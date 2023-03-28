@@ -3,8 +3,8 @@
 set -ex
 set -o pipefail
 
-TAG=${TAG:-latest}
-REPO=${REPO:-kubespheredev}
+TAG=${TAG:-v3.3.2}
+REPO=${REPO:-registry.gitlab.com/sonaproject}
 PUSH=${PUSH:-}
 
 # support other container tools. e.g. podman
