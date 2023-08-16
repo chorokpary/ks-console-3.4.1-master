@@ -476,6 +476,9 @@ export const getBrowserLang = () => {
   if (lang.indexOf('en') !== -1) {
     return 'en'
   }
+  if (lang.indexOf('ko-kr') !== -1) {
+    return 'ko'
+  }
 
   return get(globals, 'config.defaultLang', 'en')
 }

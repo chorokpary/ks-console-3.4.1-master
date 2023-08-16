@@ -51,6 +51,27 @@ const init = async () => {
     })
   }
 
+  if (userLang === 'ko') {
+    moment.locale('ko', {
+      relativeTime: {
+        s: '1 초',
+        ss: '%d 초',
+        m: '1 분',
+        mm: '%d 분',
+        h: '1 시간',
+        hh: '%d 시간',
+        d: '1 일',
+        dd: '%d 일',
+        M: '1 개월',
+        MM: '%d 개월',
+        y: '1 년',
+        yy: '%d 년',
+        past: '%s전',
+        future: '%s이후',
+      },
+    })
+  }
+
   const locales = {}
   const localePath = globals.localeManifest[`locale-${userLang}.json`]
   if (userLang && localePath) {
