@@ -227,7 +227,7 @@ export default class PodItem extends React.PureComponent {
             const itemWidth = 100 / configs.length
 
             return (
-              <div key={item.type} style={{ width: `${itemWidth}%` }}>
+              <div key={item.type}>
                 <TinyArea
                   key={item.type}
                   width="100%"

@@ -165,7 +165,8 @@
         justify-content: space-between;
 
         & > div {
-          padding: 0 10px;
+          margin: 0 10px;
+	  width: calc(50% - 20px);
         }
       }
     }
