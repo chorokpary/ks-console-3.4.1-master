@@ -70,7 +70,7 @@ module.exports = {
   // Physical Resource Monitoring
   SELECT_TIME_RANGE: '시간 범위를 선택하세요.',
   LAST_TIME: '최근 {value}',
-  LAST_TIME_M: '{num, plural, =1 {최근 1 분} other{최근 # 분}}',
+  LAST_TIME_M: '{num, plural, =1 {최근 1 분} other{최근 # 분}}',
   LAST_TIME_H: '{num, plural, =1 {최근 1 시간} other{최근 # 시간}}',
   LAST_TIME_D: '{num, plural, =1 {최근 1 일} other{최근 # 일}}',
   TIMERANGE_SELECTOR_MSG: '종료 시간은 시작 시간 이후여야 합니다.',
@@ -90,7 +90,7 @@ module.exports = {
   // Physical Resource Monitoring > Average CPU Load
   TIME_M: '{num, plural, =1 {1 분} other{# 분}}',
   TIME_H: '{num, plural, =1 {1 시간} other{# 시간}}',
-  TIME_D: '{num, plural, =1 {1 일} other{# 일}}',
+  TIME_D: '{num, plural, =1 {1 일} other{# 일}}',
   // etcd Monitoring
   EXTERNAL_ETCD: '외부 etcd',
   DB_FSYNC: 'DB Fsync',
