@@ -136,7 +136,14 @@ export default class BaseStore {
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)
     )
-    const data = (get(result, 'items') || []).map(item => ({
+    // const data = (get(result, 'items') || []).map(item => ({
+    //   cluster,
+    //   namespace,
+    //   ...this.mapper(item),
+    // }))
+
+    console.log(this.module)
+    const data = (get(result, 'images') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
@@ -151,6 +158,8 @@ export default class BaseStore {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
+
+    console.log(data)
 
     return data
   }

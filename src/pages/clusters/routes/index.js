@@ -61,6 +61,8 @@ import CustomMonitoring from '../containers/CustomMonitoring'
 import detail from './detail'
 import Gateway from '../containers/Gateway'
 
+import Images from '../containers/Resources'
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -260,6 +262,13 @@ export default [
             component: Gateway,
             exact: true,
           },
+
+          {
+            path: `${PATH}/images`,
+            component: Images,
+            exact: true,
+          },
+
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({
             path: `${PATH}/workloads`,

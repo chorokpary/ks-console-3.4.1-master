@@ -24,10 +24,13 @@ const proxy = require('./middlewares/proxy')
 const checkToken = require('./middlewares/checkToken')
 const checkIfExist = require('./middlewares/checkIfExist')
 
+const mm3CheckToken = require('./middlewares/mm3CheckToken')
+
 const {
   k8sResourceProxy,
   devopsWebhookProxy,
   b2iFileProxy,
+  webMm3Proxy,
 } = require('./proxy')
 
 const {
@@ -72,6 +75,9 @@ router
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
 
   .get('/sample/:app', parseBody, handleSampleData)
+
+  .all('/edgetron/(.*)', mm3CheckToken)
+  .use(proxy('/edgetron/(.*)', webMm3Proxy))
 
   // session
   .post('/login', parseBody, handleLogin)

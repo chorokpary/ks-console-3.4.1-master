@@ -28,8 +28,8 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://ks-apiserver
-    wsUrl: ws://ks-apiserver
+    url: http://192.168.16.86:30881
+    wsUrl: ws://192.168.16.86:30881
 
   # docker image search default url
   dockerHubUrl: https://hub.docker.com
@@ -254,6 +254,23 @@ client:
                 title: GATEWAY_SETTINGS,
                 authKey: cluster-settings,
               }
+        - name: resources
+          title: Resources
+          icon: appcenter
+          showInDisable: true
+          children:
+            - {
+              name: images,
+              title: 이미지,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: networks,
+              title: 네트워크,
+              skipAuth: true,
+              showInDisable: true,
+            }
 
   # access control page navigations
   accessNavs:

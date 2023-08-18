@@ -78,10 +78,21 @@ const getServedVersion = item => {
   return servedVersion
 }
 
+// const getBaseInfo = item => ({
+//   uid: get(item, 'metadata.uid'),
+//   name: get(item, 'metadata.name'),
+//   creator: getResourceCreator(item),
+//   description: getDescription(item),
+//   aliasName: getAliasName(item),
+//   createTime: get(item, 'metadata.creationTimestamp', ''),
+//   resourceVersion: get(item, 'metadata.resourceVersion'),
+//   isFedManaged: get(item, 'metadata.labels["kubefed.io/managed"]') === 'true',
+// })
+
 const getBaseInfo = item => ({
-  uid: get(item, 'metadata.uid'),
-  name: get(item, 'metadata.name'),
-  creator: getResourceCreator(item),
+  arch_type: get(item, 'arch_type'),
+  name: get(item, 'name'),
+  os_type: get(item, 'os_type'),
   description: getDescription(item),
   aliasName: getAliasName(item),
   createTime: get(item, 'metadata.creationTimestamp', ''),
@@ -156,7 +167,7 @@ const UserMapper = item => ({
   groups: get(item, 'spec.groups', []),
   status: get(item, 'status.state', 'Pending'),
   conditions: get(item, 'status.conditions', []),
-  lastLoginTime: get(item, 'status.lastLoginTime'),
+  timestamp: get(item, 'timestamp'),
   _originData: getOriginData(item),
 })
 

@@ -76,10 +76,11 @@ export default class UsersStore extends Base {
     return 'users'
   }
 
-  getResourceUrl = (params = {}) =>
-    `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
-      params
-    )}`
+  // getResourceUrl = (params = {}) =>
+  //   `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
+  //     params
+  //   )}`
+  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/images`
 
   getListUrl = this.getResourceUrl
 
