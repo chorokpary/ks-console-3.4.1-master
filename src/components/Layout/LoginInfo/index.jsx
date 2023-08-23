@@ -60,9 +60,6 @@ export default class LoginInfo extends Component {
       case 'logout':
         this.props.rootStore.logout()
         break
-      case 'support':
-        routing.push('/support')
-        break
       default:
         break
     }
@@ -83,10 +80,6 @@ export default class LoginInfo extends Component {
         </Menu.MenuItem>
         <Menu.MenuItem key="about">
           <Icon name="information" /> {t('ABOUT')}
-        </Menu.MenuItem>
-        <Menu.MenuItem key="support">
-          <Icon name="message-circle-duotone" />
-          {t('TECHNICAL_SUPPORT')}
         </Menu.MenuItem>
       </Menu>
     )
