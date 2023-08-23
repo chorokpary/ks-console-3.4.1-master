@@ -68,21 +68,6 @@ client:
     - label: "English"
       value: "en"
       recommend: true
-    - label: "Español"
-      value: "es"
-      recommend: true
-    - label: "العربية"
-      value: "ar"
-    - label: "Français"
-      value: "fr"
-    - label: "हिन्दी"
-      value: "hi"
-    - label: "Lietuvių"
-      value: "lt"
-    - label: "Polski"
-      value: "pl"
-    - label: "Türkçe"
-      value: "tr"
   defaultLang: "en"
   showAllLangs: true
 
