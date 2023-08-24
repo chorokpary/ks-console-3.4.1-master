@@ -30,7 +30,7 @@ import RoleStore from 'stores/role'
 
 @withList({
   store: new UserStore(),
-  module: 'users',
+  module: 'images',
   authKey: 'members',
   name: '이미지',
 })

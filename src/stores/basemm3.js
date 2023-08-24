@@ -27,6 +27,9 @@ import List from './base.list'
 export default class BaseStore {
   list = new List()
 
+  dataList = [];
+  searchList = [];
+
   @observable
   detail = {}
 
@@ -122,7 +125,7 @@ export default class BaseStore {
     this.list.isLoading = true
 
     if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'createTime'
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
     }
 
     if (params.limit === Infinity || params.limit === -1) {
@@ -136,17 +139,61 @@ export default class BaseStore {
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)
     )
-    
-    const data = (get(result, 'items') || []).map(item => ({
+
+    // mm3 api 관련 
+    const mm3Array = ['vms', 'images','flavors','networks','routers','floating_ips','lbs','security_groups','keypairs','host_devices','pci_devices','volumes','clusters','workspaces','licenses']
+    const apiName = mm3Array.includes(this.module) ? this.module : "";
+
+    const data = (get(result, apiName) || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
- 
+    // 초기 데이터 처리 
+    this.dataList = data;
+
+    // 검색 관련 처리 
+    const exceptionArray = ['page','limit','sortBy','ascending'];
+    const searchArray = Object.keys(params).map((key) => {
+                let value = params[key];
+                let searchData = {
+                  "searchKeywordType" : key,
+                  "searchKeywordText" : value 
+                }
+                return searchData     
+            }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+
+    if(searchArray.length > 0){
+      searchArray.map((search) => {
+        let resultList = this.dataList.filter((row) => {
+          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+        });
+        this.searchList = resultList;
+      })
+      this.dataList = this.searchList;
+    }
+
+    //정렬 처리
+    const sortType = !!params.ascending ? "asc" : "desc";
+    this.dataList.sort((a, b) => {
+      var x = a[params.sortBy];
+      var y = b[params.sortBy];
+      if (sortType == "desc") {
+        return x > y ? -1 : x < y ? 1 : 0;
+      } else if (sortType == "asc") {
+        return x < y ? -1 : x > y ? 1 : 0;
+      }
+    });
+
+    // mm3 데이터 page 별 Slice 처리 
+    const perPage = Number(params.limit) || 10;
+    const currentPage = Number(params.page) || 1;
+    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+
     this.list.update({
-      data: more ? [...this.list.data, ...data] : data,
-      total: result.totalItems || result.total_count || data.length || 0,
+      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
+      total: result.totalItems || result.total_count || this.dataList.length || 0,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -154,7 +201,7 @@ export default class BaseStore {
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
 
-    console.log(data)
+    // console.log(data)
 
     return data
   }
@@ -267,6 +314,7 @@ export default class BaseStore {
     if (this.afterChange) {
       this.afterChange(res, params)
     }
+    
     return res
   }
 

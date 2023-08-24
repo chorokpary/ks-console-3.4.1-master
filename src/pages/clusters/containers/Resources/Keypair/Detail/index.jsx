@@ -1,0 +1,154 @@
+/*
+ * This file is part of KubeSphere Console.
+ * Copyright (C) 2019 The KubeSphere Console Authors.
+ *
+ * KubeSphere Console is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KubeSphere Console is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import React from 'react'
+import { toJS } from 'mobx'
+import { observer, inject } from 'mobx-react'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components'
+
+import { getLocalTime } from 'utils'
+import { trigger } from 'utils/action'
+import KeypairStore from 'stores/resources/keypair'
+
+import DetailPage from 'clusters/containers/Base/Detail'
+
+import routes from './routes'
+
+@inject('rootStore')
+@observer
+@trigger
+export default class KeypairDetail extends React.Component {
+  store = new KeypairStore()
+
+  componentDidMount() {
+    this.fetchData()
+  }
+
+  get module() {
+    return this.store.module
+  }
+
+  get name() {
+    return 'KEYPAIR_DETAIL'
+  }
+
+  get listUrl() {
+    const { cluster } = this.props.match.params
+    return `/clusters/${cluster}/keypair`
+  }
+
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
+  get showEdit() {
+    const { name } = this.props.match.params
+    return !globals.config.presetClusterRoles.includes(name)
+  }
+
+  fetchData = () => {
+    this.store.fetchDetail(this.props.match.params);
+  }
+
+  getOperations = () => [
+    {
+      key: 'edit',
+      icon: 'pen',
+      text: t('EDIT_INFORMATION'),
+      action: 'edit',
+      show: this.showEdit,
+      onClick: () =>
+        this.trigger('resource.baseinfo.edit', {
+          type: this.name,
+          detail: toJS(this.store.detail),
+          success: this.fetchData,
+        }),
+    },
+    {
+      key: 'viewYaml',
+      icon: 'eye',
+      text: t('VIEW_YAML'),
+      action: 'view',
+      onClick: () => {
+        this.trigger('keypair.yaml.view', {
+          yaml: this.store.yaml,
+          readOnly: true,
+        })
+      },
+    },
+    {
+      key: 'delete',
+      icon: 'trash',
+      text: t('DELETE'),
+      action: 'delete',
+      type: 'danger',
+      show: this.showEdit,
+      onClick: () =>
+        this.trigger('keypair.delete', {
+          type: this.name,
+          detail: toJS(this.store.detail),
+          cluster: this.props.match.params.cluster,
+          success: () => this.routing.push(this.listUrl),
+        }),
+    },
+  ]
+
+  getAttrs = () => {
+    const detail = toJS(this.store.detail)
+
+    if (isEmpty(detail)) {
+      return
+    }
+
+    return [
+      {
+        name: t('클러스터'),
+        value: detail.cluster,
+      },
+      {
+        name: t('설명'),
+        value: detail.keypair.description,
+      },
+    ]
+  }
+
+  render() {
+    const stores = { detailStore: this.store }
+
+    if (this.store.isLoading && !this.store.detail.name) {
+      return <Loading className="ks-page-loading" />
+    }
+
+    const sideProps = {
+      module: this.module,
+      name: get(this.store.detail, 'name'),
+      desc: get(this.store.detail.keypair, 'description', ""),
+      operations: this.getOperations(),
+      attrs: this.getAttrs(),
+      breadcrumbs: [
+        {
+          label: t('Keypair'),
+          url: this.listUrl,
+        },
+      ],
+    }
+
+    return <DetailPage stores={stores} routes={routes} {...sideProps} />
+  }
+}

@@ -30,6 +30,11 @@ server:
     clientSecret: kubesphere
     url: http://192.168.16.86:30881
     wsUrl: ws://192.168.16.86:30881
+    mm3Url: http://192.168.16.80:32080 
+
+  mm3UserInfo:
+    userName: "edgetron"
+    passWord: "password"
 
   # docker image search default url
   dockerHubUrl: https://hub.docker.com
@@ -268,6 +273,12 @@ client:
             - {
               name: networks,
               title: 네트워크,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: keypair,
+              title: "키페어",
               skipAuth: true,
               showInDisable: true,
             }

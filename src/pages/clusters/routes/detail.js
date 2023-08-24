@@ -50,6 +50,10 @@ import LogCollectionDetail from '../containers/LogCollections/Detail'
 import IPPoolDetail from '../containers/Network/IPPools/Detail'
 import GatewayDetail from '../containers/Gateway/Detail'
 
+//MM3 Detail Page
+import KeypairDetail from '../containers/Resources/Keypair/Detail'
+
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -173,6 +177,11 @@ export default [
         path: `${PATH}/projects/:namespace`,
         component: ProjectDetail,
       },
+      
     ],
+  },
+  {
+    path: `${PATH}/keypair/:name`,
+    component: KeypairDetail,
   },
 ]
