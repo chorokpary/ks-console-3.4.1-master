@@ -61,7 +61,7 @@ import CustomMonitoring from '../containers/CustomMonitoring'
 import detail from './detail'
 import Gateway from '../containers/Gateway'
 
-import Images from '../containers/Resources'
+import Images from '../containers/Resources/Images'
 import Keypair from '../containers/Resources/Keypair'
 
 const PATH = '/clusters/:cluster'
@@ -73,10 +73,10 @@ export default [
     redirect: globals.app.isMultiCluster
       ? null
       : {
-          from: '/clusters',
-          to: '/clusters/default/overview',
-          exact: true,
-        },
+        from: '/clusters',
+        to: '/clusters/default/overview',
+        exact: true,
+      },
     exact: true,
   },
   {
