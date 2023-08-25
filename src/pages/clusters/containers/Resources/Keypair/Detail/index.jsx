@@ -148,6 +148,7 @@ export default class KeypairDetail extends React.Component {
         },
       ],
     }
+    console.log(sideProps)
 
     return <DetailPage stores={stores} routes={routes} {...sideProps} />
   }

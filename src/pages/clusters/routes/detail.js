@@ -52,6 +52,7 @@ import GatewayDetail from '../containers/Gateway/Detail'
 
 //MM3 Detail Page
 import KeypairDetail from '../containers/Resources/Keypair/Detail'
+import ImageDetail from '../containers/Resources/Images/Detail'
 
 
 const PATH = '/clusters/:cluster'
@@ -177,11 +178,15 @@ export default [
         path: `${PATH}/projects/:namespace`,
         component: ProjectDetail,
       },
-      
+
     ],
   },
   {
     path: `${PATH}/keypair/:name`,
     component: KeypairDetail,
+  },
+  {
+    path: `${PATH}/images/:name`,
+    component: ImageDetail,
   },
 ]

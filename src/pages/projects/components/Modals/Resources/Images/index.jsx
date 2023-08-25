@@ -18,49 +18,45 @@ export default function ResourceImageModal({ title, store }) {
   }
 
   return (
-    <>
-      {modelView &&
-        <Modal
-          icon="pen"
-          width={600}
-          title={title}
-          onOk={handleOk}
-          onCancel={closeModal}
-          visible={true}
+    <Modal
+      icon="pen"
+      width={600}
+      title={title}
+      onOk={handleOk}
+      onCancel={closeModal}
+      visible={modelView}
+    >
+      <Form>
+        <Form.Item
+          label={t('NAME')}
+          rules={[
+            { required: true, message: t('NAME_EMPTY_DESC') },
+            {
+              pattern: PATTERN_NAME,
+              message: t('INVALID_NAME_DESC', {
+                message: t('LONG_NAME_DESC'),
+              }),
+            },
+          ]}
+          desc={t('LONG_NAME_DESC')}
         >
-          <Form>
-            <Form.Item
-              label={t('NAME')}
-              rules={[
-                { required: true, message: t('NAME_EMPTY_DESC') },
-                {
-                  pattern: PATTERN_NAME,
-                  message: t('INVALID_NAME_DESC', {
-                    message: t('LONG_NAME_DESC'),
-                  }),
-                },
-              ]}
-              desc={t('LONG_NAME_DESC')}
-            >
-              <Input name="name" maxLength={253} />
-            </Form.Item>
-            <Form.Item
-              label={t('VOLUME_SNAPSHOT_CLASS')}
-              rules={[{ required: true, message: t('SNAPSHOT_EMPTY_TIP') }]}
-              desc={t('SELECT_VOLUME_SNAPSHOT_CLASS_DESC')}
-            >
-              <Select
-                name="type"
-              // options={volumeSelect ? snapShotClass : options}
-              // placeholder=" "
-              // className={styles.input}
-              />
-            </Form.Item>
-          </Form>
+          <Input name="name" maxLength={253} />
+        </Form.Item>
+        <Form.Item
+          label={t('VOLUME_SNAPSHOT_CLASS')}
+          rules={[{ required: true, message: t('SNAPSHOT_EMPTY_TIP') }]}
+          desc={t('SELECT_VOLUME_SNAPSHOT_CLASS_DESC')}
+        >
+          <Select
+            name="type"
+          // options={volumeSelect ? snapShotClass : options}
+          // placeholder=" "
+          // className={styles.input}
+          />
+        </Form.Item>
+      </Form>
 
-        </Modal>
-      }
-    </>
+    </Modal>
   )
 
 }

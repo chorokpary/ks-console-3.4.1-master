@@ -24,6 +24,7 @@ import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
+import { ICON_TYPES } from 'utils/constants'
 
 import RoleStore from 'stores/role'
 import ImageStore from 'stores/resources/images'
@@ -99,11 +100,19 @@ export default class Images extends React.Component {
 
   getColumns = () => {
     const { getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('name'),
         dataIndex: 'name',
         sorter: true,
+        render: name => (
+          <Avatar
+            icon={ICON_TYPES[this.module]}
+            to={`/clusters/${cluster}/images/${name}`}
+            title={name}
+          />
+        ),
       },
       {
         title: t('arch_type'),

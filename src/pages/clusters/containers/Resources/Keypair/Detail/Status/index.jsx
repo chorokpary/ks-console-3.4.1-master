@@ -1,5 +1,5 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
@@ -9,6 +9,7 @@ import { Button, Notify } from '@kube-design/components'
 import styles from './index.scss'
 
 const Status = (props) => {
+  console.log(props)
 
   const store = props.detailStore;
 
@@ -39,13 +40,13 @@ const Status = (props) => {
     setEncodeKey(createEncode64(get(store.detail.keypair, 'public_key', '')));
   }, [])
 
-  const renderOperations = () =>{
+  const renderOperations = () => {
     return (
       <div>
         <Button
           type="flat"
           icon={showSecret ? 'eye' : 'eye-closed'}
-          onClick={() => {setShowSecret(!showSecret)}}
+          onClick={() => { setShowSecret(!showSecret) }}
         />
         <Button onClick={() => textClipboard()}>복사</Button>
       </div>
@@ -53,20 +54,20 @@ const Status = (props) => {
   }
 
   return (
-    <>  
-        <div>
-         <Card operations={renderOperations()}>
+    <>
+      <div>
+        <Card operations={renderOperations()}>
           <div className={styles.defaultWrapper}>
-              <ul>
-                  <li>
-                    <span>
-                      <pre>{convert()}</pre>
-                    </span>
-                  </li>
-              </ul>
-            </div>
-         </Card>
-      </div>         
+            <ul>
+              <li>
+                <span>
+                  <pre>{convert()}</pre>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </Card>
+      </div>
     </>
   );
 };
