@@ -78,21 +78,10 @@ const getServedVersion = item => {
   return servedVersion
 }
 
-// const getBaseInfo = item => ({
-//   uid: get(item, 'metadata.uid'),
-//   name: get(item, 'metadata.name'),
-//   creator: getResourceCreator(item),
-//   description: getDescription(item),
-//   aliasName: getAliasName(item),
-//   createTime: get(item, 'metadata.creationTimestamp', ''),
-//   resourceVersion: get(item, 'metadata.resourceVersion'),
-//   isFedManaged: get(item, 'metadata.labels["kubefed.io/managed"]') === 'true',
-// })
-
 const getBaseInfo = item => ({
-  arch_type: get(item, 'arch_type'),
-  name: get(item, 'name'),
-  os_type: get(item, 'os_type'),
+  uid: get(item, 'metadata.uid'),
+  name: get(item, 'metadata.name'),
+  creator: getResourceCreator(item),
   description: getDescription(item),
   aliasName: getAliasName(item),
   createTime: get(item, 'metadata.creationTimestamp', ''),
@@ -448,14 +437,14 @@ const EventsMapper = item => {
     item.count > 1
       ? item.count === 2
         ? t.html('EVENT_AGE_DATA_TWICE', {
-            lastTime: moment(item.lastTimestamp).fromNow(),
-            duration: moment(item.firstTimestamp).to(now, true),
-          })
+          lastTime: moment(item.lastTimestamp).fromNow(),
+          duration: moment(item.firstTimestamp).to(now, true),
+        })
         : t.html('EVENT_AGE_DATA', {
-            lastTime: moment(item.lastTimestamp).fromNow(),
-            count: item.count,
-            duration: moment(item.firstTimestamp).to(now, true),
-          })
+          lastTime: moment(item.lastTimestamp).fromNow(),
+          count: item.count,
+          duration: moment(item.firstTimestamp).to(now, true),
+        })
       : moment(item.firstTimestamp).fromNow()
 
   return {
@@ -1062,8 +1051,8 @@ const VolumeSnapshotMapper = detail => {
     backupStatus: deletionTimestamp
       ? 'deleting'
       : readyToUse
-      ? 'success'
-      : 'updating',
+        ? 'success'
+        : 'updating',
     namespace,
     snapshotSourceName,
     _originData: getOriginData(detail),
