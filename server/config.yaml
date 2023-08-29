@@ -265,19 +265,25 @@ client:
           showInDisable: true
           children:
             - {
-              name: images,
-              title: 이미지,
-              skipAuth: true,
-              showInDisable: true,
-            }
-            - {
               name: networks,
               title: 네트워크,
               skipAuth: true,
               showInDisable: true,
             }
             - {
-              name: keypair,
+              name: routers,
+              title: 가상 라우터,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: images,
+              title: 이미지,
+              skipAuth: true,
+              showInDisable: true,
+            }           
+            - {
+              name: keypairs,
               title: "키페어",
               skipAuth: true,
               showInDisable: true,

@@ -53,6 +53,7 @@ import GatewayDetail from '../containers/Gateway/Detail'
 //MM3 Detail Page
 import KeypairDetail from '../containers/Resources/Keypair/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
+import RouterDetail from '../containers/Resources/Routers/Detail'
 
 
 const PATH = '/clusters/:cluster'
@@ -188,5 +189,9 @@ export default [
   {
     path: `${PATH}/images/:name`,
     component: ImageDetail,
+  },
+  {
+    path: `${PATH}/routers/:name`,
+    component: RouterDetail,
   },
 ]

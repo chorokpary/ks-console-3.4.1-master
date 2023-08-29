@@ -20,15 +20,14 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import InviteMemberModal from 'components/Modals/InviteMember'
-import ModifyMemberModal from 'components/Modals/ModifyMember'
+import RegistModal from 'projects/components/Modals/Resources/Keypairs/Regist'
+import ModifyModal from 'projects/components/Modals/Resources/Keypairs/Modify'
+
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
-import RegistModal from 'components/Modals/Resources/Keypair/Regist'
-
 export default {
-  'keypair.regist': {
+  'router.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -40,6 +39,7 @@ export default {
               success && success()
             })
         },
+        title: '가상 라우터 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -50,42 +50,27 @@ export default {
       })
     },
   },
-  'keypair.edit': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+  'router.edit': {
+    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
-        onOk: role => {
+        onOk: data => {
           store
-            .update(
-              { ...detail, ...cluster, workspace, namespace, devops },
-              {
-                username: detail.name,
-                roleRef: role,
-              }
-            )
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('UPDATE_SUCCESSFUL') })
+              Notify.success({ content: t('수정 되었습니다.') })
               success && success()
             })
         },
-        modal: ModifyMemberModal,
+        title: '라우터 수정',
+        modal: ModifyModal,
         store,
         module,
         ...props,
       })
     },
   },
-  'keypair.remove': {
+  'router.remove': {
     on({
       store,
       detail,
@@ -102,13 +87,13 @@ export default {
             .delete({ ...detail, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('DELETED_SUCCESSFULLY') })
+              Notify.success({ content: t('삭제 되었습니다.') })
               success && success()
             })
         },
         modal: DeleteModal,
         title: t('삭제'),
-        desc: t.html('키페어 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        desc: t.html('가상 라우터 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -117,7 +102,7 @@ export default {
       })
     },
   },
-  'keypair.remove.batch': {
+  'router.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       const usernames = rowKeys.join(', ')
@@ -127,7 +112,7 @@ export default {
             .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('DELETED_SUCCESSFULLY') })
+              Notify.success({ content: t('삭제 되었습니다.') })
               success && success()
             })
         },
@@ -138,21 +123,21 @@ export default {
             : t('일괄 삭제'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('키페어 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('키페어 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('가상 라우터 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
+            : t.html('가상 라우터 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
       })
     },
   },
-  'keypair.delete': {
+  'router.delete': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
           store.delete(detail).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('DELETED_SUCCESSFULLY') })
+            Notify.success({ content: t('삭제 되었습니다.') })
             success && success()
           })
         },
@@ -164,11 +149,11 @@ export default {
       })
     },
   },
-  'keypair.yaml.view': {
+  'router.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
-          Notify.success({ content: t('UPDATE_SUCCESSFUL') })
+          Notify.success({ content: t('수정 되었습니다.') })
           Modal.close(modal)
           success && success()
         },

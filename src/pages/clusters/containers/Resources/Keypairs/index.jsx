@@ -26,7 +26,7 @@ import Table from 'components/Tables/List'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
-import KeypairStore from 'stores/resources/keypair'
+import KeypairStore from 'stores/resources/keypairs'
 
 @withList({
   store: new KeypairStore(),
@@ -112,7 +112,7 @@ export default class Keypairs extends React.Component {
         render: name => (
           <Avatar
             icon={ICON_TYPES[this.module]}
-            to={`/clusters/${cluster}/keypair/${name}`}
+            to={`/clusters/${cluster}/keypairs/${name}`}
             title={name}
           />
         ),
@@ -143,7 +143,7 @@ export default class Keypairs extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('INVITE_CLUSTER_MEMBER_DESC') }
+    return { desc: t('Please create a data.') }
   }
 
   get columnSearch() {
@@ -170,7 +170,9 @@ export default class Keypairs extends React.Component {
       <ListPage {...this.props}>
       <Banner
         {...bannerProps}
+        icon="key"
         tabs={this.tabs}
+        title={t('키페어')}
         description={t('키페어의 상태와 사용현황을 관리 할 수 있습니다.')}
       />
       <Table

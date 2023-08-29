@@ -27,66 +27,46 @@ import cookie from 'utils/cookie'
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
-export default class KeypairStore extends Base {
+export default class RouterStore extends Base {
 
   records = new List()
 
-  module = 'keypairs'
+  module = 'routers'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/keypairs`
+  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/routers`
   getListUrl = this.getResourceUrl
-
-  
-  // @action
-  // async fetchList({ devops, workspace, cluster, more, ...params } = {}) {
-  //   this.list.isLoading = true
-
-  //   if (params.limit === Infinity || params.limit === -1) {
-  //     params.limit = -1
-  //     params.page = 1
-  //   }
-
-  //   params.limit = params.limit || 10
-
-  //   const url = `${this.getResourceUrl({ namespace: devops, cluster })}`
-
-  //   const result = await request.get(url, { ...params }, {}, () => {
-  //     return []
-  //   })
-
-  //   const data = Array.isArray(result.items)
-  //     ? result.items.map(item => {
-  //         return { ...this.mapper({ ...item, devops }) }
-  //       })
-  //     : []
-
-  //   this.list.update({
-  //     data: more ? [...this.list.data, ...data] : data,
-  //     total: result.totalItems || result.total_count || data.length || 0,
-  //     ...params,
-  //     limit: Number(params.limit) || 10,
-  //     page: Number(params.page) || 1,
-  //     isLoading: false,
-  //     ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-  //   })
-
-  //   console.log(data)
-
-  //   return data
-  // }
 
   @action
   async create(data, params = {}) {
-    let res
-    if (params.workspace) {
-      res = await this.submitting(
-        request.post(this.getResourceUrl(params), data)
-      )
-    } else {
-      res = this.submitting(request.post(this.getListUrl(params), data))
-    }
-    // this.afterChange(res, params)
+    const url = this.getResourceUrl(params);
+
+    const jsonData = {};
+    const keypairData = {};
+
+    keypairData.name = data.name;
+    keypairData.public_key = data.publicKey;
+    keypairData.description = data?.description;
+
+    jsonData.keypair = keypairData;
+
+    const res = await request.post(url, jsonData)
     return res
+  }
+
+  @action
+  async update({ name, ...params }, data) {
+
+    const jsonData = {};
+    const keypairData = {};
+
+    keypairData.name = data.name;
+    keypairData.description = data?.description;
+
+    jsonData.keypair = keypairData;
+
+    await this.submitting(
+      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+    )
   }
 
 
@@ -97,7 +77,7 @@ export default class KeypairStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
     )
-    const detail = { ...params, ...this.mapper(result), kind: 'Keypair' }
+    const detail = { ...params, ...this.mapper(result), kind: 'routers' }
 
     // Yaml 파일 관련 
     await this.fetchYaml(params);
@@ -114,37 +94,12 @@ export default class KeypairStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}/manifest`
     )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypair' }
+    const yamlData = { ...params, ...this.mapper(result), kind: 'routers' }
   
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData
   }
-
-
-  // @action
-  // async update({ name, ...params }, data) {
-  //   await this.submitting(
-  //     request.put(this.getDetailUrl({ name, ...params }), data)
-  //   )
-
-  //   if (data.password && name === globals.user.username) {
-  //     return await request.post('logout')
-  //   }
-
-  //   const lang = get(data, 'spec.lang')
-  //   if (lang && data.lang !== cookie('lang')) {
-  //     window.location.reload()
-  //   }
-  // }
-
-
-  // @action
-  // async modifyPassword({ name }, data) {
-  //   return this.submitting(
-  //     request.put(`${this.getDetailUrl({ name })}/password`, data)
-  //   )
-  // }
 
   @action
   async batchDelete({ rowKeys, ...params }) {
