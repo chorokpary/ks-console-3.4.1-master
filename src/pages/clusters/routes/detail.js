@@ -51,7 +51,7 @@ import IPPoolDetail from '../containers/Network/IPPools/Detail'
 import GatewayDetail from '../containers/Gateway/Detail'
 
 //MM3 Detail Page
-import KeypairDetail from '../containers/Resources/Keypair/Detail'
+import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
 import RouterDetail from '../containers/Resources/Routers/Detail'
 
@@ -183,7 +183,7 @@ export default [
     ],
   },
   {
-    path: `${PATH}/keypair/:name`,
+    path: `${PATH}/keypairs/:name`,
     component: KeypairDetail,
   },
   {

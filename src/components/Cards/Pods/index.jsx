@@ -403,7 +403,7 @@ export default class PodsCard extends React.Component {
         isEmpty={isEmpty(data)}
       >
         {!hideHeader && this.renderHeader()}
-        {this.renderContent()}
+        {/* {this.renderContent()} */}
         {!hideFooter && this.renderFooter()}
       </Panel>
     )
