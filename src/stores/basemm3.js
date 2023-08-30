@@ -23,6 +23,7 @@ import { API_VERSIONS, LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 
 import List from './base.list'
+import axios from "axios";
 
 export default class BaseStore {
   list = new List()
@@ -148,9 +149,24 @@ export default class BaseStore {
       ...this.mapper(item),
     }))
 
-    // 초기 데이터 처리 
-    this.dataList = data;
+    // VMS 일때 Flavor 정보 추가 
+    const vmArray = [];
+    if(apiName == "vms"){
 
+      const promises = data.map(async (vm) => {
+        const flavorDetail = await axios.get("/edgetron/resources/kubevirt/flavors/"+vm.flavor);
+        vm.flavor_detail = flavorDetail.data.flavor;
+        vmArray.push(vm);
+      })  
+      await Promise.all(promises);
+
+      // 초기 데이터 처리 
+      this.dataList = vmArray;
+    }else{
+      // 초기 데이터 처리 
+      this.dataList = data;
+    }
+   
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {

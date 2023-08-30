@@ -63,8 +63,6 @@
   }
 }
 
-
-
 .expandItem {
   position: relative;
   height: 64px;
@@ -114,7 +112,6 @@
     transform: translate3d(0, 100%, 0);
   }
 }
-
 
 .itemMain {
   display: flex;
@@ -251,7 +248,6 @@
   }
 }
 
-
 .itemExtra {
   display: none;
   position: absolute;
@@ -271,7 +267,25 @@
     margin-bottom: 12px;
 
     &:last-child {
-      margin-bottom: 10px;
+      margin-bottom: 0;
     }
   }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 56px;
+}
+
+.cluster {
+  width: 260px;
+  margin-right: 12px;
 }
