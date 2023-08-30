@@ -161,7 +161,6 @@ const Status = (props) => {
         </Panel>
       }     
 
-       {/* 가상 머신 상세 관련 샘플 */}
       <DetailVmList type='이미지' variables='image' name="ubuntu-2004-image-amd64" />
       
     </>

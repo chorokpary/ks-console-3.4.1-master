@@ -41,13 +41,15 @@ export default class RouterStore extends Base {
     const url = this.getResourceUrl(params);
 
     const jsonData = {};
-    const keypairData = {};
+    const routersData = {};
 
-    keypairData.name = data.name;
-    keypairData.public_key = data.publicKey;
-    keypairData.description = data?.description;
+    routersData.name = data.routerName;
+    routersData.enable_snat = data.snatType == "T" ? true : false;
+    routersData.internal = data.internal;
+    routersData.external = data.external;
+    routersData.description = data.description;
 
-    jsonData.keypair = keypairData;
+    jsonData.router = routersData;
 
     const res = await request.post(url, jsonData)
     return res
@@ -57,18 +59,20 @@ export default class RouterStore extends Base {
   async update({ name, ...params }, data) {
 
     const jsonData = {};
-    const keypairData = {};
+    const routersData = {};
 
-    keypairData.name = data.name;
-    keypairData.description = data?.description;
+    routersData.name = data.routerName;
+    routersData.enable_snat = data.snapType == "T" ? true : false;
+    routersData.internal = data.internal;
+    routersData.external = data.external;
+    routersData.description = data.description;
 
-    jsonData.keypair = keypairData;
+    jsonData.router = routersData;
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
     )
   }
-
 
   @action
   async fetchDetail(params) {
@@ -127,6 +131,15 @@ export default class RouterStore extends Base {
     }
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  }
+
+  @action
+  async networkList(params) {
+
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/networks`
+    )
+    return result
   }
 
 }

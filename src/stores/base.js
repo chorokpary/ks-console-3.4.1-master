@@ -154,7 +154,7 @@ export default class BaseStore {
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
 
-    console.log(data)
+    // console.log(data)
 
     return data
   }

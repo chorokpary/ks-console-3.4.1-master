@@ -50,6 +50,8 @@ const DetailVmList = (props) => {
   }
 
   const renderExtraContentNetwork = (obj) => {
+
+    const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
     return (
       <div className={styles.itemExtra}>
           <div className={styles.containers} >
@@ -60,14 +62,17 @@ const DetailVmList = (props) => {
                 <div className={classnames(styles.title, styles.name)}>
                   <div>{obj.flavor_detail.name}</div>
                   <p>Flavor</p>
-                </div>                
+                </div>
                 <div className={styles.title}>
                   <div>
-                   {obj.networks.length == 0 && "-"}
-                   {obj.networks.length > 1 ? obj.networks[0] + " 외 " + (obj.networks.length - 1) + "개" : obj.networks[0] }
+                   {
+                    networkList.length >= 1 ?  
+                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개" 
+                    : "-"
+                   }
                   </div>
                   <p>네트워크</p>
-                </div>
+                </div>                
                 <div className={styles.title}>
                   <div>{obj.flavor_detail.vcpus} Core</div>
                   <p>CPU</p>
@@ -79,11 +84,14 @@ const DetailVmList = (props) => {
                 <div className={styles.title}>
                   <div>{obj.flavor_detail.root_disk} Gib</div>
                   <p>Disk</p>
-                </div>
+                </div>                
                 <div className={styles.title}>
                   <div>
-                   {obj.gpus.length == 0 && "-"}
-                   {obj.gpus.length > 1 ? obj.gpus[0] + " 외 " + (obj.gpus.length - 1) + "개" : obj.gpus[0] }
+                  {
+                    obj.gpus.length >= 1 ?  
+                    obj.gpus.length == 1 ? obj.gpus[0] : obj.gpus[0] + " 외 " + (obj.gpus.length - 1) + "개" 
+                    : "-"
+                   }
                   </div>
                   <p>GPU</p>
                 </div>
@@ -100,15 +108,17 @@ const DetailVmList = (props) => {
   useEffect(() => {
     const fnGetExternalNetwork = async () => {
       const vmList = await store.fetchList();
-      setVmDataList(vmList);
+      setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
     };
 
     fnGetExternalNetwork();
   }, [])
 
+
   return (
     <>  
-      {vmDataList.length > 0 ?
+
+      {vmDataList.length > 0 && 
         vmDataList.map((obj, index) => (
           <Panel title={"가상 머신"} key={index}>
             <div className={styles.wrapper}>
@@ -128,13 +138,16 @@ const DetailVmList = (props) => {
             </div>
           </Panel> 
         ))
-        : 
+      }
+      
+      {vmDataList.length == 0 &&
         <Panel title={"가상 머신"}>
           <div className={styles.wrapper}>
               <div>{props.type}를 사용하는 가상머신이 없습니다.</div>
           </div>
       </Panel> 
       }
+
     </>
   );
 };
