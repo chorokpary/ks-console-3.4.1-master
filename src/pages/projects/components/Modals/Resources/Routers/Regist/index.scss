@@ -1,0 +1,8 @@
+@import "~scss/variables";
+@import "~scss/mixins";
+
+.textarea {
+  :global .textarea {
+    max-width: 640px;
+  }
+}

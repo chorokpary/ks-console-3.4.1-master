@@ -131,7 +131,7 @@ export default class RouterDetail extends React.Component {
       },
       {
         name: t('내부 네트워크'),
-        value: detail.router.internal.length > 1 ? detail.router.internal[0] + " 외 " + (detail.router.internal.length - 1) + "개" : detail.router.internal[0],
+        value: detail.router.internal.length >= 1 ? detail.router.internal.length == 1 ? detail.router.internal[0] : detail.router.internal[0] + " 외 " + (detail.router.internal.length - 1) + "개" : "-",
       },
       {
         name: t('외부 네트워크'),
