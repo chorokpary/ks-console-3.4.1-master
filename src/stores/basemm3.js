@@ -140,7 +140,7 @@ export default class BaseStore {
     )
 
     // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distrotype']
+    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
     const apiName = mm3Array.includes(this.module) ? this.module : "";
 
     const data = (get(result, apiName) || []).map(item => ({
@@ -151,22 +151,22 @@ export default class BaseStore {
 
     // VMS 일때 Flavor 정보 추가 
     const vmArray = [];
-    if(apiName == "vms"){
+    if (apiName == "vms") {
 
       const promises = data.map(async (vm) => {
-        const flavorDetail = await axios.get("/edgetron/resources/kubevirt/flavors/"+vm.flavor);
+        const flavorDetail = await axios.get("/edgetron/resources/kubevirt/flavors/" + vm.flavor);
         vm.flavor_detail = flavorDetail.data.flavor;
         vmArray.push(vm);
-      })  
+      })
       await Promise.all(promises);
 
       // 초기 데이터 처리 
       this.dataList = vmArray;
-    }else{
+    } else {
       // 초기 데이터 처리 
       this.dataList = data;
     }
-   
+
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {

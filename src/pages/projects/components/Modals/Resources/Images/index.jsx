@@ -1,29 +1,35 @@
 import React, { useEffect, useState } from 'react'
-import { Modal, TypeSelect } from 'components/Base'
+import { Modal, TypeSelect, List } from 'components/Base'
 import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
 import { PATTERN_NAME } from 'utils/constants'
-import { range } from 'lodash'
-import { Form, Input, Select, Icon, Tooltip, TextArea } from '@kube-design/components'
+import { get, range } from 'lodash'
+import { Form, Input, Select, Icon, Tooltip, TextArea, Dropdown } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import DistroTypeStore from 'stores/resources/distrotype'
+import styles from './index.scss'
+import ContainerForm from '../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
 
 export default function ResourceImageModal({ title, store }) {
   // console.log(store)
-  const distroTypeList = new DistroTypeStore();
+  const distroTypeStore = new DistroTypeStore();
 
   const [modelView, setModalView] = useState(true);
 
   const [realTime, setRealTime] = useState('미사용')
   const [publicType, setPublicType] = useState('퍼블릭')
   const [osType, setOsType] = useState('linux')
-
-  const fetchData = async () => {
-    await distroTypeList.fetchList();
-  };
+  const [distroTypeData, setDistroTypeData] = useState([])
+  const [distroTypeList, setDistroTypeList] = useState([])
+  const [distroType, setDistroType] = useState('ubuntu')
 
   useEffect(() => {
-    fetchData();
+    const getDistroTypeList = async () => {
+      const dist = await distroTypeStore.fetchList();
+      setDistroTypeData(dist)
+      setDistroTypeList(dist.filter(obj => obj.name != 'windows'))
+    };
+    getDistroTypeList();
   }, [])
 
   const realTimeOptions = [
@@ -45,7 +51,17 @@ export default function ResourceImageModal({ title, store }) {
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'linux', },
     { label: 'Windows', value: 'windows', icon: 'windows', }
+
   ]
+  const distroTypeOptions = () => {
+    const opt = distroTypeList.map((obj) => ({
+      label: t(obj.name),
+      description: t(obj.vendor),
+      icon: t(obj.name),
+      value: t(obj.name),
+    }))
+    return opt
+  }
 
   const handleOk = () => {
     console.log('ok')
@@ -67,7 +83,16 @@ export default function ResourceImageModal({ title, store }) {
     }, {})
   }
 
-  console.log(distroTypeList)
+  const handleOsType = (value) => {
+    setOsType(value)
+    if (value == 'windows') {
+      setDistroType('windows')
+      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'))
+    } else {
+      setDistroType('ubuntu')
+      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'))
+    }
+  }
 
   return (
     <>
@@ -94,7 +119,8 @@ export default function ResourceImageModal({ title, store }) {
             ]}
           // desc={t('LONG_NAME_DESC')}
           >
-            <Input name="name" maxLength={253} />
+            <Input name="name" maxLength={253}
+              style={{ maxWidth: 'none' }} />
           </Form.Item>
 
           <Form.Item>
@@ -105,50 +131,31 @@ export default function ResourceImageModal({ title, store }) {
                   label={t('이미지')}
                   rules={[{ required: true, }]}
                 >
-                  <div style={{ textAlign: 'center' }}>
-                    <CardSelect
-                      onChange={(e) => setOsType(e)}
-                      name="metadata.annotations['kubesphere.io/provisioner']"
-                      options={osTypeOptions}
-                      defaultValue={osType}
-                    />
-                  </div>
+                  <CardSelect
+                    className={styles.customUl}
+                    onChange={(e) => handleOsType(e)}
+                    name="os_type"
+                    options={osTypeOptions}
+                    defaultValue={osType}
+                  />
                 </Form.Item>
               </Column>
               <Column>
-                <Form.Item>
+                <Form.Item label={t('배포판')}>
                   <TypeSelect
-                    name={`qwfqwftype`}
-                    // onChange={this.handleStrategyChange}
-                    defaultValue="RollingUpdate"
-                  // options={this.strategyOptions}
+                    name={`distro_type`}
+                    onChange={(e) => setDistroType(e)}
+                    defaultValue={distroType}
+                    options={distroTypeOptions()}
                   />
                 </Form.Item>
-                <Form.Group
-                  label={t('ROLLING_UPDATE_SETTINGS')}
-                  checkable
-                  keepDataWhenUnCheck
-                >
-                  <Columns >
-                    <Column>
-                      <Form.Item
-                        label={t('PARTITION_ORDINAL')}
-                        desc={t('PARTITION_ORDINAL_DESC')}
-                        rules={[
-                          { required: true, message: t('PARTITION_ORDINAL_EMPTY') },
-                          // { validator: this.valueValidatorNumber },
-                        ]}
-                      >
-                        <NumberInput
-                          name={`${this.rollingUpdatePrefix}.partition`}
-                          defaultValue={0}
-                          min={0}
-                          integer
-                        />
-                      </Form.Item>
-                    </Column>
-                  </Columns>
-                </Form.Group>
+                <Form.Item>
+                  <Input name="distro_url"
+                    defaultValue={osType + ' > ' + distroType}
+                    readOnly
+                    style={{ maxWidth: 'none' }}
+                  />
+                </Form.Item>
               </Column>
             </Columns>
           </Form.Item>
@@ -249,11 +256,13 @@ export default function ResourceImageModal({ title, store }) {
               style={{ maxWidth: 'none' }}
             />
           </Form.Item>
-          <Form.Item>
-            <Input name="soruce"
-              style={{ maxWidth: 'none' }}
+          {/* <Form.Item>
+            <ContainerForm
+              type={'Add'}
+              // namespace={get({ metadata: { namespace: 'kdh-project01' } }, 'metadata.namespace')}
+              namespace={'kdh-project01'}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label={t('설명')}

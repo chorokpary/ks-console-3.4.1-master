@@ -31,7 +31,7 @@ export default class DistroTypeStore extends Base {
 
     records = new List()
 
-    module = 'distrotype'
+    module = 'distro_types'
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/metadata/distro_types`
     getListUrl = this.getResourceUrl
