@@ -157,6 +157,7 @@ export default class Images extends React.Component {
         <Banner
           {...bannerProps}
           tabs={this.tabs}
+          title={t('이미지')}
           description={t('이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
         />
         <Table

@@ -40,7 +40,7 @@ export default {
               success && success()
             })
         },
-        title: 'asd',
+        title: '이미지 생성',
         modal: ResourceImageModal,
         store,
         cluster,

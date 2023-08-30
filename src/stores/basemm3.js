@@ -66,8 +66,7 @@ export default class BaseStore {
   }
 
   getListUrl = (params = {}) =>
-    `${this.apiVersion}${this.getPath(params)}/${this.module}${
-      params.dryRun ? '?dryRun=All' : ''
+    `${this.apiVersion}${this.getPath(params)}/${this.module}${params.dryRun ? '?dryRun=All' : ''
     }`
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
@@ -79,8 +78,7 @@ export default class BaseStore {
     `${this.getWatchListUrl(params)}/${params.name}`
 
   getResourceUrl = (params = {}) =>
-    `kapis/resources.kubesphere.io/v1alpha3${this.getPath(params)}/${
-      this.module
+    `kapis/resources.kubesphere.io/v1alpha3${this.getPath(params)}/${this.module
     }`
 
   getFilterParams = params => {
@@ -104,7 +102,7 @@ export default class BaseStore {
 
     setTimeout(() => {
       promise
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => {
           this.isSubmitting = false
         })
@@ -141,7 +139,7 @@ export default class BaseStore {
     )
 
     // mm3 api 관련 
-    const mm3Array = ['vms', 'images','flavors','networks','routers','floating_ips','lbs','security_groups','keypairs','host_devices','pci_devices','volumes','clusters','workspaces','licenses']
+    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distrotype']
     const apiName = mm3Array.includes(this.module) ? this.module : "";
 
     const data = (get(result, apiName) || []).map(item => ({
@@ -154,17 +152,17 @@ export default class BaseStore {
     this.dataList = data;
 
     // 검색 관련 처리 
-    const exceptionArray = ['page','limit','sortBy','ascending'];
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {
-                let value = params[key];
-                let searchData = {
-                  "searchKeywordType" : key,
-                  "searchKeywordText" : value 
-                }
-                return searchData     
-            }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+      let value = params[key];
+      let searchData = {
+        "searchKeywordType": key,
+        "searchKeywordText": value
+      }
+      return searchData
+    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
 
-    if(searchArray.length > 0){
+    if (searchArray.length > 0) {
       searchArray.map((search) => {
         let resultList = this.dataList.filter((row) => {
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
@@ -227,10 +225,10 @@ export default class BaseStore {
 
     const data = Array.isArray(result.items)
       ? result.items.map(item => ({
-          cluster,
-          module: module || this.module,
-          ...this.mapper(item),
-        }))
+        cluster,
+        module: module || this.module,
+        ...this.mapper(item),
+      }))
       : []
 
     this.list.update({
@@ -314,7 +312,7 @@ export default class BaseStore {
     if (this.afterChange) {
       this.afterChange(res, params)
     }
-    
+
     return res
   }
 
