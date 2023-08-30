@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Modal, TypeSelect, List } from 'components/Base'
 import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
 import { PATTERN_NAME } from 'utils/constants'
-import { get, range } from 'lodash'
+import { get, omit, range } from 'lodash'
 import { Form, Input, Select, Icon, Tooltip, TextArea, Dropdown } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
@@ -10,13 +10,15 @@ import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
 import ContainerForm from '../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
 
-export default function ResourceImageModal({ title, store }) {
-  // console.log(store)
+export default function ResourceImageModal({ title, store, onOk }) {
+
+  const form = useRef();
+  const [formData, setFormData] = useState({});
   const distroTypeStore = new DistroTypeStore();
 
   const [modelView, setModalView] = useState(true);
 
-  const [realTime, setRealTime] = useState('미사용')
+  const [realTime, setRealTime] = useState(false)
   const [publicType, setPublicType] = useState('퍼블릭')
   const [osType, setOsType] = useState('linux')
   const [distroTypeData, setDistroTypeData] = useState([])
@@ -33,8 +35,8 @@ export default function ResourceImageModal({ title, store }) {
   }, [])
 
   const realTimeOptions = [
-    { value: '미사용', },
-    { value: '사용', }
+    { label: '미사용', value: false, },
+    { label: '사용', value: true, }
   ]
   const publicTypeOptions = [
     { value: '퍼블릭', },
@@ -64,8 +66,12 @@ export default function ResourceImageModal({ title, store }) {
   }
 
   const handleOk = () => {
-    console.log('ok')
-    setModalView(false);
+
+    // form.current.validator(() => {
+    const { data } = form.current.props;
+    data.size = Number(data.size.slice(0, data.size.length - 2))
+    onOk({ image: data })
+    // })
   }
 
   const closeModal = () => {
@@ -101,10 +107,12 @@ export default function ResourceImageModal({ title, store }) {
         width={1000}
         title={title}
         onOk={handleOk}
+        okText={'생성'}
         onCancel={closeModal}
+        cancelText={'취소'}
         visible={modelView}
       >
-        <Form>
+        <Form data={formData} ref={form}>
           <Form.Item
             label={t('이름')}
             rules={[
@@ -129,7 +137,9 @@ export default function ResourceImageModal({ title, store }) {
               <Column>
                 <Form.Item
                   label={t('이미지')}
-                  rules={[{ required: true, }]}
+                  rules={[{
+                    required: true,
+                  }]}
                 >
                   <CardSelect
                     className={styles.customUl}
@@ -142,15 +152,17 @@ export default function ResourceImageModal({ title, store }) {
               </Column>
               <Column>
                 <Form.Item label={t('배포판')}>
+
+                  {/* os 타입이 바뀔때마다 새로 랜더링 해야하나? */}
                   <TypeSelect
-                    name={`distro_type`}
+                    name='distro_type'
                     onChange={(e) => setDistroType(e)}
                     defaultValue={distroType}
                     options={distroTypeOptions()}
                   />
                 </Form.Item>
                 <Form.Item>
-                  <Input name="distro_url"
+                  <Input
                     defaultValue={osType + ' > ' + distroType}
                     readOnly
                     style={{ maxWidth: 'none' }}
@@ -168,7 +180,6 @@ export default function ResourceImageModal({ title, store }) {
                   rules={[
                     {
                       required: true,
-                      // message: t('SNAPSHOT_CLASS_PROVISIONER_EMPTY_DESC'),
                     },
                   ]}
                 >
@@ -202,18 +213,18 @@ export default function ResourceImageModal({ title, store }) {
             rules={[
               {
                 required: true,
-                // message: t('SNAPSHOT_CLASS_PROVISIONER_EMPTY_DESC'),
               },
             ]}
           >
             <RadioGroup
+              name="is_realtime"
               wrapClassName="radio"
-              value={realTime}
+              defaultValue={realTime}
               onChange={value => setRealTime(value)}
             >
               {realTimeOptions.map(option => (
                 <RadioButton key={option.value} value={option.value}>
-                  {option.value}
+                  {option.label}
                 </RadioButton>
               ))}
             </RadioGroup>
@@ -221,7 +232,9 @@ export default function ResourceImageModal({ title, store }) {
           {/* </Form.Item> */}
           <Form.Item
             label={t('사이즈')}
-            rules={[{ required: true, }]}>
+            rules={[{
+              required: true,
+            }]}>
             <UnitSlider
               name="size"
               max={40}
@@ -236,7 +249,9 @@ export default function ResourceImageModal({ title, store }) {
 
           <Form.Item
             label={t('소스')}
-            rules={[{ required: true, }]}>
+            rules={[{
+              required: true,
+            }]}>
             <RadioGroup
               wrapClassName="radio"
               value={publicType}
@@ -263,6 +278,13 @@ export default function ResourceImageModal({ title, store }) {
               namespace={'kdh-project01'}
             />
           </Form.Item> */}
+          <Form.Item>
+            <Input name="source"
+              defaultValue={'docker://quay.io/edgestack/ubuntu-2004-kube:x86_64'}
+              readOnly
+              style={{ maxWidth: 'none' }}
+            />
+          </Form.Item>
 
           <Form.Item
             label={t('설명')}
