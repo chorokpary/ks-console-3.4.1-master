@@ -64,6 +64,7 @@ import Gateway from '../containers/Gateway'
 import Images from '../containers/Resources/Images'
 import Keypairs from '../containers/Resources/Keypairs'
 import Routers from '../containers/Resources/Routers'
+import Flavors from '../containers/Resources/Flavors'
 
 const PATH = '/clusters/:cluster'
 
@@ -277,6 +278,11 @@ export default [
           {
             path: `${PATH}/routers`,
             component: Routers,
+            exact: true,
+          },
+          {
+            path: `${PATH}/flavors`,
+            component: Flavors,
             exact: true,
           },
 
