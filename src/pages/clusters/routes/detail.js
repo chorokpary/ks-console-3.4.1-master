@@ -54,6 +54,7 @@ import GatewayDetail from '../containers/Gateway/Detail'
 import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
 import RouterDetail from '../containers/Resources/Routers/Detail'
+import FlavorDetail from '../containers/Resources/Flavors/Detail'
 
 
 const PATH = '/clusters/:cluster'
@@ -193,5 +194,9 @@ export default [
   {
     path: `${PATH}/routers/:name`,
     component: RouterDetail,
+  },
+  {
+    path: `${PATH}/flavors/:name`,
+    component: FlavorDetail,
   },
 ]

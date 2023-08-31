@@ -288,6 +288,12 @@ client:
               skipAuth: true,
               showInDisable: true,
             }
+            - {
+              name: flavors,
+              title: "Flavor",
+              skipAuth: true,
+              showInDisable: true,
+            }
 
   # access control page navigations
   accessNavs:
