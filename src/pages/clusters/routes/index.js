@@ -65,6 +65,7 @@ import Images from '../containers/Resources/Images'
 import Keypairs from '../containers/Resources/Keypairs'
 import Routers from '../containers/Resources/Routers'
 import Flavors from '../containers/Resources/Flavors'
+import Vms from '../containers/Resources/Vms'
 
 const PATH = '/clusters/:cluster'
 
@@ -283,6 +284,11 @@ export default [
           {
             path: `${PATH}/flavors`,
             component: Flavors,
+            exact: true,
+          },
+          {
+            path: `${PATH}/vms`,
+            component: Vms,
             exact: true,
           },
 

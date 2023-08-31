@@ -26,16 +26,15 @@ import Table from 'components/Tables/List'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
-import KeypairStore from 'stores/resources/keypairs'
+import VmStore from 'stores/resources/vms'
 
 @withList({
-  store: new KeypairStore(),
-  module: 'keypairs',
-  authKey: 'keypairs',
-  name: '키페어',
+  store: new VmStore(),
+  module: 'vms',
+  authKey: 'vms',
+  name: '가상머신',
 })
-export default class Keypairs extends React.Component {
- 
+export default class Vms extends React.Component {
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -51,7 +50,7 @@ export default class Keypairs extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('keypair.remove', {
+          trigger('vm.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -71,7 +70,7 @@ export default class Keypairs extends React.Component {
           text: t('생성'),
           action: 'create',
           onClick: () =>
-            trigger('keypair.regist', {
+            trigger('vm.regist', {
             ...this.props.match.params,
             type: this.name,
             success: getData,
@@ -85,7 +84,7 @@ export default class Keypairs extends React.Component {
           text: t('REMOVE'),
           action: 'delete',
           onClick: () =>
-            trigger('keypair.remove.batch', {
+            trigger('vm.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -112,28 +111,100 @@ export default class Keypairs extends React.Component {
         render: name => (
           <Avatar
             icon={ICON_TYPES[this.module]}
-            to={`/clusters/${cluster}/keypairs/${name}`}
+            to={`/clusters/${cluster}/vms/${name}`}
             title={name}
           />
         ),
       },
       {
-        title: t('Finger Print'),
-        dataIndex: 'finger_print',
+        title: t('이미지'),
+        dataIndex: 'image',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('Flavor'),
+        dataIndex: 'flavor',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('고정 IP'),
+        dataIndex: 'networks',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: networks => {
+          let networkIpList = ""
+
+          if (!!networks) {
+            networkIpList = networks.map((el) => {
+              if (el.name != "k8s-pod-network") {
+                return <p key={el.name}>{el.ip}</p>
+              }
+            });
+          } else {
+            networkIpList = <p></p>
+          }
+      
+          return networkIpList
+        }
+      },
+      {
+        title: t('플로팅 IP'),
+        dataIndex: 'name',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: name => {
+          const floatingList = this.props.store.floatingIpList;
+          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
+          return floatingIp
+        },
+      },
+      {
+        title: t('노드'),
+        dataIndex: 'node',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('보안그룹'),
+        dataIndex: 'security_groups',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: security => {
+          let securityGroupText = ""
+          if (!!security) {
+            securityGroupText = security.length > 1 ? security[0] + " 외 " + (security.length - 1) + "개" : security[0]
+          } else {
+            securityGroupText = ""
+          }
+          
+          return securityGroupText
+        },
+      },
+      {
+        title: t('상태'),
+        dataIndex: 'state',
         isHideable: true,
         search: true,
         width: 'auto',
       },
       {
         title: t('등록일'),
-        dataIndex: 'timestamp',
+        dataIndex: 'creation_timestamp',
         isHideable: true,
         width: 150,
         sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
+        sortOrder: getSortOrder('creation_timestamp'),
+        render: creation_timestamp => (
           <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
+            {getLocalTime(creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}
           </p>
         ),
       },
@@ -152,8 +223,8 @@ export default class Keypairs extends React.Component {
         search: true,
       },
       {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
+        dataIndex: 'flavor',
+        title: t('Flavor'),
         search: true,
       }
     ]
@@ -161,7 +232,6 @@ export default class Keypairs extends React.Component {
 
 
   render() {
-    
     const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
     return (
@@ -170,8 +240,8 @@ export default class Keypairs extends React.Component {
         {...bannerProps}
         icon="key"
         tabs={this.tabs}
-        title={t('키페어')}
-        description={t('키페어의 상태와 사용현황을 관리 할 수 있습니다.')}
+        title={t('가상머신')}
+        description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}
       />
       <Table
         {...tableProps}

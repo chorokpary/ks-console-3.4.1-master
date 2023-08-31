@@ -158,11 +158,9 @@ export default class Routers extends React.Component {
         width: 150,
         sorter: true,
         sortOrder: getSortOrder('timestamp'),
-        render: login_time => (
+        render: timestamp => (
           <p>
-            {login_time
-              ? getLocalTime(login_time).format('YYYY-MM-DD HH:mm:ss')
-              : t('NOT_LOGIN_YET')}
+            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
           </p>
         ),
       },

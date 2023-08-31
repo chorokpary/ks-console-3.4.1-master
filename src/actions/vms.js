@@ -20,14 +20,14 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import RegistModal from 'projects/components/Modals/Resources/Routers/Regist'
-import ModifyModal from 'projects/components/Modals/Resources/Routers/Modify'
+import RegistModal from 'projects/components/Modals/Resources/Keypairs/Regist'
+import ModifyModal from 'projects/components/Modals/Resources/Keypairs/Modify'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
 export default {
-  'router.regist': {
+  'vm.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -39,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: '가상 라우터 생성',
+        title: '키 페어 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -50,19 +50,19 @@ export default {
       })
     },
   },
-  'router.edit': {
+  'vm.edit': {
     on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.routerName }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('수정 되었습니다.') })
               success && success()
             })
         },
-        title: '가상 라우터 수정',
+        title: '키 페어 수정',
         modal: ModifyModal,
         store,
         module,
@@ -70,7 +70,7 @@ export default {
       })
     },
   },
-  'router.remove': {
+  'vm.remove': {
     on({
       store,
       detail,
@@ -93,7 +93,7 @@ export default {
         },
         modal: DeleteModal,
         title: t('삭제'),
-        desc: t.html('가상 라우터 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        desc: t.html('가상머신 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -102,7 +102,7 @@ export default {
       })
     },
   },
-  'router.remove.batch': {
+  'vm.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       const usernames = rowKeys.join(', ')
@@ -123,15 +123,15 @@ export default {
             : t('일괄 삭제'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('가상 라우터 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('가상 라우터 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('가상머신 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
+            : t.html('가상머신 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
       })
     },
   },
-  'router.delete': {
+  'vm.delete': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
@@ -149,7 +149,7 @@ export default {
       })
     },
   },
-  'router.yaml.view': {
+  'vm.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
