@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Login to the gitlab
           command: |
-            docker login registry.gitlab.com -u sonaproject -p glpat-ZsJXSZZuufyAm59kSXGn
+            docker login registry.gitlab.com -u sonaproject -p glpat-wXbmq9RX3HcHbqh3WCz7
       - run:
           name: Build multiarch docker image and push
           command: |

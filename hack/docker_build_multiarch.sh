@@ -39,7 +39,7 @@ DOCKER_CLI_EXPERIMENTAL=enabled ${CONTAINER_CLI} ${CONTAINER_BUILDER} \
   --platform ${PLATFORMS} \
   ${PUSH} \
   --file build/Dockerfile.dapper \
-  --tag "${REPO}"/ks-console:"${TAG}" .
+  --tag "${REPO}"/ks-console-infra:"${TAG}" .
 
 # delete preimage
 docker rmi ks-console-pre:"${TAG}" -f
