@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 import ImageStore from 'stores/resources/images'
 import { useParams } from 'react-router-dom';
@@ -9,6 +9,8 @@ import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
+
+import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
 const store = new ImageStore();
 
@@ -37,9 +39,10 @@ const ImageDetail = (props) => {
       action: 'edit',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('resource.baseinfo.edit', {
+        props.rootStore.triggerAction('images.edit', {
           type: 'IMAGE_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.image),
+          store: store,
           success: fetchData,
         })
     },
@@ -68,6 +71,8 @@ const ImageDetail = (props) => {
           store: store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
+          okText: '삭제',
+          cancelText: '취소'
         })
     },
   ]
@@ -94,7 +99,7 @@ const ImageDetail = (props) => {
       },
       {
         name: t('리얼타임'),
-        value: detail.is_realtime ? '사용' : '미사용',
+        value: detail.image.is_realtime ? '사용' : '미사용',
       },
       {
         name: t('단계'),
@@ -103,10 +108,6 @@ const ImageDetail = (props) => {
       {
         name: t('진행률'),
         value: detail.image.progress,
-      },
-      {
-        name: t('공개여부'),
-        value: detail.image.description,
       },
       {
         name: t('소스'),
@@ -149,7 +150,7 @@ const ImageDetail = (props) => {
           {
             path: '',
             title: '상태',
-            component: Test,
+            component: Status,
             exact: true,
           }
         ]}
@@ -160,19 +161,9 @@ const ImageDetail = (props) => {
 
 export default inject('rootStore')(observer(ImageDetail));
 
-const Test = () => {
+const Status = ({ match }) => {
+  const imageName = match.params.name
   return (
-    <div>
-      <Card >
-        <div>
-          <div className="detail-box">
-            <i className="ico ico-empty-vm"></i>
-            <div className="etc-msg">
-              이미지를 사용하는 가상머신이 없습니다.
-            </div>
-          </div>
-        </div>
-      </Card>
-    </div>
+    <DetailVmList type='이미지' variables='image' name={imageName} />
   )
 }

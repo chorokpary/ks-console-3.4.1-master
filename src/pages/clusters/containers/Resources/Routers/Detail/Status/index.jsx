@@ -1,5 +1,5 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
@@ -23,31 +23,31 @@ const Status = (props) => {
   const renderContentNetwork = () => {
     return (
       <>
-      {internalNetwork.map((obj, index) => (
-        index == 0 &&
-        <div className={styles.content} key={index}>
-          <div className={styles.text}>
-            <div>{obj.name}</div>
-            <p>이름</p>
+        {internalNetwork.map((obj, index) => (
+          index == 0 &&
+          <div className={styles.content} key={index}>
+            <div className={styles.text}>
+              <div>{obj.name}</div>
+              <p>이름</p>
+            </div>
+            <div className={styles.text}>
+              <div>{obj.type}</div>
+              <p>유형</p>
+            </div>
+            <div className={styles.text}>
+              <div>{obj.cidr}</div>
+              <p>CIDR</p>
+            </div>
+            <div className={styles.text}>
+              <div>{obj.gateway_ip}</div>
+              <p>게이트웨이</p>
+            </div>
+            <div className={styles.arrow}>
+              <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />
+            </div>
           </div>
-          <div className={styles.text}>
-            <div>{obj.type}</div>
-            <p>유형</p>
-          </div>
-          <div className={styles.text}>
-            <div>{obj.cidr}</div>
-            <p>CIDR</p>
-          </div>
-          <div className={styles.text}>
-            <div>{obj.gateway_ip}</div>
-            <p>게이트웨이</p>
-          </div>          
-          <div className={styles.arrow}>
-            <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />
-          </div>
-        </div>
-       ))}
-       </>
+        ))}
+      </>
     )
   }
 
@@ -56,30 +56,30 @@ const Status = (props) => {
       <div className={styles.itemExtra}>
         {internalNetwork.map((obj, index) => (
           index > 0 &&
-              <div className={styles.containers} key={index}>
-              <div className={classnames(styles.item)}>
-                <div className={styles.icon}>
-                  <Icon name="network" size={40} />         
-                </div>
-                <div className={classnames(styles.title, styles.name)}>
-                  <div>{obj.name}</div>
-                  <p>이름</p>
-                </div>
-                <div className={styles.title}>
-                  <div>{obj.type}</div>
-                  <p>유형</p>
-                </div>
-                <div className={styles.title}>
-                  <div>{obj.cidr}</div>
-                  <p>CIDR</p>
-                </div>
-                <div className={styles.title}>
-                  <div>{obj.gateway_ip}</div>
-                  <p>게이트웨이</p>
-                </div>
-              </div>          
-          </div>   
-         ))}
+          <div className={styles.containers} key={index}>
+            <div className={classnames(styles.item)}>
+              <div className={styles.icon}>
+                <Icon name="network" size={40} />
+              </div>
+              <div className={classnames(styles.title, styles.name)}>
+                <div>{obj.name}</div>
+                <p>이름</p>
+              </div>
+              <div className={styles.title}>
+                <div>{obj.type}</div>
+                <p>유형</p>
+              </div>
+              <div className={styles.title}>
+                <div>{obj.cidr}</div>
+                <p>CIDR</p>
+              </div>
+              <div className={styles.title}>
+                <div>{obj.gateway_ip}</div>
+                <p>게이트웨이</p>
+              </div>
+            </div>
+          </div>
+        ))}
 
       </div>
     )
@@ -91,34 +91,34 @@ const Status = (props) => {
 
   useEffect(() => {
 
-      const fnGetExternalNetwork = async () => {
-        const externalData = await axios.get(`/edgetron/resources/kubevirt/networks/${store.detail.router.external}`);
-        setExternalNetwork(externalData.data.network);
-      };
+    const fnGetExternalNetwork = async () => {
+      const externalData = await axios.get(`/edgetron/resources/kubevirt/networks/${store.detail.router.external}`);
+      setExternalNetwork(externalData.data.network);
+    };
 
-      const fnGetInternalNetwork = async () => {
-        setInternalNetwork([]);
-        const promises = (store.detail.router?.internal).map(async (name) => {
-          const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + name);
-          setInternalNetwork(internalNetwork => [...internalNetwork, internalData.data.network])
-        })
-        await Promise.all(promises);
-      };
-
-      store.detail.router?.external && fnGetExternalNetwork();
+    const fnGetInternalNetwork = async () => {
       setInternalNetwork([]);
-      fnGetInternalNetwork();
+      const promises = (store.detail.router?.internal).map(async (name) => {
+        const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + name);
+        setInternalNetwork(internalNetwork => [...internalNetwork, internalData.data.network])
+      })
+      await Promise.all(promises);
+    };
+
+    store.detail.router?.external && fnGetExternalNetwork();
+    setInternalNetwork([]);
+    fnGetInternalNetwork();
 
   }, [])
 
   return (
-    <>  
+    <>
       {!!externalNetwork &&
         <Panel title={"외부 네트워크"}>
           <div className={styles.wrapper}>
             <div className={classnames(styles.item)}>
               <div className={styles.icon}>
-                <Icon name="network-router" size={40} />         
+                <Icon name="network-router" size={40} />
               </div>
               <div className={classnames(styles.title, styles.name)}>
                 <div>{externalNetwork.name}</div>
@@ -137,7 +137,7 @@ const Status = (props) => {
                 <p>게이트웨이</p>
               </div>
             </div>
-          </div>  
+          </div>
         </Panel>
       }
 
@@ -159,10 +159,10 @@ const Status = (props) => {
             </div>
           </div>
         </Panel>
-      }     
+      }
 
-      <DetailVmList type='이미지' variables='image' name="ubuntu-2004-image-amd64" />
-      
+      <DetailVmList type='이미지' variables='image' name={externalNetwork?.name} />
+
     </>
   );
 };

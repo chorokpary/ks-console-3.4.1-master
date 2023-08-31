@@ -8,7 +8,7 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
-import ContainerForm from '../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
+import ContainerForm from '../../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
 
 export default function ResourceImageModal({ title, store, onOk }) {
 
@@ -67,15 +67,17 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   const handleOk = () => {
 
-    // form.current.validator(() => {
-    const { data } = form.current.props;
-    data.size = Number(data.size.slice(0, data.size.length - 2))
-    onOk({ image: data })
-    // })
+    form.current.validator(() => {
+      const { data } = form.current.props;
+      if (typeof data.size === 'string') {
+        data.size = Number(data.size.slice(0, data.size.length - 2))
+      }
+      data.distro_type = distroType;
+      onOk({ image: data })
+    })
   }
 
   const closeModal = () => {
-    console.log('cancel')
     setModalView(false);
   }
 
@@ -137,9 +139,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
               <Column>
                 <Form.Item
                   label={t('이미지')}
-                  rules={[{
-                    required: true,
-                  }]}
+                  rules={[{ required: true, }]}
                 >
                   <CardSelect
                     className={styles.customUl}
@@ -152,10 +152,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
               </Column>
               <Column>
                 <Form.Item label={t('배포판')}>
-
-                  {/* os 타입이 바뀔때마다 새로 랜더링 해야하나? */}
                   <TypeSelect
-                    name='distro_type'
+                    // name="distro_type"
                     onChange={(e) => setDistroType(e)}
                     defaultValue={distroType}
                     options={distroTypeOptions()}
@@ -253,8 +251,9 @@ export default function ResourceImageModal({ title, store, onOk }) {
               required: true,
             }]}>
             <RadioGroup
+              name="is_public"
               wrapClassName="radio"
-              value={publicType}
+              defaultValue={publicType}
             // onChange={value => setPublicType(value)}
             >
               {publicTypeOptions.map(option => (

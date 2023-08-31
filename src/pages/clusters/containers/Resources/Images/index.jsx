@@ -103,7 +103,7 @@ export default class Images extends React.Component {
     const { cluster } = this.props.match.params
     return [
       {
-        title: t('name'),
+        title: t('이름'),
         dataIndex: 'name',
         sorter: true,
         render: name => (
@@ -115,19 +115,37 @@ export default class Images extends React.Component {
         ),
       },
       {
-        title: t('arch_type'),
+        title: t('CPU 타입'),
         dataIndex: 'arch_type',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('os_type'),
+        title: t('부트 타입'),
         dataIndex: 'os_type',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('timestamp'),
+        title: t('배포판'),
+        dataIndex: 'distro_type',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('단계'),
+        dataIndex: 'phase',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('진행률'),
+        dataIndex: 'progress',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('등록일'),
         dataIndex: 'timestamp',
         isHideable: true,
         sorter: true,

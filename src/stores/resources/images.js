@@ -88,6 +88,16 @@ export default class ImageStore extends Base {
         // this.afterChange(res, params)
         return res
     }
+    @action
+    async update({ name, ...params }, data) {
+        const jsonData = {};
+        jsonData.image = data;
+
+        await this.submitting(
+            request.put(this.getDetailUrl({ name, ...params }), jsonData)
+        )
+    }
+
 
 
     @action

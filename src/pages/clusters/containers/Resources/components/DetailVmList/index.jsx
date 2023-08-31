@@ -136,16 +136,20 @@ const DetailVmList = (props) => {
                 {renderExtraContentNetwork(obj)}
               </div>
             </div>
-          </Panel> 
+          </Panel>
         ))
       }
-      
+
       {vmDataList.length == 0 &&
-        <Panel title={"가상 머신"}>
-          <div className={styles.wrapper}>
-              <div>{props.type}를 사용하는 가상머신이 없습니다.</div>
+        // <Panel title={"가상 머신"}>
+        <Card >
+          {/* <div className={styles.wrapper}> */}
+          <div style={{ textAlign: 'center' }}>
+            <Icon name="templet" size={50} style={{ margin: '10px' }} />
+            <div  >{props.type}를 사용하는 가상머신이 없습니다.</div>
           </div>
-      </Panel> 
+        </Card>
+        // </Panel> 
       }
 
     </>

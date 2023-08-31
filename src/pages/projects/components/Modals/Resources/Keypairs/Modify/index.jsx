@@ -12,7 +12,7 @@ const ModifyModal = (props) => {
   const [formData, setFormData] = useState({});
 
   const handleOk = () => {
-    const onOk  = props.onOk;
+    const onOk = props.onOk;
 
     form.current.validator(() => {
       const { data } = form.current.props;
@@ -25,45 +25,45 @@ const ModifyModal = (props) => {
   }
 
   return (
-    <>  
-        <Modal
-          icon="pen"
-          width={700}
-          title={props.title}
-          onOk={handleOk}
-          onCancel={closeModal}
-          visible={modelView}
-        >
-          <Form data={formData} ref={form}>
-            
-            <Form.Item
-                label={t('이름')}
-              >
-              <Input
-                name="name"
-                autoFocus={true}
-                maxLength={63}
-                defaultValue={props.store.detail.keypair.name}
-                disabled
+    <>
+      <Modal
+        icon="pen"
+        width={700}
+        title={props.title}
+        onOk={handleOk}
+        onCancel={closeModal}
+        visible={modelView}
+      >
+        <Form data={formData} ref={form}>
 
-              />   
-            </Form.Item>
+          <Form.Item
+            label={t('이름')}
+          >
+            <Input
+              name="name"
+              autoFocus={true}
+              maxLength={63}
+              defaultValue={props.store.detail.keypair.name}
+              disabled
 
-            <Form.Item
-              className={styles.textarea}
-              label={t('설명')}
-              desc={t('DESCRIPTION_DESC')}
-            >
-              <TextArea
-                name="description"
-                maxLength={256}
-                rows="1"    
-                defaultValue={props.store.detail.keypair.description}      
-              />
-            </Form.Item>
+            />
+          </Form.Item>
 
-          </Form>
-        </Modal>
+          <Form.Item
+            className={styles.textarea}
+            label={t('설명')}
+            desc={t('DESCRIPTION_DESC')}
+          >
+            <TextArea
+              name="description"
+              maxLength={256}
+              rows="1"
+              defaultValue={props.store.detail.keypair.description}
+            />
+          </Form.Item>
+
+        </Form>
+      </Modal>
 
     </>
   );
