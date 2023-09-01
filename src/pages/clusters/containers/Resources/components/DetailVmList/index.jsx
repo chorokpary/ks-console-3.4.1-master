@@ -23,7 +23,7 @@ const DetailVmList = (props) => {
   const store = new VmStore();
   const [vmDataList, setVmDataList] = useState([]);
 
-  const [isExpandInternal, setIsExpandInternal] = useState(false)
+  const [isExpandFlag, setIsExpandFlag] = useState(false)
   
   const renderContentNetwork = (obj) => {
     return (
@@ -42,7 +42,7 @@ const DetailVmList = (props) => {
               <p>노드</p>
           </div>
           <div className={styles.arrow}>
-            <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />
+            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
           </div>
         </div>
        </>
@@ -101,9 +101,6 @@ const DetailVmList = (props) => {
     )
   }
 
-  const handleExpandExtra = () => {
-    setIsExpandInternal(!isExpandInternal)
-  }
 
   useEffect(() => {
     const fnGetExternalNetwork = async () => {
@@ -114,30 +111,40 @@ const DetailVmList = (props) => {
     fnGetExternalNetwork();
   }, [])
 
+  const [expandItem, setExpandItem] = useState();
+  const handleExpand = (name) => {
+    setExpandItem(name);
+    setIsExpandFlag(!isExpandFlag)
+  }
+
 
   return (
     <>  
 
       {vmDataList.length > 0 && 
-        vmDataList.map((obj, index) => (
-          <Panel title={"가상 머신"} key={index}>
-            <div className={styles.wrapper}>
-              <div
-                className={classnames(styles.expandItem, "", {
-                  [styles.expanded]: isExpandInternal,
-                })}
-              >
-                <div className={styles.itemMain} onClick={() => handleExpandExtra()}>
-                  <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
+       
+          <Panel title={"가상 머신"} >
+            { vmDataList.map((obj, index) => {
+              return (
+                <div className={styles.wrapper} key={index}>
+                <div
+                  className={classnames(styles.expandItem, "", {
+                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+                  })}
+                >
+                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
+                    <div className={styles.icon}>
+                      <Icon name="network-duotone" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+                    </div>
+                    {renderContentNetwork(obj)}
                   </div>
-                  {renderContentNetwork(obj)}
+                  {renderExtraContentNetwork(obj)}
                 </div>
-                {renderExtraContentNetwork(obj)}
               </div>
-            </div>
-          </Panel> 
-        ))
+              )
+            }
+            )}
+          </Panel>       
       }
       
       {vmDataList.length == 0 &&
