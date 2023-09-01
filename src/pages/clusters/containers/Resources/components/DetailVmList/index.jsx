@@ -1,10 +1,10 @@
 import { get, groupBy } from 'lodash'
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import { Panel, Card } from 'components/Base'
-import { Icon } from '@kube-design/components'
+import { Panel } from 'components/Base'
+import { Icon} from '@kube-design/components'
 import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
@@ -23,29 +23,29 @@ const DetailVmList = (props) => {
   const store = new VmStore();
   const [vmDataList, setVmDataList] = useState([]);
 
-  const [isExpandInternal, setIsExpandInternal] = useState(false)
-
+  const [isExpandFlag, setIsExpandFlag] = useState(false)
+  
   const renderContentNetwork = (obj) => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>{obj.name}</div>
-            <p>이름</p>
+              <div>{obj.name}</div>
+              <p>이름</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
-            <p>상태</p>
+              <div>{obj.state}</div>
+              <p>상태</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.node != "N/A" ? obj.name : "-"}</div>
-            <p>노드</p>
+              <div>{obj.node != "N/A" ? obj.name : "-"}</div>
+              <p>노드</p>
           </div>
           <div className={styles.arrow}>
-            <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />
+            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
           </div>
         </div>
-      </>
+       </>
     )
   }
 
@@ -54,56 +54,53 @@ const DetailVmList = (props) => {
     const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
     return (
       <div className={styles.itemExtra}>
-        <div className={styles.containers} >
-          <div className={classnames(styles.item)}>
-            <div className={styles.icon}>
-              <Icon name="apps" size={40} />
-            </div>
-            <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.flavor_detail.name}</div>
-              <p>Flavor</p>
-            </div>
-            <div className={styles.title}>
-              <div>
-                {
-                  networkList.length >= 1 ?
-                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개"
+          <div className={styles.containers} >
+              <div className={classnames(styles.item)}>
+                <div className={styles.icon}>
+                  <Icon name="apps" size={40} />         
+                </div>
+                <div className={classnames(styles.title, styles.name)}>
+                  <div>{obj.flavor_detail.name}</div>
+                  <p>Flavor</p>
+                </div>
+                <div className={styles.title}>
+                  <div>
+                   {
+                    networkList.length >= 1 ?  
+                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개" 
                     : "-"
-                }
-              </div>
-              <p>네트워크</p>
-            </div>
-            <div className={styles.title}>
-              <div>{obj.flavor_detail.vcpus} Core</div>
-              <p>CPU</p>
-            </div>
-            <div className={styles.title}>
-              <div>{common.fnSetBytes(obj.flavor_detail.ram)}</div>
-              <p>Memory</p>
-            </div>
-            <div className={styles.title}>
-              <div>{obj.flavor_detail.root_disk} Gib</div>
-              <p>Disk</p>
-            </div>
-            <div className={styles.title}>
-              <div>
-                {
-                  obj.gpus.length >= 1 ?
-                    obj.gpus.length == 1 ? obj.gpus[0] : obj.gpus[0] + " 외 " + (obj.gpus.length - 1) + "개"
+                   }
+                  </div>
+                  <p>네트워크</p>
+                </div>                
+                <div className={styles.title}>
+                  <div>{obj.flavor_detail.vcpus} Core</div>
+                  <p>CPU</p>
+                </div>
+                <div className={styles.title}>
+                  <div>{common.fnSetBytes(obj.flavor_detail.ram)}</div>
+                  <p>Memory</p>
+                </div>
+                <div className={styles.title}>
+                  <div>{obj.flavor_detail.root_disk} Gib</div>
+                  <p>Disk</p>
+                </div>                
+                <div className={styles.title}>
+                  <div>
+                  {
+                    obj.gpus.length >= 1 ?  
+                    obj.gpus.length == 1 ? obj.gpus[0] : obj.gpus[0] + " 외 " + (obj.gpus.length - 1) + "개" 
                     : "-"
-                }
-              </div>
-              <p>GPU</p>
-            </div>
-          </div>
+                   }
+                  </div>
+                  <p>GPU</p>
+                </div>
+              </div>          
+          </div>        
         </div>
-      </div>
     )
   }
 
-  const handleExpandExtra = () => {
-    setIsExpandInternal(!isExpandInternal)
-  }
 
   useEffect(() => {
     const fnGetExternalNetwork = async () => {
@@ -114,42 +111,48 @@ const DetailVmList = (props) => {
     fnGetExternalNetwork();
   }, [])
 
+  const [expandItem, setExpandItem] = useState();
+  const handleExpand = (name) => {
+    setExpandItem(name);
+    setIsExpandFlag(!isExpandFlag)
+  }
+
 
   return (
-    <>
+    <>  
 
-      {vmDataList.length > 0 &&
-        vmDataList.map((obj, index) => (
-          <Panel title={"가상 머신"} key={index}>
-            <div className={styles.wrapper}>
-              <div
-                className={classnames(styles.expandItem, "", {
-                  [styles.expanded]: isExpandInternal,
-                })}
-              >
-                <div className={styles.itemMain} onClick={() => handleExpandExtra()}>
-                  <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
+      {vmDataList.length > 0 && 
+       
+          <Panel title={"가상 머신"} >
+            { vmDataList.map((obj, index) => {
+              return (
+                <div className={styles.wrapper} key={index}>
+                <div
+                  className={classnames(styles.expandItem, "", {
+                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+                  })}
+                >
+                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
+                    <div className={styles.icon}>
+                      <Icon name="network-duotone" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+                    </div>
+                    {renderContentNetwork(obj)}
                   </div>
-                  {renderContentNetwork(obj)}
+                  {renderExtraContentNetwork(obj)}
                 </div>
-                {renderExtraContentNetwork(obj)}
               </div>
-            </div>
-          </Panel>
-        ))
+              )
+            }
+            )}
+          </Panel>       
       }
-
+      
       {vmDataList.length == 0 &&
-        // <Panel title={"가상 머신"}>
-        <Card >
-          {/* <div className={styles.wrapper}> */}
-          <div style={{ textAlign: 'center' }}>
-            <Icon name="templet" size={50} style={{ margin: '10px' }} />
-            <div  >{props.type}를 사용하는 가상머신이 없습니다.</div>
+        <Panel title={"가상 머신"}>
+          <div className={styles.wrapper}>
+              <div>{props.type}를 사용하는 가상머신이 없습니다.</div>
           </div>
-        </Card>
-        // </Panel> 
+      </Panel> 
       }
 
     </>

@@ -57,6 +57,7 @@ import RouterDetail from '../containers/Resources/Routers/Detail'
 import FlavorDetail from '../containers/Resources/Flavors/Detail'
 import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
+import VmDetail from '../containers/Resources/Vms/Detail'
 
 
 const PATH = '/clusters/:cluster'
@@ -209,5 +210,8 @@ export default [
     path: `${PATH}/floatingip/:name/:id`,
     component: FloatingIpDetail,
   },
-
+  {
+    path: `${PATH}/vms/:name`,
+    component: VmDetail,
+  },
 ]

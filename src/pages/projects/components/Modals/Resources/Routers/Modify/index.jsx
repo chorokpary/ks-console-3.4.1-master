@@ -5,7 +5,7 @@ import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from 
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
-const RegistModal = (props) => {
+const ModifyModal = (props) => {
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -29,8 +29,8 @@ const RegistModal = (props) => {
       const { data } = form.current.props;
 
       data.snatType = radioSnatType;
-      data.internal = internalCheckItems;
-      data.external = radioExternal;
+      data.internal = internalCheckItems == "" ? props.store.detail.router.internal : internalCheckItems;
+      data.external = radioExternal == "" ? props.store.detail.router.external : radioExternal;
 
       onOk({ ...data })
     })
@@ -123,14 +123,13 @@ const RegistModal = (props) => {
             
             <Form.Item
                 label={t('이름')}
-                rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
-                desc={t('NAME_DESC')}
               >
               <Input
                 name="routerName"
                 autoFocus={true}
                 maxLength={63}
-
+                defaultValue={props.store.detail.router.name}
+                disabled
               />   
             </Form.Item>
             <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
@@ -143,7 +142,6 @@ const RegistModal = (props) => {
               <div>
                   <div>
                     총 {stateVariables['internal'].length}건
-                    {routerInternal.length}
                   </div>
                   <table>
                     <colgroup>
@@ -257,7 +255,7 @@ const RegistModal = (props) => {
                 name="description"
                 maxLength={256}
                 rows="1"    
-                defaultValue={''} 
+                defaultValue={props.store.detail.router.description}     
               />
             </Form.Item>
 
@@ -268,5 +266,5 @@ const RegistModal = (props) => {
   );
 };
 
-export default RegistModal
+export default ModifyModal
 

@@ -67,6 +67,7 @@ import Routers from '../containers/Resources/Routers'
 import Flavors from '../containers/Resources/Flavors'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
+import Vms from '../containers/Resources/Vms'
 
 const PATH = '/clusters/:cluster'
 
@@ -297,7 +298,11 @@ export default [
             component: FloatingIp,
             exact: true,
           },
-
+          {
+            path: `${PATH}/vms`,
+            component: Vms,
+            exact: true,
+          },
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

@@ -265,6 +265,12 @@ client:
           showInDisable: true
           children:
             - {
+              name: vms,
+              title: "가상머신",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
               name: networks,
               title: 네트워크,
               skipAuth: true,

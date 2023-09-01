@@ -86,6 +86,9 @@ export default class RouterStore extends Base {
     // Yaml 파일 관련 
     await this.fetchYaml(params);
 
+    // Rouster Data List 추가
+    await this.fetchDataList(params);
+
     this.detail = detail
     this.isLoading = false
     return detail
@@ -103,6 +106,20 @@ export default class RouterStore extends Base {
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData
+  }
+
+  @action
+  async fetchDataList(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `${this.getResourceUrl(params)}`
+    )
+    const dataList = { ...params, ...this.mapper(result), kind: 'routers' }
+
+    this.dataList = dataList.routers
+    this.isLoading = false
+    return dataList
   }
 
   @action
