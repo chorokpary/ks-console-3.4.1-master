@@ -294,6 +294,13 @@ client:
               skipAuth: true,
               showInDisable: true,
             }
+            - {
+              name: floatingip,
+              title: "플로팅 IP",
+              skipAuth: true,
+              showInDisable: true,
+            }
+
 
   # access control page navigations
   accessNavs:

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
-import ImageStore from 'stores/resources/images'
+import NetworkStore from 'stores/resources/networks'
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
@@ -12,9 +12,9 @@ import { getLocalTime } from 'utils'
 
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
-const store = new ImageStore();
+const store = new NetworkStore();
 
-const ImageDetail = (props) => {
+const NetworkDetail = (props) => {
 
   useEffect(() => {
     fetchData();
@@ -25,10 +25,9 @@ const ImageDetail = (props) => {
   }
 
   const { cluster } = props.match.params
-  const listUrl = `/clusters/${cluster}/images`
+  const listUrl = `/clusters/${cluster}/networks`
 
   const { routing } = props.rootStore;
-
 
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
@@ -40,9 +39,9 @@ const ImageDetail = (props) => {
       action: 'edit',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('images.edit', {
-          type: 'IMAGE_DETAIL',
-          detail: toJS(store.detail.image),
+        props.rootStore.triggerAction('networks.edit', {
+          type: 'NETWORK_DETAIL',
+          detail: toJS(store.detail.network),
           store: store,
           success: fetchData,
         })
@@ -53,7 +52,7 @@ const ImageDetail = (props) => {
       text: t('VIEW_YAML'),
       action: 'view',
       onClick: () =>
-        props.rootStore.triggerAction('images.yaml.view', {
+        props.rootStore.triggerAction('networks.yaml.view', {
           yaml: store.yaml,
           readOnly: true,
         })
@@ -66,8 +65,8 @@ const ImageDetail = (props) => {
       type: 'danger',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('images.delete', {
-          type: 'IMAGE_DETAIL',
+        props.rootStore.triggerAction('networks.delete', {
+          type: 'NETWORK_DETAIL',
           detail: toJS(store.detail),
           store: store,
           cluster: props.match.params.cluster,
@@ -91,36 +90,54 @@ const ImageDetail = (props) => {
         value: detail.cluster,
       },
       {
-        name: t('CPU 타입'),
-        value: detail.image.arch_type,
+        name: t('네트워크 유형'),
+        value: detail.network.type,
       },
       {
-        name: t('부트 타입'),
-        value: detail.image.boot_type,
+        name: t('세그먼트 ID'),
+        value: detail.network.segment_id,
       },
       {
-        name: t('리얼타임'),
-        value: detail.image.is_realtime ? '사용' : '미사용',
+        name: t('MTU'),
+        value: detail.network.mtu,
       },
       {
-        name: t('단계'),
-        value: detail.image.phase,
+        name: t('CIDR'),
+        value: detail.network.cidr,
       },
       {
-        name: t('진행률'),
-        value: detail.image.progress,
+        name: t('게이트웨이 IP'),
+        value: detail.network.gateway_ip,
       },
       {
-        name: t('소스'),
-        value: detail.image.source,
+        name: t('디폴트 라우트'),
+        value: detail.network.default_route ? '사용' : '미사용',
+      },
+      {
+        name: t('External'),
+        value: detail.network.external ? '사용' : '미사용',
+      },
+      {
+        name: t('IP POOL 정보'),
+        value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
+      },
+      {
+        name: t('DNS'),
+        value: detail.network.dns.map(el => el + '\n'),
+      },
+      {
+        name: t('호스트 라우트'),
+        value: detail.network.host_routes.map(obj =>
+          'Destination: ' + obj.destination + '\n Nexthop:' + obj.nexthop + '\n'
+        ),
       },
       {
         name: t('설명'),
-        value: detail.image.description,
+        value: detail.network.description,
       },
       {
         name: t('생성일'),
-        value: getLocalTime(detail.image.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        value: getLocalTime(detail.network.timestamp).format('YYYY-MM-DD HH:mm:ss'),
       },
     ]
   }
@@ -132,12 +149,12 @@ const ImageDetail = (props) => {
   const sideProps = {
     module: store.module,
     name: get(store.detail, 'name'),
-    desc: get(store.detail.image, 'description', ''),
+    desc: get(store.detail.network, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('Images'),
+        label: t('Networks'),
         url: listUrl,
       },
     ],
@@ -160,11 +177,12 @@ const ImageDetail = (props) => {
   )
 }
 
-export default inject('rootStore')(observer(ImageDetail));
+export default inject('rootStore')(observer(NetworkDetail));
 
 const Status = ({ match }) => {
   const imageName = match.params.name
   return (
-    <DetailVmList type='이미지' variables='image' name={imageName} />
+    // <DetailVmList type='이미지' variables='image' name={imageName} />
+    null
   )
 }

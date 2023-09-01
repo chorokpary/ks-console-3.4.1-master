@@ -65,6 +65,8 @@ import Images from '../containers/Resources/Images'
 import Keypairs from '../containers/Resources/Keypairs'
 import Routers from '../containers/Resources/Routers'
 import Flavors from '../containers/Resources/Flavors'
+import Networks from '../containers/Resources/Networks'
+import FloatingIp from '../containers/Resources/FloatingIp'
 
 const PATH = '/clusters/:cluster'
 
@@ -285,6 +287,17 @@ export default [
             component: Flavors,
             exact: true,
           },
+          {
+            path: `${PATH}/networks`,
+            component: Networks,
+            exact: true,
+          },
+          {
+            path: `${PATH}/floatingip`,
+            component: FloatingIp,
+            exact: true,
+          },
+
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

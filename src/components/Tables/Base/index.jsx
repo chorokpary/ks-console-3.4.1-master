@@ -73,7 +73,7 @@ export default class WorkloadTable extends React.Component {
   static defaultProps = {
     rowKey: 'name',
     selectedRowKeys: [],
-    onFetch() {},
+    onFetch() { },
     hideHeader: false,
     hideFooter: false,
     hideSearch: false,
