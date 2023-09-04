@@ -23,8 +23,8 @@ import { Modal } from 'components/Base'
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
-import RegistModal from 'projects/components/Modals/Resources/Images/Regist'
-import ModifyModal from 'projects/components/Modals/Resources/Images/Modify'
+import RegistModal from 'projects/components/Modals/Resources/Networks/Regist'
+import ModifyModal from 'projects/components/Modals/Resources/Networks/Modify'
 
 export default {
   'networks.regist': {

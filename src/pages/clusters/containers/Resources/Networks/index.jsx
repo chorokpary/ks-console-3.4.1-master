@@ -62,7 +62,6 @@ export default class Networks extends React.Component {
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props
-    console.log(tableProps)
 
     return {
       ...tableProps.tableActions,
