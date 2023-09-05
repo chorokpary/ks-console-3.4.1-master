@@ -1,0 +1,15 @@
+@import "~scss/variables";
+@import "~scss/mixins";
+
+.textarea {
+  :global .textarea {
+    max-width: 640px;
+  }
+}
+
+.confirm {
+  width: 920px;
+  bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+}

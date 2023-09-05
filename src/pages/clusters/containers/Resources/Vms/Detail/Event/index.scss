@@ -5,34 +5,32 @@
   border-radius: 4px;
   background-color: #ffffff;
   border: solid 1px $light-color03;
+}
 
-  ul > li {
-    display: flex;
-    padding: 12px 20px;
-    border-radius: 22px;
-    background-color: $bg-color;
-    border: solid 1px $border-color;
+.empty {
+  height: 56px;
+}
 
-    & + li {
-      margin-top: 8px;
-    }
+.table table {
+  width: 100%;
+  text-align: left;
 
-    & > span {
-      font-family: $font-family-id;
-      word-break: break-all;
-
-      &:first-child {
-        min-width: 160px;
-        margin-right: 80px;
-        color: #79879c;
+  thead {
+      th {
+          text-transform: uppercase;
+          padding: 10px;
       }
-
-      & > pre {
-        font-family: $font-family-id;
-        padding: 0;
-        background: transparent;
-        white-space: pre-wrap;
+  }
+  tbody {
+      tr {
+          border-bottom: 1px solid #F1F1F1;
+          color: #75787b;
+          td {
+              padding: 10px;
+          }
+          th {
+              padding-left: 10px;
+          }
       }
-    }
   }
 }

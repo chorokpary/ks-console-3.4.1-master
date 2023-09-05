@@ -20,7 +20,7 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import RegistModal from 'projects/components/Modals/Resources/Keypairs/Regist'
+import RegistModal from 'projects/components/Modals/Resources/Vms/Regist'
 import ModifyModal from 'projects/components/Modals/Resources/Keypairs/Modify'
 
 import EditYamlModal from 'components/Modals/EditYaml'
@@ -39,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: '키 페어 생성',
+        title: '가상 머신 생성',
         modal: RegistModal,
         store,
         cluster,

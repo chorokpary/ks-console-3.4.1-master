@@ -1,15 +1,18 @@
-import { get, groupBy } from 'lodash'
+import { get, groupBy, isEmpty } from 'lodash'
 import React, {useState, useEffect} from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import { Panel } from 'components/Base'
+import { Panel, Text } from 'components/Base'
 import { Icon} from '@kube-design/components'
+import { TinyArea } from 'components/Charts'
+
 import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
 import * as common from 'utils/resources'
+import { getAreaChartOps } from 'utils/monitoring'
 
 
 const DetailVmList = (props) => {
@@ -24,8 +27,9 @@ const DetailVmList = (props) => {
   const [vmDataList, setVmDataList] = useState([]);
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
+  const [expandItem, setExpandItem] = useState();
   
-  const renderContentNetwork = (obj) => {
+  const renderContent = (obj) => {
     return (
       <>
         <div className={styles.content}>
@@ -41,6 +45,7 @@ const DetailVmList = (props) => {
               <div>{obj.node != "N/A" ? obj.name : "-"}</div>
               <p>노드</p>
           </div>
+          {renderMonitorings()}  
           <div className={styles.arrow}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
           </div>
@@ -49,7 +54,7 @@ const DetailVmList = (props) => {
     )
   }
 
-  const renderExtraContentNetwork = (obj) => {
+  const renderExtraContent = (obj) => {
 
     const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
     return (
@@ -72,29 +77,41 @@ const DetailVmList = (props) => {
                    }
                   </div>
                   <p>네트워크</p>
-                </div>                
+                </div>     
                 <div className={styles.title}>
-                  <div>{obj.flavor_detail.vcpus} Core</div>
-                  <p>CPU</p>
-                </div>
-                <div className={styles.title}>
-                  <div>{common.fnSetBytes(obj.flavor_detail.ram)}</div>
-                  <p>Memory</p>
-                </div>
-                <div className={styles.title}>
-                  <div>{obj.flavor_detail.root_disk} Gib</div>
-                  <p>Disk</p>
-                </div>                
-                <div className={styles.title}>
-                  <div>
-                  {
-                    obj.gpus.length >= 1 ?  
-                    obj.gpus.length == 1 ? obj.gpus[0] : obj.gpus[0] + " 외 " + (obj.gpus.length - 1) + "개" 
-                    : "-"
-                   }
-                  </div>
-                  <p>GPU</p>
-                </div>
+                      <Text
+                        key='CPU'
+                        icon='cpu'
+                        title={obj.flavor_detail.vcpus +" Core"}
+                        description={t('CPU')}
+                      />
+                    </div>
+                    <div className={styles.title}>
+                      <Text
+                        key='Memory'
+                        icon='memory'
+                        title={common.fnSetBytes(obj.flavor_detail.ram)}
+                        description={t('Memory')}
+                      />
+                    </div>
+                    <div className={styles.title}>
+                      <Text
+                        key='Disk'
+                        icon='storage'
+                        title={obj.flavor_detail.root_disk +" Gib"}
+                        description={t('Disk')}
+                      />
+                    </div>
+                    <div className={styles.title}>
+                      <Text
+                        key='GPU'
+                        icon='gpu'
+                        title={obj.flavor_detail.gpus.length >= 1 ?  
+                          obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0] : obj.flavor_detail.gpus[0] + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개" 
+                          : "-"}
+                        description={t('GPU')}
+                      />
+                    </div>
               </div>          
           </div>        
         </div>
@@ -111,12 +128,67 @@ const DetailVmList = (props) => {
     fnGetExternalNetwork();
   }, [])
 
-  const [expandItem, setExpandItem] = useState();
+  
   const handleExpand = (name) => {
     setExpandItem(name);
     setIsExpandFlag(!isExpandFlag)
   }
 
+  const getMonitoringCfgs = metrics => [
+    {
+      type: 'cpu',
+      title: 'CPU',
+      unitType: 'cpu',
+      legend: ['USED'],
+      data: [metrics.cpu],
+      bgColor: 'transparent',
+    },
+    {
+      type: 'memory',
+      title: 'MEMORY',
+      unitType: 'memory',
+      legend: ['USED'],
+      data: [metrics.memory],
+      bgColor: 'transparent',
+    },
+  ]
+  
+  const renderMonitorings = () => {
+    // const { metrics = {}, isExpand, loading } = props
+
+    const isExpand = false;
+    const loading = false;
+    const metrics = {}
+
+    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
+
+    if (isEmpty(metrics.cpu) && isEmpty(metrics.memory))
+      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
+
+    const configs = getMonitoringCfgs(metrics)
+  
+    return (
+      <div className={styles.monitors}>
+        <div className={styles.charts}>
+          {configs.map(item => {
+            const config = getAreaChartOps(item)
+
+            return (
+              <div key={item.type}>
+                <TinyArea
+                  key={item.type}
+                  width="100%"
+                  height={40}
+                  {...config}
+                  darkMode={isExpand}
+                />
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>  
@@ -136,9 +208,9 @@ const DetailVmList = (props) => {
                     <div className={styles.icon}>
                       <Icon name="network-duotone" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
                     </div>
-                    {renderContentNetwork(obj)}
+                    {renderContent(obj)}
                   </div>
-                  {renderExtraContentNetwork(obj)}
+                  {renderExtraContent(obj)}
                 </div>
               </div>
               )
