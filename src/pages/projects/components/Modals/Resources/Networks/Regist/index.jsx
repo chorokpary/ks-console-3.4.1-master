@@ -132,9 +132,12 @@ export default function ResourceImageModal({ title, store, onOk }) {
   }
 
   const handleNetworkType = (e) => {
+    const { data } = form.current.props;
     if (e == 'FLAT') {
+      data.segment_id = ' ';
       setExternalBool(true)
     } else {
+      data.segment_id = '';
       setExternalBool(false)
     }
   }
