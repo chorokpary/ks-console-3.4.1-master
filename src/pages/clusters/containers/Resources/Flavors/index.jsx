@@ -52,7 +52,7 @@ export default class Flavors extends React.Component {
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
-                    trigger('flavors.remove', {
+                    trigger('flavor.remove', {
                         detail: item,
                         success: getData,
                         ...this.props.match.params,
@@ -72,7 +72,7 @@ export default class Flavors extends React.Component {
                     text: t('생성'),
                     action: 'create',
                     onClick: () =>
-                        trigger('flavors.regist', {
+                        trigger('flavor.regist', {
                             ...this.props.match.params,
                             type: this.name,
                             success: getData,
@@ -86,7 +86,7 @@ export default class Flavors extends React.Component {
                     text: t('REMOVE'),
                     action: 'delete',
                     onClick: () =>
-                        trigger('flavors.remove.batch', {
+                        trigger('flavor.remove.batch', {
                             success: getData,
                             ...this.props.match.params,
                         }),
