@@ -49,6 +49,13 @@ module.exports = {
       include: root('src/assets'),
       use: 'url-loader?limit=100000',
     },
+    {
+      test: /\.js$/, // .js 에 babel-loader 적용
+      include: root('node_modules/gridstack'),
+      use: {
+        loader: "babel-loader",
+      },
+    },
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.scss'],
