@@ -12,6 +12,7 @@ export default function CustomDashboard() {
     handleClass: 'grid-stack-item-content .grid_item .grid_title',
     cellHeight: 59,
     verticalMargin: 20,
+    disableResize: true, // resize 
   };
   useEffect(() => {
     GridStack.init(options);
