@@ -11,13 +11,13 @@ import styles from './index.scss'
 import ObjectInput from 'components/Inputs/ObjectInput'
 import * as common from "utils/resources"
 
-export default function ResourceImageModal({ title, store, onOk }) {
+export default function ResourceNetworkModal({ title, store, onOk }) {
 
   const form = useRef();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
   const [external, setExternal] = useState(false)
-  const [defaultRoute, setDefaultRoute] = useState(true)
+  const [defaultRoute, setDefaultRoute] = useState(false)
   const [cidrReducer, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
   const [externalBool, setExternalBool] = useState(false);
 
@@ -41,8 +41,29 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
     form.current.validator(() => {
       const { data } = form.current.props;
+
+      const dns = []
+      data.dns?.map((el) => {
+        if (el != '') {
+          dns.push(el)
+        }
+      });
+      const host_routes = []
+      data.Destination?.map((el, idx) => {
+        if (el != '') {
+          host_routes.push({ destination: el, nexthop: data.Nexthop[idx] })
+        }
+      })
+      data.ip_pool = {
+        start: data.ip_pool_start,
+        end: data.ip_pool_end
+      }
+      data.dns = dns
+      data.host_routes = host_routes
+      data.networktype_app = false
       console.log(data)
-      // onOk({ image: data })
+
+      onOk({ network: data })
     })
   }
 
@@ -67,6 +88,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   // ip 정규식
   const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
+  // const regexIpzero = /(^(\d{1,3}\.){3}([0])$)/; // 끝자리 0 정규식
   // 숫자 정규식
   const regexNumber = /^[0-9]+$/;
   const isValidIpAddress = (ip) => {
@@ -171,7 +193,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   rules={[{ required: true, message: t('이름을 입력해주세요') },]}
                 >
                   <Select
-                    name="network_type"
+                    name="type"
                     defaultValue="VXLAN"
                     options={networkTypeOptions}
                     onChange={(e) => handleNetworkType(e)} />
@@ -182,7 +204,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   label={t('세그먼트 ID')}
                   rules={[{ required: true, message: t('세그먼트 ID를 입력해주세요') },]}
                 >
-                  <Input name="segment_id"
+                  <NumberInput name="segment_id"
                     disabled={externalBool}
                     style={{ maxWidth: 'none' }} />
                 </Form.Item>

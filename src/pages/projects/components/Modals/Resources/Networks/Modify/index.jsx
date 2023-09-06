@@ -8,7 +8,7 @@ import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/
 import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
 
-export default function ResourceImageModal({ title, store, onOk, detail }) {
+export default function ResourceNetworkModal({ title, store, onOk, detail }) {
 
   const form = useRef();
   const [formData, setFormData] = useState({});
