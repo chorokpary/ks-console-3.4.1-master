@@ -112,8 +112,6 @@ export default class VmDetail extends React.Component {
   getAttrs = () => {
     const detail = toJS(this.store.detail)
 
-    console.log("detail : "+ JSON.stringify(detail))
-
     if (isEmpty(detail)) {
       return
     }

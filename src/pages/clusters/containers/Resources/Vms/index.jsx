@@ -154,13 +154,13 @@ export default class Vms extends React.Component {
       },
       {
         title: t('플로팅 IP'),
-        dataIndex: 'name',
+        dataIndex: 'floating',
         isHideable: true,
         search: true,
         width: 'auto',
-        render: name => {
+        render: (floating, record)  => {
           const floatingList = this.props.store.floatingIpList;
-          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
+          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == record.name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
           return floatingIp
         },
       },

@@ -139,80 +139,27 @@ const ModifyModal = (props) => {
               </div>              
             </Form.Item>
             <Form.Item label={t('내부 네트워크')} >
+            <div className={styles.wrapper}>
               <div>
-                  <div>
-                    총 {stateVariables['internal'].length}건
-                  </div>
-                  <table>
+                총 {stateVariables['internal'].length}건
+              </div>
+              <div className={styles.table}>
+                <table>
                     <colgroup>
-                      <col style={{width: "40px"}} />
-                      <col style={{width: "auto"}} />
-                      <col style={{width: "auto"}} />
-                      <col style={{width: "auto"}} />
-                      <col style={{width: "auto"}} />
-                      <col style={{width: "auto"}} />
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th>
-                        <Checkbox name='select-all-internal' 
-                                onChange={(checked) => handleAllCheck(checked, "internal")}
-                                checked={dataListVariables['internal'].length > 0 && stateVariables['internal'].length === dataListVariables['internal'].length ? true : false}/>
-                        </th>
-                        <th><strong>네트워크 이름</strong></th>
-                        <th><strong>네트워크 유형</strong></th>
-                        <th><strong>기본 경로</strong></th>
-                        <th><strong>CIDR</strong></th>
-                        <th><strong>게이트웨이</strong></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).length &&
-                      <tr>
-                        <td colSpan="6" className="no-data">
-                          <p>모든 자원이 할당 되었습니다.</p>
-                        </td>
-                      </tr>
-                    }
-                    {internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).map((data, key) => {
-                        return <tr key={data.name}>
-                        <td>
-                          <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
-                          onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
-                        </td>
-                        <td>{data.name}</td>
-                        <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? "사용" : "미사용"}</td>
-                        <td>{data.cidr}</td>
-                        <td>{data.gateway_ip}</td>
-                      </tr>
-                    })}
-                    </tbody>
-                  </table>
-                  <div>
-                    {internalCheckItems?.map((name) => 
-                    <span key={name}><Button onClick={() => handleDelete(name, "internal")}>{name}</Button></span>
-                    )}                      
-                  </div>
-                </div>
-            </Form.Item>
-            <Form.Item label={t('외부 네트워크')} >                
-                <div>
-                    <div>
-                      <Button onClick={() => externalRadioDeselect()}>선택해제</Button>
-                    </div>
-                    <table>
-                      <colgroup>
-                          <col style={{width: "40px"}}/>   
-                          <col style={{width: "200px"}}/>
-                          <col style={{width: "100px"}}/>
-                          <col style={{width: "100px"}}/>
-                          <col style={{width: "100px"}}/>
-                          <col style={{width: "100px"}}/>
+                        <col width="5%"/>
+                        <col width="20%"/>
+                        <col width="15%"/>
+                        <col width="20%"/>
+                        <col width="20%"/>
+                        <col width="20%"/>
                       </colgroup>
                       <thead>
                         <tr>
-                          <th></th>
+                          <th>
+                          <Checkbox name='select-all-internal' 
+                                onChange={(checked) => handleAllCheck(checked, "internal")}
+                                checked={dataListVariables['internal'].length > 0 && stateVariables['internal'].length === dataListVariables['internal'].length ? true : false}/>
+                          </th>
                           <th><strong>네트워크 이름</strong></th>
                           <th><strong>네트워크 유형</strong></th>
                           <th><strong>기본 경로</strong></th>
@@ -221,18 +168,18 @@ const ModifyModal = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                      {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).length &&
+                      {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).length &&
                         <tr>
                           <td colSpan="6" className="no-data">
                             <p>모든 자원이 할당 되었습니다.</p>
                           </td>
                         </tr>
                       }
-                      {externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).map((data) => {
-                         return <tr key={data.name}>
+                      {internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).map((data, key) => {
+                          return <tr key={data.name}>
                           <td>
-                            <Radio name="external" value={data.name} checked={radioExternal === data.name} 
-                            onChange={(e) => {setRadioExternal(data.name);}}/>
+                            <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
+                            onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
                           </td>
                           <td>{data.name}</td>
                           <td>{(data.type).toUpperCase()}</td>
@@ -242,8 +189,64 @@ const ModifyModal = (props) => {
                         </tr>
                       })}
                       </tbody>
-                    </table>
+                  </table> 
+                  <div>
+                    {internalCheckItems?.map((name) => 
+                    <span key={name}><Button onClick={() => handleDelete(name, "internal")}>{name}</Button></span>
+                    )}                      
+                  </div>
                 </div>
+            </div>             
+            </Form.Item>
+            
+            <Form.Item label={t('외부 네트워크')} >                
+              <div className={styles.wrapper}>
+                <div className={styles.divInRight}><Button onClick={() => externalRadioDeselect()}>선택해제</Button></div>
+                <div className={styles.table}>
+                  <table>
+                      <colgroup>
+                          <col width="5%"/>
+                          <col width="20%"/>
+                          <col width="15%"/>
+                          <col width="20%"/>
+                          <col width="20%"/>
+                          <col width="20%"/>
+                        </colgroup>
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th><strong>네트워크 이름</strong></th>
+                            <th><strong>네트워크 유형</strong></th>
+                            <th><strong>기본 경로</strong></th>
+                            <th><strong>CIDR</strong></th>
+                            <th><strong>게이트웨이</strong></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).length &&
+                            <tr>
+                              <td colSpan="6" className="no-data">
+                                <p>모든 자원이 할당 되었습니다.</p>
+                              </td>
+                            </tr>
+                          }
+                          {externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).map((data) => {
+                            return <tr key={data.name}>
+                              <td>
+                                <Radio name="external" value={data.name} checked={radioExternal === data.name} 
+                                onChange={(e) => {setRadioExternal(data.name);}}/>
+                              </td>
+                              <td>{data.name}</td>
+                              <td>{(data.type).toUpperCase()}</td>
+                              <td>{data.default_route ? "사용" : "미사용"}</td>
+                              <td>{data.cidr}</td>
+                              <td>{data.gateway_ip}</td>
+                            </tr>
+                          })}
+                        </tbody>
+                    </table> 
+                  </div>
+              </div>           
             </Form.Item>
            
             <Form.Item

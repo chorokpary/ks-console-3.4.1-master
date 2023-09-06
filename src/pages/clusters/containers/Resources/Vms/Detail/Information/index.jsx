@@ -8,7 +8,7 @@ import { Button, Notify } from '@kube-design/components'
 
 import styles from './index.scss'
 
-const Status = (props) => {
+const Information = (props) => {
 
   const store = props.detailStore;
 
@@ -23,5 +23,5 @@ const Status = (props) => {
   );
 };
 
-export default inject('detailStore')(observer(Status))
+export default inject('detailStore')(observer(Information))
 

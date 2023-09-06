@@ -10,8 +10,6 @@ import { Icon, Button, Notify } from '@kube-design/components'
 
 import styles from './index.scss'
 
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
-
 const Status = (props) => {
 
   const store = props.detailStore;
@@ -43,7 +41,7 @@ const Status = (props) => {
               <p>게이트웨이</p>
             </div>
             <div className={styles.arrow}>
-              <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />
+              {internalNetwork.length > 1 && <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />}
             </div>
           </div>
         ))}
@@ -107,7 +105,7 @@ const Status = (props) => {
 
     store.detail.router?.external && fnGetExternalNetwork();
     setInternalNetwork([]);
-    fnGetInternalNetwork();
+    store.detail.router?.internal && fnGetInternalNetwork();
 
   }, [])
 
@@ -149,19 +147,26 @@ const Status = (props) => {
                 [styles.expanded]: isExpandInternal,
               })}
             >
-              <div className={styles.itemMain} onClick={() => handleExpandExtra()}>
-                <div className={styles.icon}>
-                  <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
+              {internalNetwork.length > 1 ?
+                <div className={styles.itemMain} onClick={() => handleExpandExtra()}>
+                  <div className={styles.icon}>
+                    <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
+                  </div>
+                  {renderContentNetwork()}
                 </div>
-                {renderContentNetwork()}
-              </div>
-              {renderExtraContentNetwork()}
+                :
+                <div className={styles.itemMainRemoveCursor} >
+                  <div className={styles.icon}>
+                    <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
+                  </div>
+                  {renderContentNetwork()}
+                </div>
+              }             
+              {internalNetwork.length > 1 && renderExtraContentNetwork()}
             </div>
           </div>
         </Panel>
       }
-
-      <DetailVmList type='이미지' variables='image' name={externalNetwork?.name} />
 
     </>
   );
