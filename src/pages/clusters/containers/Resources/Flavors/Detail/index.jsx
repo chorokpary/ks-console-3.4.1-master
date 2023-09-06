@@ -39,9 +39,10 @@ const FlavorDetail = (props) => {
             action: 'edit',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('resource.baseinfo.edit', {
+                props.rootStore.triggerAction('flavor.edit', {
                     type: 'FLAVOR_DETAIL',
                     detail: toJS(store.detail),
+                    store: store,
                     success: fetchData,
                 })
         },
@@ -51,7 +52,7 @@ const FlavorDetail = (props) => {
             text: t('VIEW_YAML'),
             action: 'view',
             onClick: () =>
-                props.rootStore.triggerAction('flavors.yaml.view', {
+                props.rootStore.triggerAction('flavor.yaml.view', {
                     yaml: store.yaml,
                     readOnly: true,
                 })
@@ -64,7 +65,7 @@ const FlavorDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('flavors.delete', {
+                props.rootStore.triggerAction('flavor.delete', {
                     type: 'FLAVOR_DETAIL',
                     detail: toJS(store.detail),
                     store: store,

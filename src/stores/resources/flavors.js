@@ -77,15 +77,9 @@ export default class FlavorStore extends Base {
 
     @action
     async create(data, params = {}) {
-        let res
-        if (params.workspace) {
-            res = await this.submitting(
-                request.post(this.getResourceUrl(params), data)
-            )
-        } else {
-            res = this.submitting(request.post(this.getListUrl(params), data))
-        }
-        // this.afterChange(res, params)
+
+        let res = await this.submitting(request.post(this.getListUrl(params), data))
+
         return res
     }
 
@@ -97,7 +91,7 @@ export default class FlavorStore extends Base {
         const result = await request.get(
             `${this.getResourceUrl(params)}/${params.name}`
         )
-        const detail = { ...params, ...this.mapper(result), kind: 'flavors' }
+        const detail = { ...params, ...this.mapper(result), kind: 'Flavors' }
 
         // Yaml 파일 관련 
         await this.fetchYaml(params);
@@ -114,7 +108,7 @@ export default class FlavorStore extends Base {
         const result = await request.get(
             `${this.getResourceUrl(params)}/${params.name}/manifest`
         )
-        const yamlData = { ...params, ...this.mapper(result), kind: 'flavors' }
+        const yamlData = { ...params, ...this.mapper(result), kind: 'Flavors' }
 
         this.yaml = yamlData.manifest
         this.isLoading = false
@@ -122,29 +116,14 @@ export default class FlavorStore extends Base {
     }
 
 
-    // @action
-    // async update({ name, ...params }, data) {
-    //   await this.submitting(
-    //     request.put(this.getDetailUrl({ name, ...params }), data)
-    //   )
+    @action
+    async update({ name, ...params }, data) {
 
-    //   if (data.password && name === globals.user.username) {
-    //     return await request.post('logout')
-    //   }
+        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.flavor.name }), data))
 
-    //   const lang = get(data, 'spec.lang')
-    //   if (lang && data.lang !== cookie('lang')) {
-    //     window.location.reload()
-    //   }
-    // }
+        return res
+    }
 
-
-    // @action
-    // async modifyPassword({ name }, data) {
-    //   return this.submitting(
-    //     request.put(`${this.getDetailUrl({ name })}/password`, data)
-    //   )
-    // }
 
     @action
     async batchDelete({ rowKeys, ...params }) {
