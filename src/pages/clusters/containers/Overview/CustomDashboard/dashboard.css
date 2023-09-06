@@ -1596,6 +1596,7 @@ select {
     align-items: center
 }
 
+/* 
 html,
 body,
 div,
@@ -1656,7 +1657,7 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%
-}
+} */
 
 * {
     scrollbar-width: thin;
