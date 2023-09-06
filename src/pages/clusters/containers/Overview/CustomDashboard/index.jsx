@@ -7,7 +7,7 @@ import './dashboard.css'
 export default function CustomDashboard() {
 
   const options = {
-    float: true,
+    float: false,
     disableOneColumnMode: true,
     handleClass: 'grid-stack-item-content .grid_item .grid_title',
     cellHeight: 59,
