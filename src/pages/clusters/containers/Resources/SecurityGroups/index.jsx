@@ -30,16 +30,7 @@ import RoleStore from 'stores/role'
 import SecurityGroupStore from 'stores/resources/securityGroups'
 import * as common from 'utils/resources'
 
-const fnGetSecurityGroup = async () => {
-    setDetailSecurityGroup([]);
-    const promises = (store.detail.vm.security_groups).map(async (name) => {
-        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + name);
-        securityDetail.data.security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
-        securityDetail.data.security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
-        setDetailSecurityGroup(detailSecurityGroup => [...detailSecurityGroup, securityDetail.data.security_group])
-    })
-    await Promise.all(promises);
-};
+
 
 @withList({
     store: new SecurityGroupStore(),
