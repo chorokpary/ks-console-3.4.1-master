@@ -101,4 +101,21 @@ export default class FloatingIpStore extends Base {
         return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
 
+    @action
+    async networkList(params) {
+
+        const result = await request.get(
+            `/edgetron/resources/kubevirt/networks`
+        )
+        return result
+    }
+    @action
+    async routerList(params) {
+
+        const result = await request.get(
+            `/edgetron/resources/kubevirt/routers`
+        )
+        return result
+    }
+
 }
