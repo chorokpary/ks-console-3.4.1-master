@@ -61,7 +61,10 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
       data.dns = dns
       data.host_routes = host_routes
       data.networktype_app = false
-      console.log(data)
+
+      if (data.segment_id == " ") {
+        delete data.segment_id;
+      }
 
       onOk({ network: data })
     })
@@ -150,7 +153,6 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
 
   const handleExternal = (value) => {
     setExternal(value)
-
   }
 
   const handleNetworkType = (e) => {
@@ -160,6 +162,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
       setExternalBool(true)
     } else {
       data.segment_id = '';
+      document.getElementById('radio.0').click();
       setExternalBool(false)
     }
   }
@@ -225,8 +228,10 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                     defaultValue={external}
                     onChange={value => handleExternal(value)}
                   >
-                    {externalOptions.map(option => (
-                      <RadioButton key={option.value} value={option.value}>
+                    {externalOptions.map((option, idx) => (
+                      <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
+                        disabled={!externalBool && idx == 1 ? true : false}
+                      >
                         {option.label}
                       </RadioButton>
                     ))}
@@ -393,10 +398,6 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
             </Form.Group>
           </Form.Item>
         </Form>
-
-
-
-
       </Modal >
     </>
 

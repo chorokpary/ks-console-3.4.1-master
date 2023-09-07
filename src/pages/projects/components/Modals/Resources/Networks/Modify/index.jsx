@@ -1,68 +1,54 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Modal, TypeSelect, List } from 'components/Base'
-import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
+import { Modal, } from 'components/Base'
+import { NumberInput } from 'components/Inputs'
 import { get, omit, range } from 'lodash'
-import { Form, Input, Select, Icon, Tooltip, TextArea, Dropdown } from '@kube-design/components'
+import { Form, Input, Select, Button, TextArea } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
-import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
+import * as common from "utils/resources"
 
 export default function ResourceNetworkModal({ title, store, onOk, detail }) {
 
   const form = useRef();
   const [formData, setFormData] = useState({});
-  const distroTypeStore = new DistroTypeStore();
-
   const [modelView, setModalView] = useState(true);
+  const [defaultRoute, setDefaultRoute] = useState(detail.default_route)
+  const [cidrReducer, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
 
-  const [realTime, setRealTime] = useState(detail.is_realtime)
-  const [osType, setOsType] = useState(detail.os_type)
-  const [distroTypeData, setDistroTypeData] = useState([])
-  const [distroTypeList, setDistroTypeList] = useState([])
-  const [distroType, setDistroType] = useState(detail.distro_type)
-
-  useEffect(() => {
-    const getDistroTypeList = async () => {
-      const dist = await distroTypeStore.fetchList();
-      setDistroTypeData(dist)
-      setDistroTypeList(dist.filter(obj => obj.name != 'windows'))
-    };
-    getDistroTypeList();
-  }, [])
-
-  const realTimeOptions = [
+  const defaultRouteOptions = [
     { label: '미사용', value: false, },
     { label: '사용', value: true, }
   ]
-  const archTypeOptions = [
-    { label: 'x86_64', value: 'x86_64', },
-    { label: 'aarch64', value: 'aarch64', },
-  ]
-  const bootTypeOptions = [
-    { label: 'legacy', value: 'legacy', },
-    { label: 'uefi', value: 'uefi', }
-  ]
-  const osTypeOptions = [
-    { label: 'Linux', value: 'linux', icon: 'linux', },
-    { label: 'Windows', value: 'windows', icon: 'windows', }
-
-  ]
-  const distroTypeOptions = () => {
-    const opt = distroTypeList.map((obj) => ({
-      label: t(obj.name),
-      description: t(obj.vendor),
-      icon: t(obj.name),
-      value: t(obj.name),
-    }))
-    return opt
-  }
 
   const handleOk = () => {
 
     form.current.validator(() => {
       const { data } = form.current.props;
-      data.distro_type = distroType;
+
+      const dns = []
+      data.dns?.map((el) => {
+        if (el != '') {
+          dns.push(el)
+        }
+      });
+      data.dns = dns
+
+      // todo
+      // 호스트 라우트 입력 시, 서버 json 에러남.
+      // const host_routes = []
+      // data.Destination?.map((el, idx) => {
+      //   if (el != '') {
+      //     host_routes.push({ destination: el, nexthop: data.Nexthop[idx] })
+      //   }
+      // })
+      // data.host_routes = host_routes
+
+      data.ip_pool = {
+        start: data.ip_pool_start,
+        end: data.ip_pool_end
+      }
+
       onOk({ ...data })
     })
   }
@@ -71,15 +57,81 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
     setModalView(false);
   }
 
-  const handleOsType = (value) => {
-    setOsType(value)
-    if (value == 'windows') {
-      setDistroType('windows')
-      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'))
-    } else {
-      setDistroType('ubuntu')
-      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'))
+  // ip 정규식
+  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
+  // const regexIpzero = /(^(\d{1,3}\.){3}([0])$)/; // 끝자리 0 정규식
+  // 숫자 정규식
+  const regexNumber = /^[0-9]+$/;
+  const isValidIpAddress = (ip) => {
+    return regexIp.test(ip);
+  }
+  const fnCheckCidrClass = (num) => {
+    if (!regexNumber.test(num)) {
+      return false;
     }
+    let clsMaximumVal = 128;
+    let classVal = parseInt(num);
+    if (classVal < 1 || classVal > clsMaximumVal) {
+      return false;
+    }
+    return true;
+  }
+
+  const onChaneCidr = (e) => {
+    const { data } = form.current.props;
+    if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])) {
+      data.ip_pool_start = '';
+      data.ip_pool_end = '';
+      data.gateway_ip = '';
+
+      const a = document.getElementById('ip_pool_start')
+      const b = document.getElementById('ip_pool_end')
+      const c = document.getElementById('gateway_ip')
+      if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
+        a.nextElementSibling.classList.remove('hide')
+        a.parentElement.parentElement.classList.add("error-item");
+        b.nextElementSibling.classList.remove('hide')
+        b.parentElement.parentElement.classList.add("error-item");
+        c.nextElementSibling.classList.remove('hide')
+        c.parentElement.parentElement.classList.add("error-item");
+      }
+
+      setCidrReducer()
+    } else {
+      const cidrData = common.fnCalculateCidr(e);
+      data.ip_pool_start = cidrData.startIp
+      data.ip_pool_end = cidrData.endIp;
+      data.gateway_ip = cidrData.gatewayIp;
+
+      const a = document.getElementById('ip_pool_start')
+      const b = document.getElementById('ip_pool_end')
+      const c = document.getElementById('gateway_ip')
+      if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
+        a.nextElementSibling.classList.add('hide')
+        a.parentElement.parentElement.classList.remove("error-item");
+        b.nextElementSibling.classList.add('hide')
+        b.parentElement.parentElement.classList.remove("error-item");
+        c.nextElementSibling.classList.add('hide')
+        c.parentElement.parentElement.classList.remove("error-item");
+      }
+
+      setCidrReducer()
+    }
+  }
+
+  const nextHostRoute = useRef(1);
+  const [listHostRoute, setListHostRoute] = useState([1]);
+
+  const handleHostRoute = {
+
+    addColumn: () => {
+      nextHostRoute.current += 1
+      setListHostRoute(listHostRoute => [...listHostRoute, nextHostRoute.current]);
+
+    },
+    delColumn: (id) => {
+      setListHostRoute(listHostRoute.filter((el) => el !== id));
+    },
   }
 
   return (
@@ -101,90 +153,151 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
           >
             <Input name="name" maxLength={253}
               defaultValue={detail.name}
-              style={{ maxWidth: 'none' }}
-              readOnly />
+              readOnly
+              style={{ maxWidth: 'none' }} />
           </Form.Item>
-
-          <Form.Item>
-
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('이미지')}
-                  rules={[{ required: true, }]}
-                >
-                  <CardSelect
-                    className={styles.customUl}
-                    onChange={(e) => handleOsType(e)}
-                    name="os_type"
-                    options={osTypeOptions}
-                    defaultValue={osType}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item label={t('배포판')}>
-                  <TypeSelect
-                    onChange={(e) => setDistroType(e)}
-                    defaultValue={distroType}
-                    options={distroTypeOptions()}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Input
-                    defaultValue={osType + ' > ' + distroType}
-                    readOnly
-                    style={{ maxWidth: 'none' }}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
-
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('CPU 타입')}
-                  rules={[{ required: true, },]}
-                >
-                  <Select
-                    name="arch_type"
-                    defaultValue={detail.arch_type}
-                    options={archTypeOptions} />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('부트 타입')}
-                  rules={[{ required: true, },]}>
-                  <Select
-                    name="boot_type"
-                    defaultValue={detail.boot_type}
-                    options={bootTypeOptions}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
-
           <Form.Item
-            label={t('리얼 타임')}
-            rules={[{ required: true, },]}
+            label={t('MTU')}
+            rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
           >
-            <RadioGroup
-              name="is_realtime"
-              wrapClassName="radio"
-              defaultValue={realTime}
-              onChange={value => setRealTime(value)}
-            >
-              {realTimeOptions.map(option => (
-                <RadioButton key={option.value} value={option.value}>
-                  {option.label}
-                </RadioButton>
-              ))}
-            </RadioGroup>
+            <NumberInput name="mtu"
+              defaultValue={detail.mtu}
+              // min={1}
+              // max={1600}
+              style={{ maxWidth: 'none' }} />
           </Form.Item>
+
+          <Form.Item>
+            <Columns>
+              <Column>
+                <Form.Item
+                  label={t('CIDR')}
+                  rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
+                >
+                  <Input name="cidr"
+                    style={{ maxWidth: 'none' }}
+                    onChange={(e) => onChaneCidr(e)}
+                    defaultValue={detail.cidr}
+                  />
+                </Form.Item>
+              </Column>
+              <Column>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('IP POOL 정보')}
+                      rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                    >
+                      <Input name="ip_pool_start" defaultValue={detail.ip_pool.start} />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                    >
+                      <Input name="ip_pool_end"
+                        style={{ marginTop: '24px' }} defaultValue={detail.ip_pool.end} />
+                    </Form.Item>
+                  </Column>
+                </Columns>
+              </Column>
+            </Columns>
+          </Form.Item>
+
+          <Form.Item>
+            <Columns>
+              <Column>
+                <Form.Item
+                  label={t('디폴트 라우트')}
+                  rules={[{ required: true },]}
+                >
+                  <RadioGroup
+                    name="default_route"
+                    wrapClassName="radio"
+                    defaultValue={defaultRoute}
+                    onChange={value => setDefaultRoute(value)}
+                  >
+                    {defaultRouteOptions.map(option => (
+                      <RadioButton key={option.value} value={option.value}>
+                        {option.label}
+                      </RadioButton>
+                    ))}
+                  </RadioGroup>
+                </Form.Item>
+              </Column>
+              <Column>
+                <Form.Item
+                  label={t('게이트웨이 IP')}
+                  rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
+                >
+                  <Input name="gateway_ip" defaultValue={detail.gateway_ip} />
+                </Form.Item>
+              </Column>
+            </Columns>
+          </Form.Item>
+
+          <Form.Item label={t('DNS')}>
+            <Form.Group>
+              <Columns>
+                <Column>
+                  <Form.Item
+                    label={t('Primary')}
+                  >
+                    <Input name="dns.0" defaultValue={detail.dns?.[0]} />
+                  </Form.Item>
+                </Column>
+                <Column>
+                  <Form.Item
+                    label={t('Secondary')}
+                  >
+                    <Input name="dns.1" defaultValue={detail.dns?.[1]} />
+                  </Form.Item>
+                </Column>
+              </Columns>
+            </Form.Group>
+          </Form.Item>
+
+          {/* <Form.Item label={t('호스트 라우트')}>
+            <Form.Group>
+              {listHostRoute.map((obj, idx) => (
+                <div className={styles.item} key={obj}>
+                  <Columns>
+                    <Column>
+                      <Form.Item>
+                        <Input
+                          name={`Destination.${obj}`}
+                          placeholder={t('Destination')}
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      <Form.Item>
+                        <Input
+                          name={`Nexthop.${obj}`}
+                          placeholder={t('Nexthop')}
+                        />
+                      </Form.Item>
+                    </Column>
+                  </Columns>
+                  <Button
+                    type="flat"
+                    icon="trash"
+                    className={styles.delete}
+                    onClick={() => handleHostRoute.delColumn(obj)}
+                  />
+                </div>
+              ))}
+              <div className="text-right">
+                <Button
+                  className={styles.add}
+                  onClick={handleHostRoute.addColumn}
+                >
+                  추가
+                </Button>
+              </div>
+
+            </Form.Group>
+          </Form.Item> */}
 
           <Form.Item
             label={t('설명')}
@@ -197,8 +310,9 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
               maxLength={256}
             />
           </Form.Item>
-        </Form>
 
+
+        </Form>
       </Modal >
     </>
 
