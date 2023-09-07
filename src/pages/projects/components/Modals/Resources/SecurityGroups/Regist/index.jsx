@@ -7,7 +7,7 @@ import styles from './index.scss'
 
 import axios from "axios";
 
-const ModifyModal = (props) => {
+const RegistModal = (props) => {
 
     const form = useRef();
     const [modelView, setModalView] = useState(true);
@@ -22,16 +22,7 @@ const ModifyModal = (props) => {
     const [gpus, setGpus] = useState([]);
     const [extraSpecsFields, setExtraSpecsFields] = useState([]);
     const [ram, setRam] = useState(0);
-    const [byteFlag, setByteFlag] = useState(!(props.store.detail.flavor.ram / 1024 < 1));
-
-    let checkExtraSpecs = [];
-    useEffect(() => {
-        setRootDisk(props.store.detail.flavor.root_disk);
-        setEphemeralDisk(props.store.detail.flavor.ephemeral_disk);
-        setVcpus(props.store.detail.flavor.vcpus);
-        setRam(props.store.detail.flavor.ram / 1024 < 1 ? props.store.detail.flavor.ram : (props.store.detail.flavor.ram / 1024));
-        checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(obj => obj.value === "True");
-    }, [])
+    const [byteFlag, setByteFlag] = useState(true);
 
     useEffect(() => {
         //const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
@@ -73,21 +64,17 @@ const ModifyModal = (props) => {
         data.then(response => {
             if (response.data.extra_specs) {
                 for (let i = 0, n = response.data.extra_specs.length; i < n; i += 1) {
-                    let isChecked = false;
-                    checkExtraSpecs.map(obj => {
-                        if (response.data.extra_specs[i].name === obj.key) {
-                            isChecked = true;
-                        }
-                    })
                     res.push({
                         key: response.data.extra_specs[i].name,
                         description: response.data.extra_specs[i].description,
-                        value: isChecked,
+                        value: false,
                     });
                 };
                 setExtraSpecsFields(res);
             }
         });
+        //setExtraSpecsFields([{ name: "hugepage", description: "ddeessccrriippttiioonn", checked: false }
+        //    , { name: "etc", description: "eettccddeesscc", checked: false }]);
     }, [])
 
     //slider
@@ -121,7 +108,7 @@ const ModifyModal = (props) => {
         }
     }
 
-    const [formDeviceFields, setFormDeviceFields] = useState(props.store.detail.flavor.devices);
+    const [formDeviceFields, setFormDeviceFields] = useState([{ name: '', quantity: 0, message: '' }]);
     //hostDevice handler
     const handleHostDevice = {
 
@@ -171,7 +158,7 @@ const ModifyModal = (props) => {
         },
     }//end hostDevice
 
-    const [formGpuFields, setFormGpuFields] = useState(props.store.detail.flavor.gpus);
+    const [formGpuFields, setFormGpuFields] = useState([{ name: '', quantity: 0, message: '' }]);
     //GPU handler
     const handleGpu = {
 
@@ -280,14 +267,13 @@ const ModifyModal = (props) => {
                     <Form.Item
                         label={t('이름')}
                         rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        desc={t('NAME_DESC')}
                     >
                         <Input
                             name="name"
                             autoFocus={true}
                             maxLength={63}
                             style={{ maxWidth: 'none' }}
-                            defaultValue={props.store.detail.flavor.name}
-                            disabled
                         />
                     </Form.Item>
 
@@ -471,7 +457,7 @@ const ModifyModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue={props.store.detail.flavor.description}
+                            defaultValue=""
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>
@@ -483,5 +469,5 @@ const ModifyModal = (props) => {
     );
 };
 
-export default ModifyModal
+export default RegistModal
 

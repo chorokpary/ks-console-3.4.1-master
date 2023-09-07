@@ -55,6 +55,7 @@ import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
 import RouterDetail from '../containers/Resources/Routers/Detail'
 import FlavorDetail from '../containers/Resources/Flavors/Detail'
+import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
@@ -201,6 +202,10 @@ export default [
   {
     path: `${PATH}/flavors/:name`,
     component: FlavorDetail,
+  },
+  {
+    path: `${PATH}/securityGroups/:name`,
+    component: SecurityGroupDetail,
   },
   {
     path: `${PATH}/networks/:name`,

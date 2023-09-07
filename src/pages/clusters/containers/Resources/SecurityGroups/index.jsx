@@ -27,16 +27,27 @@ import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import RoleStore from 'stores/role'
-import FlavorStore from 'stores/resources/flavors'
+import SecurityGroupStore from 'stores/resources/securityGroups'
 import * as common from 'utils/resources'
 
+const fnGetSecurityGroup = async () => {
+    setDetailSecurityGroup([]);
+    const promises = (store.detail.vm.security_groups).map(async (name) => {
+        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + name);
+        securityDetail.data.security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
+        securityDetail.data.security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
+        setDetailSecurityGroup(detailSecurityGroup => [...detailSecurityGroup, securityDetail.data.security_group])
+    })
+    await Promise.all(promises);
+};
+
 @withList({
-    store: new FlavorStore(),
-    module: 'flavors',
-    authKey: 'flavors',
-    name: 'Flavor',
+    store: new SecurityGroupStore(),
+    module: 'security_groups',
+    authKey: 'security_groups',
+    name: '보안그룹',
 })
-export default class Flavors extends React.Component {
+export default class SecurityGroups extends React.Component {
 
     showAction(record) {
         return globals.user.username !== record.name
@@ -52,7 +63,7 @@ export default class Flavors extends React.Component {
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
-                    trigger('flavor.remove', {
+                    trigger('securityGroup.remove', {
                         detail: item,
                         success: getData,
                         ...this.props.match.params,
@@ -72,7 +83,7 @@ export default class Flavors extends React.Component {
                     text: t('생성'),
                     action: 'create',
                     onClick: () =>
-                        trigger('flavor.regist', {
+                        trigger('securityGroup.regist', {
                             ...this.props.match.params,
                             type: this.name,
                             success: getData,
@@ -86,7 +97,7 @@ export default class Flavors extends React.Component {
                     text: t('REMOVE'),
                     action: 'delete',
                     onClick: () =>
-                        trigger('flavor.remove.batch', {
+                        trigger('securityGroup.remove.batch', {
                             success: getData,
                             ...this.props.match.params,
                         }),
@@ -110,60 +121,22 @@ export default class Flavors extends React.Component {
                 render: name => (
                     <Avatar
                         icon={ICON_TYPES[this.module]}
-                        to={`/clusters/${cluster}/flavors/${name}`}
+                        to={`/clusters/${cluster}/securityGroups/${name}`}
                         title={name}
                     />
                 ),
             },
             {
-                title: t('CPU'),
-                dataIndex: 'vcpus',
+                title: t('인바운드 규칙수'),
+                dataIndex: 'ingress_count',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('메모리'),
-                dataIndex: 'ram',
+                title: t('아웃바운드 규칙수'),
+                dataIndex: 'egress_count',
                 isHideable: true,
                 width: 'auto',
-                render: ram => (
-                    <p>
-                        {common.fnSetBytes(ram)}
-                    </p>
-                ),
-            },
-            {
-                title: t('루트 디스크'),
-                dataIndex: 'root_disk',
-                isHideable: true,
-                width: 'auto',
-                render: rdisk => (
-                    <p>
-                        {rdisk} GiB
-                    </p>
-                ),
-            },
-            {
-                title: t('임시 디스크'),
-                dataIndex: 'ephemeral_disk',
-                isHideable: true,
-                width: 'auto',
-                render: edisk => (
-                    <p>
-                        {edisk} GiB
-                    </p>
-                ),
-            },
-            {
-                title: t('GPU'),
-                dataIndex: 'gpus',
-                isHideable: true,
-                width: 'auto',
-                render: gpus => (
-                    <p>
-                        {gpus.length} 개
-                    </p>
-                ),
             },
             {
                 title: t('등록일'),
@@ -195,8 +168,8 @@ export default class Flavors extends React.Component {
                 <Banner
                     {...bannerProps}
                     tabs={this.tabs}
-                    title={t('Flavor')}
-                    description={t('Flavor의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('보안그룹')}
+                    description={t('보안그룹의 상태와 사용현황을 관리 할 수 있습니다.')}
                 />
                 <Table
                     {...tableProps}

@@ -65,6 +65,7 @@ import Images from '../containers/Resources/Images'
 import Keypairs from '../containers/Resources/Keypairs'
 import Routers from '../containers/Resources/Routers'
 import Flavors from '../containers/Resources/Flavors'
+import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 import Vms from '../containers/Resources/Vms'
@@ -286,6 +287,11 @@ export default [
           {
             path: `${PATH}/flavors`,
             component: Flavors,
+            exact: true,
+          },
+          {
+            path: `${PATH}/securityGroups`,
+            component: SecurityGroups,
             exact: true,
           },
           {

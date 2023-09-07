@@ -18,9 +18,9 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/Flavors/Detail/Status'
+import Status from 'clusters/containers/Resources/SecurityGroups/Detail/Status'
 
-const PATH = '/clusters/:cluster/flavors/:name'
+const PATH = '/clusters/:cluster/securityGroups/:name'
 
 export default [
     {
