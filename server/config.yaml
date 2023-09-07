@@ -306,6 +306,12 @@ client:
               skipAuth: true,
               showInDisable: true,
             }
+            - {
+              name: securityGroups,
+              title: "보안그룹",
+              skipAuth: true,
+              showInDisable: true,
+            }
 
 
   # access control page navigations

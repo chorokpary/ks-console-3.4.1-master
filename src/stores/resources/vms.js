@@ -574,4 +574,124 @@ export default class VmStore extends Base {
     return dataList
   }
 
+  // 등록 관련 데이터 시작 
+  @action
+  async fetchVmListFlavor(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/flavors`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'flavors' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListImage(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/images`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'images' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListBootVolume(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/volumes/available`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'volumes' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListNetwork(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/networks`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'networks' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListSriovNetwork(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/sriov_networks`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'sriov_networks' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListKeypair(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/keypairs`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'keypairs' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListNode(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/nodes`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'nodes' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListSecurityGroup(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/security_groups`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'security_groups' }
+
+    const securityArray = [];
+    const promises = (response.security_groups).map(async (security) => {
+
+      const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/"+security.name);
+
+      securityDetail.data.security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
+      securityDetail.data.security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
+
+      securityArray.push(securityDetail.data.security_group)
+    })
+
+    await Promise.all(promises);
+
+    this.isLoading = false
+    return securityArray;
+  }
+
+  // 등록 관련 데이터 끝
+
 }
