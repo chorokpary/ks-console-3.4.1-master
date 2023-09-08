@@ -75,6 +75,26 @@ export default class ServiceComponents extends React.Component {
       icon: '/assets/kubernetes.svg',
     },
     {
+      type: 'kubevirt',
+      title: 'KubeVirt',
+      icon: '/assets/kubevirt.svg',
+    },
+    {
+      type: 'capi',
+      title: 'CAPI',
+      icon: '/assets/capi.svg',
+    },
+    {
+      type: 'harbor',
+      title: 'Harbor',
+      icon: '/assets/harbor.svg',
+    },
+    {
+      type: 'longhorn',
+      title: 'Longhorn',
+      icon: '/assets/longhorn.svg',
+    },
+    {
       type: 'istio',
       title: t('APPLICATION_GOVERNANCE'),
       icon: '/assets/istio.svg',
