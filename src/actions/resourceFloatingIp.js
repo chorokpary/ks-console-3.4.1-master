@@ -25,6 +25,8 @@ import DeleteModal from 'components/Modals/Delete'
 
 import RegistModal from 'projects/components/Modals/Resources/FloatingIp/Regist'
 import ModifyModal from 'projects/components/Modals/Resources/Images/Modify'
+import LbPop from 'projects/components/Modals/Resources/FloatingIp/LbPop'
+
 
 export default {
     'floatingIp.regist': {
@@ -41,6 +43,29 @@ export default {
                 },
                 title: '플로팅 IP 생성',
                 modal: RegistModal,
+                store,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                ...props,
+            })
+        },
+    },
+    'floatingIp.lbPop': {
+        on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+            const modal = Modal.open({
+                onOk: data => {
+                    store
+                        .create(data, { cluster, workspace, namespace, devops })
+                        .then(() => {
+                            Modal.close(modal)
+                            Notify.success({ content: t('저장 되었습니다.') })
+                            success && success()
+                        })
+                },
+                title: 'LB 연결',
+                modal: LbPop,
                 store,
                 cluster,
                 workspace,

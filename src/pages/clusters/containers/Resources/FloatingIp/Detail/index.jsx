@@ -15,6 +15,7 @@ import FloatingIpStore from 'stores/resources/floatingip';
 const store = new FloatingIpStore();
 
 const FloatingIpDetail = (props) => {
+    console.log(props)
 
     useEffect(() => {
         fetchData();
@@ -36,7 +37,7 @@ const FloatingIpDetail = (props) => {
             icon: 'pen',
             text: t('EDIT_INFORMATION'),
             action: 'edit',
-            show: showEdit,
+            show: false,
             onClick: () =>
                 props.rootStore.triggerAction('floatingIp.edit', {
                     type: 'FLOATINGIP_DETAIL',
@@ -51,7 +52,11 @@ const FloatingIpDetail = (props) => {
             text: t('VM 연결'),
             action: 'view',
             onClick: () =>
-                console.log('asd')
+                props.rootStore.triggerAction('floatingIp.vmPop', {
+                    store: store,
+                    type: "LB_POP",
+                    success: fetchData,
+                }),
         },
         {
             key: 'edit2',
@@ -59,7 +64,11 @@ const FloatingIpDetail = (props) => {
             text: t('LB 연결'),
             action: 'view',
             onClick: () =>
-                console.log('asd')
+                props.rootStore.triggerAction('floatingIp.lbPop', {
+                    store: store,
+                    type: "LB_POP",
+                    success: fetchData,
+                }),
         },
         {
             key: 'delete',

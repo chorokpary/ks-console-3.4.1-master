@@ -69,6 +69,8 @@ import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 import Vms from '../containers/Resources/Vms'
+import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
+
 
 const PATH = '/clusters/:cluster'
 
@@ -83,6 +85,11 @@ export default [
         to: '/clusters/default/overview',
         exact: true,
       },
+    exact: true,
+  },
+  {
+    path: `${PATH}/overview/edit`,
+    component: CustomOverviewEdit,
     exact: true,
   },
   {

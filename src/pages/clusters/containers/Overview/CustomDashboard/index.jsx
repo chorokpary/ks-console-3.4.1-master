@@ -3,8 +3,12 @@ import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack'
 // import './scss/test.css'
 import './dashboard.css'
+import { inject, observer } from 'mobx-react';
 
-export default function CustomDashboard() {
+const CustomDashboard = (props) => {
+
+  const { cluster } = props.match.params
+  const { routing } = props.rootStore;
 
   const options = {
     float: false,
@@ -17,6 +21,10 @@ export default function CustomDashboard() {
   useEffect(() => {
     GridStack.init(options);
   }, [])
+
+  const editMode = () => {
+    routing.push(`/clusters/${cluster}/overview/edit`)
+  }
   return (
     <>
       <div className="content-wrapper content_wrap">
@@ -27,14 +35,30 @@ export default function CustomDashboard() {
             <div className="dash_toptab">
               <label htmlFor="name1">
                 <input type="radio" name="mode" id="name1" value="name1" defaultChecked />
-                <span>대시보드 1</span>
+                <span>대시보드 1
+                  <div className="tab-quick-menu">
+                    <button type="button" className="btn_quick"><i className="ico-quick-menu"></i></button>
+                    <ul className="quick-menu-list">
+                      <li><i className="ico ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                      <li><i className="ico ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                    </ul>
+                  </div>
+                </span>
               </label>
               <label htmlFor="name2">
                 <input type="radio" name="mode" id="name2" value="name2" />
-                <span>대시 2</span>
+                <span>대시보드 2
+                  <div className="tab-quick-menu">
+                    <button type="button" className="btn_quick"><i className="ico-quick-menu"></i></button>
+                    <ul className="quick-menu-list">
+                      <li><i className="ico ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                      <li><i className="ico ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                    </ul>
+                  </div>
+                </span>
               </label>
+              <button type="button" className="btn_dash_add" onClick={() => editMode()}><i className="ico-plus"></i></button>
             </div>
-
             {/* // Top area */}
 
             {/* tab-content */}
@@ -1072,10 +1096,9 @@ export default function CustomDashboard() {
                               <input type="radio" name="box-tab2" id="name11" value="name5" />
                               <span>x86</span>
                             </label>
-                            <label htmlFor="name12">
-                              <input type="radio" name="box-tab2" id="name12" value="name6" />
-                              <span>AMD</span>
-                            </label>
+                          </div>
+                          <div className="right">
+                            <i className="ico-btn-trash"></i>
                           </div>
                         </div>
                         <div className="grid_info style_status style_node">
@@ -1108,19 +1131,9 @@ export default function CustomDashboard() {
                                     <div className="hexagon"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
+                                    <div className="hexagon off"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                  </div>
-                                  <div className="hexagon_group">
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
+                                    <div className="hexagon off"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
                                   </div>
@@ -1128,11 +1141,15 @@ export default function CustomDashboard() {
                                     <div className="hexagon"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
+                                    <div className="hexagon off"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
                                     <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
-                                    <div className="hexagon"><span>ARM</span></div>
+                                  </div>
+                                  <div className="hexagon_group">
+                                    <div className="hexagon"><span>x86</span></div>
+                                    <div className="hexagon off"><span>x86</span></div>
+                                    <div className="hexagon"><span>x86</span></div>
+                                    <div className="hexagon error"><span>x86</span></div>
                                   </div>
                                 </div>
                                 {/* // hexagon_wrap */}
@@ -1351,3 +1368,5 @@ export default function CustomDashboard() {
     </>
   )
 }
+
+export default inject('rootStore')(observer(CustomDashboard));
