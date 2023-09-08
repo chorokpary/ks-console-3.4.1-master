@@ -110,7 +110,8 @@ export default class Vms extends React.Component {
         search: true,
         render: name => (
           <Avatar
-            icon={ICON_TYPES[this.module]}
+            icon="templet"
+            iconSize={40}
             to={`/clusters/${cluster}/vms/${name}`}
             title={name}
           />

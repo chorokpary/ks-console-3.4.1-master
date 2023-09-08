@@ -133,7 +133,7 @@ const Status = (props) => {
           {/* 가상 머신 */}
             <Panel title={"가상머신"}>
             <div className={styles.wrapper}>
-              <div className={styles.itemMain} >
+              <div className={styles.itemVm} >
                 <div className={styles.icon}>
                   <Icon name="templet" size={40} />
                 </div>
@@ -160,7 +160,7 @@ const Status = (props) => {
           {!!detailFlavor &&
             <Panel title={"Flavor"}>
               <div className={styles.wrapper}>
-                  <div className={classnames(styles.item)}>
+                  <div className={classnames(styles.itemFlavor)}>
                     <div className={styles.icon}>
                       <Icon name="apps" size={40} />
                     </div>
@@ -227,7 +227,7 @@ const Status = (props) => {
             <Panel title={"네트워크"}>
               <div className={styles.wrapper}>
                 {detailNetwork.map((obj, index) => (
-                  <div className={classnames(styles.item)} key={index}>
+                  <div className={classnames(styles.itemNetwork)} key={index}>
                     <div className={styles.icon}>
                       <Icon name="network-duotone" size={40} />
                     </div>
@@ -258,7 +258,7 @@ const Status = (props) => {
             <Panel title={"볼륨"}>
               <div className={styles.wrapper}>
                 {detailVolume.map((obj, index) => (
-                  <div className={classnames(styles.item)} key={index}>
+                  <div className={classnames(styles.itemVolume)} key={index}>
                     <div className={styles.icon}>
                       <Icon name="network-duotone" size={40} />
                     </div>

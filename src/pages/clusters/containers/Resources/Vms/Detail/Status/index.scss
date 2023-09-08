@@ -14,116 +14,8 @@
   border-radius: $border-radius;
 }
 
-.item {
-  display: flex;
-  align-items: center;
-  height: 64px;
-  padding: 12px;
-  margin-bottom: 8px;
-  line-height: 20px;
-  background-color: $white;
-  border-radius: 4px;
-  border: 1px solid $border-color;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  .icon {
-    position: relative;
-    width: 40px;
-    margin-right: 12px;
-
-    .indicator {
-      position: absolute;
-      right: -1px;
-      bottom: -1px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-  }
-
-  .title {
-    min-width: 120px;
-
-    & > div {
-      @include ellipsis;
-      @include TypographyTitleH6($dark-color07);
-    }
-
-    & > p {
-      @include ellipsis;
-      @include TypographyParagraph($dark-color01);
-    }
-
-    &.name {
-      padding-right: 20px;
-      width: 30%;
-    }
-  }
-
-  :global {
-    .tag {
-      height: 20px;
-    }
-  }
-}
-
-
-
-.expandItem {
-  position: relative;
-  height: 64px;
-  margin-bottom: 8px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.expanded {
-  .arrow {
-    :global(.icon) {
-      transform-origin: center center;
-      transform: rotate(180deg);
-    }
-  }
-
-  .itemMain {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0 -4px;
-    padding: 12px 16px;
-    background-color: $dark-color07;
-    border-color: $dark-color07;
-
-    .content .text {
-      div,
-      a,
-      p {
-        color: $white;
-      }
-
-      a:hover {
-        color: $primary;
-      }
-    }
-
-    .content .monitors {
-      color: $white;
-    }
-  }
-
-  .itemExtra {
-    display: block;
-    transform: translate3d(0, 100%, 0);
-  }
-}
-
-
-.itemMain {
+.itemVm {
   display: flex;
   padding: 12px;
   height: 64px;
@@ -132,7 +24,6 @@
   border: 1px solid $border-color;
   border-radius: 4px;
   transition: all $trans-speed;  
-  // background: url('/assets/resources/icons/ico-status-terminating.svg');
 
   .icon {
     position: relative;
@@ -258,6 +149,229 @@
   }
 }
 
+.itemFlavor {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 12px;
+  margin-bottom: 8px;
+  line-height: 20px;
+  background-color: $white;
+  border-radius: 4px;
+  border: 1px solid $border-color;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .icon {
+    position: relative;
+    width: 40px;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+
+  .title {
+    min-width: 120px;
+    width: 12%;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
+    }
+
+    &.name {
+      padding-right: 20px;
+      width: 28%;
+    }
+  }
+
+  :global {
+    .tag {
+      height: 20px;
+    }
+  }
+}
+
+.itemNetwork {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 12px;
+  margin-bottom: 8px;
+  line-height: 20px;
+  background-color: $white;
+  border-radius: 4px;
+  border: 1px solid $border-color;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .icon {
+    position: relative;
+    width: 40px;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+
+  .title {
+    min-width: 120px;
+    width: 20%;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
+    }
+
+    &.name {
+      padding-right: 20px;
+      width: 28%;
+    }
+  }
+
+  :global {
+    .tag {
+      height: 20px;
+    }
+  }
+}
+
+.itemVolume {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 12px;
+  margin-bottom: 8px;
+  line-height: 20px;
+  background-color: $white;
+  border-radius: 4px;
+  border: 1px solid $border-color;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .icon {
+    position: relative;
+    width: 40px;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+
+  .title {
+    min-width: 120px;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
+    }
+
+    &.name {
+      padding-right: 20px;
+      width: 28%;
+    }
+  }
+
+  :global {
+    .tag {
+      height: 20px;
+    }
+  }
+}
+
+.expandItem {
+  position: relative;
+  height: 64px;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.expanded {
+  .arrow {
+    :global(.icon) {
+      transform-origin: center center;
+      transform: rotate(180deg);
+    }
+  }
+
+  .itemMain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0 -4px;
+    padding: 12px 16px;
+    background-color: $dark-color07;
+    border-color: $dark-color07;
+
+    .content .text {
+      div,
+      a,
+      p {
+        color: $white;
+      }
+
+      a:hover {
+        color: $primary;
+      }
+    }
+
+    .content .monitors {
+      color: $white;
+    }
+  }
+
+  .itemExtra {
+    display: block;
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+
+
+
 .itemMainRemoveCursor {
   display: flex;
   padding: 12px;
@@ -357,7 +471,7 @@
       padding-right: 20px;
 
       &:first-of-type {
-        width: 28%;
+        width: 20%;
       }
 
       & > div {

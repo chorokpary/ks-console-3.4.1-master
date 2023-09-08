@@ -46,7 +46,7 @@ const DetailSecurityGroupList = (props) => {
     return (
       <div className={styles.itemExtra}>
           <div className={styles.containers} >
-            <Panel title={"인바운드"} >
+            <Panel title={"인바운드"} className={styles.panelWrapper}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -76,7 +76,7 @@ const DetailSecurityGroupList = (props) => {
                 </table>
               </div>
             </Panel>   
-            <Panel title={"아웃바인드"} >
+            <Panel title={"아웃바인드"} className={styles.panelWrapper}>
               <div className={styles.table}>
                   <table>
                     <colgroup>
