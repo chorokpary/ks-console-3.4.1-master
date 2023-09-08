@@ -22,7 +22,6 @@
 
 
 .typeselectbox {
-  padding: 10px;
   width: 50%;
 }
 
@@ -34,7 +33,12 @@
 }
 
 .removeCheckWrapper {
-  padding: 12px;
+  padding-top: 12px;
+  button {
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
 }
 
 .divInRight {
@@ -42,28 +46,32 @@
   justify-content: right;
 }
 
-.table table {
+.table {
   width: 100%;
-  text-align: left;
-
-  thead {
-      th {
-          text-transform: uppercase;
-          border-bottom: 1px solid #F1F1F1;
-          padding: 10px;
-      }
-  }
-  tbody {
-      tr {
-          border-bottom: 1px solid #F1F1F1;
-          color: #75787b;
-          td {
-              padding: 10px;
-          }
-          th {
-              padding-left: 10px;
-          }
-      }
+  max-height: 250px;
+  overflow-y: scroll;
+  table {
+    width: 100%;
+    text-align: left;
+    thead {
+        th {
+            text-transform: uppercase;
+            border-bottom: 1px solid #F1F1F1;
+            padding: 10px;
+        }
+    }
+    tbody {
+        tr {
+            border-bottom: 1px solid #F1F1F1;
+            color: #75787b;
+            td {
+                padding: 10px;
+            }
+            th {
+                padding-left: 10px;
+            }
+        }
+    }
   }
 }
 
@@ -134,11 +142,11 @@ i {display: flex; justify-content: center; align-items: center;}
   font-weight: 700;
   padding: 5px 23px;
 }
+
 .modal-footer {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
   border-radius: 0 0 4px 4px;
   background: #f9fbfd;
   flex: 0 0 auto;
@@ -206,7 +214,6 @@ button {
 	  align-items: flex-start;
 	  display: flex;
 	  gap: 12px;
-	  width: fit-content;
 	  > .box_style {
 	    position: relative;
 	    width: 100%;

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal, TypeSelect } from 'components/Base'
 import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
-import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, InputPassword, Notify } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, InputPassword, Notify, Tabs } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import * as common from "utils/resources"
@@ -87,11 +87,17 @@ const RegistModal = (props) => {
   ]
 
   const imageOptions = () => {
-    const opt = imageOptionList.map((obj) => ({
-      label: t(obj.name),
-      icon: t(obj.distro_type),
-      value: t(obj.name),
-    }))
+    const opt = imageOptionList.map((obj) => {
+      const exceptonArray = ['ubuntu', 'centos']
+      const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
+
+      return {
+        label: t(obj.name),
+        icon: distroType,
+        value: t(obj.name),
+      }
+
+    })
     return opt
   }
 
@@ -135,31 +141,65 @@ const RegistModal = (props) => {
 
       const { data } = form.current.props;
 
-      const jsonData = {};
-
-      jsonData.network = networkCheckItems;
-      jsonData.sriov = sriovCheckItems;
-      jsonData.securitygroup = securityGroupCheckItems;
+      data.network = networkCheckItems;
+      data.sriov = sriovCheckItems;
+      data.securitygroup = securityGroupCheckItems;
   
-      jsonData.image = data.image;
-      jsonData.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
-      jsonData.flavor = data.flavor; 
-      jsonData.keypair = data.keypair == "선택" ? "" : data.keypair;
-      jsonData.node = data.node == "선택" ? "" : data.node;
-      jsonData.imageType = data.imageType;
-      jsonData.userScript = data.userScript;
+      data.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
+      data.keypair = data.keypair == "선택" ? "" : data.keypair;
+      data.node = data.node == "선택" ? "" : data.node;
 
-      // console.log(listPasswordRoute)
-      // console.log(listFileRoute)
-      // console.log(listPackageRoute)
-      listPasswordRoute.map((obj) => {
-        console.log("listPasswordRoute obj :"+ obj)
-        console.log(data['scriptPassword_'+obj])
-      })
+      let makeScriptStep_1 = false;
+      let makeScriptStep_2 = false;
+      let makeScriptStep_3 = false;
 
-      console.log(JSON.stringify(jsonData))
+      let makeScript = "#cloud-config\n"
+        makeScript += "chpasswd:\n"
+        makeScript += "list:\n"
 
-      // onOk({ ...data })
+        listPasswordRoute.map((obj) => {
+          console.log(data['scriptPassword_'+obj])
+          if(!!data['scriptId_'+obj] && !!data['scriptPassword_'+obj]){
+            makeScript += data['scriptId_'+obj] + ":"+ data['scriptPassword_'+obj] +"\n"
+            makeScriptStep_1 = true;
+          }  
+        })
+
+        makeScript += "expire: False\n"
+        makeScript += "write_files:\n"
+
+        listFileRoute.map((obj) => {
+          if(!!data['scriptPath_'+obj] && !!data['scriptContent_'+obj]){
+            makeScript += data['scriptPath_'+obj] + ":"+ data['scriptContent_'+obj] +"\n"
+            makeScript += "path: "+ data['scriptPath_'+obj] +"\ncontent: "+ data['scriptContent_'+obj] +"\n"   
+
+            makeScriptStep_2 = true;
+          }                      
+        }) 
+
+        makeScript += "packages:\n"
+
+        listPackageRoute.map((obj) => {
+          if(!!data['scriptPackage_'+obj]){
+            if(data['scriptVersion_'+obj] == ""){
+              makeScript += data['scriptPackage_'+obj] +"\n"
+              makeScriptStep_3 = true;
+            }else{
+              makeScript += "["+ data['scriptPackage_'+obj] +", "+  data['scriptVersion_'+obj] +"]\n"
+              makeScriptStep_3 = true;
+            }
+          }            
+        })
+
+      if(!makeScriptStep_1 && !makeScriptStep_2 && !makeScriptStep_3){
+        makeScript = "";
+      }
+
+      data.makeScript = makeScript;
+
+      console.log("data : "+ JSON.stringify(data))
+
+      onOk({ ...data })
     })
   }
 
@@ -376,12 +416,13 @@ const RegistModal = (props) => {
   // 스크립트 끝 ==================================================
 
   
-
+  const [tab, setTab] = useState("I");
+  const { TabPanel } = Tabs;
  
   return (
     <>  
         <Modal
-          icon="cluster"
+          icon="templet"
           width={960}
           title={props.title}
           onCancel={closeModal}
@@ -452,6 +493,18 @@ const RegistModal = (props) => {
                   <Form.Item
                     label={t('유형')}
                   >
+                    <Tabs type="button" activeName={tab} onChange={newTab => {
+                       setTab(newTab) ;
+                       setImageType(newTab);
+                    }}>
+                        <TabPanel label="이미지" name="I"/>
+                        <TabPanel label="부트볼륨" name="B"/>
+                    </Tabs>
+                  </Form.Item>
+
+                  {/* <Form.Item
+                    label={t('유형')}
+                  >
                     <RadioGroup
                       name="imageType"
                       wrapClassName="radio"
@@ -464,7 +517,7 @@ const RegistModal = (props) => {
                         </RadioButton>
                       ))}
                     </RadioGroup>
-                  </Form.Item>    
+                  </Form.Item>     */}
 
                   { imageType == "I" &&            
                     <Form.Item>
@@ -545,7 +598,6 @@ const RegistModal = (props) => {
                     <Form.Item
                       className={styles.textarea}
                       label={t('설명')}
-                      desc={t('DESCRIPTION_DESC')}
                     >
                       <TextArea
                         name="description"
@@ -561,7 +613,7 @@ const RegistModal = (props) => {
                 {/* 네트워크 설정 시작==========================================*/}
                 <div className={`${regStep == 2 ? "" : "hide"}`}>
 
-                  <Form.Item label={t('내부 네트워크')} >
+                  <Form.Item label={t('네트워크')} >
                     <div className={styles.wrapper}>
                       <div>
                         총 {stateVariables['network'].length}건
@@ -594,7 +646,7 @@ const RegistModal = (props) => {
                               {!networkDataList?.length &&
                                   <tr>
                                     <td colSpan="6" className="no-data">
-                                      <p>모든 자원이 할당 되었습니다.</p>
+                                      <p>할당 가능한 자원이 없습니다.</p>
                                     </td>
                                   </tr>
                                 }
@@ -653,7 +705,7 @@ const RegistModal = (props) => {
                               {!sriovNetworkDataList?.length &&
                                   <tr>
                                     <td colSpan="5" className="no-data">
-                                      <p>모든 자원이 할당 되었습니다.</p>
+                                      <p>할당 가능한 자원이 없습니다.</p>
                                     </td>
                                   </tr>
                                 }
@@ -727,7 +779,7 @@ const RegistModal = (props) => {
                               {!securityGroupDataList?.length &&
                                   <tr>
                                     <td colSpan="5" className="no-data">
-                                      <p>모든 자원이 할당 되었습니다.</p>
+                                      <p>할당 가능한 자원이 없습니다.</p>
                                     </td>
                                   </tr>
                                 }

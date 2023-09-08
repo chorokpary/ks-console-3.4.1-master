@@ -238,7 +238,7 @@ export default class Vms extends React.Component {
       <ListPage {...this.props}>
       <Banner
         {...bannerProps}
-        icon="key"
+        icon="templet"
         tabs={this.tabs}
         title={t('가상머신')}
         description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}

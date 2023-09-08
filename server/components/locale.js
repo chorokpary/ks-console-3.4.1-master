@@ -33,6 +33,7 @@ module.exports = function(app) {
       'zh-tw': 'tc',
       'en-uk': 'en',
       'en-us': 'en',
+      'ko-kr': 'ko',
     },
     dirs: [root('server/locales')],
   })

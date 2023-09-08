@@ -20,7 +20,7 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components'
+import { Loading, Notify } from '@kube-design/components'
 
 import { getLocalTime } from 'utils'
 import { trigger } from 'utils/action'
@@ -73,12 +73,14 @@ export default class VmDetail extends React.Component {
       text: t('EDIT_INFORMATION'),
       action: 'edit',
       show: this.showEdit,
-      onClick: () =>
-        this.trigger('vm.edit', {
-          type: this.name,
-          detail: toJS(this.store.detail),
-          success: this.fetchData,
-        }),
+      onClick: () => {
+        Notify.info('개발 중 입니다.')
+      }
+        // this.trigger('vm.edit', {
+        //   type: this.name,
+        //   detail: toJS(this.store.detail),
+        //   success: this.fetchData,
+        // }),
     },
     {
       key: 'viewYaml',
