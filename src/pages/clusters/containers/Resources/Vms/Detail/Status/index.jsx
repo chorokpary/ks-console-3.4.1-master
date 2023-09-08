@@ -19,7 +19,6 @@ import DetailSecurityGroupList from 'pages/clusters/containers/Resources/compone
 const Status = (props) => {
 
   const store = props.detailStore;
-  console.log("props : "+ JSON.stringify(store.metrics))
   // console.log("store : "+ JSON.stringify(store))
 
   const [detailFlavor, setDetailFlavor] = useState(null);
@@ -136,7 +135,7 @@ const Status = (props) => {
             <div className={styles.wrapper}>
               <div className={styles.itemMain} >
                 <div className={styles.icon}>
-                  <Icon name="cluster" size={40} />
+                  <Icon name="templet" size={40} />
                 </div>
                 <div className={styles.content}>
                   <div className={styles.text}>

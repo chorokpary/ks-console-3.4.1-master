@@ -206,7 +206,7 @@ const DetailVmList = (props) => {
                 >
                   <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
                     <div className={styles.icon}>
-                      <Icon name="network-duotone" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+                      <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
                     </div>
                     {renderContent(obj)}
                   </div>

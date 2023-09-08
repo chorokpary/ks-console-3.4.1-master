@@ -85,6 +85,11 @@ export default class VmStore extends Base {
       })
       await Promise.all(promises);
 
+     // 초기 정렬 처리
+      vmArray.sort((a, b) => {
+        return a.creation_timestamp < b.creation_timestamp ? 1 : a.creation_timestamp > b.creation_timestamp ? -1 : 0;
+      });
+
       // 초기 데이터 처리 
       this.dataList = vmArray;
     } else {
@@ -153,14 +158,61 @@ export default class VmStore extends Base {
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
 
+    console.log(JSON.stringify(data))
+
     const jsonData = {};
-    const keypairData = {};
+    const resourceData = {};
 
-    keypairData.name = data.name;
-    keypairData.public_key = data.publicKey;
-    keypairData.description = data?.description;
+    resourceData.name = data.name;
+    resourceData.image = data.image;
+    resourceData.flavor = data.flavor;
+    resourceData.keypair = data.keypair;
+    
+    //resourceData.boot_dv = data.imageType == "I" ? "" : data.bootvolume;
 
-    jsonData.keypair = keypairData;
+    const securityGroupsArray = [];
+    data.securitygroup.map((name) => {
+        securityGroupsArray.push(name);
+    });
+    resourceData.security_groups = securityGroupsArray;
+    
+    const networksArray = [];
+    data.network.map((name) => {
+        let networkName = {}
+        networkName.network_name = name;
+        networksArray.push(networkName);
+    });
+    resourceData.networks = networksArray;
+
+    // api에서 이름 넣으면 스크립트 오류 발생 함
+    // resourceData.username = globals.user.username; // Failed to validate the cloud-init script 오류나서 안보냄
+    resourceData.username = "";
+    resourceData.user_script = data.userScript == "" ? data.makeScript : data.userScript;
+    //resourceData.user_script = "#cloud-config\npassword: rocky\nchpasswd: {expire: False}\nssh_pwauth: True\nssh_svcname: ssh\nssh_deletekeys: True\nssh_genkeytypes: ['rsa', 'ecdsa']"
+
+    const sriovNetworksArray = [];
+    data.sriov.map((name) => {
+        sriovNetworksArray.push(name);
+    });
+    resourceData.sriov_networks = sriovNetworksArray;
+
+    const hostDeviceArray = [];
+    resourceData.host_devices = hostDeviceArray;
+
+    const gpuDeviceArray = [];
+    resourceData.gpus = gpuDeviceArray;
+
+    if (data.node != "N/A" && data.imageType != "B" && hostDeviceArray.length == 0 && gpuDeviceArray.length == 0) {
+        resourceData.node = data.node;
+    }
+
+    resourceData.description = data.description;
+    resourceData.storage_class = "openebs-hostpath"; // 고정값
+    // resourceData.storage_class = "longhorn"; // 고정값
+
+    jsonData.vm = resourceData;
+
+    console.log(JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
     return res

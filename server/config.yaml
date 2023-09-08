@@ -66,6 +66,8 @@ client:
       recommend: true
     - label: "简体中文"
       value: "zh"
+    - label: "한국어"
+      value: "ko"
       recommend: true
     - label: "English"
       value: "en"
@@ -260,7 +262,7 @@ client:
                 authKey: cluster-settings,
               }
         - name: resources
-          title: Resources
+          title: "리소스"
           icon: appcenter
           showInDisable: true
           children:
