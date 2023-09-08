@@ -211,9 +211,9 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     if(step ==1){
-      if(imageType == "I" && (data.name == "" || data.image == "선택" || data.flavor == "선택")){
+      if(imageType == "I" && (data.name == undefined || data.image == "선택" || data.flavor == "선택")){
         handleOk();
-      }else if(imageType == "B" && (data.name == "" || data.bootvolume == "선택" || data.flavor == "선택")){
+      }else if(imageType == "B" && (data.name == undefined || data.bootvolume == "선택" || data.flavor == "선택")){
         handleOk();
       }else{
         setRegStep(2);

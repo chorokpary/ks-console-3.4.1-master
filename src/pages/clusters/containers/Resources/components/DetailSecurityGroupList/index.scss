@@ -209,7 +209,7 @@
     .text {
       display: table-cell;
       vertical-align: middle;
-      width: 16%;
+      width: 20%;
       padding-right: 20px;
 
       &:first-of-type {
@@ -290,27 +290,35 @@
   margin-right: 12px;
 }
 
+.table {
 
-.table table {
-  width: 100%;
-  text-align: left;
-
-  thead {
-      th {
-          text-transform: uppercase;
-          padding: 10px;
-      }
-  }
-  tbody {
-      tr {
-          border-bottom: 1px solid #F1F1F1;
-          color: #75787b;
-          td {
+    table {
+      width: 100%;
+      text-align: left;
+      thead {
+          th {
+              text-transform: uppercase;
               padding: 10px;
           }
-          th {
-              padding-left: 10px;
+      }
+      tbody {
+          tr {
+              border-bottom: 1px solid #F1F1F1;
+              color: #75787b;
+              td {
+                  padding: 10px;
+              }
+              th {
+                  padding-left: 10px;
+              }
           }
       }
-  }
+    }
+} 
+
+.panelWrapper {
+    padding: 12px;
+    border: 1px solid #ccd3db;
+    border-radius: 4px;
+    background-color: #ffffff;
 }
