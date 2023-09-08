@@ -1,9 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack'
 import './../dashboard.css'
 
 export default function CustomDashboardEdit() {
+
+  // accordion
+  var accordionButtons;
+  var accordionContents;
+  var openAllButton;
+  var closeAllButton;
+
+  // popover preview
+  var openButtons;
+  var popoverContainers;
+  var closeButtons;
+  var addButtons;
+
+  // switch 토글 전체 열고 닫기
+  var toggleAll;
+  var toggles;
 
   const options = {
     float: false,
@@ -16,9 +32,116 @@ export default function CustomDashboardEdit() {
 
   useEffect(() => {
     GridStack.init(options);
+
+    accordionButtons = document.querySelectorAll('.accordion-btn');
+    accordionContents = document.querySelectorAll('.accordion-content');
+    openAllButton = document.getElementById('openAll');
+    closeAllButton = document.getElementById('closeAll');
+
+    openButtons = document.querySelectorAll(".open-popover-button");
+    popoverContainers = document.querySelectorAll(".popover-container");
+    closeButtons = document.querySelectorAll(".close-popover-button");
+    addButtons = document.querySelectorAll(".btn_add");
+
+    toggleAll = document.getElementById('toggle-all');
+    toggles = document.querySelectorAll('.toggle');
+
+    // 모든 아코디언 초기로 열기
+    accordionButtons.forEach((button, index) => {
+      button.classList.add('active');
+      const content = accordionContents[index];
+      content.style.maxHeight = content.scrollHeight + "px";
+    });
+
+    // 각 버튼을 클릭할 때 팝오버 열기
+    openButtons.forEach(function (openButton, index) {
+      openButton.addEventListener("click", function (event) {
+        // 다른 팝오버 닫기
+        closeAllPopovers();
+
+        var popoverContainer = popoverContainers[index];
+        var buttonRect = openButton.getBoundingClientRect();
+
+        // 해당 팝오버를 버튼의 오른쪽에 위치
+        popoverContainer.style.top = buttonRect.top + "px";
+        popoverContainer.style.left = buttonRect.right + "px";
+        popoverContainer.style.display = "block";
+
+        // 팝오버의 top 위치가 400px보다 많을 때 position을 bottom: 50px로 변경
+        if (buttonRect.top > 450) {
+          popoverContainer.style.top = "auto";
+          popoverContainer.style.bottom = "100px";
+        } else {
+          popoverContainer.style.bottom = "auto";
+        }
+
+        // 팝오버가 열렸을 때 문서의 다른 부분을 클릭하면 닫히도록 이벤트 리스너 추가
+        document.addEventListener("click", function closePopoverOutside(event) {
+          if (!popoverContainer.contains(event.target)) {
+            popoverContainer.style.display = "none";
+            document.removeEventListener("click", closePopoverOutside);
+          }
+        });
+
+        event.stopPropagation();
+      });
+    });
+
+    toggleAll.addEventListener('change', () => {
+      const toggleAllChecked = toggleAll.checked;
+      toggles.forEach(toggle => {
+        toggle.checked = toggleAllChecked;
+      });
+    });
+
+    toggles.forEach(toggle => {
+      toggle.addEventListener('change', () => {
+        const allTogglesChecked = Array.from(toggles).every(t => t.checked);
+        toggleAll.checked = allTogglesChecked;
+      });
+    });
+  }, [])
+
+  useEffect(() => {
+    // 각 팝오버의 닫기 버튼을 클릭할 때 팝오버 닫기
+    closeButtons.forEach(function (closeButton) {
+      closeButton.addEventListener("click", function () {
+        var popoverContainer = closeButton.closest(".popover-container");
+        popoverContainer.style.display = "none";
+      });
+    });
+    return () => {
+      closeButtons.forEach(function (closeButton) {
+        closeButton.removeEventListener("click", function () {
+          var popoverContainer = closeButton.closest(".popover-container");
+          popoverContainer.style.display = "none";
+        });
+      });
+    }
   }, [])
 
 
+  // 전체 열기 버튼 클릭 시 모든 아코디언 열기
+  const openAll = () => {
+    accordionButtons.forEach((button, index) => {
+      button.classList.add('active');
+      accordionContents[index].style.maxHeight = accordionContents[index].scrollHeight + "px";
+    });
+  }
+  // 전체 닫기 버튼 클릭 시 모든 아코디언 닫기
+  const closeAll = () => {
+    accordionButtons.forEach((button, index) => {
+      button.classList.remove('active');
+      accordionContents[index].style.maxHeight = null;
+    });
+  }
+
+  // 팝오버 닫기 함수
+  const closeAllPopovers = () => {
+    popoverContainers.forEach(function (popoverContainer) {
+      popoverContainer.style.display = "none";
+    });
+  }
 
   return (
     <>
@@ -1353,8 +1476,8 @@ export default function CustomDashboardEdit() {
                 <div className="text">전체선택</div>
               </div>
               <div className="right">
-                <button id="closeAll"><i className="ico-fold-all"></i></button>
-                <button id="openAll"><i className="ico-fold-unfold-all"></i></button>
+                <button id="closeAll" onClick={() => closeAll()}><i className="ico-fold-all"></i></button>
+                <button id="openAll" onClick={() => openAll()}><i className="ico-fold-unfold-all"></i></button>
               </div>
             </div>
 

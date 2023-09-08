@@ -629,8 +629,8 @@ select {
 }
 
 .edit_left .accordion .accordion-content {
-    /* max-height: 0; */
-    max-height: 300;
+    max-height: 0;
+    /* max-height: 300; */
     padding: 0 15px;
     overflow: hidden;
     transition: max-height .3s ease-in-out;
