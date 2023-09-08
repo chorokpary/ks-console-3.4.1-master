@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal, TypeSelect } from 'components/Base'
 import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
-import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, InputPassword, Notify, Tabs } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, InputPassword, Notify, Tabs, Icon } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import * as common from "utils/resources"
@@ -486,8 +486,9 @@ const RegistModal = (props) => {
                   <Form.Item
                     label={t('이름')}
                     rules={[{ required: true, message: t('이름를 입력해 주세요.') }]}
+                    desc={t('NAME_DESC')}
                   >
-                  <Input name="name" autoFocus={true}  maxLength={63} />   
+                  <Input name="name" autoFocus={true}  maxLength={63} style={{ maxWidth: 'none' }}/>   
                   </Form.Item>
 
                   <Form.Item
@@ -598,6 +599,7 @@ const RegistModal = (props) => {
                     <Form.Item
                       className={styles.textarea}
                       label={t('설명')}
+                      desc={t('DESCRIPTION_DESC')}
                     >
                       <TextArea
                         name="description"
@@ -967,6 +969,7 @@ const RegistModal = (props) => {
                         <div className={styles.list}>
                           <label>이미지</label>
                           <div className={styles.multiline}>
+                              <Icon name="ubunt" size={40} />
                             <div className={styles.bold}>{imageName}</div>
                           </div>
                         </div>
@@ -974,7 +977,9 @@ const RegistModal = (props) => {
                           <label>Flavor</label>
                           <div className={styles.multiline}>
                             <div className={styles.bold}>{flavorName}</div>
-                            <p><span className={styles.flag}><em>CPU</em> {flavorCpu} Cores</span><br /><span className={styles.flag}><em>Memory</em> {flavorMemory}</span><br /><span className={styles.flag}><em>Disk</em> {flavorDisk} Gib</span></p>
+                            <p>
+                              CPU {flavorCpu} Cores / Memory {flavorMemory} / Disk {flavorDisk} Gib
+                            </p>
                           </div>
                         </div>
                         <div className={styles.list}>

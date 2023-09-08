@@ -130,6 +130,7 @@ const ModifyModal = (props) => {
                 maxLength={63}
                 defaultValue={props.store.detail.router.name}
                 disabled
+                style={{ maxWidth: 'none' }}
               />   
             </Form.Item>
             <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>

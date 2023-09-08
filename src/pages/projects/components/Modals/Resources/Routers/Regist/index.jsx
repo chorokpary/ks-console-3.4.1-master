@@ -130,7 +130,7 @@ const RegistModal = (props) => {
                 name="routerName"
                 autoFocus={true}
                 maxLength={63}
-
+                style={{ maxWidth: 'none' }}
               />   
             </Form.Item>
             <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>

@@ -99,7 +99,7 @@ const RegistModal = (props) => {
                 name="name"
                 autoFocus={true}
                 maxLength={63}
-
+                style={{ maxWidth: 'none' }}
               />   
             </Form.Item>
 
