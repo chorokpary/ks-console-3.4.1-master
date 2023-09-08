@@ -127,7 +127,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
               //   }),
               // },
             ]}
-          // desc={t('LONG_NAME_DESC')}
+            desc={t('NAME_DESC')}
           >
             <Input name="name" maxLength={253}
               style={{ maxWidth: 'none' }} />
@@ -287,7 +287,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
           <Form.Item
             label={t('설명')}
-          // desc={t('DESCRIPTION_DESC')}
+            desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
               style={{ maxWidth: 'none' }}

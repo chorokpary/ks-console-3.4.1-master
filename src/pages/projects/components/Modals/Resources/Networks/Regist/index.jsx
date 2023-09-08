@@ -159,9 +159,19 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
     const { data } = form.current.props;
     if (e == 'FLAT') {
       data.segment_id = ' ';
+      const a = document.getElementById('segment_id')
+      if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
+        a.nextElementSibling.classList.add('hide')
+        a.parentElement.parentElement.classList.remove("error-item");
+      }
       setExternalBool(true)
     } else {
       data.segment_id = '';
+      const a = document.getElementById('segment_id')
+      if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
+        a.nextElementSibling.classList.remove('hide')
+        a.parentElement.parentElement.classList.add("error-item");
+      }
       document.getElementById('radio.0').click();
       setExternalBool(false)
     }
@@ -183,6 +193,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
           <Form.Item
             label={t('이름')}
             rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+            desc={t('NAME_DESC')}
           >
             <Input name="name" maxLength={253}
               style={{ maxWidth: 'none' }} />

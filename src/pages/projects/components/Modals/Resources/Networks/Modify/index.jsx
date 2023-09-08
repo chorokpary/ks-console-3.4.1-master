@@ -150,6 +150,7 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
           <Form.Item
             label={t('이름')}
             rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+            desc={t('NAME_DESC')}
           >
             <Input name="name" maxLength={253}
               defaultValue={detail.name}
@@ -302,6 +303,7 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
           <Form.Item
             label={t('설명')}
             rules={[{ required: true, message: '설명을 입력해주세요.' }]}
+            desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
               defaultValue={detail.description}

@@ -189,6 +189,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
           <Form.Item
             label={t('설명')}
             rules={[{ required: true, message: '설명을 입력해주세요.' }]}
+            desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
               defaultValue={detail.description}
