@@ -207,7 +207,7 @@ i {
     display: block
 }
 
-select {
+.dashboard select {
     border: 1px solid #abb4be;
     border-radius: 4px;
     background: #fff url("/assets/resources/images/icons/ico-arrow-down.svg") right 15px center no-repeat;
@@ -221,11 +221,11 @@ select {
     appearance: none
 }
 
-.select-list-box {
+.dashboard .select-list-box {
     position: relative
 }
 
-.selected-item {
+.dashboard .selected-item {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -236,7 +236,7 @@ select {
     padding: 11px 34px 11px 12px
 }
 
-.selected-item:before {
+.dashboard .selected-item:before {
     content: "";
     position: absolute;
     width: 30px;
@@ -247,12 +247,12 @@ select {
     background: url("/assets/resources/images/icons/ico-select-arrow.svg") right 8px center no-repeat
 }
 
-.selected-item.active:before {
+.dashboard .selected-item.active:before {
     right: 3px;
     transform: rotate(180deg)
 }
 
-.selected-item .icon {
+.dashboard .selected-item .icon {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -260,12 +260,12 @@ select {
     height: 24px
 }
 
-.selected-item p {
+.dashboard .selected-item p {
     min-height: 20px;
     user-select: none
 }
 
-.selected-item strong {
+.dashboard .selected-item strong {
     display: block;
     height: 20px;
     line-height: 20px;
@@ -274,7 +274,7 @@ select {
     font-weight: 500
 }
 
-.selected-item span {
+.dashboard .selected-item span {
     display: block;
     height: 20px;
     line-height: 20px;
@@ -282,11 +282,11 @@ select {
     font-size: 12px
 }
 
-.selected-item.single {
+.dashboard .selected-item.single {
     padding: 5px 34px 5px 12px
 }
 
-.selected-item.single .icon {
+.dashboard .selected-item.single .icon {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -294,62 +294,62 @@ select {
     height: 20px
 }
 
-.selected-item.single strong {
+.dashboard .selected-item.single strong {
     font-weight: 400
 }
 
-.selected-item.multi p {
+.dashboard .selected-item.multi p {
     display: flex;
     justify-content: flex-start;
     align-items: center
 }
 
-.selected-item.multi p strong {
+.dashboard .selected-item.multi p strong {
     white-space: nowrap
 }
 
-.selected-item.multi p strong:after {
+.dashboard .selected-item.multi p strong:after {
     content: ",";
     padding-right: 4px
 }
 
-.selected-item.multi p strong:last-child:after {
+.dashboard .selected-item.multi p strong:last-child:after {
     content: "";
     padding-right: 0
 }
 
-.selected-item.active {
+.dashboard .selected-item.active {
     border: 1px solid #55bc8a !important;
     box-shadow: 0 0px 8px rgba(85, 188, 138, .2)
 }
 
-.selected-item+.checkbox-list,
-.selected-item+.select-list {
+.dashboard .selected-item+.checkbox-list,
+.dashboard .selected-item+.select-list {
     top: calc(100% + 4px);
     left: 0;
     right: inherit;
     bottom: inherit
 }
 
-.selected-item.top-down+.checkbox-list,
-.selected-item.top-down+.select-list {
+.dashboard .selected-item.top-down+.checkbox-list,
+.dashboard .selected-item.top-down+.select-list {
     top: inherit;
     bottom: calc(100% + 4px)
 }
 
-.selected-item.right+.checkbox-list,
-.selected-item.right+.select-list {
+.dashboard .selected-item.right+.checkbox-list,
+.dashboard .selected-item.right+.select-list {
     left: inherit;
     right: 0
 }
 
-.selected-item.active+.checkbox-list,
-.selected-item.active+.select-list {
+.dashboard .selected-item.active+.checkbox-list,
+.dashboard .selected-item.active+.select-list {
     display: block
 }
 
-.selected-item.top-down.active+.checkbox-list,
-.selected-item.top-down.active+.select-list {
+.dashboard .selected-item.top-down.active+.checkbox-list,
+.dashboard .selected-item.top-down.active+.select-list {
     display: block;
     animation: show-fade-down .5s
 }
@@ -479,7 +479,7 @@ select {
     font-size: 11px
 }
 
-.footer {
+.dashboard .footer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -490,7 +490,7 @@ select {
     padding: 20px 20px
 }
 
-.footer button {
+.dashboard .footer button {
     border: 1px solid #ccd3db;
     border-radius: 16px;
     background: #eff4f9;
@@ -498,12 +498,12 @@ select {
     margin: 0
 }
 
-.footer button:hover,
-.footer button:active {
+.dashboard .footer button:hover,
+.dashboard .footer button:active {
     background: #d8dee5
 }
 
-*.btn {
+.dashboard *.btn {
     border-radius: 16px;
     min-width: 90px;
     height: 32px;
@@ -513,7 +513,7 @@ select {
     padding: 5px 23px
 }
 
-*.btn.btn-default {
+.dashboard *.btn.btn-default {
     flex: 0 0 auto !important;
     border: 1px solid #ccd3db;
     background: #eff4f9;
@@ -521,24 +521,24 @@ select {
     box-shadow: none
 }
 
-*.btn.btn-default:hover {
+.dashboard *.btn.btn-default:hover {
     background-color: #e3e9ef;
     border-color: #c1c9d1
 }
 
-*.btn.btn-primary {
+.dashboard *.btn.btn-primary {
     flex: 0 0 auto !important;
     background: #242e42;
     color: #fff;
     box-shadow: 0 4px 8px 0 rgba(35, 45, 65, .28)
 }
 
-*.btn.btn-primary:hover {
+.dashboard *.btn.btn-primary:hover {
     box-shadow: none;
     background: #242e42
 }
 
-*.btn.btn-cancel {
+.dashboard *.btn.btn-cancel {
     flex: 0 0 auto !important;
     background: #ca2621;
     color: #fff
@@ -1189,16 +1189,16 @@ select {
 
 .dash_wrap .dash_boxtab input[type=radio]+span {
     border-radius: 1px;
-    padding: 5px 10px;
+    padding: 3px 10px;
     transition: all .4s;
     -webkit-transition: all .4s;
-    font-size: 12px;
+    font-size: 11px;
     color: #36435c
 }
 
 .dash_wrap .dash_boxtab input[type=radio]:checked+span {
     background-color: #fff;
-    font-size: 12px
+    font-size: 11px
 }
 
 .dash_wrap .hexagon_wrap {
@@ -1254,7 +1254,7 @@ select {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: .9rem;
+    font-size: 10px;
     font-weight: bold
 }
 
@@ -1463,7 +1463,8 @@ select {
 
 .dash_wrap .grid_wrap {
     display: inline-block;
-    width: 100%
+    width: 100%;
+    padding: 10px;
 }
 
 .dash_wrap .grid_wrap .grid-stack {

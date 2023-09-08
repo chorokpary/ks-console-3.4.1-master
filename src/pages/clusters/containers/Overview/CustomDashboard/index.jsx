@@ -254,7 +254,7 @@ const CustomDashboard = (props) => {
                     {/* // 01 */}
 
                     {/* 02 */}
-                    <div className="grid-stack-item" gs-x="0" gs-y="4" gs-w="9" gs-h="5">
+                    <div className="grid-stack-item" gs-x="0" gs-y="4" gs-w="9" gs-h="6">
                       <div className="grid-stack-item-content">
                         {/* grid_item */}
                         <div className="grid_item">
@@ -350,7 +350,7 @@ const CustomDashboard = (props) => {
                     {/* // 02 */}
 
                     {/* 02 */}
-                    <div className="grid-stack-item" gs-x="0" gs-y="20" gs-w="9" gs-h="5">
+                    <div className="grid-stack-item" gs-x="0" gs-y="10" gs-w="9" gs-h="6">
                       <div className="grid-stack-item-content">
                         {/* grid_item */}
                         <div className="grid_item">
@@ -670,7 +670,7 @@ const CustomDashboard = (props) => {
                     {/* // 03 */}
 
                     {/* 03 */}
-                    <div className="grid-stack-item" gs-x="9" gs-y="16" gs-w="3" gs-h="9">
+                    <div className="grid-stack-item" gs-x="9" gs-y="17" gs-w="3" gs-h="9">
                       <div className="grid-stack-item-content">
                         {/* grid_item */}
                         <div className="grid_item">
@@ -766,7 +766,7 @@ const CustomDashboard = (props) => {
                     {/* // 03 */}
 
                     {/* 04 */}
-                    <div className="grid-stack-item" gs-x="0" gs-y="16" gs-w="9" gs-h="4">
+                    <div className="grid-stack-item" gs-x="0" gs-y="21" gs-w="9" gs-h="4">
                       <div className="grid-stack-item-content">
                         {/* grid_item */}
                         <div className="grid_item">
@@ -1077,7 +1077,7 @@ const CustomDashboard = (props) => {
                     {/* // 04 */}
 
                     {/* 06 */}
-                    <div className="grid-stack-item" gs-x="0" gs-y="10" gs-w="9" gs-h="6">
+                    <div className="grid-stack-item" gs-x="0" gs-y="25" gs-w="9" gs-h="7">
                       <div className="grid-stack-item-content">
                         {/* grid_item */}
                         <div className="grid_item">
@@ -1098,9 +1098,9 @@ const CustomDashboard = (props) => {
                                 <span>x86</span>
                               </label>
                             </div>
-                            <div className="right">
+                            {/* <div className="right">
                               <i className="ico-btn-trash"></i>
-                            </div>
+                            </div> */}
                           </div>
                           <div className="grid_info style_status style_node">
                             <div className="box type_node">

@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react'
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack'
 import './../dashboard.css'
+import { inject, observer } from 'mobx-react';
 
-export default function CustomDashboardEdit() {
+const CustomDashboardEdit = (props) => {
+
+  const { cluster } = props.match.params
+  const { routing } = props.rootStore;
 
   // accordion
   var accordionButtons;
@@ -63,7 +67,7 @@ export default function CustomDashboardEdit() {
         var buttonRect = openButton.getBoundingClientRect();
 
         // 해당 팝오버를 버튼의 오른쪽에 위치
-        popoverContainer.style.top = buttonRect.top + "px";
+        popoverContainer.style.top = (buttonRect.top - 80) + "px";
         popoverContainer.style.left = buttonRect.right + "px";
         popoverContainer.style.display = "block";
 
@@ -143,6 +147,10 @@ export default function CustomDashboardEdit() {
     });
   }
 
+  const cancelEdit = () => {
+    routing.push(`/clusters/${cluster}/overview`)
+  }
+
   return (
     <>
       <div className="dashboard">
@@ -164,7 +172,7 @@ export default function CustomDashboardEdit() {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>클러스터 노드</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
@@ -214,7 +222,7 @@ export default function CustomDashboardEdit() {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>Pod</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
@@ -259,7 +267,7 @@ export default function CustomDashboardEdit() {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>가상머신</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
@@ -304,7 +312,7 @@ export default function CustomDashboardEdit() {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>쿠버네티스</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
@@ -343,7 +351,7 @@ export default function CustomDashboardEdit() {
                       {/* // 01 */}
 
                       {/* 02 */}
-                      <div className="grid-stack-item" gs-x="0" gs-y="4" gs-w="9" gs-h="5">
+                      <div className="grid-stack-item" gs-x="0" gs-y="4" gs-w="9" gs-h="6">
                         <div className="grid-stack-item-content">
                           {/* grid_item */}
                           <div className="grid_item">
@@ -368,7 +376,7 @@ export default function CustomDashboardEdit() {
                                     <span>쿠버네티스</span>
                                   </label>
                                 </div>
-                                {/*<i className="ico ico-btn-trash"></i>*/}
+                                <i className="ico ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_chart">
@@ -439,7 +447,7 @@ export default function CustomDashboardEdit() {
                       {/* // 02 */}
 
                       {/* 02 */}
-                      <div className="grid-stack-item" gs-x="0" gs-y="20" gs-w="9" gs-h="5">
+                      <div className="grid-stack-item" gs-x="0" gs-y="10" gs-w="9" gs-h="6">
                         <div className="grid-stack-item-content">
                           {/* grid_item */}
                           <div className="grid_item">
@@ -464,7 +472,7 @@ export default function CustomDashboardEdit() {
                                     <span>쿠버네티스</span>
                                   </label>
                                 </div>
-                                {/*<i className="ico ico-btn-trash"></i>*/}
+                                <i className="ico ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_chart">
@@ -512,7 +520,7 @@ export default function CustomDashboardEdit() {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>리소스 사용량 Top 5</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_list">
                               <div className="select_wrap">
@@ -669,7 +677,7 @@ export default function CustomDashboardEdit() {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>최근 생성된 리소스 (일주일)</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_list">
                               {/* // select_wrap */}
@@ -759,13 +767,13 @@ export default function CustomDashboardEdit() {
                       {/* // 03 */}
 
                       {/* 03 */}
-                      <div className="grid-stack-item" gs-x="9" gs-y="16" gs-w="3" gs-h="9">
+                      <div className="grid-stack-item" gs-x="9" gs-y="17" gs-w="3" gs-h="9">
                         <div className="grid-stack-item-content">
                           {/* grid_item */}
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>이슈</label>
-                              {/*<i className="ico ico-btn-trash"></i>*/}
+                              <i className="ico ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_list">
                               {/* // select_wrap */}
@@ -855,14 +863,14 @@ export default function CustomDashboardEdit() {
                       {/* // 03 */}
 
                       {/* 04 */}
-                      <div className="grid-stack-item" gs-x="0" gs-y="16" gs-w="9" gs-h="4">
+                      <div className="grid-stack-item" gs-x="0" gs-y="21" gs-w="9" gs-h="4">
                         <div className="grid-stack-item-content">
                           {/* grid_item */}
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>컴퓨팅 유형별 현황</label>
                               <div className="right">
-                                {/*<i className="ico ico-btn-trash"></i>*/}
+                                <i className="ico ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status box_nth">
@@ -1006,7 +1014,7 @@ export default function CustomDashboardEdit() {
                             <div className="grid_title">
                               <label>리소스 변화량</label>
                               <div className="right">
-                                {/*<i className="ico ico-btn-trash"></i>*/}
+                                <i className="ico ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status box_long">
@@ -1092,7 +1100,7 @@ export default function CustomDashboardEdit() {
                             <div className="grid_title">
                               <label>쿠버네티스 컴포넌트 상태</label>
                               <div className="right">
-                                {/*<i className="ico ico-btn-trash"></i>*/}
+                                <i className="ico ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status box_nth_wrap">
@@ -1166,7 +1174,7 @@ export default function CustomDashboardEdit() {
                       {/* // 04 */}
 
                       {/* 06 */}
-                      <div className="grid-stack-item" gs-x="0" gs-y="10" gs-w="9" gs-h="6">
+                      <div className="grid-stack-item" gs-x="0" gs-y="25" gs-w="9" gs-h="7">
                         <div className="grid-stack-item-content">
                           {/* grid_item */}
                           <div className="grid_item">
@@ -1188,7 +1196,7 @@ export default function CustomDashboardEdit() {
                                 </label>
                               </div>
                               <div className="right">
-                                <i className="ico-btn-trash"></i>
+                                <i className="ico ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status style_node">
@@ -1806,7 +1814,7 @@ export default function CustomDashboardEdit() {
             </div>
 
             <div className="footer">
-              <button type="button" className="btn btn-default">취소</button>
+              <button type="button" className="btn btn-default" onClick={() => cancelEdit()}>취소</button>
               <button type="button" className="btn btn-primary">저장</button>
             </div>
           </div>
@@ -1815,3 +1823,5 @@ export default function CustomDashboardEdit() {
     </>
   )
 }
+
+export default inject('rootStore')(observer(CustomDashboardEdit));
