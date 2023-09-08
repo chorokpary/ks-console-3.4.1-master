@@ -85,6 +85,11 @@ export default class VmStore extends Base {
       })
       await Promise.all(promises);
 
+     // 초기 정렬 처리
+      vmArray.sort((a, b) => {
+        return a.creation_timestamp < b.creation_timestamp ? 1 : a.creation_timestamp > b.creation_timestamp ? -1 : 0;
+      });
+
       // 초기 데이터 처리 
       this.dataList = vmArray;
     } else {
