@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider, Radio, Column, Columns, Tooltip } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
@@ -13,236 +13,207 @@ const RegistModal = (props) => {
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
 
-    const [rootDisk, setRootDisk] = useState(10);
-    const [ephemeralDisk, setEphemeralDisk] = useState(10);
+    const regexRemoteIp = /[^0123456789.\/]/g;
+    const regexPort = /[^0123456789-]/g;
 
-    const [vcpus, setVcpus] = useState(0);
+    const ruleTypeOptions = [
+        { value: "CUSTOM", label: "사용자 지정", protocol: "TCP", port: "0" },
+        { value: "ALL", label: "ALL", protocol: "TCP", port: "0-65535" },
+        { value: "FTP", label: "FTP", protocol: "TCP", port: "20" },
+        { value: "SSH", label: "SSH", protocol: "TCP", port: "22" },
+        { value: "TELNET", label: "TELNET", protocol: "TCP", port: "23" },
+        { value: "SMTP", label: "SMTP", protocol: "TCP", port: "25" },
+        { value: "DNS", label: "DNS", protocol: "TCP", port: "53" },
+        { value: "DHCP서버", label: "DHCP서버", protocol: "UDP", port: "67" },
+        { value: "DHCP클라이언트", label: "DHCP클라이언트", protocol: "UDP", port: "68" },
+        { value: "HTTP", label: "HTTP", protocol: "TCP", port: "80" },
+        { value: "POP3", label: "POP3", protocol: "TCP", port: "110" },
+        { value: "IMAP4", label: "IMAP4", protocol: "TCP", port: "143" },
+        { value: "HTTPS", label: "HTTPS", protocol: "TCP", port: "443" },
+    ];
 
-    const [devices, setDevices] = useState([]);
-    const [gpus, setGpus] = useState([]);
-    const [extraSpecsFields, setExtraSpecsFields] = useState([]);
-    const [ram, setRam] = useState(0);
-    const [byteFlag, setByteFlag] = useState(true);
+    const ethernetTypeOptions = [
+        { value: "ALL", label: "ALL" },
+        { value: "IPv4", label: "IPv4" },
+    ];
 
-    useEffect(() => {
-        //const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
-        //var res = [];
-        //data.then(response => {
-        //    if (response.data.host_devices) {
-        //        for (let i = 0, n = response.data.host_devices.length; i < n; i += 1) {
-        //            res.push({
-        //                label: response.data.host_devices[i].name,
-        //                value: response.data.host_devices[i].name,
-        //            });
-        //        };
-        //        setDevices(res);
-        //    }
-        //});
-        setDevices([{ label: "device1", value: "device1" }, { label: "device2", value: "device2" }]);
-    }, [])
+    const protocolOptions = [
+        //{ value: "ALL", label: "ALL" },
+        { value: "TCP", label: "TCP" },
+        { value: "UDP", label: "UDP" },
+        { value: "ICMP", label: "ICMP" },
+        { value: "SCTP", label: "SCTP" },
+    ];
 
-    useEffect(() => {
-        //const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
-        //var res = [];
-        //data.then(response => {
-        //    if (response.data.mediated_devices) {
-        //        for (let i = 0, n = response.data.mediated_devices.length; i < n; i += 1) {
-        //            res.push({
-        //                label: response.data.mediated_devices[i].name,
-        //                value: response.data.mediated_devices[i].name,
-        //            });
-        //        };
-        //        setGpus(res);
-        //    }
-        //});
-        setGpus([{ label: "intel.com/x710", value: "intel.com/x710" }, { label: "intel.com/x880", value: "intel.com/x880" }]);
-    }, [])
+    const remoteIpPrefixOptions = [
+        { value: "ALL", label: "ALL" },
+        { value: "", label: "직접입력" },
+    ];
 
-    useEffect(() => {
-        const data = axios.get(`/edgetron/resources/kubevirt/extra_specs`);
-        var res = [];
-        data.then(response => {
-            if (response.data.extra_specs) {
-                for (let i = 0, n = response.data.extra_specs.length; i < n; i += 1) {
-                    res.push({
-                        key: response.data.extra_specs[i].name,
-                        description: response.data.extra_specs[i].description,
-                        value: false,
-                    });
-                };
-                setExtraSpecsFields(res);
-            }
-        });
-        //setExtraSpecsFields([{ name: "hugepage", description: "ddeessccrriippttiioonn", checked: false }
-        //    , { name: "etc", description: "eettccddeesscc", checked: false }]);
-    }, [])
-
-    //slider
-    const handleRootDisk = {
-        onChangeSlider: (e) => {
-            setRootDisk(e);
-        }
-    }
-    const handleEphemeralDisk = {
-        onChangeSlider: (e) => {
-            setEphemeralDisk(e);
-        }
-    }
-
-    //extrSpec check
-    const handCheckExtrSpec = (i, e) => {
-        const values = [...extraSpecsFields];
-        values[i].value = e;
-        setExtraSpecsFields(values);
-    }
-
-    //cpu count
-    const addVcpus = (e) => {
-        e.preventDefault();
-        setVcpus(vcpus + 1);
-    }
-    const minusVcpus = (e) => {
-        e.preventDefault();
-        if (vcpus > 0) {
-            setVcpus(vcpus - 1);
-        }
-    }
-
-    const [formDeviceFields, setFormDeviceFields] = useState([{ name: '', quantity: 0, message: '' }]);
-    //hostDevice handler
-    const handleHostDevice = {
+    const [formRulesIngressFields, setFormRulesIngressFields] = useState([]);
+    //Rules handler
+    const handleIngressRules = {
 
         handleAddFields: () => {
-            const values = [...formDeviceFields, { name: '', quantity: 0, message: '' }];
-            setFormDeviceFields(values);
+            const values = [...formRulesIngressFields,
+            {
+                ruleType: '사용자 지정'
+                , direction: 'Ingress'
+                , ethernetType: 'IPv4'
+                , remoteIpPrefix: ''
+                , protocol: 'TCP'
+                , portRangeMin: 0
+                , portRangeMax: 0
+                , isCustom: true
+                , validPort: { isValid: false, message: "※포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다." }
+            }];
+            setFormRulesIngressFields(values);
         },
 
         handleRemoveFields: (i) => {
-            let values = [...formDeviceFields].filter((obj, idx) => idx !== i);
-            setFormDeviceFields(values);
+            let values = [...formRulesIngressFields].filter((obj, idx) => idx !== i);
+            setFormRulesIngressFields(values);
         },
 
-        handleSelectClick: (i, val) => {
-            const values = [...formDeviceFields];
+        handleInputChange: (i, e) => {
+            const values = [...formRulesIngressFields];
 
-            if (!values.map(obj => obj.name).includes(val) || values[i].name === val || val === "") {
-                values[i].name = val;
-                values[i].message = ""
+            if (e.target.id.indexOf("remoteIpPrefix") != -1) {
+                values[i].remoteIpPrefix = e.target.value.replace(regexRemoteIp, '');
             } else {
-                values[i].message = "이미 선택한 디바이스 입니다.";
-                setTimeout(() => { handleHostDevice.deleteMessage(i) }, 1500);
+                if (regexPort.test(e.target.value) || (e.target.value < 0 || e.target.value > 65535)) {
+                    values[i].validPort.isValid = true;
+                } else {
+                    values[i].validPort.isValid = false;
+                }
+
+                if (e.target.id.indexOf("portRangeMin") != -1) {
+                    values[i].portRangeMin = e.target.value;
+                } else {
+                    values[i].portRangeMax = e.target.value;
+                }
             }
-            setFormDeviceFields(values);
+
+            setFormRulesIngressFields(values);
         },
 
-        deleteMessage: (i) => {
-            const values = [...formDeviceFields];
-            values[i].message = "";
-            setFormDeviceFields(values);
-        },
+        handleSelectClick: (i, e, field, val) => {
+            let values = [...formRulesIngressFields];
 
-        addCnt: (i, val) => {
-            const values = [...formDeviceFields];
-
-            values[i].quantity = Number(val) + 1;
-            setFormDeviceFields(values);
-        },
-        minusCnt: (i, val) => {
-            const values = [...formDeviceFields];
-            let numVal = Number(val);
-
-            if (numVal > 0) {
-                values[i].quantity = numVal - 1;
-                setFormDeviceFields(values);
+            if (field === "ethernetType") {
+                values[i].ethernetType = val;
+            } else if (field === "protocol") {
+                values[i].protocol = val;
+            } else if (field === "remoteIpPrefix") {
+                values[i].remoteIpPrefix = val;
+            } else {
+                values[i].ruleType = val;
+                values = setRuleTypeHandler(i, e, val, values);
             }
-        },
-    }//end hostDevice
 
-    const [formGpuFields, setFormGpuFields] = useState([{ name: '', quantity: 0, message: '' }]);
-    //GPU handler
-    const handleGpu = {
+            setFormRulesIngressFields(values);
+        },
+
+    }//end Rules
+
+    const [formRulesEgressFields, setFormRulesEgressFields] = useState([]);
+    //Rules handler
+    const handleEgressRules = {
 
         handleAddFields: () => {
-            const values = [...formGpuFields, { name: '', quantity: 0, message: '' }];
-            setFormGpuFields(values);
+            const values = [...formRulesEgressFields,
+            {
+                ruleType: '사용자 지정'
+                , direction: 'Egress'
+                , ethernetType: 'IPv4'
+                , remoteIpPrefix: ''
+                , protocol: 'TCP'
+                , portRangeMin: 0
+                , portRangeMax: 0
+                , isCustom: true
+                , validPort: { isValid: false, message: "※포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다." }
+            }];
+            setFormRulesEgressFields(values);
         },
 
         handleRemoveFields: (i) => {
-            let values = [...formGpuFields].filter((obj, idx) => idx !== i);
-            setFormGpuFields(values);
+            let values = [...formRulesEgressFields].filter((obj, idx) => idx !== i);
+            setFormRulesEgressFields(values);
+
+            if (values.filter(obj => obj.ruleType === "ALL").length < 1) {
+                setBtnDisabled(false);
+            }
         },
 
-        handleSelectClick: (i, val) => {
-            const values = [...formGpuFields];
+        handleInputChange: (i, e) => {
+            const values = [...formRulesEgressFields];
 
-            if (!values.map(obj => obj.name).includes(val) || values[i].name === val || val === "") {
-                values[i].name = val;
-                values[i].message = ""
+            if (e.target.id.indexOf("remoteIpPrefix") != -1) {
+                values[i].remoteIpPrefix = e.target.value.replace(regexRemoteIp, '');
             } else {
-                values[i].message = "이미 선택한 GPU 입니다.";
-                setTimeout(() => { handleGpu.deleteMessage(i) }, 1500);
+                if (regexPort.test(e.target.value) || (e.target.value < 0 || e.target.value > 65535)) {
+                    values[i].validPort.isValid = true;
+                } else {
+                    values[i].validPort.isValid = false;
+                }
+
+                if (e.target.id.indexOf("portRangeMin") != -1) {
+                    values[i].portRangeMin = e.target.value;
+                } else {
+                    values[i].portRangeMax = e.target.value;
+                }
             }
-            setFormGpuFields(values);
+
+            setFormRulesEgressFields(values);
         },
 
-        deleteMessage: (i) => {
-            const values = [...formGpuFields];
-            values[i].message = "";
-            setFormGpuFields(values);
-        },
+        handleSelectClick: (i, e, field, val) => {
+            let values = [...formRulesEgressFields];
 
-        addCnt: (i, val) => {
-            const values = [...formGpuFields];
-
-            values[i].quantity = Number(val) + 1;
-            setFormGpuFields(values);
-        },
-        minusCnt: (i, val) => {
-            const values = [...formGpuFields];
-            let numVal = Number(val);
-
-            if (numVal > 0) {
-                values[i].quantity = numVal - 1;
-                setFormGpuFields(values);
+            if (field === "ethernetType") {
+                values[i].ethernetType = val;
+            } else if (field === "protocol") {
+                values[i].protocol = val;
+            } else if (field === "remoteIpPrefix") {
+                values[i].remoteIpPrefix = val;
+            } else {
+                values[i].ruleType = val;
+                if (val === "ALL") {
+                    setBtnDisabled(true);
+                } else {
+                    setBtnDisabled(false);
+                }
+                values = setRuleTypeHandler(i, e, val, values);
             }
+
+            setFormRulesEgressFields(values);
         },
 
-    }//end GPU
+    }//end Rules
 
-    //ram num check
-    const changeRam = (e) => {
-        const { value } = e.target;
-        const onlyNumber = value.replace(/[^0-9]/g, '');
-        setRam(Number(onlyNumber));
-    }
+    //유형에 맞는 프로토콜, 포트범위 셋팅
+    const setRuleTypeHandler = (i, e, val, values) => {
 
-    const handleByte = (size) => {
-
-        if (size === "MiB") {
-            if (ram !== 0) {
-                setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
-            }
-            setByteFlag(false);
+        values[i].isCustom = val === "CUSTOM" ? true : false;
+        if (val === "ALL") {
+            values[i].protocol = "ALL";
+            values[i].ethernetType = "ALL";
         } else {
-            if (ram !== 0) {
-                setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
-            }
-            setByteFlag(true);
+            values[i].protocol = ruleTypeOptions.filter((obj) => obj.value === val)[0].protocol;
+            values[i].ethernetType = "IPv4";
         }
+        values[i].portRangeMax = ruleTypeOptions.filter((obj) => obj.value === val)[0].port;
+        values[i].validPort.isValid = false;
+
+        return values;
     }
+    //----------------end 
 
     const handleOk = () => {
         const onOk = props.onOk;
 
         form.current.validator(() => {
             const { data } = form.current.props;
-            data.vcpus = vcpus;
-            data.ram = byteFlag ? ram * 1024 : ram;
-            data.root_disk = rootDisk;
-            data.ephemeral_disk = ephemeralDisk;
-            data.extra_specs = [...extraSpecsFields].filter(obj => delete obj.description);
-            data.devices = [...formDeviceFields].filter(obj => delete obj.message && obj.name);
-            data.gpus = [...formGpuFields].filter(obj => delete obj.message && obj.name);
             onOk({ flavor: data })
         })
     }
@@ -277,176 +248,11 @@ const RegistModal = (props) => {
                         />
                     </Form.Item>
 
-                    <div style={{padding: 10}}/>
-                    <Columns>
-                        <Column>
-                            <Form.Item label={t('CPU')} >
-                                <div>
-                                    <Button icon="substract" onClick={minusVcpus}></Button>&nbsp;&nbsp;
-                                    <Input name="vcpus" value={vcpus} style={{ width: '30%' }} />&nbsp;&nbsp;
-                                    <Button icon="add" onClick={addVcpus} />
-                                </div>
-                            </Form.Item>
-                        </Column>
-                        <Column>
-                            <div>
-                                <Input type="hidden" name="byteFlag" value={byteFlag}/>
-                                <Form.Item label={t('메모리')} >
-                                    <div>
-                                        <Input name="ram" value={ram} onChange={changeRam} style={{ width: '30%' }} />&nbsp;&nbsp;&nbsp;
-                                        <Radio name="memory" checked={byteFlag} defaultChecked	onChange={() => handleByte('GiB')} >GiB</Radio>
-                                        <Radio name="memory" checked={!byteFlag} onChange={() => handleByte('MiB')} >MiB</Radio>
-                                    </div>
-                                </Form.Item>
-                            </div>
-                        </Column>
-                    </Columns>
+                    <div style={{ padding: 10 }} />
 
-                    <Form.Item label={t('루트 디스크')} >
-                        <div style={{
-                            textAlign: "center",
-                            padding: 20
-                        }}>
-                            <Input type="hidden" name="rootDisk" value={rootDisk} />
-                            <Slider max={320} marks={{
-                                0: "0",
-                                10: "10",
-                                20: "20",
-                                40: "40",
-                                80: "80",
-                                160: "160",
-                                320: "320",
-                            }} style={{width: '10%'}} value={rootDisk} unit={"GiB"} onChange={e => handleRootDisk.onChangeSlider(e)} withInput />
-                        </div>
-                    </Form.Item>
+                    
 
-                    <Form.Item label={t('임시 디스크')} >
-                        <div style={{
-                            textAlign: "center",
-                            padding: 20
-                        }}>
-                            <Input type="hidden" name="ephemeralDisk" value={ephemeralDisk} />
-                            <Slider max={40} marks={{
-                                0: "0",
-                                10: "10",
-                                20: "20",
-                                30: "30",
-                                40: "40",
-                            }} value={ephemeralDisk} unit={"GiB"} onChange={e => handleEphemeralDisk.onChangeSlider(e)} withInput />
-                        </div>
-                    </Form.Item>
-
-                    <Form.Item label={t('EXTRSPEC')} >
-                        <CheckboxGroup options={extraSpecsFields}>
-                            {extraSpecsFields.map((v, i) => (
-                                <div key={i}  style={{
-                                    padding: 5,
-                                }}>
-                                    <Input
-                                        type="hidden"
-                                        name={`extraSpecs.${i}.key`}
-                                        value={v.key}
-                                    />
-                                    <Tooltip content={v.description} placement="right">
-                                        <Checkbox
-                                            checked={v.value}
-                                            name={`extraSpecs.${i}.value`}
-                                            value={v.value}
-                                            onChange={(e) => handCheckExtrSpec(i, e)}
-                                        >
-                                            {v.key}
-                                        </Checkbox>
-                                    </Tooltip>
-                                </div>
-                            ))}
-                        </CheckboxGroup>
-                    </Form.Item>
-
-                    <Form.Item label={t('GPU')} >
-                        <Form.Group>
-                            {formGpuFields.map((v, i) => (
-                                <div className={styles.item} key={i}>
-                                    <Columns>
-                                        <Column>
-                                            <Form.Item>
-                                                <div>
-                                                    <Select name={`gpus.${i}.name`} value={v.name} options={gpus} onChange={(e) => handleGpu.handleSelectClick(i, e)} />
-                                                    {v.message && (<em>{v.message}</em>)}
-                                                </div>
-                                            </Form.Item>
-                                        </Column>
-                                        <Column>
-                                            <Form.Item>
-                                                <div style={{ marginLeft: "45%" }}>
-                                                    <Button icon="substract" onClick={() => handleGpu.minusCnt(i, v.quantity)}></Button>&nbsp;&nbsp;
-                                                    <Input name={`gpus.${i}.quantity`} value={v.quantity} style={{ width: '30%' }} />&nbsp;&nbsp;
-                                                    <Button icon="add" onClick={() => handleGpu.addCnt(i, v.quantity)} />
-                                                </div>
-                                            </Form.Item>
-                                        </Column>
-                                    </Columns>
-                                    <Button
-                                        type="flat"
-                                        icon="trash"
-                                        className={styles.delete}
-                                        onClick={() => handleGpu.handleRemoveFields(i)}
-                                    />
-                                </div>
-                            ))}
-                            <div className="text-right">
-                                <Button
-                                    className={styles.add}
-                                    onClick={handleGpu.handleAddFields}
-                                >
-                                    추가
-                                </Button>
-                            </div>
-
-                        </Form.Group>
-                    </Form.Item>
-
-                    <Form.Item label={t('호스트 디바이스')} >
-                        <Form.Group>
-                            {formDeviceFields.map((v, i) => (
-                                <div className={styles.item} key={i}>
-                                    <Columns>
-                                        <Column>
-                                            <Form.Item>
-                                                <div>
-                                                    <Select name={`devices.${i}.name`} value={v.name} options={devices} onChange={(e) => handleHostDevice.handleSelectClick(i, e)} />
-                                                    {v.message && (<em>{v.message}</em>)}
-                                                </div>
-                                            </Form.Item>
-                                        </Column>
-                                        <Column>
-                                            <Form.Item>
-                                                <div style={{ marginLeft: "45%" }}>
-                                                    <Button icon="substract" onClick={() => handleHostDevice.minusCnt(i, v.quantity)}></Button>&nbsp;&nbsp;
-                                                    <Input name={`devices.${i}.quantity`} value={v.quantity} style={{ width: '30%' }} />&nbsp;&nbsp;
-                                                    <Button icon="add" onClick={() => handleHostDevice.addCnt(i, v.quantity)} />
-                                                </div>
-                                            </Form.Item>
-                                        </Column>
-                                    </Columns>
-                                    <Button
-                                        type="flat"
-                                        icon="trash"
-                                        className={styles.delete}
-                                        onClick={() => handleHostDevice.handleRemoveFields(i)}
-                                    />
-                                </div>
-                            ))}
-                            <div className="text-right">
-                                <Button
-                                    className={styles.add}
-                                    onClick={handleHostDevice.handleAddFields}
-                                >
-                                    추가
-                                </Button>
-                            </div>
-
-                        </Form.Group>
-                    </Form.Item>
+                    <div style={{ padding: 10 }} />
 
                     <Form.Item
                         className={styles.textarea}

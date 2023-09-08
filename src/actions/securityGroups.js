@@ -21,7 +21,6 @@ import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
 import RegistModal from 'projects/components/Modals/Resources/SecurityGroups/Regist'
-import ModifyModal from 'projects/components/Modals/Resources/SecurityGroups/Modify'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
@@ -46,26 +45,6 @@ export default {
         workspace,
         namespace,
         devops,
-        ...props,
-      })
-    },
-  },
-  'securityGroup.edit': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
-      const modal = Modal.open({
-        onOk: data => {
-          store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('수정 되었습니다.') })
-              success && success()
-            })
-        },
-        title: '보안그룹 수정',
-        modal: ModifyModal,
-        store,
-        module,
         ...props,
       })
     },
