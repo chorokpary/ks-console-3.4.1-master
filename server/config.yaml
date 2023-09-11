@@ -116,7 +116,7 @@ client:
     - cate: cluster
       items:
         - name: overview
-          title: OVERVIEW
+          title: 대시보드
           icon: dashboard
           skipAuth: true
           showInDisable: true
@@ -262,7 +262,7 @@ client:
                 authKey: cluster-settings,
               }
         - name: resources
-          title: "리소스"
+          title: "컴퓨팅"
           icon: appcenter
           showInDisable: true
           children:
