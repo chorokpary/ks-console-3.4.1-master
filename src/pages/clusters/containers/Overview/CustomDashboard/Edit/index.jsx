@@ -230,7 +230,7 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont1">
                                     <div className="number_wrap">
                                       <i className="ico ico-type-pod"></i>
-                                      <p><span className="em">5</span> / 7</p>
+                                      <p><span className="em">8</span> / 11</p>
                                     </div>
                                   </div>
                                   <div className="cont2">
@@ -275,7 +275,7 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont1">
                                     <div className="number_wrap">
                                       <i className="ico ico-type-vm"></i>
-                                      <p><span className="em">5</span> / 7</p>
+                                      <p><span className="em">3</span> / 7</p>
                                     </div>
                                   </div>
                                   <div className="cont2">
@@ -284,7 +284,7 @@ const CustomDashboardEdit = (props) => {
                                       <p className="status waiting"><span>Waiting</span></p>
                                     </div>
                                     <div className="status_wrap">
-                                      <div className="value">8</div>
+                                      <div className="value">3</div>
                                       <p className="status running"><span>Running</span></p>
                                     </div>
                                     <div className="status_wrap">
@@ -320,24 +320,24 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont1">
                                     <div className="number_wrap">
                                       <i className="ico ico-type-container"></i>
-                                      <p><span className="em">5</span> / 7</p>
+                                      <p><span className="em">4</span> / 9</p>
                                     </div>
                                   </div>
                                   <div className="cont2">
                                     <div className="status_wrap">
-                                      <div className="value">2</div>
+                                      <div className="value">1</div>
                                       <p className="status waiting"><span>Waiting</span></p>
                                     </div>
                                     <div className="status_wrap">
-                                      <div className="value">8</div>
+                                      <div className="value">4</div>
                                       <p className="status running"><span>Running</span></p>
                                     </div>
                                     <div className="status_wrap">
-                                      <div className="value">1</div>
+                                      <div className="value">2</div>
                                       <p className="status completed"><span>Completed</span></p>
                                     </div>
                                     <div className="status_wrap">
-                                      <div className="value">1</div>
+                                      <div className="value">2</div>
                                       <p className="status error"><span>Error</span></p>
                                     </div>
                                   </div>
