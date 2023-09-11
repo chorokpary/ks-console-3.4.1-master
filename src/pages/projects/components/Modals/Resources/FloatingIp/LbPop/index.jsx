@@ -4,16 +4,27 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
+import { toJS } from 'mobx'
 
 const LbPop = ({ title, onOk, store }) => {
+  // LB list
+  // FIP 상세의 network가
+  // Router의 external 이면서
+  // 해당 Router의 internal 이
+  // LB의 network 인 것.
+  // router list 중 external이 fip의 network인 것을 찾고,
+  // 해당 router 의 internal이 LB list 중 network와 일치하는 것.
+
+  const fipDetail = toJS(store.detail.floating_ip);
 
   const [modelView, setModalView] = useState(true);
 
-  const [networkList, setNetworkList] = useState([]);
   const [routerList, setRouterList] = useState([]);
+  const [lbList, setLbList] = useState([]);
 
-  const [networkDataList, setNetworkDataList] = useState([]);
+  const [list, setList] = useState([]);
   const [radioExternal, setRadioExternal] = useState("");
+  const [lbData, setLbData] = useState();
 
   const closeModal = () => {
     setModalView(false);
@@ -23,31 +34,41 @@ const LbPop = ({ title, onOk, store }) => {
 
     const fnGetRouterList = async () => {
       const routerData = await store.routerList()
-      setRouterList(getSliceData(routerData.routers));
+      setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
-    //Network List 추출
-    const fnGetNetworkList = async () => {
-      const networkData = await store.networkList()
-      setNetworkDataList(networkData.networks)
+    const fnGetLbList = async () => {
+      const lbData = await store.lbList()
+      setLbList(lbData.lbs)
     };
 
-    fnGetNetworkList();
+    fnGetLbList();
   }, [])
 
   useEffect(() => {
-    if (networkDataList.length > 0 && routerList.length > 0) {
-      const list = networkDataList.filter((obj) => (
-        routerList.includes(obj.name)
-      ));
-      setNetworkList(list);
-      setRadioExternal(list[0].name)
+    if (lbList.length > 0 && routerList.length > 0) {
+      const internalList = routerList.find((obj) => obj.external == fipDetail.network)?.internal;
+      const list = lbList.filter((obj) => internalList.includes(obj.network))
+      setList(list)
+      if (list.length > 0) handleLbData(list[0])
     }
-  }, [networkDataList, routerList])
+  }, [lbList, routerList])
 
   const handleOk = () => {
-    onOk({ floating_ip: { network: radioExternal } })
+    onOk(
+      {
+        id: fipDetail.id,
+        instance_type: 'lb',
+        instance_name: lbData.name,
+        target_network: lbData.network,
+        target_ip: lbData.virtual_ip
+      })
+  }
+
+  const handleLbData = (data) => {
+    setLbData(data)
+    setRadioExternal(data.name)
   }
 
   const getSliceData = (data) => {
@@ -81,42 +102,36 @@ const LbPop = ({ title, onOk, store }) => {
                 <table>
                   <colgroup>
                     <col width="5%" />
-                    <col width="20%" />
                     <col width="15%" />
-                    <col width="20%" />
                     <col width="20%" />
                     <col width="20%" />
                   </colgroup>
                   <thead>
                     <tr>
                       <th></th>
-                      <th><strong>네트워크 이름</strong></th>
-                      <th><strong>네트워크 유형</strong></th>
-                      <th><strong>기본 경로</strong></th>
-                      <th><strong>CIDR</strong></th>
-                      <th><strong>게이트웨이</strong></th>
+                      <th><strong>이름</strong></th>
+                      <th><strong>네트워크</strong></th>
+                      <th><strong>IP</strong></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {!networkList?.length &&
+                    {!list?.length &&
                       <tr>
-                        <td colSpan="6" className="no-data">
-                          <p>모든 자원이 할당 되었습니다.</p>
+                        <td colSpan="4" className="no-data">
+                          <p>데이터가 없습니다</p>
                         </td>
                       </tr>
                     }
-                    {networkList?.map((data) => (
+                    {list?.map((data) => (
                       <tr key={data.name}>
                         <td>
                           <Radio name="external" value={data.name}
                             checked={radioExternal === data.name}
-                            onChange={(e) => { setRadioExternal(data.name); }} />
+                            onChange={(e) => { handleLbData(data); }} />
                         </td>
                         <td>{data.name}</td>
-                        <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? "사용" : "미사용"}</td>
-                        <td>{data.cidr}</td>
-                        <td>{data.gateway_ip}</td>
+                        <td>{data.network}</td>
+                        <td>{data.virtual_ip}</td>
                       </tr>
                     ))}
                   </tbody>

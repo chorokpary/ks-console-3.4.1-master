@@ -26,6 +26,7 @@ import DeleteModal from 'components/Modals/Delete'
 import RegistModal from 'projects/components/Modals/Resources/FloatingIp/Regist'
 import ModifyModal from 'projects/components/Modals/Resources/Images/Modify'
 import LbPop from 'projects/components/Modals/Resources/FloatingIp/LbPop'
+import VmPop from 'projects/components/Modals/Resources/FloatingIp/VmPop'
 
 
 export default {
@@ -52,15 +53,38 @@ export default {
             })
         },
     },
+    'floatingIp.vmPop': {
+        on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+            const modal = Modal.open({
+                onOk: data => {
+                    store
+                        .update(data, { cluster, workspace, namespace, devops, name: data.id, ...data })
+                        .then(() => {
+                            Modal.close(modal)
+                            Notify.success({ content: t('정상적으로 연결 되었습니다.') })
+                            success && success()
+                        })
+                },
+                title: 'VM 연결',
+                modal: VmPop,
+                store,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                ...props,
+            })
+        },
+    },
     'floatingIp.lbPop': {
         on({ store, cluster, workspace, namespace, success, devops, ...props }) {
             const modal = Modal.open({
                 onOk: data => {
                     store
-                        .create(data, { cluster, workspace, namespace, devops })
+                        .update(data, { cluster, workspace, namespace, devops, name: data.id, ...data })
                         .then(() => {
                             Modal.close(modal)
-                            Notify.success({ content: t('저장 되었습니다.') })
+                            Notify.success({ content: t('정상적으로 연결 되었습니다.') })
                             success && success()
                         })
                 },
@@ -71,6 +95,36 @@ export default {
                 workspace,
                 namespace,
                 devops,
+                ...props,
+            })
+        },
+    },
+    'floatingIp.deallocate': {
+        on({
+            store,
+            cluster,
+            workspace,
+            namespace,
+            success,
+            devops,
+            data,
+            ...props
+        }) {
+            const modal = Modal.open({
+                onOk: () => {
+                    store
+                        .update(data, { cluster, workspace, namespace, devops, name: data.id })
+                        .then(() => {
+                            Modal.close(modal)
+                            Notify.success({ content: t('해제 되었습니다.') })
+                            success && success()
+                        })
+                },
+                modal: DeleteModal,
+                title: '플로팅 IP 해제',
+                desc: '해제 하시겠습니까?',
+                module: store.module,
+                store,
                 ...props,
             })
         },
@@ -107,8 +161,6 @@ export default {
             devops,
             ...props
         }) {
-            console.log(detail)
-            console.log(store)
             const modal = Modal.open({
                 onOk: () => {
                     store

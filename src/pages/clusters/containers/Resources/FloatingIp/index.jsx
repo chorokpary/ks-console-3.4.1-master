@@ -111,7 +111,7 @@ export default class FloatingIp extends React.Component {
                     <Avatar
                         icon={ICON_TYPES[this.module]}
                         to={`/clusters/${cluster}/floatingip/${name}/${floatingip.id}`}
-                        title={name}
+                        title={name + '1'}
                     />
                 ),
             },
@@ -120,6 +120,11 @@ export default class FloatingIp extends React.Component {
                 dataIndex: 'instance_type',
                 isHideable: true,
                 width: 'auto',
+                render: (instance_type) => (
+                    <Avatar
+                        title={instance_type?.toUpperCase()}
+                    />
+                ),
             },
             {
                 title: t('플로팅 IP'),

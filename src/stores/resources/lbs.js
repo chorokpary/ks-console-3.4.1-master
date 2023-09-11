@@ -22,13 +22,13 @@ import { Notify } from '@kube-design/components'
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
-export default class FloatingIpStore extends Base {
+export default class LbsIpStore extends Base {
 
     records = new List()
 
-    module = 'floating_ips'
+    module = 'lbs'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/floating_ips`
+    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/lbs`
     getListUrl = this.getResourceUrl
 
     @action
@@ -47,23 +47,21 @@ export default class FloatingIpStore extends Base {
     @action
     async update({ name, ...params }, data) {
         const jsonData = {};
-        jsonData.floating_ip = params;
+        jsonData.lbs = params;
 
         await this.submitting(
             request.put(this.getDetailUrl({ name: data.name, ...params }), jsonData)
         )
     }
 
-
-
     @action
     async fetchDetail(params) {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}`
+            `${this.getResourceUrl(params)}/${params}`
         )
-        const detail = { ...params, ...this.mapper(result), kind: 'FloatingIp' }
+        const detail = { ...params, ...this.mapper(result), kind: 'Lbs' }
 
         this.detail = detail
         this.isLoading = false
@@ -90,44 +88,12 @@ export default class FloatingIpStore extends Base {
 
     @action
     delete(user) {
-        // 기본적으로 name == 삭제되는 파라미터 인데
-        // floating ip 는 id로 삭제해야해서 치환
-        user.name = user.id;
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
 
         return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
-    }
-
-    @action
-    async networkList(params) {
-        const result = await request.get(
-            `/edgetron/resources/kubevirt/networks`
-        )
-        return result
-    }
-    @action
-    async routerList(params) {
-        const result = await request.get(
-            `/edgetron/resources/kubevirt/routers`
-        )
-        return result
-    }
-    @action
-    async lbList(params) {
-        const result = await request.get(
-            `/edgetron/resources/kubevirt/lbs`
-        )
-        return result
-    }
-    @action
-    async vmList(params) {
-        const result = await request.get(
-            `/edgetron/resources/kubevirt/vms`
-        )
-        return result
     }
 
 }
