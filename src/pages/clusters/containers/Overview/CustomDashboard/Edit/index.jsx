@@ -190,7 +190,7 @@ const CustomDashboardEdit = (props) => {
                                   </div>
                                   <div className="cont3">
                                     <div className="status_wrap">
-                                      <div className="value">14</div>
+                                      <div className="value">4</div>
                                       <p className="status running"><span>Running</span></p>
                                     </div>
                                     <div className="status_wrap">
@@ -202,7 +202,7 @@ const CustomDashboardEdit = (props) => {
                                       <p className="status unschedulable"><span>Unschedulable</span></p>
                                     </div>
                                     <div className="status_wrap">
-                                      <div className="value">1151</div>
+                                      <div className="value">5</div>
                                       <p className="status total"><span>Total</span></p>
                                     </div>
                                   </div>
@@ -230,7 +230,7 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont1">
                                     <div className="number_wrap">
                                       <i className="ico ico-type-pod"></i>
-                                      <p><span className="em">8</span> / 11</p>
+                                      <p><span className="em">8</span> / 12</p>
                                     </div>
                                   </div>
                                   <div className="cont2">
@@ -886,11 +886,11 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">4</div>
-                                      <p className="status waiting"><span>Active</span></p>
+                                      <p className="status running"><span>Active</span></p>
                                     </div>
                                     <div className="status_wrap">
                                       <div className="value">1</div>
-                                      <p className="status running"><span>Inactive</span></p>
+                                      <p className="status waiting"><span>Inactive</span></p>
                                     </div>
                                   </div>
                                 </div>
@@ -906,11 +906,11 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">2</div>
-                                      <p className="status waiting"><span>Used</span></p>
+                                      <p className="status running"><span>Used</span></p>
                                     </div>
                                     <div className="status_wrap">
                                       <div className="value">1</div>
-                                      <p className="status running"><span>Unused</span></p>
+                                      <p className="status waiting"><span>Unused</span></p>
                                     </div>
                                   </div>
                                 </div>
@@ -920,17 +920,17 @@ const CustomDashboardEdit = (props) => {
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
-                                      <p><span className="em">4</span> / 7</p>
+                                      <p><span className="em">4</span> / 8</p>
                                     </div>
                                   </div>
                                   <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">7</div>
-                                      <p className="status waiting"><span>Active</span></p>
+                                      <p className="status running"><span>Active</span></p>
                                     </div>
                                     <div className="status_wrap">
                                       <div className="value">1</div>
-                                      <p className="status running"><span>Inactive</span></p>
+                                      <p className="status waiting"><span>Inactive</span></p>
                                     </div>
                                   </div>
                                 </div>
@@ -946,11 +946,11 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">2</div>
-                                      <p className="status waiting"><span>Used</span></p>
+                                      <p className="status running"><span>Used</span></p>
                                     </div>
                                     <div className="status_wrap">
                                       <div className="value">1</div>
-                                      <p className="status running"><span>Unused</span></p>
+                                      <p className="status waiting"><span>Unused</span></p>
                                     </div>
                                   </div>
                                 </div>
@@ -966,11 +966,11 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">4</div>
-                                      <p className="status waiting"><span>Used</span></p>
+                                      <p className="status running"><span>Used</span></p>
                                     </div>
                                     <div className="status_wrap">
                                       <div className="value">1</div>
-                                      <p className="status running"><span>Unused</span></p>
+                                      <p className="status waiting"><span>Unused</span></p>
                                     </div>
                                   </div>
                                 </div>
@@ -986,11 +986,11 @@ const CustomDashboardEdit = (props) => {
                                   <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">7</div>
-                                      <p className="status waiting"><span>Active</span></p>
+                                      <p className="status running"><span>Active</span></p>
                                     </div>
                                     <div className="status_wrap">
                                       <div className="value">1</div>
-                                      <p className="status running"><span>Inactive</span></p>
+                                      <p className="status waiting"><span>Inactive</span></p>
                                     </div>
                                   </div>
                                 </div>
@@ -1206,12 +1206,12 @@ const CustomDashboardEdit = (props) => {
                                     <div className="cont_group">
                                       <div className="cont1">
                                         <div className="number_wrap">
-                                          <p><span className="em">8</span> / 12</p>
+                                          <p><span className="em">13</span> / 18</p>
                                         </div>
                                       </div>
                                       <div className="cont2">
                                         <div className="status_wrap">
-                                          <div className="value">15</div>
+                                          <div className="value">13</div>
                                           <p className="status on"><span>On</span></p>
                                         </div>
                                         <div className="status_wrap">
@@ -1310,7 +1310,7 @@ const CustomDashboardEdit = (props) => {
                                             <tr>
                                               <td className="tbl_tit">
                                                 <div className="hexagon"><span>ARM</span></div>
-                                                <p>Arm_node_01</p>
+                                                <p>Arm_node_02</p>
                                               </td>
                                               <td>
                                                 <p>15%</p><span>8 Core</span>
@@ -1331,7 +1331,7 @@ const CustomDashboardEdit = (props) => {
                                             <tr>
                                               <td className="tbl_tit">
                                                 <div className="hexagon"><span>ARM</span></div>
-                                                <p>Arm_node_01</p>
+                                                <p>Arm_node_03</p>
                                               </td>
                                               <td>
                                                 <p>15%</p><span>8 Core</span>
@@ -1352,7 +1352,7 @@ const CustomDashboardEdit = (props) => {
                                             <tr>
                                               <td className="tbl_tit">
                                                 <div className="hexagon"><span>ARM</span></div>
-                                                <p>Arm_node_01</p>
+                                                <p>Arm_node_04</p>
                                               </td>
                                               <td>
                                                 <p>15%</p><span>8 Core</span>
@@ -1373,7 +1373,7 @@ const CustomDashboardEdit = (props) => {
                                             <tr>
                                               <td className="tbl_tit">
                                                 <div className="hexagon"><span>ARM</span></div>
-                                                <p>Arm_node_01</p>
+                                                <p>Arm_node_05</p>
                                               </td>
                                               <td>
                                                 <p>15%</p><span>8 Core</span>
@@ -1394,7 +1394,7 @@ const CustomDashboardEdit = (props) => {
                                             <tr>
                                               <td className="tbl_tit">
                                                 <div className="hexagon"><span>ARM</span></div>
-                                                <p>Arm_node_01</p>
+                                                <p>Arm_node_06</p>
                                               </td>
                                               <td>
                                                 <p>15%</p><span>8 Core</span>
@@ -1415,7 +1415,7 @@ const CustomDashboardEdit = (props) => {
                                             <tr>
                                               <td className="tbl_tit">
                                                 <div className="hexagon"><span>ARM</span></div>
-                                                <p>Arm_node_01</p>
+                                                <p>Arm_node_07</p>
                                               </td>
                                               <td>
                                                 <p>15%</p><span>8 Core</span>
