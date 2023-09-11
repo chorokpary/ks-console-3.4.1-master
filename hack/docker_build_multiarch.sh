@@ -3,7 +3,7 @@
 set -ex
 set -o pipefail
 
-TAG=${TAG:-v3.4.0}
+TAG=${TAG:-v3.4.0-infra}
 REPO=${REPO:-registry.gitlab.com/sonaproject}
 PUSH=${PUSH:-}
 
@@ -39,7 +39,7 @@ DOCKER_CLI_EXPERIMENTAL=enabled ${CONTAINER_CLI} ${CONTAINER_BUILDER} \
   --platform ${PLATFORMS} \
   ${PUSH} \
   --file build/Dockerfile.dapper \
-  --tag "${REPO}"/ks-console-infra:"${TAG}" .
+  --tag "${REPO}"/ks-console:"${TAG}" .
 
 # delete preimage
 docker rmi ks-console-pre:"${TAG}" -f
