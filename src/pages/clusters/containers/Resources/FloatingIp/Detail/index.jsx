@@ -108,65 +108,6 @@ const FloatingIpDetail = (props) => {
       ]
     )
   }
-  // const getOperations = () => [
-  //     {
-  //         key: 'edit',
-  //         icon: 'pen',
-  //         text: t('EDIT_INFORMATION'),
-  //         action: 'edit',
-  //         show: false,
-  //         onClick: () =>
-  //             props.rootStore.triggerAction('floatingIp.edit', {
-  //                 type: 'FLOATINGIP_DETAIL',
-  //                 detail: toJS(store.detail.floating_ip),
-  //                 store: store,
-  //                 success: fetchData,
-  //             })
-  //     },
-  //     {
-  //         key: 'edit1',
-  //         icon: 'image',
-  //         text: t('VM 연결'),
-  //         action: 'view',
-  //         onClick: () =>
-  //             props.rootStore.triggerAction('floatingIp.vmPop', {
-  //                 store: store,
-  //                 type: "LB_POP",
-  //                 success: fetchData,
-  //             }),
-  //     },
-  //     {
-  //         key: 'edit2',
-  //         icon: 'image',
-  //         text: t('LB 연결'),
-  //         action: 'view',
-  //         onClick: () =>
-  //             props.rootStore.triggerAction('floatingIp.lbPop', {
-  //                 store: store,
-  //                 type: "LB_POP",
-  //                 success: fetchData,
-  //             }),
-  //     },
-  //     {
-  //         key: 'delete',
-  //         icon: 'trash',
-  //         text: t('삭제'),
-  //         action: 'delete',
-  //         type: 'danger',
-  //         show: showEdit,
-  //         onClick: () =>
-  //             props.rootStore.triggerAction('floatingIp.delete', {
-  //                 type: 'FLOATINGIP_DETAIL',
-  //                 detail: toJS(store.detail),
-  //                 store: store,
-  //                 cluster: props.match.params.cluster,
-  //                 success: () => routing.push(listUrl),
-  //                 okText: '삭제',
-  //                 cancelText: '취소',
-  //                 ...props
-  //             })
-  //     },
-  // ]
 
   const handleConnectSuccess = (bool) => {
     setFipConnected(bool)
@@ -200,6 +141,7 @@ const FloatingIpDetail = (props) => {
   }
 
   const sideProps = {
+    icon: "intranet-routers",
     module: store.module,
     name: detail?.network,
     // desc: get(store.detail.network, 'description', ''),

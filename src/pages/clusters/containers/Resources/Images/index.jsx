@@ -173,6 +173,7 @@ export default class Images extends React.Component {
     return (
       <ListPage {...this.props}>
         <Banner
+          icon="snapshot"
           {...bannerProps}
           tabs={this.tabs}
           title={t('이미지')}

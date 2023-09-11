@@ -130,6 +130,7 @@ const ImageDetail = (props) => {
   }
 
   const sideProps = {
+    icon: "snapshot",
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.image, 'description', ''),
@@ -137,7 +138,7 @@ const ImageDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('Images'),
+        label: t('이미지'),
         url: listUrl,
       },
     ],

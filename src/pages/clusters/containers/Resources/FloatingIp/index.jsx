@@ -111,7 +111,7 @@ export default class FloatingIp extends React.Component {
                     <Avatar
                         icon={ICON_TYPES[this.module]}
                         to={`/clusters/${cluster}/floatingip/${name}/${floatingip.id}`}
-                        title={name + '1'}
+                        title={name}
                     />
                 ),
             },
@@ -153,6 +153,7 @@ export default class FloatingIp extends React.Component {
         return (
             <ListPage {...this.props}>
                 <Banner
+                    icon="intranet-routers"
                     {...bannerProps}
                     tabs={this.tabs}
                     title={t('플로팅 IP')}

@@ -62,7 +62,7 @@ const LbPanel = (props) => {
             >
               <div className={styles.itemMain} >
                 <div className={styles.icon}>
-                  <Icon name="templet" size={40} />
+                  <Icon name="loadbalancer" size={40} />
                 </div>
                 {renderContent(lbDetail)}
               </div>

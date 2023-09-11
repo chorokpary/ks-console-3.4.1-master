@@ -147,6 +147,7 @@ const NetworkDetail = (props) => {
   }
 
   const sideProps = {
+    icon: "network-duotone",
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.network, 'description', ''),
@@ -154,7 +155,7 @@ const NetworkDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('Networks'),
+        label: t('네트워크'),
         url: listUrl,
       },
     ],

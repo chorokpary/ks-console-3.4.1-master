@@ -167,6 +167,7 @@ export default class Networks extends React.Component {
     return (
       <ListPage {...this.props}>
         <Banner
+          icon="network-duotone"
           {...bannerProps}
           tabs={this.tabs}
           title={t('네트워크')}
