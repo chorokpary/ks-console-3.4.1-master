@@ -171,6 +171,22 @@ class Overview extends React.Component {
         icon: '/assets/kubernetes.svg',
       },
       {
+        type: 'kubevirt',
+        icon: '/assets/kubevirt.svg',
+      },
+      {
+        type: 'capi',
+        icon: '/assets/capi.svg',
+      },
+      {
+        type: 'harbor',
+        icon: '/assets/harbor.svg',
+      },
+      {
+        type: 'longhorn',
+        icon: '/assets/longhorn.svg',
+      },
+      {
         type: 'istio',
         icon: '/assets/istio.svg',
         disabled: !globals.app.hasClusterModule(this.cluster, 'servicemesh'),
