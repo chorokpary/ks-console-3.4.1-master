@@ -221,16 +221,35 @@ export default class VmStore extends Base {
   @action
   async update({ name, ...params }, data) {
 
+    const scurityGroups = data.scurityGroups;
+
     const jsonData = {};
-    const keypairData = {};
+    const vmData = {};
 
-    keypairData.name = data.name;
-    keypairData.description = data?.description;
+    vmData.name = name;
+    vmData.description = !!data.description ? data.description : "";
 
-    jsonData.keypair = keypairData;
+    jsonData.vm = vmData;
 
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+
+    // API 에서 수정이 안됨
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
+    )
+
+    const jsonDataSecurity = {};
+    const vmDataSecurity = {};
+
+    vmDataSecurity.name = name;
+    vmDataSecurity.security_groups = scurityGroups;
+
+    jsonDataSecurity.vm = vmDataSecurity;
+
+    console.log("jsonDataSecurity : "+ JSON.stringify(jsonDataSecurity))
+
+    await this.submitting(
+      request.put("/edgetron/resources/kubevirt/vms/"+name+"/security_groups", jsonDataSecurity)
     )
   }
 
@@ -612,6 +631,18 @@ export default class VmStore extends Base {
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 
+  @action
+  async actionState({data, ...params}) {
+
+    const jsonData = {};
+    const name = data.vmName;
+    jsonData.action = data.actionType;
+
+    await this.submitting(
+      request.put(`${this.getDetailUrl({ name: name, ...params })}/action`, jsonData)
+    )
+  }
+  
   @action
   async fetchFloatingList(params) {
     this.isLoading = true

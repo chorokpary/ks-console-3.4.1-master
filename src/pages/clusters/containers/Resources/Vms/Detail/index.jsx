@@ -66,6 +66,16 @@ export default class VmDetail extends React.Component {
     this.store.fetchDetail(this.props.match.params);
   }
 
+  fnOpenVncPopup = () => {
+    //실제 URL 로 변경 요망
+    var apiUrl = "http://"+location.hostname+":30020";
+    var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
+    param = param + this.name + "/vnc";
+
+    var popupName = this.name.replaceAll("-", "");
+    window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1030,height=800');
+  }
+
   getOperations = () => [
     {
       key: 'edit',
@@ -74,13 +84,32 @@ export default class VmDetail extends React.Component {
       action: 'edit',
       show: this.showEdit,
       onClick: () => {
-        Notify.info('개발 중 입니다.')
-      }
-        // this.trigger('vm.edit', {
-        //   type: this.name,
-        //   detail: toJS(this.store.detail),
-        //   success: this.fetchData,
-        // }),
+        this.trigger('vm.edit', {
+          type: this.name,
+          detail: toJS(this.store.detail),
+          success: this.fetchData,
+        })
+      },        
+    },
+    {
+      key: 'vnc',
+      icon: 'vpn',
+      text: t('VNC 접속'),
+      action: 'view',
+      onClick: () => {
+        this.fnOpenVncPopup();
+      },
+    },
+    {
+      key: 'volume',
+      icon: 'pen',
+      text: t('볼륨 연결/분리'),
+      action: 'view',
+      onClick: () => {
+        this.trigger('vm.volumePop', {
+          type: this.name,
+        })
+      },        
     },
     {
       key: 'viewYaml',
@@ -92,6 +121,37 @@ export default class VmDetail extends React.Component {
           yaml: this.store.yaml,
           readOnly: true,
         })
+      },
+    },
+    {
+      key: 'viewLog',
+      icon: 'eye',
+      text: t('Console 로그'),
+      action: 'view',
+      onClick: () => {
+        this.trigger('vm.log.view', {
+          vmlog: this.store.vmLog,
+          readOnly: true,
+        })
+      },
+    },
+    {
+      key: 'migrate',
+      icon: 'radio',
+      text: t('마이그레이션'),
+      action: 'view',
+      onClick: () => {
+
+        const data = {};
+        data.vmName = this.name;
+        data.actionType = "migrate";
+    
+        this.trigger('vm.actionState', {
+          data: data,
+          title : "마이그레이션",
+          desc: "마이그레이션을 진행 하시겠습니까?\n가상머신 상태가 마이그레이션중으로 변경되고,\n완료되면 가상머신 상태가 표시됩니다",
+        },)
+
       },
     },
     {

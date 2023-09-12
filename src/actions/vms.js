@@ -20,11 +20,14 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import RegistModal from 'projects/components/Modals/Resources/Vms/Regist'
-import ModifyModal from 'projects/components/Modals/Resources/Keypairs/Modify'
+import RegistModal from 'clusters/containers/Resources/components/Modals/Vms/Regist'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/Vms/Modify'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
+import ConsoleLoglModal from 'clusters/containers/Resources/components/Modals/ConsoleLog'
+import VolumeModal from 'clusters/containers/Resources/components/Modals/Vms/VolumePop'
 
 export default {
   'vm.regist': {
@@ -62,7 +65,7 @@ export default {
               success && success()
             })
         },
-        title: '키 페어 수정',
+        title: '가상머신 수정',
         modal: ModifyModal,
         store,
         module,
@@ -153,13 +156,65 @@ export default {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
-          Notify.success({ content: t('수정 되었습니다.') })
           Modal.close(modal)
           success && success()
         },
         detail,
         store,
         modal: EditYamlModal,
+        ...props,
+      })
+    },
+  },
+  'vm.log.view': {
+    on({ store, detail, success, ...props }) {
+      const modal = Modal.open({
+        onOk: async data => {
+          Modal.close(modal)
+          success && success()
+        },
+        detail,
+        store,
+        modal: ConsoleLoglModal,
+        ...props,
+      })
+    },
+  },
+  'vm.actionState': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.actionState({data, ...props}).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('변경 되었습니다.') })
+            success && success()
+          })
+        },
+        title: !!title ? title : '상태변경',
+        desc: !!desc ? desc : '가상머신 상태를 변경하시겠습니까?',
+        modal: ConfirmModal,
+        module: store.module,
+        detail,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.volumePop': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .create(data, { cluster, workspace, namespace, devops })
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('처리 되었습니다.') })
+              success && success()
+            })
+        },
+        title: '볼륨 연결/분리',
+        modal: VolumeModal,
+        store,
         ...props,
       })
     },

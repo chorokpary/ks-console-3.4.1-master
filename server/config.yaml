@@ -40,7 +40,7 @@ server:
   dockerHubUrl: https://hub.docker.com
 
 client:
-  title: KubeSphere
+  title: ARM CMP
   description: ""
   encryptKey: kubesphere
 

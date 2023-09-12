@@ -20,8 +20,8 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import RegistModal from 'projects/components/Modals/Resources/Keypairs/Regist'
-import ModifyModal from 'projects/components/Modals/Resources/Keypairs/Modify'
+import RegistModal from 'clusters/containers/Resources/components/Modals/Keypairs/Regist'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/Keypairs/Modify'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'

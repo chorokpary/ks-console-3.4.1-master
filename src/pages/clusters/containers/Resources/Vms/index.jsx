@@ -25,6 +25,9 @@ import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
+import { Dropdown, Menu, Button, Notify } from '@kube-design/components'
+
+import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
@@ -96,7 +99,6 @@ export default class Vms extends React.Component {
       }),
     }
   }
-
 
   getColumns = () => {
     const { getSortOrder } = this.props
@@ -195,6 +197,17 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: (state, record) => (
+          <div>
+            <Dropdown content={<Menu>
+               {this.fnGetActionColumn(state, record.name)}
+              </Menu>}>
+              <div className={styles.iconwrapper}>
+                <i className={styles[`ico-status-${state.toLowerCase()}`]}/><p>{state}</p>
+              </div>   
+            </Dropdown>
+          </div>                
+        ),      
       },
       {
         title: t('등록일'),
@@ -211,6 +224,100 @@ export default class Vms extends React.Component {
       },
     ]
   }
+
+  handleVmAction = (action, state, vmName) => {
+
+  
+    if ("Stopped" == state && "pause" == action) {
+      Notify.warning('Stopped 상태에서 Pause 할 수 없습니다.')
+      return;
+    }
+    if ("Stopped" == state && "restart" == action) {
+      Notify.warning('Stopped 상태에서 Restart 할 수 없습니다.')
+      return;
+    }
+
+    const { getData, trigger } = this.props
+
+    console.log(this.props)
+
+    const data = {};
+    data.vmName = vmName;
+    data.state = state;
+    data.actionType = action;
+
+    trigger('vm.actionState', {
+      data: data,
+      success: getData,
+      ...this.props.match.params,
+    },)
+  }
+
+  fnGetActionColumn = (state, vmName) => {
+    let elements = "";
+    elements =
+      <>
+        {/* Stopped */}
+        {state == "Stopped" &&
+           <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmName)}>
+            <i className={styles['ico-quick-start']}></i><span>시작</span>
+          </Menu.MenuItem>
+        }
+        {/* Provisioning */}
+        {/* {state == "Provisioning" &&
+            <>
+              <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+                <i className={styles['ico-quick-stop']}></i><span>중지</span>
+              </Menu.MenuItem>
+              <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+                <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
+              </Menu.MenuItem>
+            </>   
+              } */}
+        {/* Starting */}
+        {/* {state == "Starting" &&
+              <>
+                <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+                  <i className={styles['ico-quick-stop']}></i><span>중지</span>
+                </Menu.MenuItem>
+                <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+                  <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
+                </Menu.MenuItem>
+              </>   
+              } */}
+        {/* Running */}
+        {state == "Running" &&
+            <>
+              <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+                <i className={styles['ico-quick-stop']}></i><span>중지</span>
+              </Menu.MenuItem>
+              <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmName)}>
+                <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
+              </Menu.MenuItem>
+              <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+                <i className={styles['ico-quick-restart']}></i><span>재시작</span>
+              </Menu.MenuItem>
+            </>   
+        }
+        {/* Paused */}
+        {state == "Paused" &&
+            <>
+            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+              <i className={styles['ico-quick-stop']}></i><span>중지</span>
+            </Menu.MenuItem>
+            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmName)}>
+              <i className={styles['ico-quick-unpause']}></i><span>일시중지 해제</span>
+            </Menu.MenuItem>
+            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+              <i className={styles['ico-quick-restart']}></i><span>재시작</span>
+            </Menu.MenuItem>
+          </>   
+        }
+      </>
+
+    return elements;
+  }
+
 
   get emptyProps() {
     return { desc: t('Please create a data.') }
