@@ -8,7 +8,7 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
-import ContainerForm from '../../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
+import ContainerForm from '../../../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
 
 export default function ResourceImageModal({ title, store, onOk }) {
 

@@ -23,10 +23,9 @@ import { Modal } from 'components/Base'
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
-import RegistModal from 'projects/components/Modals/Resources/FloatingIp/Regist'
-import ModifyModal from 'projects/components/Modals/Resources/Images/Modify'
-import LbPop from 'projects/components/Modals/Resources/FloatingIp/LbPop'
-import VmPop from 'projects/components/Modals/Resources/FloatingIp/VmPop'
+import RegistModal from 'clusters/containers/Resources/components/Modals/FloatingIp/Regist'
+import LbPop from 'clusters/containers/Resources/components/Modals/FloatingIp/LbPop'
+import VmPop from 'clusters/containers/Resources/components/Modals/FloatingIp/VmPop'
 
 
 export default {
@@ -129,27 +128,27 @@ export default {
             })
         },
     },
-    'floatingIp.edit': {
-        on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
-            const modal = Modal.open({
-                onOk: data => {
-                    store
-                        .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
-                        .then(() => {
-                            Modal.close(modal)
-                            Notify.success({ content: t('수정 되었습니다.') })
-                            success && success()
-                        })
-                },
-                title: '플로팅 IP 수정',
-                modal: ModifyModal,
-                store,
-                detail,
-                module,
-                ...props,
-            })
-        },
-    },
+    // 'floatingIp.edit': {
+    //     on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    //         const modal = Modal.open({
+    //             onOk: data => {
+    //                 store
+    //                     .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
+    //                     .then(() => {
+    //                         Modal.close(modal)
+    //                         Notify.success({ content: t('수정 되었습니다.') })
+    //                         success && success()
+    //                     })
+    //             },
+    //             title: '플로팅 IP 수정',
+    //             modal: ModifyModal,
+    //             store,
+    //             detail,
+    //             module,
+    //             ...props,
+    //         })
+    //     },
+    // },
     'floatingIp.remove': {
         on({
             store,
