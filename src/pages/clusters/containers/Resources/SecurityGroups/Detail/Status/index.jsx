@@ -49,7 +49,7 @@ const Status = (props) => {
                         </Panel>
                     }
                     {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").length > 0 &&
-                        <Panel title={"아웃 바운드"}>
+                        <Panel title={"아웃바운드"}>
                             {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").map((rule, index) => (
                                 <div className={styles.wrapper}>
                                     <div className={classnames(styles.item)}>
