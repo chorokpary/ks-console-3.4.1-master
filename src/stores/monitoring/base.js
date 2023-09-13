@@ -282,21 +282,20 @@ export default class BaseMonitoringStore {
     this.data = fillZero ? fillEmptyMetrics(params, result) : result
     this.isLoading = false
     this.isRefreshing = false
-
+    console.log(result)
     return result
   }
 
   @action
   checkEtcd = async () => {
-    const api = `apis${
-      this.cluster && globals.app.isMultiCluster
+    const api = `apis${this.cluster && globals.app.isMultiCluster
         ? `/clusters/${this.cluster}`
         : ''
-    }/monitoring.coreos.com/v1/namespaces/kubesphere-monitoring-system/servicemonitors/etcd`
+      }/monitoring.coreos.com/v1/namespaces/kubesphere-monitoring-system/servicemonitors/etcd`
     this.etcdChecking = true
 
     try {
-      const response = await request.get(api, {}, {}, () => {})
+      const response = await request.get(api, {}, {}, () => { })
       this.supportETCD = response.code !== '404'
     } catch (e) {
       this.supportETCD = false
