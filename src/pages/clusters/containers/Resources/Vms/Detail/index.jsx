@@ -25,6 +25,7 @@ import { Loading, Notify } from '@kube-design/components'
 import { getLocalTime } from 'utils'
 import { trigger } from 'utils/action'
 import VmStore from 'stores/resources/vms'
+import FloatingIpStore from 'stores/resources/floatingip';
 
 import DetailPage from 'clusters/containers/Base/Detail'
 
@@ -35,7 +36,8 @@ import routes from './routes'
 @trigger
 export default class VmDetail extends React.Component {
   store = new VmStore()
-
+  floatingstore = new FloatingIpStore()
+  
   componentDidMount() {
     this.fetchData()
   }
@@ -61,6 +63,23 @@ export default class VmDetail extends React.Component {
     const { name } = this.props.match.params
     return !globals.config.presetClusterRoles.includes(name)
   }
+
+  get floatingId() {
+    const { name } = this.props.match.params
+    const floatingData = toJS(this.store.floatingList)
+    const floatingId = floatingData?.filter((row) => row.instance_name == name).map((el) => el.id)[0]
+
+    return floatingId;
+  }
+
+  get floatingIp() {
+    const { name } = this.props.match.params
+    const floatingData = toJS(this.store.floatingList)
+    const floatingIp = floatingData?.filter((row) => row.instance_name == name).map((el) => el.floating_ip)[0]
+
+    return floatingIp;
+  }
+
 
   fetchData = () => {
     this.store.fetchDetail(this.props.match.params);
@@ -101,8 +120,28 @@ export default class VmDetail extends React.Component {
       },
     },
     {
+      key: 'floatingIp',
+      icon: 'intranet-routers',
+      text: this.floatingIp == undefined ? 'FIP 할당' : "FIP 해제",
+      action: 'view',
+      onClick: () => {
+        if(this.floatingIp == undefined){
+          this.trigger('vm.floatingIpPop', {
+            type: this.name,
+            success: this.fetchData,
+          })
+        }else{
+          this.trigger('vm.floatingIpPop.deallocate', {
+            data: { id: this.floatingId },
+            store: this.floatingstore,
+            success: this.fetchData,
+          })
+        }  
+      },        
+    },
+    {
       key: 'volume',
-      icon: 'pen',
+      icon: 'storage',
       text: t('볼륨 연결/분리'),
       action: 'view',
       onClick: () => {
@@ -142,10 +181,11 @@ export default class VmDetail extends React.Component {
       action: 'view',
       onClick: () => {
 
+        const { name } = this.props.match.params
         const data = {};
-        data.vmName = this.name;
+        data.vmName = name;
         data.actionType = "migrate";
-    
+        
         this.trigger('vm.actionState', {
           data: data,
           title : "마이그레이션",
@@ -209,7 +249,7 @@ export default class VmDetail extends React.Component {
       },
       {
         name: t('플로팅 IP'),
-        value: detail.vm.floatingIp,
+        value: this.floatingIp,
       },
       {
         name: t('키페어'),

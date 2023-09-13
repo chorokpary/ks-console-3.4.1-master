@@ -22,6 +22,7 @@ import { Modal } from 'components/Base'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/FloatingIp/Regist'
 import LbPop from 'clusters/containers/Resources/components/Modals/FloatingIp/LbPop'
@@ -119,7 +120,7 @@ export default {
                             success && success()
                         })
                 },
-                modal: DeleteModal,
+                modal: ConfirmModal,
                 title: '플로팅 IP 해제',
                 desc: '해제 하시겠습니까?',
                 module: store.module,

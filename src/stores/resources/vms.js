@@ -269,6 +269,9 @@ export default class VmStore extends Base {
     // VmLog 관련 
     await this.fetchVmLog(params);
 
+    // FloatingIp 관련
+    await this.fetchVmListFloating(params); 
+
     this.detail = detail
     this.isLoading = false
 
@@ -745,6 +748,33 @@ export default class VmStore extends Base {
     )
     const response = { ...params, ...this.mapper(result), kind: 'nodes' }
 
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListRouter(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/routers`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'routers' }
+
+    this.isLoading = false
+    return response;
+  }
+
+  @action
+  async fetchVmListFloating(params) {
+    this.isLoading = true
+    
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/floating_ips`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'floating_ips' }
+
+    this.floatingList = response.floating_ips
     this.isLoading = false
     return response;
   }

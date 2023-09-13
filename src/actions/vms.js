@@ -28,6 +28,7 @@ import DeleteModal from 'components/Modals/Delete'
 import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 import ConsoleLoglModal from 'clusters/containers/Resources/components/Modals/ConsoleLog'
 import VolumeModal from 'clusters/containers/Resources/components/Modals/Vms/VolumePop'
+import FloatingIpModal from 'clusters/containers/Resources/components/Modals/Vms/FloatingIpPop'
 
 export default {
   'vm.regist': {
@@ -203,15 +204,6 @@ export default {
   'vm.volumePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        onOk: data => {
-          store
-            .create(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('처리 되었습니다.') })
-              success && success()
-            })
-        },
         title: '볼륨 연결/분리',
         modal: VolumeModal,
         store,
@@ -219,4 +211,36 @@ export default {
       })
     },
   },
+  'vm.floatingIpPop': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        title: '플로팅 IP 설정',
+        modal: FloatingIpModal,
+        store,
+        success,
+        ...props,
+      })
+    },
+  },
+  'vm.floatingIpPop.deallocate': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      console.log(store)
+      const modal = Modal.open({
+        onOk: () => {
+          store.update(data, { name: data.id }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('해제 되었습니다.') })
+            success && success()
+          })
+        },
+        title: '플로팅 IP 해제',
+        desc: '해제 하시겠습니까?',
+        modal: ConfirmModal,
+        store,
+        ...props,
+      })
+    },
+  },
+
+  
 }
