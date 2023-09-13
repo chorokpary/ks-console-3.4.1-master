@@ -56,7 +56,7 @@ const SecurityGroupDetail = (props) => {
                     detail: toJS(store.detail),
                     store: store,
                     cluster: props.match.params.cluster,
-                    success: () => routing.push(listUrl),
+                    success: () => routing.push(listUrl()),
                 })
         },
     ]
@@ -84,7 +84,7 @@ const SecurityGroupDetail = (props) => {
         ]
     }
 
-    if (store.isLoading && !store.detail.name) {
+    if (store.isLoading) {
         return <Loading className="ks-page-loading" />;
     }
 

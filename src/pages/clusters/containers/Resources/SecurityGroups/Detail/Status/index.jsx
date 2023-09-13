@@ -80,7 +80,7 @@ const Status = (props) => {
                     }
                 </div>
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type='이미지' variables='image' name="ubuntu-2004-image-amd64" />
+                <DetailVmList type='보안그룹' variables='security_groups' name={props.match.params.name} />
             </div>
         </>
     );

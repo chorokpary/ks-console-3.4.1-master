@@ -122,7 +122,11 @@ const DetailVmList = (props) => {
   useEffect(() => {
     const fnGetExternalNetwork = async () => {
       const vmList = await store.fetchList();
-      setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
+        if (props.variables === 'security_groups') {
+            setVmDataList(vmList?.filter((row) => row[props.variables].toString() === props.name))
+        } else {
+            setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
+        }
     };
 
     fnGetExternalNetwork();
@@ -222,7 +226,7 @@ const DetailVmList = (props) => {
       {vmDataList.length == 0 &&
         <Panel title={"가상 머신"}>
           <div className={styles.wrapper}>
-              <div>{props.type}를 사용하는 가상머신이 없습니다.</div>
+              <div>{props.type}{props.type ==="보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
           </div>
       </Panel> 
       }

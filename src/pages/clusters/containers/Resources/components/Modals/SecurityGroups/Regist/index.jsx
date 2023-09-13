@@ -13,6 +13,8 @@ const RegistModal = (props) => {
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
 
+    const [btnDimm, setBtnDimm] = useState(false);
+
     const regexRemoteIp = /[^0123456789.\/]/g;
     const regexPort = /[^0123456789-]/g;
 
@@ -71,7 +73,7 @@ const RegistModal = (props) => {
         },
 
         handleRemoveFields: (i) => {
-            let values = [...formRulesIngressFields].filter((obj, idx) => idx !== i);
+            const values = [...formRulesIngressFields].filter((obj, idx) => idx !== i);
             setFormRulesIngressFields(values);
         },
 
@@ -134,7 +136,7 @@ const RegistModal = (props) => {
         },
 
         handleRemoveFields: (i) => {
-            let values = [...formRulesEgressFields].filter((obj, idx) => idx !== i);
+            const values = [...formRulesEgressFields].filter((obj, idx) => idx !== i);
             setFormRulesEgressFields(values);
         },
 
@@ -169,6 +171,13 @@ const RegistModal = (props) => {
             } else {
                 values[i].ruleType = val;
                 values = setRuleTypeHandler(i, val, values);
+
+                if (val === "ALL") {
+                    values = values.filter((obj, idx) => idx === i);
+                    setBtnDimm(true);
+                } else {
+                    setBtnDimm(false);
+                }
             }
 
             setFormRulesEgressFields(values);
@@ -326,6 +335,7 @@ const RegistModal = (props) => {
                                     <Button
                                         className={styles.add}
                                         onClick={handleEgressRules.handleAddFields}
+                                        disabled={ btnDimm}
                                     >
                                         추가
                                     </Button>

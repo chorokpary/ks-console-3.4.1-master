@@ -213,11 +213,16 @@ export default class SecurityGroupStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(username =>
-                        request.delete(
+                    rowKeys.map(async (username) => {
+                        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + username);
+                        securityDetail.data.security_group.rules.map((rule) => {
+                            request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
+                        })
+
+                        await request.delete(
                             `${this.getDetailUrl({ name: username, ...params })}`
                         )
-                    )
+                    })
                 )
             )
         }
@@ -225,13 +230,20 @@ export default class SecurityGroupStore extends Base {
     }
 
     @action
-    delete(user) {
+    async delete(user) {
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
 
-        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + user.name);
+        Promise.all(
+            securityDetail.data.security_group.rules.map((rule) => {
+                request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
+            })
+        )
+
+        return await this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
 
 }
