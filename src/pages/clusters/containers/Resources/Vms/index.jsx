@@ -110,14 +110,23 @@ export default class Vms extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
-          <Avatar
-            icon="templet"
-            iconSize={40}
-            to={`/clusters/${cluster}/vms/${name}`}
-            title={name}
-          />
-        ),
+        render: (name, record) => {
+          return (
+            record.state?.toLowerCase() == "running" ?
+            <Avatar
+              icon="templet"
+              iconSize={40}
+              to={`/clusters/${cluster}/vms/${name}`}
+              title={name}
+            />
+            :
+            <Avatar
+              icon="templet"
+              iconSize={40}
+              title={name}
+            />
+          )
+        },
       },
       {
         title: t('이미지'),
