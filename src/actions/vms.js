@@ -224,7 +224,6 @@ export default {
   },
   'vm.floatingIpPop.deallocate': {
     on({ store, detail, success, data, title, desc, ...props }) {
-      console.log(store)
       const modal = Modal.open({
         onOk: () => {
           store.update(data, { name: data.id }).then(() => {

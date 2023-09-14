@@ -1,154 +1,129 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { observer, inject } from 'mobx-react'
-import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components'
-
-import { getLocalTime } from 'utils'
-import { trigger } from 'utils/action'
-import KeypairStore from 'stores/resources/keypairs'
-
+import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
+import { useParams } from 'react-router-dom';
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components';
+import { observer, inject } from 'mobx-react';
+import { Card } from 'components/Base'
+import { getLocalTime } from 'utils'
+
+import * as common from 'utils/resources'
 import routes from './routes'
 
-@inject('rootStore')
-@observer
-@trigger
-export default class KeypairDetail extends React.Component {
-  store = new KeypairStore()
+import KeypairStore from 'stores/resources/keypairs'
 
-  componentDidMount() {
-    this.fetchData()
-  }
+const store = new KeypairStore();
 
-  get module() {
-    return this.store.module
-  }
+const KeypairDetail = (props) => {
 
-  get name() {
-    return 'KEYPAIR_DETAIL'
-  }
+    useEffect(() => {
+        fetchData();
+    }, [])
 
-  get listUrl() {
-    const { cluster } = this.props.match.params
-    return `/clusters/${cluster}/keypairs`
-  }
-
-  get routing() {
-    return this.props.rootStore.routing
-  }
-
-  get showEdit() {
-    const { name } = this.props.match.params
-    return !globals.config.presetClusterRoles.includes(name)
-  }
-
-  fetchData = () => {
-    this.store.fetchDetail(this.props.match.params);
-  }
-
-  getOperations = () => [
-    {
-      key: 'edit',
-      icon: 'pen',
-      text: t('EDIT_INFORMATION'),
-      action: 'edit',
-      show: this.showEdit,
-      onClick: () =>
-        this.trigger('keypair.edit', {
-          type: this.name,
-          detail: toJS(this.store.detail),
-          success: this.fetchData,
-        }),
-    },
-    {
-      key: 'viewYaml',
-      icon: 'eye',
-      text: t('VIEW_YAML'),
-      action: 'view',
-      onClick: () => {
-        this.trigger('keypair.yaml.view', {
-          yaml: this.store.yaml,
-          readOnly: true,
-        })
-      },
-    },
-    {
-      key: 'delete',
-      icon: 'trash',
-      text: t('DELETE'),
-      action: 'delete',
-      type: 'danger',
-      show: this.showEdit,
-      onClick: () =>
-        this.trigger('keypair.delete', {
-          type: this.name,
-          detail: toJS(this.store.detail),
-          cluster: this.props.match.params.cluster,
-          success: () => this.routing.push(this.listUrl),
-        }),
-    },
-  ]
-
-  getAttrs = () => {
-    const detail = toJS(this.store.detail)
-
-    if (isEmpty(detail)) {
-      return
+    const fetchData = () => {
+        store.fetchDetail(props.match.params);
     }
+    
+    const { cluster } = props.match.params
+    const listUrl = `/clusters/${cluster}/keypairs`
 
-    return [
+    const routing = props.rootStore.routing;
+    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+
+    const getOperations = () => [
       {
-        name: t('클러스터'),
-        value: detail.cluster,
+        key: 'edit',
+        icon: 'pen',
+        text: t('EDIT_INFORMATION'),
+        action: 'edit',
+        show: showEdit,
+        onClick: () =>
+            props.rootStore.triggerAction('keypair.edit', {
+            type: 'KEYPAIR_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            success: fetchData,
+          }),
       },
       {
-        name: t('설명'),
-        value: detail.keypair.description,
+        key: 'viewYaml',
+        icon: 'eye',
+        text: t('VIEW_YAML'),
+        action: 'view',
+        onClick: () => {
+            props.rootStore.triggerAction('keypair.yaml.view', {
+            yaml: store.yaml,
+            readOnly: true,
+          })
+        },
+      },
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+            props.rootStore.triggerAction('keypair.delete', {
+            type: 'KEYPAIR_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            cluster: props.match.params.cluster,
+            success: () => routing.push(listUrl),
+          }),
       },
     ]
-  }
 
-  render() {
-    const stores = { detailStore: this.store }
+    const getAttrs = () => {
+      const detail = toJS(store.detail)
+  
+      if (isEmpty(detail)) {
+        return
+      }
+  
+      return [
+        {
+          name: t('클러스터'),
+          value: detail.cluster,
+        },
+        {
+          name: t('설명'),
+          value: detail.keypair.description,
+        },
+      ]
+    }
 
-    if (this.store.isLoading && !this.store.detail.name) {
-      return <Loading className="ks-page-loading" />
+    if (store.isLoading) {
+        return <Loading className="ks-page-loading" />;
     }
 
     const sideProps = {
-      module: this.module,
-      name: get(this.store.detail, 'name'),
-      desc: get(this.store.detail.keypair, 'description', ""),
-      operations: this.getOperations(),
-      attrs: this.getAttrs(),
-      breadcrumbs: [
-        {
-          label: t('키페어'),
-          url: this.listUrl,
-        },
-      ],
+        module: store.module,
+        name: get(store.detail, 'name'),
+        desc: get(store.detail.flavor, 'description', ''),
+        operations: getOperations(),
+        attrs: getAttrs(),
+        breadcrumbs: [
+            {
+                label: t('키페어'),
+                url: listUrl,
+            },
+        ],
     }
 
-    return <DetailPage stores={stores} routes={routes} {...sideProps} />
-  }
+    return (
+        <>
+            <DetailPage
+                stores={{ detailStore: store }}
+                routes={routes}
+                {...sideProps} />
+        </>
+    )
 }
+
+export default inject('rootStore')(observer(KeypairDetail));
+

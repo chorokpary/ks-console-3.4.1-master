@@ -1,304 +1,269 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import DetailPage from 'clusters/containers/Base/Detail'
+
+import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
-import { observer, inject } from 'mobx-react'
 import { get, isEmpty } from 'lodash'
-import { Loading, Notify } from '@kube-design/components'
-
+import { Loading } from '@kube-design/components';
+import { observer, inject } from 'mobx-react';
+import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
-import { trigger } from 'utils/action'
+
+import * as common from 'utils/resources'
+import routes from './routes'
+
 import VmStore from 'stores/resources/vms'
 import FloatingIpStore from 'stores/resources/floatingip';
 
-import DetailPage from 'clusters/containers/Base/Detail'
+const store = new VmStore();
+const floatingstore = new FloatingIpStore()
 
-import routes from './routes'
+const VmDetail = (props) => {
 
-@inject('rootStore')
-@observer
-@trigger
-export default class VmDetail extends React.Component {
-  store = new VmStore()
-  floatingstore = new FloatingIpStore()
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const fetchData = () => {
+        store.fetchDetail(props.match.params);
+    }
+    
+    const { cluster } = props.match.params
+    const listUrl = `/clusters/${cluster}/vms`
+
+    const routing = props.rootStore.routing;
+    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+
+    const vmName = props.match.params.name;
+    const floatingData = toJS(store.floatingList)
+    const floatingId = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.id)[0]
+    const floatingIp = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.floating_ip)[0]
+
+    const fnOpenVncPopup = () => {
+      //실제 URL 로 변경 요망
+      var apiUrl = "http://"+location.hostname+":30020";
+      var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
+      param = param + vmName + "/vnc";
   
-  componentDidMount() {
-    this.fetchData()
-  }
-
-  get module() {
-    return this.store.module
-  }
-
-  get name() {
-    return 'VM_DETAIL'
-  }
-
-  get listUrl() {
-    const { cluster } = this.props.match.params
-    return `/clusters/${cluster}/vms`
-  }
-
-  get routing() {
-    return this.props.rootStore.routing
-  }
-
-  get showEdit() {
-    const { name } = this.props.match.params
-    return !globals.config.presetClusterRoles.includes(name)
-  }
-
-  get floatingId() {
-    const { name } = this.props.match.params
-    const floatingData = toJS(this.store.floatingList)
-    const floatingId = floatingData?.filter((row) => row.instance_name == name).map((el) => el.id)[0]
-
-    return floatingId;
-  }
-
-  get floatingIp() {
-    const { name } = this.props.match.params
-    const floatingData = toJS(this.store.floatingList)
-    const floatingIp = floatingData?.filter((row) => row.instance_name == name).map((el) => el.floating_ip)[0]
-
-    return floatingIp;
-  }
-
-
-  fetchData = () => {
-    this.store.fetchDetail(this.props.match.params);
-  }
-
-  fnOpenVncPopup = () => {
-    //실제 URL 로 변경 요망
-    var apiUrl = "http://"+location.hostname+":30020";
-    var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
-    param = param + this.name + "/vnc";
-
-    var popupName = this.name.replaceAll("-", "");
-    window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1030,height=800');
-  }
-
-  getOperations = () => [
-    {
-      key: 'edit',
-      icon: 'pen',
-      text: t('EDIT_INFORMATION'),
-      action: 'edit',
-      show: this.showEdit,
-      onClick: () => {
-        this.trigger('vm.edit', {
-          type: this.name,
-          detail: toJS(this.store.detail),
-          success: this.fetchData,
-        })
-      },        
-    },
-    {
-      key: 'vnc',
-      icon: 'vpn',
-      text: t('VNC 접속'),
-      action: 'view',
-      onClick: () => {
-        this.fnOpenVncPopup();
-      },
-    },
-    {
-      key: 'floatingIp',
-      icon: 'intranet-routers',
-      text: this.floatingIp == undefined ? 'FIP 할당' : "FIP 해제",
-      action: 'view',
-      onClick: () => {
-        if(this.floatingIp == undefined){
-          this.trigger('vm.floatingIpPop', {
-            type: this.name,
-            success: this.fetchData,
-          })
-        }else{
-          this.trigger('vm.floatingIpPop.deallocate', {
-            data: { id: this.floatingId },
-            store: this.floatingstore,
-            success: this.fetchData,
-          })
-        }  
-      },        
-    },
-    {
-      key: 'volume',
-      icon: 'storage',
-      text: t('볼륨 연결/분리'),
-      action: 'view',
-      onClick: () => {
-        this.trigger('vm.volumePop', {
-          type: this.name,
-        })
-      },        
-    },
-    {
-      key: 'viewYaml',
-      icon: 'eye',
-      text: t('VIEW_YAML'),
-      action: 'view',
-      onClick: () => {
-        this.trigger('vm.yaml.view', {
-          yaml: this.store.yaml,
-          readOnly: true,
-        })
-      },
-    },
-    {
-      key: 'viewLog',
-      icon: 'eye',
-      text: t('Console 로그'),
-      action: 'view',
-      onClick: () => {
-        this.trigger('vm.log.view', {
-          vmlog: this.store.vmLog,
-          readOnly: true,
-        })
-      },
-    },
-    {
-      key: 'migrate',
-      icon: 'radio',
-      text: t('마이그레이션'),
-      action: 'view',
-      onClick: () => {
-
-        const { name } = this.props.match.params
-        const data = {};
-        data.vmName = name;
-        data.actionType = "migrate";
-        
-        this.trigger('vm.actionState', {
-          data: data,
-          title : "마이그레이션",
-          desc: "마이그레이션을 진행 하시겠습니까?\n가상머신 상태가 마이그레이션중으로 변경되고,\n완료되면 가상머신 상태가 표시됩니다",
-        },)
-
-      },
-    },
-    {
-      key: 'delete',
-      icon: 'trash',
-      text: t('DELETE'),
-      action: 'delete',
-      type: 'danger',
-      show: this.showEdit,
-      onClick: () =>
-        this.trigger('vm.delete', {
-          type: this.name,
-          detail: toJS(this.store.detail),
-          cluster: this.props.match.params.cluster,
-          success: () => this.routing.push(this.listUrl),
-        }),
-    },
-  ]
-
-  getAttrs = () => {
-    const detail = toJS(this.store.detail)
-
-    if (isEmpty(detail)) {
-      return
+      var popupName = vmName.replaceAll("-", "");
+      window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1030,height=800');
     }
 
-    return [
+    const getOperations = () => [
       {
-        name: t('클러스터'),
-        value: detail.cluster,
+        key: 'edit',
+        icon: 'pen',
+        text: t('EDIT_INFORMATION'),
+        action: 'edit',
+        show: showEdit,
+        onClick: () => {
+            props.rootStore.triggerAction('vm.edit', {
+            type: 'VM_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            success: fetchData,
+          })
+        },        
       },
       {
-        name: t('이미지'),
-        value: detail.vm.image,
+        key: 'vnc',
+        icon: 'vpn',
+        text: t('VNC 접속'),
+        action: 'view',
+        onClick: () => {
+          fnOpenVncPopup();
+        },
       },
       {
-        name: t('Flavor'),
-        value: detail.vm.flavor.name,
+        key: 'floatingIp',
+        icon: 'intranet-routers',
+        text: floatingIp == undefined ? 'FIP 할당' : "FIP 해제",
+        action: 'view',
+        onClick: () => {
+          if(floatingIp == undefined){
+              props.rootStore.triggerAction('vm.floatingIpPop', {
+              type: 'VM_DETAIL',
+              store: store,
+              success: fetchData,
+            })
+          }else{
+              props.rootStore.triggerAction('vm.floatingIpPop.deallocate', {
+              data: { id: floatingId },
+              store: floatingstore,
+              success: fetchData,
+            })
+          }  
+        },        
       },
       {
-        name: t('네트워크'),
-        value: detail.vm.networks.length > 0 ?
-                detail.vm.networks && (detail.vm.networks).map((network) => {
-                  if (network.name != "k8s-pod-network") {
-                    return <p key={network.name}>{network.ip}</p>
-                  }else if(detail.vm.networks.length ==1 && network.name == "k8s-pod-network"){
-                    return <p key={network.name}>-</p>
-                  }
-                })
-              : "-"
+        key: 'volume',
+        icon: 'storage',
+        text: t('볼륨 연결/분리'),
+        action: 'view',
+        onClick: () => {
+            props.rootStore.triggerAction('vm.volumePop', {
+            type: 'VM_DETAIL',
+            store: store,
+          })
+        },        
       },
       {
-        name: t('SR-IOV 네트워크'),
-        value: "-",
+        key: 'viewYaml',
+        icon: 'eye',
+        text: t('VIEW_YAML'),
+        action: 'view',
+        onClick: () => {
+            props.rootStore.triggerAction('vm.yaml.view', {
+            yaml: store.yaml,
+            readOnly: true,
+          })
+        },
       },
       {
-        name: t('플로팅 IP'),
-        value: this.floatingIp,
+        key: 'viewLog',
+        icon: 'eye',
+        text: t('Console 로그'),
+        action: 'view',
+        onClick: () => {
+            props.rootStore.triggerAction('vm.log.view', {
+            vmlog: store.vmLog,
+            readOnly: true,
+          })
+        },
       },
       {
-        name: t('키페어'),
-        value: detail.vm.keypair,
+        key: 'migrate',
+        icon: 'radio',
+        text: t('마이그레이션'),
+        action: 'view',
+        onClick: () => {
+
+          const data = {};
+          data.vmName = vmName;
+          data.actionType = "migrate";
+          
+            props.rootStore.triggerAction('vm.actionState', {
+            data: data,
+            store: store,
+            title : "마이그레이션",
+            desc: "마이그레이션을 진행 하시겠습니까?\n가상머신 상태가 마이그레이션중으로 변경되고,\n완료되면 가상머신 상태가 표시됩니다",
+          },)
+  
+        },
       },
       {
-        name: t('로드밸런서'),
-        value: "-",
-      },
-      {
-        name: t('보안그룹'),
-        value: detail.vm.security_groups.length > 0 ? 
-                detail.vm.security_groups && (detail.vm.security_groups).map((security) => (
-                  <p key={security}>{security}</p>
-                ))
-              : "-",
-      },
-      {
-        name: t('설명'),
-        value: detail.vm.description,
-      },
-      {
-        name: t('생성시간'),
-        value: getLocalTime(detail.vm.creation_timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+            props.rootStore.triggerAction('vm.delete', {
+            type: 'VM_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            cluster: props.match.params.cluster,
+            success: () => routing.push(listUrl),
+          }),
       },
     ]
-  }
 
-  render() {
-    const stores = { detailStore: this.store }
+    const getAttrs = () => {
+      const detail = toJS(store.detail)
+  
+      if (isEmpty(detail)) {
+        return
+      }
+  
+      return [
+        {
+          name: t('클러스터'),
+          value: detail.cluster,
+        },
+        {
+          name: t('이미지'),
+          value: detail.vm.image,
+        },
+        {
+          name: t('Flavor'),
+          value: detail.vm.flavor.name,
+        },
+        {
+          name: t('네트워크'),
+          value: detail.vm.networks.length > 0 ?
+                  detail.vm.networks && (detail.vm.networks).map((network) => {
+                    if (network.name != "k8s-pod-network") {
+                      return <p key={network.name}>{network.ip}</p>
+                    }else if(detail.vm.networks.length ==1 && network.name == "k8s-pod-network"){
+                      return <p key={network.name}>-</p>
+                    }
+                  })
+                : "-"
+        },
+        {
+          name: t('SR-IOV 네트워크'),
+          value: "-",
+        },
+        {
+          name: t('플로팅 IP'),
+          value: floatingIp,
+        },
+        {
+          name: t('키페어'),
+          value: detail.vm.keypair,
+        },
+        {
+          name: t('로드밸런서'),
+          value: "-",
+        },
+        {
+          name: t('보안그룹'),
+          value: detail.vm.security_groups.length > 0 ? 
+                  detail.vm.security_groups && (detail.vm.security_groups).map((security) => (
+                    <p key={security}>{security}</p>
+                  ))
+                : "-",
+        },
+        {
+          name: t('설명'),
+          value: detail.vm.description,
+        },
+        {
+          name: t('생성시간'),
+          value: getLocalTime(detail.vm.creation_timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        },
+      ]
+    }
 
-    if (this.store.isLoading && !this.store.detail.name) {
-      return <Loading className="ks-page-loading" />
+    if (store.isLoading) {
+        return <Loading className="ks-page-loading" />;
     }
 
     const sideProps = {
-      module: this.module,
-      name: get(this.store.detail, 'name'),
-      desc: get(this.store.detail.vm, 'description', ""),
-      operations: this.getOperations(),
-      attrs: this.getAttrs(),
-      breadcrumbs: [
-        {
-          label: t('가상머신'),
-          url: this.listUrl,
-        },
-      ],
+        module: store.module,
+        name: get(store.detail, 'name'),
+        desc: get(store.detail.flavor, 'description', ''),
+        operations: getOperations(),
+        attrs: getAttrs(),
+        breadcrumbs: [
+            {
+                label: t('가상머신'),
+                url: listUrl,
+            },
+        ],
     }
 
-    return <DetailPage stores={stores} routes={routes} {...sideProps} />
-  }
+    return (
+        <>
+            <DetailPage
+                stores={{ detailStore: store }}
+                routes={routes}
+                {...sideProps} />
+        </>
+    )
 }
+
+export default inject('rootStore')(observer(VmDetail));
+
