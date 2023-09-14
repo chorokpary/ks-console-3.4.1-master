@@ -2047,6 +2047,14 @@ body.dashboard {
     font-family: "Roboto", "Pretendard", sans-serif
 }
 
+.dashboard .src-components-Charts-Custom-Tooltip-index__tooltip {
+    padding: 8px 12px !important;
+}
+
+.dashboard .src-components-Charts-Custom-Tooltip-index__label {
+    color: #ffffff !important;
+}
+
 .dashboard button,
 .dashboard input,
 .dashboard select,

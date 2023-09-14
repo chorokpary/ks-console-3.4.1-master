@@ -282,7 +282,7 @@ export default class BaseMonitoringStore {
     this.data = fillZero ? fillEmptyMetrics(params, result) : result
     this.isLoading = false
     this.isRefreshing = false
-    console.log(result)
+
     return result
   }
 
