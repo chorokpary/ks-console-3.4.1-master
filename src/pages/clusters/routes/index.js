@@ -70,7 +70,7 @@ import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 import Vms from '../containers/Resources/Vms'
 import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
-
+import ContainerImage from '../containers/Resources/ContainerImages'
 
 const PATH = '/clusters/:cluster'
 
@@ -316,6 +316,12 @@ export default [
             component: Vms,
             exact: true,
           },
+          {
+            path: `${PATH}/containerimages`,
+            component: ContainerImage,
+            exact: true,
+          },
+
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

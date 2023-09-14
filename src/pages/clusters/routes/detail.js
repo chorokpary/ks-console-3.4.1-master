@@ -59,7 +59,7 @@ import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
-
+import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -218,5 +218,9 @@ export default [
   {
     path: `${PATH}/vms/:name`,
     component: VmDetail,
+  },
+  {
+    path: `${PATH}/containerimages/:name`,
+    component: ContainerImageDetail,
   },
 ]

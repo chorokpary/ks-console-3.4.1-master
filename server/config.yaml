@@ -314,6 +314,12 @@ client:
               skipAuth: true,
               showInDisable: true,
             }
+            - {
+              name: containerImages,
+              title: "컨테이너_이미지",
+              skipAuth: true,
+              showInDisable: true,
+            }
 
 
   # access control page navigations
