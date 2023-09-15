@@ -1,7 +1,76 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
+import { getAreaChartOps } from 'utils/monitoring'
+import { get } from 'lodash'
+import TinyArea from '../../../../../projects/containers/Overview/ResourceUsage/TinyArea'
+// import { TinyArea } from 'components/Charts'
 
-const ResourceChange = () => {
+const MetricTypes = {
+  pod_running_count: 'cluster_pod_running_count',
+}
+
+const ResourceChange = ({ monitorStore }) => {
+
+  const [tabData, setTabData] = useState();
+  const [metricData, setMetricData] = useState([]);
+  const [tabContentData, setTabContentData] = useState([]);
+  const [tabContent, setTabContent] = useState();
+  const [tabContentActive, setTabContentActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getNetworkTrafficData = async () => {
+      setLoading(true)
+      const metricData = await monitorStore.fetchMetrics({
+        metrics: Object.values(MetricTypes),
+        // step: `${Math.floor(4320)}s`, // Time interval
+        // times: 10,
+        fillZero: true,
+        step: '1d',
+        times: 10,
+      })
+      setMetricData(metricData)
+      setLoading(false)
+    };
+    getNetworkTrafficData();
+  }, [])
+
+  useEffect(() => {
+    // getData();
+    getContentOptions();
+  }, [metricData])
+
+  const getContentOptions = () => {
+    const result = [
+      {
+        type: 'pod',
+        title: 'POD',
+        legend: ['RUNNING_PODS'],
+        unit: '',
+        metricType: MetricTypes.pod_running_count,
+        data: [
+          get(metricData, `${MetricTypes.pod_running_count}.data.result[0]`, {}),
+        ],
+      },
+    ]
+
+    const data = result.map(item => ({
+      props: item,
+    }))
+    setTabContentData(data)
+  }
+
+  useEffect(() => {
+    if (tabContentData.length > 0) {
+      setTabContent(tabContentData?.[0])
+      setTabContentActive(true)
+
+      const config = getAreaChartOps(tabContentData?.[0].props)
+      const lastData = config.data[config.data.length - 1];
+      console.log(lastData)
+      setTabData(lastData)
+    }
+  }, [tabContentData])
 
   return (
     <>
@@ -15,14 +84,15 @@ const ResourceChange = () => {
 
               </div>
             </div>
-            <div className="grid_info style_status box_long">
-              <div className="box type_status">
-                <div className="cont_group">
-                  <h5><i className="ico ico-type-pod"></i>Pod</h5>
-                  <div className="number_wrap">
-                    <p><span className="em">12</span></p>
-                  </div>
-                  <div className="cont2">
+            <Loading spinning={loading}>
+              <div className="grid_info style_status box_long">
+                <div className="box type_status">
+                  <div className="cont_group">
+                    <h5><i className="ico ico-type-pod"></i>Pod</h5>
+                    <div className="number_wrap">
+                      <p><span className="em">{tabData?.RUNNING_PODS}</span></p>
+                    </div>
+                    {/* <div className="cont2">
                     <div className="status_wrap">
                       <div className="value">1</div>
                       <p><span>Created</span></p>
@@ -31,12 +101,15 @@ const ResourceChange = () => {
                       <div className="value">0</div>
                       <p><span>Deleted</span></p>
                     </div>
-                  </div>
-                  <div className="chart chart_03">
+                  </div> */}
+                    {tabContentActive &&
+                      <TabContent option={tabContent?.props}></TabContent>
+                    }
+                    {/* <div className="chart chart_03"></div> */}
                   </div>
                 </div>
               </div>
-            </div>
+            </Loading>
             {/*// grid_info style_status */}
             <div className="grid_info style_status box_long">
               <div className="box type_status">
@@ -93,3 +166,15 @@ const ResourceChange = () => {
 }
 
 export default ResourceChange
+
+const TabContent = ({ option }) => {
+
+  const commonProps = {
+    key: option?.title,
+  }
+  const config = getAreaChartOps(option)
+
+  return (
+    <TinyArea {...commonProps} {...config} bgColor="transparent" />
+  )
+}

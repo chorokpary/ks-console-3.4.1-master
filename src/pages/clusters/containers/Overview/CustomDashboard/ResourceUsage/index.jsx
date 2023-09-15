@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import { getLastMonitoringData, getAreaChartOps, getSuitableUnit, getValueByUnit } from 'utils/monitoring'
-import ClusterMonitorStore from 'stores/monitoring/cluster'
 import { get } from 'lodash'
 import { SimpleArea } from 'components/Charts'
 
@@ -19,9 +18,7 @@ const MetricTypes = {
   pod_capacity: 'cluster_pod_quota',
 }
 
-const ResourcesUsage = () => {
-
-  const monitorStore = new ClusterMonitorStore({ cluster: 'default' })
+const ResourcesUsage = ({ monitorStore }) => {
 
   const [metricData, setMetricData] = useState([]);
   const [tabData, setTabData] = useState();

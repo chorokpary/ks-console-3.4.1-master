@@ -3,6 +3,7 @@ import { GridStack } from 'gridstack'
 import 'gridstack/dist/gridstack.min.css';
 import './dashboard.css'
 import { inject, observer } from 'mobx-react';
+import ClusterMonitorStore from 'stores/monitoring/cluster'
 
 import ClusterNode from './ClusterNode';
 import Pod from './Pod';
@@ -22,6 +23,8 @@ const CustomDashboard = (props) => {
 
   const { cluster } = props.match.params
   const { routing } = props.rootStore;
+
+  const monitorStore = new ClusterMonitorStore({ cluster })
 
   const options = {
     float: false,
@@ -85,44 +88,43 @@ const CustomDashboard = (props) => {
                   <div className="grid-stack">
 
                     {/* 클러스터 노드 */}
-                    <ClusterNode></ClusterNode>
+                    <ClusterNode />
 
                     {/* 파드 */}
-                    <Pod></Pod>
+                    <Pod />
 
                     {/* 가상머신 */}
-                    <Vm></Vm>
+                    <Vm />
 
                     {/* 쿠버네티스 */}
-                    <K8s></K8s>
+                    <K8s />
 
                     {/* 리소스 사용량 */}
-                    <ResourcesUsage></ResourcesUsage>
+                    <ResourcesUsage monitorStore={monitorStore} />
 
                     {/* 네트워크 트래픽 */}
-                    <NetworkTraffic></NetworkTraffic>
+                    <NetworkTraffic monitorStore={monitorStore} />
 
                     {/* 리소스 사용량 Top 5 */}
-                    <NodeTop5></NodeTop5>
+                    <NodeTop5 />
 
                     {/* 최근 생성된 리소스 (일주일) */}
-                    <RecentResource></RecentResource>
+                    <RecentResource />
 
                     {/* 이슈 */}
-                    <Issue></Issue>
+                    <Issue />
 
                     {/* 컴퓨팅 유형별 현황 */}
-                    <Computing></Computing>
-
+                    <Computing />
 
                     {/* 리소스 변화량 */}
-                    <ResourceChange></ResourceChange>
+                    <ResourceChange monitorStore={monitorStore} />
 
                     {/* 쿠버네티스 컴포넌트 상태 */}
-                    <K8sStatus></K8sStatus>
+                    <K8sStatus />
 
                     {/* BMC 노드 현황 */}
-                    <BmcNode></BmcNode>
+                    <BmcNode />
                   </div>
                 </div>
 

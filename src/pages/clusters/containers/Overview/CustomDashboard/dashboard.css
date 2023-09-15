@@ -2055,6 +2055,11 @@ body.dashboard {
     color: #ffffff !important;
 }
 
+.dashboard .src-components-Charts-Custom-Legend-index__item {
+    padding: 0 4px !important;
+}
+
+
 .dashboard button,
 .dashboard input,
 .dashboard select,
