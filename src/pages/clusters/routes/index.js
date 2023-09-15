@@ -71,6 +71,7 @@ import FloatingIp from '../containers/Resources/FloatingIp'
 import Vms from '../containers/Resources/Vms'
 import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
 import ContainerImage from '../containers/Resources/ContainerImages'
+import ContainerResource from '../containers/Resources/ContainerResource'
 
 const PATH = '/clusters/:cluster'
 
@@ -297,7 +298,7 @@ export default [
             exact: true,
           },
           {
-            path: `${PATH}/securityGroups`,
+            path: `${PATH}/securitygroups`,
             component: SecurityGroups,
             exact: true,
           },
@@ -319,6 +320,11 @@ export default [
           {
             path: `${PATH}/containerimages`,
             component: ContainerImage,
+            exact: true,
+          },
+          {
+            path: `${PATH}/containerresource`,
+            component: ContainerResource,
             exact: true,
           },
 

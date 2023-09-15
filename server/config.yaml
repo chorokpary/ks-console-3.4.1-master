@@ -320,6 +320,12 @@ client:
               skipAuth: true,
               showInDisable: true,
             }
+            - {
+              name: containerResource,
+              title: "쿠버네티스",
+              skipAuth: true,
+              showInDisable: true,
+            }
 
 
   # access control page navigations

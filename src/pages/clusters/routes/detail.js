@@ -60,6 +60,7 @@ import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
 import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
+import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -204,7 +205,7 @@ export default [
     component: FlavorDetail,
   },
   {
-    path: `${PATH}/securityGroups/:name`,
+    path: `${PATH}/securitygroups/:name`,
     component: SecurityGroupDetail,
   },
   {
@@ -222,5 +223,9 @@ export default [
   {
     path: `${PATH}/containerimages/:name`,
     component: ContainerImageDetail,
+  },
+ {
+    path: `${PATH}/containerresource/:name`,
+    component: ContainerResourceDetail,
   },
 ]
