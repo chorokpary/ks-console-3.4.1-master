@@ -32,6 +32,10 @@ const ResourcesUsage = ({ monitorStore }) => {
     const getResourceUsageData = async () => {
       setLoading(true)
       const metricData = await monitorStore.fetchMetrics({
+        // step - time interval
+        // times - 표시할 총 시간
+        // ex - 그래프 길이 = 5m * 100 
+        // -> 현재시간부터 500분을 5분 단위로 표기
         metrics: Object.values(MetricTypes),
         step: '5m',
         times: 100,

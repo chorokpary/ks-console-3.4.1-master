@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import { getAreaChartOps } from 'utils/monitoring'
 import { get } from 'lodash'
-import TinyArea from '../../../../../projects/containers/Overview/ResourceUsage/TinyArea'
-// import { TinyArea } from 'components/Charts'
+import TinyArea from 'projects/containers/Overview/ResourceUsage/TinyArea'
 
 const MetricTypes = {
   pod_running_count: 'cluster_pod_running_count',
@@ -67,7 +66,6 @@ const ResourceChange = ({ monitorStore }) => {
 
       const config = getAreaChartOps(tabContentData?.[0].props)
       const lastData = config.data[config.data.length - 1];
-      console.log(lastData)
       setTabData(lastData)
     }
   }, [tabContentData])

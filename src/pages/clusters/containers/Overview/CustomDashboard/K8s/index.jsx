@@ -1,7 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
+import K8sStore from 'stores/resources/containerresource'
+import K8sModel from 'stores/dashboard/k8s';
+import { fnSetK8s } from 'utils/dashboard'
 
 const K8s = () => {
+  const k8sStore = new K8sStore();
+
+  useEffect(() => {
+    const getK8sData = async () => {
+      setLoading(true)
+      const k8sList = await k8sStore.fetchList({ limit: 1000 })
+      setList(k8sList)
+      setLoading(false)
+    };
+    getK8sData();
+  }, [])
+
+  const [list, setList] = useState([]);
+  const k8s = new K8sModel();
+  const [data, setData] = useState(k8s);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (list.length > 0) {
+      const data = fnSetK8s(list, k8s)
+      setData(data)
+    }
+  }, [list])
 
   return (
     <>
@@ -19,33 +44,25 @@ const K8s = () => {
                   <div className="cont1">
                     <div className="number_wrap">
                       <i className="ico ico-type-container"></i>
-                      <p><span className="em">4</span> / 9</p>
+                      <p><span className="em">{data.ready}</span> / {data.total}</p>
                     </div>
                   </div>
                   <div className="cont2">
                     <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Waiting</span></p>
+                      <div className="value">{data.ready}</div>
+                      <p className="status running"><span>Ready</span></p>
                     </div>
                     <div className="status_wrap">
-                      <div className="value">4</div>
-                      <p className="status running"><span>Running</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">2</div>
-                      <p className="status completed"><span>Completed</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">2</div>
-                      <p className="status error"><span>Error</span></p>
+                      <div className="value">{data.notReady}</div>
+                      <p className="status waiting"><span>NotReady</span></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          {/* // grid_item */}
         </div>
+        {/* // grid_item */}
       </div>
     </>
   )

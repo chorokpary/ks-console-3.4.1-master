@@ -64,10 +64,9 @@ export const fnSetVms = (list, data) => {
 }
 export const fnSetK8s = (list, data) => {
     list.map((obj) => {
-        if (obj.state === 'Provisioning'
-            || obj.state === 'Deleting') {
+        if (!obj.cluster_ready) {
             data.notReady += 1
-        } else if (obj.state === 'Provisioned') {
+        } else if (obj.cluster_ready) {
             data.ready += 1
         }
     })
