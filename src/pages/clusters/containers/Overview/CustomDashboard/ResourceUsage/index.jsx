@@ -130,10 +130,7 @@ const ResourcesUsage = ({ monitorStore }) => {
       },
     ]
 
-    const data = result.map(item => ({
-      props: item,
-    }))
-    setTabContentData(data)
+    setTabContentData(result)
   }
 
   useEffect(() => {
@@ -145,7 +142,7 @@ const ResourcesUsage = ({ monitorStore }) => {
 
   const onClickTabData = (unitType) => {
     setTabActive(unitType)
-    setTabContent(tabContentData.filter(obj => obj.props.unitType == unitType)[0])
+    setTabContent(tabContentData.filter(obj => obj.unitType == unitType)[0])
   }
 
 
@@ -204,7 +201,7 @@ const ResourcesUsage = ({ monitorStore }) => {
                   </div>
                   <div className="cont2">
                     {tabContentActive &&
-                      <TabContent option={tabContent?.props}></TabContent>
+                      <TabContent option={tabContent}></TabContent>
                     }
                     {/* <div className="chart_01"></div> */}
                   </div>

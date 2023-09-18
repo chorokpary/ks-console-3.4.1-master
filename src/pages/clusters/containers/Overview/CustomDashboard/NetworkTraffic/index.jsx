@@ -70,10 +70,7 @@ const NetworkTraffic = ({ monitorStore }) => {
       },
     ]
 
-    const data = result.map(item => ({
-      props: item,
-    }))
-    setTabContentData(data)
+    setTabContentData(result)
   }
 
   useEffect(() => {
@@ -81,7 +78,7 @@ const NetworkTraffic = ({ monitorStore }) => {
       setTabContent(tabContentData?.[0])
       setTabContentActive(true)
 
-      const config = getAreaChartOps(tabContentData?.[0].props)
+      const config = getAreaChartOps(tabContentData?.[0])
       const lastData = config.data[config.data.length - 1];
       setTabData(lastData)
     }
@@ -145,7 +142,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                 </div>
                 <div className="cont2">
                   {tabContentActive &&
-                    <TabContent option={tabContent?.props}></TabContent>
+                    <TabContent option={tabContent}></TabContent>
                   }
                   {/* <div className="chart_02"></div> */}
                 </div>

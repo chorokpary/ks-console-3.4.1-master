@@ -53,10 +53,7 @@ const ResourceChange = ({ monitorStore }) => {
       },
     ]
 
-    const data = result.map(item => ({
-      props: item,
-    }))
-    setTabContentData(data)
+    setTabContentData(result)
   }
 
   useEffect(() => {
@@ -64,7 +61,7 @@ const ResourceChange = ({ monitorStore }) => {
       setTabContent(tabContentData?.[0])
       setTabContentActive(true)
 
-      const config = getAreaChartOps(tabContentData?.[0].props)
+      const config = getAreaChartOps(tabContentData?.[0])
       const lastData = config.data[config.data.length - 1];
       setTabData(lastData)
     }
@@ -101,7 +98,7 @@ const ResourceChange = ({ monitorStore }) => {
                     </div>
                   </div> */}
                     {tabContentActive &&
-                      <TabContent option={tabContent?.props}></TabContent>
+                      <TabContent option={tabContent}></TabContent>
                     }
                     {/* <div className="chart chart_03"></div> */}
                   </div>
