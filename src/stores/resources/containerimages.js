@@ -38,20 +38,24 @@ export default class ContainerImagesStore extends Base {
 
   @action
   async create(data, params = {}) {
+
     const url = this.getResourceUrl(params);
 
-    const res = await request.post(url, jsonData)
+    console.log("data : "+ JSON.stringify(data))
+    const res = await request.post(url, data)
     return res
   }
 
   @action
   async update({ name, ...params }, data) {
 
+    const jsonData = {};
+    jsonData.image = data;
+    
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
     )
   }
-
 
   @action
   async fetchDetail(params) {

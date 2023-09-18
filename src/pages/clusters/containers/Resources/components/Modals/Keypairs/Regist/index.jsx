@@ -41,7 +41,8 @@ const RegistModal = (props) => {
       let priveteKey = keyPair.privateKey
       let publicKey = keyPair.publicKey
 
-      const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey, globals.user.email);
+      // const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey, globals.user.email);
+      const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey);
       const privateKeyToOpenSSH = forge.ssh.privateKeyToOpenSSH(priveteKey);
 
       setPublicKey(publicKeyToOpenSSH)

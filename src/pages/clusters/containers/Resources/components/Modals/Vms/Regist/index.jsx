@@ -49,6 +49,8 @@ const RegistModal = (props) => {
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
 
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+
   useEffect(() => {
 
     const getVmCreateData = async () => {
@@ -83,7 +85,7 @@ const RegistModal = (props) => {
 
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'linux', },
-    { label: 'Windows', value: 'window', icon: 'windows', }
+    { label: 'Windows', value: 'window', icon: 'windows', }  
   ]
 
   const imageOptions = () => {
@@ -138,6 +140,8 @@ const RegistModal = (props) => {
   const handleOk = () => {
     const onOk  = props.onOk;
     form.current.validator(() => {
+      
+      setSubmitButtonFlag(true);
 
       const { data } = form.current.props;
 
@@ -234,6 +238,7 @@ const RegistModal = (props) => {
       setFlavorDisk(flavorData[0].root_disk)
   
       setRegStep(4);    
+      setSubmitButtonFlag(false);
     }
   }
 
@@ -244,29 +249,33 @@ const RegistModal = (props) => {
           <>
               {regStep == 1 &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-cancel'])}>취소</Button>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
                   <Button type="control" onClick={() => {stepMoveCheck(1)}} className={classnames(styles['btn'],styles['btn-control'])}>다음</Button>                    
                 </>
               }
               {(regStep == 2) &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-cancel'])}>취소</Button>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
                   <Button onClick={() => {setRegStep(regStep-1)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
                   <Button type="control" onClick={() => {setRegStep(regStep+1)}} className={classnames(styles['btn'],styles['btn-control'])}>다음</Button>
                 </>
               }
                {(regStep == 3) &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-cancel'])}>취소</Button>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
                   <Button onClick={() => {setRegStep(regStep-1)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
                   <Button type="control" onClick={() => {stepMoveCheck(3)}} className={classnames(styles['btn'],styles['btn-control'])}>다음</Button>
                 </>
               }
               {regStep == 4 &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-cancel'])}>취소</Button>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
                   <Button onClick={() => {setRegStep(3)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
-                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])}>생성</Button>
+                  {submitButtonFlag ? 
+                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} disabled>생성</Button>
+                  :
+                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >생성</Button>
+                  }
                 </>
               }
           </>
@@ -969,7 +978,6 @@ const RegistModal = (props) => {
                         <div className={styles.list}>
                           <label>이미지</label>
                           <div className={styles.multiline}>
-                              <Icon name="ubunt" size={40} />
                             <div className={styles.bold}>{imageName}</div>
                           </div>
                         </div>

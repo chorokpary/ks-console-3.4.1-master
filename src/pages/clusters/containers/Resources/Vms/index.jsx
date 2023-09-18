@@ -206,17 +206,29 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (state, record) => (
-          <div>
-            <Dropdown content={<Menu>
-               {this.fnGetActionColumn(state, record.name)}
-              </Menu>}>
+        render: (state, record) => {
+          const stateArray = ['Stopped','Running','Paused']
+
+          if(stateArray.includes(state)){
+            return (
+              <div>
+                <Dropdown content={<Menu>
+                  {this.fnGetActionColumn(state, record.name)}
+                  </Menu>}>
+                  <div className={styles.iconwrapper}>
+                    <i className={styles[`ico-status-${state.toLowerCase()}`]}/><p>{state}</p>
+                  </div>   
+                </Dropdown>
+              </div>  
+            )       
+          }else{
+            return (
               <div className={styles.iconwrapper}>
                 <i className={styles[`ico-status-${state.toLowerCase()}`]}/><p>{state}</p>
-              </div>   
-            </Dropdown>
-          </div>                
-        ),      
+              </div>  
+            )
+          } 
+        },      
       },
       {
         title: t('등록일'),
@@ -272,28 +284,6 @@ export default class Vms extends React.Component {
             <i className={styles['ico-quick-start']}></i><span>시작</span>
           </Menu.MenuItem>
         }
-        {/* Provisioning */}
-        {/* {state == "Provisioning" &&
-            <>
-              <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-                <i className={styles['ico-quick-stop']}></i><span>중지</span>
-              </Menu.MenuItem>
-              <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-                <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
-              </Menu.MenuItem>
-            </>   
-              } */}
-        {/* Starting */}
-        {/* {state == "Starting" &&
-              <>
-                <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-                  <i className={styles['ico-quick-stop']}></i><span>중지</span>
-                </Menu.MenuItem>
-                <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-                  <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
-                </Menu.MenuItem>
-              </>   
-              } */}
         {/* Running */}
         {state == "Running" &&
             <>

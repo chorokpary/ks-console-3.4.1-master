@@ -16,11 +16,10 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
 
   const [modelView, setModalView] = useState(true);
 
-  const [realTime, setRealTime] = useState(detail.is_realtime)
-  const [osType, setOsType] = useState(detail.os_type)
+  const [osType, setOsType] = useState("linux")
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroTypeList, setDistroTypeList] = useState([])
-  const [distroType, setDistroType] = useState(detail.distro_type)
+  const [distroType, setDistroType] = useState(store.detail.image.os_distro)
 
   useEffect(() => {
     const getDistroTypeList = async () => {
@@ -31,10 +30,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
     getDistroTypeList();
   }, [])
 
-  const realTimeOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
-  ]
+
   const archTypeOptions = [
     { label: 'x86_64', value: 'x86_64', },
     { label: 'aarch64', value: 'aarch64', },
@@ -62,7 +58,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
 
     form.current.validator(() => {
       const { data } = form.current.props;
-      data.distro_type = distroType;
+      data.os_distro = distroType;
       onOk({ ...data })
     })
   }
@@ -80,6 +76,14 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
       setDistroType('ubuntu')
       setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'))
     }
+  }
+
+  const versionValidator = (rule, value, callback) => {
+
+    if(value == undefined){
+      return callback({ message: t('버전을 입력해 주세요.') })
+    }
+    callback()
   }
 
   return (
@@ -100,7 +104,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             rules={[{ required: true, message: t('이름을 입력해주세요') },]}
           >
             <Input name="name" maxLength={253}
-              defaultValue={detail.name}
+              defaultValue={store.detail.image.name}
               style={{ maxWidth: 'none' }}
               readOnly />
           </Form.Item>
@@ -150,7 +154,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                 >
                   <Select
                     name="arch_type"
-                    defaultValue={detail.arch_type}
+                    defaultValue={store.detail.image.arch_type}
                     options={archTypeOptions} />
                 </Form.Item>
               </Column>
@@ -160,7 +164,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                   rules={[{ required: true, },]}>
                   <Select
                     name="boot_type"
-                    defaultValue={detail.boot_type}
+                    defaultValue={store.detail.image.boot_type}
                     options={bootTypeOptions}
                   />
                 </Form.Item>
@@ -169,21 +173,13 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
           </Form.Item>
 
           <Form.Item
-            label={t('리얼 타임')}
-            rules={[{ required: true, },]}
+            label={t('쿠버네티스 버전')}
+            rules={[{ required: true, validator: versionValidator }]}         
           >
-            <RadioGroup
-              name="is_realtime"
-              wrapClassName="radio"
-              defaultValue={realTime}
-              onChange={value => setRealTime(value)}
-            >
-              {realTimeOptions.map(option => (
-                <RadioButton key={option.value} value={option.value}>
-                  {option.label}
-                </RadioButton>
-              ))}
-            </RadioGroup>
+            <Input name="kube_version" maxLength={253}
+              style={{ maxWidth: 'none' }}  
+              defaultValue={store.detail.image.kube_version}
+              />
           </Form.Item>
 
           <Form.Item
@@ -192,7 +188,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
-              defaultValue={detail.description}
+              defaultValue={store.detail.image.description}
               style={{ maxWidth: 'none' }}
               name="description"
               maxLength={256}

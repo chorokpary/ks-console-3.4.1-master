@@ -8,7 +8,7 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
-import ContainerForm from '../../../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
+import ContainerForm from 'components/Forms/Workload/ContainerSettings/ContainerForm'
 
 export default function ResourceImageModal({ title, store, onOk }) {
 
@@ -18,7 +18,6 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   const [modelView, setModalView] = useState(true);
 
-  const [realTime, setRealTime] = useState(false)
   const [publicType, setPublicType] = useState('퍼블릭')
   const [osType, setOsType] = useState('linux')
   const [distroTypeData, setDistroTypeData] = useState([])
@@ -34,10 +33,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     getDistroTypeList();
   }, [])
 
-  const realTimeOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
-  ]
+
   const publicTypeOptions = [
     { value: '퍼블릭', },
     { value: '프라이빗', }
@@ -72,7 +68,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
       if (typeof data.size === 'string') {
         data.size = Number(data.size.slice(0, data.size.length - 2))
       }
-      data.distro_type = distroType;
+      data.os_distro = distroType;
       onOk({ image: data })
     })
   }
@@ -102,6 +98,15 @@ export default function ResourceImageModal({ title, store, onOk }) {
     }
   }
 
+  const versionValidator = (rule, value, callback) => {
+
+    if(value == undefined){
+      return callback({ message: t('버전을 입력해 주세요.') })
+    }
+    callback()
+  }
+
+
   return (
     <>
       <Modal
@@ -118,14 +123,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
           <Form.Item
             label={t('이름')}
             rules={[
-              // { required: true, message: t('NAME_EMPTY_DESC') },
               { required: true, message: t('이름을 입력해주세요') },
-              // {
-              //   pattern: PATTERN_NAME,
-              //   message: t('INVALID_NAME_DESC', {
-              //     message: t('LONG_NAME_DESC'),
-              //   }),
-              // },
             ]}
             desc={t('NAME_DESC')}
           >
@@ -205,29 +203,14 @@ export default function ResourceImageModal({ title, store, onOk }) {
             </Columns>
           </Form.Item>
 
-          {/* <Form.Item> */}
           <Form.Item
-            label={t('리얼 타임')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            label={t('쿠버네티스 버전')}
+            rules={[{ required: true, validator: versionValidator }]}         
           >
-            <RadioGroup
-              name="is_realtime"
-              wrapClassName="radio"
-              defaultValue={realTime}
-              onChange={value => setRealTime(value)}
-            >
-              {realTimeOptions.map(option => (
-                <RadioButton key={option.value} value={option.value}>
-                  {option.label}
-                </RadioButton>
-              ))}
-            </RadioGroup>
+            <Input name="kube_version" maxLength={253}
+              style={{ maxWidth: 'none' }}  placeholder="v1.1.1"/>
           </Form.Item>
-          {/* </Form.Item> */}
+
           <Form.Item
             label={t('사이즈')}
             rules={[{
