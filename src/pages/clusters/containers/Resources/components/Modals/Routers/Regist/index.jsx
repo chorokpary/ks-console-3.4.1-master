@@ -191,7 +191,7 @@ const RegistModal = (props) => {
                         })}
                       </tbody>
                   </table> 
-                  <div>
+                  <div className={styles.removeCheckWrapper}>
                     {internalCheckItems?.map((name) => 
                     <span key={name}><Button onClick={() => handleDelete(name, "internal")}>{name}</Button></span>
                     )}                      

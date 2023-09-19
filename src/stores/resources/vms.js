@@ -74,13 +74,18 @@ export default class VmStore extends Base {
       ...this.mapper(item),
     }))
 
-    // VMS 일때 Flavor 정보 추가 
+    // VMS 일때 Flavor, Image 정보 추가 
     const vmArray = [];
     if (apiName == "vms") {
 
       const promises = data.map(async (vm) => {
+
         const flavorDetail = await axios.get("/edgetron/resources/kubevirt/flavors/" + vm.flavor);
         vm.flavor_detail = flavorDetail.data.flavor;
+  
+        const imageDetail = await axios.get("/edgetron/resources/kubevirt/images/" + vm.image);
+        vm.image_detail = imageDetail.data.image;
+
         vmArray.push(vm);
       })
       await Promise.all(promises);

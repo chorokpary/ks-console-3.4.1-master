@@ -31,7 +31,7 @@ export default class VolumeStore extends Base {
 
   records = new List()
 
-  module = 'volumes'
+  module = 'resourcesvolumes'
 
   getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/volumes`
   getListUrl = this.getResourceUrl
@@ -81,7 +81,7 @@ export default class VolumeStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}/manifest`
     )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' }
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Volumes' }
   
     this.yaml = yamlData.manifest
     this.isLoading = false

@@ -22,6 +22,9 @@ const ModifyModal = (props) => {
   const [radioSnatType, setRadioSnatType] = useState("T");
   const [radioExternal, setRadioExternal] = useState("");
 
+  const detailInternal = props.store.detail.router.internal;
+  const detailExternal= props.store.detail.router.external;
+
   const handleOk = () => {
     const onOk  = props.onOk;
 
@@ -67,6 +70,14 @@ const ModifyModal = (props) => {
     };
 
     fnGetNetworkList();
+
+    // 초기 선택 
+    detailInternal.map((name) => {
+      handleSingleCheck(true, name, "internal")
+    })
+    
+    detailExternal && setRadioExternal(detailExternal);
+
   }, [])
 
   // 체크 리스트 시작 ==================================================
@@ -108,7 +119,6 @@ const ModifyModal = (props) => {
 
   // 체크 리스트 끝 ==================================================
   
-
   return (
     <>  
         <Modal
@@ -159,7 +169,7 @@ const ModifyModal = (props) => {
                           <th>
                           <Checkbox name='select-all-internal' 
                                 onChange={(checked) => handleAllCheck(checked, "internal")}
-                                checked={dataListVariables['internal'].length > 0 && stateVariables['internal'].length === dataListVariables['internal'].length ? true : false}/>
+                                checked={(dataListVariables['internal'].length + detailInternal.length) > 0 && stateVariables['internal'].length === (dataListVariables['internal'].length + detailInternal.length) ? true : false}/>
                           </th>
                           <th><strong>네트워크 이름</strong></th>
                           <th><strong>네트워크 유형</strong></th>
@@ -189,9 +199,22 @@ const ModifyModal = (props) => {
                           <td>{data.gateway_ip}</td>
                         </tr>
                       })}
+                      {internalNetworkList?.filter((data) => (detailInternal.includes(data.name))).map((data, key) => {
+                          return <tr key={data.name}>
+                          <td>
+                            <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
+                            onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
+                          </td>
+                          <td>{data.name}</td>
+                          <td>{(data.type).toUpperCase()}</td>
+                          <td>{data.default_route ? "사용" : "미사용"}</td>
+                          <td>{data.cidr}</td>
+                          <td>{data.gateway_ip}</td>
+                        </tr>
+                      })}
                       </tbody>
                   </table> 
-                  <div>
+                  <div className={styles.removeCheckWrapper}>
                     {internalCheckItems?.map((name) => 
                     <span key={name}><Button onClick={() => handleDelete(name, "internal")}>{name}</Button></span>
                     )}                      
@@ -232,6 +255,19 @@ const ModifyModal = (props) => {
                             </tr>
                           }
                           {externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).map((data) => {
+                            return <tr key={data.name}>
+                              <td>
+                                <Radio name="external" value={data.name} checked={radioExternal === data.name} 
+                                onChange={(e) => {setRadioExternal(data.name);}}/>
+                              </td>
+                              <td>{data.name}</td>
+                              <td>{(data.type).toUpperCase()}</td>
+                              <td>{data.default_route ? "사용" : "미사용"}</td>
+                              <td>{data.cidr}</td>
+                              <td>{data.gateway_ip}</td>
+                            </tr>
+                          })}
+                          {externalNetworkList?.filter((data) => data.name == detailExternal).map((data) => {
                             return <tr key={data.name}>
                               <td>
                                 <Radio name="external" value={data.name} checked={radioExternal === data.name} 

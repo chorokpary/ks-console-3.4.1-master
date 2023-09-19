@@ -136,6 +136,55 @@ export default class Vms extends React.Component {
         width: 'auto',
       },
       {
+        title: t('CPU 타입'),
+        dataIndex: 'cpuType',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: (cpuType, record)  => {
+          const arch_type = <p>{record.image_detail.arch_type}</p>
+          return arch_type
+        },
+      },
+      // {
+      //   title: t('호스트 디바이스'),
+      //   dataIndex: 'host_devices',
+      //   isHideable: true,
+      //   search: true,
+      //   width: 'auto',
+      //   render: host_devices => {
+      //     let hostDeviceList = ""
+
+      //     if (!!host_devices) {
+      //       hostDeviceList = host_devices.map((host) => {
+      //           return <p key={host}>{host}</p>
+      //       });
+      //     } else {
+      //       hostDeviceList = <p>-</p>
+      //     }
+      //     return hostDeviceList
+      //   }
+      // },
+      // {
+      //   title: t('Mediated 디바이스'),
+      //   dataIndex: 'gpus',
+      //   isHideable: true,
+      //   search: true,
+      //   width: 'auto',
+      //   render: gpus => {
+      //     let gpusList = ""
+
+      //     if (!!gpus) {
+      //       gpusList = gpus.map((gpu) => {
+      //           return <p key={gpu}>{gpu}</p>
+      //       });
+      //     } else {
+      //       gpusList = <p>-</p>
+      //     }
+      //     return gpusList
+      //   }
+      // },
+      {
         title: t('Flavor'),
         dataIndex: 'flavor',
         isHideable: true,
@@ -158,7 +207,7 @@ export default class Vms extends React.Component {
               }
             });
           } else {
-            networkIpList = <p></p>
+            networkIpList = <p>-</p>
           }
       
           return networkIpList
@@ -340,7 +389,8 @@ export default class Vms extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
+    //console.log({ ...this.props })
+    
     return (
       <ListPage {...this.props}>
       <Banner

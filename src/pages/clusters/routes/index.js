@@ -72,6 +72,7 @@ import Vms from '../containers/Resources/Vms'
 import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
 import ContainerImage from '../containers/Resources/ContainerImages'
 import ContainerResource from '../containers/Resources/ContainerResource'
+import ResourcesVolumes from '../containers/Resources/Volumes'
 
 const PATH = '/clusters/:cluster'
 
@@ -327,7 +328,11 @@ export default [
             component: ContainerResource,
             exact: true,
           },
-
+          {
+            path: `${PATH}/resourcesvolumes`,
+            component: ResourcesVolumes,
+            exact: true,
+          },          
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

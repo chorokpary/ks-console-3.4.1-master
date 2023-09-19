@@ -326,6 +326,12 @@ client:
               skipAuth: true,
               showInDisable: true,
             }
+            - {
+              name: resourcesVolumes,
+              title: "볼륨",
+              skipAuth: true,
+              showInDisable: true,
+            }
 
 
   # access control page navigations

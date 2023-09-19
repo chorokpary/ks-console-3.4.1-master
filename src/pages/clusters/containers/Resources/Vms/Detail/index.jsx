@@ -245,7 +245,7 @@ const VmDetail = (props) => {
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
-        operations: getOperations(),
+        operations: get(store.detail.vm, 'migratable') ? getOperations() : getOperations().filter((data) => data.key != "migrate"),
         attrs: getAttrs(),
         breadcrumbs: [
             {
