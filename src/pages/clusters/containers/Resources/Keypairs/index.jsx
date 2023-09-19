@@ -111,7 +111,7 @@ export default class Keypairs extends React.Component {
         search: true,
         render: name => (
           <Avatar
-            icon={ICON_TYPES[this.module]}
+            icon="key"
             to={`/clusters/${cluster}/keypairs/${name}`}
             title={name}
           />

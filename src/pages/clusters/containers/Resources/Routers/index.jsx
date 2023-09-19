@@ -111,7 +111,7 @@ export default class Routers extends React.Component {
         search: true,
         render: name => (
           <Avatar
-            icon={ICON_TYPES[this.module]}
+            icon="router"
             to={`/clusters/${cluster}/routers/${name}`}
             title={name}
           />

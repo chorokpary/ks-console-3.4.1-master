@@ -111,7 +111,7 @@ export default class SecurityGroups extends React.Component {
                 sorter: true,
                 render: name => (
                     <Avatar
-                        icon={ICON_TYPES[this.module]}
+                        icon="shield"
                         to={`/clusters/${cluster}/securityGroups/${name}`}
                         title={name}
                     />
@@ -157,6 +157,7 @@ export default class SecurityGroups extends React.Component {
         return (
             <ListPage {...this.props}>
                 <Banner
+                    icon="shield"
                     {...bannerProps}
                     tabs={this.tabs}
                     title={t('보안그룹')}

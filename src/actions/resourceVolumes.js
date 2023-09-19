@@ -27,7 +27,7 @@ import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
 export default {
-  'volume.regist': {
+  'resourcesvolume.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -50,7 +50,7 @@ export default {
       })
     },
   },
-  'volume.edit': {
+  'resourcesvolume.edit': {
     on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -70,7 +70,7 @@ export default {
       })
     },
   },
-  'volume.remove': {
+  'resourcesvolume.remove': {
     on({
       store,
       detail,
@@ -93,7 +93,7 @@ export default {
         },
         modal: DeleteModal,
         title: t('삭제'),
-        desc: t.html('키페어 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        desc: t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -102,7 +102,7 @@ export default {
       })
     },
   },
-  'volume.remove.batch': {
+  'resourcesvolume.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       const usernames = rowKeys.join(', ')
@@ -123,15 +123,15 @@ export default {
             : t('일괄 삭제'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('키페어 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('키페어 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
+            : t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
       })
     },
   },
-  'volume.delete': {
+  'resourcesvolume.delete': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
@@ -149,7 +149,7 @@ export default {
       })
     },
   },
-  'volume.yaml.view': {
+  'resourcesvolume.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {

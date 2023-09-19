@@ -109,7 +109,7 @@ export default class Flavors extends React.Component {
                 sorter: true,
                 render: name => (
                     <Avatar
-                        icon={ICON_TYPES[this.module]}
+                        icon="apps"
                         to={`/clusters/${cluster}/flavors/${name}`}
                         title={name}
                     />
@@ -193,6 +193,7 @@ export default class Flavors extends React.Component {
         return (
             <ListPage {...this.props}>
                 <Banner
+                    icon="apps"
                     {...bannerProps}
                     tabs={this.tabs}
                     title={t('Flavor')}

@@ -22,11 +22,16 @@ import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import classNames from 'classnames'
+import Indicator from 'components/Base/Indicator'
+
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import VolumeStore from 'stores/resources/volumes'
+
+import styles from './index.scss'
 
 @withList({
   store: new VolumeStore(),
@@ -51,7 +56,7 @@ export default class ResourcesVolumes extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('volume.remove', {
+          trigger('resourcesvolume.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -71,7 +76,7 @@ export default class ResourcesVolumes extends React.Component {
           text: t('생성'),
           action: 'create',
           onClick: () =>
-            trigger('volume.regist', {
+            trigger('resourcesvolume.regist', {
             ...this.props.match.params,
             type: this.name,
             success: getData,
@@ -85,7 +90,7 @@ export default class ResourcesVolumes extends React.Component {
           text: t('REMOVE'),
           action: 'delete',
           onClick: () =>
-            trigger('volume.remove.batch', {
+            trigger('resourcesvolume.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -111,18 +116,80 @@ export default class ResourcesVolumes extends React.Component {
         search: true,
         render: name => (
           <Avatar
-            icon={ICON_TYPES[this.module]}
-            to={`/clusters/${cluster}/volume/${name}`}
+            icon="storage"
+            to={`/clusters/${cluster}/resourcesvolumes/${name}`}
             title={name}
           />
         ),
       },
       {
-        title: t('Finger Print'),
-        dataIndex: 'finger_print',
+        title: t('볼륨 모드'),
+        dataIndex: 'volumeMode',
         isHideable: true,
         search: true,
         width: 'auto',
+        render: (volumeMode)  => {
+          return "Filesystem"
+        },
+      },
+      {
+        title: t('접근 모드'),
+        dataIndex: 'access_modes',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: access_modes => {
+          let accessModesList = ""
+
+          if (!!access_modes) {
+            accessModesList = access_modes.map((mode) => {
+                return <p key={mode}>{mode}</p>
+            });
+          } else {
+            accessModesList = <p>-</p>
+          }
+      
+          return accessModesList
+        }
+      },
+      {
+        title: t('입력 소스'),
+        dataIndex: 'import_endpoint',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('스토리지 클래스'),
+        dataIndex: 'storage_class',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('용량'),
+        dataIndex: 'capacity',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('상태'),
+        dataIndex: 'phase',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: (phase) => {
+          const type = "running"
+          const flicker = true;
+
+            return (
+              <div className={styles.iconwrapper}>
+                <Indicator className={styles.indicator} type={type} flicker={flicker} />
+                <p>{phase}</p>
+              </div>  
+            )
+        },      
       },
       {
         title: t('등록일'),
@@ -149,11 +216,6 @@ export default class ResourcesVolumes extends React.Component {
       {
         dataIndex: 'name',
         title: t('이름'),
-        search: true,
-      },
-      {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
         search: true,
       }
     ]

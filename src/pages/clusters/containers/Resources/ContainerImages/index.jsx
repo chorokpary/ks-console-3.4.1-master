@@ -107,7 +107,7 @@ export default class Images extends React.Component {
         sorter: true,
         render: name => (
           <Avatar
-            icon={ICON_TYPES[this.module]}
+            icon="snapshot"
             to={`/clusters/${cluster}/containerimages/${name}`}
             title={name}
           />
