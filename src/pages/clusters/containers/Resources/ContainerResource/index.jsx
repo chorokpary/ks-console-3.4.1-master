@@ -29,7 +29,7 @@ import { Dropdown, Menu, Button, Notify } from '@kube-design/components'
 
 import styles from './index.scss'
 
-import ResourceStore from 'stores/resources/containerResource'
+import ResourceStore from 'stores/resources/containerresource'
 
 @withList({
     store: new ResourceStore(),

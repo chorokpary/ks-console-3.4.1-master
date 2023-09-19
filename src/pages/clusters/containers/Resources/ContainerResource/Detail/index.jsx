@@ -24,7 +24,7 @@ import { Loading, Notify } from '@kube-design/components'
 
 import { getLocalTime } from 'utils'
 import { trigger } from 'utils/action'
-import ResourceStore from 'stores/resources/containerResource'
+import ResourceStore from 'stores/resources/containerresource'
 
 import DetailPage from 'clusters/containers/Base/Detail'
 
