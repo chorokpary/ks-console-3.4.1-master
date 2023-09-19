@@ -117,6 +117,7 @@ export default class ResourcesVolumes extends React.Component {
         render: name => (
           <Avatar
             icon="storage"
+            iconSize={40}
             to={`/clusters/${cluster}/resourcesvolumes/${name}`}
             title={name}
           />

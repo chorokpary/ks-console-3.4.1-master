@@ -110,6 +110,7 @@ export default class Networks extends React.Component {
         render: name => (
           <Avatar
             icon="network-duotone"
+            iconSize={40}
             to={`/clusters/${cluster}/networks/${name}`}
             title={name}
           />

@@ -112,6 +112,7 @@ export default class SecurityGroups extends React.Component {
                 render: name => (
                     <Avatar
                         icon="shield"
+                        iconSize={40}
                         to={`/clusters/${cluster}/securityGroups/${name}`}
                         title={name}
                     />

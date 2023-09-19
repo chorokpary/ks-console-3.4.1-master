@@ -110,6 +110,7 @@ export default class Flavors extends React.Component {
                 render: name => (
                     <Avatar
                         icon="apps"
+                        iconSize={40}
                         to={`/clusters/${cluster}/flavors/${name}`}
                         title={name}
                     />
