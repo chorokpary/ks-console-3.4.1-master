@@ -3,29 +3,18 @@ import { Loading } from '@kube-design/components'
 import { getAreaChartOps } from 'utils/monitoring'
 import { get } from 'lodash'
 import { SimpleArea } from 'components/Charts'
+import PodStore from 'stores/monitoring/pod'
+
 
 const MetricTypes = {
-  // cpu_utilisation: 'cluster_cpu_utilisation',
-  // memory_utilisation: 'cluster_memory_utilisation',
-  // cpu_load1: 'cluster_load1',
-  // cpu_load5: 'cluster_load5',
-  // cpu_load15: 'cluster_load15',
-  // disk_size_usage: 'cluster_disk_size_usage',
-  // disk_inode_utilisation: 'cluster_disk_inode_utilisation',
-  // disk_inode_usage: 'cluster_disk_inode_usage',
-  // disk_inode_total: 'cluster_disk_inode_total',
-  // disk_read_iops: 'cluster_disk_read_iops',
-  // disk_write_iops: 'cluster_disk_write_iops',
-  // disk_read_throughput: 'cluster_disk_read_throughput',
-  // disk_write_throughput: 'cluster_disk_write_throughput',
   net_transmitted: 'cluster_net_bytes_transmitted',
   net_received: 'cluster_net_bytes_received',
-  // pod_running_count: 'cluster_pod_running_count',
-  // pod_abnormal_count: 'cluster_pod_abnormal_count',
-  // pod_completed_count: 'cluster_pod_succeeded_count',
+  pod_net_bytes_transmitted: 'pod_net_bytes_transmitted',
+  pod_net_bytes_received: 'pod_net_bytes_received'
 }
 
 const NetworkTraffic = ({ monitorStore }) => {
+  const podStore = new PodStore();
 
   const [tabData, setTabData] = useState();
   const [metricData, setMetricData] = useState([]);
@@ -33,6 +22,9 @@ const NetworkTraffic = ({ monitorStore }) => {
   const [tabContent, setTabContent] = useState();
   const [tabContentActive, setTabContentActive] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [rightTabActive, setRightTabActive] = useState('node');
+  const [podData, setPodData] = useState([]);
 
   useEffect(() => {
     const getNetworkTrafficData = async () => {
@@ -48,6 +40,16 @@ const NetworkTraffic = ({ monitorStore }) => {
       setLoading(false)
     };
     getNetworkTrafficData();
+
+    const getPodTrafficData = async () => {
+      const podData = await podStore.fetchMetrics({
+        metrics: Object.values(MetricTypes),
+        step: '5m',
+        times: 100,
+      })
+      setPodData(podData)
+    };
+    getPodTrafficData();
   }, [])
 
   useEffect(() => {
@@ -73,6 +75,34 @@ const NetworkTraffic = ({ monitorStore }) => {
     setTabContentData(result)
   }
 
+  const getContentOptions2 = () => {
+    const result = [
+      {
+        type: 'bandwidth',
+        title: 'NETWORK_TRAFFIC',
+        unitType: 'bandwidth',
+        legend: ['OUT', 'IN'],
+        data: [
+          get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}),
+          get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}),
+        ],
+      },
+    ]
+
+    setTabContentData(result)
+  }
+
+  const onclickTab = (tab) => {
+    setRightTabActive(tab);
+  }
+  useEffect(() => {
+    if (rightTabActive == 'node') {
+      getContentOptions()
+    } else if (rightTabActive == 'pod') {
+      getContentOptions2()
+    }
+  }, [rightTabActive])
+
   useEffect(() => {
     if (tabContentData.length > 0) {
       setTabContent(tabContentData?.[0])
@@ -95,11 +125,11 @@ const NetworkTraffic = ({ monitorStore }) => {
               <div className="right">
                 <div className="dash_boxtab">
                   <label htmlFor="name3">
-                    <input type="radio" name="box-tab1" id="name3" value="name3" defaultChecked />
+                    <input type="radio" name="box-tab1" id="name3" value="name3" defaultChecked onClick={() => onclickTab('node')} />
                     <span>노드</span>
                   </label>
                   <label htmlFor="name4">
-                    <input type="radio" name="box-tab1" id="name4" value="name4" />
+                    <input type="radio" name="box-tab1" id="name4" value="name4" onClick={() => onclickTab('pod')} />
                     <span>Pod</span>
                   </label>
                   <label htmlFor="name5">

@@ -8,7 +8,7 @@ import ClusterMonitorStore from 'stores/monitoring/cluster'
 import ClusterNode from './ClusterNode';
 import Pod from './Pod';
 import Vm from './Vm';
-import NodeTop5 from './NodeTop5';
+import UsageTop5 from './UsageTop5';
 import RecentResource from './RecentResource';
 import K8s from './K8s';
 import ResourcesUsage from './ResourceUsage';
@@ -106,7 +106,7 @@ const CustomDashboard = (props) => {
                     <NetworkTraffic monitorStore={monitorStore} />
 
                     {/* 리소스 사용량 Top 5 */}
-                    <NodeTop5 />
+                    <UsageTop5 />
 
                     {/* 최근 생성된 리소스 (일주일) */}
                     <RecentResource />

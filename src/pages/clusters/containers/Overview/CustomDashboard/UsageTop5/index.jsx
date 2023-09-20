@@ -24,6 +24,36 @@ const NodeTop5 = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  var selectedItems;
+  var selectItemList;
+
+  useEffect(() => {
+
+    selectedItems = document.querySelectorAll('.select-list-box .selected-item')
+    selectItemList = document.querySelectorAll('.select-list-box .select-list li')
+    selectedItems.forEach((item, index) => {
+      item.addEventListener('click', (e) => {
+        selectedItems.forEach((item, index) => {
+          item.classList.remove('active')
+        })
+
+        if (e.currentTarget.className.indexOf('active') > -1) {
+          e.currentTarget.classList.remove('active')
+        } else {
+          e.currentTarget.classList.add('active')
+        }
+      }, false)
+    })
+
+    selectItemList.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        selectedItems.forEach((item, index) => {
+          item.classList.remove('active')
+        })
+      }, false)
+    })
+
+  }, [])
   return (
     <>
       <div className="grid-stack-item" gs-x="9" gs-y="0" gs-w="3" gs-h="8">
