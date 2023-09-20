@@ -123,7 +123,7 @@ export default class Images extends React.Component {
       },
       {
         title: t('부트 타입'),
-        dataIndex: 'os_type',
+        dataIndex: 'boot_type',
         isHideable: true,
         width: 'auto',
       },
