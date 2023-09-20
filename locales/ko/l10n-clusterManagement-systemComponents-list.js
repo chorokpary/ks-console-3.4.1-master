@@ -67,6 +67,9 @@ module.exports = {
   KUBEVIRT_OPERATOR_WEBHOOK_DESC: 'Kubernetes 가상화 오퍼레이터를 위한 Webhook 입니다.',
   KUBEVIRT_PROMETHEUS_METRICS_DESC: '가상 머신을 생성하기 위한 Kubernetes 가상화 컴포넌트들입니다.',
   VIRT_VNC_DESC: 'Kubernetes 가상화를 위한 웹기반 VNC 입니다.',
+  CDI_PROMETHEUS_METRICS_DESC: '가상 머신 이미지를 관리하기 위한 CDI(Containerized Data Importer) 구성 요소들을 포함하고 있습니다.',
+  CDI_UPLOADPROXY_DESC: '이 구성 요소를 사용하면 가상 시스템 이미지를 Kubernetes 퍼시스턴트 볼륨에 업로드할 수 있습니다.',
+  CDI_API_DESC: '가상 머신 이미지를 가져오고 관리하기 위한 컨테이너형 데이터 임포터 API 및 런타임을 제공합니다.',
   // CAPI
   CAPI_WEBHOOK_SERVICE_DESC: '선언형 Kubernetes 스타일 API를 이용하여 클러스터를 생성, 설정 및 관리할 수 있도록 합니다.',
   CAPK_WEBHOOK_SERVICE_DESC: 'Kubevirt를 인프라 프로바이더로 사용하여 테넌트 Kubernetes 클러스터를 프로비저닝하는 데 필요한 가상 리소스를 제공합니다.',

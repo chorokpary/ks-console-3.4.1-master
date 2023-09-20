@@ -68,6 +68,9 @@ module.exports = {
   KUBEVIRT_OPERATOR_WEBHOOK_DESC: 'A webhook for Kubernetes Virtualization operator.',
   KUBEVIRT_PROMETHEUS_METRICS_DESC: 'A set of Kubernetes Virtualzation components for launching virtual machines.',
   VIRT_VNC_DESC: 'A web based VNC for Kubernetes Virtualization.',
+  CDI_PROMETHEUS_METRICS_DESC: 'A set of ContainerizedDataImporter (CDI) components for managing virtual machine images.',
+  CDI_UPLOADPROXY_DESC: 'This component allows the users to upload virtual machine images to Kubernetes persistent volume.',
+  CDI_API_DESC: 'Containerized Data Importer API and runtime in order to import and manage virtual machine images.',
   // CAPI
   CAPI_WEBHOOK_SERVICE_DESC: 'Brings declarative Kubernetes-style APIs to cluster creation, configuration and management.',
   CAPK_WEBHOOK_SERVICE_DESC: 'Provides virtual resources for provisioning tanent Kubernetes cluster using kubevirt as a infrastructure provider.',
