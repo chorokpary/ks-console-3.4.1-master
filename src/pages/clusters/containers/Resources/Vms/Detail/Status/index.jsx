@@ -190,7 +190,7 @@ const Status = (props) => {
                       <Text
                         key='Memory'
                         icon='memory'
-                        title={common.fnSetBytes(detailFlavor.ram)}
+                        title={common.fnSetBytes(detailFlavor.ram) + " Gib"}
                         description={t('Memory')}
                       />
                     </div>

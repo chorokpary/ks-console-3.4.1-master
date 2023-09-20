@@ -23,6 +23,7 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
+import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -167,4 +168,40 @@ export default class ResourceStore extends Base {
         return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
 
+    // 등록 관련 데이터 시작 
+    @action
+    async fetchListImage(params) {
+        this.isLoading = true
+
+        const result = await request.get(
+            `/edgetron/resources/capk/images`
+        )
+        const response = { ...params, ...this.mapper(result), kind: 'images' }
+
+        this.isLoading = false
+        return response;
+    }
+
+    @action
+    async fetchListLoadBalancer(params) {
+        this.isLoading = true
+
+        const result = await request.get(
+            `/edgetron/resources/kubevirt/lbs`
+        )
+
+        const response = { ...params, ...this.mapper(result), kind: 'lbs' }
+
+        const dataArray = [];
+        const promises = response._originData.lbs.map(async (lb) => {
+            const lbDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lb.name);
+            lb.rulesCount = lbDetail.data.lb.rules.length;
+            dataArray.push(lb);
+        })
+        await Promise.all(promises);
+        response._originData.lbs = dataArray;
+
+        this.isLoading = false
+        return response;
+    }
 }

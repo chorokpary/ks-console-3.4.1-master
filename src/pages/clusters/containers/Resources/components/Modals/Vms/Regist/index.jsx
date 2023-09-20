@@ -106,7 +106,7 @@ const RegistModal = (props) => {
   const flavorOptions = () => {
     const opt = flavorDataList.map((obj) => ({
       label: t(obj.name),
-      description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} / Disk ${obj.root_disk} GiB`,
+      description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib/ Disk ${obj.root_disk} Gib`,
       value: t(obj.name),
     }))
     return opt
@@ -986,7 +986,7 @@ const RegistModal = (props) => {
                           <div className={styles.multiline}>
                             <div className={styles.bold}>{flavorName}</div>
                             <p>
-                              CPU {flavorCpu} Cores / Memory {flavorMemory} / Disk {flavorDisk} Gib
+                              CPU {flavorCpu} Cores / Memory {flavorMemory} Gib/ Disk {flavorDisk} Gib
                             </p>
                           </div>
                         </div>

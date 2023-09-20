@@ -34,7 +34,7 @@ export function fnNewlineTransformOutput(descriptionData) {
 
 export function fnSetBytes(size) {
     const gibSize =  size / 1024;
-    return gibSize < 1 ? (size + " MiB") : (gibSize + " Gib");
+    return (0 < gibSize && gibSize < 1) ? gibSize.toFixed(1) : gibSize;
 }
 
 export function fnNewlineTransformInput(descriptionData) {

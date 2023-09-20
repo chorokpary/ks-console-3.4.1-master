@@ -93,15 +93,15 @@ const FlavorDetail = (props) => {
             },
             {
                 name: t('몌모리'),
-                value: common.fnSetBytes(detail.flavor.ram),
+                value: common.fnSetBytes(detail.flavor.ram) + ' Gib',
             },
             {
                 name: t('루트 디스크'),
-                value: detail.flavor.root_disk + ' GiB',
+                value: detail.flavor.root_disk + ' Gib',
             },
             {
                 name: t('임시 디스크'),
-                value: detail.flavor.ephemeral_disk + ' GiB',
+                value: detail.flavor.ephemeral_disk + ' Gib',
             },
             {
                 name: t('GPU'),

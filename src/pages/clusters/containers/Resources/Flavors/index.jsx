@@ -123,7 +123,7 @@ export default class Flavors extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('메모리'),
+                title: t('메모리 (Gib)'),
                 dataIndex: 'ram',
                 isHideable: true,
                 width: 'auto',
@@ -134,26 +134,16 @@ export default class Flavors extends React.Component {
                 ),
             },
             {
-                title: t('루트 디스크'),
+                title: t('루트 디스크 (Gib)'),
                 dataIndex: 'root_disk',
                 isHideable: true,
                 width: 'auto',
-                render: rdisk => (
-                    <p>
-                        {rdisk} GiB
-                    </p>
-                ),
             },
             {
-                title: t('임시 디스크'),
+                title: t('임시 디스크 (Gib)'),
                 dataIndex: 'ephemeral_disk',
                 isHideable: true,
                 width: 'auto',
-                render: edisk => (
-                    <p>
-                        {edisk} GiB
-                    </p>
-                ),
             },
             {
                 title: t('GPU'),

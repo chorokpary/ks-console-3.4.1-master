@@ -90,7 +90,7 @@ const DetailVmList = (props) => {
                       <Text
                         key='Memory'
                         icon='memory'
-                        title={common.fnSetBytes(obj.flavor_detail.ram)}
+                        title={common.fnSetBytes(obj.flavor_detail.ram) +" Gib"}
                         description={t('Memory')}
                       />
                     </div>
