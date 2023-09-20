@@ -26,6 +26,9 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
     { label: 'VXLAN', value: 'VXLAN', },
     { label: 'VLAN', value: 'VLAN', },
     { label: 'FLAT', value: 'FLAT', },
+    { label: 'GRE', value: 'GRE', },
+    { label: 'GENEVE', value: 'GENEVE', },
+    { label: 'STT', value: 'STT', },
   ]
   const externalOptions = [
     { label: '미사용', value: false, },
@@ -157,7 +160,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
 
   const handleNetworkType = (e) => {
     const { data } = form.current.props;
-    if (e == 'FLAT') {
+    if (e == 'FLAT' || e == 'VLAN') {
       data.segment_id = ' ';
       const a = document.getElementById('segment_id')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
@@ -226,110 +229,114 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
             </Columns>
           </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('External')}
-                  rules={[{ required: true },]}
-                >
-                  <RadioGroup
-                    name="external"
-                    wrapClassName="radio"
-                    defaultValue={external}
-                    onChange={value => handleExternal(value)}
-                  >
-                    {externalOptions.map((option, idx) => (
-                      <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
-                        disabled={!externalBool && idx == 1 ? true : false}
-                      >
-                        {option.label}
-                      </RadioButton>
-                    ))}
-                  </RadioGroup>
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('MTU')}
-                  rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
-                >
-                  <NumberInput name="mtu"
-                    defaultValue={1500}
-                    // min={1}
-                    // max={1600}
-                    style={{ maxWidth: 'none' }} />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
-
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('CIDR')}
-                  rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
-                >
-                  <Input name="cidr"
-                    style={{ maxWidth: 'none' }}
-                    onChange={(e) => onChaneCidr(e)}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
+          <Form.Item label={t('서브넷')}>
+            <Form.Group>
+              <Form.Item>
                 <Columns>
                   <Column>
                     <Form.Item
-                      label={t('IP POOL 정보')}
-                      rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                      label={t('External')}
+                      rules={[{ required: true },]}
                     >
-                      <Input name="ip_pool_start" />
+                      <RadioGroup
+                        name="external"
+                        wrapClassName="radio"
+                        defaultValue={external}
+                        onChange={value => handleExternal(value)}
+                      >
+                        {externalOptions.map((option, idx) => (
+                          <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
+                            disabled={!externalBool && idx == 1 ? true : false}
+                          >
+                            {option.label}
+                          </RadioButton>
+                        ))}
+                      </RadioGroup>
                     </Form.Item>
                   </Column>
                   <Column>
                     <Form.Item
-                      rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                      label={t('MTU')}
+                      rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
                     >
-                      <Input name="ip_pool_end"
-                        style={{ marginTop: '24px' }} />
+                      <NumberInput name="mtu"
+                        defaultValue={1500}
+                        // min={1}
+                        // max={1600}
+                        style={{ maxWidth: 'none' }} />
                     </Form.Item>
                   </Column>
                 </Columns>
-              </Column>
-            </Columns>
-          </Form.Item>
+              </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('디폴트 라우트')}
-                  rules={[{ required: true },]}
-                >
-                  <RadioGroup
-                    name="default_route"
-                    wrapClassName="radio"
-                    defaultValue={defaultRoute}
-                    onChange={value => setDefaultRoute(value)}
-                  >
-                    {defaultRouteOptions.map(option => (
-                      <RadioButton key={option.value} value={option.value}>
-                        {option.label}
-                      </RadioButton>
-                    ))}
-                  </RadioGroup>
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('게이트웨이 IP')}
-                  rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
-                >
-                  <Input name="gateway_ip" />
-                </Form.Item>
-              </Column>
-            </Columns>
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('CIDR')}
+                      rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
+                    >
+                      <Input name="cidr"
+                        style={{ maxWidth: 'none' }}
+                        onChange={(e) => onChaneCidr(e)}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('IP POOL 정보')}
+                          rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                        >
+                          <Input name="ip_pool_start" />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item
+                          rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                        >
+                          <Input name="ip_pool_end"
+                            style={{ marginTop: '24px' }} />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Column>
+                </Columns>
+              </Form.Item>
+
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('디폴트 라우트')}
+                      rules={[{ required: true },]}
+                    >
+                      <RadioGroup
+                        name="default_route"
+                        wrapClassName="radio"
+                        defaultValue={defaultRoute}
+                        onChange={value => setDefaultRoute(value)}
+                      >
+                        {defaultRouteOptions.map(option => (
+                          <RadioButton key={option.value} value={option.value}>
+                            {option.label}
+                          </RadioButton>
+                        ))}
+                      </RadioGroup>
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('게이트웨이 IP')}
+                      rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
+                    >
+                      <Input name="gateway_ip" />
+                    </Form.Item>
+                  </Column>
+                </Columns>
+              </Form.Item>
+            </Form.Group>
           </Form.Item>
 
           <Form.Item label={t('DNS')}>

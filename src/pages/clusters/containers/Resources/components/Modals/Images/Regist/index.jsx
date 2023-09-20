@@ -96,7 +96,6 @@ export default function ResourceImageModal({ title, store, onOk }) {
   }
 
   const handleOsType = (value) => {
-    console.log(value)
     setOsType(value)
     if (value == 'windows') {
       setDistroType('windows')
