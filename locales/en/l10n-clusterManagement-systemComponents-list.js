@@ -63,6 +63,7 @@ module.exports = {
   S2IOPERATOR_METRICS_SERVICE_DESC: 'S2I monitoring service that provides basic monitoring data.',
   WEBHOOK_SERVER_SERVICE_DESC: 'Provides the default values and authentication webhook for S2I.',
   // KubeVirt
+  VIRTUALIZATION: 'Virtualization',
   VIRT_EXPORTPROXY_DESC: 'Provides an endpoint for access to VM data for authorized users.',
   VIRT_API_DESC: 'Kubernetes Virtualization API and runtime in order to define and manage virtual machines.',
   KUBEVIRT_OPERATOR_WEBHOOK_DESC: 'A webhook for Kubernetes Virtualization operator.',
@@ -78,7 +79,13 @@ module.exports = {
   CAPI_KUBEADM_CONTROL_PLANE_WEBHOOK_SERVICE_DESC: 'Instantiates a Kubernetes control plane consisting of core Kubernetes services.',
   CERT_MANAGER_DESC: 'Adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates.',
   CERT_MANAGER_WEBHOOK_DESC: 'A webhook for cert-manager.',
-  // Longhorn
+  // Network
+  NETWORK: 'Network',
+  CLUSTER_NETWORK_ADDONS_OPERATOR_PROMETHEUS_METRICS_DESC: 'A set of CNI plugins for providing network connectivity for virtual machines and containers.',
+  // Storage
+  STORAGE: 'Storage',
+  HOSTPATH_PROVISIONER_OPERATOR_WEBHOOK_SERVICE_DESC: 'The Kubernetes operator for managing KubeVirt hostpath provisioner deployment.',
+  HPP_PROMETHEUS_METRICS_DESC: 'A special multi-node version of the kubernetes hostpath provisioner.',
   LONGHORN_ADMISSION_WEBHOOK_DESC: 'Provides longhorn admission control.',
   LONGHORN_CONVERSION_WEBHOOK_DESC: 'Provides longhorn conversion control.',
   LONGHORN_FRONTEND_DESC: 'A web based longhorn dashboard.',
@@ -90,7 +97,8 @@ module.exports = {
   CSI_PROVISIONER_DESC: 'This component is a sidecar container that watches the Kubernetes API server for PersistentVolumeClaim objects',
   CSI_RESIZER_DESC: 'This component is a sidecar container that watches the Kubernetes API server for PersistentVolumeClaim object edits and triggers ControllerExpandVolume operations against a CSI endpoint.',
   CSI_SNAPSHOTTER_DESC: 'This component watches VolumeSnapshotContent objects and triggers CreateSnapshot and DeleteSnapshot operations against a CSI endpoint.',
-  // Harbor
+  // Registry
+  REGISTRY: 'Registry',
   REGISTRY_HARBOR_CORE_DESC: 'A cloud native registry that stores, signs, and scans content.',
   REGISTRY_HARBOR_REGISTRY_DESC: 'The component is responsible for storing Docker images and processing pull/push operations.',
   REGISTRY_HARBOR_PORTAL_DESC: 'Harbor is an open source trusted cloud-native registry to store, sign, and scan content.',

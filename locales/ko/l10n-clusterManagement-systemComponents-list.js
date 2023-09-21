@@ -62,6 +62,7 @@ module.exports = {
   S2IOPERATOR_METRICS_SERVICE_DESC: '기본 모니터링 데이터를 제공하는 S2I 모니터링 서비스입니다.',
   WEBHOOK_SERVER_SERVICE_DESC: 'S2I에 대한 기본값 및 인증 webhook을 제공합니다.',
   // KubeVirt
+  VIRTUALIZATION: '가상화',
   VIRT_EXPORTPROXY_DESC: '인증된 사용자에게 VM 데이터 액세스에 대한 엔드포인트를 제공합니다.',
   VIRT_API_DESC: '가상 머신을 정의하고 관리하기 위한 Kubernetes 가상화 API 및 런타임을 제공합니다.',
   KUBEVIRT_OPERATOR_WEBHOOK_DESC: 'Kubernetes 가상화 오퍼레이터를 위한 Webhook 입니다.',
@@ -77,7 +78,13 @@ module.exports = {
   CAPI_KUBEADM_CONTROL_PLANE_WEBHOOK_SERVICE_DESC: '핵심 Kubernetes 컴포넌트들로 구성된 Kubernetes 제어 평면을 인스턴스화합니다.',
   CERT_MANAGER_DESC: 'Kubernetes 클러스터에서 인증서 및 인증서 발급자를 리소스 유형으로 추가하고 해당 인증서의 획득, 갱신 및 사용 프로세스 간소화해줍니다.',
   CERT_MANAGER_WEBHOOK_DESC: 'Cert-manager에서 사용되는 webhook입니다.',
-  // Longhorn
+  // Network
+  NETWORK: '네트워크',
+  CLUSTER_NETWORK_ADDONS_OPERATOR_PROMETHEUS_METRICS_DESC: '가상 머신 및 컨테이너에 대한 네트워크 연결을 제공하기 위한 CNI 플러그인 집합입니다.',
+  // Storage
+  STORAGE: '스토리지',
+  HOSTPATH_PROVISIONER_OPERATOR_WEBHOOK_SERVICE_DESC: 'Kubevirt의 호스트경로 프로비저너를 배포하기 위한 오퍼레이터입니다.',
+  HPP_PROMETHEUS_METRICS_DESC: '멀티 노드를 지원하는 Kubernetes 호스트 경로 프로바이더 입니다.',
   LONGHORN_ADMISSION_WEBHOOK_DESC: 'Longhorn 스토리지를 위한 어드미션 제어를 제공합니다.',
   LONGHORN_CONVERSION_WEBHOOK_DESC: 'Longhorn 스토리지를 위한 컨버젼 제어를 제공합니다.',
   LONGHORN_FRONTEND_DESC: '웹 기반 Longhorn 대쉬보드를 제공합니다.',
@@ -89,7 +96,8 @@ module.exports = {
   CSI_PROVISIONER_DESC: 'PersistentVolumeClaim 개체에 대한 Kubernetes API 서버를 감시하는 사이드카 컨테이너입니다.',
   CSI_RESIZER_DESC: 'PersistentVolumeClaim 개체 편집을 위한 Kubernetes API 서버를 감시하고 CSI 끝점에 대해 ControllerExpandVolume 작업을 트리거하는 사이드카 컨테이너입니다.',
   CSI_SNAPSHOTTER_DESC: 'VolumeSnapshotContent 개체를 감시하고 CSI 엔드포인트에 대해 CreateSnapshot 및 DeleteSnapshot 작업을 트리거합니다.',
-  // Harbor
+  // Registry
+  REGISTRY: '레지스트리',
   REGISTRY_HARBOR_CORE_DESC: '컨텐트를 저장, 서명 및 검색하는 클라우드 네이티브 레지스트리입니다.',
   REGISTRY_HARBOR_REGISTRY_DESC: '컨테이너 이미지를 저장하고 풀/푸쉬 작업을 처리하는 역할을 합니다.',
   REGISTRY_HARBOR_PORTAL_DESC: 'Web 기반 Harbor 대쉬보드를 제공합니다.',

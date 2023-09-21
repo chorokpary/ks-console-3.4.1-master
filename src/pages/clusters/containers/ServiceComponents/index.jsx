@@ -76,7 +76,7 @@ export default class ServiceComponents extends React.Component {
     },
     {
       type: 'kubevirt',
-      title: 'KubeVirt',
+      title: t('VIRTUALIZATION'),
       icon: '/assets/kubevirt.svg',
     },
     {
@@ -85,14 +85,19 @@ export default class ServiceComponents extends React.Component {
       icon: '/assets/capi.svg',
     },
     {
-      type: 'harbor',
-      title: 'Harbor',
-      icon: '/assets/harbor.svg',
+      type: 'cni',
+      title: t('NETWORK'),
+      icon: '/assets/cni-plugin.svg',
     },
     {
-      type: 'longhorn',
-      title: 'Longhorn',
-      icon: '/assets/longhorn.svg',
+      type: 'csi',
+      title: t('STORAGE'),
+      icon: '/assets/csi-plugin.svg',
+    },
+    {
+      type: 'harbor',
+      title: t('REGISTRY'),
+      icon: '/assets/harbor.svg',
     },
     {
       type: 'istio',

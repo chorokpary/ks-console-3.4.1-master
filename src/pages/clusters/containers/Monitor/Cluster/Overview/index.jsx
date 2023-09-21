@@ -183,8 +183,12 @@ class Overview extends React.Component {
         icon: '/assets/harbor.svg',
       },
       {
-        type: 'longhorn',
-        icon: '/assets/longhorn.svg',
+        type: 'cni',
+        icon: '/assets/cni-plugin.svg',
+      },
+      {
+        type: 'csi',
+        icon: '/assets/csi-plugin.svg',
       },
       {
         type: 'istio',

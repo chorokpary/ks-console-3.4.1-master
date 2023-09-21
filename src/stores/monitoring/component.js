@@ -136,7 +136,8 @@ export default class ComponentMonitoring extends Base {
       kubevirt: get(ksComponents, 'kubevirt', []),
       capi: get(ksComponents, 'capi-system', []),
       harbor: get(ksComponents, 'harbor', []),
-      longhorn: get(ksComponents, 'longhorn-system', []),
+      cni: get(ksComponents, 'cni-system', []),
+      csi: get(ksComponents, 'csi-system', []),
     }
 
     // components replicas count
