@@ -227,6 +227,12 @@ const ResourcesUsage = ({ monitorStore }) => {
     } else if (rightTabActive == 'pod') {
       getContentOptions2()
       getData2()
+    } else if (rightTabActive == 'vm') {
+      setTabContentActive(false)
+      setTabData([])
+    } else if (rightTabActive == 'k8s') {
+      setTabContentActive(false)
+      setTabData([])
     }
     setTabActive('cpu')
   }, [rightTabActive])
@@ -264,11 +270,11 @@ const ResourcesUsage = ({ monitorStore }) => {
                     <span>Pod</span>
                   </label>
                   <label htmlFor="name2_3">
-                    <input type="radio" name="box-tab" id="name2_3" value="name5" />
+                    <input type="radio" name="box-tab" id="name2_3" value="name5" onClick={() => onclickTab('vm')} />
                     <span>가상머신</span>
                   </label>
                   <label htmlFor="name2_4">
-                    <input type="radio" name="box-tab" id="name2_4" value="name6" />
+                    <input type="radio" name="box-tab" id="name2_4" value="name6" onClick={() => onclickTab('k8s')} />
                     <span>쿠버네티스</span>
                   </label>
                 </div>

@@ -100,6 +100,12 @@ const NetworkTraffic = ({ monitorStore }) => {
       getContentOptions()
     } else if (rightTabActive == 'pod') {
       getContentOptions2()
+    } else if (rightTabActive == 'vm') {
+      setTabContentActive(false)
+      setTabData('')
+    } else if (rightTabActive == 'k8s') {
+      setTabContentActive(false)
+      setTabData('')
     }
   }, [rightTabActive])
 
@@ -133,11 +139,11 @@ const NetworkTraffic = ({ monitorStore }) => {
                     <span>Pod</span>
                   </label>
                   <label htmlFor="name5">
-                    <input type="radio" name="box-tab1" id="name5" value="name5" />
+                    <input type="radio" name="box-tab1" id="name5" value="name5" onClick={() => onclickTab('vm')} />
                     <span>가상머신</span>
                   </label>
                   <label htmlFor="name6">
-                    <input type="radio" name="box-tab1" id="name6" value="name6" />
+                    <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onclickTab('k8s')} />
                     <span>쿠버네티스</span>
                   </label>
                 </div>
