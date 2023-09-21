@@ -2568,7 +2568,7 @@ body.dashboard {
 
 /*# sourceMappingURL=dashboard.css.map */
 
-/* 그래프 pop css */
+/* dashboard custom css */
 .dashboard .src-components-Charts-Custom-Tooltip-index__tooltip {
     padding: 8px 12px !important;
 }
@@ -2579,4 +2579,13 @@ body.dashboard {
 
 .dashboard .src-components-Charts-Custom-Legend-index__item {
     padding: 0 4px !important;
+}
+
+.dashboard .usageTab .select-control {
+    padding: 0 12px;
+    border: 1px solid #abb4be;
+}
+
+.dashboard .usageTab .select-option-label {
+    color: #ffffff !important;
 }
