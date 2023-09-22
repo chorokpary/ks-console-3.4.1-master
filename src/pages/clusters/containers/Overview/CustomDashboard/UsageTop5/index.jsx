@@ -75,7 +75,6 @@ const NodeTop5 = () => {
   const getPodData = async (params = {}) => {
     setLoading(true)
     const podList = await podStore.fetchAll(params)
-    console.log(podList)
     setList(podList)
     setLoading(false)
   };
