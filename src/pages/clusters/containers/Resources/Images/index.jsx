@@ -132,6 +132,19 @@ export default class Images extends React.Component {
         dataIndex: 'distro_type',
         isHideable: true,
         width: 'auto',
+        render: distro_type => {
+          const icon = "ico-os-"+distro_type;
+          return (
+            <i
+            style={{
+              backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              width: '40px',
+              height: '40px'
+            }}></i>
+          )
+        }, 
       },
       {
         title: t('단계'),

@@ -11,6 +11,8 @@ import styles from './index.scss'
 import ObjectInput from 'components/Inputs/ObjectInput'
 import * as common from "utils/resources"
 
+import classnames from 'classnames'
+
 export default function ResourceNetworkModal({ title, store, onOk }) {
 
   const form = useRef();
@@ -20,6 +22,9 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
   const [defaultRoute, setDefaultRoute] = useState(false)
   const [cidrReducer, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
   const [externalBool, setExternalBool] = useState(false);
+
+  const [regStep, setRegStep] = useState(1);
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
 
 
   const networkTypeOptions = [
@@ -180,241 +185,330 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
     }
   }
 
+  const stepMoveCheck = (step) => {
+    const { data } = form.current.props;
+    if(step ==1){
+      if(data.name == undefined || data.name == "" 
+      || data.segment_id == undefined || data.segment_id == ""
+      || data.cidr == undefined || data.cidr == ""
+      || data.ip_pool_start == undefined || data.ip_pool_start == ""
+      || data.ip_pool_end == undefined || data.ip_pool_end == ""
+      || data.gateway_ip == undefined || data.gateway_ip == ""
+      ){
+        handleOk();
+      }else{
+        setRegStep(2);
+      }
+    }
+  }
+
+  const fnGetModalFooter = () => {
+    let elements = "";
+    elements =
+          <>
+              {regStep == 1 &&
+                <>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
+                  <Button type="control" onClick={() => {stepMoveCheck(1)}} className={classnames(styles['btn'],styles['btn-control'])}>다음</Button>                    
+                </>
+              }
+              {regStep == 2 &&
+                <>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
+                  <Button onClick={() => {setRegStep(1)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
+                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >생성</Button>
+                </>
+              }
+          </>
+      return elements;
+  }
+
   return (
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={960}
         title={title}
-        onOk={handleOk}
-        okText={'생성'}
         onCancel={closeModal}
-        cancelText={'취소'}
-        visible={modelView}
+        bodyClassName={styles.body}
+        visible={modelView}   
+        hideFooter    
       >
         <Form data={formData} ref={form}>
-          <Form.Item
-            label={t('이름')}
-            rules={[{ required: true, message: t('이름을 입력해주세요') },]}
-            desc={t('NAME_DESC')}
-          >
-            <Input name="name" maxLength={253}
-              style={{ maxWidth: 'none' }} />
-          </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('네트워크 타입')}
-                  rules={[{ required: true, message: t('이름을 입력해주세요') },]}
-                >
-                  <Select
-                    name="type"
-                    defaultValue="VXLAN"
-                    options={networkTypeOptions}
-                    onChange={(e) => handleNetworkType(e)} />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('세그먼트 ID')}
-                  rules={[{ required: true, message: t('세그먼트 ID를 입력해주세요') },]}
-                >
-                  <NumberInput name="segment_id"
-                    disabled={externalBool}
-                    style={{ maxWidth: 'none' }} />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
+           {/* Header */}
+           <div className={styles.tab_process}>
+              {/* styles.view_screen  : 이전 링크 관련 class*/}
+              <div className={classnames(styles.process_item,`${regStep == 1 ? styles.current : ''}`)}>
+                  <div className={styles.status}>
+                    <div className={`${regStep == 1 ? styles.current : regStep > 1 ? styles.done : styles.todo}`}></div>
+                  </div>
+                  <span className={styles.basic}></span>
+                  <div className={styles.title}>
+                    <div className={styles.step_name}>기본 설정</div>
+                    <div className={styles.situation}>{regStep == 1 ? "Current" : regStep > 1 ? "Done" : "To do"}</div>
+                  </div>
+                </div>
+                <div className={classnames(styles.process_item,`${regStep == 2 ? styles.current : ''}`)}>
+                  <div className={styles.status}>
+                    <div className={`${regStep == 2 ? styles.current : styles.todo}`} ></div>
+                  </div>
+                  <span className={styles.check}></span>
+                  <div className={styles.title}>
+                    <div className={styles.step_name}>세부 설정</div>
+                    <div className={styles.situation}>{regStep == 2 ? "Current" : "To do"}</div>
+                  </div>
+                </div>
+            </div>
 
-          <Form.Item label={t('서브넷')}>
-            <Form.Group>
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('External')}
-                      rules={[{ required: true },]}
-                    >
-                      <RadioGroup
-                        name="external"
-                        wrapClassName="radio"
-                        defaultValue={external}
-                        onChange={value => handleExternal(value)}
-                      >
-                        {externalOptions.map((option, idx) => (
-                          <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
-                            disabled={!externalBool && idx == 1 ? true : false}
-                          >
-                            {option.label}
-                          </RadioButton>
-                        ))}
-                      </RadioGroup>
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('MTU')}
-                      rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
-                    >
-                      <NumberInput name="mtu"
-                        defaultValue={1500}
-                        // min={1}
-                        // max={1600}
-                        style={{ maxWidth: 'none' }} />
-                    </Form.Item>
-                  </Column>
-                </Columns>
-              </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('CIDR')}
-                      rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
-                    >
-                      <Input name="cidr"
-                        style={{ maxWidth: 'none' }}
-                        onChange={(e) => onChaneCidr(e)}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
+              {/* Content */}
+              <div className={styles.pop_overflow_y}>
+              <div className={styles.cont_boxwrap}>
+
+                {/* 기본설정 설정 시작==========================================*/}
+                <div className={`${regStep == 1 ? "" : "hide"}`}>
+                  
+                  <Form.Item
+                    label={t('이름')}
+                    rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+                    desc={t('NAME_DESC')}
+                  >
+                    <Input name="name" maxLength={253}
+                      style={{ maxWidth: 'none' }} />
+                  </Form.Item>
+
+                  <Form.Item>
                     <Columns>
                       <Column>
                         <Form.Item
-                          label={t('IP POOL 정보')}
-                          rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                          label={t('네트워크 타입')}
+                          rules={[{ required: true, message: t('이름을 입력해주세요') },]}
                         >
-                          <Input name="ip_pool_start" />
+                          <Select
+                            name="type"
+                            defaultValue="VXLAN"
+                            options={networkTypeOptions}
+                            onChange={(e) => handleNetworkType(e)} />
                         </Form.Item>
                       </Column>
                       <Column>
                         <Form.Item
-                          rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                          label={t('세그먼트 ID')}
+                          rules={[{ required: true, message: t('세그먼트 ID를 입력해주세요') },]}
                         >
-                          <Input name="ip_pool_end"
-                            style={{ marginTop: '24px' }} />
+                          <NumberInput name="segment_id"
+                            disabled={externalBool}
+                            style={{ maxWidth: 'none' }} />
                         </Form.Item>
                       </Column>
                     </Columns>
-                  </Column>
-                </Columns>
-              </Form.Item>
-
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('디폴트 라우트')}
-                      rules={[{ required: true },]}
-                    >
-                      <RadioGroup
-                        name="default_route"
-                        wrapClassName="radio"
-                        defaultValue={defaultRoute}
-                        onChange={value => setDefaultRoute(value)}
-                      >
-                        {defaultRouteOptions.map(option => (
-                          <RadioButton key={option.value} value={option.value}>
-                            {option.label}
-                          </RadioButton>
-                        ))}
-                      </RadioGroup>
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('게이트웨이 IP')}
-                      rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
-                    >
-                      <Input name="gateway_ip" />
-                    </Form.Item>
-                  </Column>
-                </Columns>
-              </Form.Item>
-            </Form.Group>
-          </Form.Item>
-
-          <Form.Item label={t('DNS')}>
-            <Form.Group>
-              <Columns>
-                <Column>
-                  <Form.Item
-                    label={t('Primary')}
-                  >
-                    <Input name="dns.1" />
                   </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item
-                    label={t('Secondary')}
-                  >
-                    <Input name="dns.2" />
+
+                  <Form.Item label={t('서브넷')}>
+                    <Form.Group>
+                      <Form.Item>
+                        <Columns>
+                          <Column>
+                            <Form.Item
+                              label={t('External')}
+                              rules={[{ required: true },]}
+                            >
+                              <RadioGroup
+                                name="external"
+                                wrapClassName="radio"
+                                defaultValue={external}
+                                onChange={value => handleExternal(value)}
+                              >
+                                {externalOptions.map((option, idx) => (
+                                  <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
+                                    disabled={!externalBool && idx == 1 ? true : false}
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                ))}
+                              </RadioGroup>
+                            </Form.Item>
+                          </Column>
+                          <Column>
+                            <Form.Item
+                              label={t('MTU')}
+                              rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
+                            >
+                              <NumberInput name="mtu"
+                                defaultValue={1500}
+                                // min={1}
+                                // max={1600}
+                                style={{ maxWidth: 'none' }} />
+                            </Form.Item>
+                          </Column>
+                        </Columns>
+                      </Form.Item>
+
+                      <Form.Item>
+                        <Columns>
+                          <Column>
+                            <Form.Item
+                              label={t('CIDR')}
+                              rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
+                            >
+                              <Input name="cidr"
+                                style={{ maxWidth: 'none' }}
+                                onChange={(e) => onChaneCidr(e)}
+                              />
+                            </Form.Item>
+                          </Column>
+                          <Column>
+                            <Columns>
+                              <Column>
+                                <Form.Item
+                                  label={t('IP POOL 정보')}
+                                  rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                                >
+                                  <Input name="ip_pool_start" />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item
+                                  rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                                >
+                                  <Input name="ip_pool_end"
+                                    style={{ marginTop: '24px' }} />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                          </Column>
+                        </Columns>
+                      </Form.Item>
+
+                      <Form.Item>
+                        <Columns>
+                          <Column>
+                            <Form.Item
+                              label={t('디폴트 라우트')}
+                              rules={[{ required: true },]}
+                            >
+                              <RadioGroup
+                                name="default_route"
+                                wrapClassName="radio"
+                                defaultValue={defaultRoute}
+                                onChange={value => setDefaultRoute(value)}
+                              >
+                                {defaultRouteOptions.map(option => (
+                                  <RadioButton key={option.value} value={option.value}>
+                                    {option.label}
+                                  </RadioButton>
+                                ))}
+                              </RadioGroup>
+                            </Form.Item>
+                          </Column>
+                          <Column>
+                            <Form.Item
+                              label={t('게이트웨이 IP')}
+                              rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
+                            >
+                              <Input name="gateway_ip" />
+                            </Form.Item>
+                          </Column>
+                        </Columns>
+                      </Form.Item>
+                    </Form.Group>
                   </Form.Item>
-                </Column>
-              </Columns>
-            </Form.Group>
-          </Form.Item>
 
-          {/* <Form.Item label={t('호스트 라우트')}>
-            <Form.Group
-            // label={t('ADD_METADATA')}
-            // desc={t('VOLUME_ADD_METADATA_DESC')}
-            // keepDataWhenUnCheck
-            // checkable
-            >
-              <Form.Item>
-                <PropertiesInput name="metadata.labels" addText={t('ADD')} />
-              </Form.Item>
-            </Form.Group>
-          </Form.Item> */}
-
-
-          <Form.Item label={t('호스트 라우트')}>
-            <Form.Group>
-              {listHostRoute.map((obj, idx) => (
-                <div className={styles.item} key={obj}>
-                  <Columns>
-                    <Column>
-                      <Form.Item>
-                        <Input
-                          name={`Destination.${obj}`}
-                          placeholder={t('Destination')}
-                        />
-                      </Form.Item>
-                    </Column>
-                    <Column>
-                      <Form.Item>
-                        <Input
-                          name={`Nexthop.${obj}`}
-                          placeholder={t('Nexthop')}
-                        />
-                      </Form.Item>
-                    </Column>
-                  </Columns>
-                  <Button
-                    type="flat"
-                    icon="trash"
-                    className={styles.delete}
-                    onClick={() => handleHostRoute.delColumn(obj)}
-                  />
                 </div>
-              ))}
-              <div className="text-right">
-                <Button
-                  className={styles.add}
-                  onClick={handleHostRoute.addColumn}
-                >
-                  추가
-                </Button>
-              </div>
+                {/* 기본설정 설정 끝==========================================*/}
 
-            </Form.Group>
-          </Form.Item>
+                {/* 세부 설정 시작==========================================*/}
+                <div className={`${regStep == 2 ? "" : "hide"}`}>
+
+                  <Form.Item label={t('DNS')}>
+                    <Form.Group>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('Primary')}
+                          >
+                            <Input name="dns.1" />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('Secondary')}
+                          >
+                            <Input name="dns.2" />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Form.Group>
+                  </Form.Item>   
+
+                  {/* <Form.Item label={t('호스트 라우트')}>
+                    <Form.Group
+                    // label={t('ADD_METADATA')}
+                    // desc={t('VOLUME_ADD_METADATA_DESC')}
+                    // keepDataWhenUnCheck
+                    // checkable
+                    >
+                      <Form.Item>
+                        <PropertiesInput name="metadata.labels" addText={t('ADD')} />
+                      </Form.Item>
+                    </Form.Group>
+                  </Form.Item> */}
+
+
+                  <Form.Item label={t('호스트 라우트')}>
+                    <Form.Group>
+                      {listHostRoute.map((obj, idx) => (
+                        <div className={styles.item} key={obj}>
+                          <Columns>
+                            <Column>
+                              <Form.Item>
+                                <Input
+                                  name={`Destination.${obj}`}
+                                  placeholder={t('Destination')}
+                                />
+                              </Form.Item>
+                            </Column>
+                            <Column>
+                              <Form.Item>
+                                <Input
+                                  name={`Nexthop.${obj}`}
+                                  placeholder={t('Nexthop')}
+                                />
+                              </Form.Item>
+                            </Column>
+                          </Columns>
+                          <Button
+                            type="flat"
+                            icon="trash"
+                            className={styles.delete}
+                            onClick={() => handleHostRoute.delColumn(obj)}
+                          />
+                        </div>
+                      ))}
+                      <div className="text-right">
+                        <Button
+                          className={styles.add}
+                          onClick={handleHostRoute.addColumn}
+                        >
+                          추가
+                        </Button>
+                      </div>
+
+                    </Form.Group>
+                  </Form.Item>
+
+                </div>
+                {/* 세부 설정 끝==========================================*/}
+
+              </div> 
+            </div>
+
+            {/* Footer */}
+            <div className={styles['modal-footer']}>
+              {fnGetModalFooter()}  
+            </div>
+
         </Form>
       </Modal >
     </>

@@ -134,6 +134,19 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: (image, record)  => {
+          const icon = "ico-os-"+record.image_detail.distro_type;
+          return (
+            <i
+            style={{
+              backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              width: '40px',
+              height: '40px'
+            }}></i>
+          )
+        },
       },
       {
         title: t('CPU 타입'),
@@ -146,51 +159,51 @@ export default class Vms extends React.Component {
           return arch_type
         },
       },
-      // {
-      //   title: t('호스트 디바이스'),
-      //   dataIndex: 'host_devices',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      //   render: host_devices => {
-      //     let hostDeviceList = ""
-
-      //     if (!!host_devices) {
-      //       hostDeviceList = host_devices.map((host) => {
-      //           return <p key={host}>{host}</p>
-      //       });
-      //     } else {
-      //       hostDeviceList = <p>-</p>
-      //     }
-      //     return hostDeviceList
-      //   }
-      // },
-      // {
-      //   title: t('Mediated 디바이스'),
-      //   dataIndex: 'gpus',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      //   render: gpus => {
-      //     let gpusList = ""
-
-      //     if (!!gpus) {
-      //       gpusList = gpus.map((gpu) => {
-      //           return <p key={gpu}>{gpu}</p>
-      //       });
-      //     } else {
-      //       gpusList = <p>-</p>
-      //     }
-      //     return gpusList
-      //   }
-      // },
       {
-        title: t('Flavor'),
-        dataIndex: 'flavor',
+        title: t('호스트 디바이스'),
+        dataIndex: 'host_devices',
         isHideable: true,
         search: true,
         width: 'auto',
+        render: host_devices => {
+          let hostDeviceList = ""
+
+          if (host_devices.length > 0) {
+            hostDeviceList = host_devices.map((host) => {
+                return <p key={host}>{host}</p>
+            });
+          } else {
+            hostDeviceList = <p>-</p>
+          }
+          return hostDeviceList
+        }
       },
+      {
+        title: t('Mediated 디바이스'),
+        dataIndex: 'gpus',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: gpus => {
+          let gpusList = ""
+
+          if (gpus.length > 0) {
+            gpusList = gpus.map((gpu) => {
+                return <p key={gpu}>{gpu}</p>
+            });
+          } else {
+            gpusList = <p>-</p>
+          }
+          return gpusList
+        }
+      },
+      // {
+      //   title: t('Flavor'),
+      //   dataIndex: 'flavor',
+      //   isHideable: true,
+      //   search: true,
+      //   width: 'auto',
+      // },
       {
         title: t('고정 IP'),
         dataIndex: 'networks',
@@ -222,7 +235,8 @@ export default class Vms extends React.Component {
         render: (floating, record)  => {
           const floatingList = this.props.store.floatingIpList;
           const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == record.name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
-          return floatingIp
+
+          return floatingIp == "" ? "-" : floatingIp
         },
       },
       {
@@ -297,7 +311,6 @@ export default class Vms extends React.Component {
 
   handleVmAction = (action, state, vmName) => {
 
-  
     if ("Stopped" == state && "pause" == action) {
       Notify.warning('Stopped 상태에서 Pause 할 수 없습니다.')
       return;
@@ -308,8 +321,6 @@ export default class Vms extends React.Component {
     }
 
     const { getData, trigger } = this.props
-
-    console.log(this.props)
 
     const data = {};
     data.vmName = vmName;
