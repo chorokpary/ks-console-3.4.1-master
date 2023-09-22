@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Modal, TypeSelect, List } from 'components/Base'
-import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
+import { Modal, List } from 'components/Base'
+import { UnitSlider, NumberInput } from 'components/Inputs'
 import { PATTERN_NAME } from 'utils/constants'
 import { get, omit, range } from 'lodash'
 import { Form, Input, Select, Icon, Tooltip, TextArea, Dropdown } from '@kube-design/components'
@@ -9,6 +9,9 @@ import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/
 import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
 import ContainerForm from 'components/Forms/Workload/ContainerSettings/ContainerForm'
+
+import TypeSelect from '../../../TypeSelect'
+import CardSelect from '../../../CardSelect'
 
 export default function ResourceImageModal({ title, store, onOk }) {
 
@@ -47,15 +50,15 @@ export default function ResourceImageModal({ title, store, onOk }) {
     { label: 'uefi', value: 'uefi', }
   ]
   const osTypeOptions = [
-    { label: 'Linux', value: 'linux', icon: 'linux', },
-    { label: 'Windows', value: 'windows', icon: 'windows', }
-
+    { label: 'Linux', value: 'linux', icon: 'ico-linux', },
+    { label: 'Windows', value: 'windows', icon: 'ico-windows', },
+    // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
   const distroTypeOptions = () => {
     const opt = distroTypeList.map((obj) => ({
       label: t(obj.name),
       description: t(obj.vendor),
-      icon: t(obj.name),
+      icon: `ico-os-${obj.name}`,
       value: t(obj.name),
     }))
     return opt

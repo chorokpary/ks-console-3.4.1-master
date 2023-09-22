@@ -73,6 +73,7 @@ import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
 import ContainerImage from '../containers/Resources/ContainerImages'
 import ContainerResource from '../containers/Resources/ContainerResource'
 import ResourcesVolumes from '../containers/Resources/Volumes'
+import Sriov from '../containers/Resources/Sriov'
 
 const PATH = '/clusters/:cluster'
 
@@ -332,7 +333,13 @@ export default [
             path: `${PATH}/resourcesvolumes`,
             component: ResourcesVolumes,
             exact: true,
-          },          
+          },  
+          {
+            path: `${PATH}/sriovs`,
+            component: Sriov,
+            exact: true,
+          },  
+                  
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

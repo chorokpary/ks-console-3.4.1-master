@@ -315,23 +315,29 @@ client:
               showInDisable: true,
             }
             - {
-              name: containerImages,
-              title: "컨테이너_이미지",
+              name: containerResource,
+              title: "쿠버네티스_리소스",
               skipAuth: true,
               showInDisable: true,
             }
             - {
-              name: containerResource,
-              title: "쿠버네티스",
+              name: containerImages,
+              title: "쿠버네티스_이미지",
               skipAuth: true,
               showInDisable: true,
-            }
+            }            
             - {
               name: resourcesVolumes,
               title: "볼륨",
               skipAuth: true,
               showInDisable: true,
             }
+            # - {
+            #   name: sriovs,
+            #   title: "SR-IOV 네트워크 관리",
+            #   skipAuth: true,
+            #   showInDisable: true,
+            # }
 
 
   # access control page navigations

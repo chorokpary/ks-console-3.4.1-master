@@ -23,38 +23,24 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
-
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
-export default class VolumeStore extends Base {
+export default class SriovStore extends Base {
 
   records = new List()
 
-  module = 'resourcesvolumes'
+  module = 'sriov'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/volumes`
+  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/sriov_networks`
   getListUrl = this.getResourceUrl
 
   @action
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
 
-    const jsonData = {};
-    const volumeData = {};
-
-    volumeData.name = data.name;
-    volumeData.capacity = data.capacity;
-    volumeData.access_modes = data.access_modes;
-    volumeData.storage_class = data.storage_class;
-    volumeData.import_source = data.import_source;
-    volumeData.volume_mode = data.volume_mode;
-    volumeData.description = !!data.description ? data.description : "";
-
-    jsonData.volume = volumeData;
-    
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
-    const res = await request.post(url, jsonData)
+    console.log("data : "+ JSON.stringify(data))
+    const res = await request.post(url, data)
     return res
   }
 
@@ -62,12 +48,6 @@ export default class VolumeStore extends Base {
   async update({ name, ...params }, data) {
 
     const jsonData = {};
-    const volumeData = {};
-
-    volumeData.name = data.name;
-    volumeData.description = data?.description;
-
-    jsonData.volume = volumeData;
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
@@ -82,7 +62,7 @@ export default class VolumeStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
     )
-    const detail = { ...params, ...this.mapper(result), kind: 'Volumes' }
+    const detail = { ...params, ...this.mapper(result), kind: 'Sriov' }
 
     // Yaml 파일 관련 
     await this.fetchYaml(params);
@@ -99,7 +79,7 @@ export default class VolumeStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}/manifest`
     )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Volumes' }
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Sriov' }
   
     this.yaml = yamlData.manifest
     this.isLoading = false
@@ -135,31 +115,16 @@ export default class VolumeStore extends Base {
   }
 
   @action
-  async actionState({data, ...params}) {
-
-    const jsonData = {};
-    const actionData = {};
-
-    const vmName = data.vmName;
-    const volumeName = data.volumeName;
-
-    if(data.actionType == "A"){
-        actionData.vm_name = vmName;
-        actionData.persist = true;
-        actionData.action = "attach";
-    }else{
-        actionData.vm_name = vmName;
-        actionData.action = "detach";
-    }
-
-    jsonData.action = actionData;
+  async fetchSriovBondList(params) {
+    this.isLoading = true
     
-    // console.log("volumeName : "+ volumeName)
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
-
-    await this.submitting(
-      request.put(`${this.getDetailUrl({ name: data.volumeName, ...params })}/action`, jsonData)
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/sriov_resources`
     )
+    const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
+
+    this.isLoading = false
+    return response;
   }
 
 }

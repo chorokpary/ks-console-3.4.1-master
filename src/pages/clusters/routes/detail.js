@@ -61,6 +61,7 @@ import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
 import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
+import VolumeDetail from '../containers/Resources/Volumes/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -228,4 +229,10 @@ export default [
     path: `${PATH}/containerresource/:name`,
     component: ContainerResourceDetail,
   },
+  {
+    path: `${PATH}/resourcesvolumes/:name`,
+    component: VolumeDetail,
+  },
+
+  
 ]

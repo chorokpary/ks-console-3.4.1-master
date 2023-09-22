@@ -1,5 +1,5 @@
 import { get, isEmpty } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
@@ -40,7 +40,9 @@ const index = (props) => {
 
   const monitorStore = new NodeMonitorStore({ cluster: cluster })
 
-  const [metrics, setMetrics] = useState(monitorStore.data)
+  // const [metrics, setMetrics] = useState(monitorStore.data)
+
+  var metrics = useRef();
 
   const fetchData = async (params) => {
     // const { name, role = [] } = this.store.detail
@@ -52,8 +54,9 @@ const index = (props) => {
       fillZero: !role.includes('edge'),
       ...params,
     })
-    
-    setMetrics(monitorStore.data)
+    console.log(monitorStore.data)
+    metrics = monitorStore.data;
+    // setMetrics(monitorStore.data)
   }
 
   const getMonitoringCfgs = () => {
@@ -93,6 +96,10 @@ const index = (props) => {
     ]
   }
 
+  const fnRefreshing = () => {
+    console.log("fnRefreshing click!!")
+  }
+
   const { isLoading, isRefreshing } = monitorStore
   const configs = getMonitoringCfgs()
 
@@ -104,10 +111,11 @@ const index = (props) => {
               title={t('모니터링')}
               onFetch={fetchData}
               loading={isLoading}
-              refreshing={isRefreshing}
+              refreshing={fnRefreshing}
               isEmpty={isEmpty(metrics)}              
             >
               {configs.map(item => {
+                console.log("metrics :"+ JSON.stringify(metrics))
                 const config = getAreaChartOps(item)
                 if (isEmpty(config.data)) return null
                 return <SimpleArea key={config.title} width="100%" {...config} />

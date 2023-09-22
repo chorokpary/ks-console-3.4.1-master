@@ -29,15 +29,13 @@ import Indicator from 'components/Base/Indicator'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
-import VolumeStore from 'stores/resources/volumes'
-
-import styles from './index.scss'
+import SriovStore from 'stores/resources/sriovs'
 
 @withList({
-  store: new VolumeStore(),
-  module: 'resourcesvolumes',
-  authKey: 'resourcesvolumes',
-  name: '볼륨',
+  store: new SriovStore(),
+  module: 'sriovs',
+  authKey: 'sriovs',
+  name: 'SR-IOV',
 })
 export default class ResourcesVolumes extends React.Component {
  
@@ -56,7 +54,7 @@ export default class ResourcesVolumes extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('resourcesvolume.remove', {
+          trigger('sriov.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -76,7 +74,7 @@ export default class ResourcesVolumes extends React.Component {
           text: t('생성'),
           action: 'create',
           onClick: () =>
-            trigger('resourcesvolume.regist', {
+            trigger('sriov.regist', {
             ...this.props.match.params,
             type: this.name,
             success: getData,
@@ -90,7 +88,7 @@ export default class ResourcesVolumes extends React.Component {
           text: t('REMOVE'),
           action: 'delete',
           onClick: () =>
-            trigger('resourcesvolume.remove.batch', {
+            trigger('sriov.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -118,7 +116,7 @@ export default class ResourcesVolumes extends React.Component {
           <Avatar
             icon="storage"
             iconSize={40}
-            to={`/clusters/${cluster}/resourcesvolumes/${name}`}
+            to={`/clusters/${cluster}/sriovs/${name}`}
             title={name}
           />
         ),
@@ -181,13 +179,13 @@ export default class ResourcesVolumes extends React.Component {
         search: true,
         width: 'auto',
         render: (phase) => {          
-          const type = !!phase == true ? phase : "Bound"
+          const type = phase.toLowerCase();
           const flicker = true;
 
             return (
               <div className={styles.iconwrapper}>
                 <Indicator className={styles.indicator} type={type} flicker={flicker} />
-                <p>{type}</p>
+                <p>{phase}</p>
               </div>  
             )          
         },      
@@ -234,8 +232,8 @@ export default class ResourcesVolumes extends React.Component {
         {...bannerProps}
         icon="storage"
         tabs={this.tabs}
-        title={t('볼륨')}
-        description={t('볼륨의 상태와 사용현황을 관리 할 수 있습니다.')}
+        title={t('SR-IOV')}
+        description={t('SR-IOV의 상태와 사용현황을 관리 할 수 있습니다.')}
       />
       <Table
         {...tableProps}

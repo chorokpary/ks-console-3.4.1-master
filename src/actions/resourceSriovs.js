@@ -20,15 +20,14 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import RegistModal from 'clusters/containers/Resources/components/Modals/Volumes/Regist'
-import ModifyModal from 'clusters/containers/Resources/components/Modals/Volumes/Modify'
-import BindingModal from 'clusters/containers/Resources/components/Modals/Volumes/Binding'
+import RegistModal from 'clusters/containers/Resources/components/Modals/SrIovs/Regist'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/SrIovs/Modify'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
 export default {
-  'resourcesvolume.regist': {
+  'sriov.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -40,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: '볼륨 생성',
+        title: 'SR-IOV 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -51,7 +50,7 @@ export default {
       })
     },
   },
-  'resourcesvolume.edit': {
+  'sriov.edit': {
     on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -63,7 +62,7 @@ export default {
               success && success()
             })
         },
-        title: '볼륨 수정',
+        title: 'SR-IOV 수정',
         modal: ModifyModal,
         store,
         module,
@@ -71,7 +70,7 @@ export default {
       })
     },
   },
-  'resourcesvolume.remove': {
+  'sriov.remove': {
     on({
       store,
       detail,
@@ -94,7 +93,7 @@ export default {
         },
         modal: DeleteModal,
         title: t('삭제'),
-        desc: t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        desc: t.html('SR-IOV 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -103,7 +102,7 @@ export default {
       })
     },
   },
-  'resourcesvolume.remove.batch': {
+  'sriov.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       const usernames = rowKeys.join(', ')
@@ -124,15 +123,15 @@ export default {
             : t('일괄 삭제'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('SR-IOV 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
+            : t.html('SR-IOV 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
       })
     },
   },
-  'resourcesvolume.delete': {
+  'sriov.delete': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
@@ -150,7 +149,7 @@ export default {
       })
     },
   },
-  'resourcesvolume.yaml.view': {
+  'sriov.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
@@ -161,17 +160,6 @@ export default {
         detail,
         store,
         modal: EditYamlModal,
-        ...props,
-      })
-    },
-  },
-  'resourcesvolume.bindingPop': {
-    on({ store, success, ...props }) {
-      const modal = Modal.open({
-        title: '플로팅 IP 설정',
-        modal: BindingModal,
-        store,
-        success,
         ...props,
       })
     },
