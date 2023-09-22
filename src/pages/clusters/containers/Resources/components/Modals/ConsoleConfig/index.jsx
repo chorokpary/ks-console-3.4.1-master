@@ -27,70 +27,69 @@ import EditMode from 'components/EditMode'
 import styles from './index.scss'
 
 export default class ConsoleLoglModal extends React.Component {
-  static propTypes = {
-    detail: PropTypes.object,
-    vmlog: PropTypes.object,
-    visible: PropTypes.bool,
-    onOk: PropTypes.func,
-    onCancel: PropTypes.func,
-    readOnly: PropTypes.bool,
-  }
-
-  static defaultProps = {
-    visible: false,
-    readOnly: false,
-    detail: {},
-    onOk() {},
-    onCancel() {},
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      value: props.store ? null : props.detail,
+    static propTypes = {
+        detail: PropTypes.object,
+        resourceConfig: PropTypes.object,
+        visible: PropTypes.bool,
+        onOk: PropTypes.func,
+        onCancel: PropTypes.func,
+        readOnly: PropTypes.bool,
     }
 
-    this.editor = React.createRef()
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.visible && !prevProps.visible) {
-      this.init(this.props)
+    static defaultProps = {
+        visible: false,
+        readOnly: false,
+        detail: {},
+        onOk() { },
+        onCancel() { },
     }
-  }
 
-  componentDidMount() {
-    this.init(this.props)
-  }
+    constructor(props) {
+        super(props)
 
-  init(props) {
-    const { vmlog, detail, store } = props
-    if (vmlog) {
-      return this.setState({ value: vmlog })
+        this.state = {
+            value: props.store ? null : props.detail,
+        }
+
+        this.editor = React.createRef()
     }
-  }
 
-  render() {
-    const { readOnly, visible, onCancel } = this.props
-    const title = t('Console 로그 보기')
+    componentDidUpdate(prevProps) {
+        if (this.props.visible && !prevProps.visible) {
+            this.init(this.props)
+        }
+    }
 
-    return (
-      <Modal
-        title={title}
-        bodyClassName={classnames({
-          [styles.readOnly]: readOnly,
-        })}
-        onCancel={onCancel}
-        visible={visible}
-        closable={readOnly}
-        hideFooter={readOnly}
-        fullScreen
-      >
-          <div className={styles.wrapper}>
-            {this.state.value}
-          </div>       
-      </Modal>
-    )
-  }
+    componentDidMount() {
+        this.init(this.props)
+    }
+
+    init(props) {
+        const { resourceConfig, detail, store } = props
+        if (resourceConfig) {
+            return this.setState({ value: resourceConfig })
+        }
+    }
+
+    render() {
+        const { readOnly, visible, onCancel } = this.props
+        const title = t('Console Config 보기')
+
+        return (
+            <Modal
+                title={title}
+                bodyClassName={classnames({
+                    [styles.readOnly]: readOnly,
+                })}
+                onCancel={onCancel}
+                visible={visible}
+                closable={readOnly}
+                hideFooter={readOnly}
+            >
+                <div className={styles.wrapper}>
+                    {this.state.value}
+                </div>
+            </Modal>
+        )
+    }
 }

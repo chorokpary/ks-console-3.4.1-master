@@ -34,7 +34,7 @@ import ResourceStore from 'stores/resources/containerresource'
 @withList({
     store: new ResourceStore(),
     module: 'clusters',
-    authKey: 'ContainerResource',
+    authKey: 'clusters',
     name: '쿠버네티스',
 })
 export default class Resource extends React.Component {
@@ -114,7 +114,7 @@ export default class Resource extends React.Component {
                     <Avatar
                         icon="templet"
                         iconSize={40}
-                        to={`/clusters/${cluster}/resource/${name}`}
+                        to={`/clusters/${cluster}/containerResource/${name}`}
                         title={name}
                     />
                 ),
@@ -123,42 +123,42 @@ export default class Resource extends React.Component {
                 title: t('배포 단계'),
                 dataIndex: 'phase',
                 isHideable: true,
-                search: true,
                 width: 'auto',
                 render: (phase) => (
-                    <p className="tall"><i className={`ico ico-status-${phase.toLowerCase().replace("ed", "ing")}`}></i><span>{phase}</span></p>
+                    <p className="tall"><i className={`ico ico-status-${phase?.toLowerCase().replace("ed", "ing")}`}></i><span>{phase}</span></p>
                 ),
             },
             {
                 title: t('쿠버네티스 버전'),
                 dataIndex: 'kube_version',
                 isHideable: true,
-                search: true,
                 width: 'auto',
             },
             {
                 title: t('Master Node'),
                 dataIndex: 'cp_replicas',
                 isHideable: true,
-                search: true,
                 width: 'auto',
             },
             {
                 title: t('Worker Node'),
                 dataIndex: 'md_replicas',
                 isHideable: true,
-                search: true,
                 width: 'auto',
             },
             {
                 title: t('상태'),
                 dataIndex: 'cluster_ready',
                 isHideable: true,
-                search: true,
                 width: 'auto',
-                render: (state, record) => (
-                    state ? 'Ready' : 'Not-ready'
-                ),
+                render: (state, record) => {
+                    const stateArray = ['Stopped', 'Running', 'Paused']
+                    return (
+                        <div className={styles.iconwrapper}>
+                            <i className={styles[`ico-status-${state ? 'Running' : ''}`]} /><p>{state ? 'Ready' : 'Not-ready'}</p>
+                        </div>
+                    )
+                }
             },
             {
                 title: t('등록일'),

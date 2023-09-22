@@ -109,6 +109,7 @@ export default class SecurityGroups extends React.Component {
                 title: t('이름'),
                 dataIndex: 'name',
                 sorter: true,
+                search: true,
                 render: name => (
                     <Avatar
                         icon="shield"
@@ -170,7 +171,7 @@ export default class SecurityGroups extends React.Component {
                     tableActions={this.tableActions}
                     itemActions={this.itemActions}
                     columns={this.getColumns()}
-                    searchType="name"
+                    columnSearch={this.columnSearch}
                 />
             </ListPage>
         )

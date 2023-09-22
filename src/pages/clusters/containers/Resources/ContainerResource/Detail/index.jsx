@@ -16,88 +16,52 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { observer, inject } from 'mobx-react'
-import { get, isEmpty } from 'lodash'
-import { Loading, Notify } from '@kube-design/components'
-
-import { getLocalTime } from 'utils'
-import { trigger } from 'utils/action'
-import ResourceStore from 'stores/resources/containerresource'
-
+import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components';
+import { observer, inject } from 'mobx-react';
+import { getLocalTime } from 'utils'
+
 import routes from './routes'
+import ResourceStore from 'stores/resources/containerresource'
 
-@inject('rootStore')
-@observer
-@trigger
-export default class ResourceDetail extends React.Component {
-    store = new ResourceStore()
+const store = new ResourceStore();
 
-    componentDidMount() {
-        this.fetchData()
+const ResourceDetail = (props) => {
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const fetchData = async () => {
+        await store.fetchDetail(props.match.params);
     }
 
-    get module() {
-        return this.store.module
-    }
-
-    get name() {
-        return 'RESOURCE_DETAIL'
-    }
-
-    get listUrl() {
-        const { cluster } = this.props.match.params
+    const listUrl = () => {
+        const { cluster } = props.match.params
         return `/clusters/${cluster}/containerResource`
     }
 
-    get routing() {
-        return this.props.rootStore.routing
-    }
+    const routing = props.rootStore.routing;
+    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
-    get showEdit() {
-        const { name } = this.props.match.params
-        return !globals.config.presetClusterRoles.includes(name)
-    }
-
-    fetchData = () => {
-        this.store.fetchDetail(this.props.match.params);
-    }
-
-    fnOpenVncPopup = () => {
-        //실제 URL 로 변경 요망
-        var apiUrl = "http://" + location.hostname + ":30020";
-        var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
-        param = param + this.name + "/vnc";
-
-        var popupName = this.name.replaceAll("-", "");
-        window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1030,height=800');
-    }
-
-    getOperations = () => [
+    const getOperations = () => [
         {
             key: 'edit',
             icon: 'pen',
             text: t('EDIT_INFORMATION'),
             action: 'edit',
-            show: this.showEdit,
+            show: showEdit,
             onClick: () => {
-                this.trigger('containerresource.edit', {
-                    type: this.name,
-                    detail: toJS(this.store.detail),
-                    success: this.fetchData,
+                props.rootStore.triggerAction('containerresource.edit', {
+                    type: 'RESOURCE_DETAIL',
+                    detail: toJS(store.detail),
+                    store: store,
+                    success: fetchData,
                 })
-            },
-        },
-        {
-            key: 'vnc',
-            icon: 'vpn',
-            text: t('VNC 접속'),
-            action: 'view',
-            onClick: () => {
-                this.fnOpenVncPopup();
             },
         },
         {
@@ -106,8 +70,9 @@ export default class ResourceDetail extends React.Component {
             text: t('VIEW_YAML'),
             action: 'view',
             onClick: () => {
-                this.trigger('containerresource.yaml.view', {
-                    yaml: this.store.yaml,
+                props.rootStore.triggerAction('containerresource.yaml.view', {
+                    yaml: store.yaml,
+                    store: store,
                     readOnly: true,
                 })
             },
@@ -118,8 +83,8 @@ export default class ResourceDetail extends React.Component {
             text: t('Console Config'),
             action: 'view',
             onClick: () => {
-                this.trigger('containerresource.config.view', {
-                    vmlog: this.store.vmLog,
+                props.rootStore.triggerAction('containerresource.config.view', {
+                    resourceConfig: store.resourceConfig,
                     readOnly: true,
                 })
             },
@@ -130,19 +95,21 @@ export default class ResourceDetail extends React.Component {
             text: t('DELETE'),
             action: 'delete',
             type: 'danger',
-            show: this.showEdit,
+            show: showEdit,
             onClick: () =>
-                this.trigger('containerresource.delete', {
-                    type: this.name,
-                    detail: toJS(this.store.detail),
-                    cluster: this.props.match.params.cluster,
-                    success: () => this.routing.push(this.listUrl),
+                props.rootStore.triggerAction('containerresource.delete', {
+                    type: 'RESOURCE_DETAIL',
+                    detail: toJS(store.detail.cluster),
+                    store: store,
+                    cluster: props.match.params.cluster,
+                    success: () => routing.push(listUrl()),
                 }),
         },
     ]
 
-    getAttrs = () => {
-        const detail = toJS(this.store.detail)
+    const getAttrs = () => {
+        const detail = toJS(store.detail.cluster)
+        const detailFlavor = store.machines
 
         if (isEmpty(detail)) {
             return
@@ -151,84 +118,109 @@ export default class ResourceDetail extends React.Component {
         return [
             {
                 name: t('클러스터'),
-                value: detail.cluster,
+                value: '-',
             },
             {
-                name: t('이미지'),
-                value: detail.vm.image,
-            },
-            {
-                name: t('Flavor'),
-                value: detail.vm.flavor.name,
-            },
-            {
-                name: t('네트워크'),
-                value: detail.vm.networks.length > 0 ?
-                    detail.vm.networks && (detail.vm.networks).map((network) => {
-                        if (network.name != "k8s-pod-network") {
-                            return <p key={network.name}>{network.ip}</p>
-                        } else if (detail.vm.networks.length == 1 && network.name == "k8s-pod-network") {
-                            return <p key={network.name}>-</p>
-                        }
+                name: t('Pod CIDRS'),
+                value: detail.pod_cidrs.length > 0 ?
+                    detail.pod_cidrs && (detail.pod_cidrs).map((cidr) => {
+                        return <p key={cidr}>{cidr}</p>
                     })
-                    : "-"
-            },
-            {
-                name: t('SR-IOV 네트워크'),
-                value: "-",
-            },
-            {
-                name: t('플로팅 IP'),
-                value: detail.vm.floatingIp,
-            },
-            {
-                name: t('키페어'),
-                value: detail.vm.keypair,
-            },
-            {
-                name: t('로드밸런서'),
-                value: "-",
-            },
-            {
-                name: t('보안그룹'),
-                value: detail.vm.security_groups.length > 0 ?
-                    detail.vm.security_groups && (detail.vm.security_groups).map((security) => (
-                        <p key={security}>{security}</p>
-                    ))
                     : "-",
             },
             {
+                name: t('Service CIDRS'),
+                value: detail.service_cidrs.length > 0 ?
+                    detail.service_cidrs && (detail.service_cidrs).map((cidr) => {
+                        return  <p key={cidr}>{cidr}</p>
+                    })
+                    : "-",
+            },
+            {
+                name: t('쿠버네티스 서버 IP'),
+                value: detail.cp_endpoint?.host,
+            },
+            {
+                name: t('Port'),
+                value: detail.cp_endpoint?.port,
+            },
+            {
+                name: t('이미지'),
+                value: detail.os_distro,
+            },
+            {
+                name: t('버전'),
+                value: detail.kube_version,
+            },
+            {
+                name: t('CNI'),
+                value: detail.cni,
+            },
+            {
+                name: t('CSI'),
+                value: detail.csi,
+            },
+            {
+                name: t('EKG Stack'),
+                value: detail.ui,
+            },
+            {
+                name: t('ELB'),
+                value: detail.elb,
+            },
+            {
+                name: t('Master Flavor'),
+                value: detailFlavor.length > 0 && detailFlavor.filter((obj) => obj.name.includes(detail.cp?.name) ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p> })
+            },
+            {
+                name: t('Worker Flavor'),
+                value: detailFlavor.length > 0 && detailFlavor.filter((obj) => !obj.name.includes(detail.cp?.name) ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p>})
+            },
+            {
+                name: t('Scalling'),
+                value: "-",
+            },
+            {
+                name: t('네트워크'),
+                value: detail.network_name,
+            },
+            {
                 name: t('설명'),
-                value: detail.vm.description,
+                value: detail.description,
             },
             {
                 name: t('생성시간'),
-                value: getLocalTime(detail.vm.creation_timestamp).format('YYYY-MM-DD HH:mm:ss'),
+                value: getLocalTime(detail.creation_timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
     }
 
-    render() {
-        const stores = { detailStore: this.store }
-
-        if (this.store.isLoading && !this.store.detail.name) {
-            return <Loading className="ks-page-loading" />
-        }
-
-        const sideProps = {
-            module: this.module,
-            name: get(this.store.detail, 'name'),
-            desc: get(this.store.detail.vm, 'description', ""),
-            operations: this.getOperations(),
-            attrs: this.getAttrs(),
-            breadcrumbs: [
-                {
-                    label: t('쿠버네티스'),
-                    url: this.listUrl,
-                },
-            ],
-        }
-
-        return <DetailPage stores={stores} routes={routes} {...sideProps} />
+    if (store.isLoading) {
+        return <Loading className="ks-page-loading" />;
     }
+
+    const sideProps = {
+        module: store.module,
+        name: get(store.detail.cluster, 'name'),
+        desc: get(store.detail.cluster, 'description', ''),
+        operations: getOperations(),
+        attrs: getAttrs(),
+        breadcrumbs: [
+            {
+                label: t('쿠버네티스'),
+                url: listUrl,
+            },
+        ],
+    }
+
+    return (
+        <>
+            <DetailPage
+                stores={{ detailStore: store }}
+                routes={routes}
+                {...sideProps} />
+        </>
+    )
 }
+
+export default inject('rootStore')(observer(ResourceDetail));

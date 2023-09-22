@@ -5,8 +5,6 @@ import { Form, Input, Select, TextArea, Button, Columns, Column, Tooltip } from 
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
-import axios from "axios";
-
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -138,6 +136,9 @@ const RegistModal = (props) => {
         handleRemoveFields: (i) => {
             const values = [...formRulesEgressFields].filter((obj, idx) => idx !== i);
             setFormRulesEgressFields(values);
+            if (values.length < 1) {
+                setBtnDimm(false);
+            }
         },
 
         handleInputChange: (i, field, e) => {
@@ -246,103 +247,150 @@ const RegistModal = (props) => {
 
                     <div style={{ padding: 10 }} />
 
-                    <Form.Group label="보안정책">
-                        <Form.Item label={t('인바운드')}>
-                            <div>
-                                {formRulesIngressFields.map((v, i) => (
-                                    <div className={styles.item} key={i}>
-                                        <Columns>
-                                            <Column>
-                                                <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'ruleType', e)} />
-                                            </Column>
-                                            <Column>
-                                                <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
-                                            </Column>
-                                            <Column>
-                                                <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} >
-                                                    <Input type="text"
-                                                        onChange={(e) => handleIngressRules.handleInputChange(i, 'portRangeMax', e)}
-                                                        value={v.portRangeMax}
-                                                        disabled={!v.isCustom} />
-                                                </Tooltip>
-                                            </Column>
-                                            <Column>
-                                                <Select value={v.ethernetType} options={ethernetTypeOptions} disabled={true} />
-                                            </Column>
-                                            <Column>
-                                                <Input type="text"
-                                                    onChange={(e) => handleIngressRules.handleInputChange(i, 'remoteIpPrefix', e)}
-                                                    value={v.remoteIpPrefix} />
-                                            </Column>
-                                        </Columns>
-                                        <Button
-                                            type="flat"
-                                            icon="trash"
-                                            className={styles.delete}
-                                            onClick={() => handleIngressRules.handleRemoveFields(i)}
-                                        />
-
+                    <Form.Item label={t('보안정책')}>
+                        <Form.Group>
+                            <Form.Item label={t('인바운드')}>
+                                <div className={styles.wrapper}>
+                                    <div className={styles.table}>
+                                        <table>
+                                            <colgroup>
+                                                <col width="20%" />
+                                                <col width="15%" />
+                                                <col width="20%" />
+                                                <col width="15%" />
+                                                <col width="20%" />
+                                                <col width="10%" />
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th><strong>정책</strong></th>
+                                                    <th><strong>프로토콜</strong></th>
+                                                    <th><strong>포트 범위</strong></th>
+                                                    <th><strong>이더넷 유형</strong></th>
+                                                    <th><strong>원격 IP 범위</strong></th>
+                                                    <th><strong></strong></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {formRulesIngressFields.map((v, i) => (
+                                                    <tr key={i}>
+                                                        <td>
+                                                            <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'ruleType', e)} />
+                                                        </td>
+                                                        <td>
+                                                            <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
+                                                        </td>
+                                                        <td>
+                                                            <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} >
+                                                                <Input type="text"
+                                                                    onChange={(e) => handleIngressRules.handleInputChange(i, 'portRangeMax', e)}
+                                                                    value={v.portRangeMax}
+                                                                    disabled={!v.isCustom} />
+                                                            </Tooltip>
+                                                        </td>
+                                                        <td>
+                                                            <Select value={v.ethernetType} options={ethernetTypeOptions} disabled={true} />
+                                                        </td>
+                                                        <td>
+                                                            <Input type="text"
+                                                                onChange={(e) => handleIngressRules.handleInputChange(i, 'remoteIpPrefix', e)}
+                                                                value={v.remoteIpPrefix} />
+                                                        </td>
+                                                        <td>
+                                                            <Button
+                                                                type="flat"
+                                                                icon="trash"
+                                                                onClick={() => handleIngressRules.handleRemoveFields(i)}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     </div>
-                                ))}
-                                <div className="text-right">
-                                    <Button
-                                        className={styles.add}
-                                        onClick={handleIngressRules.handleAddFields}
-                                    >
-                                        추가
-                                    </Button>
-                                </div>
-                            </div>
-                        </Form.Item>
-
-                        <Form.Item label={t('아웃바운드')}>
-                            <div>
-                                {formRulesEgressFields.map((v, i) => (
-                                    <div className={styles.item} key={i}>
-                                        <Columns>
-                                            <Column>
-                                                <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'ruleType', e)} />
-                                            </Column>
-                                            <Column>
-                                                <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
-                                            </Column>
-                                            <Column>
-                                                <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} >
-                                                    <Input type="text"
-                                                        onChange={(e) => handleEgressRules.handleInputChange(i, 'portRangeMax', e)}
-                                                        value={v.portRangeMax}
-                                                        disabled={!v.isCustom} />
-                                                </Tooltip>
-                                            </Column>
-                                            <Column>
-                                                <Select value={v.ethernetType} options={ethernetTypeOptions} disabled={true} />
-                                            </Column>
-                                            <Column>
-                                                <Input type="text"
-                                                    onChange={(e) => handleEgressRules.handleInputChange(i, 'remoteIpPrefix', e)}
-                                                    value={v.remoteIpPrefix} />
-                                            </Column>
-                                        </Columns>
+                                    <div className="text-right">
                                         <Button
-                                            type="flat"
-                                            icon="trash"
-                                            className={styles.delete}
-                                            onClick={() => handleEgressRules.handleRemoveFields(i)}
-                                        />
+                                            className={styles.add}
+                                            onClick={handleIngressRules.handleAddFields}
+                                        >
+                                            추가
+                                        </Button>
                                     </div>
-                                ))}
-                                <div className="text-right">
-                                    <Button
-                                        className={styles.add}
-                                        onClick={handleEgressRules.handleAddFields}
-                                        disabled={ btnDimm}
-                                    >
-                                        추가
-                                    </Button>
                                 </div>
-                            </div>
-                        </Form.Item>
-                    </Form.Group>
+                            </Form.Item>
+
+                            <Form.Item label={t('아웃바운드')}>
+                                <div className={styles.wrapper}>
+                                    <div className={styles.table}>
+                                        <table>
+                                            <colgroup>
+                                                <col width="20%" />
+                                                <col width="15%" />
+                                                <col width="20%" />
+                                                <col width="15%" />
+                                                <col width="20%" />
+                                                <col width="10%" />
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th><strong>정책</strong></th>
+                                                    <th><strong>프로토콜</strong></th>
+                                                    <th><strong>포트 범위</strong></th>
+                                                    <th><strong>이더넷 유형</strong></th>
+                                                    <th><strong>원격 IP 범위</strong></th>
+                                                    <th><strong></strong></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {formRulesEgressFields.map((v, i) => (
+                                                    <tr key={i}>
+                                                        <td>
+                                                            <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'ruleType', e)} />
+                                                        </td>
+                                                        <td>
+                                                            <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
+                                                        </td>
+                                                        <td>
+                                                            <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} >
+                                                                <Input type="text"
+                                                                    onChange={(e) => handleEgressRules.handleInputChange(i, 'portRangeMax', e)}
+                                                                    value={v.portRangeMax}
+                                                                    disabled={!v.isCustom} />
+                                                            </Tooltip>
+                                                        </td>
+                                                        <td>
+                                                            <Select value={v.ethernetType} options={ethernetTypeOptions} disabled={true} />
+                                                        </td>
+                                                        <td>
+                                                            <Input type="text"
+                                                                onChange={(e) => handleEgressRules.handleInputChange(i, 'remoteIpPrefix', e)}
+                                                                value={v.remoteIpPrefix} />
+                                                        </td>
+                                                        <td>
+                                                            <Button
+                                                                type="flat"
+                                                                icon="trash"
+                                                                onClick={() => handleEgressRules.handleRemoveFields(i)}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="text-right">
+                                        <Button
+                                            className={styles.add}
+                                            onClick={handleEgressRules.handleAddFields}
+                                            disabled={btnDimm}
+                                        >
+                                            추가
+                                        </Button>
+                                    </div>
+                                </div>
+                            </Form.Item>
+                        </Form.Group>
+                    </Form.Item>
 
                     <div style={{ padding: 10 }} />
 

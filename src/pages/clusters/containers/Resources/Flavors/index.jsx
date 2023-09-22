@@ -107,6 +107,7 @@ export default class Flavors extends React.Component {
                 title: t('이름'),
                 dataIndex: 'name',
                 sorter: true,
+                search: true,
                 render: name => (
                     <Avatar
                         icon="apps"
@@ -178,6 +179,16 @@ export default class Flavors extends React.Component {
         return { desc: t('데이터가 없습니다') }
     }
 
+    get columnSearch() {
+        return [
+            {
+                dataIndex: 'name',
+                title: t('이름'),
+                search: true,
+            },
+        ]
+    }
+
     render() {
 
         const { bannerProps, tableProps } = this.props
@@ -196,7 +207,7 @@ export default class Flavors extends React.Component {
                     tableActions={this.tableActions}
                     itemActions={this.itemActions}
                     columns={this.getColumns()}
-                    searchType="name"
+                    columnSearch={this.columnSearch}
                 />
             </ListPage>
         )

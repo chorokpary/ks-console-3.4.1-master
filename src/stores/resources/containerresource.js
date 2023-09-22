@@ -39,47 +39,132 @@ export default class ResourceStore extends Base {
 
 
     // @action
-    // async fetchList({ devops, workspace, cluster, more, ...params } = {}) {
-    //   this.list.isLoading = true
+    async fetchList({
+        cluster,
+        workspace,
+        namespace,
+        more,
+        devops,
+        ...params
+    } = {}) {
+        this.list.isLoading = true
 
-    //   if (params.limit === Infinity || params.limit === -1) {
-    //     params.limit = -1
-    //     params.page = 1
-    //   }
+        if (!params.sortBy && params.ascending === undefined) {
+            params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
+        }
 
-    //   params.limit = params.limit || 10
+        if (params.limit === Infinity || params.limit === -1) {
+            params.limit = -1
+            params.page = 1
+        }
 
-    //   const url = `${this.getResourceUrl({ namespace: devops, cluster })}`
+        params.limit = params.limit || 10
 
-    //   const result = await request.get(url, { ...params }, {}, () => {
-    //     return []
-    //   })
+        const result = await request.get(
+            this.getResourceUrl({ cluster, workspace, namespace, devops }),
+            this.getFilterParams(params)
+        )
 
-    //   const data = Array.isArray(result.items)
-    //     ? result.items.map(item => {
-    //         return { ...this.mapper({ ...item, devops }) }
-    //       })
-    //     : []
+        // mm3 api 관련 
+        const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
+        const apiName = mm3Array.includes(this.module) ? this.module : "";
 
-    //   this.list.update({
-    //     data: more ? [...this.list.data, ...data] : data,
-    //     total: result.totalItems || result.total_count || data.length || 0,
-    //     ...params,
-    //     limit: Number(params.limit) || 10,
-    //     page: Number(params.page) || 1,
-    //     isLoading: false,
-    //     ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-    //   })
+        const data = (get(result, apiName) || []).map(item => ({
+            cluster,
+            namespace,
+            ...this.mapper(item),
+        }))
 
-    //   console.log(data)
+        // 초기 데이터 처리 
+        this.dataList = 
+            data.length > 0 ? data.map((obj) => {
+                const cluster = obj.cluster
+                const namespace = obj.namespace
+                const temData = obj._originData
+                temData.cluster = cluster
+                temData.namespace = namespace
+                return temData
+            }) : [];
 
-    //   return data
-    // }
+
+        // 검색 관련 처리 
+        const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
+        const searchArray = Object.keys(params).map((key) => {
+            let value = params[key];
+            let searchData = {
+                "searchKeywordType": key,
+                "searchKeywordText": value
+            }
+            return searchData
+        }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+
+        if (searchArray.length > 0) {
+            searchArray.map((search) => {
+                let resultList = this.dataList.filter((row) => {
+                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                });
+                this.searchList = resultList;
+            })
+            this.dataList = this.searchList;
+        }
+
+        //정렬 처리
+        const sortType = !!params.ascending ? "asc" : "desc";
+        this.dataList.sort((a, b) => {
+            var x = a[params.sortBy];
+            var y = b[params.sortBy];
+            if (sortType == "desc") {
+                return x > y ? -1 : x < y ? 1 : 0;
+            } else if (sortType == "asc") {
+                return x < y ? -1 : x > y ? 1 : 0;
+            }
+        });
+
+        // mm3 데이터 page 별 Slice 처리 
+        const perPage = Number(params.limit) || 10;
+        const currentPage = Number(params.page) || 1;
+        const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+
+        this.list.update({
+            data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
+            total: result.totalItems || result.total_count || this.dataList.length || 0,
+            ...params,
+            limit: Number(params.limit) || 10,
+            page: Number(params.page) || 1,
+            isLoading: false,
+            ...(this.list.silent ? {} : { selectedRowKeys: [] }),
+        })
+
+        return data
+    }
 
     @action
     async create(data, params = {}) {
 
-        let res = await this.submitting(request.post(this.getListUrl(params), data))
+        const jsonData = {};
+        const reqData = {};
+        reqData.external_network = data.external_network;
+        reqData.sriov_network = data.sriov_network;
+        reqData.elb_network = data.elb_network;
+        reqData.elb_type = data.elb_type.toLowerCase();
+
+        reqData.name = data.name;
+        reqData.kube_image = data.image;
+        reqData.description = data.description;
+        reqData.master_flavor = data.masterFlavor;
+        reqData.worker_flavor = data.workerFlavor;
+        reqData.master_number = data.master_number;
+        reqData.worker_number = data.worker_number;
+        reqData.worker_autoscale = data.worker_autoscale;
+        reqData.worker_scale_range = data.worker_scale_range;
+        reqData.cni = data.cni.toLowerCase();
+        reqData.csi = data.csi.toLowerCase();
+        reqData.ui = data.ui.toLowerCase();
+        reqData.expiration = data.expiration;
+        reqData.private_registry = true;
+        jsonData.cluster = reqData;
+
+        let res = await this.submitting(request.post(this.getListUrl(params), jsonData))
 
         return res
     }
@@ -97,7 +182,10 @@ export default class ResourceStore extends Base {
         // Yaml 파일 관련 
         await this.fetchYaml(params);
 
-        this.detail = detail
+        await this.fetchDetailFlavor(params);
+        await this.fetchResourceConfig(params);
+
+        this.detail = detail._originData
         this.isLoading = false
         return detail
     }
@@ -111,7 +199,8 @@ export default class ResourceStore extends Base {
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'ContainerResource' }
 
-        this.yaml = yamlData.manifest
+        this.yaml = yamlData._originData.manifest
+
         this.isLoading = false
         return yamlData
     }
@@ -126,7 +215,7 @@ export default class ResourceStore extends Base {
         )
         const response = { ...params, ...this.mapper(result), kind: 'ContainerResource' }
 
-        this.resourctConfig = response.config.message
+        this.resourceConfig = response._originData.config
         this.isLoading = false
         return response
     }
@@ -134,7 +223,7 @@ export default class ResourceStore extends Base {
     @action
     async update({ name, ...params }, data) {
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.flavor.name }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.cluster.name }), data))
 
         return res
     }
@@ -200,6 +289,20 @@ export default class ResourceStore extends Base {
         })
         await Promise.all(promises);
         response._originData.lbs = dataArray;
+
+        this.isLoading = false
+        return response;
+    }
+
+    @action
+    async fetchDetailFlavor(params) {
+        this.isLoading = true
+
+        const result = await request.get(
+            `/edgetron/resources/capk/clusters/${params.name}/machines`
+        )
+        const response = { ...params, ...this.mapper(result), kind: 'machines' }
+        this.machines = response._originData.machines
 
         this.isLoading = false
         return response;

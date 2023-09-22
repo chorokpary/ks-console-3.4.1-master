@@ -51,7 +51,7 @@ const RegistModal = (props) => {
     const [csiSelect, setCsiSelect] = useState('');
     const [elbSelect, setElbSelect] = useState('metalLB');
     const [expirationSelect, setExpirationSelect] = useState('10');
-    const [ekgStack, setEkgStack] = useState('');
+    const [ekgStack, setEkgStack] = useState('Dashboard');
 
     const [cnis, setCnis] = useState([]);
     const [csis, setCsis] = useState([]);
@@ -63,11 +63,12 @@ const RegistModal = (props) => {
 
     const [isAutoScale, setIsAutoScale] = useState(false);
     const [autoScale, setAutoScale] = useState([0, 1]);
+    const [isFirst, setIsFirst] = useState(true);
 
     const [osType, setOsType] = useState('linux')
 
     useEffect(() => {
-        
+
         const getVmCreateData = async () => {
             const listFlavor = await vmStore.fetchVmListFlavor();
             const listNetwork = await vmStore.fetchVmListNetwork();
@@ -129,7 +130,6 @@ const RegistModal = (props) => {
                     });
                 };
                 setUis(resUi);
-                setEkgStack(resUi[0]?.value);
             }
         });
     }, []);
@@ -174,7 +174,7 @@ const RegistModal = (props) => {
         { label: "8년", value: 8 },
         { label: "9년", value: 9 },
         { label: "10년", value: 10 }
-     ];
+    ];
 
     const handleOk = () => {
 
@@ -187,21 +187,18 @@ const RegistModal = (props) => {
 
             const { data } = form.current.props;
 
-            data.external_network = networkCheckItems;
-            data.sriov_network = sriovCheckItems;
-            data.elb_network = elbCheckItems;
+            data.external_network = networkCheckItem;
+            data.sriov_network = sriovCheckItem;
+            data.elb_network = elbCheckItem;
             data.elb_type = elbSelect;
 
-            data.kube_image = imageSelect;
-            data.master_flavor = masterFlavorSelect;
-            data.worker_flavor = workerFlavorSelect;
             data.master_number = masterFlavorNumber;
             data.worker_number = workerFlavorNumber;
             data.worker_autoscale = isAutoScale;
             data.worker_scale_range = workerScaleRange;
-            data.cni = cniSelect.toLowerCase();
-            data.csi = csiSelect.toLowerCase();
-            data.ui = ekgStack.toLowerCase();
+            data.cni = cniSelect;
+            data.csi = csiSelect;
+            data.ui = ekgStack;
             data.expiration = expirationSelect;
             data.private_registry = true;
 
@@ -217,6 +214,18 @@ const RegistModal = (props) => {
         const { data } = form.current.props;
 
         if (step == 1) {
+
+            if (isFirst) {
+                if (networkDataList.length > 0) {
+                    handleSingleCheck(networkDataList[0].name, "network");
+                    setNetworkName(networkDataList[0].name);
+                }
+                setCniSelect(cnis[0].value);
+                setCsiSelect(csis[0].value);
+                setEkgStack(uis[0].value);
+                setIsFirst(false)
+            }
+
             if (data.name == undefined || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
                 handleOk();
             } else {
@@ -225,7 +234,9 @@ const RegistModal = (props) => {
         }
 
         if (step == 2) {
-            if ((networkFlag === 1 && networkCheckItem == "") || (networkFlag === 2 && sriovCheckItem == "")) {
+            
+
+            if (!networkName) {
                 handleOk();
             } else {
                 setRegStep(3);
@@ -233,6 +244,7 @@ const RegistModal = (props) => {
         }
 
         if (step == 3) {
+
             setClusterName(data.name);
             setImageName(data.image);
             setDescription(data.description)
@@ -322,6 +334,9 @@ const RegistModal = (props) => {
 
     const handleSingleCheck = (name, type) => {
         setVariables[type](name);
+        if (type !== "elb") {
+            setNetworkName(name);
+        }
     };
 
     const handleDelete = (name, type) => {
@@ -353,14 +368,8 @@ const RegistModal = (props) => {
     }
 
     const networkValidator = (rule, value, callback) => {
-        console.log(networkName)
-        console.log(isElb)
-        console.log(elbCheckItem)
-        if (networkFlag == 1 && networkName == "") {
+        if (!value) {
             return callback({ message: t('네트워크를 선택해 주세요.') })
-        }
-        if (networkFlag == 2 && networkName == "") {
-            return callback({ message: t('SR-IOV 네트워크를 선택해 주세요.') })
         }
         callback()
     }
@@ -370,12 +379,9 @@ const RegistModal = (props) => {
     // 스크립트 시작 ==================================================
     const onChangeNetwork = (el) => {
         setNetworkFlag(el);
-        setNetworkName("");
-        if (networkFlag === 1) {
-            handleSingleCheck("", "sriov");
-        } else {
-            handleSingleCheck("", "network");
-        }
+        setNetworkName('');
+        handleSingleCheck('', "sriov");
+        handleSingleCheck('', "network");
     }
 
     //cpu count
@@ -476,9 +482,8 @@ const RegistModal = (props) => {
                                 <Form.Group>
                                     <Columns>
                                         <Column>
-                                            <Form.Item
-                                                label={t('OS 타입')}
-                                            >
+                                            <Form.Item label={t('OS 타입')}
+                                                rules={[{ required: true, message: t('OS를 선택해주세요.') }]}>
                                                 <CardSelect
                                                     className={styles.customUl}
                                                     onChange={(e) => handleOsType(e)}
@@ -516,65 +521,65 @@ const RegistModal = (props) => {
                                             }
                                         </Column>
                                     </Columns>
-                                    </Form.Group>
+                                </Form.Group>
 
                                 <Form.Group>
-                                <Columns>
-                                    <Column>
-                                        <Form.Item
-                                            label={t('Master Flavor')}
-                                            rules={[{ required: true, validator: masterFlavorValidator }]}
-                                        >
-                                            <TypeSelect
-                                                name="masterFlavor"
-                                                defaultValue={"선택"}
-                                                options={flavorOptions()}
-                                                placeholder={{ label: t('선택') }}
-                                                onChange={(e) => setMasterFlavorSelect(e)}
-                                            />
-                                        </Form.Item>
-                                    </Column>
-                                    <Column>
-                                        <Form.Item label={t('\r\n')}>
-                                            <div>
-                                                <br />
-                                                <Select name="masterNumber"
-                                                    options={[{ label: 1, value: 1 }, { label: 3, value: 3 }, { label: 5, value: 5 }]}
-                                                    onChange={(e) => setMasterFlavorNumber(e)}
-                                                    defaultValue={1} />
-                                            </div>
-                                        </Form.Item>
-                                    </Column>
-                                </Columns>
+                                    <Columns>
+                                        <Column>
+                                            <Form.Item label={t('Master Flavor')}
+                                                rules={[{ required: true, validator: masterFlavorValidator }]}
+                                            >
+                                                <TypeSelect
+                                                    name="masterFlavor"
+                                                    defaultValue={"선택"}
+                                                    options={flavorOptions()}
+                                                    placeholder={{ label: t('선택') }}
+                                                    onChange={(e) => setMasterFlavorSelect(e)}
+                                                />
+                                            </Form.Item>
+                                        </Column>
+                                        <Column>
+                                            <Form.Item label={t('\r\n')}>
+                                                <div>
+                                                    <br />
+                                                    <Select name="masterNumber"
+                                                        options={[{ label: 1, value: 1 }, { label: 3, value: 3 }, { label: 5, value: 5 }]}
+                                                        onChange={(e) => setMasterFlavorNumber(e)}
+                                                        defaultValue={1} />
+                                                </div>
+                                            </Form.Item>
+                                        </Column>
+                                    </Columns>
                                 </Form.Group>
+
                                 <Form.Group>
-                                <Columns>
-                                    <Column>
-                                        <Form.Item
-                                            label={t('Worker Flavor')}
-                                            rules={[{ required: true, validator: workerFlavorValidator }]}
-                                        >
-                                            <TypeSelect
-                                                name="workerFlavor"
-                                                defaultValue={"선택"}
-                                                options={flavorOptions()}
-                                                placeholder={{ label: t('선택') }}
-                                                onChange={(e) => setWorkerFlavorSelect(e)}
-                                            />
-                                        </Form.Item>
-                                    </Column>
-                                    <Column>
-                                        <Form.Item label={t('\r\n')}>
-                                            <div>
-                                                <br />
-                                                <Button icon="substract" onClick={minusBtn} />&nbsp;&nbsp;
-                                                <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%' }} />&nbsp;&nbsp;
-                                                <Button icon="add" onClick={addBtn} />
-                                            </div>
-                                        </Form.Item>
-                                    </Column>
-                                </Columns>
-                                    </Form.Group>
+                                    <Columns>
+                                        <Column>
+                                            <Form.Item label={t('Worker Flavor')}
+                                                rules={[{ required: true, validator: workerFlavorValidator }]}
+                                            >
+                                                <TypeSelect
+                                                    name="workerFlavor"
+                                                    defaultValue={"선택"}
+                                                    options={flavorOptions()}
+                                                    placeholder={{ label: t('선택') }}
+                                                    onChange={(e) => setWorkerFlavorSelect(e)}
+                                                />
+                                            </Form.Item>
+                                        </Column>
+                                        <Column>
+                                            <Form.Item label={t('\r\n')}>
+                                                <div>
+                                                    <br />
+                                                    <Button icon="substract" onClick={minusBtn} />&nbsp;&nbsp;
+                                                    <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%' }} />&nbsp;&nbsp;
+                                                    <Button icon="add" onClick={addBtn} />
+                                                </div>
+                                            </Form.Item>
+                                        </Column>
+                                    </Columns>
+                                </Form.Group>
+
                                 <Form.Item
                                     className={styles.textarea}
                                     label={t('설명')}
@@ -593,124 +598,125 @@ const RegistModal = (props) => {
 
                             {/* 네트워크 설정 시작==========================================*/}
                             <div className={`${regStep == 2 ? "" : "hide"}`}>
-                                <Form.Group label={t('네트워크')} >
-                                    <Form.Item>
-                                        <div>
-                                            <Select
-                                                options={[{ label: "네트워크", value: 1 }, { label: "SR-IOV 네트워크", value: 2 }]}
-                                                onChange={(e) => onChangeNetwork(e)}
-                                                defaultValue={1} />
+                                <Form.Item label={t('네트워크')}>
+                                    <Form.Group>
+                                        <Form.Item>
+                                            <div>
+                                                <Select
+                                                    options={[{ label: "네트워크", value: 1 }, { label: "SR-IOV 네트워크", value: 2 }]}
+                                                    onChange={(e) => onChangeNetwork(e)}
+                                                    defaultValue={1} />
                                                 &nbsp;네트워크 타입을 선택해주세요.
-                                        </div>
-                                    </Form.Item>
-
-                                    <Form.Item label={t('네트워크')}
-                                        className={`${networkFlag === 1 ? '' : 'hide'}`}
-                                        rules={[{ required: true }]}>
-                                        <div className={styles.wrapper}>
-                                            <div className={styles.table}>
-                                                <table>
-                                                    <colgroup>
-                                                        <col width="5%" />
-                                                        <col width="20%" />
-                                                        <col width="15%" />
-                                                        <col width="20%" />
-                                                        <col width="20%" />
-                                                        <col width="20%" />
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th><strong>네트워크 이름</strong></th>
-                                                            <th><strong>네트워크 유형</strong></th>
-                                                            <th><strong>기본 경로</strong></th>
-                                                            <th><strong>CIDR</strong></th>
-                                                            <th><strong>게이트웨이</strong></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {!networkDataList?.length &&
-                                                            <tr>
-                                                                <td colSpan="6" className="no-data">
-                                                                    <p>할당 가능한 자원이 없습니다.</p>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                        {networkDataList?.map((data, key) => (
-                                                            <tr key={data.name}>
-                                                                <td>
-                                                                    <Radio name={`select-${data.name}`}
-                                                                        checked={data.name === networkCheckItem}
-                                                                        onChange={(e) => { handleSingleCheck(data.name, "network"); setNetworkName(data.name); }} />
-                                                                </td>
-                                                                <td>{data.name}</td>
-                                                                <td>{(data.type).toUpperCase()}</td>
-                                                                <td>{data.default_route ? "사용" : "미사용"}</td>
-                                                                <td>{data.cidr}</td>
-                                                                <td>{data.gateway_ip}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
                                             </div>
-                                        </div>
-                                    </Form.Item>
+                                        </Form.Item>
 
-                                    <Form.Item label={t('SR-IOV 네트워크')}
-                                        className={`${networkFlag === 2 ? '' : 'hide'}`}
-                                        rules={[{ required: true }]}>
-                                        <div className={styles.wrapper}>
-                                            <div className={styles.table}>
-                                                <table>
-                                                    <colgroup>
-                                                        <col width="5%" />
-                                                        <col width="25%" />
-                                                        <col width="20%" />
-                                                        <col width="25%" />
-                                                        <col width="25%" />
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th><strong>네트워크 이름</strong></th>
-                                                            <th><strong>네트워크 유형</strong></th>
-                                                            <th><strong>CIDR</strong></th>
-                                                            <th><strong>게이트웨이</strong></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {!sriovNetworkDataList?.length &&
+                                        <Form.Item label={t('네트워크')}
+                                            className={`${networkFlag === 1 ? '' : 'hide'}`}
+                                            >
+                                            <div className={styles.wrapper}>
+                                                <div className={styles.table}>
+                                                    <table>
+                                                        <colgroup>
+                                                            <col width="5%" />
+                                                            <col width="20%" />
+                                                            <col width="15%" />
+                                                            <col width="20%" />
+                                                            <col width="20%" />
+                                                            <col width="20%" />
+                                                        </colgroup>
+                                                        <thead>
                                                             <tr>
-                                                                <td colSpan="5" className="no-data">
-                                                                    <p>할당 가능한 자원이 없습니다.</p>
-                                                                </td>
+                                                                <th></th>
+                                                                <th><strong>네트워크 이름</strong></th>
+                                                                <th><strong>네트워크 유형</strong></th>
+                                                                <th><strong>기본 경로</strong></th>
+                                                                <th><strong>CIDR</strong></th>
+                                                                <th><strong>게이트웨이</strong></th>
                                                             </tr>
-                                                        }
-                                                        {sriovNetworkDataList?.map((data, key) => (
-                                                            <tr key={data.name}>
-                                                                <td>
-                                                                    <Radio name={`select-${data.name}`}
-                                                                        checked={data.name === sriovCheckItem}
-                                                                        onChange={(e) => { handleSingleCheck(data.name, "sriov"); setNetworkName(data.name); }} />
-                                                                </td>
-                                                                <td>{data.name}</td>
-                                                                <td>{(data.type).toUpperCase()}</td>
-                                                                <td>{data.cidr}</td>
-                                                                <td>{data.gateway_ip}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            {!networkDataList?.length &&
+                                                                <tr>
+                                                                    <td colSpan="6" className="no-data">
+                                                                        <p>할당 가능한 자원이 없습니다.</p>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            {networkDataList?.map((data, key) => (
+                                                                <tr key={data.name}>
+                                                                    <td>
+                                                                        <Radio name={`select-${data.name}`}
+                                                                            checked={data.name === networkCheckItem}
+                                                                            onChange={(e) => handleSingleCheck(data.name, "network")} />
+                                                                    </td>
+                                                                    <td>{data.name}</td>
+                                                                    <td>{(data.type).toUpperCase()}</td>
+                                                                    <td>{data.default_route ? "사용" : "미사용"}</td>
+                                                                    <td>{data.cidr}</td>
+                                                                    <td>{data.gateway_ip}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Form.Item>
+                                        </Form.Item>
 
-                                    <Form.Item rules={[{ required: true, validator: networkValidator }]}>
-                                        <Input type="hidden" name="networkName" value={networkName} />
-                                    </Form.Item>
-                                </Form.Group>
+                                        <Form.Item label={t('SR-IOV 네트워크')}
+                                            className={`${networkFlag === 2 ? '' : 'hide'}`}
+                                            >
+                                            <div className={styles.wrapper}>
+                                                <div className={styles.table}>
+                                                    <table>
+                                                        <colgroup>
+                                                            <col width="5%" />
+                                                            <col width="25%" />
+                                                            <col width="20%" />
+                                                            <col width="25%" />
+                                                            <col width="25%" />
+                                                        </colgroup>
+                                                        <thead>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th><strong>네트워크 이름</strong></th>
+                                                                <th><strong>네트워크 유형</strong></th>
+                                                                <th><strong>CIDR</strong></th>
+                                                                <th><strong>게이트웨이</strong></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {!sriovNetworkDataList?.length &&
+                                                                <tr>
+                                                                    <td colSpan="5" className="no-data">
+                                                                        <p>할당 가능한 자원이 없습니다.</p>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            {sriovNetworkDataList?.map((data, key) => (
+                                                                <tr key={data.name}>
+                                                                    <td>
+                                                                        <Radio name={`select-${data.name}`}
+                                                                            checked={data.name === sriovCheckItem}
+                                                                            onChange={(e) => handleSingleCheck(data.name, "sriov")} />
+                                                                    </td>
+                                                                    <td>{data.name}</td>
+                                                                    <td>{(data.type).toUpperCase()}</td>
+                                                                    <td>{data.cidr}</td>
+                                                                    <td>{data.gateway_ip}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </Form.Item>
+                                        <Form.Item>
+                                            <Input type="hidden" value={networkName} />
+                                        </Form.Item>
+                                    </Form.Group>
+                                </Form.Item>
 
-                                <Form.Group label={t('ELB (External Load Balancer)')} onChange={(e) => setIsElb(!isElb)} checkable>
+                                <Form.Group label={t('ELB (External Load Balancer)')} onChange={(e) => { setIsElb(!isElb); handleSingleCheck("", "elb"); }} checkable>
                                     <Form.Item>
                                         <Select
                                             name="elbType"
@@ -794,45 +800,41 @@ const RegistModal = (props) => {
                                 <Form.Group label="Plug-in" checkable keepDataWhenUnCheck>
                                     <Columns>
                                         <Column>
-                                            <Form.Item>
-                                                <div>
-                                                    CNI  (Container Network Interface)
-                                                    <Select name="cni"
-                                                        options={cnis}
-                                                        defaultValue={"선택"}
-                                                        onChange={(el) => setCniSelect(el)}
-                                                        />
-                                                </div>
+                                            <Form.Item label={"CNI  (Container Network Interface)"}>
+                                                <Select name="cni"
+                                                    options={cnis}
+                                                    onChange={(el) => setCniSelect(el)}
+                                                    defaultValue={cniSelect}
+                                                />
                                             </Form.Item>
                                         </Column>
                                         <Column>
                                             <div>
-                                                <Form.Item>
-                                                    <div>
-                                                        CSI  (Container Storage Interface)
-                                                        <Select name="csi"
-                                                            options={csis}
-                                                            defaultValue={"선택"}
-                                                            onChange={(el) => setCsiSelect(el)}
-                                                            />
-                                                    </div>
+                                                <Form.Item label={"CSI  (Container Storage Interface)"}>
+                                                    <Select name="csi"
+                                                        options={csis}
+                                                        onChange={(el) => setCsiSelect(el)}
+                                                        defaultValue={csiSelect}
+                                                    />
                                                 </Form.Item>
                                             </div>
                                         </Column>
                                     </Columns>
                                 </Form.Group>
 
-                                <Form.Group>
-                                    <Form.Item label={t('EKG Stack')}>
-                                        <CardSelect
-                                            name="ekgStack"
-                                            className={styles.customUl}
-                                            onChange={(e) => setEkgStack(e)}
-                                            options={uis}
-                                            defaultValue={ekgStack}
-                                        />
-                                    </Form.Item>
-                                </Form.Group>
+                                <Form.Item label={t('EKG Stack')}>
+                                    <Form.Group>
+                                        <Form.Item>
+                                            <CardSelect
+                                                name="ekgStack"
+                                                className={styles.customUl}
+                                                onChange={(e) => setEkgStack(e)}
+                                                options={uis}
+                                                defaultValue={ekgStack}
+                                            />
+                                        </Form.Item>
+                                    </Form.Group>
+                                </Form.Item>
 
                                 <Form.Item label={t('인증서 유효기간')}>
                                     <Select name="expiration"

@@ -303,65 +303,68 @@ const RegistModal = (props) => {
                     </Columns>
 
                     <Form.Item label={t('루트 디스크')} >
-                        <div style={{
-                            textAlign: "center",
-                            padding: 20
-                        }}>
-                            <Input type="hidden" name="rootDisk" value={rootDisk} />
-                            <Slider max={320} marks={{
-                                0: "0",
-                                10: "10",
-                                20: "20",
-                                40: "40",
-                                80: "80",
-                                160: "160",
-                                320: "320",
-                            }} style={{width: '10%'}} value={rootDisk} unit={"GiB"} onChange={e => handleRootDisk.onChangeSlider(e)} withInput />
-                        </div>
+                        <Form.Group>
+                            <div style={{
+                                textAlign: "center",
+                                padding: 20
+                            }}>
+                                <Input type="hidden" name="rootDisk" value={rootDisk} />
+                                <Slider max={320} marks={{
+                                    0: "0",
+                                    10: "10",
+                                    20: "20",
+                                    40: "40",
+                                    80: "80",
+                                    160: "160",
+                                    320: "320",
+                                }} style={{width: '10%'}} value={rootDisk} unit={"GiB"} onChange={e => handleRootDisk.onChangeSlider(e)} withInput />
+                            </div>
+                        </Form.Group>
                     </Form.Item>
 
                     <Form.Item label={t('임시 디스크')} >
-                        <div style={{
-                            textAlign: "center",
-                            padding: 20
-                        }}>
-                            <Input type="hidden" name="ephemeralDisk" value={ephemeralDisk} />
-                            <Slider max={40} marks={{
-                                0: "0",
-                                10: "10",
-                                20: "20",
-                                30: "30",
-                                40: "40",
-                            }} value={ephemeralDisk} unit={"GiB"} onChange={e => handleEphemeralDisk.onChangeSlider(e)} withInput />
-                        </div>
+                        <Form.Group>
+                            <div style={{
+                                textAlign: "center",
+                                padding: 20
+                            }}>
+                                <Input type="hidden" name="ephemeralDisk" value={ephemeralDisk} />
+                                <Slider max={40} marks={{
+                                    0: "0",
+                                    10: "10",
+                                    20: "20",
+                                    30: "30",
+                                    40: "40",
+                                }} value={ephemeralDisk} unit={"GiB"} onChange={e => handleEphemeralDisk.onChangeSlider(e)} withInput />
+                            </div>
+                        </Form.Group>
                     </Form.Item>
-
                     <Form.Item label={t('EXTRSPEC')} >
-                        <CheckboxGroup options={extraSpecsFields}>
-                            {extraSpecsFields.map((v, i) => (
-                                <div key={i}  style={{
-                                    padding: 5,
-                                }}>
-                                    <Input
-                                        type="hidden"
-                                        name={`extraSpecs.${i}.key`}
-                                        value={v.key}
-                                    />
-                                    <Tooltip content={v.description} placement="right">
-                                        <Checkbox
-                                            checked={v.value}
-                                            name={`extraSpecs.${i}.value`}
-                                            value={v.value}
-                                            onChange={(e) => handCheckExtrSpec(i, e)}
-                                        >
-                                            {v.key}
-                                        </Checkbox>
-                                    </Tooltip>
-                                </div>
-                            ))}
-                        </CheckboxGroup>
+                        <Form.Group>
+                            <CheckboxGroup options={extraSpecsFields} >
+                                {extraSpecsFields.map((v, i) => (
+                                    <>
+                                        <Input
+                                            type="hidden"
+                                            name={`extraSpecs.${i}.key`}
+                                            value={v.key}
+                                            key={i}
+                                        />
+                                        <Tooltip content={v.description} placement="top">
+                                            <Checkbox
+                                                checked={v.value}
+                                                name={`extraSpecs.${i}.value`}
+                                                value={v.value}
+                                                onChange={(e) => handCheckExtrSpec(i, e)}
+                                            >
+                                                {v.key}
+                                            </Checkbox>
+                                        </Tooltip>
+                                    </> 
+                                ))}
+                            </CheckboxGroup>
+                        </Form.Group>
                     </Form.Item>
-
                     <Form.Item label={t('GPU')} >
                         <Form.Group>
                             {formGpuFields.map((v, i) => (
