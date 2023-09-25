@@ -25,11 +25,14 @@ import { Panel } from 'components/Base'
 import ReplicaStatus from './Status'
 
 import styles from './index.scss'
+import axios from "axios";
 
 export default class HPACard extends React.Component {
   static propTypes = {
     module: PropTypes.string,
-    detail: PropTypes.object,
+    detail: PropTypes.array,
+    names: PropTypes.array,
+    text: PropTypes.object,
     enableScale: PropTypes.bool,
     onScale: PropTypes.func,
   }
@@ -40,42 +43,38 @@ export default class HPACard extends React.Component {
     onScale() {},
   }
 
-  get replicaStatus() {
-    const { module, detail, enableScale } = this.props
+  fnGetStatus = (idx) => {
+    const { module, detail, names, text, enableScale } = this.props
     let status = {}
 
     switch (module) {
-      default:
-      case 'deployments': {
+        default:
+        case 'deployments': {
         status = {
-          current: detail.availablePodNums || 0,
-          desire: detail.podNums || 0,
+            current: detail.state[idx].unavailableNums || 0,
+            desire: detail.state[idx].nums || 0,
         }
         break
-      }
-      case 'statefulsets': {
+        }
+        case 'statefulsets': {
         status = {
-          current: get(detail, 'status.currentReplicas', detail.readyPodNums),
-          desire: detail.podNums || 0,
+            current: get(detail.state[idx], 'status.currentReplicas', detail.state[idx].readyNums),
+            desire: detail.state[idx].nums || 0,
         }
         break
-      }
-      case 'daemonsets': {
+        }
+        case 'daemonsets': {
         status = {
-          current: get(detail, 'status.numberReady', 0),
-          desire: get(detail, 'status.desiredNumberScheduled', 0),
+            current: get(detail.state[idx], 'status.numberReady', 0),
+            desire: get(detail.state[idx], 'status.desiredNumberScheduled', 0),
         }
         break
-      }
-      case 'gateways': {
-        status = {
-          current: Array.isArray(detail.pods) ? detail.pods.length : 1,
-          desire: get(detail, 'replicas', 0),
         }
-      }
     }
 
-    status.onScale = enableScale ? this.handleReplicaChange : null
+    status.onScale = enableScale ? (idx>0 ? this.handleReplicaChange: null) : null //master는 scale수정 불가
+    status.name = names[idx]
+    status.text = text
 
     return status
   }
@@ -83,18 +82,28 @@ export default class HPACard extends React.Component {
   handleReplicaChange = newReplicas => {
     if (newReplicas >= 0) {
       this.props.onScale(newReplicas)
+      this.putScale(newReplicas)
     }
   }
 
-  render() {
+  putScale = async (newReplicas) => {
+    if (newReplicas) {
+      const replicas = { "replicas": newReplicas }
+      const response = await axios.put(`/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
+      if (response.status === 200) {
+          setTimeout(async () => { await this.props.onFetchData() }, 1000)
+      }
+    }
+  }
+
+    render() {
+    
     const { className } = this.props
 
     return (
       <Panel className={classnames(styles.replica, className)}>
         <div className={styles.replicaCount}>
-        <ReplicaStatus {...this.replicaStatus} />
-        <div style={{ padding: 30 }}/>
-        <ReplicaStatus {...this.replicaStatus} />
+           {this.props.names.map((obj, idx) => (<div  style={{ marginRight : 30}}><ReplicaStatus {...this.fnGetStatus(idx)}/></div>))}
         </div>
       </Panel>
     )

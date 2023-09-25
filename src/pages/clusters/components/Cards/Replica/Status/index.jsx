@@ -35,6 +35,7 @@ export default class ReplicaStatus extends React.Component {
         theme: PropTypes.string,
         className: PropTypes.string,
         name: PropTypes.string,
+        text: PropTypes.object,
         current: PropTypes.number,
         desire: PropTypes.number,
         onScale: PropTypes.func,
@@ -50,7 +51,7 @@ export default class ReplicaStatus extends React.Component {
 
     constructor(props) {
         super(props)
-
+        
         const desire = getInter(props.desire)
 
         this.state = {
@@ -114,7 +115,7 @@ export default class ReplicaStatus extends React.Component {
                 })
             } else {
                 this.handleConfirm()
-                this.handleCancel()
+                //this.handleCancel()
             }
         }, 1000)
     }
@@ -142,11 +143,11 @@ export default class ReplicaStatus extends React.Component {
     }
 
     render() {
-        const { theme, className, name, current } = this.props
+        const { theme, className, name, text, current } = this.props
         const { showConfirm, seconds, desire } = this.state
         const nameText = t(name)
-        const currentText = t('REPLICAS_CURRENT')
-        const desireText = t('REPLICAS_DESIRED')
+        const currentText = t('Current')
+        const desireText = t('Desired')
 
         return (
             <div className={classnames(styles.card, className, styles[theme])}>
@@ -176,8 +177,8 @@ export default class ReplicaStatus extends React.Component {
                 <NotifyConfirm
                     visible={showConfirm}
                     width={400}
-                    title={t('ADJUST_REPLICAS')}
-                    content={t.html('REPLICAS_SCALE_NOTIFY_CONTENT', {
+                    title={t(text.title)}
+                    content={t.html(text.content, {
                         num: desire,
                     })}
                     cancelText={t('REPLICAS_SCALE_NOTIFY_CANCEL')}

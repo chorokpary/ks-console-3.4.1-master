@@ -10,15 +10,17 @@ import { Icon, Button, Notify } from '@kube-design/components'
 import styles from './index.scss'
 
 const Status = (props) => {
-
     const store = props.detailStore;
     const detailFlavor = props.detailStore.machines;
 
-    const state= {
-        nums: store.detail?.cluster?.cp?.replicas,
-        availableNums: store.detail?.cluster?.cp?.unavailable_replicas,
-    };
+    const state = [
+        { nums: store.detail?.cluster?.cp?.replicas, unavailableNums: store.detail?.cluster?.cp?.unavailable_replicas },
+        { nums: store.detail?.cluster?.md?.replicas, unavailableNums: store.detail?.cluster?.md?.unavailable_replicas }
+    ]
     
+    const names = ['Master 개수', 'Worker 개수']
+    const text = { title : 'Worker 개수 조정', content : 'Worker 개수를 변경하시겠습니까?' }
+
      const enabledActions = () => {
         return globals.app.getActions({
             module: module(),
@@ -28,7 +30,7 @@ const Status = (props) => {
     }
 
     const module = () => {
-        return props.detailStore.module
+        return store.module
     }
 
     const handleScale = () => {
@@ -36,17 +38,23 @@ const Status = (props) => {
         store.scale = { cluster, namespace, name }
     }
 
-     const enableScaleReplica =() => {
+    const enableScaleReplica =() => {
         return (
             enabledActions().includes('edit') 
         )
     }
-
-    const { availableNums,nums } = state
-    console.log(state)
+    
     return (
         <>
-            
+            <ReplicaCard
+                module={module()}
+                detail={{ ...store.detail, state }}
+                names={names}
+                text={text}
+                onScale={handleScale()}
+                onFetchData={store.fetchData}
+                enableScale={enableScaleReplica()}
+            />
 
             <Panel title={"Master Node"}>
                 <div className={styles.wrapper}>

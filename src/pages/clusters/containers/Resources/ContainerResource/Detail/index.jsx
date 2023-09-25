@@ -34,6 +34,7 @@ const ResourceDetail = (props) => {
 
     useEffect(() => {
         fetchData();
+        store.fetchData = fetchData;
     }, [])
 
     const fetchData = async () => {
@@ -174,7 +175,7 @@ const ResourceDetail = (props) => {
             },
             {
                 name: t('Worker Flavor'),
-                value: detailFlavor.length > 0 && detailFlavor.filter((obj) => !obj.name.includes(detail.cp?.name) ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p>})
+                value: detailFlavor.length > 0 && detailFlavor.filter((obj, idx) => !obj.name.includes(detail.cp?.name) && idx===1 ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p>})
             },
             {
                 name: t('Scalling'),
