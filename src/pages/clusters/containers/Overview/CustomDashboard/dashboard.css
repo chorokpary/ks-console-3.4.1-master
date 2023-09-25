@@ -577,9 +577,12 @@ body.dashboard {
     margin: 0 !important;
 }
 
+.dashboard .content_wrap .grid-stack-animate,
+.dashboard .content_wrap .grid-stack-animate .grid-stack-item {
+    transition: none !important;
+}
+
 .dashboard .content-wrapper {
-    background: #eff4f9;
-    padding: 20px;
     min-height: 100vh;
     min-width: 1000px;
     height: 100vh;
@@ -1497,7 +1500,6 @@ body.dashboard {
     display: inline-block;
     width: 100%;
     min-width: 1275px;
-    padding: 10px;
 }
 
 .dash_wrap .grid_wrap .grid-stack {
@@ -1678,10 +1680,11 @@ body.dashboard {
 
 .dash_wrap .grid_wrap .grid-stack .grid-stack-item .grid-stack-item-content .grid_item .grid_info.style_status .box.type_status .cont_group>div.cont1 {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 30px;
     min-width: 60px;
+    margin-top: 10px;
 }
 
 .dash_wrap .grid_wrap .grid-stack .grid-stack-item .grid-stack-item-content .grid_item .grid_info.style_status .box.type_status .cont_group>div.cont2 {
