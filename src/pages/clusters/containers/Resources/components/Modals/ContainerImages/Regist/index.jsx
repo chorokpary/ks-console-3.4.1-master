@@ -36,24 +36,27 @@ export default function ResourceImageModal({ title, store, onOk }) {
     getDistroTypeList();
   }, [])
 
-
   const publicTypeOptions = [
     { value: '퍼블릭', },
     { value: '프라이빗', }
   ]
+
   const archTypeOptions = [
     { label: 'x86_64', value: 'x86_64', },
     { label: 'aarch64', value: 'aarch64', },
   ]
+  
   const bootTypeOptions = [
     { label: 'legacy', value: 'legacy', },
     { label: 'uefi', value: 'uefi', }
   ]
+
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
     // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
+  
   const distroTypeOptions = () => {
     const opt = distroTypeList.map((obj) => ({
       label: t(obj.name),

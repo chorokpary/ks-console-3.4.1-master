@@ -65,7 +65,7 @@ export default class VmStore extends Base {
     )
 
     // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
+    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes']
     const apiName = mm3Array.includes(this.module) ? this.module : "";
 
     const data = (get(result, apiName) || []).map(item => ({

@@ -164,6 +164,7 @@ export default class Images extends React.Component {
 
     const { bannerProps, tableProps } = this.props
     // console.log({ ...tableProps })
+
     return (
       <ListPage {...this.props}>
         <Banner

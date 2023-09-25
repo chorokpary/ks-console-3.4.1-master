@@ -80,7 +80,7 @@ const ContainerImageDetail = (props) => {
 
     const getAttrs = () => {
       const detail = toJS(store.detail)
-  
+
       if (isEmpty(detail)) {
         return
       }

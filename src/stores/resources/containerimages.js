@@ -23,6 +23,7 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
+import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -35,6 +36,7 @@ export default class ContainerImagesStore extends Base {
 
   getResourceUrl = (params = {}) => `edgetron/resources/capk/images`
   getListUrl = this.getResourceUrl
+
 
   @action
   async create(data, params = {}) {
