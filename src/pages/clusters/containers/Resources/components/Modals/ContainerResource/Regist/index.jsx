@@ -2,7 +2,8 @@ import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal, TypeSelect } from 'components/Base'
-import { UnitSlider, CardSelect, NumberInput } from 'components/Inputs'
+import CardSelect from '../../../CardSelect'
+import { CardSelect as CardSelect2 } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, Tabs, Icon, Slider } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
@@ -62,7 +63,7 @@ const RegistModal = (props) => {
     const [isElb, setIsElb] = useState(false);
 
     const [isAutoScale, setIsAutoScale] = useState(false);
-    const [autoScale, setAutoScale] = useState([0, 1]);
+    const [autoScale, setAutoScale] = useState([1, 4]);
     const [isFirst, setIsFirst] = useState(true);
 
     const [osType, setOsType] = useState('linux')
@@ -135,9 +136,10 @@ const RegistModal = (props) => {
     }, []);
 
     const osTypeOptions = [
-        { label: 'Linux', value: 'linux', icon: 'linux', },
-        { label: 'Windows', value: 'window', icon: 'windows', }
+        { label: 'Linux', value: 'linux', icon: 'ico-linux', },
+        { label: 'Windows', value: 'window', icon: 'ico-windows', }
     ]
+
 
     const imageOptions = () => {
         const opt = imageOptionList.map((obj) => {
@@ -719,10 +721,10 @@ const RegistModal = (props) => {
                                 <Form.Group label={t('ELB (External Load Balancer)')} onChange={(e) => { setIsElb(!isElb); handleSingleCheck("", "elb"); }} checkable>
                                     <Form.Item>
                                         <Select
-                                            name="elbType"
                                             options={[{ label: "metalLB", value: "metalLB" }, { label: "pureLB", value: "pureLB" }]}
                                             onChange={(e) => setElbSelect(e)}
-                                            defaultValue="metalLB" />
+                                            value={elbSelect}
+                                             />
                                     </Form.Item>
 
                                     <Form.Item label={t('LB')}>
@@ -793,7 +795,7 @@ const RegistModal = (props) => {
                                             8: "8",
                                             9: "9",
                                             10: "10"
-                                        }} step={1} max={10} onChange={(e) => handlerAutoScale(e)} range withInput />
+                                        }} step={1} max={10} value={autoScale} onChange={(e) => handlerAutoScale(e)} range withInput />
                                     </Form.Item>
                                 </Form.Group>
 
@@ -825,7 +827,7 @@ const RegistModal = (props) => {
                                 <Form.Item label={t('EKG Stack')}>
                                     <Form.Group>
                                         <Form.Item>
-                                            <CardSelect
+                                            <CardSelect2
                                                 name="ekgStack"
                                                 className={styles.customUl}
                                                 onChange={(e) => setEkgStack(e)}
