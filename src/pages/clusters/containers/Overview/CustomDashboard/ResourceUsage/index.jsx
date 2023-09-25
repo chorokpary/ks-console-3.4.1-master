@@ -4,6 +4,7 @@ import { getLastMonitoringData, getAreaChartOps, getSuitableUnit, getValueByUnit
 import { get, last } from 'lodash'
 import { SimpleArea } from 'components/Charts'
 import PodStore from 'stores/monitoring/pod'
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 const MetricTypes = {
   cpu_usage: 'cluster_cpu_usage',
@@ -24,6 +25,7 @@ const MetricTypes = {
 
 const ResourcesUsage = ({ monitorStore }) => {
   const podStore = new PodStore();
+  const customStore = new CustomStore();
 
   const [metricData, setMetricData] = useState([]);
   const [tabData, setTabData] = useState();
@@ -63,6 +65,16 @@ const ResourcesUsage = ({ monitorStore }) => {
       handlePodData(podData)
     };
     getPodUsageData();
+    const asd = async () => {
+      const qq = await customStore.fetchMetric({
+        expr: 'node_cpu_seconds_total{namespace="default", service="launcher-node-exporter", mode="idle"}',
+        // start: 1695338000,
+        // end: 1695348000,
+        step: '5m'
+      })
+      console.log(qq)
+    };
+    asd();
   }, [])
 
   const handlePodData = (podData) => {
