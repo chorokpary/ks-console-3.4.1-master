@@ -91,7 +91,7 @@ export default class HPACard extends React.Component {
       const replicas = { "replicas": newReplicas }
       const response = await axios.put(`/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
       if (response.status === 200) {
-          setTimeout(async () => { await this.props.onFetchData() }, 1000)
+          setTimeout(async () => { await this.props.onFetchData() }, 500)
       }
     }
   }
