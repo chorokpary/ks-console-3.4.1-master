@@ -51,13 +51,19 @@ const RegistModal = (props) => {
   const [osType, setOsType] = useState('linux')
 
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+  
+  const [isScript, setIsScript] = useState(false);
+  const [isPassword, setIsPassword] = useState(false);
+  const [isPackage, setIsPackage] = useState(false);
+  const [isFileWrite, setIsFileWrite] = useState(false);
+  const [isUserScript, setIsUserScript] = useState(false);  
 
   useEffect(() => {
 
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor();
       const listImage = await vmStore.fetchVmListImage();
-      const listBootVolume = await vmStore.fetchVmListBootVolume();
+      // const listBootVolume = await vmStore.fetchVmListBootVolume();
       const listNetwork = await vmStore.fetchVmListNetwork();
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork();
       const listKeypair = await vmStore.fetchVmListKeypair();
@@ -67,7 +73,7 @@ const RegistModal = (props) => {
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
       setImageOptionList(listImage.images);
-      setBootVolumeDataList(listBootVolume.volumes);
+      // setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
       setKeypairDataList(listKeypair.keypairs);
@@ -84,9 +90,7 @@ const RegistModal = (props) => {
     { label: '부트볼륨', value: 'B', }
   ]
 
-  const osTypeOptions = [
-    // { label: 'Linux', value: 'linux', icon: 'linux', },
-    // { label: 'Windows', value: 'window', icon: 'windows', }  
+  const osTypeOptions = [ 
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
     { label: 'etc', value: '', icon: 'ico-plus', }
@@ -96,11 +100,9 @@ const RegistModal = (props) => {
     const opt = imageOptionList.map((obj) => {
       // const exceptonArray = ['ubuntu', 'centos']
       // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
-
       return {
         label: t(obj.name),
-        // icon: distroType,
-        icon: `ico-os-${obj.name}`,
+        icon: `ico-os-${obj.distro_type}`,
         value: t(obj.name),
       }
 
@@ -833,133 +835,131 @@ const RegistModal = (props) => {
                     clearable
                   />
                 </Form.Item>
-
-                <Form.Item label={t('스크립트')}>
-                  <div className={styles.wrapper}>
-
-                    {listPasswordRoute.map((obj, idx) => (
-                      <div className={styles.scriptitem} key={obj}>
-                        <Columns>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptId_${obj}`}
-                                placeholder={t('ID')}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item>
-                              <InputPassword
-                                name={`scriptPassword_${obj}`}
-                                placeholder={t('Password')}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                        <Button
-                          type="flat"
-                          icon="trash"
-                          className={styles.scriptdelete}
-                          onClick={() => handlePasswordRoute.delColumn(obj)}
-                        />
-                      </div>
-                    ))}
-                    <div className="text-right">
-                      <Button
-                        className={styles.scriptadd}
-                        onClick={handlePasswordRoute.addColumn}
-                      >
-                        추가
-                      </Button>
+              
+                <Form.Group label={t('스크립트')} onChange={(e) => setIsScript(!isScript)} checkable>
+                    <div className={styles.wrapper}>
+                      <Form.Group label="패스워드 변경" onChange={(e) => setIsPassword(!isPassword)} checkable >
+                        {listPasswordRoute.map((obj, idx) => (
+                          <div className={styles.scriptitem} key={obj}>
+                            <Columns>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptId_${obj}`}
+                                    placeholder={t('ID')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item>
+                                  <InputPassword
+                                    name={`scriptPassword_${obj}`}
+                                    placeholder={t('Password')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() => handlePasswordRoute.delColumn(obj)}
+                            />
+                          </div>
+                        ))}
+                        <div className="text-right">
+                          <Button
+                            className={styles.scriptadd}
+                            onClick={handlePasswordRoute.addColumn}
+                          >
+                            추가
+                          </Button>
+                        </div>
+                      </Form.Group>
+                      <Form.Group label="패키지 설치" onChange={(e) => setIsPackage(!isPackage)} checkable >
+                        {listFileRoute.map((obj, idx) => (
+                          <div className={styles.scriptitem} key={obj}>
+                            <Columns>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptPath_${obj}`}
+                                    placeholder={t('PATH')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptContent_${obj}`}
+                                    placeholder={t('Content')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() => handleFileRoute.delColumn(obj)}
+                            />
+                          </div>
+                        ))}
+                        <div className="text-right">
+                          <Button
+                            className={styles.scriptadd}
+                            onClick={handleFileRoute.addColumn}
+                          >
+                            추가
+                          </Button>
+                        </div>
+                      </Form.Group>
+                      <Form.Group label="파일 쓰기" onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
+                        {listPackageRoute.map((obj, idx) => (
+                          <div className={styles.scriptitem} key={obj}>
+                            <Columns>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptPackage_${obj}`}
+                                    placeholder={t('Package')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptVersion_${obj}`}
+                                    placeholder={t('Ver')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() => handlePackageRoute.delColumn(obj)}
+                            />
+                          </div>
+                        ))}
+                        <div className="text-right">
+                          <Button
+                            className={styles.scriptadd}
+                            onClick={handlePackageRoute.addColumn}
+                          >
+                            추가
+                          </Button>
+                        </div>
+                      </Form.Group>
+                      <Form.Group label="사용자 정의" onChange={(e) => setIsUserScript(!isUserScript)} checkable >
+                          <TextArea
+                            name="userScript"
+                            rows="5"
+                          />
+                      </Form.Group>
                     </div>
-
-                    {listFileRoute.map((obj, idx) => (
-                      <div className={styles.scriptitem} key={obj}>
-                        <Columns>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptPath_${obj}`}
-                                placeholder={t('PATH')}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptContent_${obj}`}
-                                placeholder={t('Content')}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                        <Button
-                          type="flat"
-                          icon="trash"
-                          className={styles.scriptdelete}
-                          onClick={() => handleFileRoute.delColumn(obj)}
-                        />
-                      </div>
-                    ))}
-                    <div className="text-right">
-                      <Button
-                        className={styles.scriptadd}
-                        onClick={handleFileRoute.addColumn}
-                      >
-                        추가
-                      </Button>
-                    </div>
-
-                    {listPackageRoute.map((obj, idx) => (
-                      <div className={styles.scriptitem} key={obj}>
-                        <Columns>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptPackage_${obj}`}
-                                placeholder={t('Package')}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptVersion_${obj}`}
-                                placeholder={t('Ver')}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                        <Button
-                          type="flat"
-                          icon="trash"
-                          className={styles.scriptdelete}
-                          onClick={() => handlePackageRoute.delColumn(obj)}
-                        />
-                      </div>
-                    ))}
-                    <div className="text-right">
-                      <Button
-                        className={styles.scriptadd}
-                        onClick={handlePackageRoute.addColumn}
-                      >
-                        추가
-                      </Button>
-                    </div>
-
-                    <Form.Item
-                      className={styles.textarea}
-                      label={t('사용자정의')}
-                    >
-                      <TextArea
-                        name="userScript"
-                        rows="5"
-                      />
-                    </Form.Item>
-
-                  </div>
-                </Form.Item>
+                </Form.Group>
 
               </div>
               {/* 세부 설정 끝==========================================*/}

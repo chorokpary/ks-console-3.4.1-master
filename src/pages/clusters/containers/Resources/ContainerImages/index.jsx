@@ -127,6 +127,26 @@ export default class Images extends React.Component {
         width: 'auto',
       },
       {
+        title: t('배포판'),
+        dataIndex: 'image',
+        isHideable: true,
+        width: 'auto',
+        render: (image, record)  => {
+          const distro = (record.image_detail.os_distro).split("-")[0]
+          const icon = "ico-os-"+distro;          
+          return (
+            <i
+            style={{
+              backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              width: '40px',
+              height: '40px'
+            }}></i>
+          )
+        },
+      },
+      {
         title: t('단계'),
         dataIndex: 'phase',
         isHideable: true,
@@ -171,7 +191,7 @@ export default class Images extends React.Component {
           icon="snapshot"
           {...bannerProps}
           tabs={this.tabs}
-          title={t('쿠버네티스 이미지')}
+          title={t('KaaS 이미지')}
           description={t('이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
         />
         <Table

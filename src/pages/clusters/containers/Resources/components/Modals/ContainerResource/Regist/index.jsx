@@ -1,13 +1,16 @@
 import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
-import { Modal, TypeSelect } from 'components/Base'
-import CardSelect from '../../../CardSelect'
-import { CardSelect as CardSelect2 } from 'components/Inputs'
+import { Modal } from 'components/Base'
+
+// import { CardSelect as CardSelect2 } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, Tabs, Icon, Slider } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import * as common from "utils/resources"
+
+import TypeSelect from '../../../TypeSelect'
+import CardSelect from '../../../CardSelect'
 
 import classnames from 'classnames'
 import styles from './index.scss'
@@ -143,15 +146,14 @@ const RegistModal = (props) => {
 
     const imageOptions = () => {
         const opt = imageOptionList.map((obj) => {
-            const exceptonArray = ['ubuntu', 'centos']
-            const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
-
+            // const exceptonArray = ['ubuntu', 'centos']
+            // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
+            const distroType = (obj.image_detail.os_distro).split("-")[0]
             return {
                 label: t(obj.name),
-                icon: distroType,
+                icon: `ico-os-${distroType}`,
                 value: t(obj.name),
-            }
-
+              }
         })
         return opt
     }
@@ -795,7 +797,7 @@ const RegistModal = (props) => {
                                             8: "8",
                                             9: "9",
                                             10: "10"
-                                        }} step={1} max={10} value={autoScale} onChange={(e) => handlerAutoScale(e)} range withInput />
+                                        }} step={1} Max={10} value={autoScale} onChange={(e) => handlerAutoScale(e)} range withInput />
                                     </Form.Item>
                                 </Form.Group>
 
@@ -827,7 +829,7 @@ const RegistModal = (props) => {
                                 <Form.Item label={t('EKG Stack')}>
                                     <Form.Group>
                                         <Form.Item>
-                                            <CardSelect2
+                                            <CardSelect
                                                 name="ekgStack"
                                                 className={styles.customUl}
                                                 onChange={(e) => setEkgStack(e)}

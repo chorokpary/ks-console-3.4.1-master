@@ -267,6 +267,15 @@ export default class ResourceStore extends Base {
         )
         const response = { ...params, ...this.mapper(result), kind: 'images' }
 
+        //Image Detail 정보 추가 
+        const imageArray = [];
+        const promises = (response._originData.images).map(async (image) => {           
+            const imageDetail = await axios.get("/edgetron/resources/capk/images/" + image.name);
+            image.image_detail = imageDetail.data.image;
+            imageArray.push(image);
+        })
+        await Promise.all(promises);
+
         this.isLoading = false
         return response;
     }

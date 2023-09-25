@@ -304,13 +304,13 @@ client:
             }
             - {
               name: containerResource,
-              title: "쿠버네티스_리소스",
+              title: "KaaS_리소스",
               skipAuth: true,
               showInDisable: true,
             }
             - {
               name: containerImages,
-              title: "쿠버네티스_이미지",
+              title: "KaaS_이미지",
               skipAuth: true,
               showInDisable: true,
             }            
