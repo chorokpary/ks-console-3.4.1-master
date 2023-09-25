@@ -28,14 +28,19 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://ks-apiserver
-    wsUrl: ws://ks-apiserver
+    url: http://192.168.16.86:30881
+    wsUrl: ws://192.168.16.86:30881
+    mm3Url: http://192.168.16.80:32080 
+
+  mm3UserInfo:
+    userName: "edgetron"
+    passWord: "password"
 
   # docker image search default url
   dockerHubUrl: https://hub.docker.com
 
 client:
-  title: KubeSphere
+  title: ARM CMP
   description: ""
   encryptKey: kubesphere
 
@@ -61,6 +66,8 @@ client:
       recommend: true
     - label: "简体中文"
       value: "zh"
+    - label: "한국어"
+      value: "ko"
       recommend: true
     - label: "한국어"
       value: "ko"
@@ -97,7 +104,7 @@ client:
     - cate: cluster
       items:
         - name: overview
-          title: OVERVIEW
+          title: 대시보드
           icon: dashboard
           skipAuth: true
           showInDisable: true
@@ -242,6 +249,84 @@ client:
                 title: GATEWAY_SETTINGS,
                 authKey: cluster-settings,
               }
+        - name: resources
+          title: "컴퓨팅"
+          icon: appcenter
+          showInDisable: true
+          children:
+            - {
+              name: vms,
+              title: "가상머신",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: networks,
+              title: 네트워크,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: routers,
+              title: 가상 라우터,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: images,
+              title: 이미지,
+              skipAuth: true,
+              showInDisable: true,
+            }           
+            - {
+              name: keypairs,
+              title: "키페어",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: flavors,
+              title: "Flavor",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: floatingip,
+              title: "플로팅 IP",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: securityGroups,
+              title: "보안그룹",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: containerResource,
+              title: "쿠버네티스_리소스",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: containerImages,
+              title: "쿠버네티스_이미지",
+              skipAuth: true,
+              showInDisable: true,
+            }            
+            - {
+              name: resourcesVolumes,
+              title: "볼륨",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            # - {
+            #   name: sriovs,
+            #   title: "SR-IOV 네트워크 관리",
+            #   skipAuth: true,
+            #   showInDisable: true,
+            # }
+
 
   # access control page navigations
   accessNavs:

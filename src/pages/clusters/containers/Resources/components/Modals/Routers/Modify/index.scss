@@ -1,0 +1,62 @@
+@import "~scss/variables";
+@import "~scss/mixins";
+
+.textarea {
+  :global .textarea {
+    max-width: 100%;
+  }
+}
+
+.wrapper {
+  padding: 12px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px $light-color03;
+}
+
+.empty {
+  height: 56px;
+}
+
+.divInRight {
+  display: flex; 
+  justify-content: right;
+}
+
+.table {
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  
+  table {
+    width: 100%;
+    text-align: left;
+    thead {
+        th {
+            text-transform: uppercase;
+            border-bottom: 1px solid #F1F1F1;
+            padding: 10px;
+        }
+    }
+    tbody {
+        tr {
+            border-bottom: 1px solid #F1F1F1;
+            color: #75787b;
+            td {
+                padding: 10px;
+            }
+            th {
+                padding-left: 10px;
+            }
+        }
+    }
+  }
+}
+
+.removeCheckWrapper {
+  padding-top: 12px;
+  button {
+    margin-left: 5px;
+    margin-bottom: 5px;
+  }
+}

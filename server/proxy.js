@@ -48,6 +48,20 @@ const devopsWebhookProxy = {
   },
 }
 
+const webMm3Proxy = {
+  target: `${serverConfig.apiServer.mm3Url}`,
+  changeOrigin: true,
+  events: {
+    proxyReq(proxyReq, req) {
+      // Set authorization
+      if (req.mm3AccessToken) {
+        proxyReq.setHeader('Authorization', `Bearer ${req.mm3AccessToken}`)
+      }
+      NEED_OMIT_HEADERS.forEach(key => proxyReq.removeHeader(key))
+    },
+  },
+}
+
 const b2iFileProxy = {
   target: serverConfig.apiServer.url,
   changeOrigin: true,
@@ -89,4 +103,5 @@ module.exports = {
   k8sResourceProxy,
   devopsWebhookProxy,
   b2iFileProxy,
+  webMm3Proxy,
 }

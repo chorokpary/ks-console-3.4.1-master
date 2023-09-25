@@ -1,0 +1,188 @@
+import { get } from 'lodash'
+import React, { useState, useRef, useEffect } from 'react'
+
+import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from '@kube-design/components'
+import { Modal } from 'components/Base'
+import styles from './index.scss'
+import { toJS } from 'mobx'
+
+const VmPop = ({ title, onOk, store }) => {
+  // VM list
+  // FIP 상세의 network가
+  // Router의 external 이면서
+  // 해당 Router의 internal 이
+  // VM의 networks의 포함되어 있는 것.
+  // router list 중 external이 fip의 network인 것을 찾고,
+  // 해당 router 의 internal이 VM list의 networks와 포함되는 것
+
+  const form = useRef();
+  const [formData, setFormData] = useState({});
+  const fipDetail = toJS(store.detail.floating_ip);
+  const [list, setList] = useState([]);
+  const [internalList, setInternalList] = useState([]);
+
+  const [modelView, setModalView] = useState(true);
+
+  const [vmList, setVmList] = useState([]);
+  const [routerList, setRouterList] = useState([]);
+
+  const [radioExternal, setRadioExternal] = useState("");
+  const [radioExternalIdx, setRadioExternalIdx] = useState(0);
+
+  const [vmData, setVmData] = useState();
+
+  const closeModal = () => {
+    setModalView(false);
+  }
+
+  useEffect(() => {
+
+    const fnGetRouterList = async () => {
+      const routerData = await store.routerList()
+      setRouterList(routerData.routers);
+    };
+    fnGetRouterList();
+
+    const fnGetVmList = async () => {
+      const vmData = await store.vmList()
+      setVmList(vmData.vms)
+    };
+
+    fnGetVmList();
+  }, [])
+
+  useEffect(() => {
+    if (vmList.length > 0 && routerList.length > 0) {
+      const internalList = routerList.find((obj) => obj.external == fipDetail.network)?.internal;
+      setInternalList(internalList)
+
+      const arr = new Set();
+      vmList.map((obj) => {
+        var net = obj.networks;
+        net.map((obj2) => {
+          internalList.forEach(el => {
+            if (el == obj2.name) {
+              arr.add(obj);
+            }
+          })
+        });
+      })
+      const list = Array.from(arr)
+      setList(list);
+      if (list.length > 0) handleVmData(list[0], 0)
+    }
+  }, [vmList, routerList])
+
+  const handleOk = () => {
+    const { data } = form.current.props
+    const network = data.network[radioExternalIdx].split(" ")
+
+    onOk({
+      id: fipDetail.id,
+      instance_type: 'vm',
+      instance_name: radioExternal,
+      target_network: network[0],
+      target_ip: network[1]
+    })
+  }
+
+  const handleVmData = (data, idx) => {
+    setVmData(data)
+    setRadioExternal(data.name)
+    setRadioExternalIdx(idx)
+  }
+
+  const selectOption = (data) => {
+    const options = [];
+    let idx = 0;
+    let defaultValue = '';
+    data?.map((networks) => (
+      internalList.map((el) => {
+        if (el == networks.name) {
+          if (idx == 0) defaultValue = `${networks.name} ${networks.ip}`
+          options.push({
+            label: `${networks.name} ${networks.ip}`,
+            value: `${networks.name} ${networks.ip}`
+          })
+          idx++;
+        }
+      })
+    ));
+    return {
+      options,
+      defaultValue
+    }
+  }
+
+  return (
+    <>
+      <Modal
+        icon="pen"
+        width={800}
+        title={title}
+        onOk={handleOk}
+        onCancel={closeModal}
+        visible={modelView}
+        okText={'연결'}
+        cancelText={'취소'}
+      >
+        <Form data={formData} ref={form}>
+
+          {/* <Form.Item > */}
+          <div className={styles.wrapper}>
+            <div className={styles.table}>
+              <table>
+                <colgroup>
+                  <col width="5%" />
+                  <col width="20%" />
+                  <col width="20%" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th><strong>이름</strong></th>
+                    <th><strong>네트워크</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!list?.length &&
+                    <tr>
+                      <td colSpan="3" className="no-data">
+                        <p>모든 자원이 할당 되었습니다.</p>
+                      </td>
+                    </tr>
+                  }
+                  {list?.map((data, idx) => (
+                    <tr key={data.name}>
+                      <td>
+                        <Form.Item >
+                          <Radio name="external" value={data.name}
+                            checked={radioExternal === data.name}
+                            onChange={(e) => { handleVmData(data, idx); }} />
+                        </Form.Item>
+                      </td>
+                      <td>{data.name}</td>
+                      <td>
+                        <Form.Item >
+                          <Select name={`network.${idx}`} style={{ width: '100%' }}
+                            {...selectOption(data.networks)}
+                          />
+                        </Form.Item>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {/* </Form.Item> */}
+
+        </Form>
+      </Modal>
+
+    </>
+  );
+};
+
+export default VmPop
+

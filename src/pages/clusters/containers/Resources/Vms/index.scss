@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+@import '~scss/variables';
+@import '~scss/mixins';
+
+
+.iconwrapper {
+  display: flex;
+    i {
+      margin-right: 5px;
+    }
+}
+
+.ico-status-provisioning {background:url('/assets/resources/images/icons/ico-status-provisioning.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-running {background:url('/assets/resources/images/icons/ico-status-running.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-stopped {background:url('/assets/resources/images/icons/ico-status-stopped.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-stopping {background:url('/assets/resources/images/icons/ico-status-stopping.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-starting {background:url('/assets/resources/images/icons/ico-status-starting.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-paused {background:url('/assets/resources/images/icons/ico-status-paused.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-migrating {background:url('/assets/resources/images/icons/ico-status-migrating.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-terminating {background:url('/assets/resources/images/icons/ico-status-terminating.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-status-unknown {background:url('/assets/resources/images/icons/ico-status-unknown.svg') center no-repeat; width: 16px; height: 16px;}
+
+
+.ico-quick-start {background:url('/assets/resources/images/icons/ico-quick-start.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-quick-restart {background:url('/assets/resources/images/icons/ico-quick-restart.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-quick-pause {background:url('/assets/resources/images/icons/ico-quick-pause.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-quick-unpause {background:url('/assets/resources/images/icons/ico-quick-unpose.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-quick-stop  {background:url('/assets/resources/images/icons/ico-quick-stop.svg') center no-repeat; width: 16px; height: 16px;}
+.ico-quick-trash {background:url('/assets/resources/images/icons/ico-quick-trash.svg') center no-repeat; width: 16px; height: 16px;}
+
+
+

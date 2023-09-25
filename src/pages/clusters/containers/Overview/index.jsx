@@ -21,6 +21,7 @@ import { observer, inject } from 'mobx-react'
 
 import Dashboard from './Dashboard'
 import Initializing from './Initializing'
+import CustomDashboard from './CustomDashboard'
 
 @inject('clusterStore')
 @observer
@@ -36,6 +37,7 @@ export default class Overview extends React.Component {
       return <Initializing store={this.cluster} match={this.props.match} />
     }
 
-    return <Dashboard match={this.props.match} />
+    // return <Dashboard match={this.props.match} />
+    return <CustomDashboard match={this.props.match} />
   }
 }
