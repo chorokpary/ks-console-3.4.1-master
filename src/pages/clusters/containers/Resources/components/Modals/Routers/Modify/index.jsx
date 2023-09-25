@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from '@kube-design/components'
 import { Modal } from 'components/Base'
+
+import classnames from 'classnames'
 import styles from './index.scss'
 
 const ModifyModal = (props) => {
@@ -144,16 +146,18 @@ const ModifyModal = (props) => {
               />   
             </Form.Item>
             <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
-              <div>
+              <div className={styles.wrapper}>  
                 <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}}>사용</Radio>
                 <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}}>미사용</Radio>
               </div>              
             </Form.Item>
             <Form.Item label={t('내부 네트워크')} >
             <div className={styles.wrapper}>
-              <div>
-                총 {stateVariables['internal'].length}건
-              </div>
+              {stateVariables['internal'].length > 0 &&
+                <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "internal")}>전체 선택 해제</Button>  {stateVariables['internal'].length}개 선택
+                </div>
+              }
               <div className={styles.table}>
                 <table>
                     <colgroup>
@@ -225,7 +229,11 @@ const ModifyModal = (props) => {
             
             <Form.Item label={t('외부 네트워크')} >                
               <div className={styles.wrapper}>
-                <div className={styles.divInRight}><Button onClick={() => externalRadioDeselect()}>선택해제</Button></div>
+                {!!radioExternal &&
+                  <div className={classnames(styles.table_title, styles.table_title_bg, styles.divInRight)}>
+                    <Button className={styles.table_title_button} onClick={() => externalRadioDeselect()}>선택해제</Button>
+                  </div>
+                }
                 <div className={styles.table}>
                   <table>
                       <colgroup>

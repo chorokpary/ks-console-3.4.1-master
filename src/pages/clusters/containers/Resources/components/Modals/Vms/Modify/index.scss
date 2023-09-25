@@ -7,6 +7,14 @@
   }
 }
 
+.wrapper {
+  padding: 12px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px $light-color03;
+}
+
+
 .removeCheckWrapper {
   padding-top: 12px;
   button {
@@ -15,6 +23,23 @@
   }
 }
 
+.table_title {
+  position: relative;
+  padding: 10px 20px;
+  background-color: #f9fbfd;
+  box-shadow: 0 1px 0 0 #eff4f9;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px; 
+  color: #eff4f9;
+}
+
+.table_title_bg {
+  background-color: #242e42; 
+}
+
+.table_title_button {
+  margin-right: 20px ;
+}
 
 .table {
   width: 100%;

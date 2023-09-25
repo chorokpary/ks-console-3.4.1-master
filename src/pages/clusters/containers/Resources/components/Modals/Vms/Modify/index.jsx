@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Form, Input, Select, TextArea, Button, Loading, Checkbox } from '@kube-design/components'
 import { Modal } from 'components/Base'
+
+import classnames from 'classnames'
 import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
@@ -109,9 +111,11 @@ const ModifyModal = (props) => {
 
           <Form.Item label={t('보안 그룹')} >
             <div className={styles.wrapper}>
-              <div>
-                총 {stateVariables['security'].length}건
-              </div>
+              {stateVariables['security'].length > 0 &&
+                <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>전체 선택 해제</Button>  {stateVariables['security'].length}개 선택
+                </div>
+              }
               <div className={styles.table}>
                 <table>
                     <colgroup>

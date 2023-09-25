@@ -634,9 +634,11 @@ const RegistModal = (props) => {
 
                 <Form.Item label={t('네트워크')} >
                   <div className={styles.wrapper}>
-                    <div>
-                      총 {stateVariables['network'].length}건
-                    </div>
+                    {stateVariables['network'].length > 0 &&
+                      <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "network")}>전체 선택 해제</Button>  {stateVariables['network'].length}개 선택
+                      </div>
+                    }
                     <div className={styles.table}>
                       <table>
                         <colgroup>
@@ -695,9 +697,11 @@ const RegistModal = (props) => {
 
                 <Form.Item label={t('SR-IOV 네트워크')} >
                   <div className={styles.wrapper}>
-                    <div>
-                      총 {stateVariables['sriov'].length}건
-                    </div>
+                    {stateVariables['sriov'].length > 0 &&
+                      <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "sriov")}>전체 선택 해제</Button>  {stateVariables['sriov'].length}개 선택
+                      </div>
+                    }
                     <div className={styles.table}>
                       <table>
                         <colgroup>
@@ -767,11 +771,13 @@ const RegistModal = (props) => {
                   />
                 </Form.Item>
 
-                <Form.Item label={t('내부 네트워크')} >
+                <Form.Item label={t('보안 그룹')} >
                   <div className={styles.wrapper}>
-                    <div>
-                      총 {stateVariables['security'].length}건
-                    </div>
+                    {stateVariables['security'].length > 0 &&
+                      <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>전체 선택 해제</Button>  {stateVariables['security'].length}개 선택
+                      </div>
+                    }
                     <div className={styles.table}>
                       <table>
                         <colgroup>
