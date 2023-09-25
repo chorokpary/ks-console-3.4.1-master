@@ -1,4 +1,4 @@
-# KubeSphere Console
+# KubeSphere Console for Managed K8S
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/kubesphere/console)
 ![](https://github.com/kubesphere/console/workflows/Main/badge.svg)

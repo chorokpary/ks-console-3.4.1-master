@@ -224,6 +224,8 @@ export default class PodItem extends React.PureComponent {
           {configs.map(item => {
             const config = getAreaChartOps(item)
 
+            const itemWidth = 100 / configs.length
+
             return (
               <div key={item.type}>
                 <TinyArea

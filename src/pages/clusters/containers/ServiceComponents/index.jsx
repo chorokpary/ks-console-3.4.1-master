@@ -75,6 +75,31 @@ export default class ServiceComponents extends React.Component {
       icon: '/assets/kubernetes.svg',
     },
     {
+      type: 'kubevirt',
+      title: t('VIRTUALIZATION'),
+      icon: '/assets/kubevirt.svg',
+    },
+    {
+      type: 'capi',
+      title: 'CAPI',
+      icon: '/assets/capi.svg',
+    },
+    {
+      type: 'cni',
+      title: t('NETWORK'),
+      icon: '/assets/cni-plugin.svg',
+    },
+    {
+      type: 'csi',
+      title: t('STORAGE'),
+      icon: '/assets/csi-plugin.svg',
+    },
+    {
+      type: 'harbor',
+      title: t('REGISTRY'),
+      icon: '/assets/harbor.svg',
+    },
+    {
       type: 'istio',
       title: t('APPLICATION_GOVERNANCE'),
       icon: '/assets/istio.svg',

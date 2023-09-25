@@ -68,7 +68,7 @@ module.exports = {
   REST_USER: 'REST 사용자',
   VOLUME_TYPE: '볼륨 유형',
   SECRET_NAME: '시크릿 이름',
-  REST_AUTH_TRUE: 'True',
+  REST_AUTH_TRUE: '예',
   SECRET_NAMESPACE: '시크릿 네임스페이스',
   GID_MIN: '최소 GID',
   GID_MAX: '최대 GID',

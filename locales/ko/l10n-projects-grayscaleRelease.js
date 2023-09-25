@@ -46,7 +46,7 @@ module.exports = {
   // Release Modes > Canary Release > Create > Service Settings
   UNFINISHED_GRAY_TASK: '그레이스케일 릴리즈 진행 중',
   NO_WORKLOAD_FOUND_TIP: '워크로드를 찾을 수 없습니다',
-  NO_SERVICE_MESH_TIP: '애플리케이션 거버넌스가 앱에 대해 비활성화되어 있어 그레이스케일 릴리스를 사용할 수 없습니다.',
+  NO_SERVICE_MESH_TIP: '애플리케이션 거버넌스가 앱에 대해 비활성화되어 있어 그레이스케일 릴리스를 사용할 수 없습니다.',
   GRAY_APP_NAME: '앱: {name}',
   UNSUPPORTED_WORKLOAD_TYPE: '지원되지 않는 워크로드 유형',
   // Release Modes > Canary Release > Create > New Version Settings

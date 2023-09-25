@@ -69,6 +69,11 @@ export default class ComponentStore {
     const data = {
       kubernetes: get(components, 'kube-system', []),
       kubesphere: get(components, 'kubesphere-system', []),
+      kubevirt: get(components, 'kubevirt', []),
+      capi: get(components, 'capi-system', []),
+      harbor: get(components, 'harbor', []),
+      cni: get(components, 'cni-system', []),
+      csi: get(components, 'csi-system', []),
       istio: get(components, 'istio-system', []),
       monitoring: get(components, 'kubesphere-monitoring-system', []),
       logging: get(components, 'kubesphere-logging-system', []),

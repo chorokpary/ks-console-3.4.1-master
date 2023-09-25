@@ -70,7 +70,7 @@ module.exports = {
   NO_MATCHING_RESULT_FOUND: '일치하는 결과를 찾을 수 없음',
   STATUS: '상태',
   TOTAL_ITEMS: '전체: {num}',
-  YOU_CAN_TRY_TO: '아래 조치를 취해보세요.',
+  YOU_CAN_TRY_TO: '아래의 조치를 취해보세요.',
   REFRESH_DATA: '데이터 새로고침',
   CLEAR_SEARCH_CONDITIONS: '검색 조건 지우기',
   // List > Edit Taints
