@@ -144,7 +144,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                   </label>
                   <label htmlFor="name6">
                     <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onclickTab('k8s')} />
-                    <span>쿠버네티스</span>
+                    <span>KaaS</span>
                   </label>
                 </div>
 

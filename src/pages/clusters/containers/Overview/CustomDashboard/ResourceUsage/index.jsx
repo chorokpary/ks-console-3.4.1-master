@@ -275,7 +275,7 @@ const ResourcesUsage = ({ monitorStore }) => {
                   </label>
                   <label htmlFor="name2_4">
                     <input type="radio" name="box-tab" id="name2_4" value="name6" onClick={() => onclickTab('k8s')} />
-                    <span>쿠버네티스</span>
+                    <span>KaaS</span>
                   </label>
                 </div>
               </div>

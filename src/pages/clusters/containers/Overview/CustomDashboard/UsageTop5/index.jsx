@@ -20,7 +20,7 @@ const typeOption = [
   },
   {
     value: 'k8s',
-    label: '쿠버네티스'
+    label: 'KaaS'
   },
 ]
 const sortOptionNode = [

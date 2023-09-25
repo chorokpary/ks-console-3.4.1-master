@@ -52,7 +52,7 @@ const Vm = () => {
                     <div className="cont2">
                       <div className="status_wrap">
                         <div className="value">{data.waiting}</div>
-                        <p className="status waiting"><span>Waiting</span></p>
+                        <p className="status waiting"><span>Progressing</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.running}</div>

@@ -1,7 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
+import ComponentStore from 'stores/component'
+import PodStore from 'stores/pod'
+import { joinSelector } from 'utils'
+import { get } from 'lodash'
+
+const componentStore = new ComponentStore()
+const podStore = new PodStore()
 
 const K8sStatus = () => {
+
+  const [componentData, setComponentData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [asd, setasd] = useState();
+  const [podList, setPodList] = useState([]);
+
+  useEffect(() => {
+
+    const getK8sStatusData = async () => {
+      setLoading(true)
+      await componentStore.fetchList({ cluster: 'default' })
+      const { data } = componentStore.list;
+      const componentData = data['kubernetes']
+      // kubesphere
+      // kubernetes
+      setComponentData(componentData)
+      setLoading(false)
+    };
+    getK8sStatusData();
+
+  }, [])
 
   return (
     <>
@@ -10,72 +38,25 @@ const K8sStatus = () => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title">
-              <label>쿠버네티스 컴포넌트 상태</label>
+              <label>KaaS 컴포넌트 상태</label>
               <div className="right">
-
               </div>
             </div>
             <div className="grid_info style_status box_nth_wrap">
-              <div className="box type_component selected">
-                <h5><i className="ico ico-type-kubernetes-component"></i>Kubeproxy</h5>
-                <div className="status_box">
-                  <p className="status_active">3</p>
-                  <p className="status_inactive">0</p>
-                  {/* <p className="status_error">1</p> */}
-                </div>
-                <div className="box_pop">
-                  <h6>Kubeproxy</h6>
-                  <div className="status_wrap">
-                    <p className="status active"><span>Worker1</span></p>
+              {componentData.map((item, idx) => (
+                <div className="box type_component" key={idx}>
+                  {/* <Loading spinning={loading}> */}
+                  <h5><i className="ico ico-type-kubernetes-component"></i>{item.name}</h5>
+                  <div className="status_box">
+                    <p className="status_active">{item.healthyBackends}</p>
+                    <p className={`${item.totalBackends - item.healthyBackends > 0 ? 'status_error' : 'status_inactive'}`}>
+                      {item.totalBackends - item.healthyBackends}
+                    </p>
+                    <PodList label={item.label}></PodList>
                   </div>
-                  <div className="status_wrap">
-                    <p className="status inactive"><span>Worker2</span></p>
-                  </div>
-                  <div className="status_wrap">
-                    <p className="status error"><span>Master</span></p>
-                  </div>
+                  {/* </Loading> */}
                 </div>
-              </div>
-              <div className="box type_component">
-                <h5><i className="ico ico-type-kubernetes-component"></i>coreDNS</h5>
-                <div className="status_box">
-                  <p className="status_active">3</p>
-                  <p className="status_inactive">0</p>
-                  {/* <p className="status_error">1</p> */}
-                </div>
-              </div>
-              <div className="box type_component">
-                <h5><i className="ico ico-type-kubernetes-component"></i>Kubelet</h5>
-                <div className="status_box">
-                  <p className="status_active">3</p>
-                  <p className="status_inactive">0</p>
-                  {/* <p className="status_error">1</p> */}
-                </div>
-              </div>
-              <div className="box type_component">
-                <h5><i className="ico ico-type-kubernetes-component"></i>kube-scheduler</h5>
-                <div className="status_box">
-                  <p className="status_active">3</p>
-                  <p className="status_inactive">0</p>
-                  {/* <p className="status_error">1</p> */}
-                </div>
-              </div>
-              <div className="box type_component">
-                <h5><i className="ico ico-type-kubernetes-component"></i>kube-scheduler</h5>
-                <div className="status_box">
-                  <p className="status_active">3</p>
-                  <p className="status_inactive">0</p>
-                  {/* <p className="status_error">1</p> */}
-                </div>
-              </div>
-              <div className="box type_component">
-                <h5><i className="ico ico-type-kubernetes-component"></i>kube-controller-manager</h5>
-                <div className="status_box">
-                  <p className="status_active">3</p>
-                  <p className="status_inactive">0</p>
-                  {/* <p className="status_error">1</p> */}
-                </div>
-              </div>
+              ))}
             </div>
             {/*// grid_info style_status */}
 
@@ -88,3 +69,38 @@ const K8sStatus = () => {
 }
 
 export default K8sStatus
+
+const PodList = ({ label }) => {
+
+  const [podList, setPodList] = useState([])
+
+  useEffect(() => {
+    const getPodList = async () => {
+      const podList = await podStore.fetchList({ limit: 1000, labelSelector: joinSelector(label) })
+      setPodList(podList)
+    };
+    getPodList();
+  }, [])
+
+  return (
+    <>
+      {podList.length > 0 &&
+        <>
+          <div className="box_pop">
+            <h6>Kubeproxy</h6>
+            {podList.map((item, idx) => (
+              <div className="status_wrap" key={idx}>
+                <p className={`status 
+                ${item.podStatus.type.toLowerCase() === 'error' ? 'error' :
+                    item.podStatus.type.toLowerCase() === 'running' ? 'active' : 'inactive'}`
+                }>
+                  <span>{item.node}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </>
+      }
+    </>
+  )
+}

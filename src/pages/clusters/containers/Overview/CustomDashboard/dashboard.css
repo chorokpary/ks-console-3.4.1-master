@@ -92,10 +92,6 @@ body.dashboard {
     box-sizing: border-box;
 }
 
-.dashboard {
-    /* button */
-}
-
 .dashboard i {
     flex-shrink: 0;
 }
@@ -570,7 +566,6 @@ body.dashboard {
     position: absolute;
     left: 260px;
     width: calc(100% - 260px);
-    padding-top: 20px;
 }
 
 .dashboard .content_wrap {
@@ -864,16 +859,7 @@ body.dashboard {
     bottom: 50px;
 }
 
-.dash_wrap {
-    /* common */
-    /* Tab */
-    /* quick_menu */
-    /* bar graph */
-    /* chart */
-    /* tbl_list */
-    /* draggable grid - gridstack */
-}
-
+/* common */
 .dash_wrap .number_wrap {
     display: flex;
     flex-direction: column;
@@ -1510,6 +1496,7 @@ body.dashboard {
 .dash_wrap .grid_wrap {
     display: inline-block;
     width: 100%;
+    min-width: 1275px;
     padding: 10px;
 }
 
@@ -1518,6 +1505,7 @@ body.dashboard {
 }
 
 .dash_wrap .grid_wrap .grid-stack .grid-stack-item .grid-stack-item-content {
+    overflow-y: hidden !important;
     left: 10px;
     right: 10px;
     background-color: white;
@@ -1946,7 +1934,6 @@ body.dashboard {
     width: 75%;
     background: #F9FBFD;
     border-radius: 4px;
-    overflow: auto;
 }
 
 .dash_wrap .grid_wrap .grid-stack .grid-stack-item .grid-stack-item-content .grid_item .grid_info.style_list {
@@ -2078,7 +2065,6 @@ body.dashboard {
     align-items: center;
 }
 
-/* dashboard common */
 body.dashboard {
     margin: 0;
     padding: 0;
@@ -2094,14 +2080,8 @@ body.dashboard {
     backface-visibility: hidden;
     resize: none;
     outline: 0;
+    line-height: initial;
     font-family: "Roboto", "Pretendard", sans-serif;
-}
-
-.dashboard {
-    /* Works on Chrome, Edge, and Safari */
-    /* ico arrow */
-    /* ico detail */
-    /* ico list */
 }
 
 .dashboard div,
@@ -2129,6 +2109,7 @@ body.dashboard {
     backface-visibility: hidden;
     resize: none;
     outline: 0;
+    line-height: initial;
     font-family: "Roboto", "Pretendard", sans-serif;
 }
 
