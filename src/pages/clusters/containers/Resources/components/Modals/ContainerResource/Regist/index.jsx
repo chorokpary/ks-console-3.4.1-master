@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal } from 'components/Base'
 
-// import { CardSelect as CardSelect2 } from 'components/Inputs'
+ import { CardSelect as CardSelect2 } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, Tabs, Icon, Slider } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
@@ -829,7 +829,7 @@ const RegistModal = (props) => {
                                 <Form.Item label={t('EKG Stack')}>
                                     <Form.Group>
                                         <Form.Item>
-                                            <CardSelect
+                                            <CardSelect2
                                                 name="ekgStack"
                                                 className={styles.customUl}
                                                 onChange={(e) => setEkgStack(e)}
