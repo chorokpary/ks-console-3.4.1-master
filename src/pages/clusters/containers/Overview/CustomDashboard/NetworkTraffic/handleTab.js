@@ -17,7 +17,7 @@ export function getData(activeTab, data) {
   } else if (activeTab == 'pod') {
     result = getPodData(data)
   } else if (activeTab == 'vm') {
-    // result = getVmData(data)
+    result = getVmData(data)
   } else if (activeTab == 'k8s') {
 
   }
@@ -32,7 +32,7 @@ export function getContentOptions(activeTab, data) {
   } else if (activeTab == 'pod') {
     result = getPodResult(data)
   } else if (activeTab == 'vm') {
-    // result = getVmResult(data)
+    result = getVmResult(data)
   } else if (activeTab == 'k8s') {
 
   }
@@ -68,6 +68,42 @@ function getPodData(podData) {
   return lastData
 }
 
+function getVmData(data) {
+  var outboundCnt = 0;
+  data.vmOutboundData.data.result.map(obj => {
+    outboundCnt += Number(last(obj.values)[1])
+  })
+  var inboundCnt = 0;
+  data.vmInboundData.data.result.map(obj => {
+    inboundCnt += Number(last(obj.values)[1])
+  })
+
+  const totalVal = outboundCnt + inboundCnt
+  const outSumData = sumVmData(getAreaChartOps(getVmResult(data)[0]))
+  const inSumData = sumVmData(getAreaChartOps(getVmResult(data)[1]))
+
+  const lastData = {
+    OUT: outSumData.sum,
+    IN: inSumData.sum,
+    UNIT: outSumData.unit || inSumData.unit,
+    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+  }
+
+  return lastData
+}
+
+function sumVmData(config) {
+  const lastData = config.data[config.data.length - 1];
+  const { TOTAL, UNIT, time, ...others } = lastData;
+  const values = Object.values(others)
+  const sum = values.reduce((a, b) => {
+    return a + b
+  }, 0);
+
+  lastData.sum = sum.toFixed(2)
+  lastData.unit = config.unit
+  return lastData
+}
 
 // ================================= right tab data =================================
 function getNodeResult(metricData) {
@@ -98,6 +134,43 @@ function getPodResult(podData) {
         get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}),
         get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}),
       ],
+    },
+  ]
+
+  return result
+}
+
+function getVmResult(data) {
+  const result = [
+    {
+      activeTab: 'OUT',
+      type: 'bandwidth',
+      title: 'NETWORK_TRAFFIC',
+      unitType: 'bandwidth',
+      legend:
+        data.vmOutboundData.data.result.map(item => (
+          item.metric.pod + '-' + item.metric.device
+        ))
+      ,
+      data:
+        data.vmOutboundData.data.result.map(item => (
+          item
+        ))
+    },
+    {
+      activeTab: 'IN',
+      type: 'bandwidth',
+      title: 'NETWORK_TRAFFIC',
+      unitType: 'bandwidth',
+      legend:
+        data.vmInboundData.data.result.map(item => (
+          item.metric.pod + '-' + item.metric.device
+        ))
+      ,
+      data:
+        data.vmInboundData.data.result.map(item => (
+          item
+        ))
     },
   ]
 
