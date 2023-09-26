@@ -62,6 +62,9 @@ import VmDetail from '../containers/Resources/Vms/Detail'
 import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
 import VolumeDetail from '../containers/Resources/Volumes/Detail'
+import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
+import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
+import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -233,6 +236,17 @@ export default [
     path: `${PATH}/resourcesvolumes/:name`,
     component: VolumeDetail,
   },
-
+  {
+    path: `${PATH}/hostdevices/:name`,
+    component: HostDeviceDetail,
+  },
+  {
+    path: `${PATH}/mediateddevices/:name`,
+    component: MediatedDeviceDetail,
+  },
+  {
+    path: `${PATH}/loadbalancers/:name`,
+    component: LoadBalancerDetail,
+  },
   
 ]

@@ -74,6 +74,9 @@ import ContainerImage from '../containers/Resources/ContainerImages'
 import ContainerResource from '../containers/Resources/ContainerResource'
 import ResourcesVolumes from '../containers/Resources/Volumes'
 import Sriov from '../containers/Resources/Sriov'
+import HostDevices from '../containers/Resources/HostDevices'
+import MediatedDevices from '../containers/Resources/MediatedDevices'
+import LoadBalancers from '../containers/Resources/LoadBalancers'
 
 const PATH = '/clusters/:cluster'
 
@@ -337,6 +340,21 @@ export default [
           {
             path: `${PATH}/sriovs`,
             component: Sriov,
+            exact: true,
+          },
+          {
+            path: `${PATH}/hostdevices`,
+            component: HostDevices,
+            exact: true,
+          },  
+          {
+            path: `${PATH}/mediateddevices`,
+            component: MediatedDevices,
+            exact: true,
+          },  
+          {
+            path: `${PATH}/loadbalancers`,
+            component: LoadBalancers,
             exact: true,
           },  
                   

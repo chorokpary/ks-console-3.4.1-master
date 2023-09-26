@@ -326,6 +326,24 @@ client:
             #   skipAuth: true,
             #   showInDisable: true,
             # }
+            #- {
+            #  name: hostDevices,
+            #  title: "호스트 디바이스",
+            #  skipAuth: true,
+            #  showInDisable: true,
+            #}
+            #- {
+            #  name: mediatedDevices,
+            #  title: "Mediated 디바이스",
+            #  skipAuth: true,
+            #  showInDisable: true,
+            #}
+            #- {
+            #  name: loadBalancers,
+            #  title: "로드 밸런서",
+            #  skipAuth: true,
+            #  showInDisable: true,
+            #}
 
 
   # access control page navigations
