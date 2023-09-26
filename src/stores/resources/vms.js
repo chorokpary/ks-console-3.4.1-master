@@ -80,11 +80,11 @@ export default class VmStore extends Base {
 
       const promises = data.map(async (vm) => {
 
-        // const flavorDetail = await axios.get("/edgetron/resources/kubevirt/flavors/" + vm.flavor);
-        // vm.flavor_detail = flavorDetail.data.flavor;
+        const flavorDetail = await axios.get("/edgetron/resources/kubevirt/flavors/" + vm.flavor);
+        vm.flavor_detail = flavorDetail.data.flavor;
   
-        // const imageDetail = await axios.get("/edgetron/resources/kubevirt/images/" + vm.image);
-        // vm.image_detail = imageDetail.data.image;
+        const imageDetail = await axios.get("/edgetron/resources/kubevirt/images/" + vm.image);
+        vm.image_detail = imageDetail.data.image;
 
         vmArray.push(vm);
       })
