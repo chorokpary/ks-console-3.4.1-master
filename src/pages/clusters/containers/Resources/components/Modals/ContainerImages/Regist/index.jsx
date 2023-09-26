@@ -105,8 +105,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
   }
 
   const versionValidator = (rule, value, callback) => {
-
-    if(value == undefined){
+    if(!!!value){
       return callback({ message: t('버전을 입력해 주세요.') })
     }
     callback()
