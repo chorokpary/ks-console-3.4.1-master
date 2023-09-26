@@ -27,7 +27,7 @@ import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import RoleStore from 'stores/role'
-import LoadBalancerStore from 'stores/resources/loadBalancers'
+import LoadBalancerStore from 'stores/resources/loadbalancers'
 import * as common from 'utils/resources'
 
 

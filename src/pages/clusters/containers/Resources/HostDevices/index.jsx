@@ -27,7 +27,7 @@ import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import RoleStore from 'stores/role'
-import HostDeviceStore from 'stores/resources/hostDevices'
+import HostDeviceStore from 'stores/resources/hostdevices'
 import * as common from 'utils/resources'
 
 

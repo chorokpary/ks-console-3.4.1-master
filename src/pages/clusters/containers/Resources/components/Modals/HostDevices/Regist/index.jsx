@@ -5,7 +5,7 @@ import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider,
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
-import HostDeviceStore from 'stores/resources/hostDevices'
+import HostDeviceStore from 'stores/resources/hostdevices'
 
 import axios from "axios";
 

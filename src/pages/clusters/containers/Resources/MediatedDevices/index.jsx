@@ -27,7 +27,7 @@ import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import RoleStore from 'stores/role'
-import MediatedDeviceStore from 'stores/resources/mediatedDevices'
+import MediatedDeviceStore from 'stores/resources/mediateddevices'
 import * as common from 'utils/resources'
 
 
