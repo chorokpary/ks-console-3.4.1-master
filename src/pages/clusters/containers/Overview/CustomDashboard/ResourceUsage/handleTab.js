@@ -28,7 +28,7 @@ export function getData(activeTab, data) {
   } else if (activeTab == 'pod') {
     result = getPodData(data)
   } else if (activeTab == 'vm') {
-
+    result = getVmData(data)
   } else if (activeTab == 'k8s') {
 
   }
@@ -95,7 +95,7 @@ function getPodData(podData) {
       name: 'CPU',
       unitType: 'cpu',
       used: last(podData.pod_cpu_usage[0].values)[1],
-      total: last(podData.pod_cpu_usage[0].values)[1],
+      total: 1,
     },
     {
       activeTab: 'memory',
@@ -103,6 +103,44 @@ function getPodData(podData) {
       unitType: 'memory',
       used: last(podData.pod_memory_usage[0].values)[1],
       total: 99999999,
+    },
+  ]
+
+  result.map(obj => {
+    obj._unit = getSuitableUnit(obj.total || obj.used, obj.unitType) || obj.unit
+    obj._used = getValueByUnit(obj.used, obj._unit)
+    obj._total = getValueByUnit(obj.total, obj._unit)
+    obj._percent = obj._used / obj._total * 100
+  })
+  return result
+}
+
+function getVmData(data) {
+  var cpuCnt = 0;
+  data.cpuData.data.result.map(obj => {
+    cpuCnt += Number(last(obj.values)[1])
+  })
+  var memoryCnt = 0;
+  data.memoryData.data.result.map(obj => {
+    memoryCnt += Number(last(obj.values)[1])
+  })
+
+  const result = [
+    {
+      activeTab: 'cpu',
+      name: 'CPU',
+      unitType: '%',
+      unit: '%',
+      used: cpuCnt,
+      total: 1,
+    },
+    {
+      activeTab: 'memory',
+      name: 'MEMORY',
+      unitType: 'Gi',
+      unit: 'Gi',
+      used: memoryCnt,
+      total: 99999999999,
     },
   ]
 
@@ -175,7 +213,7 @@ function getPodResult(podData) {
   return result
 }
 
-function getVmResult(vmData) {
+function getVmResult(data) {
   const result = [
     {
       activeTab: 'cpu',
@@ -183,12 +221,29 @@ function getVmResult(vmData) {
       title: 'CPU_USAGE',
       unit: '%',
       legend:
-        vmData.data.result.map(item => (
+        data.cpuData.data.result.map(item => (
           item.metric.pod
         ))
       ,
       data:
-        vmData.data.result.map(item => (
+        data.cpuData.data.result.map(item => (
+          item
+        ))
+    },
+    {
+      activeTab: 'memory',
+      type: 'utilisation',
+      title: 'MEMORY_USAGE',
+      unit: '%',
+      unitType: 'memory',
+      legend: ['USAGE'],
+      legend:
+        data.memoryData.data.result.map(item => (
+          item.metric.pod
+        ))
+      ,
+      data:
+        data.memoryData.data.result.map(item => (
           item
         ))
     },

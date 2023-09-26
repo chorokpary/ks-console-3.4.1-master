@@ -53,7 +53,7 @@ const storeParams = {
   sort_type: 'desc',
 }
 
-const NodeTop5 = () => {
+const UsageTop5 = () => {
   const nodeStore = new NodeStore({ ...storeParams })
   const podStore = new PodStore({ ...storeParams })
 
@@ -150,10 +150,8 @@ const NodeTop5 = () => {
                 </div>
               </div>
               {/* // select_wrap */}
-              {/* todo
-              cpu, memory 단위적용 */}
-              <Loading spinning={loading}>
-                {typeMetric == 'node' &&
+              {typeMetric == 'node' &&
+                <Loading spinning={loading}>
                   <ul className="list_01">
                     {list.map((obj, idx) => (
                       <li className="li_type_01" key={idx}>
@@ -175,8 +173,10 @@ const NodeTop5 = () => {
                       </li>
                     ))}
                   </ul>
-                }
-                {typeMetric == 'pod' &&
+                </Loading>
+              }
+              {typeMetric == 'pod' &&
+                <Loading spinning={loading}>
                   <ul className="list_01">
                     {list.map((obj, idx) => (
                       <li className="li_type_01" key={idx}>
@@ -197,8 +197,8 @@ const NodeTop5 = () => {
                       </li>
                     ))}
                   </ul>
-                }
-              </Loading>
+                </Loading>
+              }
               {list.length == 0 &&
                 <div className="grid_text">
                   <span>데이터가 없습니다.</span>
@@ -213,4 +213,4 @@ const NodeTop5 = () => {
   )
 }
 
-export default NodeTop5
+export default UsageTop5

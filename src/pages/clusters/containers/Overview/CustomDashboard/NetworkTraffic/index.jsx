@@ -9,6 +9,7 @@ import PodStore from 'stores/monitoring/pod'
 const MetricTypes = {
   net_transmitted: 'cluster_net_bytes_transmitted',
   net_received: 'cluster_net_bytes_received',
+  cluster_net_utilisation: 'cluster_net_utilisation',
   pod_net_bytes_transmitted: 'pod_net_bytes_transmitted',
   pod_net_bytes_received: 'pod_net_bytes_received'
 }
@@ -195,7 +196,6 @@ const NetworkTraffic = ({ monitorStore }) => {
 export default NetworkTraffic
 
 const TabContent = ({ option }) => {
-  // console.log(option)
 
   const commonProps = {
     key: option?.title,

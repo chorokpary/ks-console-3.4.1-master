@@ -38,7 +38,7 @@ const K8sStatus = () => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title">
-              <label>KaaS 컴포넌트 상태</label>
+              <label>클러스터 컴포넌트 상태</label>
               <div className="right">
               </div>
             </div>
