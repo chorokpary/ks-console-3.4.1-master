@@ -2634,3 +2634,9 @@ body.dashboard {
 .dashboard .usageTab .select-option-label {
     color: #ffffff !important;
 }
+
+.dashboard .ico-type-network-device {
+    background: url("/assets/resources/images/icons/ico-type-network-device.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+}

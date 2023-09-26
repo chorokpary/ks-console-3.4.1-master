@@ -129,7 +129,7 @@ function getVmData(data) {
     {
       activeTab: 'cpu',
       name: 'CPU',
-      unitType: '%',
+      unitType: 'cpu',
       unit: '%',
       used: cpuCnt,
       total: 1,
@@ -137,7 +137,7 @@ function getVmData(data) {
     {
       activeTab: 'memory',
       name: 'MEMORY',
-      unitType: 'Gi',
+      unitType: 'memory',
       unit: 'Gi',
       used: memoryCnt,
       total: 99999999999,
