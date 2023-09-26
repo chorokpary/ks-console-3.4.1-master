@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal } from 'components/Base'
 
- import { CardSelect as CardSelect2 } from 'components/Inputs'
+import { CardSelect as CardSelect2 } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, Tabs, Icon, Slider } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
@@ -153,7 +153,7 @@ const RegistModal = (props) => {
                 label: t(obj.name),
                 icon: `ico-os-${distroType}`,
                 value: t(obj.name),
-              }
+            }
         })
         return opt
     }
@@ -238,10 +238,10 @@ const RegistModal = (props) => {
         }
 
         if (step == 2) {
-            
+
 
             if (!networkName) {
-                handleOk();
+                return false;
             } else {
                 setRegStep(3);
             }
@@ -482,107 +482,100 @@ const RegistModal = (props) => {
                                 >
                                     <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
                                 </Form.Item>
+                                <div style={{ padding : 10 }}/>
+                                <Columns>
+                                    <Column>
+                                        <Form.Item label={t('OS 타입')}
+                                            rules={[{ required: true, message: t('OS를 선택해주세요.') }]}>
+                                            <CardSelect
+                                                className={styles.customUl}
+                                                onChange={(e) => handleOsType(e)}
+                                                name="os_type"
+                                                options={osTypeOptions}
+                                                defaultValue={osType}
+                                            />
+                                        </Form.Item>
+                                    </Column>
+                                    <Column>
+                                        <Form.Item
+                                            label={t('이미지')}
+                                            rules={[{ required: true, validator: imageValidator }]}
+                                        >
+                                            <TypeSelect
+                                                name="image"
+                                                defaultValue={"선택"}
+                                                placeholder={{
+                                                    label: t('선택')
+                                                }}
+                                                options={imageOptions()}
+                                                onChange={(e) => setSelectImageName(e)}
+                                            />
+                                        </Form.Item>
+                                        {
+                                            selectImageName &&
+                                            <Form.Item>
+                                                <Input
+                                                    name="imageView"
+                                                    defaultValue={osType + ' > ' + selectImageName}
+                                                    readOnly
+                                                    style={{ maxWidth: 'none' }}
+                                                />
+                                            </Form.Item>
+                                        }
+                                    </Column>
+                                </Columns>
+                                <Columns>
+                                    <Column>
+                                        <Form.Item label={t('Master Flavor')}
+                                            rules={[{ required: true, validator: masterFlavorValidator }]}
+                                        >
+                                            <TypeSelect
+                                                name="masterFlavor"
+                                                defaultValue={"선택"}
+                                                options={flavorOptions()}
+                                                placeholder={{ label: t('선택') }}
+                                                onChange={(e) => setMasterFlavorSelect(e)}
+                                            />
+                                        </Form.Item>
+                                    </Column>
+                                    <Column>
+                                        <Form.Item label={t('\r\n')}>
+                                            <div>
+                                                <br />
+                                                <Select name="masterNumber"
+                                                    options={[{ label: 1, value: 1 }, { label: 3, value: 3 }, { label: 5, value: 5 }]}
+                                                    onChange={(e) => setMasterFlavorNumber(e)}
+                                                    defaultValue={1} />
+                                            </div>
+                                        </Form.Item>
+                                    </Column>
+                                </Columns>
 
-                                <Form.Group>
-                                    <Columns>
-                                        <Column>
-                                            <Form.Item label={t('OS 타입')}
-                                                rules={[{ required: true, message: t('OS를 선택해주세요.') }]}>
-                                                <CardSelect
-                                                    className={styles.customUl}
-                                                    onChange={(e) => handleOsType(e)}
-                                                    name="os_type"
-                                                    options={osTypeOptions}
-                                                    defaultValue={osType}
-                                                />
-                                            </Form.Item>
-                                        </Column>
-                                        <Column>
-                                            <Form.Item
-                                                label={t('이미지')}
-                                                rules={[{ required: true, validator: imageValidator }]}
-                                            >
-                                                <TypeSelect
-                                                    name="image"
-                                                    defaultValue={"선택"}
-                                                    placeholder={{
-                                                        label: t('선택')
-                                                    }}
-                                                    options={imageOptions()}
-                                                    onChange={(e) => setSelectImageName(e)}
-                                                />
-                                            </Form.Item>
-                                            {
-                                                selectImageName &&
-                                                <Form.Item>
-                                                    <Input
-                                                        name="imageView"
-                                                        defaultValue={osType + ' > ' + selectImageName}
-                                                        readOnly
-                                                        style={{ maxWidth: 'none' }}
-                                                    />
-                                                </Form.Item>
-                                            }
-                                        </Column>
-                                    </Columns>
-                                </Form.Group>
-
-                                <Form.Group>
-                                    <Columns>
-                                        <Column>
-                                            <Form.Item label={t('Master Flavor')}
-                                                rules={[{ required: true, validator: masterFlavorValidator }]}
-                                            >
-                                                <TypeSelect
-                                                    name="masterFlavor"
-                                                    defaultValue={"선택"}
-                                                    options={flavorOptions()}
-                                                    placeholder={{ label: t('선택') }}
-                                                    onChange={(e) => setMasterFlavorSelect(e)}
-                                                />
-                                            </Form.Item>
-                                        </Column>
-                                        <Column>
-                                            <Form.Item label={t('\r\n')}>
-                                                <div>
-                                                    <br />
-                                                    <Select name="masterNumber"
-                                                        options={[{ label: 1, value: 1 }, { label: 3, value: 3 }, { label: 5, value: 5 }]}
-                                                        onChange={(e) => setMasterFlavorNumber(e)}
-                                                        defaultValue={1} />
-                                                </div>
-                                            </Form.Item>
-                                        </Column>
-                                    </Columns>
-                                </Form.Group>
-
-                                <Form.Group>
-                                    <Columns>
-                                        <Column>
-                                            <Form.Item label={t('Worker Flavor')}
-                                                rules={[{ required: true, validator: workerFlavorValidator }]}
-                                            >
-                                                <TypeSelect
-                                                    name="workerFlavor"
-                                                    defaultValue={"선택"}
-                                                    options={flavorOptions()}
-                                                    placeholder={{ label: t('선택') }}
-                                                    onChange={(e) => setWorkerFlavorSelect(e)}
-                                                />
-                                            </Form.Item>
-                                        </Column>
-                                        <Column>
-                                            <Form.Item label={t('\r\n')}>
-                                                <div>
-                                                    <br />
-                                                    <Button icon="substract" onClick={minusBtn} />&nbsp;&nbsp;
-                                                    <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%' }} />&nbsp;&nbsp;
-                                                    <Button icon="add" onClick={addBtn} />
-                                                </div>
-                                            </Form.Item>
-                                        </Column>
-                                    </Columns>
-                                </Form.Group>
+                                <Columns>
+                                    <Column>
+                                        <Form.Item label={t('Worker Flavor')}
+                                            rules={[{ required: true, validator: workerFlavorValidator }]}
+                                        >
+                                            <TypeSelect
+                                                name="workerFlavor"
+                                                defaultValue={"선택"}
+                                                options={flavorOptions()}
+                                                placeholder={{ label: t('선택') }}
+                                                onChange={(e) => setWorkerFlavorSelect(e)}
+                                            />
+                                        </Form.Item>
+                                    </Column>
+                                    <Column>
+                                        <Form.Item label={t('\r\n')}>
+                                            <div>
+                                                <br />
+                                                <Button icon="substract" onClick={minusBtn} />&nbsp;&nbsp;
+                                                <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%' }} />&nbsp;&nbsp;
+                                                <Button icon="add" onClick={addBtn} />
+                                            </div>
+                                        </Form.Item>
+                                    </Column>
+                                </Columns>
 
                                 <Form.Item
                                     className={styles.textarea}
@@ -610,13 +603,12 @@ const RegistModal = (props) => {
                                                     options={[{ label: "네트워크", value: 1 }, { label: "SR-IOV 네트워크", value: 2 }]}
                                                     onChange={(e) => onChangeNetwork(e)}
                                                     defaultValue={1} />
-                                                &nbsp;네트워크 타입을 선택해주세요.
                                             </div>
                                         </Form.Item>
 
                                         <Form.Item label={t('네트워크')}
                                             className={`${networkFlag === 1 ? '' : 'hide'}`}
-                                            >
+                                        >
                                             <div className={styles.wrapper}>
                                                 <div className={styles.table}>
                                                     <table>
@@ -668,7 +660,7 @@ const RegistModal = (props) => {
 
                                         <Form.Item label={t('SR-IOV 네트워크')}
                                             className={`${networkFlag === 2 ? '' : 'hide'}`}
-                                            >
+                                        >
                                             <div className={styles.wrapper}>
                                                 <div className={styles.table}>
                                                     <table>
@@ -714,9 +706,7 @@ const RegistModal = (props) => {
                                                 </div>
                                             </div>
                                         </Form.Item>
-                                        <Form.Item>
-                                            <Input type="hidden" value={networkName} />
-                                        </Form.Item>
+                                        <div className={`form-item-error ${!networkName ? "" : "hide"}`}>네트워크를 선택해 주세요.</div>
                                     </Form.Group>
                                 </Form.Item>
 
@@ -726,7 +716,7 @@ const RegistModal = (props) => {
                                             options={[{ label: "metalLB", value: "metalLB" }, { label: "pureLB", value: "pureLB" }]}
                                             onChange={(e) => setElbSelect(e)}
                                             value={elbSelect}
-                                             />
+                                        />
                                     </Form.Item>
 
                                     <Form.Item label={t('LB')}>

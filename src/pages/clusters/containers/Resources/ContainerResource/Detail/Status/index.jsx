@@ -14,8 +14,8 @@ const Status = (props) => {
     const detailFlavor = props.detailStore.machines;
 
     const state = [
-        { nums: store.detail?.cluster?.cp?.replicas, unavailableNums: store.detail?.cluster?.cp?.unavailable_replicas },
-        { nums: store.detail?.cluster?.md?.replicas, unavailableNums: store.detail?.cluster?.md?.unavailable_replicas }
+        { nums: store.detail?.cluster?.cp?.replicas, unavailableNums: store.detail?.cluster?.cp?.replicas },
+        { nums: store.detail?.cluster?.md?.replicas, unavailableNums: store.detail?.cluster?.md?.replicas }
     ]
     
     const names = ['Master 개수', 'Worker 개수']
