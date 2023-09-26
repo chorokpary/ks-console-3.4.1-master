@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider, Radio, Column, Columns, Tooltip } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider, Tabs, Column, Columns, Tooltip } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
@@ -25,37 +25,37 @@ const RegistModal = (props) => {
     const [byteFlag, setByteFlag] = useState(true);
 
     useEffect(() => {
-        //const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
-        //var res = [];
-        //data.then(response => {
-        //    if (response.data.host_devices) {
-        //        for (let i = 0, n = response.data.host_devices.length; i < n; i += 1) {
-        //            res.push({
-        //                label: response.data.host_devices[i].name,
-        //                value: response.data.host_devices[i].name,
-        //            });
-        //        };
-        //        setDevices(res);
-        //    }
-        //});
-        setDevices([{ label: "device1", value: "device1" }, { label: "device2", value: "device2" }]);
+        const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
+        var res = [];
+        data.then(response => {
+            if (response.data.host_devices) {
+                for (let i = 0, n = response.data.host_devices.length; i < n; i += 1) {
+                    res.push({
+                        label: response.data.host_devices[i].name,
+                        value: response.data.host_devices[i].name,
+                    });
+                };
+                setDevices(res);
+            }
+        });
+        //setDevices([{ label: "device1", value: "device1" }, { label: "device2", value: "device2" }]);
     }, [])
 
     useEffect(() => {
-        //const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
-        //var res = [];
-        //data.then(response => {
-        //    if (response.data.mediated_devices) {
-        //        for (let i = 0, n = response.data.mediated_devices.length; i < n; i += 1) {
-        //            res.push({
-        //                label: response.data.mediated_devices[i].name,
-        //                value: response.data.mediated_devices[i].name,
-        //            });
-        //        };
-        //        setGpus(res);
-        //    }
-        //});
-        setGpus([{ label: "intel.com/x710", value: "intel.com/x710" }, { label: "intel.com/x880", value: "intel.com/x880" }]);
+        const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
+        var res = [];
+        data.then(response => {
+            if (response.data.mediated_devices) {
+                for (let i = 0, n = response.data.mediated_devices.length; i < n; i += 1) {
+                    res.push({
+                        label: response.data.mediated_devices[i].name,
+                        value: response.data.mediated_devices[i].name,
+                    });
+                };
+                setGpus(res);
+            }
+        });
+        //setGpus([{ label: "intel.com/x710", value: "intel.com/x710" }, { label: "intel.com/x880", value: "intel.com/x880" }]);
     }, [])
 
     useEffect(() => {
@@ -251,6 +251,9 @@ const RegistModal = (props) => {
         setModalView(false);
     }
 
+    const [tab, setTab] = useState("GiB");
+    const { TabPanel } = Tabs;
+
     return (
         <>
             <Modal
@@ -292,11 +295,17 @@ const RegistModal = (props) => {
                             <div>
                                 <Input type="hidden" name="byteFlag" value={byteFlag}/>
                                 <Form.Item label={t('메모리')} >
-                                    <div>
-                                        <Input name="ram" value={ram} onChange={changeRam} style={{ width: '30%' }} />&nbsp;&nbsp;&nbsp;
-                                        <Radio name="memory" checked={byteFlag} defaultChecked	onChange={() => handleByte('GiB')} >GiB</Radio>
-                                        <Radio name="memory" checked={!byteFlag} onChange={() => handleByte('MiB')} >MiB</Radio>
-                                    </div>
+                                    <Columns>
+                                        <Column>
+                                            <Input name="ram" value={ram} onChange={changeRam}/>
+                                        </Column>
+                                        <Column style={{ width: '95%' }}>
+                                            <Tabs type="button" activeName={tab} onChange={newTab => { setTab(newTab); handleByte(newTab) }} >
+                                                <TabPanel label="GiB" name="GiB" />
+                                                <TabPanel label="MiB" name="MiB" />
+                                            </Tabs>
+                                        </Column>
+                                    </Columns>
                                 </Form.Item>
                             </div>
                         </Column>
