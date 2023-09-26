@@ -26,10 +26,10 @@ import Table from 'components/Tables/List'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
-import Containerimage from 'stores/resources/containerimages'
+import ContainerImagesStore from 'stores/resources/containerimages'
 
 @withList({
-  store: new Containerimage(),
+  store: new ContainerImagesStore(),
   module: 'containerimages',
   authKey: 'containerimages',
   name: '이미지',
@@ -38,6 +38,10 @@ export default class Images extends React.Component {
 
   showAction(record) {
     return globals.user.username !== record.name
+  }
+
+  fetchData = () => {
+    console.log("fetchData")
   }
 
   get itemActions() {
@@ -61,6 +65,10 @@ export default class Images extends React.Component {
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props
+
+    const { cluster } = this.props.match.params;
+    const listUrl = `/clusters/${cluster}/containerimages`
+
     return {
       ...tableProps.tableActions,
       actions: [
@@ -73,7 +81,7 @@ export default class Images extends React.Component {
             trigger('containerimage.regist', {
               ...this.props.match.params,
               type: this.name,
-              success: getData,
+              success: this.fetchData,
             }),
         },
       ],
