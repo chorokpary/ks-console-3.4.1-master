@@ -168,7 +168,7 @@ export default {
   'resourcesvolume.bindingPop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '플로팅 IP 설정',
+        title: '바인딩',
         modal: BindingModal,
         store,
         success,

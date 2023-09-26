@@ -23,7 +23,6 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
-
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
@@ -140,22 +139,17 @@ export default class VolumeStore extends Base {
     const jsonData = {};
     const actionData = {};
 
-    const vmName = data.vmName;
-    const volumeName = data.volumeName;
-
     if(data.actionType == "A"){
-        actionData.vm_name = vmName;
-        actionData.persist = true;
+        actionData.vm_name = data.vmName;
+        actionData.persist = data.persist;
         actionData.action = "attach";
     }else{
-        actionData.vm_name = vmName;
+        actionData.vm_name = data.vmName;
+        actionData.persist = data.persist;
         actionData.action = "detach";
     }
 
     jsonData.action = actionData;
-    
-    // console.log("volumeName : "+ volumeName)
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
 
     await this.submitting(
       request.put(`${this.getDetailUrl({ name: data.volumeName, ...params })}/action`, jsonData)

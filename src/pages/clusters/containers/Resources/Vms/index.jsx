@@ -135,7 +135,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (image, record)  => {
-          const icon = "ico-os-"+record.image_detail.distro_type;
+          const icon = "ico-os-"+record.image_detail?.distro_type;
           return (
             <i
             style={{
@@ -155,7 +155,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (cpuType, record)  => {
-          const arch_type = <p>{record.image_detail.arch_type}</p>
+          const arch_type = <p>{record.image_detail?.arch_type}</p>
           return arch_type
         },
       },

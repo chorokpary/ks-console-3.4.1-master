@@ -30,9 +30,9 @@ const RegistModal = (props) => {
   }, [])
 
   const storageClassOptions = [
+    { label: 'openebs-hostpath', value: 'openebs-hostpath', },
     { label: 'longhorn', value: 'longhorn', },
-    // { label: 'hostpath-csi', value: 'hostpath-csi', },
-    // { label: 'openebs-hostpath', value: 'openebs-hostpath', },
+    { label: 'hostpath-csi', value: 'hostpath-csi', },    
   ]
 
   const accessModeOptions = [
@@ -193,7 +193,7 @@ const RegistModal = (props) => {
                   >
                     <Select
                       name="storage_class"
-                      defaultValue={"longhorn"}
+                      defaultValue={"openebs-hostpath"}
                       options={storageClassOptions}
                       clearable
                     />
