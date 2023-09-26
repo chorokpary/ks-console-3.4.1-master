@@ -295,8 +295,10 @@ const RegistModal = (props) => {
     setSelectImageName('')
     if (value == 'window') {
       setImageOptionList(imageDataList.filter(obj => obj.os_type == 'window'))
+    } else if (value == 'linux') {
+      setImageOptionList(imageDataList.filter(obj => obj.os_type != 'windows'))
     } else {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type != 'window'))
+      setImageOptionList([])
     }
   }
 
@@ -958,11 +960,15 @@ const RegistModal = (props) => {
                           </Button>
                         </div>
                       </Form.Group>
-                      <Form.Group label="사용자 정의" onChange={(e) => setIsUserScript(!isUserScript)} checkable >
+                      <Form.Group label="사용자 정의" onChange={(e) => setIsUserScript(!isUserScript)} checkable>
+                        <Form.Item
+                            className={styles.textarea}
+                          >
                           <TextArea
                             name="userScript"
-                            rows="5"
+                            rows="5"                            
                           />
+                        </Form.Item>
                       </Form.Group>
                     </div>
                 </Form.Group>
