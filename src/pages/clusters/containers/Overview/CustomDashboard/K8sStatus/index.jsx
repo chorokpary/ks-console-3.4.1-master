@@ -34,7 +34,7 @@ const K8sStatus = () => {
   return (
     <>
       <div className="grid-stack-item" gs-x="4" gs-y="16" gs-w="5" gs-h="5">
-        <div className="grid-stack-item-content">
+        <div className="grid-stack-item-content pop_over">
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title">

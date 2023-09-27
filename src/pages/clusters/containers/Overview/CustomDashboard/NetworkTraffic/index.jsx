@@ -48781,7 +48781,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                     </div>
                     <div className="chart_tab no-tab">
                       <div className="title">
-                        <i className="ico ico-type-network-device"></i>
+                        <i className="ico ico-type-network"></i>
                         <h5>Total</h5>
                       </div>
                       <div className="data">

@@ -120,11 +120,11 @@ const CustomDashboard = (props) => {
                     {/* 리소스 변화량 */}
                     <ResourceChange monitorStore={monitorStore} />
 
-                    {/* 쿠버네티스 컴포넌트 상태 */}
-                    <K8sStatus />
-
                     {/* BMC 노드 현황 */}
                     <BmcNode />
+
+                    {/* 쿠버네티스 컴포넌트 상태 */}
+                    <K8sStatus />
                   </div>
                 </div>
 
