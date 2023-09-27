@@ -162,14 +162,14 @@ export default class Resource extends React.Component {
             },
             {
                 title: t('등록일'),
-                dataIndex: 'creation_timestamp',
+                dataIndex: 'timestamp',
                 isHideable: true,
                 width: 150,
                 sorter: true,
                 sortOrder: getSortOrder('creation_timestamp'),
-                render: creation_timestamp => (
+                render: timestamp => (
                     <p>
-                        {getLocalTime(creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}
+                        {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
                     </p>
                 ),
             },

@@ -191,7 +191,7 @@ const ResourceDetail = (props) => {
             },
             {
                 name: t('생성시간'),
-                value: getLocalTime(detail.creation_timestamp).format('YYYY-MM-DD HH:mm:ss'),
+                value: getLocalTime(detail.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
     }
