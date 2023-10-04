@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { Modal, List } from 'components/Base'
 import { UnitSlider, NumberInput } from 'components/Inputs'
-import { PATTERN_NAME } from 'utils/constants'
 import { get, omit, range } from 'lodash'
 import { Form, Input, Select, Icon, Tooltip, TextArea, Dropdown } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
@@ -11,6 +10,12 @@ import styles from './index.scss'
 import ContainerForm from '../../../../../../../../components/Forms/Workload/ContainerSettings/ContainerForm'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
+import classnames from 'classnames'
+import axios from 'axios'
+
+const defaultDockerText = '컨테이너에 대한 이미지를 설정합니다.'
+const emptyDockerText = '이미지를 찾을 수 없습니다.'
+const defaultRegistryUrl = 'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'
 
 export default function ResourceImageModal({ title, store, onOk }) {
 
@@ -21,11 +26,24 @@ export default function ResourceImageModal({ title, store, onOk }) {
   const [modelView, setModalView] = useState(true);
 
   const [realTime, setRealTime] = useState(false)
-  const [publicType, setPublicType] = useState('퍼블릭')
+  const [publicType, setPublicType] = useState('public')
   const [osType, setOsType] = useState('linux')
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroTypeList, setDistroTypeList] = useState([])
   const [distroType, setDistroType] = useState('ubuntu')
+
+  const [registryUrl, setRegistryUrl] = useState(defaultRegistryUrl)
+  const [registryUrlActive, setRegistryUrlActive] = useState(false)
+  const [dockerPopActive, setDockerPopActive] = useState(false)
+
+  const [dockerName, setDockerName] = useState('')
+  const [dockerListData, setDockerListData] = useState([])
+  const [dockerList, setDockerList] = useState([])
+  const [dockerTagList, setDockerTagList] = useState([])
+  const [dockerTag, setDockerTag] = useState('')
+  const [sourceEmpty, setSourceEmpty] = useState(false)
+
+  const [docekerText, setDockerText] = useState(defaultDockerText)
 
   useEffect(() => {
     const getDistroTypeList = async () => {
@@ -37,13 +55,85 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   }, [])
 
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.select_inner_content')) {
+      setDockerPopActive(false);
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  const handleRegistryUrl = () => {
+    if (registryUrlActive) {
+      setRegistryUrl(defaultRegistryUrl)
+      setRegistryUrlActive(false)
+    } else {
+      setRegistryUrlActive(true)
+    }
+  }
+
+  // docker list
+  const handleDockerPop = async () => {
+
+    // const response = await axios.get(`https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image`, {
+    try {
+      const response = await axios.get(registryUrl, {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        }
+      });
+      setDockerListData(response.data.repositories)
+      setDockerList(response.data.repositories)
+      setDockerPopActive(true)
+      setDockerText(defaultDockerText)
+    } catch {
+      setDockerList([])
+      setDockerTagList([])
+      setDockerPopActive(false)
+      setDockerText(emptyDockerText)
+      setDockerTag('')
+    }
+  }
+
+  // docker tag list
+  const handleDockerTag = async (imageName) => {
+    setDockerName(imageName)
+    const response = await axios.get(`https://quay.io/api/v1/repository/edgestack/${imageName}`, {
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      }
+    });
+
+    const tagList = Object.values(response.data.tags).filter((obj) => (
+      obj.size != null && obj.size != 0
+    ));
+    setDockerTagList(tagList)
+    setDockerTag(tagList?.[0]?.name)
+    setDockerPopActive(false)
+    setSourceEmpty(false)
+  }
+
+  const searchDockerList = (e) => {
+    if (e.key === 'Enter') {
+      const name = e.target.value
+      const list = dockerListData.filter(item => (
+        item.name.includes(name)
+      ))
+      setDockerList(list)
+    }
+  }
+
   const realTimeOptions = [
     { label: '미사용', value: false, },
     { label: '사용', value: true, }
   ]
   const publicTypeOptions = [
-    { value: '퍼블릭', },
-    { value: '프라이빗', }
+    { label: '퍼블릭', value: 'public', },
+    { label: '프라이빗', value: 'private', }
   ]
   const archTypeOptions = [
     { label: 'x86_64', value: 'x86_64', },
@@ -70,13 +160,20 @@ export default function ResourceImageModal({ title, store, onOk }) {
   }
 
   const handleOk = () => {
-
     form.current.validator(() => {
       const { data } = form.current.props;
+
+      if (dockerTag == '') {
+        setSourceEmpty(true)
+        return
+      } else {
+        setSourceEmpty(false)
+      }
       if (typeof data.size === 'string') {
         data.size = Number(data.size.slice(0, data.size.length - 2))
       }
       data.distro_type = distroType;
+      data.source = 'docker://quay.io/edgestack/' + dockerName + ':' + dockerTag;
       onOk({ image: data })
     })
   }
@@ -106,6 +203,14 @@ export default function ResourceImageModal({ title, store, onOk }) {
     } else {
       setDistroType('')
       setDistroTypeList([])
+    }
+  }
+
+  const handlePublicType = (value) => {
+    setPublicType(value)
+    setRegistryUrlActive(false)
+    if (value == 'public') {
+      setRegistryUrl(defaultRegistryUrl)
     }
   }
 
@@ -274,22 +379,131 @@ export default function ResourceImageModal({ title, store, onOk }) {
               name="is_public"
               wrapClassName="radio"
               defaultValue={publicType}
-            // onChange={value => setPublicType(value)}
+              onChange={value => handlePublicType(value)}
             >
               {publicTypeOptions.map(option => (
                 <RadioButton key={option.value} value={option.value}>
-                  {option.value}
+                  {option.label}
                 </RadioButton>
               ))}
             </RadioGroup>
           </Form.Item>
+
           <Form.Item>
+
+            <div className={styles.content_box_wrap}>
+              <div className={styles.content_box}>
+                {/* <label>소스</label> */}
+                <div className={`${styles.cont_box_wrap} ${sourceEmpty ? styles.formErrorStyle : ''}`}>
+                  {/* <div className={styles.regi_group_area}>
+                    <div className={styles.formarea}>
+                      <div className={styles.custom_input}>
+                        <label>사용자 이름</label>
+                        <input type="text" />
+                      </div>
+                      <div className={styles.custom_input}>
+                        <label>패스워드</label>
+                        <input type="password" />
+                      </div>
+                      <button type="button" className={classnames(styles.btn, styles.btn_control)}>유효성 체크</button>
+                    </div>
+                  </div> */}
+                  <div className={styles.cont_box_section}>
+                    <div className={styles.cont_box_wrap}>
+                      <h6 className={styles.label}>
+                        {publicType == 'private' &&
+                          <div className={styles.form_check}>
+                            <input type="checkbox" name="chk-1" id="chk-1" />
+                            <label htmlFor="chk-1" onClick={() => handleRegistryUrl()}></label>
+                          </div>
+                        }
+                        <div className={styles.title}>
+                          <p>Registry URL</p>
+                          <span>이미지 레지스트리 URL을 설정합니다.</span>
+                        </div>
+                      </h6>
+                      {registryUrlActive &&
+                        <div className={styles.regi_group_area}>
+                          <div className={styles.formarea}>
+                            <div className={classnames(styles.custom_input, styles.w_1)}>
+                              <label>Registry URL</label>
+                              <input type="text" defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                    <div className={`${styles.select_inner_content} select_inner_content`} >
+                      <div className={classnames(styles.select_list_box, styles.inner_image)}>
+                        <div className={classnames(styles.selected_item, styles.image)} onClick={() => handleDockerPop()}>
+                          <p className={styles.inner_image}>
+                            <span>Docker</span>
+                          </p>
+                          <div className={styles.placeholder}>{dockerName}</div>
+                        </div>
+                        {dockerPopActive &&
+                          <div className={styles.select_list_image} style={{ display: 'block' }}>
+                            <div className={styles.sel_search}>
+                              <i className={styles.ico_search_small}></i>
+                              <div className={styles.input_search_pop}>
+                                <input type="text" placeholder="검색" onKeyDown={searchDockerList} />
+                              </div>
+                            </div>
+                            <ul className={styles.sel_img}>
+                              {dockerList.length > 0 &&
+                                dockerList.map((obj, idx) => (
+                                  <li onClick={() => handleDockerTag(obj.name)} key={idx}>
+                                    {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
+                                    <i style={{ background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg') center no-repeat`, width: '30px', height: '30px', marginRight: '5px' }}></i>
+                                    <p className={styles.name}>
+                                      <strong>{obj.name}</strong>
+                                      <span>{obj.description}</span>
+                                    </p>
+                                    <div className={styles.rank}>
+                                      <i className={styles.ico_type_star}></i>
+                                      <span>{obj.popularity}</span>
+                                    </div>
+                                  </li>
+                                ))}
+                            </ul>
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <div className={styles.section_box}>
+                      {dockerTagList.length > 0 ?
+                        <div className={styles.radio_list}>
+                          {dockerTagList.map((obj, idx) => (
+                            <div className={styles.form_radio} key={idx} onClick={() => setDockerTag(obj.name)}>
+                              <input type="radio" name="rdo-tag" value="Y" id={`rdo-tag-n${idx}`} defaultChecked={idx == 0} />
+                              <label htmlFor={`rdo-tag-n${idx}`}><i className={styles.ico_etc_tag}></i><span>{obj.name}</span></label>
+                            </div>
+                          ))}
+                        </div>
+                        :
+                        <div className={styles.empty}>
+                          <i className={styles.ico_type_container2}></i>
+                          <span>{docekerText}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Form.Item>
+          {sourceEmpty &&
+            <div className="form-item-error">이미지를 설정해주세요</div>
+          }
+
+          {/* <Form.Item>
             <Input name="source_url"
               defaultValue={'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'}
               readOnly
               style={{ maxWidth: 'none' }}
             />
-          </Form.Item>
+          </Form.Item> */}
           {/* <Form.Item>
             <ContainerForm
               type={'Add'}
@@ -297,13 +511,13 @@ export default function ResourceImageModal({ title, store, onOk }) {
               namespace={'kdh-project01'}
             />
           </Form.Item> */}
-          <Form.Item>
+          {/* <Form.Item>
             <Input name="source"
               defaultValue={'docker://quay.io/edgestack/ubuntu-2004-kube:x86_64'}
               readOnly
               style={{ maxWidth: 'none' }}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label={t('설명')}
@@ -315,7 +529,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
               maxLength={256}
             />
           </Form.Item>
-        </Form>
+        </Form >
 
       </Modal >
     </>
