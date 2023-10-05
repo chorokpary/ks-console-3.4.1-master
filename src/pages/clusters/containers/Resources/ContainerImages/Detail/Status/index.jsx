@@ -16,7 +16,7 @@ const Status = (props) => {
   return (
     <>  
       <div>
-        <DetailVmList type='컨테이너 이미지' variables='image' name={props.match.params.name} />
+        <DetailVmList type='KaaS 이미지' variables='image' name={props.match.params.name} />
       </div>         
     </>
   );
