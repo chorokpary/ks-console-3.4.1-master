@@ -162,7 +162,7 @@ const ModifyModal = (props) => {
                   </table> 
                   <div className={styles.removeCheckWrapper}>
                     {securityGroupCheckItems?.map((name) => 
-                    <span key={name}><Button onClick={() => handleDelete(name, "security")}>{name}</Button></span>
+                    <span key={name}><Button icon="close" onClick={() => handleDelete(name, "security")}>{name}</Button></span>
                     )}                      
                   </div>
                 </div>

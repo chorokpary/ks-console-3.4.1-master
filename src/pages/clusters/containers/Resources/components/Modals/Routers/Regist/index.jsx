@@ -198,7 +198,7 @@ const RegistModal = (props) => {
                   </table> 
                   <div className={styles.removeCheckWrapper}>
                     {internalCheckItems?.map((name) => 
-                    <span key={name}><Button onClick={() => handleDelete(name, "internal")}>{name}</Button> </span>
+                    <span key={name}><Button icon="close" onClick={() => handleDelete(name, "internal")}>{name}</Button> </span>
                     )}                      
                   </div>
                 </div>

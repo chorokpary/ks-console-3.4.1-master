@@ -690,7 +690,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {networkCheckItems?.map((name) =>
-                          <span key={name}><Button onClick={() => handleDelete(name, "network")}>{name}</Button></span>
+                          <span key={name}><Button icon="close" onClick={() => handleDelete(name, "network")}>{name}</Button></span>
                         )}
                       </div>
                     </div>
@@ -750,7 +750,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {sriovCheckItems?.map((name) =>
-                          <span key={name}><Button onClick={() => handleDelete(name, "sriov")}>{name}</Button></span>
+                          <span key={name}><Button icon="close" onClick={() => handleDelete(name, "sriov")}>{name}</Button></span>
                         )}
                       </div>
                     </div>
@@ -826,7 +826,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {securityGroupCheckItems?.map((name) =>
-                          <span key={name}><Button onClick={() => handleDelete(name, "security")}>{name}</Button></span>
+                          <span key={name}><Button icon="close" onClick={() => handleDelete(name, "security")}>{name}</Button></span>
                         )}
                       </div>
                     </div>
