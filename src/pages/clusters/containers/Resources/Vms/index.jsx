@@ -18,14 +18,15 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
+import { Avatar, Status, Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
+import { Link } from 'react-router-dom'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
-import { Dropdown, Menu, Button, Notify } from '@kube-design/components'
+import { Dropdown, Menu, Button, Notify, Icon } from '@kube-design/components'
 
 import styles from './index.scss'
 
@@ -100,6 +101,70 @@ export default class Vms extends React.Component {
     }
   }
 
+  getState (state) {
+    console.log("state1 : "+ state)
+    if (state === 'Provisioning'
+      || state === 'Starting'
+      || state === 'Stopping'
+      || state === 'Terminating'
+      || state === 'Migrating') {
+      return "waiting"
+    } else if (state === 'Running') {
+      return "running"
+    } else if (state === 'Stopped' || state === 'Paused') {
+      return "stopped"
+    } else if (state === 'Unknown') {
+      return "error"
+    }else{
+      return "error"
+    }
+  }
+
+  getItemDesc (state) {
+    console.log("state2 : "+ state)
+    if (state === 'Stoped'){
+      return "중지"
+    }else if (state === 'Provisioning') {
+      return "생성 중"
+    }else if (state === 'Starting') {
+      return "시작 중"
+    }else if (state === 'Running') {
+      return "실행 중"
+    }else if (state === 'Paused') {
+      return "일시 정지"
+    }else if (state === 'Migrating') {
+      return "이관 중"  
+    }else if (state === 'Stopping') {
+      return "정지 중"
+    }else if (state === 'Terminating') {
+      return "삭제 중"
+    }else if (state === 'Unknown') {
+      return "알수없음"
+    }else{
+      return "-"
+    }
+  }
+
+  getVmsStatus() {
+    const VMS_STATUS = [
+      { text: 'STOPED', value: 'Stoped' },
+      { text: 'PROVISIONING', value: 'Provisioning' },
+      { text: 'STARTING', value: 'Starting' },
+      { text: 'RUNNING', value: 'Running' },
+      { text: 'PAUSED', value: 'Paused' },
+      { text: 'MIGRATING', value: 'Migrating' },
+      { text: 'STOPPING', value: 'Stopping' },
+      { text: 'TERMINATING', value: 'Terminating' },
+      { text: 'UNKNOWN', value: 'Unknown' },
+    ]
+
+    return VMS_STATUS.map(status => ({
+      // text: t(status.text),
+      text: status.text,
+      value: status.value,
+    }))
+  }
+   
   getColumns = () => {
     const { getSortOrder } = this.props
     const { cluster } = this.props.match.params
@@ -110,21 +175,27 @@ export default class Vms extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
+        render: this.renderAvatar,
         render: (name, record) => {
+
+          const { cluster } = this.props.match.params
+          const { state } = record
+
           return (
-            record.state?.toLowerCase() == "running" ?
-            <Avatar
-              icon="templet"
-              iconSize={40}
-              to={`/clusters/${cluster}/vms/${name}`}
-              title={name}
-            />
-            :
-            <Avatar
-              icon="templet"
-              iconSize={40}
-              title={name}
-            />
+            <div className={styles.avatar}>
+              <div className={styles.icon}>
+                <Icon name="templet" size={40} />
+                <Indicator
+                  className={styles.indicator}
+                  type={this.getState(state)}
+                  flicker
+                />
+              </div>
+              <div>    
+                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}`}>{name} </Link>            
+                <div className={styles.desc}>{this.getItemDesc(state)}</div> 
+              </div>
+            </div>
           )
         },
       },
@@ -266,6 +337,7 @@ export default class Vms extends React.Component {
       {
         title: t('상태'),
         dataIndex: 'state',
+        filters: this.getVmsStatus(),
         isHideable: true,
         search: true,
         width: 'auto',
@@ -390,8 +462,8 @@ export default class Vms extends React.Component {
         search: true,
       },
       {
-        dataIndex: 'flavor',
-        title: t('Flavor'),
+        dataIndex: 'state',
+        title: t('상태'),
         search: true,
       }
     ]

@@ -40,10 +40,6 @@ export default class Images extends React.Component {
     return globals.user.username !== record.name
   }
 
-  fetchData = () => {
-    console.log("fetchData")
-  }
-
   get itemActions() {
     const { getData, trigger } = this.props
     return [
@@ -81,7 +77,7 @@ export default class Images extends React.Component {
             trigger('containerimage.regist', {
               ...this.props.match.params,
               type: this.name,
-              success: this.fetchData,
+              success: getData,
             }),
         },
       ],

@@ -1,17 +1,31 @@
-import { get, isEmpty } from 'lodash'
-import React, {useState, useEffect, useRef} from 'react'
-import { toJS } from 'mobx'
+/*
+ * This file is part of KubeSphere Console.
+ * Copyright (C) 2019 The KubeSphere Console Authors.
+ *
+ * KubeSphere Console is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KubeSphere Console is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import React from 'react'
 import { observer, inject } from 'mobx-react'
-import classnames from 'classnames'
+import { get, isEmpty } from 'lodash'
 
 import { getChartData, getAreaChartOps } from 'utils/monitoring'
 import NodeMonitorStore from 'stores/monitoring/node'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
-
-import styles from './index.scss'
-
+import CustomTooltip from 'components/Charts/Custom/Tooltip'
 
 const MetricTypes = {
   cpu_utilisation: 'node_cpu_utilisation',
@@ -32,34 +46,46 @@ const MetricTypes = {
   net_received: 'node_net_bytes_received',
 }
 
-const index = (props) => {
+@inject('detailStore')
+@observer
+class Monitorings extends React.Component {
+  constructor(props) {
+    super(props)
 
-  const store = props.detailStore;
+    this.monitorStore = new NodeMonitorStore({ cluster: this.cluster })
+  }
 
-  const cluster = props.match.params.cluster
+  get store() {
+    return this.props.detailStore
+  }
 
-  const monitorStore = new NodeMonitorStore({ cluster: cluster })
+  get cluster() {
+    return this.props.match.params.cluster
+  }
 
-  // const [metrics, setMetrics] = useState(monitorStore.data)
+  get metrics() {
+    return this.monitorStore.data
+  }
 
-  var metrics = useRef();
-
-  const fetchData = async (params) => {
+  fetchData = params => {
     // const { name, role = [] } = this.store.detail
-    let name = "worker01"
+    let name = "worker02"
     let role = ""
-    await monitorStore.fetchMetrics({
+    this.monitorStore.fetchMetrics({
       resources: [name],
       metrics: Object.values(MetricTypes),
       fillZero: !role.includes('edge'),
       ...params,
     })
-    console.log(monitorStore.data)
-    metrics = monitorStore.data;
-    // setMetrics(monitorStore.data)
   }
 
-  const getMonitoringCfgs = () => {
+  getMonitoringCfgs = () => {
+    const deviceUsage = get(
+      this.metrics,
+      `${MetricTypes.device_size_utilisation}.data.result`,
+      []
+    )
+    const legend = deviceUsage && deviceUsage.map(item => item.metric.device)
 
     return [
       {
@@ -67,7 +93,7 @@ const index = (props) => {
         title: 'CPU_USAGE',
         unit: '%',
         legend: ['CPU_USAGE'],
-        data: get(metrics, `${MetricTypes.cpu_utilisation}.data.result`),
+        data: get(this.metrics, `${MetricTypes.cpu_utilisation}.data.result`),
       },
       {
         type: 'utilisation',
@@ -75,7 +101,7 @@ const index = (props) => {
         unit: '%',
         legend: ['MEMORY_USAGE'],
         data: get(
-          metrics,
+          this.metrics,
           `${MetricTypes.memory_utilisation}.data.result`
         ),
       },
@@ -86,50 +112,39 @@ const index = (props) => {
         legend: ['OUT', 'IN'],
         data: [
           get(
-            metrics,
+            this.metrics,
             `${MetricTypes.net_transmitted}.data.result[0]`,
             {}
           ),
-          get(metrics, `${MetricTypes.net_received}.data.result[0]`, {}),
+          get(this.metrics, `${MetricTypes.net_received}.data.result[0]`, {}),
         ],
       },
     ]
   }
 
-  const fnRefreshing = () => {
-    console.log("fnRefreshing click!!")
+  render() {
+    const { createTime } = this.store.detail
+    const { isLoading, isRefreshing } = this.monitorStore
+    const configs = this.getMonitoringCfgs()
+
+    return (
+      <MonitoringController
+        createTime={createTime}
+        onFetch={this.fetchData}
+        loading={isLoading}
+        refreshing={isRefreshing}
+        isEmpty={isEmpty(this.metrics)}
+      >
+        {configs.map(item => {
+          const config = getAreaChartOps(item)
+
+          if (isEmpty(config.data)) return null
+
+          return <SimpleArea key={config.title} width="100%" {...config} />
+        })}
+      </MonitoringController>
+    )
   }
+}
 
-  const { isLoading, isRefreshing } = monitorStore
-  const configs = getMonitoringCfgs()
-
-  return (
-    <>  
-        <div>
-          <div className={styles.wrapper}>
-          <MonitoringController
-              title={t('모니터링')}
-              onFetch={fetchData}
-              loading={isLoading}
-              refreshing={fnRefreshing}
-              isEmpty={isEmpty(metrics)}              
-            >
-              {configs.map(item => {
-                console.log("metrics :"+ JSON.stringify(metrics))
-                const config = getAreaChartOps(item)
-                if (isEmpty(config.data)) return null
-                return <SimpleArea key={config.title} width="100%" {...config} />
-              })}
-              
-            </MonitoringController>
-          </div>
-      </div>         
-
-
-
-    </>
-  );
-};
-
-export default inject('detailStore')(observer(index))
-
+export default Monitorings

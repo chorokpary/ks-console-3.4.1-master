@@ -40,7 +40,7 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('저장 되었습니다.') })
-              success && success()
+              success && setTimeout(() => {success();},1000)
             })
         },
         title: '가상 머신 생성',

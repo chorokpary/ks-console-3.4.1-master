@@ -29,5 +29,29 @@
 .ico-quick-stop  {background:url('/assets/resources/images/icons/ico-quick-stop.svg') center no-repeat; width: 16px; height: 16px;}
 .ico-quick-trash {background:url('/assets/resources/images/icons/ico-quick-trash.svg') center no-repeat; width: 16px; height: 16px;}
 
+.avatar {
+  display: flex;
+
+  .icon {
+    position: relative;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      top: 28px;
+      right: 0;
+    }
+  }
+
+  .title {
+    @include TypographyTitleH6($dark-color07);
+  }
+
+  .desc {
+    @include TypographyParagraph($dark-color01);
+  }
+}
+
+
 
 
