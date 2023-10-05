@@ -309,17 +309,17 @@ const ModifyModal = (props) => {
                             <div>
                                 <Input type="hidden" name="byteFlag" value={byteFlag}/>
                                 <Form.Item label={t('메모리')} >
-                                    <Columns>
-                                        <Column>
+                                    <div className={styles.divwrap}>
+                                        <div className={styles.div_left}>
                                             <Input name="ram" value={ram} onChange={changeRam} />
-                                        </Column>
-                                        <Column style={{ width: '95%' }}>
+                                        </div>
+                                        <div className={styles.div_right}>
                                             <Tabs type="button" activeName={tab} onChange={newTab => { setTab(newTab); handleByte(newTab) }} >
                                                 <TabPanel label="GiB" name="GiB" />
                                                 <TabPanel label="MiB" name="MiB" />
                                             </Tabs>
-                                        </Column>
-                                    </Columns>
+                                        </div>
+                                    </div>
                                 </Form.Item>
                             </div>
                         </Column>

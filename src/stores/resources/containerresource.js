@@ -101,7 +101,11 @@ export default class ResourceStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = this.dataList.filter((row) => {
-                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                    if (typeof row[search.searchKeywordType] === "boolean") {
+                        return (row[search.searchKeywordType] ? 'Ready' : 'Not-ready').includes(search.searchKeywordText);
+                    } else {
+                        return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                    }
                 });
                 this.searchList = resultList;
             })

@@ -1,30 +1,51 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider, Radio, Column, Columns, Tooltip } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Radio, Toggle } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
-import axios from "axios";
+import MediatedDevicesStore from 'stores/resources/mediateddevices'
 
 const RegistModal = (props) => {
+
+    const mediatedDevicesStore = new MediatedDevicesStore();
 
     const form = useRef();
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
+
+    const [deviceDataList, setDeviceDataList] = useState([]);
+    const [deviceCheckItem, setDeviceCheckItem] = useState("");
+    const [isGpu, setIsGpu] = useState(false);
 
     const handleOk = () => {
         const onOk = props.onOk;
 
         form.current.validator(() => {
             const { data } = form.current.props;
-            onOk({ flavor: data })
+            onOk({ mediated_device: data })
         })
     }
 
     const closeModal = () => {
         setModalView(false);
     }
+
+    const isGpuValidator = (rule, value, callback) => {
+        if (value == '') {
+            return callback({ message: t('GPU 여부를 선택해 주세요.') })
+        }
+        callback()
+    }
+
+    useEffect(() => {
+        const getDeviceData = async () => {
+            const listDevice = await mediatedDevicesStore.fetchDeviceList();
+            setDeviceDataList(listDevice.vgpu_profiles);
+        };
+        getDeviceData();
+    }, [])
 
     return (
         <>
@@ -51,7 +72,66 @@ const RegistModal = (props) => {
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>
+                    
+                    <Form.Item label={t('Mdiated 디바이스 ')}>
+                        <div className={styles.wrapper}>
+                            <div className={styles.table}>
+                                <table>
+                                    <colgroup>
+                                        <col width="5%" />
+                                        <col width="15%" />
+                                        <col width="20%" />
+                                        <col width="10%" />
+                                        <col width="10%" />
+                                        <col width="10%" />
+                                        <col width="15%" />
+                                        <col width="15%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th><strong>디바이스 ID</strong></th>
+                                            <th><strong>디바이스 이름</strong></th>
+                                            <th><strong>클래스</strong></th>
+                                            <th><strong>최대 개수</strong></th>
+                                            <th><strong>해상도</strong></th>
+                                            <th><strong>CUDA 지원 여부</strong></th>
+                                            <th><strong>픽셀수</strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {!deviceDataList?.length &&
+                                            <tr>
+                                                <td colSpan="8" className="no-data">
+                                                    <p>할당 가능한 자원이 없습니다.</p>
+                                                </td>
+                                            </tr>
+                                        }
+                                        {deviceDataList?.map((data, key) => (
+                                            <tr key={data.name}>
+                                                <td>
+                                                    <Radio name={`select-${data.name}`}
+                                                        checked={data.name === deviceCheckItem}
+                                                        onChange={(e) => setDeviceCheckItem(data.name)} />
+                                                </td>
+                                                <td>{data.mdev_id}</td>
+                                                <td>{data.name}</td>
+                                                <td>{data.clazz}</td>
+                                                <td>{data.max_num}</td>
+                                                <td>{data.resolution}</td>
+                                                <td>{data.cuda ? '지원' : '미지원'}</td>
+                                                <td>{data.pixels}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </Form.Item>
 
+                    <Form.Item label={t('GPU 여부')} rules={[{ required: true, validator: isGpuValidator }]}>
+                        <Toggle showText onText="on" offText="off" name="isGpu" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
+                    </Form.Item>
                     
                     <Form.Item
                         className={styles.textarea}

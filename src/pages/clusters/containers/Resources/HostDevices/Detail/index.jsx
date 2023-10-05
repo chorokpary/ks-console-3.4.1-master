@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
-import SecurityGroupStore from 'stores/resources/securityGroups'
+import HostDeviceStore from 'stores/resources/hostdevices'
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
@@ -10,7 +10,7 @@ import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import routes from './routes'
 
-const store = new SecurityGroupStore();
+const store = new HostDeviceStore();
 
 const HostDeviceDetail = (props) => {
 
@@ -19,7 +19,12 @@ const HostDeviceDetail = (props) => {
     }, [])
 
     const fetchData = () => {
-        store.fetchDetail(props.match.params);
+        const { cluster } = props.match.params
+        const pathname = props.location.pathname
+        const param = {};
+        param.cluster = cluster;
+        param.name = pathname.replace(`/clusters/${cluster}/hostDevices/`, '');
+        store.fetchDetail(param);
     }
     const listUrl = () => {
         const { cluster } = props.match.params
@@ -73,32 +78,28 @@ const HostDeviceDetail = (props) => {
             },
             {
                 name: t('제조사 ID'),
-                value: detail.security_group.description,
+                value: detail.host_device.vendor_id,
             },
             {
                 name: t('제조사'),
-                value: detail.security_group.description,
+                value: detail.host_device.description,
             },
             {
                 name: t('제품 ID'),
-                value: detail.security_group.description,
+                value: detail.host_device.product_id,
             },
             {
                 name: t('External'),
-                value: detail.security_group.description,
+                value: detail.host_device.is_external ? '사용' : '미사용',
             },
             {
                 name: t('GPU'),
-                value: detail.security_group.description,
+                value: detail.host_device.is_gpu ? '사용' : '미사용',
             },
             {
                 name: t('설명'),
-                value: detail.security_group.description,
+                value: detail.host_device.description,
 
-            },
-            {
-                name: t('생성일'),
-                value: getLocalTime(detail.security_group.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
     }

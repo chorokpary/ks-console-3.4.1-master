@@ -114,20 +114,19 @@ export default class HostDevices extends React.Component {
                     <Avatar
                         icon="network-router"
                         iconSize={40}
-                        to={`/clusters/${cluster}/hostDevices/${name}`}
                         title={name}
                     />
                 ),
             },
             {
                 title: t('제조사 명'),
-                dataIndex: 'vendor_id',
+                dataIndex: 'vendor_name',
                 isHideable: true,
                 width: 'auto',
             },
             {
                 title: t('제품명'),
-                dataIndex: 'product_id',
+                dataIndex: 'product_name',
                 isHideable: true,
                 width: 'auto',
             },
@@ -136,21 +135,9 @@ export default class HostDevices extends React.Component {
                 dataIndex: 'is_gpu',
                 isHideable: true,
                 width: 'auto',
-            },
-            {
-                title: t('등록일'),
-                dataIndex: 'timestamp',
-                isHideable: true,
-                sorter: true,
-                sortOrder: getSortOrder('descend'),
-                width: 150,
-                render: date => (
-                    <p>
-                        {date
-                            ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-                            : t('-')}
-                    </p>
-                ),
+                render: isGpu => (
+                    isGpu ? '사용' : '미사용'
+                )
             },
         ]
     }

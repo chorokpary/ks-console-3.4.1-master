@@ -153,4 +153,17 @@ export default class MediatedDeviceStore extends Base {
         return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
 
+    @action
+    async fetchDeviceList(params) {
+        this.isLoading = true
+
+        const result = await request.get(
+            `/edgetron/resources/kubevirt/gpus/vgpus/${params.name}`
+        )
+        const response = { ...params, ...this.mapper(result), kind: 'vgpuProfiles' }
+        this.vgpuProfiles = response.vgpu_profiles
+
+        this.isLoading = false
+        return response;
+    }
 }

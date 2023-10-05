@@ -18,14 +18,14 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
+import { Avatar, Status, Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
+import { Link } from 'react-router-dom'
 import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-import { Dropdown, Menu, Button, Notify } from '@kube-design/components'
+import { Icon } from '@kube-design/components'
 
 import styles from './index.scss'
 
@@ -35,7 +35,7 @@ import ResourceStore from 'stores/resources/containerresource'
     store: new ResourceStore(),
     module: 'clusters',
     authKey: 'clusters',
-    name: '쿠버네티스',
+    name: 'KaaS',
 })
 export default class Resource extends React.Component {
 
@@ -100,6 +100,26 @@ export default class Resource extends React.Component {
         }
     }
 
+    getResourcesStatus() {
+        const RESOURCES_STATUS = [
+            { text: 'READY', value: 'Ready' },
+            { text: 'NOTREADY', value: 'Not-ready' },
+        ]
+
+        return RESOURCES_STATUS.map(status => ({
+            text: status.text,
+            value: status.value,
+        }))
+    }
+
+    getState(state) {
+        if (state) {
+            return "running"
+        } else {
+            return "inactive"
+        }
+    }
+
     getColumns = () => {
         const { getSortOrder } = this.props
         const { cluster } = this.props.match.params
@@ -110,14 +130,28 @@ export default class Resource extends React.Component {
                 sorter: true,
                 sortOrder: getSortOrder('name'),
                 search: true,
-                render: name => (
-                    <Avatar
-                        icon="kubernetes"
-                        iconSize={40}
-                        to={`/clusters/${cluster}/containerResource/${name}`}
-                        title={name}
-                    />
-                ),
+                render: this.renderAvatar,
+                render: (name, record) => {
+
+                    const { cluster } = this.props.match.params
+                    const { cluster_ready } = record
+
+                    return (
+                        <div className={styles.avatar}>
+                            <div className={styles.icon}>
+                                <Icon name="kubernetes" size={40} />
+                                <Indicator
+                                    className={styles.indicator}
+                                    type={this.getState(cluster_ready)}
+                                    flicker
+                                />
+                            </div>
+                            <div>
+                                <Link className={styles.title} to={`/clusters/${cluster}/containerResource/${name}`}>{name} </Link>
+                            </div>
+                        </div>
+                    )
+                }
             },
             {
                 title: t('배포 단계'),
@@ -125,7 +159,7 @@ export default class Resource extends React.Component {
                 isHideable: true,
                 width: 'auto',
                 render: (phase) => (
-                    <p className="tall"><i className={`ico ico-status-${phase?.toLowerCase().replace("ed", "ing")}`}></i><span>{phase}</span></p>
+                    <p className="tall"><span>{phase}</span></p>
                 ),
             },
             {
@@ -150,13 +184,12 @@ export default class Resource extends React.Component {
                 title: t('상태'),
                 dataIndex: 'cluster_ready',
                 isHideable: true,
+                filters: this.getResourcesStatus(),
+                search: true,
                 width: 'auto',
                 render: (state, record) => {
-                    const stateArray = ['Stopped', 'Running', 'Paused']
                     return (
-                        <div className={styles.iconwrapper}>
-                            <i className={styles[`ico-status-${state ? 'Running' : ''}`]} /><p>{state ? 'Ready' : 'Not-ready'}</p>
-                        </div>
+                        <p>{state ? 'Ready' : 'Not-ready'}</p>
                     )
                 }
             },
@@ -187,6 +220,11 @@ export default class Resource extends React.Component {
                 title: t('이름'),
                 search: true,
             },
+            {
+                dataIndex: 'cluster_ready',
+                title: t('상태'),
+                search: true,
+            }
         ]
     }
 

@@ -107,33 +107,37 @@ export default class MediatedDevice extends React.Component {
         return [
             {
                 title: t('이름'),
-                dataIndex: 'name',
+                dataIndex: 'resource_name',
                 sorter: true,
                 search: true,
                 render: name => (
                     <Avatar
                         icon="gpu"
                         iconSize={40}
-                        to={`/clusters/${cluster}/mediatedDevices/${name}`}
                         title={name}
                     />
                 ),
             },
-            
             {
-                title: t('등록일'),
-                dataIndex: 'timestamp',
+                title: t('Mediated 디바이스 이름'),
+                dataIndex: 'mediated_device_name',
                 isHideable: true,
-                sorter: true,
-                sortOrder: getSortOrder('descend'),
-                width: 150,
-                render: date => (
-                    <p>
-                        {date
-                            ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-                            : t('-')}
-                    </p>
-                ),
+                width: 'auto',
+            },
+            {
+                title: t('GPU 여부'),
+                dataIndex: 'is_gpu',
+                isHideable: true,
+                width: 'auto',
+                render: isGpu => (
+                    isGpu ? '사용' : '미사용'
+                )
+            },
+            {
+                title: t('가용  개수'),
+                dataIndex: 'allocatable',
+                isHideable: true,
+                width: 'auto',
             },
         ]
     }

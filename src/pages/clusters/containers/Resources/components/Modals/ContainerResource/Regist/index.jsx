@@ -71,6 +71,8 @@ const RegistModal = (props) => {
 
     const [osType, setOsType] = useState('linux')
 
+    const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+
     useEffect(() => {
 
         const getVmCreateData = async () => {
@@ -184,6 +186,7 @@ const RegistModal = (props) => {
 
         const onOk = props.onOk;
         form.current.validator(() => {
+            setSubmitButtonFlag(true);
 
             const workerScaleRange = {};
             workerScaleRange.worker_min_replicas = autoScale[0];
@@ -264,6 +267,7 @@ const RegistModal = (props) => {
             setWorkerFlavorDisk(workerFlavorData[0].root_disk)
 
             setRegStep(4);
+            setSubmitButtonFlag(false);
         }
     }
 
@@ -295,7 +299,11 @@ const RegistModal = (props) => {
                     <>
                         <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
                         <Button onClick={() => { setRegStep(3) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
-                        <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>생성</Button>
+                        {submitButtonFlag ?
+                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>생성</Button>
+                            :
+                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>생성</Button>
+                        }
                     </>
                 }
             </>
@@ -570,7 +578,7 @@ const RegistModal = (props) => {
                                             <div>
                                                 <br />
                                                 <Button icon="substract" onClick={minusBtn} />&nbsp;&nbsp;
-                                                <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%' }} />&nbsp;&nbsp;
+                                                <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
                                                 <Button icon="add" onClick={addBtn} />
                                             </div>
                                         </Form.Item>
