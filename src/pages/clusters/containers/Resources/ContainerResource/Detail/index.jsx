@@ -208,7 +208,7 @@ const ResourceDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('쿠버네티스'),
+                label: t('KaaS 리소스'),
                 url: listUrl,
             },
         ],

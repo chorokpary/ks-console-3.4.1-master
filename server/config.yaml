@@ -304,22 +304,22 @@ client:
             }
             - {
               name: containerResource,
-              title: "KaaS_리소스",
+              title: "KaaS 리소스",
               skipAuth: true,
               showInDisable: true,
             }
             - {
               name: containerImages,
-              title: "KaaS_이미지",
+              title: "KaaS 이미지",
               skipAuth: true,
               showInDisable: true,
             }            
-            - {
-              name: resourcesVolumes,
-              title: "볼륨",
-              skipAuth: true,
-              showInDisable: true,
-            }
+            # - {
+            #   name: resourcesVolumes,
+            #   title: "볼륨",
+            #   skipAuth: true,
+            #   showInDisable: true,
+            # }
             # - {
             #   name: sriovs,
             #   title: "SR-IOV 네트워크 관리",

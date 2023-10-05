@@ -137,7 +137,7 @@ const ContainerImageDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('컨테이너 이미지'),
+                label: t('KaaS 이미지'),
                 url: listUrl,
             },
         ],
