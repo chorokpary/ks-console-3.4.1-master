@@ -91,26 +91,31 @@ const RegistModal = (props) => {
         >
           <Form data={formData} ref={form}>
             
-            <Form.Item
-                label={t('이름')}
-                rules={[{ required: true, message: t('키페어를 입력해 주세요.') }]}
-                desc={t('NAME_DESC')}
-              >
-              <Input
-                name="name"
-                autoFocus={true}
-                maxLength={63}
-                style={{ maxWidth: 'none' }}
-              />   
-            </Form.Item>
-
-            <Form.Item>
-              <div>
-                {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>생성</Button> }
-                {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>공개 키</Button> }
-                {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>개인 키</Button> }
-              </div>        
-            </Form.Item>
+            <div className={styles.divwrap}>
+              <div className={styles.div_left}>
+                <Form.Item
+                    label={t('이름')}
+                    rules={[{ required: true, message: t('키페어를 입력해 주세요.') }]}
+                    desc={t('NAME_DESC')}
+                  >
+                  <Input
+                    name="name"
+                    autoFocus={true}
+                    maxLength={63}
+                    style={{ maxWidth: 'none' }}
+                  />   
+                </Form.Item>
+              </div>
+              <div className={styles.div_right}>
+              <Form.Item>
+                <div>
+                  {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>생성</Button> }
+                  {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>공개 키</Button> }
+                  {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>개인 키</Button> }
+                </div>        
+              </Form.Item>
+              </div>
+            </div>
 
             <Form.Item
               className={styles.textarea}
