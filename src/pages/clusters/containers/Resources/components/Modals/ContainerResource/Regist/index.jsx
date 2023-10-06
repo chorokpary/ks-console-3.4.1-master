@@ -300,7 +300,7 @@ const RegistModal = (props) => {
                         <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
                         <Button onClick={() => { setRegStep(3) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
                         {submitButtonFlag ?
-                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>생성</Button>
+                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>생성</Button>
                             :
                             <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>생성</Button>
                         }
@@ -727,46 +727,48 @@ const RegistModal = (props) => {
                                         />
                                     </Form.Item>
 
-                                    <Form.Item label={t('LB')}>
+                                    <Form.Item label={t('네트워크')}>
                                         <div className={styles.wrapper}>
                                             <div className={styles.table}>
                                                 <table>
                                                     <colgroup>
                                                         <col width="5%" />
                                                         <col width="20%" />
-                                                        <col width="20%" />
-                                                        <col width="20%" />
-                                                        <col width="20%" />
                                                         <col width="15%" />
+                                                        <col width="20%" />
+                                                        <col width="20%" />
+                                                        <col width="20%" />
                                                     </colgroup>
                                                     <thead>
                                                         <tr>
                                                             <th></th>
-                                                            <th><strong>이름</strong></th>
                                                             <th><strong>네트워크 이름</strong></th>
-                                                            <th><strong>멤버 IP</strong></th>
-                                                            <th><strong>VIP</strong></th>
-                                                            <th><strong>정책 개수</strong></th>
+                                                            <th><strong>네트워크 유형</strong></th>
+                                                            <th><strong>기본 경로</strong></th>
+                                                            <th><strong>CIDR</strong></th>
+                                                            <th><strong>게이트웨이</strong></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {!loadBalancerDataList?.length &&
+                                                        {!networkDataList?.filter((el) => el.external).length &&
                                                             <tr>
                                                                 <td colSpan="6" className="no-data">
                                                                     <p>할당 가능한 자원이 없습니다.</p>
                                                                 </td>
                                                             </tr>
                                                         }
-                                                        {loadBalancerDataList?.map((data, key) => (
+                                                        {networkDataList?.filter((el) => el.external).map((data, key) => (
                                                             <tr key={data.name}>
                                                                 <td>
-                                                                    <Radio name={`select-${data.name}`} checked={data.name === elbCheckItem} onChange={() => handleSingleCheck(data.name, "elb")} />
+                                                                    <Radio name={`select-${data.name}`}
+                                                                        checked={data.name === elbCheckItem}
+                                                                        onChange={() => handleSingleCheck(data.name, "elb")} />
                                                                 </td>
-                                                                <td><p>{data.name}</p></td>
-                                                                <td><p>{data.network}</p></td>
-                                                                <td>{data.members?.length && data.members?.map((el, i) => (<p key={i}>{el}</p>))}</td>
-                                                                <td><p>{data.virtual_ip}</p></td>
-                                                                <td><p>{data.rulesCount}</p></td>
+                                                                <td>{data.name}</td>
+                                                                <td>{(data.type).toUpperCase()}</td>
+                                                                <td>{data.default_route ? "사용" : "미사용"}</td>
+                                                                <td>{data.cidr}</td>
+                                                                <td>{data.gateway_ip}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -945,36 +947,40 @@ const RegistModal = (props) => {
                                                 </div>
                                             </div>
                                         ))}
-                                        <label className={`${loadBalancerDataList.filter(x => elbCheckItem === x.name).length > 0 ? '' : 'hide'}`}>ELB</label>
-                                        {loadBalancerDataList.filter(x => elbCheckItem === x.name).map((obj, index) => (
+                                        <label className={`${networkDataList.filter(x => elbCheckItem === x.name).length > 0 ? '' : 'hide'}`}>ELB</label>
+                                        {networkDataList.filter(x => elbCheckItem === x.name).map((obj, index) => (
                                             <div className={styles.greybgbox} key={index}>
-                                                <div className={styles.list} style={{ width: '16%' }}>
-                                                    <label style={{ width: '100%' }}>네트워크 이름</label>
-                                                    <div>{obj.network}</div>
-                                                </div>
-                                                <div className={styles.list} style={{ width: '16%' }}>
+                                                <div className={styles.list} style={{ width: '15%' }}>
                                                     <label>타입</label>
                                                     <div>{elbSelect}</div>
                                                 </div>
-                                                <div className={styles.list} style={{ width: '16%' }}>
-                                                    <label>ELB 이름</label>
+                                                <div className={styles.list} style={{ width: '20%' }}>
+                                                    <label>이름</label>
                                                     <div>{obj.name}</div>
                                                 </div>
-                                                <div className={styles.list} style={{ width: '16%' }}>
-                                                    <label>멤버IP</label>
-                                                    <div className="multiline">
-                                                        {obj.members?.map((el, i) => (
-                                                            <div key={i}>{el}</div>
-                                                        ))}
+                                                <div className={styles.list} style={{ width: '15%' }}>
+                                                    <label>유형</label>
+                                                    <div className={styles.multiline}>
+                                                        <div>{obj.type}</div>
                                                     </div>
                                                 </div>
-                                                <div className={styles.list} style={{ width: '16%' }}>
-                                                    <label>VIP</label>
-                                                    <div>{obj.virtual_ip}</div>
+                                                <div className={styles.list} style={{ width: '10%' }}>
+                                                    <label>경로</label>
+                                                    <div className={styles.multiline}>
+                                                        <div>{obj.default_route ? "사용" : "미사용"}</div>
+                                                    </div>
                                                 </div>
-                                                <div className={styles.list} style={{ width: '16%' }}>
-                                                    <label>정책 개수</label>
-                                                    <div>{obj.rulesCount}</div>
+                                                <div className={styles.list}>
+                                                    <label>CIDR</label>
+                                                    <div className={styles.multiline}>
+                                                        <div>{obj.cidr}</div>
+                                                    </div>
+                                                </div>
+                                                <div className={styles.list}>
+                                                    <label>게이트웨이</label>
+                                                    <div className={styles.multiline}>
+                                                        <div>{obj.gateway_ip}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}

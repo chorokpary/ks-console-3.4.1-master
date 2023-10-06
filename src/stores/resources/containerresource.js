@@ -165,7 +165,7 @@ export default class ResourceStore extends Base {
         reqData.csi = data.csi.toLowerCase();
         reqData.ui = data.ui.toLowerCase();
         reqData.expiration = data.expiration;
-        reqData.private_registry = true;
+        reqData.private_registry = false;
         jsonData.cluster = reqData;
 
         let res = await this.submitting(request.post(this.getListUrl(params), jsonData))
