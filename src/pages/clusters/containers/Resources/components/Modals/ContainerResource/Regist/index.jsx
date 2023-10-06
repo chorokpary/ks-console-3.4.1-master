@@ -53,7 +53,7 @@ const RegistModal = (props) => {
     const [workerFlavorNumber, setWorkerFlavorNumber] = useState(1);
     const [cniSelect, setCniSelect] = useState('');
     const [csiSelect, setCsiSelect] = useState('');
-    const [elbSelect, setElbSelect] = useState('metalLB');
+    const [elbSelect, setElbSelect] = useState('pureLB');
     const [expirationSelect, setExpirationSelect] = useState('10');
     const [ekgStack, setEkgStack] = useState('Dashboard');
 
