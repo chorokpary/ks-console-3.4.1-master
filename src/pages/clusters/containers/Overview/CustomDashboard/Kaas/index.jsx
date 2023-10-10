@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
-import K8sStore from 'stores/resources/containerresource'
-import K8sModel from 'stores/dashboard/k8s';
+import KaasStore from 'stores/resources/containerresource'
+import KaasModel from 'stores/dashboard/kaas';
 import { fnSetK8s } from 'utils/dashboard'
 
-const K8s = () => {
-  const k8sStore = new K8sStore();
+const Kaas = () => {
+  const kasStore = new KaasStore();
 
   useEffect(() => {
     const getK8sData = async () => {
       setLoading(true)
-      const k8sList = await k8sStore.fetchList({ limit: 1000 })
-      setList(k8sList)
+      const kaasList = await kasStore.fetchList({ limit: 1000 })
+      setList(kaasList)
       setLoading(false)
     };
     getK8sData();
   }, [])
 
   const [list, setList] = useState([]);
-  const k8s = new K8sModel();
+  const k8s = new KaasModel();
   const [data, setData] = useState(k8s);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -68,4 +68,4 @@ const K8s = () => {
   )
 }
 
-export default K8s
+export default Kaas

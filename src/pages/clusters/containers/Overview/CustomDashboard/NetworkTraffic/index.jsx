@@ -3,6 +3,7 @@ import { Loading } from '@kube-design/components'
 import { getAreaChartOps, getValueByUnit, getSuitableUnit } from 'utils/monitoring'
 import { get, last } from 'lodash'
 import { SimpleArea } from 'components/Charts'
+import VmStore from 'stores/resources/vms'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import PodStore from 'stores/monitoring/pod'
 import { getContentOptions, getData } from './handleTab'
@@ -48608,6 +48609,7 @@ const vmInboundDummy = {
 const NetworkTraffic = ({ monitorStore }) => {
   const podStore = new PodStore();
   const customStore = new CustomStore();
+  const vmStore = new VmStore();
 
   const [tabData, setTabData] = useState();
   const [metricData, setMetricData] = useState([]);
@@ -48620,7 +48622,9 @@ const NetworkTraffic = ({ monitorStore }) => {
 
   const [podData, setPodData] = useState([]);
 
-  const [vmData, setVmData] = useState({ vmInboundData: {}, vmOutboundData: {} });
+  const [vmList, setVmList] = useState([])
+  const [vmData, setVmData] = useState({ vmInboundData: [], vmOutboundData: [] });
+  const [kaasData, setKaasData] = useState({ vmInboundData: [], vmOutboundData: [] });
   const [vmInboundData, setVmInboundData] = useState([]);
   const [vmOutboundData, setVmOutboundData] = useState([]);
 
@@ -48651,16 +48655,23 @@ const NetworkTraffic = ({ monitorStore }) => {
     };
     getPodTrafficData();
 
+    // vm list
+    const getVmList = async () => {
+      const vmList = await vmStore.fetchList({ limit: 1000 })
+      setVmList(vmList)
+    };
+    getVmList();
+
     // vm inbound data
-    var currentTime = + new Date();
+    var currentTime = Math.floor(Date.now() / 1000);
     const getVmInboundData = async () => {
       const vmInboundData = await customStore.fetchMetric({
         expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         start: currentTime - 30000,
         end: currentTime,
       })
-      // setVmInboundData(vmInboundData)
-      setVmInboundData(vmInboundDummy)
+      setVmInboundData(vmInboundData)
+      // setVmInboundData(vmInboundDummy)
     };
     getVmInboundData();
     // vm outbound data
@@ -48670,21 +48681,42 @@ const NetworkTraffic = ({ monitorStore }) => {
         start: currentTime - 30000,
         end: currentTime,
       })
-      // setVmOutboundData(vmOutboundData)
-      setVmOutboundData(vmOutboundDummy)
+      setVmOutboundData(vmOutboundData)
+      // setVmOutboundData(vmOutboundDummy)
     };
     getVmOutboundData();
 
   }, [])
 
-  // vm inbound set
+  // vm, kaas > inbound, outbound data set
   useEffect(() => {
-    setVmData({ ...vmData, ['vmInboundData']: vmInboundData })
-  }, [vmInboundData])
-  // vm outbound set
-  useEffect(() => {
-    setVmData({ ...vmData, ['vmOutboundData']: vmOutboundData })
-  }, [vmOutboundData])
+    let vmInboundFilteredData = [];
+    let vmOutboundFilteredData = [];
+    let kaasInboundFilteredData = [];
+    let kaasOutboundFilteredData = [];
+
+    if (vmInboundData.length > 0) {
+      vmInboundData.map(obj => {
+        if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
+          vmInboundFilteredData.push(obj)
+        } else {
+          kaasInboundFilteredData.push(obj)
+        }
+      })
+    }
+    if (vmOutboundData.length > 0) {
+      vmOutboundData.map(obj => {
+        if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
+          vmOutboundFilteredData.push(obj)
+        } else {
+          kaasOutboundFilteredData.push(obj)
+        }
+      })
+    }
+
+    setVmData({ ...vmData, ['vmInboundData']: vmInboundFilteredData, ['vmOutboundData']: vmOutboundFilteredData })
+    setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundFilteredData, ['vmOutboundData']: kaasOutboundFilteredData })
+  }, [vmInboundData, vmOutboundData, vmList])
 
   // first render
   useEffect(() => {
@@ -48746,14 +48778,14 @@ const NetworkTraffic = ({ monitorStore }) => {
                     <span>가상머신</span>
                   </label>
                   <label htmlFor="name6">
-                    <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onClickRightTab('k8s')} />
+                    <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onClickRightTab('kaas', kaasData)} />
                     <span>KaaS</span>
                   </label>
                 </div>
 
               </div>
             </div>
-            {rightTabActive != 'vm' &&
+            {(rightTabActive != 'vm' && rightTabActive != 'kaas') &&
               <div className="grid_info style_chart">
                 <div className="box type_chart">
                   <div className="cont1">
@@ -48800,7 +48832,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                 </div>
               </div>
             }
-            {rightTabActive == 'vm' &&
+            {(rightTabActive == 'vm' || rightTabActive == 'kaas') &&
               <div className="grid_info style_chart">
                 <div className="box type_chart">
                   <div className="cont1">
@@ -48828,7 +48860,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                     </div>
                     <div className="chart_tab no-tab">
                       <div className="title">
-                        <i className="ico ico-type-network-device"></i>
+                        <i className="ico ico-type-network"></i>
                         <h5>Total</h5>
                       </div>
                       <div className="data">

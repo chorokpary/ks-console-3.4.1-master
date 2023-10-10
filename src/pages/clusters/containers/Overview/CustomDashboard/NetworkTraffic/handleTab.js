@@ -18,8 +18,8 @@ export function getData(activeTab, data) {
     result = getPodData(data)
   } else if (activeTab == 'vm') {
     result = getVmData(data)
-  } else if (activeTab == 'k8s') {
-
+  } else if (activeTab == 'kaas') {
+    result = getKaasData(data)
   }
   return result;
 }
@@ -33,8 +33,8 @@ export function getContentOptions(activeTab, data) {
     result = getPodResult(data)
   } else if (activeTab == 'vm') {
     result = getVmResult(data)
-  } else if (activeTab == 'k8s') {
-
+  } else if (activeTab == 'kaas') {
+    result = getKaasResult(data)
   }
   return result;
 }
@@ -70,11 +70,11 @@ function getPodData(podData) {
 
 function getVmData(data) {
   var outboundCnt = 0;
-  data.vmOutboundData.data.result.map(obj => {
+  data.vmOutboundData.map(obj => {
     outboundCnt += Number(last(obj.values)[1])
   })
   var inboundCnt = 0;
-  data.vmInboundData.data.result.map(obj => {
+  data.vmInboundData.map(obj => {
     inboundCnt += Number(last(obj.values)[1])
   })
 
@@ -102,6 +102,30 @@ function sumVmData(config) {
 
   lastData.sum = sum.toFixed(2)
   lastData.unit = config.unit
+  return lastData
+}
+
+function getKaasData(data) {
+  var outboundCnt = 0;
+  data.vmOutboundData.map(obj => {
+    outboundCnt += Number(last(obj.values)[1])
+  })
+  var inboundCnt = 0;
+  data.vmInboundData.map(obj => {
+    inboundCnt += Number(last(obj.values)[1])
+  })
+
+  const totalVal = outboundCnt + inboundCnt
+  const outSumData = sumVmData(getAreaChartOps(getKaasResult(data)[0]))
+  const inSumData = sumVmData(getAreaChartOps(getKaasResult(data)[1]))
+
+  const lastData = {
+    OUT: outSumData.sum,
+    IN: inSumData.sum,
+    UNIT: outSumData.unit || inSumData.unit,
+    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+  }
+
   return lastData
 }
 
@@ -148,12 +172,12 @@ function getVmResult(data) {
       title: 'NETWORK_TRAFFIC',
       unitType: 'bandwidth',
       legend:
-        data.vmOutboundData.data.result.map(item => (
+        data.vmOutboundData.map(item => (
           item.metric.pod + '-' + item.metric.device
         ))
       ,
       data:
-        data.vmOutboundData.data.result.map(item => (
+        data.vmOutboundData.map(item => (
           item
         ))
     },
@@ -163,12 +187,49 @@ function getVmResult(data) {
       title: 'NETWORK_TRAFFIC',
       unitType: 'bandwidth',
       legend:
-        data.vmInboundData.data.result.map(item => (
+        data.vmInboundData.map(item => (
           item.metric.pod + '-' + item.metric.device
         ))
       ,
       data:
-        data.vmInboundData.data.result.map(item => (
+        data.vmInboundData.map(item => (
+          item
+        ))
+    },
+  ]
+
+  return result
+}
+
+function getKaasResult(data) {
+  const result = [
+    {
+      activeTab: 'OUT',
+      type: 'bandwidth',
+      title: 'NETWORK_TRAFFIC',
+      unitType: 'bandwidth',
+      legend:
+        data.vmOutboundData.map(item => (
+          item.metric.pod + '-' + item.metric.device
+        ))
+      ,
+      data:
+        data.vmOutboundData.map(item => (
+          item
+        ))
+    },
+    {
+      activeTab: 'IN',
+      type: 'bandwidth',
+      title: 'NETWORK_TRAFFIC',
+      unitType: 'bandwidth',
+      legend:
+        data.vmInboundData.map(item => (
+          item.metric.pod + '-' + item.metric.device
+        ))
+      ,
+      data:
+        data.vmInboundData.map(item => (
           item
         ))
     },

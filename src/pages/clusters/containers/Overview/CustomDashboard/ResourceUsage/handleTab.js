@@ -29,8 +29,8 @@ export function getData(activeTab, data) {
     result = getPodData(data)
   } else if (activeTab == 'vm') {
     result = getVmData(data)
-  } else if (activeTab == 'k8s') {
-
+  } else if (activeTab == 'kaas') {
+    result = getKaasData(data)
   }
   return result;
 }
@@ -44,8 +44,8 @@ export function getContentOptions(activeTab, data) {
     result = getPodResult(data)
   } else if (activeTab == 'vm') {
     result = getVmResult(data)
-  } else if (activeTab == 'k8s') {
-
+  } else if (activeTab == 'kaas') {
+    result = getKaasResult(data)
   }
   return result;
 }
@@ -117,11 +117,11 @@ function getPodData(podData) {
 
 function getVmData(data) {
   var cpuCnt = 0;
-  data.cpuData.data.result.map(obj => {
+  data.cpuData.map(obj => {
     cpuCnt += Number(last(obj.values)[1])
   })
   var memoryCnt = 0;
-  data.memoryData.data.result.map(obj => {
+  data.memoryData.map(obj => {
     memoryCnt += Number(last(obj.values)[1])
   })
 
@@ -153,6 +153,43 @@ function getVmData(data) {
   return result
 }
 
+function getKaasData(data) {
+  var cpuCnt = 0;
+  data.cpuData.map(obj => {
+    cpuCnt += Number(last(obj.values)[1])
+  })
+  var memoryCnt = 0;
+  data.memoryData.map(obj => {
+    memoryCnt += Number(last(obj.values)[1])
+  })
+
+  const result = [
+    {
+      activeTab: 'cpu',
+      name: 'CPU',
+      unitType: 'cpu',
+      unit: '%',
+      used: cpuCnt,
+      total: 1,
+    },
+    {
+      activeTab: 'memory',
+      name: 'MEMORY',
+      unitType: 'memory',
+      unit: 'Gi',
+      used: memoryCnt,
+      total: 99999999999,
+    },
+  ]
+
+  result.map(obj => {
+    obj._unit = getSuitableUnit(obj.total || obj.used, obj.unitType) || obj.unit
+    obj._used = getValueByUnit(obj.used, obj._unit)
+    obj._total = getValueByUnit(obj.total, obj._unit)
+    obj._percent = obj._used / obj._total * 100
+  })
+  return result
+}
 
 
 // ================================= right tab data =================================
@@ -221,12 +258,12 @@ function getVmResult(data) {
       title: 'CPU_USAGE',
       unit: '%',
       legend:
-        data.cpuData.data.result.map(item => (
+        data.cpuData.map(item => (
           item.metric.pod
         ))
       ,
       data:
-        data.cpuData.data.result.map(item => (
+        data.cpuData.map(item => (
           item
         ))
     },
@@ -238,12 +275,50 @@ function getVmResult(data) {
       unitType: 'memory',
       legend: ['USAGE'],
       legend:
-        data.memoryData.data.result.map(item => (
+        data.memoryData.map(item => (
           item.metric.pod
         ))
       ,
       data:
-        data.memoryData.data.result.map(item => (
+        data.memoryData.map(item => (
+          item
+        ))
+    },
+  ]
+  return result
+}
+
+function getKaasResult(data) {
+  const result = [
+    {
+      activeTab: 'cpu',
+      type: 'utilisation',
+      title: 'CPU_USAGE',
+      unit: '%',
+      legend:
+        data.cpuData.map(item => (
+          item.metric.pod
+        ))
+      ,
+      data:
+        data.cpuData.map(item => (
+          item
+        ))
+    },
+    {
+      activeTab: 'memory',
+      type: 'utilisation',
+      title: 'MEMORY_USAGE',
+      unit: '%',
+      unitType: 'memory',
+      legend: ['USAGE'],
+      legend:
+        data.memoryData.map(item => (
+          item.metric.pod
+        ))
+      ,
+      data:
+        data.memoryData.map(item => (
           item
         ))
     },

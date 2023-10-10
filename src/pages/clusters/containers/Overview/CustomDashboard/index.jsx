@@ -10,7 +10,7 @@ import Pod from './Pod';
 import Vm from './Vm';
 import UsageTop5 from './UsageTop5';
 import RecentResource from './RecentResource';
-import K8s from './K8s';
+import Kaas from './Kaas';
 import ResourcesUsage from './ResourceUsage';
 import NetworkTraffic from './NetworkTraffic';
 import Issue from './Issue';
@@ -97,7 +97,7 @@ const CustomDashboard = (props) => {
                     <Vm />
 
                     {/* 쿠버네티스 */}
-                    <K8s />
+                    <Kaas />
 
                     {/* 리소스 사용량 */}
                     <ResourcesUsage monitorStore={monitorStore} />
