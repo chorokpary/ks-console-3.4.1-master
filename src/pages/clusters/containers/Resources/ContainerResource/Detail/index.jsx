@@ -161,10 +161,10 @@ const ResourceDetail = (props) => {
                 name: t('CSI'),
                 value: detail.csi,
             },
-            {
-                name: t('EKG Stack'),
-                value: detail.ui,
-            },
+            //{
+            //    name: t('EKG Stack'),
+            //    value: detail.ui,
+            //},
             {
                 name: t('ELB'),
                 value: detail.elb,
