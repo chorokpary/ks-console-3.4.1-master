@@ -583,7 +583,7 @@ const RegistModal = (props) => {
                                             </Form.Item>
                                         </Column>
                                         <Column>
-                                            <Form.Item>
+                                            <Form.Item desc={t('Master는 홀수 개이며 최대 개수는 5개 입니다.')}>
                                                 <div>
                                                     <Button icon="substract" onClick={minusMasterBtn} />&nbsp;&nbsp;
                                                     <Input name="masterNumber" value={masterFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
@@ -609,7 +609,7 @@ const RegistModal = (props) => {
                                             </Form.Item>
                                         </Column>
                                         <Column>
-                                            <Form.Item>
+                                            <Form.Item desc={t('Worker 최대 개수는 50개 입니다.')}>
                                                 <div>
                                                     <Button icon="substract" onClick={minusWorkerBtn} />&nbsp;&nbsp;
                                                     <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
