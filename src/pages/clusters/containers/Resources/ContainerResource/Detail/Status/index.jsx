@@ -76,9 +76,9 @@ const Status = (props) => {
                                 <p>상태</p>
                             </div>
                             <div className={styles.title}>
-                                {detail?.networks?.length > 0 ?
+                                {detail?.networks?.filter((network) => network.name != "k8s-pod-network").length > 0 ?
                                     (<div>
-                                        {(detail.networks).map((obj) => (
+                                        {(detail.networks).filter((network) => network.name != "k8s-pod-network").map((obj) => (
                                             <div key={obj.name}>{obj.ip}({obj.name})</div>
                                         ))}
                                     </div>)
@@ -112,9 +112,9 @@ const Status = (props) => {
                                 <p>상태</p>
                             </div>
                             <div className={styles.title}>
-                                {detail?.networks?.length > 0 ?
+                                {detail?.networks?.filter((network) => network.name != "k8s-pod-network").length > 0 ?
                                     (<div>
-                                        {(detail.networks).map((obj) => (
+                                        {(detail.networks).filter((network) => network.name != "k8s-pod-network").map((obj) => (
                                             <div key={obj.name}>{obj.ip}({obj.name})</div>
                                         ))}
                                     </div>)

@@ -177,10 +177,10 @@ const ResourceDetail = (props) => {
                 name: t('Worker Flavor'),
                 value: detailFlavor.length > 0 && detailFlavor.filter((obj, idx) => !obj.name.includes(detail.cp?.name) && idx===1 ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p>})
             },
-            {
-                name: t('Scalling'),
-                value: "-",
-            },
+            //{
+            //    name: t('Scalling'),
+            //    value: "-",
+            //},
             {
                 name: t('네트워크'),
                 value: detail.network_name,

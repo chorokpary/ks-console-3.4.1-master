@@ -189,7 +189,9 @@ export default class Resource extends React.Component {
                 width: 'auto',
                 render: (state, record) => {
                     return (
-                        <p>{state ? 'Ready' : 'Not-ready'}</p>
+                        <div className={styles.iconwrapper}>
+                            <i className={styles[`ico-status-${state ? 'running' : 'stopping'}`]} /><p>{state ? 'Ready' : 'Not-ready'}</p>
+                        </div>
                     )
                 }
             },

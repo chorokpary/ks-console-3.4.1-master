@@ -19,6 +19,9 @@ import axios from "axios";
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
 
+const CONFIG_CPU = 2;
+const CONFIG_RAM = 4;
+const CONFIG_DISK = 40;
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -55,11 +58,11 @@ const RegistModal = (props) => {
     const [csiSelect, setCsiSelect] = useState('');
     const [elbSelect, setElbSelect] = useState('pureLB');
     const [expirationSelect, setExpirationSelect] = useState('10');
-    const [ekgStack, setEkgStack] = useState('Dashboard');
+    const [ekgStack, setEkgStack] = useState([]);
 
     const [cnis, setCnis] = useState([]);
     const [csis, setCsis] = useState([]);
-    const [uis, setUis] = useState([]);
+    const [features, setFeatures] = useState([]);
 
     const [networkFlag, setNetworkFlag] = useState(1);
     const [networkName, setNetworkName] = useState('');
@@ -124,18 +127,19 @@ const RegistModal = (props) => {
             }
         });
 
-        const uiData = axios.get(`/edgetron/resources/capk/metadata/uis`);
-        let resUi = [];
-        uiData.then(response => {
-            if (response.data.uis) {
-                for (let i = 0, n = response.data.uis.length; i < n; i += 1) {
-                    resUi.push({
-                        label: response.data.uis[i].name,
-                        value: response.data.uis[i].name,
-                        icon: response.data.uis[i].name.toLowerCase(),
+        const featureData = axios.get(`/edgetron/resources/capk/metadata/features`);
+        let resFeature = [];
+        featureData.then(response => {
+            if (response.data.features) {
+                for (let i = 0, n = response.data.features.length; i < n; i += 1) {
+                    resFeature.push({
+                        label: response.data.features[i].name,
+                        value: response.data.features[i].name,
+                        //icon: response.data.features[i].name.toLowerCase(),
+                        icon: 'kubesphere',
                     });
                 };
-                setUis(resUi);
+                setFeatures(resFeature);
             }
         });
     }, []);
@@ -165,6 +169,7 @@ const RegistModal = (props) => {
             label: t(obj.name),
             description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib/ Disk ${obj.root_disk} Gib`,
             value: t(obj.name),
+            disabled: (obj.vcpus < CONFIG_CPU || common.fnSetBytes(obj.ram) < CONFIG_RAM || obj.root_disk < CONFIG_DISK)
         }))
         return opt
     }
@@ -189,8 +194,8 @@ const RegistModal = (props) => {
             setSubmitButtonFlag(true);
 
             const workerScaleRange = {};
-            workerScaleRange.worker_min_replicas = autoScale[0];
-            workerScaleRange.worker_max_replicas = autoScale[1];
+            workerScaleRange.worker_min_replicas = isAutoScale ? autoScale[0] : 0;
+            workerScaleRange.worker_max_replicas = isAutoScale ? autoScale[1] : 0;
 
             const { data } = form.current.props;
 
@@ -205,7 +210,7 @@ const RegistModal = (props) => {
             data.worker_scale_range = workerScaleRange;
             data.cni = cniSelect;
             data.csi = csiSelect;
-            data.ui = ekgStack;
+            data.features = ekgStack;
             data.expiration = expirationSelect;
             data.private_registry = true;
 
@@ -229,7 +234,6 @@ const RegistModal = (props) => {
                 }
                 setCniSelect(cnis[0].value);
                 setCsiSelect(csis[0].value);
-                setEkgStack(uis[0].value);
                 setIsFirst(false)
             }
 
@@ -397,11 +401,23 @@ const RegistModal = (props) => {
     }
 
     //cpu count
-    const addBtn = (e) => {
+    const addMasterBtn = (e) => {
+        e.preventDefault();
+        if (masterFlavorNumber < 5) {
+            setMasterFlavorNumber(masterFlavorNumber + 2);
+        }
+    }
+    const minusMasterBtn = (e) => {
+        e.preventDefault();
+        if (masterFlavorNumber > 1) {
+            setMasterFlavorNumber(masterFlavorNumber - 2);
+        }
+    }
+    const addWorkerBtn = (e) => {
         e.preventDefault();
         setWorkerFlavorNumber(workerFlavorNumber + 1);
     }
-    const minusBtn = (e) => {
+    const minusWorkerBtn = (e) => {
         e.preventDefault();
         if (workerFlavorNumber > 0) {
             setWorkerFlavorNumber(workerFlavorNumber - 1);
@@ -416,6 +432,24 @@ const RegistModal = (props) => {
             setAutoScale([0, maxNum]);
         }
     }
+
+    const handleEkgStack = (e => {
+        if (e === 'all') {
+            if ([...ekgStack].includes(e)) {
+                setEkgStack([]);
+            } else {
+                const eArray = [];
+                features.filter((obj) => obj.value !== 'all').forEach((el) => eArray.push(el.value));
+                setEkgStack(eArray);
+            }
+        } else {
+            if ([...ekgStack].includes(e)) {
+                setEkgStack([...ekgStack].filter((obj) => obj !== e));
+            } else {
+                setEkgStack(e);
+            }
+        }
+    })
 
     // 스크립트 끝 ==================================================
 
@@ -490,100 +524,101 @@ const RegistModal = (props) => {
                                 >
                                     <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
                                 </Form.Item>
-                                <div style={{ padding : 10 }}/>
-                                <Columns>
-                                    <Column>
-                                        <Form.Item label={t('OS 타입')}
-                                            rules={[{ required: true, message: t('OS를 선택해주세요.') }]}>
-                                            <CardSelect
-                                                className={styles.customUl}
-                                                onChange={(e) => handleOsType(e)}
-                                                name="os_type"
-                                                options={osTypeOptions}
-                                                defaultValue={osType}
-                                            />
-                                        </Form.Item>
-                                    </Column>
-                                    <Column>
-                                        <Form.Item
-                                            label={t('이미지')}
-                                            rules={[{ required: true, validator: imageValidator }]}
-                                        >
-                                            <TypeSelect
-                                                name="image"
-                                                defaultValue={"선택"}
-                                                placeholder={{
-                                                    label: t('선택')
-                                                }}
-                                                options={imageOptions()}
-                                                onChange={(e) => setSelectImageName(e)}
-                                            />
-                                        </Form.Item>
-                                        {
-                                            selectImageName &&
-                                            <Form.Item>
-                                                <Input
-                                                    name="imageView"
-                                                    defaultValue={osType + ' > ' + selectImageName}
-                                                    readOnly
-                                                    style={{ maxWidth: 'none' }}
+                                <div style={{ padding: 10 }} />
+
+
+                                이미지 <span class="form-item-required">*</span>
+                                <Form.Group>
+                                    <Columns>
+                                        <Column>
+                                            <Form.Item rules={[{ required: true, message: t('OS를 선택해주세요.') }]}>
+                                                <CardSelect
+                                                    className={styles.customUl}
+                                                    onChange={(e) => handleOsType(e)}
+                                                    name="os_type"
+                                                    options={osTypeOptions}
+                                                    defaultValue={osType}
                                                 />
                                             </Form.Item>
-                                        }
-                                    </Column>
-                                </Columns>
-                                <Columns>
-                                    <Column>
-                                        <Form.Item label={t('Master Flavor')}
-                                            rules={[{ required: true, validator: masterFlavorValidator }]}
-                                        >
-                                            <TypeSelect
-                                                name="masterFlavor"
-                                                defaultValue={"선택"}
-                                                options={flavorOptions()}
-                                                placeholder={{ label: t('선택') }}
-                                                onChange={(e) => setMasterFlavorSelect(e)}
-                                            />
-                                        </Form.Item>
-                                    </Column>
-                                    <Column>
-                                        <Form.Item label={t('\r\n')}>
-                                            <div>
-                                                <br />
-                                                <Select name="masterNumber"
-                                                    options={[{ label: 1, value: 1 }, { label: 3, value: 3 }, { label: 5, value: 5 }]}
-                                                    onChange={(e) => setMasterFlavorNumber(e)}
-                                                    defaultValue={1} />
-                                            </div>
-                                        </Form.Item>
-                                    </Column>
-                                </Columns>
+                                        </Column>
+                                        <Column>
+                                            <Form.Item rules={[{ required: true, validator: imageValidator }]}>
+                                                <TypeSelect
+                                                    name="image"
+                                                    defaultValue={"선택"}
+                                                    placeholder={{
+                                                        label: t('선택')
+                                                    }}
+                                                    options={imageOptions()}
+                                                    onChange={(e) => setSelectImageName(e)}
+                                                />
+                                            </Form.Item>
+                                            {
+                                                selectImageName &&
+                                                <Form.Item>
+                                                    <Input
+                                                        name="imageView"
+                                                        defaultValue={osType + ' > ' + selectImageName}
+                                                        readOnly
+                                                        style={{ maxWidth: 'none' }}
+                                                    />
+                                                </Form.Item>
+                                            }
+                                        </Column>
+                                    </Columns>
+                                </Form.Group>
 
-                                <Columns>
-                                    <Column>
-                                        <Form.Item label={t('Worker Flavor')}
-                                            rules={[{ required: true, validator: workerFlavorValidator }]}
-                                        >
-                                            <TypeSelect
-                                                name="workerFlavor"
-                                                defaultValue={"선택"}
-                                                options={flavorOptions()}
-                                                placeholder={{ label: t('선택') }}
-                                                onChange={(e) => setWorkerFlavorSelect(e)}
-                                            />
-                                        </Form.Item>
-                                    </Column>
-                                    <Column>
-                                        <Form.Item label={t('\r\n')}>
-                                            <div>
-                                                <br />
-                                                <Button icon="substract" onClick={minusBtn} />&nbsp;&nbsp;
-                                                <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
-                                                <Button icon="add" onClick={addBtn} />
-                                            </div>
-                                        </Form.Item>
-                                    </Column>
-                                </Columns>
+                                Master Flavor <span class="form-item-required">*</span>
+                                <Form.Group>
+                                    <Columns>
+                                        <Column>
+                                            <Form.Item rules={[{ required: true, validator: masterFlavorValidator }]}>
+                                                <TypeSelect
+                                                    name="masterFlavor"
+                                                    defaultValue={"선택"}
+                                                    options={flavorOptions()}
+                                                    placeholder={{ label: t('선택') }}
+                                                    onChange={(e) => setMasterFlavorSelect(e)}
+                                                />
+                                            </Form.Item>
+                                        </Column>
+                                        <Column>
+                                            <Form.Item>
+                                                <div>
+                                                    <Button icon="substract" onClick={minusMasterBtn} />&nbsp;&nbsp;
+                                                    <Input name="masterNumber" value={masterFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
+                                                    <Button icon="add" onClick={addMasterBtn} />
+                                                </div>
+                                            </Form.Item>
+                                        </Column>
+                                    </Columns>
+                                </Form.Group>
+
+                                Worker Flavor <span class="form-item-required">*</span>
+                                <Form.Group>
+                                    <Columns>
+                                        <Column>
+                                            <Form.Item rules={[{ required: true, validator: workerFlavorValidator }]}>
+                                                <TypeSelect
+                                                    name="workerFlavor"
+                                                    defaultValue={"선택"}
+                                                    options={flavorOptions()}
+                                                    placeholder={{ label: t('선택') }}
+                                                    onChange={(e) => setWorkerFlavorSelect(e)}
+                                                />
+                                            </Form.Item>
+                                        </Column>
+                                        <Column>
+                                            <Form.Item>
+                                                <div>
+                                                    <Button icon="substract" onClick={minusWorkerBtn} />&nbsp;&nbsp;
+                                                    <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
+                                                    <Button icon="add" onClick={addWorkerBtn} />
+                                                </div>
+                                            </Form.Item>
+                                        </Column>
+                                    </Columns>
+                                </Form.Group>
 
                                 <Form.Item
                                     className={styles.textarea}
@@ -830,11 +865,11 @@ const RegistModal = (props) => {
                                     <Form.Group>
                                         <Form.Item>
                                             <CardSelect2
-                                                name="ekgStack"
                                                 className={styles.customUl}
-                                                onChange={(e) => setEkgStack(e)}
-                                                options={uis}
-                                                defaultValue={ekgStack}
+                                                onChange={(e) => handleEkgStack(e)}
+                                                options={features}
+                                                value={ekgStack}
+                                                customSize={[`70%`, `15%`]}
                                             />
                                         </Form.Item>
                                     </Form.Group>
@@ -1010,9 +1045,13 @@ const RegistModal = (props) => {
                                                     <div>CSI: {csiSelect}</div>
                                                 </div>
                                             </div>
-                                            <div className={styles.list}>
+                                            <div className={styles.list} style={{ width: '100%' }}>
                                                 <label>EKG Stack</label>
-                                                <div>{ekgStack}</div>
+                                                <div className={styles.multiline}>
+                                                    {ekgStack.map((obj, index) => (
+                                                        <div key={index}>{obj}</div>
+                                                    ))}
+                                                </div>
                                             </div>
                                             <div className={styles.list}>
                                                 <label style={{ width: '100%' }}>인증서 유효기간</label>
