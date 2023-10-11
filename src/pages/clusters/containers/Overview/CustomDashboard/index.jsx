@@ -18,6 +18,10 @@ import Computing from './Computing';
 import ResourceChange from './ResourceChange';
 import K8sStatus from './K8sStatus';
 import BmcNode from './BmcNode';
+import CabonIndicator from './CabonIndicator';
+import PowerUsageTop5 from './PowerUsageTop5';
+import CpuPower from './CpuPower';
+import CpuUsage from './CpuUsage';
 
 const CustomDashboard = (props) => {
 
@@ -125,6 +129,19 @@ const CustomDashboard = (props) => {
 
                     {/* 쿠버네티스 컴포넌트 상태 */}
                     <K8sStatus />
+
+                    {/* 탄소 지표 */}
+                    <CabonIndicator />
+
+                    {/* 전력 사용량 TOP 5 */}
+                    <PowerUsageTop5 />
+
+                    {/* CPU 소비 전력량 비교 */}
+                    <CpuPower />
+
+                    {/* CPU 사용률 / 소비전력 */}
+                    <CpuUsage />
+
                   </div>
                 </div>
 

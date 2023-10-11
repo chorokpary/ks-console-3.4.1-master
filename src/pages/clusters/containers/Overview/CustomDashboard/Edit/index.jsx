@@ -1288,7 +1288,7 @@ const CustomDashboardEdit = (props) => {
                                             {/* 데이터 모두 사용시 */}
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_01</p>
                                               </td>
                                               <td>
@@ -1309,7 +1309,7 @@ const CustomDashboardEdit = (props) => {
                                             </tr>
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_02</p>
                                               </td>
                                               <td>
@@ -1330,7 +1330,7 @@ const CustomDashboardEdit = (props) => {
                                             </tr>
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_03</p>
                                               </td>
                                               <td>
@@ -1351,7 +1351,7 @@ const CustomDashboardEdit = (props) => {
                                             </tr>
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_04</p>
                                               </td>
                                               <td>
@@ -1372,7 +1372,7 @@ const CustomDashboardEdit = (props) => {
                                             </tr>
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_05</p>
                                               </td>
                                               <td>
@@ -1393,7 +1393,7 @@ const CustomDashboardEdit = (props) => {
                                             </tr>
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_06</p>
                                               </td>
                                               <td>
@@ -1414,7 +1414,7 @@ const CustomDashboardEdit = (props) => {
                                             </tr>
                                             <tr>
                                               <td className="tbl_tit">
-                                                <div className="hexagon"><span>ARM</span></div>
+                                                <i className="ico-type24-arm"></i>
                                                 <p>Arm_node_07</p>
                                               </td>
                                               <td>
