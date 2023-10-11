@@ -141,7 +141,7 @@ export default class ResourceStore extends Base {
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
 
-    return data
+    return this.dataList
   }
 
   @action

@@ -1,7 +1,87 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
+import NodeStore from 'stores/node';
+import VmStore from 'stores/resources/vms'
+import PodStore from 'stores/pod'
+import KaasStore from 'stores/resources/containerresource'
+import moment from 'moment-mini';
+
+const iconType = {
+  'node': 'clusternode',
+  'pod': 'pod',
+  'vm': 'vm',
+  'kaas': 'container',
+}
 
 const RecentResource = () => {
+  const nodeStore = new NodeStore();
+  const podStore = new PodStore();
+  const vmStore = new VmStore();
+  const kaasStore = new KaasStore();
+
+  const [nodeList, setNodeList] = useState([]);
+  const [podList, setPodList] = useState([]);
+  const [vmList, setVmList] = useState([]);
+  const [kaasList, setKaasList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true)
+
+    // node data
+    const getNodeData = async () => {
+      const nodeList = await nodeStore.fetchList({ limit: 1000, sortBy: 'createTime' })
+      handleDate(nodeList, 'createTime', 'node')
+    };
+    getNodeData();
+
+    // pod data
+    const getPodData = async () => {
+      const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime' })
+      handleDate(podList, 'createTime', 'pod')
+    };
+    getPodData();
+
+    // vm data
+    const getVmData = async () => {
+      const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
+      handleDate(vmList, 'creation_timestamp', 'vm')
+    };
+    getVmData();
+
+    // kaas data
+    const getKaasData = async () => {
+      const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp' })
+      handleDate(kaasList, 'timestamp', 'kaas')
+    };
+    getKaasData();
+
+    setLoading(false)
+  }, [])
+
+  // recent week
+  const handleDate = (list, dateType, resourceType) => {
+    let date = new Date();
+    let dayBefore = date.getTime() - (7 * 24 * 60 * 60 * 1000) // recent week
+
+    let arr = []
+    list.map(obj => {
+      if (new Date(obj[dateType]) > dayBefore) {
+        arr.push({ name: obj.name, date: obj[dateType], type: resourceType })
+      }
+    })
+
+    if (resourceType == 'node') {
+      setNodeList(arr);
+    } else if (resourceType == 'pod') {
+      setPodList(arr);
+    } else if (resourceType == 'vm') {
+      setVmList(arr);
+    } else if (resourceType == 'kaas') {
+      setKaasList(arr);
+    }
+  }
+
   return (
     <>
       <div className="grid-stack-item" gs-x="9" gs-y="8" gs-w="3" gs-h="9">
@@ -13,85 +93,14 @@ const RecentResource = () => {
 
             </div>
             <div className="grid_info style_list">
-              {/* // select_wrap */}
-              <ul className="list_01">
-                <li className="li_type_01">
-                  <div className="lft">
-                    <i className="ico ico-page-list-clusternode"></i>
-                    <h6 className="list_title">
-                      Worker01
-                      <span>2023-08-23</span>
-                    </h6>
-                  </div>
-                  <div className="type">
-                    <span className="type_node">노드</span>
-                  </div>
-                </li>
-                <li className="li_type_01">
-                  <div className="lft">
-                    <i className="ico ico-page-list-pod"></i>
-                    <h6 className="list_title">
-                      Worker01
-                      <span>2023-08-22</span>
-                    </h6>
-                  </div>
-                  <div className="type">
-                    <span className="type_pod">Pod</span>
-                  </div>
-                </li>
-                <li className="li_type_01">
-                  <div className="lft">
-                    <i className="ico ico-page-list-container"></i>
-                    <h6 className="list_title">
-                      Worker01
-                      <span>2023-08-21</span>
-                    </h6>
-                  </div>
-                  <div className="type">
-                    <span className="type_container">쿠버네티스</span>
-                  </div>
-                </li>
-                <li className="li_type_01">
-                  <div className="lft">
-                    <i className="ico ico-page-list-vm"></i>
-                    <h6 className="list_title">
-                      Worker01
-                      <span>2023-08-20</span>
-                    </h6>
-                  </div>
-                  <div className="type">
-                    <span className="type_vm">가상머신</span>
-                  </div>
-                </li>
-                <li className="li_type_01">
-                  <div className="lft">
-                    <i className="ico ico-page-list-vm"></i>
-                    <h6 className="list_title">
-                      Worker01
-                      <span>2023-08-20</span>
-                    </h6>
-                  </div>
-                  <div className="type">
-                    <span className="type_vm">가상머신</span>
-                  </div>
-                </li>
-                <li className="li_type_01">
-                  <div className="lft">
-                    <i className="ico ico-page-list-vm"></i>
-                    <h6 className="list_title">
-                      Worker01
-                      <span>2023-08-20</span>
-                    </h6>
-                  </div>
-                  <div className="type">
-                    <span className="type_vm">가상머신</span>
-                  </div>
-                </li>
-              </ul>
-
-              {/* <div className="grid_text">
-   <span>데이터가 없습니다.</span>
-  </div> */}
+              <Loading spinning={loading}>
+                <List
+                  nodeList={nodeList}
+                  podList={podList}
+                  vmList={vmList}
+                  kaasList={kaasList}
+                />
+              </Loading>
             </div>
           </div>
           {/* // grid_item */}
@@ -102,3 +111,49 @@ const RecentResource = () => {
 }
 
 export default RecentResource
+
+const List = ({ nodeList, podList, vmList, kaasList }) => {
+
+  const [list, setList] = useState([])
+  useEffect(() => {
+    let arr = [];
+    arr.push(...nodeList)
+    arr.push(...podList)
+    arr.push(...vmList)
+    arr.push(...kaasList)
+    arr.sort(function (a, b) {
+      return moment(b.date) - moment(a.date);
+    });
+    setList(arr)
+  }, [nodeList, podList, vmList, kaasList])
+
+  return (
+    <>
+      {list.length > 0 &&
+        <ul className="list_01">
+          {list.map((obj, idx) => (
+            <li className="li_type_01" key={idx}>
+              <div className="lft">
+                <i className={`ico ico-page-list-${iconType[obj.type]}`}></i>
+                <h6 className="list_title">
+                  {obj.name}
+                  <span>{moment(obj.date).format('YYYY-MM-DD')}</span>
+                </h6>
+              </div>
+              <div className="type">
+                <span className={`type_${obj.type == 'node' ? 'node' : iconType[obj.type]}`}>{obj.type}</span>
+              </div>
+            </li>
+          ))
+          }
+        </ul>
+      }
+
+      {list.length == 0 &&
+        <div className="grid_text">
+          <span>데이터가 없습니다.</span>
+        </div>
+      }
+    </>
+  )
+}

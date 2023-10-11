@@ -7,6 +7,19 @@ import VmStore from 'stores/resources/vms'
 import PodStore from 'stores/monitoring/pod'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { getContentOptions, getData } from './handleTab'
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Line,
+  Area,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Scatter
+} from "recharts";
 
 const MetricTypes = {
   cpu_usage: 'cluster_cpu_usage',
@@ -2939,7 +2952,94 @@ const TabContent = ({ option }) => {
   }
   const config = getAreaChartOps(option)
 
+  const data = [
+    {
+      name: "Page A",
+      uv: 20,
+      pv: 800,
+      pq: 800,
+      amt: 12,
+      cnt: 490
+    },
+    {
+      name: "Page B",
+      uv: 50,
+      pv: 967,
+      pq: 868,
+      amt: 125,
+      cnt: 590
+    },
+    {
+      name: "Page C",
+      uv: 10,
+      pv: 1098,
+      pq: 1506,
+      amt: 55,
+      cnt: 350
+    },
+    {
+      name: "Page D",
+      uv: 100,
+      pv: 1200,
+      pq: 480,
+      amt: 7,
+      cnt: 480
+    },
+    {
+      name: "Page E",
+      uv: 52,
+      pv: 1108,
+      pq: 1228,
+      amt: 64,
+      cnt: 460
+    },
+    {
+      name: "Page F",
+      uv: 162,
+      pv: 680,
+      pq: 1520,
+      amt: 23,
+      cnt: 380
+    }
+  ];
+
   return (
     <SimpleArea {...commonProps} {...config} style={{ padding: '10px', color: 'white' }} />
+    // <ResponsiveContainer width={'100%'} height={'100%'} debounce={1}>
+    //   <ComposedChart
+    //     width={500}
+    //     height={400}
+    //     data={data}
+    //     margin={{
+    //       top: 20,
+    //       right: 20,
+    //       bottom: 20,
+    //       left: 20
+    //     }}
+    //   >
+    //     <CartesianGrid
+    //       stroke={'#d8dee5'}
+    //       strokeDasharray="2 2"
+    //       vertical={false}
+    //     />
+    //     <XAxis dataKey="name" />
+    //     <YAxis yAxisId="left" type="number" dataKey="pq" name="weight" stroke="#8884d8" />
+    //     <YAxis
+    //       yAxisId="right"
+    //       type="number"
+    //       dataKey="uv"
+    //       name="weight"
+    //       // unit="kg"
+    //       orientation="right"
+    //     // stroke="#82ca9d"
+    //     />
+    //     <Tooltip />
+    //     <Legend />
+    //     <Bar yAxisId="left" dataKey="pv" barSize={20} fill="#413ea0" />
+    //     <Bar yAxisId="left" dataKey="pq" barSize={20} fill="#213ea1" />
+    //     <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#ff7300" />
+    //     <Line yAxisId="right" type="monotone" dataKey="amt" stroke="#ff1300" />
+    //   </ComposedChart>
+    // </ResponsiveContainer>
   )
 }
