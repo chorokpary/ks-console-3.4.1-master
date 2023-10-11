@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Loading, Select } from '@kube-design/components'
 import NodeStore from 'stores/rank/node';
 import { get } from 'lodash';
+import VmStore from 'stores/resources/vms'
 import PodStore from 'stores/dashboard/rank/pod';
+import CustomStore from 'stores/monitoring/custom/monitor'
 import { getSuitableValue } from 'utils/monitoring'
 
 const typeOption = [
@@ -19,7 +21,7 @@ const typeOption = [
     label: '가상머신'
   },
   {
-    value: 'k8s',
+    value: 'kaas',
     label: 'KaaS'
   },
 ]
@@ -47,6 +49,27 @@ const sortOptionPod = [
     label: t(`SORT_BY_WORKSPACE_MEMORY_USAGE`)
   },
 ]
+const sortOptionVm = [
+  {
+    value: 'vm_cpu_usage',
+    label: t(`SORT_BY_WORKSPACE_CPU_USAGE`)
+  },
+  {
+    value: 'vm_memory_usage',
+    label: t(`SORT_BY_WORKSPACE_MEMORY_USAGE`)
+  },
+]
+const sortOptionKaas = [
+  {
+    value: 'kaas_cpu_usage',
+    label: t(`SORT_BY_WORKSPACE_CPU_USAGE`)
+  },
+  {
+    value: 'kaas_memory_usage',
+    label: t(`SORT_BY_WORKSPACE_MEMORY_USAGE`)
+  },
+]
+
 const storeParams = {
   limit: 5,
   page: 1,
@@ -56,10 +79,13 @@ const storeParams = {
 const UsageTop5 = () => {
   const nodeStore = new NodeStore({ ...storeParams })
   const podStore = new PodStore({ ...storeParams })
+  const customStore = new CustomStore();
+  const vmStore = new VmStore();
 
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [vmList, setVmList] = useState([])
   const [sortOption, setSortOption] = useState(sortOptionNode)
   const [sortMetric, setSortMetric] = useState(sortOption[0].value)
   const [unitType, setUnitType] = useState({ unit: 'cpu', value: 'CPU 사용량' })
@@ -79,9 +105,63 @@ const UsageTop5 = () => {
     setLoading(false)
   };
 
+  const handleDataList = (data, type) => {
+    let vmFilteredData = [];
+    let kaasFilteredData = []
+
+    data.map(obj => {
+      if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
+        let name = obj.metric.pod
+        let usage = obj.values[0][1]
+        vmFilteredData.push({ name, usage })
+      } else {
+        let name = obj.metric.pod
+        let usage = obj.values[0][1]
+        kaasFilteredData.push({ name, usage })
+      }
+    })
+    vmFilteredData.sort(function (a, b) {
+      return b.usage - a.usage;
+    });
+    kaasFilteredData.sort(function (a, b) {
+      return b.usage - a.usage;
+    });
+
+    // type : vm, kaas
+    setList(type == 'vm' ? vmFilteredData.splice(0, 5) : kaasFilteredData.splice(0, 5))
+  }
+
   useEffect(() => {
+    // vm list
+    const getVmList = async () => {
+      const vmList = await vmStore.fetchList({ limit: 1000 })
+      setVmList(vmList)
+    };
+    getVmList();
+
     getNodeData();
   }, [])
+
+  const getCpuData = async (type) => {
+    var currentTime = Math.floor(Date.now() / 1000);
+    const cpuData = await customStore.fetchMetric({
+      expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+      start: currentTime,
+      end: currentTime,
+    })
+    handleDataList(cpuData, type)
+  };
+
+  const getMemoryData = async (type) => {
+    var currentTime = Math.floor(Date.now() / 1000);
+    const memoryData = await customStore.fetchMetric({
+      expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+      start: currentTime,
+      end: currentTime,
+    })
+    handleDataList(memoryData, type)
+  };
+
 
   const handleSortOption = (e) => {
     setSortMetric(e)
@@ -89,8 +169,21 @@ const UsageTop5 = () => {
       getNodeData({ sort_metric: e })
     } else if (e.includes('pod')) {
       getPodData({ sort_metric: e })
+    } else if (e.includes('vm')) {
+      if (e.includes('cpu')) {
+        getCpuData('vm')
+      } else if (e.includes('memory')) {
+        getMemoryData('vm')
+      }
+    } else if (e.includes('kaas')) {
+      if (e.includes('cpu')) {
+        getCpuData('kaas')
+      } else if (e.includes('memory')) {
+        getMemoryData('kaas')
+      }
     }
   }
+
   const handleTypeOption = (e) => {
     setTypeMetric(e)
     if (e == 'node') {
@@ -99,6 +192,12 @@ const UsageTop5 = () => {
     } else if (e == 'pod') {
       setSortOption(sortOptionPod)
       handleSortOption(sortOptionPod[0].value)
+    } else if (e == 'vm') {
+      setSortOption(sortOptionVm)
+      handleSortOption(sortOptionVm[0].value)
+    } else if (e == 'kaas') {
+      setSortOption(sortOptionKaas)
+      handleSortOption(sortOptionKaas[0].value)
     }
   }
 
@@ -181,7 +280,7 @@ const UsageTop5 = () => {
                     {list.map((obj, idx) => (
                       <li className="li_type_01" key={idx}>
                         <div className="lft">
-                          <i className="ico ico-page-list-clusternode"></i>
+                          <i className="ico ico-page-list-pod"></i>
                           <h6 className="list_title">
                             {obj.pod}
                           </h6>
@@ -189,6 +288,34 @@ const UsageTop5 = () => {
                         <div className="info">
                           <h6>
                             {getSuitableValue((Number(get(obj, sortMetric)) || 0), unitType.unit)}
+                            <span>
+                              {unitType.value}
+                            </span>
+                          </h6>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </Loading>
+              }
+              {(typeMetric == 'vm' || typeMetric == 'kaas') &&
+                <Loading spinning={loading}>
+                  <ul className="list_01">
+                    {list.map((obj, idx) => (
+                      <li className="li_type_01" key={idx}>
+                        <div className="lft">
+                          <i className={`ico ico-page-list-${typeMetric == 'vm' ? 'vm' : 'container'}`}></i>
+                          <h6 className="list_title">
+                            {obj.name}
+                          </h6>
+                        </div>
+                        <div className="info">
+                          <h6>
+                            {unitType.unit == 'cpu' ?
+                              ((Number(obj.usage) * 100).toFixed(2) || 0) + '%'
+                              :
+                              getSuitableValue((Number(obj.usage) || 0), unitType.unit)
+                            }
                             <span>
                               {unitType.value}
                             </span>
