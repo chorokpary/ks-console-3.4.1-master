@@ -45,12 +45,12 @@ const ClusterNode = () => {
                   <div className="cont_group">
                     <div className="cont1">
                       <div className="number_wrap">
-                        <i className="ico ico-type-clusternode"><span>Master</span></i>
+                        <i className="ico-type-clusternode"><span>Master</span></i>
 
                         <p><span className="em">{data.master.on}</span>/{data.master.total}</p>
                       </div>
                       <div className="number_wrap">
-                        <i className="ico ico-type-clusternode"><span>Worker</span></i>
+                        <i className="ico-type-clusternode"><span>Worker</span></i>
                         <p><span className="em">{data.worker.on}</span>/{data.worker.total}</p>
                       </div>
                     </div>

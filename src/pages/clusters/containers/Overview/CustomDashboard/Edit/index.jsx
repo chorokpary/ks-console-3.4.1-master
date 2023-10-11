@@ -172,19 +172,19 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>클러스터 노드</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
-                                      <i className="ico ico-type-clusternode"><span>Master</span></i>
+                                      <i className="ico-type-clusternode"><span>Master</span></i>
 
                                       <p><span className="em">1</span>/1</p>
                                     </div>
                                     <div className="number_wrap">
-                                      <i className="ico ico-type-clusternode"><span>Worker</span></i>
+                                      <i className="ico-type-clusternode"><span>Worker</span></i>
                                       <p><span className="em">4</span>/4</p>
                                     </div>
                                   </div>
@@ -222,14 +222,14 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>Pod</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
-                                      <i className="ico ico-type-pod"></i>
+                                      <i className="ico-type-pod"></i>
                                       <p><span className="em">8</span> / 12</p>
                                     </div>
                                   </div>
@@ -267,14 +267,14 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>가상머신</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
-                                      <i className="ico ico-type-vm"></i>
+                                      <i className="ico-type-vm"></i>
                                       <p><span className="em">3</span> / 7</p>
                                     </div>
                                   </div>
@@ -312,14 +312,14 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>쿠버네티스</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_status">
                               <div className="box type_status">
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
-                                      <i className="ico ico-type-container"></i>
+                                      <i className="ico-type-container"></i>
                                       <p><span className="em">4</span> / 9</p>
                                     </div>
                                   </div>
@@ -376,7 +376,7 @@ const CustomDashboardEdit = (props) => {
                                     <span>쿠버네티스</span>
                                   </label>
                                 </div>
-                                <i className="ico ico-btn-trash"></i>
+                                <i className="ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_chart">
@@ -384,7 +384,7 @@ const CustomDashboardEdit = (props) => {
                                 <div className="cont1">
                                   <div className="chart_tab on">
                                     <div className="title">
-                                      <i className="ico ico-big-cpu"></i>
+                                      <i className="ico-type-cpu"></i>
                                       <h5>CPU</h5>
                                     </div>
                                     <div className="data">
@@ -401,7 +401,7 @@ const CustomDashboardEdit = (props) => {
                                   </div>
                                   <div className="chart_tab">
                                     <div className="title">
-                                      <i className="ico ico-big-memory"></i>
+                                      <i className="ico-type-memory"></i>
                                       <h5>메모리</h5>
                                     </div>
                                     <div className="data">
@@ -419,7 +419,7 @@ const CustomDashboardEdit = (props) => {
                                   </div>
                                   <div className="chart_tab">
                                     <div className="title">
-                                      <i className="ico ico-big-disk"></i>
+                                      <i className="ico-type-disk"></i>
                                       <h5>디스크</h5>
                                     </div>
                                     <div className="data">
@@ -472,7 +472,7 @@ const CustomDashboardEdit = (props) => {
                                     <span>쿠버네티스</span>
                                   </label>
                                 </div>
-                                <i className="ico ico-btn-trash"></i>
+                                <i className="ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_chart">
@@ -480,7 +480,7 @@ const CustomDashboardEdit = (props) => {
                                 <div className="cont1">
                                   <div className="chart_tab no-tab">
                                     <div className="title">
-                                      <i className="ico ico-type-outbound"></i>
+                                      <i className="ico-type-outbound"></i>
                                       <h5>Outbound</h5>
                                     </div>
                                     <div className="data">
@@ -491,7 +491,7 @@ const CustomDashboardEdit = (props) => {
                                   </div>
                                   <div className="chart_tab no-tab">
                                     <div className="title">
-                                      <i className="ico ico-type-inbound"></i>
+                                      <i className="ico-type-inbound"></i>
                                       <h5>Inbound</h5>
                                     </div>
                                     <div className="data">
@@ -520,7 +520,7 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>리소스 사용량 Top 5</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_list">
                               <div className="select_wrap">
@@ -590,7 +590,7 @@ const CustomDashboardEdit = (props) => {
                               <ul className="list_01">
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-clusternode"></i>
+                                    <i className="ico-type24-clusternode"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>192.168.16.87</span>
@@ -604,7 +604,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-clusternode"></i>
+                                    <i className="ico-type24-clusternode"></i>
                                     <h6 className="list_title">
                                       Worker02
                                       <span>192.168.16.87</span>
@@ -618,7 +618,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-clusternode"></i>
+                                    <i className="ico-type24-clusternode"></i>
                                     <h6 className="list_title">
                                       Worker03
                                       <span>192.168.16.87</span>
@@ -632,7 +632,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-clusternode"></i>
+                                    <i className="ico-type24-clusternode"></i>
                                     <h6 className="list_title">
                                       Master01
                                       <span>192.168.16.87</span>
@@ -646,7 +646,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-clusternode"></i>
+                                    <i className="ico-type24-clusternode"></i>
                                     <h6 className="list_title">
                                       Worker04
                                       <span>192.168.16.87</span>
@@ -677,14 +677,14 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>최근 생성된 리소스 (일주일)</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_list">
                               {/* // select_wrap */}
                               <ul className="list_01">
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-clusternode"></i>
+                                    <i className="ico-type24-clusternode"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>2023-08-23</span>
@@ -696,7 +696,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-pod"></i>
+                                    <i className="ico-type24-pod"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>2023-08-22</span>
@@ -708,7 +708,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-container"></i>
+                                    <i className="ico-type24-container"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>2023-08-21</span>
@@ -720,7 +720,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-vm"></i>
+                                    <i className="ico-type24-vm"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>2023-08-20</span>
@@ -732,7 +732,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-vm"></i>
+                                    <i className="ico-type24-vm"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>2023-08-20</span>
@@ -744,7 +744,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-page-list-vm"></i>
+                                    <i className="ico-type24-vm"></i>
                                     <h6 className="list_title">
                                       Worker01
                                       <span>2023-08-20</span>
@@ -773,14 +773,14 @@ const CustomDashboardEdit = (props) => {
                           <div className="grid_item">
                             <div className="grid_title">
                               <label>이슈</label>
-                              <i className="ico ico-btn-trash"></i>
+                              <i className="ico-btn-trash"></i>
                             </div>
                             <div className="grid_info style_list">
                               {/* // select_wrap */}
                               <ul className="list_01">
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-info-warning"></i>
+                                    <i className="ico-info-warning"></i>
                                     <h6 className="list_title">
                                       worker02 노드의 사용량을 추가하십시오.
                                       <span>2023-08-23</span>
@@ -792,7 +792,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-info-warning"></i>
+                                    <i className="ico-info-warning"></i>
                                     <h6 className="list_title">
                                       1개의 노드가 새로운 Pod를 예약할 수 없습니다.
                                       <span>2023-08-23</span>
@@ -804,7 +804,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-info-warning"></i>
+                                    <i className="ico-info-warning"></i>
                                     <h6 className="list_title">
                                       abcnavme이 설치 종료되었습니다.
                                       <span>2023-08-21</span>
@@ -816,7 +816,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-info-warning-2"></i>
+                                    <i className="ico-info-warning-2"></i>
                                     <h6 className="list_title">
                                       pod_avme이 준비 상태입니다.
                                       <span>2023-08-20</span>
@@ -828,7 +828,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-info-warning"></i>
+                                    <i className="ico-info-warning"></i>
                                     <h6 className="list_title">
                                       worker02 노드의 메모리 사용량을 추가하십시오.
                                       <span>2023-08-16</span>
@@ -840,7 +840,7 @@ const CustomDashboardEdit = (props) => {
                                 </li>
                                 <li className="li_type_01">
                                   <div className="lft">
-                                    <i className="ico ico-info-warning"></i>
+                                    <i className="ico-info-warning"></i>
                                     <h6 className="list_title">
                                       worker02 노드의 사용량을 추가하십시오.
                                       <span>2023-08-14</span>
@@ -870,13 +870,13 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_title">
                               <label>컴퓨팅 유형별 현황</label>
                               <div className="right">
-                                <i className="ico ico-btn-trash"></i>
+                                <i className="ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status box_nth">
 
                               <div className="box type_status">
-                                <h5><i className="ico ico-page-list-loadbalancer"></i>로드밸런서</h5>
+                                <h5><i className="ico-type24-loadbalancer"></i>로드밸런서</h5>
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
@@ -896,7 +896,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_status">
-                                <h5><i className="ico ico-page-list-floatingip"></i>플로팅 IP</h5>
+                                <h5><i className="ico-type24-floatingip"></i>플로팅 IP</h5>
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
@@ -916,7 +916,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_status">
-                                <h5><i className="ico ico-page-list-router"></i>가상라우터</h5>
+                                <h5><i className="ico-type24-router"></i>가상라우터</h5>
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
@@ -936,7 +936,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_status">
-                                <h5><i className="ico ico-page-list-security"></i>보안그룹</h5>
+                                <h5><i className="ico-type24-security"></i>보안그룹</h5>
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
@@ -956,7 +956,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_status">
-                                <h5><i className="ico ico-page-list-network"></i>Mediated 디바이스</h5>
+                                <h5><i className="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
@@ -976,7 +976,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_status">
-                                <h5><i className="ico ico-page-list-network2"></i>Host 디바이스</h5>
+                                <h5><i className="ico-type24-hostdevice"></i>Host 디바이스</h5>
                                 <div className="cont_group">
                                   <div className="cont1">
                                     <div className="number_wrap">
@@ -1014,13 +1014,13 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_title">
                               <label>리소스 변화량</label>
                               <div className="right">
-                                <i className="ico ico-btn-trash"></i>
+                                <i className="ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status box_long">
                               <div className="box type_status">
                                 <div className="cont_group">
-                                  <h5><i className="ico ico-type-pod"></i>Pod</h5>
+                                  <h5><i className="ico-type-pod"></i>Pod</h5>
                                   <div className="number_wrap">
                                     <p><span className="em">12</span></p>
                                   </div>
@@ -1043,7 +1043,7 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_info style_status box_long">
                               <div className="box type_status">
                                 <div className="cont_group">
-                                  <h5><i className="ico ico-type-vm"></i>가상머신</h5>
+                                  <h5><i className="ico-type-vm"></i>가상머신</h5>
                                   <div className="number_wrap">
                                     <p><span className="em">7</span></p>
                                   </div>
@@ -1066,7 +1066,7 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_info style_status box_long">
                               <div className="box type_status">
                                 <div className="cont_group">
-                                  <h5><i className="ico ico-type-container"></i>쿠버네티스</h5>
+                                  <h5><i className="ico-type-container"></i>쿠버네티스</h5>
                                   <div className="number_wrap">
                                     <p><span className="em">1</span></p>
                                   </div>
@@ -1100,12 +1100,12 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_title">
                               <label>쿠버네티스 컴포넌트 상태</label>
                               <div className="right">
-                                <i className="ico ico-btn-trash"></i>
+                                <i className="ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status box_nth_wrap">
                               <div className="box type_component selected">
-                                <h5><i className="ico ico-type-kubernetes-component"></i>Kubeproxy</h5>
+                                <h5><i className="ico-type-kubernetes-component"></i>Kubeproxy</h5>
                                 <div className="status_box">
                                   <p className="status_active">3</p>
                                   <p className="status_inactive">0</p>
@@ -1125,7 +1125,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_component">
-                                <h5><i className="ico ico-type-kubernetes-component"></i>coreDNS</h5>
+                                <h5><i className="ico-type-kubernetes-component"></i>coreDNS</h5>
                                 <div className="status_box">
                                   <p className="status_active">3</p>
                                   <p className="status_inactive">0</p>
@@ -1133,7 +1133,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_component">
-                                <h5><i className="ico ico-type-kubernetes-component"></i>Kubelet</h5>
+                                <h5><i className="ico-type-kubernetes-component"></i>Kubelet</h5>
                                 <div className="status_box">
                                   <p className="status_active">3</p>
                                   <p className="status_inactive">0</p>
@@ -1141,7 +1141,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_component">
-                                <h5><i className="ico ico-type-kubernetes-component"></i>kube-scheduler</h5>
+                                <h5><i className="ico-type-kubernetes-component"></i>kube-scheduler</h5>
                                 <div className="status_box">
                                   <p className="status_active">3</p>
                                   <p className="status_inactive">0</p>
@@ -1149,7 +1149,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_component">
-                                <h5><i className="ico ico-type-kubernetes-component"></i>kube-scheduler</h5>
+                                <h5><i className="ico-type-kubernetes-component"></i>kube-scheduler</h5>
                                 <div className="status_box">
                                   <p className="status_active">3</p>
                                   <p className="status_inactive">0</p>
@@ -1157,7 +1157,7 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               <div className="box type_component">
-                                <h5><i className="ico ico-type-kubernetes-component"></i>kube-controller-manager</h5>
+                                <h5><i className="ico-type-kubernetes-component"></i>kube-controller-manager</h5>
                                 <div className="status_box">
                                   <p className="status_active">3</p>
                                   <p className="status_inactive">0</p>
@@ -1179,7 +1179,7 @@ const CustomDashboardEdit = (props) => {
                           {/* grid_item */}
                           <div className="grid_item">
                             <div className="grid_title">
-                              <label>BMC 노드 현황</label>
+                              <label>베어메탈 노드 현황</label>
                               <div className="view-result">총 99건</div>
                               <div className="dash_boxtab">
                                 <label htmlFor="name9">
@@ -1196,7 +1196,7 @@ const CustomDashboardEdit = (props) => {
                                 </label>
                               </div>
                               <div className="right">
-                                <i className="ico ico-btn-trash"></i>
+                                <i className="ico-btn-trash"></i>
                               </div>
                             </div>
                             <div className="grid_info style_status style_node">
@@ -1263,14 +1263,14 @@ const CustomDashboardEdit = (props) => {
                                           <caption>네트워크 목록</caption>
                                           <colgroup>
                                             <col style={{ width: "auto" }} />
-                                            <col style={{ width: "auto" }} />
-                                            <col style={{ width: "auto" }} />
-                                            <col style={{ width: "auto" }} />
-                                            <col style={{ width: "auto" }} />
+                                            <col style={{ width: "15%" }} />
+                                            <col style={{ width: "18%" }} />
+                                            <col style={{ width: "18%" }} />
+                                            <col style={{ width: "15%" }} />
                                           </colgroup>
                                           <thead>
                                             <tr>
-                                              <th><strong>BMC 노드</strong></th>
+                                              <th><strong>베어메탈 노드</strong></th>
                                               <th><strong>CPU</strong></th>
                                               <th><strong>메모리</strong></th>
                                               <th><strong>디스크</strong></th>
@@ -1292,7 +1292,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_01</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -1313,7 +1313,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_02</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -1334,7 +1334,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_03</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -1355,7 +1355,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_04</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -1376,7 +1376,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_05</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -1397,7 +1397,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_06</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -1418,7 +1418,7 @@ const CustomDashboardEdit = (props) => {
                                                 <p>Arm_node_07</p>
                                               </td>
                                               <td>
-                                                <p>15%</p><span>8 Core</span>
+                                                <p>15%</p><span>2.0 GHz</span>
                                               </td>
                                               <td>
                                                 <p>25%</p><span>232 GB / 100 GB</span>

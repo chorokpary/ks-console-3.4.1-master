@@ -60,7 +60,7 @@ const Issue = () => {
                   {list.map((obj, idx) => (
                     <li className="li_type_01" key={idx}>
                       <div className="lft">
-                        <i className={`ico ico-info-${obj.labels.severity == 'warning' ? 'warning' : 'warning-2'}`}></i>
+                        <i className={`ico-info-${obj.labels.severity == 'warning' ? 'warning' : 'warning-2'}`}></i>
                         <h6 className="list_title">
                           {obj.annotations.summary}
                           <span>{getLocalTime(obj.activeAt).format('YYYY-MM-DD')}</span>

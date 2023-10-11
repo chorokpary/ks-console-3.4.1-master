@@ -45,7 +45,7 @@ const Vm = () => {
                   <div className="cont_group">
                     <div className="cont1">
                       <div className="number_wrap">
-                        <i className="ico ico-type-vm"></i>
+                        <i className="ico-type-vm"></i>
                         <p><span className="em">{data.running}</span> / {data.total}</p>
                       </div>
                     </div>

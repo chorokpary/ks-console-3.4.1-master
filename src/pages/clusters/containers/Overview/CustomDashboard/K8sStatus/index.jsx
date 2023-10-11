@@ -46,7 +46,7 @@ const K8sStatus = () => {
               {componentData.map((item, idx) => (
                 <div className="box type_component" key={idx}>
                   {/* <Loading spinning={loading}> */}
-                  <h5><i className="ico ico-type-kubernetes-component"></i>{item.name}</h5>
+                  <h5><i className="ico-type-kubernetes-component"></i>{item.name}</h5>
                   <div className="status_box">
                     <p className="status_active">{item.healthyBackends}</p>
                     <p className={`${item.totalBackends - item.healthyBackends > 0 ? 'status_error' : 'status_inactive'}`}>

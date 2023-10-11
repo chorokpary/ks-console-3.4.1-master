@@ -48791,7 +48791,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                   <div className="cont1">
                     <div className="chart_tab no-tab">
                       <div className="title">
-                        <i className="ico ico-type-outbound"></i>
+                        <i className="ico-type-outbound"></i>
                         <h5>Outbound</h5>
                       </div>
                       <div className="data">
@@ -48802,7 +48802,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                     </div>
                     <div className="chart_tab no-tab">
                       <div className="title">
-                        <i className="ico ico-type-inbound"></i>
+                        <i className="ico-type-inbound"></i>
                         <h5>Inbound</h5>
                       </div>
                       <div className="data">
@@ -48813,7 +48813,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                     </div>
                     <div className="chart_tab no-tab">
                       <div className="title">
-                        <i className="ico ico-type-network"></i>
+                        <i className="ico-type-network"></i>
                         <h5>Total</h5>
                       </div>
                       <div className="data">
@@ -48838,7 +48838,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                   <div className="cont1">
                     <div className={`chart_tab ${tabActive == 'OUT' ? 'on' : ''}`} onClick={() => onClickLeftTab('OUT')}>
                       <div className="title">
-                        <i className="ico ico-type-outbound"></i>
+                        <i className="ico-type-outbound"></i>
                         <h5>Outbound</h5>
                       </div>
                       <div className="data">
@@ -48849,7 +48849,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                     </div>
                     <div className={`chart_tab ${tabActive == 'IN' ? 'on' : ''}`} onClick={() => onClickLeftTab('IN')}>
                       <div className="title">
-                        <i className="ico ico-type-inbound"></i>
+                        <i className="ico-type-inbound"></i>
                         <h5>Inbound</h5>
                       </div>
                       <div className="data">
@@ -48860,7 +48860,7 @@ const NetworkTraffic = ({ monitorStore }) => {
                     </div>
                     <div className="chart_tab no-tab">
                       <div className="title">
-                        <i className="ico ico-type-network"></i>
+                        <i className="ico-type-network"></i>
                         <h5>Total</h5>
                       </div>
                       <div className="data">

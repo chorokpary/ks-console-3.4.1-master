@@ -18,7 +18,7 @@ const Computing = () => {
             <div className="grid_info style_status box_nth">
 
               <div className="box type_status">
-                <h5><i className="ico ico-page-list-loadbalancer"></i>로드밸런서</h5>
+                <h5><i className="ico-type24-loadbalancer"></i>로드밸런서</h5>
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">
@@ -38,7 +38,7 @@ const Computing = () => {
                 </div>
               </div>
               <div className="box type_status">
-                <h5><i className="ico ico-page-list-floatingip"></i>플로팅 IP</h5>
+                <h5><i className="ico-type24-floatingip"></i>플로팅 IP</h5>
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">
@@ -58,7 +58,7 @@ const Computing = () => {
                 </div>
               </div>
               <div className="box type_status">
-                <h5><i className="ico ico-page-list-router"></i>가상라우터</h5>
+                <h5><i className="ico-type24-router"></i>가상라우터</h5>
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">
@@ -78,7 +78,7 @@ const Computing = () => {
                 </div>
               </div>
               <div className="box type_status">
-                <h5><i className="ico ico-page-list-security"></i>보안그룹</h5>
+                <h5><i className="ico-type24-security"></i>보안그룹</h5>
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">
@@ -98,7 +98,7 @@ const Computing = () => {
                 </div>
               </div>
               <div className="box type_status">
-                <h5><i className="ico ico-page-list-network"></i>Mediated 디바이스</h5>
+                <h5><i className="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">
@@ -118,7 +118,7 @@ const Computing = () => {
                 </div>
               </div>
               <div className="box type_status">
-                <h5><i className="ico ico-page-list-network2"></i>Host 디바이스</h5>
+                <h5><i className="ico-type24-hostdevice"></i>Host 디바이스</h5>
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">

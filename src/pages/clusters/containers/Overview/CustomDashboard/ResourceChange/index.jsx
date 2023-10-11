@@ -83,7 +83,7 @@ const ResourceChange = ({ monitorStore }) => {
               <div className="grid_info style_status box_long">
                 <div className="box type_status">
                   <div className="cont_group">
-                    <h5><i className="ico ico-type-pod"></i>Pod</h5>
+                    <h5><i className="ico-type-pod"></i>Pod</h5>
                     <div className="number_wrap">
                       <p><span className="em">{tabData?.RUNNING_PODS}</span></p>
                     </div>
@@ -109,7 +109,7 @@ const ResourceChange = ({ monitorStore }) => {
             <div className="grid_info style_status box_long">
               <div className="box type_status">
                 <div className="cont_group">
-                  <h5><i className="ico ico-type-vm"></i>가상머신</h5>
+                  <h5><i className="ico-type-vm"></i>가상머신</h5>
                   <div className="number_wrap">
                     <p><span className="em">7</span></p>
                   </div>
@@ -132,7 +132,7 @@ const ResourceChange = ({ monitorStore }) => {
             <div className="grid_info style_status box_long">
               <div className="box type_status">
                 <div className="cont_group">
-                  <h5><i className="ico ico-type-container"></i>KaaS</h5>
+                  <h5><i className="ico-type-container"></i>KaaS</h5>
                   <div className="number_wrap">
                     <p><span className="em">1</span></p>
                   </div>

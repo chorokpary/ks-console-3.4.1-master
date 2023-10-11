@@ -10,7 +10,7 @@ const BmcNode = () => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title">
-              <label>BMC 노드 현황</label>
+              <label>베어메탈 노드 현황</label>
               <div className="view-result">총 99건</div>
               <div className="dash_boxtab">
                 <label htmlFor="name9">
@@ -94,14 +94,14 @@ const BmcNode = () => {
                           <caption>네트워크 목록</caption>
                           <colgroup>
                             <col style={{ width: "auto" }} />
-                            <col style={{ width: "auto" }} />
-                            <col style={{ width: "auto" }} />
-                            <col style={{ width: "auto" }} />
-                            <col style={{ width: "auto" }} />
+                            <col style={{ width: "15%" }} />
+                            <col style={{ width: "18%" }} />
+                            <col style={{ width: "18%" }} />
+                            <col style={{ width: "15%" }} />
                           </colgroup>
                           <thead>
                             <tr>
-                              <th><strong>BMC 노드</strong></th>
+                              <th><strong>베어메탈 노드</strong></th>
                               <th><strong>CPU</strong></th>
                               <th><strong>메모리</strong></th>
                               <th><strong>디스크</strong></th>
@@ -119,11 +119,11 @@ const BmcNode = () => {
                             {/* 데이터 모두 사용시 */}
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_01</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -140,11 +140,11 @@ const BmcNode = () => {
                             </tr>
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_02</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -161,11 +161,11 @@ const BmcNode = () => {
                             </tr>
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_03</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -182,11 +182,11 @@ const BmcNode = () => {
                             </tr>
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_04</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -203,11 +203,11 @@ const BmcNode = () => {
                             </tr>
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_05</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -224,11 +224,11 @@ const BmcNode = () => {
                             </tr>
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_06</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>
@@ -245,11 +245,11 @@ const BmcNode = () => {
                             </tr>
                             <tr>
                               <td className="tbl_tit">
-                                <div className="hexagon"><span>ARM</span></div>
+                                <i className="ico-type24-arm"></i>
                                 <p>Arm_node_07</p>
                               </td>
                               <td>
-                                <p>15%</p><span>8 Core</span>
+                                <p>15%</p><span>2.0 GHz</span>
                               </td>
                               <td>
                                 <p>25%</p><span>232 GB / 100 GB</span>

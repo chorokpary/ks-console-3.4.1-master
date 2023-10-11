@@ -255,7 +255,7 @@ const UsageTop5 = () => {
                     {list.map((obj, idx) => (
                       <li className="li_type_01" key={idx}>
                         <div className="lft">
-                          <i className="ico ico-page-list-clusternode"></i>
+                          <i className="ico-type24-clusternode"></i>
                           <h6 className="list_title">
                             {obj.node}
                             <span>{get(obj, 'host_ip', '-')}</span>
@@ -280,7 +280,7 @@ const UsageTop5 = () => {
                     {list.map((obj, idx) => (
                       <li className="li_type_01" key={idx}>
                         <div className="lft">
-                          <i className="ico ico-page-list-pod"></i>
+                          <i className="ico-type24-pod"></i>
                           <h6 className="list_title">
                             {obj.pod}
                           </h6>
@@ -304,7 +304,7 @@ const UsageTop5 = () => {
                     {list.map((obj, idx) => (
                       <li className="li_type_01" key={idx}>
                         <div className="lft">
-                          <i className={`ico ico-page-list-${typeMetric == 'vm' ? 'vm' : 'container'}`}></i>
+                          <i className={`ico-type24-${typeMetric == 'vm' ? 'vm' : 'container'}`}></i>
                           <h6 className="list_title">
                             {obj.name}
                           </h6>

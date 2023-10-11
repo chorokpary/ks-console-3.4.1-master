@@ -59,8 +59,8 @@ const CustomDashboard = (props) => {
                     <div className="tab-quick-menu">
                       <button type="button" className="btn_quick"><i className="ico-quick-menu"></i></button>
                       <ul className="quick-menu-list">
-                        <li><i className="ico ico-quick-pannel"></i><span>대시보드 편집</span></li>
-                        <li><i className="ico ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                        <li><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                        <li><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
                       </ul>
                     </div>
                   </span>
@@ -71,8 +71,8 @@ const CustomDashboard = (props) => {
                     <div className="tab-quick-menu">
                       <button type="button" className="btn_quick"><i className="ico-quick-menu"></i></button>
                       <ul className="quick-menu-list">
-                        <li><i className="ico ico-quick-pannel"></i><span>대시보드 편집</span></li>
-                        <li><i className="ico ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                        <li><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                        <li><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
                       </ul>
                     </div>
                   </span>

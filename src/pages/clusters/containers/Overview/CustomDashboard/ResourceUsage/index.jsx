@@ -2907,7 +2907,7 @@ const ResourcesUsage = ({ monitorStore }) => {
                   {tabData && tabData.map(data => (
                     <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab)}>
                       <div className="title">
-                        <i className={`ico ico-big-${data.unitType}`}></i>
+                        <i className={`ico-type-${data.unitType}`}></i>
                         <h5>{data.name}</h5>
                       </div>
                       <div className="data">

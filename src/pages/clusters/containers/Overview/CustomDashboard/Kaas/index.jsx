@@ -43,7 +43,7 @@ const Kaas = () => {
                 <div className="cont_group">
                   <div className="cont1">
                     <div className="number_wrap">
-                      <i className="ico ico-type-container"></i>
+                      <i className="ico-type-container"></i>
                       <p><span className="em">{data.ready}</span> / {data.total}</p>
                     </div>
                   </div>

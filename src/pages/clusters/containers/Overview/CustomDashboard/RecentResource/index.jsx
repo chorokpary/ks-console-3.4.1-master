@@ -134,7 +134,7 @@ const List = ({ nodeList, podList, vmList, kaasList }) => {
           {list.map((obj, idx) => (
             <li className="li_type_01" key={idx}>
               <div className="lft">
-                <i className={`ico ico-page-list-${iconType[obj.type]}`}></i>
+                <i className={`ico-type24-${iconType[obj.type]}`}></i>
                 <h6 className="list_title">
                   {obj.name}
                   <span>{moment(obj.date).format('YYYY-MM-DD')}</span>
