@@ -159,6 +159,7 @@ const RegistModal = (props) => {
                 label: t(obj.name),
                 icon: `ico-os-${distroType}`,
                 value: t(obj.name),
+                description: t(obj.image_detail.description),
             }
         })
         return opt
@@ -476,7 +477,7 @@ const RegistModal = (props) => {
                             <span className={styles.basic}></span>
                             <div className={styles.title}>
                                 <div className={styles.step_name}>기본 설정</div>
-                                <div className={styles.situation}>{regStep == 1 ? "Current" : regStep > 1 ? "Done" : "To do"}</div>
+                                <div className={styles.situation}>{regStep == 1 ? "현재" : regStep > 1 ? "설정완료" : "미설정"}</div>
                             </div>
                         </div>
                         <div className={classnames(styles.process_item, `${regStep == 2 ? styles.current : ''}`)}>
@@ -486,7 +487,7 @@ const RegistModal = (props) => {
                             <span className={styles.network}></span>
                             <div className={styles.title}>
                                 <div className={styles.step_name}>네트워크 설정</div>
-                                <div className={styles.situation}>{regStep == 2 ? "Current" : regStep > 2 ? "Done" : "To do"}</div>
+                                <div className={styles.situation}>{regStep == 2 ? "현재" : regStep > 2 ? "설정완료" : "미설정"}</div>
                             </div>
                         </div>
                         <div className={classnames(styles.process_item, `${regStep == 3 ? styles.current : ''}`)}>
@@ -496,7 +497,7 @@ const RegistModal = (props) => {
                             <span className={styles.detail}></span>
                             <div className={styles.title}>
                                 <div className={styles.step_name}>세부 설정</div>
-                                <div className={styles.situation}>{regStep == 3 ? "Current" : regStep > 3 ? "Done" : "To do"}</div>
+                                <div className={styles.situation}>{regStep == 3 ? "현재" : regStep > 3 ? "설정완료" : "미설정"}</div>
                             </div>
                         </div>
                         <div className={classnames(styles.process_item, `${regStep == 4 ? styles.current : ''}`)}>
@@ -506,7 +507,7 @@ const RegistModal = (props) => {
                             <span className={styles.check}></span>
                             <div className={styles.title}>
                                 <div className={styles.step_name}>입력 정보 확인</div>
-                                <div className={styles.situation}>{regStep == 4 ? "Current" : "To do"}</div>
+                                <div className={styles.situation}>{regStep == 4 ? "현재" : "미설정"}</div>
                             </div>
                         </div>
                     </div>

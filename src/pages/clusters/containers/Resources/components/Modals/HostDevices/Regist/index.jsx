@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 import { Form, Input, TextArea, Button, Checkbox, Toggle, Column, Columns, Icon } from '@kube-design/components'
-import { Modal } from 'components/Base'
+import { Modal, Indicator } from 'components/Base'
 import styles from './index.scss'
 
 import HostDeviceStore from 'stores/resources/hostdevices'
@@ -70,7 +70,8 @@ const RegistModal = (props) => {
                 , device_name: data.device_name
                 , isExternal: data.isExternal
                 , isGpu: data.isGpu
-                , description: ""})))
+                , description: ""
+            })))
         }
         else {
             setCheckItems([]);
@@ -105,7 +106,7 @@ const RegistModal = (props) => {
         setAddRowList(values);
     };
 
-  // 체크 리스트 끝 ==================================================
+    // 체크 리스트 끝 ==================================================
 
     const handleOk = () => {
         const onOk = props.onOk;
@@ -205,8 +206,8 @@ const RegistModal = (props) => {
                                 </table>
                                 {addRowList?.map((v, i) => (
                                     <div className={styles.item} key={i}>
-                                        <Columns>
-                                            <Column style={{ width: '5%', flexBasis : '1' }}>
+                                        <div className={styles.divwrap}>
+                                            <div style={{ paddingRight: '10px' }}>
                                                 <Icon
                                                     className={styles.substract}
                                                     name="substract"
@@ -215,36 +216,38 @@ const RegistModal = (props) => {
                                                     onClick={() => handleDelete(v.device_name)}
                                                     clickable
                                                 />
-                                            </Column>
-                                            <Column style={{ width: '15%' }}>
+                                            </div>
+                                            <div className={styles.div_input}>
                                                 <Form.Item>
                                                     <Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} />
                                                 </Form.Item>
-                                            </Column>
-                                            <Column style={{ width: '10%' }}>
+                                            </div>
+                                            <div className={styles.div_noinput}>
                                                 {v.vendor_id}
-                                            </Column>
-                                            <Column style={{ width: '15%' }}>
+                                            </div>
+                                            <div className={styles.div_noinput}>
                                                 {v.vendor_name}
-                                            </Column>
-                                            <Column style={{ width: '10%' }}>
+                                            </div>
+                                            <div className={styles.div_noinput}>
                                                 {v.device_id}
-                                            </Column>
-                                            <Column style={{ width: '15%' }}>
+                                            </div>
+                                            <div className={styles.div_noinput}>
                                                 {v.device_name}
-                                            </Column>
-                                            <Column style={{ width: '10%' }}>
-                                                {v.isExternal ? '사용' : '미사용'}
-                                            </Column>
-                                            <Column style={{ width: '7%' }}>
+                                            </div>
+                                            <div className={styles.div_noinput}>
+                                                {v.isExternal ?
+                                                    <p style={{ marginLeft: '20%', width: '80%' }}><Indicator className={styles.indicator} type="running" flicker />사용 </p>
+                                                : <p style={{ marginLeft: '10%', width: '90%' }}><Indicator className={styles.indicator} type="inactive" flicker />미사용</p>}
+                                            </div>
+                                            <div className={styles.div_noinput}>
                                                 {v.isGpu ? 'GPU' : '-'}
-                                            </Column>
-                                            <Column style={{ width: '20%', flexBasis: '1' }}>
+                                            </div>
+                                            <div className={styles.div_description}>
                                                 <Form.Item>
                                                     <Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} />
                                                 </Form.Item>
-                                            </Column>
-                                        </Columns>
+                                            </div>
+                                        </div>
                                     </div>
                                 )
                                     //<span key={name}><Button onClick={() => handleDelete(name)}>{name}</Button></span>

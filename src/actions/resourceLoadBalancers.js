@@ -22,9 +22,11 @@ import { Modal } from 'components/Base'
 
 import RegistModal from 'pages/clusters/containers/Resources/components/Modals/LoadBalancers/Regist'
 import ModifyModal from 'pages/clusters/containers/Resources/components/Modals/LoadBalancers/Modify'
+import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import FloatingIpModal from 'clusters/containers/Resources/components/Modals/LoadBalancers/FloatingIpPop'
 
 export default {
   'loadBalancer.regist': {

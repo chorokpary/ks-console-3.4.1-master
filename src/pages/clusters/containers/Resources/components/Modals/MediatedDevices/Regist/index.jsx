@@ -24,6 +24,10 @@ const RegistModal = (props) => {
 
         form.current.validator(() => {
             const { data } = form.current.props;
+
+            data.mediated_device_name = deviceCheckItem;
+            data.is_gpu = isGpu;
+
             onOk({ mediated_device: data })
         })
     }
@@ -33,9 +37,9 @@ const RegistModal = (props) => {
     }
 
     const isGpuValidator = (rule, value, callback) => {
-        if (value == '') {
-            return callback({ message: t('GPU 여부를 선택해 주세요.') })
-        }
+        //if (value == '') {
+        //    return callback({ message: t('GPU 여부를 선택해 주세요.') })
+        //}
         callback()
     }
 

@@ -31,7 +31,6 @@ import LoadBalancerStore from 'stores/resources/loadbalancers'
 import * as common from 'utils/resources'
 
 
-
 @withList({
     store: new LoadBalancerStore(),
     module: 'lbs',
@@ -118,6 +117,35 @@ export default class LoadBalancers extends React.Component {
                         title={name}
                     />
                 ),
+            },
+            {
+                title: t('네트워크 이름'),
+                dataIndex: 'network',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('멤버 IP'),
+                dataIndex: 'members',
+                isHideable: true,
+                width: 'auto',
+                render: members => (
+                    members.map((member) => {
+                        return <p>{member}</p>
+                    })
+                )
+            },
+            {
+                title: t('VIP'),
+                dataIndex: 'virtual_ip',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('규칙수'),
+                dataIndex: 'rules_count',
+                isHideable: true,
+                width: 'auto',
             },
             {
                 title: t('등록일'),

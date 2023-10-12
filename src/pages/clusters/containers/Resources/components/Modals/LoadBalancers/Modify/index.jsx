@@ -1,30 +1,99 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider, Radio, Column, Columns, Tooltip } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button} from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
-import axios from "axios";
+import LoadBalancerStore from 'stores/resources/loadbalancers'
 
 const ModifyModal = (props) => {
+
+    const loadBalancerStore = new LoadBalancerStore();
 
     const form = useRef();
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
+
+    const [vmDataList, setVmDataList] = useState([]);
+
+    useEffect(() => {
+
+        const getCreateData = async () => {
+            const listVm = await loadBalancerStore.fetchVmList();
+
+            setVmDataList(listVm.vms);
+        };
+
+        getCreateData();
+    }, [])
+
+    const vmOptions = () => {
+        const opt = vmDataList.filter((el) => el.networks.length > 1).map((obj) => ({
+            label: t(obj.name),
+            value: t(obj.name),
+        }))
+        return opt
+    }
 
     const handleOk = () => {
         const onOk = props.onOk;
 
         form.current.validator(() => {
             const { data } = form.current.props;
-            onOk({ flavor: data })
+            data.members = [...formMemberIpFields].filter(el => el.memberIp != '선택').map(obj => obj.memberIp);
+
+            onOk({ lb: data })
         })
     }
 
     const closeModal = () => {
         setModalView(false);
     }
+
+    const memberIpObj = {
+        vmName: '선택'
+        , memberIp: '선택'
+        , vmIpOptions: []
+    }
+    const [formMemberIpFields, setFormMemberIpFields] = useState([memberIpObj]);
+    //멤버 IP handler
+    const handleMemberIp = {
+
+        handleAddFields: () => {
+            const values = [...formMemberIpFields, memberIpObj];
+            setFormMemberIpFields(values);
+        },
+
+        handleRemoveFields: (i) => {
+            const values = [...formMemberIpFields].filter((obj, idx) => idx !== i);
+            setFormMemberIpFields(values);
+        },
+
+        handleSelectClick: (i, val) => {
+            const values = [...formMemberIpFields];
+
+            const opt = vmDataList.filter((el) => el.name == val).map((obj) => {
+                return obj.networks.filter((el) => el.name != "k8s-pod-network").map((network) => ({
+                    label: t(network.ip),
+                    value: t(network.ip),
+                }))
+            })
+            values[i].vmIpOptions = opt[0];
+            values[i].memberIp = opt[0][0].value;
+
+            values[i].vmName = val;
+            setFormMemberIpFields(values);
+        },
+
+        handleIpSelectClick: (i, val) => {
+            const values = [...formMemberIpFields];
+            values[i].memberIp = val;
+
+            setFormMemberIpFields(values);
+        },
+
+    }//end 멤버 IP
 
     return (
         <>
@@ -48,11 +117,61 @@ const ModifyModal = (props) => {
                             autoFocus={true}
                             maxLength={63}
                             style={{ maxWidth: 'none' }}
-                            defaultValue={props.store.detail.flavor.name}
+                            defaultValue={props.store.detail.lb.name}
                             disabled
                         />
                     </Form.Item>
+                    <div style={{ padding: 10 }} />
 
+                    {t('멤버 IP')} <span class="form-item-required">*</span>
+                    <Form.Item>
+                        <div className={styles.wrapper}>
+                            <div className={styles.table}>
+                                <table>
+                                    <colgroup>
+                                        <col width="20%" />
+                                        <col width="20%" />
+                                        <col width="10%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th><strong>가상 머신 이름</strong></th>
+                                            <th><strong>가상 머신 IP</strong></th>
+                                            <th><strong></strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {formMemberIpFields.map((v, i) => (
+                                            <tr key={i}>
+                                                <td>
+                                                    <Select value={v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
+                                                </td>
+                                                <td>
+                                                    <Select value={v.memberIp} options={v.vmIpOptions} onChange={(e) => handleMemberIp.handleIpSelectClick(i, e)} />
+                                                </td>
+                                                <td>
+                                                    <Button
+                                                        type="flat"
+                                                        icon="trash"
+                                                        onClick={() => handleMemberIp.handleRemoveFields(i)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="text-right">
+                                <Button
+                                    className={styles.add}
+                                    onClick={handleMemberIp.handleAddFields}
+                                >
+                                    추가
+                                </Button>
+                            </div>
+                        </div>
+                    </Form.Item>
+                    
 
                     <Form.Item
                         className={styles.textarea}
@@ -63,7 +182,7 @@ const ModifyModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue={props.store.detail.flavor.description}
+                            defaultValue={props.store.detail.lb.description}
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

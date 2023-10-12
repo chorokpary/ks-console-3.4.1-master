@@ -569,3 +569,32 @@ button {
     border-radius: 4px;
     margin-top: 4px;
 }
+
+.divwrap {
+    display: flex;
+    position: relative;
+    padding-bottom: 12px;
+
+    .div_noinput {
+        position: relative;
+        width: 12%;
+        text-align: center;
+        padding-right: 10px;
+    }
+
+    .div_input {
+        position: relative;
+        width: 20%;
+        padding-right: 10px;
+    }
+
+    .div_description {
+        position: relative;
+        width: 25%;
+    }
+}
+
+.indicator {
+    position: absolute;
+    top: 5px;
+}

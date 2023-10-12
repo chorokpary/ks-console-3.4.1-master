@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
-import SecurityGroupStore from 'stores/resources/securityGroups'
+import LoadBalancerStore from 'stores/resources/loadbalancers'
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
@@ -11,10 +11,12 @@ import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import routes from './routes'
+import FloatingIpStore from 'stores/resources/floatingip';
 
-const store = new SecurityGroupStore();
+const store = new LoadBalancerStore();
+const floatingstore = new FloatingIpStore()
 
-const SecurityGroupDetail = (props) => {
+const LoadBalancerDetail = (props) => {
 
     useEffect(() => {
         fetchData();
@@ -25,20 +27,59 @@ const SecurityGroupDetail = (props) => {
     }
     const listUrl = () => {
         const { cluster } = props.match.params
-        return `/clusters/${cluster}/securityGroups`
+        return `/clusters/${cluster}/loadBalancers`
     }
     const routing = props.rootStore.routing;
 
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+    const lbName = props.match.params.name;
+    const floatingData = toJS(store.floatingIpList)
+    const floatingId = floatingData?.filter((row) => row.instance_name == lbName).map((el) => el.id)[0]
+    const floatingIp = floatingData?.filter((row) => row.instance_name == lbName).map((el) => el.floating_ip)[0]
 
     const getOperations = () => [
+        {
+            key: 'edit',
+            icon: 'pen',
+            text: t('EDIT_INFORMATION'),
+            action: 'edit',
+            show: showEdit,
+            onClick: () =>
+                props.rootStore.triggerAction('loadBalancer.edit', {
+                    type: 'LB_DETAIL',
+                    detail: toJS(store.detail),
+                    store: store,
+                    success: fetchData,
+                })
+        },
+        {
+            key: 'floatingIp',
+            icon: 'intranet-routers',
+            text: floatingIp == undefined ? 'FIP 할당' : "FIP 해제",
+            action: 'view',
+            onClick: () => {
+                if (floatingIp == undefined) {
+                    props.rootStore.triggerAction('loadBalancer.floatingIpPop', {
+                        type: 'LB_DETAIL',
+                        store: store,
+                        success: fetchData,
+                    })
+                } else {
+                    props.rootStore.triggerAction('loadBalancer.floatingIpPop.deallocate', {
+                        data: { id: floatingId },
+                        store: floatingstore,
+                        success: fetchData,
+                    })
+                }
+            },
+        },
         {
             key: 'viewYaml',
             icon: 'eye',
             text: t('VIEW_YAML'),
             action: 'view',
             onClick: () =>
-                props.rootStore.triggerAction('securityGroup.yaml.view', {
+                props.rootStore.triggerAction('loadBalancer.yaml.view', {
                     yaml: store.yaml,
                     readOnly: true,
                 })
@@ -51,8 +92,8 @@ const SecurityGroupDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('securityGroup.delete', {
-                    type: 'SECURITYGROUP_DETAIL',
+                props.rootStore.triggerAction('loadBalancer.delete', {
+                    type: 'LB_DETAIL',
                     detail: toJS(store.detail),
                     store: store,
                     cluster: props.match.params.cluster,
@@ -74,12 +115,28 @@ const SecurityGroupDetail = (props) => {
                 value: detail.cluster,
             },
             {
+                name: t('네트워크 이름'),
+                value: detail.lb.network,
+            },
+            {
+                name: t('멤버 IP'),
+                value: detail.lb.members.length > 1 ? detail.lb.members + '외 ' + detail.lb.members.length + '개' : detail.lb.members,
+            },
+            {
+                name: t('VIP'),
+                value: detail.lb.virtual_ip,
+            },
+            {
+                name: t('정책'),
+                value: detail.lb.rules.length < 1 ? '-' : detail.lb.rules.map((rule) => (rule.protocol) + '\r\n')
+            },
+            {
                 name: t('설명'),
-                value: detail.security_group.description,
+                value: detail.lb.description,
             },
             {
                 name: t('생성일'),
-                value: getLocalTime(detail.security_group.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+                value: getLocalTime(detail.lb.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
     }
@@ -91,12 +148,12 @@ const SecurityGroupDetail = (props) => {
     const sideProps = {
         module: store.module,
         name: get(store.detail, 'name'),
-        desc: get(store.detail.security_group, 'description', ''),
+        desc: get(store.detail.lb, 'description', ''),
         operations: getOperations(),
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('보안그룹'),
+                label: t('로드 밸런서'),
                 url: listUrl,
             },
         ],
@@ -112,5 +169,5 @@ const SecurityGroupDetail = (props) => {
     )
 }
 
-export default inject('rootStore')(observer(SecurityGroupDetail));
+export default inject('rootStore')(observer(LoadBalancerDetail));
 
