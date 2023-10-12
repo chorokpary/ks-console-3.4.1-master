@@ -23,6 +23,7 @@ import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
+import { cloneDeep, get, isEmpty, omit } from 'lodash'
 import { Link } from 'react-router-dom'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
@@ -39,6 +40,50 @@ import VmStore from 'stores/resources/vms'
   name: '가상머신',
 })
 export default class Vms extends React.Component {
+
+   //auto refresh start  ##################################
+   constructor(props) {
+    super(props)
+    this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+  }
+ 
+  componentDidUpdate() {
+    if (this.refreshTimer === null && this.isRuning) {
+      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.refreshTimer)
+    this.unsubscribe && this.unsubscribe()
+  }
+
+  refreshHandler = () => {
+    if (this.isRuning) {
+      this.getData({ silent: true })
+    } else {
+      clearInterval(this.refreshTimer)
+      this.refreshTimer = null
+    }
+  }
+
+  get isRuning() {
+    const { data } = toJS(this.props.store.list)
+    const runingData = data.filter(
+      item => item.status !== 'failed' && item.status !== 'successful'
+    )
+    return !isEmpty(runingData)
+  }
+
+  getData = params => {
+    this.props.store.fetchList({
+      ...this.props.match.params,
+      ...params,
+    })
+  }
+  //auto refresh end  ##################################
+
+
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -102,7 +147,6 @@ export default class Vms extends React.Component {
   }
 
   getState (state) {
-    console.log("state1 : "+ state)
     if (state === 'Provisioning'
       || state === 'Starting'
       || state === 'Stopping'
@@ -121,7 +165,6 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc (state) {
-    console.log("state2 : "+ state)
     if (state === 'Stoped'){
       return "중지"
     }else if (state === 'Provisioning') {
@@ -469,6 +512,13 @@ export default class Vms extends React.Component {
     ]
   }
 
+  handleFetch = (params, refresh) => {
+    this.routing.query(params, refresh)
+  }
+
+  get routing() {
+    return this.props.rootStore.routing
+  }
 
   render() {
     const { bannerProps, tableProps } = this.props
@@ -491,6 +541,7 @@ export default class Vms extends React.Component {
         tableActions={this.tableActions}
         columns={this.getColumns()}
         columnSearch={this.columnSearch}
+        onFetch={this.handleFetch}
       />
     </ListPage>
      

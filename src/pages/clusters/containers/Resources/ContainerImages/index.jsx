@@ -204,7 +204,7 @@ export default class Images extends React.Component {
           emptyProps={this.emptyProps}
           tableActions={this.tableActions}
           itemActions={this.itemActions}
-          columns={this.getColumns()}
+          columns={this.getColumns()}          
           searchType="name"
         />
       </ListPage>

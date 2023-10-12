@@ -44,9 +44,12 @@ export default class VmStore extends Base {
     namespace,
     more,
     devops,
+    silent,
     ...params
   } = {}) {
-    this.list.isLoading = true
+    if (!silent) {
+      this.list.isLoading = true
+    }
 
     if (!params.sortBy && params.ascending === undefined) {
       params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'

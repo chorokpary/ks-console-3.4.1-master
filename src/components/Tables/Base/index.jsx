@@ -68,6 +68,7 @@ export default class WorkloadTable extends React.Component {
     extraProps: PropTypes.object,
     alwaysUpdate: PropTypes.bool,
     emptyText: PropTypes.any,
+    hideRefresh: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -81,6 +82,7 @@ export default class WorkloadTable extends React.Component {
     extraProps: {},
     pagination: {},
     filters: {},
+    hideRefresh: false,
   }
 
   constructor(props) {
@@ -324,7 +326,7 @@ export default class WorkloadTable extends React.Component {
   }
 
   renderNormalTitle() {
-    const { hideCustom, customFilter, columns } = this.props
+    const { hideCustom, customFilter, columns, hideRefresh } = this.props
     const { hideColumns } = this.state
 
     return (
@@ -333,12 +335,15 @@ export default class WorkloadTable extends React.Component {
         <LevelItem>{this.renderSearch()}</LevelItem>
         <LevelRight>
           <div>
-            <Button
-              type="flat"
-              icon="refresh"
-              onClick={this.handleRefresh}
-              data-test="table-refresh"
-            />
+            {!hideRefresh && (
+                <Button
+                type="flat"
+                icon="refresh"
+                onClick={this.handleRefresh}
+                data-test="table-refresh"
+              />
+            )}
+            
             {!hideCustom && (
               <CustomColumns
                 className={styles.columnMenu}

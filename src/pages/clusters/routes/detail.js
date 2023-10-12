@@ -65,6 +65,7 @@ import VolumeDetail from '../containers/Resources/Volumes/Detail'
 import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
+import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -247,6 +248,10 @@ export default [
   {
     path: `${PATH}/loadbalancers/:name`,
     component: LoadBalancerDetail,
+  },
+  {
+    path: `${PATH}/baremetalmonitoring/:name`,
+    component: BareMetalDetail,
   },
   
 ]

@@ -27,12 +27,20 @@ const RegistModal = (props) => {
 
   const [bondcheck, setBondCheck] = useState(false);
 
+  const [sriovResourceDataList, setSriovResourceDataList] = useState([]);
   const [sriovBondDataList, setSriovBondDataList] = useState([]);
 
   const [external, setExternal] = useState(false)
   const [defaultRoute, setDefaultRoute] = useState(false)
   const [cidrReducer, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
   const [externalBool, setExternalBool] = useState(false);
+
+  const resourceNameOptions = sriovResourceDataList.map((name) => {
+    return {
+      label: name, value: name,
+    }
+  })
+
 
   const networkTypeOptions = [
     { label: 'VXLAN', value: 'VXLAN', },
@@ -52,13 +60,19 @@ const RegistModal = (props) => {
   ]
 
   useEffect(() => {
-    const getVmCreateData = async () => {
+    
+    const getSriovCreateData = async () => {
+
+      const listSriovResource = await sriovStore.fetchSriovResourceList();
+      console.log("listSriovResource.resources: "+ JSON.stringify(listSriovResource.resources))
+      setSriovResourceDataList(listSriovResource.resources);      
+
       const listSriovBond = await sriovStore.fetchSriovBondList();
       console.log("listSriovBond.resources: "+ JSON.stringify(listSriovBond.resources))
       setSriovBondDataList(listSriovBond.resources);      
     };
 
-    getVmCreateData();
+    getSriovCreateData();
   }, [])
 
   const handleOk = () => {
@@ -338,12 +352,21 @@ const RegistModal = (props) => {
                   <Input name="resource_name" autoFocus={true}  maxLength={63} style={{ maxWidth: 'none' }}/>   
                   </Form.Item>
 
+                  <Form.Item
+                    label={t('리소스 이름')}
+                    rules={[{ required: true, message: t('이름을 선택해 주세요') },]}
+                  >
+                      <Select
+                        name="name"                        
+                        options={resourceNameOptions}/>
+                  </Form.Item>
+
                   <Form.Item>
                     <Columns>
                       <Column>
                         <Form.Item
                           label={t('네트워크 타입')}
-                          rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+                          rules={[{ required: true, message: t('이름을 선택해 주세요') },]}
                         >
                           <Select
                             name="type"
@@ -355,7 +378,6 @@ const RegistModal = (props) => {
                       <Column>
                         <Form.Item
                           label={t('세그먼트 ID')}
-                          rules={[{ required: true, message: t('세그먼트 ID를 입력해주세요') },]}
                         >
                           <NumberInput name="segment_id"
                             disabled={externalBool}
@@ -393,7 +415,7 @@ const RegistModal = (props) => {
                           <Column>
                             <Form.Item
                               label={t('MTU')}
-                              rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
+                              rules={[{ required: true, message: t('MTU를 입력해 주세요.') },]}
                             >
                               <NumberInput name="mtu"
                                 defaultValue={1500}
@@ -410,7 +432,7 @@ const RegistModal = (props) => {
                           <Column>
                             <Form.Item
                               label={t('CIDR')}
-                              rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
+                              rules={[{ required: true, message: t('CIDR을 입력해 주세요.') },]}
                             >
                               <Input name="cidr"
                                 style={{ maxWidth: 'none' }}
@@ -423,7 +445,7 @@ const RegistModal = (props) => {
                               <Column>
                                 <Form.Item
                                   label={t('IP POOL 정보')}
-                                  rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                                  rules={[{ required: true, message: t('IP POOL을 입력해 주세요.') },]}
                                 >
                                   <Input name="ip_pool_start" />
                                 </Form.Item>

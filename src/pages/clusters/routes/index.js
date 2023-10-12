@@ -78,6 +78,8 @@ import HostDevices from '../containers/Resources/HostDevices'
 import MediatedDevices from '../containers/Resources/MediatedDevices'
 import LoadBalancers from '../containers/Resources/LoadBalancers'
 
+import BareMetal from '../containers/Resources/BareMetal'
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -357,7 +359,13 @@ export default [
             component: LoadBalancers,
             exact: true,
           },  
+          {
+            path: `${PATH}/baremetalmonitoring`,
+            component: BareMetal,
+            exact: true,
+          },  
                   
+          
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({
