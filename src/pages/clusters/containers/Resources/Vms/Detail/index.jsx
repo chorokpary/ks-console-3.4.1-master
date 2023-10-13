@@ -15,9 +15,12 @@ import routes from './routes'
 
 import VmStore from 'stores/resources/vms'
 import FloatingIpStore from 'stores/resources/floatingip';
+import VolumeStore from 'stores/resources/volumes'
 
 const store = new VmStore();
 const floatingstore = new FloatingIpStore()
+const volumeStore = new VolumeStore()
+
 
 const VmDetail = (props) => {
 
@@ -40,6 +43,9 @@ const VmDetail = (props) => {
     const floatingId = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.id)[0]
     const floatingIp = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.floating_ip)[0]
 
+    const volumeData = toJS(store.volumeList)
+    const volumeName = volumeData?.filter((row) => row.used_by_vmi == vmName).map((el) => el.name)[0]
+  
     const fnOpenVncPopup = () => {
       //실제 URL 로 변경 요망
       var apiUrl = "http://"+location.hostname+":30020";
@@ -99,13 +105,22 @@ const VmDetail = (props) => {
       {
         key: 'volume',
         icon: 'storage',
-        text: t('볼륨 연결/분리'),
+        text: volumeName == undefined ? '볼륨 연결' : "볼륨 분리",
         action: 'view',
         onClick: () => {
-            props.rootStore.triggerAction('vm.volumePop', {
-            type: 'VM_DETAIL',
-            store: store,
-          })
+          if(volumeName == undefined){
+              props.rootStore.triggerAction('vm.volumePop', {
+              type: 'VM_DETAIL',
+              store: store,
+              success: fetchData,
+            })
+          }else{
+              props.rootStore.triggerAction('vm.volumePop.detach', {
+              data: { vmName: vmName, volumeName : volumeName, actionType : "D" },
+              store: volumeStore,
+              success: fetchData,
+            })
+          }            
         },        
       },
       {

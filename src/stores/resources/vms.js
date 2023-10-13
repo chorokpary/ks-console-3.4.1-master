@@ -107,6 +107,7 @@ export default class VmStore extends Base {
 
     // FloatingIp List 추출
     await this.fetchFloatingList(params);
+    
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -279,6 +280,9 @@ export default class VmStore extends Base {
 
     // FloatingIp 관련
     await this.fetchVmListFloating(params);
+
+    // Volume 관련
+    await this.fetchVolumeList(params);    
 
     this.detail = detail
     this.isLoading = false
@@ -1527,6 +1531,20 @@ export default class VmStore extends Base {
     const dataList = { ...params, ...this.mapper(result), kind: 'floating' }
 
     this.floatingIpList = dataList.floating_ips
+    this.isLoading = false
+    return dataList
+  }
+
+  @action
+  async fetchVolumeList(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/volumes`
+    )
+    const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
+
+    this.volumeList = dataList.volumes
     this.isLoading = false
     return dataList
   }

@@ -279,7 +279,7 @@ const RegistModal = (props) => {
             <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
             <Button onClick={() => { setRegStep(3) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
             {submitButtonFlag ?
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>생성</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>생성</Button>
               :
               <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >생성</Button>
             }

@@ -204,8 +204,26 @@ export default {
   'vm.volumePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '볼륨 연결/분리',
+        title: '볼륨 연결',
         modal: VolumeModal,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.volumePop.detach': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.actionState({data, ...props}).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('분리 되었습니다.') })
+            success && success()
+          })
+        },
+        title: '볼륨 분리',
+        desc: '분리 하시겠습니까?',
+        modal: ConfirmModal,
         store,
         ...props,
       })

@@ -26,6 +26,7 @@ import BindingModal from 'clusters/containers/Resources/components/Modals/Volume
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 
 export default {
   'resourcesvolume.regist': {
@@ -176,4 +177,23 @@ export default {
       })
     },
   },
+  'resourcesvolume.detach': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.actionState({data, ...props}).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('분리 되었습니다.') })
+            success && success()
+          })
+        },
+        title: '볼륨 분리',
+        desc: '분리 하시겠습니까?',
+        modal: ConfirmModal,
+        store,
+        ...props,
+      })
+    },
+  },
+  
 }

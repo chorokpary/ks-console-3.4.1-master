@@ -145,7 +145,6 @@ export default class VolumeStore extends Base {
         actionData.action = "attach";
     }else{
         actionData.vm_name = data.vmName;
-        actionData.persist = data.persist;
         actionData.action = "detach";
     }
 

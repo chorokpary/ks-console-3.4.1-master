@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, omit, pick } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 import { observer, inject } from 'mobx-react';
 
@@ -16,6 +16,7 @@ const BindingModal = (props) => {
   const [formData, setFormData] = useState({});
 
   const vmStore = new VmStore();
+  const volumeStore = new VolumeStore();
  
   const volumeName = props.store.detail.name;
 
@@ -23,11 +24,13 @@ const BindingModal = (props) => {
   const [vmName, setVmName] = useState('선택'); 
   const [radioPersist, setRadioPersist] = useState("T");
 
+  const [volumeList, setVolumeList] = useState([]);
+  const [attachedVmList, setAttachedVmList] = useState([]);
+
   const handleOk = () => {
     const success = props.success;
 
-    form.current.validator(() => {
-      const volumeStore = new VolumeStore();
+    form.current.validator(() => {    
 
       const data = {};
       data.vmName = vmName,
@@ -54,6 +57,11 @@ const BindingModal = (props) => {
     const getVmCreateData = async () => {
       const vmListData = await vmStore.fetchList();
       setVmList(vmListData);
+
+      const volumeData = await volumeStore.fetchList();
+      const attachedVmList = volumeData?.filter((row) => (row.used_by_vmi != "" && row.used_by_vmi != null)).map((el) => el.used_by_vmi)
+
+      setAttachedVmList(attachedVmList);
     };
 
     getVmCreateData();
@@ -65,10 +73,12 @@ const BindingModal = (props) => {
   }
 
   const vmOptions = () => {
-    const opt = vmList.map((obj) => ({
-      label: obj.name,
-      value: t(obj.name),
-    }))
+    const opt = vmList.map((obj) => {
+      return {
+        label: obj.name,
+        value: t(obj.name),
+      }
+    })
     return opt
   }
 

@@ -33,6 +33,9 @@ const VolumeDetail = (props) => {
     const routing = props.rootStore.routing;
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
+    const volumeName = props.match.params.name;
+    const used_by_vmi = store.detail.volume?.used_by_vmi 
+
     const getOperations = () => [
       {
         key: 'edit',
@@ -63,13 +66,22 @@ const VolumeDetail = (props) => {
       {
         key: 'volume',
         icon: 'storage',
-        text: t('바인딩'),
+        text: used_by_vmi == undefined  ? '바인딩' : "분리",
         action: 'view',
         onClick: () => {
-            props.rootStore.triggerAction('resourcesvolume.bindingPop', {
-            type: 'VOLUME_DETAIL',
-            store: store,
-          })
+          if(used_by_vmi == undefined){
+              props.rootStore.triggerAction('resourcesvolume.bindingPop', {
+              type: 'VOLUME_DETAIL',
+              store: store,
+              success: fetchData,
+            })
+          }else{
+              props.rootStore.triggerAction('resourcesvolume.detach', {
+              data: { vmName: used_by_vmi, volumeName : volumeName, actionType : "D" },
+              store: store,
+              success: fetchData,
+            })
+          }  
         },        
       },
       {
