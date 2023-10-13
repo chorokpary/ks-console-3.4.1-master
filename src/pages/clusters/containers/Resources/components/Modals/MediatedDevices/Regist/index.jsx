@@ -25,22 +25,16 @@ const RegistModal = (props) => {
         form.current.validator(() => {
             const { data } = form.current.props;
 
+            data.resource_name = data.name;
             data.mediated_device_name = deviceCheckItem;
             data.is_gpu = isGpu;
-
+            
             onOk({ mediated_device: data })
         })
     }
 
     const closeModal = () => {
         setModalView(false);
-    }
-
-    const isGpuValidator = (rule, value, callback) => {
-        //if (value == '') {
-        //    return callback({ message: t('GPU 여부를 선택해 주세요.') })
-        //}
-        callback()
     }
 
     useEffect(() => {
@@ -76,8 +70,10 @@ const RegistModal = (props) => {
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>
-                    
-                    <Form.Item label={t('Mdiated 디바이스 ')}>
+                    <div style={{ padding: 10 }} />
+
+                    {t('Mediated 디바이스')} <span class="form-item-required">*</span>
+                    <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
                                 <table>
@@ -132,11 +128,13 @@ const RegistModal = (props) => {
                             </div>
                         </div>
                     </Form.Item>
+                    <div style={{ padding: 10 }} />
 
-                    <Form.Item label={t('GPU 여부')} rules={[{ required: true, validator: isGpuValidator }]}>
-                        <Toggle showText onText="on" offText="off" name="isGpu" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
+                    {t('GPU 여부')} <span class="form-item-required">*</span>
+                    <Form.Item>
+                        <Toggle showText onText="on" offText="off" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
                     </Form.Item>
-                    
+
                     <Form.Item
                         className={styles.textarea}
                         label={t('설명')}

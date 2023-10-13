@@ -24,7 +24,7 @@ const Status = (props) => {
                                 <div className={styles.wrapper}>
                                     <div className={classnames(styles.item)}>
                                         <div className={styles.icon}>
-                                            <Icon name="apps" size={40} />
+                                            <Icon name="shield" size={40} />
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
                                             <div>{rule.ethernet_type ? rule.protocol : 'ALL'}</div>
