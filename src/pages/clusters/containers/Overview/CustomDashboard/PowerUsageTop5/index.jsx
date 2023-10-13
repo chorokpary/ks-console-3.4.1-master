@@ -12,15 +12,15 @@ const PowerUsageTop5 = () => {
                         <div className="grid_title">
                             <label>전력 사용량 Top 5</label>
                             <div className="dash_boxtab">
-                                <label for="name13">
-                                    <input type="radio" name="box-tab5" id="name13" value="name3" checked />
+                                <label htmlFor="name13">
+                                    <input type="radio" name="box-tab5" id="name13" value="name3" defaultChecked />
                                     <span>전체</span>
                                 </label>
-                                <label for="name14">
+                                <label htmlFor="name14">
                                     <input type="radio" name="box-tab5" id="name14" value="name4" />
                                     <span>ARM</span>
                                 </label>
-                                <label for="name15">
+                                <label htmlFor="name15">
                                     <input type="radio" name="box-tab5" id="name15" value="name5" />
                                     <span>x86</span>
                                 </label>

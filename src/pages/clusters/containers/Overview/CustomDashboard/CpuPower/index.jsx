@@ -13,19 +13,19 @@ const CpuPower = () => {
                             <label>CPU 소비 전력량 비교 (1대 평균)</label>
                             <div className="right">
                                 <div className="dash_boxtab">
-                                    <label for="cpupower_name1">
-                                        <input type="radio" name="cpupower" id="cpupower_name1" value="name3" checked />
+                                    <label htmlFor="cpupower_name1">
+                                        <input type="radio" name="cpupower" id="cpupower_name1" value="name3" defaultChecked />
                                         <span>최근 1시간</span>
                                     </label>
-                                    <label for="cpupower_name2">
+                                    <label htmlFor="cpupower_name2">
                                         <input type="radio" name="cpupower" id="cpupower_name2" value="name4" />
                                         <span>최근 1일</span>
                                     </label>
-                                    <label for="cpupower_name3">
+                                    <label htmlFor="cpupower_name3">
                                         <input type="radio" name="cpupower" id="cpupower_name3" value="name5" />
                                         <span>최근 1주일</span>
                                     </label>
-                                    <label for="cpupower_name4">
+                                    <label htmlFor="cpupower_name4">
                                         <input type="radio" name="cpupower" id="cpupower_name4" value="name6" />
                                         <span>최근 1달</span>
                                     </label>

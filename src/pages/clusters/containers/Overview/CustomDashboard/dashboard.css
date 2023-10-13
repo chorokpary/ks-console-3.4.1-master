@@ -1944,6 +1944,10 @@ body.dashboard {
     flex-shrink: 0;
 }
 
+.grid_item .grid_info.style_chart .box.type_chart>.cont1 .chart_tab .data>.number_wrap.rgt {
+    justify-content: flex-end;
+}
+
 .grid_item .grid_info.style_chart .box.type_chart>.cont1 .chart_tab .data>.number_wrap p {
     flex-shrink: 0;
     font-size: 12px;
@@ -3161,6 +3165,18 @@ body.dashboard {
     width: 40px;
     height: 40px;
 }
+
+/* .dashboard .spin-nested-loading {
+    height: calc(100% - 22px);
+}
+
+.dashboard .spin-nested-loading .spin-container {
+    height: 100% !important;
+}
+
+.dashboard .spin-nested-loading .spin-container .grid_info {
+    height: 100% !important;
+} */
 
 /*# sourceMappingURL=dashboard.css.map */
 

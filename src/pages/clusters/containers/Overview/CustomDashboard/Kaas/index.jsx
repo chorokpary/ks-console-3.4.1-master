@@ -5,25 +5,25 @@ import KaasModel from 'stores/dashboard/kaas';
 import { fnSetK8s } from 'utils/dashboard'
 
 const Kaas = () => {
-  const kasStore = new KaasStore();
+  const kaasStore = new KaasStore();
 
   useEffect(() => {
-    const getK8sData = async () => {
+    const getKaasData = async () => {
       setLoading(true)
-      const kaasList = await kasStore.fetchList({ limit: 1000 })
+      const kaasList = await kaasStore.fetchList({ limit: 1000 })
       setList(kaasList)
       setLoading(false)
     };
-    getK8sData();
+    getKaasData();
   }, [])
 
   const [list, setList] = useState([]);
-  const k8s = new KaasModel();
-  const [data, setData] = useState(k8s);
+  const kaas = new KaasModel();
+  const [data, setData] = useState(kaas);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (list.length > 0) {
-      const data = fnSetK8s(list, k8s)
+      const data = fnSetK8s(list, kaas)
       setData(data)
     }
   }, [list])

@@ -30,7 +30,7 @@ const RecentResource = () => {
 
     // node data
     const getNodeData = async () => {
-      const nodeList = await nodeStore.fetchList({ limit: 1000, sortBy: 'createTime' })
+      const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime' })
       handleDate(nodeList, 'createTime', 'node')
     };
     getNodeData();

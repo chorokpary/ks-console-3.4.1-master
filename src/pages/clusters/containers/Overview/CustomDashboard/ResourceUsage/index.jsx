@@ -2709,6 +2709,7 @@ const ResourcesUsage = ({ monitorStore }) => {
   const [tabContentData, setTabContentData] = useState([]);
   const [tabContent, setTabContent] = useState();
   const [tabContentActive, setTabContentActive] = useState(false);
+  const [rightTab, setRightTab] = useState('node')
   const [loading, setLoading] = useState(false);
 
   const [podData, setPodData] = useState([]);
@@ -2861,6 +2862,7 @@ const ResourcesUsage = ({ monitorStore }) => {
     handleContenOption(tab, data)
     handleData(tab, data)
     setTabActive('cpu')
+    setRightTab(tab)
   }
 
   useEffect(() => {
@@ -2907,20 +2909,28 @@ const ResourcesUsage = ({ monitorStore }) => {
                   {tabData && tabData.map(data => (
                     <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab)}>
                       <div className="title">
-                        <i className={`ico-type-${data.unitType}`}></i>
+                        <i className={`ico-type-${data.unitType} ${data.name}`}></i>
                         <h5>{data.name}</h5>
                       </div>
-                      <div className="data">
-                        <div className="number_wrap">
-                          <p><span className="em">{data._used}</span> / {data._total} <span className="unit">{t(data._unit)}</span></p>
-                          <p>{Math.round(data._percent)}%</p>
-                        </div>
-                        <div className="graph_wrap">
-                          <div className="graph_bar">
-                            <div className="bar animate-bar" style={{ width: `${Math.round(data._percent)}%` }}></div>
+                      {rightTab == 'node' ?
+                        <div className="data">
+                          <div className="number_wrap">
+                            <p><span className="em">{data._used}</span> / {data._total} <span className="unit">{t(data._unit)}</span></p>
+                            <p>{Math.round(data._percent)}%</p>
+                          </div>
+                          <div className="graph_wrap">
+                            <div className="graph_bar">
+                              <div className="bar animate-bar" style={{ width: `${Math.round(data._percent)}%` }}></div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                        :
+                        <div className="data">
+                          <div className="number_wrap rgt">
+                            <p><span className="em">{data._used}</span><span className="unit">{t(data._unit)}</span></p>
+                          </div>
+                        </div>
+                      }
                     </div>
                   ))}
                 </div>
@@ -2936,7 +2946,7 @@ const ResourcesUsage = ({ monitorStore }) => {
           </div>
           {/* // grid_item */}
         </div>
-      </div>
+      </div >
     </>
   )
 }
