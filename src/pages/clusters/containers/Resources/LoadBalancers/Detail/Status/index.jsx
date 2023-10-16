@@ -41,8 +41,15 @@ const Status = (props) => {
                         ))}
                     </Panel>
                 }
+                {store.detail.lb?.rules.length == 0 &&
+                    <Panel title={"정책"}>
+                        <div className={styles.wrapper}>
+                            <div>정책이 없습니다.</div>
+                        </div>
+                    </Panel>
+                }
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type='Lb' variables='lbs' name={props.match.params.name} />
+                {/*<DetailVmList type='Lb' variables='lbs' name={props.match.params.name} />*/}
             </div>
         </>
     );

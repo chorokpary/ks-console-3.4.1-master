@@ -231,7 +231,7 @@ const RegistModal = (props) => {
                                             <div className={styles.div_noinput}>
                                                 {v.device_id}
                                             </div>
-                                            <div className={styles.div_noinput}>
+                                            <div className={styles.div_input}>
                                                 {v.device_name}
                                             </div>
                                             <div className={styles.div_noinput}>
