@@ -192,11 +192,10 @@ export default class MediatedDeviceStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(username =>
-                        request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
-                        )
-                    )
+                    rowKeys.map(username => {
+                        const replaceName = username.replace("/", "%5C");
+                        request.delete('edgetron/resources/kubevirt/mediated_devices/' + replaceName)
+                    })
                 )
             )
         }
@@ -209,8 +208,8 @@ export default class MediatedDeviceStore extends Base {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
-
-        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+        user.name = user.name.replace("/", "%5C");
+        return this.submitting(request.delete('edgetron/resources/kubevirt/mediated_devices/' + user.name))
     }
 
     @action

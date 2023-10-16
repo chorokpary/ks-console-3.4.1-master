@@ -218,7 +218,7 @@ export default class HostDeviceStore extends Base {
             await this.submitting(
                 Promise.all(
                     rowKeys.map(username => {
-                        const replaceName = username.replace("/", "\\");
+                        const replaceName = username.replace("/", "%5C");
                         request.delete('edgetron/resources/kubevirt/host_devices/' + replaceName)
                     })
                 )
@@ -233,7 +233,7 @@ export default class HostDeviceStore extends Base {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
-        user.name = user.name.replace("/", "\\");
+        user.name = user.name.replace("/", "%5C");
         return this.submitting(request.delete('edgetron/resources/kubevirt/host_devices/' + user.name))
     }
 
