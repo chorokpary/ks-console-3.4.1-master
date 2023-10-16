@@ -57,8 +57,8 @@ const ModifyModal = (props) => {
             if (response.data.mediated_devices) {
                 for (let i = 0, n = response.data.mediated_devices.length; i < n; i += 1) {
                     res.push({
-                        label: response.data.mediated_devices[i].name,
-                        value: response.data.mediated_devices[i].name,
+                        label: response.data.mediated_devices[i].resource_name,
+                        value: response.data.mediated_devices[i].resource_name,
                     });
                 };
                 setGpus(res);
