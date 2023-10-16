@@ -121,74 +121,29 @@ export default class ResourcesVolumes extends React.Component {
           />
         ),
       },
-      // {
-      //   title: t('볼륨 모드'),
-      //   dataIndex: 'volumeMode',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      //   render: (volumeMode)  => {
-      //     return "Filesystem"
-      //   },
-      // },
       {
-        title: t('접근 모드'),
-        dataIndex: 'access_modes',
+        title: t('네트워크 타입'),
+        dataIndex: 'type',
         isHideable: true,
-        search: true,
-        width: 'auto',
-        render: access_modes => {
-          let accessModesList = ""
-
-          if (!!access_modes) {
-            accessModesList = access_modes.map((mode) => {
-                return <p key={mode}>{mode}</p>
-            });
-          } else {
-            accessModesList = <p>-</p>
-          }
-      
-          return accessModesList
-        }
-      },
-      {
-        title: t('입력 소스'),
-        dataIndex: 'import_source',
-        isHideable: true,
-        search: true,
         width: 'auto',
       },
       {
-        title: t('스토리지 클래스'),
-        dataIndex: 'storage_class',
+        title: t('CIDR'),
+        dataIndex: 'cidr',
         isHideable: true,
-        search: true,
         width: 'auto',
       },
       {
-        title: t('용량'),
-        dataIndex: 'capacity',
+        title: t('게이트웨이 IP'),
+        dataIndex: 'gateway_ip',
         isHideable: true,
-        search: true,
         width: 'auto',
       },
       {
-        title: t('상태'),
-        dataIndex: 'phase',
+        title: t('세그먼트 ID'),
+        dataIndex: 'segment_id',
         isHideable: true,
-        search: true,
         width: 'auto',
-        render: (phase) => {          
-          const type = phase.toLowerCase();
-          const flicker = true;
-
-            return (
-              <div className={styles.iconwrapper}>
-                <Indicator className={styles.indicator} type={type} flicker={flicker} />
-                <p>{phase}</p>
-              </div>  
-            )          
-        },      
       },
       {
         title: t('등록일'),

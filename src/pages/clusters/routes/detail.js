@@ -66,6 +66,7 @@ import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
+import SrIovDetail from '../containers/Resources/Sriov/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -253,5 +254,9 @@ export default [
     path: `${PATH}/baremetalmonitoring/:name`,
     component: BareMetalDetail,
   },
+  {
+    path: `${PATH}/sriovs/:name`,
+    component: SrIovDetail,
+  },  
   
 ]

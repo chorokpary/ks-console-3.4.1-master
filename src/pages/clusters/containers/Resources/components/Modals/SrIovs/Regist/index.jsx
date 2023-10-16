@@ -5,7 +5,7 @@ import { Modal, TypeSelect } from 'components/Base'
 import { PropertiesInput, NumberInput } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Checkbox } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
-import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
+
 import * as common from "utils/resources"
 
 import SriovStore from 'stores/resources/sriovs'
@@ -41,22 +41,13 @@ const RegistModal = (props) => {
     }
   })
 
-
   const networkTypeOptions = [
-    { label: 'VXLAN', value: 'VXLAN', },
-    { label: 'VLAN', value: 'VLAN', },
-    { label: 'FLAT', value: 'FLAT', },
-    { label: 'GRE', value: 'GRE', },
-    { label: 'GENEVE', value: 'GENEVE', },
-    { label: 'STT', value: 'STT', },
-  ]
-  const externalOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
-  ]
-  const defaultRouteOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
+    { label: 'VXLAN', value: 'vxlan', },
+    { label: 'VLAN', value: 'vlan', },
+    { label: 'FLAT', value: 'flat', },
+    { label: 'GRE', value: 'gre', },
+    { label: 'GENEVE', value: 'geneve', },
+    { label: 'STT', value: 'stt', },
   ]
 
   useEffect(() => {
@@ -64,11 +55,9 @@ const RegistModal = (props) => {
     const getSriovCreateData = async () => {
 
       const listSriovResource = await sriovStore.fetchSriovResourceList();
-      console.log("listSriovResource.resources: "+ JSON.stringify(listSriovResource.resources))
       setSriovResourceDataList(listSriovResource.resources);      
 
       const listSriovBond = await sriovStore.fetchSriovBondList();
-      console.log("listSriovBond.resources: "+ JSON.stringify(listSriovBond.resources))
       setSriovBondDataList(listSriovBond.resources);      
     };
 
@@ -121,12 +110,10 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
     console.log(data)
     if(step ==1){
-      if(data.resource_name == undefined || data.resource_name == "" 
-      || data.segment_id == undefined || data.segment_id == ""
+      if(data.resource_name == undefined || data.resource_name == "선택"  || data.resource_name == "" 
       || data.cidr == undefined || data.cidr == ""
       || data.ip_pool_start == undefined || data.ip_pool_start == ""
       || data.ip_pool_end == undefined || data.ip_pool_end == ""
-      || data.gateway_ip == undefined || data.gateway_ip == ""
       ){
         handleOk();
       }else{
@@ -202,14 +189,11 @@ const RegistModal = (props) => {
 
       const a = document.getElementById('ip_pool_start')
       const b = document.getElementById('ip_pool_end')
-      const c = document.getElementById('gateway_ip')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
         a.nextElementSibling.classList.remove('hide')
         a.parentElement.parentElement.classList.add("error-item");
         b.nextElementSibling.classList.remove('hide')
         b.parentElement.parentElement.classList.add("error-item");
-        c.nextElementSibling.classList.remove('hide')
-        c.parentElement.parentElement.classList.add("error-item");
       }
 
       setCidrReducer()
@@ -221,27 +205,20 @@ const RegistModal = (props) => {
 
       const a = document.getElementById('ip_pool_start')
       const b = document.getElementById('ip_pool_end')
-      const c = document.getElementById('gateway_ip')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
         a.nextElementSibling.classList.add('hide')
         a.parentElement.parentElement.classList.remove("error-item");
         b.nextElementSibling.classList.add('hide')
         b.parentElement.parentElement.classList.remove("error-item");
-        c.nextElementSibling.classList.add('hide')
-        c.parentElement.parentElement.classList.remove("error-item");
       }
 
       setCidrReducer()
     }
   }
 
-  const handleExternal = (value) => {
-    setExternal(value)
-  }
-
   const handleNetworkType = (e) => {
     const { data } = form.current.props;
-    if (e == 'FLAT' || e == 'VLAN') {
+    if (e == 'flat' || e == 'vlan') {
       data.segment_id = ' ';
       const a = document.getElementById('segment_id')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
@@ -256,7 +233,7 @@ const RegistModal = (props) => {
         a.nextElementSibling.classList.remove('hide')
         a.parentElement.parentElement.classList.add("error-item");
       }
-      document.getElementById('radio.0').click();
+      // document.getElementById('radio.0').click();
       setExternalBool(false)
     }
   }
@@ -299,6 +276,17 @@ const RegistModal = (props) => {
   };
 
   // 체크 리스트 끝 ==================================================
+
+  // Validation 시작 ==================================================
+  const resourceNameValidator = (rule, value, callback) => {
+    if (value == "선택" || value == "") {
+      return callback({ message: t('리소스 이름을 선택해 주세요.') })
+    }
+    callback()
+  }
+  // Validation 끝 ==================================================
+
+    
 
   return (
     <>  
@@ -345,19 +333,12 @@ const RegistModal = (props) => {
                 {/* 기본설정 설정 시작==========================================*/}
                 <div className={`${regStep == 1 ? "" : "hide"}`}>
                   <Form.Item
-                    label={t('이름')}
-                    rules={[{ required: true, message: t('이름를 입력해 주세요.') }]}
-                    desc={t('NAME_DESC')}
-                  >
-                  <Input name="resource_name" autoFocus={true}  maxLength={63} style={{ maxWidth: 'none' }}/>   
-                  </Form.Item>
-
-                  <Form.Item
                     label={t('리소스 이름')}
-                    rules={[{ required: true, message: t('이름을 선택해 주세요') },]}
+                    rules={[{ required: true, validator: resourceNameValidator }]}
                   >
                       <Select
-                        name="name"                        
+                        name="resource_name" 
+                        defaultValue={"선택"}                 
                         options={resourceNameOptions}/>
                   </Form.Item>
 
@@ -389,44 +370,6 @@ const RegistModal = (props) => {
 
                   <Form.Item label={t('서브넷')}>
                     <Form.Group>
-                      <Form.Item>
-                        <Columns>
-                          <Column>
-                            <Form.Item
-                              label={t('External')}
-                              rules={[{ required: true },]}
-                            >
-                              <RadioGroup
-                                name="external"
-                                wrapClassName="radio"
-                                defaultValue={external}
-                                onChange={value => handleExternal(value)}
-                              >
-                                {externalOptions.map((option, idx) => (
-                                  <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
-                                    disabled={!externalBool && idx == 1 ? true : false}
-                                  >
-                                    {option.label}
-                                  </RadioButton>
-                                ))}
-                              </RadioGroup>
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item
-                              label={t('MTU')}
-                              rules={[{ required: true, message: t('MTU를 입력해 주세요.') },]}
-                            >
-                              <NumberInput name="mtu"
-                                defaultValue={1500}
-                                // min={1}
-                                // max={1600}
-                                style={{ maxWidth: 'none' }} />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                      </Form.Item>
-
                       <Form.Item>
                         <Columns>
                           <Column>
@@ -465,32 +408,15 @@ const RegistModal = (props) => {
 
                       <Form.Item>
                         <Columns>
-                          <Column>
-                            <Form.Item
-                              label={t('디폴트 라우트')}
-                              rules={[{ required: true },]}
-                            >
-                              <RadioGroup
-                                name="default_route"
-                                wrapClassName="radio"
-                                defaultValue={defaultRoute}
-                                onChange={value => setDefaultRoute(value)}
+                          <Column>                           
+                             <Form.Item
+                              label={t('게이트웨이 IP')}
                               >
-                                {defaultRouteOptions.map(option => (
-                                  <RadioButton key={option.value} value={option.value}>
-                                    {option.label}
-                                  </RadioButton>
-                                ))}
-                              </RadioGroup>
+                              <Input name="gateway_ip" />
                             </Form.Item>
                           </Column>
                           <Column>
-                            <Form.Item
-                              label={t('게이트웨이 IP')}
-                              rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
-                            >
-                              <Input name="gateway_ip" />
-                            </Form.Item>
+                                   {/* 빈 컬럼 */}
                           </Column>
                         </Columns>
                       </Form.Item>
@@ -529,15 +455,18 @@ const RegistModal = (props) => {
                                 <thead>
                                   <tr>
                                     <th>
-                                    <Checkbox name='select-all-bond' 
+                                    {/* <Checkbox name='select-all-bond' 
                                           onChange={(checked) => handleAllCheck(checked, "bond")}
-                                          checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}/>
+                                          checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}/> */}
+                                     <Checkbox name='select-all-bond' 
+                                          onChange={(checked) => handleAllCheck(checked, "bond")}
+                                          disabled/>
                                     </th>
                                     <th><strong>네트워크 이름</strong></th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {sriovBondDataList.length == 0 &&
+                                  {/* {sriovBondDataList.length == 0 &&
                                     <tr>
                                       <td colSpan="6" className="no-data">
                                         <p>관련 데이터가 없습니다.</p>
@@ -552,7 +481,12 @@ const RegistModal = (props) => {
                                       </td>
                                       <td>{data}</td>
                                     </tr>
-                                  })}
+                                  })} */}
+                                   <tr>
+                                      <td colSpan="6" className="no-data">
+                                        <p>관련 데이터가 없습니다.</p>
+                                      </td>
+                                    </tr>
                                 </tbody>
                             </table> 
                             <div className={styles.removeCheckWrapper}>

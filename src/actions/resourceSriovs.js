@@ -55,7 +55,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.resource_name }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('수정 되었습니다.') })
