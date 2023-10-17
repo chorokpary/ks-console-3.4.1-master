@@ -68,11 +68,13 @@ const ModifyModal = (props) => {
       const { data } = form.current.props;
 
       const dns = []
-      data.dns?.map((el) => {
-        if (el != '') {
-          dns.push(el)
-        }
-      });
+      if(!!data.dns_primary){
+        dns.push(data.dns_primary)
+      }
+      if(!!data.dns_secondary){
+        dns.push(data.dns_secondary)
+      }
+
       const host_routes = []
       data.Destination?.map((el, idx) => {
         if (el != '') {
@@ -84,7 +86,7 @@ const ModifyModal = (props) => {
         end: data.ip_pool_end
       }
       data.dns = dns
-      data.host_routes = host_routes  
+      // data.host_routes = host_routes  
       data.networks = [];
 
       if (data.segment_id == " ") {
@@ -132,7 +134,7 @@ const ModifyModal = (props) => {
                 <>
                   <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
                   <Button onClick={() => {setRegStep(1)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
-                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >생성</Button>
+                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >수정</Button>
                 </>
               }
           </>
@@ -339,11 +341,16 @@ const ModifyModal = (props) => {
                           label={t('네트워크 타입')}
                           rules={[{ required: true, message: t('이름을 선택해 주세요') },]}
                         >
-                          <Select
+                           <Input
+                              name="type"
+                              defaultValue={(detail.type).toUpperCase()}
+                              disabled
+                            />
+                          {/* <Select
                             name="type"
                             defaultValue={detail.type}
                             options={networkTypeOptions}
-                            onChange={(e) => handleNetworkType(e)} />
+                            onChange={(e) => handleNetworkType(e)} /> */}
                         </Form.Item>
                       </Column>
                       <Column>
@@ -351,7 +358,7 @@ const ModifyModal = (props) => {
                           label={t('세그먼트 ID')}
                         >
                           <NumberInput name="segment_id"
-                            disabled={externalBool}
+                            disabled={true}
                             defaultValue={detail.segment_id}
                             style={{ maxWidth: 'none' }} />
                         </Form.Item>
@@ -502,14 +509,14 @@ const ModifyModal = (props) => {
                           <Form.Item
                             label={t('Primary')}
                           >
-                            <Input name="dns.1" defaultValue={detail.dns?.[0]} />
+                            <Input name="dns_primary" defaultValue={detail.dns?.[0]} />
                           </Form.Item>
                         </Column>
                         <Column>
                           <Form.Item
                             label={t('Secondary')}
                           >
-                            <Input name="dns.2" defaultValue={detail.dns?.[1]} />
+                            <Input name="dns_secondary" defaultValue={detail.dns?.[1]} />
                           </Form.Item>
                         </Column>
                       </Columns>

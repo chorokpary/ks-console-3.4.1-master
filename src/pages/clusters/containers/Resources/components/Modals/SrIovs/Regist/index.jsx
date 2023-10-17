@@ -72,12 +72,14 @@ const RegistModal = (props) => {
 
       const { data } = form.current.props;
 
-      const dns = []
-      data.dns?.map((el) => {
-        if (el != '') {
-          dns.push(el)
-        }
-      });
+      const dns = [];
+      if(!!data.dns_primary){
+        dns.push(data.dns_primary)
+      }
+      if(!!data.dns_secondary){
+        dns.push(data.dns_secondary)
+      }
+
       const host_routes = []
       data.Destination?.map((el, idx) => {
         if (el != '') {
@@ -512,14 +514,14 @@ const RegistModal = (props) => {
                           <Form.Item
                             label={t('Primary')}
                           >
-                            <Input name="dns.1" />
+                            <Input name="dns_primary" />
                           </Form.Item>
                         </Column>
                         <Column>
                           <Form.Item
                             label={t('Secondary')}
                           >
-                            <Input name="dns.2" />
+                            <Input name="dns_secondary" />
                           </Form.Item>
                         </Column>
                       </Columns>
