@@ -19,7 +19,6 @@
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import Empty from 'components/Tables/Base/Empty'
@@ -27,12 +26,14 @@ import Empty from 'components/Tables/Base/Empty'
 import { Button, Notify } from '@kube-design/components'
 import { cloneDeep, get, isEmpty, omit } from 'lodash'
 import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
 
 import BareMetalStore from 'stores/resources/baremetal'
 
 import '../../Overview/CustomDashboard/custom_icon.css'
 import '../../Overview/CustomDashboard/custom_style.css'
+
+import Carbon from './Carbon'
+import CpuUsage from './CpuUsage';
 
 @withList({
   store: new BareMetalStore(),
@@ -187,7 +188,7 @@ export default class BareMetalDashboard extends React.Component {
     const { cluster } = this.props.match.params
     return [
       {
-        title: t('NAME'),
+        title: t('노드명'),
         dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('name'),
@@ -201,24 +202,67 @@ export default class BareMetalDashboard extends React.Component {
         ),
       },
       {
-        title: t('Finger Print'),
+        title: t('서버 모델명'),
         dataIndex: 'finger_print',
         isHideable: true,
         width: 'auto',
       },
-      {
-        title: t('등록일'),
-        dataIndex: 'timestamp',
-        isHideable: true,
-        width: 150,
-        sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
-        ),
-      },
+      // {
+      //   title: t('상태'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('코어 수'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('Max, Clock Rate(GHz)'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('CPU'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('메모리'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('디스크'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('파워(kW)'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('온도'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+      // {
+      //   title: t('탄소 배출량(Kg)'),
+      //   dataIndex: 'state',
+      //   isHideable: true,
+      //   width: 'auto',
+      // },
+
+   
     ]
   }
 
@@ -226,20 +270,6 @@ export default class BareMetalDashboard extends React.Component {
     return { desc: t('Please create a data.') }
   }
 
-  get columnSearch() {
-    return [
-      {
-        dataIndex: 'name',
-        title: t('이름'),
-        search: true,
-      },
-      {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
-        search: true,
-      }
-    ]
-  }
 
   handleCreate = () => {
     const { trigger, module } = this.props
@@ -314,144 +344,11 @@ export default class BareMetalDashboard extends React.Component {
 
         <div className="content_box_wrap">
 
-          <div className="gridbox_wrap">
-              <div className="grid_item">
-                <div className="grid_title">
-                    <label>탄소 지표 (2023.10)</label>
-                    {/* <!--<i className="ico-btn-trash"></i>--> */}
-                  </div>
-                <div className="grid_info style_list">
-                  {/* <!-- // select_wrap --> */}
-                  <ul className="list_02">
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-bmcnode"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">24<span>대</span></div>
-                      <dl><dt>ARM</dt><dd>12</dd></dl>
-                      <dl><dt>x86</dt><dd>12</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-power"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">1,200.0<span>kWh</span></div>
-                      <dl><dt>ARM</dt><dd>700</dd></dl>
-                      <dl><dt>x86</dt><dd>500</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-co2"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">5,000.0<span>KG</span></div>
-                      <dl><dt>ARM</dt><dd>3,000</dd></dl>
-                      <dl><dt>x86</dt><dd>2,000</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-tree"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">5<span>그루</span></div>
-                      <dl><dt>ARM</dt><dd>3</dd></dl>
-                      <dl><dt>x86</dt><dd>2</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-money"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">5,000,000<span>원</span></div>
-                      <dl><dt>ARM</dt><dd>3,000,000</dd></dl>
-                      <dl><dt>x86</dt><dd>2,000,000</dd></dl>
-                      </div>
-                    </li>
-                  </ul>
+          {/* CPU 소비 전력량 비교 */}
+          <Carbon />
 
-                </div>
-              </div>
-          </div>
-
-          <div className="gridbox_wrap">
-            <div className="grid_item">
-              <div className="grid_title">
-                <label>CPU 소비 전력량 비교 (1대 평균)</label>
-                <div className="right">
-                  <div className="boxtab">
-                      <label htmlFor="cpupower_name1">
-                        <input type="radio" name="cpupower" id="cpupower_name1" value="name3" defaultChecked/>
-                        <span>최근 1시간</span>
-                      </label>
-                      <label htmlFor="cpupower_name2">
-                        <input type="radio" name="cpupower" id="cpupower_name2" value="name4" />
-                        <span>최근 1일</span>
-                      </label>
-                      <label htmlFor="cpupower_name3">
-                        <input type="radio" name="cpupower" id="cpupower_name3" value="name5" />
-                        <span>최근 1주일</span>
-                      </label>
-                      <label htmlFor="cpupower_name4">
-                        <input type="radio" name="cpupower" id="cpupower_name4" value="name6" />
-                        <span>최근 1달</span>
-                      </label>
-                  </div>
-                  {/* <!--<i className="ico-btn-trash"></i>--> */}
-                </div>
-              </div>
-              <div className="grid_info style_chart_2">
-                <div className="box type_chart">
-                  <div className="cont1">
-                    <div className="chart_tab no-tab">
-                      <div className="chart_group">
-                        <div className="title">
-                          <i className="ico-type24-arm"></i>
-                          <h5>ARM</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><i className="ico-type24-powericon"></i> <span className="em">141</span> <span className="unit">W</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="graph_wrap">
-                        <div className="graph_bar">
-                          <div className="bar animate-bar" style={{width: "30%"}}></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="chart_tab no-tab">
-                      <div className="chart_group">
-                        <div className="title">
-                          <i className="ico-type24-x86"></i>
-                          <h5>x86</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><i className="ico-type24-powericon"></i> <span className="em">160</span> <span className="unit">W</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="graph_wrap">
-                        <div className="graph_bar">
-                          <div className="bar second animate-bar" style={{width: "40%"}}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="chart_04"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* CPU 소비 전력량 비교 */}
+          <CpuUsage />
 
           <div className="value_box_wrap">
             <div className="value_box">
