@@ -44,6 +44,18 @@ export default class ResourcesVolumes extends React.Component {
     return globals.user.username !== record.name
   }
 
+  getFilterType() {
+    const NETWORK_TYPE = [
+      { text: 'VLAN', value: 'vlan' },
+      { text: 'FLAT', value: 'flat' },
+    ]
+
+    return NETWORK_TYPE.map(status => ({
+      text: status.text,
+      value: status.value,
+    }))
+  }
+
   get itemActions() {
     const { getData, trigger } = this.props
     return [
@@ -101,7 +113,6 @@ export default class ResourcesVolumes extends React.Component {
     }
   }
 
-
   getColumns = () => {
     const { getSortOrder } = this.props
     const { cluster } = this.props.match.params
@@ -124,8 +135,13 @@ export default class ResourcesVolumes extends React.Component {
       {
         title: t('네트워크 타입'),
         dataIndex: 'type',
+        filters: this.getFilterType(),
         isHideable: true,
+        search: true,
         width: 'auto',
+        render: type => (
+          <p>{type.toUpperCase()}</p>
+        ),
       },
       {
         title: t('CIDR'),
@@ -170,6 +186,11 @@ export default class ResourcesVolumes extends React.Component {
       {
         dataIndex: 'name',
         title: t('이름'),
+        search: true,
+      },
+      {
+        dataIndex: 'cidr',
+        title: t('CIDR'),
         search: true,
       }
     ]
