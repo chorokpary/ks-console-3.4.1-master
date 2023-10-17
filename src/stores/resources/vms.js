@@ -201,7 +201,9 @@ export default class VmStore extends Base {
 
     const sriovNetworksArray = [];
     data.sriov.map((name) => {
-      sriovNetworksArray.push(name);
+      let sriovNetworkName = {}
+      sriovNetworkName.network_name = name;
+      sriovNetworksArray.push(sriovNetworkName);
     });
     resourceData.sriov_networks = sriovNetworksArray;
 
