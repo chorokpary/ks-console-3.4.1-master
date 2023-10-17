@@ -161,7 +161,7 @@ const RegistModal = (props) => {
                         <div>
                             <div className={styles.divwrap}>
                                 <Select name="select" options={[{ label: t('제조사명'), value: 1 }, { label: t('제품명'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
-                                <InputSearch onSearch={e => fnSearch(e)} placeholder="please input a word" style={{ width: '40%' }} />
+                                <InputSearch onSearch={e => fnSearch(e)} placeholder={t('검색')} style={{ width: '40%' }} />
                             </div>
                             <div className={styles.wrapper}>
                                 <div className={styles.table}>
