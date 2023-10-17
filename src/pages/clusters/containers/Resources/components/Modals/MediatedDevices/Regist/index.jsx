@@ -71,7 +71,7 @@ const RegistModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('Mediated 디바이스')} <span class="form-item-required">*</span>
+                    {t('Mediated 디바이스')} <span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -129,7 +129,7 @@ const RegistModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('GPU 여부')} <span class="form-item-required">*</span>
+                    {t('GPU 여부')} <span className="form-item-required">*</span>
                     <Form.Item>
                         <Toggle showText onText="on" offText="off" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
                     </Form.Item>

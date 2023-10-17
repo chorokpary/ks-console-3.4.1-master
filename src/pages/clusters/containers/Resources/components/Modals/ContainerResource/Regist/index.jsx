@@ -528,7 +528,7 @@ const RegistModal = (props) => {
                                 <div style={{ padding: 10 }} />
 
 
-                                이미지 <span class="form-item-required">*</span>
+                                이미지 <span className="form-item-required">*</span>
                                 <Form.Group>
                                     <Columns>
                                         <Column>
@@ -569,7 +569,7 @@ const RegistModal = (props) => {
                                     </Columns>
                                 </Form.Group>
 
-                                Master Flavor <span class="form-item-required">*</span>
+                                Master Flavor <span className="form-item-required">*</span>
                                 <Form.Group>
                                     <Columns>
                                         <Column>
@@ -595,7 +595,7 @@ const RegistModal = (props) => {
                                     </Columns>
                                 </Form.Group>
 
-                                Worker Flavor <span class="form-item-required">*</span>
+                                Worker Flavor <span className="form-item-required">*</span>
                                 <Form.Group>
                                     <Columns>
                                         <Column>
@@ -633,7 +633,7 @@ const RegistModal = (props) => {
                                         defaultValue=""
                                     />
                                 </Form.Item>
-
+                                <div style={{ padding: 25 }} />
                             </div>
                             {/* 기본설정 설정 끝==========================================*/}
 

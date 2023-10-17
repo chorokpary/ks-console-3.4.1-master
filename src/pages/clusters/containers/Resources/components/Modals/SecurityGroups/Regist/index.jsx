@@ -209,8 +209,8 @@ const RegistModal = (props) => {
 
         form.current.validator(() => {
             const { data } = form.current.props;
-            data.security_group_rules = [...formRulesIngressFields.filter(obj => delete obj.validPort && delete obj.isCustom)
-                , ...formRulesEgressFields.filter(obj => delete obj.validPort && delete obj.isCustom)];
+            data.security_group_rules = [...formRulesIngressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)
+                , ...formRulesEgressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)];
             onOk({ security_group: data })
         })
     }

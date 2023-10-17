@@ -108,12 +108,12 @@ const RegistModal = (props) => {
         }
     }
 
-    const [formDeviceFields, setFormDeviceFields] = useState([{ name: '', quantity: 0, message: '' }]);
+    const [formDeviceFields, setFormDeviceFields] = useState([{ name: '선택', quantity: 0, message: '' }]);
     //hostDevice handler
     const handleHostDevice = {
 
         handleAddFields: () => {
-            const values = [...formDeviceFields, { name: '', quantity: 0, message: '' }];
+            const values = [...formDeviceFields, { name: '선택', quantity: 0, message: '' }];
             setFormDeviceFields(values);
         },
 
@@ -129,7 +129,7 @@ const RegistModal = (props) => {
                 values[i].name = val;
                 values[i].message = ""
             } else {
-                values[i].message = "이미 선택한 디바이스 입니다.";
+                values[i].message = " 이미 선택한 디바이스 입니다.";
                 setTimeout(() => { handleHostDevice.deleteMessage(i) }, 1500);
             }
             setFormDeviceFields(values);
@@ -158,12 +158,12 @@ const RegistModal = (props) => {
         },
     }//end hostDevice
 
-    const [formGpuFields, setFormGpuFields] = useState([{ name: '', quantity: 0, message: '' }]);
+    const [formGpuFields, setFormGpuFields] = useState([{ name: '선택', quantity: 0, message: '' }]);
     //GPU handler
     const handleGpu = {
 
         handleAddFields: () => {
-            const values = [...formGpuFields, { name: '', quantity: 0, message: '' }];
+            const values = [...formGpuFields, { name: '선택', quantity: 0, message: '' }];
             setFormGpuFields(values);
         },
 
@@ -179,7 +179,7 @@ const RegistModal = (props) => {
                 values[i].name = val;
                 values[i].message = ""
             } else {
-                values[i].message = "이미 선택한 GPU 입니다.";
+                values[i].message = " 이미 선택한 GPU 입니다.";
                 setTimeout(() => { handleGpu.deleteMessage(i) }, 1500);
             }
             setFormGpuFields(values);
@@ -241,8 +241,8 @@ const RegistModal = (props) => {
             data.root_disk = rootDisk;
             data.ephemeral_disk = ephemeralDisk;
             data.extra_specs = [...extraSpecsFields].filter(obj => delete obj.description);
-            data.devices = [...formDeviceFields].filter(obj => delete obj.message && obj.name);
-            data.gpus = [...formGpuFields].filter(obj => delete obj.message && obj.name);
+            data.devices = [...formDeviceFields].filter(obj => delete obj.message && (obj.name && obj.name !== "선택"));
+            data.gpus = [...formGpuFields].filter(obj => delete obj.message && (obj.name && obj.name !== "선택"));
             onOk({ flavor: data })
         })
     }

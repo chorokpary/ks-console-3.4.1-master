@@ -218,56 +218,57 @@ const RegistModal = (props) => {
                                             ))}
                                         </tbody>
                                     </table>
-                                    {addRowList?.map((v, i) => (
-                                        <div className={styles.item} key={i}>
-                                            <div className={styles.divwrap}>
-                                                <div style={{ paddingRight: '10px' }}>
-                                                    <Icon
-                                                        className={styles.substract}
-                                                        name="substract"
-                                                        size={24}
-                                                        color={color}
-                                                        onClick={() => handleDelete(v.device_name)}
-                                                        clickable
-                                                    />
-                                                </div>
-                                                <div className={styles.div_input}>
-                                                    <Form.Item>
-                                                        <Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} />
-                                                    </Form.Item>
-                                                </div>
-                                                <div className={styles.div_noinput}>
-                                                    {v.vendor_id}
-                                                </div>
-                                                <div className={styles.div_noinput}>
-                                                    {v.vendor_name}
-                                                </div>
-                                                <div className={styles.div_noinput}>
-                                                    {v.device_id}
-                                                </div>
-                                                <div className={styles.div_input}>
-                                                    {v.device_name}
-                                                </div>
-                                                <div className={styles.div_noinput}>
-                                                    {v.isExternal ?
-                                                        <p style={{ marginLeft: '20%', width: '80%' }}><Indicator className={styles.indicator} type="running" flicker />사용 </p>
-                                                    : <p style={{ marginLeft: '10%', width: '90%' }}><Indicator className={styles.indicator} type="inactive" flicker />미사용</p>}
-                                                </div>
-                                                <div className={styles.div_noinput}>
-                                                    {v.isGpu ? 'GPU' : '-'}
-                                                </div>
-                                                <div className={styles.div_description}>
-                                                    <Form.Item>
-                                                        <Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} />
-                                                    </Form.Item>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                        //<span key={name}><Button onClick={() => handleDelete(name)}>{name}</Button></span>
-                                    )}
                                 </div>
                             </div>
+
+                            <div className={styles.wrapper}>
+                                <div className={styles.table}>
+                                    <table>
+                                        <colgroup>
+                                            <col width="5%" />
+                                            <col width="20%" />
+                                            <col width="7%" />
+                                            <col width="10%" />
+                                            <col width="7%" />
+                                            <col width="13%" />
+                                            <col width="7%" />
+                                            <col width="7%" />
+                                            <col width="24%" />
+                                        </colgroup>
+                                        <thead>
+                                        </thead>
+                                        <tbody>
+                                            {addRowList?.map((v, i) => (
+                                                <tr key={i}>
+                                                    <td>
+                                                        <Icon
+                                                            className={styles.substract}
+                                                            name="substract"
+                                                            size={24}
+                                                            color={color}
+                                                            onClick={() => handleDelete(v.device_name)}
+                                                            clickable
+                                                        />
+                                                    </td>
+                                                    <td><Form.Item><Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} /></Form.Item></td>
+                                                    <td>{v.vendor_id}</td>
+                                                    <td>{v.vendor_name}</td>
+                                                    <td>{v.device_id}</td>
+                                                    <td>{v.device_name}</td>
+                                                    <td>
+                                                        {v.isExternal ? <div>사용</div> : <div>미사용</div>}
+                                                    </td>
+                                                    <td>{v.isGpu ? 'GPU' : '-'}</td>
+                                                    <td>
+                                                        <Form.Item><Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} /></Form.Item>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                         </div>
                     </Form.Item>
 

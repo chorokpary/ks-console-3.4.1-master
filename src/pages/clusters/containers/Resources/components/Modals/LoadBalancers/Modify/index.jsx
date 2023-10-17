@@ -18,7 +18,7 @@ const ModifyModal = (props) => {
     const [vmDataList, setVmDataList] = useState([]);
 
     useEffect(() => {
-
+        
         const getCreateData = async () => {
             const listVm = await loadBalancerStore.fetchVmList();
 
@@ -29,7 +29,7 @@ const ModifyModal = (props) => {
     }, [])
 
     const vmOptions = () => {
-        const opt = vmDataList.filter((el) => el.networks.length > 1).map((obj) => ({
+        const opt = vmDataList.filter((el) => el.networks.map(elN => elN.name).includes(props.store.detail?.lb?.network)).map((obj) => ({
             label: t(obj.name),
             value: t(obj.name),
         }))
@@ -41,7 +41,7 @@ const ModifyModal = (props) => {
 
         form.current.validator(() => {
             const { data } = form.current.props;
-            data.members = [...formMemberIpFields].filter(el => el.memberIp != '선택').map(obj => obj.memberIp);
+            data.members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
 
             onOk({ lb: data })
         })
@@ -53,8 +53,7 @@ const ModifyModal = (props) => {
 
     const memberIpObj = {
         vmName: '선택'
-        , memberIp: '선택'
-        , vmIpOptions: []
+        , memberIp: ''
     }
     const [formMemberIpFields, setFormMemberIpFields] = useState([memberIpObj]);
     //멤버 IP handler
@@ -73,13 +72,12 @@ const ModifyModal = (props) => {
         handleSelectClick: (i, val) => {
             const values = [...formMemberIpFields];
 
-            const opt = vmDataList.filter((el) => el.name == val).map((obj) => {
-                return obj.networks.filter((el) => el.name != "k8s-pod-network").map((network) => ({
-                    label: t(network.ip),
-                    value: t(network.ip),
+            const opt = vmDataList.filter((el) => el.name === val).map((obj) => {
+                return obj.networks.filter((el) => el.name === props.store.detail?.lb?.network).map((network) => ({
+                    value: network.ip
                 }))
             })
-            values[i].vmIpOptions = opt[0];
+
             values[i].memberIp = opt[0][0].value;
 
             values[i].vmName = val;
@@ -94,6 +92,7 @@ const ModifyModal = (props) => {
         },
 
     }//end 멤버 IP
+
 
     return (
         <>
@@ -123,7 +122,7 @@ const ModifyModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('멤버 IP')} <span class="form-item-required">*</span>
+                    {t('멤버 IP')} <span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -147,7 +146,7 @@ const ModifyModal = (props) => {
                                                     <Select value={v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
                                                 </td>
                                                 <td>
-                                                    <Select value={v.memberIp} options={v.vmIpOptions} onChange={(e) => handleMemberIp.handleIpSelectClick(i, e)} />
+                                                    <Input type="text " value={v.memberIp} disabled />
                                                 </td>
                                                 <td>
                                                     <Button
