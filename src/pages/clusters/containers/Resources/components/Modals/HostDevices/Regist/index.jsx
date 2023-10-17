@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, TextArea, Button, Checkbox, Toggle, Column, Columns, Icon } from '@kube-design/components'
+import { Form, Input, TextArea, Select, Checkbox, Toggle, InputSearch, Icon } from '@kube-design/components'
 import { Modal, Indicator } from 'components/Base'
 import styles from './index.scss'
 
@@ -16,20 +16,22 @@ const RegistModal = (props) => {
     const [formData, setFormData] = useState({});
 
     const [dataList, setDataList] = useState([]);
+    const [keyword, setKeyword] = useState(2);
+
+    const getCreateData = async () => {
+        const listPciDevice = await hostDeviceStore.fetchListPciDevices();
+        setDataList(
+            listPciDevice.pci_devices.map(data => ({
+                vendor_id: data.vendor_id
+                , vendor_name: data.vendor_name
+                , device_id: data.device_id
+                , device_name: data.device_name
+                , isExternal: true
+                , isGpu: false
+            })));
+    };
 
     useEffect(() => {
-        const getCreateData = async () => {
-            const listPciDevice = await hostDeviceStore.fetchListPciDevices();
-            setDataList(
-                listPciDevice.pci_devices.map(data => ({
-                    vendor_id: data.vendor_id
-                    , vendor_name: data.vendor_name
-                    , device_id: data.device_id
-                    , device_name: data.device_name
-                    , isExternal: true
-                    , isGpu: false
-                })));
-        };
         getCreateData();
     }, [])
 
@@ -108,6 +110,18 @@ const RegistModal = (props) => {
 
     // 체크 리스트 끝 ==================================================
 
+    const fnSearch = (e) => {
+        if (e) {
+            if (keyword === 1) {
+                setDataList(dataList.filter(el => el.vendor_name.toLowerCase().includes(e.toLowerCase())))
+            } else {
+                setDataList(dataList.filter(el => el.device_name.toLowerCase().includes(e.toLowerCase())))
+            }
+        } else {
+            getCreateData();
+        }
+    }
+
     const handleOk = () => {
         const onOk = props.onOk;
 
@@ -143,115 +157,116 @@ const RegistModal = (props) => {
             >
                 <Form data={formData} ref={form}>
 
-                    <Form.Item label={t('호스트 디바이스')} >
-                        <div className={styles.wrapper}>
-                            {checkItems.length > 0 &&
-                                <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                                    <Button className={styles.table_title_button} onClick={() => handleAllCheckModal(false)}>전체 선택 해제</Button>  {checkItems.length}개 선택
-                                </div>
-                            }
-                            <div className={styles.table}>
-                                <table>
-                                    <colgroup>
-                                        <col width="5%" />
-                                        <col width="10%" />
-                                        <col width="20%" />
-                                        <col width="10%" />
-                                        <col width="25%" />
-                                        <col width="15%" />
-                                        <col width="15%" />
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <Checkbox name='select-all-network'
-                                                    onChange={(checked) => handleAllCheckModal(checked)}
-                                                    checked={dataList.length > 0 && checkItems.length === dataList.length ? true : false} />
-                                            </th>
-                                            <th><strong>제조사 ID</strong></th>
-                                            <th><strong>제조명</strong></th>
-                                            <th><strong>제품 ID</strong></th>
-                                            <th><strong>제품명</strong></th>
-                                            <th><strong>External</strong></th>
-                                            <th><strong>GPU</strong></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {!dataList?.length &&
+                    <Form.Item label={t('호스트 디바이스')}>
+                        <div>
+                            <div className={styles.divwrap}>
+                                <Select name="select" options={[{ label: t('제조사명'), value: 1 }, { label: t('제품명'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
+                                <InputSearch onSearch={e => fnSearch(e)} placeholder="please input a word" style={{ width: '40%' }} />
+                            </div>
+                            <div className={styles.wrapper}>
+                                <div className={styles.table}>
+                                    <table>
+                                        <colgroup>
+                                            <col width="5%" />
+                                            <col width="10%" />
+                                            <col width="20%" />
+                                            <col width="10%" />
+                                            <col width="25%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                        </colgroup>
+                                        <thead>
                                             <tr>
-                                                <td colSpan="6" className="no-data">
-                                                    <p>할당 가능한 자원이 없습니다.</p>
-                                                </td>
+                                                <th>
+                                                    <Checkbox name='select-all-network'
+                                                        onChange={(checked) => handleAllCheckModal(checked)}
+                                                        checked={dataList.length > 0 && checkItems.length === dataList.length ? true : false} />
+                                                </th>
+                                                <th><strong>제조사 ID</strong></th>
+                                                <th><strong>제조명</strong></th>
+                                                <th><strong>제품 ID</strong></th>
+                                                <th><strong>제품명</strong></th>
+                                                <th><strong>External</strong></th>
+                                                <th><strong>GPU</strong></th>
                                             </tr>
-                                        }
-                                        {dataList?.map((data, key) => (
-                                            <tr key={data.name}>
-                                                <td>
-                                                    <Checkbox name={`select-${data.device_name}`} checked={checkItems.includes(data.device_name) ? true : false}
-                                                        onChange={(checked) => handleSingleCheck(checked, data, key)} />
-                                                </td>
-                                                <td>{data.vendor_id}</td>
-                                                <td>{data.vendor_name}</td>
-                                                <td>{data.device_id}</td>
-                                                <td>{data.device_name}</td>
-                                                <td style={{ textAlign: "left" }}>
-                                                    <Toggle checked={data.isExternal} showText onText="on" offText="off" onChange={(e) => hendleExternal(e, key)} />
-                                                </td>
-                                                <td style={{ textAlign: "left" }}>
-                                                    <Toggle checked={data.isGpu} showText onText="on" offText="off" onChange={(e) => hendleGpu(e, key)} />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                {addRowList?.map((v, i) => (
-                                    <div className={styles.item} key={i}>
-                                        <div className={styles.divwrap}>
-                                            <div style={{ paddingRight: '10px' }}>
-                                                <Icon
-                                                    className={styles.substract}
-                                                    name="substract"
-                                                    size={24}
-                                                    color={color}
-                                                    onClick={() => handleDelete(v.device_name)}
-                                                    clickable
-                                                />
-                                            </div>
-                                            <div className={styles.div_input}>
-                                                <Form.Item>
-                                                    <Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} />
-                                                </Form.Item>
-                                            </div>
-                                            <div className={styles.div_noinput}>
-                                                {v.vendor_id}
-                                            </div>
-                                            <div className={styles.div_noinput}>
-                                                {v.vendor_name}
-                                            </div>
-                                            <div className={styles.div_noinput}>
-                                                {v.device_id}
-                                            </div>
-                                            <div className={styles.div_input}>
-                                                {v.device_name}
-                                            </div>
-                                            <div className={styles.div_noinput}>
-                                                {v.isExternal ?
-                                                    <p style={{ marginLeft: '20%', width: '80%' }}><Indicator className={styles.indicator} type="running" flicker />사용 </p>
-                                                : <p style={{ marginLeft: '10%', width: '90%' }}><Indicator className={styles.indicator} type="inactive" flicker />미사용</p>}
-                                            </div>
-                                            <div className={styles.div_noinput}>
-                                                {v.isGpu ? 'GPU' : '-'}
-                                            </div>
-                                            <div className={styles.div_description}>
-                                                <Form.Item>
-                                                    <Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} />
-                                                </Form.Item>
+                                        </thead>
+                                        <tbody>
+                                            {!dataList?.length &&
+                                                <tr>
+                                                    <td colSpan="6" className="no-data">
+                                                        <p>할당 가능한 자원이 없습니다.</p>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            {dataList?.map((data, key) => (
+                                                <tr key={data.name}>
+                                                    <td>
+                                                        <Checkbox name={`select-${data.device_name}`} checked={checkItems.includes(data.device_name) ? true : false}
+                                                            onChange={(checked) => handleSingleCheck(checked, data, key)} />
+                                                    </td>
+                                                    <td>{data.vendor_id}</td>
+                                                    <td>{data.vendor_name}</td>
+                                                    <td>{data.device_id}</td>
+                                                    <td>{data.device_name}</td>
+                                                    <td style={{ textAlign: "left" }}>
+                                                        <Toggle checked={data.isExternal} showText onText="on" offText="off" onChange={(e) => hendleExternal(e, key)} />
+                                                    </td>
+                                                    <td style={{ textAlign: "left" }}>
+                                                        <Toggle checked={data.isGpu} showText onText="on" offText="off" onChange={(e) => hendleGpu(e, key)} />
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    {addRowList?.map((v, i) => (
+                                        <div className={styles.item} key={i}>
+                                            <div className={styles.divwrap}>
+                                                <div style={{ paddingRight: '10px' }}>
+                                                    <Icon
+                                                        className={styles.substract}
+                                                        name="substract"
+                                                        size={24}
+                                                        color={color}
+                                                        onClick={() => handleDelete(v.device_name)}
+                                                        clickable
+                                                    />
+                                                </div>
+                                                <div className={styles.div_input}>
+                                                    <Form.Item>
+                                                        <Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} />
+                                                    </Form.Item>
+                                                </div>
+                                                <div className={styles.div_noinput}>
+                                                    {v.vendor_id}
+                                                </div>
+                                                <div className={styles.div_noinput}>
+                                                    {v.vendor_name}
+                                                </div>
+                                                <div className={styles.div_noinput}>
+                                                    {v.device_id}
+                                                </div>
+                                                <div className={styles.div_input}>
+                                                    {v.device_name}
+                                                </div>
+                                                <div className={styles.div_noinput}>
+                                                    {v.isExternal ?
+                                                        <p style={{ marginLeft: '20%', width: '80%' }}><Indicator className={styles.indicator} type="running" flicker />사용 </p>
+                                                    : <p style={{ marginLeft: '10%', width: '90%' }}><Indicator className={styles.indicator} type="inactive" flicker />미사용</p>}
+                                                </div>
+                                                <div className={styles.div_noinput}>
+                                                    {v.isGpu ? 'GPU' : '-'}
+                                                </div>
+                                                <div className={styles.div_description}>
+                                                    <Form.Item>
+                                                        <Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} />
+                                                    </Form.Item>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                                    //<span key={name}><Button onClick={() => handleDelete(name)}>{name}</Button></span>
-                                )}
+                                    )
+                                        //<span key={name}><Button onClick={() => handleDelete(name)}>{name}</Button></span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </Form.Item>

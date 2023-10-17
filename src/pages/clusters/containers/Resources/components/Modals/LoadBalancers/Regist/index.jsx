@@ -60,7 +60,7 @@ const RegistModal = (props) => {
     }, [])
 
     const networkOptions = () => {
-        const opt = networkDataList.map((obj) => ({
+        const opt = networkDataList.filter((el) => !el.external).map((obj) => ({
             label: t(obj.name),
             value: t(obj.name),
         }))
