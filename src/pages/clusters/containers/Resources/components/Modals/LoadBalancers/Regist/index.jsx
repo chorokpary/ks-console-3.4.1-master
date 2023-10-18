@@ -45,6 +45,7 @@ const RegistModal = (props) => {
 
     const [networkDataList, setNetworkDataList] = useState([]);
     const [vmDataList, setVmDataList] = useState([]);
+    const [isMembers, setIsMembers] = useState(true);
 
     useEffect(() => {
 
@@ -77,6 +78,8 @@ const RegistModal = (props) => {
     const handleOk = () => {
         const onOk = props.onOk;
 
+        setIsMembers([...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp).length > 0);
+
         form.current.validator(() => {
             const { data } = form.current.props;
             data.network = networkName
@@ -84,7 +87,10 @@ const RegistModal = (props) => {
 
             data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)];
 
-            onOk({ lb: data })
+            if (data.members.length > 0) {
+                onOk({ lb: data })
+            }
+
         })
     }
 
@@ -119,6 +125,7 @@ const RegistModal = (props) => {
                 }))
             })
             values[i].memberIp = opt[0][0].value;
+            setIsMembers(true)
 
             values[i].vmName = val;
             setFormMemberIpFields(values);
@@ -285,7 +292,7 @@ const RegistModal = (props) => {
                                                     <Select value={v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
                                                 </td>
                                                 <td>
-                                                    <Input type="text "value={v.memberIp} disabled/>
+                                                    <Input type="text" value={v.memberIp} disabled/>
                                                 </td>
                                                 <td>
                                                     <Button
@@ -298,6 +305,7 @@ const RegistModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상머신을 선택해 주세요.</div>
                             </div>
                             <div className="text-right">
                                 <Button
