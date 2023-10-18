@@ -5,7 +5,7 @@ const BmcNode = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="25" gs-w="9" gs-h="7">
+      <div className="grid-stack-item" gs-x="0" gs-y="29" gs-w="9" gs-h="7">
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">

@@ -129,7 +129,7 @@ const ResourceChange = ({ monitorStore }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="16" gs-w="4" gs-h="5">
+      <div className="grid-stack-item" gs-x="0" gs-y="36" gs-w="4" gs-h="5">
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">

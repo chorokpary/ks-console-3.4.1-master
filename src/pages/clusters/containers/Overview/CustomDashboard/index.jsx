@@ -14,14 +14,18 @@ import Kaas from './Kaas';
 import ResourcesUsage from './ResourceUsage';
 import NetworkTraffic from './NetworkTraffic';
 import Issue from './Issue';
-import Computing from './Computing';
+import ComputingNetwork from './ComputingNetwork';
+import ComputingTemplate from './ComputingTemplate';
 import ResourceChange from './ResourceChange';
-import K8sStatus from './K8sStatus';
+import ClusterStatus from './ClusterStatus';
 import BmcNode from './BmcNode';
 import CabonIndicator from './CabonIndicator';
 import PowerUsageTop5 from './PowerUsageTop5';
 import CpuPower from './CpuPower';
-import CpuUsage from './CpuUsage';
+import CarbonPower from './CarbonPower';
+import CarbonCo2 from './CarbonCo2';
+import CarbonTree from './CarbonTree';
+import CarbonCost from './CarbonCost';
 
 const CustomDashboard = (props) => {
 
@@ -118,8 +122,10 @@ const CustomDashboard = (props) => {
                     {/* 이슈 */}
                     <Issue />
 
-                    {/* 컴퓨팅 유형별 현황 */}
-                    <Computing />
+                    {/* 컴퓨팅 네트워크 현황 */}
+                    <ComputingNetwork />
+                    {/* 컴퓨팅 템플릿 현황 */}
+                    <ComputingTemplate />
 
                     {/* 리소스 변화량 */}
                     <ResourceChange monitorStore={monitorStore} />
@@ -127,8 +133,8 @@ const CustomDashboard = (props) => {
                     {/* BMC 노드 현황 */}
                     <BmcNode />
 
-                    {/* 쿠버네티스 컴포넌트 상태 */}
-                    <K8sStatus />
+                    {/* 클러스터 컴포넌트 상태 */}
+                    <ClusterStatus />
 
                     {/* 탄소 지표 */}
                     <CabonIndicator />
@@ -136,11 +142,17 @@ const CustomDashboard = (props) => {
                     {/* 전력 사용량 TOP 5 */}
                     <PowerUsageTop5 />
 
-                    {/* CPU 소비 전력량 비교 */}
+                    {/* CPU 소비 전력량 비교 (1대 평균) */}
                     <CpuPower />
 
-                    {/* CPU 사용률 / 소비전력 */}
-                    <CpuUsage />
+                    {/* 탄소 발자국 - 전력 사용량 */}
+                    <CarbonPower />
+                    {/* 탄소 발자국 - CO2 발생량 */}
+                    <CarbonCo2 />
+                    {/* 탄소 발자국 - 나무 */}
+                    <CarbonTree />
+                    {/* 탄소 발자국 - 비용 */}
+                    <CarbonCost />
 
                   </div>
                 </div>
