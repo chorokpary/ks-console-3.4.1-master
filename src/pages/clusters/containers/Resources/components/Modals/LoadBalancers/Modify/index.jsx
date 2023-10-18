@@ -122,7 +122,7 @@ const ModifyModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('멤버 IP')} <span className="form-item-required">*</span>
+                    {t('멤버 IP')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
