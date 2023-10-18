@@ -126,7 +126,7 @@ const RegistModal = (props) => {
                 }))
             })
             values[i].memberIp = opt[0][0].value;
-            setIsMembers(true)
+            setIsMembers(true);
 
             values[i].vmName = val;
             setFormMemberIpFields(values);
