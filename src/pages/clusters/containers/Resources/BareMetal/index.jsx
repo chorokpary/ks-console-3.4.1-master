@@ -144,24 +144,25 @@ export default class BareMetalDashboard extends React.Component {
             ...this.props.match.params,
           }),
       },
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('삭제'),
-        action: 'delete',
-        show: this.showAction,
-        onClick: item =>
-          trigger('keypair.remove', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
-      },
+      // {
+      //   key: 'delete',
+      //   icon: 'trash',
+      //   text: t('삭제'),
+      //   action: 'delete',
+      //   show: this.showAction,
+      //   onClick: item =>
+      //     trigger('keypair.remove', {
+      //       detail: item,
+      //       success: getData,
+      //       ...this.props.match.params,
+      //     }),
+      // },
     ]
   }
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props
+    
     return {
       ...tableProps.tableActions,
       actions: [
@@ -171,7 +172,7 @@ export default class BareMetalDashboard extends React.Component {
           text: t('등록'),
           action: 'create',
           onClick: () =>
-            trigger('keypair.regist', {
+            trigger('baremetal.regist', {
             ...this.props.match.params,
             type: this.name,
             success: getData,
@@ -384,8 +385,8 @@ export default class BareMetalDashboard extends React.Component {
           
         </div>
 
-      {/* 리스트  */}
-      {this.renderContent()}
+          {/* 리스트  */}
+          {this.renderContent()}
 
     </ListPage>
      

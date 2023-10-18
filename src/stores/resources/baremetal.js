@@ -150,17 +150,19 @@ export default class BareMetalStore extends Base {
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
 
+    console.log("BBBBBBBBBBBBBB")
+
     const jsonData = {};
     const keypairData = {};
 
-    keypairData.name = data.name;
-    keypairData.public_key = data.publicKey;
-    keypairData.description = data?.description;
+    console.log("data : "+ JSON.stringify(data.system_data))
 
-    jsonData.keypair = keypairData;
+    // keypairData.name = data.system_data;
 
-    const res = await request.post(url, jsonData)
-    return res
+    // jsonData.keypair = keypairData;
+
+    // const res = await request.post(url, jsonData)
+    // return res
   }
 
   @action
