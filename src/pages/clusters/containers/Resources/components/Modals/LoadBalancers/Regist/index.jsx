@@ -77,17 +77,18 @@ const RegistModal = (props) => {
 
     const handleOk = () => {
         const onOk = props.onOk;
+        const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
 
-        setIsMembers([...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp).length > 0);
+        setIsMembers(members.length > 0);
 
         form.current.validator(() => {
-            const { data } = form.current.props;
-            data.network = networkName
-            data.members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
 
-            data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)];
+            if (members.length > 0) {
+                const { data } = form.current.props;
+                data.network = networkName
+                data.members = members;
 
-            if (data.members.length > 0) {
+                data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)];
                 onOk({ lb: data })
             }
 
