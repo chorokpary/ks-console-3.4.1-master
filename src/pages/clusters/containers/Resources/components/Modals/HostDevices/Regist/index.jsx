@@ -231,7 +231,7 @@ const RegistModal = (props) => {
                                             <col width="10%" />
                                             <col width="7%" />
                                             <col width="13%" />
-                                            <col width="7%" />
+                                            <col width="9%" />
                                             <col width="7%" />
                                             <col width="24%" />
                                         </colgroup>
@@ -256,7 +256,10 @@ const RegistModal = (props) => {
                                                     <td>{v.device_id}</td>
                                                     <td>{v.device_name}</td>
                                                     <td>
-                                                        {v.isExternal ? <div>사용</div> : <div>미사용</div>}
+                                                        {v.isExternal ?
+                                                            <div className={styles.divwrap}><Indicator type="running" className={styles.indicator}  flicker />사용</div>
+                                                            : <div className={styles.divwrap}><Indicator type="inactive" className={styles.indicator}  flicker />미사용</div>
+                                                        }
                                                     </td>
                                                     <td>{v.isGpu ? 'GPU' : '-'}</td>
                                                     <td>
