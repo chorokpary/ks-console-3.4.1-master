@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, omit } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal, } from 'components/Base'
@@ -63,7 +63,7 @@ const RegistModal = (props) => {
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor();
       const listImage = await vmStore.fetchVmListImage();
-      // const listBootVolume = await vmStore.fetchVmListBootVolume();
+      const listBootVolume = await vmStore.fetchVmListBootVolume();
       const listNetwork = await vmStore.fetchVmListNetwork();
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork();
       const listKeypair = await vmStore.fetchVmListKeypair();
@@ -73,7 +73,7 @@ const RegistModal = (props) => {
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
       setImageOptionList(listImage.images);
-      // setBootVolumeDataList(listBootVolume.volumes);
+      setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
       setKeypairDataList(listKeypair.keypairs);
@@ -96,13 +96,31 @@ const RegistModal = (props) => {
     { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
+  const imageDetailList = [];
+  props.store.dataList.map((obj) => {
+    imageDetailList.push(obj.image_detail)      
+  })
+
+  const fnGetImageDescriptino = (name) => {
+    const imageDetail = _.find(imageDetailList, (data) => {
+      if (data.name === name ) return data;
+    });
+
+    const desc = _.get(imageDetail, 'description', "-");
+    return desc;
+  }
+
   const imageOptions = () => {
     const opt = imageOptionList.map((obj) => {
       // const exceptonArray = ['ubuntu', 'centos']
       // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
+      // console.log("obj :"+ JSON.stringify(obj))    
+
+      const description = fnGetImageDescriptino(obj.name)
       return {
         label: t(obj.name),
         icon: `ico-os-${obj.distro_type}`,
+        description : description,
         value: t(obj.name),
       }
 
@@ -568,6 +586,7 @@ const RegistModal = (props) => {
                             }}
                             options={imageOptions()}
                             onChange={(e) => setSelectImageName(e)}
+                            defaultDescription={"이미지를 선택해 주세요."}
                           />
                         </Form.Item>
                         {
@@ -612,6 +631,7 @@ const RegistModal = (props) => {
                       label: t('선택')
                     }}
                     className={styles.typeselectbox}
+                    defaultDescription={"Flavor를 선택해 주세요."}
                   />
                 </Form.Item>
 

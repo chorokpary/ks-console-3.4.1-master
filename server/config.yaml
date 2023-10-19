@@ -142,13 +142,13 @@ client:
             - { name: nodes, title: CLUSTER_NODE_PL }
             - { name: members, title: CLUSTER_MEMBER_PL }
             - { name: roles, title: CLUSTER_ROLE_PL }
-            # - {
-            #     name: log-collections,
-            #     title: LOG_RECEIVER_PL,
-            #     icon: file,
-            #     authKey: cluster-settings,
-            #     clusterModule: logging|events|auditing,
-            #   }
+            - {
+                name: log-collections,
+                title: LOG_RECEIVER_PL,
+                icon: file,
+                authKey: cluster-settings,
+                clusterModule: logging|events|auditing,
+              }
             - {
                 name: gateways,
                 title: GATEWAY_SETTINGS,
@@ -298,20 +298,20 @@ client:
                 requiredClusterVersion: v3.1.0,
               }                
         - { name: customresources, title: CRD_PL, icon: select, admin: true }      
-        # - name: network
-        #   title: NETWORK
-        #   icon: earth
-        #   children:
-        #     - {
-        #         name: networkpolicies,
-        #         title: NETWORK_POLICY_PL,
-        #         clusterModule: network,
-        #       }
-        #     - {
-        #         name: ippools,
-        #         title: POD_IP_POOL_PL,
-        #         clusterModule: "network.ippool",
-        #       }
+        - name: network
+          title: NETWORK
+          icon: earth
+          children:
+            - {
+                name: networkpolicies,
+                title: NETWORK_POLICY_PL,
+                clusterModule: network,
+              }
+            - {
+                name: ippools,
+                title: POD_IP_POOL_PL,
+                clusterModule: "network.ippool",
+              }
         # Contains dangerous operations, only available for platform-admin.
         - name: storage
           title: STORAGE

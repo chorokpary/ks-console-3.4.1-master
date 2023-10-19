@@ -274,51 +274,6 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('호스트 디바이스'),
-        dataIndex: 'host_devices',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: host_devices => {
-          let hostDeviceList = ""
-
-          if (host_devices.length > 0) {
-            hostDeviceList = host_devices.map((host) => {
-                return <p key={host}>{host}</p>
-            });
-          } else {
-            hostDeviceList = <p>-</p>
-          }
-          return hostDeviceList
-        }
-      },
-      {
-        title: t('Mediated 디바이스'),
-        dataIndex: 'gpus',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: gpus => {
-          let gpusList = ""
-
-          if (gpus.length > 0) {
-            gpusList = gpus.map((gpu) => {
-                return <p key={gpu}>{gpu}</p>
-            });
-          } else {
-            gpusList = <p>-</p>
-          }
-          return gpusList
-        }
-      },
-      // {
-      //   title: t('Flavor'),
-      //   dataIndex: 'flavor',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      // },
-      {
         title: t('고정 IP'),
         dataIndex: 'networks',
         isHideable: true,

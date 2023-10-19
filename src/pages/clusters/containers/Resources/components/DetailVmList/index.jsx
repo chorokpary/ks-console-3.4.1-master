@@ -107,7 +107,7 @@ const DetailVmList = (props) => {
                         key='GPU'
                         icon='gpu'
                         title={obj.flavor_detail.gpus.length >= 1 ?  
-                          obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0] : obj.flavor_detail.gpus[0] + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개" 
+                          obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개" 
                           : "-"}
                         description={t('GPU')}
                       />

@@ -22,8 +22,9 @@ const CpuUsage = () => {
         const getVmCpuUsageData = async () => {
         const vmCpuData = await customStore.fetchMetric({
             // expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
-            expr: `redfish_exporter_collector_duration_seconds`,
-            start: currentTime - 30000,
+            // expr: `redfish_exporter_collector_duration_seconds`,
+            expr: `redfish_chassis_power_powersupply_last_power_output_watts`,    
+            start: currentTime,
             end: currentTime,
         })
         console.log(JSON.stringify(vmCpuData))

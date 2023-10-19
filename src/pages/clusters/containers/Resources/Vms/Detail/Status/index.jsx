@@ -56,9 +56,9 @@ const Status = (props) => {
       };
 
       const fnGetVolume = async () => {
-        // const response = await axios.get(`/edgetron/resources/kubevirt/volumes`);
-        // const volumeData = (response.volumes).filter(el => el.used_by_vmi == name);
-        const volumeData = [];
+        const response = await axios.get(`/edgetron/resources/kubevirt/volumes`);
+        const volumeData = (response.data.volumes).filter(el => el.used_by_vmi == store.detail.vm?.name);
+        // const volumeData = [];
         setDetailVolume(volumeData);
       };
 
@@ -172,7 +172,7 @@ const Status = (props) => {
                       <div>
                         {
                           detailFlavor.devices.length >= 1 ?  
-                          detailFlavor.devices.length == 1 ? detailFlavor.devices[0] : detailFlavor.devices[0] + " 외 " + (detailFlavor.devices.length - 1) + "개" 
+                          detailFlavor.devices.length == 1 ? detailFlavor.devices[0].name : detailFlavor.devices[0].name + " 외 " + (detailFlavor.devices.length - 1) + "개" 
                           : "-"
                         }
                       </div>
@@ -207,7 +207,7 @@ const Status = (props) => {
                         key='GPU'
                         icon='gpu'
                         title={detailFlavor.gpus.length >= 1 ?  
-                          detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0] : detailFlavor.gpus[0] + " 외 " + (detailFlavor.gpus.length - 1) + "개" 
+                          detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0].name : detailFlavor.gpus[0].name + " 외 " + (detailFlavor.gpus.length - 1) + "개" 
                           : "-"}
                         description={t('GPU')}
                       />
@@ -273,7 +273,7 @@ const Status = (props) => {
                       <p>접근모드</p>
                     </div>
                     <div className={styles.title}>
-                      <div>{obj.capacity}GB</div>
+                      <div>{obj.capacity}</div>
                       <p>용량</p>
                     </div>
                     <div className={styles.title}>
