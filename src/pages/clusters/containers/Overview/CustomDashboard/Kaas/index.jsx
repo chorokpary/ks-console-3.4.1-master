@@ -54,7 +54,7 @@ const Kaas = () => {
                     </div>
                     <div className="status_wrap">
                       <div className="value">{data.notReady}</div>
-                      <p className="status inactive"><span>NotReady</span></p>
+                      <p className="status waiting"><span>NotReady</span></p>
                     </div>
                   </div>
                 </div>

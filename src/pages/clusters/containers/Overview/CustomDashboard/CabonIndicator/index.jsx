@@ -1,7 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 const CabonIndicator = () => {
+
+  const customStore = new CustomStore();
+
+  useEffect(() => {
+
+    var currentTime = Math.floor(Date.now() / 1000);
+    const asd = async () => {
+      const qq = await customStore.fetchMetric({
+        expr: `avg by ( job) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+        start: currentTime,
+        end: currentTime,
+      })
+      console.log('qq : ', qq)
+    };
+    asd();
+  }, [])
 
   return (
     <>

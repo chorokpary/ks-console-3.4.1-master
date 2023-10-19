@@ -37,6 +37,19 @@ const ResourceChange = ({ monitorStore }) => {
   const [kaasLoading, setKaasLoading] = useState(true);
 
   useEffect(() => {
+    const asd = async () => {
+      const metricData = await monitorStore.fetchMetrics({
+        metrics: 'redfish_chassis_power_powersupply_last_power_output_watts',
+        // step: `${Math.floor(4320)}s`, // Time interval
+        // times: 10,
+        // fillZero: true,
+        // step: '1d',
+        // times: 10,
+      })
+      console.log(metricData)
+    };
+    asd();
+
     const getPodData = async () => {
       setLoading(true)
       const metricData = await monitorStore.fetchMetrics({

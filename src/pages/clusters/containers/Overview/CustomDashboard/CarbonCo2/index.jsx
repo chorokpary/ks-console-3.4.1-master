@@ -5,7 +5,7 @@ const CarbonCo2 = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="6" gs-y="46" gs-w="6" gs-h="3">
+      <div className="grid-stack-item" gs-x="5" gs-y="46" gs-w="5" gs-h="3">
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">

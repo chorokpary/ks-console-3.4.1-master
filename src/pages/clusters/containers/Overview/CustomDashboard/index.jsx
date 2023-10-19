@@ -14,8 +14,7 @@ import Kaas from './Kaas';
 import ResourcesUsage from './ResourceUsage';
 import NetworkTraffic from './NetworkTraffic';
 import Issue from './Issue';
-import ComputingNetwork from './ComputingNetwork';
-import ComputingTemplate from './ComputingTemplate';
+import Computing from './Computing';
 import ResourceChange from './ResourceChange';
 import ClusterStatus from './ClusterStatus';
 import BmcNode from './BmcNode';
@@ -122,10 +121,8 @@ const CustomDashboard = (props) => {
                     {/* 이슈 */}
                     <Issue />
 
-                    {/* 컴퓨팅 네트워크 현황 */}
-                    <ComputingNetwork />
-                    {/* 컴퓨팅 템플릿 현황 */}
-                    <ComputingTemplate />
+                    {/* 컴퓨팅 */}
+                    <Computing />
 
                     {/* 리소스 변화량 */}
                     <ResourceChange monitorStore={monitorStore} />
