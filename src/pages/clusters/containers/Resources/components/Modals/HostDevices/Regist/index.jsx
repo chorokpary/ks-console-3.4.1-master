@@ -159,7 +159,7 @@ const RegistModal = (props) => {
 
                     <Form.Item label={t('호스트 디바이스')}>
                         <div>
-                            <div className={styles.divwrap}>
+                            <div className={styles.divwrap} style={{ marginBottom: '10px' }}>
                                 <Select name="select" options={[{ label: t('제조사명'), value: 1 }, { label: t('제품명'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
                                 <InputSearch onSearch={e => fnSearch(e)} placeholder={t('검색')} style={{ width: '40%' }} />
                             </div>

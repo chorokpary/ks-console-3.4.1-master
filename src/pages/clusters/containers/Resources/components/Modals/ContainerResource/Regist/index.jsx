@@ -19,9 +19,12 @@ import axios from "axios";
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
 
-const CONFIG_CPU = 2;
-const CONFIG_RAM = 4;
-const CONFIG_DISK = 40;
+const CONFIG_CPU_MASTER= 4;
+const CONFIG_RAM_MASTER = 8;
+const CONFIG_DISK_MASTER = 80;
+const CONFIG_CPU_WORKER = 8;
+const CONFIG_RAM_WORKER = 16;
+const CONFIG_DISK_WORKER = 160;
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -165,12 +168,13 @@ const RegistModal = (props) => {
         return opt
     }
 
-    const flavorOptions = () => {
+    const flavorOptions = (flag) => {
         const opt = flavorDataList.map((obj) => ({
             label: t(obj.name),
             description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib/ Disk ${obj.root_disk} Gib`,
             value: t(obj.name),
-            disabled: (obj.vcpus < CONFIG_CPU || common.fnSetBytes(obj.ram) < CONFIG_RAM || obj.root_disk < CONFIG_DISK)
+            disabled: flag === 1 ? (obj.vcpus < CONFIG_CPU_MASTER || common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER || obj.root_disk < CONFIG_DISK_MASTER)
+            : (obj.vcpus < CONFIG_CPU_WORKER || common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER || obj.root_disk < CONFIG_DISK_WORKER)
         }))
         return opt
     }
@@ -552,6 +556,7 @@ const RegistModal = (props) => {
                                                     }}
                                                     options={imageOptions()}
                                                     onChange={(e) => setSelectImageName(e)}
+                                                    defaultDescription={"이미지를 선택해 주세요."}
                                                 />
                                             </Form.Item>
                                             {
@@ -577,9 +582,10 @@ const RegistModal = (props) => {
                                                 <TypeSelect
                                                     name="masterFlavor"
                                                     defaultValue={"선택"}
-                                                    options={flavorOptions()}
+                                                    options={flavorOptions(1)}
                                                     placeholder={{ label: t('선택') }}
                                                     onChange={(e) => setMasterFlavorSelect(e)}
+                                                    defaultDescription={"Master Flavor를 선택해 주세요."}
                                                 />
                                             </Form.Item>
                                         </Column>
@@ -603,9 +609,10 @@ const RegistModal = (props) => {
                                                 <TypeSelect
                                                     name="workerFlavor"
                                                     defaultValue={"선택"}
-                                                    options={flavorOptions()}
+                                                    options={flavorOptions(2)}
                                                     placeholder={{ label: t('선택') }}
                                                     onChange={(e) => setWorkerFlavorSelect(e)}
+                                                    defaultDescription={"Worker Flavor를 선택해 주세요."}
                                                 />
                                             </Form.Item>
                                         </Column>
