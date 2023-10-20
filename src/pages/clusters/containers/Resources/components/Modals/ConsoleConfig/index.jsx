@@ -20,24 +20,26 @@ import { isUndefined, isEmpty } from 'lodash'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { toJS } from 'mobx'
-import classnames from 'classnames'
+import classNames from 'classnames'
 import { Modal } from 'components/Base'
 import EditMode from 'components/EditMode'
 
 import styles from './index.scss'
 
-export default class ConsoleLoglModal extends React.Component {
+export default class ConsoleConfiglModal extends React.Component {
     static propTypes = {
         detail: PropTypes.object,
         resourceConfig: PropTypes.object,
         visible: PropTypes.bool,
         onOk: PropTypes.func,
         onCancel: PropTypes.func,
+        isSubmitting: PropTypes.bool,
         readOnly: PropTypes.bool,
     }
 
     static defaultProps = {
         visible: false,
+        isSubmitting: false,
         readOnly: false,
         detail: {},
         onOk() { },
@@ -69,26 +71,63 @@ export default class ConsoleLoglModal extends React.Component {
         if (resourceConfig) {
             return this.setState({ value: resourceConfig })
         }
+
+        if (detail && detail.name) {
+            store.fetchDetail(detail).then(data => {
+                const scheduleTemplate = store.deployedScheduleTemplate
+                if (!isEmpty(scheduleTemplate)) {
+                    this.setState({ value: [data._originData, scheduleTemplate] })
+                } else {
+                    this.setState({ value: data._originData })
+                }
+            })
+        }
+    }
+
+    handleOk = () => {
+        const { onOk, onCancel, store, detail } = this.props
+
+        const value = this.editor.current.getData()
+        const list = store.list
+        const selectedRowKeys = toJS(list.selectedRowKeys)
+        const newSelectedRowKeys = selectedRowKeys
+            ? selectedRowKeys.filter(item => item !== detail.uid)
+            : ''
+
+        if (isUndefined(value)) {
+            onCancel()
+        } else {
+            onOk(value)
+            if (selectedRowKeys) list.setSelectRowKeys(newSelectedRowKeys)
+        }
     }
 
     render() {
-        const { readOnly, visible, onCancel } = this.props
-        const title = t('Console Config 보기')
+        const { readOnly, visible, onCancel, isSubmitting } = this.props
 
         return (
             <Modal
-                title={title}
-                bodyClassName={classnames({
+                title={t('Kubeconfig')}
+                bodyClassName={classNames({
                     [styles.readOnly]: readOnly,
                 })}
+                onOk={this.handleOk}
                 onCancel={onCancel}
+                okText={t('OK')}
                 visible={visible}
                 closable={readOnly}
                 hideFooter={readOnly}
+                isSubmitting={isSubmitting}
+                fullScreen
             >
-                <div className={styles.wrapper}>
-                    {this.state.value}
-                </div>
+                {this.state.value && (
+                    <EditMode
+                        ref={this.editor}
+                        editorClassName={styles.editor}
+                        value={this.state.value}
+                        readOnly={readOnly}
+                    />
+                )}
             </Modal>
         )
     }

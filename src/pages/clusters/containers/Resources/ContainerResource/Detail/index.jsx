@@ -86,6 +86,7 @@ const ResourceDetail = (props) => {
             onClick: () => {
                 props.rootStore.triggerAction('containerresource.config.view', {
                     resourceConfig: store.resourceConfig,
+                    store: store,
                     readOnly: true,
                 })
             },
