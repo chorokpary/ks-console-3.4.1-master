@@ -113,7 +113,7 @@ const ComputingTemplate = ({
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="25" gs-w="9" gs-h="4">
+      <div className="grid-stack-item" gs-x="0" gs-y="25" gs-w="12" gs-h="4">
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">

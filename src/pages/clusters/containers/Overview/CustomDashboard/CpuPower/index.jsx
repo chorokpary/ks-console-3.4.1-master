@@ -5,7 +5,7 @@ const CpuPower = () => {
 
     return (
         <>
-            <div className="grid-stack-item" gs-x="0" gs-y="41" gs-w="9" gs-h="5">
+            <div className="grid-stack-item" gs-x="0" gs-y="49" gs-w="12" gs-h="5">
                 <div className="grid-stack-item-content">
                     {/* grid_item */}
                     <div className="grid_item">

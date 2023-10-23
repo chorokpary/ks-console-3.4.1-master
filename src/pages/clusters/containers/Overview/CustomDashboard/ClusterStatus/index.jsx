@@ -33,7 +33,7 @@ const ClusterStatus = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="4" gs-y="36" gs-w="5" gs-h="5">
+      <div className="grid-stack-item" gs-x="6" gs-y="36" gs-w="6" gs-h="5">
         <div className="grid-stack-item-content pop_over">
           {/* grid_item */}
           <div className="grid_item">
@@ -42,22 +42,22 @@ const ClusterStatus = () => {
               <div className="right">
               </div>
             </div>
-            <div className="grid_info style_status box_nth_wrap">
-              {componentData.map((item, idx) => (
-                <div className="box type_component" key={idx}>
-                  {/* <Loading spinning={loading}> */}
-                  <h5><i className="ico-type-kubernetes-component"></i>{item.name}</h5>
-                  <div className="status_box">
-                    <p className="status_active">{item.healthyBackends}</p>
-                    <p className={`${item.totalBackends - item.healthyBackends > 0 ? 'status_error' : 'status_inactive'}`}>
-                      {item.totalBackends - item.healthyBackends}
-                    </p>
-                    <PodList label={item.label}></PodList>
+            <Loading spinning={loading}>
+              <div className="grid_info style_status box_nth_wrap">
+                {componentData.map((item, idx) => (
+                  <div className="box type_component" key={idx}>
+                    <h5><i className="ico-type-kubernetes-component"></i>{item.name}</h5>
+                    <div className="status_box">
+                      <p className="status_active">{item.healthyBackends}</p>
+                      <p className={`${item.totalBackends - item.healthyBackends > 0 ? 'status_error' : 'status_inactive'}`}>
+                        {item.totalBackends - item.healthyBackends}
+                      </p>
+                      <PodList label={item.label}></PodList>
+                    </div>
                   </div>
-                  {/* </Loading> */}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </Loading>
             {/*// grid_info style_status */}
 
           </div>

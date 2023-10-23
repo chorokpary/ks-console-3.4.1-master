@@ -30,7 +30,7 @@ const Vm = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="5" gs-y="0" gs-w="2" gs-h="4">
+      <div className="grid-stack-item" gs-x="6" gs-y="0" gs-w="3" gs-h="4">
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">

@@ -34,6 +34,7 @@ const CustomDashboard = (props) => {
   const monitorStore = new ClusterMonitorStore({ cluster })
 
   const options = {
+    column: 15,
     float: false,
     disableOneColumnMode: true,
     handleClass: 'grid-stack-item-content .grid_item .grid_title',

@@ -7,15 +7,18 @@ const Issue = () => {
   const store = new MessageStore()
 
   const [list, setList] = useState([])
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true)
       const list = await store.fetchList({
         sortBy: 'activeAt',
         type: 'builtin',
         cluster: 'default'
       })
       setList(list)
+      setLoading(false)
     };
     getData();
   }, [])
@@ -46,38 +49,40 @@ const Issue = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="9" gs-y="17" gs-w="3" gs-h="9">
+      <div className="grid-stack-item" gs-x="12" gs-y="17" gs-w="3" gs-h="9">
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title">
               <label>이슈</label>
             </div>
-            <div className="grid_info style_list">
-              {/* // select_wrap */}
-              {list.length > 0 ?
-                <ul className="list_01">
-                  {list.map((obj, idx) => (
-                    <li className="li_type_01" key={idx}>
-                      <div className="lft">
-                        <i className={`ico-info-${obj.labels.severity == 'warning' ? 'warning' : 'warning-2'}`}></i>
-                        <h6 className="list_title">
-                          {obj.annotations.summary}
-                          <span>{getLocalTime(obj.activeAt).format('YYYY-MM-DD')}</span>
-                        </h6>
-                      </div>
-                      <div className="type">
-                        <span className={`type_${getTypeIcon(obj.labels)}`}>{getType(obj.labels)}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                :
-                <div className="grid_text">
-                  <span>데이터가 없습니다.</span>
-                </div>
-              }
-            </div>
+            <Loading spinning={loading}>
+              <div className="grid_info style_list">
+                {/* // select_wrap */}
+                {list.length > 0 ?
+                  <ul className="list_01">
+                    {list.map((obj, idx) => (
+                      <li className="li_type_01" key={idx}>
+                        <div className="lft">
+                          <i className={`ico-info-${obj.labels.severity == 'warning' ? 'warning' : 'warning-2'}`}></i>
+                          <h6 className="list_title">
+                            {obj.annotations.summary}
+                            <span>{getLocalTime(obj.activeAt).format('YYYY-MM-DD')}</span>
+                          </h6>
+                        </div>
+                        <div className="type">
+                          <span className={`type_${getTypeIcon(obj.labels)}`}>{getType(obj.labels)}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  :
+                  <div className="grid_text">
+                    <span>데이터가 없습니다.</span>
+                  </div>
+                }
+              </div>
+            </Loading>
           </div>
           {/* // grid_item */}
         </div>

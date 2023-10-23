@@ -142,7 +142,7 @@ const ResourceChange = ({ monitorStore }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="36" gs-w="4" gs-h="5">
+      <div className="grid-stack-item" gs-x="0" gs-y="36" gs-w="6" gs-h="5">
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">
@@ -151,7 +151,7 @@ const ResourceChange = ({ monitorStore }) => {
 
               </div>
             </div>
-            <Loading spinning={loading}>
+            <Loading spinning={loading || vmLoading || kaasLoading}>
               <div className="grid_info style_status box_long">
                 <div className="box type_status">
                   <div className="cont_group">
@@ -170,12 +170,9 @@ const ResourceChange = ({ monitorStore }) => {
                     </div>
                   </div> */}
                     <TinyArea {...getAreaChartOps(podContent)} bgColor="transparent" />
-                    {/* <div className="chart chart_03"></div> */}
                   </div>
                 </div>
               </div>
-            </Loading>
-            <Loading spinning={vmLoading}>
               <div className="grid_info style_status box_long">
                 <div className="box type_status">
                   <div className="cont_group">
@@ -187,8 +184,6 @@ const ResourceChange = ({ monitorStore }) => {
                   </div>
                 </div>
               </div>
-            </Loading>
-            <Loading spinning={kaasLoading}>
               <div className="grid_info style_status box_long">
                 <div className="box type_status">
                   <div className="cont_group">

@@ -36,9 +36,7 @@ const ClusterNode = () => {
           <div className="grid_item">
             <div className="grid_title">
               <label>클러스터 노드</label>
-
             </div>
-
             <Loading spinning={loading}>
               <div className="grid_info style_status">
                 <div className="box type_status">

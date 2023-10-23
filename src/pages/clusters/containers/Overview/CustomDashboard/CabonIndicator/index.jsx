@@ -22,7 +22,7 @@ const CabonIndicator = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="9" gs-y="26" gs-w="3" gs-h="8">
+      <div className="grid-stack-item" gs-x="12" gs-y="26" gs-w="3" gs-h="8">
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
