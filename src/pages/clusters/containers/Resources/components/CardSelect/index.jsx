@@ -29,10 +29,12 @@ export default class CardSelect extends Component {
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
     selectedClassName: PropTypes.string,
     iconSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    customSize: PropTypes.array,
   }
 
   static defaultProps = {
     selectedClassName: styles.selected,
+    customSize: ['none', 'none']
   }
 
   state = {
@@ -45,18 +47,34 @@ export default class CardSelect extends Component {
     const { onChange } = this.props
 
     if (isArray(value)) {
-      if (value.includes(targetValue)) {
-        this.setState(
-          { value: value.filter(item => item !== targetValue) },
-          () => {
-            onChange(value.filter(item => item !== targetValue))
-          }
-        )
+      if (targetValue === 'all') {
+        if (value.includes(targetValue)) {
+          this.setState(
+            { value: [] },
+            () => {
+              onChange([])
+            }
+          )
+        } else {
+          this.setState({ value: [...this.props.options].map(obj => obj.value) }, () => {
+            onChange([...this.props.options].map(obj => obj.value))
+          })
+        }
       } else {
-        this.setState({ value: [...value, targetValue] }, () => {
-          onChange([...value, targetValue])
-        })
+        if (value.includes(targetValue)) {
+          this.setState(
+            { value: value.filter(item => item !== targetValue) },
+            () => {
+              onChange(value.filter(item => item !== targetValue))
+            }
+          )
+        } else {
+          this.setState({ value: [...value, targetValue] }, () => {
+            onChange([...value, targetValue])
+          })
+        }
       }
+
     } else {
       this.setState({ value: targetValue }, () => {
         onChange(targetValue)
@@ -70,9 +88,9 @@ export default class CardSelect extends Component {
   }
 
   render() {
-    const { className, options, selectedClassName } = this.props
+    const { className, options, selectedClassName, customSize } = this.props
     return (
-      <ul className={classnames(styles.container, className)}>
+        <ul className={classnames(styles.container, className)} style={{ width: customSize[0], marginLeft: customSize[1] }}>
         {options.map(
           ({ icon = 'picture', image, label, value, description }) => (
             <li

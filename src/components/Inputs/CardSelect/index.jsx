@@ -29,12 +29,10 @@ export default class CardSelect extends Component {
     value: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
     selectedClassName: PropTypes.string,
     iconSize: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    customSize: PropTypes.array,
   }
 
   static defaultProps = {
       selectedClassName: styles.selected,
-      customSize: ['none', 'none']
   }
 
   state = {
@@ -72,9 +70,9 @@ export default class CardSelect extends Component {
   }
 
   render() {
-    const { className, options, selectedClassName, customSize } = this.props
+    const { className, options, selectedClassName } = this.props
     return (
-      <ul className={classnames(styles.container, className)} style={{ width: customSize[0], marginLeft: customSize[1]}}>
+      <ul className={classnames(styles.container, className)}>
         {options.map(
           ({ icon = 'picture', image, label, value, description }) => (
             <li

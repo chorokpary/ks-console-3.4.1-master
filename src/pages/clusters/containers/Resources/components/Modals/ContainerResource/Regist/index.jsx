@@ -3,10 +3,8 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal } from 'components/Base'
 
-import { CardSelect as CardSelect2 } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, Tabs, Icon, Slider } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
-import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import * as common from "utils/resources"
 
 import TypeSelect from '../../../TypeSelect'
@@ -131,7 +129,7 @@ const RegistModal = (props) => {
         });
 
         const featureData = axios.get(`/edgetron/resources/capk/metadata/features`);
-        let resFeature = [];
+        let resFeature = [{ label: '모두선택', value: 'all', icon: 'ico-empty' }];
         featureData.then(response => {
             if (response.data.features) {
                 for (let i = 0, n = response.data.features.length; i < n; i += 1) {
@@ -139,7 +137,7 @@ const RegistModal = (props) => {
                         label: response.data.features[i].name,
                         value: response.data.features[i].name,
                         //icon: response.data.features[i].name.toLowerCase(),
-                        icon: 'kubesphere',
+                        icon: 'ico-empty',
                     });
                 };
                 setFeatures(resFeature);
@@ -439,21 +437,7 @@ const RegistModal = (props) => {
     }
 
     const handleEkgStack = (e => {
-        if (e === 'all') {
-            if ([...ekgStack].includes(e)) {
-                setEkgStack([]);
-            } else {
-                const eArray = [];
-                features.filter((obj) => obj.value !== 'all').forEach((el) => eArray.push(el.value));
-                setEkgStack(eArray);
-            }
-        } else {
-            if ([...ekgStack].includes(e)) {
-                setEkgStack([...ekgStack].filter((obj) => obj !== e));
-            } else {
-                setEkgStack(e);
-            }
-        }
+        setEkgStack(e.filter(obj => obj !== 'all'));
     })
 
     // 스크립트 끝 ==================================================
@@ -872,7 +856,7 @@ const RegistModal = (props) => {
                                 <Form.Item label={t('EKG Stack')}>
                                     <Form.Group>
                                         <Form.Item>
-                                            <CardSelect2
+                                            <CardSelect
                                                 className={styles.customUl}
                                                 onChange={(e) => handleEkgStack(e)}
                                                 options={features}
