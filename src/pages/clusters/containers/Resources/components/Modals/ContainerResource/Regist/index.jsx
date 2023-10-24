@@ -129,7 +129,7 @@ const RegistModal = (props) => {
         });
 
         const featureData = axios.get(`/edgetron/resources/capk/metadata/features`);
-        let resFeature = [{ label: '모두선택', value: 'all', icon: 'ico-empty' }];
+        let resFeature = [{ label: '모두선택', value: 'all', icon: 'ico-etc-checkall' }];
         featureData.then(response => {
             if (response.data.features) {
                 for (let i = 0, n = response.data.features.length; i < n; i += 1) {
@@ -137,7 +137,7 @@ const RegistModal = (props) => {
                         label: response.data.features[i].name,
                         value: response.data.features[i].name,
                         //icon: response.data.features[i].name.toLowerCase(),
-                        icon: 'ico-empty',
+                        icon: 'ico-etc-' + response.data.features[i].name.toLowerCase(),
                     });
                 };
                 setFeatures(resFeature);

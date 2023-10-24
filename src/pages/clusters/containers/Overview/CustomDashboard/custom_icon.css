@@ -620,6 +620,55 @@ i {
     width: 30px;
     height: 30px;
   }
+
+  /* etc kaas */
+  .ico-etc-checkall {
+    background: url("/assets/resources/images/icons/ico-etc-checkall.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-security {
+    background: url("/assets/resources/images/icons/ico-type-security.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-servicemesh {
+    background: url("/assets/resources/images/icons/ico-etc-servicemesh.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-audit {
+    background: url("/assets/resources/images/icons/ico-etc-audit.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-network {
+    background: url("/assets/resources/images/icons/ico-type-network.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-lma {
+    background: url("/assets/resources/images/icons/ico-etc-lma.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-devops {
+    background: url("/assets/resources/images/icons/ico-etc-devops.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ico-etc-appstore {
+    background: url("/assets/resources/images/icons/ico-etc-appstore.svg") center no-repeat;
+    width: 30px;
+    height: 30px;
+  } 
   
   .ico-arrow-clamp-down {
     background: url('/assets/resources/images/icons/ico-arrow-clamp-down.svg') center no-repeat;
