@@ -37,23 +37,26 @@ const Carbon = () => {
     const armKwh = 700;
     const x86Kwh = 300;
 
-    const imsiKwh = armKwh + x86Kwh;   
+    const totalKwh = armKwh + x86Kwh;   
 
     // 전기 사용량
-    setUseKwh(common.fnAddCommar(imsiKwh))
+    setUseKwh(common.fnAddCommar(totalKwh))
     setArmKwh(armKwh);
     setX86Kwh(x86Kwh);
 
     // CO2 발생량
-    setUseCo2((Math.round((imsiKwh  * 0.4781) / 0.1)*0.1).toFixed(1))
+    setUseCo2((Math.round((totalKwh  * 0.4781) / 0.1)*0.1).toFixed(1))
     setArmCo2((Math.round((armKwh  * 0.4781) / 0.1)*0.1).toFixed(1))
     setX86Co2((Math.round((x86Kwh  * 0.4781) / 0.1)*0.1).toFixed(1))
 
-    // 필요소나무
-    setUseTree((Math.round(((imsiKwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
-    setArmTree((Math.round(((armKwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
-    setX86Tree((Math.round(((x86Kwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
-
+    // // 필요소나무
+    // setUseTree((Math.round(((imsiKwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
+    // setArmTree((Math.round(((armKwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
+    // setX86Tree((Math.round(((x86Kwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
+    setUseTree((Math.round((totalKwh * 0.1157625)/0.1)*0.1).toFixed(1))
+    setArmTree((Math.round((armKwh * 0.1157625)/0.1)*0.1).toFixed(1))
+    setX86Tree((Math.round((x86Kwh * 0.1157625)/0.1)*0.1).toFixed(1))
+    
     const armPrice = 3000000;
     const x86Price = 2000000;
 

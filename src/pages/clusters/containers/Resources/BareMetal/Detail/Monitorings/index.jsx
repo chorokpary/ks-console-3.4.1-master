@@ -1,150 +1,167 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-import React from 'react'
+import { get, isEmpty, find } from 'lodash'
+import React, {useState, useEffect} from 'react'
+import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { get, isEmpty } from 'lodash'
+import classnames from 'classnames'
 
 import { getChartData, getAreaChartOps } from 'utils/monitoring'
-import NodeMonitorStore from 'stores/monitoring/node'
+
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
-import CustomTooltip from 'components/Charts/Custom/Tooltip'
 
-const MetricTypes = {
-  cpu_utilisation: 'node_cpu_utilisation',
-  cpu_load1: 'node_load1',
-  cpu_load5: 'node_load5',
-  cpu_load15: 'node_load15',
-  memory_utilisation: 'node_memory_utilisation',
-  disk_utilisation: 'node_disk_size_utilisation',
-  disk_inode_utilisation: 'node_disk_inode_utilisation',
-  device_size_utilisation: 'node_device_size_utilisation',
-  disk_inode_usage: 'node_disk_inode_usage',
-  disk_inode_total: 'node_disk_inode_total',
-  disk_read_iops: 'node_disk_read_iops',
-  disk_write_iops: 'node_disk_write_iops',
-  disk_read_throughput: 'node_disk_read_throughput',
-  disk_write_throughput: 'node_disk_write_throughput',
-  net_transmitted: 'node_net_bytes_transmitted',
-  net_received: 'node_net_bytes_received',
-}
+import styles from './index.scss'
 
-@inject('detailStore')
-@observer
-class Monitorings extends React.Component {
-  constructor(props) {
-    super(props)
+const index = (props) => {
 
-    this.monitorStore = new NodeMonitorStore({ cluster: this.cluster })
+  const store = props.detailStore;
+  const customStore = new CustomStore();
+
+  const [vmCpuData, setVmCpuData] = useState([]);
+  const [vmMemoryData, setVmMemoryData] = useState([]);
+  const [vmInboundData, setVmInboundData] = useState({});
+  const [vmOutboundData, setVmOutboundData] = useState({});
+
+  const fetchData = async (params) => {
+
+    var currentTime = Math.floor(Date.now() / 1000);
+
+    const step = params.step;
+    const times = params.times;
+    const start = (params.start == '' || !!!params.start) ? currentTime - 3000 : Math.floor(params.start);
+    const end = (params.end == '' || !!!params.end) ? currentTime : Math.floor(params.end);
+
+    
+    // const vmName = store.detail.name;
+    const vmName = "vpc-test";
+
+    const getVmCpuUsageData = async () => {
+      const vmCpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
+        start,
+        end,
+      })
+
+      const vmCpuMetricData = _.find(vmCpuData, (data) => {
+        if (data.metric.pod === vmName ) return data;
+      });
+  
+      // 배열 처리 
+      const vmCpuArray = [];
+      vmCpuArray.push(vmCpuMetricData)
+      setVmCpuData(vmCpuArray)
+    };
+
+    // vm memory data
+    const getVmMemoryUsageData = async () => {
+      const vmMemoryData = await customStore.fetchMetric({
+        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+        start,
+        end,
+      })
+
+      const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
+        if (data.metric.pod === vmName ) return data;
+      });
+
+      // 배열 처리 
+      const vmMemoryArray = [];
+      vmMemoryArray.push(vmMemoryMetricData)
+      setVmMemoryData(vmMemoryArray)
+
+    };
+
+    const getVmInboundData = async () => {
+      const vmInboundData = await customStore.fetchMetric({
+        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[${step}])`,
+        start,
+        end,
+      })
+
+      const vmInboundMetricData = _.find(vmInboundData, (data) => {
+        if (data.metric.pod === vmName ) return data;
+      });
+
+      setVmInboundData(vmInboundMetricData)
+
+    };
+   
+    // vm outbound data
+    const getVmOutboundData = async () => {
+      const vmOutboundData= await customStore.fetchMetric({
+        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[${step}])`,
+        start,
+        end,
+      })
+
+      const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
+        if (data.metric.pod === vmName ) return data;
+      });
+
+      setVmOutboundData(vmOutboundMetricData)
+
+    };
+    
+    getVmCpuUsageData();
+    getVmMemoryUsageData();
+    getVmInboundData();
+    getVmOutboundData()    
+
   }
 
-  get store() {
-    return this.props.detailStore
-  }
-
-  get cluster() {
-    return this.props.match.params.cluster
-  }
-
-  get metrics() {
-    return this.monitorStore.data
-  }
-
-  fetchData = params => {
-    // const { name, role = [] } = this.store.detail
-    let name = "worker02"
-    let role = ""
-    this.monitorStore.fetchMetrics({
-      resources: [name],
-      metrics: Object.values(MetricTypes),
-      fillZero: !role.includes('edge'),
-      ...params,
-    })
-  }
-
-  getMonitoringCfgs = () => {
-    const deviceUsage = get(
-      this.metrics,
-      `${MetricTypes.device_size_utilisation}.data.result`,
-      []
-    )
-    const legend = deviceUsage && deviceUsage.map(item => item.metric.device)
-
+  const getMonitoringCfgs = () => {
     return [
       {
         type: 'utilisation',
         title: 'CPU_USAGE',
         unit: '%',
         legend: ['CPU_USAGE'],
-        data: get(this.metrics, `${MetricTypes.cpu_utilisation}.data.result`),
+        data: vmCpuData,
       },
       {
         type: 'utilisation',
         title: 'MEMORY_USAGE',
         unit: '%',
+        unitType: 'memory',
         legend: ['MEMORY_USAGE'],
-        data: get(
-          this.metrics,
-          `${MetricTypes.memory_utilisation}.data.result`
-        ),
+        data: vmMemoryData,
       },
       {
         type: 'bandwidth',
         title: 'NETWORK_TRAFFIC',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
-        data: [
-          get(
-            this.metrics,
-            `${MetricTypes.net_transmitted}.data.result[0]`,
-            {}
-          ),
-          get(this.metrics, `${MetricTypes.net_received}.data.result[0]`, {}),
-        ],
+        data: [vmOutboundData , vmInboundData],
       },
     ]
   }
 
-  render() {
-    const { createTime } = this.store.detail
-    const { isLoading, isRefreshing } = this.monitorStore
-    const configs = this.getMonitoringCfgs()
+  const { isLoading, isRefreshing } = customStore
+  const configs = getMonitoringCfgs()
 
-    return (
-      <MonitoringController
-        createTime={createTime}
-        onFetch={this.fetchData}
-        loading={isLoading}
-        refreshing={isRefreshing}
-        isEmpty={isEmpty(this.metrics)}
-      >
-        {configs.map(item => {
-          const config = getAreaChartOps(item)
+  return (
+    <>  
+        <div>
+          <div className={styles.wrapper}>
+          <MonitoringController
+              title={t('모니터링')}
+              onFetch={fetchData}
+              loading={isLoading}
+              refreshing={isRefreshing}       
+            >
+              {configs.map(item => {
+                const config = getAreaChartOps(item)
+                if (isEmpty(config.data)) return null
+                return <SimpleArea key={config.title} width="100%" {...config} />
+              })}
+              
+            </MonitoringController>
+          </div>
+      </div>         
+    </>
+  );
+};
 
-          if (isEmpty(config.data)) return null
+export default inject('detailStore')(observer(index))
 
-          return <SimpleArea key={config.title} width="100%" {...config} />
-        })}
-      </MonitoringController>
-    )
-  }
-}
-
-export default Monitorings

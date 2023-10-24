@@ -45,7 +45,7 @@ export default class BareMetalStore extends Base {
     isLoading: true,
   }
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/keypairs`
+  getResourceUrl = (params = {}) => `/kapis/monitoring.kubesphere.io/v1alpha3/targets/query?expr=redfish_chassis_model_info`
   getListUrl = this.getResourceUrl
 
   @action
@@ -75,23 +75,27 @@ export default class BareMetalStore extends Base {
     params.limit = params.limit || 10
 
     const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
-      this.getFilterParams(params)
+      this.getResourceUrl()
     )
 
-    const data = (get(result, 'keypairs') || []).map(item => ({
+    const data = (get(result.data, 'result') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
+    const dataArray = [];
+    data.map((obj) => {
+        dataArray.push(obj.metric)
+    })
+
     // 초기 정렬 처리
-    data.sort((a, b) => {
-      return a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0;
+    dataArray.sort((a, b) => {
+      return a.instance < b.instance ? 1 : a.instance > b.instance ? -1 : 0;
     });
 
     // 초기 데이터 처리 
-    this.dataList = data; 
+    this.dataList = dataArray; 
     
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -187,13 +191,11 @@ export default class BareMetalStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
+      `${this.getResourceUrl(params)}`
     )
+    
     const detail = { ...params, ...this.mapper(result), kind: 'Baremetal' }
-
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
-
+    
     this.detail = detail
     this.isLoading = false
     return detail

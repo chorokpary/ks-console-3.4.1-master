@@ -1616,3 +1616,34 @@
     background-color: #3617ce;
   }
   /*# sourceMappingURL=custom_style.css.map */
+
+  .form-group-content:first-child {
+    margin-top:0 !important;  
+  }
+  
+  .src-pages-clusters-containers-Resources-components-Modals-ContainerResource-Regist-index__table table thead th {
+    text-transform: uppercase;
+    border-bottom: 1px solid #F1F1F1;
+    padding: 10px;
+    background: #f9fbfd;  
+  }
+
+  li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected {
+    border: 2px solid #A3ABF9;
+    background: #F6F8FF;  
+  }
+
+  .src-pages-clusters-containers-Resources-components-TypeSelect-index__option.src-pages-clusters-containers-Resources-components-TypeSelect-index__disabled {
+    background: #EFF4F9;
+  }
+ 
+  .src-pages-clusters-containers-Resources-components-TypeSelect-index__option.src-pages-clusters-containers-Resources-components-TypeSelect-index__disabled > div,
+  .src-pages-clusters-containers-Resources-components-TypeSelect-index__option.src-pages-clusters-containers-Resources-components-TypeSelect-index__disabled > p {
+    color: #79879C;
+  }
+
+
+  
+
+  
+   

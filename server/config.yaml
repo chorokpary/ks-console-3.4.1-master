@@ -143,13 +143,6 @@ client:
             - { name: members, title: CLUSTER_MEMBER_PL }
             - { name: roles, title: CLUSTER_ROLE_PL }
             - {
-                name: log-collections,
-                title: LOG_RECEIVER_PL,
-                icon: file,
-                authKey: cluster-settings,
-                clusterModule: logging|events|auditing,
-              }
-            - {
                 name: gateways,
                 title: GATEWAY_SETTINGS,
                 authKey: cluster-settings,
@@ -159,6 +152,13 @@ client:
                 title: SYSTEM_COMPONENT_PL, 
                 icon: components 
               }    
+            - {
+                name: log-collections,
+                title: LOG_RECEIVER_PL,
+                icon: file,
+                authKey: cluster-settings,
+                clusterModule: logging|events|auditing,
+              }
         - { name: projects, title: PROJECT_PL, icon: project }
         - name: app-workloads
           title: APPLICATION_WORKLOAD_PL
@@ -177,7 +177,12 @@ client:
                 - { name: cronjobs, title: CRONJOB_PL }
             - { name: pods, title: POD_PL }
             - { name: services, title: SERVICE_PL }
-            - { name: ingresses, title: ROUTE_PL }
+            - { name: ingresses, title: ROUTE_PL }            
+        - name : computing-workloads
+          title: "컴퓨팅 워크로드"
+          icon: appcenter
+          showInDisable: true   
+          children: 
             - { name: vms, title: "가상머신"}
             - { name: containerResource, title: "KaaS" }
         - name: computing
@@ -238,8 +243,7 @@ client:
              title: "Mediated 디바이스",
              skipAuth: true,
              showInDisable: true,
-            }
-            
+            }            
         - name: resources
           title: "리소스 템플릿"
           icon: appcenter
@@ -270,7 +274,7 @@ client:
               showInDisable: true,
             }   
         - name: virtualmachine-management
-          title: "가상머신 관리"
+          title: "컴퓨팅 애플리케이션 관리"
           icon: appcenter
           showInDisable: true   
           children:   

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
+import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
+
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 const CpuUsage = () => {
@@ -13,11 +15,12 @@ const CpuUsage = () => {
     const [vmCpuData, setVmCpuData] = useState([]);
     const [vmMemoryData, setVmMemoryData] = useState([]);
 
+    const [timeStep, setTimeStep] = useState("h")
+
     useEffect(() => {
 
-        // vm cpu data
-        const step = '5m'
-        const times = 100
+        const step = '60'
+        const times = 10
         var currentTime = Math.floor(Date.now() / 1000);
         const getVmCpuUsageData = async () => {
         const vmCpuData = await customStore.fetchMetric({
@@ -27,13 +30,28 @@ const CpuUsage = () => {
             start: currentTime,
             end: currentTime,
         })
-        console.log(JSON.stringify(vmCpuData))
+        // console.log("vmCpuData : " +JSON.stringify(vmCpuData))
         setVmCpuData(vmCpuData)
         // setVmCpuData(vmCpuDataDummy)
         };
         getVmCpuUsageData();
+
+        onClickTab('h');
         
     },[])
+
+    const onClickTab = (step) => {
+
+        const stepData = {
+            h: { step: '6m', times : 10},
+            d: { step: '60m', times : 24},
+            w: { step: '60m', times : 168},
+            m: { step: '60m', times : 720},
+        }
+
+        console.log(get(stepData, step))
+
+    }
 
     return (
         <>
@@ -44,19 +62,19 @@ const CpuUsage = () => {
                     <div className="right">
                     <div className="boxtab">
                         <label htmlFor="cpupower_name1">
-                            <input type="radio" name="cpupower" id="cpupower_name1" value="name3" defaultChecked/>
+                            <input type="radio" name="cpupower" id="cpupower_name1" value="name3" defaultChecked onClick={() => onClickTab('h')} />
                             <span>최근 1시간</span>
                         </label>
                         <label htmlFor="cpupower_name2">
-                            <input type="radio" name="cpupower" id="cpupower_name2" value="name4" />
+                            <input type="radio" name="cpupower" id="cpupower_name2" value="name4" onClick={() => onClickTab('d')} />
                             <span>최근 1일</span>
                         </label>
                         <label htmlFor="cpupower_name3">
-                            <input type="radio" name="cpupower" id="cpupower_name3" value="name5" />
+                            <input type="radio" name="cpupower" id="cpupower_name3" value="name5" onClick={() => onClickTab('w')} />
                             <span>최근 1주일</span>
                         </label>
                         <label htmlFor="cpupower_name4">
-                            <input type="radio" name="cpupower" id="cpupower_name4" value="name6" />
+                            <input type="radio" name="cpupower" id="cpupower_name4" value="name6" onClick={() => onClickTab('m')} />
                             <span>최근 1달</span>
                         </label>
                     </div>
