@@ -215,7 +215,7 @@ const RegistModal = (props) => {
             data.csi = csiSelect;
             data.features = ekgStack;
             data.expiration = expirationSelect;
-            data.private_registry = true;
+            data.private_registry = tab === 'private';
 
             onOk({ ...data })
         })
@@ -439,6 +439,9 @@ const RegistModal = (props) => {
     const handleEkgStack = (e => {
         setEkgStack(e.filter(obj => obj !== 'all'));
     })
+
+    const [tab, setTab] = useState("private");
+    const { TabPanel } = Tabs;
 
     // 스크립트 끝 ==================================================
 
@@ -666,14 +669,14 @@ const RegistModal = (props) => {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {!networkDataList?.length &&
+                                                            {!networkDataList?.filter((el) => el.external).length &&
                                                                 <tr>
                                                                     <td colSpan="6" className="no-data">
                                                                         <p>할당 가능한 자원이 없습니다.</p>
                                                                     </td>
                                                                 </tr>
                                                             }
-                                                            {networkDataList?.map((data, key) => (
+                                                            {networkDataList?.filter((el) => el.external).map((data, key) => (
                                                                 <tr key={data.name}>
                                                                     <td>
                                                                         <Radio name={`select-${data.name}`}
@@ -865,6 +868,13 @@ const RegistModal = (props) => {
                                             />
                                         </Form.Item>
                                     </Form.Group>
+                                </Form.Item>
+
+                                <Form.Item label={t('컨테이너 이미지')}>
+                                    <Tabs type="button" activeName={tab} onChange={newTab => setTab(newTab)}>
+                                        <TabPanel label="프라이빗" name="private" />
+                                        <TabPanel label="퍼블릭" name="public" />
+                                    </Tabs>
                                 </Form.Item>
 
                                 <Form.Item label={t('인증서 유효기간')}>

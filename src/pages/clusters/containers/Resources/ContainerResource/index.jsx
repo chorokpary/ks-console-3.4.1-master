@@ -18,7 +18,7 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status, Indicator } from 'components/Base'
+import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'

@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
 import { Panel, Text } from 'components/Base'
-import { Icon} from '@kube-design/components'
+import { Icon, Loading } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 
 import styles from './index.scss'
@@ -13,7 +13,6 @@ import VmStore from 'stores/resources/vms'
 
 import * as common from 'utils/resources'
 import { getAreaChartOps } from 'utils/monitoring'
-
 
 const DetailVmList = (props) => {
 
@@ -28,6 +27,7 @@ const DetailVmList = (props) => {
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   
   const renderContent = (obj) => {
     return (
@@ -127,6 +127,7 @@ const DetailVmList = (props) => {
         } else {
             setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
         }
+        setIsLoading(false)
     };
 
     fnGetExternalNetwork();
@@ -226,9 +227,12 @@ const DetailVmList = (props) => {
       {vmDataList.length == 0 &&
         <Panel title={"가상 머신"}>
           <div className={styles.wrapper}>
-              <div>{props.type}{props.type ==="보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
+            {isLoading? 
+              <div><Loading /></div>
+              : <div>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
+            }
           </div>
-      </Panel> 
+        </Panel> 
       }
 
     </>

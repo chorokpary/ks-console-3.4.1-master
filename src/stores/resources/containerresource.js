@@ -172,7 +172,7 @@ export default class ResourceStore extends Base {
     reqData.ui = "kubesphere";
     reqData.features = data.features;
     reqData.expiration = data.expiration;
-    reqData.private_registry = false;
+    reqData.private_registry = data.private_registry;
     jsonData.cluster = reqData;
 
     let res = await this.submitting(request.post(this.getListUrl(params), jsonData))
@@ -322,6 +322,15 @@ export default class ResourceStore extends Base {
       `/edgetron/resources/capk/clusters/${params.name}/machines`
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
+    const dataArray = [];
+    const promises = response._originData.machines.map(async (machine) => {
+      const flavorData = await axios.get("/edgetron/resources/kubevirt/flavors/" + machine.flavor);
+      machine.flavor_detail = flavorData.data.flavor;
+      dataArray.push(machine);
+    })
+    await Promise.all(promises);
+    response._originData.lbs = dataArray;
+
     this.machines = response._originData.machines
 
     this.isLoading = false
