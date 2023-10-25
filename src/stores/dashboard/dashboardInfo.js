@@ -93,7 +93,7 @@ export default class DashboardInfo {
     }
     cpuPower = {
         x: 0,
-        y: 41,
+        y: 42,
         w: 12,
         h: 5
     }

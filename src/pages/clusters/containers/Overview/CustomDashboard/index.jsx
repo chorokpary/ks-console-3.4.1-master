@@ -4,7 +4,6 @@ import 'gridstack/dist/gridstack.min.css';
 import './dashboard.css'
 import { inject, observer } from 'mobx-react';
 import ClusterMonitorStore from 'stores/monitoring/cluster'
-import $ from 'jquery'
 
 import ClusterNode from './ClusterNode';
 import Pod from './Pod';
@@ -32,15 +31,11 @@ import DashboardInfo from 'stores/dashboard/dashboardInfo'
 
 const CustomDashboard = (props) => {
 
-  var quickMenuBtnList;
-  var quickMenuItemList;
-
   const { cluster } = props.match.params
   const { routing } = props.rootStore;
 
   const monitorStore = new ClusterMonitorStore({ cluster })
 
-  const [quickMenuActive, setQuickMenuActive] = useState(false)
   const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
 
   const [dashboardArr, setDashboardArr] = useState(new Array(new DashboardInfo()))
@@ -53,15 +48,17 @@ const CustomDashboard = (props) => {
     cellHeight: 59,
     verticalMargin: 20,
     disableResize: true, // resize
-    disableDrag: true // drag
+    // disableDrag: true // drag
   };
+
   useEffect(() => {
     GridStack.init(options);
     const q = new DashboardInfo()
     const arr = new Array(q)
     // const b = new DashboardInfo()
     // b.name = '대시보드2'
-    // b.clusterNode.y = 40
+    // b.clusterNode.x = 9
+    // b.kaas.x = 0
     // b.pod = null
     // b.computingTemplate = null
     // arr.push(b)
@@ -94,6 +91,24 @@ const CustomDashboard = (props) => {
     e.target.parentElement.classList.add('active')
   }
 
+  const deleteDashboard = idx => {
+    dashboardArr.splice(idx, 1)
+
+    cookie.save('dashboardInfo', dashboardArr);
+    const spliceArr = cookie.load('dashboardInfo')
+
+    setDashboardArr(spliceArr)
+  }
+
+  useEffect(() => {
+    setActiveDashboard(dashboardArr[0])
+    document.getElementById("dashTab0").click()
+  }, [dashboardArr])
+
+  const editDashboard = idx => {
+    routing.push(`/clusters/${cluster}/overview/edit?idx=${idx}`)
+  }
+
   return (
     <>
       <div className="dashboard">
@@ -103,22 +118,22 @@ const CustomDashboard = (props) => {
             <section>
               {/* Top area */}
               <div className="dash_toptab">
-                {dashboardArr.length > 0 &&
-                  dashboardArr.map((obj, idx) => (
-                    <label htmlFor={`name${idx}`} key={idx}>
-                      <input type="radio" name="mode" id={`name${idx}`} value={`name${idx}`} defaultChecked={idx == 0 ? true : false} />
-                      <span onClick={() => setActiveDashboard(obj)}>{obj.name}
-                        <div className="tab-quick-menu" onClick={actvieQuick}>
-                          <button type="button" className='btn_quick' ><i className="ico-quick-menu"></i></button>
-                          <ul className="quick-menu-list">
-                            <li><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
-                            <li><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
-                          </ul>
-                        </div>
-                      </span>
-                    </label>
-                  ))
-                }
+                {dashboardArr.map((obj, idx) => (
+                  <label htmlFor={`dashTab${idx}`} key={idx}>
+                    <input type="radio" name="mode" id={`dashTab${idx}`} value={`dashTab${idx}`} defaultChecked={idx == 0 ? true : false} />
+                    <span onClick={() => setActiveDashboard(obj)}>{obj.name}
+                      <div className="tab-quick-menu" onClick={actvieQuick}>
+                        <button type="button" className='btn_quick' ><i className="ico-quick-menu"></i></button>
+                        <ul className="quick-menu-list">
+                          <li onClick={() => editDashboard(idx)}><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                          {dashboardArr.length > 1 &&
+                            <li onClick={() => deleteDashboard(idx)}><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                          }
+                        </ul>
+                      </div>
+                    </span>
+                  </label>
+                ))}
                 <button type="button" className="btn_dash_add" onClick={() => editMode()}><i className="ico-plus"></i></button>
               </div>
               {/* // Top area */}

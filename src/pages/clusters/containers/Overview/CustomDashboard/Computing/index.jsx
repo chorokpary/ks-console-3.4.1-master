@@ -17,7 +17,6 @@ import KaasStore from 'stores/resources/containerresource'
 import KaasImageStore from 'stores/resources/containerimages'
 
 const Computing = ({ computing }) => {
-  console.log('asd : ', computing)
   const vmStore = new VmStore();
   const securityGroupStore = new SecurityGroupStore();
   const loadBalancerStore = new LoadBalancerStore();
