@@ -11,7 +11,7 @@ const MetricTypes = {
   pod_running_count: 'cluster_pod_running_count',
 }
 
-const ResourceChange = ({ monitorStore }) => {
+const ResourceChange = ({ monitorStore, x, y, w, h }) => {
   const vmStore = new VmStore();
   const kaasStore = new KaasStore();
 
@@ -142,7 +142,7 @@ const ResourceChange = ({ monitorStore }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="36" gs-w="6" gs-h="5">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">

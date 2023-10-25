@@ -38,7 +38,7 @@ const MetricTypes = {
   pod_memory_usage: 'pod_memory_usage'
 }
 
-const ResourcesUsage = ({ monitorStore }) => {
+const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
   const podStore = new PodStore();
   const customStore = new CustomStore();
   const vmStore = new VmStore();
@@ -213,7 +213,7 @@ const ResourcesUsage = ({ monitorStore }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="4" gs-w="12" gs-h="6">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">

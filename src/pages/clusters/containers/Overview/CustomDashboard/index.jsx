@@ -4,6 +4,7 @@ import 'gridstack/dist/gridstack.min.css';
 import './dashboard.css'
 import { inject, observer } from 'mobx-react';
 import ClusterMonitorStore from 'stores/monitoring/cluster'
+import $ from 'jquery'
 
 import ClusterNode from './ClusterNode';
 import Pod from './Pod';
@@ -26,12 +27,23 @@ import CarbonCo2 from './CarbonCo2';
 import CarbonTree from './CarbonTree';
 import CarbonCost from './CarbonCost';
 
+import cookie from 'react-cookies';
+import DashboardInfo from 'stores/dashboard/dashboardInfo'
+
 const CustomDashboard = (props) => {
+
+  var quickMenuBtnList;
+  var quickMenuItemList;
 
   const { cluster } = props.match.params
   const { routing } = props.rootStore;
 
   const monitorStore = new ClusterMonitorStore({ cluster })
+
+  const [quickMenuActive, setQuickMenuActive] = useState(false)
+  const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
+
+  const [dashboardArr, setDashboardArr] = useState(new Array(new DashboardInfo()))
 
   const options = {
     column: 15,
@@ -40,18 +52,48 @@ const CustomDashboard = (props) => {
     handleClass: 'grid-stack-item-content .grid_item .grid_title',
     cellHeight: 59,
     verticalMargin: 20,
-    disableResize: true, // resize 
+    disableResize: true, // resize
+    disableDrag: true // drag
   };
   useEffect(() => {
     GridStack.init(options);
+    const q = new DashboardInfo()
+    const arr = new Array(q)
+    // const b = new DashboardInfo()
+    // b.name = '대시보드2'
+    // b.clusterNode.y = 40
+    // b.pod = null
+    // b.computingTemplate = null
+    // arr.push(b)
 
+    cookie.save('dashboardInfo', arr);
+    const dashboardArr = cookie.load('dashboardInfo')
+
+    setDashboardArr(dashboardArr)
   }, [])
-
-
 
   const editMode = () => {
     routing.push(`/clusters/${cluster}/overview/edit`)
   }
+
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.tab-quick-menu')) {
+      document.querySelectorAll('.tab-quick-menu button').forEach((removeBtn) => {
+        removeBtn.classList.remove('active')
+      })
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  const actvieQuick = e => {
+    e.target.parentElement.classList.add('active')
+  }
+
   return (
     <>
       <div className="dashboard">
@@ -61,30 +103,22 @@ const CustomDashboard = (props) => {
             <section>
               {/* Top area */}
               <div className="dash_toptab">
-                <label htmlFor="name1">
-                  <input type="radio" name="mode" id="name1" value="name1" defaultChecked />
-                  <span>대시보드 1
-                    <div className="tab-quick-menu">
-                      <button type="button" className="btn_quick"><i className="ico-quick-menu"></i></button>
-                      <ul className="quick-menu-list">
-                        <li><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
-                        <li><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
-                      </ul>
-                    </div>
-                  </span>
-                </label>
-                {/* <label htmlFor="name2">
-                  <input type="radio" name="mode" id="name2" value="name2" />
-                  <span>대시보드 2
-                    <div className="tab-quick-menu">
-                      <button type="button" className="btn_quick"><i className="ico-quick-menu"></i></button>
-                      <ul className="quick-menu-list">
-                        <li><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
-                        <li><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
-                      </ul>
-                    </div>
-                  </span>
-                </label> */}
+                {dashboardArr.length > 0 &&
+                  dashboardArr.map((obj, idx) => (
+                    <label htmlFor={`name${idx}`} key={idx}>
+                      <input type="radio" name="mode" id={`name${idx}`} value={`name${idx}`} defaultChecked={idx == 0 ? true : false} />
+                      <span onClick={() => setActiveDashboard(obj)}>{obj.name}
+                        <div className="tab-quick-menu" onClick={actvieQuick}>
+                          <button type="button" className='btn_quick' ><i className="ico-quick-menu"></i></button>
+                          <ul className="quick-menu-list">
+                            <li><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                            <li><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                          </ul>
+                        </div>
+                      </span>
+                    </label>
+                  ))
+                }
                 <button type="button" className="btn_dash_add" onClick={() => editMode()}><i className="ico-plus"></i></button>
               </div>
               {/* // Top area */}
@@ -94,64 +128,197 @@ const CustomDashboard = (props) => {
 
                 <div className="grid_wrap">
                   <div className="grid-stack">
-
                     {/* 클러스터 노드 */}
-                    <ClusterNode />
+                    {activeDashboard.clusterNode &&
+                      <ClusterNode
+                        x={activeDashboard.clusterNode.x}
+                        y={activeDashboard.clusterNode.y}
+                        w={activeDashboard.clusterNode.w}
+                        h={activeDashboard.clusterNode.h}
+                      />
+                    }
 
                     {/* 파드 */}
-                    <Pod />
+                    {activeDashboard.pod &&
+                      <Pod
+                        x={activeDashboard.pod.x}
+                        y={activeDashboard.pod.y}
+                        w={activeDashboard.pod.w}
+                        h={activeDashboard.pod.h}
+                      />
+                    }
 
                     {/* 가상머신 */}
-                    <Vm />
+                    {activeDashboard.vm &&
+                      <Vm
+                        x={activeDashboard.vm.x}
+                        y={activeDashboard.vm.y}
+                        w={activeDashboard.vm.w}
+                        h={activeDashboard.vm.h}
+                      />
+                    }
 
                     {/* 쿠버네티스 */}
-                    <Kaas />
+                    {activeDashboard.kaas &&
+                      <Kaas
+                        x={activeDashboard.kaas.x}
+                        y={activeDashboard.kaas.y}
+                        w={activeDashboard.kaas.w}
+                        h={activeDashboard.kaas.h}
+                      />
+                    }
 
                     {/* 리소스 사용량 */}
-                    <ResourcesUsage monitorStore={monitorStore} />
+                    {activeDashboard.resourceUsage &&
+                      <ResourcesUsage monitorStore={monitorStore}
+                        x={activeDashboard.resourceUsage.x}
+                        y={activeDashboard.resourceUsage.y}
+                        w={activeDashboard.resourceUsage.w}
+                        h={activeDashboard.resourceUsage.h}
+                      />
+                    }
 
                     {/* 네트워크 트래픽 */}
-                    <NetworkTraffic monitorStore={monitorStore} />
+                    {activeDashboard.networkTraffic &&
+                      <NetworkTraffic monitorStore={monitorStore}
+                        x={activeDashboard.networkTraffic.x}
+                        y={activeDashboard.networkTraffic.y}
+                        w={activeDashboard.networkTraffic.w}
+                        h={activeDashboard.networkTraffic.h}
+                      />
+                    }
 
                     {/* 리소스 사용량 Top 5 */}
-                    <UsageTop5 />
+                    {activeDashboard.usageTop5 &&
+                      <UsageTop5
+                        x={activeDashboard.usageTop5.x}
+                        y={activeDashboard.usageTop5.y}
+                        w={activeDashboard.usageTop5.w}
+                        h={activeDashboard.usageTop5.h}
+                      />
+                    }
 
                     {/* 최근 생성된 리소스 (일주일) */}
-                    <RecentResource />
+                    {activeDashboard.recentResource &&
+                      <RecentResource
+                        x={activeDashboard.recentResource.x}
+                        y={activeDashboard.recentResource.y}
+                        w={activeDashboard.recentResource.w}
+                        h={activeDashboard.recentResource.h}
+                      />
+                    }
 
                     {/* 이슈 */}
-                    <Issue />
+                    {activeDashboard.issue &&
+                      <Issue
+                        x={activeDashboard.issue.x}
+                        y={activeDashboard.issue.y}
+                        w={activeDashboard.issue.w}
+                        h={activeDashboard.issue.h}
+                      />
+                    }
 
                     {/* 컴퓨팅 */}
-                    <Computing />
+                    <Computing
+                      computing={activeDashboard}
+                    />
 
                     {/* 리소스 변화량 */}
-                    <ResourceChange monitorStore={monitorStore} />
+                    {activeDashboard.resourceChange &&
+                      <ResourceChange monitorStore={monitorStore}
+                        x={activeDashboard.resourceChange.x}
+                        y={activeDashboard.resourceChange.y}
+                        w={activeDashboard.resourceChange.w}
+                        h={activeDashboard.resourceChange.h}
+                      />
+                    }
 
                     {/* BMC 노드 현황 */}
-                    <BmcNode />
+                    {activeDashboard.bmcNode &&
+                      <BmcNode
+                        x={activeDashboard.bmcNode.x}
+                        y={activeDashboard.bmcNode.y}
+                        w={activeDashboard.bmcNode.w}
+                        h={activeDashboard.bmcNode.h}
+                      />
+                    }
 
                     {/* 클러스터 컴포넌트 상태 */}
-                    <ClusterStatus />
+                    {activeDashboard.clusterStatus &&
+                      <ClusterStatus
+                        x={activeDashboard.clusterStatus.x}
+                        y={activeDashboard.clusterStatus.y}
+                        w={activeDashboard.clusterStatus.w}
+                        h={activeDashboard.clusterStatus.h}
+                      />
+                    }
 
                     {/* 탄소 지표 */}
-                    <CabonIndicator />
+                    {activeDashboard.carbonIndicator &&
+                      <CabonIndicator
+                        x={activeDashboard.carbonIndicator.x}
+                        y={activeDashboard.carbonIndicator.y}
+                        w={activeDashboard.carbonIndicator.w}
+                        h={activeDashboard.carbonIndicator.h}
+                      />
+                    }
 
                     {/* 전력 사용량 TOP 5 */}
-                    <PowerUsageTop5 />
+                    {activeDashboard.powerUsageTop5 &&
+                      <PowerUsageTop5
+                        x={activeDashboard.powerUsageTop5.x}
+                        y={activeDashboard.powerUsageTop5.y}
+                        w={activeDashboard.powerUsageTop5.w}
+                        h={activeDashboard.powerUsageTop5.h}
+                      />
+                    }
 
                     {/* CPU 소비 전력량 비교 (1대 평균) */}
-                    <CpuPower />
+                    {activeDashboard.cpuPower &&
+                      <CpuPower
+                        x={activeDashboard.cpuPower.x}
+                        y={activeDashboard.cpuPower.y}
+                        w={activeDashboard.cpuPower.w}
+                        h={activeDashboard.cpuPower.h}
+                      />
+                    }
 
                     {/* 탄소 발자국 - 전력 사용량 */}
-                    <CarbonPower />
+                    {activeDashboard.carbonPower &&
+                      <CarbonPower
+                        x={activeDashboard.carbonPower.x}
+                        y={activeDashboard.carbonPower.y}
+                        w={activeDashboard.carbonPower.w}
+                        h={activeDashboard.carbonPower.h}
+                      />
+                    }
                     {/* 탄소 발자국 - CO2 발생량 */}
-                    <CarbonCo2 />
+                    {activeDashboard.carbonCo2 &&
+                      <CarbonCo2
+                        x={activeDashboard.carbonCo2.x}
+                        y={activeDashboard.carbonCo2.y}
+                        w={activeDashboard.carbonCo2.w}
+                        h={activeDashboard.carbonCo2.h}
+                      />
+                    }
                     {/* 탄소 발자국 - 나무 */}
-                    <CarbonTree />
+                    {activeDashboard.carbonTree &&
+                      <CarbonTree
+                        x={activeDashboard.carbonTree.x}
+                        y={activeDashboard.carbonTree.y}
+                        w={activeDashboard.carbonTree.w}
+                        h={activeDashboard.carbonTree.h}
+                      />
+                    }
                     {/* 탄소 발자국 - 비용 */}
-                    <CarbonCost />
-
+                    {activeDashboard.carbonCost &&
+                      <CarbonCost
+                        x={activeDashboard.carbonCost.x}
+                        y={activeDashboard.carbonCost.y}
+                        w={activeDashboard.carbonCost.w}
+                        h={activeDashboard.carbonCost.h}
+                      />
+                    }
                   </div>
                 </div>
 

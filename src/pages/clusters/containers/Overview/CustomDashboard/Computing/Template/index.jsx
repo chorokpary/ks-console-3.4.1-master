@@ -18,6 +18,7 @@ const ComputingTemplate = ({
   keypairList,
   kaasList,
   kaasIamgeList,
+  x, y, w, h
 }) => {
 
   const [hd, setHd] = useState({ used: 0, unused: 0 })
@@ -113,7 +114,7 @@ const ComputingTemplate = ({
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="25" gs-w="12" gs-h="4">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">

@@ -8,7 +8,7 @@ import { get } from 'lodash'
 const componentStore = new ComponentStore()
 const podStore = new PodStore()
 
-const ClusterStatus = () => {
+const ClusterStatus = ({ x, y, w, h }) => {
 
   const [componentData, setComponentData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ const ClusterStatus = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="6" gs-y="36" gs-w="6" gs-h="5">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content pop_over">
           {/* grid_item */}
           <div className="grid_item">

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
-const CarbonTree = () => {
+const CarbonTree = ({ x, y, w, h }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="49" gs-w="6" gs-h="3">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title">

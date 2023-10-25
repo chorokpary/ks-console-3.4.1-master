@@ -13,7 +13,7 @@ const iconType = {
   'kaas': 'container',
 }
 
-const RecentResource = () => {
+const RecentResource = ({ x, y, w, h }) => {
   const nodeStore = new NodeStore();
   const podStore = new PodStore();
   const vmStore = new VmStore();
@@ -84,7 +84,7 @@ const RecentResource = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="12" gs-y="8" gs-w="3" gs-h="9">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">

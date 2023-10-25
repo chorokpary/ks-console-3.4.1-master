@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
-const CabonIndicator = () => {
+const CabonIndicator = ({ x, y, w, h }) => {
 
   const customStore = new CustomStore();
 
@@ -22,7 +22,7 @@ const CabonIndicator = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="12" gs-y="26" gs-w="3" gs-h="8">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">

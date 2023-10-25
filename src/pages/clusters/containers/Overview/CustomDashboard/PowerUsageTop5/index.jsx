@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
-const PowerUsageTop5 = () => {
+const PowerUsageTop5 = ({ x, y, w, h }) => {
 
     return (
         <>
-            <div className="grid-stack-item" gs-x="12" gs-y="34" gs-w="3" gs-h="7">
+            <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
                 <div className="grid-stack-item-content">
                     {/* grid_item */}
                     <div className="grid_item">

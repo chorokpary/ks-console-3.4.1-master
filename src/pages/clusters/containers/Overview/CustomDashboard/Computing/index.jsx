@@ -16,7 +16,8 @@ import KeypairStore from 'stores/resources/keypairs'
 import KaasStore from 'stores/resources/containerresource'
 import KaasImageStore from 'stores/resources/containerimages'
 
-const Computing = () => {
+const Computing = ({ computing }) => {
+  console.log('asd : ', computing)
   const vmStore = new VmStore();
   const securityGroupStore = new SecurityGroupStore();
   const loadBalancerStore = new LoadBalancerStore();
@@ -156,28 +157,40 @@ const Computing = () => {
 
   return (
     <>
-      <Network
-        loading={loading}
-        networkList={networkList}
-        routerList={routerList}
-        sriovList={sriovList}
-        floatingIpList={floatingIpList}
-        vmList={vmList}
-        sgList={sgList}
-        lbList={lbList}
-      />
-      <Template
-        loading={loading}
-        vmList={vmList}
-        imageList={imageList}
-        flavorList={flavorList}
-        flavorDetailList={flavorDetailList}
-        hdList={hdList}
-        mdList={mdList}
-        keypairList={keypairList}
-        kaasList={kaasList}
-        kaasIamgeList={kaasIamgeList}
-      />
+      {computing.computingNetwork &&
+        <Network
+          loading={loading}
+          networkList={networkList}
+          routerList={routerList}
+          sriovList={sriovList}
+          floatingIpList={floatingIpList}
+          vmList={vmList}
+          sgList={sgList}
+          lbList={lbList}
+          x={computing.computingNetwork.x}
+          y={computing.computingNetwork.y}
+          w={computing.computingNetwork.w}
+          h={computing.computingNetwork.h}
+        />
+      }
+      {computing.computingTemplate &&
+        <Template
+          loading={loading}
+          vmList={vmList}
+          imageList={imageList}
+          flavorList={flavorList}
+          flavorDetailList={flavorDetailList}
+          hdList={hdList}
+          mdList={mdList}
+          keypairList={keypairList}
+          kaasList={kaasList}
+          kaasIamgeList={kaasIamgeList}
+          x={computing.computingTemplate.x}
+          y={computing.computingTemplate.y}
+          w={computing.computingTemplate.w}
+          h={computing.computingTemplate.h}
+        />
+      }
     </>
   )
 }

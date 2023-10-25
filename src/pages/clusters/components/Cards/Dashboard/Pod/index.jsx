@@ -4,7 +4,7 @@ import PodStore from 'stores/pod'
 import PodModel from 'stores/dashboard/pods'
 import { fnSetPods } from 'utils/dashboard'
 
-const Pod = () => {
+const Pod = ({ x, y, w, h }) => {
   const podStore = new PodStore();
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Pod = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="3" gs-y="0" gs-w="2" gs-h="4">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
