@@ -45,7 +45,7 @@ export default class BareMetalStore extends Base {
     isLoading: true,
   }
 
-  getResourceUrl = (params = {}) => `/kapis/monitoring.kubesphere.io/v1alpha3/targets/query?expr=redfish_chassis_model_info`
+  getResourceUrl = (params = {}) => `cmp/baremetal/nodes`
   getListUrl = this.getResourceUrl
 
   @action
@@ -78,24 +78,24 @@ export default class BareMetalStore extends Base {
       this.getResourceUrl()
     )
 
-    const data = (get(result.data, 'result') || []).map(item => ({
+    const data = (get(result, 'nodes') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
-    const dataArray = [];
-    data.map((obj) => {
-        dataArray.push(obj.metric)
-    })
+    // const dataArray = [];
+    // data.map((obj) => {
+    //     dataArray.push(obj.metric)
+    // })
 
     // 초기 정렬 처리
-    dataArray.sort((a, b) => {
-      return a.instance < b.instance ? 1 : a.instance > b.instance ? -1 : 0;
+    data.sort((a, b) => {
+      return a.name < b.name ? 1 : a.name > b.name ? -1 : 0;
     });
-
+    
     // 초기 데이터 처리 
-    this.dataList = dataArray; 
+    this.dataList = data; 
     
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -154,19 +154,25 @@ export default class BareMetalStore extends Base {
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
 
-    console.log("BBBBBBBBBBBBBB")
-
     const jsonData = {};
-    const keypairData = {};
+    const nodeData = {};
+    const redfishData = {};
 
-    console.log("data : "+ JSON.stringify(data.system_data))
+    nodeData.ScrapeInterval = data.nodeInterval+"s";
+    nodeData.port = Number(data.nodePort);
 
-    // keypairData.name = data.system_data;
+    redfishData.ScrapeInterval = data.refishInterval+"s";
+    redfishData.port = Number(data.refishPort);
+    redfishData.target = data.target_ip_array;
 
-    // jsonData.keypair = keypairData;
-
-    // const res = await request.post(url, jsonData)
-    // return res
+    jsonData.name = data.name;
+    jsonData.ip = data.ip;
+    jsonData.nodeExporter = nodeData;
+    jsonData['redfish-exporter'] = redfishData;
+    
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+    const res = await request.post(url, jsonData)
+    return res
   }
 
   @action
@@ -199,20 +205,6 @@ export default class BareMetalStore extends Base {
     this.detail = detail
     this.isLoading = false
     return detail
-  }
-
-  @action
-  async fetchYaml(params) {
-    this.isLoading = true
-    
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
-    )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Baremetal' }
-  
-    this.yaml = yamlData.manifest
-    this.isLoading = false
-    return yamlData
   }
 
   @action

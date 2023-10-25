@@ -82,7 +82,7 @@ export default class BareMetalDashboard extends React.Component {
 
     const { metricFlag } = this.state;
     if(metricFlag){ 
-      this.getMetricData() 
+      this.getInitMetricData() 
     }    
   }
 
@@ -117,7 +117,7 @@ export default class BareMetalDashboard extends React.Component {
   //auto refresh end  ##################################
 
   // metric get data start  ##################################
-  getMetricData = async () => {
+  getInitMetricData = async () => {
 
     const metric_state = await this.customStore.fetchMetric({
       expr: `max by(instance) (redfish_system_power_state)`,
@@ -144,7 +144,7 @@ export default class BareMetalDashboard extends React.Component {
     })
 
     const metric_cpu = await this.customStore.fetchMetric({
-      expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[5m]))`,
+      expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[${this.step}]))`,
       start: this.currentTime,
       end: this.currentTime,
     })
@@ -161,18 +161,17 @@ export default class BareMetalDashboard extends React.Component {
       end: this.currentTime,
     })
 
-    // const metric_disk_total = await this.customStore.fetchMetric({
-    //   expr: `avg by(instance) (node_memory_MemTotal_bytes)`,
-    //   start: this.currentTime,
-    //   end: this.currentTime,
-    // })
+    const metric_disk_total = await this.customStore.fetchMetric({
+      expr: `sum by(instance) (node_filesystem_size_bytes)`,
+      start: this.currentTime,
+      end: this.currentTime,
+    })
 
-    // const metric_disk_free = await this.customStore.fetchMetric({
-    //   expr: `avg by (instance) (node_memory_MemFree_bytes)`,
-    //   start: this.currentTime,
-    //   end: this.currentTime,
-    // })
-
+    const metric_disk_free = await this.customStore.fetchMetric({
+      expr: `sum by(instance) (node_filesystem_avail_bytes)`,
+      start: this.currentTime,
+      end: this.currentTime,
+    })
 
     const metric_power = await this.customStore.fetchMetric({
       expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
@@ -180,13 +179,11 @@ export default class BareMetalDashboard extends React.Component {
       end: this.currentTime,
     })
 
-   
     const metric_temperature = await this.customStore.fetchMetric({
       expr: `avg by(instance) (redfish_chassis_temperature_celsius)`,
       start: this.currentTime,
       end: this.currentTime,
     })
-
 
     this.setState({
       metricFlag: false,
@@ -197,8 +194,8 @@ export default class BareMetalDashboard extends React.Component {
       metricCpuData : metric_cpu,
       metricMemoryTotalData : metric_memory_total,
       metricMemoryFreeData : metric_memory_free,
-      metricDiskTotalData : [],
-      metricDiskFreeData : [],
+      metricDiskTotalData : metric_disk_total,
+      metricDiskFreeData : metric_disk_free,
       metricPowerData : metric_power,
       metricTemperatureData : metric_temperature,   
     });
@@ -306,13 +303,26 @@ export default class BareMetalDashboard extends React.Component {
     }
   }
 
+  getMetricData = (metricData , record) => {
+    const instance = toJS(record.ip)
+    const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    return metrics;
+  }
+
+  getMetricValue = (metricData , record) => {
+    const instance = toJS(record.ip)
+    const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    const val = get(metrics, 'values[0][1]', '0');
+    return val;
+  }
+
   getColumns = () => {
     const { getSortOrder } = this.props
     const { cluster } = this.props.match.params
     return [
       {
         title: t('노드명'),
-        dataIndex: 'job',
+        dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('job'),
         render: name => (
@@ -327,11 +337,8 @@ export default class BareMetalDashboard extends React.Component {
       {
         title: t('상태'),
         key: 'state',
-        isHideable: true,
         render: record => {
-          const { metricStateData } = this.state;
-          const metrics = metricStateData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const state = get(metrics, 'values[0][1]');
+          const state = this.getMetricValue('metricStateData', record)
           const statText = (state == 1 || state == 3) ? "On" : "Off"
           return (
             <Text title={`${statText}`}/>
@@ -341,11 +348,9 @@ export default class BareMetalDashboard extends React.Component {
       {
         title: t('서버 모델명'),
         key: 'model',
-        isHideable: true,
         render: record => {
-          const { metricModelData } = this.state;
-          const metrics = metricModelData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const modelName = get(metrics, 'metric.model')     
+          const metrics = this.getMetricData('metricModelData', record)  
+          const modelName = get(metrics, 'metric.model', '-')     
           return (
             <Text title={`${modelName}`}/>
           )
@@ -354,10 +359,8 @@ export default class BareMetalDashboard extends React.Component {
       {
         title: t('유형'),
         key: 'type',
-        isHideable: true,
         render: record => {
-          const { metricTypeData } = this.state;
-          const metrics = metricTypeData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
+          const metrics = this.getMetricData('metricTypeData', record)  
           const machine = get(metrics, 'metric.machine',"NOT")     
           const typeText = (machine == "NOT") ? "-" : machine.includes('x86') ? "X86" : "ARM"
           return (
@@ -370,9 +373,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'core',
         isHideable: true,
         render: record => {         
-          const { metricCoreData } = this.state;
-          const metrics = metricCoreData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const coreCount = get(metrics, 'values[0][1]', 0);         
+          const coreCount = this.getMetricValue('metricCoreData', record)       
           return (
             <Text title={`${coreCount}`}/>
           )
@@ -394,13 +395,8 @@ export default class BareMetalDashboard extends React.Component {
         key: 'cpu',
         isHideable: true,
         render: record => {
-          const { metricCpuData, metricCoreData } = this.state;
-
-          const metrics_cpu = metricCpuData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const cpu = Math.round(get(metrics_cpu, 'values[0][1]', 0) * 100);
-
-          const metrics_core = metricCoreData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const coreCount = get(metrics_core, 'values[0][1]', 0);
+          const cpu = Math.round(this.getMetricValue('metricCpuData', record) * 100);
+          const coreCount = this.getMetricValue('metricCoreData', record) 
           return (
             <Text title={`${cpu}%`} description={`${coreCount}core`} />
           )
@@ -411,19 +407,14 @@ export default class BareMetalDashboard extends React.Component {
         key: 'memory',
         isHideable: true,
         render: record => {
-          const { metricMemoryTotalData, metricMemoryFreeData } = this.state;
-
-          const metrics_memory_total = metricMemoryTotalData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const memory_total_data = get(metrics_memory_total, 'values[0][1]', 0);
-
-          const metrics_memory_free = metricMemoryFreeData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const memory_free_data = get(metrics_memory_free, 'values[0][1]', 0);
+          const memory_total_data = this.getMetricValue('metricMemoryTotalData', record) 
+          const memory_free_data = this.getMetricValue('metricMemoryFreeData', record) 
 
           const memory_total = getValueByUnit(memory_total_data, "Gi")
           const memory_free = getValueByUnit(memory_free_data, "Gi")
           const memory_used = (memory_total-memory_free).toFixed(2)
 
-          const memory_percent = ((memory_used/memory_total)*100).toFixed(0)
+          const memory_percent = isNaN(((memory_used/memory_total)*100).toFixed(0)) ? 0 : ((memory_used/memory_total)*100).toFixed(0)
           return (
             <Text title={`${memory_percent}%`} description={`${memory_used}Gi/${memory_total}Gi`} />
           )
@@ -434,9 +425,16 @@ export default class BareMetalDashboard extends React.Component {
         key: 'disk',
         isHideable: true,
         render: record => {
-          const disk = "25"
+          const disk_total_data = this.getMetricValue('metricDiskTotalData', record) 
+          const disk_free_data = this.getMetricValue('metricDiskFreeData', record) 
+
+          const disk_total = getValueByUnit(disk_total_data, "GB")
+          const disk_free = getValueByUnit(disk_free_data, "GB")
+          const disk_used = (disk_total-disk_free).toFixed(2)
+
+          const disk_percent = isNaN(((disk_used/disk_total)*100).toFixed(0)) ? 0 :((disk_used/disk_total)*100).toFixed(0)
           return (
-            <Text title={`${disk}%`} description={`232GB/1000GB`} />
+            <Text title={`${disk_percent}%`} description={`${disk_used}GB/${disk_total}GB`} />
           )
         }
       },
@@ -445,9 +443,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'power',
         isHideable: true,
         render: record => {
-          const { metricPowerData } = this.state;
-          const metrics = metricPowerData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const power = get(metrics, 'values[0][1]', 0);
+          const power = this.getMetricValue('metricPowerData', record) 
           return (
             <Text title={`${power}`}/>
           )
@@ -458,9 +454,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'temperature',
         isHideable: true,
         render: record => {
-          const { metricTemperatureData } = this.state;
-          const metrics = metricTemperatureData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const temperature = get(metrics, 'values[0][1]', 0);
+          const temperature = this.getMetricValue('metricTemperatureData', record) 
           return (
             <Text title={`${temperature}`}/>
           )
@@ -468,15 +462,13 @@ export default class BareMetalDashboard extends React.Component {
       },
       {
         title: t('탄소 배출량(Kg)'),
-        key: 'cabon',
+        key: 'carbon',
         isHideable: true,
         render: record => {
-          const { metricPowerData } = this.state;
-          const metrics = metricPowerData.find(item => get(item, 'metric.instance').split(":")[0] === toJS(record.instance).split(":")[0])
-          const power = get(metrics, 'values[0][1]', 0);
-          const cabon = (Math.round((power  * 0.4781) / 0.1)*0.1).toFixed(1);
+          const power = this.getMetricValue('metricPowerData', record) 
+          const carbon = (Math.round((power  * 0.4781) / 0.1)*0.1).toFixed(1);
           return (
-            <Text title={`${cabon}`}/>
+            <Text title={`${carbon}`}/>
           )
         }
       },      
@@ -496,6 +488,56 @@ export default class BareMetalDashboard extends React.Component {
       trigger,
       success: this.getData,
     })
+  }
+
+
+  renderNodeStateContent() {
+  
+    const { metricStateData} = this.state;
+
+    const { data } = toJS(this.props.store.list)
+
+    const totalCount = data.length;
+    const nodeOnData = metricStateData.filter(item => (get(item, 'values[0][1]') == 1 || get(item, 'values[0][1]') == 3))
+    const nodeOffData = metricStateData.filter(item => (get(item, 'values[0][1]') == 2 || get(item, 'values[0][1]') == 4))
+    
+    // error 관련 flag가 없기 때문에 APi 등록된 전체에서 on, off 갯수를 뺀다.
+    let nodeErrorCount = 0 ;
+    nodeErrorCount = totalCount - (nodeOnData.length + nodeOffData.length);
+
+    return (
+      <div className="value_box_wrap">
+        <div className="value_box">
+          <div className="div_value">
+            <div className="txt_group">
+                <div className="text_title">전체</div>
+              </div>
+            <div className="number_wrap">{totalCount}</div>
+          </div>
+          <div className="div_value">
+            <div className="txt_group">
+              <div className="status_point"></div>
+              <div className="text_title">On</div>
+            </div>
+            <div className="number_wrap">{nodeOnData.length}</div>
+          </div>
+          <div className="div_value">
+            <div className="txt_group">
+              <div className="status_point_off"></div>
+              <div className="text_title">Off</div>
+            </div>
+            <div className="number_wrap">{nodeOffData.length}</div>
+          </div>
+          <div className="div_value">
+            <div className="txt_group">
+              <div className="status_point_error"></div>
+              <div className="text_title">Error</div>
+            </div>
+            <div className="number_wrap">{nodeErrorCount}</div>
+          </div>
+            </div>
+      </div>  
+    )
   }
 
   renderContent() {
@@ -560,49 +602,18 @@ export default class BareMetalDashboard extends React.Component {
       <ListPage {...this.props}>
 
         <div className="content_box_wrap">
-
           {/* CPU 소비 전력량 비교 */}
           <Carbon />
 
           {/* CPU 소비 전력량 비교 */}
           <CpuUsage />
 
-          <div className="value_box_wrap">
-            <div className="value_box">
-              <div className="div_value">
-                <div className="txt_group">
-                    <div className="text_title">전체</div>
-                  </div>
-                <div className="number_wrap">24</div>
-              </div>
-              <div className="div_value">
-                <div className="txt_group">
-                  <div className="status_point"></div>
-                  <div className="text_title">On</div>
-                </div>
-                <div className="number_wrap">19</div>
-              </div>
-              <div className="div_value">
-                <div className="txt_group">
-                  <div className="status_point_off"></div>
-                  <div className="text_title">Off</div>
-                </div>
-                <div className="number_wrap">1</div>
-              </div>
-              <div className="div_value">
-                <div className="txt_group">
-                  <div className="status_point_error"></div>
-                  <div className="text_title">Error</div>
-                </div>
-                <div className="number_wrap">1</div>
-              </div>
-            </div>
-          </div>
-          
+          {/* 노드 상태  */}
+          {this.renderNodeStateContent()}          
         </div>
 
-          {/* 리스트  */}
-          {this.renderContent()}
+        {/* 리스트  */}
+        {this.renderContent()}
 
     </ListPage>
      

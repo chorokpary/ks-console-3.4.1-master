@@ -20,14 +20,14 @@ const RegistModal = (props) => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
-      const system_array = []
-      data.NodeIp?.map((el, idx) => {
+      const target_array = []
+      data.TargetIp?.map((el, idx) => {
         if (el != '') {
-          system_array.push({ ip: el, node_name: data.NodeName[idx] })
+          target_array.push(data.TargetIp[idx])
         }
       })
 
-      data.system_data = system_array 
+      data.target_ip_array = target_array 
       console.log("data : "+ JSON.stringify(data))
       
       onOk({ ...data })
@@ -57,61 +57,131 @@ const RegistModal = (props) => {
     <>  
         <Modal
           icon="pen"
-          width={960}
+          width={800}
           title={props.title}
           onOk={handleOk}
           onCancel={closeModal}
           visible={modelView}
         >
           <Form data={formData} ref={form}>
-            
-            <div className={styles.divwrap}>
+
+            {/* <div className={styles.divwrap}>
               <div className={styles.div_top}>시스템 정보 입력</div>
               <div className={styles.div_bottom}>등록 하려는 시스템의 IP, 노드명 정보를 입력해주세요.</div>
-            </div>
+            </div> */}
 
-            <Form.Group>
-              {listSystem.map((obj, idx) => (
-                <div className={styles.item} key={obj}>
+            <Form.Item
+                label={t('이름')}
+                rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                desc={t('NAME_DESC')}
+              >
+              <Input
+                name="name"
+                autoFocus={true}
+                maxLength={63}
+              />   
+            </Form.Item>
+
+            <Form.Item
+                label={t('IP')}
+                rules={[{ required: true, message: t('IP을 입력해 주세요.') }]}
+              >
+              <Input
+                name="ip"
+                autoFocus={true}
+              />   
+            </Form.Item>
+
+            <Form.Item label={t('Node Exporter')}>
+              <Form.Group>
+                <Form.Item>
                   <Columns>
                     <Column>
-                      <Form.Item>
+                      <Form.Item
+                        label={t('Scrape Interval')}
+                      >
                         <Input
-                          name={`NodeIp.${obj}`}
-                          placeholder={t('IP')}
+                          name="nodeInterval"
+                          placeholder={t('60')}
                         />
                       </Form.Item>
                     </Column>
                     <Column>
-                      <Form.Item>
+                      <Form.Item
+                        label={t('Port')}
+                      >
                         <Input
-                          name={`NodeName.${obj}`}
-                          placeholder={t('노드명')}
+                          name="nodePort"
+                          placeholder={t('21000')}
                         />
                       </Form.Item>
                     </Column>
                   </Columns>
+                </Form.Item>
+              </Form.Group>
+            </Form.Item>
+
+            <Form.Item label={t('Redfish Exporter')}>
+              <Form.Group>
+                <Form.Item>
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                        label={t('Scrape Interval')}
+                      >
+                        <Input
+                          name="refishInterval"
+                          placeholder={t('60')}
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      <Form.Item
+                        label={t('Port')}
+                      >
+                        <Input
+                          name="refishPort"
+                          placeholder={t('9610')}
+                        />
+                      </Form.Item>
+                    </Column>
+                  </Columns>
+                </Form.Item>
+              </Form.Group>
+            </Form.Item>
+
+            <Form.Item label={t('Redfish Exporter Target')}>
+              <Form.Group >
+                {listSystem.map((obj, idx) => (
+                  <div className={styles.item} key={obj}>
+
+                      <Form.Item>
+                        <Input
+                          name={`TargetIp.${obj}`}
+                          placeholder={t('192.168.XX.XX:11000')}
+                          style={{ maxWidth: 'none' }}
+                        />
+                      </Form.Item>
+
+                    <Button
+                      type="flat"
+                      icon="trash"
+                      className={styles.delete}
+                      onClick={() => handleSystem.delColumn(obj)}
+                    />
+                  </div>
+                ))}
+                <div className="text-right">
                   <Button
-                    type="flat"
-                    icon="trash"
-                    className={styles.delete}
-                    onClick={() => handleSystem.delColumn(obj)}
-                  />
+                    className={styles.add}
+                    onClick={handleSystem.addColumn}
+                  >
+                    추가
+                  </Button>
                 </div>
-              ))}
-              <div className="text-right">
-                <Button
-                  className={styles.add}
-                  onClick={handleSystem.addColumn}
-                >
-                  추가
-                </Button>
-              </div>
 
-            </Form.Group>
-
-
-
+              </Form.Group>
+            </Form.Item>
 
           </Form>
         </Modal>

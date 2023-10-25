@@ -71,9 +71,8 @@ const BareMetalDetail = (props) => {
         end: currentTime,
       })
 
-
-      const metricData = toJS(store.detail.data.result).find(item => get(item, 'metric.job') === store.detail.name) 
-      const instance = get(metricData, 'metric.instance').split(":")[0]
+      const metricData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
+      const instance = get(metricData, 'ip')
 
       const metrics = metric_model.find(item => get(item, 'metric.instance').split(":")[0] === instance)
       const modelName = get(metrics, 'metric.model')  
@@ -104,6 +103,39 @@ const BareMetalDetail = (props) => {
 
     const routing = props.rootStore.routing;
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+
+    const getOperations = () => [
+      {
+        key: 'edit',
+        icon: 'pen',
+        text: t('EDIT_INFORMATION'),
+        action: 'edit',
+        show: showEdit,
+        onClick: () =>
+            props.rootStore.triggerAction('baremetal.edit', {
+            type: 'BAREMETAL_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            success: fetchData,
+          }),
+      },
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+            props.rootStore.triggerAction('baremetal.delete', {
+            type: 'BAREMETAL_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            cluster: props.match.params.cluster,
+            success: () => routing.push(listUrl),
+          }),
+      },
+    ]
 
     const getAttrs = () => {
       const detail = toJS(store.detail)
@@ -140,6 +172,7 @@ const BareMetalDetail = (props) => {
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.data, 'description', ''),
+        operations: getOperations(),
         attrs: getAttrs(),
         breadcrumbs: [
             {

@@ -42,12 +42,8 @@ const RegistModal = (props) => {
   })
 
   const networkTypeOptions = [
-    { label: 'VXLAN', value: 'vxlan', },
     { label: 'VLAN', value: 'vlan', },
     { label: 'FLAT', value: 'flat', },
-    { label: 'GRE', value: 'gre', },
-    { label: 'GENEVE', value: 'geneve', },
-    { label: 'STT', value: 'stt', },
   ]
 
   useEffect(() => {
@@ -353,7 +349,7 @@ const RegistModal = (props) => {
                         >
                           <Select
                             name="type"
-                            defaultValue="VXLAN"
+                            defaultValue="VLAN"
                             options={networkTypeOptions}
                             onChange={(e) => handleNetworkType(e)} />
                         </Form.Item>

@@ -173,6 +173,7 @@ const RegistModal = (props) => {
       data.network = networkCheckItems;
       data.sriov = sriovCheckItems;
       data.securitygroup = securityGroupCheckItems;
+      data.imageType = imageType;
 
       data.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
       data.keypair = data.keypair == "선택" ? "" : data.keypair;
@@ -1014,9 +1015,9 @@ const RegistModal = (props) => {
                         <div className={styles.bold}>{vmName}</div>
                       </div>
                       <div className={styles.list}>
-                        <label>이미지</label>
+                        <label>{`${imageType == "I" ? '이미지' : '부트볼륨'}`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{imageName}</div>
+                          <div className={styles.bold}>{`${imageType == "I" ? imageName : bootVolumeName}`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>

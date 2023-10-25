@@ -18,43 +18,42 @@ const index = (props) => {
   const store = props.detailStore;
   const customStore = new CustomStore();
 
-  const [vmCpuData, setVmCpuData] = useState([]);
+  const [nodeCpuData, setNodeCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
-  const [vmInboundData, setVmInboundData] = useState({});
-  const [vmOutboundData, setVmOutboundData] = useState({});
 
   const fetchData = async (params) => {
 
     var currentTime = Math.floor(Date.now() / 1000);
 
-    const step = params.step;
-    const times = params.times;
+    console.log(params)
+
+    const step = ((params.step).replace('m', '') * params.times) + 'm';
     const start = (params.start == '' || !!!params.start) ? currentTime - 3000 : Math.floor(params.start);
     const end = (params.end == '' || !!!params.end) ? currentTime : Math.floor(params.end);
 
-    
     // const vmName = store.detail.name;
     const vmName = "vpc-test";
 
-    const getVmCpuUsageData = async () => {
-      const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
+    const getNodeCpuUsageData = async () => {
+      const nodeCpuData = await customStore.fetchMetric({
+        expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[${step}])) by (instance)) * 100`,
         start,
         end,
       })
 
-      const vmCpuMetricData = _.find(vmCpuData, (data) => {
+      console.log("nodeCpuData : "+ JSON.stringify(nodeCpuData))
+      const nodeCpuMetricData = _.find(nodeCpuData, (data) => {
         if (data.metric.pod === vmName ) return data;
       });
   
       // 배열 처리 
-      const vmCpuArray = [];
-      vmCpuArray.push(vmCpuMetricData)
-      setVmCpuData(vmCpuArray)
+      const nodeCpuArray = [];
+      nodeCpuArray.push(nodeCpuMetricData)
+      setNodeCpuData(nodeCpuArray)
     };
 
     // vm memory data
-    const getVmMemoryUsageData = async () => {
+    const getNodeMemoryUsageData = async () => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         start,
@@ -71,42 +70,9 @@ const index = (props) => {
       setVmMemoryData(vmMemoryArray)
 
     };
-
-    const getVmInboundData = async () => {
-      const vmInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[${step}])`,
-        start,
-        end,
-      })
-
-      const vmInboundMetricData = _.find(vmInboundData, (data) => {
-        if (data.metric.pod === vmName ) return data;
-      });
-
-      setVmInboundData(vmInboundMetricData)
-
-    };
-   
-    // vm outbound data
-    const getVmOutboundData = async () => {
-      const vmOutboundData= await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[${step}])`,
-        start,
-        end,
-      })
-
-      const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
-        if (data.metric.pod === vmName ) return data;
-      });
-
-      setVmOutboundData(vmOutboundMetricData)
-
-    };
     
-    getVmCpuUsageData();
-    getVmMemoryUsageData();
-    getVmInboundData();
-    getVmOutboundData()    
+    getNodeCpuUsageData();
+    getNodeMemoryUsageData();
 
   }
 
@@ -117,7 +83,7 @@ const index = (props) => {
         title: 'CPU_USAGE',
         unit: '%',
         legend: ['CPU_USAGE'],
-        data: vmCpuData,
+        data: nodeCpuData,
       },
       {
         type: 'utilisation',
@@ -126,13 +92,6 @@ const index = (props) => {
         unitType: 'memory',
         legend: ['MEMORY_USAGE'],
         data: vmMemoryData,
-      },
-      {
-        type: 'bandwidth',
-        title: 'NETWORK_TRAFFIC',
-        unitType: 'bandwidth',
-        legend: ['OUT', 'IN'],
-        data: [vmOutboundData , vmInboundData],
       },
     ]
   }

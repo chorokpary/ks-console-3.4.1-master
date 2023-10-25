@@ -34,12 +34,8 @@ const ModifyModal = (props) => {
   const [externalBool, setExternalBool] = useState(false);
 
   const networkTypeOptions = [
-    { label: 'VXLAN', value: 'vxlan', },
     { label: 'VLAN', value: 'vlan', },
     { label: 'FLAT', value: 'flat', },
-    { label: 'GRE', value: 'gre', },
-    { label: 'GENEVE', value: 'geneve', },
-    { label: 'STT', value: 'stt', },
   ]
 
   useEffect(() => {

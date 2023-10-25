@@ -28,12 +28,14 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://192.168.16.86:30881
-    wsUrl: ws://192.168.16.86:30881
-    mm3Url: http://192.168.16.80:32080 
-    # url: http://10.24.3.34:30881
-    # wsUrl: ws://10.24.3.34:30881
-    # mm3Url: http://10.24.3.34:32080 
+    # url: http://192.168.16.86:30881
+    # wsUrl: ws://192.168.16.86:30881
+    # mm3Url: http://192.168.16.80:32080 
+    # cmpUrl: http://192.168.16.86:31000 
+    url: http://10.24.3.34:30881
+    wsUrl: ws://10.24.3.34:30881
+    mm3Url: http://10.24.3.34:32080 
+    cmpUrl: http://192.168.16.86:31000
     
 
   mm3UserInfo:
@@ -378,6 +380,10 @@ client:
                 name: baremetalmonitoring,
                 title: "BareMetal 모니터링",
               }
+            - {
+                name: baremetalcarbon,
+                title: "BareMetal 탄소지표 통계",
+              }              
             - {
                 name: 'kaasresource',
                 title: "컴퓨팅/KaaS 리소스",
