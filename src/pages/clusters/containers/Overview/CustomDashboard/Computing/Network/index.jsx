@@ -93,7 +93,7 @@ const ComputingNetwork = ({
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>컴퓨팅 네트워크 현황</label>
               <div className="right">
                 {/* <i className="ico-btn-trash"></i> */}

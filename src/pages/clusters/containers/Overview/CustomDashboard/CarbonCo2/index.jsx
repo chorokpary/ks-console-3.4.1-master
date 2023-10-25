@@ -8,7 +8,7 @@ const CarbonCo2 = ({ x, y, w, h }) => {
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>탄소 발자국 - CO2 발생량</label>
             </div>
             <div className="grid_info style_chart_2">

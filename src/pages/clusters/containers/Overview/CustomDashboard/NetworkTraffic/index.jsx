@@ -169,7 +169,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>네트워크 트래픽</label>
               <div className="right">
                 <div className="dash_boxtab">

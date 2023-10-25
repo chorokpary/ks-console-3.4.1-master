@@ -217,9 +217,8 @@ const UsageTop5 = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>리소스 사용량 Top 5</label>
-
             </div>
             <div className="grid_info style_list">
               <div className="select_wrap">

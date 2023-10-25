@@ -34,7 +34,7 @@ const Vm = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>가상머신</label>
 
             </div>

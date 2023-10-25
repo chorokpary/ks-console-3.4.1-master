@@ -37,7 +37,7 @@ const ClusterStatus = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content pop_over">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>클러스터 컴포넌트 상태</label>
               <div className="right">
               </div>

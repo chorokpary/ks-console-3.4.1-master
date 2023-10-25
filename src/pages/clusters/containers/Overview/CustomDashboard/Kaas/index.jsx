@@ -34,9 +34,8 @@ const Kaas = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>KaaS</label>
-
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_status">

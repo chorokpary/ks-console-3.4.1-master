@@ -26,7 +26,7 @@ const CabonIndicator = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>탄소 지표 (2023.10)</label>
               {/*<i className="ico-btn-trash"></i>*/}
             </div>

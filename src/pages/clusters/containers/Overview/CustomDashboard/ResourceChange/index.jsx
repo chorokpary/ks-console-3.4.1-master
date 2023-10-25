@@ -145,7 +145,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>리소스 변화량</label>
               <div className="right">
 

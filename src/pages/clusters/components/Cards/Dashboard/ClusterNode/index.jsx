@@ -34,7 +34,7 @@ const ClusterNode = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>클러스터 노드</label>
 
             </div>

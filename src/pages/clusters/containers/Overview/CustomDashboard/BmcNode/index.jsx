@@ -9,7 +9,7 @@ const BmcNode = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>베어메탈 노드 현황</label>
               <div className="view-result">총 99건</div>
               <div className="dash_boxtab">
