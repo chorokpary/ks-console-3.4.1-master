@@ -23,8 +23,10 @@ const VmPop = ({ title, onOk, store }) => {
 
   const [modelView, setModalView] = useState(true);
 
+  const [vmDataList, setVmDataList] = useState([]);
   const [vmList, setVmList] = useState([]);
   const [routerList, setRouterList] = useState([]);
+  const [fipList, setFipList] = useState([]);
 
   const [radioExternal, setRadioExternal] = useState("");
   const [radioExternalIdx, setRadioExternalIdx] = useState(0);
@@ -45,11 +47,35 @@ const VmPop = ({ title, onOk, store }) => {
 
     const fnGetVmList = async () => {
       const vmData = await store.vmList()
-      setVmList(vmData.vms)
+      setVmDataList(vmData.vms)
     };
-
     fnGetVmList();
+
+    const fnGetFipList = async () => {
+      const fipData = await store.fipList()
+      setFipList(fipData.floating_ips)
+    };
+    fnGetFipList();
   }, [])
+
+  useEffect(() => {
+    if (fipList.length > 0 && vmDataList.length > 0) {
+      const arr = new Set();
+      fipList.map(obj => {
+        if (obj.target_ip != null && obj.instance_type == 'vm') {
+          arr.add(obj.instance_name)
+        }
+      })
+      const vmArr = new Set();
+      vmDataList.map(obj => {
+        if (!arr.has(obj.name)) {
+          vmArr.add(obj)
+        }
+      })
+      const list = Array.from(vmArr)
+      setVmList(list)
+    }
+  }, [vmDataList, fipList])
 
   useEffect(() => {
     if (vmList.length > 0 && routerList.length > 0) {

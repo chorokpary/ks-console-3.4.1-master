@@ -128,6 +128,17 @@ export default class FloatingIp extends React.Component {
                 ),
             },
             {
+                title: t('리소스 이름'),
+                dataIndex: 'instance_name',
+                isHideable: true,
+                width: 'auto',
+                render: (instance_name) => (
+                    <Avatar
+                        title={instance_name}
+                    />
+                ),
+            },
+            {
                 title: t('플로팅 IP'),
                 dataIndex: 'floating_ip',
                 isHideable: true,
