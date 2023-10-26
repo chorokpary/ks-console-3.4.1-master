@@ -165,7 +165,7 @@ const CustomDashboardEdit = (props) => {
     <>
       <div className="dashboard">
         <div className="dash_edit">
-          <div className="content-wrapper content_wrap">
+          <div className="content_wrap">
             <div className="dash_wrap">
 
               <section>
@@ -538,6 +538,17 @@ const CustomDashboardEdit = (props) => {
                                       <div className="data">
                                         <div className="number_wrap data-r">
                                           <p><span className="em">1.51</span> <span className="unit">Mbps</span></p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="chart_tab no-tab">
+                                      <div className="title">
+                                        <i className="ico-type-network"></i>
+                                        <h5>전체</h5>
+                                      </div>
+                                      <div className="data">
+                                        <div className="number_wrap data-r">
+                                          <p><span className="em">3.77</span> <span className="unit">Mbps</span></p>
                                         </div>
                                       </div>
                                     </div>
@@ -2479,19 +2490,18 @@ const CustomDashboardEdit = (props) => {
               </div>
             </div>
 
-            <button className="accordion-btn">컴퓨팅 & 컴포넌트 현황<i className="ico-arrow-clamp-up"></i></button>
+            <button className="accordion-btn">컴퓨팅 컴포넌트 현황<i className="ico-arrow-clamp-up"></i></button>
             <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
                   <input type="checkbox" id="toggle-10" className="toggle" />
                   <span className="slider"></span>
                 </label>
-                <label className="section-title">컴퓨팅 유형별 현황</label>
+                <label className="section-title">컴퓨팅 템플릿 현황</label>
                 <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>미리보기</h5>
                     <div className="preview_cont">
 
@@ -2510,12 +2520,11 @@ const CustomDashboardEdit = (props) => {
                   <input type="checkbox" id="toggle-11" className="toggle" />
                   <span className="slider"></span>
                 </label>
-                <label className="section-title">쿠버네티스 컴포넌트 상태</label>
+                <label className="section-title">컴퓨팅 네트워크 현황</label>
                 <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>미리보기</h5>
                     <div className="preview_cont">
 
@@ -2529,12 +2538,15 @@ const CustomDashboardEdit = (props) => {
                 </div>
 
               </div>
+            </div>
+            <button className="accordion-btn">베어메탈 현황 및 전력사용량<i className="ico-arrow-clamp-up"></i></button>
+            <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
                   <input type="checkbox" id="toggle-12" className="toggle" />
                   <span className="slider"></span>
                 </label>
-                <label className="section-title">BMC 노드 현황</label>
+                <label className="section-title">베어메탈 노드 현황</label>
                 <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
 
                 <div className="popover-container">
@@ -2544,6 +2556,174 @@ const CustomDashboardEdit = (props) => {
                     <div className="preview_cont">
 
                       <div className="view img_12">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-13" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">CPU & 소비 전력량 비교</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_13">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-14" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">탄소발자국 - 소나무</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_14">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-15" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">탄소 발자국 - 비용</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_15">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-16" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">탄소 발자국 - 전력 사용량</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_16">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-17" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">탄소 발자국 - CO2 발생량</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_17">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-18" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">탄소 지표</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_18">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
+
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-19" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">전력 사용량 Top 5</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_19">미리보기</div>
                     </div>
                     <button className="close-popover-button"><i className="ico-close"></i></button>
                   </div>
