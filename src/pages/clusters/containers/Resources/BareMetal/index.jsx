@@ -52,13 +52,6 @@ export default class BareMetalDashboard extends React.Component {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 40000)
 
-    const currentTime = Math.floor(Date.now() / 1000);
-    this.currentTime = currentTime
-    this.step = "5m";
-    this.times = 100;
-    this.start = currentTime - 30000;
-    this.end = currentTime;
-
     this.state = {
       metricFlag : true,
       metricStateData : [],
@@ -144,7 +137,7 @@ export default class BareMetalDashboard extends React.Component {
     })
 
     const metric_cpu = await this.customStore.fetchMetric({
-      expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[${this.step}]))`,
+      expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[5m]))`,
       start: this.currentTime,
       end: this.currentTime,
     })
@@ -493,7 +486,7 @@ export default class BareMetalDashboard extends React.Component {
 
   renderNodeStateContent() {
   
-    const { metricStateData} = this.state;
+    const { metricStateData } = this.state;
 
     const { data } = toJS(this.props.store.list)
 
@@ -603,7 +596,7 @@ export default class BareMetalDashboard extends React.Component {
 
         <div className="content_box_wrap">
           {/* CPU 소비 전력량 비교 */}
-          <Carbon />
+          <Carbon {...this.props}/>
 
           {/* CPU 소비 전력량 비교 */}
           <CpuUsage />

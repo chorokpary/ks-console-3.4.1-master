@@ -19,60 +19,150 @@ const index = (props) => {
   const customStore = new CustomStore();
 
   const [nodeCpuData, setNodeCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
+  const [nodeMemoryData, setNodeMemoryData] = useState([]);
+  const [nodeDiskData, setNodeDiskData] = useState([]);
+  const [nodePowerData, setNodePowerData] = useState([]);
+  const [nodeTemperatureData, setNodeTemperatureData] = useState([]);  
+
+  const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
+  
+    switch (unit) {
+      default:
+      case 's':
+        break
+      case 'm':
+        value *= 60
+        break
+      case 'h':
+        value *= 60 * 60
+        break
+      case 'd':
+        value = value * 24 * 60 * 60
+        break
+    }
+    return hasUnit ? `${value}s` : value
+  }
+
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+  
+    return { start, end }
+  }
 
   const fetchData = async (params) => {
 
-    var currentTime = Math.floor(Date.now() / 1000);
+    const paramsData = Object.assign(params, {
+      start : params.start,
+      end : params.end,
+      step: getMinuteValue(params.step),
+      times : params.times ,
+    })
 
-    console.log(params)
+    if (!paramsData.start || !paramsData.end) {
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
+    }
 
-    const step = ((params.step).replace('m', '') * params.times) + 'm';
-    const start = (params.start == '' || !!!params.start) ? currentTime - 3000 : Math.floor(params.start);
-    const end = (params.end == '' || !!!params.end) ? currentTime : Math.floor(params.end);
+    const metricData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
+    const instance = get(metricData, 'ip')
 
-    // const vmName = store.detail.name;
-    const vmName = "vpc-test";
-
+    // cpu 사용량
     const getNodeCpuUsageData = async () => {
       const nodeCpuData = await customStore.fetchMetric({
-        expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[${step}])) by (instance)) * 100`,
-        start,
-        end,
+        expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
+        ...paramsData,
       })
 
-      console.log("nodeCpuData : "+ JSON.stringify(nodeCpuData))
       const nodeCpuMetricData = _.find(nodeCpuData, (data) => {
-        if (data.metric.pod === vmName ) return data;
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;        
       });
-  
+
       // 배열 처리 
       const nodeCpuArray = [];
       nodeCpuArray.push(nodeCpuMetricData)
       setNodeCpuData(nodeCpuArray)
     };
 
-    // vm memory data
+    // Memory 사용량
+    // 사용률: `(1 - ((avg_over_time(node_memory_MemFree_bytes[5m]) + avg_over_time(node_memory_Cached_bytes[5m]) + avg_over_time(node_memory_Buffers_bytes[5m])) / avg_over_time(node_memory_MemTotal_bytes[5m])))`,
+    // 사용량: `sum(node_memory_MemTotal_bytes - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes)) by (instance)`,
     const getNodeMemoryUsageData = async () => {
-      const vmMemoryData = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
-        start,
-        end,
+      const nodeMemoryData = await customStore.fetchMetric({
+        expr: `sum(node_memory_MemTotal_bytes - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes)) by (instance)`,
+        ...paramsData,
       })
 
-      const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
-        if (data.metric.pod === vmName ) return data;
+      const nodeMemoryMetricData = _.find(nodeMemoryData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
       });
 
       // 배열 처리 
-      const vmMemoryArray = [];
-      vmMemoryArray.push(vmMemoryMetricData)
-      setVmMemoryData(vmMemoryArray)
-
+      const nodeMemoryArray = [];
+      nodeMemoryArray.push(nodeMemoryMetricData)
+      setNodeMemoryData(nodeMemoryArray)
     };
-    
+
+    // Disk 사용량
+    const getNodeDiskUsageData = async () => {
+      const nodeDiskData = await customStore.fetchMetric({
+        expr: `sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) by (instance)`,        
+        ...paramsData,
+      })
+
+      const nodeDiskMetricData = _.find(nodeDiskData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodeDiskArray = [];
+      nodeDiskArray.push(nodeDiskMetricData)
+      setNodeDiskData(nodeDiskArray)
+    };
+
+    // 파워 사용량
+    const getNodePowerUsageData = async () => {
+      const nodePowerData = await customStore.fetchMetric({
+        expr: `sum(redfish_chassis_power_powersupply_last_power_output_watts) by (instance)`,        
+        ...paramsData,
+      })
+
+      const nodePowerMetricData = _.find(nodePowerData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodePowerArray = [];
+      nodePowerArray.push(nodePowerMetricData)
+      setNodePowerData(nodePowerArray)
+    };
+
+    // 온도
+    const getNodeTemperatureData = async () => {
+      const nodeTemperatureData = await customStore.fetchMetric({
+        expr: `sum(redfish_chassis_power_powersupply_last_power_output_watts) by (instance)`,        
+        ...paramsData,
+      })
+
+      const nodeTemperatureMetricData = _.find(nodeTemperatureData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodeTemperatureArray = [];
+      nodeTemperatureArray.push(nodeTemperatureMetricData)
+      setNodeTemperatureData(nodeTemperatureArray)
+    };
+
     getNodeCpuUsageData();
     getNodeMemoryUsageData();
+    getNodeDiskUsageData();
+    getNodePowerUsageData();
+    getNodeTemperatureData();
 
   }
 
@@ -88,11 +178,32 @@ const index = (props) => {
       {
         type: 'utilisation',
         title: 'MEMORY_USAGE',
-        unit: '%',
-        unitType: 'memory',
+        unit: "GB",
         legend: ['MEMORY_USAGE'],
-        data: vmMemoryData,
+        data: nodeMemoryData,
       },
+      {
+        type: 'utilisation',
+        title: 'DISK_USAGE',
+        unitType: 'disk',
+        legend: ['DISK_USAGE'],
+        data: nodeDiskData,
+      },
+      {
+        type: 'utilisation',
+        title: 'Power Usage',
+        unit: 'kWh',
+        legend: ['Power Usage'],
+        data: nodePowerData,
+      },
+      {
+        type: 'utilisation',
+        title: 'Temperature',
+        unit: '℃',
+        legend: ['Temperature'],
+        data: nodeTemperatureData,
+      },
+
     ]
   }
 

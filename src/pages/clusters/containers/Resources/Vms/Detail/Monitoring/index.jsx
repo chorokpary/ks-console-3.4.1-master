@@ -22,20 +22,55 @@ const index = (props) => {
   const [vmInboundData, setVmInboundData] = useState({});
   const [vmOutboundData, setVmOutboundData] = useState({});
 
+  const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
+  
+    switch (unit) {
+      default:
+      case 's':
+        break
+      case 'm':
+        value *= 60
+        break
+      case 'h':
+        value *= 60 * 60
+        break
+      case 'd':
+        value = value * 24 * 60 * 60
+        break
+    }
+    return hasUnit ? `${value}s` : value
+  }
+
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+  
+    return { start, end }
+  }
+
   const fetchData = async (params) => {
 
-    var currentTime = Math.floor(Date.now() / 1000);
+    const paramsData = Object.assign(params, {
+      start : params.start,
+      end : params.end,
+      step: getMinuteValue(params.step),
+      times : params.times ,
+    })
 
-    const step = params.step;
-    const times = params.times;
-    const start = (params.start == '' || !!!params.start) ? currentTime - 3000 : Math.floor(params.start);
-    const end = (params.end == '' || !!!params.end) ? currentTime : Math.floor(params.end);
+    if (!paramsData.start || !paramsData.end) {
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
+    }
 
     const getVmCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
-        start,
-        end,
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
+        ...paramsData,
       })
 
       const vmCpuMetricData = _.find(vmCpuData, (data) => {
@@ -52,8 +87,7 @@ const index = (props) => {
     const getVmMemoryUsageData = async () => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
-        start,
-        end,
+        ...paramsData,
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
@@ -69,9 +103,8 @@ const index = (props) => {
 
     const getVmInboundData = async () => {
       const vmInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[${step}])`,
-        start,
-        end,
+        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
+        ...paramsData,
       })
 
       const vmInboundMetricData = _.find(vmInboundData, (data) => {
@@ -85,9 +118,8 @@ const index = (props) => {
     // vm outbound data
     const getVmOutboundData = async () => {
       const vmOutboundData= await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[${step}])`,
-        start,
-        end,
+        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
+        ...paramsData,
       })
 
       const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
