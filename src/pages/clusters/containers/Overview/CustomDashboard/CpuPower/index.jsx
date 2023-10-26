@@ -10,7 +10,7 @@ const CpuPower = ({ x, y, w, h }) => {
                     {/* grid_item */}
                     <div className="grid_item">
                         <div className="grid_title" style={{ cursor: 'default' }}>
-                            <label>CPU 소비 전력량 비교 (1대 평균)</label>
+                            <label>CPU & 소비 전력량 비교 (1대 평균)</label>
                             <div className="right">
                                 <div className="dash_boxtab">
                                     <label htmlFor="cpupower_name1">

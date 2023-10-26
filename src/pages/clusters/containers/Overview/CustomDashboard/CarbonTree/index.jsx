@@ -9,7 +9,7 @@ const CarbonTree = ({ x, y, w, h }) => {
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>탄소 발자국 - 나무</label>
+              <label>탄소 발자국 - 소나무</label>
             </div>
             <div className="grid_info style_chart_2">
               <div className="box type_chart">

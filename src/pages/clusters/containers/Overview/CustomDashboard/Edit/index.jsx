@@ -544,7 +544,7 @@ const CustomDashboardEdit = (props) => {
                                     <div className="chart_tab no-tab">
                                       <div className="title">
                                         <i className="ico-type-network"></i>
-                                        <h5>전체</h5>
+                                        <h5>Total</h5>
                                       </div>
                                       <div className="data">
                                         <div className="number_wrap data-r">
@@ -578,7 +578,9 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_item">
                               <div className="grid_title">
                                 <label>리소스 사용량 Top 5</label>
-                                <i className="ico-btn-trash"></i>
+                                <div className="right">
+                                  <i className="ico-btn-trash"></i>
+                                </div>
                               </div>
                               <div className="grid_info style_list">
                                 <div className="select_wrap">
@@ -1078,8 +1080,6 @@ const CustomDashboardEdit = (props) => {
                                 </div>
                               </div>
                               {/*// grid_info style_status */}
-
-
                             </div>
                             {/* // grid_item */}
                           </div>
@@ -1093,144 +1093,142 @@ const CustomDashboardEdit = (props) => {
                           gs-w={activeDashboard.computingTemplate.w}
                           gs-h={activeDashboard.computingTemplate.h}>
                           <div className="grid-stack-item-content">
-                            <div className="grid-stack-item-content">
-                              <div className="grid_item">
-                                <div className="grid_title">
-                                  <label>컴퓨팅 템플릿 현황</label>
-                                  <div className="right">
-                                    <i className="ico-btn-trash"></i>
-                                  </div>
+                            <div className="grid_item">
+                              <div className="grid_title">
+                                <label>컴퓨팅 템플릿 현황</label>
+                                <div className="right">
+                                  <i className="ico-btn-trash"></i>
                                 </div>
-                                <div className="spin-nested-loading">
-                                  <div className="spin-container">
-                                    <div className="grid_info style_status box_nth">
-
-                                      <div className="box type_status">
-                                        <h5><i className="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
-                                        <div className="cont_group">
-                                          <div className="cont1">
-                                            <div className="number_wrap">
-                                              <p><span className="em">4</span> / 5</p>
-                                            </div>
-                                          </div>
-                                          <div className="cont2">
-                                            <div className="status_wrap">
-                                              <div className="value">4</div>
-                                              <p className="status used"><span>Used</span></p>
-                                            </div>
-                                            <div className="status_wrap">
-                                              <div className="value">1</div>
-                                              <p className="status unused"><span>Unused</span></p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="box type_status">
-                                        <h5><i className="ico-type24-hostdevice"></i>Host 디바이스</h5>
-                                        <div className="cont_group">
-                                          <div className="cont1">
-                                            <div className="number_wrap">
-                                              <p><span className="em">2</span> / 3</p>
-                                            </div>
-                                          </div>
-                                          <div className="cont2">
-                                            <div className="status_wrap">
-                                              <div className="value">2</div>
-                                              <p className="status used"><span>Used</span></p>
-                                            </div>
-                                            <div className="status_wrap">
-                                              <div className="value">1</div>
-                                              <p className="status unused"><span>Unused</span></p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="box type_status">
-                                        <h5><i className="ico-type24-image"></i>이미지</h5>
-                                        <div className="cont_group">
-                                          <div className="cont1">
-                                            <div className="number_wrap">
-                                              <p><span className="em">2</span> / 3</p>
-                                            </div>
-                                          </div>
-                                          <div className="cont2">
-                                            <div className="status_wrap">
-                                              <div className="value">2</div>
-                                              <p className="status used"><span>Used</span></p>
-                                            </div>
-                                            <div className="status_wrap">
-                                              <div className="value">1</div>
-                                              <p className="status unused"><span>Unused</span></p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="box type_status">
-                                        <h5><i className="ico-type24-keypair"></i>키페어</h5>
-                                        <div className="cont_group">
-                                          <div className="cont1">
-                                            <div className="number_wrap">
-                                              <p><span className="em">4</span> / 7</p>
-                                            </div>
-                                          </div>
-                                          <div className="cont2">
-                                            <div className="status_wrap">
-                                              <div className="value">7</div>
-                                              <p className="status used"><span>Used</span></p>
-                                            </div>
-                                            <div className="status_wrap">
-                                              <div className="value">1</div>
-                                              <p className="status unused"><span>Unused</span></p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="box type_status">
-                                        <h5><i className="ico-type24-flavor"></i>Flavor</h5>
-                                        <div className="cont_group">
-                                          <div className="cont1">
-                                            <div className="number_wrap">
-                                              <p><span className="em">4</span> / 5</p>
-                                            </div>
-                                          </div>
-                                          <div className="cont2">
-                                            <div className="status_wrap">
-                                              <div className="value">4</div>
-                                              <p className="status used"><span>Used</span></p>
-                                            </div>
-                                            <div className="status_wrap">
-                                              <div className="value">1</div>
-                                              <p className="status unused"><span>Unused</span></p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="box type_status">
-                                        <h5><i className="ico-type24-kaasimage"></i>KaaS 이미지</h5>
-                                        <div className="cont_group">
-                                          <div className="cont1">
-                                            <div className="number_wrap">
-                                              <p><span className="em">7</span> / 8</p>
-                                            </div>
-                                          </div>
-                                          <div className="cont2">
-                                            <div className="status_wrap">
-                                              <div className="value">7</div>
-                                              <p className="status used"><span>Used</span></p>
-                                            </div>
-                                            <div className="status_wrap">
-                                              <div className="value">1</div>
-                                              <p className="status unused"><span>Unused</span></p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                    </div>
-                                  </div>
-                                </div>
-
                               </div>
+                              <div className="spin-nested-loading">
+                                <div className="spin-container">
+                                  <div className="grid_info style_status box_nth">
+
+                                    <div className="box type_status">
+                                      <h5><i className="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
+                                      <div className="cont_group">
+                                        <div className="cont1">
+                                          <div className="number_wrap">
+                                            <p><span className="em">4</span> / 5</p>
+                                          </div>
+                                        </div>
+                                        <div className="cont2">
+                                          <div className="status_wrap">
+                                            <div className="value">4</div>
+                                            <p className="status used"><span>Used</span></p>
+                                          </div>
+                                          <div className="status_wrap">
+                                            <div className="value">1</div>
+                                            <p className="status unused"><span>Unused</span></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="box type_status">
+                                      <h5><i className="ico-type24-hostdevice"></i>Host 디바이스</h5>
+                                      <div className="cont_group">
+                                        <div className="cont1">
+                                          <div className="number_wrap">
+                                            <p><span className="em">2</span> / 3</p>
+                                          </div>
+                                        </div>
+                                        <div className="cont2">
+                                          <div className="status_wrap">
+                                            <div className="value">2</div>
+                                            <p className="status used"><span>Used</span></p>
+                                          </div>
+                                          <div className="status_wrap">
+                                            <div className="value">1</div>
+                                            <p className="status unused"><span>Unused</span></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="box type_status">
+                                      <h5><i className="ico-type24-image"></i>이미지</h5>
+                                      <div className="cont_group">
+                                        <div className="cont1">
+                                          <div className="number_wrap">
+                                            <p><span className="em">2</span> / 3</p>
+                                          </div>
+                                        </div>
+                                        <div className="cont2">
+                                          <div className="status_wrap">
+                                            <div className="value">2</div>
+                                            <p className="status used"><span>Used</span></p>
+                                          </div>
+                                          <div className="status_wrap">
+                                            <div className="value">1</div>
+                                            <p className="status unused"><span>Unused</span></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="box type_status">
+                                      <h5><i className="ico-type24-keypair"></i>키페어</h5>
+                                      <div className="cont_group">
+                                        <div className="cont1">
+                                          <div className="number_wrap">
+                                            <p><span className="em">4</span> / 7</p>
+                                          </div>
+                                        </div>
+                                        <div className="cont2">
+                                          <div className="status_wrap">
+                                            <div className="value">7</div>
+                                            <p className="status used"><span>Used</span></p>
+                                          </div>
+                                          <div className="status_wrap">
+                                            <div className="value">1</div>
+                                            <p className="status unused"><span>Unused</span></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="box type_status">
+                                      <h5><i className="ico-type24-flavor"></i>Flavor</h5>
+                                      <div className="cont_group">
+                                        <div className="cont1">
+                                          <div className="number_wrap">
+                                            <p><span className="em">4</span> / 5</p>
+                                          </div>
+                                        </div>
+                                        <div className="cont2">
+                                          <div className="status_wrap">
+                                            <div className="value">4</div>
+                                            <p className="status used"><span>Used</span></p>
+                                          </div>
+                                          <div className="status_wrap">
+                                            <div className="value">1</div>
+                                            <p className="status unused"><span>Unused</span></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="box type_status">
+                                      <h5><i className="ico-type24-kaasimage"></i>KaaS 이미지</h5>
+                                      <div className="cont_group">
+                                        <div className="cont1">
+                                          <div className="number_wrap">
+                                            <p><span className="em">7</span> / 8</p>
+                                          </div>
+                                        </div>
+                                        <div className="cont2">
+                                          <div className="status_wrap">
+                                            <div className="value">7</div>
+                                            <p className="status used"><span>Used</span></p>
+                                          </div>
+                                          <div className="status_wrap">
+                                            <div className="value">1</div>
+                                            <p className="status unused"><span>Unused</span></p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+
                             </div>
                           </div>
                         </div>
@@ -1252,14 +1250,16 @@ const CustomDashboardEdit = (props) => {
                                   <i className="ico-btn-trash"></i>
                                 </div>
                               </div>
-                              <div className="grid_info style_status box_long">
-                                <div className="box type_status">
-                                  <div className="cont_group">
-                                    <h5><i className="ico-type-pod"></i>Pod</h5>
-                                    <div className="number_wrap">
-                                      <p><span className="em">12</span></p>
-                                    </div>
-                                    {/* <div className="cont2">
+                              <div class="spin-nested-loading">
+                                <div class="spin-container">
+                                  <div className="grid_info style_status box_long">
+                                    <div className="box type_status">
+                                      <div className="cont_group">
+                                        <h5><i className="ico-type-pod"></i>Pod</h5>
+                                        <div className="number_wrap">
+                                          <p><span className="em">12</span></p>
+                                        </div>
+                                        {/* <div className="cont2">
                                     <div className="status_wrap">
                                       <div className="value">1</div>
                                       <p><span>Created</span></p>
@@ -1269,38 +1269,40 @@ const CustomDashboardEdit = (props) => {
                                       <p><span>Deleted</span></p>
                                     </div>
                                   </div> */}
-                                    <div className="chart chart_03">
+                                        <div className="chart chart_03">
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </div>
-                              {/*// grid_info style_status */}
-                              <div className="grid_info style_status box_long">
-                                <div className="box type_status">
-                                  <div className="cont_group">
-                                    <h5><i className="ico-type-vm"></i>가상머신</h5>
-                                    <div className="number_wrap">
-                                      <p><span className="em">7</span></p>
-                                    </div>
-                                    <div className="chart chart_03">
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              {/*// grid_info style_status */}
-                              <div className="grid_info style_status box_long">
-                                <div className="box type_status">
-                                  <div className="cont_group">
-                                    <h5><i className="ico-type-container"></i>쿠버네티스</h5>
-                                    <div className="number_wrap">
-                                      <p><span className="em">1</span></p>
-                                    </div>
-                                    <div className="chart chart_03">
+                                  {/*// grid_info style_status */}
+                                  <div className="grid_info style_status box_long">
+                                    <div className="box type_status">
+                                      <div className="cont_group">
+                                        <h5><i className="ico-type-vm"></i>가상머신</h5>
+                                        <div className="number_wrap">
+                                          <p><span className="em">7</span></p>
+                                        </div>
+                                        <div className="chart chart_03">
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
+                                  {/*// grid_info style_status */}
+                                  <div className="grid_info style_status box_long">
+                                    <div className="box type_status">
+                                      <div className="cont_group">
+                                        <h5><i className="ico-type-container"></i>쿠버네티스</h5>
+                                        <div className="number_wrap">
+                                          <p><span className="em">1</span></p>
+                                        </div>
+                                        <div className="chart chart_03">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {/*// grid_info style_status */}
                                 </div>
                               </div>
-                              {/*// grid_info style_status */}
                             </div>
                             {/* // grid_item */}
                           </div>
@@ -1319,7 +1321,7 @@ const CustomDashboardEdit = (props) => {
                             {/* grid_item */}
                             <div className="grid_item">
                               <div className="grid_title">
-                                <label>쿠버네티스 컴포넌트 상태</label>
+                                <label>클러스터 컴포넌트 상태</label>
                                 <div className="right">
                                   <i className="ico-btn-trash"></i>
                                 </div>
@@ -1691,7 +1693,7 @@ const CustomDashboardEdit = (props) => {
                             {/* grid_item */}
                             <div className="grid_item">
                               <div className="grid_title">
-                                <label>CPU 소비 전력량 비교 (1대 평균)</label>
+                                <label>CPU & 소비 전력량 비교 (1대 평균)</label>
                                 <div className="right">
                                   <div className="dash_boxtab">
                                     <label htmlFor="cpupower_name1">
@@ -1711,7 +1713,7 @@ const CustomDashboardEdit = (props) => {
                                       <span>최근 1달</span>
                                     </label>
                                   </div>
-                                  {/*<i className="ico-btn-trash"></i>*/}
+                                  <i className="ico-btn-trash"></i>
                                 </div>
                               </div>
                               <div className="spin-nested-loading">
@@ -1784,6 +1786,9 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_item">
                               <div className="grid_title">
                                 <label>탄소 발자국 - 전력 사용량</label>
+                                <div className="right">
+                                  <i className="ico-btn-trash"></i>
+                                </div>
                               </div>
                               <div className="spin-nested-loading">
                                 <div className="spin-container">
@@ -1837,6 +1842,9 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_item">
                               <div className="grid_title">
                                 <label>탄소 발자국 - CO2 발생량</label>
+                                <div className="right">
+                                  <i className="ico-btn-trash"></i>
+                                </div>
                               </div>
                               <div className="spin-nested-loading">
                                 <div className="spin-container">
@@ -1889,7 +1897,10 @@ const CustomDashboardEdit = (props) => {
                             {/* grid_item */}
                             <div className="grid_item">
                               <div className="grid_title">
-                                <label>탄소 발자국 - 나무</label>
+                                <label>탄소 발자국 - 소나무</label>
+                                <div className="right">
+                                  <i className="ico-btn-trash"></i>
+                                </div>
                               </div>
                               <div className="spin-nested-loading">
                                 <div className="spin-container">
@@ -1943,6 +1954,9 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_item">
                               <div className="grid_title">
                                 <label>탄소 발자국 - 비용</label>
+                                <div className="right">
+                                  <i className="ico-btn-trash"></i>
+                                </div>
                               </div>
                               <div className="spin-nested-loading">
                                 <div className="spin-container">
@@ -1996,7 +2010,7 @@ const CustomDashboardEdit = (props) => {
                             <div className="grid_item">
                               <div className="grid_title">
                                 <label>탄소 지표 (2023.10)</label>
-                                {/*<i className="ico-btn-trash"></i>*/}
+                                <i className="ico-btn-trash"></i>
                               </div>
                               <div className="spin-nested-loading">
                                 <div className="spin-container">
@@ -2121,7 +2135,7 @@ const CustomDashboardEdit = (props) => {
                                     <span>x86</span>
                                   </label>
                                 </div>
-                                {/*<i className="ico-btn-trash"></i>*/}
+                                <i className="ico-btn-trash"></i>
                               </div>
                               <div className="spin-nested-loading">
                                 <div className="spin-container">
@@ -2536,6 +2550,29 @@ const CustomDashboardEdit = (props) => {
                     <button className="btn btn-primary">추가</button>
                   </div>
                 </div>
+              </div>
+
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input type="checkbox" id="toggle-21" className="toggle" />
+                  <span className="slider"></span>
+                </label>
+                <label className="section-title">클러스터 컴포넌트 상태</label>
+                <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>미리보기</h5>
+                    <div className="preview_cont">
+
+                      <div className="view img_21">미리보기</div>
+                    </div>
+                    <button className="close-popover-button"><i className="ico-close"></i></button>
+                  </div>
+                  <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div>
+                </div>
 
               </div>
             </div>
@@ -2739,7 +2776,7 @@ const CustomDashboardEdit = (props) => {
             <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
-                  <input type="checkbox" id="toggle-13" className="toggle" />
+                  <input type="checkbox" id="toggle-20" className="toggle" />
                   <span className="slider"></span>
                 </label>
                 <label className="section-title">이슈</label>
@@ -2751,7 +2788,7 @@ const CustomDashboardEdit = (props) => {
                     <h5>미리보기</h5>
                     <div className="preview_cont">
 
-                      <div className="view img_13">미리보기</div>
+                      <div className="view img_20">미리보기</div>
                     </div>
                     <button className="close-popover-button"><i className="ico-close"></i></button>
                   </div>
