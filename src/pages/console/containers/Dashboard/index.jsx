@@ -28,6 +28,8 @@ import AdminDashboard from './Admin'
 
 import styles from './index.scss'
 
+import "../../../clusters/containers/Overview/CustomDashboard/custom_theme.css";
+
 @inject('rootStore')
 class Dashboard extends React.Component {
   constructor(props) {

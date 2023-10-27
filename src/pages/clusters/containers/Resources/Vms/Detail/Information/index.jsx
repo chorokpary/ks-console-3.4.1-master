@@ -7,8 +7,6 @@ import axios from "axios";
 import * as common from 'utils/resources'
 
 import styles from './index.scss'
-// import '../../../../Overview/CustomDashboard/custom_icon.css'
-// import '../../../../Overview/CustomDashboard/custom_style.css'
 
 const Information = (props) => {
 
