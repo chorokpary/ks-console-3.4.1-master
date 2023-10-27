@@ -20,6 +20,8 @@ import { renderRoutes } from 'utils/router.config'
 
 import routes from './routes'
 
+import '../clusters/containers/Overview/CustomDashboard/custom_theme.css'
+
 const App = () => renderRoutes(routes)
 
 export default App
