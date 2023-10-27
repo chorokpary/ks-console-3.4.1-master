@@ -40,7 +40,7 @@ const ClusterNode = ({ x, y, w, h }) => {
             <Loading spinning={loading}>
               <div className="grid_info style_status">
                 <div className="box type_status">
-                  <div className="cont_group">
+                  <div className="cont_group clusternode">
                     <div className="cont1">
                       <div className="number_wrap">
                         <i className="ico-type-clusternode"><span>Master</span></i>

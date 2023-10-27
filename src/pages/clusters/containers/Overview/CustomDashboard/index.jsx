@@ -55,13 +55,13 @@ const CustomDashboard = (props) => {
     GridStack.init(options);
     const q = new DashboardInfo()
     const arr = new Array(q)
-    // const b = new DashboardInfo()
-    // b.name = '대시보드2'
-    // b.clusterNode.x = 9
-    // b.kaas.x = 0
-    // b.pod = null
-    // b.computingTemplate = null
-    // arr.push(b)
+    const b = new DashboardInfo()
+    b.name = '대시보드2'
+    b.clusterNode.x = 9
+    b.kaas.x = 0
+    b.pod = null
+    b.computingTemplate = null
+    arr.push(b)
 
     cookie.save('dashboardInfo', arr);
     const dashboardArr = cookie.load('dashboardInfo')
