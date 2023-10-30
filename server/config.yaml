@@ -165,7 +165,7 @@ client:
         - { name: projects, title: PROJECT_PL, icon: project }
         - name: app-workloads
           title: APPLICATION_WORKLOAD_PL
-          icon: appcenter
+          icon: vnc
           children:
             - name: workloads
               title: WORKLOAD_PL
@@ -183,14 +183,14 @@ client:
             - { name: ingresses, title: ROUTE_PL }            
         - name : computing-workloads
           title: "컴퓨팅 워크로드"
-          icon: appcenter
+          icon: templet
           showInDisable: true   
           children: 
             - { name: vms, title: "가상머신"}
             - { name: containerResource, title: "KaaS" }
         - name: computing
           title: "컴퓨팅 설정"
-          icon: appcenter
+          icon: computing-setting
           showInDisable: true
           children:            
             - {
@@ -249,7 +249,7 @@ client:
             }            
         - name: resources
           title: "리소스 템플릿"
-          icon: appcenter
+          icon: resource
           showInDisable: true   
           children: 
             - {
@@ -278,7 +278,7 @@ client:
             }   
         - name: virtualmachine-management
           title: "컴퓨팅 애플리케이션 관리"
-          icon: appcenter
+          icon: cron-job
           showInDisable: true   
           children:   
             - {
