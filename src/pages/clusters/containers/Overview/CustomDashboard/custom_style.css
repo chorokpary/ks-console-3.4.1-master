@@ -1,3 +1,10 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 .content_box_wrap i {
   flex-shrink: 0;
 }
@@ -1344,6 +1351,7 @@
   width: 482px;
   height: 30px;
   margin: 0 auto;
+  margin-bottom: 10px;
 }
 .content_box_wrap .value_box_wrap .overview {
   position: fixed;
@@ -1430,10 +1438,11 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+  min-height: 500px;
+  height: 100%;
 }
 .content_box_wrap .tree_wrap .tree_box {
   display: flex;
-  flex-grow: 1;
   min-width: 700px;
   min-height: 90px;
   padding: 6px;
@@ -1444,6 +1453,9 @@
   border: 1px solid #b6c2cd;
   background: var(--wh, #fff);
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+}
+.content_box_wrap .tree_wrap .tree_box.vm {
+  margin-top: 50px;
 }
 .content_box_wrap .tree_wrap .tree_box .title_icon {
   display: flex;
