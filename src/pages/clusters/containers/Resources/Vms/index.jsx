@@ -227,8 +227,7 @@ export default class Vms extends React.Component {
           return (
             <div className={styles.avatar}>
               <div className={styles.icon}>
-                {/* <Icon name="templet" size={40} /> */}
-                <i className="ico-type40-vm"></i>
+                <i className="ico-type-vm"></i>
                 <Indicator
                   className={styles.indicator}
                   type={this.getState(state)}

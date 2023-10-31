@@ -1433,7 +1433,6 @@ html {
   border-radius: 10px;
 }
 .content_box_wrap .tree_wrap {
-  width: 100%;
   display: flex;
   margin: 10px;
   flex-direction: column;
