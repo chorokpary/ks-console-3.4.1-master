@@ -12,6 +12,8 @@ const Information = (props) => {
 
   const store = props.detailStore;
 
+  console.log(JSON.stringify(store.detail.vm))
+
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailVolume, setDetailVolume] = useState([]);
   const [detailNetwork, setDetailNetwork] = useState([]);
@@ -101,7 +103,7 @@ const Information = (props) => {
                     <h5><span>VM</span>{store.detail.vm?.name}</h5>
                     <div className="group">
                       
-                      <div className="info"><i className={(store.detail.vm?.cpu_arch).includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch).includes('x86') ? "X86" : "ARM"}</span></div>
+                      <div className="info"><i className={(store.detail.vm?.cpu_arch)?.includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch)?.includes('x86') ? "X86" : "ARM"}</span></div>
                       <div className="info">
                         <i className={`ico-os-${detailImage?.distro_type}`}></i>
                         <span>{store.detail.vm?.image}</span>
