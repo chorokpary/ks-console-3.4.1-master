@@ -48,6 +48,7 @@ module.exports = {
   CLUSTER_NODE_EMPTY_DESC: 'Please add a node to the cluster.',
   NODE_NAME_EMPTY_DESC: 'Please set a name for the node.',
   CPU_USAGE: 'CPU Usage',
+  CPU_TYPE: 'CPU Type',
   MEMORY_USAGE: 'Memory Usage',
   CONTROL_PLANE: 'Control plane',
   WORKER: 'Worker',

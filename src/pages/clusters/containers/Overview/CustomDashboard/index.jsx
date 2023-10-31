@@ -26,7 +26,6 @@ import CarbonCo2 from './CarbonCo2';
 import CarbonTree from './CarbonTree';
 import CarbonCost from './CarbonCost';
 
-import cookie from 'react-cookies';
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 
 const CustomDashboard = (props) => {

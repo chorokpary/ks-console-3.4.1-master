@@ -316,6 +316,14 @@ export default class Nodes extends React.Component {
           roles.indexOf('master') === -1 ? t('WORKER') : t('CONTROL_PLANE'),
       },
       {
+        title: t('CPU_TYPE'),
+        dataIndex: 'cpu_type',
+        filteredValue: getFilteredValue('status'),
+        isHideable: true,
+        render: (_, record) =>
+          <Text title={record.nodeInfo.architecture.toUpperCase()} />
+      },
+      {
         title: t('CPU_USAGE'),
         key: 'cpu',
         isHideable: true,

@@ -47,6 +47,7 @@ module.exports = {
   CLUSTER_NODE_EMPTY_DESC: '클러스터에 노드를 추가하십시오.',
   NODE_NAME_EMPTY_DESC: '노드의 이름을 설정하십시오.',
   CPU_USAGE: 'CPU 사용량',
+  CPU_TYPE: 'CPU 타입',
   MEMORY_USAGE: '메모리 사용량',
   CONTROL_PLANE: '컨트롤 플레인',
   WORKER: '워커',

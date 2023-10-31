@@ -6,7 +6,6 @@ import { inject, observer } from 'mobx-react';
 import queryString from 'query-string';
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 
-import cookie from 'react-cookies';
 import { makePanels } from 'stores/dashboard/panels';
 const CustomDashboardEdit = (props) => {
 
