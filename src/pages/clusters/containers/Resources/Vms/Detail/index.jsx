@@ -53,7 +53,7 @@ const VmDetail = (props) => {
       param = param + vmName + "/vnc";
   
       var popupName = vmName.replaceAll("-", "");
-      window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1030,height=800');
+      window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1200,height=900');
     }
 
     const getOperations = () => [

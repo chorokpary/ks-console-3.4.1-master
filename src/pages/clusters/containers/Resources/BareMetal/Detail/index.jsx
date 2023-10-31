@@ -71,8 +71,8 @@ const BareMetalDetail = (props) => {
         end: currentTime,
       })
 
-      const metricData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
-      const instance = get(metricData, 'ip')
+      const detailData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
+      const instance = get(detailData, 'ip')
 
       const metrics = metric_model.find(item => get(item, 'metric.instance').split(":")[0] === instance)
       const modelName = get(metrics, 'metric.model')  

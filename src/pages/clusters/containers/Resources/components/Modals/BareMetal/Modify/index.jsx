@@ -1,5 +1,5 @@
 import { toJS } from 'mobx'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 import { get, omit } from 'lodash'
 import { Modal } from 'components/Base'
@@ -9,6 +9,8 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import styles from './index.scss'
 
 const RegistModal = (props) => {
+
+  const detailInfo = toJS(props.store.detail.nodes).find(item => get(item, 'name') === props.store.detail.name) 
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -30,7 +32,7 @@ const RegistModal = (props) => {
       data.target_ip_array = target_array 
       console.log("data : "+ JSON.stringify(data))
       
-      onOk({ ...data })
+      // onOk({ ...data })
     })
   }
 
@@ -53,6 +55,14 @@ const RegistModal = (props) => {
     },
   }
 
+  useEffect(() => {    
+    if(detailInfo['redfish-exporter']['target'].length > 0){
+      (detailInfo['redfish-exporter']['target']).map((obj, index) => {
+        index > 0 ? handleSystem.addColumn() : "";
+      })
+    }
+  }, [])
+
   return (
     <>  
         <Modal
@@ -65,11 +75,6 @@ const RegistModal = (props) => {
         >
           <Form data={formData} ref={form}>
 
-            {/* <div className={styles.divwrap}>
-              <div className={styles.div_top}>시스템 정보 입력</div>
-              <div className={styles.div_bottom}>등록 하려는 시스템의 IP, 노드명 정보를 입력해주세요.</div>
-            </div> */}
-
             <Form.Item
                 label={t('이름')}
                 rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
@@ -79,6 +84,8 @@ const RegistModal = (props) => {
                 name="name"
                 autoFocus={true}
                 maxLength={63}
+                defaultValue={detailInfo.name}
+                disabled
               />   
             </Form.Item>
 
@@ -89,6 +96,8 @@ const RegistModal = (props) => {
               <Input
                 name="ip"
                 autoFocus={true}
+                defaultValue={detailInfo.ip}
+                disabled
               />   
             </Form.Item>
 
@@ -103,6 +112,7 @@ const RegistModal = (props) => {
                         <Input
                           name="nodeInterval"
                           placeholder={t('60')}
+                          defaultValue={(detailInfo.nodeExporter.ScrapeInterval).replace('s','')}
                         />
                       </Form.Item>
                     </Column>
@@ -113,6 +123,7 @@ const RegistModal = (props) => {
                         <Input
                           name="nodePort"
                           placeholder={t('21000')}
+                          defaultValue={detailInfo.nodeExporter.port}
                         />
                       </Form.Item>
                     </Column>
@@ -132,6 +143,7 @@ const RegistModal = (props) => {
                         <Input
                           name="refishInterval"
                           placeholder={t('60')}
+                          defaultValue={(detailInfo['redfish-exporter']['ScrapeInterval']).replace('s','')}
                         />
                       </Form.Item>
                     </Column>
@@ -142,6 +154,7 @@ const RegistModal = (props) => {
                         <Input
                           name="refishPort"
                           placeholder={t('9610')}
+                          defaultValue={detailInfo['redfish-exporter']['port']}
                         />
                       </Form.Item>
                     </Column>
@@ -154,15 +167,14 @@ const RegistModal = (props) => {
               <Form.Group >
                 {listSystem.map((obj, idx) => (
                   <div className={styles.item} key={obj}>
-
-                      <Form.Item>
-                        <Input
-                          name={`TargetIp.${obj}`}
-                          placeholder={t('192.168.XX.XX:11000')}
-                          style={{ maxWidth: 'none' }}
-                        />
-                      </Form.Item>
-
+                    <Form.Item>
+                      <Input
+                        name={`TargetIp.${obj}`}
+                        placeholder={t('192.168.XX.XX:11000')}
+                        style={{ maxWidth: 'none' }}
+                        defaultValue={detailInfo['redfish-exporter']['target'].length > 0 ? detailInfo['redfish-exporter']['target'][idx] : ''}
+                      />
+                    </Form.Item>  
                     <Button
                       type="flat"
                       icon="trash"

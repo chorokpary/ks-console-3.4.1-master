@@ -1433,11 +1433,11 @@ html {
   border-radius: 10px;
 }
 .content_box_wrap .tree_wrap {
-  width: 70%;
-  margin: 0 auto;
+  width: 100%;
   display: flex;
-  justify-content: center;
+  margin: 10px;
   flex-direction: column;
+  justify-content: flex-start;
   min-height: 500px;
   height: 100%;
 }
@@ -1453,9 +1453,6 @@ html {
   border: 1px solid #b6c2cd;
   background: var(--wh, #fff);
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
-}
-.content_box_wrap .tree_wrap .tree_box.vm {
-  margin-top: 50px;
 }
 .content_box_wrap .tree_wrap .tree_box .title_icon {
   display: flex;
@@ -1476,8 +1473,9 @@ html {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: 12px;
   margin-bottom: 4px;
+  font-weight: 700;
 }
 .content_box_wrap .tree_wrap .tree_box > .cont_box1 > h5 > span {
   display: flex;
@@ -1491,6 +1489,7 @@ html {
   font-size: 11px !important;
   font-weight: 400;
   height: 20px;
+  font-weight: 700;
 }
 .content_box_wrap .tree_wrap .tree_box > .cont_box1 > h5 > span.bg_01 {
   background: #3744b9;

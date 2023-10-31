@@ -12,8 +12,6 @@ const Information = (props) => {
 
   const store = props.detailStore;
 
-  // console.log(JSON.stringify(store.detail))
-
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailVolume, setDetailVolume] = useState([]);
   const [detailNetwork, setDetailNetwork] = useState([]);
@@ -103,8 +101,11 @@ const Information = (props) => {
                     <h5><span>VM</span>{store.detail.vm?.name}</h5>
                     <div className="group">
                       
-                      <div className="info"><i className="ico-type24-arm"></i><span>ARM</span></div>
-                      <div className="info"><i className="ico-os-ubuntu"></i><span>Ubuntu2023</span></div>
+                      <div className="info"><i className={(store.detail.vm?.cpu_arch).includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch).includes('x86') ? "X86" : "ARM"}</span></div>
+                      <div className="info">
+                        <i className={`ico-os-${detailImage?.distro_type}`}></i>
+                        <span>{store.detail.vm?.image}</span>
+                      </div>
                     </div>
                   </div>
                   <div className="cont_box2">
@@ -203,7 +204,7 @@ const Information = (props) => {
                               <div className="cont_box1">
                                 <h5><span className="bg_04">NIC</span>{network.interface}</h5>
                                 <div className="group">
-                                  <div className="info_2"><span>IP</span><p>{network.ip}</p></div>
+                                  <div className="info_2"><span>IP</span><p>{network.ip}</p></div>                                  
                                 </div>
                               </div>
                             </div>

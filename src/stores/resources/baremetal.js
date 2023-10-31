@@ -180,17 +180,27 @@ export default class BareMetalStore extends Base {
   @action
   async update({ name, ...params }, data) {
 
-    const jsonData = {};
-    const keypairData = {};
+     const jsonData = {};
+    const nodeData = {};
+    const redfishData = {};
 
-    keypairData.name = data.name;
-    keypairData.description = data?.description;
+    nodeData.ScrapeInterval = data.nodeInterval+"s";
+    nodeData.port = Number(data.nodePort);
 
-    jsonData.keypair = keypairData;
+    redfishData.ScrapeInterval = data.refishInterval+"s";
+    redfishData.port = Number(data.refishPort);
+    redfishData.target = data.target_ip_array;
 
-    await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    )
+    jsonData.name = data.name;
+    jsonData.ip = data.ip;
+    jsonData.nodeExporter = nodeData;
+    jsonData['redfish-exporter'] = redfishData;
+    
+    console.log("url : "+ url)
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+    const res = await request.post(url, jsonData)
+    console.log("res : "+ JSON.stringify(res))
+    return res
   }
 
 

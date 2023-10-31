@@ -165,7 +165,7 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc (state) {
-    if (state === 'Stoped'){
+    if (state === 'Stopped'){
       return "중지"
     }else if (state === 'Provisioning') {
       return "생성 중"
@@ -227,7 +227,8 @@ export default class Vms extends React.Component {
           return (
             <div className={styles.avatar}>
               <div className={styles.icon}>
-                <Icon name="templet" size={40} />
+                {/* <Icon name="templet" size={40} /> */}
+                <i className="ico-type40-vm"></i>
                 <Indicator
                   className={styles.indicator}
                   type={this.getState(state)}

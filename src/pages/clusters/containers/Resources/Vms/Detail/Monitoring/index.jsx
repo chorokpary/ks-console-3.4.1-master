@@ -168,25 +168,19 @@ const index = (props) => {
   const configs = getMonitoringCfgs()
 
   return (
-    <>  
-        <div>
-          <div className={styles.wrapper}>
-          <MonitoringController
-              title={t('모니터링')}
-              onFetch={fetchData}
-              loading={isLoading}
-              refreshing={isRefreshing}       
-            >
-              {configs.map(item => {
-                const config = getAreaChartOps(item)
-                if (isEmpty(config.data)) return null
-                return <SimpleArea key={config.title} width="100%" {...config} />
-              })}
-              
-            </MonitoringController>
-          </div>
-      </div>         
-    </>
+      <MonitoringController
+          title={t('모니터링')}
+          onFetch={fetchData}
+          loading={isLoading}
+          refreshing={isRefreshing}       
+        >
+          {configs.map(item => {
+            const config = getAreaChartOps(item)
+            if (isEmpty(config.data)) return null
+            return <SimpleArea key={config.title} width="100%" {...config} />
+          })}
+          
+        </MonitoringController>       
   );
 };
 

@@ -6,6 +6,8 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
+  background-color: #e8f0f6 !important;
+  border: 1px solid #e8f0f6 !important;
 }
 
 .button-control {
@@ -136,6 +138,7 @@ div.flatpickr-calendar .flatpickr-innerContainer .flatpickr-days .dayContainer .
 .src-components-Layout-Header-index__header,
 .src-core-layouts-Base-index__main {
   background-color: #e8f0f6 !important;
+  border: 1px solid #e8f0f6 !important;
 }
 
 /* header 탑메뉴 정렬 및 색상 */
@@ -418,6 +421,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   display: flex;
   justify-content: center;
   width: 100%;
+  border: 1px solid #D8E2EC;
 }
 
 .src-components-Layout-GlobalNav-index__close {

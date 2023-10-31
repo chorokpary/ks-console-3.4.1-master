@@ -96,31 +96,12 @@ const RegistModal = (props) => {
     { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
-  const imageDetailList = [];
-  props.store.dataList.map((obj) => {
-    imageDetailList.push(obj.image_detail)      
-  })
-
-  const fnGetImageDescriptino = (name) => {
-    const imageDetail = _.find(imageDetailList, (data) => {
-      if (data.name === name ) return data;
-    });
-
-    const desc = _.get(imageDetail, 'description', "-");
-    return desc;
-  }
-
   const imageOptions = () => {
     const opt = imageOptionList.map((obj) => {
-      // const exceptonArray = ['ubuntu', 'centos']
-      // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
-      // console.log("obj :"+ JSON.stringify(obj))    
-
-      const description = fnGetImageDescriptino(obj.name)
       return {
         label: t(obj.name),
         icon: `ico-os-${obj.distro_type}`,
-        description : description,
+        description : t(obj.description),
         value: t(obj.name),
       }
 
