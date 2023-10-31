@@ -190,7 +190,7 @@ export default class Vms extends React.Component {
 
   getVmsStatus() {
     const VMS_STATUS = [
-      { text: 'STOPED', value: 'Stoped' },
+      { text: 'STOPPED', value: 'Stopped' },
       { text: 'PROVISIONING', value: 'Provisioning' },
       { text: 'STARTING', value: 'Starting' },
       { text: 'RUNNING', value: 'Running' },

@@ -265,7 +265,6 @@ a:hover.src-core-containers-Base-Detail-index__navItem {
 
 /* 목록 가상머신 아이콘 */
 .src-pages-clusters-containers-Resources-Vms-index__avatar {
-  width: 35px !important;
   height: 35px !important;
   display: flex;
   align-items: center;
