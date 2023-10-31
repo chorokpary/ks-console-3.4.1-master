@@ -103,7 +103,7 @@ export default class HPACard extends React.Component {
     return (
       <Panel className={classnames(styles.replica, className)}>
         <div className={styles.replicaCount}>
-           {this.props.names.map((obj, idx) => (<div  style={{ marginRight : 30}}><ReplicaStatus {...this.fnGetStatus(idx)}/></div>))}
+           {this.props.names.map((obj, idx) => (<div key={idx} style={{ marginRight : 30}}><ReplicaStatus {...this.fnGetStatus(idx)}/></div>))}
         </div>
       </Panel>
     )
