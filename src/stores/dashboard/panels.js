@@ -1,69 +1,69 @@
 const panelInfo = {
-  clusterNode: function (val = { x: 0, y: 0, w: 3, h: 4 }) {
+  clusterNode: function (val = { w: 3, h: 4 }) {
     return clusterNodePanel(val)
   },
-  pod: function (val = { x: 0, y: 0, w: 3, h: 4 }) {
+  pod: function (val = { w: 3, h: 4 }) {
     return podPanel(val)
   },
-  vm: function (val = { x: 0, y: 0, w: 3, h: 4 }) {
+  vm: function (val = { w: 3, h: 4 }) {
     return vmPanel(val)
   },
-  kaas: function (val = { x: 0, y: 0, w: 3, h: 4 }) {
+  kaas: function (val = { w: 3, h: 4 }) {
     return kaasPanel(val)
   },
-  resourceUsage: function (val = { x: 0, y: 0, w: 12, h: 6 }) {
+  resourceUsage: function (val = { w: 12, h: 6 }) {
     return resourceUsagePanel(val)
   },
 
-  networkTraffic: function (val = { x: 0, y: 0, w: 12, h: 6 }) {
+  networkTraffic: function (val = { w: 12, h: 6 }) {
     return networkTrafficPanel(val)
   },
-  computingNetwork: function (val = { x: 0, y: 0, w: 12, h: 4 }) {
+  computingNetwork: function (val = { w: 12, h: 4 }) {
     return computingNetworkPanel(val)
   },
-  computingTemplate: function (val = { x: 0, y: 0, w: 12, h: 4 }) {
+  computingTemplate: function (val = { w: 12, h: 4 }) {
     return computingTemplatePanel(val)
   },
-  bmcNode: function (val = { x: 0, y: 0, w: 12, h: 7 }) {
+  bmcNode: function (val = { w: 12, h: 7 }) {
     return bmcNodePanel(val)
   },
-  resourceChange: function (val = { x: 0, y: 0, w: 6, h: 5 }) {
+  resourceChange: function (val = { w: 6, h: 5 }) {
     return resourceChangePanel(val)
   },
 
-  clusterStatus: function (val = { x: 0, y: 0, w: 6, h: 5 }) {
+  clusterStatus: function (val = { w: 6, h: 5 }) {
     return clusterStatusPanel(val)
   },
-  carbonPower: function (val = { x: 0, y: 0, w: 6, h: 3 }) {
+  carbonPower: function (val = { w: 6, h: 3 }) {
     return carbonPowerPanel(val)
   },
-  carbonCo2: function (val = { x: 0, y: 0, w: 6, h: 3 }) {
+  carbonCo2: function (val = { w: 6, h: 3 }) {
     return carbonCo2Panel(val)
   },
-  carbonTree: function (val = { x: 0, y: 0, w: 6, h: 3 }) {
+  carbonTree: function (val = { w: 6, h: 3 }) {
     return carbonTreePanel(val)
   },
-  carbonCost: function (val = { x: 0, y: 0, w: 6, h: 3 }) {
+  carbonCost: function (val = { w: 6, h: 3 }) {
     return carbonCostPanel(val)
   },
 
-  cpuPower: function (val = { x: 0, y: 0, w: 12, h: 5 }) {
+  cpuPower: function (val = { w: 12, h: 5 }) {
     return cpuPowerPanel(val)
   },
-  usageTop5: function (val = { x: 0, y: 0, w: 3, h: 8 }) {
+  usageTop5: function (val = { w: 3, h: 8 }) {
     return usageTop5Panel(val)
   },
-  recentResource: function (val = { x: 0, y: 0, w: 3, h: 9 }) {
+  recentResource: function (val = { w: 3, h: 9 }) {
     return recentResourcePanel(val)
   },
-  issue: function (val = { x: 0, y: 0, w: 3, h: 9 }) {
+  issue: function (val = { w: 3, h: 9 }) {
     return issuePanel(val)
   },
-  carbonIndicator: function (val = { x: 0, y: 0, w: 3, h: 9 }) {
+  carbonIndicator: function (val = { w: 3, h: 9 }) {
     return carbonIndicatorPanel(val)
   },
 
-  powerUsageTop5: function (val = { x: 0, y: 0, w: 3, h: 7 }) {
+  powerUsageTop5: function (val = { w: 3, h: 7 }) {
     return powerUsageTop5Panel(val)
   }
 }

@@ -48,23 +48,18 @@ const CustomDashboard = (props) => {
     cellHeight: 59,
     verticalMargin: 20,
     disableResize: true, // resize
-    // disableDrag: true // drag
+    disableDrag: true // drag
   };
 
   useEffect(() => {
     GridStack.init(options);
-    const q = new DashboardInfo()
-    const arr = new Array(q)
-    const b = new DashboardInfo()
-    b.name = '대시보드2'
-    b.clusterNode.x = 9
-    b.kaas.x = 0
-    b.pod = null
-    b.computingTemplate = null
-    arr.push(b)
 
-    cookie.save('dashboardInfo', arr);
-    const dashboardArr = cookie.load('dashboardInfo')
+    var dashboardArr = JSON.parse(localStorage.getItem("dashboardArr"))
+    if (!dashboardArr) {
+      const dash = new DashboardInfo()
+      dashboardArr = [dash]
+      localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
+    }
 
     setDashboardArr(dashboardArr)
   }, [])
@@ -93,9 +88,8 @@ const CustomDashboard = (props) => {
 
   const deleteDashboard = idx => {
     dashboardArr.splice(idx, 1)
-
-    cookie.save('dashboardInfo', dashboardArr);
-    const spliceArr = cookie.load('dashboardInfo')
+    localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
+    const spliceArr = JSON.parse(localStorage.getItem("dashboardArr"))
 
     setDashboardArr(spliceArr)
   }
@@ -134,7 +128,9 @@ const CustomDashboard = (props) => {
                     </span>
                   </label>
                 ))}
-                <button type="button" className="btn_dash_add" onClick={() => editMode()}><i className="ico-plus"></i></button>
+                {dashboardArr.length <= 10 &&
+                  <button type="button" className="btn_dash_add" onClick={() => editMode()}><i className="ico-plus"></i></button>
+                }
               </div>
               {/* // Top area */}
 

@@ -7,7 +7,6 @@ import queryString from 'query-string';
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 
 import cookie from 'react-cookies';
-import { clusterNodePanel } from 'stores/dashboard/panels';
 import { makePanels } from 'stores/dashboard/panels';
 const CustomDashboardEdit = (props) => {
 
@@ -19,23 +18,21 @@ const CustomDashboardEdit = (props) => {
 
   const { idx } = queryObj;
 
-  const [activeDashboard, setActiveDashboard] = useState(cookie.load('dashboardInfo')[idx])
+  const [activeDashboard, setActiveDashboard] = useState(idx ? JSON.parse(localStorage.getItem("dashboardArr"))[idx] : new DashboardInfo())
+  const [dashboardName, setDashboardName] = useState(activeDashboard.name);
+  const [accodionActive1, setAccodionActive1] = useState(true);
+  const [accodionActive2, setAccodionActive2] = useState(true);
+  const [accodionActive3, setAccodionActive3] = useState(true);
+  const [accodionActive4, setAccodionActive4] = useState(true);
 
   // accordion
   var accordionButtons;
   var accordionContents;
-  var openAllButton;
-  var closeAllButton;
 
   // popover preview
   var openButtons;
   var popoverContainers;
   var closeButtons;
-  var addButtons;
-
-  // switch 토글 전체 열고 닫기
-  var toggleAll;
-  var toggles;
 
   const options = {
     column: 15,
@@ -45,7 +42,7 @@ const CustomDashboardEdit = (props) => {
     cellHeight: 59,
     verticalMargin: 20,
   };
-  var grid;
+  var grid
 
   useEffect(() => {
     grid = GridStack.init(options);
@@ -65,31 +62,15 @@ const CustomDashboardEdit = (props) => {
       });
     });
     grid.on('removed', function (event, items) {
-      items.forEach(function (item) {
-        // console.log(item)
-        // console.log(item.grid.el.childNodes)
-      });
+      // items.forEach(function (item) {
+      // console.log(item)
+      // console.log(item.grid.el.childNodes)
+      // });
     });
-
-    accordionButtons = document.querySelectorAll('.accordion-btn');
-    accordionContents = document.querySelectorAll('.accordion-content');
-    openAllButton = document.getElementById('openAll');
-    closeAllButton = document.getElementById('closeAll');
 
     openButtons = document.querySelectorAll(".open-popover-button");
     popoverContainers = document.querySelectorAll(".popover-container");
     closeButtons = document.querySelectorAll(".close-popover-button");
-    addButtons = document.querySelectorAll(".btn_add");
-
-    toggleAll = document.getElementById('toggle-all');
-    toggles = document.querySelectorAll('.toggle');
-
-    // 모든 아코디언 초기로 열기
-    accordionButtons.forEach((button, index) => {
-      button.classList.add('active');
-      const content = accordionContents[index];
-      content.style.maxHeight = content.scrollHeight + "px";
-    });
 
     // 각 버튼을 클릭할 때 팝오버 열기
     openButtons.forEach(function (openButton, index) {
@@ -117,83 +98,13 @@ const CustomDashboardEdit = (props) => {
       });
     });
 
-    toggleAll.addEventListener('change', () => {
-      const toggleAllChecked = toggleAll.checked;
-      toggles.forEach(toggle => {
-        toggle.checked = toggleAllChecked;
-      });
-    });
+    // 모든 아코디언 초기로 열기
+    openAll()
 
-    toggles.forEach(toggle => {
-      toggle.addEventListener('change', () => {
-        const allTogglesChecked = Array.from(toggles).every(t => t.checked);
-        toggleAll.checked = allTogglesChecked;
-      });
-    });
-
-    var qqq = document.querySelectorAll(".ico-btn-trash");
-    qqq.forEach(function (el, index) {
-      el.addEventListener("click", function (event) {
-        var removeTarget = event.target.closest('.grid-stack-item');
-        grid.removeWidget(removeTarget)
-      })
-    })
   }, [])
 
-  const asd = () => {
-    closeAllPopovers();
-    grid.batchUpdate()
-    grid.addWidget(`
-    <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="3" gs-h="4">
-      <div class="grid-stack-item-content">
-        <div class="grid_item">
-          <div class="grid_title">
-            <label>클러스터 노드</label>
-            <i class="ico-btn-trash"></i>
-          </div>
-          <div class="grid_info style_status">
-            <div class="box type_status">
-              <div class="cont_group">
-                <div class="cont1">
-                  <div class="number_wrap">
-                    <i class="ico-type-clusternode"><span>Master</span></i>
-
-                    <p><span class="em">1</span>/1</p>
-                  </div>
-                  <div class="number_wrap">
-                    <i class="ico-type-clusternode"><span>Worker</span></i>
-                    <p><span class="em">4</span>/4</p>
-                  </div>
-                </div>
-                <div class="cont3">
-                  <div class="status_wrap">
-                    <div class="value">4</div>
-                    <p class="status running"><span>Running</span></p>
-                  </div>
-                  <div class="status_wrap">
-                    <div class="value">1</div>
-                    <p class="status warning"><span>Warning</span></p>
-                  </div>
-                  <div class="status_wrap">
-                    <div class="value">0</div>
-                    <p class="status unschedulable"><span>Unschedulable</span></p>
-                  </div>
-                  <div class="status_wrap">
-                    <div class="value">5</div>
-                    <p class="status total"><span>Total</span></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>`
-    );
-    grid.batchUpdate(false)
-  }
-
   useEffect(() => {
+    grid = GridStack.init(options);
     const keys = Object.keys(activeDashboard)
     keys.map(obj => {
       const panel = activeDashboard[obj] ? makePanels(obj, activeDashboard[obj]) : null
@@ -204,6 +115,7 @@ const CustomDashboardEdit = (props) => {
   }, [activeDashboard])
 
   const toggleHandler = (e, panelName) => {
+    grid = GridStack.init(options);
     const isChecked = e.target.previousSibling.checked
     if (!isChecked) {
       grid.addWidget(makePanels(panelName))
@@ -211,10 +123,7 @@ const CustomDashboardEdit = (props) => {
       grid.removeWidget(document.getElementById(panelName + "Panel"))
     }
   }
-  const removeGridWidget = (e) => {
-    var removeTarget = e.target.closest('.grid-stack-item');
-    grid.removeWidget(removeTarget)
-  }
+
 
   useEffect(() => {
     // 각 팝오버의 닫기 버튼을 클릭할 때 팝오버 닫기
@@ -237,6 +146,8 @@ const CustomDashboardEdit = (props) => {
 
   // 전체 열기 버튼 클릭 시 모든 아코디언 열기
   const openAll = () => {
+    accordionButtons = document.querySelectorAll('.accordion-btn');
+    accordionContents = document.querySelectorAll('.accordion-content');
     accordionButtons.forEach((button, index) => {
       button.classList.add('active');
       accordionContents[index].style.maxHeight = accordionContents[index].scrollHeight + "px";
@@ -244,6 +155,8 @@ const CustomDashboardEdit = (props) => {
   }
   // 전체 닫기 버튼 클릭 시 모든 아코디언 닫기
   const closeAll = () => {
+    accordionButtons = document.querySelectorAll('.accordion-btn');
+    accordionContents = document.querySelectorAll('.accordion-content');
     accordionButtons.forEach((button, index) => {
       button.classList.remove('active');
       accordionContents[index].style.maxHeight = null;
@@ -259,6 +172,39 @@ const CustomDashboardEdit = (props) => {
 
   const cancelEdit = () => {
     routing.push(`/clusters/${cluster}/overview`)
+  }
+
+  const saveDashboard = () => {
+    grid = GridStack.init();
+
+    const o = new Object()
+    grid.engine.nodes.map((obj => {
+      const id = obj.el.id.slice(0, -5)
+      o[id] = { x: obj.x, y: obj.y, w: obj.w, h: obj.h }
+    }))
+    o['name'] = dashboardName
+
+    var arr = JSON.parse(localStorage.getItem("dashboardArr"))
+    if (idx) {
+      arr.splice(idx, 1)
+    }
+    arr.unshift(o)
+
+    localStorage.setItem("dashboardArr", JSON.stringify(arr))
+
+    routing.push(`/clusters/${cluster}/overview`)
+  }
+
+  const handleAccordion = (e) => {
+    const el = e.currentTarget
+    if (el.classList.contains('active')) {
+      el.classList.remove('active');
+      el.nextElementSibling.style.maxHeight = null
+    } else {
+      el.classList.add('active');
+      el.nextElementSibling.style.maxHeight = el.nextElementSibling.scrollHeight + "px";
+    }
+
   }
 
   return (
@@ -285,18 +231,22 @@ const CustomDashboardEdit = (props) => {
             <div className="content-box">
               <label aria-required>대시보드 이름</label>
               <div className="input-byte">
-                <input type="text" placeholder="입력해 주세요." defaultValue={activeDashboard.name} />
+                <input type="text" placeholder="입력해 주세요." defaultValue={dashboardName}
+                  onChange={(e) => setDashboardName(e.target.value)} />
               </div>
             </div>
           </div>
           <div className="accordion">
             <div className="acc_top">
               <div className="left">
-                <label className="switch type_text">
+                {/* todo
+                전체선택 추가 작업 필요 
+                bmc 개발 이후 예정 */}
+                {/* <label className="switch type_text">
                   <input type="checkbox" id="toggle-all" />
                   <span className="slider"></span>
                 </label>
-                <div className="text">전체선택</div>
+                <div className="text">전체선택</div> */}
               </div>
               <div className="right">
                 <button id="closeAll" onClick={() => closeAll()}><i className="ico-fold-all"></i></button>
@@ -304,7 +254,7 @@ const CustomDashboardEdit = (props) => {
               </div>
             </div>
 
-            <button className="accordion-btn">리소스 현황 및 사용량<i className="ico-arrow-clamp-up"></i></button>
+            <button className='accordion-btn' onClick={(e) => handleAccordion(e)}>리소스 현황 및 사용량<i className="ico-arrow-clamp-up"></i></button>
             <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
@@ -524,7 +474,7 @@ const CustomDashboardEdit = (props) => {
               </div>
             </div>
 
-            <button className="accordion-btn">컴퓨팅 컴포넌트 현황<i className="ico-arrow-clamp-up"></i></button>
+            <button className='accordion-btn' onClick={(e) => handleAccordion(e)}>컴퓨팅 컴포넌트 현황<i className="ico-arrow-clamp-up"></i></button>
             <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
@@ -596,7 +546,7 @@ const CustomDashboardEdit = (props) => {
 
               </div>
             </div>
-            <button className="accordion-btn">베어메탈 현황 및 전력사용량<i className="ico-arrow-clamp-up"></i></button>
+            <button className='accordion-btn' onClick={(e) => handleAccordion(e)}>베어메탈 현황 및 전력사용량<i className="ico-arrow-clamp-up"></i></button>
             <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
@@ -792,7 +742,7 @@ const CustomDashboardEdit = (props) => {
               </div>
             </div>
 
-            <button className="accordion-btn">기타<i className="ico-arrow-clamp-up"></i></button>
+            <button className='accordion-btn' onClick={(e) => handleAccordion(e)}>기타<i className="ico-arrow-clamp-up"></i></button>
             <div className="accordion-content">
               <div className="section-content">
                 <label className="switch type_text">
@@ -822,7 +772,7 @@ const CustomDashboardEdit = (props) => {
 
             <div className="footer">
               <button type="button" className="btn btn-default" onClick={() => cancelEdit()}>취소</button>
-              <button type="button" className="btn btn-primary">저장</button>
+              <button type="button" className="btn btn-primary" onClick={() => saveDashboard()}>저장</button>
             </div>
           </div>
         </div>
