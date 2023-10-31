@@ -170,8 +170,10 @@ export default class BareMetalStore extends Base {
     jsonData.nodeExporter = nodeData;
     jsonData['redfish-exporter'] = redfishData;
     
+    console.log("url : "+ url)
     console.log("jsonData : "+ JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
+    console.log("res : "+ JSON.stringify(res))
     return res
   }
 

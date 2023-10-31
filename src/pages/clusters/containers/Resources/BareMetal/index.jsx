@@ -30,9 +30,6 @@ import { getValueByUnit } from 'utils/monitoring'
 import BareMetalStore from 'stores/resources/baremetal'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
-import '../../Overview/CustomDashboard/custom_icon.css'
-import '../../Overview/CustomDashboard/custom_style.css'
-
 import Carbon from './Carbon'
 import CpuUsage from './CpuUsage';
 
@@ -114,68 +111,46 @@ export default class BareMetalDashboard extends React.Component {
 
     const metric_state = await this.customStore.fetchMetric({
       expr: `max by(instance) (redfish_system_power_state)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_model = await this.customStore.fetchMetric({
       expr: `max by(instance, model) (redfish_chassis_model_info)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_type = await this.customStore.fetchMetric({
       expr: `max by(instance, machine) (node_uname_info)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_core = await this.customStore.fetchMetric({
       expr: `count(node_cpu_seconds_total{mode="idle"}) without (cpu,mode)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_cpu = await this.customStore.fetchMetric({
       expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[5m]))`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_memory_total = await this.customStore.fetchMetric({
       expr: `avg by(instance) (node_memory_MemTotal_bytes)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_memory_free = await this.customStore.fetchMetric({
       expr: `avg by (instance) (node_memory_MemFree_bytes)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_disk_total = await this.customStore.fetchMetric({
       expr: `sum by(instance) (node_filesystem_size_bytes)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_disk_free = await this.customStore.fetchMetric({
       expr: `sum by(instance) (node_filesystem_avail_bytes)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_power = await this.customStore.fetchMetric({
       expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     const metric_temperature = await this.customStore.fetchMetric({
       expr: `avg by(instance) (redfish_chassis_temperature_celsius)`,
-      start: this.currentTime,
-      end: this.currentTime,
     })
 
     this.setState({
@@ -305,8 +280,8 @@ export default class BareMetalDashboard extends React.Component {
   getMetricValue = (metricData , record) => {
     const instance = toJS(record.ip)
     const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
-    const val = get(metrics, 'values[0][1]', '0');
-    return val;
+    const value = get(metrics, 'value[1]', '0');
+    return value;
   }
 
   getColumns = () => {
@@ -332,7 +307,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'state',
         render: record => {
           const state = this.getMetricValue('metricStateData', record)
-          const statText = (state == 1 || state == 3) ? "On" : "Off"
+          const statText = (state == 1 || state == 3) ? "On" : (state == 2 || state == 4) ? "Off" : "Unknown"
           return (
             <Text title={`${statText}`}/>
           )
@@ -355,7 +330,7 @@ export default class BareMetalDashboard extends React.Component {
         render: record => {
           const metrics = this.getMetricData('metricTypeData', record)  
           const machine = get(metrics, 'metric.machine',"NOT")     
-          const typeText = (machine == "NOT") ? "-" : machine.includes('x86') ? "X86" : "ARM"
+          const typeText = (machine == "NOT") ? "ARM" : machine.includes('x86') ? "X86" : "ARM"
           return (
             <Text title={`${typeText}`} />
           )
@@ -491,8 +466,8 @@ export default class BareMetalDashboard extends React.Component {
     const { data } = toJS(this.props.store.list)
 
     const totalCount = data.length;
-    const nodeOnData = metricStateData.filter(item => (get(item, 'values[0][1]') == 1 || get(item, 'values[0][1]') == 3))
-    const nodeOffData = metricStateData.filter(item => (get(item, 'values[0][1]') == 2 || get(item, 'values[0][1]') == 4))
+    const nodeOnData = metricStateData.filter(item => (get(item, 'value[1]') == 1 || get(item, 'values[1]') == 3))
+    const nodeOffData = metricStateData.filter(item => (get(item, 'value[1]') == 2 || get(item, 'values[1]') == 4))
     
     // error 관련 flag가 없기 때문에 APi 등록된 전체에서 on, off 갯수를 뺀다.
     let nodeErrorCount = 0 ;
@@ -524,7 +499,7 @@ export default class BareMetalDashboard extends React.Component {
           <div className="div_value">
             <div className="txt_group">
               <div className="status_point_error"></div>
-              <div className="text_title">Error</div>
+              <div className="text_title">Unknown</div>
             </div>
             <div className="number_wrap">{nodeErrorCount}</div>
           </div>
@@ -599,7 +574,7 @@ export default class BareMetalDashboard extends React.Component {
           <Carbon {...this.props}/>
 
           {/* CPU 소비 전력량 비교 */}
-          <CpuUsage />
+          <CpuUsage {...this.props}/>
 
           {/* 노드 상태  */}
           {this.renderNodeStateContent()}          

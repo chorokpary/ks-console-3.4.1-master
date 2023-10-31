@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
 import * as common from 'utils/resources'
+import { cloneDeep, get, omit, find } from 'lodash'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 const Carbon = (props) => {
-
-  console.log("props : "+ JSON.stringify(props.store.list))
-
-  const { data } = props.store.list;
-  const totalCount = data.length;
 
   const customStore = new CustomStore();
 
@@ -34,49 +30,70 @@ const Carbon = (props) => {
   const [armPrice, setArmPrice] = useState(0)
   const [x86Price, setX86Price] = useState(0)
 
+
   useEffect(() => {
-    fetchData();
+    let timer = setTimeout(()=>{ fetchData() }, 2000);
+    return ()=>{ clearTimeout(timer) }
   }, [])
 
-  const fetchData = async (params) => {
+  const fetchData = async () => {
+    console.log(" fetchData ")
+    
+    const { data } = props.store.list;
 
-    const armServerCount = 12;
-    const x86ServerCount = 12;
+    const metric_type = await customStore.fetchMetric({
+      expr: `max by(instance, machine) (node_uname_info)`,
+    })
 
-    setServerTotalCount(armServerCount + x86ServerCount)
-    setArmServerCount(armServerCount)
-    setX86ServerCount(x86ServerCount)
+    const metric_power = await customStore.fetchMetric({
+      expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+    })
 
-    const armKwh = 700;
-    const x86Kwh = 300;
+    let total_power = 0;
+    let total_x86_power = 0;
+    let total_arm_power = 0;
 
-    const totalKwh = armKwh + x86Kwh;   
+    let total_x86_count = 0;
+    let total_arm_count = 0;
+
+    await data.map((obj) => {   
+      const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+      const type = get(type_data, 'metric.machine','')
+
+      type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
+
+      const power_data = metric_power.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+      const power = Number(get(power_data, 'value[1]', 0));
+
+      total_power += power;
+      type.includes('x86') ? total_x86_power += power : total_arm_power += power;
+    })
+
+    setServerTotalCount(total_arm_count + total_x86_count)
+    setArmServerCount(total_arm_count)
+    setX86ServerCount(total_x86_count)
 
     // 전기 사용량
-    setUseKwh(common.fnAddCommar(totalKwh))
-    setArmKwh(armKwh);
-    setX86Kwh(x86Kwh);
+    setUseKwh(common.fnAddCommar(total_power))
+    setArmKwh(common.fnAddCommar(total_arm_power))
+    setX86Kwh(common.fnAddCommar(total_x86_power))
 
     // CO2 발생량
-    setUseCo2((Math.round((totalKwh  * 0.4781) / 0.1)*0.1).toFixed(1))
-    setArmCo2((Math.round((armKwh  * 0.4781) / 0.1)*0.1).toFixed(1))
-    setX86Co2((Math.round((x86Kwh  * 0.4781) / 0.1)*0.1).toFixed(1))
+    setUseCo2((Math.round((total_power  * 0.4781) / 0.1)*0.1).toFixed(1))
+    setArmCo2((Math.round((total_arm_power  * 0.4781) / 0.1)*0.1).toFixed(1))
+    setX86Co2((Math.round((total_x86_power  * 0.4781) / 0.1)*0.1).toFixed(1))
 
-    // // 필요소나무
-    // setUseTree((Math.round(((imsiKwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
-    // setArmTree((Math.round(((armKwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
-    // setX86Tree((Math.round(((x86Kwh * 0.4781) / 4.13)/0.1)*0.1).toFixed(1))
-    setUseTree((Math.round((totalKwh * 0.1157625)/0.1)*0.1).toFixed(1))
-    setArmTree((Math.round((armKwh * 0.1157625)/0.1)*0.1).toFixed(1))
-    setX86Tree((Math.round((x86Kwh * 0.1157625)/0.1)*0.1).toFixed(1))
+    // 필요소나무
+    setUseTree((Math.round((total_power * 0.1157625)/0.1)*0.1).toFixed(1))
+    setArmTree((Math.round((total_arm_power * 0.1157625)/0.1)*0.1).toFixed(1))
+    setX86Tree((Math.round((total_x86_power * 0.1157625)/0.1)*0.1).toFixed(1))
     
-    const armPrice = 3000000;
-    const x86Price = 2000000;
+    const armPrice = common.fnAddCommar(total_arm_power * 111.16);
+    const x86Price = common.fnAddCommar(total_x86_power * 111.16);
 
-    setUsePrice(common.fnAddCommar(armPrice + x86Price))
+    setUsePrice(common.fnAddCommar(Number(armPrice) + Number(x86Price)))
     setArmPrice(common.fnAddCommar(armPrice))
     setX86Price(common.fnAddCommar(x86Price))
-
 
   }
 

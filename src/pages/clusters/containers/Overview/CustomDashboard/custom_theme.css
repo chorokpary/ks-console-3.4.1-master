@@ -25,10 +25,17 @@ a:hover {
 /* 인풋/셀렉트/텍스트에리어 테마색 적용 */
 .select-control:focus,
 .select.is-open .select-control,
+.textarea:focus,
 textarea:focus,
-input.input:focus {
-  border: 1px solid #3617ce;
-  box-shadow: 0px 4px 4px 0px rgba(86, 128, 236, 0.3);
+input.input:focus,
+input:focus.input {
+  border: 1px solid #3617ce !important;
+  box-shadow: 0px 4px 4px 0px rgba(86, 128, 236, 0.3) !important;
+}
+
+/* 셀렉트 hover background 색삭제 */
+.icon-clickable:hover {
+  background-color: transparent !important;
 }
 
 /* 마우스 드래그시 텍스트 선택 색상 */
@@ -51,6 +58,7 @@ input.input:focus {
   background-color: #404E68 !important;
   width: 30px;
   height: 30px;
+  display: flex !important;
 }
 
 /* 탭라디오 목록 스타일 색상 */
@@ -89,20 +97,38 @@ input.input:focus {
 /* check, radio */
 label.radio.checked:before,
 label.radio.checked:hover:before,
+label.checkbox.indeterminate:before,
+label.checkbox.indeterminate:hover:before,
 label.checkbox.checked:before,
 label.checkbox.checked:hover:before {
-  background-color: #5680EC;
+  background-color: #5680EC !important;
 }
 
 /* slider */
 .slider-track,
 .slider-handler::after {
-  background-color: #5680EC;
+  background-color: #5680EC !important;
 }
 
 .slider-handler {
-  border: 1px solid #5680EC;
-  box-shadow: 0px 4px 4px 0px rgba(86, 128, 236, 0.3);
+  border: 1px solid #5680EC !important;
+  box-shadow: 0px 4px 4px 0px rgba(86, 128, 236, 0.3) !important;
+}
+
+/* 캘린더 */
+div.flatpickr-calendar .flatpickr-innerContainer .flatpickr-days .dayContainer .flatpickr-day.selected:hover,
+div.flatpickr-calendar .flatpickr-innerContainer .flatpickr-days .dayContainer .flatpickr-day.selected {
+  background: #5680EC !important;
+}
+
+.src-components-Cards-Monitoring-Controller-TimeSelector-Range-index__default ul li.src-components-Cards-Monitoring-Controller-TimeSelector-Range-index__cur {
+  color: #3617ce !important;
+}
+
+/* icon-coloured */
+.kubed-icon-coloured {
+  color: #3617ce !important;
+  fill: #3617ce !important;
 }
 
 /****** layout & navi text ******/
@@ -190,6 +216,20 @@ a:hover.src-core-containers-Base-Detail-index__navItem {
   border-color: #4465dc !important;
 }
 
+/* 상세 > 리비전 기록 : 디플로이먼트 */
+.d2h-ins {
+  background-color: rgba(199, 202, 240, 0.7) !important;
+}
+
+.d2h-ins {
+  border-color: #b4c0e2 !important;
+}
+
+/* 상세 > 메타데이터 */
+.src-components-Cards-Annotations-index__values > li {
+  border-radius: 20px !important;
+}
+
 /* 목록 페이지 타이틀 아이콘 색상 및 정렬 */
 .src-components-Cards-Banner-index__titleWrapper .icon {
   justify-content: center;
@@ -205,6 +245,11 @@ a:hover.src-core-containers-Base-Detail-index__navItem {
 tbody > .table-row:hover,
 tbody > .table-row:hover td {
   background: #EEF2FF !important;
+}
+
+/* 목록 테이블 체크 선택시 table-row-selected */
+.table-row-selected {
+  border-color: #5680EC !important;
 }
 
 /* 목록 search area 옆 refresh, settings 버튼 아이콘 */
@@ -243,6 +288,15 @@ tbody > .table-row:hover td {
 
 .src-pages-clusters-containers-Resources-components-Modals-HostDevices-Regist-index__table table tbody tr {
   border-bottom: 0 !important;
+}
+
+/* 목록 추가 테이블 border-bottom */
+div[class$=-Regist-index__table] > table {
+  border-collapse: none !important;
+}
+
+div[class$=-Regist-index__table] > table > tbody > tr > td {
+  border-bottom: #eff4f9 !important;
 }
 
 /* 생성 모달 안 목록 선택된 x 버튼 디자인 */
@@ -303,7 +357,9 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 }
 
 /* 앱스토어, 워크벤치 : 아이콘, 텍스트 컬러변경 */
+.src-components-Base-Text-index__wrapper > div:hover *,
 .src-components-Base-Text-index__clickable:hover svg,
+.src-components-Base-Text-index__clickable:hover,
 .src-pages-console-containers-Dashboard-Admin-History-index__histories a:hover svg,
 .icon .src-components-Base-Text-index__icon,
 .src-pages-console-containers-Dashboard-Admin-History-index__histories a:hover .src-components-Base-Text-index__text,
@@ -331,6 +387,11 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 /* rank 색상 */
 .src-components-Tables-Ranking-index__table.src-components-Tables-Ranking-index__table_rank.src-components-Tables-Ranking-index__table_no_border td.src-components-Tables-Ranking-index__rankCol {
   background: #DDE4FF !important;
+}
+
+/* Base bar */
+.src-components-Base-Bar-index__bar {
+  background: #6371E8;
 }
 
 /* 하단 우측 kube 도구 버튼 색 */

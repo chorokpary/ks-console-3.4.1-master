@@ -2,55 +2,250 @@ import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
 import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
+import { getChartData, getAreaChartOps } from 'utils/monitoring'
+import { getLocalTime } from 'utils'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
 
-const CpuUsage = () => {
+import {
+    ResponsiveContainer,
+    ComposedChart,
+    Line,
+    Area,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    Dot,
+    Scatter
+  } from "recharts";
+
+const CpuUsage = (props) => {
 
     const customStore = new CustomStore();
 
-    const [vmList, setVmList] = useState([])
-    const [vmData, setVmData] = useState({ cpuData: [], memoryData: [] });
-    const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] });
-    const [vmCpuData, setVmCpuData] = useState([]);
-    const [vmMemoryData, setVmMemoryData] = useState([]);
+    const [stepParams, setStepParams] = useState({ step: '6m', times: 10 })
+    
+    const [x86CpuData, setX86CpuData] = useState([]);
+    const [armCpuData, setArmCpuData] = useState([]);
+    const [x86PowerData, setX86PowerData] = useState([]);
+    const [armPowerData, setArmPowerData] = useState([]);
+    const [x86PowerLastData, setX86PowerLastData] = useState(0);
+    const [armPowerLastData, setArmPowerLastData] = useState(0);
 
-    const [timeStep, setTimeStep] = useState("h")
+    const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
+        const unit = timeStr.slice(-1)
+        let value = parseFloat(timeStr)
+        
+        switch (unit) {
+            default:
+            case 's':
+            break
+            case 'm':
+            value *= 60
+            break
+            case 'h':
+            value *= 60 * 60
+            break
+            case 'd':
+            value = value * 24 * 60 * 60
+            break
+        }
+        return hasUnit ? `${value}s` : value
+    }
+
+    const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+        const interval = parseFloat(step) * times
+        const end = Math.floor(Date.now() / 1000)
+        const start = Math.floor(end - interval)
+        
+        return { start, end }
+    }
 
     useEffect(() => {
+        fetchData(stepParams);
+    }, [stepParams])
 
-        const step = '60'
-        const times = 10
-        var currentTime = Math.floor(Date.now() / 1000);
-        const getVmCpuUsageData = async () => {
-            const vmCpuData = await customStore.fetchMetric({
-                // expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
-                // expr: `redfish_exporter_collector_duration_seconds`,
-                expr: `redfish_chassis_power_powersupply_last_power_output_watts`,
-                start: currentTime,
-                end: currentTime,
+    const fetchData = async (params) => {
+
+        //sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))
+        //sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))
+        
+        const { data } = props.store.list;
+
+        const paramsData = Object.assign(params, {
+            start : params.start,
+            end : params.end,
+            step: getMinuteValue(params.step),
+            times : params.times ,
+        })
+      
+        if (!paramsData.start || !paramsData.end) {
+            const timeRange = getTimeRange(paramsData)
+            paramsData.start = timeRange.start
+            paramsData.end = timeRange.end
+        }
+
+        const getTypeData = async () => {
+
+            const metric_type = await customStore.fetchMetric({
+                expr: `max by(instance, machine) (node_uname_info)`,
             })
-            // console.log("vmCpuData : " +JSON.stringify(vmCpuData))
-            setVmCpuData(vmCpuData)
-            // setVmCpuData(vmCpuDataDummy)
+
+            let total_x86_count = 0;
+            let total_arm_count = 0;
+
+            await data.map((obj) => {   
+                const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+                const type = get(type_data, 'metric.machine','')
+                type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
+            })
+
+             console.log("total_x86_count : "+ total_x86_count)
+             console.log("total_arm_count : "+ total_arm_count)
+        
         };
-        getVmCpuUsageData();
 
-        onClickTab('h');
+        const getCpuUsageData = async () => {
+            const metric_cpu = await customStore.fetchMetric({
+                expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
+                ...paramsData
+            })
 
-    }, [])
+            const x86CpuMetricData = _.find(metric_cpu, (data) => {
+                if (get(data, 'metric.machine').includes('x86') ) return data;  
+            });
+
+            const armCpuMetricData = _.find(metric_cpu, (data) => {
+                if (get(data, 'metric.machine').includes('arm') ) return data;  
+            });
+
+            const x86CpuArray = [];
+            const armCpuArray = [];
+
+            x86CpuArray.push(x86CpuMetricData)
+            x86CpuArray.push(armCpuMetricData)
+
+            setX86CpuData(x86CpuArray)
+            setArmCpuData(armCpuArray)
+        };
+
+        const getPowerUsageData = async () => {
+            const metric_power = await customStore.fetchMetric({
+                expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+                ...paramsData
+            })
+
+            const metric_power_last = await customStore.fetchMetric({
+                expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+            })
+
+            const x86PowerMetricData = _.find(metric_power, (data) => {
+                if (get(data, 'metric.machine').includes('x86') ) return data;  
+            });
+
+            const armPowerMetricData = _.find(metric_power, (data) => {
+                if (get(data, 'metric.machine').includes('arm') ) return data;  
+            });
+
+            const x86PowerMetricLastData = _.find(metric_power_last, (data) => {
+                if (get(data, 'metric.machine').includes('x86') ) return data;  
+            });
+
+            const armPowerMetricLastData = _.find(metric_power_last, (data) => {
+                if (get(data, 'metric.machine').includes('arm') ) return data;  
+            });
+
+            // redfish_chassis_power_powersupply_last_power_output_watts 메트릭 데이터가 없어 대기 중..
+            console.log("x86PowerMetricLastData : "+ x86PowerMetricLastData)
+            console.log("armPowerMetricLastData : "+ armPowerMetricLastData)
+
+            const x86PowerArray = [];
+            const armPowerArray = [];
+
+            x86PowerArray.push(x86PowerMetricData)
+            armPowerArray.push(armPowerMetricData)
+
+            setX86PowerData(x86PowerArray)
+            setArmPowerData(armPowerArray)
+        };
+
+
+        getTypeData();
+        getCpuUsageData();
+        getPowerUsageData();
+    }
+
+    const getMonitoringCfgs = () => {
+        return [
+          {
+            type: 'utilisation',
+            title: 'CPU_USAGE_X86',
+            legend: ['CPU_USAGE_X86'],
+            data: x86CpuData,
+          },
+          {
+            type: 'utilisation',
+            title: 'CPU_USAGE_ARM',
+            legend: ['CPU_USAGE_ARM'],
+            data: armCpuData,
+          },
+          {
+            type: 'utilisation',
+            title: 'POWER_X86',
+            legend: ['POWER_X86'],
+            data: x86PowerData,
+          },
+          {
+            type: 'utilisation',
+            title: 'POWER_ARM',
+            legend: ['POWER_ARM'],
+            data: armPowerData,
+          },
+        ]
+    }
+
+    const getComposedData = () => {
+
+        const configs = getMonitoringCfgs()
+
+        const x86CpuConfigData = getAreaChartOps(configs.find(item => item.title === 'CPU_USAGE_X86'))
+        const armCpuConfigData = getAreaChartOps(configs.find(item => item.title === 'CPU_USAGE_ARM'))
+        const x86PowerConfigData = getAreaChartOps(configs.find(item => item.title === 'POWER_X86'))
+        const armPowerConfigData = getAreaChartOps(configs.find(item => item.title === 'POWER_ARM'))
+
+        // 기준이되는 데이터 생성
+        let standardArray = [];        
+        standardArray = x86CpuConfigData.data.length > 0 ? x86CpuConfigData.data : armCpuConfigData.data ;
+        if(standardArray.length < 1 ){
+            standardArray = x86PowerConfigData.data.length > 0 ? x86PowerConfigData.data : armPowerConfigData.data ;
+        }
+
+        const ComposedData = [];
+        standardArray.map((obj) => {
+            const data = {
+                time: obj.time,
+                x86_usage: get(_.find(x86CpuConfigData.data, {'time': obj.time}), 'CPU_USAGE_X86', 0),
+                arm_usage: get(_.find(armCpuConfigData.data, {'time': obj.time}), 'CPU_USAGE_ARM', 0),
+                x86_power: get(_.find(x86PowerConfigData.data, {'time': obj.time}), 'POWER_X86', 0),
+                arm_power: get(_.find(armPowerConfigData.data, {'time': obj.time}), 'POWER_ARM', 0),                                
+            }
+            ComposedData.push(data)
+        })
+        // console.log("ComposedData : "+ JSON.stringify(ComposedData))
+        return ComposedData;
+    } 
 
     const onClickTab = (step) => {
-
         const stepData = {
             h: { step: '6m', times: 10 },
             d: { step: '60m', times: 24 },
             w: { step: '60m', times: 168 },
-            m: { step: '60m', times: 720 },
+            m: { step: '1h', times: 697 },
         }
-
-        console.log(get(stepData, step))
-
+        setStepParams(get(stepData, step))
     }
 
     return (
@@ -92,13 +287,13 @@ const CpuUsage = () => {
                                         </div>
                                         <div className="data">
                                             <div className="number_wrap data-r">
-                                                <p><i className="ico-type24-powericon"></i> <span className="em">141</span> <span className="unit">W</span></p>
+                                                <p><i className="ico-type24-powericon"></i> <span className="em">{x86PowerLastData}</span> <span className="unit">W</span></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="graph_wrap">
                                         <div className="graph_bar">
-                                            <div className="bar animate-bar" style={{ width: "30%" }}></div>
+                                            <div className="bar animate-bar" style={{ width: `${x86PowerLastData}%` }}></div>
                                         </div>
                                     </div>
                                 </div>
@@ -110,19 +305,63 @@ const CpuUsage = () => {
                                         </div>
                                         <div className="data">
                                             <div className="number_wrap data-r">
-                                                <p><i className="ico-type24-powericon"></i> <span className="em">160</span> <span className="unit">W</span></p>
+                                                <p><i className="ico-type24-powericon"></i> <span className="em">{armPowerLastData}</span> <span className="unit">W</span></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="graph_wrap">
                                         <div className="graph_bar">
-                                            <div className="bar second animate-bar" style={{ width: "40%" }}></div>
+                                            <div className="bar second animate-bar" style={{ width: `${armPowerLastData}%`}}></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="cont2">
-                                <div className="chart_04"></div>
+                                {/* <div className="chart_04"> */}
+                                    <ResponsiveContainer width={'100%'} height={'100%'} debounce={1}>
+                                        <ComposedChart
+                                        width={500}
+                                        height={400}
+                                        data={getComposedData()}
+                                        margin={{
+                                            top: 40,
+                                            right: 10,
+                                            bottom: 5,
+                                            left: 10
+                                        }}
+                                        >
+                                        <CartesianGrid
+                                            stroke={'#d8dee5'}
+                                            strokeDasharray="2 2"
+                                            vertical={false}
+                                        />
+                                        <Legend
+                                            wrapperStyle={{
+                                            top: 0,
+                                            left: 'auto',
+                                            right: 0,
+                                            width: '80%',
+                                            zIndex: 100,
+                                            }}          
+                                                                             
+                                        />
+                                        <XAxis dataKey="time" />
+                                        <YAxis yAxisId="left" type="number" dataKey="x86_usage" name="weight" stroke="#8884d8" />
+                                        <YAxis
+                                            yAxisId="right"
+                                            type="number"
+                                            dataKey="x86_power"
+                                            name="weight"
+                                            orientation="right"
+                                        />
+                                        <Tooltip />                                        
+                                        <Line yAxisId="right" type="monotone" dataKey="arm_power" stroke="#52d698" />
+                                        <Line yAxisId="right" type="monotone" dataKey="x86_power" stroke="#8d96ea" />
+                                        <Bar yAxisId="left" dataKey="arm_usage" barSize={20} fill="#6cc294" />
+                                        <Bar yAxisId="left" dataKey="x86_usage" barSize={20} fill="#799bf3" />
+                                        </ComposedChart>
+                                    </ResponsiveContainer>
+                                {/* </div> */}
                             </div>
                         </div>
                     </div>
