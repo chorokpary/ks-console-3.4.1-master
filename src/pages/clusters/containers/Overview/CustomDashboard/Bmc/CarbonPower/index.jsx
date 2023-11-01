@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
-const CarbonCo2 = ({ x, y, w, h }) => {
+const CarbonPower = ({ x, y, w, h }) => {
+
+  const [maxUsage, setMaxUsage] = useState(200)
 
   return (
     <>
+      {/* 1대 평균 기준 200kwh  */}
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>탄소 발자국 - CO2 발생량</label>
+              <label>탄소 발자국 - 전력 사용량</label>
             </div>
             <div className="grid_info style_chart_2">
               <div className="box type_chart">
                 <div className="cont4">
                   <div className="bar_value">
                     <dl className="rgt">
-                      <dt>ARM</dt><dd>5,000.0 KG</dd>
+                      <dt>ARM</dt><dd>5,000.0 kWh</dd>
                     </dl>
                     <dl>
-                      <dt>x86</dt><dd>6,000.0 KG</dd>
+                      <dt>x86</dt><dd>6,000.0 kWh</dd>
                     </dl>
                   </div>
                   <div className="bar_chart">
@@ -28,7 +31,7 @@ const CarbonCo2 = ({ x, y, w, h }) => {
                         <div className="bar animate-bar" style={{ width: "40%" }}></div>
                       </div>
                     </div>
-                    <div className="center_icon"><i className="ico-type-co2"></i></div>
+                    <div className="center_icon"><i className="ico-type-power"></i></div>
                     <div className="graph_wrap">
                       <div className="graph_bar">
                         <div className="bar second animate-bar" style={{ width: "60%" }}></div>
@@ -45,4 +48,4 @@ const CarbonCo2 = ({ x, y, w, h }) => {
   )
 }
 
-export default CarbonCo2
+export default CarbonPower

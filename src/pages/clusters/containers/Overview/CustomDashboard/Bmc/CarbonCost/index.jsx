@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
-const CarbonTree = ({ x, y, w, h }) => {
+const CarbonCost = ({ x, y, w, h }) => {
+
+  const [maxUsage, setMaxUsage] = useState(22232)
 
   return (
     <>
+      {/* 1대 평균 기준 22232 원  */}
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>탄소 발자국 - 소나무</label>
+              <label>탄소 발자국 - 비용</label>
             </div>
             <div className="grid_info style_chart_2">
               <div className="box type_chart">
                 <div className="cont4">
                   <div className="bar_value">
                     <dl className="rgt">
-                      <dt>ARM</dt><dd>2,000 그루</dd>
+                      <dt>ARM</dt><dd>2,000,000 원</dd>
                     </dl>
                     <dl>
-                      <dt>x86</dt><dd>3,000 그루</dd>
+                      <dt>x86</dt><dd>3,000,000 원</dd>
                     </dl>
                   </div>
                   <div className="bar_chart">
@@ -28,7 +31,7 @@ const CarbonTree = ({ x, y, w, h }) => {
                         <div className="bar animate-bar" style={{ width: "40%" }}></div>
                       </div>
                     </div>
-                    <div className="center_icon"><i className="ico-type-tree"></i></div>
+                    <div className="center_icon"><i className="ico-type-money"></i></div>
                     <div className="graph_wrap">
                       <div className="graph_bar">
                         <div className="bar second animate-bar" style={{ width: "60%" }}></div>
@@ -45,4 +48,4 @@ const CarbonTree = ({ x, y, w, h }) => {
   )
 }
 
-export default CarbonTree
+export default CarbonCost

@@ -17,14 +17,7 @@ import Issue from './Issue';
 import Computing from './Computing';
 import ResourceChange from './ResourceChange';
 import ClusterStatus from './ClusterStatus';
-import BmcNode from './BmcNode';
-import CabonIndicator from './CabonIndicator';
-import PowerUsageTop5 from './PowerUsageTop5';
-import CpuPower from './CpuPower';
-import CarbonPower from './CarbonPower';
-import CarbonCo2 from './CarbonCo2';
-import CarbonTree from './CarbonTree';
-import CarbonCost from './CarbonCost';
+import Bmc from './Bmc';
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 
@@ -243,16 +236,6 @@ const CustomDashboard = (props) => {
                       />
                     }
 
-                    {/* BMC 노드 현황 */}
-                    {activeDashboard.bmcNode &&
-                      <BmcNode
-                        x={activeDashboard.bmcNode.x}
-                        y={activeDashboard.bmcNode.y}
-                        w={activeDashboard.bmcNode.w}
-                        h={activeDashboard.bmcNode.h}
-                      />
-                    }
-
                     {/* 클러스터 컴포넌트 상태 */}
                     {activeDashboard.clusterStatus &&
                       <ClusterStatus
@@ -263,72 +246,13 @@ const CustomDashboard = (props) => {
                       />
                     }
 
-                    {/* 탄소 지표 */}
-                    {activeDashboard.carbonIndicator &&
-                      <CabonIndicator
-                        x={activeDashboard.carbonIndicator.x}
-                        y={activeDashboard.carbonIndicator.y}
-                        w={activeDashboard.carbonIndicator.w}
-                        h={activeDashboard.carbonIndicator.h}
-                      />
-                    }
+                    {/* bmc 관련 
+                    (BMC 노드 현황, 탄소지표, 전력사용량 top 5, cpu 소비 전력량 비교 1대평균
+                    탄소 발자국 - 전력 사용량, co2 발생량, 나무, 비용)*/}
+                    <Bmc
+                      bmc={activeDashboard}
+                    />
 
-                    {/* 전력 사용량 TOP 5 */}
-                    {activeDashboard.powerUsageTop5 &&
-                      <PowerUsageTop5
-                        x={activeDashboard.powerUsageTop5.x}
-                        y={activeDashboard.powerUsageTop5.y}
-                        w={activeDashboard.powerUsageTop5.w}
-                        h={activeDashboard.powerUsageTop5.h}
-                      />
-                    }
-
-                    {/* CPU 소비 전력량 비교 (1대 평균) */}
-                    {activeDashboard.cpuPower &&
-                      <CpuPower
-                        x={activeDashboard.cpuPower.x}
-                        y={activeDashboard.cpuPower.y}
-                        w={activeDashboard.cpuPower.w}
-                        h={activeDashboard.cpuPower.h}
-                      />
-                    }
-
-                    {/* 탄소 발자국 - 전력 사용량 */}
-                    {activeDashboard.carbonPower &&
-                      <CarbonPower
-                        x={activeDashboard.carbonPower.x}
-                        y={activeDashboard.carbonPower.y}
-                        w={activeDashboard.carbonPower.w}
-                        h={activeDashboard.carbonPower.h}
-                      />
-                    }
-                    {/* 탄소 발자국 - CO2 발생량 */}
-                    {activeDashboard.carbonCo2 &&
-                      <CarbonCo2
-                        x={activeDashboard.carbonCo2.x}
-                        y={activeDashboard.carbonCo2.y}
-                        w={activeDashboard.carbonCo2.w}
-                        h={activeDashboard.carbonCo2.h}
-                      />
-                    }
-                    {/* 탄소 발자국 - 나무 */}
-                    {activeDashboard.carbonTree &&
-                      <CarbonTree
-                        x={activeDashboard.carbonTree.x}
-                        y={activeDashboard.carbonTree.y}
-                        w={activeDashboard.carbonTree.w}
-                        h={activeDashboard.carbonTree.h}
-                      />
-                    }
-                    {/* 탄소 발자국 - 비용 */}
-                    {activeDashboard.carbonCost &&
-                      <CarbonCost
-                        x={activeDashboard.carbonCost.x}
-                        y={activeDashboard.carbonCost.y}
-                        w={activeDashboard.carbonCost.w}
-                        h={activeDashboard.carbonCost.h}
-                      />
-                    }
                   </div>
                 </div>
 

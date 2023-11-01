@@ -1761,7 +1761,6 @@ export const carbonIndicatorPanel = ({ x, y, w, h }) => {
           <div class="spin-nested-loading">
             <div class="spin-container">
               <div class="grid_info style_list">
-                {/* // select_wrap */}
                 <ul class="list_02">
                   <li class="li_type_02">
                     <div class="lft">
