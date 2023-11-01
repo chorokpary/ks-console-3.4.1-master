@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import { getLocalTime } from 'utils'
+import * as common from 'utils/resources'
 
 const CabonIndicator = ({ x, y, w, h,
   serverTotalCount,
@@ -52,9 +53,9 @@ const CabonIndicator = ({ x, y, w, h,
                     <i className="ico-type-power"></i>
                   </div>
                   <div className="rgt">
-                    <div className="value">{useKwh}<span>kWh</span></div>
-                    <dl><dt>ARM</dt><dd>{armKwh}</dd></dl>
-                    <dl><dt>x86</dt><dd>{x86Kwh}</dd></dl>
+                    <div className="value">{common.fnAddCommar(useKwh)}<span>kWh</span></div>
+                    <dl><dt>ARM</dt><dd>{common.fnAddCommar(armKwh)}</dd></dl>
+                    <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Kwh)}</dd></dl>
                   </div>
                 </li>
                 <li className="li_type_02">
@@ -82,9 +83,9 @@ const CabonIndicator = ({ x, y, w, h,
                     <i className="ico-type-money"></i>
                   </div>
                   <div className="rgt">
-                    <div className="value">{usePrice}<span>원</span></div>
-                    <dl><dt>ARM</dt><dd>{armPrice}</dd></dl>
-                    <dl><dt>x86</dt><dd>{x86Price}</dd></dl>
+                    <div className="value">{common.fnAddCommar(usePrice)}<span>원</span></div>
+                    <dl><dt>ARM</dt><dd>{common.fnAddCommar(armPrice)}</dd></dl>
+                    <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Price)}</dd></dl>
                   </div>
                 </li>
               </ul>

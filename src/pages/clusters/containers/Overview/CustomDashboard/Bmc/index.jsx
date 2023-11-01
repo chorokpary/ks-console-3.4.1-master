@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
-import * as common from 'utils/resources'
 import BareMetalStore from 'stores/resources/baremetal'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { get } from 'lodash'
@@ -50,7 +49,7 @@ const Bmc = ({ bmc }) => {
   useEffect(() => {
     const getNodeData = async () => {
       const data = await bareMetalStore.fetchList()
-      console.log('node : ', data)
+      // console.log('node : ', data)
       setNodeData(data)
     };
     getNodeData();
@@ -59,7 +58,7 @@ const Bmc = ({ bmc }) => {
       const data = await customStore.fetchMetric({
         expr: `max by(instance, machine) (node_uname_info)`,
       })
-      console.log('type : ', data)
+      // console.log('type : ', data)
       setMetricType(data)
     };
     getMetricType();
@@ -68,11 +67,10 @@ const Bmc = ({ bmc }) => {
       const data = await customStore.fetchMetric({
         expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       })
-      console.log('data : ', data)
+      // console.log('data : ', data)
       setMetricData(data)
     };
     getMetricData();
-
   }, [])
 
   useEffect(() => {
@@ -122,32 +120,40 @@ const Bmc = ({ bmc }) => {
       total_x86_power *= 0.001
 
       // 전기 사용량
-      setUseKwh(common.fnAddCommar(total_power))
-      setArmKwh(common.fnAddCommar(total_arm_power))
-      setX86Kwh(common.fnAddCommar(total_x86_power))
+      setUseKwh(total_power)
+      setArmKwh(total_arm_power)
+      setX86Kwh(total_x86_power)
 
       // CO2 발생량
-      setUseCo2((Math.round((total_power * 0.4781) / 0.1) * 0.1).toFixed(1))
-      setArmCo2((Math.round((total_arm_power * 0.4781) / 0.1) * 0.1).toFixed(1))
-      setX86Co2((Math.round((total_x86_power * 0.4781) / 0.1) * 0.1).toFixed(1))
+      setUseCo2(getCo2(total_power))
+      setArmCo2(getCo2(total_arm_power))
+      setX86Co2(getCo2(total_x86_power))
 
       // 필요소나무
-      setUseTree((Math.round((total_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
-      setArmTree((Math.round((total_arm_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
-      setX86Tree((Math.round((total_x86_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
+      setUseTree(getTree(total_power))
+      setArmTree(getTree(total_arm_power))
+      setX86Tree(getTree(total_x86_power))
 
-      const armPrice = (total_arm_power * 111.16).toFixed(0)
-      const x86Price = (total_x86_power * 111.16).toFixed(0)
+      const armPrice = getCost(total_arm_power)
+      const x86Price = getCost(total_x86_power)
 
-      setUsePrice(common.fnAddCommar(Number(armPrice) + Number(x86Price)))
-      setArmPrice(common.fnAddCommar(armPrice))
-      setX86Price(common.fnAddCommar(x86Price))
+      setUsePrice(Number(armPrice) + Number(x86Price))
+      setArmPrice(armPrice)
+      setX86Price(x86Price)
     }
 
   }, [nodeData, metricType, metricData])
 
-  const getCo2 = () => {
+  const getCo2 = (num) => {
+    return (Math.round((num * 0.4781) / 0.1) * 0.1).toFixed(1)
+  }
 
+  const getTree = (num) => {
+    return (Math.round((num * 0.1157625) / 0.1) * 0.1).toFixed(1)
+  }
+
+  const getCost = (num) => {
+    return (num * 111.16).toFixed(0)
   }
 
   return (
@@ -217,6 +223,8 @@ const Bmc = ({ bmc }) => {
           y={bmc.carbonPower.y}
           w={bmc.carbonPower.w}
           h={bmc.carbonPower.h}
+          armUsage={armKwh / usedArmCnt}
+          x86Usage={x86Kwh / usedX86Cnt}
         />
       }
       {/* 탄소 발자국 - CO2 발생량 */}
@@ -226,6 +234,8 @@ const Bmc = ({ bmc }) => {
           y={bmc.carbonCo2.y}
           w={bmc.carbonCo2.w}
           h={bmc.carbonCo2.h}
+          armCo2={getCo2(armKwh / usedArmCnt)}
+          x86Co2={getCo2(x86Kwh / usedX86Cnt)}
         />
       }
       {/* 탄소 발자국 - 나무 */}
@@ -235,6 +245,8 @@ const Bmc = ({ bmc }) => {
           y={bmc.carbonTree.y}
           w={bmc.carbonTree.w}
           h={bmc.carbonTree.h}
+          armTree={getTree(armKwh / usedArmCnt)}
+          x86Tree={getTree(x86Kwh / usedX86Cnt)}
         />
       }
       {/* 탄소 발자국 - 비용 */}
@@ -244,6 +256,8 @@ const Bmc = ({ bmc }) => {
           y={bmc.carbonCost.y}
           w={bmc.carbonCost.w}
           h={bmc.carbonCost.h}
+          armCost={getCost(armKwh / usedArmCnt)}
+          x86Cost={getCost(x86Kwh / usedX86Cnt)}
         />
       }
     </>
