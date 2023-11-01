@@ -10,6 +10,8 @@ import styles from './index.scss'
 
 const RegistModal = (props) => {
 
+  const dataList = props.store.dataList;
+
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
@@ -53,6 +55,26 @@ const RegistModal = (props) => {
     },
   }
 
+  
+  // Validation 시작 ==================================================
+  const resourceIpValidator = (rule, value, callback) => {
+  
+    const duplicate = dataList.filter((el) => el.ip == value)
+    
+    if (value && duplicate.length > 0) {
+      console.log("AA")
+      return callback({ message: t('이미 등록된 IP입니다.') })
+    }
+
+    if (!value) {
+      return callback({ message: t('IP를 입력해 주세요.') })
+    }
+   
+    callback()
+  }
+  // Validation 끝 ==================================================
+
+
   return (
     <>  
         <Modal
@@ -71,24 +93,23 @@ const RegistModal = (props) => {
             </div> */}
 
             <Form.Item
-                label={t('이름')}
-                rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
-                desc={t('NAME_DESC')}
-              >
-              <Input
-                name="name"
-                autoFocus={true}
-                maxLength={63}
-              />   
-            </Form.Item>
+              label={t('이름')}
+              rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+              desc={t('NAME_DESC')}
+            >
+            <Input
+              name="name"
+              autoFocus={true}
+              maxLength={63}
+            />   
+          </Form.Item>
 
             <Form.Item
                 label={t('IP')}
-                rules={[{ required: true, message: t('IP을 입력해 주세요.') }]}
+                rules={[{ required: true, validator: resourceIpValidator }]}
               >
               <Input
                 name="ip"
-                autoFocus={true}
               />   
             </Form.Item>
 
