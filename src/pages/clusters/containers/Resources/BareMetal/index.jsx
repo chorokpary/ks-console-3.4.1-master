@@ -542,6 +542,8 @@ export default class BareMetalDashboard extends React.Component {
     const pagination = { total, page, limit }
 
     const { tableProps } = this.props
+    //console.log({ ...this.props })
+
     return (
       <Table
         {...tableProps}
@@ -555,7 +557,6 @@ export default class BareMetalDashboard extends React.Component {
         onCreate={showCreate}
         tableActions={this.tableActions}
         itemActions={this.itemActions}
-        hideSearch
         hideRefresh
       />
     )

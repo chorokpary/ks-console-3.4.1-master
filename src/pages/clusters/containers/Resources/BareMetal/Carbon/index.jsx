@@ -63,7 +63,7 @@ const Carbon = (props) => {
       type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
 
       const power_data = metric_power.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
-      const power = Number(get(power_data, 'value[1]', 0));
+      const power = Number(get(power_data, 'value[1]', 0)) / 1000;
 
       total_power += power;
       type.includes('x86') ? total_x86_power += power : total_arm_power += power;
@@ -88,8 +88,9 @@ const Carbon = (props) => {
     setArmTree((Math.round((total_arm_power * 0.1157625)/0.1)*0.1).toFixed(1))
     setX86Tree((Math.round((total_x86_power * 0.1157625)/0.1)*0.1).toFixed(1))
     
-    const armPrice = common.fnAddCommar(total_arm_power * 111.16);
-    const x86Price = common.fnAddCommar(total_x86_power * 111.16);
+    // 금액
+    const armPrice = Math.round(total_arm_power * 111.16);
+    const x86Price = Math.round(total_x86_power * 111.16);
 
     setUsePrice(common.fnAddCommar(Number(armPrice) + Number(x86Price)))
     setArmPrice(common.fnAddCommar(armPrice))

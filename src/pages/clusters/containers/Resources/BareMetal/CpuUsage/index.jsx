@@ -32,8 +32,10 @@ const CpuUsage = (props) => {
     const [armCpuData, setArmCpuData] = useState([]);
     const [x86PowerData, setX86PowerData] = useState([]);
     const [armPowerData, setArmPowerData] = useState([]);
-    const [x86PowerLastData, setX86PowerLastData] = useState(0);
-    const [armPowerLastData, setArmPowerLastData] = useState(0);
+    const [x86PowerAvgData, setX86PowerAvgData] = useState(0);
+    const [armPowerAvgData, setArmPowerAvgData] = useState(0);
+    const [x86PowerPercent, setX86PowerPercent] = useState(0);
+    const [armPowerPercent, setArmPowerPercent] = useState(0);
 
     const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
         const unit = timeStr.slice(-1)
@@ -62,7 +64,7 @@ const CpuUsage = (props) => {
         const start = Math.floor(end - interval)
         
         return { start, end }
-    }
+    }  
 
     useEffect(() => {
         fetchData(stepParams);
@@ -70,9 +72,6 @@ const CpuUsage = (props) => {
 
     const fetchData = async (params) => {
 
-        //sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))
-        //sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))
-        
         const { data } = props.store.list;
 
         const paramsData = Object.assign(params, {
@@ -93,6 +92,10 @@ const CpuUsage = (props) => {
             const metric_type = await customStore.fetchMetric({
                 expr: `max by(instance, machine) (node_uname_info)`,
             })
+            
+            const metric_power_last = await customStore.fetchMetric({
+                expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+            })
 
             let total_x86_count = 0;
             let total_arm_count = 0;
@@ -101,11 +104,31 @@ const CpuUsage = (props) => {
                 const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
                 const type = get(type_data, 'metric.machine','')
                 type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
-            })
+            })       
 
-             console.log("total_x86_count : "+ total_x86_count)
-             console.log("total_arm_count : "+ total_arm_count)
+            const x86PowerMetricLastData = _.find(metric_power_last, (data) => {
+                if (get(data, 'metric.machine').includes('x86') ) return data;  
+            });
+
+            const armPowerMetricLastData = _.find(metric_power_last, (data) => {
+                if (get(data, 'metric.machine').includes('arm') ) return data;  
+            });
         
+            const x86PowerLastData = get(x86PowerMetricLastData, 'value[1]', '0');
+            const armPowerLastData = get(armPowerMetricLastData, 'value[1]', '0');
+
+            const x86PowerAvg = Math.round(x86PowerLastData / total_x86_count);
+            const armPowerAvg = Math.round(armPowerLastData / total_arm_count);
+
+            setX86PowerAvgData(x86PowerAvg);
+            setArmPowerAvgData(armPowerAvg);
+
+            const max_power = 200000;
+            const x86PowerPercent = ((x86PowerAvg / max_power) * 100).toFixed(0)
+            const armPowerPercent = ((armPowerAvg / max_power) * 100).toFixed(0)
+
+            setX86PowerPercent(x86PowerPercent);
+            setArmPowerPercent(armPowerPercent); 
         };
 
         const getCpuUsageData = async () => {
@@ -133,13 +156,10 @@ const CpuUsage = (props) => {
         };
 
         const getPowerUsageData = async () => {
+
             const metric_power = await customStore.fetchMetric({
                 expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
                 ...paramsData
-            })
-
-            const metric_power_last = await customStore.fetchMetric({
-                expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
             })
 
             const x86PowerMetricData = _.find(metric_power, (data) => {
@@ -148,19 +168,7 @@ const CpuUsage = (props) => {
 
             const armPowerMetricData = _.find(metric_power, (data) => {
                 if (get(data, 'metric.machine').includes('arm') ) return data;  
-            });
-
-            const x86PowerMetricLastData = _.find(metric_power_last, (data) => {
-                if (get(data, 'metric.machine').includes('x86') ) return data;  
-            });
-
-            const armPowerMetricLastData = _.find(metric_power_last, (data) => {
-                if (get(data, 'metric.machine').includes('arm') ) return data;  
-            });
-
-            // redfish_chassis_power_powersupply_last_power_output_watts 메트릭 데이터가 없어 대기 중..
-            console.log("x86PowerMetricLastData : "+ x86PowerMetricLastData)
-            console.log("armPowerMetricLastData : "+ armPowerMetricLastData)
+            });            
 
             const x86PowerArray = [];
             const armPowerArray = [];
@@ -287,13 +295,13 @@ const CpuUsage = (props) => {
                                         </div>
                                         <div className="data">
                                             <div className="number_wrap data-r">
-                                                <p><i className="ico-type24-powericon"></i> <span className="em">{x86PowerLastData}</span> <span className="unit">W</span></p>
+                                                <p><i className="ico-type24-powericon"></i> <span className="em">{isNaN(x86PowerPercent) ? 0 : x86PowerPercent}</span> <span className="unit">W</span></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="graph_wrap">
                                         <div className="graph_bar">
-                                            <div className="bar animate-bar" style={{ width: `${x86PowerLastData}%` }}></div>
+                                            <div className="bar animate-bar" style={{ width: `${isNaN(x86PowerPercent) ? 0 : x86PowerPercent}%` }}></div>
                                         </div>
                                     </div>
                                 </div>
@@ -305,13 +313,13 @@ const CpuUsage = (props) => {
                                         </div>
                                         <div className="data">
                                             <div className="number_wrap data-r">
-                                                <p><i className="ico-type24-powericon"></i> <span className="em">{armPowerLastData}</span> <span className="unit">W</span></p>
+                                                <p><i className="ico-type24-powericon"></i> <span className="em">{isNaN(armPowerPercent) ? 0 : armPowerPercent}</span> <span className="unit">W</span></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="graph_wrap">
                                         <div className="graph_bar">
-                                            <div className="bar second animate-bar" style={{ width: `${armPowerLastData}%`}}></div>
+                                            <div className="bar second animate-bar" style={{ width: `${isNaN(armPowerPercent) ? 0 : armPowerPercent}%`}}></div>
                                         </div>
                                     </div>
                                 </div>

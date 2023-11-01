@@ -69,6 +69,7 @@ export default class Vms extends React.Component {
 
   get isRuning() {
     const { data } = toJS(this.props.store.list)
+    
     const runingData = data.filter(
       item => item.status !== 'failed' && item.status !== 'successful'
     )
@@ -218,7 +219,6 @@ export default class Vms extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: this.renderAvatar,
         render: (name, record) => {
 
           const { cluster } = this.props.match.params
