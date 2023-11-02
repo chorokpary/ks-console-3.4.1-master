@@ -185,53 +185,51 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
               </div>
             </div>
             {(rightTabActive != 'vm' && rightTabActive != 'kaas') &&
-              <Loading spinning={loading}>
-                <div className="grid_info style_chart">
-                  <div className="box type_chart">
-                    <div className="cont1">
-                      <div className="chart_tab no-tab">
-                        <div className="title">
-                          <i className="ico-type-outbound"></i>
-                          <h5>Outbound</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
+              <div className="grid_info style_chart">
+                <div className="box type_chart">
+                  <div className="cont1">
+                    <div className="chart_tab no-tab">
+                      <div className="title">
+                        <i className="ico-type-outbound"></i>
+                        <h5>Outbound</h5>
                       </div>
-                      <div className="chart_tab no-tab">
-                        <div className="title">
-                          <i className="ico-type-inbound"></i>
-                          <h5>Inbound</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="chart_tab no-tab">
-                        <div className="title">
-                          <i className="ico-type-network"></i>
-                          <h5>Total</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
+                      <div className="data">
+                        <div className="number_wrap data-r">
+                          <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
                         </div>
                       </div>
                     </div>
-                    <div className="cont2">
-                      {tabContentActive &&
-                        <TabContent option={tabContent}></TabContent>
-                      }
-                      {/* <div className="chart_02"></div> */}
+                    <div className="chart_tab no-tab">
+                      <div className="title">
+                        <i className="ico-type-inbound"></i>
+                        <h5>Inbound</h5>
+                      </div>
+                      <div className="data">
+                        <div className="number_wrap data-r">
+                          <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="chart_tab no-tab">
+                      <div className="title">
+                        <i className="ico-type-network"></i>
+                        <h5>Total</h5>
+                      </div>
+                      <div className="data">
+                        <div className="number_wrap data-r">
+                          <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <div className="cont2">
+                    {tabContentActive &&
+                      <TabContent option={tabContent}></TabContent>
+                    }
+                    {/* <div className="chart_02"></div> */}
+                  </div>
                 </div>
-              </Loading>
+              </div>
             }
             {(rightTabActive == 'vm' || rightTabActive == 'kaas') &&
               <Loading spinning={loading}>

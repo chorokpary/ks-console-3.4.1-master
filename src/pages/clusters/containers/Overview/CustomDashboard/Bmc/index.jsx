@@ -214,6 +214,7 @@ const Bmc = ({ bmc }) => {
           y={bmc.cpuPower.y}
           w={bmc.cpuPower.w}
           h={bmc.cpuPower.h}
+          nodeData={nodeData}
         />
       }
 
