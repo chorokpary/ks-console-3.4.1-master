@@ -37,21 +37,10 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
   const [kaasLoading, setKaasLoading] = useState(true);
 
   useEffect(() => {
-    const asd = async () => {
-      const metricData = await monitorStore.fetchMetrics({
-        metrics: 'redfish_chassis_power_powersupply_last_power_output_watts',
-        // step: `${Math.floor(4320)}s`, // Time interval
-        // times: 10,
-        // fillZero: true,
-        // step: '1d',
-        // times: 10,
-      })
-      console.log(metricData)
-    };
-    asd();
 
-    const getPodData = async () => {
+    const getData = async () => {
       setLoading(true)
+
       const metricData = await monitorStore.fetchMetrics({
         metrics: Object.values(MetricTypes),
         // step: `${Math.floor(4320)}s`, // Time interval
@@ -61,21 +50,17 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
         times: 10,
       })
       setMetricData(metricData)
-      setLoading(false)
-    };
-    getPodData();
 
-    const getVmData = async () => {
       const vmData = await vmStore.fetchList({ limit: 1000, sortBy: 'creation_timestamp' })
       handleDate(vmData, 'creation_timestamp', 'vm')
-    };
-    getVmData();
 
-    const getKaasData = async () => {
       const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp' })
       handleDate(kaasData, 'timestamp', 'kaas')
+
+      setLoading(false)
     };
-    getKaasData();
+    getData();
+
   }, [])
 
   useEffect(() => {
@@ -152,14 +137,15 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
               </div>
             </div>
             <Loading spinning={loading || vmLoading || kaasLoading}>
-              <div className="grid_info style_status box_long">
-                <div className="box type_status">
-                  <div className="cont_group">
-                    <h5><i className="ico-type-pod"></i>Pod</h5>
-                    <div className="number_wrap">
-                      <p><span className="em">{podCnt?.Run}</span></p>
-                    </div>
-                    {/* <div className="cont2">
+              <>
+                <div className="grid_info style_status box_long">
+                  <div className="box type_status">
+                    <div className="cont_group">
+                      <h5><i className="ico-type-pod"></i>Pod</h5>
+                      <div className="number_wrap">
+                        <p><span className="em">{podCnt?.Run}</span></p>
+                      </div>
+                      {/* <div className="cont2">
                     <div className="status_wrap">
                       <div className="value">1</div>
                       <p><span>Created</span></p>
@@ -169,32 +155,33 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
                       <p><span>Deleted</span></p>
                     </div>
                   </div> */}
-                    <TinyArea {...getAreaChartOps(podContent)} bgColor="transparent" />
-                  </div>
-                </div>
-              </div>
-              <div className="grid_info style_status box_long">
-                <div className="box type_status">
-                  <div className="cont_group">
-                    <h5><i className="ico-type-vm"></i>가상머신</h5>
-                    <div className="number_wrap">
-                      <p><span className="em">{vmCnt}</span></p>
+                      <TinyArea {...getAreaChartOps(podContent)} bgColor="transparent" />
                     </div>
-                    <TinyArea  {...vmData} bgColor="transparent" />
                   </div>
                 </div>
-              </div>
-              <div className="grid_info style_status box_long">
-                <div className="box type_status">
-                  <div className="cont_group">
-                    <h5><i className="ico-type-container"></i>KaaS</h5>
-                    <div className="number_wrap">
-                      <p><span className="em">{kaasCnt}</span></p>
+                <div className="grid_info style_status box_long">
+                  <div className="box type_status">
+                    <div className="cont_group">
+                      <h5><i className="ico-type-vm"></i>가상머신</h5>
+                      <div className="number_wrap">
+                        <p><span className="em">{vmCnt}</span></p>
+                      </div>
+                      <TinyArea  {...vmData} bgColor="transparent" />
                     </div>
-                    <TinyArea  {...kaasData} bgColor="transparent" />
                   </div>
                 </div>
-              </div>
+                <div className="grid_info style_status box_long">
+                  <div className="box type_status">
+                    <div className="cont_group">
+                      <h5><i className="ico-type-container"></i>KaaS</h5>
+                      <div className="number_wrap">
+                        <p><span className="em">{kaasCnt}</span></p>
+                      </div>
+                      <TinyArea  {...kaasData} bgColor="transparent" />
+                    </div>
+                  </div>
+                </div>
+              </>
             </Loading>
           </div>
         </div>

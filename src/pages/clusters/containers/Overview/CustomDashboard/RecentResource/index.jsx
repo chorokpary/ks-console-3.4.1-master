@@ -26,37 +26,30 @@ const RecentResource = ({ x, y, w, h }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
 
-    // node data
-    const getNodeData = async () => {
+    const getData = async () => {
+      setLoading(true)
+
+      // node data
       const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime' })
       handleDate(nodeList, 'createTime', 'node')
-    };
-    getNodeData();
 
-    // pod data
-    const getPodData = async () => {
+      // pod data
       const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime' })
       handleDate(podList, 'createTime', 'pod')
-    };
-    getPodData();
 
-    // vm data
-    const getVmData = async () => {
+      // vm data
       const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
       handleDate(vmList, 'creation_timestamp', 'vm')
-    };
-    getVmData();
 
-    // kaas data
-    const getKaasData = async () => {
+      // kaas data
       const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp' })
       handleDate(kaasList, 'timestamp', 'kaas')
-    };
-    getKaasData();
 
-    setLoading(false)
+      setLoading(false)
+    };
+    getData();
+
   }, [])
 
   // recent week

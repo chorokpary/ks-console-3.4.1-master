@@ -3,7 +3,7 @@ import { Loading } from '@kube-design/components'
 import * as common from 'utils/resources'
 
 const CarbonTree = ({ x, y, w, h,
-  armTree, x86Tree
+  armTree, x86Tree, loading
 }) => {
 
   {/* 1대 평균 기준 23.2 그루  */ }
@@ -35,33 +35,35 @@ const CarbonTree = ({ x, y, w, h,
             <div className="grid_title" style={{ cursor: 'default' }}>
               <label>탄소 발자국 - 소나무</label>
             </div>
-            <div className="grid_info style_chart_2">
-              <div className="box type_chart">
-                <div className="cont4">
-                  <div className="bar_value">
-                    <dl className="rgt">
-                      <dt>ARM</dt><dd>{common.fnAddCommar(arm)} 그루</dd>
-                    </dl>
-                    <dl>
-                      <dt>x86</dt><dd>{common.fnAddCommar(x86)} 그루</dd>
-                    </dl>
-                  </div>
-                  <div className="bar_chart">
-                    <div className="graph_wrap">
-                      <div className="graph_bar rgt">
-                        <div className="bar animate-bar" style={{ width: armBar + '%' }}></div>
-                      </div>
+            <Loading spinning={loading}>
+              <div className="grid_info style_chart_2">
+                <div className="box type_chart">
+                  <div className="cont4">
+                    <div className="bar_value">
+                      <dl className="rgt">
+                        <dt>ARM</dt><dd>{common.fnAddCommar(arm)} 그루</dd>
+                      </dl>
+                      <dl>
+                        <dt>x86</dt><dd>{common.fnAddCommar(x86)} 그루</dd>
+                      </dl>
                     </div>
-                    <div className="center_icon"><i className="ico-type-tree"></i></div>
-                    <div className="graph_wrap">
-                      <div className="graph_bar">
-                        <div className="bar second animate-bar" style={{ width: x86Bar + '%' }}></div>
+                    <div className="bar_chart">
+                      <div className="graph_wrap">
+                        <div className="graph_bar rgt">
+                          <div className="bar animate-bar" style={{ width: armBar + '%' }}></div>
+                        </div>
+                      </div>
+                      <div className="center_icon"><i className="ico-type-tree"></i></div>
+                      <div className="graph_wrap">
+                        <div className="graph_bar">
+                          <div className="bar second animate-bar" style={{ width: x86Bar + '%' }}></div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Loading>
           </div>
         </div>
       </div>

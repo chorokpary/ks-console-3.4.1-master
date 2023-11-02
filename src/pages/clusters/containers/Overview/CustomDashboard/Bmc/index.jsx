@@ -19,6 +19,7 @@ const Bmc = ({ bmc }) => {
   const bareMetalStore = new BareMetalStore();
   const customStore = new CustomStore();
 
+  const [loading, setLoading] = useState(false)
   const [nodeData, setNodeData] = useState([])
   const [metricType, setMetricType] = useState([])
   const [metricData, setMetricData] = useState([])
@@ -47,30 +48,26 @@ const Bmc = ({ bmc }) => {
   const [usedX86Cnt, setUsedX86Cnt] = useState(0)
 
   useEffect(() => {
-    const getNodeData = async () => {
-      const data = await bareMetalStore.fetchList()
-      // console.log('node : ', data)
-      setNodeData(data)
-    };
-    getNodeData();
+    const getData = async () => {
+      setLoading(true)
 
-    const getMetricType = async () => {
-      const data = await customStore.fetchMetric({
+      const data = await bareMetalStore.fetchList()
+      setNodeData(data)
+
+      const getMetricType = await customStore.fetchMetric({
         expr: `max by(instance, machine) (node_uname_info)`,
       })
-      // console.log('type : ', data)
-      setMetricType(data)
-    };
-    getMetricType();
+      setMetricType(getMetricType)
 
-    const getMetricData = async () => {
-      const data = await customStore.fetchMetric({
+      const getMetricData = await customStore.fetchMetric({
         expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       })
-      // console.log('data : ', data)
-      setMetricData(data)
+      setMetricData(getMetricData)
+
+      setLoading(false)
     };
-    getMetricData();
+    getData();
+
   }, [])
 
   useEffect(() => {
@@ -172,6 +169,8 @@ const Bmc = ({ bmc }) => {
       {/* 탄소 지표 */}
       {bmc.carbonIndicator &&
         <CabonIndicator
+          loading={loading}
+
           x={bmc.carbonIndicator.x}
           y={bmc.carbonIndicator.y}
           w={bmc.carbonIndicator.w}
@@ -204,6 +203,7 @@ const Bmc = ({ bmc }) => {
           y={bmc.powerUsageTop5.y}
           w={bmc.powerUsageTop5.w}
           h={bmc.powerUsageTop5.h}
+          nodeData={nodeData}
         />
       }
 
@@ -220,6 +220,7 @@ const Bmc = ({ bmc }) => {
       {/* 탄소 발자국 - 전력 사용량 */}
       {bmc.carbonPower &&
         <CarbonPower
+          loading={loading}
           x={bmc.carbonPower.x}
           y={bmc.carbonPower.y}
           w={bmc.carbonPower.w}
@@ -231,6 +232,7 @@ const Bmc = ({ bmc }) => {
       {/* 탄소 발자국 - CO2 발생량 */}
       {bmc.carbonCo2 &&
         <CarbonCo2
+          loading={loading}
           x={bmc.carbonCo2.x}
           y={bmc.carbonCo2.y}
           w={bmc.carbonCo2.w}
@@ -242,6 +244,7 @@ const Bmc = ({ bmc }) => {
       {/* 탄소 발자국 - 나무 */}
       {bmc.carbonTree &&
         <CarbonTree
+          loading={loading}
           x={bmc.carbonTree.x}
           y={bmc.carbonTree.y}
           w={bmc.carbonTree.w}
@@ -253,6 +256,7 @@ const Bmc = ({ bmc }) => {
       {/* 탄소 발자국 - 비용 */}
       {bmc.carbonCost &&
         <CarbonCost
+          loading={loading}
           x={bmc.carbonCost.x}
           y={bmc.carbonCost.y}
           w={bmc.carbonCost.w}

@@ -56,92 +56,57 @@ const Computing = ({ computing }) => {
 
   useEffect(() => {
     // ---------------------------- network ------------------------------
-    const getVmData = async () => {
+    const getData = async () => {
       setLoading(true)
-      const list = await vmStore.fetchList({ limit: 1000 })
-      setVmList(list)
+
+      const vmlist = await vmStore.fetchList({ limit: 1000 })
+      setVmList(vmlist)
+
+      const networklist = await networkStore.fetchList({ limit: 1000 })
+      setNetworkList(networklist)
+
+      const routerlist = await routerStore.fetchList({ limit: 1000 })
+      setRouterList(routerlist)
+
+      const sriovlist = await sriovStore.fetchList({ limit: 1000 })
+      setSriovList(sriovlist)
+
+      const fiplist = await floatingIpStore.fetchList({ limit: 1000 })
+      setFloatingIpList(fiplist)
+
+      const sglist = await securityGroupStore.fetchList({ limit: 1000 })
+      setSgList(sglist)
+
+      const lblist = await loadBalancerStore.fetchList({ limit: 1000 })
+      setLbList(lblist)
+
+
+      // ---------------------------- template ------------------------------
+      const imagelist = await imageStore.fetchList({ limit: 1000 })
+      setImageList(imagelist)
+
+      const flavorlist = await flavorStore.fetchList({ limit: 1000 })
+      setFlavorList(flavorlist)
+
+      const hdlist = await hostDeviceStore.fetchList({ limit: 1000 })
+      setHdList(hdlist)
+
+      const mdlist = await mediatedDeviceStore.fetchList({ limit: 1000 })
+      setMdList(mdlist)
+
+      const keypairlist = await keypairStore.fetchList({ limit: 1000 })
+      setKeypairList(keypairlist)
+
+      const kaaslist = await kaasStore.fetchList({ limit: 1000 })
+      setKaasList(kaaslist)
+
+      const kaasimagelist = await kaasImageStore.fetchList({ limit: 1000 })
+      setKaasImageList(kaasimagelist)
+
       setLoading(false)
     };
-    getVmData();
+    getData();
 
-    const getNetworkData = async () => {
-      const list = await networkStore.fetchList({ limit: 1000 })
-      setNetworkList(list)
-    };
-    getNetworkData();
-
-    const getRouterData = async () => {
-      const list = await routerStore.fetchList({ limit: 1000 })
-      setRouterList(list)
-    };
-    getRouterData();
-
-    const getSriovData = async () => {
-      const list = await sriovStore.fetchList({ limit: 1000 })
-      setSriovList(list)
-    };
-    getSriovData();
-
-    const getFloatingIpData = async () => {
-      const list = await floatingIpStore.fetchList({ limit: 1000 })
-      setFloatingIpList(list)
-    };
-    getFloatingIpData();
-
-    const getSgData = async () => {
-      const list = await securityGroupStore.fetchList({ limit: 1000 })
-      setSgList(list)
-    };
-    getSgData();
-
-    const getLbData = async () => {
-      const list = await loadBalancerStore.fetchList({ limit: 1000 })
-      setLbList(list)
-    };
-    getLbData();
-
-    // ---------------------------- template ------------------------------
-    const getImageData = async () => {
-      const list = await imageStore.fetchList({ limit: 1000 })
-      setImageList(list)
-    };
-    getImageData();
-
-    const getFlavorData = async () => {
-      const list = await flavorStore.fetchList({ limit: 1000 })
-      setFlavorList(list)
-    };
-    getFlavorData();
-
-    const getHdData = async () => {
-      const list = await hostDeviceStore.fetchList({ limit: 1000 })
-      setHdList(list)
-    };
-    getHdData();
-
-    const getMdData = async () => {
-      const list = await mediatedDeviceStore.fetchList({ limit: 1000 })
-      setMdList(list)
-    };
-    getMdData();
-
-    const getKeypairData = async () => {
-      const list = await keypairStore.fetchList({ limit: 1000 })
-      setKeypairList(list)
-    };
-    getKeypairData();
-
-    const getKaasData = async () => {
-      const list = await kaasStore.fetchList({ limit: 1000 })
-      setKaasList(list)
-    };
-    getKaasData();
-
-    const getKaasIamgeData = async () => {
-      const list = await kaasImageStore.fetchList({ limit: 1000 })
-      setKaasImageList(list)
-    };
-    getKaasIamgeData();
   }, [])
 
   useEffect(() => {

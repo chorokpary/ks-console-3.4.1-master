@@ -12,8 +12,6 @@ const ClusterStatus = ({ x, y, w, h }) => {
 
   const [componentData, setComponentData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [asd, setasd] = useState();
-  const [podList, setPodList] = useState([]);
 
   useEffect(() => {
 

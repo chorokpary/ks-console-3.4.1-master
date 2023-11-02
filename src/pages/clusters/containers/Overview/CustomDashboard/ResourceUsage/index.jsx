@@ -62,9 +62,10 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
 
   useEffect(() => {
 
-    // node data
-    const getResourceUsageData = async () => {
+    const getData = async () => {
       setLoading(true)
+
+      // node data
       const metricData = await monitorStore.fetchMetrics({
         // step - time interval
         // times - 표시할 총 시간
@@ -75,51 +76,40 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
         times: 100,
       })
       setMetricData(metricData)
-      setLoading(false)
-    };
-    getResourceUsageData();
 
-    // pod data
-    const getPodUsageData = async () => {
+      // pod data
       const podData = await podStore.fetchMetrics({
         metrics: Object.values(MetricTypes),
         step: '5m',
         times: 100,
       })
       handlePodData(podData)
-    };
-    getPodUsageData();
 
-    // vm list
-    const getVmList = async () => {
+      // vm list
       const vmList = await vmStore.fetchList({ limit: 1000 })
       setVmList(vmList)
-    };
-    getVmList();
 
-    // vm cpu data
-    const step = '5m'
-    const times = 100
-    var currentTime = Math.floor(Date.now() / 1000);
-    const getVmCpuUsageData = async () => {
+      // vm cpu data
+      const step = '5m'
+      const times = 100
+      var currentTime = Math.floor(Date.now() / 1000);
       const vmCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
         start: currentTime - 30000,
         end: currentTime,
       })
       setVmCpuData(vmCpuData)
-    };
-    getVmCpuUsageData();
-    // vm memory data
-    const getVmMemoryUsageData = async () => {
+      // vm memory data
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         start: currentTime - 30000,
         end: currentTime,
       })
       setVmMemoryData(vmMemoryData)
+
+      setLoading(false)
     };
-    getVmMemoryUsageData();
+    getData();
 
   }, [])
 

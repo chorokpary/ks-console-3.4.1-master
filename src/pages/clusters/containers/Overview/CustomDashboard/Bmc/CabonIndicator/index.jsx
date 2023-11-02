@@ -4,6 +4,8 @@ import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 
 const CabonIndicator = ({ x, y, w, h,
+  loading,
+
   serverTotalCount,
   armServerCount,
   x86ServerCount,
@@ -37,59 +39,60 @@ const CabonIndicator = ({ x, y, w, h,
             </div>
             <div className="grid_info style_list">
               {/* // select_wrap */}
-              <ul className="list_02">
-                <li className="li_type_02">
-                  <div className="lft">
-                    <i className="ico-type-bmcnode"></i>
-                  </div>
-                  <div className="rgt">
-                    <div className="value">{serverTotalCount}<span>대</span></div>
-                    <dl><dt>ARM</dt><dd>{armServerCount}</dd></dl>
-                    <dl><dt>x86</dt><dd>{x86ServerCount}</dd></dl>
-                  </div>
-                </li>
-                <li className="li_type_02">
-                  <div className="lft">
-                    <i className="ico-type-power"></i>
-                  </div>
-                  <div className="rgt">
-                    <div className="value">{common.fnAddCommar(useKwh)}<span>kWh</span></div>
-                    <dl><dt>ARM</dt><dd>{common.fnAddCommar(armKwh)}</dd></dl>
-                    <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Kwh)}</dd></dl>
-                  </div>
-                </li>
-                <li className="li_type_02">
-                  <div className="lft">
-                    <i className="ico-type-co2"></i>
-                  </div>
-                  <div className="rgt">
-                    <div className="value">{useCo2}<span>KG</span></div>
-                    <dl><dt>ARM</dt><dd>{armCo2}</dd></dl>
-                    <dl><dt>x86</dt><dd>{x86Co2}</dd></dl>
-                  </div>
-                </li>
-                <li className="li_type_02">
-                  <div className="lft">
-                    <i className="ico-type-tree"></i>
-                  </div>
-                  <div className="rgt">
-                    <div className="value">{useTree}<span>그루</span></div>
-                    <dl><dt>ARM</dt><dd>{armTree}</dd></dl>
-                    <dl><dt>x86</dt><dd>{x86Tree}</dd></dl>
-                  </div>
-                </li>
-                <li className="li_type_02">
-                  <div className="lft">
-                    <i className="ico-type-money"></i>
-                  </div>
-                  <div className="rgt">
-                    <div className="value">{common.fnAddCommar(usePrice)}<span>원</span></div>
-                    <dl><dt>ARM</dt><dd>{common.fnAddCommar(armPrice)}</dd></dl>
-                    <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Price)}</dd></dl>
-                  </div>
-                </li>
-              </ul>
-
+              <Loading spinning={loading}>
+                <ul className="list_02">
+                  <li className="li_type_02">
+                    <div className="lft">
+                      <i className="ico-type-bmcnode"></i>
+                    </div>
+                    <div className="rgt">
+                      <div className="value">{serverTotalCount}<span>대</span></div>
+                      <dl><dt>ARM</dt><dd>{armServerCount}</dd></dl>
+                      <dl><dt>x86</dt><dd>{x86ServerCount}</dd></dl>
+                    </div>
+                  </li>
+                  <li className="li_type_02">
+                    <div className="lft">
+                      <i className="ico-type-power"></i>
+                    </div>
+                    <div className="rgt">
+                      <div className="value">{common.fnAddCommar(useKwh)}<span>kWh</span></div>
+                      <dl><dt>ARM</dt><dd>{common.fnAddCommar(armKwh)}</dd></dl>
+                      <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Kwh)}</dd></dl>
+                    </div>
+                  </li>
+                  <li className="li_type_02">
+                    <div className="lft">
+                      <i className="ico-type-co2"></i>
+                    </div>
+                    <div className="rgt">
+                      <div className="value">{useCo2}<span>KG</span></div>
+                      <dl><dt>ARM</dt><dd>{armCo2}</dd></dl>
+                      <dl><dt>x86</dt><dd>{x86Co2}</dd></dl>
+                    </div>
+                  </li>
+                  <li className="li_type_02">
+                    <div className="lft">
+                      <i className="ico-type-tree"></i>
+                    </div>
+                    <div className="rgt">
+                      <div className="value">{useTree}<span>그루</span></div>
+                      <dl><dt>ARM</dt><dd>{armTree}</dd></dl>
+                      <dl><dt>x86</dt><dd>{x86Tree}</dd></dl>
+                    </div>
+                  </li>
+                  <li className="li_type_02">
+                    <div className="lft">
+                      <i className="ico-type-money"></i>
+                    </div>
+                    <div className="rgt">
+                      <div className="value">{common.fnAddCommar(usePrice)}<span>원</span></div>
+                      <dl><dt>ARM</dt><dd>{common.fnAddCommar(armPrice)}</dd></dl>
+                      <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Price)}</dd></dl>
+                    </div>
+                  </li>
+                </ul>
+              </Loading>
             </div>
           </div>
           {/* // grid_item */}

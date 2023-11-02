@@ -39,9 +39,10 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
   const [vmOutboundData, setVmOutboundData] = useState([]);
 
   useEffect(() => {
-    // node data
-    const getNetworkTrafficData = async () => {
+    const getData = async () => {
       setLoading(true)
+
+      // node data
       const metricData = await monitorStore.fetchMetrics({
         metrics: Object.values(MetricTypes),
         step: '5m', // Time interval
@@ -50,49 +51,39 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         // times: 160,
       })
       setMetricData(metricData)
-      setLoading(false)
-    };
-    getNetworkTrafficData();
 
-    // pod data
-    const getPodTrafficData = async () => {
+      // pod data
       const podData = await podStore.fetchMetrics({
         metrics: Object.values(MetricTypes),
         step: '5m',
         times: 100,
       })
       setPodData(podData)
-    };
-    getPodTrafficData();
 
-    // vm list
-    const getVmList = async () => {
+      // vm list
       const vmList = await vmStore.fetchList({ limit: 1000 })
       setVmList(vmList)
-    };
-    getVmList();
 
-    // vm inbound data
-    var currentTime = Math.floor(Date.now() / 1000);
-    const getVmInboundData = async () => {
+      // vm inbound data
+      var currentTime = Math.floor(Date.now() / 1000);
       const vmInboundData = await customStore.fetchMetric({
         expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         start: currentTime - 30000,
         end: currentTime,
       })
       setVmInboundData(vmInboundData)
-    };
-    getVmInboundData();
-    // vm outbound data
-    const getVmOutboundData = async () => {
+
+      // vm outbound data
       const vmOutboundData = await customStore.fetchMetric({
         expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         start: currentTime - 30000,
         end: currentTime,
       })
       setVmOutboundData(vmOutboundData)
+
+      setLoading(false)
     };
-    getVmOutboundData();
+    getData();
 
   }, [])
 
@@ -194,98 +185,102 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
               </div>
             </div>
             {(rightTabActive != 'vm' && rightTabActive != 'kaas') &&
-              <div className="grid_info style_chart">
-                <div className="box type_chart">
-                  <div className="cont1">
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-outbound"></i>
-                        <h5>Outbound</h5>
+              <Loading spinning={loading}>
+                <div className="grid_info style_chart">
+                  <div className="box type_chart">
+                    <div className="cont1">
+                      <div className="chart_tab no-tab">
+                        <div className="title">
+                          <i className="ico-type-outbound"></i>
+                          <h5>Outbound</h5>
+                        </div>
+                        <div className="data">
+                          <div className="number_wrap data-r">
+                            <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                      <div className="chart_tab no-tab">
+                        <div className="title">
+                          <i className="ico-type-inbound"></i>
+                          <h5>Inbound</h5>
+                        </div>
+                        <div className="data">
+                          <div className="number_wrap data-r">
+                            <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="chart_tab no-tab">
+                        <div className="title">
+                          <i className="ico-type-network"></i>
+                          <h5>Total</h5>
+                        </div>
+                        <div className="data">
+                          <div className="number_wrap data-r">
+                            <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-inbound"></i>
-                        <h5>Inbound</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                        </div>
-                      </div>
+                    <div className="cont2">
+                      {tabContentActive &&
+                        <TabContent option={tabContent}></TabContent>
+                      }
+                      {/* <div className="chart_02"></div> */}
                     </div>
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-network"></i>
-                        <h5>Total</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    {tabContentActive &&
-                      <TabContent option={tabContent}></TabContent>
-                    }
-                    {/* <div className="chart_02"></div> */}
                   </div>
                 </div>
-              </div>
+              </Loading>
             }
             {(rightTabActive == 'vm' || rightTabActive == 'kaas') &&
-              <div className="grid_info style_chart">
-                <div className="box type_chart">
-                  <div className="cont1">
-                    <div className={`chart_tab ${tabActive == 'OUT' ? 'on' : ''}`} onClick={() => onClickLeftTab('OUT')}>
-                      <div className="title">
-                        <i className="ico-type-outbound"></i>
-                        <h5>Outbound</h5>
+              <Loading spinning={loading}>
+                <div className="grid_info style_chart">
+                  <div className="box type_chart">
+                    <div className="cont1">
+                      <div className={`chart_tab ${tabActive == 'OUT' ? 'on' : ''}`} onClick={() => onClickLeftTab('OUT')}>
+                        <div className="title">
+                          <i className="ico-type-outbound"></i>
+                          <h5>Outbound</h5>
+                        </div>
+                        <div className="data">
+                          <div className="number_wrap data-r">
+                            <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                      <div className={`chart_tab ${tabActive == 'IN' ? 'on' : ''}`} onClick={() => onClickLeftTab('IN')}>
+                        <div className="title">
+                          <i className="ico-type-inbound"></i>
+                          <h5>Inbound</h5>
+                        </div>
+                        <div className="data">
+                          <div className="number_wrap data-r">
+                            <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="chart_tab no-tab">
+                        <div className="title">
+                          <i className="ico-type-network"></i>
+                          <h5>Total</h5>
+                        </div>
+                        <div className="data">
+                          <div className="number_wrap data-r">
+                            <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className={`chart_tab ${tabActive == 'IN' ? 'on' : ''}`} onClick={() => onClickLeftTab('IN')}>
-                      <div className="title">
-                        <i className="ico-type-inbound"></i>
-                        <h5>Inbound</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                        </div>
-                      </div>
+                    <div className="cont2">
+                      {tabContentActive &&
+                        <TabContent option={tabContent}></TabContent>
+                      }
+                      {/* <div className="chart_02"></div> */}
                     </div>
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-network"></i>
-                        <h5>Total</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    {tabContentActive &&
-                      <TabContent option={tabContent}></TabContent>
-                    }
-                    {/* <div className="chart_02"></div> */}
                   </div>
                 </div>
-              </div>
+              </Loading>
             }
           </div>
           {/* // grid_item */}

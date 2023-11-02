@@ -224,9 +224,7 @@ const BmcNode = ({ x, y, w, h,
                       </div>
                       <div className="hexagon_wrap">
                         {nodeList.map((obj, idx) => (
-                          <>
-                            <div className={`hexagon ${getState(metricState, obj)}`}><span>{getType(obj).toUpperCase()}</span></div>
-                          </>
+                          <div key={idx} className={`hexagon ${getState(metricState, obj)}`}><span>{getType(obj).toUpperCase()}</span></div>
                         ))}
                       </div>
                     </div>
@@ -282,7 +280,7 @@ const BmcNode = ({ x, y, w, h,
                                 ))
                                 :
                                 <tr>
-                                  <td colspan="6" className="msg-text">
+                                  <td colSpan="6" className="msg-text">
                                     <p>데이터가 없습니다.</p>
                                   </td>
                                 </tr>
