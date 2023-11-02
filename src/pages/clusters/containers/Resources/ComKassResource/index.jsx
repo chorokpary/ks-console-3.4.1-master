@@ -148,6 +148,8 @@ const index = (props) => {
 
 
   const getMonitoringCfgs = () => {
+
+    
     return [
       {
         type: 'utilisation',
