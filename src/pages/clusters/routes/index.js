@@ -79,6 +79,7 @@ import MediatedDevices from '../containers/Resources/MediatedDevices'
 import LoadBalancers from '../containers/Resources/LoadBalancers'
 
 import BareMetal from '../containers/Resources/BareMetal'
+import ComKassResource from '../containers/Resources/ComKassResource'
 
 const PATH = '/clusters/:cluster'
 
@@ -364,6 +365,13 @@ export default [
             component: BareMetal,
             exact: true,
           },  
+          {
+            path: `${PATH}/computingkaasmonitoring`,
+            component: ComKassResource,
+            exact: true,
+          }, 
+
+          
                   
           
 

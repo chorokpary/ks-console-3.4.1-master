@@ -473,7 +473,7 @@ export default class Vms extends React.Component {
   }
 
   getBanner = () => {
-    return <i className="ico-type40-vm"></i>
+    return <i className="ico-type-vm"></i>
   }
 
   render() {
