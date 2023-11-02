@@ -114,25 +114,29 @@ const Status = (props) => {
       {!!externalNetwork &&
         <Panel title={"외부 네트워크"}>
           <div className={styles.wrapper}>
-            <div className={classnames(styles.item)}>
+            <div className={styles.itemMainRemoveCursor} >
               <div className={styles.icon}>
                 <Icon name="network-router" size={40} />
               </div>
-              <div className={classnames(styles.title, styles.name)}>
-                <div>{externalNetwork.name}</div>
-                <p>이름</p>
-              </div>
-              <div className={styles.title}>
-                <div>{externalNetwork.type}</div>
-                <p>유형</p>
-              </div>
-              <div className={styles.title}>
-                <div>{externalNetwork.cidr}</div>
-                <p>CIDR</p>
-              </div>
-              <div className={styles.title}>
-                <div>{externalNetwork.gateway_ip}</div>
-                <p>게이트웨이</p>
+              <div className={styles.content}>
+                <div className={styles.text}>
+                  <div>{externalNetwork.name}</div>
+                  <p>이름</p>
+                </div>
+                <div className={styles.text}>
+                  <div>{externalNetwork.type}</div>
+                  <p>유형</p>
+                </div>
+                <div className={styles.text}>
+                  <div>{externalNetwork.cidr}</div>
+                  <p>CIDR</p>
+                </div>
+                <div className={styles.text}>
+                  <div>{externalNetwork.gateway_ip}</div>
+                  <p>게이트웨이</p>
+                </div>
+                <div className={styles.arrow}>                 
+                </div>
               </div>
             </div>
           </div>
