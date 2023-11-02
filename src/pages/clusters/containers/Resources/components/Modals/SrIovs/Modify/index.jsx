@@ -275,7 +275,7 @@ const ModifyModal = (props) => {
   return (
     <>  
         <Modal
-          icon="templet"
+          icon="pen"
           width={960}
           title={props.title}
           onCancel={closeModal}

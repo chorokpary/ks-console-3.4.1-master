@@ -1375,7 +1375,7 @@ html {
   align-items: center;
   justify-content: center;
   padding: 0px 8px;
-  background-color: #e3e9ef;
+  background-color: #d8e2ec;
   border-radius: 18px;
   font-family: "Pretendard-Bold";
   font-weight: 700;
@@ -1416,6 +1416,15 @@ html {
 }
 .content_box_wrap .value_box_wrap .status_point_error {
   background-color: #ca2621;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 6px;
+  left: 0;
+  border-radius: 10px;
+}
+.content_box_wrap .value_box_wrap .status_point_unknown {
+  background-color: #f5a623;
   position: absolute;
   width: 8px;
   height: 8px;
@@ -1720,13 +1729,13 @@ html {
 .content_box_wrap .topology_wrap .topology_network_wrap .topology_network > li.network_bar .network_name > .name > em {
   border-radius: 2px;
   padding: 0 4px;
-  background: #5680EC;
+  background: #5680ec;
   color: #fff;
   font-size: 10px;
   font-style: normal;
 }
 .content_box_wrap .topology_wrap .topology_network_wrap .topology_network > li.network_bar .network_name > .name > em.ex {
-  background: #9B51E0;
+  background: #9b51e0;
 }
 .content_box_wrap .topology_wrap .topology_network_wrap .topology_network > li.network_bar .network_name > .name > span {
   color: #fff;

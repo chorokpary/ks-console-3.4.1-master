@@ -1,0 +1,37 @@
+@charset "utf-8";
+
+@import '~scss/variables';
+@import '~scss/mixins';
+
+
+.iconwrapper {
+  display: flex;
+    i {
+      margin-right: 5px;
+    }
+}
+
+.avatar {
+  display: flex;
+
+  .icon {
+    position: relative;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      top: 28px;
+      right: 0;
+    }
+  }
+
+  .title {
+    @include TypographyTitleH6($dark-color07);
+  }
+
+  .desc {
+    @include TypographyParagraph($dark-color01);
+  }
+}
+
+

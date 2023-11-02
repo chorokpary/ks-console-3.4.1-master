@@ -18,21 +18,23 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status, Panel, Text, Modal } from 'components/Base'
+import { Avatar, Text, Indicator } from 'components/Base'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import Empty from 'components/Tables/Base/Empty'
+import classNames from 'classnames'
 
 import { Button, Notify } from '@kube-design/components'
 import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
 import { getValueByUnit } from 'utils/monitoring'
+
+import styles from './index.scss'
 
 import BareMetalStore from 'stores/resources/baremetal'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 import Carbon from './Carbon'
 import CpuUsage from './CpuUsage';
-
 
 @withList({
   store: new BareMetalStore(),
@@ -284,6 +286,16 @@ export default class BareMetalDashboard extends React.Component {
     return value;
   }
 
+  getState (state) {
+    if (state === 'on') {
+      return "active"
+    } else if (state === 'off') {
+      return "inactive"
+    }else{
+      return "warning"
+    }
+  }
+
   getColumns = () => {
     const { getSortOrder } = this.props
     const { cluster } = this.props.match.params
@@ -501,7 +513,7 @@ export default class BareMetalDashboard extends React.Component {
           </div>
           <div className="div_value">
             <div className="txt_group">
-              <div className="status_point_error"></div>
+              <div className="status_point_unknown"></div>
               <div className="text_title">Unknown</div>
             </div>
             <div className="number_wrap">{nodeErrorCount}</div>

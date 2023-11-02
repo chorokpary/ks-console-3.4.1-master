@@ -472,6 +472,10 @@ export default class Vms extends React.Component {
     return this.props.rootStore.routing
   }
 
+  getBanner = () => {
+    return <i className="ico-type40-vm"></i>
+  }
+
   render() {
     const { bannerProps, tableProps } = this.props
     //console.log({ ...this.props })
@@ -480,7 +484,8 @@ export default class Vms extends React.Component {
       <ListPage {...this.props}>
       <Banner
         {...bannerProps}
-        icon="templet"
+        // icon="templet"
+        icon={this.getBanner}
         tabs={this.tabs}
         title={t('가상머신')}
         description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}
