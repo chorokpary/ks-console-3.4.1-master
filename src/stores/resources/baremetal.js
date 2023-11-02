@@ -58,7 +58,7 @@ export default class BareMetalStore extends Base {
     silent,
     ...params
   } = {}) {
-    console.log("silent : "+ silent)
+    // console.log("silent : "+ silent)
     if (!silent) {
       this.list.isLoading = true
     }
@@ -93,10 +93,10 @@ export default class BareMetalStore extends Base {
     data.sort((a, b) => {
       return a.name < b.name ? 1 : a.name > b.name ? -1 : 0;
     });
-    
+
     // 초기 데이터 처리 
-    this.dataList = data; 
-    
+    this.dataList = data;
+
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {
@@ -158,10 +158,10 @@ export default class BareMetalStore extends Base {
     const nodeData = {};
     const redfishData = {};
 
-    nodeData.ScrapeInterval = data.nodeInterval+"s";
+    nodeData.ScrapeInterval = data.nodeInterval + "s";
     nodeData.port = Number(data.nodePort);
 
-    redfishData.ScrapeInterval = data.refishInterval+"s";
+    redfishData.ScrapeInterval = data.refishInterval + "s";
     redfishData.port = Number(data.refishPort);
     redfishData.target = data.target_ip_array;
 
@@ -169,25 +169,25 @@ export default class BareMetalStore extends Base {
     jsonData.ip = data.ip;
     jsonData.nodeExporter = nodeData;
     jsonData['redfish-exporter'] = redfishData;
-    
-    console.log("url : "+ url)
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+
+    console.log("url : " + url)
+    console.log("jsonData : " + JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
-    console.log("res : "+ JSON.stringify(res))
+    console.log("res : " + JSON.stringify(res))
     return res
   }
 
   @action
   async update({ name, ...params }, data) {
 
-     const jsonData = {};
+    const jsonData = {};
     const nodeData = {};
     const redfishData = {};
 
-    nodeData.ScrapeInterval = data.nodeInterval+"s";
+    nodeData.ScrapeInterval = data.nodeInterval + "s";
     nodeData.port = Number(data.nodePort);
 
-    redfishData.ScrapeInterval = data.refishInterval+"s";
+    redfishData.ScrapeInterval = data.refishInterval + "s";
     redfishData.port = Number(data.refishPort);
     redfishData.target = data.target_ip_array;
 
@@ -195,11 +195,11 @@ export default class BareMetalStore extends Base {
     jsonData.ip = data.ip;
     jsonData.nodeExporter = nodeData;
     jsonData['redfish-exporter'] = redfishData;
-    
-    console.log("url : "+ url)
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+
+    console.log("url : " + url)
+    console.log("jsonData : " + JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
-    console.log("res : "+ JSON.stringify(res))
+    console.log("res : " + JSON.stringify(res))
     return res
   }
 
@@ -211,9 +211,9 @@ export default class BareMetalStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}`
     )
-    
+
     const detail = { ...params, ...this.mapper(result), kind: 'Baremetal' }
-    
+
     this.detail = detail
     this.isLoading = false
     return detail

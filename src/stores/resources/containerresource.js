@@ -48,7 +48,7 @@ export default class ResourceStore extends Base {
     silent,
     ...params
   } = {}) {
-    console.log("silent : "+ silent)
+    // console.log("silent : "+ silent)
     if (!silent) {
       this.list.isLoading = true
     }

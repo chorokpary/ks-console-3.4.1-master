@@ -1307,30 +1307,33 @@ body.dashboard {
 
 .dash_wrap .hexagon_wrap {
     margin: 30px 0 0 0;
-}
-
-.dash_wrap .hexagon_wrap>.hexagon_group {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 100%;
-}
-
-.dash_wrap .hexagon_wrap>.hexagon_group:nth-child(2n) {
-    margin-left: 16px;
-}
-
-.dash_wrap .hexagon_wrap>.hexagon_group:nth-child(n+2) {
-    margin-top: -3px;
+    width: 280px;
+    height: 194px;
+    padding-top: 3px;
+    overflow-y: auto;
 }
 
 .dash_wrap .hexagon {
     position: relative;
+    float: left;
     width: 32px;
     height: 18px;
     background-color: #55bc8a;
-    margin: 6px 0;
+    margin: 4px 0;
     border: 2px solid #fff;
+}
+
+.dash_wrap .hexagon:nth-child(9),
+.dash_wrap .hexagon:nth-child(25),
+.dash_wrap .hexagon:nth-child(41),
+.dash_wrap .hexagon:nth-child(57),
+.dash_wrap .hexagon:nth-child(73),
+.dash_wrap .hexagon:nth-child(89),
+.dash_wrap .hexagon:nth-child(105),
+.dash_wrap .hexagon:nth-child(121),
+.dash_wrap .hexagon:nth-child(137),
+.dash_wrap .hexagon:nth-child(153) {
+    margin-left: 16px;
 }
 
 .dash_wrap .hexagon:before,

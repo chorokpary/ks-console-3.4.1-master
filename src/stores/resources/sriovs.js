@@ -68,15 +68,15 @@ export default class SriovStore extends Base {
       ...this.mapper(item),
     }))
 
-    console.log("data : "+ JSON.stringify(data))
+    // console.log("data : "+ JSON.stringify(data))
     // 초기 정렬 처리
     data.sort((a, b) => {
       return a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0;
     });
 
     // 초기 데이터 처리 
-    this.dataList = data; 
-    
+    this.dataList = data;
+
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {
@@ -150,7 +150,7 @@ export default class SriovStore extends Base {
 
     jsonData.network = networkData;
 
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    // console.log("jsonData : "+ JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
     return res
   }
@@ -174,7 +174,7 @@ export default class SriovStore extends Base {
 
     jsonData.network = networkData;
 
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    // console.log("jsonData : "+ JSON.stringify(jsonData))
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
@@ -202,12 +202,12 @@ export default class SriovStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-    
+
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}/manifest`
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'Sriov' }
-  
+
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData
@@ -244,13 +244,13 @@ export default class SriovStore extends Base {
   @action
   async fetchSriovResourceList(params) {
     this.isLoading = true
-    
+
     const result = await request.get(
       `/edgetron/resources/kubevirt/sriov_resources`
     )
-    console.log("result : "+ JSON.stringify(result))
+    // console.log("result : "+ JSON.stringify(result))
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
-    
+
     this.isLoading = false
     return response;
   }
@@ -258,13 +258,13 @@ export default class SriovStore extends Base {
   @action
   async fetchSriovBondList(params) {
     this.isLoading = true
-    
+
     const result = await request.get(
       `/edgetron/resources/kubevirt/sriov_resources`
     )
-    console.log("bond : "+ JSON.stringify(result))
+    // console.log("bond : "+ JSON.stringify(result))
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
-    
+
     this.isLoading = false
     return response;
   }

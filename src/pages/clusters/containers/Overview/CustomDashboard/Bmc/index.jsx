@@ -165,6 +165,7 @@ const Bmc = ({ bmc }) => {
           y={bmc.bmcNode.y}
           w={bmc.bmcNode.w}
           h={bmc.bmcNode.h}
+          nodeData={nodeData}
         />
       }
 

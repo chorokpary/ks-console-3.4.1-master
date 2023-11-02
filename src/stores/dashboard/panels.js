@@ -1245,7 +1245,6 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
                     </div>
                   </div>
                   <div class="hexagon_wrap">
-                    <div class="hexagon_group">
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon off"><span>ARM</span></div>
@@ -1254,8 +1253,6 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
-                    </div>
-                    <div class="hexagon_group">
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
@@ -1264,8 +1261,6 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
                       <div class="hexagon off"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
-                    </div>
-                    <div class="hexagon_group">
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
                       <div class="hexagon"><span>ARM</span></div>
@@ -1274,7 +1269,6 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
                       <div class="hexagon"><span>x86</span></div>
                       <div class="hexagon"><span>x86</span></div>
                       <div class="hexagon"><span>x86</span></div>
-                    </div>
                   </div>
                 </div>
               </div>
