@@ -25,9 +25,8 @@ import Table from 'components/Tables/List'
 import classNames from 'classnames'
 import Indicator from 'components/Base/Indicator'
 
-
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
+import { Icon, Tooltip } from '@kube-design/components'
+import { getLocalTime, map_accessModes } from 'utils'
 
 import VolumeStore from 'stores/resources/volumes'
 
@@ -134,24 +133,11 @@ export default class ResourcesVolumes extends React.Component {
       //   },
       // },
       {
-        title: t('접근 모드'),
+        title: this.renderAccessTitle(),
         dataIndex: 'access_modes',
-        isHideable: true,
         search: true,
         width: 'auto',
-        render: access_modes => {
-          let accessModesList = ""
-
-          if (!!access_modes) {
-            accessModesList = access_modes.map((mode) => {
-                return <p key={mode}>{mode}</p>
-            });
-          } else {
-            accessModesList = <p>-</p>
-          }
-      
-          return accessModesList
-        }
+        render: access_modes => this.mapperAccessMode(access_modes),
       },
       {
         title: t('입력 소스'),
@@ -175,23 +161,31 @@ export default class ResourcesVolumes extends React.Component {
         width: 'auto',
       },
       {
-        title: t('상태'),
-        dataIndex: 'phase',
+        title: t('MOUNT_STATUS'),
+        dataIndex: 'used_by_vmi',
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (phase) => {          
-          const type = !!phase == true ? phase : "Bound"
-          const flicker = true;
-
-            return (
-              <div className={styles.iconwrapper}>
-                <Indicator className={styles.indicator} type={type} flicker={flicker} />
-                <p>{type}</p>
-              </div>  
-            )          
-        },      
+        render: used_by_vmi => (!!used_by_vmi ? t('MOUNTED') : t('NOT_MOUNTED')),
       },
+      // {
+      //   title: t('상태'),
+      //   dataIndex: 'phase',
+      //   isHideable: true,
+      //   search: true,
+      //   width: 'auto',
+      //   render: (phase, record) => {          
+      //     const type = !!phase == true ? phase : "Bound"
+      //     const flicker = true;
+
+      //       return (
+      //         <div className={styles.iconwrapper}>
+      //           <Indicator className={styles.indicator} type={type} flicker={flicker} />
+      //           <p>{type}</p>
+      //         </div>  
+      //       )          
+      //   },      
+      // },
       {
         title: t('등록일'),
         dataIndex: 'timestamp',
@@ -206,6 +200,30 @@ export default class ResourcesVolumes extends React.Component {
         ),
       },
     ]
+  }
+
+  mapperAccessMode = accessModes => {
+    console.log(accessModes)
+    const modes = map_accessModes(accessModes)
+    return <span>{modes.join(',')}</span>
+  }
+
+  renderAccessTitle = () => {
+    const renderModeTip = (
+      <div>
+        <div>{t('RWO_DESC')}</div>
+        <div>{t('ROX_DESC')}</div>
+        <div>{t('RWX_DESC')}</div>
+      </div>
+    )
+    return (
+      <div className={styles.mode_title}>
+        {t('ACCESS_MODE_TCAP')}
+        <Tooltip content={renderModeTip}>
+          <Icon name="question" size={16} className={styles.question}></Icon>
+        </Tooltip>
+      </div>
+    )
   }
 
   get emptyProps() {

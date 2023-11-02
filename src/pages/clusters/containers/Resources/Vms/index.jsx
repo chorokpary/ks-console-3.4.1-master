@@ -68,12 +68,9 @@ export default class Vms extends React.Component {
   }
 
   get isRuning() {
-    const { data } = toJS(this.props.store.list)
-    
-    const runingData = data.filter(
-      item => item.status !== 'failed' && item.status !== 'successful'
-    )
-    return !isEmpty(runingData)
+    const { selectedRowKeys } = toJS(this.props.store.list)
+    const runingFlag = selectedRowKeys.length > 0 ? false : true;
+    return runingFlag
   }
 
   getData = params => {

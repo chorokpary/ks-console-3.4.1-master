@@ -166,7 +166,7 @@ const RegistModal = (props) => {
 
       let makeScript = "#cloud-config\n"
       makeScript += "chpasswd:\n"
-      makeScript += "list:\n"
+      makeScript += "list: | \n"
 
       listPasswordRoute.map((obj) => {
         console.log(data['scriptPassword_' + obj])
@@ -181,8 +181,7 @@ const RegistModal = (props) => {
 
       listFileRoute.map((obj) => {
         if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
-          makeScript += data['scriptPath_' + obj] + ":" + data['scriptContent_' + obj] + "\n"
-          makeScript += "path: " + data['scriptPath_' + obj] + "\ncontent: " + data['scriptContent_' + obj] + "\n"
+          makeScript += " - path: " + data['scriptPath_' + obj] + "\ncontent: | \n" + data['scriptContent_' + obj] + "\n"
 
           makeScriptStep_2 = true;
         }
@@ -192,11 +191,11 @@ const RegistModal = (props) => {
 
       listPackageRoute.map((obj) => {
         if (!!data['scriptPackage_' + obj]) {
-          if (data['scriptVersion_' + obj] == "") {
-            makeScript += data['scriptPackage_' + obj] + "\n"
+          if (data['scriptVersion_' + obj] == "" || data['scriptVersion_' + obj] == undefined) {
+            makeScript += " - " + data['scriptPackage_' + obj] + "\n"
             makeScriptStep_3 = true;
           } else {
-            makeScript += "[" + data['scriptPackage_' + obj] + ", " + data['scriptVersion_' + obj] + "]\n"
+            makeScript += " - [" + data['scriptPackage_' + obj] + ", " + data['scriptVersion_' + obj] + "]\n"
             makeScriptStep_3 = true;
           }
         }
@@ -769,7 +768,7 @@ const RegistModal = (props) => {
                 >
                   <Select
                     name="keypair"
-                    defaultValue={"선택"}
+                    placeholder={t('SELECT')}
                     options={keypairOptions()}
                     clearable
                   />
@@ -840,14 +839,13 @@ const RegistModal = (props) => {
                 >
                   <Select
                     name="node"
-                    defaultValue={"선택"}
+                    placeholder={t('SELECT')}
                     options={nodeOptions()}
                     clearable
                   />
                 </Form.Item>
               
                 <Form.Group label={t('스크립트')} onChange={(e) => setIsScript(!isScript)} checkable>
-                    <div className={styles.wrapper}>
                       <Form.Group label="패스워드 변경" onChange={(e) => setIsPassword(!isPassword)} checkable >
                         {listPasswordRoute.map((obj, idx) => (
                           <div className={styles.scriptitem} key={obj}>
@@ -886,7 +884,7 @@ const RegistModal = (props) => {
                           </Button>
                         </div>
                       </Form.Group>
-                      <Form.Group label="패키지 설치" onChange={(e) => setIsPackage(!isPackage)} checkable >
+                      <Form.Group label="파일 쓰기" onChange={(e) => setIsPackage(!isPackage)} checkable >
                         {listFileRoute.map((obj, idx) => (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
@@ -924,7 +922,7 @@ const RegistModal = (props) => {
                           </Button>
                         </div>
                       </Form.Group>
-                      <Form.Group label="파일 쓰기" onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
+                      <Form.Group label="패키지 설치" onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
                         {listPackageRoute.map((obj, idx) => (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
@@ -972,7 +970,6 @@ const RegistModal = (props) => {
                           />
                         </Form.Item>
                       </Form.Group>
-                    </div>
                 </Form.Group>
 
               </div>

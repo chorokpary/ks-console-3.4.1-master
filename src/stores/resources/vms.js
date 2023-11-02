@@ -197,7 +197,7 @@ export default class VmStore extends Base {
     // api에서 이름 넣으면 스크립트 오류 발생 함
     // resourceData.username = globals.user.username; // Failed to validate the cloud-init script 오류나서 안보냄
     resourceData.username = "";
-    resourceData.user_script = data.userScript == "" ? data.makeScript : data.userScript;
+    resourceData.user_script = (data.userScript == "" || data.userScript == undefined) ? data.makeScript : data.userScript;
     //resourceData.user_script = "#cloud-config\npassword: rocky\nchpasswd: {expire: False}\nssh_pwauth: True\nssh_svcname: ssh\nssh_deletekeys: True\nssh_genkeytypes: ['rsa', 'ecdsa']"
 
     const sriovNetworksArray = [];

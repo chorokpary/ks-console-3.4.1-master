@@ -66,8 +66,8 @@ const DetailSecurityGroupList = (props) => {
                     <tbody>
                       {(obj.rules).filter(el => el.direction == "ingress").map((obj, index) => (
                         <tr key={obj.id}>
-                          <td>{obj.protocol}</td>
-                          <td>{obj.port_range_min}~{obj.port_range_max}</td>
+                          <td>{obj.protocol}</td>                          
+                          <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
                           <td>{obj.ethernet_type}</td>
                           <td>{obj.remote_ip_prefix}</td>
                         </tr>
@@ -97,7 +97,7 @@ const DetailSecurityGroupList = (props) => {
                         {(obj.rules).filter(el => el.direction == "egress").map((obj, index) => (
                           <tr key={obj.id}>
                             <td>{obj.protocol}</td>
-                            <td>{obj.port_range_min}~{obj.port_range_max}</td>
+                            <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
                             <td>{obj.ethernet_type}</td>
                             <td>{obj.remote_ip_prefix}</td>
                           </tr>
