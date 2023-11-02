@@ -3,21 +3,28 @@ import { observer, inject } from 'mobx-react'
 import { toJS } from 'mobx'
 import classnames from 'classnames'
 
-import { isEmpty } from 'lodash'
+import { isEmpty, throttle } from 'lodash'
 import { Indicator } from 'components/Base'
 import ReplicaCard from 'clusters/components/Cards/Replica'
 import { Panel, Text } from 'components/Base'
 import { Icon, Button, Notify } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
+import { getAreaChartOps } from 'utils/monitoring'
+
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 
 import styles from './index.scss'
 
+const step = '5m'
+const times = 100
+
 const Status = (props) => {
     const store = props.detailStore;
     const machines = props.detailStore.machines;
+    const customStore = new CustomStore();
 
     const state = [
         { nums: store.detail?.cluster?.cp?.replicas, unavailableNums: store.detail?.cluster?.cp?.replicas },
@@ -121,6 +128,78 @@ const Status = (props) => {
     }
 
     //monitoring script----------------------------------------------
+    const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] });
+    const [isLoading, setIsLoading] = useState(true);
+    let timer = 0;
+
+    useEffect(() => {
+        fetchData(0);
+
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [])
+
+    const fetchData = (timerSec) => {
+
+        timer = setTimeout(async () => {
+
+            let kaasCpuFilteredData = [];
+            let kaasMemoryFilteredData = [];
+
+            Promise.all([getCpuUsageData(), getMemoryUsageData()]).then((values) => {
+                if (values[0].length > 0) {
+                    values[0].map(obj => {
+                        if (obj.metric.pod.split("-control-")[0] === props.match.params.name || obj.metric.pod.split("-md-")[0] === props.match.params.name) {
+                            kaasCpuFilteredData.push(obj)
+                        }
+                    })
+                }
+
+                if (values[1].length > 0) {
+                    values[1].map(obj => {
+                        if (obj.metric.pod.split("-control-")[0] === props.match.params.name || obj.metric.pod.split("-md-")[0] === props.match.params.name) {
+                            kaasMemoryFilteredData.push(obj)
+                        }
+                    })
+                }
+
+                setKaasData({ ...kaasData, ['cpuData']: kaasCpuFilteredData, ['memoryData']: kaasMemoryFilteredData })
+            });
+            fetchData(5000);
+        }, timerSec)
+    }
+
+    useEffect(() => {
+        setIsLoading(false)
+    }, [kaasData])
+
+    // kaas cpu data
+    const getCpuUsageData = () => {
+        const currentTime = Math.floor(Date.now() / 1000);
+        return new Promise(async (resolve, reject) => {
+            const cpuFetchData = await customStore.fetchMetric({
+                expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
+                start: currentTime - 30000,
+                end: currentTime,
+            })
+            resolve(cpuFetchData)
+        })
+    };
+
+    // kaas memory data
+    const getMemoryUsageData = () => {
+        const currentTime = Math.floor(Date.now() / 1000);
+        return new Promise(async (resolve, reject) => {
+            const memoryFetchData = await customStore.fetchMetric({
+                expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+                start: currentTime - 30000,
+                end: currentTime,
+            })
+            resolve(memoryFetchData)
+        })
+    };
+
     const getMonitoringCfgs = metrics => [
         {
             type: 'cpu',
@@ -140,20 +219,23 @@ const Status = (props) => {
         },
     ]
 
-    const renderMonitorings = () => {
-        // const { metrics = {}, isExpand, loading } = props
+    const renderMonitorings = (nodeName, isExpandFlag, nodeIp) => {
 
-        const isExpand = false;
-        const loading = false;
-        const metrics = {}
-
+        const isExpand = (nodeName == expandItem && isExpandFlag);
+        const loading = isLoading;
+        const podName = kaasData.memoryData?.find(obj => obj.metric?.instance?.split(":")[0] === nodeIp)?.metric?.pod
+        const metrics = {
+            ['cpu']: kaasData.cpuData.find(obj => obj.metric.pod === podName)
+            , ['memory']: kaasData.memoryData.find(obj => obj.metric.pod === podName)
+        }
+        
         if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
         if (isEmpty(metrics.cpu) && isEmpty(metrics.memory))
             return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
         const configs = getMonitoringCfgs(metrics)
-
+        
         return (
             <div className={styles.monitors}>
                 <div className={styles.charts}>
@@ -228,7 +310,7 @@ const Status = (props) => {
                                         }
                                         <p>IP(네트워크)</p>
                                     </div>
-                                    {renderMonitorings()}
+                                    {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network").ip)}
                                     <div className={styles.arrow}>
                                         <Icon name="chevron-down" type={detail.name != expandItem ? '' : (detail.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                                     </div>
@@ -280,7 +362,7 @@ const Status = (props) => {
                                         }
                                         <p>IP(네트워크)</p>
                                     </div>
-                                    {renderMonitorings()}
+                                    {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network").ip)}
                                     <div className={styles.arrow}>
                                         <Icon name="chevron-down" type={detail.name != expandItem ? '' : (detail.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                                     </div>

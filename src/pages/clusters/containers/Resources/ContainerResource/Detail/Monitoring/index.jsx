@@ -19,8 +19,6 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 
-import ResourceStore from 'stores/resources/containerresource'
-
 import { Columns, Column, Loading, Icon } from '@kube-design/components'
 import { Card } from 'components/Base'
 import { StatusCircle } from 'components/Cards/Monitoring'

@@ -23,6 +23,8 @@ const CONFIG_DISK_MASTER = 80;
 const CONFIG_CPU_WORKER = 8;
 const CONFIG_RAM_WORKER = 16;
 const CONFIG_DISK_WORKER = 160;
+const regexPort = /[^a-z0-9$-]/g;
+
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -240,7 +242,7 @@ const RegistModal = (props) => {
                 setIsFirst(false)
             }
 
-            if (data.name == undefined || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
+            if (data.name == undefined || regexPort.test(data.name) || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
                 handleOk();
             } else {
                 setRegStep(2);
@@ -366,6 +368,17 @@ const RegistModal = (props) => {
 
 
     // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름를 입력해 주세요.') })
+        } else {
+            if (regexPort.test(value)) {
+                return callback({ message: t('이름를 확인해 주세요.') })
+            }
+        }
+        callback()
+    }
+
     const imageValidator = (rule, value, callback) => {
         if (value == "선택" || value == "select") {
             return callback({ message: t('이미지를 선택해 주세요.') })
@@ -511,7 +524,7 @@ const RegistModal = (props) => {
                             <div className={`${regStep == 1 ? "" : "hide"}`}>
                                 <Form.Item
                                     label={t('이름')}
-                                    rules={[{ required: true, message: t('이름를 입력해 주세요.') }]}
+                                    rules={[{ required: true, validator: nameValidator }]}
                                     desc={t('NAME_DESC')}
                                 >
                                     <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
