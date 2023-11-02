@@ -630,3 +630,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 }
 
 /*# sourceMappingURL=custom_theme.css.map */
+
+.src-components-Tables-Base-index__table .table-body {
+  min-height: 300px;
+}
