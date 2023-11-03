@@ -1,29 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
-import { get } from 'lodash'
+import { get, remove } from 'lodash'
 import { getAreaChartOps } from 'utils/monitoring'
-import { getLocalTime } from 'utils'
 
-import CustomLegend from 'components/Charts/Custom/Legend'
-import CustomTooltip from 'components/Charts/Custom/Tooltip'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { getMinuteValue, getTimeRange } from 'stores/monitoring/base'
-
-import {
-  ResponsiveContainer,
-  ComposedChart,
-  Line,
-  Area,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  Dot,
-  Scatter
-} from "recharts";
+import { CustomChart } from 'components/Charts'
 
 const stepData = {
   h: { step: '6m', times: 10 },
@@ -51,9 +34,6 @@ const CpuPower = ({ x, y, w, h,
   const [armCpuData, setArmCpuData] = useState([]);
   const [x86PowerData, setX86PowerData] = useState([]);
   const [armPowerData, setArmPowerData] = useState([]);
-
-  const [x86PowerPercent, setX86PowerPercent] = useState(0);
-  const [armPowerPercent, setArmPowerPercent] = useState(0);
 
   useEffect(() => {
 
@@ -227,7 +207,6 @@ const CpuPower = ({ x, y, w, h,
     return isNaN(powerPercent) ? 0 : powerPercent
   }
 
-
   return (
     <>
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
@@ -274,7 +253,7 @@ const CpuPower = ({ x, y, w, h,
                     </div>
                     <div className="graph_wrap">
                       <div className="graph_bar">
-                        <div className="bar animate-bar" style={{ width: getPower('arm') + '%' }}></div>
+                        <div className="bar animate-bar" style={{ width: `${getPower('arm')}%` }}></div>
                       </div>
                     </div>
                   </div>
@@ -292,62 +271,15 @@ const CpuPower = ({ x, y, w, h,
                     </div>
                     <div className="graph_wrap">
                       <div className="graph_bar">
-                        <div className="bar second animate-bar" style={{ width: getPower('x86') + '%' }}></div>
+                        <div className="bar second animate-bar" style={{ width: `${getPower('x86')}%` }}></div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="cont2">
-                  {/* <Loading spinning={loading}> */}
-                  <ResponsiveContainer width={'100%'} height={'100%'} debounce={1}>
-                    <ComposedChart
-                      data={getComposedData()}
-                      margin={{
-                        top: 40,
-                        right: -20,
-                        bottom: -20,
-                        left: -20
-                      }}
-                    >
-                      <CartesianGrid
-                        stroke={'#d8dee5'}
-                        strokeDasharray="2 2"
-                        vertical={false}
-                      />
-                      <Legend
-                        wrapperStyle={{
-                          top: 0,
-                          left: 'auto',
-                          right: 0,
-                          width: '80%',
-                          zIndex: 100,
-                        }}
-                        content={
-                          <CustomLegend
-                          // activeSeries={this.state.activeSeries}
-                          // onClick={this.handleLegendClick}
-                          />
-                        }
-                      />
-                      <XAxis dataKey="time" />
-                      <YAxis yAxisId="left" type="number" dataKey="x86_usage" name="weight" stroke="#8884d8" />
-                      <YAxis
-                        yAxisId="right"
-                        type="number"
-                        dataKey="x86_power"
-                        name="weight"
-                        orientation="right"
-                      />
-                      <Tooltip
-                        content={<CustomTooltip />}
-                      />
-                      <Line yAxisId="right" type="monotone" dataKey="arm_power" stroke="#52d698" />
-                      <Line yAxisId="right" type="monotone" dataKey="x86_power" stroke="#8d96ea" />
-                      <Bar yAxisId="left" dataKey="arm_usage" barSize={20} fill="#6cc294" stroke="#6cc294" />
-                      <Bar yAxisId="left" dataKey="x86_usage" barSize={20} fill="#799bf3" stroke="#799bf3" />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                  {/* </Loading> */}
+                  <Loading spinning={loading}>
+                    <CustomChart data={getComposedData()} />
+                  </Loading>
                 </div>
               </div>
             </div>

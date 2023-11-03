@@ -2959,14 +2959,18 @@ body.dashboard {
 
 /*# sourceMappingURL=dashboard.css.map */
 
+
+.baremetalChart .src-components-Charts-Custom-Tooltip-index__tooltip,
 .dashboard .src-components-Charts-Custom-Tooltip-index__tooltip {
     padding: 8px 12px !important;
 }
 
+.baremetalChart .src-components-Charts-Custom-Tooltip-index__label,
 .dashboard .src-components-Charts-Custom-Tooltip-index__label {
     color: #ffffff !important;
 }
 
+.baremetalChart .src-components-Charts-Custom-Legend-index__item,
 .dashboard .src-components-Charts-Custom-Legend-index__item {
     padding: 0 4px !important;
 }

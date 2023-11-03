@@ -217,47 +217,47 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
                 </div>
               </div>
             </div>
-            {/* <Loading spinning={loading}> */}
-            <div className="grid_info style_chart">
-              <div className="box type_chart">
-                <div className="cont1">
-                  {tabData && tabData.map(data => (
-                    <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab)}>
-                      <div className="title">
-                        <i className={`ico-type-${data.unitType} ${data.name}`}></i>
-                        <h5>{data.name}</h5>
-                      </div>
-                      {rightTab == 'node' ?
-                        <div className="data">
-                          <div className="number_wrap">
-                            <p><span className="em">{data._used}</span> / {data._total} <span className="unit">{t(data._unit)}</span></p>
-                            <p>{Math.round(data._percent)}%</p>
-                          </div>
-                          <div className="graph_wrap">
-                            <div className="graph_bar">
-                              <div className="bar animate-bar" style={{ width: `${Math.round(data._percent)}%` }}></div>
+            <Loading spinning={loading}>
+              <div className="grid_info style_chart">
+                <div className="box type_chart">
+                  <div className="cont1">
+                    {tabData && tabData.map(data => (
+                      <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab)}>
+                        <div className="title">
+                          <i className={`ico-type-${data.unitType} ${data.name}`}></i>
+                          <h5>{data.name}</h5>
+                        </div>
+                        {rightTab == 'node' ?
+                          <div className="data">
+                            <div className="number_wrap">
+                              <p><span className="em">{data._used}</span> / {data._total} <span className="unit">{t(data._unit)}</span></p>
+                              <p>{Math.round(data._percent)}%</p>
+                            </div>
+                            <div className="graph_wrap">
+                              <div className="graph_bar">
+                                <div className="bar animate-bar" style={{ width: `${Math.round(data._percent)}%` }}></div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        :
-                        <div className="data">
-                          <div className="number_wrap rgt">
-                            <p><span className="em">{data._used}</span><span className="unit">{t(data._unit)}</span></p>
+                          :
+                          <div className="data">
+                            <div className="number_wrap rgt">
+                              <p><span className="em">{data._used}</span><span className="unit">{t(data._unit)}</span></p>
+                            </div>
                           </div>
-                        </div>
-                      }
-                    </div>
-                  ))}
-                </div>
-                <div className="cont2">
-                  {tabContentActive &&
-                    <TabContent option={tabContent}></TabContent>
-                  }
-                  {/* <div className="chart_01"></div> */}
+                        }
+                      </div>
+                    ))}
+                  </div>
+                  <div className="cont2">
+                    {tabContentActive &&
+                      <TabContent option={tabContent}></TabContent>
+                    }
+                    {/* <div className="chart_01"></div> */}
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* </Loading> */}
+            </Loading>
           </div>
           {/* // grid_item */}
         </div>
