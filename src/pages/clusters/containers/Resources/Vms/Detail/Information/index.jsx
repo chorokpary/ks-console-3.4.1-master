@@ -12,8 +12,6 @@ const Information = (props) => {
 
   const store = props.detailStore;
 
-  console.log(JSON.stringify(store.detail.vm))
-
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailVolume, setDetailVolume] = useState([]);
   const [detailNetwork, setDetailNetwork] = useState([]);
