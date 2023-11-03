@@ -23,7 +23,7 @@ const CONFIG_DISK_MASTER = 80;
 const CONFIG_CPU_WORKER = 8;
 const CONFIG_RAM_WORKER = 16;
 const CONFIG_DISK_WORKER = 160;
-const regexPort = /[^a-z0-9$-]/g;
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
 
@@ -242,7 +242,7 @@ const RegistModal = (props) => {
                 setIsFirst(false)
             }
 
-            if (data.name == undefined || regexPort.test(data.name) || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
+            if (data.name == undefined || !regexName.test(data.name) || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
                 handleOk();
             } else {
                 setRegStep(2);
@@ -372,7 +372,7 @@ const RegistModal = (props) => {
         if (value == undefined) {
             return callback({ message: t('이름를 입력해 주세요.') })
         } else {
-            if (regexPort.test(value)) {
+            if (!regexName.test(value)) {
                 return callback({ message: t('이름를 확인해 주세요.') })
             }
         }
