@@ -336,4 +336,19 @@ export default class ResourceStore extends Base {
     this.isLoading = false
     return response;
   }
+  
+  @action
+  async fetchMachines(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `/edgetron/resources/capk/clusters/${params.name}/machines`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'machines' }
+
+    this.machines = response._originData.machines
+
+    this.isLoading = false
+    return response;
+  }
 }

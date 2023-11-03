@@ -3,13 +3,14 @@ import React, {useState, useEffect} from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import { Panel, Text } from 'components/Base'
+import { Panel, Text, Indicator } from 'components/Base'
 import { Icon, Loading } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 
 import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 import * as common from 'utils/resources'
 import { getAreaChartOps } from 'utils/monitoring'
@@ -23,13 +24,130 @@ const DetailVmList = (props) => {
   // }
 
   const store = new VmStore();
+  const customStore = new CustomStore();
+
   const [vmDataList, setVmDataList] = useState([]);
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
   const [isLoading, setIsLoading] = useState(true);
+
+  const [vmCpuData, setVmCpuData] = useState([]);
+  const [vmMemoryData, setVmMemoryData] = useState([]);
+
+  const intiParams = {"times":50,"step":"10m"}
+
+  const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
   
+    switch (unit) {
+      default:
+      case 's':
+        break
+      case 'm':
+        value *= 60
+        break
+      case 'h':
+        value *= 60 * 60
+        break
+      case 'd':
+        value = value * 24 * 60 * 60
+        break
+    }
+    return hasUnit ? `${value}s` : value
+  }
+
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+  
+    return { start, end }
+  }
+
+  const handleExpand = (name) => {
+    setExpandItem(name);
+    setIsExpandFlag(!isExpandFlag)
+  }
+
+  useEffect(() => {
+    const fnGetExternalNetwork = async () => {
+      const vmList = await store.fetchList();
+        if (props.variables === 'security_groups') {
+            setVmDataList(vmList?.filter((row) => row[props.variables].includes(props.name)))
+        } else {
+            setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
+        }
+        setIsLoading(false)
+    };
+
+    fnGetExternalNetwork();
+    fetchData(intiParams);
+
+  }, []) 
+
+  const fetchData = async (params) => {
+
+    const paramsData = Object.assign(params, {
+      start : params.start,
+      end : params.end,
+      step: getMinuteValue(params.step),
+      times : params.times ,
+    })
+
+    if (!paramsData.start || !paramsData.end) {
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
+    }
+
+    const getVmCpuUsageData = async () => {
+      const vmCpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        ...paramsData,
+      })
+
+      setVmCpuData(vmCpuData)
+    };
+
+    // vm memory data
+    const getVmMemoryUsageData = async () => {
+      const vmMemoryData = await customStore.fetchMetric({
+        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+        ...paramsData,
+      })
+
+      setVmMemoryData(vmMemoryData)
+
+    };
+    
+    getVmCpuUsageData();
+    getVmMemoryUsageData();
+
+  }
+
+  const getMonitoringCfgs = (cpuData, memoryData) => [
+    {
+      type: 'cpu',
+      title: 'CPU',
+      unitType: 'cpu',
+      legend: ['USED'],
+      data: cpuData,
+      bgColor: 'transparent',
+    },
+    {
+      type: 'memory',
+      title: 'MEMORY',
+      unitType: 'memory',
+      legend: ['USED'],
+      data: memoryData,
+      bgColor: 'transparent',
+    },
+  ]
+
   const renderContent = (obj) => {
+
     return (
       <>
         <div className={styles.content}>
@@ -42,10 +160,10 @@ const DetailVmList = (props) => {
               <p>상태</p>
           </div>
           <div className={styles.text}>
-              <div>{obj.node != "N/A" ? obj.name : "-"}</div>
+              <div>{obj.node != "N/A" ? obj.node : "-"}</div>
               <p>노드</p>
           </div>
-          {renderMonitorings()}  
+          {renderMonitorings(obj.name)}  
           <div className={styles.arrow}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
           </div>
@@ -118,47 +236,7 @@ const DetailVmList = (props) => {
     )
   }
 
-
-  useEffect(() => {
-    const fnGetExternalNetwork = async () => {
-      const vmList = await store.fetchList();
-        if (props.variables === 'security_groups') {
-            setVmDataList(vmList?.filter((row) => row[props.variables].toString() === props.name))
-        } else {
-            setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
-        }
-        setIsLoading(false)
-    };
-
-    fnGetExternalNetwork();
-  }, [])
-
-  
-  const handleExpand = (name) => {
-    setExpandItem(name);
-    setIsExpandFlag(!isExpandFlag)
-  }
-
-  const getMonitoringCfgs = metrics => [
-    {
-      type: 'cpu',
-      title: 'CPU',
-      unitType: 'cpu',
-      legend: ['USED'],
-      data: [metrics.cpu],
-      bgColor: 'transparent',
-    },
-    {
-      type: 'memory',
-      title: 'MEMORY',
-      unitType: 'memory',
-      legend: ['USED'],
-      data: [metrics.memory],
-      bgColor: 'transparent',
-    },
-  ]
-  
-  const renderMonitorings = () => {
+  const renderMonitorings = (vnName) => {
     // const { metrics = {}, isExpand, loading } = props
 
     const isExpand = false;
@@ -167,10 +245,24 @@ const DetailVmList = (props) => {
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    if (isEmpty(metrics.cpu) && isEmpty(metrics.memory))
+    const vmCpuMetricData = _.find(vmCpuData, (data) => {
+      if (data.metric.pod === vnName ) return data;
+    });
+    
+    const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
+      if (data.metric.pod === vnName ) return data;
+    });
+
+    if (!!!vmCpuMetricData && !!!vmMemoryMetricData)
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
-    const configs = getMonitoringCfgs(metrics)
+    const vmCpuArray = [];
+    vmCpuArray.push(vmCpuMetricData)
+
+    const vmMemoryArray = [];
+    vmMemoryArray.push(vmMemoryMetricData)
+
+    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray)
   
     return (
       <div className={styles.monitors}>
@@ -195,6 +287,24 @@ const DetailVmList = (props) => {
     )
   }
 
+  const getState = (state) =>  {
+    if (state === 'Provisioning'
+      || state === 'Starting'
+      || state === 'Stopping'
+      || state === 'Terminating'
+      || state === 'Migrating') {
+      return "waiting"
+    } else if (state === 'Running') {
+      return "running"
+    } else if (state === 'Stopped' || state === 'Paused') {
+      return "stopped"
+    } else if (state === 'Unknown') {
+      return "error"
+    }else{
+      return "error"
+    }
+  }
+
   return (
     <>  
 
@@ -211,7 +321,13 @@ const DetailVmList = (props) => {
                 >
                   <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
                     <div className={styles.icon}>
-                      <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+                      {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
+                      <i className="ico-type40-vm"></i>
+                      <Indicator
+                        className={styles.indicator}
+                        type={getState(obj.state)}
+                        flicker
+                      />
                     </div>
                     {renderContent(obj)}
                   </div>

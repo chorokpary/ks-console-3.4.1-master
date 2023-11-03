@@ -170,15 +170,13 @@ export default class BareMetalStore extends Base {
     jsonData.nodeExporter = nodeData;
     jsonData['redfish-exporter'] = redfishData;
 
-    console.log("url : " + url)
-    console.log("jsonData : " + JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
-    console.log("res : " + JSON.stringify(res))
     return res
   }
 
   @action
   async update({ name, ...params }, data) {
+    const url = this.getResourceUrl(params);
 
     const jsonData = {};
     const nodeData = {};
@@ -196,10 +194,7 @@ export default class BareMetalStore extends Base {
     jsonData.nodeExporter = nodeData;
     jsonData['redfish-exporter'] = redfishData;
 
-    console.log("url : " + url)
-    console.log("jsonData : " + JSON.stringify(jsonData))
-    const res = await request.post(url, jsonData)
-    console.log("res : " + JSON.stringify(res))
+    const res = await request.put(url, jsonData)
     return res
   }
 

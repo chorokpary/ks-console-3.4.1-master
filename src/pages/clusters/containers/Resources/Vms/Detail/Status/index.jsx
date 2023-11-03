@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
 import axios from "axios";
-import { Panel, Text } from 'components/Base'
+import { Panel, Text, Indicator } from 'components/Base'
 import { Icon, Button, Notify } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 
@@ -30,6 +30,8 @@ const Status = (props) => {
 
   const [vmCpuData, setVmCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
+
+  const intiParams = {"times":50,"step":"10m"}
 
   useEffect(() => {
 
@@ -69,10 +71,8 @@ const Status = (props) => {
 
       store.detail.vm?.flavor && fnGetFlavor();
       store.detail.vm?.networks && fnGetNetwork();
-      store.detail.vm?.security_groups && fnGetSecurityGroup();
+      store.detail.vm?.security_groups && fnGetSecurityGroup();      
       fnGetVolume();
-
-      const intiParams = {"times":50,"step":"10m"}
       fetchData(intiParams);
   }, []);
 
@@ -132,7 +132,7 @@ const Status = (props) => {
   
       // 배열 처리 
       const vmCpuArray = [];
-      vmCpuArray.push(vmCpuMetricData)
+      !!vmCpuMetricData && vmCpuArray.push(vmCpuMetricData)
       setVmCpuData(vmCpuArray)
     };
 
@@ -149,44 +149,13 @@ const Status = (props) => {
 
       // 배열 처리 
       const vmMemoryArray = [];
-      vmMemoryArray.push(vmMemoryMetricData)
+      !!vmMemoryMetricData && vmMemoryArray.push(vmMemoryMetricData)
       setVmMemoryData(vmMemoryArray)
-
-    };
-
-    const getVmInboundData = async () => {
-      const vmInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
-        ...paramsData,
-      })
-
-      const vmInboundMetricData = _.find(vmInboundData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
-      });
-
-      setVmInboundData(vmInboundMetricData)
-
-    };
-   
-    // vm outbound data
-    const getVmOutboundData = async () => {
-      const vmOutboundData= await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
-        ...paramsData,
-      })
-
-      const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
-      });
-
-      setVmOutboundData(vmOutboundMetricData)
 
     };
     
     getVmCpuUsageData();
     getVmMemoryUsageData();
-    getVmInboundData();
-    getVmOutboundData()    
 
   }
 
@@ -244,6 +213,24 @@ const Status = (props) => {
     )
   }
 
+  const getState = (state) =>  {
+    if (state === 'Provisioning'
+      || state === 'Starting'
+      || state === 'Stopping'
+      || state === 'Terminating'
+      || state === 'Migrating') {
+      return "waiting"
+    } else if (state === 'Running') {
+      return "running"
+    } else if (state === 'Stopped' || state === 'Paused') {
+      return "stopped"
+    } else if (state === 'Unknown') {
+      return "error"
+    }else{
+      return "error"
+    }
+  }
+
   return (
     <>  
         <div>
@@ -254,6 +241,11 @@ const Status = (props) => {
               <div className={styles.itemVm} >
                 <div className={styles.icon}>
                   <i className="ico-type40-vm"></i>
+                  <Indicator
+                      className={styles.indicator}
+                      type={getState(store.detail.vm?.state)}
+                      flicker
+                    />
                 </div>
                 <div className={styles.content}>
                   <div className={styles.text}>

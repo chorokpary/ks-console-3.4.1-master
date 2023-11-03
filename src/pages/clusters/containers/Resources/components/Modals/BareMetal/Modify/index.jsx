@@ -30,9 +30,8 @@ const RegistModal = (props) => {
       })
 
       data.target_ip_array = target_array 
-      console.log("data : "+ JSON.stringify(data))
-      
-      // onOk({ ...data })
+
+      onOk({ ...data })
     })
   }
 

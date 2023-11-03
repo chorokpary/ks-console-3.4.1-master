@@ -281,13 +281,13 @@ const CpuUsage = (props) => {
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
-                        <p><i className="ico-type24-powericon"></i> <span className="em">{isNaN(x86PowerPercent) ? 0 : x86PowerPercent}</span> <span className="unit">W</span></p>
+                        <p><i className="ico-type24-powericon"></i> <span className="em">{(isNaN(x86PowerPercent) || isFinite(x86PowerPercent)) ? 0 : x86PowerPercent}</span> <span className="unit">W</span></p>
                       </div>
                     </div>
                   </div>
                   <div className="graph_wrap">
                     <div className="graph_bar">
-                      <div className="bar animate-bar" style={{ width: `${isNaN(x86PowerPercent) ? 0 : x86PowerPercent}%` }}></div>
+                      <div className="bar animate-bar" style={{ width: `${(isNaN(x86PowerPercent) || isFinite(x86PowerPercent)) ? 0 : x86PowerPercent}%` }}></div>
                     </div>
                   </div>
                 </div>
@@ -299,13 +299,13 @@ const CpuUsage = (props) => {
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
-                        <p><i className="ico-type24-powericon"></i> <span className="em">{isNaN(armPowerPercent) ? 0 : armPowerPercent}</span> <span className="unit">W</span></p>
+                        <p><i className="ico-type24-powericon"></i> <span className="em">{(isNaN(armPowerPercent) || isFinite(armPowerPercent)) ? 0 : armPowerPercent}</span> <span className="unit">W</span></p>
                       </div>
                     </div>
                   </div>
                   <div className="graph_wrap">
                     <div className="graph_bar">
-                      <div className="bar second animate-bar" style={{ width: `${isNaN(armPowerPercent) ? 0 : armPowerPercent}%` }}></div>
+                      <div className="bar second animate-bar" style={{ width: `${(isNaN(armPowerPercent) || isFinite(armPowerPercent)) ? 0 : armPowerPercent}%` }}></div>
                     </div>
                   </div>
                 </div>
