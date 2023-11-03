@@ -10,3 +10,21 @@
   background-color: #ffffff;
   border: solid 1px $light-color03;
 }
+
+.divwrap {
+  padding: 5px;
+  display: flex;
+  position: relative;
+
+  .div_left {
+    position: relative;
+    width: 50%;
+    padding-right: 5px;
+  }
+
+  .div_right {
+    position: relative;
+    width: 50%;
+    padding-left: 5px;
+  }
+}

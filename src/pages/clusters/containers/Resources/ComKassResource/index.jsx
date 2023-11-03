@@ -9,7 +9,7 @@ import VmStore from 'stores/resources/vms'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
-import { SimpleArea } from 'components/Charts'
+import { SimpleArea, MediumArea } from 'components/Charts'
 
 import styles from './index.scss'
 
@@ -22,10 +22,10 @@ const index = (props) => {
   const [vmData, setVmData] = useState({ cpuData: [], memoryData: [] });
   const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] });
 
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
-  const [vmInboundData, setVmInboundData] = useState({});
-  const [vmOutboundData, setVmOutboundData] = useState({});
+  const [cpuData, setCpuData] = useState([]);
+  const [memoryData, setMemoryData] = useState([]);
+  const [inboundData, setInboundData] = useState({});
+  const [outboundData, setOutboundData] = useState({});
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -62,7 +62,6 @@ const index = (props) => {
      const vmList = await vmStore.fetchList({ limit: 1000 })
      setVmList(vmList)
 
-
     const paramsData = Object.assign(params, {
       start : params.start,
       end : params.end,
@@ -77,36 +76,40 @@ const index = (props) => {
     }
 
     const getVmCpuUsageData = async () => {
-      const vmCpuData = await customStore.fetchMetric({
+      const cpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
         ...paramsData,
       })
-      setVmCpuData(vmCpuData)
+      setCpuData(cpuData)
     };
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const vmMemoryData = await customStore.fetchMetric({
+      const memoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
       })
-      setVmMemoryData(vmMemoryData)
+      setMemoryData(memoryData)
     };
 
     const getVmInboundData = async () => {
-      const vmInboundData = await customStore.fetchMetric({
+      const inboundData = await customStore.fetchMetric({
         expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         ...paramsData,
       })
+      
+      setInboundData(inboundData[0])
     };
    
     // vm outbound data
     const getVmOutboundData = async () => {
-      const vmOutboundData= await customStore.fetchMetric({
+      const outboundData= await customStore.fetchMetric({
         expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         ...paramsData,
       })
+
+      setOutboundData(outboundData[0])
     };
     
     getVmCpuUsageData();
@@ -123,8 +126,8 @@ const index = (props) => {
     let kaasCpuFilteredData = [];
     let kaasMemoryFilteredData = [];
 
-    if (vmCpuData.length > 0) {
-      vmCpuData.map(obj => {
+    if (cpuData.length > 0) {
+      cpuData.map(obj => {
         if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
           vmCpuFilteredData.push(obj)
         } else {
@@ -132,8 +135,8 @@ const index = (props) => {
         }
       })
     }
-    if (vmMemoryData.length > 0) {
-      vmMemoryData.map(obj => {
+    if (memoryData.length > 0) {
+      memoryData.map(obj => {
         if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
           vmMemoryFilteredData.push(obj)
         } else {
@@ -144,19 +147,19 @@ const index = (props) => {
 
     setVmData({ ...vmData, ['cpuData']: vmCpuFilteredData, ['memoryData']: vmMemoryFilteredData })
     setKaasData({ ...kaasData, ['cpuData']: kaasCpuFilteredData, ['memoryData']: kaasMemoryFilteredData })
-  }, [vmCpuData, vmMemoryData, vmList])
+  }, [cpuData, memoryData, vmList])
 
+  console.log("cpuData : "+ JSON.stringify(cpuData))
 
   const getMonitoringCfgs = () => {
 
-    
     return [
       {
         type: 'utilisation',
         title: 'CPU_USAGE',
         unit: '%',
         legend: ['CPU_USAGE'],
-        data: vmCpuData,
+        data: cpuData,
       },
       {
         type: 'utilisation',
@@ -164,14 +167,14 @@ const index = (props) => {
         unit: '%',
         unitType: 'memory',
         legend: ['MEMORY_USAGE'],
-        data: vmMemoryData,
+        data: memoryData,
       },
       {
         type: 'bandwidth',
         title: 'NETWORK_TRAFFIC',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
-        data: [vmOutboundData , vmInboundData],
+        data: [outboundData , inboundData],
       },
     ]
   }
@@ -179,22 +182,38 @@ const index = (props) => {
   const { isLoading, isRefreshing } = customStore
   const configs = getMonitoringCfgs()
 
-  console.log("vmData : "+ JSON.stringify(vmData))
-
   return (
+   
       <MonitoringController
           title={t('컴퓨팅/KaaS 리소스')}
           onFetch={fetchData}
           loading={isLoading}
           refreshing={isRefreshing}       
         >
-          {configs.map(item => {
-            const config = getAreaChartOps(item)
-            if (isEmpty(config.data)) return null
-            return <SimpleArea key={config.title} width="100%" {...config} />
-          })}
-          
-        </MonitoringController>       
+          <div className={styles.divwrap}>
+            {configs.map((item, index) => {
+              const config = getAreaChartOps(item)
+
+              if (isEmpty(config.data)) return null
+              if (item.type != "utilisation") return null
+              return (
+                <div key={config.title} className={index%2 == 1 ? styles.div_right : styles.div_left}>
+                    <MediumArea width="100%" height={150} {...config} />
+                </div>
+              )
+            })}
+          </div>
+          {configs.map((item, index) => {
+              const config = getAreaChartOps(item)
+
+              if (isEmpty(config.data)) return null
+              if (item.type != "bandwidth") return null
+              return <SimpleArea key={config.title} width="100%" {...config} />
+
+            })}
+        </MonitoringController>    
+  
+
   );
 };
 

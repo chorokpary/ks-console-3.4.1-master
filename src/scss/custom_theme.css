@@ -211,7 +211,7 @@ div.flatpickr-calendar .flatpickr-months .flatpickr-month .flatpickr-dropdown .d
 }
 
 /***** 목록,상세,생성 화면 *****/
-/* 상세 페이지 > 우측 선택 */
+/* 상세 우측 메뉴탭 */
 a:hover.src-core-containers-Base-Detail-index__navItem {
   color: #a8bbff !important;
 }
@@ -223,13 +223,10 @@ a:hover.src-core-containers-Base-Detail-index__navItem {
   border-color: #4465dc !important;
 }
 
-/* 상세 > 리비전 기록 : 디플로이먼트 */
-.d2h-ins {
-  background-color: rgba(199, 202, 240, 0.7) !important;
-}
-
+/* 상세 > 리비전 기록 */
 .d2h-ins {
   border-color: #b4c0e2 !important;
+  background-color: rgba(199, 202, 240, 0.7) !important;
 }
 
 /* 상세 > 메타데이터 */
@@ -237,7 +234,7 @@ a:hover.src-core-containers-Base-Detail-index__navItem {
   border-radius: 20px !important;
 }
 
-/* 목록 페이지 타이틀 아이콘 색상 및 정렬 */
+/* 목록 페이지 타이틀 아이콘 사이즈 및 정렬 */
 .src-components-Cards-Banner-index__titleWrapper .icon {
   justify-content: center;
   align-items: center;
@@ -310,17 +307,17 @@ tbody > .table-row:hover td {
   padding: 5px 10px;
 }
 
-/* 생성 모달 popup 상세 컴포넌트 */
+/* 생성 - popup 상세 컴포넌트 */
 .form-group-content {
   margin-top: 0 !important;
 }
 
-/* 접히는 박스 */
+/* 토글 접히는 박스 */
 .form-group-title-toggle {
   height: 30px;
 }
 
-/* 생성 모달 안 목록 디자인 */
+/* 생성 - 목록 디자인 */
 .src-components-Base-Modal-index__body table thead th {
   text-transform: uppercase !important;
   border-bottom: 1px solid #f1f1f1 !important;
@@ -337,7 +334,7 @@ tbody > .table-row:hover td {
   border-bottom: 0 !important;
 }
 
-/* 생성 모달 안 목록 row 추가 테이블 border-bottom */
+/* 생성 - 목록 row 추가 테이블 border-bottom */
 div[class$=-Regist-index__table] > table {
   border-collapse: none !important;
 }
@@ -346,7 +343,7 @@ div[class$=-Regist-index__table] > table > tbody > tr > td {
   border-bottom: #eff4f9 !important;
 }
 
-/* 생성 모달 안 목록 선택된 x 버튼 디자인 */
+/* 생성 - 목록 선택 삭제 x 버튼 디자인 */
 div[class$=__removeCheckWrapper] {
   display: flex;
 }
@@ -355,10 +352,15 @@ div[class$=__removeCheckWrapper] > span > .button-size-normal.has-icon {
   border: 1px solid #5680ec !important;
   background-color: #5680ec !important;
   box-shadow: none;
+  color: #ffffff !important;
   display: flex !important;
 }
 
-/* 생성화면 아이콘 박스 선택 : OS 선택 등 */
+div[class$=__removeCheckWrapper] > span > .button-size-normal.has-icon span svg {
+  color: #ffffff !important;
+}
+
+/* 생성 - 아이콘 박스 선택 : OS 선택 등 */
 .src-pages-clusters-containers-Resources-components-CardSelect-index__container li:first-child {
   margin-left: 12px;
 }
@@ -389,12 +391,12 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   color: #3617ce !important;
 }
 
-/* 공통 상세 breadcrumb  */
+/* 상세 breadcrumb  */
 .src-core-containers-Base-Detail-BaseInfo-index__breadcrumbs .icon > svg {
   color: #3617ce !important;
 }
 
-/* 공통 상세 좌측 정보 영역 상단 박스 이미지 삭제 */
+/* 상세 좌측 정보 영역 상단 박스 이미지 삭제 */
 .src-core-containers-Base-Detail-BaseInfo-index__card .src-core-containers-Base-Detail-BaseInfo-index__base {
   background-image: none !important;
 }
@@ -447,7 +449,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   fill: #8155ff !important;
 }
 
-/* dashboard dot-area chart circle */
+/* dot-area chart circle */
 .recharts-area-dots > * {
   stroke: #4487ec !important;
 }
@@ -599,7 +601,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(1) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(1) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
-  background: url("/assets/resources/images/icons/icon_menu_1_h.svg") !important;
+  background: url("/assets/resources/images/icons/icon_menu_1_h.svg") no-repeat !important;
 }
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(1) .src-components-Layout-GlobalNav-index__title:before {
@@ -608,7 +610,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(2) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(2) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
-  background: url("/assets/resources/images/icons/icon_menu_2_h.svg") !important;
+  background: url("/assets/resources/images/icons/icon_menu_2_h.svg") no-repeat !important;
 }
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(2) .src-components-Layout-GlobalNav-index__title:before {
@@ -617,7 +619,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(3) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(3) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
-  background: url("/assets/resources/images/icons/icon_menu_3_h.svg") !important;
+  background: url("/assets/resources/images/icons/icon_menu_3_h.svg") no-repeat !important;
 }
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(3) .src-components-Layout-GlobalNav-index__title:before {
@@ -626,7 +628,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(4) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(4) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
-  background: url("/assets/resources/images/icons/icon_menu_4_h.svg") !important;
+  background: url("/assets/resources/images/icons/icon_menu_4_h.svg") no-repeat !important;
 }
 
 .src-components-Layout-GlobalNav-index__navs > a:nth-child(4) .src-components-Layout-GlobalNav-index__title:before {
@@ -642,7 +644,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   display: none;
 }
 
-/* 로그인 커스텀 */
+/* 로그인 */
 .src-core-containers-Login-index__login {
   position: relative;
   padding: 60px !important;
