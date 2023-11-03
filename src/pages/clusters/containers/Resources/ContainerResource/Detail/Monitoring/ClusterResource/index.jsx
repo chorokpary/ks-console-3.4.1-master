@@ -21,6 +21,7 @@ const ClusterResourceStatus = (props) => {
     const [tabActive, setTabActive] = useState('cpu');
     const [tabContentData, setTabContentData] = useState([]);
     const [tabContent, setTabContent] = useState();
+    const [tabIdx, setTabIdx] = useState(0);
     let timer = 0;
 
     useEffect(() => {
@@ -64,7 +65,8 @@ const ClusterResourceStatus = (props) => {
     useEffect(() => {
         setTabData(getData('kaas', kaasData))
         setTabContentData(getContentOptions('kaas', kaasData))
-        setTabContent(getContentOptions('kaas', kaasData)?.[0])
+
+        setTabContent(getContentOptions('kaas', kaasData)?.[tabIdx])
         setIsLoading(false)
     }, [kaasData])
 
@@ -96,9 +98,10 @@ const ClusterResourceStatus = (props) => {
 
     //-----------tab
     // left tab active
-    const onClickLeftTab = (activeTab) => {
+    const onClickLeftTab = (activeTab, idx) => {
         setTabActive(activeTab)
         setTabContent(tabContentData.filter(obj => obj.activeTab == activeTab)[0])
+        setTabIdx(idx)
     }
 
     return (
@@ -115,8 +118,8 @@ const ClusterResourceStatus = (props) => {
                                     <div className="grid_info style_chart">
                                         <div className="box type_chart">
                                             <div className="cont1">
-                                                {tabData && tabData.map(data => (
-                                                    <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab)}>
+                                                {tabData && tabData.map((data, idx) => (
+                                                    <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab, idx)}>
                                                         <div className="title">
                                                             <i className={`ico-type-${data.unitType} ${data.name}`}></i>
                                                             <h5>{data.name}</h5>
