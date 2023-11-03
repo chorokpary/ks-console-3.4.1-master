@@ -16,19 +16,39 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { observer, inject } from 'mobx-react'
 
 import { Columns, Column, Loading, Icon } from '@kube-design/components'
 import { Card } from 'components/Base'
 import { StatusCircle } from 'components/Cards/Monitoring'
 import { default as ClusterResourceStatus } from './ClusterResource'
+import ResourceStore from 'stores/resources/containerresource'
 
 import styles from './index.scss'
 
 const index = (props) => {
+    const resourceStore = new ResourceStore();
+    const [machines, setMachines] = useState();
+    const [isLoading, setIsLoading] = useState(true);
 
-    const store = props.detailStore;
+    let timer = 0;
+    useEffect(() => {
+        fetchData(0);
+
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [])
+
+    const fetchData = (timerSec) => {
+        timer = setTimeout(async () => {
+            await resourceStore.fetchMachines(props.match.params);
+            setMachines(resourceStore.machines);
+            setIsLoading(false)
+            fetchData(5000);
+        }, timerSec)
+    }
 
     const cluster = () => {
         return props.match.params.cluster
@@ -36,10 +56,9 @@ const index = (props) => {
 
     const componentHealth = () => {
         const result = {};
-        const machines = store.machines
-        const node = {total : machines?.length, health: machines?.filter(obj => obj.ready_status).length}
+        const node = { total: machines?.length, health: (machines?.length > 0 ? machines?.filter(obj => obj.ready_status).length : 0)}
         result.counts = {node: node}
-        result.isLoading = machines?.isLoading
+        result.isLoading = isLoading
         return result
     }
 

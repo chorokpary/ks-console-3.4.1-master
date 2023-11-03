@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+import { Loading } from '@kube-design/components';
 import { getAreaChartOps } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
@@ -106,44 +107,42 @@ const ClusterResourceStatus = (props) => {
 
     return (
         <>
-            {
-                isLoading ?
-                    <div>{t('LOADING')}</div>
-                    :
-                    kaasData.cpuData.length > 0 && kaasData.memoryData.length > 0 ?
-                        <div className="grid-stack-item">
-                            <div className="grid-stack-item-content">
-                                {/* grid_item */}
-                                <div className="grid_item">
-                                    <div className="grid_info style_chart">
-                                        <div className="box type_chart">
-                                            <div className="cont1">
-                                                {tabData && tabData.map((data, idx) => (
-                                                    <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab, idx)}>
-                                                        <div className="title">
-                                                            <i className={`ico-type-${data.unitType} ${data.name}`}></i>
-                                                            <h5>{data.name}</h5>
-                                                        </div>
-                                                        <div className="data">
-                                                            <div className="number_wrap rgt">
-                                                                <p><span className="em">{data._used}</span><span className="unit">{t(data._unit)}</span></p>
-                                                            </div>
-                                                        </div>
+            <div className="grid-stack-item">
+                <div className="grid-stack-item-content">
+                    {/* grid_item */}
+                    <Loading spinning={isLoading}>
+                        <div className="grid_item">
+                            <div className="grid_info style_chart">
+                                <div className="box type_chart">
+                                    <div className="cont1">
+                                        {tabData && tabData.map((data, idx) => (
+                                            <div className={`chart_tab ${tabActive == data.activeTab ? 'on' : ''}`} key={data.name} onClick={() => onClickLeftTab(data.activeTab, idx)}>
+                                                <div className="title">
+                                                    <i className={`ico-type-${data.unitType} ${data.name}`}></i>
+                                                    <h5>{data.name}</h5>
+                                                </div>
+                                                <div className="data">
+                                                    <div className="number_wrap rgt">
+                                                        <p><span className="em">{data._used}</span><span className="unit">{t(data._unit)}</span></p>
                                                     </div>
-                                                ))}
+                                                </div>
                                             </div>
-                                            <div className="cont2">
-                                                <TabContent option={tabContent}></TabContent>
-                                            </div>
-                                        </div>
+                                        ))}
+                                    </div>
+                                    <div className="cont2">
+                                        {kaasData.cpuData.length > 0 && kaasData.memoryData.length > 0 ?
+                                            <TabContent option={tabContent}></TabContent>
+                                            :
+                                            <div>모니터링 데이터가 없습니다.</div>
+                                        }
                                     </div>
                                 </div>
-                                {/* // grid_item */}
                             </div>
-                        </div >  
-                        :
-                        <div>모니터링 데이터가 없습니다.</div>
-            }
+                        </div>
+                    </Loading>
+                    {/* // grid_item */}
+                </div>
+            </div >  
         </>
     )
 }
