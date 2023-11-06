@@ -148,7 +148,7 @@ export default class MediatedDevice extends React.Component {
     }
 
     getBanner = () => {
-        return <i className="ico-type-mediatedvgpu"></i>
+        return <i className="ico-type40-mediatedvgpu"></i>
     }
 
     render() {

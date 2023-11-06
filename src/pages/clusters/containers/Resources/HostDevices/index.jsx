@@ -147,7 +147,7 @@ export default class HostDevices extends React.Component {
     }
 
     getBanner = () => {
-        return <i className="ico-type-hostdevice"></i>
+        return <i className="ico-type40-hostdevice"></i>
     }
 
     render() {
