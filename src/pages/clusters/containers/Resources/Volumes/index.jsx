@@ -203,7 +203,6 @@ export default class ResourcesVolumes extends React.Component {
   }
 
   mapperAccessMode = accessModes => {
-    console.log(accessModes)
     const modes = map_accessModes(accessModes)
     return <span>{modes.join(',')}</span>
   }

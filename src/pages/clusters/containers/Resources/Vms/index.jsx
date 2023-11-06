@@ -59,8 +59,9 @@ export default class Vms extends React.Component {
   }
 
   refreshHandler = () => {
+    const { page, limit } = toJS(this.props.store.list);
     if (this.isRuning) {
-      this.getData({ silent: true })
+      this.getData({ silent: true, page, limit })
     } else {
       clearInterval(this.refreshTimer)
       this.refreshTimer = null
@@ -74,6 +75,7 @@ export default class Vms extends React.Component {
   }
 
   getData = params => {
+    console.log("params 22 :"+ JSON.stringify(params))
     this.props.store.fetchList({
       ...this.props.match.params,
       ...params,
