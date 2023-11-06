@@ -66,6 +66,7 @@ const BareMetalCarbonIndicator = () => {
         type: 'utilisation',
         title: '전력 사용량',
         legend: ['전력 사용량'],
+        unit: 'carbonPower',
         unitTxt: 'kWh',
         data,
       },
@@ -131,10 +132,10 @@ const BareMetalCarbonIndicator = () => {
           <Card
             title={'ARM'}
             empty={t('NO_MONITORING_DATA')}
-            isEmpty={!x86PowerData[0]}
+            isEmpty={!armPowerData[0]}
           >
             <div className={styles.content}>
-              {getMonitoringCfgs(x86PowerData).map(item => {
+              {getMonitoringCfgs(armPowerData).map(item => {
                 const config = getAreaChartOps(item)
 
                 if (isEmpty(config.data)) return null
@@ -152,16 +153,16 @@ const BareMetalCarbonIndicator = () => {
           <Card
             title={'x86'}
             empty={t('NO_MONITORING_DATA')}
-            isEmpty={!armPowerData[0]}
+            isEmpty={!x86PowerData[0]}
           >
             <div className={styles.content}>
-              {getMonitoringCfgs(armPowerData).map(item => {
+              {getMonitoringCfgs(x86PowerData).map(item => {
                 const config = getAreaChartOps(item)
 
                 if (isEmpty(config.data)) return null
 
                 return (
-                  <div key={'arm' + item.title} className={styles.box}>
+                  <div key={'x86' + item.title} className={styles.box}>
                     <SimpleArea width="100%" height={190} {...config} unit={item.unitTxt} />
                   </div>
                 )

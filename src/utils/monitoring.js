@@ -173,14 +173,17 @@ export const getValueByUnit = (num, unit, precision = 2) => {
     case 'ms':
       value *= 1000
       break
+    case 'carbonPower':
+      value *= 0.001
+      break
     case 'carbonCo2':
-      value = (Math.round((value * 0.4781) / 0.1) * 0.1)
+      value = (Math.round((value * 0.4781) / 0.1) * 0.1) * 0.001
       break
     case 'carbonTree':
-      value = (Math.round((value * 0.1157625) / 0.1) * 0.1)
+      value = (Math.round((value * 0.1157625) / 0.1) * 0.1) * 0.001
       break
     case 'carbonCost':
-      value = (value * 111.16)
+      value = (value * 111.16) * 0.001
       break
   }
 
