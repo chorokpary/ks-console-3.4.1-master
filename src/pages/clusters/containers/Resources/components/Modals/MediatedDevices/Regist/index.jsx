@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Radio, Toggle } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Radio, Toggle, Loading } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
@@ -16,8 +16,9 @@ const RegistModal = (props) => {
     const [formData, setFormData] = useState({});
 
     const [deviceDataList, setDeviceDataList] = useState([]);
-    const [deviceCheckItem, setDeviceCheckItem] = useState('ctest');
+    const [deviceCheckItem, setDeviceCheckItem] = useState('');
     const [isGpu, setIsGpu] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleOk = () => {
         const onOk = props.onOk;
@@ -37,13 +38,30 @@ const RegistModal = (props) => {
         setModalView(false);
     }
 
+    let timer = 0;
     useEffect(() => {
-        const getDeviceData = async () => {
-            const listDevice = await mediatedDevicesStore.fetchDeviceList();
-            setDeviceDataList(listDevice.vgpu_profiles);
-        };
-        getDeviceData();
+
+        Promise.all([getDeviceData()]).then((values) => {
+            timer = setTimeout(async () => {
+                if (values[0].length > 0) {
+                    setDeviceDataList(values[0])
+                    setIsLoading(false)
+                }
+            }, 1000)
+        });
+
+        return () => {
+            clearTimeout(timer)
+        }
+
     }, [])
+
+    const getDeviceData = () => {
+        return new Promise(async (resolve, reject) => {
+            const listDevice = await mediatedDevicesStore.fetchDeviceList();
+            resolve(listDevice)
+        })
+    };
 
     return (
         <>
@@ -78,12 +96,12 @@ const RegistModal = (props) => {
                                 <table>
                                     <colgroup>
                                         <col width="5%" />
-                                        <col width="15%" />
-                                        <col width="20%" />
+                                        <col width="12%" />
+                                        <col width="18%" />
                                         <col width="10%" />
                                         <col width="10%" />
-                                        <col width="10%" />
-                                        <col width="15%" />
+                                        <col width="12%" />
+                                        <col width="13%" />
                                         <col width="15%" />
                                     </colgroup>
                                     <thead>
@@ -99,14 +117,16 @@ const RegistModal = (props) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {!deviceDataList?.length &&
+                                        {isLoading ? <tr><td colSpan="8" className="no-data" style={{ textAlign: 'center' }}><Loading /></td></tr>
+                                            :
+                                            deviceDataList?.length < 1 ?
                                             <tr>
                                                 <td colSpan="8" className="no-data">
                                                     <p>할당 가능한 자원이 없습니다.</p>
                                                 </td>
                                             </tr>
-                                        }
-                                        {deviceDataList?.map((data, key) => (
+                                            :
+                                            deviceDataList?.map((data, key) => (
                                             <tr key={data.name}>
                                                 <td>
                                                     <Radio name={`select-${data.name}`}
@@ -143,7 +163,6 @@ const RegistModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue=""
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>
