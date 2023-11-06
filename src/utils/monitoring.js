@@ -173,6 +173,15 @@ export const getValueByUnit = (num, unit, precision = 2) => {
     case 'ms':
       value *= 1000
       break
+    case 'carbonCo2':
+      value = (Math.round((value * 0.4781) / 0.1) * 0.1)
+      break
+    case 'carbonTree':
+      value = (Math.round((value * 0.1157625) / 0.1) * 0.1)
+      break
+    case 'carbonCost':
+      value = (value * 111.16)
+      break
   }
 
   return Number(value) === 0 ? 0 : Number(value.toFixed(precision))
@@ -467,7 +476,7 @@ export const unitTransformMap = {
     ['months', 10000 * 60 * 60 * 24 * 30],
   ]),
   'percent (0-100)': unitTransformFactory([['%', 0]]),
-  'percent (0.0-1.0)': function(number, decimals) {
+  'percent (0.0-1.0)': function (number, decimals) {
     const format = unitTransformFactory([['%', 0]])
     return format(number * 100, decimals)
   },
@@ -490,7 +499,7 @@ export function unitTransformGroupFactory(config) {
 }
 
 export function unitTransformFactory(config) {
-  return function(number, decimals = 0) {
+  return function (number, decimals = 0) {
     const isNegative = number < 0
     const abs = Math.abs(number)
 

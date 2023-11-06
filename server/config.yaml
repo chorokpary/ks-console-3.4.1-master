@@ -383,7 +383,7 @@ client:
                 title: "BareMetal 모니터링",
               }
             - {
-                name: baremetalcarbon,
+                name: baremetal-carbon-indicator,
                 title: "BareMetal 탄소지표 통계",
               }              
             - {
