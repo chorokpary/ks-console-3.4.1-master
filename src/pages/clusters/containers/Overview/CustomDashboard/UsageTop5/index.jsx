@@ -85,7 +85,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [vmList, setVmList] = useState([])
+  const [vmList, setVmList] = useState()
   const [sortOption, setSortOption] = useState(sortOptionNode)
   const [sortMetric, setSortMetric] = useState(sortOption[0].value)
   const [unitType, setUnitType] = useState({ unit: 'cpu', value: 'CPU 사용량' })
@@ -105,61 +105,58 @@ const UsageTop5 = ({ x, y, w, h }) => {
     setLoading(false)
   };
 
-  const handleDataList = (data, type) => {
-    let vmFilteredData = [];
-    let kaasFilteredData = []
+  const handleDataList = (data) => {
+    let filteredData = [];
 
     data.map(obj => {
-      if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
-        let name = obj.metric.pod
-        let usage = obj.values[0][1]
-        vmFilteredData.push({ name, usage })
-      } else {
-        let name = obj.metric.pod
-        let usage = obj.values[0][1]
-        kaasFilteredData.push({ name, usage })
-      }
+      let name = obj.metric.pod
+      let usage = obj.values[0][1]
+      filteredData.push({ name, usage })
     })
-    vmFilteredData.sort(function (a, b) {
+    filteredData.sort(function (a, b) {
       return b.usage - a.usage;
     });
-    kaasFilteredData.sort(function (a, b) {
-      return b.usage - a.usage;
-    });
-
-    // type : vm, kaas
-    setList(type == 'vm' ? vmFilteredData.splice(0, 5) : kaasFilteredData.splice(0, 5))
+    setList(filteredData.splice(0, 5))
   }
 
   useEffect(() => {
     // vm list
     const getVmList = async () => {
       const vmList = await vmStore.fetchList({ limit: 1000 })
-      setVmList(vmList)
+      let vmNames = '';
+      vmList.map(obj => vmNames = vmNames + obj.name + "|")
+      setVmList(vmNames)
     };
     getVmList();
 
     getNodeData();
   }, [])
 
+
   const getCpuData = async (type) => {
+    let filtered = `pod=~"${vmList}"`
+    if (type != 'vm') filtered = `pod!="${vmList}"`
+
     var currentTime = Math.floor(Date.now() / 1000);
     const cpuData = await customStore.fetchMetric({
-      expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+      expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",${filtered}}[5m])) * 100)) / 100`,
       start: currentTime,
       end: currentTime,
     })
-    handleDataList(cpuData, type)
+    handleDataList(cpuData)
   };
 
   const getMemoryData = async (type) => {
+    let filtered = `pod=~"${vmList}"`
+    if (type != 'vm') filtered = `pod!="${vmList}"`
+
     var currentTime = Math.floor(Date.now() / 1000);
     const memoryData = await customStore.fetchMetric({
-      expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+      expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",${filtered}}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",${filtered}}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",${filtered}}`,
       start: currentTime,
       end: currentTime,
     })
-    handleDataList(memoryData, type)
+    handleDataList(memoryData)
   };
 
 

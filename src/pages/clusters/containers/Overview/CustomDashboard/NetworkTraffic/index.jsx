@@ -32,11 +32,8 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
 
   const [podData, setPodData] = useState([]);
 
-  const [vmList, setVmList] = useState([])
   const [vmData, setVmData] = useState({ vmInboundData: [], vmOutboundData: [] });
   const [kaasData, setKaasData] = useState({ vmInboundData: [], vmOutboundData: [] });
-  const [vmInboundData, setVmInboundData] = useState([]);
-  const [vmOutboundData, setVmOutboundData] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
@@ -62,60 +59,45 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
 
       // vm list
       const vmList = await vmStore.fetchList({ limit: 1000 })
-      setVmList(vmList)
+      let vmNames = '';
+      vmList.map(obj => vmNames = vmNames + obj.name + "|")
 
       // vm inbound data
       var currentTime = Math.floor(Date.now() / 1000);
       const vmInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
+        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmNames}"}[5m])`,
         start: currentTime - 30000,
         end: currentTime,
       })
-      setVmInboundData(vmInboundData)
 
       // vm outbound data
       const vmOutboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
+        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmNames}"}[5m])`,
         start: currentTime - 30000,
         end: currentTime,
       })
-      setVmOutboundData(vmOutboundData)
+
+      const kaasInboundData = await customStore.fetchMetric({
+        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmNames}"}[5m])`,
+        start: currentTime - 30000,
+        end: currentTime,
+      })
+
+      // vm outbound data
+      const kaasOutboundData = await customStore.fetchMetric({
+        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmNames}"}[5m])`,
+        start: currentTime - 30000,
+        end: currentTime,
+      })
+
+      setVmData({ ...vmData, ['vmInboundData']: vmInboundData, ['vmOutboundData']: vmOutboundData })
+      setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundData, ['vmOutboundData']: kaasOutboundData })
 
       setLoading(false)
     };
     getData();
 
   }, [])
-
-  // vm, kaas > inbound, outbound data set
-  useEffect(() => {
-    let vmInboundFilteredData = [];
-    let vmOutboundFilteredData = [];
-    let kaasInboundFilteredData = [];
-    let kaasOutboundFilteredData = [];
-
-    if (vmInboundData.length > 0) {
-      vmInboundData.map(obj => {
-        if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
-          vmInboundFilteredData.push(obj)
-        } else {
-          kaasInboundFilteredData.push(obj)
-        }
-      })
-    }
-    if (vmOutboundData.length > 0) {
-      vmOutboundData.map(obj => {
-        if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
-          vmOutboundFilteredData.push(obj)
-        } else {
-          kaasOutboundFilteredData.push(obj)
-        }
-      })
-    }
-
-    setVmData({ ...vmData, ['vmInboundData']: vmInboundFilteredData, ['vmOutboundData']: vmOutboundFilteredData })
-    setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundFilteredData, ['vmOutboundData']: kaasOutboundFilteredData })
-  }, [vmInboundData, vmOutboundData, vmList])
 
   // first render
   useEffect(() => {

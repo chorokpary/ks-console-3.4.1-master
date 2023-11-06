@@ -155,7 +155,7 @@ const BmcNode = ({ x, y, w, h,
   }
 
   useEffect(() => {
-    if (nodeList.length > 0 && metricState.length > 0) {
+    if (nodeList.length > 0) {
       var on = 0;
       var off = 0;
       var unknown = 0;
@@ -163,7 +163,7 @@ const BmcNode = ({ x, y, w, h,
         const state = getMetricValue(metricState, obj)
         if (state == 1 || state == 3) {
           on++
-        } else if (state == 1 || state == 3) {
+        } else if (state == 2 || state == 4) {
           off++
         } else {
           unknown++

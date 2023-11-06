@@ -41,11 +41,8 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
 
   const [podData, setPodData] = useState([]);
 
-  const [vmList, setVmList] = useState([])
   const [vmData, setVmData] = useState({ cpuData: [], memoryData: [] });
   const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] });
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
 
   useEffect(() => {
 
@@ -74,25 +71,42 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
 
       // vm list
       const vmList = await vmStore.fetchList({ limit: 1000 })
-      setVmList(vmList)
+      let vmNames = '';
+      vmList.map(obj => vmNames = vmNames + obj.name + "|")
 
       // vm cpu data
       const step = '5m'
       const times = 100
       var currentTime = Math.floor(Date.now() / 1000);
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${vmNames}"}[${step}])) * ${times})) / 100`,
         start: currentTime - 30000,
         end: currentTime,
       })
-      setVmCpuData(vmCpuData)
+
       // vm memory data
       const vmMemoryData = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmNames}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmNames}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmNames}"}`,
         start: currentTime - 30000,
         end: currentTime,
       })
-      setVmMemoryData(vmMemoryData)
+
+      // kaas cpu data
+      const kaasCpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod!~"${vmNames}"}[${step}])) * ${times})) / 100`,
+        start: currentTime - 30000,
+        end: currentTime,
+      })
+
+      // kaas memory data
+      const kaasMemoryData = await customStore.fetchMetric({
+        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmNames}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmNames}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmNames}"}`,
+        start: currentTime - 30000,
+        end: currentTime,
+      })
+
+      setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })
+      setKaasData({ ...kaasData, ['cpuData']: kaasCpuData, ['memoryData']: kaasMemoryData })
 
       setLoading(false)
     };
@@ -125,36 +139,6 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
     handleData('node', metricData);
     handleContenOption('node', metricData);
   }, [metricData])
-
-  // vm, kass > cpu, memory set
-  useEffect(() => {
-    let vmCpuFilteredData = [];
-    let vmMemoryFilteredData = [];
-    let kaasCpuFilteredData = [];
-    let kaasMemoryFilteredData = [];
-
-    if (vmCpuData.length > 0) {
-      vmCpuData.map(obj => {
-        if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
-          vmCpuFilteredData.push(obj)
-        } else {
-          kaasCpuFilteredData.push(obj)
-        }
-      })
-    }
-    if (vmMemoryData.length > 0) {
-      vmMemoryData.map(obj => {
-        if (vmList.find(vmObj => vmObj.name == obj.metric.pod)) {
-          vmMemoryFilteredData.push(obj)
-        } else {
-          kaasMemoryFilteredData.push(obj)
-        }
-      })
-    }
-
-    setVmData({ ...vmData, ['cpuData']: vmCpuFilteredData, ['memoryData']: vmMemoryFilteredData })
-    setKaasData({ ...kaasData, ['cpuData']: kaasCpuFilteredData, ['memoryData']: kaasMemoryFilteredData })
-  }, [vmCpuData, vmMemoryData, vmList])
 
   // handle left data
   const handleData = (rightTabActive, metricData) => {
