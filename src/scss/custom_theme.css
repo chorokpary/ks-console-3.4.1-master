@@ -25,10 +25,15 @@ a:hover {
 .select.is-open .select-control,
 .textarea:focus,
 textarea:focus,
-input.input:focus,
-input:focus.input {
+input.input:focus {
   border: 1px solid #3617ce !important;
   box-shadow: 0px 4px 4px 0px rgba(86, 128, 236, 0.3) !important;
+}
+
+.input-search > input:focus,
+.src-components-Tables-Base-FilterInput-index__wrapper > input:focus {
+  border: 1px solid #79879c !important;
+  box-shadow: none !important;
 }
 
 /* 셀렉트 hover background 색삭제 */

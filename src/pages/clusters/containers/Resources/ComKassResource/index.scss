@@ -3,9 +3,12 @@
 @import '~scss/variables';
 @import '~scss/mixins';
 
+.title {
+  padding: 10px;
+}
 
 .wrapper {
-  padding: 12px;
+  padding: 10px;
   border-radius: 4px;
   background-color: #ffffff;
   border: solid 1px $light-color03;

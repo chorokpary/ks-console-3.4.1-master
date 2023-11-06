@@ -93,6 +93,7 @@ const index = (props) => {
       setMemoryData(memoryData)
     };
 
+    // vm inbound data
     const getVmInboundData = async () => {
       const inboundData = await customStore.fetchMetric({
         expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
@@ -145,11 +146,62 @@ const index = (props) => {
       })
     }
 
+    //  작업 중~~~~
+    if(vmCpuFilteredData.length > 0 ){
+
+      console.log("vmCpuFilteredData.length : "+ vmCpuFilteredData.length)
+      vmCpuFilteredData.map(data => {
+        (data.values).map(obj => {
+
+        })
+      })
+
+      const standardJson = vmCpuFilteredData[0]
+      const standardValues = standardJson.values;
+      // console.log("tempJson : "+ JSON.stringify(tempJson))
+
+      let sumCpu = 0;
+      standardValues.map(obj => {
+        // console.log(obj[1])
+        sumCpu += Number(obj[1])
+      })
+      // console.log("sumCpu : "+ sumCpu)
+
+
+      // console.log(JSON.stringify(standardValues))
+      const standardData = getAreaChartOps({
+        type: 'utilisation',
+        title: 'CPU_USAGE_X86',
+        unit: '%',
+        legend: ['CPU_USAGE_X86'],
+        data: [standardJson],
+      })
+
+      const chartDataArray = [];
+      vmCpuFilteredData.map(data => {
+        const chartData = getAreaChartOps({
+            type: 'utilisation',
+            title: 'CPU_USAGE_X86',
+            unit: '%',
+            legend: ['CPU_USAGE_X86'],
+            data: [data],
+          })
+
+        chartDataArray.push(chartData)  
+      })
+
+
+      // console.log(JSON.stringify(chartDataArray))
+    }
+
+   
+
+
     setVmData({ ...vmData, ['cpuData']: vmCpuFilteredData, ['memoryData']: vmMemoryFilteredData })
     setKaasData({ ...kaasData, ['cpuData']: kaasCpuFilteredData, ['memoryData']: kaasMemoryFilteredData })
-  }, [cpuData, memoryData, vmList])
 
-  console.log("cpuData : "+ JSON.stringify(cpuData))
+
+  }, [cpuData, memoryData, vmList])
 
   const getMonitoringCfgs = () => {
 
@@ -190,6 +242,7 @@ const index = (props) => {
           loading={isLoading}
           refreshing={isRefreshing}       
         >
+          <div className={styles.title}>컴퓨팅 리소스 사용량</div>
           <div className={styles.divwrap}>
             {configs.map((item, index) => {
               const config = getAreaChartOps(item)
@@ -204,13 +257,13 @@ const index = (props) => {
             })}
           </div>
           {configs.map((item, index) => {
-              const config = getAreaChartOps(item)
+            const config = getAreaChartOps(item)
 
-              if (isEmpty(config.data)) return null
-              if (item.type != "bandwidth") return null
-              return <SimpleArea key={config.title} width="100%" {...config} />
+            if (isEmpty(config.data)) return null
+            if (item.type != "bandwidth") return null
+            return <SimpleArea key={config.title} width="100%" {...config} />
 
-            })}
+          })}
         </MonitoringController>    
   
 
