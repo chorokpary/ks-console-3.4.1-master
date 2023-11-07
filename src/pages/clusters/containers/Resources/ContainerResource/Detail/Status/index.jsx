@@ -219,11 +219,11 @@ const Status = (props) => {
         },
     ]
 
-    const renderMonitorings = (nodeName, isExpandFlag, nodeIp) => {
+    const renderMonitorings = (nodeName, isExpandFlag, nodeNetwork) => {
 
         const isExpand = (nodeName == expandItem && isExpandFlag);
         const loading = isLoading;
-        const podName = kaasData.memoryData?.find(obj => obj.metric?.instance?.split(":")[0] === nodeIp)?.metric?.pod
+        const podName = kaasData.memoryData?.find(obj => obj.metric?.instance?.split(":")[0] === nodeNetwork?.ip)?.metric?.pod
         const metrics = {
             ['cpu']: kaasData.cpuData.find(obj => obj.metric.pod === podName)
             , ['memory']: kaasData.memoryData.find(obj => obj.metric.pod === podName)
@@ -310,7 +310,7 @@ const Status = (props) => {
                                         }
                                         <p>IP(네트워크)</p>
                                     </div>
-                                    {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network").ip)}
+                                    {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network"))}
                                     <div className={styles.arrow}>
                                         <Icon name="chevron-down" type={detail.name != expandItem ? '' : (detail.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                                     </div>
@@ -362,7 +362,7 @@ const Status = (props) => {
                                         }
                                         <p>IP(네트워크)</p>
                                     </div>
-                                    {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network").ip)}
+                                    {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network"))}
                                     <div className={styles.arrow}>
                                         <Icon name="chevron-down" type={detail.name != expandItem ? '' : (detail.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                                     </div>

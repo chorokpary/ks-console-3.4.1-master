@@ -403,7 +403,6 @@ const RegistModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue=""
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

@@ -637,7 +637,6 @@ const RegistModal = (props) => {
                                         name="description"
                                         maxLength={256}
                                         rows="1"
-                                        defaultValue=""
                                     />
                                 </Form.Item>
                                 <div style={{ padding: 25 }} />
