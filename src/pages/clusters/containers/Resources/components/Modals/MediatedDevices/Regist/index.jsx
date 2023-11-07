@@ -42,12 +42,21 @@ const RegistModal = (props) => {
     useEffect(() => {
 
         Promise.all([getDeviceData()]).then((values) => {
-            timer = setTimeout(async () => {
-                if (values[0].length > 0) {
-                    setDeviceDataList(values[0])
-                    setIsLoading(false)
-                }
-            }, 1000)
+            const fetchData = (timeSec) => {
+                timer = setTimeout(async () => {
+                    if (values[0].length > 0) {
+                        setDeviceDataList(values[0])
+                        setIsLoading(false)
+                    } else {
+                        if (timeSec === 1000) {
+                            fetchData(2000)
+                        } else {
+                            setIsLoading(false)
+                        }
+                    }
+                }, timeSec)
+            }
+            fetchData(1000);
         });
 
         return () => {
