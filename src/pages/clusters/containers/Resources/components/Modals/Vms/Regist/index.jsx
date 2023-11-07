@@ -169,7 +169,6 @@ const RegistModal = (props) => {
       makeScript += "list: | \n"
 
       listPasswordRoute.map((obj) => {
-        console.log(data['scriptPassword_' + obj])
         if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
           makeScript += data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
           makeScriptStep_1 = true;
@@ -206,8 +205,6 @@ const RegistModal = (props) => {
       }
 
       data.makeScript = makeScript;
-
-      console.log("data : " + JSON.stringify(data))
 
       onOk({ ...data })
     })

@@ -75,7 +75,6 @@ export default class Vms extends React.Component {
   }
 
   getData = params => {
-    console.log("params 22 :"+ JSON.stringify(params))
     this.props.store.fetchList({
       ...this.props.match.params,
       ...params,

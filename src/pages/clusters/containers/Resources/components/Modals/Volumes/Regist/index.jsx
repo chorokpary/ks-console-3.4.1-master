@@ -74,7 +74,6 @@ const RegistModal = (props) => {
       data.access_modes = accesModeArray;
       data.capacity = volumeCapacity;
 
-      console.log("data : "+ JSON.stringify(data))
       onOk({ ...data })
     })
   }

@@ -30,8 +30,7 @@ const RegistModal = (props) => {
       })
 
       data.target_ip_array = target_array 
-      console.log("data : "+ JSON.stringify(data))
-      
+
       onOk({ ...data })
     })
   }
@@ -62,7 +61,6 @@ const RegistModal = (props) => {
     const duplicate = dataList.filter((el) => el.ip == value)
     
     if (value && duplicate.length > 0) {
-      console.log("AA")
       return callback({ message: t('이미 등록된 IP입니다.') })
     }
 

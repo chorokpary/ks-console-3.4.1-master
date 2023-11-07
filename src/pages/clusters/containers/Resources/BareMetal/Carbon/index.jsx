@@ -37,7 +37,6 @@ const Carbon = (props) => {
   }, [])
 
   const fetchData = async () => {
-    console.log(" fetchData ")
     
     const { data } = props.store.list;
 

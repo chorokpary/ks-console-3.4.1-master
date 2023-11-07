@@ -101,7 +101,7 @@ const ModifyModal = (props) => {
 
   const stepMoveCheck = (step) => {
     const { data } = form.current.props;
-    console.log(data)
+
     if(step ==1){
       if(data.resource_name == undefined || data.resource_name == "" 
       || data.cidr == undefined || data.cidr == ""
