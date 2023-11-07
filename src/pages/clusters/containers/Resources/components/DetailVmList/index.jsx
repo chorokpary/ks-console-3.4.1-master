@@ -4,7 +4,6 @@ import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
 import { Panel, Text, Indicator } from 'components/Base'
-import { Icon, Loading } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 
 import styles from './index.scss'
@@ -14,6 +13,18 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 
 import * as common from 'utils/resources'
 import { getAreaChartOps } from 'utils/monitoring'
+
+import {
+  Button,
+  Icon,
+  InputSearch,
+  Level,
+  LevelLeft,
+  LevelRight,
+  Loading,
+  Pagination,
+  Select,
+} from '@kube-design/components'
 
 const DetailVmList = (props) => {
 
@@ -27,15 +38,20 @@ const DetailVmList = (props) => {
   const customStore = new CustomStore();
 
   const [vmDataList, setVmDataList] = useState([]);
+  const [vmSliceDataList, setVmSliceDataList] = useState([]);
+  const [vmSearchDataList, setVmSearchDataList] = useState([]);
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearchFlag, setIsSearchFlag] = useState(false);
 
   const [vmCpuData, setVmCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
-  const intiParams = {"times":50,"step":"10m"}
+  const perPage = 6; 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchValue, setSearchValue] = useState();
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -72,22 +88,34 @@ const DetailVmList = (props) => {
   }
 
   useEffect(() => {
-    const fnGetExternalNetwork = async () => {
-      const vmList = await store.fetchList();
-        if (props.variables === 'security_groups') {
-            setVmDataList(vmList?.filter((row) => row[props.variables].includes(props.name)))
-        } else {
-            setVmDataList(vmList?.filter((row) => row[props.variables] === props.name))
-        }
-        setIsLoading(false)
-    };
-
-    fnGetExternalNetwork();
-    fetchData(intiParams);
-
+    fnGetData();
+    fetchData();
   }, []) 
 
-  const fetchData = async (params) => {
+  const fnGetData = async ({...params} = {}) => {
+    
+    setIsLoading(true);
+    setIsSearchFlag(false); 
+    const page = get(params, "page", 1);
+
+    const vmList = await store.fetchList();
+    const vmFilterData = vmList?.filter((row) => props.variables === 'security_groups' ? row[props.variables].includes(props.name) : row[props.variables] === props.name)
+    const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];    
+
+    const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) : 
+                           (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
+
+    setCurrentPage(page);
+    setVmDataList(vmFilterData);
+    setVmSliceDataList(vmSliceData);
+    setVmSearchDataList(vmSearchData)
+
+    setIsLoading(false);
+  };
+
+  const fetchData = async () => {
+
+    const params = {"times":50,"step":"10m"}
 
     const paramsData = Object.assign(params, {
       start : params.start,
@@ -146,7 +174,50 @@ const DetailVmList = (props) => {
     },
   ]
 
-  const renderContent = (obj) => {
+  const renderContent = () => {
+
+    if(vmSliceDataList.length == 0){
+      const content = (
+        <div className={styles.nodata}>
+          리소스를 찾을 수 없음
+        </div>
+      )
+      return content;
+    }
+
+  const content = (
+      vmSliceDataList.map((obj, index) => {
+          return (
+            <div className={styles.wrapper} key={index}>
+                <div
+                  className={classnames(styles.expandItem, "", {
+                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+                  })}
+                >
+                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
+                    <div className={styles.icon}>
+                      {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
+                      <i className="ico-type40-vm"></i>
+                      <Indicator
+                        className={styles.indicator}
+                        type={getState(obj.state)}
+                        flicker
+                      />
+                    </div>
+                    {renderContentDetail(obj)}
+                  </div>
+                  {renderExtraContent(obj)}
+                </div>    
+          </div>
+          )
+        }
+      )
+    )
+    
+    return <Loading spinning={isLoading}>{content}</Loading> 
+  }
+
+  const renderContentDetail = (obj) => {
 
     return (
       <>
@@ -237,11 +308,9 @@ const DetailVmList = (props) => {
   }
 
   const renderMonitorings = (vnName) => {
-    // const { metrics = {}, isExpand, loading } = props
 
     const isExpand = false;
     const loading = false;
-    const metrics = {}
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
@@ -287,6 +356,73 @@ const DetailVmList = (props) => {
     )
   }
 
+  const getPagination = () => {
+    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
+    const pagination = {"page": currentPage,"limit": perPage,"total": total}
+    return pagination
+  }
+
+  const getSearchData = (data, searchText) => {
+    setIsSearchFlag(true);
+    const resultList = data.filter((row) => {
+      return row["name"]?.toLowerCase().includes(searchText.toLowerCase());
+    });
+    return resultList;
+  }  
+
+  const getSliceData = (data, page) => {
+    const currentPage = page; 
+    const sliceData = data.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    return sliceData;
+  }   
+
+  const handleSearch = value => {
+    setSearchValue(value);
+    fnGetData({
+      name: value,
+    })
+  }
+
+  const handleRefresh = () => {
+    const params = searchValue ? { name: searchValue, page: currentPage } : { page: currentPage }
+    fnGetData(params);
+  }
+
+  const handlePage = page => {
+    const params = page ? { page: page } : {}
+    fnGetData(params);
+  }
+
+  const renderHeader = () => {
+    return (
+      <div className={styles.header}>
+        <InputSearch
+          className={styles.search}
+          name="search"
+          placeholder={t('SEARCH_BY_NAME')}
+          onSearch={handleSearch}
+        />
+        <div className={styles.actions}>
+          <Button type="flat" icon="refresh" onClick={handleRefresh} />
+        </div>
+      </div>
+    )
+  }
+
+  const renderFooter = () => {
+    const pagination = getPagination()
+    const { total } = pagination
+
+    return (
+      <Level className={styles.footer}>
+        <LevelLeft>{t('TOTAL_ITEMS', { num: total })}</LevelLeft>
+        <LevelRight>
+          <Pagination {...pagination} onChange={handlePage} />
+        </LevelRight>
+      </Level>
+    )
+  }
+
   const getState = (state) =>  {
     if (state === 'Provisioning'
       || state === 'Starting'
@@ -308,42 +444,20 @@ const DetailVmList = (props) => {
   return (
     <>  
 
-      {vmDataList.length > 0 && 
-       
-          <Panel title={"가상 머신"} >
-            { vmDataList.map((obj, index) => {
-              return (
-                <div className={styles.wrapper} key={index}>
-                <div
-                  className={classnames(styles.expandItem, "", {
-                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-                  })}
-                >
-                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
-                    <div className={styles.icon}>
-                      {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
-                      <i className="ico-type40-vm"></i>
-                      <Indicator
-                        className={styles.indicator}
-                        type={getState(obj.state)}
-                        flicker
-                      />
-                    </div>
-                    {renderContent(obj)}
-                  </div>
-                  {renderExtraContent(obj)}
-                </div>
-              </div>
-              )
-            }
-            )}
+      {vmDataList.length > 0 &&        
+          <Panel title={"가상 머신"} 
+                 className={classnames(styles.main)}
+          >
+            {renderHeader()}
+            {renderContent()}              
+            {renderFooter()}
           </Panel>       
       }
       
       {vmDataList.length == 0 &&
-        <Panel title={"가상 머신"}>
+        <Panel title={"가상 머신"} >
           <div className={styles.wrapper}>
-            {isLoading? 
+            {isLoading ? 
               <div><Loading /></div>
               : <div>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
             }

@@ -209,6 +209,7 @@
     .text {
       display: table-cell;
       vertical-align: middle;
+      text-align: left;
       width: 16%;
       padding-right: 20px;
 
@@ -285,7 +286,57 @@
   height: 56px;
 }
 
+.nodata {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  background-color: $th-bg-color;
+}
+
 .cluster {
   width: 260px;
   margin-right: 12px;
+}
+
+
+.main {
+  .header {
+    display: flex;
+    padding: 12px;
+    background-color: $th-bg-color;
+
+    .search {
+      width: 100%;
+    }
+
+    .actions {
+      flex: 1 0 auto;
+
+      :global {
+        button {
+          margin-left: 12px;
+
+          &:hover {
+            background-color: $bg-color;
+          }
+        }
+      }
+    }
+  }
+
+  .body {
+    min-height: 80px;
+    padding: 12px;
+    background-color: $th-bg-color;
+  }
+
+  .footer {
+    padding: 10px 12px;
+    background-color: $th-bg-color;
+
+    :global .level-left {
+      @include TypographyParagraph($dark-color01);
+    }
+  }
 }
