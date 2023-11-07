@@ -30,9 +30,13 @@ input.input:focus {
   box-shadow: 0px 4px 4px 0px rgba(86, 128, 236, 0.3) !important;
 }
 
-.input-search > input:focus,
-.src-components-Tables-Base-FilterInput-index__wrapper > input:focus {
+.input-search > input:focus {
   border: 1px solid #79879c !important;
+  box-shadow: none !important;
+}
+
+.src-components-Tables-Base-FilterInput-index__wrapper input:focus {
+  border: none !important;
   box-shadow: none !important;
 }
 
@@ -562,17 +566,11 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   background: #ffffff !important;
 }
 
-.src-components-Layout-GlobalNav-index__nav.src-components-Layout-GlobalNav-index__active {
-  background: #ffffff !important;
-}
-
-.src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title,
-.src-components-Layout-GlobalNav-index__nav.src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title {
+.src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title {
   color: #000 !important;
 }
 
-.src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__desc,
-.src-components-Layout-GlobalNav-index__nav.src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__desc {
+.src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__desc {
   color: #000 !important;
 }
 
@@ -604,8 +602,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   background-repeat: no-repeat !important;
 }
 
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(1) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(1) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
+.src-components-Layout-GlobalNav-index__navs > a:nth-child(1) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before {
   background: url("/assets/resources/images/icons/icon_menu_1_h.svg") no-repeat !important;
 }
 
@@ -613,8 +610,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   background: url("/assets/resources/images/icons/icon_menu_1.svg");
 }
 
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(2) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(2) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
+.src-components-Layout-GlobalNav-index__navs > a:nth-child(2) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before {
   background: url("/assets/resources/images/icons/icon_menu_2_h.svg") no-repeat !important;
 }
 
@@ -622,8 +618,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   background: url("/assets/resources/images/icons/icon_menu_2.svg");
 }
 
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(3) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(3) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
+.src-components-Layout-GlobalNav-index__navs > a:nth-child(3) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before {
   background: url("/assets/resources/images/icons/icon_menu_3_h.svg") no-repeat !important;
 }
 
@@ -631,8 +626,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   background: url("/assets/resources/images/icons/icon_menu_3.svg");
 }
 
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(4) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before,
-.src-components-Layout-GlobalNav-index__navs > a:nth-child(4) .src-components-Layout-GlobalNav-index__active .src-components-Layout-GlobalNav-index__title:before {
+.src-components-Layout-GlobalNav-index__navs > a:nth-child(4) > .src-components-Layout-GlobalNav-index__nav:hover .src-components-Layout-GlobalNav-index__title:before {
   background: url("/assets/resources/images/icons/icon_menu_4_h.svg") no-repeat !important;
 }
 
