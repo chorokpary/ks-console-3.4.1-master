@@ -58,7 +58,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
       setPodData(podData)
 
       // vm list
-      const vmList = await vmStore.fetchList({ limit: 1000 })
+      const vmList = await vmStore.vmList()
       let vmNames = '';
       vmList.map(obj => vmNames = vmNames + obj.name + "|")
 

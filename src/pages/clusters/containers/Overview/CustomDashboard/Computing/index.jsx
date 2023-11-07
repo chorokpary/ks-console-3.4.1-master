@@ -59,7 +59,7 @@ const Computing = ({ computing }) => {
     const getData = async () => {
       setLoading(true)
 
-      const vmlist = await vmStore.fetchList({ limit: 1000 })
+      const vmlist = await vmStore.vmList()
       setVmList(vmlist)
 
       const networklist = await networkStore.fetchList({ limit: 1000 })

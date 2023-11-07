@@ -122,7 +122,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
   useEffect(() => {
     // vm list
     const getVmList = async () => {
-      const vmList = await vmStore.fetchList({ limit: 1000 })
+      const vmList = await vmStore.vmList()
       let vmNames = '';
       vmList.map(obj => vmNames = vmNames + obj.name + "|")
       setVmList(vmNames)

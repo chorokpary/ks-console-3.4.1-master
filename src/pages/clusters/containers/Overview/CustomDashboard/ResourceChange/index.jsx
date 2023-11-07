@@ -51,7 +51,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
       })
       setMetricData(metricData)
 
-      const vmData = await vmStore.fetchList({ limit: 1000, sortBy: 'creation_timestamp' })
+      const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp' })
       handleDate(vmData, 'creation_timestamp', 'vm')
 
       const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp' })

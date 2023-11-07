@@ -10,7 +10,7 @@ const Vm = ({ x, y, w, h }) => {
   useEffect(() => {
     const getVmData = async () => {
       setLoading(true)
-      const vmList = await vmStore.fetchList({ limit: 1000 })
+      const vmList = await vmStore.vmList()
       setList(vmList)
       setLoading(false)
     };

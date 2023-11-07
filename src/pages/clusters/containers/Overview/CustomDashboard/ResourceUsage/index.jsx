@@ -70,7 +70,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
       handlePodData(podData)
 
       // vm list
-      const vmList = await vmStore.fetchList({ limit: 1000 })
+      const vmList = await vmStore.vmList()
       let vmNames = '';
       vmList.map(obj => vmNames = vmNames + obj.name + "|")
 

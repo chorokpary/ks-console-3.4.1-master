@@ -39,7 +39,7 @@ const RecentResource = ({ x, y, w, h }) => {
       handleDate(podList, 'createTime', 'pod')
 
       // vm data
-      const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
+      const vmList = await vmStore.vmList({ sortBy: 'creation_timestamp' })
       handleDate(vmList, 'creation_timestamp', 'vm')
 
       // kaas data

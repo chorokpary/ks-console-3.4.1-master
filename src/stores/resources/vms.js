@@ -107,7 +107,7 @@ export default class VmStore extends Base {
 
     // FloatingIp List 추출
     await this.fetchFloatingList(params);
-    
+
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -178,7 +178,7 @@ export default class VmStore extends Base {
     resourceData.keypair = data.keypair;
 
     // 값 전달 시 invalid_boot_volume 오류 발생
-    resourceData.boot_dv = data.imageType == "I" ? "": data.bootvolume;   
+    resourceData.boot_dv = data.imageType == "I" ? "" : data.bootvolume;
 
     const securityGroupsArray = [];
     data.securitygroup.map((name) => {
@@ -269,10 +269,10 @@ export default class VmStore extends Base {
 
     this.isLoading = true
 
-    const url = globals.config.serverlocation == "TB" 
-                  ? `${this.getResourceUrl(params)}/${params.name}/info` 
-                  : `${this.getResourceUrl(params)}/${params.name}`;
-    
+    const url = globals.config.serverlocation == "TB"
+      ? `${this.getResourceUrl(params)}/${params.name}/info`
+      : `${this.getResourceUrl(params)}/${params.name}`;
+
     const result = await request.get(url)
     const detail = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -549,5 +549,25 @@ export default class VmStore extends Base {
   }
 
   // 등록 관련 데이터 끝
+
+
+  @action
+  async vmList(params) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms`
+    )
+    if (params) {
+      result.vms.sort((a, b) => {
+        var x = a[params.sortBy];
+        var y = b[params.sortBy];
+        if (params.sortType == "asc") {
+          return x < y ? -1 : x > y ? 1 : 0;
+        } else {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+      });
+    }
+    return result.vms
+  }
 
 }
