@@ -7,6 +7,8 @@ import styles from './index.scss'
 
 import MediatedDevicesStore from 'stores/resources/mediateddevices'
 
+const regexName = /^([a-z0-9]+)\/([a-z0-9]+)$/;
+
 const RegistModal = (props) => {
 
     const mediatedDevicesStore = new MediatedDevicesStore();
@@ -19,10 +21,11 @@ const RegistModal = (props) => {
     const [deviceCheckItem, setDeviceCheckItem] = useState('');
     const [isGpu, setIsGpu] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isCheck, setIsCheck] = useState(false);
 
     const handleOk = () => {
         const onOk = props.onOk;
-
+        setIsCheck(true)
         form.current.validator(() => {
             const { data } = form.current.props;
 
@@ -32,6 +35,18 @@ const RegistModal = (props) => {
             
             onOk({ mediated_device: data })
         })
+    }
+
+    // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름를 입력해 주세요.') })
+        } else {
+            if (!regexName.test(value)) {
+                return callback({ message: t('이름를 확인해 주세요.') })
+            }
+        }
+        callback()
     }
 
     const closeModal = () => {
@@ -87,7 +102,8 @@ const RegistModal = (props) => {
 
                     <Form.Item
                         label={t('이름')}
-                        rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        rules={[{ required: true, validator: nameValidator }]}
+                        desc={t('이름은 소문자, 숫자, /(필수) 입력 가능합니다. ex) test/001')}
                     >
                         <Input
                             name="name"
@@ -154,6 +170,7 @@ const RegistModal = (props) => {
                                     </tbody>
                                 </table>
                             </div>
+                            <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>네트워크를 선택해 주세요.</div>
                         </div>
                     </Form.Item>
                     <div style={{ padding: 10 }} />

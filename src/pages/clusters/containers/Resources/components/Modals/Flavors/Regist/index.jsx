@@ -8,6 +8,8 @@ import classnames from 'classnames'
 
 import axios from "axios";
 
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -254,13 +256,25 @@ const RegistModal = (props) => {
     const stepMoveCheck = (step) => {
         const { data } = form.current.props;
         if (step == 1) {
-            if (data.name == undefined) {
+            if (data.name == undefined || !regexName.test(data.name)) {
                 handleOk();
             } else {
                 setRegStep(2);
                 setSubmitButtonFlag(false);
             }
         }
+    }
+
+    // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름를 입력해 주세요.') })
+        } else {
+            if (!regexName.test(value)) {
+                return callback({ message: t('이름를 확인해 주세요.') })
+            }
+        }
+        callback()
     }
 
     const fnGetModalFooter = () => {
@@ -342,7 +356,7 @@ const RegistModal = (props) => {
 
                             <Form.Item
                                 label={t('이름')}
-                                rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                                rules={[{ required: true, validator: nameValidator }]}
                                 desc={t('NAME_DESC')}
                             >
                                 <Input
