@@ -347,7 +347,7 @@ export default class BareMetalDashboard extends React.Component {
           const metrics = this.getMetricData('metricTypeData', record)  
           const machine = get(metrics, 'metric.machine',"NOT")     
           const x86Array = ['x86_64', 'amd']
-          const typeText = x86Array.includes(machine.toLowerCase()) ? "X86" : "ARM"
+          const typeText = x86Array.includes(machine.toLowerCase()) ? "X86" : machine == "NOT" ? "-" : "ARM"
           return (
             <Text title={`${typeText}`} />
           )
@@ -468,7 +468,7 @@ export default class BareMetalDashboard extends React.Component {
   handleCreate = () => {
     const { trigger, module } = this.props
 
-    trigger('keypair.regist', {
+    trigger('baremetal.regist', {
       module,
       trigger,
       success: this.getData,

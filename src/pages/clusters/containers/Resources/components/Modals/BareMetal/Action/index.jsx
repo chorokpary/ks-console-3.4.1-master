@@ -27,12 +27,17 @@ const FloatingIpModal = (props) => {
 
     const success = props.success;
 
-    form.current.validator(() => {     
+    form.current.validator(async () => {     
+
+      const systemId = await getSystemId(targetIp);
 
       const data = {}
-      data.ip = targetIp,
-      data.reseType = props.state,
-      data.systemId = getSystemId(targetIp)
+      data.instanceIp = props.detail.ip;
+      data.targetIp = targetIp,
+      data.reseType = props.detail.state,
+      data.systemId = systemId
+      
+      console.log("data : "+ JSON.stringify(data))
 
       // bareMetalStore.update(data, {name: data.id, ...data }).then(() => {
       //   Notify.success({ content: t('정상적으로 연결 되었습니다.') })
@@ -46,21 +51,6 @@ const FloatingIpModal = (props) => {
   const closeModal = () => {
     setModalView(false);
   }
-
-  useEffect(() => {
-
-    // redfish_system_state{target="192.168.16.88:11000",instance=~"192.168.16.88.*"}
-    const getSystemId = async () => {
-      const metric_system_id = await customStore.fetchMetric({
-        expr: `redfish_system_state`,
-        ...paramsData
-      })
-      // console.log("metric_system_id : "+ JSON.stringify(metric_system_id))
-    };
-
-    // getSystemId();
-
-  }, [])
 
   const targetIpOptions = () => {
     const opt = (props.detail["redfish-exporter"]["target"]).map((obj) => ({
@@ -91,7 +81,6 @@ const FloatingIpModal = (props) => {
     const metric = `redfish_system_state{target="${targetIp}",instance=~"${props.detail.ip}.*"}`
     const metricData = await customStore.fetchMetric({
       expr: metric,
-      ...paramsData
     })
 
     const system_id = get(metricData[0], 'metric.system_id', "")

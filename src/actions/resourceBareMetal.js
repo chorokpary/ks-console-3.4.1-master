@@ -149,7 +149,7 @@ export default {
       })
     },
   },
-  'baremetal.actionState': {
+  'baremetal.action': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
         title: '상태 변경',

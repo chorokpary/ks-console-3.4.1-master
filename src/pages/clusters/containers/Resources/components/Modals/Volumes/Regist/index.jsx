@@ -162,7 +162,7 @@ const RegistModal = (props) => {
                 <div className={`${regStep == 1 ? "" : "hide"}`}>
                   <Form.Item
                     label={t('이름')}
-                    rules={[{ required: true, message: t('이름를 입력해 주세요.') }]}
+                    rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
                     desc={t('NAME_DESC')}
                   >
                   <Input name="name" autoFocus={true}  maxLength={63} style={{ maxWidth: 'none' }}/>   

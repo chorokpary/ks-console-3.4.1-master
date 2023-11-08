@@ -174,6 +174,7 @@ const index = (props) => {
       },
       {
         type: 'bandwidth',
+        title: '',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
         data: [outboundDataCom , inboundDataCom],
@@ -201,6 +202,7 @@ const index = (props) => {
       },
       {
         type: 'bandwidth',
+        title: '',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
         data: [outboundDataKaas , inboundDataKaas],
