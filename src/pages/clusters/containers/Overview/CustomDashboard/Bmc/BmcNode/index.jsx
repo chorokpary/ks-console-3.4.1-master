@@ -99,7 +99,8 @@ const BmcNode = ({ x, y, w, h,
     var iconText = "arm"
     const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === data.ip))
     const type = get(type_data, 'metric.machine', '')
-    if (type.includes('x86')) iconText = 'x86'
+    const x86Array = ['x86_64', 'amd']
+    iconText = x86Array.includes(type.toLowerCase()) ? "x86" : "arm"
     return iconText
   }
 
@@ -261,7 +262,7 @@ const BmcNode = ({ x, y, w, h,
                                       <p>{obj.name}</p>
                                     </td>
                                     <td>
-                                      <p>{Math.round(getMetricValue(metricCpu, obj) * 100)}%</p>
+                                      <p>{Math.round(getMetricValue(metricCpu, obj)).toFixed(1)}%</p>
                                       <span>{getMetricValue(metricCore, obj)}core</span>
                                     </td>
                                     <td>

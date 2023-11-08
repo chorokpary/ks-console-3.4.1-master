@@ -110,8 +110,11 @@ const CpuUsage = (props) => {
       setArmPowerAvgData(armPowerAvg);
 
       const max_power = 200000;
-      const x86PowerPercent = ((x86PowerAvg / max_power) * 100).toFixed(0)
-      const armPowerPercent = ((armPowerAvg / max_power) * 100).toFixed(0)
+      let x86PowerPercent = ((x86PowerAvg / max_power) * 100).toFixed(0);
+      let armPowerPercent = ((armPowerAvg / max_power) * 100).toFixed(0);
+
+      x86PowerPercent = x86PowerPercent == "Infinity" ? 0 : x86PowerPercent;
+      armPowerPercent = armPowerPercent == "Infinity" ? 0 : x86PowerPercent;
 
       setX86PowerPercent(x86PowerPercent);
       setArmPowerPercent(armPowerPercent);

@@ -188,9 +188,8 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.actionState', {
+          trigger('baremetal.action', {
             detail: item,
-            state: "ForceOff",
             success: getData,
             ...this.props.match.params,
           }),
@@ -202,9 +201,8 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.actionState', {
+          trigger('baremetal.action', {
             detail: item,
-            state: "GracefulRestart",
             success: getData,
             ...this.props.match.params,
           }),
@@ -216,9 +214,8 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.actionState', {
+          trigger('baremetal.action', {
             detail: item,
-            state: "GracefulShutdown",
             success: getData,
             ...this.props.match.params,
           }),
@@ -230,9 +227,8 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.actionState', {
+          trigger('baremetal.action', {
             detail: item,
-            state: "On",
             success: getData,
             ...this.props.match.params,
           }),
@@ -309,12 +305,13 @@ export default class BareMetalDashboard extends React.Component {
         dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('job'),
-        render: name => (
+        render: (name, record) => (
           <Avatar
             icon="nodes"
             iconSize={40}
             to={`/clusters/${cluster}/baremetalmonitoring/${name}`}
             title={name}
+            desc={record.ip}
           />
         ),
       },
@@ -349,7 +346,8 @@ export default class BareMetalDashboard extends React.Component {
         render: record => {
           const metrics = this.getMetricData('metricTypeData', record)  
           const machine = get(metrics, 'metric.machine',"NOT")     
-          const typeText = (machine == "NOT") ? "ARM" : machine.includes('x86') ? "X86" : "ARM"
+          const x86Array = ['x86_64', 'amd']
+          const typeText = x86Array.includes(machine.toLowerCase()) ? "X86" : "ARM"
           return (
             <Text title={`${typeText}`} />
           )
@@ -382,7 +380,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'cpu',
         isHideable: true,
         render: record => {
-          const cpu = Math.round(this.getMetricValue('metricCpuData', record) * 100);
+          const cpu = Math.round(this.getMetricValue('metricCpuData', record)).toFixed(1);
           const coreCount = this.getMetricValue('metricCoreData', record) 
           return (
             <Text title={`${cpu}%`} description={`${coreCount}core`} />
