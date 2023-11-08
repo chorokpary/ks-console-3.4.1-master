@@ -58,14 +58,15 @@ const Carbon = (props) => {
     await data.map((obj) => {   
       const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
       const type = get(type_data, 'metric.machine','')
+      const x86Array = ['x86_64', 'amd']     
 
-      type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
+      x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
 
       const power_data = metric_power.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
       const power = Number(get(power_data, 'value[1]', 0)) / 1000;
 
       total_power += power;
-      type.includes('x86') ? total_x86_power += power : total_arm_power += power;
+      x86Array.includes(type.toLowerCase()) ? total_x86_power += power : total_arm_power += power;
     })
 
     setServerTotalCount(total_arm_count + total_x86_count)

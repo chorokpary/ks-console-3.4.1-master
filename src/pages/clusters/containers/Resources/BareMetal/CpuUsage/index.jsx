@@ -89,7 +89,8 @@ const CpuUsage = (props) => {
       await data.map((obj) => {
         const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
         const type = get(type_data, 'metric.machine', '')
-        type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
+        const x86Array = ['x86_64', 'amd']             
+        x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
       })
 
       const x86PowerMetricLastData = _.find(metric_power_last, (data) => {

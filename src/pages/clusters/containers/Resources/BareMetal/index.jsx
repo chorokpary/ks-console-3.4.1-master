@@ -428,9 +428,9 @@ export default class BareMetalDashboard extends React.Component {
         key: 'power',
         isHideable: true,
         render: record => {
-          const power = this.getMetricValue('metricPowerData', record) 
+          var power = this.getMetricValue('metricPowerData', record) 
           return (
-            <Text title={`${power}`}/>
+            <Text title={`${Number(power) / 1000}`}/>
           )
         }
       },
