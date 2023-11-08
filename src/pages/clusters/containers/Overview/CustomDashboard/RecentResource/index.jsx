@@ -39,7 +39,7 @@ const RecentResource = ({ x, y, w, h }) => {
       handleDate(podList, 'createTime', 'pod')
 
       // vm data
-      const vmList = await vmStore.vmList({ sortBy: 'creation_timestamp' })
+      const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
       handleDate(vmList, 'creation_timestamp', 'vm')
 
       // kaas data
@@ -82,7 +82,7 @@ const RecentResource = ({ x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>최근 생성된 리소스 (일주일)</label>
+              <label>최근 생성된 리소스 (1주일)</label>
 
             </div>
             <div className="grid_info style_list">

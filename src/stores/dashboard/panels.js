@@ -589,7 +589,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>최근 생성된 리소스 (일주일)</label>
+            <label>최근 생성된 리소스 (1주일)</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="grid_info style_list">

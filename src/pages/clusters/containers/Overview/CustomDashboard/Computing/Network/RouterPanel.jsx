@@ -5,7 +5,7 @@ const Panel = ({ router }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-router"></i>가상라우터</h5>
+                <h5><i className="ico-type24-router"></i>가상 라우터</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

@@ -244,85 +244,87 @@ const UsageTop5 = ({ x, y, w, h }) => {
                   </div>
                 </div>
               </div>
-              {/* // select_wrap */}
-              {typeMetric == 'node' &&
-                <Loading spinning={loading}>
-                  <ul className="list_01">
-                    {list.map((obj, idx) => (
-                      <li className="li_type_01" key={idx}>
-                        <div className="lft">
-                          <i className="ico-type24-clusternode"></i>
-                          <h6 className="list_title">
-                            {obj.node}
-                            <span>{get(obj, 'host_ip', '-')}</span>
-                          </h6>
-                        </div>
-                        <div className="info">
-                          <h6>
-                            {Math.round((Number(get(obj, sortMetric)) || 0) * 100)}%
-                            <span>
-                              {unitType.value}
-                            </span>
-                          </h6>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </Loading>
-              }
-              {typeMetric == 'pod' &&
-                <Loading spinning={loading}>
-                  <ul className="list_01">
-                    {list.map((obj, idx) => (
-                      <li className="li_type_01" key={idx}>
-                        <div className="lft">
-                          <i className="ico-type24-pod"></i>
-                          <h6 className="list_title">
-                            {obj.pod}
-                          </h6>
-                        </div>
-                        <div className="info">
-                          <h6>
-                            {getSuitableValue((Number(get(obj, sortMetric)) || 0), unitType.unit)}
-                            <span>
-                              {unitType.value}
-                            </span>
-                          </h6>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </Loading>
-              }
-              {(typeMetric == 'vm' || typeMetric == 'kaas') &&
-                <Loading spinning={loading}>
-                  <ul className="list_01">
-                    {list.map((obj, idx) => (
-                      <li className="li_type_01" key={idx}>
-                        <div className="lft">
-                          <i className={`ico-type24-${typeMetric == 'vm' ? 'vm' : 'container'}`}></i>
-                          <h6 className="list_title">
-                            {obj.name}
-                          </h6>
-                        </div>
-                        <div className="info">
-                          <h6>
-                            {unitType.unit == 'cpu' ?
-                              ((Number(obj.usage) * 100).toFixed(2) || 0) + '%'
-                              :
-                              getSuitableValue((Number(obj.usage) || 0), unitType.unit)
-                            }
-                            <span>
-                              {unitType.value}
-                            </span>
-                          </h6>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </Loading>
-              }
-              {list.length == 0 &&
+              {list.length > 0 ?
+                <>
+                  {typeMetric == 'node' &&
+                    <Loading spinning={loading}>
+                      <ul className="list_01">
+                        {list.map((obj, idx) => (
+                          <li className="li_type_01" key={idx}>
+                            <div className="lft">
+                              <i className="ico-type24-clusternode"></i>
+                              <h6 className="list_title">
+                                {obj.node}
+                                <span>{get(obj, 'host_ip', '-')}</span>
+                              </h6>
+                            </div>
+                            <div className="info">
+                              <h6>
+                                {Math.round((Number(get(obj, sortMetric)) || 0) * 100)}%
+                                <span>
+                                  {unitType.value}
+                                </span>
+                              </h6>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </Loading>
+                  }
+                  {typeMetric == 'pod' &&
+                    <Loading spinning={loading}>
+                      <ul className="list_01">
+                        {list.map((obj, idx) => (
+                          <li className="li_type_01" key={idx}>
+                            <div className="lft">
+                              <i className="ico-type24-pod"></i>
+                              <h6 className="list_title">
+                                {obj.pod}
+                              </h6>
+                            </div>
+                            <div className="info">
+                              <h6>
+                                {getSuitableValue((Number(get(obj, sortMetric)) || 0), unitType.unit)}
+                                <span>
+                                  {unitType.value}
+                                </span>
+                              </h6>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </Loading>
+                  }
+                  {(typeMetric == 'vm' || typeMetric == 'kaas') &&
+                    <Loading spinning={loading}>
+                      <ul className="list_01">
+                        {list.map((obj, idx) => (
+                          <li className="li_type_01" key={idx}>
+                            <div className="lft">
+                              <i className={`ico-type24-${typeMetric == 'vm' ? 'vm' : 'container'}`}></i>
+                              <h6 className="list_title">
+                                {obj.name}
+                              </h6>
+                            </div>
+                            <div className="info">
+                              <h6>
+                                {unitType.unit == 'cpu' ?
+                                  ((Number(obj.usage) * 100).toFixed(2) || 0) + '%'
+                                  :
+                                  getSuitableValue((Number(obj.usage) || 0), unitType.unit)
+                                }
+                                <span>
+                                  {unitType.value}
+                                </span>
+                              </h6>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </Loading>
+                  }
+                </>
+                :
                 <div className="grid_text">
                   <span>데이터가 없습니다.</span>
                 </div>

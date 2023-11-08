@@ -102,31 +102,37 @@ const PowerUsageTop5 = ({ x, y, w, h,
               </div>
             </div>
             <div className="grid_info style_list">
-              <Loading spinning={loading}>
-                <ul className="list_01">
-                  {nodeList.map((obj, idx) => (
-                    <li className="li_type_01" key={idx}>
-                      <div className="lft">
-                        <i className={`ico-type24-${getType(obj)}`}></i>
-                        <h6 className="list_title">
-                          {obj.name}
-                          <span>{obj.ip}</span>
-                        </h6>
-                      </div>
-                      <div className="info2">
-                        <h6>{Number(obj.power) * 0.001} kWh
-                          <span>{((Number(obj.power) * 0.001) / maxUsage * 100).toFixed(2)}%</span>
-                        </h6>
-                        <div className="graph_wrap">
-                          <div className="graph_bar">
-                            <div className="bar animate-bar" style={{ width: (Number(obj.power) * 0.001) / maxUsage * 100 + "%" }}></div>
+              {nodeList.length > 0 ?
+                <Loading spinning={loading}>
+                  <ul className="list_01">
+                    {nodeList.map((obj, idx) => (
+                      <li className="li_type_01" key={idx}>
+                        <div className="lft">
+                          <i className={`ico-type24-${getType(obj)}`}></i>
+                          <h6 className="list_title">
+                            {obj.name}
+                            <span>{obj.ip}</span>
+                          </h6>
+                        </div>
+                        <div className="info2">
+                          <h6>{Number(obj.power) * 0.001} kWh
+                            <span>{((Number(obj.power) * 0.001) / maxUsage * 100).toFixed(2)}%</span>
+                          </h6>
+                          <div className="graph_wrap">
+                            <div className="graph_bar">
+                              <div className="bar animate-bar" style={{ width: (Number(obj.power) * 0.001) / maxUsage * 100 + "%" }}></div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </Loading>
+                      </li>
+                    ))}
+                  </ul>
+                </Loading>
+                :
+                <div className="grid_text">
+                  <span>데이터가 없습니다.</span>
+                </div>
+              }
             </div>
           </div>
           {/* // grid_item */}
