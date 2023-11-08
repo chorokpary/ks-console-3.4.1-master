@@ -112,7 +112,7 @@ const ResourceDetail = (props) => {
     const getAttrs = () => {
         const detail = toJS(store.detail.cluster)
         const detailFlavor = store.machines
-
+        console.log(store)
         if (isEmpty(detail)) {
             return
         }
@@ -120,7 +120,7 @@ const ResourceDetail = (props) => {
         return [
             {
                 name: t('클러스터'),
-                value: '-',
+                value: detail.infra.namespace,
             },
             {
                 name: t('Pod CIDRS'),
@@ -168,7 +168,7 @@ const ResourceDetail = (props) => {
             //},
             {
                 name: t('ELB'),
-                value: detail.elb,
+                value: detail.elb ? detail.elb :  '-',
             },
             {
                 name: t('Master Flavor'),
@@ -188,7 +188,7 @@ const ResourceDetail = (props) => {
             },
             {
                 name: t('설명'),
-                value: detail.description,
+                value: detail.description ? detail.description : '-',
             },
             {
                 name: t('생성시간'),

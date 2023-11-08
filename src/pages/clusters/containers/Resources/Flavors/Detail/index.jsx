@@ -113,7 +113,7 @@ const FlavorDetail = (props) => {
             },
             {
                 name: t('설명'),
-                value: detail.flavor.description,
+                value: detail.flavor.description ? detail.description : '-',
             },
             {
                 name: t('생성일'),

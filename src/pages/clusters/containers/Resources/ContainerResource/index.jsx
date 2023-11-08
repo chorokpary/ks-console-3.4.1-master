@@ -290,7 +290,7 @@ export default class Resource extends React.Component {
                     icon="kubernetes"
                     tabs={this.tabs}
                     title={t('KaaS 리소스')}
-                    description={t('쿠버네티스의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    description={t('KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.')}
                 />
                 <Table
                     {...tableProps}

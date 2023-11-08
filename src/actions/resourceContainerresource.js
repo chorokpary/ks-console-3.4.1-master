@@ -40,7 +40,7 @@ export default {
               success && success()
             })
         },
-        title: '리소스 생성',
+        title: 'KaaS 리소스 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -63,7 +63,7 @@ export default {
               success && success()
             })
         },
-        title: '리소스 수정',
+        title: 'KaaS 리소스 수정',
         modal: ModifyModal,
         store,
         module,
@@ -94,7 +94,7 @@ export default {
         },
         modal: DeleteModal,
         title: t('삭제'),
-        desc: t.html('리소스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        desc: t.html('KaaS 리소스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -124,8 +124,8 @@ export default {
             : t('일괄 삭제'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('리소스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('리소스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('KaaS 리소스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
+            : t.html('KaaS 리소스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
