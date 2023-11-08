@@ -22,6 +22,7 @@ import { Modal } from 'components/Base'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/BareMetal/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/BareMetal/Modify'
+import ActionModal from 'clusters/containers/Resources/components/Modals/BareMetal/Action'
 
 import DeleteModal from 'components/Modals/Delete'
 
@@ -147,5 +148,15 @@ export default {
         ...props,
       })
     },
-  }
+  },
+  'baremetal.actionState': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        title: '상태 변경',
+        modal: ActionModal,
+        store,
+        ...props,
+      })
+    },
+  },
 }

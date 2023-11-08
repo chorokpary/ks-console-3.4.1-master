@@ -188,8 +188,9 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.action', {
+          trigger('baremetal.actionState', {
             detail: item,
+            state: "ForceOff",
             success: getData,
             ...this.props.match.params,
           }),
@@ -201,8 +202,9 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.action', {
+          trigger('baremetal.actionState', {
             detail: item,
+            state: "GracefulRestart",
             success: getData,
             ...this.props.match.params,
           }),
@@ -214,8 +216,9 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.action', {
+          trigger('baremetal.actionState', {
             detail: item,
+            state: "GracefulShutdown",
             success: getData,
             ...this.props.match.params,
           }),
@@ -227,8 +230,9 @@ export default class BareMetalDashboard extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('baremetal.action', {
+          trigger('baremetal.actionState', {
             detail: item,
+            state: "On",
             success: getData,
             ...this.props.match.params,
           }),
