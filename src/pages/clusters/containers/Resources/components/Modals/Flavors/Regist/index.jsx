@@ -268,10 +268,10 @@ const RegistModal = (props) => {
     // Validation 시작 ==================================================
     const nameValidator = (rule, value, callback) => {
         if (value == undefined) {
-            return callback({ message: t('이름를 입력해 주세요.') })
+            return callback({ message: t('이름을 입력해 주세요.') })
         } else {
             if (!regexName.test(value)) {
-                return callback({ message: t('이름를 확인해 주세요.') })
+                return callback({ message: t('이름을 확인해 주세요.') })
             }
         }
         callback()

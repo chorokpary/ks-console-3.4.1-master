@@ -171,7 +171,7 @@ const RegistModal = (props) => {
     const flavorOptions = (flag) => {
         const opt = flavorDataList.map((obj) => ({
             label: t(obj.name),
-            description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib/ Disk ${obj.root_disk} Gib`,
+            description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib / Disk ${obj.root_disk} Gib`,
             value: t(obj.name),
             disabled: flag === 1 ? (obj.vcpus < CONFIG_CPU_MASTER || common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER || obj.root_disk < CONFIG_DISK_MASTER)
             : (obj.vcpus < CONFIG_CPU_WORKER || common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER || obj.root_disk < CONFIG_DISK_WORKER)
@@ -370,10 +370,10 @@ const RegistModal = (props) => {
     // Validation 시작 ==================================================
     const nameValidator = (rule, value, callback) => {
         if (value == undefined) {
-            return callback({ message: t('이름를 입력해 주세요.') })
+            return callback({ message: t('이름을 입력해 주세요.') })
         } else {
             if (!regexName.test(value)) {
-                return callback({ message: t('이름를 확인해 주세요.') })
+                return callback({ message: t('이름을 확인해 주세요.') })
             }
         }
         callback()
@@ -564,7 +564,7 @@ const RegistModal = (props) => {
                                                 <Form.Item>
                                                     <Input
                                                         name="imageView"
-                                                        defaultValue={osType + ' > ' + selectImageName}
+                                                        defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
                                                         readOnly
                                                         style={{ maxWidth: 'none' }}
                                                     />
