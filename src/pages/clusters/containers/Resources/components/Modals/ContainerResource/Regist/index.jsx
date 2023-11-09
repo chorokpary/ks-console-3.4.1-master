@@ -931,14 +931,14 @@ const RegistModal = (props) => {
                                                 <div className={styles.multiline}>
                                                     <div className={styles.bold}>{masterFlavorSelect}</div>
                                                     <p>
-                                                        CPU {masterFlavorCpu} Cores / Memory {masterFlavorMemory} Gib/ Disk {masterFlavorDisk} Gib
+                                                        CPU {masterFlavorCpu} Cores / Memory {masterFlavorMemory} Gib / Disk {masterFlavorDisk} Gib
                                                     </p>
                                                 </div>
                                                 <label style={{ width: '100%' }}>Worker Flavor</label>
                                                 <div className={styles.multiline}>
                                                     <div className={styles.bold}>{workerFlavorSelect}</div>
                                                     <p>
-                                                        CPU {workerFlavorCpu} Cores / Memory {workerFlavorMemory} Gib/ Disk {workerFlavorDisk} Gib
+                                                        CPU {workerFlavorCpu} Cores / Memory {workerFlavorMemory} Gib / Disk {workerFlavorDisk} Gib
                                                     </p>
                                                 </div>
                                             </div>
