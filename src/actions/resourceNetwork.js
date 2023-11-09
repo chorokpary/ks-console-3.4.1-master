@@ -25,7 +25,7 @@ import DeleteModal from 'components/Modals/Delete'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/Networks/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/Networks/Modify'
-import TopologyModal from 'clusters/containers/Resources/components/Modals/topology'
+import TopologyModal from 'clusters/containers/Resources/components/Modals/Topology'
 
 
 export default {
