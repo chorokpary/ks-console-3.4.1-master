@@ -28,12 +28,14 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://192.168.16.86:30881
-    wsUrl: ws://192.168.16.86:30881
-    mm3Url: http://192.168.16.80:32080 
-    # url: http://10.24.3.34:30881
-    # wsUrl: ws://10.24.3.34:30881
-    # mm3Url: http://10.24.3.34:32080 
+    # url: http://192.168.16.86:30881
+    # wsUrl: ws://192.168.16.86:30881
+    # mm3Url: http://192.168.16.80:32080 
+    # cmpUrl: http://192.168.16.86:31000 
+    url: http://10.24.3.34:30881
+    wsUrl: ws://10.24.3.34:30881
+    mm3Url: http://10.24.3.34:32080 
+    cmpUrl: http://10.24.3.34:31000
     
 
   mm3UserInfo:
@@ -47,6 +49,8 @@ client:
   title: ARM CMP
   description: ""
   encryptKey: kubesphere
+  # serverlocation: "86"
+  serverlocation: "TB"
 
   version:
     kubesphere: 3.1.0
@@ -142,13 +146,6 @@ client:
             - { name: nodes, title: CLUSTER_NODE_PL }
             - { name: members, title: CLUSTER_MEMBER_PL }
             - { name: roles, title: CLUSTER_ROLE_PL }
-            # - {
-            #     name: log-collections,
-            #     title: LOG_RECEIVER_PL,
-            #     icon: file,
-            #     authKey: cluster-settings,
-            #     clusterModule: logging|events|auditing,
-            #   }
             - {
                 name: gateways,
                 title: GATEWAY_SETTINGS,
@@ -159,10 +156,17 @@ client:
                 title: SYSTEM_COMPONENT_PL, 
                 icon: components 
               }    
+            - {
+                name: log-collections,
+                title: LOG_RECEIVER_PL,
+                icon: file,
+                authKey: cluster-settings,
+                clusterModule: logging|events|auditing,
+              }
         - { name: projects, title: PROJECT_PL, icon: project }
         - name: app-workloads
           title: APPLICATION_WORKLOAD_PL
-          icon: appcenter
+          icon: vnc
           children:
             - name: workloads
               title: WORKLOAD_PL
@@ -177,12 +181,17 @@ client:
                 - { name: cronjobs, title: CRONJOB_PL }
             - { name: pods, title: POD_PL }
             - { name: services, title: SERVICE_PL }
-            - { name: ingresses, title: ROUTE_PL }
+            - { name: ingresses, title: ROUTE_PL }            
+        - name : computing-workloads
+          title: "컴퓨팅 워크로드"
+          icon: templet
+          showInDisable: true   
+          children: 
             - { name: vms, title: "가상머신"}
             - { name: containerResource, title: "KaaS" }
         - name: computing
           title: "컴퓨팅 설정"
-          icon: appcenter
+          icon: computing-setting
           showInDisable: true
           children:            
             - {
@@ -238,11 +247,10 @@ client:
              title: "Mediated 디바이스",
              skipAuth: true,
              showInDisable: true,
-            }
-            
+            }            
         - name: resources
           title: "리소스 템플릿"
-          icon: appcenter
+          icon: resource
           showInDisable: true   
           children: 
             - {
@@ -270,8 +278,8 @@ client:
               showInDisable: true,
             }   
         - name: virtualmachine-management
-          title: "가상머신 관리"
-          icon: appcenter
+          title: "컴퓨팅 애플리케이션 관리"
+          icon: cron-job
           showInDisable: true   
           children:   
             - {
@@ -298,20 +306,20 @@ client:
                 requiredClusterVersion: v3.1.0,
               }                
         - { name: customresources, title: CRD_PL, icon: select, admin: true }      
-        # - name: network
-        #   title: NETWORK
-        #   icon: earth
-        #   children:
-        #     - {
-        #         name: networkpolicies,
-        #         title: NETWORK_POLICY_PL,
-        #         clusterModule: network,
-        #       }
-        #     - {
-        #         name: ippools,
-        #         title: POD_IP_POOL_PL,
-        #         clusterModule: "network.ippool",
-        #       }
+        - name: network
+          title: NETWORK
+          icon: earth
+          children:
+            - {
+                name: networkpolicies,
+                title: NETWORK_POLICY_PL,
+                clusterModule: network,
+              }
+            - {
+                name: ippools,
+                title: POD_IP_POOL_PL,
+                clusterModule: "network.ippool",
+              }
         # Contains dangerous operations, only available for platform-admin.
         - name: storage
           title: STORAGE
@@ -375,7 +383,11 @@ client:
                 title: "BareMetal 모니터링",
               }
             - {
-                name: 'kaasresource',
+                name: baremetal-carbon-indicator,
+                title: "BareMetal 탄소지표 통계",
+              }              
+            - {
+                name: 'computingkaasmonitoring',
                 title: "컴퓨팅/KaaS 리소스",
               }            
             - {
