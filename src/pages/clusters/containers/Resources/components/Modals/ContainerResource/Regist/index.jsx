@@ -431,20 +431,23 @@ const RegistModal = (props) => {
     }
     const addWorkerBtn = (e) => {
         e.preventDefault();
-        setWorkerFlavorNumber(workerFlavorNumber + 1);
+        if (workerFlavorNumber < 10) {
+            setWorkerFlavorNumber(workerFlavorNumber + 1);
+        }
     }
     const minusWorkerBtn = (e) => {
         e.preventDefault();
-        if (workerFlavorNumber > 0) {
+        if (workerFlavorNumber > 1) {
             setWorkerFlavorNumber(workerFlavorNumber - 1);
         }
     }
 
     const handlerAutoScale = (e) => {
         if (Array.isArray(e)) {
-            setAutoScale(e)
+            const scale = [e[0], e[1] < 1 ? 1: e[1]]
+            setAutoScale(scale)
         } else {
-            const maxNum = e > 10 ? 10 : e;
+            const maxNum = e > 10 ? 10 : (e < 1 ? 1 : e);
             setAutoScale([0, maxNum]);
         }
     }
@@ -617,7 +620,7 @@ const RegistModal = (props) => {
                                             </Form.Item>
                                         </Column>
                                         <Column>
-                                            <Form.Item desc={t('Worker 최대 개수는 50개 입니다.')}>
+                                            <Form.Item desc={t('Worker 최대 개수는 10개 입니다.')}>
                                                 <div>
                                                     <Button icon="substract" onClick={minusWorkerBtn} />&nbsp;&nbsp;
                                                     <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;

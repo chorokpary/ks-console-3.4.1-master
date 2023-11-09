@@ -269,6 +269,7 @@ const Status = (props) => {
                 onScale={handleScale()}
                 onFetchData={store.fetchData}
                 enableScale={enableScaleReplica()}
+                countRange={[1,10]}
             />
 
             <Panel title={"Master Node"}>

@@ -39,6 +39,7 @@ export default class ReplicaStatus extends React.Component {
         current: PropTypes.number,
         desire: PropTypes.number,
         onScale: PropTypes.func,
+        countRange: PropTypes.array,
     }
 
     static defaultProps = {
@@ -47,6 +48,7 @@ export default class ReplicaStatus extends React.Component {
         current: 0,
         desire: 0,
         onScale: null,
+        countRange:[0,9999]
     }
 
     constructor(props) {
@@ -134,10 +136,11 @@ export default class ReplicaStatus extends React.Component {
         if (!this.props.onScale) return null
 
         const { desire } = this.state
+        const { countRange } = this.props
 
         return (
             <div className={styles.scale}>
-                <NumberControl value={desire} onChange={this.handleScale} />
+                <NumberControl value={desire} onChange={this.handleScale} countRange={countRange} />
             </div>
         )
     }

@@ -112,7 +112,6 @@ const ResourceDetail = (props) => {
     const getAttrs = () => {
         const detail = toJS(store.detail.cluster)
         const detailFlavor = store.machines
-        console.log(store)
         if (isEmpty(detail)) {
             return
         }

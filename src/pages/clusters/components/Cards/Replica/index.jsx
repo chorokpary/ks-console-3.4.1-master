@@ -35,6 +35,7 @@ export default class HPACard extends React.Component {
     text: PropTypes.object,
     enableScale: PropTypes.bool,
     onScale: PropTypes.func,
+    countRange: PropTypes.array,
   }
 
   static defaultProps = {
@@ -44,7 +45,7 @@ export default class HPACard extends React.Component {
   }
 
   fnGetStatus = (idx) => {
-    const { module, detail, names, text, enableScale } = this.props
+    const { module, detail, names, text, enableScale, countRange } = this.props
     let status = {}
 
     switch (module) {
@@ -53,6 +54,7 @@ export default class HPACard extends React.Component {
         status = {
             current: detail.state[idx].unavailableNums || 0,
             desire: detail.state[idx].nums || 0,
+            countRange: countRange,
         }
         break
         }

@@ -62,19 +62,19 @@ export default class CardSelect extends Component {
         }
       } else {
         if (value.includes(targetValue)) {
-          this.setState(
-            { value: value.filter(item => item !== targetValue) },
-            () => {
-              onChange(value.filter(item => item !== targetValue))
-            }
-          )
+          if (value.length === this.props.options?.length) {
+            this.setState({ value: value.filter(item => item !== targetValue && item !== 'all') }, () => {onChange(value.filter(item => item !== targetValue && item !== 'all'))})
+          } else {
+            this.setState({ value: value.filter(item => item !== targetValue) }, () => {onChange(value.filter(item => item !== targetValue))})
+          }
         } else {
-          this.setState({ value: [...value, targetValue] }, () => {
-            onChange([...value, targetValue])
-          })
+          if ((value.length+2) === this.props.options?.length) {
+            this.setState({ value: [...value, targetValue, 'all'] }, () => {onChange([...value, targetValue, 'all'])})
+          } else {
+            this.setState({ value: [...value, targetValue] }, () => {onChange([...value, targetValue])})
+          }
         }
       }
-
     } else {
       this.setState({ value: targetValue }, () => {
         onChange(targetValue)
