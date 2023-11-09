@@ -9,7 +9,6 @@ const BmcNode = ({ x, y, w, h,
   nodeData
 }) => {
   const customStore = new CustomStore()
-
   const [loading, setLoading] = useState(false)
   const [nodeList, setNodeList] = useState([])
   const [metricType, setMetricType] = useState([])
@@ -118,16 +117,16 @@ const BmcNode = ({ x, y, w, h,
   }
 
   const getDisk = (data) => {
-    const memory_total_data = getMetricValue(metricDiskTotal, data)
-    const memory_free_data = getMetricValue(metricDiskFree, data)
+    const disk_total_data = getMetricValue(metricDiskTotal, data)
+    const disk_free_data = getMetricValue(metricDiskFree, data)
 
-    const memory_total = getValueByUnit(memory_total_data, "Gi")
-    const memory_free = getValueByUnit(memory_free_data, "Gi")
-    const memory_used = (memory_total - memory_free).toFixed(2)
+    const disk_total = getValueByUnit(disk_total_data, "GB")
+    const disk_free = getValueByUnit(disk_free_data, "GB")
+    const disk_used = (disk_total - disk_free).toFixed(2)
 
-    const memory_percent = isNaN(((memory_used / memory_total) * 100).toFixed(0)) ? 0 : ((memory_used / memory_total) * 100).toFixed(0)
+    const disk_percent = isNaN(((disk_used / disk_total) * 100).toFixed(0)) ? 0 : ((disk_used / disk_total) * 100).toFixed(0)
 
-    return <><p>{memory_percent}%</p><span>{memory_used}GB/{memory_total}GB</span></>
+    return <><p>{disk_percent}%</p><span>{disk_used}GB/{disk_total}GB</span></>
   }
 
   const getState = (metricData, data) => {
