@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { GridStack } from 'gridstack'
 import 'gridstack/dist/gridstack.min.css';
-import './../dashboard.css'
 import { inject, observer } from 'mobx-react';
 import queryString from 'query-string';
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
+import { Notify } from '@kube-design/components'
 
 import { makePanels } from 'stores/dashboard/panels';
 const CustomDashboardEdit = (props) => {
@@ -19,10 +19,6 @@ const CustomDashboardEdit = (props) => {
 
   const [activeDashboard, setActiveDashboard] = useState(idx ? JSON.parse(localStorage.getItem("dashboardArr"))[idx] : new DashboardInfo())
   const [dashboardName, setDashboardName] = useState(activeDashboard.name);
-  const [accodionActive1, setAccodionActive1] = useState(true);
-  const [accodionActive2, setAccodionActive2] = useState(true);
-  const [accodionActive3, setAccodionActive3] = useState(true);
-  const [accodionActive4, setAccodionActive4] = useState(true);
 
   // accordion
   var accordionButtons;
@@ -40,6 +36,7 @@ const CustomDashboardEdit = (props) => {
     handleClass: 'grid-stack-item-content .grid_item .grid_title',
     cellHeight: 59,
     verticalMargin: 20,
+    disableResize: true
   };
   var grid
 
@@ -173,9 +170,26 @@ const CustomDashboardEdit = (props) => {
     routing.push(`/clusters/${cluster}/overview`)
   }
 
-  const saveDashboard = () => {
-    grid = GridStack.init();
+  const validSave = () => {
+    if (dashboardName.trim().length == 0) {
+      Notify.error({ content: t('대시보드 이름을 최소 1글자 이상 입력해주세요.') })
+      document.getElementById('dashboardName').focus();
+    } else {
+      var arr = JSON.parse(localStorage.getItem("dashboardArr"))
+      var duplicateName = arr.find(el => el.name == dashboardName)
+      grid = GridStack.init();
 
+      if (duplicateName) {
+        Notify.error({ content: t('중복된 이름입니다.') })
+      } else if (grid.engine.nodes.length == 0) {
+        Notify.error({ content: t('패널을 최소 1개 이상 선택해주세요.') })
+      } else {
+        saveDashboard(grid, arr)
+      }
+    }
+  }
+
+  const saveDashboard = (grid, arr) => {
     const o = new Object()
     grid.engine.nodes.map((obj => {
       const id = obj.el.id.slice(0, -5)
@@ -183,7 +197,6 @@ const CustomDashboardEdit = (props) => {
     }))
     o['name'] = dashboardName
 
-    var arr = JSON.parse(localStorage.getItem("dashboardArr"))
     if (idx) {
       arr.splice(idx, 1)
     }
@@ -230,7 +243,7 @@ const CustomDashboardEdit = (props) => {
             <div className="content-box">
               <label aria-required>대시보드 이름</label>
               <div className="input-byte">
-                <input type="text" placeholder="입력해 주세요." defaultValue={dashboardName}
+                <input type="text" id="dashboardName" placeholder="입력해 주세요." defaultValue={dashboardName}
                   onChange={(e) => setDashboardName(e.target.value)} />
               </div>
             </div>
@@ -771,7 +784,7 @@ const CustomDashboardEdit = (props) => {
 
             <div className="footer">
               <button type="button" className="btn btn-default" onClick={() => cancelEdit()}>취소</button>
-              <button type="button" className="btn btn-primary" onClick={() => saveDashboard()}>저장</button>
+              <button type="button" className="btn btn-primary" onClick={() => validSave()}>저장</button>
             </div>
           </div>
         </div>

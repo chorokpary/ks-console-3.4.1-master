@@ -4,6 +4,9 @@ import 'gridstack/dist/gridstack.min.css';
 import './dashboard.css'
 import { inject, observer } from 'mobx-react';
 import ClusterMonitorStore from 'stores/monitoring/cluster'
+import { Notify } from '@kube-design/components'
+import { Modal } from 'components/Base'
+import DeleteModal from 'components/Modals/Delete'
 
 import ClusterNode from './ClusterNode';
 import Pod from './Pod';
@@ -78,12 +81,21 @@ const CustomDashboard = (props) => {
     e.target.parentElement.classList.add('active')
   }
 
-  const deleteDashboard = idx => {
-    dashboardArr.splice(idx, 1)
-    localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
-    const spliceArr = JSON.parse(localStorage.getItem("dashboardArr"))
+  const deleteDashboard = (idx, name) => {
+    const modal = Modal.open({
+      onOk: () => {
+        dashboardArr.splice(idx, 1)
+        localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
+        const spliceArr = JSON.parse(localStorage.getItem("dashboardArr"))
+        Modal.close(modal)
+        Notify.success({ content: t('삭제 되었습니다.') })
 
-    setDashboardArr(spliceArr)
+        setDashboardArr(spliceArr)
+      },
+      modal: DeleteModal,
+      title: '대시보드 삭제',
+      desc: `${name} 를 삭제하시겠습니까?`,
+    })
   }
 
   useEffect(() => {
@@ -113,7 +125,7 @@ const CustomDashboard = (props) => {
                         <ul className="quick-menu-list">
                           <li onClick={() => editDashboard(idx)}><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
                           {dashboardArr.length > 1 &&
-                            <li onClick={() => deleteDashboard(idx)}><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                            <li onClick={() => deleteDashboard(idx, obj.name)}><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
                           }
                         </ul>
                       </div>
