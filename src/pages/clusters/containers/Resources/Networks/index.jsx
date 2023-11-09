@@ -57,19 +57,19 @@ export default class Networks extends React.Component {
             ...this.props.match.params,
           }),
       },
-      {
-        key: 'topology',
-        icon: 'pen',
-        text: t('토폴리지'),
-        action: 'delete',
-        show: this.showAction,
-        onClick: item =>
-          trigger('networks.topology', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
-      },
+      // {
+      //   key: 'topology',
+      //   icon: 'pen',
+      //   text: t('토폴리지'),
+      //   action: 'delete',
+      //   show: this.showAction,
+      //   onClick: item =>
+      //     trigger('networks.topology', {
+      //       detail: item,
+      //       success: getData,
+      //       ...this.props.match.params,
+      //     }),
+      // },
     ]
   }
 
