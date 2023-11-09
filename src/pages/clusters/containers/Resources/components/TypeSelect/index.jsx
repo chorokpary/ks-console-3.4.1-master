@@ -32,12 +32,14 @@ export default class TypeSelect extends React.Component {
     defaultValue: PropTypes.any,
     options: PropTypes.array.isRequired,
     onChange: PropTypes.func,
+    defaultDescription : PropTypes.string,
   }
 
   static defaultProps = {
     className: '',
     options: [],
     onChange() { },
+    defaultDescription: ''
   }
 
   constructor(props) {
@@ -177,7 +179,7 @@ export default class TypeSelect extends React.Component {
   }
 
   renderControl() {
-    const { placeholder, options, disabled } = this.props
+    const { placeholder, options, disabled, defaultDescription} = this.props
     const { value, showOptions } = this.state
     const option =
       options.find(item => isEqual(item.value, value)) || placeholder || {}
@@ -192,6 +194,7 @@ export default class TypeSelect extends React.Component {
         {this.renderIcon(option)}
         <div className={styles.text}>
           <div>{option.label}</div>
+          {(defaultDescription && !!!option.description ) && <p>{defaultDescription}</p>}
           {option.description && <p>{option.description}</p>}
         </div>
         {option.details && this.renderDetail(option.details)}

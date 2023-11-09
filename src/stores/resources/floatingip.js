@@ -129,5 +129,12 @@ export default class FloatingIpStore extends Base {
         )
         return result
     }
+    @action
+    async fipList(params) {
+        const result = await request.get(
+            `/edgetron/resources/kubevirt/floating_ips`
+        )
+        return result
+    }
 
 }

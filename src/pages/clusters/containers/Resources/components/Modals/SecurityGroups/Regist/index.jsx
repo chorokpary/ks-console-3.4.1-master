@@ -5,6 +5,8 @@ import { Form, Input, Select, TextArea, Button, Columns, Column, Tooltip } from 
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -215,6 +217,18 @@ const RegistModal = (props) => {
         })
     }
 
+    // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름을 입력해 주세요.') })
+        } else {
+            if (!regexName.test(value)) {
+                return callback({ message: t('이름을 확인해 주세요.') })
+            }
+        }
+        callback()
+    }
+
     const closeModal = () => {
         setModalView(false);
     }
@@ -234,7 +248,7 @@ const RegistModal = (props) => {
 
                     <Form.Item
                         label={t('이름')}
-                        rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        rules={[{ required: true, validator: nameValidator }]}
                         desc={t('NAME_DESC')}
                     >
                         <Input
@@ -403,7 +417,6 @@ const RegistModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue=""
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

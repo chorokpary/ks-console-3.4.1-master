@@ -7,6 +7,8 @@ import styles from './index.scss'
 
 import LoadBalancerStore from 'stores/resources/loadbalancers'
 
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+
 const RegistModal = (props) => {
 
     const loadBalancerStore = new LoadBalancerStore();
@@ -45,6 +47,7 @@ const RegistModal = (props) => {
 
     const [networkDataList, setNetworkDataList] = useState([]);
     const [vmDataList, setVmDataList] = useState([]);
+    const [isMembers, setIsMembers] = useState(true);
 
     useEffect(() => {
 
@@ -76,16 +79,34 @@ const RegistModal = (props) => {
 
     const handleOk = () => {
         const onOk = props.onOk;
+        const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
+
+        setIsMembers(members.length > 0);
 
         form.current.validator(() => {
-            const { data } = form.current.props;
-            data.network = networkName
-            data.members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
 
-            data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)];
+            if (members.length > 0) {
+                const { data } = form.current.props;
+                data.network = networkName
+                data.members = members;
 
-            onOk({ lb: data })
+                data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)];
+                onOk({ lb: data })
+            }
+
         })
+    }
+
+    // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름을 입력해 주세요.') })
+        } else {
+            if (!regexName.test(value)) {
+                return callback({ message: t('이름을 확인해 주세요.') })
+            }
+        }
+        callback()
     }
 
     const closeModal = () => {
@@ -119,6 +140,7 @@ const RegistModal = (props) => {
                 }))
             })
             values[i].memberIp = opt[0][0].value;
+            setIsMembers(true);
 
             values[i].vmName = val;
             setFormMemberIpFields(values);
@@ -241,7 +263,7 @@ const RegistModal = (props) => {
 
                     <Form.Item
                         label={t('이름')}
-                        rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        rules={[{ required: true, validator: nameValidator }]}
                         desc={t('NAME_DESC')}
                     >
                         <Input
@@ -261,7 +283,7 @@ const RegistModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('멤버 IP')} <span className="form-item-required">*</span>
+                    {t('멤버 IP')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -285,7 +307,7 @@ const RegistModal = (props) => {
                                                     <Select value={v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
                                                 </td>
                                                 <td>
-                                                    <Input type="text "value={v.memberIp} disabled/>
+                                                    <Input type="text" value={v.memberIp} disabled/>
                                                 </td>
                                                 <td>
                                                     <Button
@@ -298,6 +320,7 @@ const RegistModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상머신을 선택해 주세요.</div>
                             </div>
                             <div className="text-right">
                                 <Button
@@ -311,7 +334,7 @@ const RegistModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('정책')} <span className="form-item-required">*</span>
+                    {t('정책')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -380,7 +403,6 @@ const RegistModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue=""
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

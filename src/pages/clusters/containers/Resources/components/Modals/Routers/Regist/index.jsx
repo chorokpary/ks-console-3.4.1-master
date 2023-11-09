@@ -22,7 +22,7 @@ const RegistModal = (props) => {
   const [routerInternal, setRouterInternal] = useState([]);
   const [routerExternal, setRouterExternal] = useState([]);
 
-  const [radioSnatType, setRadioSnatType] = useState("T");
+  const [radioSnatType, setRadioSnatType] = useState("F");
   const [radioExternal, setRadioExternal] = useState("");
 
   const handleOk = () => {
@@ -135,12 +135,6 @@ const RegistModal = (props) => {
                 maxLength={63}
                 style={{ maxWidth: 'none' }}
               />   
-            </Form.Item>
-            <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
-              <div className={styles.wrapper}>
-                <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}}>사용</Radio>
-                <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}}>미사용</Radio>
-              </div>              
             </Form.Item>
             <Form.Item label={t('내부 네트워크')} >
             <div className={styles.wrapper}>
@@ -257,6 +251,13 @@ const RegistModal = (props) => {
                   </table> 
                 </div>
             </div>               
+            </Form.Item>
+
+            <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
+              <div className={styles.wrapper}>
+                <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}} disabled={!!radioExternal ? false : true}>사용</Radio>
+                <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}}>미사용</Radio>
+              </div>              
             </Form.Item>
            
             <Form.Item

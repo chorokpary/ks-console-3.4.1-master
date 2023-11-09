@@ -59,8 +59,9 @@ export default class Vms extends React.Component {
   }
 
   refreshHandler = () => {
+    const { page, limit } = toJS(this.props.store.list);
     if (this.isRuning) {
-      this.getData({ silent: true })
+      this.getData({ silent: true, page, limit })
     } else {
       clearInterval(this.refreshTimer)
       this.refreshTimer = null
@@ -68,11 +69,9 @@ export default class Vms extends React.Component {
   }
 
   get isRuning() {
-    const { data } = toJS(this.props.store.list)
-    const runingData = data.filter(
-      item => item.status !== 'failed' && item.status !== 'successful'
-    )
-    return !isEmpty(runingData)
+    const { selectedRowKeys } = toJS(this.props.store.list)
+    const runingFlag = selectedRowKeys.length > 0 ? false : true;
+    return runingFlag
   }
 
   getData = params => {
@@ -165,7 +164,7 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc (state) {
-    if (state === 'Stoped'){
+    if (state === 'Stopped'){
       return "중지"
     }else if (state === 'Provisioning') {
       return "생성 중"
@@ -190,7 +189,7 @@ export default class Vms extends React.Component {
 
   getVmsStatus() {
     const VMS_STATUS = [
-      { text: 'STOPED', value: 'Stoped' },
+      { text: 'STOPPED', value: 'Stopped' },
       { text: 'PROVISIONING', value: 'Provisioning' },
       { text: 'STARTING', value: 'Starting' },
       { text: 'RUNNING', value: 'Running' },
@@ -218,7 +217,6 @@ export default class Vms extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: this.renderAvatar,
         render: (name, record) => {
 
           const { cluster } = this.props.match.params
@@ -227,7 +225,7 @@ export default class Vms extends React.Component {
           return (
             <div className={styles.avatar}>
               <div className={styles.icon}>
-                <Icon name="templet" size={40} />
+                <i className="ico-type-vm"></i>
                 <Indicator
                   className={styles.indicator}
                   type={this.getState(state)}
@@ -273,51 +271,6 @@ export default class Vms extends React.Component {
           return arch_type
         },
       },
-      {
-        title: t('호스트 디바이스'),
-        dataIndex: 'host_devices',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: host_devices => {
-          let hostDeviceList = ""
-
-          if (host_devices.length > 0) {
-            hostDeviceList = host_devices.map((host) => {
-                return <p key={host}>{host}</p>
-            });
-          } else {
-            hostDeviceList = <p>-</p>
-          }
-          return hostDeviceList
-        }
-      },
-      {
-        title: t('Mediated 디바이스'),
-        dataIndex: 'gpus',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: gpus => {
-          let gpusList = ""
-
-          if (gpus.length > 0) {
-            gpusList = gpus.map((gpu) => {
-                return <p key={gpu}>{gpu}</p>
-            });
-          } else {
-            gpusList = <p>-</p>
-          }
-          return gpusList
-        }
-      },
-      // {
-      //   title: t('Flavor'),
-      //   dataIndex: 'flavor',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      // },
       {
         title: t('고정 IP'),
         dataIndex: 'networks',
@@ -520,6 +473,10 @@ export default class Vms extends React.Component {
     return this.props.rootStore.routing
   }
 
+  getBanner = () => {
+    return <i className="ico-type-vm"></i>
+  }
+
   render() {
     const { bannerProps, tableProps } = this.props
     //console.log({ ...this.props })
@@ -528,7 +485,8 @@ export default class Vms extends React.Component {
       <ListPage {...this.props}>
       <Banner
         {...bannerProps}
-        icon="templet"
+        // icon="templet"
+        icon={this.getBanner}
         tabs={this.tabs}
         title={t('가상머신')}
         description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}

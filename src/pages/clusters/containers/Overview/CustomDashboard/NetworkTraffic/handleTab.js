@@ -93,16 +93,20 @@ function getVmData(data) {
 }
 
 function sumVmData(config) {
-  const lastData = config.data[config.data.length - 1];
-  const { TOTAL, UNIT, time, ...others } = lastData;
-  const values = Object.values(others)
-  const sum = values.reduce((a, b) => {
-    return a + b
-  }, 0);
+  if (config.data.length > 0) {
+    const lastData = config.data[config.data.length - 1];
+    const { ...others } = lastData;
+    const values = Object.values(others)
+    const sum = values.reduce((a, b) => {
+      return a + b
+    }, 0);
 
-  lastData.sum = sum.toFixed(2)
-  lastData.unit = config.unit
-  return lastData
+    lastData.sum = sum ? sum.toFixed(2) : 0
+    lastData.unit = config.unit
+    return lastData
+  } else {
+    return { sum: 0, unit: '' }
+  }
 }
 
 function getKaasData(data) {

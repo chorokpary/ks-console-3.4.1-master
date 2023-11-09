@@ -4,13 +4,13 @@ import VmStore from 'stores/resources/vms'
 import VmModel from 'stores/dashboard/vms';
 import { fnSetVms } from 'utils/dashboard'
 
-const Vm = () => {
+const Vm = ({ x, y, w, h }) => {
   const vmStore = new VmStore();
 
   useEffect(() => {
     const getVmData = async () => {
       setLoading(true)
-      const vmList = await vmStore.fetchList({ limit: 1000 })
+      const vmList = await vmStore.vmList()
       setList(vmList)
       setLoading(false)
     };
@@ -30,15 +30,13 @@ const Vm = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="5" gs-y="0" gs-w="2" gs-h="4">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>가상머신</label>
-
             </div>
-
             <Loading spinning={loading}>
               <div className="grid_info style_status">
                 <div className="box type_status">

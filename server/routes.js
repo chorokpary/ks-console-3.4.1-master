@@ -31,6 +31,7 @@ const {
   devopsWebhookProxy,
   b2iFileProxy,
   webMm3Proxy,
+  webCmpProxy,
 } = require('./proxy')
 
 const {
@@ -78,6 +79,8 @@ router
 
   .all('/edgetron/(.*)', mm3CheckToken)
   .use(proxy('/edgetron/(.*)', webMm3Proxy))
+
+  .use(proxy('/cmp/(.*)', webCmpProxy))
 
   // session
   .post('/login', parseBody, handleLogin)

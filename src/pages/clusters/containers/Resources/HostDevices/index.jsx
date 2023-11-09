@@ -17,20 +17,13 @@
  */
 
 import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-
-import RoleStore from 'stores/role'
 import HostDeviceStore from 'stores/resources/hostdevices'
-import * as common from 'utils/resources'
 
-
+import styles from './index.scss'
 
 @withList({
     store: new HostDeviceStore(),
@@ -110,13 +103,20 @@ export default class HostDevices extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: name => (
-                    <Avatar
-                        icon="network-router"
-                        iconSize={40}
-                        title={name}
-                    />
-                ),
+                render: name => {
+                    const { cluster } = this.props.match.params
+
+                    return (
+                        <div className={styles.avatar} >
+                            <div className={styles.icon}>
+                                <i className="ico-type-hostdevice"></i>
+                            </div>
+                            <div>
+                                <div className={styles.title}>{name}</div>
+                            </div>
+                        </div>
+                    )
+                },
             },
             {
                 title: t('제조사 명'),
@@ -146,13 +146,17 @@ export default class HostDevices extends React.Component {
         return { desc: t('데이터가 없습니다') }
     }
 
+    getBanner = () => {
+        return <i className="ico-type40-hostdevice"></i>
+    }
+
     render() {
 
         const { bannerProps, tableProps } = this.props
         return (
             <ListPage {...this.props}>
                 <Banner
-                    icon="network-router"
+                    icon={this.getBanner}
                     {...bannerProps}
                     tabs={this.tabs}
                     title={t('호스트 디바이스')}

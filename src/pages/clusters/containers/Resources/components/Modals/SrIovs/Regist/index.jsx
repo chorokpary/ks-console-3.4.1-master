@@ -42,12 +42,8 @@ const RegistModal = (props) => {
   })
 
   const networkTypeOptions = [
-    { label: 'VXLAN', value: 'vxlan', },
     { label: 'VLAN', value: 'vlan', },
     { label: 'FLAT', value: 'flat', },
-    { label: 'GRE', value: 'gre', },
-    { label: 'GENEVE', value: 'geneve', },
-    { label: 'STT', value: 'stt', },
   ]
 
   useEffect(() => {
@@ -98,8 +94,6 @@ const RegistModal = (props) => {
         delete data.segment_id;
       }
 
-      console.log("data : "+ JSON.stringify(data))
-
       onOk({ ...data })
     })
   }
@@ -110,7 +104,7 @@ const RegistModal = (props) => {
 
   const stepMoveCheck = (step) => {
     const { data } = form.current.props;
-    console.log(data)
+    
     if(step ==1){
       if(data.resource_name == undefined || data.resource_name == "선택"  || data.resource_name == "" 
       || data.cidr == undefined || data.cidr == ""
@@ -293,7 +287,7 @@ const RegistModal = (props) => {
   return (
     <>  
         <Modal
-          icon="templet"
+          icon="pen"
           width={960}
           title={props.title}
           onCancel={closeModal}
@@ -353,7 +347,7 @@ const RegistModal = (props) => {
                         >
                           <Select
                             name="type"
-                            defaultValue="VXLAN"
+                            defaultValue="VLAN"
                             options={networkTypeOptions}
                             onChange={(e) => handleNetworkType(e)} />
                         </Form.Item>

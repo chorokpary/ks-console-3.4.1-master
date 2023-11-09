@@ -1,11 +1,13 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Radio, Toggle } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Radio, Toggle, Loading } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
 import MediatedDevicesStore from 'stores/resources/mediateddevices'
+
+const regexName = /^([a-z0-9]+)\/([a-z0-9]+)$/;
 
 const RegistModal = (props) => {
 
@@ -16,12 +18,14 @@ const RegistModal = (props) => {
     const [formData, setFormData] = useState({});
 
     const [deviceDataList, setDeviceDataList] = useState([]);
-    const [deviceCheckItem, setDeviceCheckItem] = useState('ctest');
+    const [deviceCheckItem, setDeviceCheckItem] = useState('');
     const [isGpu, setIsGpu] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isCheck, setIsCheck] = useState(false);
 
     const handleOk = () => {
         const onOk = props.onOk;
-
+        setIsCheck(true)
         form.current.validator(() => {
             const { data } = form.current.props;
 
@@ -33,17 +37,55 @@ const RegistModal = (props) => {
         })
     }
 
+    // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름을 입력해 주세요.') })
+        } else {
+            if (!regexName.test(value)) {
+                return callback({ message: t('이름을 확인해 주세요.') })
+            }
+        }
+        callback()
+    }
+
     const closeModal = () => {
         setModalView(false);
     }
 
+    let timer = 0;
     useEffect(() => {
-        const getDeviceData = async () => {
-            const listDevice = await mediatedDevicesStore.fetchDeviceList();
-            setDeviceDataList(listDevice.vgpu_profiles);
-        };
-        getDeviceData();
+
+        Promise.all([getDeviceData()]).then((values) => {
+            const fetchData = (timeSec) => {
+                timer = setTimeout(async () => {
+                    if (values[0].length > 0) {
+                        setDeviceDataList(values[0])
+                        setIsLoading(false)
+                    } else {
+                        if (timeSec === 1000) {
+                            fetchData(2000)
+                        } else {
+                            setIsLoading(false)
+                        }
+                    }
+                }, timeSec)
+            }
+            fetchData(1000);
+        });
+
+        return () => {
+            clearTimeout(timer)
+        }
+
     }, [])
+
+    const getDeviceData = () => {
+        return new Promise(async (resolve, reject) => {
+            const listDevice = await mediatedDevicesStore.fetchDeviceList();
+            resolve(listDevice)
+        })
+    };
 
     return (
         <>
@@ -60,7 +102,8 @@ const RegistModal = (props) => {
 
                     <Form.Item
                         label={t('이름')}
-                        rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        rules={[{ required: true, validator: nameValidator }]}
+                        desc={t('이름은 소문자, 숫자, /(필수) 입력 가능합니다. ex) test/001')}
                     >
                         <Input
                             name="name"
@@ -71,19 +114,19 @@ const RegistModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('Mediated 디바이스')} <span className="form-item-required">*</span>
+                    {t('Mediated 디바이스')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
                                 <table>
                                     <colgroup>
                                         <col width="5%" />
-                                        <col width="15%" />
-                                        <col width="20%" />
+                                        <col width="12%" />
+                                        <col width="18%" />
                                         <col width="10%" />
                                         <col width="10%" />
-                                        <col width="10%" />
-                                        <col width="15%" />
+                                        <col width="12%" />
+                                        <col width="13%" />
                                         <col width="15%" />
                                     </colgroup>
                                     <thead>
@@ -99,14 +142,16 @@ const RegistModal = (props) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {!deviceDataList?.length &&
+                                        {isLoading ? <tr><td colSpan="8" className="no-data" style={{ textAlign: 'center' }}><Loading /></td></tr>
+                                            :
+                                            deviceDataList?.length < 1 ?
                                             <tr>
                                                 <td colSpan="8" className="no-data">
                                                     <p>할당 가능한 자원이 없습니다.</p>
                                                 </td>
                                             </tr>
-                                        }
-                                        {deviceDataList?.map((data, key) => (
+                                            :
+                                            deviceDataList?.map((data, key) => (
                                             <tr key={data.name}>
                                                 <td>
                                                     <Radio name={`select-${data.name}`}
@@ -125,11 +170,12 @@ const RegistModal = (props) => {
                                     </tbody>
                                 </table>
                             </div>
+                            <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>네트워크를 선택해 주세요.</div>
                         </div>
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('GPU 여부')} <span className="form-item-required">*</span>
+                    {t('GPU 여부')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <Toggle showText onText="on" offText="off" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
                     </Form.Item>
@@ -143,7 +189,6 @@ const RegistModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue=""
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

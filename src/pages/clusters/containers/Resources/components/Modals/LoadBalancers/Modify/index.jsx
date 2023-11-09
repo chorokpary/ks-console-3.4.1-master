@@ -16,6 +16,7 @@ const ModifyModal = (props) => {
     const [formData, setFormData] = useState({});
 
     const [vmDataList, setVmDataList] = useState([]);
+    const [isMembers, setIsMembers] = useState(true);
 
     useEffect(() => {
         
@@ -36,14 +37,29 @@ const ModifyModal = (props) => {
         return opt
     }
 
+    const [formMemberIpFields, setFormMemberIpFields] = useState([]);
+    useEffect(() => {
+        const opt = props.store.detail?.lb.members.map(obj => ({
+            vmName: vmDataList.filter((el) => el.networks.map(elN => elN.ip).includes(obj))[0]?.name
+            , memberIp: obj
+        }))
+        setFormMemberIpFields(opt)
+    }, [vmDataList])
+
     const handleOk = () => {
         const onOk = props.onOk;
+        const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
+
+        setIsMembers(members.length > 0);
 
         form.current.validator(() => {
-            const { data } = form.current.props;
-            data.members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
 
-            onOk({ lb: data })
+            if (members.length > 0) {
+                const { data } = form.current.props;
+                data.members = members;
+                onOk({ lb: data })
+            }
+
         })
     }
 
@@ -55,7 +71,6 @@ const ModifyModal = (props) => {
         vmName: '선택'
         , memberIp: ''
     }
-    const [formMemberIpFields, setFormMemberIpFields] = useState([memberIpObj]);
     //멤버 IP handler
     const handleMemberIp = {
 
@@ -79,6 +94,7 @@ const ModifyModal = (props) => {
             })
 
             values[i].memberIp = opt[0][0].value;
+            setIsMembers(true);
 
             values[i].vmName = val;
             setFormMemberIpFields(values);
@@ -122,7 +138,7 @@ const ModifyModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('멤버 IP')} <span className="form-item-required">*</span>
+                    {t('멤버 IP')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -159,6 +175,7 @@ const ModifyModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상머신을 선택해 주세요.</div>
                             </div>
                             <div className="text-right">
                                 <Button

@@ -79,6 +79,8 @@ import MediatedDevices from '../containers/Resources/MediatedDevices'
 import LoadBalancers from '../containers/Resources/LoadBalancers'
 
 import BareMetal from '../containers/Resources/BareMetal'
+import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator'
+import ComKassResource from '../containers/Resources/ComKassResource'
 
 const PATH = '/clusters/:cluster'
 
@@ -338,7 +340,7 @@ export default [
             path: `${PATH}/resourcesvolumes`,
             component: ResourcesVolumes,
             exact: true,
-          },  
+          },
           {
             path: `${PATH}/sriovs`,
             component: Sriov,
@@ -348,24 +350,36 @@ export default [
             path: `${PATH}/hostdevices`,
             component: HostDevices,
             exact: true,
-          },  
+          },
           {
             path: `${PATH}/mediateddevices`,
             component: MediatedDevices,
             exact: true,
-          },  
+          },
           {
             path: `${PATH}/loadbalancers`,
             component: LoadBalancers,
             exact: true,
-          },  
+          },
           {
             path: `${PATH}/baremetalmonitoring`,
             component: BareMetal,
             exact: true,
-          },  
-                  
-          
+          },
+          {
+            path: `${PATH}/baremetal-carbon-indicator`,
+            component: BareMetalCarbonIndicator,
+            exact: true,
+          },
+          {
+            path: `${PATH}/computingkaasmonitoring`,
+            component: ComKassResource,
+            exact: true,
+          },
+
+
+
+
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

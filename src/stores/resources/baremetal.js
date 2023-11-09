@@ -45,7 +45,7 @@ export default class BareMetalStore extends Base {
     isLoading: true,
   }
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/keypairs`
+  getResourceUrl = (params = {}) => `cmp/baremetal/nodes`
   getListUrl = this.getResourceUrl
 
   @action
@@ -58,7 +58,7 @@ export default class BareMetalStore extends Base {
     silent,
     ...params
   } = {}) {
-    console.log("silent : "+ silent)
+    // console.log("silent : "+ silent)
     if (!silent) {
       this.list.isLoading = true
     }
@@ -75,24 +75,28 @@ export default class BareMetalStore extends Base {
     params.limit = params.limit || 10
 
     const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
-      this.getFilterParams(params)
+      this.getResourceUrl()
     )
 
-    const data = (get(result, 'keypairs') || []).map(item => ({
+    const data = (get(result, 'nodes') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
+    // const dataArray = [];
+    // data.map((obj) => {
+    //     dataArray.push(obj.metric)
+    // })
+
     // 초기 정렬 처리
     data.sort((a, b) => {
-      return a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0;
+      return a.name < b.name ? 1 : a.name > b.name ? -1 : 0;
     });
 
     // 초기 데이터 처리 
-    this.dataList = data; 
-    
+    this.dataList = data;
+
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {
@@ -151,13 +155,20 @@ export default class BareMetalStore extends Base {
     const url = this.getResourceUrl(params);
 
     const jsonData = {};
-    const keypairData = {};
+    const nodeData = {};
+    const redfishData = {};
 
-    keypairData.name = data.name;
-    keypairData.public_key = data.publicKey;
-    keypairData.description = data?.description;
+    nodeData.ScrapeInterval = data.nodeInterval + "s";
+    nodeData.port = Number(data.nodePort);
 
-    jsonData.keypair = keypairData;
+    redfishData.ScrapeInterval = data.refishInterval + "s";
+    redfishData.port = Number(data.refishPort);
+    redfishData.target = data.target_ip_array;
+
+    jsonData.name = data.name;
+    jsonData.ip = data.ip;
+    jsonData.nodeExporter = nodeData;
+    jsonData['redfish-exporter'] = redfishData;
 
     const res = await request.post(url, jsonData)
     return res
@@ -165,18 +176,26 @@ export default class BareMetalStore extends Base {
 
   @action
   async update({ name, ...params }, data) {
+    const url = this.getResourceUrl(params);
 
     const jsonData = {};
-    const keypairData = {};
+    const nodeData = {};
+    const redfishData = {};
 
-    keypairData.name = data.name;
-    keypairData.description = data?.description;
+    nodeData.ScrapeInterval = data.nodeInterval + "s";
+    nodeData.port = Number(data.nodePort);
 
-    jsonData.keypair = keypairData;
+    redfishData.ScrapeInterval = data.refishInterval + "s";
+    redfishData.port = Number(data.refishPort);
+    redfishData.target = data.target_ip_array;
 
-    await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    )
+    jsonData.name = data.name;
+    jsonData.ip = data.ip;
+    jsonData.nodeExporter = nodeData;
+    jsonData['redfish-exporter'] = redfishData;
+
+    const res = await request.put(url, jsonData)
+    return res
   }
 
 
@@ -185,30 +204,14 @@ export default class BareMetalStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
+      `${this.getResourceUrl(params)}`
     )
-    const detail = { ...params, ...this.mapper(result), kind: 'Baremetal' }
 
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
+    const detail = { ...params, ...this.mapper(result), kind: 'Baremetal' }
 
     this.detail = detail
     this.isLoading = false
     return detail
-  }
-
-  @action
-  async fetchYaml(params) {
-    this.isLoading = true
-    
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
-    )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Baremetal' }
-  
-    this.yaml = yamlData.manifest
-    this.isLoading = false
-    return yamlData
   }
 
   @action

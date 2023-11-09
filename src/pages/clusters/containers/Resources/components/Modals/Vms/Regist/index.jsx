@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, omit } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal, } from 'components/Base'
@@ -63,7 +63,7 @@ const RegistModal = (props) => {
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor();
       const listImage = await vmStore.fetchVmListImage();
-      // const listBootVolume = await vmStore.fetchVmListBootVolume();
+      const listBootVolume = await vmStore.fetchVmListBootVolume();
       const listNetwork = await vmStore.fetchVmListNetwork();
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork();
       const listKeypair = await vmStore.fetchVmListKeypair();
@@ -73,7 +73,7 @@ const RegistModal = (props) => {
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
       setImageOptionList(listImage.images);
-      // setBootVolumeDataList(listBootVolume.volumes);
+      setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
       setKeypairDataList(listKeypair.keypairs);
@@ -98,11 +98,10 @@ const RegistModal = (props) => {
 
   const imageOptions = () => {
     const opt = imageOptionList.map((obj) => {
-      // const exceptonArray = ['ubuntu', 'centos']
-      // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
       return {
         label: t(obj.name),
         icon: `ico-os-${obj.distro_type}`,
+        description : t(obj.description),
         value: t(obj.name),
       }
 
@@ -155,6 +154,7 @@ const RegistModal = (props) => {
       data.network = networkCheckItems;
       data.sriov = sriovCheckItems;
       data.securitygroup = securityGroupCheckItems;
+      data.imageType = imageType;
 
       data.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
       data.keypair = data.keypair == "선택" ? "" : data.keypair;
@@ -166,10 +166,9 @@ const RegistModal = (props) => {
 
       let makeScript = "#cloud-config\n"
       makeScript += "chpasswd:\n"
-      makeScript += "list:\n"
+      makeScript += "list: | \n"
 
       listPasswordRoute.map((obj) => {
-        console.log(data['scriptPassword_' + obj])
         if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
           makeScript += data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
           makeScriptStep_1 = true;
@@ -181,8 +180,7 @@ const RegistModal = (props) => {
 
       listFileRoute.map((obj) => {
         if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
-          makeScript += data['scriptPath_' + obj] + ":" + data['scriptContent_' + obj] + "\n"
-          makeScript += "path: " + data['scriptPath_' + obj] + "\ncontent: " + data['scriptContent_' + obj] + "\n"
+          makeScript += " - path: " + data['scriptPath_' + obj] + "\ncontent: | \n" + data['scriptContent_' + obj] + "\n"
 
           makeScriptStep_2 = true;
         }
@@ -192,11 +190,11 @@ const RegistModal = (props) => {
 
       listPackageRoute.map((obj) => {
         if (!!data['scriptPackage_' + obj]) {
-          if (data['scriptVersion_' + obj] == "") {
-            makeScript += data['scriptPackage_' + obj] + "\n"
+          if (data['scriptVersion_' + obj] == "" || data['scriptVersion_' + obj] == undefined) {
+            makeScript += " - " + data['scriptPackage_' + obj] + "\n"
             makeScriptStep_3 = true;
           } else {
-            makeScript += "[" + data['scriptPackage_' + obj] + ", " + data['scriptVersion_' + obj] + "]\n"
+            makeScript += " - [" + data['scriptPackage_' + obj] + ", " + data['scriptVersion_' + obj] + "]\n"
             makeScriptStep_3 = true;
           }
         }
@@ -207,8 +205,6 @@ const RegistModal = (props) => {
       }
 
       data.makeScript = makeScript;
-
-      console.log("data : " + JSON.stringify(data))
 
       onOk({ ...data })
     })
@@ -440,7 +436,7 @@ const RegistModal = (props) => {
   return (
     <>
       <Modal
-        icon="templet"
+        icon="pen"
         width={960}
         title={props.title}
         onCancel={closeModal}
@@ -503,7 +499,7 @@ const RegistModal = (props) => {
               <div className={`${regStep == 1 ? "" : "hide"}`}>
                 <Form.Item
                   label={t('이름')}
-                  rules={[{ required: true, message: t('이름를 입력해 주세요.') }]}
+                  rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
@@ -568,6 +564,7 @@ const RegistModal = (props) => {
                             }}
                             options={imageOptions()}
                             onChange={(e) => setSelectImageName(e)}
+                            defaultDescription={"이미지를 선택해 주세요."}
                           />
                         </Form.Item>
                         {
@@ -575,7 +572,7 @@ const RegistModal = (props) => {
                           <Form.Item>
                             <Input
                               name="imageView"
-                              defaultValue={osType + ' > ' + selectImageName}
+                              defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
                               readOnly
                               style={{ maxWidth: 'none' }}
                             />
@@ -612,6 +609,7 @@ const RegistModal = (props) => {
                       label: t('선택')
                     }}
                     className={styles.typeselectbox}
+                    defaultDescription={"Flavor를 선택해 주세요."}
                   />
                 </Form.Item>
 
@@ -767,7 +765,7 @@ const RegistModal = (props) => {
                 >
                   <Select
                     name="keypair"
-                    defaultValue={"선택"}
+                    placeholder={t('SELECT')}
                     options={keypairOptions()}
                     clearable
                   />
@@ -838,14 +836,13 @@ const RegistModal = (props) => {
                 >
                   <Select
                     name="node"
-                    defaultValue={"선택"}
+                    placeholder={t('SELECT')}
                     options={nodeOptions()}
                     clearable
                   />
                 </Form.Item>
               
                 <Form.Group label={t('스크립트')} onChange={(e) => setIsScript(!isScript)} checkable>
-                    <div className={styles.wrapper}>
                       <Form.Group label="패스워드 변경" onChange={(e) => setIsPassword(!isPassword)} checkable >
                         {listPasswordRoute.map((obj, idx) => (
                           <div className={styles.scriptitem} key={obj}>
@@ -884,7 +881,7 @@ const RegistModal = (props) => {
                           </Button>
                         </div>
                       </Form.Group>
-                      <Form.Group label="패키지 설치" onChange={(e) => setIsPackage(!isPackage)} checkable >
+                      <Form.Group label="파일 쓰기" onChange={(e) => setIsPackage(!isPackage)} checkable >
                         {listFileRoute.map((obj, idx) => (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
@@ -922,7 +919,7 @@ const RegistModal = (props) => {
                           </Button>
                         </div>
                       </Form.Group>
-                      <Form.Group label="파일 쓰기" onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
+                      <Form.Group label="패키지 설치" onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
                         {listPackageRoute.map((obj, idx) => (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
@@ -970,7 +967,6 @@ const RegistModal = (props) => {
                           />
                         </Form.Item>
                       </Form.Group>
-                    </div>
                 </Form.Group>
 
               </div>
@@ -994,9 +990,9 @@ const RegistModal = (props) => {
                         <div className={styles.bold}>{vmName}</div>
                       </div>
                       <div className={styles.list}>
-                        <label>이미지</label>
+                        <label>{`${imageType == "I" ? '이미지' : '부트볼륨'}`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{imageName}</div>
+                          <div className={styles.bold}>{`${imageType == "I" ? imageName : bootVolumeName}`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>

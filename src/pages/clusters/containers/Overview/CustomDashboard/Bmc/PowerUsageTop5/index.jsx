@@ -1,0 +1,145 @@
+import React, { useEffect, useState } from 'react'
+import { Loading } from '@kube-design/components'
+import CustomStore from 'stores/monitoring/custom/monitor'
+import { toJS } from 'mobx'
+import { get } from 'lodash'
+import { getValueByUnit } from 'utils/monitoring'
+
+const PowerUsageTop5 = ({ x, y, w, h,
+  nodeData
+}) => {
+  const customStore = new CustomStore()
+
+  const [loading, setLoading] = useState(false)
+  const [nodeList, setNodeList] = useState([])
+  const [metricType, setMetricType] = useState([])
+  const [metricPower, setMetricPower] = useState([])
+
+  {/* 1대 평균 기준 200kwh  */ }
+  const [maxUsage, setMaxUsage] = useState(200)
+
+  useEffect(() => {
+    if (nodeData.length > 0) {
+      handleList('')
+    }
+  }, [nodeData, metricPower])
+
+  useEffect(() => {
+
+    const getData = async () => {
+      setLoading(true)
+      const metric_type = await customStore.fetchMetric({
+        expr: `max by(instance, machine) (node_uname_info)`,
+      })
+      setMetricType(metric_type)
+
+      const metric_power = await customStore.fetchMetric({
+        expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      })
+      setMetricPower(metric_power)
+
+      setLoading(false)
+    };
+    getData();
+
+  }, [])
+
+  const getMetricValue = (metricData, data) => {
+    const instance = toJS(data.ip)
+    const metrics = metricData.find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    const value = get(metrics, 'value[1]', '0');
+    return value;
+  }
+
+  const getType = (data) => {
+    var iconText = "arm"
+    const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === data.ip))
+    const type = get(type_data, 'metric.machine', '')
+    if (type.includes('x86')) iconText = 'x86'
+    return iconText
+  }
+
+  const handleList = (nodeType) => {
+    var arr = nodeData
+
+    if (nodeType == '') {
+      arr.map(obj => obj.power = getMetricValue(metricPower, obj))
+    } else {
+      arr = new Array()
+      nodeData.map(obj => {
+        obj.power = getMetricValue(metricPower, obj)
+        const type = getType(obj)
+        if (type == nodeType) arr.push(obj)
+      })
+    }
+    arr.sort((a, b) => Number(b.power) - Number(a.power))
+    arr.splice(5, arr.length)
+
+    setNodeList(arr)
+  }
+
+  return (
+    <>
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content">
+          {/* grid_item */}
+          <div className="grid_item">
+            <div className="grid_title" style={{ cursor: 'default' }}>
+              <label>전력 사용량 Top 5</label>
+              <div className="dash_boxtab">
+                <label htmlFor="name13" onClick={() => handleList('')}>
+                  <input type="radio" name="box-tab5" id="name13" value="name3" defaultChecked />
+                  <span>전체</span>
+                </label>
+                <label htmlFor="name14" onClick={() => handleList('arm')}>
+                  <input type="radio" name="box-tab5" id="name14" value="name4" />
+                  <span>ARM</span>
+                </label>
+                <label htmlFor="name15" onClick={() => handleList('x86')}>
+                  <input type="radio" name="box-tab5" id="name15" value="name5" />
+                  <span>x86</span>
+                </label>
+              </div>
+            </div>
+            <div className="grid_info style_list">
+              {nodeList.length > 0 ?
+                <Loading spinning={loading}>
+                  <ul className="list_01">
+                    {nodeList.map((obj, idx) => (
+                      <li className="li_type_01" key={idx}>
+                        <div className="lft">
+                          <i className={`ico-type24-${getType(obj)}`}></i>
+                          <h6 className="list_title">
+                            {obj.name}
+                            <span>{obj.ip}</span>
+                          </h6>
+                        </div>
+                        <div className="info2">
+                          <h6>{Number(obj.power) * 0.001} kWh
+                            <span>{((Number(obj.power) * 0.001) / maxUsage * 100).toFixed(2)}%</span>
+                          </h6>
+                          <div className="graph_wrap">
+                            <div className="graph_bar">
+                              <div className="bar animate-bar" style={{ width: (Number(obj.power) * 0.001) / maxUsage * 100 + "%" }}></div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </Loading>
+                :
+                <div className="grid_text">
+                  <span>데이터가 없습니다.</span>
+                </div>
+              }
+            </div>
+          </div>
+          {/* // grid_item */}
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default PowerUsageTop5

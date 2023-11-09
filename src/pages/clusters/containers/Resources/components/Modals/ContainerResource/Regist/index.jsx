@@ -3,10 +3,8 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal } from 'components/Base'
 
-import { CardSelect as CardSelect2 } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, Tabs, Icon, Slider } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
-import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
 import * as common from "utils/resources"
 
 import TypeSelect from '../../../TypeSelect'
@@ -19,9 +17,14 @@ import axios from "axios";
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
 
-const CONFIG_CPU = 2;
-const CONFIG_RAM = 4;
-const CONFIG_DISK = 40;
+const CONFIG_CPU_MASTER= 4;
+const CONFIG_RAM_MASTER = 8;
+const CONFIG_DISK_MASTER = 80;
+const CONFIG_CPU_WORKER = 8;
+const CONFIG_RAM_WORKER = 16;
+const CONFIG_DISK_WORKER = 160;
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+
 const RegistModal = (props) => {
 
     const form = useRef();
@@ -128,7 +131,7 @@ const RegistModal = (props) => {
         });
 
         const featureData = axios.get(`/edgetron/resources/capk/metadata/features`);
-        let resFeature = [];
+        let resFeature = [{ label: '모두선택', value: 'all', icon: 'ico-etc-checkall' }];
         featureData.then(response => {
             if (response.data.features) {
                 for (let i = 0, n = response.data.features.length; i < n; i += 1) {
@@ -136,7 +139,7 @@ const RegistModal = (props) => {
                         label: response.data.features[i].name,
                         value: response.data.features[i].name,
                         //icon: response.data.features[i].name.toLowerCase(),
-                        icon: 'kubesphere',
+                        icon: 'ico-etc-' + response.data.features[i].name.toLowerCase(),
                     });
                 };
                 setFeatures(resFeature);
@@ -165,12 +168,13 @@ const RegistModal = (props) => {
         return opt
     }
 
-    const flavorOptions = () => {
+    const flavorOptions = (flag) => {
         const opt = flavorDataList.map((obj) => ({
             label: t(obj.name),
-            description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib/ Disk ${obj.root_disk} Gib`,
+            description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib / Disk ${obj.root_disk} Gib`,
             value: t(obj.name),
-            disabled: (obj.vcpus < CONFIG_CPU || common.fnSetBytes(obj.ram) < CONFIG_RAM || obj.root_disk < CONFIG_DISK)
+            disabled: flag === 1 ? (obj.vcpus < CONFIG_CPU_MASTER || common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER || obj.root_disk < CONFIG_DISK_MASTER)
+            : (obj.vcpus < CONFIG_CPU_WORKER || common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER || obj.root_disk < CONFIG_DISK_WORKER)
         }))
         return opt
     }
@@ -213,7 +217,7 @@ const RegistModal = (props) => {
             data.csi = csiSelect;
             data.features = ekgStack;
             data.expiration = expirationSelect;
-            data.private_registry = true;
+            data.private_registry = tab === 'private';
 
             onOk({ ...data })
         })
@@ -238,7 +242,7 @@ const RegistModal = (props) => {
                 setIsFirst(false)
             }
 
-            if (data.name == undefined || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
+            if (data.name == undefined || !regexName.test(data.name) || data.image == "선택" || data.masterFlavor == "선택" || data.workerFlavor == "선택") {
                 handleOk();
             } else {
                 setRegStep(2);
@@ -364,6 +368,17 @@ const RegistModal = (props) => {
 
 
     // Validation 시작 ==================================================
+    const nameValidator = (rule, value, callback) => {
+        if (value == undefined) {
+            return callback({ message: t('이름을 입력해 주세요.') })
+        } else {
+            if (!regexName.test(value)) {
+                return callback({ message: t('이름을 확인해 주세요.') })
+            }
+        }
+        callback()
+    }
+
     const imageValidator = (rule, value, callback) => {
         if (value == "선택" || value == "select") {
             return callback({ message: t('이미지를 선택해 주세요.') })
@@ -416,41 +431,33 @@ const RegistModal = (props) => {
     }
     const addWorkerBtn = (e) => {
         e.preventDefault();
-        setWorkerFlavorNumber(workerFlavorNumber + 1);
+        if (workerFlavorNumber < 10) {
+            setWorkerFlavorNumber(workerFlavorNumber + 1);
+        }
     }
     const minusWorkerBtn = (e) => {
         e.preventDefault();
-        if (workerFlavorNumber > 0) {
+        if (workerFlavorNumber > 1) {
             setWorkerFlavorNumber(workerFlavorNumber - 1);
         }
     }
 
     const handlerAutoScale = (e) => {
         if (Array.isArray(e)) {
-            setAutoScale(e)
+            const scale = [e[0], e[1] < 1 ? 1: e[1]]
+            setAutoScale(scale)
         } else {
-            const maxNum = e > 10 ? 10 : e;
+            const maxNum = e > 10 ? 10 : (e < 1 ? 1 : e);
             setAutoScale([0, maxNum]);
         }
     }
 
     const handleEkgStack = (e => {
-        if (e === 'all') {
-            if ([...ekgStack].includes(e)) {
-                setEkgStack([]);
-            } else {
-                const eArray = [];
-                features.filter((obj) => obj.value !== 'all').forEach((el) => eArray.push(el.value));
-                setEkgStack(eArray);
-            }
-        } else {
-            if ([...ekgStack].includes(e)) {
-                setEkgStack([...ekgStack].filter((obj) => obj !== e));
-            } else {
-                setEkgStack(e);
-            }
-        }
+        setEkgStack(e.filter(obj => obj !== 'all'));
     })
+
+    const [tab, setTab] = useState("private");
+    const { TabPanel } = Tabs;
 
     // 스크립트 끝 ==================================================
 
@@ -520,7 +527,7 @@ const RegistModal = (props) => {
                             <div className={`${regStep == 1 ? "" : "hide"}`}>
                                 <Form.Item
                                     label={t('이름')}
-                                    rules={[{ required: true, message: t('이름를 입력해 주세요.') }]}
+                                    rules={[{ required: true, validator: nameValidator }]}
                                     desc={t('NAME_DESC')}
                                 >
                                     <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
@@ -528,7 +535,7 @@ const RegistModal = (props) => {
                                 <div style={{ padding: 10 }} />
 
 
-                                이미지 <span className="form-item-required">*</span>
+                                이미지<span className="form-item-required">*</span>
                                 <Form.Group>
                                     <Columns>
                                         <Column>
@@ -552,6 +559,7 @@ const RegistModal = (props) => {
                                                     }}
                                                     options={imageOptions()}
                                                     onChange={(e) => setSelectImageName(e)}
+                                                    defaultDescription={"이미지를 선택해 주세요."}
                                                 />
                                             </Form.Item>
                                             {
@@ -559,7 +567,7 @@ const RegistModal = (props) => {
                                                 <Form.Item>
                                                     <Input
                                                         name="imageView"
-                                                        defaultValue={osType + ' > ' + selectImageName}
+                                                        defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
                                                         readOnly
                                                         style={{ maxWidth: 'none' }}
                                                     />
@@ -569,7 +577,7 @@ const RegistModal = (props) => {
                                     </Columns>
                                 </Form.Group>
 
-                                Master Flavor <span className="form-item-required">*</span>
+                                Master Flavor<span className="form-item-required">*</span>
                                 <Form.Group>
                                     <Columns>
                                         <Column>
@@ -577,9 +585,10 @@ const RegistModal = (props) => {
                                                 <TypeSelect
                                                     name="masterFlavor"
                                                     defaultValue={"선택"}
-                                                    options={flavorOptions()}
+                                                    options={flavorOptions(1)}
                                                     placeholder={{ label: t('선택') }}
                                                     onChange={(e) => setMasterFlavorSelect(e)}
+                                                    defaultDescription={"Master Flavor를 선택해 주세요."}
                                                 />
                                             </Form.Item>
                                         </Column>
@@ -595,7 +604,7 @@ const RegistModal = (props) => {
                                     </Columns>
                                 </Form.Group>
 
-                                Worker Flavor <span className="form-item-required">*</span>
+                                Worker Flavor<span className="form-item-required">*</span>
                                 <Form.Group>
                                     <Columns>
                                         <Column>
@@ -603,14 +612,15 @@ const RegistModal = (props) => {
                                                 <TypeSelect
                                                     name="workerFlavor"
                                                     defaultValue={"선택"}
-                                                    options={flavorOptions()}
+                                                    options={flavorOptions(2)}
                                                     placeholder={{ label: t('선택') }}
                                                     onChange={(e) => setWorkerFlavorSelect(e)}
+                                                    defaultDescription={"Worker Flavor를 선택해 주세요."}
                                                 />
                                             </Form.Item>
                                         </Column>
                                         <Column>
-                                            <Form.Item desc={t('Worker 최대 개수는 50개 입니다.')}>
+                                            <Form.Item desc={t('Worker 최대 개수는 10개 입니다.')}>
                                                 <div>
                                                     <Button icon="substract" onClick={minusWorkerBtn} />&nbsp;&nbsp;
                                                     <Input name="workerNumber" value={workerFlavorNumber} style={{ width: '20%', textAlign: "center" }} />&nbsp;&nbsp;
@@ -630,7 +640,6 @@ const RegistModal = (props) => {
                                         name="description"
                                         maxLength={256}
                                         rows="1"
-                                        defaultValue=""
                                     />
                                 </Form.Item>
                                 <div style={{ padding: 25 }} />
@@ -675,14 +684,14 @@ const RegistModal = (props) => {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {!networkDataList?.length &&
+                                                            {!networkDataList?.filter((el) => el.external).length &&
                                                                 <tr>
                                                                     <td colSpan="6" className="no-data">
                                                                         <p>할당 가능한 자원이 없습니다.</p>
                                                                     </td>
                                                                 </tr>
                                                             }
-                                                            {networkDataList?.map((data, key) => (
+                                                            {networkDataList?.filter((el) => el.external).map((data, key) => (
                                                                 <tr key={data.name}>
                                                                     <td>
                                                                         <Radio name={`select-${data.name}`}
@@ -865,7 +874,7 @@ const RegistModal = (props) => {
                                 <Form.Item label={t('EKG Stack')}>
                                     <Form.Group>
                                         <Form.Item>
-                                            <CardSelect2
+                                            <CardSelect
                                                 className={styles.customUl}
                                                 onChange={(e) => handleEkgStack(e)}
                                                 options={features}
@@ -874,6 +883,13 @@ const RegistModal = (props) => {
                                             />
                                         </Form.Item>
                                     </Form.Group>
+                                </Form.Item>
+
+                                <Form.Item label={t('컨테이너 이미지')}>
+                                    <Tabs type="button" activeName={tab} onChange={newTab => setTab(newTab)}>
+                                        <TabPanel label="프라이빗" name="private" />
+                                        <TabPanel label="퍼블릭" name="public" />
+                                    </Tabs>
                                 </Form.Item>
 
                                 <Form.Item label={t('인증서 유효기간')}>
@@ -915,14 +931,14 @@ const RegistModal = (props) => {
                                                 <div className={styles.multiline}>
                                                     <div className={styles.bold}>{masterFlavorSelect}</div>
                                                     <p>
-                                                        CPU {masterFlavorCpu} Cores / Memory {masterFlavorMemory} Gib/ Disk {masterFlavorDisk} Gib
+                                                        CPU {masterFlavorCpu} Cores / Memory {masterFlavorMemory} Gib / Disk {masterFlavorDisk} Gib
                                                     </p>
                                                 </div>
                                                 <label style={{ width: '100%' }}>Worker Flavor</label>
                                                 <div className={styles.multiline}>
                                                     <div className={styles.bold}>{workerFlavorSelect}</div>
                                                     <p>
-                                                        CPU {workerFlavorCpu} Cores / Memory {workerFlavorMemory} Gib/ Disk {workerFlavorDisk} Gib
+                                                        CPU {workerFlavorCpu} Cores / Memory {workerFlavorMemory} Gib / Disk {workerFlavorDisk} Gib
                                                     </p>
                                                 </div>
                                             </div>

@@ -23,7 +23,7 @@ import Information from './Information'
 import Monitoring from './Monitoring'
 import Event from './Event'
 
-const PATH = '/clusters/:cluster/Vms/:name'
+const PATH = '/clusters/:cluster/vms/:name'
 
 export default [
   {

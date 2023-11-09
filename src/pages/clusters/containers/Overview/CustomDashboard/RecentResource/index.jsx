@@ -13,7 +13,7 @@ const iconType = {
   'kaas': 'container',
 }
 
-const RecentResource = () => {
+const RecentResource = ({ x, y, w, h }) => {
   const nodeStore = new NodeStore();
   const podStore = new PodStore();
   const vmStore = new VmStore();
@@ -26,37 +26,30 @@ const RecentResource = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
 
-    // node data
-    const getNodeData = async () => {
+    const getData = async () => {
+      setLoading(true)
+
+      // node data
       const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime' })
       handleDate(nodeList, 'createTime', 'node')
-    };
-    getNodeData();
 
-    // pod data
-    const getPodData = async () => {
+      // pod data
       const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime' })
       handleDate(podList, 'createTime', 'pod')
-    };
-    getPodData();
 
-    // vm data
-    const getVmData = async () => {
+      // vm data
       const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
       handleDate(vmList, 'creation_timestamp', 'vm')
-    };
-    getVmData();
 
-    // kaas data
-    const getKaasData = async () => {
+      // kaas data
       const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp' })
       handleDate(kaasList, 'timestamp', 'kaas')
-    };
-    getKaasData();
 
-    setLoading(false)
+      setLoading(false)
+    };
+    getData();
+
   }, [])
 
   // recent week
@@ -84,12 +77,12 @@ const RecentResource = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="9" gs-y="8" gs-w="3" gs-h="9">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
-              <label>최근 생성된 리소스 (일주일)</label>
+            <div className="grid_title" style={{ cursor: 'default' }}>
+              <label>최근 생성된 리소스 (1주일)</label>
 
             </div>
             <div className="grid_info style_list">

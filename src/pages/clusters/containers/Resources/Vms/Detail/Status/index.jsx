@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
 import axios from "axios";
-import { Panel, Text } from 'components/Base'
+import { Panel, Text, Indicator } from 'components/Base'
 import { Icon, Button, Notify } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 
@@ -16,15 +16,22 @@ import { getAreaChartOps } from 'utils/monitoring'
 
 import DetailSecurityGroupList from 'pages/clusters/containers/Resources/components/DetailSecurityGroupList'
 
+import CustomStore from 'stores/monitoring/custom/monitor'
+
 const Status = (props) => {
 
   const store = props.detailStore;
-  // console.log("store : "+ JSON.stringify(store))
+  const customStore = new CustomStore();
 
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailNetwork, setDetailNetwork] = useState([]);
   const [detailSecurityGroup, setDetailSecurityGroup] = useState([]);
   const [detailVolume, setDetailVolume] = useState([]);
+
+  const [vmCpuData, setVmCpuData] = useState([]);
+  const [vmMemoryData, setVmMemoryData] = useState([]);
+
+  const intiParams = {"times":50,"step":"10m"}
 
   useEffect(() => {
 
@@ -56,27 +63,109 @@ const Status = (props) => {
       };
 
       const fnGetVolume = async () => {
-        // const response = await axios.get(`/edgetron/resources/kubevirt/volumes`);
-        // const volumeData = (response.volumes).filter(el => el.used_by_vmi == name);
-        const volumeData = [];
+        const response = await axios.get(`/edgetron/resources/kubevirt/volumes`);
+        const volumeData = (response.data.volumes).filter(el => el.used_by_vmi == store.detail.vm?.name);
+        // const volumeData = [];
         setDetailVolume(volumeData);
       };
 
       store.detail.vm?.flavor && fnGetFlavor();
       store.detail.vm?.networks && fnGetNetwork();
-      store.detail.vm?.security_groups && fnGetSecurityGroup();
+      store.detail.vm?.security_groups && fnGetSecurityGroup();      
       fnGetVolume();
-    
+      fetchData(intiParams);
   }, []);
 
+  const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
+  
+    switch (unit) {
+      default:
+      case 's':
+        break
+      case 'm':
+        value *= 60
+        break
+      case 'h':
+        value *= 60 * 60
+        break
+      case 'd':
+        value = value * 24 * 60 * 60
+        break
+    }
+    return hasUnit ? `${value}s` : value
+  }
 
-  const getMonitoringCfgs = metrics => [
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+  
+    return { start, end }
+  }
+
+  const fetchData = async (params) => {
+
+    const paramsData = Object.assign(params, {
+      start : params.start,
+      end : params.end,
+      step: getMinuteValue(params.step),
+      times : params.times ,
+    })
+
+    if (!paramsData.start || !paramsData.end) {
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
+    }
+
+    const getVmCpuUsageData = async () => {
+      const vmCpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        ...paramsData,
+      })
+
+      const vmCpuMetricData = _.find(vmCpuData, (data) => {
+        if (data.metric.pod === store.detail.name ) return data;
+      });
+  
+      // 배열 처리 
+      const vmCpuArray = [];
+      !!vmCpuMetricData && vmCpuArray.push(vmCpuMetricData)
+      setVmCpuData(vmCpuArray)
+    };
+
+    // vm memory data
+    const getVmMemoryUsageData = async () => {
+      const vmMemoryData = await customStore.fetchMetric({
+        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+        ...paramsData,
+      })
+
+      const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
+        if (data.metric.pod === store.detail.name ) return data;
+      });
+
+      // 배열 처리 
+      const vmMemoryArray = [];
+      !!vmMemoryMetricData && vmMemoryArray.push(vmMemoryMetricData)
+      setVmMemoryData(vmMemoryArray)
+
+    };
+    
+    getVmCpuUsageData();
+    getVmMemoryUsageData();
+
+  }
+
+  const getMonitoringCfgs = () => [
     {
       type: 'cpu',
       title: 'CPU',
       unitType: 'cpu',
       legend: ['USED'],
-      data: [metrics.cpu],
+      data: vmCpuData,
       bgColor: 'transparent',
     },
     {
@@ -84,24 +173,22 @@ const Status = (props) => {
       title: 'MEMORY',
       unitType: 'memory',
       legend: ['USED'],
-      data: [metrics.memory],
+      data: vmMemoryData,
       bgColor: 'transparent',
     },
   ]
 
   const renderMonitorings = () => {
-    // const { metrics = {}, isExpand, loading } = props
 
     const isExpand = false;
     const loading = false;
-    const metrics = store.metrics ? store.metrics : {}; //테스트 data store 에 있음.
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    if (isEmpty(metrics.cpu) && isEmpty(metrics.memory))
+    if (isEmpty(vmCpuData) && isEmpty(vmMemoryData))
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
-    const configs = getMonitoringCfgs(metrics)
+    const configs = getMonitoringCfgs()
   
     return (
       <div className={styles.monitors}>
@@ -126,6 +213,24 @@ const Status = (props) => {
     )
   }
 
+  const getState = (state) =>  {
+    if (state === 'Provisioning'
+      || state === 'Starting'
+      || state === 'Stopping'
+      || state === 'Terminating'
+      || state === 'Migrating') {
+      return "waiting"
+    } else if (state === 'Running') {
+      return "running"
+    } else if (state === 'Stopped' || state === 'Paused') {
+      return "stopped"
+    } else if (state === 'Unknown') {
+      return "error"
+    }else{
+      return "error"
+    }
+  }
+
   return (
     <>  
         <div>
@@ -135,7 +240,12 @@ const Status = (props) => {
             <div className={styles.wrapper}>
               <div className={styles.itemVm} >
                 <div className={styles.icon}>
-                  <Icon name="templet" size={40} />
+                  <i className="ico-type40-vm"></i>
+                  <Indicator
+                      className={styles.indicator}
+                      type={getState(store.detail.vm?.state)}
+                      flicker
+                    />
                 </div>
                 <div className={styles.content}>
                   <div className={styles.text}>
@@ -172,7 +282,7 @@ const Status = (props) => {
                       <div>
                         {
                           detailFlavor.devices.length >= 1 ?  
-                          detailFlavor.devices.length == 1 ? detailFlavor.devices[0] : detailFlavor.devices[0] + " 외 " + (detailFlavor.devices.length - 1) + "개" 
+                          detailFlavor.devices.length == 1 ? detailFlavor.devices[0].name : detailFlavor.devices[0].name + " 외 " + (detailFlavor.devices.length - 1) + "개" 
                           : "-"
                         }
                       </div>
@@ -207,7 +317,7 @@ const Status = (props) => {
                         key='GPU'
                         icon='gpu'
                         title={detailFlavor.gpus.length >= 1 ?  
-                          detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0] : detailFlavor.gpus[0] + " 외 " + (detailFlavor.gpus.length - 1) + "개" 
+                          detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0].name : detailFlavor.gpus[0].name + " 외 " + (detailFlavor.gpus.length - 1) + "개" 
                           : "-"}
                         description={t('GPU')}
                       />
@@ -273,7 +383,7 @@ const Status = (props) => {
                       <p>접근모드</p>
                     </div>
                     <div className={styles.title}>
-                      <div>{obj.capacity}GB</div>
+                      <div>{obj.capacity}</div>
                       <p>용량</p>
                     </div>
                     <div className={styles.title}>

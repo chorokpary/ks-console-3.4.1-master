@@ -216,13 +216,24 @@ export default class MediatedDeviceStore extends Base {
     async fetchDeviceList(params) {
         this.isLoading = true
 
-        const result = await request.get(
-            `/edgetron/resources/kubevirt/gpus/vgpus/${params.name}`
-        )
-        const response = { ...params, ...this.mapper(result), kind: 'vgpuProfiles' }
-        this.vgpuProfiles = response.vgpu_profiles
+        const dataArray = [];
+        const resultNodes = await request.get(`/edgetron/resources/kubevirt/nodes`)
+        const responseNodes = { ...params, ...this.mapper(resultNodes), kind: 'nodes' }
+        responseNodes.nodes.map(async obj => {
+            const resultPgpus = await request.get(`/edgetron/resources/kubevirt/gpus/pgpus/${obj.name}`)
+            const responsePgpus = {...params, ...this.mapper(resultPgpus), kind: 'pgpu_models'}
+
+            responsePgpus.pgpu_models.map(async obj => {
+                const resultVgpus = await request.get(`/edgetron/resources/kubevirt/gpus/vgpus/${obj.model_num}`)
+                const responseVgpus = { ...params, ...this.mapper(resultVgpus), kind: 'vgpu_profiles' }
+
+                responseVgpus.vgpu_profiles.map(obj => dataArray.push(obj))
+            })
+        })
+
+        this.vgpuProfiles = dataArray
 
         this.isLoading = false
-        return response;
+        return dataArray;
     }
 }

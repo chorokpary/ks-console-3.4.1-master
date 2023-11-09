@@ -18,6 +18,14 @@
   vertical-align: top !important;
 }
 
+.mode_title {
+  display: flex;
+  align-items: center;
+
+  .question {
+    margin-left: 6px;
+  }
+}
 
 
 

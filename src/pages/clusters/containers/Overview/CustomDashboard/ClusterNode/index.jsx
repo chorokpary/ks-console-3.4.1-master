@@ -4,7 +4,7 @@ import NodeStore from 'stores/node';
 import ClusterNodeModel from 'stores/dashboard/clusterNode';
 import { fnSetClusterNodes } from 'utils/dashboard'
 
-const ClusterNode = () => {
+const ClusterNode = ({ x, y, w, h }) => {
   const nodeStore = new NodeStore();
 
   useEffect(() => {
@@ -30,19 +30,17 @@ const ClusterNode = () => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="0" gs-w="3" gs-h="4">
+      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
         <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
-            <div className="grid_title">
+            <div className="grid_title" style={{ cursor: 'default' }}>
               <label>클러스터 노드</label>
-
             </div>
-
             <Loading spinning={loading}>
               <div className="grid_info style_status">
                 <div className="box type_status">
-                  <div className="cont_group">
+                  <div className="cont_group clusternode">
                     <div className="cont1">
                       <div className="number_wrap">
                         <i className="ico-type-clusternode"><span>Master</span></i>

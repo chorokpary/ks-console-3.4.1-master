@@ -34,12 +34,8 @@ const ModifyModal = (props) => {
   const [externalBool, setExternalBool] = useState(false);
 
   const networkTypeOptions = [
-    { label: 'VXLAN', value: 'vxlan', },
     { label: 'VLAN', value: 'vlan', },
     { label: 'FLAT', value: 'flat', },
-    { label: 'GRE', value: 'gre', },
-    { label: 'GENEVE', value: 'geneve', },
-    { label: 'STT', value: 'stt', },
   ]
 
   useEffect(() => {
@@ -105,7 +101,7 @@ const ModifyModal = (props) => {
 
   const stepMoveCheck = (step) => {
     const { data } = form.current.props;
-    console.log(data)
+
     if(step ==1){
       if(data.resource_name == undefined || data.resource_name == "" 
       || data.cidr == undefined || data.cidr == ""
@@ -279,7 +275,7 @@ const ModifyModal = (props) => {
   return (
     <>  
         <Modal
-          icon="templet"
+          icon="pen"
           width={960}
           title={props.title}
           onCancel={closeModal}

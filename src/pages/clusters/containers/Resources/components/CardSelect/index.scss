@@ -49,6 +49,9 @@ $gap: 12px;
 }
 
 li.selected {
-  border-color: #64cdfa;
-  box-shadow: 0 3px 6px #64cdfa;
+  // border-color: #64cdfa;
+  // box-shadow: 0 3px 6px #64cdfa;
+  border: 2px solid #A3ABF9 !important;
+  background: #F6F8FF !important;
+  box-shadow: none !important;
 }

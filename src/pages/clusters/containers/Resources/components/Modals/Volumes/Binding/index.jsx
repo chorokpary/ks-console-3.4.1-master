@@ -38,8 +38,6 @@ const BindingModal = (props) => {
       data.actionType = "A",
       data.volumeName = volumeName,
 
-      console.log("form data :" + JSON.stringify(data))
-
       volumeStore.actionState({data, ...props }).then(() => {
         Notify.success({ content: t('정상적으로 연결 되었습니다.') })
         success();

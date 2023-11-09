@@ -31,16 +31,21 @@ class NumberControl extends PureComponent {
     className: PropTypes.string,
     value: PropTypes.number,
     onChange: PropTypes.func,
+    countRange: PropTypes.array,
   }
 
   handlePlusOne = () => {
-    const { value, onChange } = this.props
-    onChange && onChange(value + 1)
+    const { value, onChange, countRange } = this.props
+    if (value < countRange[1]){
+      onChange && onChange(value + 1)
+    }
   }
 
   handleMinusOne = () => {
-    const { value, onChange } = this.props
-    onChange && onChange(value - 1)
+    const { value, onChange, countRange } = this.props
+    if(value > countRange[0]){
+      onChange && onChange(value - 1)
+    }
   }
 
   render() {

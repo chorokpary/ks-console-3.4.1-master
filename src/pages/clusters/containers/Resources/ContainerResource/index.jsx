@@ -18,7 +18,7 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status, Indicator } from 'components/Base'
+import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
@@ -67,11 +67,9 @@ export default class Resource extends React.Component {
         }
 
         get isRuning() {
-            const { data } = toJS(this.props.store.list)
-            const runingData = data.filter(
-            item => item.status !== 'failed' && item.status !== 'successful'
-            )
-            return !isEmpty(runingData)
+            const { selectedRowKeys } = toJS(this.props.store.list)
+            const runingFlag = selectedRowKeys.length > 0 ? false : true;
+            return runingFlag
         }
 
         getData = params => {
@@ -292,7 +290,7 @@ export default class Resource extends React.Component {
                     icon="kubernetes"
                     tabs={this.tabs}
                     title={t('KaaS 리소스')}
-                    description={t('쿠버네티스의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    description={t('KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.')}
                 />
                 <Table
                     {...tableProps}

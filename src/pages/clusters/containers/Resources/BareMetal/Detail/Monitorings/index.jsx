@@ -1,150 +1,237 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-import React from 'react'
+import { get, isEmpty, find } from 'lodash'
+import React, {useState, useEffect} from 'react'
+import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { get, isEmpty } from 'lodash'
+import classnames from 'classnames'
 
 import { getChartData, getAreaChartOps } from 'utils/monitoring'
-import NodeMonitorStore from 'stores/monitoring/node'
+
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
-import CustomTooltip from 'components/Charts/Custom/Tooltip'
 
-const MetricTypes = {
-  cpu_utilisation: 'node_cpu_utilisation',
-  cpu_load1: 'node_load1',
-  cpu_load5: 'node_load5',
-  cpu_load15: 'node_load15',
-  memory_utilisation: 'node_memory_utilisation',
-  disk_utilisation: 'node_disk_size_utilisation',
-  disk_inode_utilisation: 'node_disk_inode_utilisation',
-  device_size_utilisation: 'node_device_size_utilisation',
-  disk_inode_usage: 'node_disk_inode_usage',
-  disk_inode_total: 'node_disk_inode_total',
-  disk_read_iops: 'node_disk_read_iops',
-  disk_write_iops: 'node_disk_write_iops',
-  disk_read_throughput: 'node_disk_read_throughput',
-  disk_write_throughput: 'node_disk_write_throughput',
-  net_transmitted: 'node_net_bytes_transmitted',
-  net_received: 'node_net_bytes_received',
-}
+import styles from './index.scss'
 
-@inject('detailStore')
-@observer
-class Monitorings extends React.Component {
-  constructor(props) {
-    super(props)
+const index = (props) => {
 
-    this.monitorStore = new NodeMonitorStore({ cluster: this.cluster })
+  const store = props.detailStore;
+  const customStore = new CustomStore();
+
+  const [nodeCpuData, setNodeCpuData] = useState([]);
+  const [nodeMemoryData, setNodeMemoryData] = useState([]);
+  const [nodeDiskData, setNodeDiskData] = useState([]);
+  const [nodePowerData, setNodePowerData] = useState([]);
+  const [nodeTemperatureData, setNodeTemperatureData] = useState([]);  
+
+  const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
+  
+    switch (unit) {
+      default:
+      case 's':
+        break
+      case 'm':
+        value *= 60
+        break
+      case 'h':
+        value *= 60 * 60
+        break
+      case 'd':
+        value = value * 24 * 60 * 60
+        break
+    }
+    return hasUnit ? `${value}s` : value
   }
 
-  get store() {
-    return this.props.detailStore
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+  
+    return { start, end }
   }
 
-  get cluster() {
-    return this.props.match.params.cluster
-  }
+  const fetchData = async (params) => {
 
-  get metrics() {
-    return this.monitorStore.data
-  }
-
-  fetchData = params => {
-    // const { name, role = [] } = this.store.detail
-    let name = "worker02"
-    let role = ""
-    this.monitorStore.fetchMetrics({
-      resources: [name],
-      metrics: Object.values(MetricTypes),
-      fillZero: !role.includes('edge'),
-      ...params,
+    const paramsData = Object.assign(params, {
+      start : params.start,
+      end : params.end,
+      step: getMinuteValue(params.step),
+      times : params.times ,
     })
+
+    if (!paramsData.start || !paramsData.end) {
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
+    }
+
+    const metricData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
+    const instance = get(metricData, 'ip')
+
+    // cpu 사용량
+    const getNodeCpuUsageData = async () => {
+      const nodeCpuData = await customStore.fetchMetric({
+        expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
+        ...paramsData,
+      })
+
+      const nodeCpuMetricData = _.find(nodeCpuData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;        
+      });
+
+      // 배열 처리 
+      const nodeCpuArray = [];
+      nodeCpuArray.push(nodeCpuMetricData)
+      setNodeCpuData(nodeCpuArray)
+    };
+
+    // Memory 사용량
+    // 사용률: `(1 - ((avg_over_time(node_memory_MemFree_bytes[5m]) + avg_over_time(node_memory_Cached_bytes[5m]) + avg_over_time(node_memory_Buffers_bytes[5m])) / avg_over_time(node_memory_MemTotal_bytes[5m])))`,
+    // 사용량: `sum(node_memory_MemTotal_bytes - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes)) by (instance)`,
+    const getNodeMemoryUsageData = async () => {
+      const nodeMemoryData = await customStore.fetchMetric({
+        expr: `sum(node_memory_MemTotal_bytes - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes)) by (instance)`,
+        ...paramsData,
+      })
+
+      const nodeMemoryMetricData = _.find(nodeMemoryData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodeMemoryArray = [];
+      nodeMemoryArray.push(nodeMemoryMetricData)
+      setNodeMemoryData(nodeMemoryArray)
+    };
+
+    // Disk 사용량
+    const getNodeDiskUsageData = async () => {
+      const nodeDiskData = await customStore.fetchMetric({
+        expr: `sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) by (instance)`,        
+        ...paramsData,
+      })
+
+      const nodeDiskMetricData = _.find(nodeDiskData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodeDiskArray = [];
+      nodeDiskArray.push(nodeDiskMetricData)
+      setNodeDiskData(nodeDiskArray)
+    };
+
+    // 파워 사용량
+    const getNodePowerUsageData = async () => {
+      const nodePowerData = await customStore.fetchMetric({
+        expr: `sum(redfish_chassis_power_powersupply_last_power_output_watts) by (instance)`,        
+        ...paramsData,
+      })
+
+      const nodePowerMetricData = _.find(nodePowerData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodePowerArray = [];
+      nodePowerArray.push(nodePowerMetricData)
+      setNodePowerData(nodePowerArray)
+    };
+
+    // 온도
+    const getNodeTemperatureData = async () => {
+      const nodeTemperatureData = await customStore.fetchMetric({
+        expr: `sum(redfish_chassis_power_powersupply_last_power_output_watts) by (instance)`,        
+        ...paramsData,
+      })
+
+      const nodeTemperatureMetricData = _.find(nodeTemperatureData, (data) => {
+        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+      });
+
+      // 배열 처리 
+      const nodeTemperatureArray = [];
+      nodeTemperatureArray.push(nodeTemperatureMetricData)
+      setNodeTemperatureData(nodeTemperatureArray)
+    };
+
+    getNodeCpuUsageData();
+    getNodeMemoryUsageData();
+    getNodeDiskUsageData();
+    getNodePowerUsageData();
+    getNodeTemperatureData();
+
   }
 
-  getMonitoringCfgs = () => {
-    const deviceUsage = get(
-      this.metrics,
-      `${MetricTypes.device_size_utilisation}.data.result`,
-      []
-    )
-    const legend = deviceUsage && deviceUsage.map(item => item.metric.device)
-
+  const getMonitoringCfgs = () => {
     return [
       {
         type: 'utilisation',
         title: 'CPU_USAGE',
         unit: '%',
         legend: ['CPU_USAGE'],
-        data: get(this.metrics, `${MetricTypes.cpu_utilisation}.data.result`),
+        data: nodeCpuData,
       },
       {
         type: 'utilisation',
         title: 'MEMORY_USAGE',
-        unit: '%',
+        unit: "GB",
         legend: ['MEMORY_USAGE'],
-        data: get(
-          this.metrics,
-          `${MetricTypes.memory_utilisation}.data.result`
-        ),
+        data: nodeMemoryData,
       },
       {
-        type: 'bandwidth',
-        title: 'NETWORK_TRAFFIC',
-        unitType: 'bandwidth',
-        legend: ['OUT', 'IN'],
-        data: [
-          get(
-            this.metrics,
-            `${MetricTypes.net_transmitted}.data.result[0]`,
-            {}
-          ),
-          get(this.metrics, `${MetricTypes.net_received}.data.result[0]`, {}),
-        ],
+        type: 'utilisation',
+        title: 'DISK_USAGE',
+        unitType: 'disk',
+        legend: ['DISK_USAGE'],
+        data: nodeDiskData,
       },
+      {
+        type: 'utilisation',
+        title: 'Power Usage',
+        unit: 'kWh',
+        legend: ['Power Usage'],
+        data: nodePowerData,
+      },
+      {
+        type: 'utilisation',
+        title: 'Temperature',
+        unit: '℃',
+        legend: ['Temperature'],
+        data: nodeTemperatureData,
+      },
+
     ]
   }
 
-  render() {
-    const { createTime } = this.store.detail
-    const { isLoading, isRefreshing } = this.monitorStore
-    const configs = this.getMonitoringCfgs()
+  const { isLoading, isRefreshing } = customStore
+  const configs = getMonitoringCfgs()
 
-    return (
-      <MonitoringController
-        createTime={createTime}
-        onFetch={this.fetchData}
-        loading={isLoading}
-        refreshing={isRefreshing}
-        isEmpty={isEmpty(this.metrics)}
-      >
-        {configs.map(item => {
-          const config = getAreaChartOps(item)
+  return (
+    <>  
+        <div>
+          <div className={styles.wrapper}>
+          <MonitoringController
+              title={t('모니터링')}
+              onFetch={fetchData}
+              loading={isLoading}
+              refreshing={isRefreshing}       
+            >
+              {configs.map(item => {
+                const config = getAreaChartOps(item)
+                if (isEmpty(config.data)) return null
+                return <SimpleArea key={config.title} width="100%" {...config} />
+              })}
+              
+            </MonitoringController>
+          </div>
+      </div>         
+    </>
+  );
+};
 
-          if (isEmpty(config.data)) return null
+export default inject('detailStore')(observer(index))
 
-          return <SimpleArea key={config.title} width="100%" {...config} />
-        })}
-      </MonitoringController>
-    )
-  }
-}
-
-export default Monitorings

@@ -1,151 +1,160 @@
 import React, { useEffect, useState } from 'react'
-import { Loading } from '@kube-design/components'
+import Network from './Network'
+import Template from './Template'
+import NetworkStore from 'stores/resources/networks'
+import RouterStore from 'stores/resources/routers'
+import SriovStore from 'stores/resources/sriovs'
+import FloatingIpStore from 'stores/resources/floatingip'
+import VmStore from 'stores/resources/vms'
+import SecurityGroupStore from 'stores/resources/securityGroups'
+import LoadBalancerStore from 'stores/resources/loadbalancers'
+import ImageStore from 'stores/resources/images'
+import FlavorStore from 'stores/resources/flavors'
+import HostDeviceStore from 'stores/resources/hostdevices'
+import MediatedDeviceStore from 'stores/resources/mediateddevices'
+import KeypairStore from 'stores/resources/keypairs'
+import KaasStore from 'stores/resources/containerresource'
+import KaasImageStore from 'stores/resources/containerimages'
 
-const Computing = () => {
+const Computing = ({ computing }) => {
+  const vmStore = new VmStore();
+  const securityGroupStore = new SecurityGroupStore();
+  const loadBalancerStore = new LoadBalancerStore();
+  const networkStore = new NetworkStore();
+  const routerStore = new RouterStore();
+  const sriovStore = new SriovStore();
+  const floatingIpStore = new FloatingIpStore();
+
+  const [loading, setLoading] = useState(false)
+
+  const [vmList, setVmList] = useState([])
+  const [sgList, setSgList] = useState([])
+  const [lbList, setLbList] = useState([])
+  const [networkList, setNetworkList] = useState([])
+  const [routerList, setRouterList] = useState([])
+  const [sriovList, setSriovList] = useState([])
+  const [floatingIpList, setFloatingIpList] = useState([])
+
+
+  const imageStore = new ImageStore();
+  const flavorStore = new FlavorStore();
+  const hostDeviceStore = new HostDeviceStore();
+  const mediatedDeviceStore = new MediatedDeviceStore();
+  const keypairStore = new KeypairStore();
+  const kaasStore = new KaasStore();
+  const kaasImageStore = new KaasImageStore();
+
+  const [imageList, setImageList] = useState([])
+  const [flavorList, setFlavorList] = useState([])
+  const [flavorDetailList, setFlavorDetailList] = useState([])
+  const [hdList, setHdList] = useState([])
+  const [mdList, setMdList] = useState([])
+  const [keypairList, setKeypairList] = useState([])
+  const [kaasList, setKaasList] = useState([])
+  const [kaasIamgeList, setKaasImageList] = useState([])
+
+
+  useEffect(() => {
+    // ---------------------------- network ------------------------------
+    const getData = async () => {
+      setLoading(true)
+
+      const vmlist = await vmStore.vmList()
+      setVmList(vmlist)
+
+      const networklist = await networkStore.fetchList({ limit: 1000 })
+      setNetworkList(networklist)
+
+      const routerlist = await routerStore.fetchList({ limit: 1000 })
+      setRouterList(routerlist)
+
+      const sriovlist = await sriovStore.fetchList({ limit: 1000 })
+      setSriovList(sriovlist)
+
+      const fiplist = await floatingIpStore.fetchList({ limit: 1000 })
+      setFloatingIpList(fiplist)
+
+      const sglist = await securityGroupStore.fetchList({ limit: 1000 })
+      setSgList(sglist)
+
+      const lblist = await loadBalancerStore.fetchList({ limit: 1000 })
+      setLbList(lblist)
+
+
+      // ---------------------------- template ------------------------------
+      const imagelist = await imageStore.fetchList({ limit: 1000 })
+      setImageList(imagelist)
+
+      const flavorlist = await flavorStore.fetchList({ limit: 1000 })
+      setFlavorList(flavorlist)
+
+      const hdlist = await hostDeviceStore.fetchList({ limit: 1000 })
+      setHdList(hdlist)
+
+      const mdlist = await mediatedDeviceStore.fetchList({ limit: 1000 })
+      setMdList(mdlist)
+
+      const keypairlist = await keypairStore.fetchList({ limit: 1000 })
+      setKeypairList(keypairlist)
+
+      const kaaslist = await kaasStore.fetchList({ limit: 1000 })
+      setKaasList(kaaslist)
+
+      const kaasimagelist = await kaasImageStore.fetchList({ limit: 1000 })
+      setKaasImageList(kaasimagelist)
+
+      setLoading(false)
+    };
+    getData();
+
+  }, [])
+
+  useEffect(() => {
+    if (flavorList.length > 0) {
+      flavorList.map(async obj => {
+        const detail = await flavorStore.fetchDetail({ name: obj.name })
+        setFlavorDetailList(list => [...list, detail])
+      })
+    }
+  }, [flavorList])
+
 
   return (
     <>
-      <div className="grid-stack-item" gs-x="0" gs-y="21" gs-w="9" gs-h="4">
-        <div className="grid-stack-item-content">
-          {/* grid_item */}
-          <div className="grid_item">
-            <div className="grid_title">
-              <label>컴퓨팅 유형별 현황</label>
-              <div className="right">
-
-              </div>
-            </div>
-            <div className="grid_info style_status box_nth">
-
-              <div className="box type_status">
-                <h5><i className="ico-type24-loadbalancer"></i>로드밸런서</h5>
-                <div className="cont_group">
-                  <div className="cont1">
-                    <div className="number_wrap">
-                      <p><span className="em">4</span> / 5</p>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">4</div>
-                      <p className="status running"><span>Active</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Inactive</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="box type_status">
-                <h5><i className="ico-type24-floatingip"></i>플로팅 IP</h5>
-                <div className="cont_group">
-                  <div className="cont1">
-                    <div className="number_wrap">
-                      <p><span className="em">2</span> / 3</p>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">2</div>
-                      <p className="status running"><span>Used</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Unused</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="box type_status">
-                <h5><i className="ico-type24-router"></i>가상라우터</h5>
-                <div className="cont_group">
-                  <div className="cont1">
-                    <div className="number_wrap">
-                      <p><span className="em">7</span> / 8</p>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">7</div>
-                      <p className="status running"><span>Active</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Inactive</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="box type_status">
-                <h5><i className="ico-type24-security"></i>보안그룹</h5>
-                <div className="cont_group">
-                  <div className="cont1">
-                    <div className="number_wrap">
-                      <p><span className="em">2</span> / 3</p>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">2</div>
-                      <p className="status running"><span>Used</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Unused</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="box type_status">
-                <h5><i className="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
-                <div className="cont_group">
-                  <div className="cont1">
-                    <div className="number_wrap">
-                      <p><span className="em">4</span> / 5</p>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">4</div>
-                      <p className="status running"><span>Used</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Unused</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="box type_status">
-                <h5><i className="ico-type24-hostdevice"></i>Host 디바이스</h5>
-                <div className="cont_group">
-                  <div className="cont1">
-                    <div className="number_wrap">
-                      <p><span className="em">7</span> / 8</p>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">7</div>
-                      <p className="status running"><span>Active</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p className="status waiting"><span>Inactive</span></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-            {/*// grid_info style_status */}
-
-
-          </div>
-          {/* // grid_item */}
-        </div>
-      </div>
+      {computing.computingNetwork &&
+        <Network
+          loading={loading}
+          networkList={networkList}
+          routerList={routerList}
+          sriovList={sriovList}
+          floatingIpList={floatingIpList}
+          vmList={vmList}
+          sgList={sgList}
+          lbList={lbList}
+          x={computing.computingNetwork.x}
+          y={computing.computingNetwork.y}
+          w={computing.computingNetwork.w}
+          h={computing.computingNetwork.h}
+        />
+      }
+      {computing.computingTemplate &&
+        <Template
+          loading={loading}
+          vmList={vmList}
+          imageList={imageList}
+          flavorList={flavorList}
+          flavorDetailList={flavorDetailList}
+          hdList={hdList}
+          mdList={mdList}
+          keypairList={keypairList}
+          kaasList={kaasList}
+          kaasIamgeList={kaasIamgeList}
+          x={computing.computingTemplate.x}
+          y={computing.computingTemplate.y}
+          w={computing.computingTemplate.w}
+          h={computing.computingTemplate.h}
+        />
+      }
     </>
   )
 }

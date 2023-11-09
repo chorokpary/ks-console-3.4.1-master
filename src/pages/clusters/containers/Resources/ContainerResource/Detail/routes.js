@@ -19,6 +19,7 @@
 import { getIndexRoute } from 'utils/router.config'
 
 import Status from './Status'
+import Monitoring from './Monitoring'
 
 const PATH = '/clusters/:cluster/containerResource/:name'
 
@@ -29,6 +30,11 @@ export default [
     component: Status,
     exact: true,
   },
-  
+  {
+    path: `${PATH}/monitoring`,
+    title: '모니터링',
+    component: Monitoring,
+    exact: true,
+  },
   getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
 ]
