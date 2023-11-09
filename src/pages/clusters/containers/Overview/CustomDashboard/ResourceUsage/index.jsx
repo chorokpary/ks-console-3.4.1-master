@@ -262,6 +262,14 @@ const TabContent = ({ option }) => {
   const config = getAreaChartOps(option)
 
   return (
-    <SimpleArea {...commonProps} {...config} style={{ padding: '10px', color: 'white' }} />
+    <>
+      {config.data.length > 0 ?
+        <SimpleArea {...commonProps} {...config} style={{ padding: '10px', color: 'white' }} />
+        :
+        <div className="grid_text">
+          <span>데이터가 없습니다.</span>
+        </div>
+      }
+    </>
   )
 }

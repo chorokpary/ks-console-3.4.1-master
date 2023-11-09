@@ -281,8 +281,10 @@ const BmcNode = ({ x, y, w, h,
                                 ))
                                 :
                                 <tr>
-                                  <td colSpan="6" className="msg-text">
-                                    <p>데이터가 없습니다.</p>
+                                  <td colSpan="6">
+                                    <div className="grid_text">
+                                      <p>데이터가 없습니다.</p>
+                                    </div>
                                   </td>
                                 </tr>
                               }
