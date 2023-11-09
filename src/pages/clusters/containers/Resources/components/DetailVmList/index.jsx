@@ -10,7 +10,7 @@ import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 import CustomStore from 'stores/monitoring/custom/monitor'
-
+import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import { getAreaChartOps } from 'utils/monitoring'
 
@@ -224,7 +224,7 @@ const DetailVmList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
               <div>{obj.name}</div>
-              <p>이름</p>
+              <p>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
           </div>
           <div className={styles.text}>
               <div>{obj.state}</div>
