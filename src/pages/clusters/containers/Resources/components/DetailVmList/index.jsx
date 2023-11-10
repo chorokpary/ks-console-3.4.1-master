@@ -224,7 +224,7 @@ const DetailVmList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
               <div>{obj.name}</div>
-              <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+              <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}에 생성 됨</p>
           </div>
           <div className={styles.text}>
               <div>{obj.state}</div>
