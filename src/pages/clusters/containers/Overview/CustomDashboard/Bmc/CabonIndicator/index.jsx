@@ -56,9 +56,9 @@ const CabonIndicator = ({ x, y, w, h,
                       <i className="ico-type-power"></i>
                     </div>
                     <div className="rgt">
-                      <div className="value">{common.fnAddCommar(useKwh)}<span>kWh</span></div>
-                      <dl><dt>ARM</dt><dd>{common.fnAddCommar(armKwh)}</dd></dl>
-                      <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Kwh)}</dd></dl>
+                      <div className="value">{useKwh > 1000 ? common.fnAddCommar(useKwh) : useKwh.toFixed(1)}<span>kWh</span></div>
+                      <dl><dt>ARM</dt><dd>{armKwh > 1000 ? common.fnAddCommar(armKwh) : armKwh.toFixed(1)}</dd></dl>
+                      <dl><dt>x86</dt><dd>{x86Kwh > 1000 ? common.fnAddCommar(x86Kwh) : x86Kwh.toFixed(1)}</dd></dl>
                     </div>
                   </li>
                   <li className="li_type_02">

@@ -274,7 +274,7 @@ const BmcNode = ({ x, y, w, h,
                                       <p>{getMetricValue(metricPower, obj)} <span className="unit">Watt</span></p>
                                     </td>
                                     <td>
-                                      <p>{getMetricValue(metricTemperature, obj)} <span className="unit">°C</span></p>
+                                      <p>{Math.round(Number(getMetricValue(metricTemperature, obj)))} <span className="unit">°C</span></p>
                                     </td>
                                   </tr>
                                 ))
