@@ -225,13 +225,13 @@ const DetailVmList = (props) => {
           <div className={styles.text}>
               <div>
                 {obj.name}
-                <Tooltip content={t('TERMINAL')}>
+                <Tooltip content={t('VNC')}>
                   <Icon
                     className="margin-l8"
                     name="terminal"
                     size={16}
                     clickable
-                    onClick={() => handleOpenTerminal(obj.name)}
+                    onClick={() => handleOpenVnc(obj.name)}
                   />
               </Tooltip>
               </div>
@@ -452,8 +452,7 @@ const DetailVmList = (props) => {
     }
   }
 
-  const handleOpenTerminal = (vmName) => {
-    console.log("vmName : "+ vmName)
+  const handleOpenVnc = (vmName) => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://"+location.hostname+":30020";
     var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
@@ -462,7 +461,6 @@ const DetailVmList = (props) => {
     var popupName = vmName.replaceAll("-", "");
     window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840');
   }
-
 
   return (
     <>  
