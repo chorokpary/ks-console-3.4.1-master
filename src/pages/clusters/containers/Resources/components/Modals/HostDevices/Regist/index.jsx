@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, TextArea, Select, Checkbox, Toggle, InputSearch, Icon } from '@kube-design/components'
+import { Form, Input, TextArea, Select, Checkbox, Toggle, InputSearch, Button } from '@kube-design/components'
 import { Modal, Indicator } from 'components/Base'
 import styles from './index.scss'
 
@@ -18,6 +18,8 @@ const RegistModal = (props) => {
 
     const [dataList, setDataList] = useState([]);
     const [keyword, setKeyword] = useState(2);
+    const [isCheck, setIsCheck] = useState(false);
+    const [isCheckName, setIsCheckName] = useState(false);
 
     const getCreateData = async () => {
         const listPciDevice = await hostDeviceStore.fetchListPciDevices();
@@ -85,6 +87,10 @@ const RegistModal = (props) => {
     const handleDelete = (name) => {
         setCheckItems(checkItems.filter((el) => el !== name));
         setAddRowList(addRowList.filter((el) => el.device_name !== name));
+        console.log(addRowList.filter((el) => regexName.test(el.name)).length)
+        if (addRowList.length-1 < 1 || addRowList.filter((el) => regexName.test(el.name)).length == addRowList.length-1) {
+            setIsCheckName(false)
+        }
     };
 
     const hendleExternal = (e, i) => {
@@ -105,6 +111,9 @@ const RegistModal = (props) => {
             values[i].description = e;
         } else {
             values[i].name = e;
+            if (regexName.test(e)) {
+                setIsCheckName(false)
+            }
         }
         setAddRowList(values);
     };
@@ -125,8 +134,11 @@ const RegistModal = (props) => {
 
     const handleOk = () => {
         const onOk = props.onOk;
+        const filterCount = addRowList.filter((el) => regexName.test(el.name)).length;
 
-        const checkName = addRowList.filter((el) => el.name).length > 0;
+        setIsCheck(true)
+        const checkName = (filterCount == addRowList.length) && (filterCount > 0);
+        setIsCheckName(!checkName)
         if (!checkName) {
             return false;
         }
@@ -223,57 +235,54 @@ const RegistModal = (props) => {
                                 </div>
                             </div>
 
-                            <div className={styles.wrapper}>
-                                <div className={styles.table}>
-                                    <table>
-                                        <colgroup>
-                                            <col width="5%" />
-                                            <col width="20%" />
-                                            <col width="7%" />
-                                            <col width="10%" />
-                                            <col width="7%" />
-                                            <col width="13%" />
-                                            <col width="9%" />
-                                            <col width="7%" />
-                                            <col width="24%" />
-                                        </colgroup>
-                                        <thead>
-                                        </thead>
-                                        <tbody>
-                                            {addRowList?.map((v, i) => (
-                                                <tr key={i}>
-                                                    <td>
-                                                        <Icon
-                                                            className={styles.substract}
-                                                            name="substract"
-                                                            size={24}
-                                                            color={color}
-                                                            onClick={() => handleDelete(v.device_name)}
-                                                            clickable
-                                                        />
-                                                    </td>
-                                                    <td><Form.Item><Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} /></Form.Item></td>
-                                                    <td>{v.vendor_id}</td>
-                                                    <td>{v.vendor_name}</td>
-                                                    <td>{v.device_id}</td>
-                                                    <td>{v.device_name}</td>
-                                                    <td>
-                                                        {v.isExternal ?
-                                                            <div className={styles.divwrap}><Indicator type="running" className={styles.indicator}  flicker />사용</div>
-                                                            : <div className={styles.divwrap}><Indicator type="inactive" className={styles.indicator}  flicker />미사용</div>
-                                                        }
-                                                    </td>
-                                                    <td>{v.isGpu ? 'GPU' : '-'}</td>
-                                                    <td>
-                                                        <Form.Item><Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} /></Form.Item>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                            {addRowList.length < 1 ?
+                                <div className={`form-item-error ${isCheck ? "" : "hide"}`} style={{ marginLeft: '10px' }}>호스트 디바이스를 선택해 주세요.</div>
+                                :
+                                <div className={styles.wrapper}>
+                                    <div className={styles.table}>
+                                        <table>
+                                            <colgroup>
+                                                <col width="5%" />
+                                                <col width="20%" />
+                                                <col width="7%" />
+                                                <col width="10%" />
+                                                <col width="7%" />
+                                                <col width="13%" />
+                                                <col width="9%" />
+                                                <col width="7%" />
+                                                <col width="24%" />
+                                            </colgroup>
+                                            <thead>
+                                            </thead>
+                                            <tbody>
+                                                {addRowList?.map((v, i) => (
+                                                    <tr key={i}>
+                                                        <td>
+                                                            <Button icon="substract" type="flat" onClick={() => handleDelete(v.device_name)} size="small"/>
+                                                        </td>
+                                                        <td><Form.Item><Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} /></Form.Item></td>
+                                                        <td>{v.vendor_id}</td>
+                                                        <td>{v.vendor_name}</td>
+                                                        <td>{v.device_id}</td>
+                                                        <td>{v.device_name}</td>
+                                                        <td>
+                                                            {v.isExternal ?
+                                                                <div className={styles.divwrap}><Indicator type="running" className={styles.indicator} flicker />사용</div>
+                                                                : <div className={styles.divwrap}><Indicator type="inactive" className={styles.indicator} flicker />미사용</div>
+                                                            }
+                                                        </td>
+                                                        <td>{v.isGpu ? 'GPU' : '-'}</td>
+                                                        <td>
+                                                            <Form.Item><Input type="text" value={v.description} placeholder="설명" id="description" onChange={(e) => handleInput(e, i, 'description')} /></Form.Item>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className={`form-item-error ${isCheck && isCheckName ? "" : "hide"}`} style={{ marginLeft: '10px' }}>이름을 확인해 주세요.</div>
                                 </div>
-                            </div>
-
+                            }
                         </div>
                     </Form.Item>
 
