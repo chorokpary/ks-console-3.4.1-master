@@ -30,7 +30,6 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
   const customStore = new CustomStore();
   const vmStore = new VmStore();
 
-  const [metricData, setMetricData] = useState([]);
   const [tabData, setTabData] = useState();
   const [tabActive, setTabActive] = useState('cpu');
   const [tabContentData, setTabContentData] = useState([]);
@@ -39,27 +38,25 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
   const [rightTab, setRightTab] = useState('node')
   const [loading, setLoading] = useState(false);
 
-  const [podData, setPodData] = useState([]);
-
+  const [metricData, setMetricData] = useState([]);
   const [vmData, setVmData] = useState({ cpuData: [], memoryData: [] });
   const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] });
+  const [podData, setPodData] = useState([]);
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
       // node data
       const metricData = await monitorStore.fetchMetrics({
-        // step - time interval
-        // times - 표시할 총 시간
-        // ex - 그래프 길이 = 5m * 100 
-        // -> 현재시간부터 500분을 5분 단위로 표기
         metrics: Object.values(MetricTypes),
-        step: '5m',
+        step: '5m', // Time interval
         times: 100,
+        // step: '3600s', // 최근 7일
+        // times: 160,
       })
-      setMetricData(metricData)
 
       // pod data
       const podData = await podStore.fetchMetrics({
@@ -67,7 +64,6 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
         step: '5m',
         times: 100,
       })
-      handlePodData(podData)
 
       // vm list
       const vmList = await vmStore.vmList()
@@ -105,12 +101,19 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
         end: currentTime,
       })
 
-      setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })
-      setKaasData({ ...kaasData, ['cpuData']: kaasCpuData, ['memoryData']: kaasMemoryData })
-
-      setLoading(false)
+      if (cleanupTrigger) {
+        setMetricData(metricData)
+        handlePodData(podData)
+        setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })
+        setKaasData({ ...kaasData, ['cpuData']: kaasCpuData, ['memoryData']: kaasMemoryData })
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 

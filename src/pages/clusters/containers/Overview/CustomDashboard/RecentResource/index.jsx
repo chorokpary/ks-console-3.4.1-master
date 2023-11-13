@@ -27,28 +27,36 @@ const RecentResource = ({ x, y, w, h }) => {
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
       // node data
       const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime' })
-      handleDate(nodeList, 'createTime', 'node')
 
       // pod data
       const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime' })
-      handleDate(podList, 'createTime', 'pod')
 
       // vm data
       const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
-      handleDate(vmList, 'creation_timestamp', 'vm')
 
       // kaas data
       const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp' })
-      handleDate(kaasList, 'timestamp', 'kaas')
 
-      setLoading(false)
+      if (cleanupTrigger) {
+        handleDate(nodeList, 'createTime', 'node')
+        handleDate(podList, 'createTime', 'pod')
+        handleDate(vmList, 'creation_timestamp', 'vm')
+        handleDate(kaasList, 'timestamp', 'kaas')
+
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 

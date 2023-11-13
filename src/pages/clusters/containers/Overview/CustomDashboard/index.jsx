@@ -46,9 +46,8 @@ const CustomDashboard = (props) => {
     disableDrag: true // drag
   };
 
+  var grid
   useEffect(() => {
-    GridStack.init(options);
-
     var dashboardArr = JSON.parse(localStorage.getItem("dashboardArr"))
     if (!dashboardArr) {
       const dash = new DashboardInfo()
@@ -99,13 +98,37 @@ const CustomDashboard = (props) => {
   }
 
   useEffect(() => {
-    setActiveDashboard(dashboardArr[0])
-    document.getElementById("dashTab0").click()
+    if (dashboardArr.length > 0) {
+      setActiveDashboard(dashboardArr[0])
+      document.getElementById("dashTab0").click()
+    }
   }, [dashboardArr])
 
   const editDashboard = idx => {
     routing.push(`/clusters/${cluster}/overview/edit?idx=${idx}`)
   }
+
+  useEffect(() => {
+    if (!_.isEmpty(activeDashboard)) {
+
+      let maxHeight = 0;
+      const keys = Object.keys(activeDashboard)
+      keys.map(obj => {
+        const panel = activeDashboard[obj]
+        let y = panel.y
+        let h = panel.h
+        if (maxHeight < y + h) {
+          maxHeight = y + h
+        }
+      })
+
+      const minHeight = (maxHeight) * 60
+      document.querySelector('.grid-stack').style.minHeight = `${minHeight}px`
+
+      grid = GridStack.init(options);
+    }
+  }, [activeDashboard])
+
 
   return (
     <>
@@ -140,7 +163,6 @@ const CustomDashboard = (props) => {
 
               {/* tab-content */}
               <div className="tab-content">
-
                 <div className="grid_wrap">
                   <div className="grid-stack">
                     {/* 클러스터 노드 */}

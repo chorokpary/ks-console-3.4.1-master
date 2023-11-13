@@ -2,26 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import MessageStore from 'stores/alerting/message'
 import { getLocalTime } from 'utils'
+import cleanupTrigger from '../cleanupTrigger'
 
 const Issue = ({ x, y, w, h }) => {
   const store = new MessageStore()
 
-  const [list, setList] = useState([])
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true)
-      const list = await store.fetchList({
-        sortBy: 'activeAt',
-        type: 'builtin',
-        cluster: 'default'
-      })
-      setList(list)
-      setLoading(false)
-    };
-    getData();
-  }, [])
+  const fetchData = async () => {
+    return await store.fetchList({
+      sortBy: 'activeAt',
+      type: 'builtin',
+      cluster: 'default'
+    })
+  }
+  const [list, error, loading] = cleanupTrigger(fetchData, [])
 
   const getType = (labels) => {
     if ('container' in labels) {

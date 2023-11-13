@@ -3,24 +3,19 @@ import { Loading } from '@kube-design/components'
 import KaasStore from 'stores/resources/containerresource'
 import KaasModel from 'stores/dashboard/kaas';
 import { fnSetK8s } from 'utils/dashboard'
+import cleanupTrigger from '../cleanupTrigger';
 
 const Kaas = ({ x, y, w, h }) => {
   const kaasStore = new KaasStore();
 
-  useEffect(() => {
-    const getKaasData = async () => {
-      setLoading(true)
-      const kaasList = await kaasStore.fetchList({ limit: 1000 })
-      setList(kaasList)
-      setLoading(false)
-    };
-    getKaasData();
-  }, [])
+  const fetchData = async () => {
+    return await kaasStore.fetchList({ limit: 1000 })
+  }
+  const [list, error, loading] = cleanupTrigger(fetchData, [])
 
-  const [list, setList] = useState([]);
   const kaas = new KaasModel();
   const [data, setData] = useState(kaas);
-  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (list.length > 0) {
       const data = fnSetK8s(list, kaas)

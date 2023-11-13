@@ -3,24 +3,19 @@ import { Loading } from '@kube-design/components'
 import NodeStore from 'stores/node';
 import ClusterNodeModel from 'stores/dashboard/clusterNode';
 import { fnSetClusterNodes } from 'utils/dashboard'
+import cleanupTrigger from '../cleanupTrigger';
 
 const ClusterNode = ({ x, y, w, h }) => {
   const nodeStore = new NodeStore();
 
-  useEffect(() => {
-    const getNodeData = async () => {
-      setLoading(true)
-      const nodeList = await nodeStore.fetchList({ limit: 1000 })
-      setList(nodeList)
-      setLoading(false)
-    };
-    getNodeData();
-  }, [])
+  const fetchData = async () => {
+    return await nodeStore.fetchList({ limit: 1000 })
+  }
+  const [list, error, loading] = cleanupTrigger(fetchData, [])
 
-  const [list, setList] = useState([]);
   const clusterNodes = new ClusterNodeModel();
   const [data, setData] = useState(clusterNodes);
-  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (list.length > 0) {
       const data = fnSetClusterNodes(list, clusterNodes)

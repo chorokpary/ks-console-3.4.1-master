@@ -3,24 +3,19 @@ import { Loading } from '@kube-design/components'
 import PodStore from 'stores/pod'
 import PodModel from 'stores/dashboard/pods'
 import { fnSetPods } from 'utils/dashboard'
+import cleanupTrigger from '../cleanupTrigger'
 
 const Pod = ({ x, y, w, h }) => {
   const podStore = new PodStore();
 
-  useEffect(() => {
-    const getPodData = async () => {
-      setLoading(true)
-      const podList = await podStore.fetchList({ limit: 1000 })
-      setList(podList)
-      setLoading(false)
-    };
-    getPodData();
-  }, [])
+  const fetchData = async () => {
+    return await podStore.fetchList({ limit: 1000 })
+  }
+  const [list, error, loading] = cleanupTrigger(fetchData, [])
 
-  const [list, setList] = useState([]);
   const pods = new PodModel();
   const [data, setData] = useState(pods);
-  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (list.length > 0) {
       const data = fnSetPods(list, pods)

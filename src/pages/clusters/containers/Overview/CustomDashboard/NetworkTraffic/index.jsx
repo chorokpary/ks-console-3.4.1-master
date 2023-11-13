@@ -36,6 +36,8 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
   const [kaasData, setKaasData] = useState({ vmInboundData: [], vmOutboundData: [] });
 
   useEffect(() => {
+    let cleanupTrigger = true;
+
     const getData = async () => {
       setLoading(true)
 
@@ -47,7 +49,6 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         // step: '3600s', // 최근 7일
         // times: 160,
       })
-      setMetricData(metricData)
 
       // pod data
       const podData = await podStore.fetchMetrics({
@@ -55,7 +56,6 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         step: '5m',
         times: 100,
       })
-      setPodData(podData)
 
       // vm list
       const vmList = await vmStore.vmList()
@@ -90,12 +90,19 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         end: currentTime,
       })
 
-      setVmData({ ...vmData, ['vmInboundData']: vmInboundData, ['vmOutboundData']: vmOutboundData })
-      setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundData, ['vmOutboundData']: kaasOutboundData })
-
-      setLoading(false)
+      if (cleanupTrigger) {
+        setMetricData(metricData)
+        setPodData(podData)
+        setVmData({ ...vmData, ['vmInboundData']: vmInboundData, ['vmOutboundData']: vmOutboundData })
+        setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundData, ['vmOutboundData']: kaasOutboundData })
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 

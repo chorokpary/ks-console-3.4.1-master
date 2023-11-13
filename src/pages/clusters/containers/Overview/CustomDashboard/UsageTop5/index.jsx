@@ -94,6 +94,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
   const getNodeData = async (params = {}) => {
     setLoading(true)
     const nodeList = await nodeStore.fetchAll(params)
+
     setList(nodeList)
     setLoading(false)
   };
@@ -120,16 +121,23 @@ const UsageTop5 = ({ x, y, w, h }) => {
   }
 
   useEffect(() => {
+    let cleanupTrigger = true;
     // vm list
     const getVmList = async () => {
       const vmList = await vmStore.vmList()
       let vmNames = '';
       vmList.map(obj => vmNames = vmNames + obj.name + "|")
-      setVmList(vmNames)
+
+      if (cleanupTrigger) {
+        setVmList(vmNames)
+        getNodeData()
+      }
     };
     getVmList();
 
-    getNodeData();
+    return () => {
+      cleanupTrigger = false
+    }
   }, [])
 
 

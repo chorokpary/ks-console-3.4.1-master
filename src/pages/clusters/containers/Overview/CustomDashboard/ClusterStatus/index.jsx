@@ -15,6 +15,7 @@ const ClusterStatus = ({ x, y, w, h }) => {
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getK8sStatusData = async () => {
       setLoading(true)
       await componentStore.fetchList({ cluster: 'default' })
@@ -22,10 +23,17 @@ const ClusterStatus = ({ x, y, w, h }) => {
       const componentData = data['kubernetes']
       // kubesphere
       // kubernetes
-      setComponentData(componentData)
-      setLoading(false)
+
+      if (cleanupTrigger) {
+        setComponentData(componentData)
+        setLoading(false)
+      }
     };
     getK8sStatusData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 
