@@ -81,11 +81,11 @@ const ResourceDetail = (props) => {
         {
             key: 'viewConfig',
             icon: 'eye',
-            text: t('Console Config'),
+            text: t('kubeconfig'),
             action: 'view',
             onClick: () => {
                 props.rootStore.triggerAction('containerresource.config.view', {
-                    resourceConfig: store.resourceConfig,
+                    resourceConfig: window.atob(store.resourceConfig),
                     store: store,
                     readOnly: true,
                 })
