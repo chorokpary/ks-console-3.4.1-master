@@ -328,7 +328,7 @@ const RegistModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상머신 이름을 선택해 주세요.</div>
+                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상 머신 이름을 선택해 주세요.</div>
                             </div>
                             <div className="text-right">
                                 <Button
