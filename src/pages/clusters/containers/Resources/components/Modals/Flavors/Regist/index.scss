@@ -299,6 +299,12 @@ $box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
     }
 }
 
+.body {
+    padding: 0;
+    overflow: hidden;
+    max-height: none;
+}
+
 /* modal popup tab_process */
 .tab_process {
     align-items: flex-start;
@@ -307,7 +313,6 @@ $box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
     height: 64px;
     padding: 0px 20px;
     position: relative;
-    width: 960px;
 
     .process_item {
         align-items: flex-start;
