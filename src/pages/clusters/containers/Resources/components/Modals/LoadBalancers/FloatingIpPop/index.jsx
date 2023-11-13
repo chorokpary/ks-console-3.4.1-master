@@ -109,7 +109,7 @@ const FloatingIpModal = (props) => {
   // Validation 시작 ==================================================
   const floatingValidator = (rule, value, callback) => {
     if(value == "선택" || value == "select"){
-      return callback({ message: t('Floating IP를 선택해 주세요.') })
+      return callback({ message: t('플로팅 IP를 선택해 주세요.') })
     }
     callback()
   }
@@ -138,9 +138,10 @@ const FloatingIpModal = (props) => {
             rules={[{ required: true, validator: floatingValidator }]}
           >
             <Select
-              value={floatingIp}
+              name="floatingIp"
               options={floatingOptions()} 
               onChange={(e) => handleSelect(e)}
+              defaultValue="선택"
             />
           </Form.Item>
         </Form>

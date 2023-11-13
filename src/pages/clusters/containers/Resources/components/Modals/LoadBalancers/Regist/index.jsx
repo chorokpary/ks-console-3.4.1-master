@@ -48,6 +48,7 @@ const RegistModal = (props) => {
     const [networkDataList, setNetworkDataList] = useState([]);
     const [vmDataList, setVmDataList] = useState([]);
     const [isMembers, setIsMembers] = useState(true);
+    const [isRules, setIsRules] = useState(true);
 
     useEffect(() => {
 
@@ -80,12 +81,14 @@ const RegistModal = (props) => {
     const handleOk = () => {
         const onOk = props.onOk;
         const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
+        const rules = [...formRulesFields].filter(el => el.portRangeMax).map(obj => obj.portRangeMax);
 
         setIsMembers(members.length > 0);
+        setIsRules(rules.length > 0);
 
         form.current.validator(() => {
 
-            if (members.length > 0) {
+            if (members.length > 0 && rules.length > 0) {
                 const { data } = form.current.props;
                 data.network = networkName
                 data.members = members;
@@ -129,6 +132,9 @@ const RegistModal = (props) => {
         handleRemoveFields: (i) => {
             const values = [...formMemberIpFields].filter((obj, idx) => idx !== i);
             setFormMemberIpFields(values);
+            if (values.length < 1) {
+                setIsMembers(false);
+            }
         },
 
         handleSelectClick: (i, val) => {
@@ -181,6 +187,7 @@ const RegistModal = (props) => {
             setFormRulesFields(values);
             if (values.length < 1) {
                 setBtnDimm(false);
+                setIsRules(false);
             }
         },
 
@@ -193,8 +200,8 @@ const RegistModal = (props) => {
             } else {
                 values[i].validPort.isValid = false;
             }
-
             values[i].portRangeMax = val;
+            setIsRules(true);
 
             setFormRulesFields(values);
         },
@@ -232,6 +239,7 @@ const RegistModal = (props) => {
         }
         values[i].portRangeMax = ruleTypeOptions.filter((obj) => obj.value === val)[0].port;
         values[i].validPort.isValid = false;
+        setIsRules(true);
 
         return values;
     }
@@ -239,7 +247,7 @@ const RegistModal = (props) => {
 
     const networkValidator = (rule, value, callback) => {
         if (value == "선택" || value == "select") {
-            return callback({ message: t('네트워크이름을 선택해 주세요.') })
+            return callback({ message: t('네트워크 이름을 선택해 주세요.') })
         }
         callback()
     }
@@ -320,7 +328,7 @@ const RegistModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상머신을 선택해 주세요.</div>
+                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상머신 이름을 선택해 주세요.</div>
                             </div>
                             <div className="text-right">
                                 <Button
@@ -381,6 +389,7 @@ const RegistModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className={`form-item-error ${isRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>정책을 선택해 주세요.</div>
                             </div>
                             <div className="text-right">
                                 <Button

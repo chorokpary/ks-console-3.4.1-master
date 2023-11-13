@@ -82,6 +82,9 @@ const ModifyModal = (props) => {
         handleRemoveFields: (i) => {
             const values = [...formMemberIpFields].filter((obj, idx) => idx !== i);
             setFormMemberIpFields(values);
+            if (values.length < 1) {
+                setIsMembers(false);
+            }
         },
 
         handleSelectClick: (i, val) => {
