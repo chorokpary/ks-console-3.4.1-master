@@ -424,13 +424,13 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('파워(kW)'),
+        title: t('파워(Watt)'),
         key: 'power',
         isHideable: true,
         render: record => {
           var power = this.getMetricValue('metricPowerData', record) 
           return (
-            <Text title={`${Number(power) / 1000}`}/>
+            <Text title={`${power}`}/>
           )
         }
       },
@@ -439,9 +439,9 @@ export default class BareMetalDashboard extends React.Component {
         key: 'temperature',
         isHideable: true,
         render: record => {
-          const temperature = this.getMetricValue('metricTemperatureData', record) 
+          const temperature = this.getMetricValue('metricTemperatureData', record)
           return (
-            <Text title={`${temperature}`}/>
+            <Text title={`${Math.round(Number(temperature))}`}/>
           )
         }
       },

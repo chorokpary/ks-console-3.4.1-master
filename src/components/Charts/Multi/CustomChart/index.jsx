@@ -66,14 +66,15 @@ const CustomChart = ({
               />
             }
           />
-          <XAxis dataKey="time" />
-          <YAxis yAxisId="left" type="number" dataKey="x86_usage" name="weight" stroke="#8884d8" />
+          <XAxis dataKey="time" strokeWidth="0"/>
+          <YAxis yAxisId="left" type="number" dataKey="x86_usage" name="weight" stroke="#8884d8" strokeWidth="0"/>
           <YAxis
             yAxisId="right"
             type="number"
             dataKey="x86_power"
             name="weight"
             orientation="right"
+            strokeWidth="0"
           />
           <Tooltip
             content={<CustomTooltip />}

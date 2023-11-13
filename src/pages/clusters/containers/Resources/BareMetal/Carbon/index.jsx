@@ -74,9 +74,9 @@ const Carbon = (props) => {
     setX86ServerCount(total_x86_count)
 
     // 전기 사용량
-    setUseKwh(common.fnAddCommar(total_power))
-    setArmKwh(common.fnAddCommar(total_arm_power))
-    setX86Kwh(common.fnAddCommar(total_x86_power))
+    setUseKwh(total_power > 1000 ? common.fnAddCommar(total_power) : total_power.toFixed(1))
+    setArmKwh(total_arm_power > 1000 ? common.fnAddCommar(total_arm_power) : total_arm_power.toFixed(1))
+    setX86Kwh(total_x86_power > 1000 ? common.fnAddCommar(total_x86_power) : total_x86_power.toFixed(1))
 
     // CO2 발생량
     setUseCo2((Math.round((total_power  * 0.4781) / 0.1)*0.1).toFixed(1))
@@ -91,10 +91,11 @@ const Carbon = (props) => {
     // 금액
     const armPrice = Math.round(total_arm_power * 111.16);
     const x86Price = Math.round(total_x86_power * 111.16);
+    const totalPrice = Number(armPrice) + Number(x86Price)
 
-    setUsePrice(common.fnAddCommar(Number(armPrice) + Number(x86Price)))
-    setArmPrice(common.fnAddCommar(armPrice))
-    setX86Price(common.fnAddCommar(x86Price))
+    setUsePrice(totalPrice > 1000 ? common.fnAddCommar(totalPrice) : totalPrice)
+    setArmPrice(armPrice > 1000 ? common.fnAddCommar(armPrice) : armPrice)
+    setX86Price(x86Price > 1000 ? common.fnAddCommar(x86Price) : x86Price)
 
   }
 
