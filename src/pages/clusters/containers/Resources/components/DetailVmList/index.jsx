@@ -23,7 +23,7 @@ import {
   LevelRight,
   Loading,
   Pagination,
-  Select,
+  Tooltip
 } from '@kube-design/components'
 
 const DetailVmList = (props) => {
@@ -194,7 +194,7 @@ const DetailVmList = (props) => {
                     [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
                   })}
                 >
-                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
+                  <div className={styles.itemMain}>
                     <div className={styles.icon}>
                       {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
                       <i className="ico-type40-vm"></i>
@@ -223,7 +223,18 @@ const DetailVmList = (props) => {
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-              <div>{obj.name}</div>
+              <div>
+                {obj.name}
+                <Tooltip content={t('VNC')}>
+                  <Icon
+                    className="margin-l8"
+                    name="terminal"
+                    size={16}
+                    clickable
+                    onClick={() => handleOpenVnc(obj.name)}
+                  />
+              </Tooltip>
+              </div>
               <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}에 생성 됨</p>
           </div>
           <div className={styles.text}>
@@ -235,7 +246,7 @@ const DetailVmList = (props) => {
               <p>노드</p>
           </div>
           {renderMonitorings(obj.name)}  
-          <div className={styles.arrow}>
+          <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
           </div>
         </div>
@@ -268,39 +279,39 @@ const DetailVmList = (props) => {
                   <p>네트워크</p>
                 </div>     
                 <div className={styles.title}>
-                      <Text
-                        key='CPU'
-                        icon='cpu'
-                        title={obj.flavor_detail.vcpus +" Core"}
-                        description={t('CPU')}
-                      />
-                    </div>
-                    <div className={styles.title}>
-                      <Text
-                        key='Memory'
-                        icon='memory'
-                        title={common.fnSetBytes(obj.flavor_detail.ram) +" Gib"}
-                        description={t('Memory')}
-                      />
-                    </div>
-                    <div className={styles.title}>
-                      <Text
-                        key='Disk'
-                        icon='storage'
-                        title={obj.flavor_detail.root_disk +" Gib"}
-                        description={t('Disk')}
-                      />
-                    </div>
-                    <div className={styles.title}>
-                      <Text
-                        key='GPU'
-                        icon='gpu'
-                        title={obj.flavor_detail.gpus.length >= 1 ?  
-                          obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개" 
-                          : "-"}
-                        description={t('GPU')}
-                      />
-                    </div>
+                  <Text
+                    key='CPU'
+                    icon='cpu'
+                    title={obj.flavor_detail.vcpus +" Core"}
+                    description={t('CPU')}
+                  />
+                </div>
+                <div className={styles.title}>
+                  <Text
+                    key='Memory'
+                    icon='memory'
+                    title={common.fnSetBytes(obj.flavor_detail.ram) +" Gib"}
+                    description={t('Memory')}
+                  />
+                </div>
+                <div className={styles.title}>
+                  <Text
+                    key='Disk'
+                    icon='storage'
+                    title={obj.flavor_detail.root_disk +" Gib"}
+                    description={t('Disk')}
+                  />
+                </div>
+                <div className={styles.title}>
+                  <Text
+                    key='GPU'
+                    icon='gpu'
+                    title={obj.flavor_detail.gpus.length >= 1 ?  
+                      obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개" 
+                      : "-"}
+                    description={t('GPU')}
+                  />
+                </div>
               </div>          
           </div>        
         </div>
@@ -439,6 +450,16 @@ const DetailVmList = (props) => {
     }else{
       return "error"
     }
+  }
+
+  const handleOpenVnc = (vmName) => {
+    //실제 URL 로 변경 요망
+    var apiUrl = "http://"+location.hostname+":30020";
+    var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
+    param = param + vmName + "/vnc";
+
+    var popupName = vmName.replaceAll("-", "");
+    window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840');
   }
 
   return (
