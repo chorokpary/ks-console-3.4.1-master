@@ -56,56 +56,52 @@ const Computing = ({ computing }) => {
 
   useEffect(() => {
     // ---------------------------- network ------------------------------
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
       const vmlist = await vmStore.vmList()
-      setVmList(vmlist)
-
       const networklist = await networkStore.fetchList({ limit: 1000 })
-      setNetworkList(networklist)
-
       const routerlist = await routerStore.fetchList({ limit: 1000 })
-      setRouterList(routerlist)
-
       const sriovlist = await sriovStore.fetchList({ limit: 1000 })
-      setSriovList(sriovlist)
-
       const fiplist = await floatingIpStore.fetchList({ limit: 1000 })
-      setFloatingIpList(fiplist)
-
       const sglist = await securityGroupStore.fetchList({ limit: 1000 })
-      setSgList(sglist)
-
       const lblist = await loadBalancerStore.fetchList({ limit: 1000 })
-      setLbList(lblist)
-
 
       // ---------------------------- template ------------------------------
       const imagelist = await imageStore.fetchList({ limit: 1000 })
-      setImageList(imagelist)
-
       const flavorlist = await flavorStore.fetchList({ limit: 1000 })
-      setFlavorList(flavorlist)
-
       const hdlist = await hostDeviceStore.fetchList({ limit: 1000 })
-      setHdList(hdlist)
-
       const mdlist = await mediatedDeviceStore.fetchList({ limit: 1000 })
-      setMdList(mdlist)
-
       const keypairlist = await keypairStore.fetchList({ limit: 1000 })
-      setKeypairList(keypairlist)
-
       const kaaslist = await kaasStore.fetchList({ limit: 1000 })
-      setKaasList(kaaslist)
-
       const kaasimagelist = await kaasImageStore.fetchList({ limit: 1000 })
-      setKaasImageList(kaasimagelist)
 
-      setLoading(false)
+      if (cleanupTrigger) {
+        setVmList(vmlist)
+        setNetworkList(networklist)
+        setRouterList(routerlist)
+        setSriovList(sriovlist)
+        setFloatingIpList(fiplist)
+        setSgList(sglist)
+        setLbList(lblist)
+
+        setImageList(imagelist)
+        setFlavorList(flavorlist)
+        setHdList(hdlist)
+        setMdList(mdlist)
+        setKeypairList(keypairlist)
+        setKaasList(kaaslist)
+        setKaasImageList(kaasimagelist)
+
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 

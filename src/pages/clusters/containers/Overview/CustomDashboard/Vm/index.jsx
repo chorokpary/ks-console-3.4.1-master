@@ -3,24 +3,19 @@ import { Loading } from '@kube-design/components'
 import VmStore from 'stores/resources/vms'
 import VmModel from 'stores/dashboard/vms';
 import { fnSetVms } from 'utils/dashboard'
+import cleanupTrigger from '../cleanupTrigger';
 
 const Vm = ({ x, y, w, h }) => {
   const vmStore = new VmStore();
 
-  useEffect(() => {
-    const getVmData = async () => {
-      setLoading(true)
-      const vmList = await vmStore.vmList()
-      setList(vmList)
-      setLoading(false)
-    };
-    getVmData();
-  }, [])
+  const fetchData = async () => {
+    return await vmStore.vmList()
+  }
+  const [list, error, loading] = cleanupTrigger(fetchData, [])
 
-  const [list, setList] = useState([]);
   const vms = new VmModel();
   const [data, setData] = useState(vms);
-  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (list.length > 0) {
       const data = fnSetVms(list, vms)

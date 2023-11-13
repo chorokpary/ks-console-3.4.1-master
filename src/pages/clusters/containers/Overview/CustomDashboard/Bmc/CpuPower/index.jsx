@@ -37,24 +37,30 @@ const CpuPower = ({ x, y, w, h,
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
       const metric_type = await customStore.fetchMetric({
         expr: `max by(instance, machine) (node_uname_info)`,
       })
-      setMetricType(metric_type)
 
       const metric_power_last = await customStore.fetchMetric({
         expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
       })
-      setMetricPower(metric_power_last)
 
-      fetchData(get(stepData, 'h'))
-
-      setLoading(false)
+      if (cleanupTrigger) {
+        setMetricType(metric_type)
+        setMetricPower(metric_power_last)
+        fetchData(get(stepData, 'h'))
+        setLoading(false)
+      }
     }
     getData()
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
   }, [])
 
 

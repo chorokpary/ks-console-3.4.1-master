@@ -38,6 +38,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
@@ -49,17 +50,22 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
         step: '1d',
         times: 10,
       })
-      setMetricData(metricData)
 
       const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp' })
-      handleDate(vmData, 'creation_timestamp', 'vm')
-
       const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp' })
-      handleDate(kaasData, 'timestamp', 'kaas')
 
-      setLoading(false)
+      if (cleanupTrigger) {
+        setMetricData(metricData)
+        handleDate(vmData, 'creation_timestamp', 'vm')
+        handleDate(kaasData, 'timestamp', 'kaas')
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 

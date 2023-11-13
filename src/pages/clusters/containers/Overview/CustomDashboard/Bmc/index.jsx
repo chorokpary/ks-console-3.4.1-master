@@ -48,25 +48,33 @@ const Bmc = ({ bmc }) => {
   const [usedX86Cnt, setUsedX86Cnt] = useState(0)
 
   useEffect(() => {
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
       const data = await bareMetalStore.fetchList()
-      setNodeData(data)
 
       const getMetricType = await customStore.fetchMetric({
         expr: `max by(instance, machine) (node_uname_info)`,
       })
-      setMetricType(getMetricType)
 
       const getMetricData = await customStore.fetchMetric({
         expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       })
-      setMetricData(getMetricData)
 
-      setLoading(false)
+      if (cleanupTrigger) {
+        setNodeData(data)
+        setMetricType(getMetricType)
+        setMetricData(getMetricData)
+
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
 
   }, [])
 

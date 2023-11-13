@@ -569,9 +569,9 @@ body.dashboard {
   width: calc(100% - 260px);
 }
 
-.dashboard .content_wrap {
+/* .dashboard .content_wrap {
   min-height: 100vh;
-}
+} */
 
 .dashboard .content_wrap .grid-stack {
   margin: 0 !important;

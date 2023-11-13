@@ -29,61 +29,71 @@ const BmcNode = ({ x, y, w, h,
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
       const metric_type = await customStore.fetchMetric({
         expr: `max by(instance, machine) (node_uname_info)`,
       })
-      setMetricType(metric_type)
 
       const metric_cpu = await customStore.fetchMetric({
         expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[5m]))`,
       })
-      setMetricCpu(metric_cpu)
 
       const metric_core = await customStore.fetchMetric({
         expr: `count(node_cpu_seconds_total{mode="idle"}) without (cpu,mode)`,
       })
-      setMetricCore(metric_core)
 
       const metric_memory_total = await customStore.fetchMetric({
         expr: `avg by(instance) (node_memory_MemTotal_bytes)`,
       })
-      setMetricMemoryTotal(metric_memory_total)
 
       const metric_memory_free = await customStore.fetchMetric({
         expr: `avg by (instance) (node_memory_MemFree_bytes)`,
       })
-      setMetricMemoryFree(metric_memory_free)
 
       const metric_disk_total = await customStore.fetchMetric({
         expr: `sum by(instance) (node_filesystem_size_bytes)`,
       })
-      setMetricDiskTotal(metric_disk_total)
 
       const metric_disk_free = await customStore.fetchMetric({
         expr: `sum by(instance) (node_filesystem_avail_bytes)`,
       })
-      setMetricDiskFree(metric_disk_free)
 
       const metric_power = await customStore.fetchMetric({
         expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       })
-      setMetricPower(metric_power)
 
       const metric_temperature = await customStore.fetchMetric({
         expr: `avg by(instance) (redfish_chassis_temperature_celsius)`,
       })
-      setMetricTemperature(metric_temperature)
 
       const metric_state = await customStore.fetchMetric({
         expr: `max by(instance) (redfish_system_power_state)`,
       })
-      setMetricState(metric_state)
 
-      setLoading(false)
+      if (cleanupTrigger) {
+        setMetricType(metric_type)
+        setMetricCpu(metric_cpu)
+        setMetricCore(metric_core)
+        setMetricMemoryTotal(metric_memory_total)
+        setMetricMemoryFree(metric_memory_free)
+
+        setMetricDiskTotal(metric_disk_total)
+        setMetricDiskFree(metric_disk_free)
+        setMetricPower(metric_power)
+        setMetricTemperature(metric_temperature)
+        setMetricState(metric_state)
+
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
+
 
   }, [])
 

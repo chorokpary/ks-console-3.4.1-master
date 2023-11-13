@@ -26,21 +26,29 @@ const PowerUsageTop5 = ({ x, y, w, h,
 
   useEffect(() => {
 
+    let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
       const metric_type = await customStore.fetchMetric({
         expr: `max by(instance, machine) (node_uname_info)`,
       })
-      setMetricType(metric_type)
 
       const metric_power = await customStore.fetchMetric({
         expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       })
-      setMetricPower(metric_power)
 
-      setLoading(false)
+      if (cleanupTrigger) {
+        setMetricType(metric_type)
+        setMetricPower(metric_power)
+        setLoading(false)
+      }
     };
     getData();
+    return () => {
+      cleanupTrigger = false
+      setLoading(false)
+    }
+
 
   }, [])
 
