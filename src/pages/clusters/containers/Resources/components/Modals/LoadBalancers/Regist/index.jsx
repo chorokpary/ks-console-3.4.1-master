@@ -119,6 +119,7 @@ const RegistModal = (props) => {
     const memberIpObj = {
         vmName: '선택'
         , memberIp: ''
+        , message: ''
     }
     const [formMemberIpFields, setFormMemberIpFields] = useState([memberIpObj]);
     //멤버 IP handler
@@ -145,10 +146,23 @@ const RegistModal = (props) => {
                     value: network.ip
                 }))
             })
-            values[i].memberIp = opt[0][0].value;
-            setIsMembers(true);
 
-            values[i].vmName = val;
+            if (!values.map(obj => obj.vmName).includes(val) || values[i].vmName === val || val === "") {
+                values[i].message = ""
+                values[i].vmName = val;
+                values[i].memberIp = opt[0][0].value;
+                setIsMembers(true);
+            } else {
+                values[i].message = " 이미 선택한 가상 머신 이름 입니다.";
+                setTimeout(() => { handleMemberIp.deleteMessage(i) }, 1000);
+            }
+
+            setFormMemberIpFields(values);
+        },
+
+        deleteMessage: (i) => {
+            const values = [...formMemberIpFields];
+            values[i].message = "";
             setFormMemberIpFields(values);
         },
 
@@ -172,6 +186,7 @@ const RegistModal = (props) => {
         , portRangeMax: '0'
         , isCustom: true
         , validPort: { isValid: false, message: "포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다." }
+        , message: ''
     }
     const [formRulesFields, setFormRulesFields] = useState([rulsObj]);
     //Rules handler
@@ -212,20 +227,34 @@ const RegistModal = (props) => {
         handleSelectClick: (i, field, val) => {
             let values = [...formRulesFields];
 
+
             if (field === "protocol") {
                 values[i].protocol = val;
             } else {
-                values[i].ruleType = val;
-                values = setRuleTypeHandler(i, val, values);
+                if (!values.map(obj => obj.ruleType).includes(val) || values[i].ruleType === val || val === "" || val === "CUSTOM") {
+                    values[i].message = ""
+                    values[i].ruleType = val;
+                    values = setRuleTypeHandler(i, val, values);
 
-                if (val === "ALL") {
-                    values = values.filter((obj, idx) => idx === i);
-                    setBtnDimm(true);
+                    if (val === "ALL") {
+                        values = values.filter((obj, idx) => idx === i);
+                        setBtnDimm(true);
+                    } else {
+                        setBtnDimm(false);
+                    }
+
                 } else {
-                    setBtnDimm(false);
+                    values[i].message = " 이미 선택한 유형 입니다.";
+                    setTimeout(() => { handleRules.deleteMessage(i) }, 1000);
                 }
             }
 
+            setFormRulesFields(values);
+        },
+
+        deleteMessage: (i) => {
+            const values = [...formRulesFields];
+            values[i].message = "";
             setFormRulesFields(values);
         },
 
@@ -315,7 +344,7 @@ const RegistModal = (props) => {
                                         {formMemberIpFields.map((v, i) => (
                                             <tr key={i}>
                                                 <td>
-                                                    <Select value={v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
+                                                    <Select value={v.message ? v.message : v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
                                                 </td>
                                                 <td>
                                                     <Input type="text" value={v.memberIp} disabled/>
@@ -368,7 +397,7 @@ const RegistModal = (props) => {
                                         {formRulesFields.map((v, i) => (
                                             <tr key={i}>
                                                 <td>
-                                                    <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleRules.handleSelectClick(i, 'ruleType', e)} />
+                                                    <Select value={v.message ? v.message : v.ruleType} options={ruleTypeOptions} onChange={(e) => handleRules.handleSelectClick(i, 'ruleType', e)} />
                                                 </td>
                                                 <td>
                                                     <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
