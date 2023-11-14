@@ -7,7 +7,7 @@ import styles from './index.scss'
 
 import MediatedDevicesStore from 'stores/resources/mediateddevices'
 
-const regexName = /^([a-z0-9]+)\/([a-z0-9]+)$/;
+const regexName = /^([a-z]+)\/([a-z0-9]+)$/;
 
 const RegistModal = (props) => {
 
@@ -27,13 +27,15 @@ const RegistModal = (props) => {
         const onOk = props.onOk;
         setIsCheck(true)
         form.current.validator(() => {
-            const { data } = form.current.props;
+            if (deviceCheckItem) {
+                const { data } = form.current.props;
 
-            data.resource_name = data.name;
-            data.mediated_device_name = deviceCheckItem;
-            data.is_gpu = isGpu;
-            
-            onOk({ mediated_device: data })
+                data.resource_name = data.name;
+                data.mediated_device_name = deviceCheckItem;
+                data.is_gpu = isGpu;
+
+                onOk({ mediated_device: data })
+            }
         })
     }
 
@@ -103,7 +105,7 @@ const RegistModal = (props) => {
                     <Form.Item
                         label={t('이름')}
                         rules={[{ required: true, validator: nameValidator }]}
-                        desc={t('이름은 소문자, 숫자, /(필수) 입력 가능합니다. ex) test/001')}
+                        desc={t('이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다. ex) test/001')}
                     >
                         <Input
                             name="name"
