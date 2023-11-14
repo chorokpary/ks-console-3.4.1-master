@@ -16,6 +16,7 @@ import axios from 'axios'
 const defaultDockerText = '컨테이너에 대한 이미지를 설정합니다.'
 const emptyDockerText = '이미지를 찾을 수 없습니다.'
 const defaultRegistryUrl = 'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'
+const defaultImageSize = '12GB'
 
 export default function ResourceImageModal({ title, store, onOk }) {
 
@@ -35,6 +36,9 @@ export default function ResourceImageModal({ title, store, onOk }) {
   const [registryUrl, setRegistryUrl] = useState(defaultRegistryUrl)
   const [registryUrlActive, setRegistryUrlActive] = useState(false)
   const [dockerPopActive, setDockerPopActive] = useState(false)
+  const [imageSize, setImageSize] = useState(defaultImageSize)
+  const [imageSizeActive, setImageSizeActive] = useState(false)
+  const [sizeEmpty, setSizeEmpty] = useState(false)
 
   const [dockerName, setDockerName] = useState('')
   const [dockerListData, setDockerListData] = useState([])
@@ -73,6 +77,16 @@ export default function ResourceImageModal({ title, store, onOk }) {
       setRegistryUrlActive(false)
     } else {
       setRegistryUrlActive(true)
+    }
+  }
+
+  const handleImageSizeActive = () => {
+    if (imageSizeActive) {
+      setImageSize(defaultImageSize)
+      setImageSizeActive(false)
+      setSizeEmpty(false)
+    } else {
+      setImageSizeActive(true)
     }
   }
 
@@ -163,15 +177,20 @@ export default function ResourceImageModal({ title, store, onOk }) {
     form.current.validator(() => {
       const { data } = form.current.props;
 
+      if (imageSize == '0GB') {
+        setSizeEmpty(true)
+        return
+      } else {
+        setSizeEmpty(false)
+        data.size = Number(imageSize.slice(0, imageSize.length - 2))
+      }
       if (dockerTag == '') {
         setSourceEmpty(true)
         return
       } else {
         setSourceEmpty(false)
       }
-      if (typeof data.size === 'string') {
-        data.size = Number(data.size.slice(0, data.size.length - 2))
-      }
+
       data.distro_type = distroType;
       data.source = 'docker://quay.io/edgestack/' + dockerName + ':' + dockerTag;
       onOk({ image: data })
@@ -187,7 +206,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     const count = 5
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1)
-      const mark = value === 0 ? '' : `${Math.floor(value)}GB`
+      const mark = value === 0 ? '0' : `${Math.floor(value)}GB`
       return { ...marks, [value]: mark }
     }, {})
   }
@@ -208,12 +227,19 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   const handlePublicType = (value) => {
     setPublicType(value)
-    setRegistryUrlActive(false)
-    if (value == 'public') {
-      setRegistryUrl(defaultRegistryUrl)
-    }
+    // setRegistryUrlActive(false)
+    // if (value == 'public') {
+    //   setRegistryUrl(defaultRegistryUrl)
+    // }
   }
 
+  useEffect(() => {
+    if (imageSize == '0GB') {
+      setSizeEmpty(true)
+    } else {
+      setSizeEmpty(false)
+    }
+  }, [imageSize])
 
   return (
     <>
@@ -352,23 +378,52 @@ export default function ResourceImageModal({ title, store, onOk }) {
             </Columns>
           </Form.Item>
 
-
           <Form.Item
             label={t('사이즈')}
             rules={[{
               required: true,
             }]}>
-            <UnitSlider
-              name="size"
-              max={40}
-              min={1}
-              marks={getMarks()}
-              defaultValue='12GB'
-              unit={'GB'}
-              withInput
-              onChange={this.handleChange}
-            />
+
+            <div className={styles.content_box_wrap}>
+              <div className={styles.content_box}>
+                <div className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''}`}>
+                  <div className={styles.cont_box_section}>
+                    <div className={styles.cont_box_wrap}>
+                      <h6 className={styles.label}>
+                        <div className={styles.form_check}>
+                          <input type="checkbox" name="chk-0" id="chk-0" />
+                          <label htmlFor="chk-0" onClick={() => handleImageSizeActive()}></label>
+                        </div>
+                        <div className={styles.title}>
+                          <p>이미지 사이즈 지정</p>
+                          <span>이미지 사이즈를 설정합니다.</span>
+                        </div>
+                      </h6>
+                      {imageSizeActive &&
+                        <div className={`${styles.select_inner_content}`} >
+                          <UnitSlider
+                            name="size"
+                            max={40}
+                            min={0}
+                            marks={getMarks()}
+                            defaultValue={imageSize}
+                            unit={'GB'}
+                            withInput
+                            onChange={(e) => setImageSize(e)}
+                            style={{ padding: '5px' }}
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </Form.Item>
+          {sizeEmpty &&
+            <div className="form-item-error">이미지 사이즈를 0 으로 설정할 수 없습니다.</div>
+          }
+
 
           <Form.Item
             label={t('소스')}
@@ -390,7 +445,6 @@ export default function ResourceImageModal({ title, store, onOk }) {
           </Form.Item>
 
           <Form.Item>
-
             <div className={styles.content_box_wrap}>
               <div className={styles.content_box}>
                 {/* <label>소스</label> */}
@@ -411,12 +465,12 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   <div className={styles.cont_box_section}>
                     <div className={styles.cont_box_wrap}>
                       <h6 className={styles.label}>
-                        {publicType == 'private' &&
-                          <div className={styles.form_check}>
-                            <input type="checkbox" name="chk-1" id="chk-1" />
-                            <label htmlFor="chk-1" onClick={() => handleRegistryUrl()}></label>
-                          </div>
-                        }
+                        {/* {publicType == 'private' && */}
+                        <div className={styles.form_check}>
+                          <input type="checkbox" name="chk-1" id="chk-1" />
+                          <label htmlFor="chk-1" onClick={() => handleRegistryUrl()}></label>
+                        </div>
+                        {/* } */}
                         <div className={styles.title}>
                           <p>Registry URL</p>
                           <span>이미지 레지스트리 URL을 설정합니다.</span>
@@ -446,7 +500,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                             <div className={styles.sel_search}>
                               <i className={styles.ico_search_small}></i>
                               <div className={styles.input_search_pop}>
-                                <input type="text" placeholder="검색" onKeyDown={searchDockerList} />
+                                <input type="text" placeholder="검색" onKeyDown={searchDockerList}
+                                  style={{ border: 0 }} />
                               </div>
                             </div>
                             <ul className={styles.sel_img}>
@@ -493,31 +548,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
               </div>
             </div>
           </Form.Item>
+
           {sourceEmpty &&
             <div className="form-item-error">이미지를 설정해주세요</div>
           }
-
-          {/* <Form.Item>
-            <Input name="source_url"
-              defaultValue={'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'}
-              readOnly
-              style={{ maxWidth: 'none' }}
-            />
-          </Form.Item> */}
-          {/* <Form.Item>
-            <ContainerForm
-              type={'Add'}
-              // namespace={get({ metadata: { namespace: 'kdh-project01' } }, 'metadata.namespace')}
-              namespace={'kdh-project01'}
-            />
-          </Form.Item> */}
-          {/* <Form.Item>
-            <Input name="source"
-              defaultValue={'docker://quay.io/edgestack/ubuntu-2004-kube:x86_64'}
-              readOnly
-              style={{ maxWidth: 'none' }}
-            />
-          </Form.Item> */}
 
           <Form.Item
             label={t('설명')}
