@@ -29,12 +29,12 @@ const Status = (props) => {
                                         <p>프로토콜</p>
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
-                                        <div>{store.detail.lb?.members}</div>
-                                        <p>멤버 IP</p>
-                                    </div>
-                                    <div className={classnames(styles.title, styles.name)}>
                                         <div>{store.detail.lb?.virtual_ip}</div>
                                         <p>VIP</p>
+                                    </div>
+                                    <div className={classnames(styles.title, styles.name)}>
+                                        <div>{rule.port_range_min !== rule.port_range_max ? (rule.port_range_min ? rule.port_range_min : 0) + `-` : ''}{rule.protocol === 'all' ? "0-65535" : rule.port_range_max}</div>
+                                        <p>포트 범위</p>
                                     </div>
                                 </div>
                             </div>

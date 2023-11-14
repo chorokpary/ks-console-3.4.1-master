@@ -81,7 +81,7 @@ const RegistModal = (props) => {
     const handleOk = () => {
         const onOk = props.onOk;
         const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
-        const rules = [...formRulesFields].filter(el => el.portRangeMax).map(obj => obj.portRangeMax);
+        const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
         setIsMembers(members.length > 0);
         setIsRules(rules.length > 0);
@@ -93,7 +93,7 @@ const RegistModal = (props) => {
                 data.network = networkName
                 data.members = members;
 
-                data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)];
+                data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)];
                 onOk({ lb: data })
             }
 
@@ -180,6 +180,9 @@ const RegistModal = (props) => {
         handleAddFields: () => {
             const values = [...formRulesFields, rulsObj];
             setFormRulesFields(values);
+            if ([...formRulesFields].length < 1) {
+                setIsRules(true);
+            }
         },
 
         handleRemoveFields: (i) => {
