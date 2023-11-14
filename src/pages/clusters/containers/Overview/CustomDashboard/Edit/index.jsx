@@ -17,6 +17,7 @@ const CustomDashboardEdit = (props) => {
 
   const { idx } = queryObj;
 
+  const [isNew, setIsNew] = useState(idx ? false : true)
   const [activeDashboard, setActiveDashboard] = useState(idx ? JSON.parse(localStorage.getItem("dashboardArr"))[idx] : new DashboardInfo())
   const [dashboardName, setDashboardName] = useState(activeDashboard.name);
 
@@ -179,8 +180,14 @@ const CustomDashboardEdit = (props) => {
       var duplicateName = arr.find(el => el.name == dashboardName)
       grid = GridStack.init();
 
-      if (duplicateName) {
+      if (isNew && duplicateName) {
         Notify.error({ content: t('중복된 이름입니다.') })
+        document.getElementById('dashboardName').style.borderColor = 'red';
+        document.getElementById('dashboardName').focus()
+      } else if (!isNew && activeDashboard.name != dashboardName && duplicateName) {
+        Notify.error({ content: t('중복된 이름입니다.') })
+        document.getElementById('dashboardName').style.borderColor = 'red';
+        document.getElementById('dashboardName').focus()
       } else if (grid.engine.nodes.length == 0) {
         Notify.error({ content: t('패널을 최소 1개 이상 선택해주세요.') })
       } else {
