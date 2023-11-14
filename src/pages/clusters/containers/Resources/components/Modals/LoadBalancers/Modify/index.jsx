@@ -70,6 +70,7 @@ const ModifyModal = (props) => {
     const memberIpObj = {
         vmName: '선택'
         , memberIp: ''
+        , message: ''
     }
     //멤버 IP handler
     const handleMemberIp = {
@@ -96,10 +97,22 @@ const ModifyModal = (props) => {
                 }))
             })
 
-            values[i].memberIp = opt[0][0].value;
-            setIsMembers(true);
+            if (!values.map(obj => obj.vmName).includes(val) || values[i].vmName === val || val === "") {
+                values[i].message = ""
+                values[i].vmName = val;
+                values[i].memberIp = opt[0][0].value;
+                setIsMembers(true);
+            } else {
+                values[i].message = " 이미 선택한 가상 머신 이름 입니다.";
+                setTimeout(() => { handleMemberIp.deleteMessage(i) }, 1000);
+            }
 
-            values[i].vmName = val;
+            setFormMemberIpFields(values);
+        },
+
+        deleteMessage: (i) => {
+            const values = [...formMemberIpFields];
+            values[i].message = "";
             setFormMemberIpFields(values);
         },
 
@@ -162,7 +175,7 @@ const ModifyModal = (props) => {
                                         {formMemberIpFields.map((v, i) => (
                                             <tr key={i}>
                                                 <td>
-                                                    <Select value={v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
+                                                    <Select value={v.message ? v.message : v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
                                                 </td>
                                                 <td>
                                                     <Input type="text " value={v.memberIp} disabled />
