@@ -29,6 +29,12 @@ const Status = (props) => {
                                         <p>프로토콜</p>
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
+                                        <div>{store.detail.lb?.members.filter((el, idx) => idx < 2).map((obj, idx) =>
+                                            <div>{obj}{idx == 1 ? '...' : ''}</div>)}
+                                        </div>
+                                        <p>멤버 IP</p>
+                                    </div>
+                                    <div className={classnames(styles.title, styles.name)}>
                                         <div>{store.detail.lb?.virtual_ip}</div>
                                         <p>VIP</p>
                                     </div>
