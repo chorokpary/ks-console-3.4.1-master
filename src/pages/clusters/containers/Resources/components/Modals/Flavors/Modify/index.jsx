@@ -147,7 +147,7 @@ const ModifyModal = (props) => {
                 values[i].message = ""
             } else {
                 values[i].message = " 이미 선택한 디바이스 입니다.";
-                setTimeout(() => { handleHostDevice.deleteMessage(i) }, 1500);
+                setTimeout(() => { handleHostDevice.deleteMessage(i) }, 1000);
             }
             setFormDeviceFields(values);
         },
@@ -197,7 +197,7 @@ const ModifyModal = (props) => {
                 values[i].message = ""
             } else {
                 values[i].message = " 이미 선택한 GPU 입니다.";
-                setTimeout(() => { handleGpu.deleteMessage(i) }, 1500);
+                setTimeout(() => { handleGpu.deleteMessage(i) }, 1000);
             }
             setFormGpuFields(values);
         },
@@ -488,10 +488,7 @@ const ModifyModal = (props) => {
                                                 <Columns>
                                                     <Column>
                                                         <Form.Item>
-                                                            <div>
-                                                                <Select name={`gpus.${i}.name`} value={v.name} options={gpus} onChange={(e) => handleGpu.handleSelectClick(i, e)} />
-                                                                {v.message && (<em>{v.message}</em>)}
-                                                            </div>
+                                                            <Select value={v.message ? v.message : v.name} options={gpus} onChange={(e) => handleGpu.handleSelectClick(i, e)} />
                                                         </Form.Item>
                                                     </Column>
                                                     <Column>
@@ -531,10 +528,7 @@ const ModifyModal = (props) => {
                                                 <Columns>
                                                     <Column>
                                                         <Form.Item>
-                                                            <div>
-                                                                <Select name={`devices.${i}.name`} value={v.name} options={devices} onChange={(e) => handleHostDevice.handleSelectClick(i, e)} />
-                                                                {v.message && (<em>{v.message}</em>)}
-                                                            </div>
+                                                            <Select value={v.message ? v.message : v.name} options={devices} onChange={(e) => handleHostDevice.handleSelectClick(i, e)} />
                                                         </Form.Item>
                                                     </Column>
                                                     <Column>
