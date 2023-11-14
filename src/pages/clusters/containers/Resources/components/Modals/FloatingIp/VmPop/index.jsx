@@ -173,7 +173,7 @@ const VmPop = ({ title, onOk, store }) => {
                 <tbody>
                   {!list?.length &&
                     <tr>
-                      <td colSpan="3" className="no-data">
+                      <td colSpan="3" className="no-data" style={{ textAlign: 'center' }}>
                         <p>모든 자원이 할당 되었습니다.</p>
                       </td>
                     </tr>

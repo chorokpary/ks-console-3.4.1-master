@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react'
+import { getIndexRoute } from 'utils/router.config'
 import DetailPage from 'clusters/containers/Base/Detail'
 import NetworkStore from 'stores/resources/networks'
 import { useParams } from 'react-router-dom';
@@ -28,6 +29,8 @@ const NetworkDetail = (props) => {
   const listUrl = `/clusters/${cluster}/networks`
 
   const { routing } = props.rootStore;
+
+  const PATH = `${listUrl}/${props.match.params.name}`
 
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
@@ -167,11 +170,12 @@ const NetworkDetail = (props) => {
         stores={{ detailStore: store }}
         routes={[
           {
-            path: '',
+            path: `${PATH}/status`,
             title: '상태',
             component: Status,
             exact: true,
-          }
+          },
+          getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
         {...sideProps} />
     </>
