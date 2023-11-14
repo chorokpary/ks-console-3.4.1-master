@@ -181,7 +181,7 @@ export default class Routers extends React.Component {
       },
       {
         dataIndex: 'enable_snat',
-        title: t('SNAP 옵션'),
+        title: t('SNAT 옵션'),
         search: true,
       }
     ]
