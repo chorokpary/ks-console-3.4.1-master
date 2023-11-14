@@ -120,7 +120,7 @@ const LoadBalancerDetail = (props) => {
             },
             {
                 name: t('멤버 IP'),
-                value: detail.lb.members.length < 1 ? '-' : detail.lb.members.map((member) => (member) + '\r\n')
+                value: detail.lb.members.length > 1 ? detail.lb.members[0] + ' 외 ' + (detail.lb.members.length - 1) + '개' : detail.lb.members[0],
             },
             {
                 name: t('VIP'),
@@ -128,7 +128,8 @@ const LoadBalancerDetail = (props) => {
             },
             {
                 name: t('정책'),
-                value: detail.lb.rules.length > 1 ? detail.lb.rules[0].protocol + '외 ' + (detail.lb.rules.length - 1) + '개' : detail.lb.rules[0].protocol,
+                //value: detail.lb.rules.length < 1 ? '-' : detail.lb.rules.map((rule) => (rule.protocol) + '\r\n')
+                value: detail.lb.rules.length > 1 ? detail.lb.rules[0].protocol + ' 외 ' + (detail.lb.rules.length - 1) + '개' : detail.lb.rules[0].protocol,
             },
             {
                 name: t('설명'),
