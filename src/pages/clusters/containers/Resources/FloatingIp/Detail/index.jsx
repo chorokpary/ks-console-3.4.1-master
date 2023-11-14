@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react'
+import { getIndexRoute } from 'utils/router.config'
 import DetailPage from 'clusters/containers/Base/Detail'
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
@@ -40,6 +41,8 @@ const FloatingIpDetail = (props) => {
   const listUrl = `/clusters/${cluster}/floatingip`
 
   const { routing } = props.rootStore;
+
+  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`
 
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
@@ -161,11 +164,12 @@ const FloatingIpDetail = (props) => {
         stores={{ detailStore: store }}
         routes={[
           {
-            path: '',
+            path: `${PATH}/status`,
             title: '상태',
             component: Status,
             exact: true,
-          }
+          },
+          getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
         {...sideProps} />
     </>

@@ -22,6 +22,8 @@ const BareMetalCarbonIndicator = () => {
   const [armActive, setArmActive] = useReducer(armActive => !armActive, true)
   const [x86Active, setX86Active] = useReducer(x86Active => !x86Active, true)
 
+  const [checkboxWidth, setCheckboxWidth] = useState('340px')
+
   useEffect(() => {
     fetchData({ step: '2m', times: 50 })
   }, [])
@@ -37,6 +39,8 @@ const BareMetalCarbonIndicator = () => {
       step: params.step,
       times: params.times
     }
+    let width = document.querySelector('.src-components-Cards-Monitoring-Controller-index__operations') ? document.querySelector('.src-components-Cards-Monitoring-Controller-index__operations').clientWidth : 340
+    setCheckboxWidth((width + 10) + 'px')
 
     const metric_power = await customStore.fetchMetric({
       expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
@@ -122,7 +126,7 @@ const BareMetalCarbonIndicator = () => {
         <div style={{
           position: 'absolute',
           top: '-35px',
-          right: '340px'
+          right: checkboxWidth
         }}>
           <Checkbox checked={armActive} onClick={() => setArmActive()}>ARM</Checkbox>
           <Checkbox checked={x86Active} onClick={() => setX86Active()}>x86</Checkbox>

@@ -117,7 +117,7 @@ const LbPop = ({ title, onOk, store }) => {
                   <tbody>
                     {!list?.length &&
                       <tr>
-                        <td colSpan="4" className="no-data">
+                        <td colSpan="4" className="no-data" style={{ textAlign: 'center' }}>
                           <p>데이터가 없습니다</p>
                         </td>
                       </tr>
