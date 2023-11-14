@@ -653,6 +653,12 @@ $size-ssmall: 11px;
             display: block;
             margin: 4px 0;
         }
+
+        input {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: solid 1px #abb4be;
+        }
     }
 
     .formarea {
