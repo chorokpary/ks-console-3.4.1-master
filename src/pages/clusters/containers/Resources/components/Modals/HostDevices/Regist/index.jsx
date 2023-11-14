@@ -8,7 +8,7 @@ import HostDeviceStore from 'stores/resources/hostdevices'
 import classnames from 'classnames'
 import { COLORS_MAP } from 'utils/constants'
 
-const regexName = /^([a-z0-9]+)\/([a-z0-9]+)$/;
+const regexName = /^([a-z]+)\/([a-z0-9]+)$/;
 const RegistModal = (props) => {
     const hostDeviceStore = new HostDeviceStore();
 
@@ -171,7 +171,7 @@ const RegistModal = (props) => {
                 <Form data={formData} ref={form}>
 
                     {t('호스트 디바이스')}<span className="form-item-required">*</span>
-                    <Form.Item desc={t('이름은 소문자, 숫자, /(필수) 입력 가능합니다. ex) test/001')}>
+                    <Form.Item desc={t('이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다. ex) test/001')}>
                         <div>
                             <div className={styles.divwrap} style={{ marginBottom: '10px' }}>
                                 <Select name="select" options={[{ label: t('제조사명'), value: 1 }, { label: t('제품명'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
