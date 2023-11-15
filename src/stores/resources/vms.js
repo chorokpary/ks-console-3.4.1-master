@@ -411,7 +411,20 @@ export default class VmStore extends Base {
     const result = await request.get(
       `/edgetron/resources/kubevirt/flavors`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'flavors' }
+    let response = { ...params, ...this.mapper(result), kind: 'flavors' }
+
+    const sortType = !!params?.ascending ? "desc" : "asc";
+    if (!!params?.sortBy) {
+      response.flavors.sort((a, b) => {
+        var x = a[params.sortBy];
+        var y = b[params.sortBy];
+        if (sortType == "desc") {
+          return x > y ? -1 : x < y ? 1 : 0;
+        } else if (sortType == "asc") {
+          return x < y ? -1 : x > y ? 1 : 0;
+        }
+      });
+    }
 
     this.isLoading = false
     return response;

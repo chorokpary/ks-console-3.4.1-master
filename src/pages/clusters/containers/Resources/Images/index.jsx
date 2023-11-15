@@ -33,7 +33,7 @@ import ImageStore from 'stores/resources/images'
   store: new ImageStore(),
   module: 'images',
   authKey: 'images',
-  name: '이미지',
+  name: '가상머신 이미지',
 })
 export default class Images extends React.Component {
 
@@ -133,18 +133,18 @@ export default class Images extends React.Component {
         isHideable: true,
         width: 'auto',
         render: distro_type => {
-          const icon = "ico-os-"+distro_type;
+          const icon = "ico-os-" + distro_type;
           return (
             <i
-            style={{
-              backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              width: '40px',
-              height: '40px'
-            }}></i>
+              style={{
+                backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                width: '40px',
+                height: '40px'
+              }}></i>
           )
-        }, 
+        },
       },
       {
         title: t('단계'),
@@ -190,8 +190,8 @@ export default class Images extends React.Component {
           icon="snapshot"
           {...bannerProps}
           tabs={this.tabs}
-          title={t('이미지')}
-          description={t('이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
+          title={t('가상머신 이미지')}
+          description={t('가상머신 이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
         />
         <Table
           {...tableProps}

@@ -32,7 +32,7 @@ import ContainerImagesStore from 'stores/resources/containerimages'
   store: new ContainerImagesStore(),
   module: 'containerimages',
   authKey: 'containerimages',
-  name: '이미지',
+  name: 'KaaS 이미지',
 })
 export default class Images extends React.Component {
 
@@ -135,18 +135,18 @@ export default class Images extends React.Component {
         dataIndex: 'image',
         isHideable: true,
         width: 'auto',
-        render: (image, record)  => {
+        render: (image, record) => {
           const distro = (record.image_detail.os_distro).split("-")[0]
-          const icon = "ico-os-"+distro;          
+          const icon = "ico-os-" + distro;
           return (
             <i
-            style={{
-              backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              width: '40px',
-              height: '40px'
-            }}></i>
+              style={{
+                backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                width: '40px',
+                height: '40px'
+              }}></i>
           )
         },
       },
@@ -196,7 +196,7 @@ export default class Images extends React.Component {
           {...bannerProps}
           tabs={this.tabs}
           title={t('KaaS 이미지')}
-          description={t('이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
+          description={t('KaaS 이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
         />
         <Table
           {...tableProps}
@@ -204,7 +204,7 @@ export default class Images extends React.Component {
           emptyProps={this.emptyProps}
           tableActions={this.tableActions}
           itemActions={this.itemActions}
-          columns={this.getColumns()}          
+          columns={this.getColumns()}
           searchType="name"
         />
       </ListPage>

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 import ImageStore from 'stores/resources/images'
+import { getIndexRoute } from 'utils/router.config'
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
@@ -29,6 +30,7 @@ const ImageDetail = (props) => {
 
   const { routing } = props.rootStore;
 
+  const PATH = `${listUrl}/${props.match.params.name}`
 
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
@@ -138,7 +140,7 @@ const ImageDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('이미지'),
+        label: t('가상머신 이미지'),
         url: listUrl,
       },
     ],
@@ -150,11 +152,12 @@ const ImageDetail = (props) => {
         stores={{ detailStore: store }}
         routes={[
           {
-            path: '',
+            path: `${PATH}/status`,
             title: '상태',
             component: Status,
             exact: true,
-          }
+          },
+          getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
         {...sideProps} />
     </>
@@ -166,6 +169,6 @@ export default inject('rootStore')(observer(ImageDetail));
 const Status = ({ match }) => {
   const imageName = match.params.name
   return (
-    <DetailVmList type='이미지' variables='image' name={imageName} />
+    <DetailVmList type='가상머신 이미지' variables='image' name={imageName} />
   )
 }
