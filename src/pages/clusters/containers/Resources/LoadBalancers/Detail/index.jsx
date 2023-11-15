@@ -129,7 +129,7 @@ const LoadBalancerDetail = (props) => {
             {
                 name: t('정책'),
                 //value: detail.lb.rules.length < 1 ? '-' : detail.lb.rules.map((rule) => (rule.protocol) + '\r\n')
-                value: detail.lb.rules.length > 1 ? detail.lb.rules[0].protocol + ' 외 ' + (detail.lb.rules.length - 1) + '개' : detail.lb.rules[0].protocol,
+                value: detail.lb.rules.length > 1 ? detail.lb.rules[0]?.protocol + ' 외 ' + (detail.lb.rules.length - 1) + '개' : detail.lb.rules[0]?.protocol,
             },
             {
                 name: t('설명'),
