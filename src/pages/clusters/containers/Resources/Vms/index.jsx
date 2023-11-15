@@ -41,12 +41,12 @@ import VmStore from 'stores/resources/vms'
 })
 export default class Vms extends React.Component {
 
-   //auto refresh start  ##################################
-   constructor(props) {
+  //auto refresh start  ##################################
+  constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
   }
- 
+
   componentDidUpdate() {
     if (this.refreshTimer === null && this.isRuning) {
       this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
@@ -78,6 +78,7 @@ export default class Vms extends React.Component {
     this.props.store.fetchList({
       ...this.props.match.params,
       ...params,
+      ...this.props.query // search param
     })
   }
   //auto refresh end  ##################################
@@ -119,10 +120,10 @@ export default class Vms extends React.Component {
           action: 'create',
           onClick: () =>
             trigger('vm.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -145,7 +146,7 @@ export default class Vms extends React.Component {
     }
   }
 
-  getState (state) {
+  getState(state) {
     if (state === 'Provisioning'
       || state === 'Starting'
       || state === 'Stopping'
@@ -158,31 +159,31 @@ export default class Vms extends React.Component {
       return "stopped"
     } else if (state === 'Unknown') {
       return "error"
-    }else{
+    } else {
       return "error"
     }
   }
 
-  getItemDesc (state) {
-    if (state === 'Stopped'){
+  getItemDesc(state) {
+    if (state === 'Stopped') {
       return "중지"
-    }else if (state === 'Provisioning') {
+    } else if (state === 'Provisioning') {
       return "생성 중"
-    }else if (state === 'Starting') {
+    } else if (state === 'Starting') {
       return "시작 중"
-    }else if (state === 'Running') {
+    } else if (state === 'Running') {
       return "실행 중"
-    }else if (state === 'Paused') {
+    } else if (state === 'Paused') {
       return "일시 정지"
-    }else if (state === 'Migrating') {
-      return "이관 중"  
-    }else if (state === 'Stopping') {
+    } else if (state === 'Migrating') {
+      return "이관 중"
+    } else if (state === 'Stopping') {
       return "정지 중"
-    }else if (state === 'Terminating') {
+    } else if (state === 'Terminating') {
       return "삭제 중"
-    }else if (state === 'Unknown') {
+    } else if (state === 'Unknown') {
       return "알수없음"
-    }else{
+    } else {
       return "-"
     }
   }
@@ -206,7 +207,7 @@ export default class Vms extends React.Component {
       value: status.value,
     }))
   }
-   
+
   getColumns = () => {
     const { getSortOrder } = this.props
     const { cluster } = this.props.match.params
@@ -232,9 +233,9 @@ export default class Vms extends React.Component {
                   flicker
                 />
               </div>
-              <div>    
-                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}`}>{name} </Link>            
-                <div className={styles.desc}>{this.getItemDesc(state)}</div> 
+              <div>
+                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}`}>{name} </Link>
+                <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
             </div>
           )
@@ -246,17 +247,17 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (image, record)  => {
-          const icon = "ico-os-"+record.image_detail?.distro_type;
+        render: (image, record) => {
+          const icon = "ico-os-" + record.image_detail?.distro_type;
           return (
             <i
-            style={{
-              backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              width: '40px',
-              height: '40px'
-            }}></i>
+              style={{
+                backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                width: '40px',
+                height: '40px'
+              }}></i>
           )
         },
       },
@@ -266,7 +267,7 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (cpuType, record)  => {
+        render: (cpuType, record) => {
           const arch_type = <p>{record.image_detail?.arch_type}</p>
           return arch_type
         },
@@ -289,7 +290,7 @@ export default class Vms extends React.Component {
           } else {
             networkIpList = <p>-</p>
           }
-      
+
           return networkIpList
         }
       },
@@ -299,7 +300,7 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (floating, record)  => {
+        render: (floating, record) => {
           const floatingList = this.props.store.floatingIpList;
           const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == record.name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
 
@@ -326,7 +327,7 @@ export default class Vms extends React.Component {
           } else {
             securityGroupText = ""
           }
-          
+
           return securityGroupText
         },
       },
@@ -338,28 +339,28 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (state, record) => {
-          const stateArray = ['Stopped','Running','Paused']
+          const stateArray = ['Stopped', 'Running', 'Paused']
 
-          if(stateArray.includes(state)){
+          if (stateArray.includes(state)) {
             return (
               <div>
                 <Dropdown content={<Menu>
                   {this.fnGetActionColumn(state, record.name)}
-                  </Menu>}>
+                </Menu>}>
                   <div className={styles.iconwrapper}>
-                    <i className={styles[`ico-status-${state.toLowerCase()}`]}/><p>{state}</p>
-                  </div>   
+                    <i className={styles[`ico-status-${state.toLowerCase()}`]} /><p>{state}</p>
+                  </div>
                 </Dropdown>
-              </div>  
-            )       
-          }else{
+              </div>
+            )
+          } else {
             return (
               <div className={styles.iconwrapper}>
-                <i className={styles[`ico-status-${state.toLowerCase()}`]}/><p>{state}</p>
-              </div>  
+                <i className={styles[`ico-status-${state.toLowerCase()}`]} /><p>{state}</p>
+              </div>
             )
-          } 
-        },      
+          }
+        },
       },
       {
         title: t('등록일'),
@@ -408,27 +409,27 @@ export default class Vms extends React.Component {
       <>
         {/* Stopped */}
         {state == "Stopped" &&
-           <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmName)}>
+          <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmName)}>
             <i className={styles['ico-quick-start']}></i><span>시작</span>
           </Menu.MenuItem>
         }
         {/* Running */}
         {state == "Running" &&
-            <>
-              <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-                <i className={styles['ico-quick-stop']}></i><span>중지</span>
-              </Menu.MenuItem>
-              <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmName)}>
-                <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
-              </Menu.MenuItem>
-              <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
-                <i className={styles['ico-quick-restart']}></i><span>재시작</span>
-              </Menu.MenuItem>
-            </>   
+          <>
+            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+              <i className={styles['ico-quick-stop']}></i><span>중지</span>
+            </Menu.MenuItem>
+            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmName)}>
+              <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
+            </Menu.MenuItem>
+            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+              <i className={styles['ico-quick-restart']}></i><span>재시작</span>
+            </Menu.MenuItem>
+          </>
         }
         {/* Paused */}
         {state == "Paused" &&
-            <>
+          <>
             <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
               <i className={styles['ico-quick-stop']}></i><span>중지</span>
             </Menu.MenuItem>
@@ -438,7 +439,7 @@ export default class Vms extends React.Component {
             <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
               <i className={styles['ico-quick-restart']}></i><span>재시작</span>
             </Menu.MenuItem>
-          </>   
+          </>
         }
       </>
 
@@ -466,6 +467,7 @@ export default class Vms extends React.Component {
   }
 
   handleFetch = (params, refresh) => {
+    console.log(params)
     this.routing.query(params, refresh)
   }
 
@@ -480,29 +482,29 @@ export default class Vms extends React.Component {
   render() {
     const { bannerProps, tableProps } = this.props
     //console.log({ ...this.props })
-    
+
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        // icon="templet"
-        icon={this.getBanner}
-        tabs={this.tabs}
-        title={t('가상머신')}
-        description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}
-      />
-      <Table
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-        onFetch={this.handleFetch}
-      />
-    </ListPage>
-     
+        <Banner
+          {...bannerProps}
+          // icon="templet"
+          icon={this.getBanner}
+          tabs={this.tabs}
+          title={t('가상머신')}
+          description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}
+        />
+        <Table
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+          onFetch={this.handleFetch}
+        />
+      </ListPage>
+
     )
   }
 }
