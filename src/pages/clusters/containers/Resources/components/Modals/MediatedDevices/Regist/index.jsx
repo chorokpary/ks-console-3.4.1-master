@@ -172,7 +172,7 @@ const RegistModal = (props) => {
                                     </tbody>
                                 </table>
                             </div>
-                            <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>네트워크를 선택해 주세요.</div>
+                            <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>디바이스를 선택해 주세요.</div>
                         </div>
                     </Form.Item>
                     <div style={{ padding: 10 }} />
