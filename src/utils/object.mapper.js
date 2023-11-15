@@ -156,7 +156,7 @@ const UserMapper = item => ({
   groups: get(item, 'spec.groups', []),
   status: get(item, 'status.state', 'Pending'),
   conditions: get(item, 'status.conditions', []),
-  lastLoginTime: get(item, 'status.lastLoginTime'),
+  timestamp: get(item, 'timestamp'),
   _originData: getOriginData(item),
 })
 
@@ -437,14 +437,14 @@ const EventsMapper = item => {
     item.count > 1
       ? item.count === 2
         ? t.html('EVENT_AGE_DATA_TWICE', {
-            lastTime: moment(item.lastTimestamp).fromNow(),
-            duration: moment(item.firstTimestamp).to(now, true),
-          })
+          lastTime: moment(item.lastTimestamp).fromNow(),
+          duration: moment(item.firstTimestamp).to(now, true),
+        })
         : t.html('EVENT_AGE_DATA', {
-            lastTime: moment(item.lastTimestamp).fromNow(),
-            count: item.count,
-            duration: moment(item.firstTimestamp).to(now, true),
-          })
+          lastTime: moment(item.lastTimestamp).fromNow(),
+          count: item.count,
+          duration: moment(item.firstTimestamp).to(now, true),
+        })
       : moment(item.firstTimestamp).fromNow()
 
   return {
@@ -1051,8 +1051,8 @@ const VolumeSnapshotMapper = detail => {
     backupStatus: deletionTimestamp
       ? 'deleting'
       : readyToUse
-      ? 'success'
-      : 'updating',
+        ? 'success'
+        : 'updating',
     namespace,
     snapshotSourceName,
     _originData: getOriginData(detail),

@@ -32,6 +32,8 @@ import { get } from 'lodash'
 
 import { Base64 } from 'js-base64'
 import styles from './index.scss'
+import '../../../scss/custom_theme.css'
+
 
 function encrypt(salt, str) {
   return mix(salt, Base64.encode(str))
@@ -101,11 +103,14 @@ export default class Login extends Component {
     const { formData, isSubmmiting, errorMessage } = this.state
     return (
       <div>
-        <a href="/" className={styles.logo}>
-          <img src="/assets/logo.svg" alt="" />
-        </a>
+        <div className="login_back"><img src="/assets/resources/images/img/img_login.svg" alt=""/></div>
         <div className={styles.login}>
-          <div className={styles.header}>{t('WELCOME')}</div>
+          <div className="top_logo">
+            <a href="/" className={styles.logo}>
+              <img src="/assets/logo.svg" alt="" />
+            </a>
+            <div className={styles.header}>{t('WELCOME')}</div>
+          </div>
           <div className={styles.divider}></div>
           {get(globals, 'oauthServers', []).map(server => (
             <div

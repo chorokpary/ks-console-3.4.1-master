@@ -156,6 +156,7 @@ export default class ClusterResourceStatusTab extends React.Component {
       default:
       case 'area': {
         const config = getAreaChartOps(option)
+        console.log(config)
         return <SimpleArea {...commonProps} {...config} />
       }
     }

@@ -1,0 +1,31 @@
+import React, { useEffect, useState } from 'react'
+
+const Panel = ({ kaas }) => {
+
+    return (
+        <>
+            <div className="box type_status">
+                <h5><i className="ico-type24-kaasimage"></i>KaaS 이미지</h5>
+                <div className="cont_group">
+                    <div className="cont1">
+                        <div className="number_wrap">
+                            <p><span className="em">{kaas.used}</span> / {kaas.used + kaas.unused}</p>
+                        </div>
+                    </div>
+                    <div className="cont2">
+                        <div className="status_wrap">
+                            <div className="value">{kaas.used}</div>
+                            <p className="status used"><span>Used</span></p>
+                        </div>
+                        <div className="status_wrap">
+                            <div className="value">{kaas.unused}</div>
+                            <p className="status unused"><span>Unused</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export default Panel

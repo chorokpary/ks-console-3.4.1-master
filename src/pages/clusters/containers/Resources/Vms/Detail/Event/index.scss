@@ -1,0 +1,36 @@
+@import '~scss/variables';
+
+.defaultWrapper {
+  padding: 12px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px $light-color03;
+}
+
+.empty {
+  height: 56px;
+}
+
+.table table {
+  width: 100%;
+  text-align: left;
+
+  thead {
+      th {
+          text-transform: uppercase;
+          padding: 10px;
+      }
+  }
+  tbody {
+      tr {
+          border-bottom: 1px solid #F1F1F1;
+          color: #75787b;
+          td {
+              padding: 10px;
+          }
+          th {
+              padding-left: 10px;
+          }
+      }
+  }
+}

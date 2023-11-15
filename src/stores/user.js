@@ -100,7 +100,7 @@ export default class UsersStore extends Base {
       )}/${name}/${module}`,
       {},
       {},
-      () => {}
+      () => { }
     )
 
     let rules = {}

@@ -1,0 +1,227 @@
+import { get, groupBy } from 'lodash'
+import React, {useState, useEffect} from 'react'
+import { toJS } from 'mobx'
+import { observer, inject } from 'mobx-react'
+
+import axios from "axios";
+import * as common from 'utils/resources'
+
+import styles from './index.scss'
+
+const Information = (props) => {
+
+  const store = props.detailStore;
+
+  const [detailFlavor, setDetailFlavor] = useState(null);
+  const [detailVolume, setDetailVolume] = useState([]);
+  const [detailNetwork, setDetailNetwork] = useState([]);
+  const [detailImage, setDetailImage] = useState(null);
+
+  const [hostDevicesList, setHostDevicesList] = useState([]);
+  const [mediatedDevicesList, setmMediatedDevicesList] = useState([]);
+
+  useEffect(() => {
+
+    const fnGetFlavor = async () => {
+      const response = await axios.get(`/edgetron/resources/kubevirt/flavors/${store.detail.vm?.flavor?.name}`);
+      setDetailFlavor(response.data.flavor);
+    };
+
+    const fnGetVolume = async () => {
+      const response = await axios.get(`/edgetron/resources/kubevirt/volumes`);
+      const volumeData = (response.data.volumes).filter(el => el.used_by_vmi == store.detail.vm?.name);
+      setDetailVolume(volumeData);
+    };
+
+    if(store.detail.vm?.networks.length > 0){
+      const networkData = (store.detail.vm?.networks).filter(el => el.name != "k8s-pod-network");
+      setDetailNetwork(networkData);
+    }
+
+    const fnGetHostDevices = async () => {
+      const response = await axios.get(`/edgetron/resources/kubevirt/host_devices`);
+      setHostDevicesList(response.data.host_devices);
+    };
+
+    const fnGetMediatedDevices = async () => {
+      const response = await axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
+      setmMediatedDevicesList(response.data.mediated_devices);
+    };
+
+    const fnGetImage = async () => {
+      const response = await axios.get(`/edgetron/resources/kubevirt/images/${store.detail.vm?.image}`);
+      setDetailImage(response.data.image);
+    };
+  
+    store.detail.vm?.flavor && fnGetFlavor();
+    fnGetVolume();
+    fnGetHostDevices();
+    fnGetMediatedDevices();
+    fnGetImage();
+
+  }, []);
+  
+  const fnGetHostDeviceIsGpu = (name) => {
+    const data = hostDevicesList.filter(el => el.name == name)[0];
+    return _.get(data, 'is_gpu') == false ? "ico-type40-hostdevice" : "ico-type40-hostgpu"; 
+  }
+
+  const fnGetMediatedDeviceIsGpu = (name) => {
+    const data = mediatedDevicesList.filter(el => el.resource_name == name)[0];
+    return _.get(data, 'is_gpu') == false ? "ico-type40-mediateddevice" : "ico-type40-mediatedvgpu"; 
+  }
+
+  const getState = (state) => {
+    if (state === 'Provisioning'
+      || state === 'Starting'
+      || state === 'Stopping'
+      || state === 'Terminating'
+      || state === 'Migrating') {
+      return "warning"
+    } else if (state === 'Running') {
+      return "on"
+    } else if (state === 'Stopped' || state === 'Paused') {
+      return "off"
+    } else if (state === 'Unknown') {
+      return "error"
+    }else{
+      return "error"
+    }
+  }
+
+  return (
+    <>  
+        <div>
+          <div className={styles.defaultWrapper}>
+            <div className="content_box_wrap">
+              <div className="tree_wrap">
+                <div className="tree_box vm">
+                  <div className="title_icon"><i className={`ico-type40-vm ${getState(store.detail.vm.state)}`}></i></div>
+                  <div className="cont_box1">
+                    <h5><span>VM</span>{store.detail.vm?.name}</h5>
+                    <div className="group">
+                      
+                      <div className="info"><i className={(store.detail.vm?.cpu_arch)?.includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch)?.includes('x86') ? "X86" : "ARM"}</span></div>
+                      <div className="info">
+                        <i className={`ico-os-${detailImage?.distro_type}`}></i>
+                        <span>{store.detail.vm?.image}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="cont_box2">
+                    <div className="title_icon none">Flavor</div>
+                    <div className="data"><i className="ico-type24-cpu"></i>
+                      <div className="info_text">
+                        <h6>CPU</h6><span>{store.detail.vm?.flavor?.vcpus} Core</span>
+                      </div>
+                    </div>
+                    <div className="data"><i className="ico-type24-memory"></i>
+                      <div className="info_text">
+                        <h6>메모리</h6><span>{common.fnSetBytes(store.detail.vm?.flavor?.ram)} Gib</span>
+                      </div>
+                    </div>
+                    <div className="data"><i className="ico-type24-disk"></i>
+                      <div className="info_text">
+                        <h6>디스크</h6><span>{store.detail.vm?.flavor?.root_disk } Gib</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <ul className="tree_box_wrap">
+
+                  { // 호스트 디바이스
+                    detailFlavor?.devices.length > 0 &&  
+                      detailFlavor?.devices.map((device) => {
+                        const hostDevice_icon = fnGetHostDeviceIsGpu(device.name); 
+                        return (
+                          <li>
+                            <div className="tree_box">
+                              <div className="title_icon"><i className={hostDevice_icon}></i></div>
+                              <div className="cont_box1">
+                                <h5><span className="bg_01">Host 디바이스</span>{device.name}</h5>
+                                <div className="group"> 
+                                  <div className="info"><span>{(device.name).split("/")[1]}</span></div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        )
+                      })                  
+                  }
+
+                  { // Mediated 디바이스
+                    detailFlavor?.gpus.length > 0 &&  
+                      detailFlavor?.gpus.map((gpu) => {                        
+                        const mediatedDevice_icon = fnGetMediatedDeviceIsGpu(gpu.name); 
+                        return (
+                          <li>
+                            <div className="tree_box">
+                              <div className="title_icon"><i className={mediatedDevice_icon}></i></div>
+                              <div className="cont_box1">
+                                <h5><span className="bg_01">Mediated 디바이스</span>{gpu.name}</h5>
+                                <div className="group"> 
+                                  <div className="info"><span>{(gpu.name).split("/")[1]}</span></div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        )
+                      })                  
+                  }
+
+                  {  //볼륨
+                    detailVolume.length > 0 && 
+                      detailVolume.map((volume, idx) => {
+                        return (
+                          <li key={volume.name}>
+                            <div className="tree_box">
+                              <div className="title_icon"><i className="ico-type40-volume"></i></div>
+                              <div className="cont_box1">
+                                <h5><span className="bg_03">Volume</span>{volume.name}</h5>
+                                <div className="group">
+                                  <div className="info_2"><span>용량</span><p>{volume.capacity}</p></div>
+                                  <div className="info_2"><span>접근모드</span>
+                                    <div className="info_box">
+                                    {(volume.access_modes).map((mode) => (<p key={mode}>{mode}</p>))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        )
+                      })                  
+                  }         
+
+                  {  //네트워크
+                    detailNetwork.length > 0 && 
+                      detailNetwork.map((network) => {
+                        return (
+                          <li key={network.name}>
+                            <div className="tree_box">
+                              <div className="title_icon"><i className="ico-type40-networkdevice"></i></div>
+                              <div className="cont_box1">
+                                <h5><span className="bg_04">NIC</span>{network.interface}</h5>
+                                <div className="group">
+                                  <div className="info_2"><span>IP</span><p>{network.ip}</p></div>                                  
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        )
+                      })                  
+                  }     
+
+                </ul>
+              </div>
+
+            </div>
+          </div>
+      </div>         
+    </>
+  );
+};
+
+export default inject('detailStore')(observer(Information))
+

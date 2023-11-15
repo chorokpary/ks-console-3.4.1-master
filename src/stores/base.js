@@ -136,12 +136,14 @@ export default class BaseStore {
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)
     )
+    
     const data = (get(result, 'items') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
+ 
     this.list.update({
       data: more ? [...this.list.data, ...data] : data,
       total: result.totalItems || result.total_count || data.length || 0,
@@ -151,6 +153,8 @@ export default class BaseStore {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
+
+    // console.log(data)
 
     return data
   }

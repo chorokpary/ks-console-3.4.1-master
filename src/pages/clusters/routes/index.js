@@ -61,6 +61,27 @@ import CustomMonitoring from '../containers/CustomMonitoring'
 import detail from './detail'
 import Gateway from '../containers/Gateway'
 
+import Images from '../containers/Resources/Images'
+import Keypairs from '../containers/Resources/Keypairs'
+import Routers from '../containers/Resources/Routers'
+import Flavors from '../containers/Resources/Flavors'
+import SecurityGroups from '../containers/Resources/SecurityGroups'
+import Networks from '../containers/Resources/Networks'
+import FloatingIp from '../containers/Resources/FloatingIp'
+import Vms from '../containers/Resources/Vms'
+import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
+import ContainerImage from '../containers/Resources/ContainerImages'
+import ContainerResource from '../containers/Resources/ContainerResource'
+import ResourcesVolumes from '../containers/Resources/Volumes'
+import Sriov from '../containers/Resources/Sriov'
+import HostDevices from '../containers/Resources/HostDevices'
+import MediatedDevices from '../containers/Resources/MediatedDevices'
+import LoadBalancers from '../containers/Resources/LoadBalancers'
+
+import BareMetal from '../containers/Resources/BareMetal'
+import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator'
+import ComKassResource from '../containers/Resources/ComKassResource'
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -70,10 +91,15 @@ export default [
     redirect: globals.app.isMultiCluster
       ? null
       : {
-          from: '/clusters',
-          to: '/clusters/default/overview',
-          exact: true,
-        },
+        from: '/clusters',
+        to: '/clusters/default/overview',
+        exact: true,
+      },
+    exact: true,
+  },
+  {
+    path: `${PATH}/overview/edit`,
+    component: CustomOverviewEdit,
     exact: true,
   },
   {
@@ -260,6 +286,101 @@ export default [
             component: Gateway,
             exact: true,
           },
+          {
+            path: `${PATH}/images`,
+            component: Images,
+            exact: true,
+          },
+          {
+            path: `${PATH}/keypairs`,
+            component: Keypairs,
+            exact: true,
+          },
+          {
+            path: `${PATH}/routers`,
+            component: Routers,
+            exact: true,
+          },
+          {
+            path: `${PATH}/flavors`,
+            component: Flavors,
+            exact: true,
+          },
+          {
+            path: `${PATH}/securitygroups`,
+            component: SecurityGroups,
+            exact: true,
+          },
+          {
+            path: `${PATH}/networks`,
+            component: Networks,
+            exact: true,
+          },
+          {
+            path: `${PATH}/floatingip`,
+            component: FloatingIp,
+            exact: true,
+          },
+          {
+            path: `${PATH}/vms`,
+            component: Vms,
+            exact: true,
+          },
+          {
+            path: `${PATH}/containerimages`,
+            component: ContainerImage,
+            exact: true,
+          },
+          {
+            path: `${PATH}/containerresource`,
+            component: ContainerResource,
+            exact: true,
+          },
+          {
+            path: `${PATH}/resourcesvolumes`,
+            component: ResourcesVolumes,
+            exact: true,
+          },
+          {
+            path: `${PATH}/sriovs`,
+            component: Sriov,
+            exact: true,
+          },
+          {
+            path: `${PATH}/hostdevices`,
+            component: HostDevices,
+            exact: true,
+          },
+          {
+            path: `${PATH}/mediateddevices`,
+            component: MediatedDevices,
+            exact: true,
+          },
+          {
+            path: `${PATH}/loadbalancers`,
+            component: LoadBalancers,
+            exact: true,
+          },
+          {
+            path: `${PATH}/baremetalmonitoring`,
+            component: BareMetal,
+            exact: true,
+          },
+          {
+            path: `${PATH}/baremetal-carbon-indicator`,
+            component: BareMetalCarbonIndicator,
+            exact: true,
+          },
+          {
+            path: `${PATH}/computingkaasmonitoring`,
+            component: ComKassResource,
+            exact: true,
+          },
+
+
+
+
+
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({
             path: `${PATH}/workloads`,

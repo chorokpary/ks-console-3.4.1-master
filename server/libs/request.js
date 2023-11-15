@@ -57,6 +57,13 @@ const send_gateway_request = ({
   )
 }
 
+const sendMm3Request = ({ method, url, params }) => {
+  return request[method.toLowerCase()](
+    `${serverConfig.apiServer.mm3Url}${url}`,
+    params
+  )
+}
+
 const send_dockerhub_request = ({ params, path, headers }) => {
   const httpsAgent = new https.Agent({
     lookup: (host, options, cb) => {
@@ -156,4 +163,5 @@ module.exports = {
   send_gateway_request,
   send_dockerhub_request,
   send_harbor_request,
+  sendMm3Request,
 }

@@ -28,16 +28,29 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://ks-apiserver
-    wsUrl: ws://ks-apiserver
+    # url: http://192.168.16.86:30881
+    # wsUrl: ws://192.168.16.86:30881
+    # mm3Url: http://192.168.16.80:32080 
+    # cmpUrl: http://192.168.16.86:31000 
+    url: http://10.24.3.34:30881
+    wsUrl: ws://10.24.3.34:30881
+    mm3Url: http://10.24.3.34:32080 
+    cmpUrl: http://10.24.3.34:31000
+    
+
+  mm3UserInfo:
+    userName: "edgetron"
+    passWord: "password"
 
   # docker image search default url
   dockerHubUrl: https://hub.docker.com
 
 client:
-  title: KubeSphere
+  title: ARM CMP
   description: ""
   encryptKey: kubesphere
+  # serverlocation: "86"
+  serverlocation: "TB"
 
   version:
     kubesphere: 3.1.0
@@ -61,6 +74,8 @@ client:
       recommend: true
     - label: "简体中文"
       value: "zh"
+    - label: "한국어"
+      value: "ko"
       recommend: true
     - label: "한국어"
       value: "ko"
@@ -97,25 +112,61 @@ client:
     - cate: cluster
       items:
         - name: overview
-          title: OVERVIEW
+          title: 대시보드
           icon: dashboard
           skipAuth: true
           showInDisable: true
-        - name: nodes
-          title: NODE_PL
-          icon: nodes
+        # - name: nodes
+        #   title: NODE_PL
+        #   icon: nodes
+        #   children:
+        #     - { name: nodes, title: CLUSTER_NODE_PL }
+        #     - {
+        #         name: edgenodes,
+        #         title: EDGE_NODE_PL,
+        #         clusterModule: edgeruntime,
+        #       }  
+        - name: cluster-settings
+          title: CLUSTER_SETTINGS
+          icon: cogwheel
+          showInDisable: true
           children:
-            - { name: nodes, title: CLUSTER_NODE_PL }
             - {
-                name: edgenodes,
-                title: EDGE_NODE_PL,
-                clusterModule: edgeruntime,
+                name: base-info,
+                title: BASIC_INFORMATION,
+                skipAuth: true,
+                showInDisable: true,
               }
-        - { name: components, title: SYSTEM_COMPONENT_PL, icon: components }
+            - {
+                name: visibility,
+                title: CLUSTER_VISIBILITY,
+                authKey: cluster-settings,
+                multiCluster: true,
+              }
+            - { name: nodes, title: CLUSTER_NODE_PL }
+            - { name: members, title: CLUSTER_MEMBER_PL }
+            - { name: roles, title: CLUSTER_ROLE_PL }
+            - {
+                name: gateways,
+                title: GATEWAY_SETTINGS,
+                authKey: cluster-settings,
+              }
+            - { 
+                name: components, 
+                title: SYSTEM_COMPONENT_PL, 
+                icon: components 
+              }    
+            - {
+                name: log-collections,
+                title: LOG_RECEIVER_PL,
+                icon: file,
+                authKey: cluster-settings,
+                clusterModule: logging|events|auditing,
+              }
         - { name: projects, title: PROJECT_PL, icon: project }
         - name: app-workloads
           title: APPLICATION_WORKLOAD_PL
-          icon: appcenter
+          icon: vnc
           children:
             - name: workloads
               title: WORKLOAD_PL
@@ -130,7 +181,119 @@ client:
                 - { name: cronjobs, title: CRONJOB_PL }
             - { name: pods, title: POD_PL }
             - { name: services, title: SERVICE_PL }
-            - { name: ingresses, title: ROUTE_PL }
+            - { name: ingresses, title: ROUTE_PL }            
+        - name : computing-workloads
+          title: "컴퓨팅 워크로드"
+          icon: templet
+          showInDisable: true   
+          children: 
+            - { name: vms, title: "가상머신"}
+            - { name: containerResource, title: "KaaS" }
+        - name: computing
+          title: "컴퓨팅 설정"
+          icon: computing-setting
+          showInDisable: true
+          children:            
+            - {
+              name: networks,
+              title: 네트워크,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: securityGroups,
+              title: "보안그룹",
+              skipAuth: true,
+              showInDisable: true,
+            }  
+            - {
+              name: routers,
+              title: 가상 라우터,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: floatingip,
+              title: "플로팅 IP",
+              skipAuth: true,
+              showInDisable: true,
+            }   
+            - {
+             name: loadBalancers,
+             title: "로드 밸런서",
+             skipAuth: true,
+             showInDisable: true,
+            }
+            - {
+              name: sriovs,
+              title: "SR-IOV 네트워크",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: resourcesVolumes,
+              title: "볼륨",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+             name: hostDevices,
+             title: "호스트 디바이스",
+             skipAuth: true,
+             showInDisable: true,
+            }
+            - {
+             name: mediatedDevices,
+             title: "Mediated 디바이스",
+             skipAuth: true,
+             showInDisable: true,
+            }            
+        - name: resources
+          title: "리소스 템플릿"
+          icon: resource
+          showInDisable: true   
+          children: 
+            - {
+              name: flavors,
+              title: "Flavor",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: keypairs,
+              title: "키페어",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: images,
+              title: 가상머신 이미지,
+              skipAuth: true,
+              showInDisable: true,
+            }               
+            - {
+              name: containerImages,
+              title: "KaaS 이미지",
+              skipAuth: true,
+              showInDisable: true,
+            }   
+        - name: virtualmachine-management
+          title: "컴퓨팅 애플리케이션 관리"
+          icon: cron-job
+          showInDisable: true   
+          children:   
+            - {
+                name: virtualmachinebackup,
+                title: "가상머신 백업/복구",
+                skipAuth: true,
+                showInDisable: true,
+            }  
+            - {
+                name: applicationmanagement,
+                title: "애플리케이션 관리",
+                skipAuth: true,
+                showInDisable: true,
+            }  
         - name: config
           title: CONFIGURATION
           icon: hammer
@@ -141,7 +304,8 @@ client:
                 name: serviceaccounts,
                 title: SERVICE_ACCOUNT_PL,
                 requiredClusterVersion: v3.1.0,
-              }
+              }                
+        - { name: customresources, title: CRD_PL, icon: select, admin: true }      
         - name: network
           title: NETWORK
           icon: earth
@@ -157,7 +321,6 @@ client:
                 clusterModule: "network.ippool",
               }
         # Contains dangerous operations, only available for platform-admin.
-        - { name: customresources, title: CRD_PL, icon: select, admin: true }
         - name: storage
           title: STORAGE
           icon: database
@@ -211,37 +374,28 @@ client:
                 title: CUSTOM_MONITORING,
                 requiredClusterVersion: v3.1.0,
               }
-        - name: cluster-settings
-          title: CLUSTER_SETTINGS
-          icon: cogwheel
-          showInDisable: true
-          children:
             - {
-                name: base-info,
-                title: BASIC_INFORMATION,
-                skipAuth: true,
-                showInDisable: true,
+                name: kubeeye-monitoring,
+                title: "KubeEye 모니터링",
               }
             - {
-                name: visibility,
-                title: CLUSTER_VISIBILITY,
-                authKey: cluster-settings,
-                multiCluster: true,
-              }
-            - { name: members, title: CLUSTER_MEMBER_PL }
-            - { name: roles, title: CLUSTER_ROLE_PL }
-            - {
-                name: log-collections,
-                title: LOG_RECEIVER_PL,
-                icon: file,
-                authKey: cluster-settings,
-                clusterModule: logging|events|auditing,
+                name: baremetalmonitoring,
+                title: "BareMetal 모니터링",
               }
             - {
-                name: gateways,
-                title: GATEWAY_SETTINGS,
-                authKey: cluster-settings,
+                name: baremetal-carbon-indicator,
+                title: "BareMetal 탄소지표 통계",
+              }              
+            - {
+                name: 'computingkaasmonitoring',
+                title: "컴퓨팅/KaaS 리소스",
+              }            
+            - {
+                name: fault-analysis,
+                title: "장애 분석",
               }
+        
+
 
   # access control page navigations
   accessNavs:

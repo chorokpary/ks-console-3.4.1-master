@@ -32,7 +32,7 @@ export default class CardSelect extends Component {
   }
 
   static defaultProps = {
-    selectedClassName: styles.selected,
+      selectedClassName: styles.selected,
   }
 
   state = {

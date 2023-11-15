@@ -1,0 +1,171 @@
+
+import React, { useEffect, useState } from 'react'
+import DetailPage from 'clusters/containers/Base/Detail'
+import ImageStore from 'stores/resources/images'
+import { useParams } from 'react-router-dom';
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components';
+import { observer, inject } from 'mobx-react';
+import { Card } from 'components/Base'
+import { getLocalTime } from 'utils'
+
+import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
+
+const store = new ImageStore();
+
+const ImageDetail = (props) => {
+
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+  const fetchData = () => {
+    store.fetchDetail(props.match.params);
+  }
+
+  const { cluster } = props.match.params
+  const listUrl = `/clusters/${cluster}/images`
+
+  const { routing } = props.rootStore;
+
+
+  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+
+  const getOperations = () => [
+    {
+      key: 'edit',
+      icon: 'pen',
+      text: t('EDIT_INFORMATION'),
+      action: 'edit',
+      show: showEdit,
+      onClick: () =>
+        props.rootStore.triggerAction('images.edit', {
+          type: 'IMAGE_DETAIL',
+          detail: toJS(store.detail.image),
+          store: store,
+          success: fetchData,
+        })
+    },
+    {
+      key: 'viewYaml',
+      icon: 'eye',
+      text: t('VIEW_YAML'),
+      action: 'view',
+      onClick: () =>
+        props.rootStore.triggerAction('images.yaml.view', {
+          yaml: store.yaml,
+          readOnly: true,
+        })
+    },
+    {
+      key: 'delete',
+      icon: 'trash',
+      text: t('DELETE'),
+      action: 'delete',
+      type: 'danger',
+      show: showEdit,
+      onClick: () =>
+        props.rootStore.triggerAction('images.delete', {
+          type: 'IMAGE_DETAIL',
+          detail: toJS(store.detail),
+          store: store,
+          cluster: props.match.params.cluster,
+          success: () => routing.push(listUrl),
+          okText: '삭제',
+          cancelText: '취소'
+        })
+    },
+  ]
+
+  const getAttrs = () => {
+    const detail = toJS(store.detail)
+
+    if (isEmpty(detail)) {
+      return
+    }
+
+    return [
+      {
+        name: t('클러스터'),
+        value: detail.cluster,
+      },
+      {
+        name: t('CPU 타입'),
+        value: detail.image.arch_type,
+      },
+      {
+        name: t('부트 타입'),
+        value: detail.image.boot_type,
+      },
+      {
+        name: t('리얼타임'),
+        value: detail.image.is_realtime ? '사용' : '미사용',
+      },
+      {
+        name: t('단계'),
+        value: detail.image.phase,
+      },
+      {
+        name: t('진행률'),
+        value: detail.image.progress,
+      },
+      {
+        name: t('소스'),
+        value: detail.image.source,
+      },
+      {
+        name: t('설명'),
+        value: detail.image.description,
+      },
+      {
+        name: t('생성일'),
+        value: getLocalTime(detail.image.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+      },
+    ]
+  }
+
+  if (store.isLoading && !store.detail.name) {
+    return <Loading className="ks-page-loading" />;
+  }
+
+  const sideProps = {
+    icon: "snapshot",
+    module: store.module,
+    name: get(store.detail, 'name'),
+    desc: get(store.detail.image, 'description', ''),
+    operations: getOperations(),
+    attrs: getAttrs(),
+    breadcrumbs: [
+      {
+        label: t('이미지'),
+        url: listUrl,
+      },
+    ],
+  }
+
+  return (
+    <>
+      <DetailPage
+        stores={{ detailStore: store }}
+        routes={[
+          {
+            path: '',
+            title: '상태',
+            component: Status,
+            exact: true,
+          }
+        ]}
+        {...sideProps} />
+    </>
+  )
+}
+
+export default inject('rootStore')(observer(ImageDetail));
+
+const Status = ({ match }) => {
+  const imageName = match.params.name
+  return (
+    <DetailVmList type='이미지' variables='image' name={imageName} />
+  )
+}

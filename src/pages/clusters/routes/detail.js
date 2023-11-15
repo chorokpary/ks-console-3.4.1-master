@@ -50,6 +50,24 @@ import LogCollectionDetail from '../containers/LogCollections/Detail'
 import IPPoolDetail from '../containers/Network/IPPools/Detail'
 import GatewayDetail from '../containers/Gateway/Detail'
 
+//MM3 Detail Page
+import KeypairDetail from '../containers/Resources/Keypairs/Detail'
+import ImageDetail from '../containers/Resources/Images/Detail'
+import RouterDetail from '../containers/Resources/Routers/Detail'
+import FlavorDetail from '../containers/Resources/Flavors/Detail'
+import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
+import NetworkDetail from '../containers/Resources/Networks/Detail'
+import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
+import VmDetail from '../containers/Resources/Vms/Detail'
+import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
+import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
+import VolumeDetail from '../containers/Resources/Volumes/Detail'
+import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
+import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
+import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
+import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
+import SrIovDetail from '../containers/Resources/Sriov/Detail'
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -173,6 +191,72 @@ export default [
         path: `${PATH}/projects/:namespace`,
         component: ProjectDetail,
       },
+
     ],
   },
+  {
+    path: `${PATH}/keypairs/:name`,
+    component: KeypairDetail,
+  },
+  {
+    path: `${PATH}/images/:name`,
+    component: ImageDetail,
+  },
+  {
+    path: `${PATH}/routers/:name`,
+    component: RouterDetail,
+  },
+  {
+    path: `${PATH}/flavors/:name`,
+    component: FlavorDetail,
+  },
+  {
+    path: `${PATH}/securitygroups/:name`,
+    component: SecurityGroupDetail,
+  },
+  {
+    path: `${PATH}/networks/:name`,
+    component: NetworkDetail,
+  },
+  {
+    path: `${PATH}/floatingip/:name/:id`,
+    component: FloatingIpDetail,
+  },
+  {
+    path: `${PATH}/vms/:name`,
+    component: VmDetail,
+  },
+  {
+    path: `${PATH}/containerimages/:name`,
+    component: ContainerImageDetail,
+  },
+ {
+    path: `${PATH}/containerresource/:name`,
+    component: ContainerResourceDetail,
+  },
+  {
+    path: `${PATH}/resourcesvolumes/:name`,
+    component: VolumeDetail,
+  },
+  {
+    path: `${PATH}/hostdevices/:name`,
+    component: HostDeviceDetail,
+  },
+  {
+    path: `${PATH}/mediateddevices/:name`,
+    component: MediatedDeviceDetail,
+  },
+  {
+    path: `${PATH}/loadbalancers/:name`,
+    component: LoadBalancerDetail,
+  },
+  {
+    path: `${PATH}/baremetalmonitoring/:name`,
+    component: BareMetalDetail,
+  },
+  {
+    path: `${PATH}/sriovs/:name`,
+    component: SrIovDetail,
+  },  
+  
 ]
