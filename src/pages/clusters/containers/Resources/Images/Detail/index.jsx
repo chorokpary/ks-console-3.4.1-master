@@ -138,7 +138,7 @@ const ImageDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('이미지'),
+        label: t('가상머신 이미지'),
         url: listUrl,
       },
     ],
@@ -166,6 +166,6 @@ export default inject('rootStore')(observer(ImageDetail));
 const Status = ({ match }) => {
   const imageName = match.params.name
   return (
-    <DetailVmList type='이미지' variables='image' name={imageName} />
+    <DetailVmList type='가상머신 이미지' variables='image' name={imageName} />
   )
 }
