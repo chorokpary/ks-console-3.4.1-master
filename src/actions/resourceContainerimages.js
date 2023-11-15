@@ -36,10 +36,10 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('저장 되었습니다.') })
-              success && setTimeout(() => {success();},1000)
+              success && setTimeout(() => { success(); }, 1000)
             })
         },
-        title: '이미지 생성',
+        title: 'KaaS 이미지 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -51,18 +51,18 @@ export default {
     },
   },
   'containerimage.edit': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('수정 되었습니다.') })
               success && success()
             })
         },
-        title: '이미지 수정',
+        title: 'KaaS 이미지 수정',
         modal: ModifyModal,
         store,
         module,
