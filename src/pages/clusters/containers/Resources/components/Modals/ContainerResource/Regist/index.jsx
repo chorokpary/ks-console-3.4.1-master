@@ -17,7 +17,7 @@ import axios from "axios";
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
 
-const CONFIG_CPU_MASTER= 4;
+const CONFIG_CPU_MASTER = 4;
 const CONFIG_RAM_MASTER = 8;
 const CONFIG_DISK_MASTER = 80;
 const CONFIG_CPU_WORKER = 8;
@@ -82,7 +82,7 @@ const RegistModal = (props) => {
     useEffect(() => {
 
         const getVmCreateData = async () => {
-            const listFlavor = await vmStore.fetchVmListFlavor();
+            const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk' });
             const listNetwork = await vmStore.fetchVmListNetwork();
             const listSriovNetwork = await vmStore.fetchVmListSriovNetwork();
 
@@ -174,7 +174,7 @@ const RegistModal = (props) => {
             description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib / Disk ${obj.root_disk} Gib`,
             value: t(obj.name),
             disabled: flag === 1 ? (obj.vcpus < CONFIG_CPU_MASTER || common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER || obj.root_disk < CONFIG_DISK_MASTER)
-            : (obj.vcpus < CONFIG_CPU_WORKER || common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER || obj.root_disk < CONFIG_DISK_WORKER)
+                : (obj.vcpus < CONFIG_CPU_WORKER || common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER || obj.root_disk < CONFIG_DISK_WORKER)
         }))
         return opt
     }
@@ -444,7 +444,7 @@ const RegistModal = (props) => {
 
     const handlerAutoScale = (e) => {
         if (Array.isArray(e)) {
-            const scale = [e[0], e[1] < 1 ? 1: e[1]]
+            const scale = [e[0], e[1] < 1 ? 1 : e[1]]
             setAutoScale(scale)
         } else {
             const maxNum = e > 10 ? 10 : (e < 1 ? 1 : e);

@@ -61,7 +61,7 @@ const RegistModal = (props) => {
   useEffect(() => {
 
     const getVmCreateData = async () => {
-      const listFlavor = await vmStore.fetchVmListFlavor();
+      const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk' });
       const listImage = await vmStore.fetchVmListImage();
       const listBootVolume = await vmStore.fetchVmListBootVolume();
       const listNetwork = await vmStore.fetchVmListNetwork();
