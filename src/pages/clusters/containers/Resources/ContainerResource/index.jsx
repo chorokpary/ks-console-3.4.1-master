@@ -76,6 +76,7 @@ export default class Resource extends React.Component {
             this.props.store.fetchList({
             ...this.props.match.params,
             ...params,
+            ...this.props.query // search param
             })
         }
     //auto refresh end  ##################################
