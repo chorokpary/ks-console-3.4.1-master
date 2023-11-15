@@ -28,14 +28,14 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    # url: http://192.168.16.86:30881
-    # wsUrl: ws://192.168.16.86:30881
-    # mm3Url: http://192.168.16.80:32080 
-    # cmpUrl: http://192.168.16.86:31000 
-    url: http://10.24.3.34:30881
-    wsUrl: ws://10.24.3.34:30881
-    mm3Url: http://10.24.3.34:32080 
-    cmpUrl: http://10.24.3.34:31000
+    url: http://192.168.16.86:30881
+    wsUrl: ws://192.168.16.86:30881
+    mm3Url: http://192.168.16.80:32080 
+    cmpUrl: http://192.168.16.86:31000 
+    # url: http://10.24.3.34:30881
+    # wsUrl: ws://10.24.3.34:30881
+    # mm3Url: http://10.24.3.34:32080 
+    # cmpUrl: http://10.24.3.34:31000
     
 
   mm3UserInfo:
@@ -49,8 +49,8 @@ client:
   title: ARM CMP
   description: ""
   encryptKey: kubesphere
-  # serverlocation: "86"
-  serverlocation: "TB"
+  serverlocation: "86"
+  # serverlocation: "TB"
 
   version:
     kubesphere: 3.1.0
