@@ -40,10 +40,10 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('저장 되었습니다.') })
-              success && setTimeout(() => {success();},1000)
+              success && setTimeout(() => { success(); }, 1000)
             })
         },
-        title: '가상 머신 생성',
+        title: '가상머신 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -55,11 +55,11 @@ export default {
     },
   },
   'vm.edit': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('수정 되었습니다.') })
@@ -185,7 +185,7 @@ export default {
     on({ store, detail, success, data, title, desc, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.actionState({data, ...props}).then(() => {
+          store.actionState({ data, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('변경 되었습니다.') })
             success && success()
@@ -215,7 +215,7 @@ export default {
     on({ store, detail, success, data, title, desc, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.actionState({data, ...props}).then(() => {
+          store.actionState({ data, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('분리 되었습니다.') })
             success && success()
@@ -259,5 +259,5 @@ export default {
     },
   },
 
-  
+
 }
