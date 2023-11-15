@@ -168,6 +168,38 @@ const VmDetail = (props) => {
         },
       },
       {
+        key: 'snapshot',
+        icon: 'snapshot',
+        text: "스냅샷",
+        action: 'view',
+        onClick: () => {
+          const data = {};
+          data.vmName = vmName;
+
+            props.rootStore.triggerAction('vm.snapshotPop', {
+              data: data,
+              store: store,
+              success: fetchData,
+            }) 
+        },        
+      },
+      {
+        key: 'clone',
+        icon: 'snapshot',
+        text: "클론",
+        action: 'view',
+        onClick: () => {
+          const data = {};
+          data.vmName = vmName;
+          
+            props.rootStore.triggerAction('vm.clonePop', {
+              data: data,
+              store: store,
+              success: fetchData,
+            }) 
+        },        
+      },
+      {
         key: 'delete',
         icon: 'trash',
         text: t('DELETE'),

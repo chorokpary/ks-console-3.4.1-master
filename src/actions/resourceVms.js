@@ -30,6 +30,9 @@ import ConsoleLoglModal from 'clusters/containers/Resources/components/Modals/Co
 import VolumeModal from 'clusters/containers/Resources/components/Modals/Vms/VolumePop'
 import FloatingIpModal from 'clusters/containers/Resources/components/Modals/Vms/FloatingIpPop'
 
+import CloneModal from 'clusters/containers/Resources/components/Modals/Vms/ClonePop'
+import SnapshotModal from 'clusters/containers/Resources/components/Modals/Vms/SnapshotPop'
+
 export default {
   'vm.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
@@ -258,6 +261,34 @@ export default {
       })
     },
   },
-
+  'vm.snapshotPop': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.snapshotCreate(data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('생성 되었습니다.') })
+            success && success()
+          })
+        },
+        title: '스냅샷 생성',
+        desc: '스냅샷을 생성 하시겠습니까?',
+        modal: ConfirmModal,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.clonePop': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        title: '클론 생성',
+        modal: CloneModal,
+        store,
+        success,
+        ...props,
+      })
+    },
+  },  
 
 }
