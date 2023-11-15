@@ -39,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: '이미지 생성',
+        title: '가상머신 이미지 생성',
         modal: RegistModal,
         store,
         cluster,
@@ -62,7 +62,7 @@ export default {
               success && success()
             })
         },
-        title: '이미지 수정',
+        title: '가상머신 이미지 수정',
         modal: ModifyModal,
         store,
         detail,
