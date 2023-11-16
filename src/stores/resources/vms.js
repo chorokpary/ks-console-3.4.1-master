@@ -286,7 +286,7 @@ export default class VmStore extends Base {
     await this.fetchVmListFloating(params);
 
     // Volume 관련
-    //await this.fetchVolumeList(params);    
+    await this.fetchVolumeList(params);
 
     this.detail = detail
     this.isLoading = false
@@ -585,17 +585,17 @@ export default class VmStore extends Base {
 
   @action
   async snapshotCreate(data, params = {}) {
-    const url = this.getResourceUrl(params)+"/snapshots";
-    
+    const url = this.getResourceUrl(params) + "/snapshots";
+
     const jsonData = {};
     const snapshotData = {};
-    snapshotData.vm_name = data.vmName; 
+    snapshotData.vm_name = data.vmName;
     // snapshotData.description = "생성 테스트";     
     jsonData.snapshot = snapshotData;
 
 
-    console.log("url : "+ url)
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    console.log("url : " + url)
+    console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
     return res;
@@ -603,18 +603,18 @@ export default class VmStore extends Base {
 
   @action
   async cloneCreate(data, params = {}) {
-    const url = this.getResourceUrl(params)+"/clones";
-    
+    const url = this.getResourceUrl(params) + "/clones";
+
     const jsonData = {};
     const cloneData = {};
-    cloneData.source_vm_name = data.source_vm_name; 
-    cloneData.target_vm_name = data.target_vm_name; 
-    cloneData.description = data.description; 
+    cloneData.source_vm_name = data.source_vm_name;
+    cloneData.target_vm_name = data.target_vm_name;
+    cloneData.description = data.description;
 
     jsonData.clone = cloneData;
 
-    console.log("url : "+ url)
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    console.log("url : " + url)
+    console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
     return res;
