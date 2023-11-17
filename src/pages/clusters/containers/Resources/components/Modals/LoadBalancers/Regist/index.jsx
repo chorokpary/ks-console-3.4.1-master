@@ -88,8 +88,6 @@ const RegistModal = (props) => {
                 }
             })
         });
-        console.log(cnt)
-        console.log(arr)
         return cnt !== arr.length
     }
 
