@@ -393,14 +393,20 @@ export default class VmStore extends Base {
   async fetchVolumeList(params) {
     this.isLoading = true
 
-    const result = await request.get(
-      `/edgetron/resources/kubevirt/volumes`
-    )
-    const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
+    try {
+      const result = await request.get(
+        `/edgetron/resources/kubevirt/volumes`
+      )
+      const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
 
-    this.volumeList = dataList.volumes
-    this.isLoading = false
-    return dataList
+      this.volumeList = dataList.volumes
+      this.isLoading = false
+      return dataList
+    } catch (e) {
+      console.log(e)
+      this.volumeList = []
+      return []
+    }
   }
 
   // 등록 관련 데이터 시작 
