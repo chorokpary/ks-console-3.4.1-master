@@ -30,7 +30,7 @@ const Status = (props) => {
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
                                         <div>{store.detail.lb?.members.filter((el, idx) => idx < 2).map((obj, idx) =>
-                                            <div>{obj}{idx == 1 ? '...' : ''}</div>)}
+                                            <div>{obj}{store.detail.lb?.members.length > 2 && idx == 1 ? '...' : ''}</div>)}
                                         </div>
                                         <p>멤버 IP</p>
                                     </div>

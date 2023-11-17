@@ -49,6 +49,7 @@ const RegistModal = (props) => {
     const [vmDataList, setVmDataList] = useState([]);
     const [isMembers, setIsMembers] = useState(true);
     const [isRules, setIsRules] = useState(true);
+    const [isDupRules, setIsDupRules] = useState(true);
 
     useEffect(() => {
 
@@ -84,11 +85,16 @@ const RegistModal = (props) => {
         const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
         setIsMembers(members.length > 0);
-        setIsRules(rules.length > 0);
-
+        if (isDuplicate(rules)) {
+            setIsDupRules(false);
+        } else {
+            setIsDupRules(true);
+            setIsRules(rules.length > 0);
+        }
+        
         form.current.validator(() => {
 
-            if (members.length > 0 && rules.length > 0) {
+            if (members.length > 0 && rules.length > 0 && !isDuplicate(rules)) {
                 const { data } = form.current.props;
                 data.network = networkName
                 data.members = members;
@@ -98,6 +104,20 @@ const RegistModal = (props) => {
             }
 
         })
+    }
+
+    const isDuplicate = arr => {
+        const isDup = arr.some(function (x) {
+            let cnt = 0;
+            formRulesFields.some(function (y) {
+                if (JSON.stringify(x) === JSON.stringify(y)) {
+                    cnt++;
+                }
+            })
+            return cnt > 1
+        });
+
+        return isDup;
     }
 
     // Validation 시작 ==================================================
@@ -206,6 +226,7 @@ const RegistModal = (props) => {
             if (values.length < 1) {
                 setBtnDimm(false);
                 setIsRules(false);
+                setIsDupRules(true);
             }
         },
 
@@ -422,6 +443,7 @@ const RegistModal = (props) => {
                                     </tbody>
                                 </table>
                                 <div className={`form-item-error ${isRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>정책을 선택해 주세요.</div>
+                                <div className={`form-item-error ${isDupRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>중복된 정책이 있습니다.</div>
                             </div>
                             <div className="text-right">
                                 <Button
