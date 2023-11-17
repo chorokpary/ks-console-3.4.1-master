@@ -79,17 +79,31 @@ const RegistModal = (props) => {
         return opt
     }
 
+    const isDuplicate = arr => {
+        let cnt = 0;
+        arr.some(function (x) {
+            formRulesFields.some(function (y) {
+                if (JSON.stringify(x) === JSON.stringify(y)) {
+                    cnt++
+                }
+            })
+        });
+        console.log(cnt)
+        console.log(arr)
+        return cnt !== arr.length
+    }
+
     const handleOk = () => {
         const onOk = props.onOk;
         const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
         const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
-        setIsMembers(members.length > 0);
+        setIsMembers(members.length > 0)
         if (isDuplicate(rules)) {
-            setIsDupRules(false);
+            setIsDupRules(false)
         } else {
-            setIsDupRules(true);
-            setIsRules(rules.length > 0);
+            setIsDupRules(true)
+            setIsRules(rules.length > 0)
         }
         
         form.current.validator(() => {
@@ -97,29 +111,15 @@ const RegistModal = (props) => {
             if (members.length > 0 && rules.length > 0 && !isDuplicate(rules)) {
                 const { data } = form.current.props;
                 data.network = networkName
-                data.members = members;
+                data.members = members
 
-                data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)];
+                data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)]
                 onOk({ lb: data })
             }
 
         })
     }
-
-    const isDuplicate = arr => {
-        const isDup = arr.some(function (x) {
-            let cnt = 0;
-            formRulesFields.some(function (y) {
-                if (JSON.stringify(x) === JSON.stringify(y)) {
-                    cnt++;
-                }
-            })
-            return cnt > 1
-        });
-
-        return isDup;
-    }
-
+    
     // Validation 시작 ==================================================
     const nameValidator = (rule, value, callback) => {
         if (value == undefined) {
@@ -226,7 +226,6 @@ const RegistModal = (props) => {
             if (values.length < 1) {
                 setBtnDimm(false);
                 setIsRules(false);
-                setIsDupRules(true);
             }
         },
 
@@ -308,6 +307,13 @@ const RegistModal = (props) => {
     useEffect(() => {
         handleMemberIp.handleIpClear();
     }, [networkName])
+
+
+    useEffect(() => {
+        if (!isDuplicate(formRulesFields)) {
+            setIsDupRules(true);
+        }
+    }, [formRulesFields])
 
     return (
         <>
