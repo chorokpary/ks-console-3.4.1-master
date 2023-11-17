@@ -1,5 +1,5 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
@@ -14,10 +14,10 @@ const Status = (props) => {
   const store = props.detailStore;
 
   return (
-    <>  
+    <>
       <div>
-        <DetailVmList type='KaaS 이미지' variables='image' name={props.match.params.name} />
-      </div>         
+        <DetailVmList type='KaaS 이미지' variables='kube_image' name={props.match.params.name} />
+      </div>
     </>
   );
 };

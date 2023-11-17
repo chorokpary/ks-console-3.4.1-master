@@ -1,5 +1,5 @@
 import { get, groupBy, isEmpty } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
@@ -9,6 +9,7 @@ import { TinyArea } from 'components/Charts'
 import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
+import ContainerImageStore from 'stores/resources/containerimages'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
@@ -35,6 +36,7 @@ const DetailVmList = (props) => {
   // }
 
   const store = new VmStore();
+  const kaasStore = new ContainerImageStore();
   const customStore = new CustomStore();
 
   const [vmDataList, setVmDataList] = useState([]);
@@ -49,14 +51,14 @@ const DetailVmList = (props) => {
   const [vmCpuData, setVmCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
-  const perPage = 6; 
+  const perPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState();
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
     let value = parseFloat(timeStr)
-  
+
     switch (unit) {
       default:
       case 's':
@@ -78,7 +80,7 @@ const DetailVmList = (props) => {
     const interval = parseFloat(step) * times
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
-  
+
     return { start, end }
   }
 
@@ -90,20 +92,20 @@ const DetailVmList = (props) => {
   useEffect(() => {
     fnGetData();
     fetchData();
-  }, []) 
+  }, [])
 
-  const fnGetData = async ({...params} = {}) => {
-    
+  const fnGetData = async ({ ...params } = {}) => {
+
     setIsLoading(true);
-    setIsSearchFlag(false); 
+    setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const vmList = await store.fetchList();
+    const vmList = (props.variables != 'kube_image') ? await store.fetchList() : await kaasStore.fetchList();
     const vmFilterData = vmList?.filter((row) => props.variables === 'security_groups' ? row[props.variables].includes(props.name) : row[props.variables] === props.name)
-    const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];    
+    const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
 
-    const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) : 
-                           (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
+    const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
+      (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
 
     setCurrentPage(page);
     setVmDataList(vmFilterData);
@@ -115,13 +117,13 @@ const DetailVmList = (props) => {
 
   const fetchData = async () => {
 
-    const params = {"times":50,"step":"10m"}
+    const params = { "times": 50, "step": "10m" }
 
     const paramsData = Object.assign(params, {
-      start : params.start,
-      end : params.end,
+      start: params.start,
+      end: params.end,
       step: getMinuteValue(params.step),
-      times : params.times ,
+      times: params.times,
     })
 
     if (!paramsData.start || !paramsData.end) {
@@ -149,7 +151,7 @@ const DetailVmList = (props) => {
       setVmMemoryData(vmMemoryData)
 
     };
-    
+
     getVmCpuUsageData();
     getVmMemoryUsageData();
 
@@ -176,7 +178,7 @@ const DetailVmList = (props) => {
 
   const renderContent = () => {
 
-    if(vmSliceDataList.length == 0){
+    if (vmSliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
           리소스를 찾을 수 없음
@@ -185,36 +187,36 @@ const DetailVmList = (props) => {
       return content;
     }
 
-  const content = (
+    const content = (
       vmSliceDataList.map((obj, index) => {
-          return (
-            <div className={styles.wrapper} key={index}>
-                <div
-                  className={classnames(styles.expandItem, "", {
-                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-                  })}
-                >
-                  <div className={styles.itemMain}>
-                    <div className={styles.icon}>
-                      {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
-                      <i className="ico-type40-vm"></i>
-                      <Indicator
-                        className={styles.indicator}
-                        type={getState(obj.state)}
-                        flicker
-                      />
-                    </div>
-                    {renderContentDetail(obj)}
-                  </div>
-                  {renderExtraContent(obj)}
-                </div>    
+        return (
+          <div className={styles.wrapper} key={index}>
+            <div
+              className={classnames(styles.expandItem, "", {
+                [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+              })}
+            >
+              <div className={styles.itemMain}>
+                <div className={styles.icon}>
+                  {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
+                  <i className="ico-type40-vm"></i>
+                  <Indicator
+                    className={styles.indicator}
+                    type={getState(obj.state)}
+                    flicker
+                  />
+                </div>
+                {renderContentDetail(obj)}
+              </div>
+              {renderExtraContent(obj)}
+            </div>
           </div>
-          )
-        }
+        )
+      }
       )
     )
-    
-    return <Loading spinning={isLoading}>{content}</Loading> 
+
+    return <Loading spinning={isLoading}>{content}</Loading>
   }
 
   const renderContentDetail = (obj) => {
@@ -223,34 +225,34 @@ const DetailVmList = (props) => {
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-              <div>
-                {obj.name}
-                <Tooltip content={t('VNC')}>
-                  <Icon
-                    className="margin-l8"
-                    name="terminal"
-                    size={16}
-                    clickable
-                    onClick={() => handleOpenVnc(obj.name)}
-                  />
+            <div>
+              {obj.name}
+              <Tooltip content={t('VNC')}>
+                <Icon
+                  className="margin-l8"
+                  name="terminal"
+                  size={16}
+                  clickable
+                  onClick={() => handleOpenVnc(obj.name)}
+                />
               </Tooltip>
-              </div>
-              <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}에 생성 됨</p>
+            </div>
+            <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}에 생성 됨</p>
           </div>
           <div className={styles.text}>
-              <div>{obj.state}</div>
-              <p>상태</p>
+            <div>{obj.state}</div>
+            <p>상태</p>
           </div>
           <div className={styles.text}>
-              <div>{obj.node != "N/A" ? obj.node : "-"}</div>
-              <p>노드</p>
+            <div>{obj.node != "N/A" ? obj.node : "-"}</div>
+            <p>노드</p>
           </div>
-          {renderMonitorings(obj.name)}  
+          {renderMonitorings(obj.name)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
-            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
+            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
           </div>
         </div>
-       </>
+      </>
     )
   }
 
@@ -259,62 +261,62 @@ const DetailVmList = (props) => {
     const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
     return (
       <div className={styles.itemExtra}>
-          <div className={styles.containers} >
-              <div className={classnames(styles.item)}>
-                <div className={styles.icon}>
-                  <Icon name="apps" size={40} />         
-                </div>
-                <div className={classnames(styles.title, styles.name)}>
-                  <div>{obj.flavor_detail.name}</div>
-                  <p>Flavor</p>
-                </div>
-                <div className={styles.title}>
-                  <div>
-                   {
-                    networkList.length >= 1 ?  
-                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개" 
+        <div className={styles.containers} >
+          <div className={classnames(styles.item)}>
+            <div className={styles.icon}>
+              <Icon name="apps" size={40} />
+            </div>
+            <div className={classnames(styles.title, styles.name)}>
+              <div>{obj.flavor_detail.name}</div>
+              <p>Flavor</p>
+            </div>
+            <div className={styles.title}>
+              <div>
+                {
+                  networkList.length >= 1 ?
+                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개"
                     : "-"
-                   }
-                  </div>
-                  <p>네트워크</p>
-                </div>     
-                <div className={styles.title}>
-                  <Text
-                    key='CPU'
-                    icon='cpu'
-                    title={obj.flavor_detail.vcpus +" Core"}
-                    description={t('CPU')}
-                  />
-                </div>
-                <div className={styles.title}>
-                  <Text
-                    key='Memory'
-                    icon='memory'
-                    title={common.fnSetBytes(obj.flavor_detail.ram) +" Gib"}
-                    description={t('Memory')}
-                  />
-                </div>
-                <div className={styles.title}>
-                  <Text
-                    key='Disk'
-                    icon='storage'
-                    title={obj.flavor_detail.root_disk +" Gib"}
-                    description={t('Disk')}
-                  />
-                </div>
-                <div className={styles.title}>
-                  <Text
-                    key='GPU'
-                    icon='gpu'
-                    title={obj.flavor_detail.gpus.length >= 1 ?  
-                      obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개" 
-                      : "-"}
-                    description={t('GPU')}
-                  />
-                </div>
-              </div>          
-          </div>        
+                }
+              </div>
+              <p>네트워크</p>
+            </div>
+            <div className={styles.title}>
+              <Text
+                key='CPU'
+                icon='cpu'
+                title={obj.flavor_detail.vcpus + " Core"}
+                description={t('CPU')}
+              />
+            </div>
+            <div className={styles.title}>
+              <Text
+                key='Memory'
+                icon='memory'
+                title={common.fnSetBytes(obj.flavor_detail.ram) + " Gib"}
+                description={t('Memory')}
+              />
+            </div>
+            <div className={styles.title}>
+              <Text
+                key='Disk'
+                icon='storage'
+                title={obj.flavor_detail.root_disk + " Gib"}
+                description={t('Disk')}
+              />
+            </div>
+            <div className={styles.title}>
+              <Text
+                key='GPU'
+                icon='gpu'
+                title={obj.flavor_detail.gpus.length >= 1 ?
+                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개"
+                  : "-"}
+                description={t('GPU')}
+              />
+            </div>
+          </div>
         </div>
+      </div>
     )
   }
 
@@ -326,11 +328,11 @@ const DetailVmList = (props) => {
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
     const vmCpuMetricData = _.find(vmCpuData, (data) => {
-      if (data.metric.pod === vnName ) return data;
+      if (data.metric.pod === vnName) return data;
     });
-    
+
     const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
-      if (data.metric.pod === vnName ) return data;
+      if (data.metric.pod === vnName) return data;
     });
 
     if (!!!vmCpuMetricData && !!!vmMemoryMetricData)
@@ -343,7 +345,7 @@ const DetailVmList = (props) => {
     vmMemoryArray.push(vmMemoryMetricData)
 
     const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray)
-  
+
     return (
       <div className={styles.monitors}>
         <div className={styles.charts}>
@@ -369,7 +371,7 @@ const DetailVmList = (props) => {
 
   const getPagination = () => {
     const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
-    const pagination = {"page": currentPage,"limit": perPage,"total": total}
+    const pagination = { "page": currentPage, "limit": perPage, "total": total }
     return pagination
   }
 
@@ -379,13 +381,13 @@ const DetailVmList = (props) => {
       return row["name"]?.toLowerCase().includes(searchText.toLowerCase());
     });
     return resultList;
-  }  
+  }
 
   const getSliceData = (data, page) => {
-    const currentPage = page; 
+    const currentPage = page;
     const sliceData = data.slice((currentPage - 1) * perPage, (currentPage) * perPage);
     return sliceData;
-  }   
+  }
 
   const handleSearch = value => {
     setSearchValue(value);
@@ -434,7 +436,7 @@ const DetailVmList = (props) => {
     )
   }
 
-  const getState = (state) =>  {
+  const getState = (state) => {
     if (state === 'Provisioning'
       || state === 'Starting'
       || state === 'Stopping'
@@ -447,14 +449,14 @@ const DetailVmList = (props) => {
       return "stopped"
     } else if (state === 'Unknown') {
       return "error"
-    }else{
+    } else {
       return "error"
     }
   }
 
   const handleOpenVnc = (vmName) => {
     //실제 URL 로 변경 요망
-    var apiUrl = "http://"+location.hostname+":30020";
+    var apiUrl = "http://" + location.hostname + ":30020";
     var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
     param = param + vmName + "/vnc";
 
@@ -463,27 +465,29 @@ const DetailVmList = (props) => {
   }
 
   return (
-    <>  
+    <>
 
-      {vmDataList.length > 0 &&        
-          <Panel title={"가상 머신"} 
-                 className={classnames(styles.main)}
-          >
-            {renderHeader()}
-            {renderContent()}              
-            {renderFooter()}
-          </Panel>       
+      {vmDataList.length > 0 &&
+        <Panel title={"가상 머신"}
+          className={classnames(styles.main)}
+        >
+          {renderHeader()}
+          {renderContent()}
+          {renderFooter()}
+        </Panel>
       }
-      
+
       {vmDataList.length == 0 &&
         <Panel title={"가상 머신"} >
           <div className={styles.wrapper}>
-            {isLoading ? 
+            {isLoading ?
               <div><Loading /></div>
-              : <div>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
+              : <div>
+                {props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는
+                {props.variables === 'kube_image' ? ' KaaS 리소스가' : ' 가상머신이'} 없습니다.</div>
             }
           </div>
-        </Panel> 
+        </Panel>
       }
 
     </>
