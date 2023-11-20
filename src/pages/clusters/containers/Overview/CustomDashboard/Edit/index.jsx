@@ -546,7 +546,7 @@ const CustomDashboardEdit = (props) => {
                   <input type="checkbox" id="clusterStatusPanel-toggle" className="toggle" defaultChecked={activeDashboard.clusterStatus} />
                   <span className="slider" onClick={(e) => toggleHandler(e, 'clusterStatus')}></span>
                 </label>
-                <label className="section-title">클러스터 컴포넌트 상태</label>
+                <label className="section-title">KaaS 컴포넌트 상태</label>
                 <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
 
                 <div className="popover-container">

@@ -102,7 +102,6 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
       })
 
       if (cleanupTrigger) {
-        console.log('asd')
         setMetricData(metricData)
         handlePodData(podData)
         setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })

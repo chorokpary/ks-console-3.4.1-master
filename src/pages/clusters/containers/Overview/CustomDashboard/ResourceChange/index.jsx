@@ -161,7 +161,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
                       <p><span>Deleted</span></p>
                     </div>
                   </div> */}
-                      <TinyArea {...getAreaChartOps(podContent)} bgColor="transparent" />
+                      <TinyArea {...getAreaChartOps(podContent)} bgColor="transparent" width={350} />
                     </div>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
                       <div className="number_wrap">
                         <p><span className="em">{vmCnt}</span></p>
                       </div>
-                      <TinyArea  {...vmData} bgColor="transparent" />
+                      <TinyArea  {...vmData} bgColor="transparent" width={350} />
                     </div>
                   </div>
                 </div>
@@ -183,7 +183,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
                       <div className="number_wrap">
                         <p><span className="em">{kaasCnt}</span></p>
                       </div>
-                      <TinyArea  {...kaasData} bgColor="transparent" />
+                      <TinyArea  {...kaasData} bgColor="transparent" width={350} />
                     </div>
                   </div>
                 </div>

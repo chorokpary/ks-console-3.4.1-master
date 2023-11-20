@@ -1725,6 +1725,7 @@ body.dashboard {
 .grid_item .grid_info.style_status.box_long h5 {
   width: 95px;
   flex-shrink: 0;
+  margin-left: 20px
 }
 
 .grid_item .grid_info.style_status.box_long .type_status {
