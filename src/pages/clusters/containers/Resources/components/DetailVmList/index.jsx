@@ -9,7 +9,6 @@ import { TinyArea } from 'components/Charts'
 import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
-import ContainerImageStore from 'stores/resources/containerimages'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
@@ -36,7 +35,6 @@ const DetailVmList = (props) => {
   // }
 
   const store = new VmStore();
-  const kaasStore = new ContainerImageStore();
   const customStore = new CustomStore();
 
   const [vmDataList, setVmDataList] = useState([]);
@@ -100,7 +98,7 @@ const DetailVmList = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const vmList = (props.variables != 'kube_image') ? await store.fetchList() : await kaasStore.fetchList();
+    const vmList = await store.fetchList();
     const vmFilterData = vmList?.filter((row) => props.variables === 'security_groups' ? row[props.variables].includes(props.name) : row[props.variables] === props.name)
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
 
@@ -482,9 +480,7 @@ const DetailVmList = (props) => {
           <div className={styles.wrapper}>
             {isLoading ?
               <div><Loading /></div>
-              : <div>
-                {props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는
-                {props.variables === 'kube_image' ? ' KaaS 리소스가' : ' 가상머신이'} 없습니다.</div>
+              : <div>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
             }
           </div>
         </Panel>
