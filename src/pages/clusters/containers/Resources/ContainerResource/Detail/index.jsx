@@ -147,7 +147,7 @@ const ResourceDetail = (props) => {
             },
             {
                 name: t('이미지'),
-                value: detail.os_distro,
+                value: detail.kube_image,
             },
             {
                 name: t('버전'),

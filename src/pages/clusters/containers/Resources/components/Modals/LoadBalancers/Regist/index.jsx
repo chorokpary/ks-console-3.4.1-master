@@ -130,6 +130,13 @@ const RegistModal = (props) => {
         callback()
     }
 
+    const networkValidator = (rule, value, callback) => {
+        if (value == "선택" || value == "select") {
+            return callback({ message: t('네트워크 이름을 선택해 주세요.') })
+        }
+        callback()
+    }
+
     const closeModal = () => {
         setModalView(false);
     }
@@ -295,17 +302,9 @@ const RegistModal = (props) => {
     }
     //----------------end
 
-    const networkValidator = (rule, value, callback) => {
-        if (value == "선택" || value == "select") {
-            return callback({ message: t('네트워크 이름을 선택해 주세요.') })
-        }
-        callback()
-    }
-
     useEffect(() => {
         handleMemberIp.handleIpClear();
     }, [networkName])
-
 
     useEffect(() => {
         if (!isDuplicate(formRulesFields)) {
