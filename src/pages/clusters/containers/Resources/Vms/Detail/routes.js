@@ -22,6 +22,8 @@ import Status from './Status'
 import Information from './Information'
 import Monitoring from './Monitoring'
 import Event from './Event'
+import Snapshot from './Snapshot'
+import Clone from './Clone'
 
 const PATH = '/clusters/:cluster/vms/:name'
 
@@ -48,6 +50,18 @@ export default [
     path: `${PATH}/event`,
     title: '이벤트',
     component: Event,
+    exact: true,
+  },
+  {
+    path: `${PATH}/snapshot`,
+    title: '스냅샷',
+    component: Snapshot,
+    exact: true,
+  },
+  {
+    path: `${PATH}/clone`,
+    title: '클론 이력',
+    component: Clone,
     exact: true,
   },
   getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),

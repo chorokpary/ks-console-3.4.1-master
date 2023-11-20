@@ -601,10 +601,11 @@ export default class VmStore extends Base {
 
     const jsonData = {};
     const snapshotData = {};
-    snapshotData.vm_name = data.vmName;
-    // snapshotData.description = "생성 테스트";     
-    jsonData.snapshot = snapshotData;
 
+    snapshotData.vm_name = data.vmName;
+    snapshotData.description = data.description;   
+
+    jsonData.snapshot = snapshotData;
 
     console.log("url : " + url)
     console.log("jsonData : " + JSON.stringify(jsonData))
@@ -619,6 +620,7 @@ export default class VmStore extends Base {
 
     const jsonData = {};
     const cloneData = {};
+
     cloneData.source_vm_name = data.source_vm_name;
     cloneData.target_vm_name = data.target_vm_name;
     cloneData.description = data.description;
@@ -631,4 +633,53 @@ export default class VmStore extends Base {
     const res = await request.post(url, jsonData)
     return res;
   }
+
+  @action
+  async cloneList(params) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/clones`
+    )
+    if (params) {
+      result.clones.sort((a, b) => {
+        var x = a[params.sortBy];
+        var y = b[params.sortBy];
+        if (params.sortType == "asc") {
+          return x < y ? -1 : x > y ? 1 : 0;
+        } else {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+      });
+    }
+    return result.vms
+  }
+
+  @action
+  cloneDelete(name) {  
+
+    const url = `/edgetron/resources/kubevirt/vms/clones/${name}`;
+    console.log("url : "+ JSON.stringify(url))
+    
+    // return this.submitting(request.delete(url))
+  }
+
+  @action
+  async restoreCreate(data, params = {}) {
+    const url = this.getResourceUrl(params) + "/restores";
+
+    const jsonData = {};
+    const snapshotData = {};
+
+    snapshotData.snapshot_name = data.snapshotName;
+    snapshotData.description = data.description;   
+
+    jsonData.snapshot = snapshotData;
+
+    console.log("url : " + url)
+    console.log("jsonData : " + JSON.stringify(jsonData))
+
+    const res = await request.post(url, jsonData)
+    return res;
+  }
+
+  restorePop
 }

@@ -8,7 +8,7 @@ import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
-const SnapshotModal = (props) => {
+const RestoreModal = (props) => {
 
   const vmStore = new VmStore();
   const vmName = props.store.detail.name;
@@ -25,12 +25,12 @@ const SnapshotModal = (props) => {
     form.current.validator(async () => {   
       
       const { data } = form.current.props;
-      data.vmName = vmName;
+      data.snapshotName = vmName;
 
       console.log("data : "+ JSON.stringify(data))
 
-      vmStore.snapshotCreate(data).then(() => {
-        Notify.success({ content: t('생성 되었습니다.') })
+      vmStore.restoreCreate(data).then(() => {
+        Notify.success({ content: t('복원 되었습니다.') })
         success();
         closeModal();
       })
@@ -55,7 +55,7 @@ const SnapshotModal = (props) => {
         <Form data={formData} ref={form}>
           <Form.Item
             label={t('설명')}
-            rules={[{ required: true, message: t('스냅샷 실헹 이력에 기재할 정보를 입력해주세요.') }]}
+            rules={[{ required: true, message: t('복원 사유 등 이력에 기재할 정보를 입력해주세요.') }]}
           >
             <Input
                 name="description"
@@ -69,5 +69,5 @@ const SnapshotModal = (props) => {
   );
 };
 
-export default SnapshotModal
+export default RestoreModal
 

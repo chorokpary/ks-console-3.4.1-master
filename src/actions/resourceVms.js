@@ -32,6 +32,7 @@ import FloatingIpModal from 'clusters/containers/Resources/components/Modals/Vms
 
 import CloneModal from 'clusters/containers/Resources/components/Modals/Vms/ClonePop'
 import SnapshotModal from 'clusters/containers/Resources/components/Modals/Vms/SnapshotPop'
+import RestoreModal from 'clusters/containers/Resources/components/Modals/Vms/RestorePop'
 
 export default {
   'vm.regist': {
@@ -265,23 +266,27 @@ export default {
     },
   },
   'vm.snapshotPop': {
-    on({ store, detail, success, data, title, desc, ...props }) {
+    on({ store, success, ...props }) {
       const modal = Modal.open({
-        onOk: () => {
-          store.snapshotCreate(data).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('생성 되었습니다.') })
-            success && success()
-          })
-        },
         title: '스냅샷 생성',
-        desc: '스냅샷을 생성 하시겠습니까?',
-        modal: ConfirmModal,
+        modal: SnapshotModal,
         store,
+        success,
         ...props,
       })
     },
-  },
+  },  
+  'vm.restorePop': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        title: '복원 실행',
+        modal: RestoreModal,
+        store,
+        success,
+        ...props,
+      })
+    },
+  },  
   'vm.clonePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
@@ -292,6 +297,25 @@ export default {
         ...props,
       })
     },
+  },  
+  'vm.cloneDelete': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.cloneDelete(name).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('삭제 되었습니다.') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        module: store.module,
+        name,
+        store,
+        ...props,
+      })
+    },
   },
+  
 
 }
