@@ -25,6 +25,7 @@ import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
+import { Icon } from '@kube-design/components'
 
 import RoleStore from 'stores/role'
 import NetworkStore from 'stores/resources/networks'
@@ -57,19 +58,19 @@ export default class Networks extends React.Component {
             ...this.props.match.params,
           }),
       },
-      // {
-      //   key: 'topology',
-      //   icon: 'pen',
-      //   text: t('토폴리지'),
-      //   action: 'delete',
-      //   show: this.showAction,
-      //   onClick: item =>
-      //     trigger('networks.topology', {
-      //       detail: item,
-      //       success: getData,
-      //       ...this.props.match.params,
-      //     }),
-      // },
+      {
+        key: 'topology',
+        icon: 'topology',
+        text: t('토폴리지'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('networks.topology', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
     ]
   }
 

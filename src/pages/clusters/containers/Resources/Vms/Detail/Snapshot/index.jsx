@@ -95,8 +95,7 @@ const Snapshot = (props) => {
             >
               <div className={styles.itemMain}>
                 <div className={styles.icon}>
-                  {/* <i className="ico-type40-vm"></i> */}
-                  <Icon name="snapshot" size={40} />
+                  <i className="ico-type-snapshot"></i>
                 </div>
                 {renderContentDetail(obj)}
               </div>
@@ -160,7 +159,7 @@ const Snapshot = (props) => {
         <div className={styles.containers} >
           <div className={classnames(styles.item)}>
             <div className={styles.icon}>
-              <Icon name="apps" size={40} />
+              <i className="ico-type-restore"></i>
             </div>
             <div className={classnames(styles.title, styles.name)}>
               <div>{obj.flavor_detail.name}</div>

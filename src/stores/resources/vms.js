@@ -615,6 +615,34 @@ export default class VmStore extends Base {
   }
 
   @action
+  async snapshotList(params) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/snapshots`
+    )
+    if (params) {
+      result.clones.sort((a, b) => {
+        var x = a[params.sortBy];
+        var y = b[params.sortBy];
+        if (params.sortType == "asc") {
+          return x < y ? -1 : x > y ? 1 : 0;
+        } else {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+      });
+    }
+    return result.vms
+  }
+
+  @action
+  snapshotDelete(name) {  
+
+    const url = `/edgetron/resources/kubevirt/vms/snapshots/${name}`;
+    console.log("url : "+ JSON.stringify(url))
+    
+    // return this.submitting(request.delete(url))
+  }
+
+  @action
   async cloneCreate(data, params = {}) {
     const url = this.getResourceUrl(params) + "/clones";
 
@@ -677,9 +705,36 @@ export default class VmStore extends Base {
     console.log("url : " + url)
     console.log("jsonData : " + JSON.stringify(jsonData))
 
-    const res = await request.post(url, jsonData)
-    return res;
+    // const res = await request.post(url, jsonData)
+    // return res;
   }
 
-  restorePop
+  @action
+  async restoreList(params) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/restores`
+    )
+    if (params) {
+      result.clones.sort((a, b) => {
+        var x = a[params.sortBy];
+        var y = b[params.sortBy];
+        if (params.sortType == "asc") {
+          return x < y ? -1 : x > y ? 1 : 0;
+        } else {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+      });
+    }
+    return result.vms
+  }
+
+  @action
+  restoreDelete(name) {  
+
+    const url = `/edgetron/resources/kubevirt/vms/restores/${name}`;
+    console.log("url : "+ JSON.stringify(url))
+    
+    // return this.submitting(request.delete(url))
+  }
+
 }

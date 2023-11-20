@@ -89,8 +89,7 @@ const Clone = (props) => {
             >
               <div className={styles.itemMain}>
                 <div className={styles.icon}>
-                  {/* <i className="ico-type40-vm"></i> */}
-                  <Icon name="snapshot" size={40} />
+                  <i className="ico-type-clone"></i>
                 </div>
                 {renderContentDetail(obj)}
               </div>

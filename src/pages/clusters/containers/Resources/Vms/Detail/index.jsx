@@ -158,7 +158,7 @@ const VmDetail = (props) => {
     },
     {
       key: 'snapshot',
-      icon: 'snapshot',
+      icon: 'resourceIcon:snapshot',
       text: "스냅샷",
       action: 'view',
       onClick: () => {
@@ -174,7 +174,7 @@ const VmDetail = (props) => {
     },
     {
       key: 'clone',
-      icon: 'snapshot',
+      icon: 'resourceIcon:clone',
       text: "클론",
       action: 'view',
       onClick: () => {
