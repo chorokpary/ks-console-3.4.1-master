@@ -1,21 +1,21 @@
-<svg width="31" height="34" viewBox="0 0 31 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_375_12053)">
-<rect width="13" height="3" transform="translate(13 11) rotate(-180)" fill="#404E68"/>
-<rect x="13" y="11" width="96" height="4" transform="rotate(-180 13 11)" fill="#404E68"/>
-</g>
-<g clip-path="url(#clip1_375_12053)">
-<rect width="13" height="3" transform="translate(13 25) rotate(-180)" fill="#404E68"/>
-<rect x="13" y="25" width="96" height="4" transform="rotate(-180 13 25)" fill="#404E68"/>
-</g>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M25 17V34H18.5H18V33.9505C14.6438 33.2827 12 25.9488 12 17C12 8.05116 14.6438 0.717288 18 0.049548V0H18.5H25V17Z" fill="#394454"/>
-<ellipse cx="24.5" cy="17" rx="6.5" ry="17" fill="#ABB4BE"/>
-<path d="M25 16C25 15.4477 25.4477 15 26 15H31V18H26C25.4477 18 25 17.5523 25 17V16Z" fill="#394454"/>
-<defs>
-<clipPath id="clip0_375_12053">
-<rect width="13" height="3" fill="white" transform="translate(13 11) rotate(-180)"/>
-</clipPath>
-<clipPath id="clip1_375_12053">
-<rect width="13" height="3" fill="white" transform="translate(13 25) rotate(-180)"/>
-</clipPath>
-</defs>
+<svg width="24" height="23" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="13" height="3" transform="translate(13 17) rotate(-180)" fill="#404E68"/>
+<rect y="9" width="13" height="5" fill="#E8F0F6"/>
+<rect width="13" height="3" transform="translate(13 9) rotate(-180)" fill="#404E68"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="#394454"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.846 0H16.6926V23H12.846H12.5508V22.9666C10.5646 22.5158 9 17.5542 9 11.5C9 5.44576 10.5646 0.484211 12.5508 0.0333795V0H12.846Z" fill="black" fill-opacity="0.2"/>
+<ellipse cx="17.1484" cy="11.5" rx="4" ry="11.5" fill="#ABB4BE"/>
+<path d="M18 11C18 10.4477 18.4477 10 19 10H24V13H19C18.4477 13 18 12.5523 18 12V11Z" fill="#5F708A"/>
+<path d="M18 11C18 10.4477 18.4477 10 19 10H24V13H19C18.4477 13 18 12.5523 18 12V11Z" fill="black" fill-opacity="0.2"/>
+<path d="M18 11C18 10.4477 18.4477 10 19 10H24V13H19C18.4477 13 18 12.5523 18 12V11Z" fill="black" fill-opacity="0.2"/>
 </svg>
