@@ -312,14 +312,20 @@ export default class VmStore extends Base {
   async fetchVmLog(params) {
     this.isLoading = true
 
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/log`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'vms' }
+    try {
+      const result = await request.get(
+        `${this.getResourceUrl(params)}/${params.name}/log`
+      )
+      const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
-    this.vmLog = response.log.message
-    this.isLoading = false
-    return response
+      this.vmLog = response.log.message
+      this.isLoading = false
+      return response
+    } catch (e) {
+      console.log(e)
+      this.vmLog = []
+      return []
+    }
   }
 
   @action

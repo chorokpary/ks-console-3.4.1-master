@@ -207,7 +207,10 @@ export default {
   'vm.volumePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '볼륨 연결',
+        onOk: () => {
+          success && success()
+        },
+        title: '볼륨 관리',
         modal: VolumeModal,
         store,
         ...props,
@@ -289,6 +292,6 @@ export default {
         ...props,
       })
     },
-  },  
+  },
 
 }
