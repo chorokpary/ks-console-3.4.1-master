@@ -70,12 +70,10 @@ const DetailKaasList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await kaasStore.fetchList();
-    console.log(vmList)
     const vmFilterData = vmList?.filter((row) => row['kube_image'] === props.name)
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
     const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
       (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
-    console.log(vmSliceData)
 
     setCurrentPage(page);
     setVmDataList(vmFilterData);
@@ -161,7 +159,6 @@ const DetailKaasList = (props) => {
 
   const renderExtraContent = () => {
 
-    console.log(machines)
     return (
       <div className={styles.itemExtra}>
         <div className={styles.containers} >
