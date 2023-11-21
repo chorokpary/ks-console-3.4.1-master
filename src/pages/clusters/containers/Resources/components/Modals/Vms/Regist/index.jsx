@@ -530,6 +530,7 @@ const RegistModal = (props) => {
                   <Tabs type="button" activeName={tab} onChange={newTab => {
                     setTab(newTab);
                     setImageType(newTab);
+                    setStorageClass("");
                   }}>
                     <TabPanel label="이미지" name="I" />
                     <TabPanel label="부트볼륨" name="B" />
