@@ -219,7 +219,8 @@ export default class VmStore extends Base {
     }
 
     resourceData.description = data.description;
-    resourceData.storage_class = "openebs-hostpath"; // 고정값
+    resourceData.storage_class = data.storageClass
+    //resourceData.storage_class = "openebs-hostpath"; // 고정값
     // resourceData.storage_class = "longhorn"; // 고정값
 
     jsonData.vm = resourceData;

@@ -14,6 +14,7 @@ import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 const RegistModal = (props) => {
 
   const form = useRef();
@@ -46,6 +47,7 @@ const RegistModal = (props) => {
   const [description, setDescription] = useState('');
   const [keypairName, setKeypairName] = useState('');
   const [nodeName, setNodeName] = useState('');
+  const [storageClass, setStorageClass] = useState('선택');
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -94,6 +96,11 @@ const RegistModal = (props) => {
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
     { label: 'etc', value: '', icon: 'ico-plus', }
+  ]
+
+  const storageClassOptions = [
+    { label: 'longhorn', value: 'longhorn' },
+    { label: 'openebs-hostpath', value: 'openebs-hostpath' }
   ]
 
   const imageOptions = () => {
@@ -159,6 +166,7 @@ const RegistModal = (props) => {
       data.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
       data.keypair = data.keypair == "선택" ? "" : data.keypair;
       data.node = data.node == "선택" ? "" : data.node;
+      data.storageClass = (imageType == "I" && storageClass != "선택") ?  storageClass : "";
 
       let makeScriptStep_1 = false;
       let makeScriptStep_2 = false;
@@ -218,9 +226,9 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     if (step == 1) {
-      if (imageType == "I" && (data.name == undefined || data.image == "선택" || data.flavor == "선택")) {
+      if (imageType == "I" && (data.name == undefined || !regexName.test(data.name)  || data.image == "선택" || data.flavor == "선택")) {
         handleOk();
-      } else if (imageType == "B" && (data.name == undefined || data.bootvolume == "선택" || data.flavor == "선택")) {
+      } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == "선택" || data.flavor == "선택")) {
         handleOk();
       } else {
         setRegStep(2);
@@ -347,6 +355,17 @@ const RegistModal = (props) => {
 
 
   // Validation 시작 ==================================================
+  const nameValidator = (rule, value, callback) => {
+    if (value == undefined) {
+      return callback({ message: t('이름을 입력해 주세요.') })
+    } else {
+      if (!regexName.test(value)) {
+        return callback({ message: t('이름을 확인해 주세요.') })
+      }
+    }
+    callback()
+  }
+
   const imageValidator = (rule, value, callback) => {
     if (value == "선택" || value == "select") {
       return callback({ message: t('이미지를 선택해 주세요.') })
@@ -499,7 +518,7 @@ const RegistModal = (props) => {
               <div className={`${regStep == 1 ? "" : "hide"}`}>
                 <Form.Item
                   label={t('이름')}
-                  rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                  rules={[{ required: true, validator: nameValidator }]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
@@ -596,22 +615,42 @@ const RegistModal = (props) => {
                     />
                   </Form.Item>
                 }
+                <Columns>
+                  <Column>
+                    {imageType == "B" &&
+                      <div style={{ padding: 8 }} />
+                    }
+                    <Form.Item
+                      label={t('Flavor')}
+                      rules={[{ required: true, validator: flavorValidator }]}
+                    >
+                      <TypeSelect
+                        name="flavor"
+                        defaultValue="선택"
+                        options={flavorOptions()}
+                        placeholder={{
+                          label: t('선택')
+                        }}
+                        defaultDescription={"Flavor를 선택해 주세요."}
+                      />
+                    </Form.Item>
+                  </Column>
 
-                <Form.Item
-                  label={t('Flavor')}
-                  rules={[{ required: true, validator: flavorValidator }]}
-                >
-                  <TypeSelect
-                    name="flavor"
-                    defaultValue="선택"
-                    options={flavorOptions()}
-                    placeholder={{
-                      label: t('선택')
-                    }}
-                    className={styles.typeselectbox}
-                    defaultDescription={"Flavor를 선택해 주세요."}
-                  />
-                </Form.Item>
+                  <Column>
+                    <div style={{ padding: 12 }} />
+                    {imageType == "I" &&
+                      <Form.Group label={t('StorageClass')} onChange={(e) => { setStorageClass("선택"); }} checkable>
+                        <Form.Item>
+                          <Select
+                            options={storageClassOptions}
+                            onChange={(el) => setStorageClass(el)}
+                            value={storageClass}
+                          />
+                        </Form.Item>
+                      </Form.Group>
+                    }
+                  </Column>
+                </Columns>
 
                 <Form.Item
                   className={styles.textarea}
