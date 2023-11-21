@@ -99,7 +99,10 @@ const DetailVmList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await store.fetchList();
-    const vmFilterData = vmList?.filter((row) => props.variables === 'security_groups' ? row[props.variables].includes(props.name) : row[props.variables] === props.name)
+    const vmFilterData = vmList?.filter((row) => 
+                          props.variables === 'security_groups' ? row[props.variables].includes(props.name)  :
+                          props.variables === 'networks' ? _.find(row[props.variables], {'name': props.name}) : row[props.variables] === props.name
+                        )
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
 
     const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
@@ -480,7 +483,7 @@ const DetailVmList = (props) => {
           <div className={styles.wrapper}>
             {isLoading ?
               <div><Loading /></div>
-              : <div>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
+              : <div className={styles.empty}>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
             }
           </div>
         </Panel>
