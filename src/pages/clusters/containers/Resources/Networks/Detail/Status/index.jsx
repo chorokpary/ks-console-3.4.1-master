@@ -38,8 +38,6 @@ const Status = (props) => {
         setLoadBalancerList(loadBalancerFilterList);
 }
 
-console.log("loadbalancerList : "+ JSON.stringify(loadbalancerList))
-
     return (
         <>
             <div>                
