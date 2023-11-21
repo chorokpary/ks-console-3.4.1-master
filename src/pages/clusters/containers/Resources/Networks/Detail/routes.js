@@ -18,7 +18,7 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/networks/Detail/Status'
+import Status from 'clusters/containers/Resources/Networks/Detail/Status'
 
 const PATH = '/clusters/:cluster/networks/:name'
 
