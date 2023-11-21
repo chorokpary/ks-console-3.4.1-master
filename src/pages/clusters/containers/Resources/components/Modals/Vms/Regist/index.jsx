@@ -640,7 +640,7 @@ const RegistModal = (props) => {
                   <Column>
                     <div style={{ padding: 12 }} />
                     {imageType == "I" &&
-                      <Form.Group label={t('StorageClass')} onChange={(e) => { setStorageClass("선택"); }} checkable>
+                      <Form.Group label={t('스토리지 클래스')} onChange={(e) => { setStorageClass("선택"); }} checkable>
                         <Form.Item>
                           <Select
                             options={storageClassOptions}
