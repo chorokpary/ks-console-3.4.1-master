@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import * as common from 'utils/resources'
 
 import { isEmpty, omit, get, find } from 'lodash'
 
 import TopologyStore from 'stores/resources/topology'
+
+import {
+  TransformWrapper,
+  TransformComponent,
+  ReactZoomPanPinchRef,
+} from "react-zoom-pan-pinch";
 
 const TopologyItem = (props) => {
 
@@ -90,108 +96,117 @@ const TopologyItem = (props) => {
     getNetworkElementsData();
   }, [networkUnionList, vmList, routerList, loadbalancerList])
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    var dragScroll = false;
-    var x, y, pre_x, pre_y;
-    var zoomLevel = 1;
-    var zoomStep = 0.1;
-    var box = document.getElementById('box');
-    var box_zoom = document.getElementById('box_zoom');
-    var result = document.getElementById('result');
-    var zoomInButton = document.getElementById('zoomIn');
-    var zoomOutButton = document.getElementById('zoomOut');
-    var resetZoomButton = document.getElementById('resetZoom');
-    var initialScrollLeft = 0;
-    var initialScrollTop = 0;
-    var initialBoxZoomPosition = { left: 0, top: 0 };
-   
-    function updateZoomDisplay() {
-      result.innerHTML = (zoomLevel * 100).toFixed(0) + '%';
-    }
-   
-    function zoomIn() {
-      if(zoomLevel.toFixed(1) >= 2){ 
-        return false;
-      };
-      updateZoom(1);
-    }
-   
-    function zoomOut() {
-       if(zoomLevel.toFixed(1) <= 0.1){ 
-        return false;
-      };
-      updateZoom(-1);
-    }
-   
-    function updateZoom(direction) {      
-      initialScrollLeft = box.scrollLeft;
-      initialScrollTop = box.scrollTop;
-      zoomLevel += direction * zoomStep;      
-      box_zoom.style.transform = 'scale(' + zoomLevel + ')';
-      box.scrollLeft = initialScrollLeft;
-      box.scrollTop = initialScrollTop;
-   
-      box_zoom.style.left = (direction === 1)
-        ? parseInt(box_zoom.style.left || 0) + 200 + 'px'
-        : parseInt(box_zoom.style.left || 0) - 100 + 'px';
-      box_zoom.style.top = (direction === 1)
-        ? parseInt(box_zoom.style.top || 0) + 50 + 'px'
-        : parseInt(box_zoom.style.top || 0) + 20 + 'px';
-   
-      if (zoomLevel <= 0.6) {
-        box_zoom.style.left = parseInt(box_zoom.style.left || 0) - 100 + 'px';
-        box_zoom.style.top = parseInt(box_zoom.style.top || 0) - 50 + 'px';
-      }
-   
-      updateZoomDisplay();
-    }
-   
-    function resetZoom() {
-      zoomLevel = 1;
-      box_zoom.style.transform = 'scale(1)';
-      box.scrollLeft = initialScrollLeft;
-      box.scrollTop = initialScrollTop;
-      box_zoom.style.left = initialBoxZoomPosition.left + 'px';
-      box_zoom.style.top = initialBoxZoomPosition.top + 'px';
-      updateZoomDisplay();
-    }
-   
-    zoomInButton.addEventListener('click', zoomIn);
-    zoomOutButton.addEventListener('click', zoomOut);
-    resetZoomButton.addEventListener('click', resetZoom);
-   
-    box.addEventListener('mousedown', function (e) {
-      dragScroll = true;
-      x = box.scrollLeft;
-      y = box.scrollTop;
-      pre_x = e.screenX;
-      pre_y = e.screenY;
-      box.style.cursor = "move";
-    });
-   
-    box.addEventListener('mousemove', function (e) {
-      if (dragScroll) {
-        box.scrollLeft = x - e.screenX + pre_x;
-        box.scrollTop = y - e.screenY + pre_y;
-        e.preventDefault();
-      }
-    });
-   
-    function endDragScroll() {
-      dragScroll = false;
-      box.style.cursor = "default";
-    }
-   
-    box.addEventListener('mouseup', endDragScroll);
-    document.body.addEventListener('mouseup', endDragScroll);
-   
-    initialBoxZoomPosition.left = parseInt(box_zoom.style.left || 0);
-    initialBoxZoomPosition.top = parseInt(box_zoom.style.top || 0);
-   
-    updateZoomDisplay();
+  //   var dragScroll = false;
+  //   var x, y, pre_x, pre_y;
+  //   var zoomLevel = 1;
+  //   var zoomStep = 0.1;
+  //   var box = document.getElementById('box');
+  //   var box_zoom = document.getElementById('box_zoom');
+  //   var result = document.getElementById('result');
+  //   var zoomInButton = document.getElementById('zoomIn');
+  //   var zoomOutButton = document.getElementById('zoomOut');
+  //   var resetZoomButton = document.getElementById('resetZoom');
+  //   var initialScrollLeft = 0;
+  //   var initialScrollTop = 0;
+  //   var initialBoxZoomPosition = { left: 0, top: 0 };
 
-  },[])
+  //   box_zoom.style.border ="1px solid red"
+   
+  //   function updateZoomDisplay() {
+  //     result.innerHTML = (zoomLevel * 100).toFixed(0) + '%';
+  //   }
+   
+  //   function zoomIn() {
+  //     if(zoomLevel.toFixed(1) >= 2){ 
+  //       return false;
+  //     };
+  //     updateZoom(1);
+  //   }
+   
+  //   function zoomOut() {
+  //      if(zoomLevel.toFixed(1) <= 0.1){ 
+  //       return false;
+  //     };
+  //     updateZoom(-1);
+  //   }
+   
+  //   function updateZoom(direction) {      
+  //     initialScrollLeft = box.scrollLeft;
+  //     initialScrollTop = box.scrollTop;
+  //     zoomLevel += direction * zoomStep;      
+  //     box_zoom.style.transform = 'scale(' + zoomLevel + ')';
+  //     box.scrollLeft = initialScrollLeft;
+  //     box.scrollTop = initialScrollTop;
+
+
+  //       // box_zoom.style.left = '100px';
+  //       // box_zoom.style.top =  '100px';
+
+   
+  //     // box_zoom.style.left = (direction === 1)
+  //     //   ? parseInt(box_zoom.style.left || 0) + 550 + 'px'
+  //     //   : parseInt(box_zoom.style.left || 0) - 0 + 'px';
+  //     // box_zoom.style.top = (direction === 1)
+  //     //   ? parseInt(box_zoom.style.top || 0) + 50 + 'px'
+  //     //   : parseInt(box_zoom.style.top || 0) + 0 + 'px';
+   
+  //     // if (zoomLevel <= 0.6) {
+  //     //   box_zoom.style.left = parseInt(box_zoom.style.left || 0) - 100 + 'px';
+  //     //   box_zoom.style.top = parseInt(box_zoom.style.top || 0) - 50 + 'px';
+  //     // }
+   
+  //     updateZoomDisplay();
+  //   }
+   
+  //   function resetZoom() {
+  //     console.log("initialBoxZoomPosition : "+ initialBoxZoomPosition.left)
+  //     console.log("initialBoxZoomPosition : "+ initialBoxZoomPosition.top)
+  //     zoomLevel = 1;
+  //     box_zoom.style.transform = 'scale(1)';
+  //     box.scrollLeft = initialScrollLeft;
+  //     box.scrollTop = initialScrollTop;
+  //     box_zoom.style.left = initialBoxZoomPosition.left + 'px';
+  //     box_zoom.style.top = initialBoxZoomPosition.top + 'px';
+  //     updateZoomDisplay();
+  //   }
+   
+  //   zoomInButton.addEventListener('click', zoomIn);
+  //   zoomOutButton.addEventListener('click', zoomOut);
+  //   resetZoomButton.addEventListener('click', resetZoom);
+   
+  //   box.addEventListener('mousedown', function (e) {
+  //     dragScroll = true;
+  //     x = box.scrollLeft;
+  //     y = box.scrollTop;
+  //     pre_x = e.screenX;
+  //     pre_y = e.screenY;
+  //     box.style.cursor = "move";
+  //   });
+   
+  //   box.addEventListener('mousemove', function (e) {
+  //     if (dragScroll) {
+  //       box.scrollLeft = x - e.screenX + pre_x;
+  //       box.scrollTop = y - e.screenY + pre_y;
+  //       e.preventDefault();
+  //     }
+  //   });
+   
+  //   function endDragScroll() {
+  //     dragScroll = false;
+  //     box.style.cursor = "default";
+  //   }
+   
+  //   box.addEventListener('mouseup', endDragScroll);
+  //   document.body.addEventListener('mouseup', endDragScroll);
+   
+  //   initialBoxZoomPosition.left = parseInt(box_zoom.style.left || 0);
+  //   initialBoxZoomPosition.top = parseInt(box_zoom.style.top || 0);
+   
+  //   updateZoomDisplay();
+
+  // },[])
 
   const getState = (state) => {
     if (state === 'Provisioning'
@@ -608,26 +623,64 @@ const TopologyItem = (props) => {
    }
 
 
+
+   const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
+    <>
+      <div className="zoomin_icon">
+          <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
+            <i className="ico-plus"></i>
+          </button>
+          <button id="zoomOut" className="btn_zoom_icon" onClick={() => zoomOut()}>
+            <i className="ico-minus"></i>
+          </button>
+          <button id="resetZoom" className="btn_zoom_icon" onClick={() => resetTransform()}>
+            <i className="ico-reset"></i>
+          </button>
+          <div id="result"></div>
+        </div>
+    </>
+  );
+
+
   return (
+
+
     <div className="content_box_wrap pop">
       <div className="pop_content" id="box">
         <div className="topology_wrap">
 
-          <div id="box_zoom" className="topology_network_wrap">
-            {/* 네트워크 List 시작*/}
-            <ul className="topology_network">
-              {renderNetworkBarList()}
-            </ul>
-            {/* 네트워크 List 끝*/}
+            <TransformWrapper
+              initialScale={1}
+              initialPositionX={10}
+              initialPositionY={10}
+              minScale={0.5}
+              maxScale={10}
+            >
+              {(utils) => (
+                <React.Fragment>
+                  <Controls {...utils} />
+                  <TransformComponent
+                  onTransformChange={(transform) => console.log('Transform changed:', transform)}
+                  >
+                    <div id="box_zoom" className="topology_network_wrap">
+                      {/* 네트워크 List 시작*/}
+                      <ul className="topology_network">
+                        {renderNetworkBarList()}
+                      </ul>
+                      {/* 네트워크 List 끝*/}
 
-            {/* 네트워크 연결 요소 시작*/}
-            <div className="network_element_wrap">  
-              {renderVmElements()}
-              {renderRouterElements()}
-              {renderLoadbalancerElements()}
-            </div>
-             {/* 네트워크 연결 요소 끝*/}
-          </div>
+                      {/* 네트워크 연결 요소 시작*/}
+                      <div className="network_element_wrap">  
+                        {renderVmElements()}
+                        {renderRouterElements()}
+                        {renderLoadbalancerElements()}
+                      </div>
+                      {/* 네트워크 연결 요소 끝*/} 
+                    </div>                     
+                  </TransformComponent>
+                </React.Fragment>
+              )}
+            </TransformWrapper>
 
         </div>
       </div>
@@ -636,7 +689,7 @@ const TopologyItem = (props) => {
       {renderLeftMenu()}
       
       {/* Zoon In/Out */}
-      {renderZoon()}
+      {/* {renderZoon()} */}
 
     </div>  
   )
