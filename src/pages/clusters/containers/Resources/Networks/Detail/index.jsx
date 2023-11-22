@@ -10,7 +10,13 @@ import { observer, inject } from 'mobx-react';
 import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
-import routes from './routes'
+
+
+import { getIndexRoute } from 'utils/router.config'
+import Status from 'clusters/containers/Resources/Networks/Detail/Status'
+
+const PATH_DETAIL = '/clusters/:cluster/networks/:name'
+
 
 const store = new NetworkStore();
 
@@ -165,10 +171,18 @@ const NetworkDetail = (props) => {
 
     return (
         <>
-            <DetailPage
-                stores={{ detailStore: store }}
-                routes={routes}
-                {...sideProps} />
+         <DetailPage
+            stores={{ detailStore: store }}
+            routes={[
+            {
+                path: `${PATH_DETAIL}/status`,
+                title: '상태',
+                component: Status,
+                exact: true,
+            },
+            getIndexRoute({ path: `${PATH_DETAIL}`, to: `${PATH_DETAIL}/status`, exact: true }),
+            ]}
+            {...sideProps} />
         </>
     )
 }
