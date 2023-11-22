@@ -26,9 +26,12 @@ import Table from 'components/Tables/List'
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 import { Icon } from '@kube-design/components'
+import classnames from 'classnames'
 
 import RoleStore from 'stores/role'
 import NetworkStore from 'stores/resources/networks'
+
+import styles from './index.scss'
 
 @withList({
   store: new NetworkStore(),
@@ -53,19 +56,6 @@ export default class Networks extends React.Component {
         show: this.showAction,
         onClick: item =>
           trigger('networks.remove', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
-      },
-      {
-        key: 'topology',
-        icon: 'topology',
-        text: t('토폴리지'),
-        action: 'delete',
-        show: this.showAction,
-        onClick: item =>
-          trigger('networks.topology', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -176,18 +166,38 @@ export default class Networks extends React.Component {
     return { desc: t('데이터가 없습니다') }
   }
 
+  modalTopology  = () => {
+    const { getData, trigger } = this.props
+    trigger('networks.topology', {
+      success: getData,
+      ...this.props.match.params,
+    })
+  }
+
   render() {
 
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner
-          icon="network-duotone"
-          {...bannerProps}
-          tabs={this.tabs}
-          title={t('네트워크')}
-          description={t('네트워크의 상태와 사용현황을 관리 할 수 있습니다.')}
-        />
+        <div className={classnames(styles.wrapper)}>
+          <div className={styles.titleWrapper}>
+            <div className={styles.icon}>
+                <Icon name={'network-duotone'} size={48} />
+            </div>
+            <div className={styles.title}>
+              <div className="h3">{t('네트워크')}</div>
+              <p className="text-second">
+                {t('네트워크의 상태와 사용현황을 관리 할 수 있습니다.')}
+              </p>
+            </div>
+            <div className={styles.divRight}>
+              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
+                  <Icon name={'topology'} size={36}/>             
+              </div>
+              <p>{t('토폴리지')}</p>
+            </div>
+          </div>
+        </div>    
         <Table
           {...tableProps}
           emptyProps={this.emptyProps}
