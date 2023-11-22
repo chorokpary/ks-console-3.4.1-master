@@ -3,8 +3,6 @@
 
 .wrapper {
   padding: 4px;
-  margin-right: 8px;
-  margin-left: 8px;
   background-color: $card-bg-color;
   border-radius: $border-radius;
 }
@@ -121,6 +119,8 @@
   padding: 12px;
   height: 64px;
   line-height: 20px;
+  margin-right: 8px;
+  margin-left: 8px;
   background-color: $white;
   border: 1px solid $border-color;
   border-radius: 4px;
