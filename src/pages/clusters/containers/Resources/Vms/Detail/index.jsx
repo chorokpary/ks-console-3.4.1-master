@@ -141,6 +141,7 @@ const VmDetail = (props) => {
       icon: 'radio',
       text: t('마이그레이션'),
       action: 'view',
+      disabled: get(store.detail.vm, 'migratable') ? false : true,
       onClick: () => {
 
         const data = {};
@@ -161,6 +162,7 @@ const VmDetail = (props) => {
       icon: 'resourceIcon:snapshot',
       text: "스냅샷",
       action: 'view',
+      disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
         const data = {};
         data.vmName = vmName;
@@ -281,7 +283,8 @@ const VmDetail = (props) => {
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
-    operations: get(store.detail.vm, 'migratable') ? getOperations() : getOperations().filter((data) => data.key != "migrate"),
+    // operations: get(store.detail.vm, 'migratable') ? getOperations() : getOperations().filter((data) => data.key != "migrate"),
+    operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
       {

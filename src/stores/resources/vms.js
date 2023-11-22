@@ -608,6 +608,45 @@ export default class VmStore extends Base {
 
     jsonData.snapshot = snapshotData;
 
+    const res = await request.post(url, jsonData)
+    return res;
+  }
+
+  @action
+  async snapshotList(name) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/snapshots/${name}`
+    )
+    result.snapshots.sort((a, b) => {
+      var x = a['timestamp'];
+      var y = b['timestamp'];
+      return x > y ? -1 : x < y ? 1 : 0;        
+    });
+
+    return result.snapshots
+  }
+
+  @action
+  snapshotDelete(name) {  
+
+    const url = `/edgetron/resources/kubevirt/vms/snapshots/${name}`;
+    console.log("url : "+ JSON.stringify(url))
+    
+    return this.submitting(request.delete(url))
+  }
+
+  @action
+  async restoreCreate(data, params = {}) {
+    const url = this.getResourceUrl(params) + "/restores";
+
+    const jsonData = {};
+    const restoreData = {};
+
+    restoreData.snapshot_name = data.snapshotName;
+    restoreData.description = data.description;   
+
+    jsonData.restore = restoreData;
+
     console.log("url : " + url)
     console.log("jsonData : " + JSON.stringify(jsonData))
 
@@ -616,28 +655,23 @@ export default class VmStore extends Base {
   }
 
   @action
-  async snapshotList(params) {
+  async restoreList(name) {
     const result = await request.get(
-      `/edgetron/resources/kubevirt/vms/snapshots`
+      `/edgetron/resources/kubevirt/vms/restores/${name}`
     )
-    if (params) {
-      result.clones.sort((a, b) => {
-        var x = a[params.sortBy];
-        var y = b[params.sortBy];
-        if (params.sortType == "asc") {
-          return x < y ? -1 : x > y ? 1 : 0;
-        } else {
-          return x > y ? -1 : x < y ? 1 : 0;
-        }
-      });
-    }
-    return result.vms
+    result.restores.sort((a, b) => {
+      var x = a['timestamp'];
+      var y = b['timestamp'];
+      return x > y ? -1 : x < y ? 1 : 0;        
+    });
+
+    return result.restores
   }
 
   @action
-  snapshotDelete(name) {  
+  restoreDelete(name) {  
 
-    const url = `/edgetron/resources/kubevirt/vms/snapshots/${name}`;
+    const url = `/edgetron/resources/kubevirt/vms/restores/${name}`;
     console.log("url : "+ JSON.stringify(url))
     
     // return this.submitting(request.delete(url))
@@ -656,86 +690,30 @@ export default class VmStore extends Base {
 
     jsonData.clone = cloneData;
 
-    console.log("url : " + url)
-    console.log("jsonData : " + JSON.stringify(jsonData))
-
     const res = await request.post(url, jsonData)
     return res;
   }
 
   @action
-  async cloneList(params) {
+  async cloneList(name) {
     const result = await request.get(
       `/edgetron/resources/kubevirt/vms/clones`
     )
-    if (params) {
-      result.clones.sort((a, b) => {
-        var x = a[params.sortBy];
-        var y = b[params.sortBy];
-        if (params.sortType == "asc") {
-          return x < y ? -1 : x > y ? 1 : 0;
-        } else {
-          return x > y ? -1 : x < y ? 1 : 0;
-        }
-      });
-    }
-    return result.vms
+   
+    result.clones.sort((a, b) => {
+      var x = a['timestamp'];
+      var y = b['timestamp'];
+      return x > y ? -1 : x < y ? 1 : 0;        
+    });
+
+    const vm_clones = (result.clones).filter(item => item.source_vm_name == name);
+
+    return vm_clones;
   }
 
   @action
   cloneDelete(name) {  
-
     const url = `/edgetron/resources/kubevirt/vms/clones/${name}`;
-    console.log("url : "+ JSON.stringify(url))
-    
-    // return this.submitting(request.delete(url))
+    return this.submitting(request.delete(url))
   }
-
-  @action
-  async restoreCreate(data, params = {}) {
-    const url = this.getResourceUrl(params) + "/restores";
-
-    const jsonData = {};
-    const snapshotData = {};
-
-    snapshotData.snapshot_name = data.snapshotName;
-    snapshotData.description = data.description;   
-
-    jsonData.snapshot = snapshotData;
-
-    console.log("url : " + url)
-    console.log("jsonData : " + JSON.stringify(jsonData))
-
-    // const res = await request.post(url, jsonData)
-    // return res;
-  }
-
-  @action
-  async restoreList(params) {
-    const result = await request.get(
-      `/edgetron/resources/kubevirt/vms/restores`
-    )
-    if (params) {
-      result.clones.sort((a, b) => {
-        var x = a[params.sortBy];
-        var y = b[params.sortBy];
-        if (params.sortType == "asc") {
-          return x < y ? -1 : x > y ? 1 : 0;
-        } else {
-          return x > y ? -1 : x < y ? 1 : 0;
-        }
-      });
-    }
-    return result.vms
-  }
-
-  @action
-  restoreDelete(name) {  
-
-    const url = `/edgetron/resources/kubevirt/vms/restores/${name}`;
-    console.log("url : "+ JSON.stringify(url))
-    
-    // return this.submitting(request.delete(url))
-  }
-
 }

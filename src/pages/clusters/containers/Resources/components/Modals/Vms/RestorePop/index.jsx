@@ -11,13 +11,12 @@ import VmStore from 'stores/resources/vms'
 const RestoreModal = (props) => {
 
   const vmStore = new VmStore();
-  const vmName = props.store.detail.name;
+  const snapshotName = props.name;
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  
   const handleOk = () => {
 
     const success = props.success;
@@ -25,7 +24,7 @@ const RestoreModal = (props) => {
     form.current.validator(async () => {   
       
       const { data } = form.current.props;
-      data.snapshotName = vmName;
+      data.snapshotName = snapshotName;
 
       console.log("data : "+ JSON.stringify(data))
 

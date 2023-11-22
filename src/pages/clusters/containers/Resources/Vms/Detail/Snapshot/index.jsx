@@ -28,10 +28,12 @@ const Snapshot = (props) => {
 
   const store = new VmStore();
 
-  const [vmDataList, setVmDataList] = useState([]);
-  const [vmSliceDataList, setVmSliceDataList] = useState([]);
-  const [vmSearchDataList, setVmSearchDataList] = useState([]);
+  const [dataList, setDataList] = useState([]);
+  const [sliceDataList, setSliceDataList] = useState([]);
+  const [searchDataList, setSearchDataList] = useState([]);
 
+  const [restoreDataList, setRestoreDataList] = useState([]);
+  
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +51,14 @@ const Snapshot = (props) => {
 
   useEffect(() => {
     fnGetData();
+    fnGetRestoreData();
   }, [])
+
+  const fnGetRestoreData = async () => {
+    const restoreList = await store.restoreList(props.match.params.name);
+    setRestoreDataList(restoreList);
+    setIsLoading(false);
+  }
 
   const fnGetData = async ({ ...params } = {}) => {
 
@@ -57,17 +66,16 @@ const Snapshot = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const vmList = (props.variables != 'kube_image') ? await store.fetchList() : await kaasStore.fetchList();
-    const vmFilterData = vmList?.filter((row) => props.variables === 'security_groups' ? row[props.variables].includes(props.name) : row[props.variables] === props.name)
-    const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
+    const filterData = await store.snapshotList(props.match.params.name);
+    const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
-    const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
-      (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
+    const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
+      (params.name != "" && params.name != undefined) ? getSliceData(searchData, page) : getSliceData(filterData, page);
 
     setCurrentPage(page);
-    setVmDataList(vmFilterData);
-    setVmSliceDataList(vmSliceData);
-    setVmSearchDataList(vmSearchData)
+    setDataList(filterData);
+    setSliceDataList(sliceData);
+    setSearchDataList(searchData)
 
     setIsLoading(false);
   };
@@ -75,17 +83,17 @@ const Snapshot = (props) => {
 
   const renderContent = () => {
 
-    if (vmSliceDataList.length == 0) {
+    if (sliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
-          리소스를 찾을 수 없음
+          리소스를 찾을 수 없습니다.
         </div>
       )
       return content;
     }
 
     const content = (
-      vmSliceDataList.map((obj, index) => {
+      sliceDataList.map((obj, index) => {
         return (
           <div className={styles.wrapper} key={index}>
             <div
@@ -99,7 +107,7 @@ const Snapshot = (props) => {
                 </div>
                 {renderContentDetail(obj)}
               </div>
-              {renderExtraContent(obj)}
+              {renderExtraContent(obj.name)}
             </div>
           </div>
         )
@@ -116,7 +124,7 @@ const Snapshot = (props) => {
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
             <p>Timestamp</p>
           </div>
           <div className={styles.text}>
@@ -124,24 +132,24 @@ const Snapshot = (props) => {
             <p>Name</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.node != "N/A" ? obj.node : "-"}</div>
+            <div>{obj.phase}</div>
             <p>Phase</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
+            <div>{obj.ready_to_use ? "사용" : "미사용"}</div>
             <p>Ready to use</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
+            {(obj.snapshot_volumes).length > 0 ? (obj.snapshot_volumes).map((item) => <div>{item}</div>) : "-"}
             <p>Snapshot Volume</p>
           </div>  
-          <div className={styles.text}>
-            <div>{obj.state}</div>
+          {/* <div className={styles.text}>
+            <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
-          </div>      
+          </div>      */}
           <div className={styles.button}>
               <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.name)}>Restore</Button></div>
-              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDelete(obj.name)} style={{width: "92.69px"}}>Delete</Button></div>  
+              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.name)} style={{width: "92.69px"}}>Delete</Button></div>  
           </div> 
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
@@ -151,44 +159,65 @@ const Snapshot = (props) => {
     )
   }
 
-  const renderExtraContent = (obj) => {
+  const renderExtraContent = (name) => {
 
-    const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
+    const restoreFilterList = restoreDataList.filter(item => item.snapshot_name == name);
+
     return (
       <div className={styles.itemExtra}>
-        <div className={styles.containers} >
-          <div className={classnames(styles.item)}>
-            <div className={styles.icon}>
-              <i className="ico-type-restore"></i>
-            </div>
-            <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.flavor_detail.name}</div>
-              <p>Timestamp</p>
-            </div>
-            <div className={styles.title}>
-              <div>{obj.flavor_detail.name}</div>
-              <p>Name</p>
-            </div>
-            <div className={styles.title}>
-              <div>{obj.flavor_detail.name}</div>
-              <p>Description</p>
-            </div>
-            <div className={styles.title}>
-              <div>{obj.flavor_detail.name}</div>
-              <p>Complete</p>
-            </div>
-            <div className={styles.arrow}>
-              <Button type="danger" onClick={() => handleDelete(obj.name)}>Delete</Button>
-            </div>
-          </div>
+
+        {restoreFilterList.length == 0 && 
+         <div className={styles.containers} >
+          <div className={styles.emptyRestore}>복원 이력이 없습니다.</div>
         </div>
+        }
+        {restoreFilterList.length > 0 && 
+          restoreFilterList.map(obj => {
+            <div className={styles.containers} >
+              <div className={classnames(styles.item)}>
+                <div className={styles.icon}>
+                  <i className="ico-type-restore"></i>
+                </div>
+                <div className={classnames(styles.title, styles.name)}>
+                  <div>{obj.timestamp}</div>
+                  <p>Timestamp</p>
+                </div>
+                <div className={styles.title}>
+                  <div>{obj.flavor_detail.name}</div>
+                  <p>Name</p>
+                </div>
+                {/* <div className={styles.text}>
+                  <div>{get(obj, "description", "-")}</div>
+                  <p>Description</p>
+                </div>      */}
+                <div className={styles.title}>
+                  <div>{obj.complete}</div>
+                  <p>Complete</p>
+                </div>
+                <div className={styles.arrow}>
+                  <Button type="danger" onClick={() => handleDeleteRestore(obj.name)}>Delete</Button>
+                </div>
+              </div>
+            </div>
+          })
+        }     
       </div>
     )
   }
 
-  const handleDelete = (name) => {
-    console.log("handleDelete!!");
-    props.rootStore.triggerAction('vm.cloneDelete', {
+  const handleDeleteSnapshot = (name) => {
+    console.log("handleDeleteSnapshot!!");
+    props.rootStore.triggerAction('vm.snapshotDelete', {
+      type: 'VM_DETAIL',
+      name : name,
+      store: store,
+      success: fnGetData,
+    })
+  }
+
+  const handleDeleteRestore = (name) => {
+    console.log("handleDeleteRestore!!");
+    props.rootStore.triggerAction('vm.restoreDelete', {
       type: 'VM_DETAIL',
       name : name,
       store: store,
@@ -197,7 +226,6 @@ const Snapshot = (props) => {
   }
 
   const handleRestore = (name) => {
-    console.log("handleRestore!!");
     props.rootStore.triggerAction('vm.restorePop', {
       name : name,
       store: store,
@@ -206,7 +234,7 @@ const Snapshot = (props) => {
   }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
+    const total = !isSearchFlag ? dataList.length : searchDataList.length;
     const pagination = { "page": currentPage, "limit": perPage, "total": total }
     return pagination
   }
@@ -274,7 +302,7 @@ const Snapshot = (props) => {
 
   return (
     <>  
-      {vmDataList.length > 0 &&
+      {dataList.length > 0 &&
           <Panel
             className={classnames(styles.main)}
           >
@@ -284,12 +312,12 @@ const Snapshot = (props) => {
           </Panel>
         }
 
-        {vmDataList.length == 0 &&
+        {dataList.length == 0 &&
           <Panel >
             <div className={styles.wrapper}>
               {isLoading ?
-                <div><Loading /></div>
-                : <div> 스냅샷 이력이 없습니다.</div>
+                <div className={styles.loading}><Loading /></div>
+                : <div className={styles.empty}> 스냅샷 리소스가 없습니다.</div>
               }
             </div>
           </Panel>

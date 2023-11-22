@@ -52,8 +52,7 @@ const Clone = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const list = await store.fetchList();
-    const filterData = list;
+    const filterData = await store.cloneList(props.match.params.name);
     const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
     const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
@@ -72,7 +71,7 @@ const Clone = (props) => {
     if (sliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
-          리소스를 찾을 수 없음
+          리소스를 찾을 수 없습니다.
         </div>
       )
       return content;
@@ -109,29 +108,30 @@ const Clone = (props) => {
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
             <p>Timestamp</p>
           </div>
-          <div className={styles.text}>
+          <div className={styles.name}>
             <div>{obj.name}</div>
             <p>Name</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
+            <div>{obj.target_vm_name}</div>
             <p>Target VM name</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.node != "N/A" ? obj.node : "-"}</div>
+            <div>{obj.phase}</div>
             <p>Phase</p>
           </div>
           <div className={styles.text}>
             <div>{obj.state}</div>
+            {(obj.networks).length > 0 ? (obj.networks).map((item) => <div>{item.name}</div>) : "-"}
             <p>Networks</p>
           </div>
-          <div className={styles.text}>
-            <div>{obj.state}</div>
+          {/* <div className={styles.text}>
+            <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
-          </div>        
+          </div>         */}
           <div className={styles.arrow}>
             <Button type="danger" onClick={() => handleDelete(obj.name)}>Delete</Button>
           </div>
@@ -233,8 +233,8 @@ const Clone = (props) => {
           <Panel >
             <div className={styles.wrapper}>
               {isLoading ?
-                <div><Loading /></div>
-                : <div> 클론 이력이 없습니다.</div>
+                <div className={styles.loading}><Loading /></div>
+                : <div className={styles.empty}> 클론 이력이 없습니다.</div>
               }
             </div>
           </Panel>

@@ -276,17 +276,54 @@ export default {
       })
     },
   },  
+  'vm.snapshotDelete': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.snapshotDelete(name).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('삭제 되었습니다.') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        module: store.module,
+        name,
+        store,
+        ...props,
+      })
+    },
+  },
   'vm.restorePop': {
-    on({ store, success, ...props }) {
+    on({ store, name, success, ...props }) {
       const modal = Modal.open({
         title: '복원 실행',
         modal: RestoreModal,
+        name,
         store,
         success,
         ...props,
       })
     },
   },  
+  'vm.restoreDelete': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.restoreDelete(name).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('삭제 되었습니다.') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        module: store.module,
+        name,
+        store,
+        ...props,
+      })
+    },
+  },
   'vm.clonePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({

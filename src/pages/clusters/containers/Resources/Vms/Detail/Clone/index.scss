@@ -211,6 +211,28 @@
       color: white;
     }
 
+    .name {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: left;
+      width: 30%;
+      padding-right: 20px;
+
+      &:first-of-type {
+        width: 28%;
+      }
+
+      & > div {
+        @include ellipsis;
+        @include TypographyTitleH6($dark-color07);
+      }
+
+      & > p {
+        @include ellipsis;
+        @include TypographyParagraph($dark-color01);
+      }
+    }
+
     .text {
       display: table-cell;
       vertical-align: middle;
@@ -219,7 +241,7 @@
       padding-right: 20px;
 
       &:first-of-type {
-        width: 28%;
+        width: 18%;
       }
 
       & > div {

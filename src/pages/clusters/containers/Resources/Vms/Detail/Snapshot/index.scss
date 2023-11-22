@@ -249,10 +249,10 @@
       display: table-cell;
       vertical-align: middle;
       text-align: left;
-      width: 16%;
+      width: 15%;
       padding-right: 20px;
 
-      &:first-of-type {
+      &:nth-child(2) {
         width: 28%;
       }
 
@@ -323,6 +323,13 @@
   justify-content: center;
   align-items: center;
   height: 56px;
+}
+
+.emptyRestore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 83px;
 }
 
 .nodata {
