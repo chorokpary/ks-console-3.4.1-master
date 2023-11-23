@@ -68,7 +68,7 @@ const RouterDetail = (props) => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('router.delete', {
+            props.rootStore.triggerAction('router.remove', {
             type: 'ROUTER_DETAIL',
             detail: toJS(store.detail),
             store: store,

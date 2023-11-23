@@ -68,7 +68,7 @@ const KeypairDetail = (props) => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('sriov.delete', {
+            props.rootStore.triggerAction('sriov.remove', {
             type: 'SRIOV_DETAIL',
             detail: toJS(store.detail),
             store: store,

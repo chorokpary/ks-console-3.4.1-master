@@ -198,7 +198,7 @@ const VmDetail = (props) => {
       type: 'danger',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('vm.delete', {
+        props.rootStore.triggerAction('vm.remove', {
           type: 'VM_DETAIL',
           detail: toJS(store.detail),
           store: store,

@@ -99,7 +99,7 @@ const ResourceDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('containerresource.delete', {
+                props.rootStore.triggerAction('containerresource.remove', {
                     type: 'RESOURCE_DETAIL',
                     detail: toJS(store.detail.cluster),
                     store: store,

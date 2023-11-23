@@ -68,7 +68,7 @@ const KeypairDetail = (props) => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('keypair.delete', {
+            props.rootStore.triggerAction('keypair.remove', {
             type: 'KEYPAIR_DETAIL',
             detail: toJS(store.detail),
             store: store,

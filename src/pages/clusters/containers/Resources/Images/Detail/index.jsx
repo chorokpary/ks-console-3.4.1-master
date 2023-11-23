@@ -68,7 +68,7 @@ const ImageDetail = (props) => {
       type: 'danger',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('images.delete', {
+        props.rootStore.triggerAction('images.remove', {
           type: 'IMAGE_DETAIL',
           detail: toJS(store.detail),
           store: store,

@@ -73,7 +73,7 @@ const NetworkDetail = (props) => {
           type: 'danger',
           show: showEdit,
           onClick: () =>
-            props.rootStore.triggerAction('networks.delete', {
+            props.rootStore.triggerAction('networks.remove', {
               type: 'NETWORK_DETAIL',
               detail: toJS(store.detail),
               store: store,
