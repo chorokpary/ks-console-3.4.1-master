@@ -25,6 +25,7 @@ import ModifyModal from 'clusters/containers/Resources/components/Modals/Vms/Mod
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import AlertModal from 'clusters/containers/Resources/components/Modals/Alert'
 import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 import ConsoleLoglModal from 'clusters/containers/Resources/components/Modals/ConsoleLog'
 import VolumeModal from 'clusters/containers/Resources/components/Modals/Vms/VolumePop'
@@ -353,6 +354,18 @@ export default {
       })
     },
   },
-  
+  'vm.alertPop': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        title: !!title ? title : '알림',
+        desc: !!desc ? desc : '알림 설명.',
+        modal: AlertModal,
+        module: store.module,
+        detail,
+        store,
+        ...props,
+      })
+    },
+  },
 
 }

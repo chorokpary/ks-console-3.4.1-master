@@ -670,11 +670,8 @@ export default class VmStore extends Base {
 
   @action
   restoreDelete(name) {  
-
     const url = `/edgetron/resources/kubevirt/vms/restores/${name}`;
-    console.log("url : "+ JSON.stringify(url))
-    
-    // return this.submitting(request.delete(url))
+    return this.submitting(request.delete(url))
   }
 
   @action

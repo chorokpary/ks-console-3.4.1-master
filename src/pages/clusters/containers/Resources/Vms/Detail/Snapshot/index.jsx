@@ -25,8 +25,9 @@ import {
 } from '@kube-design/components'
 
 const Snapshot = (props) => {
-
+  
   const store = new VmStore();
+  const vmState = props.detailStore.detail?.vm?.state;
 
   const [dataList, setDataList] = useState([]);
   const [sliceDataList, setSliceDataList] = useState([]);
@@ -162,28 +163,25 @@ const Snapshot = (props) => {
   const renderExtraContent = (name) => {
 
     const restoreFilterList = restoreDataList.filter(item => item.snapshot_name == name);
-
     return (
       <div className={styles.itemExtra}>
-
-        {restoreFilterList.length == 0 && 
-         <div className={styles.containers} >
-          <div className={styles.emptyRestore}>복원 이력이 없습니다.</div>
-        </div>
-        }
-        {restoreFilterList.length > 0 && 
-          restoreFilterList.map(obj => {
             <div className={styles.containers} >
+
+              {restoreFilterList.length == 0 && 
+                <div className={styles.emptyRestore}>복원 이력이 없습니다.</div>
+              }
+
+              {restoreFilterList.map(obj => 
               <div className={classnames(styles.item)}>
                 <div className={styles.icon}>
                   <i className="ico-type-restore"></i>
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
-                  <div>{obj.timestamp}</div>
+                  <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
                   <p>Timestamp</p>
                 </div>
                 <div className={styles.title}>
-                  <div>{obj.flavor_detail.name}</div>
+                  <div>{obj.name}</div>
                   <p>Name</p>
                 </div>
                 {/* <div className={styles.text}>
@@ -191,22 +189,21 @@ const Snapshot = (props) => {
                   <p>Description</p>
                 </div>      */}
                 <div className={styles.title}>
-                  <div>{obj.complete}</div>
+                  <div>{obj.complete ? "완료" : "미완료"}</div>
                   <p>Complete</p>
                 </div>
                 <div className={styles.arrow}>
                   <Button type="danger" onClick={() => handleDeleteRestore(obj.name)}>Delete</Button>
                 </div>
-              </div>
+              </div>  
+              )}
+
             </div>
-          })
-        }     
       </div>
     )
   }
 
   const handleDeleteSnapshot = (name) => {
-    console.log("handleDeleteSnapshot!!");
     props.rootStore.triggerAction('vm.snapshotDelete', {
       type: 'VM_DETAIL',
       name : name,
@@ -216,7 +213,6 @@ const Snapshot = (props) => {
   }
 
   const handleDeleteRestore = (name) => {
-    console.log("handleDeleteRestore!!");
     props.rootStore.triggerAction('vm.restoreDelete', {
       type: 'VM_DETAIL',
       name : name,
@@ -226,11 +222,19 @@ const Snapshot = (props) => {
   }
 
   const handleRestore = (name) => {
-    props.rootStore.triggerAction('vm.restorePop', {
-      name : name,
-      store: store,
-      success: fnGetData,
-    })
+    if(vmState != "Stopped"){
+      props.rootStore.triggerAction('vm.alertPop', {
+        store: store,
+        desc: t('가상 머신이 종료되지 않았습니다. 확인 후 다시 진행해 주세요.'),
+        success: fnGetData,
+      })
+    }else{
+      props.rootStore.triggerAction('vm.restorePop', {
+        name : name,
+        store: store,
+        success: fnGetData,
+      })
+    }   
   }
 
   const getPagination = () => {
@@ -326,5 +330,5 @@ const Snapshot = (props) => {
   );
 };
 
-export default inject('rootStore')(observer(Snapshot))
+export default inject('rootStore', 'detailStore')(observer(Snapshot))
 
