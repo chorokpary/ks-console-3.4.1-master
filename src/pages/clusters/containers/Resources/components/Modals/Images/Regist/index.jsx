@@ -300,7 +300,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 </Form.Item>
                 <Form.Item>
                   <Input
-                    defaultValue={osType + ' > ' + distroType}
+                    defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + distroType}
                     readOnly
                     style={{ maxWidth: 'none' }}
                   />
