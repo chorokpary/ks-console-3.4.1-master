@@ -234,8 +234,8 @@ const RegistModal = (props) => {
 
             if (isFirst) {
                 if (networkDataList.length > 0) {
-                    handleSingleCheck(networkDataList[0].name, "network");
-                    setNetworkName(networkDataList[0].name);
+                    handleSingleCheck(networkDataList.filter((el) => el.external)[0].name, "network");
+                    setNetworkName(networkDataList.filter((el) => el.external)[0].name);
                 }
                 setCniSelect(cnis[0].value);
                 setCsiSelect(csis[0].value);
