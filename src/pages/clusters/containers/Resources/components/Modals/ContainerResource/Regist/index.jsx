@@ -648,7 +648,8 @@ const RegistModal = (props) => {
 
                             {/* 네트워크 설정 시작==========================================*/}
                             <div className={`${regStep == 2 ? "" : "hide"}`}>
-                                <Form.Item label={t('네트워크')}>
+                                {t('네트워크')}<span className="form-item-required">*</span>
+                                <Form.Item>
                                     <Form.Group>
                                         <Form.Item>
                                             <div>

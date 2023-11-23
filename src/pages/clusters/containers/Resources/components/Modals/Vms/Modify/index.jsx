@@ -24,9 +24,11 @@ const ModifyModal = (props) => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
-      const { data } = form.current.props;
-      data.scurityGroups = securityGroupCheckItems;
-      onOk({ ...data })
+      if(securityGroupCheckItems.length > 0){
+        const { data } = form.current.props;
+        data.scurityGroups = securityGroupCheckItems;
+        onOk({ ...data })
+      }
     })
   }
 
@@ -109,7 +111,9 @@ const ModifyModal = (props) => {
             />
           </Form.Item>
 
-          <Form.Item label={t('보안 그룹')} >
+          <div style={{ padding: 10 }} />
+          {t('보안 그룹')}<span className="form-item-required">*</span>
+          <Form.Item>
             <div className={styles.wrapper}>
               {stateVariables['security'].length > 0 &&
                 <div className={classnames(styles.table_title, styles.table_title_bg)}>
@@ -166,6 +170,7 @@ const ModifyModal = (props) => {
                     )}                      
                   </div>
                 </div>
+                <div className={`form-item-error ${securityGroupCheckItems.length > 0 ? "hide" : ""}`}>보안그룹을 선택해 주세요.</div>
             </div>
           </Form.Item>
 
