@@ -908,7 +908,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => handlePasswordRoute.delColumn(obj)}
+                          onClick={() => listPasswordRoute.length > 1 && handlePasswordRoute.delColumn(obj) }
                         />
                       </div>
                     ))}
@@ -946,7 +946,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => handleFileRoute.delColumn(obj)}
+                          onClick={() => listFileRoute.length > 1 && handleFileRoute.delColumn(obj)}
                         />
                       </div>
                     ))}
@@ -984,7 +984,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => handlePackageRoute.delColumn(obj)}
+                          onClick={() => listPackageRoute.length > 1 && handlePackageRoute.delColumn(obj)}
                         />
                       </div>
                     ))}
