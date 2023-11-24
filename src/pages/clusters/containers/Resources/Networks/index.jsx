@@ -194,7 +194,7 @@ export default class Networks extends React.Component {
               <div className={styles.iconRight} onClick={() => this.modalTopology()}>
                   <Icon name={'topology'} size={36}/>             
               </div>
-              <p>{t('토폴리지')}</p>
+              <p>{t('토폴로지')}</p>
             </div>
           </div>
         </div>    
