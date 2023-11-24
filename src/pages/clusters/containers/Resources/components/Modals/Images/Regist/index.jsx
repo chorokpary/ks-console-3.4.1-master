@@ -12,6 +12,9 @@ import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 import classnames from 'classnames'
 import axios from 'axios'
+import { Base64 } from 'js-base64'
+import { async } from 'q'
+const https = require('https')
 
 const defaultDockerText = '컨테이너에 대한 이미지를 설정합니다.'
 const emptyDockerText = '이미지를 찾을 수 없습니다.'
@@ -33,7 +36,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
   const [distroTypeList, setDistroTypeList] = useState([])
   const [distroType, setDistroType] = useState('ubuntu')
 
-  const [registryUrl, setRegistryUrl] = useState(defaultRegistryUrl)
+  const [registryUrl, setRegistryUrl] = useState(publicType == 'public' ? defaultRegistryUrl : '')
   const [registryUrlActive, setRegistryUrlActive] = useState(false)
   const [dockerPopActive, setDockerPopActive] = useState(false)
   const [imageSize, setImageSize] = useState(defaultImageSize)
@@ -46,6 +49,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
   const [dockerTagList, setDockerTagList] = useState([])
   const [dockerTag, setDockerTag] = useState('')
   const [sourceEmpty, setSourceEmpty] = useState(false)
+
+  const [userName, setUserName] = useState('')
+  const [userPassword, setUserPassword] = useState('')
+
 
   const [docekerText, setDockerText] = useState(defaultDockerText)
 
@@ -71,9 +78,19 @@ export default function ResourceImageModal({ title, store, onOk }) {
     };
   }, []);
 
+  const handlePublicType = (value) => {
+    setPublicType(value)
+    setRegistryUrlActive(false)
+    document.querySelector('#chk-1').checked = false;
+  }
+
   const handleRegistryUrl = () => {
-    if (registryUrlActive) {
+    if (publicType == 'private') {
+      setRegistryUrl('')
+    } else {
       setRegistryUrl(defaultRegistryUrl)
+    }
+    if (registryUrlActive) {
       setRegistryUrlActive(false)
     } else {
       setRegistryUrlActive(true)
@@ -177,11 +194,9 @@ export default function ResourceImageModal({ title, store, onOk }) {
     form.current.validator(() => {
       const { data } = form.current.props;
 
-      if (imageSize == '0GB') {
-        setSizeEmpty(true)
+      if (sizeEmpty) {
         return
       } else {
-        setSizeEmpty(false)
         data.size = Number(imageSize.slice(0, imageSize.length - 2))
       }
       if (dockerTag == '') {
@@ -225,21 +240,59 @@ export default function ResourceImageModal({ title, store, onOk }) {
     }
   }
 
-  const handlePublicType = (value) => {
-    setPublicType(value)
-    // setRegistryUrlActive(false)
-    // if (value == 'public') {
-    //   setRegistryUrl(defaultRegistryUrl)
-    // }
-  }
-
   useEffect(() => {
-    if (imageSize == '0GB') {
+    let val = Number(imageSize.substring(0, imageSize.length - 2))
+
+    if (val == 0) {
       setSizeEmpty(true)
     } else {
       setSizeEmpty(false)
     }
   }, [imageSize])
+
+  const checkUserValid = async () => {
+    console.log(userName)
+    console.log(userPassword)
+
+    let index = registryUrl.lastIndexOf('api/v2.0/') + 9
+    let url = registryUrl.substring(0, index) + 'users'
+    let userAuth = Base64.encode(`${userName}:${userPassword}`)
+
+    // const result = await request.get(url, {
+    //   method: "GET",
+    //   headers: {
+    //     "X-Requested-With": "XMLHttpRequest",
+    //     "Authorization": `Basic ${userAuth}`
+    //   },
+    //   mode: "cors"
+    // });
+    // console.log(result)
+    const res = fetch('dockerhub/api/content/v1/products/search', {
+      method: 'GET',
+      headers: {
+        "Authorization": `Basic YWRtaW46SGFyYm9yMTIzNDU=`,
+      },
+      mode: 'cors',
+      credentials: 'include',
+      agent: new https.Agent({
+        rejectUnauthorized: false,
+      }),
+      followRedirect: false,
+    }).then(response => {
+      console.log(response)
+    })
+      .catch(err => {
+        console.log(err)
+      })
+    console.log(res)
+
+    // const response = await axios.get(`https://quay.io/api/v1/repository/edgestack/rocky-8-kube`, {
+    //   headers: {
+    //     "X-Requested-With": "XMLHttpRequest",
+    //   }
+    // });
+    // console.log(response)
+  }
 
   return (
     <>
@@ -449,42 +502,44 @@ export default function ResourceImageModal({ title, store, onOk }) {
               <div className={styles.content_box}>
                 {/* <label>소스</label> */}
                 <div className={`${styles.cont_box_wrap} ${sourceEmpty ? styles.formErrorStyle : ''}`}>
-                  {/* <div className={styles.regi_group_area}>
-                    <div className={styles.formarea}>
-                      <div className={styles.custom_input}>
-                        <label>사용자 이름</label>
-                        <input type="text" />
-                      </div>
-                      <div className={styles.custom_input}>
-                        <label>패스워드</label>
-                        <input type="password" />
-                      </div>
-                      <button type="button" className={classnames(styles.btn, styles.btn_control)}>유효성 체크</button>
-                    </div>
-                  </div> */}
                   <div className={styles.cont_box_section}>
                     <div className={styles.cont_box_wrap}>
                       <h6 className={styles.label}>
-                        {/* {publicType == 'private' && */}
                         <div className={styles.form_check}>
                           <input type="checkbox" name="chk-1" id="chk-1" />
                           <label htmlFor="chk-1" onClick={() => handleRegistryUrl()}></label>
                         </div>
-                        {/* } */}
                         <div className={styles.title}>
                           <p>Registry URL</p>
                           <span>이미지 레지스트리 URL을 설정합니다.</span>
                         </div>
                       </h6>
                       {registryUrlActive &&
-                        <div className={styles.regi_group_area}>
-                          <div className={styles.formarea}>
-                            <div className={classnames(styles.custom_input, styles.w_1)}>
-                              <label>Registry URL</label>
-                              <input type="text" defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+                        <>
+                          <div className={styles.regi_group_area}>
+                            <div className={styles.formarea}>
+                              <div className={classnames(styles.custom_input, styles.w_1)}>
+                                <label>Registry URL</label>
+                                <input type="text" placeholder={publicType == 'private' ? 'https://{url}/api/v2.0/projects/{project_name}/repositories' : ''} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+                              </div>
                             </div>
                           </div>
-                        </div>
+                          {/* {publicType == 'private' &&
+                            <div className={styles.regi_group_area}>
+                              <div className={styles.formarea}>
+                                <div className={styles.custom_input}>
+                                  <label>사용자 이름</label>
+                                  <input type="text" defaultValue={userName} onChange={(e) => setUserName(e.target.value)} />
+                                </div>
+                                <div className={styles.custom_input}>
+                                  <label>패스워드</label>
+                                  <input type="password" defaultValue={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
+                                </div>
+                                <button type="button" className={classnames(styles.btn, styles.btn_control)} onClick={() => checkUserValid()}>유효성 체크</button>
+                              </div>
+                            </div>
+                          } */}
+                        </>
                       }
                     </div>
                     <div className={`${styles.select_inner_content} select_inner_content`} >
