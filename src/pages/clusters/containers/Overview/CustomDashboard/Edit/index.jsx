@@ -175,6 +175,9 @@ const CustomDashboardEdit = (props) => {
     if (dashboardName.trim().length == 0) {
       Notify.error({ content: t('대시보드 이름을 최소 1글자 이상 입력해주세요.') })
       document.getElementById('dashboardName').focus();
+    } else if (dashboardName.trim().length > 15) {
+      Notify.error({ content: t('대시보드 이름을 최대 15글자까지만 입력해주세요.') })
+      document.getElementById('dashboardName').focus();
     } else {
       var arr = JSON.parse(localStorage.getItem("dashboardArr"))
       var duplicateName = arr.find(el => el.name == dashboardName)
