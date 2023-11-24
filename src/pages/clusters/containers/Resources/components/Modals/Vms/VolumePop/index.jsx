@@ -93,8 +93,9 @@ const VolumeModal = (props) => {
                     <col width="15%" />
                     <col width="15%" />
                     <col width="20%" />
-                    <col width="5%" />
-                    <col width="5%" />
+                    <col width="8%" />
+                    <col width="8%" />
+                    <col width="17%" />
                     <col width="15%" />
                   </colgroup>
                   <thead>
@@ -105,6 +106,7 @@ const VolumeModal = (props) => {
                       <th><strong>스토리지 클래스</strong></th>
                       <th><strong>용량</strong></th>
                       <th><strong>상태</strong></th>
+                      <th><strong>볼륨 위치</strong></th>
                       <th><strong>Action</strong></th>
                     </tr>
                   </thead>
@@ -125,13 +127,16 @@ const VolumeModal = (props) => {
                         <td >{data.storage_class}</td>
                         <td >{data.capacity}</td>
                         <td >{data.phase}</td>
+                        <td >{data.selected_node}</td>
                         <td>
-                          <Toggle
-                            checked={volumeCheckItems.includes(data.name) ? true : false}
-                            onChange={(e) => handleVolumeToggle(e, data.name)}
-                            onText={t('ON')}
-                            offText={t('OFF')}
-                          />
+                          {data.selected_node == props.store.detail.vm.node &&
+                            <Toggle
+                              checked={volumeCheckItems.includes(data.name) ? true : false}
+                              onChange={(e) => handleVolumeToggle(e, data.name)}
+                              onText={t('ON')}
+                              offText={t('OFF')}
+                            />
+                          }
                         </td>
                       </tr>
                     ))}
