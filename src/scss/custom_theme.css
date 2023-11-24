@@ -538,13 +538,17 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   color: #4465dc;
 }
 
+.src-pages-apps-containers-Home-index__cates .src-pages-apps-containers-Home-index__group .src-pages-apps-containers-Home-index__menu > .src-pages-apps-containers-Home-index__item:hover, .src-pages-apps-containers-Home-index__cates .src-pages-apps-containers-Home-index__group .src-pages-apps-containers-Home-index__menu > .src-pages-apps-containers-Home-index__item.src-pages-apps-containers-Home-index__active {
+  color: #3744b9 !important;
+}
+
 .src-pages-apps-components-Banner-index__back .custom-icon:hover > * {
   color: #96a6e2 !important;
   fill: #96a6e2 !important;
 }
 
 .markdown-body code, .markdown-body tt {
-  color: #96a6e2 !important;
+  color: #2b2edc !important;
   background-color: #DDE4FF !important;
 }
 
