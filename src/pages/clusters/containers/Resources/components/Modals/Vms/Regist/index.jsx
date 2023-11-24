@@ -34,8 +34,10 @@ const RegistModal = (props) => {
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
 
-  const [selectImageName, setSelectImageName] = useState()
-  const [imageOptionList, setImageOptionList] = useState([]);
+  const [selectImageName, setSelectImageName] = useState();
+  const [selectFlavorName, setSelectFlavorName] = useState();
+
+  const [imageOptionList, setImageOptionList] = useState([]);  
 
   const [vmName, setVmName] = useState('');
   const [imageName, setImageName] = useState('');
@@ -59,6 +61,9 @@ const RegistModal = (props) => {
   const [isPackage, setIsPackage] = useState(false);
   const [isFileWrite, setIsFileWrite] = useState(false);
   const [isUserScript, setIsUserScript] = useState(false);
+
+  const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
+  
 
   useEffect(() => {
 
@@ -226,12 +231,21 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     if (step == 1) {
+
       if (imageType == "I" && (data.name == undefined || !regexName.test(data.name)  || data.image == "선택" || data.flavor == "선택")) {
         handleOk();
       } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == "선택" || data.flavor == "선택")) {
         handleOk();
       } else {
-        setRegStep(2);
+        const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi','');
+        const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
+
+        if(flavorSize > imageSize){
+          setRegStep(2);
+          setFlavorSizeCheck(true);
+        }else{
+          setFlavorSizeCheck(false);
+        }        
       }
     }
     if (step == 3) {
@@ -583,10 +597,7 @@ const RegistModal = (props) => {
                               label: t('선택')
                             }}
                             options={imageOptions()}
-                            onChange={(e) => {
-                              setSelectImageName(e)
-                              imageViewRef.current.value = e;
-                            }}
+                            onChange={(e) => setSelectImageName(e)}
                             defaultDescription={"이미지를 선택해 주세요."}
                           />
                         </Form.Item>
@@ -629,12 +640,14 @@ const RegistModal = (props) => {
                         name="flavor"
                         defaultValue="선택"
                         options={flavorOptions()}
+                        onChange={(e) => setSelectFlavorName(e)}
                         placeholder={{
                           label: t('선택')
                         }}
                         defaultDescription={"Flavor를 선택해 주세요."}
                       />
                     </Form.Item>
+                    <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>이미지 사이즈보다 큰 사이즈를 선택해 주세요.</div>
                   </Column>
 
                   <Column>
