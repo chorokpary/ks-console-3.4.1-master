@@ -68,7 +68,7 @@ const ContainerImageDetail = (props) => {
       type: 'danger',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('containerimage.delete', {
+        props.rootStore.triggerAction('containerimage.remove', {
           type: 'KEYPAIR_DETAIL',
           detail: toJS(store.detail),
           store: store,
