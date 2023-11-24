@@ -3025,3 +3025,7 @@ body.dashboard {
 .dashboard .usageTab .select-option-label {
   color: #ffffff !important;
 }
+
+body {
+  overflow-x: hidden !important;
+}
