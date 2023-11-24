@@ -583,19 +583,19 @@ const RegistModal = (props) => {
                               label: t('선택')
                             }}
                             options={imageOptions()}
-                            onChange={(e) => setSelectImageName(e)}
+                            onChange={(e) => {
+                              setSelectImageName(e)
+                              imageViewRef.current.value = e;
+                            }}
                             defaultDescription={"이미지를 선택해 주세요."}
                           />
                         </Form.Item>
                         {
                           selectImageName &&
                           <Form.Item>
-                            <Input
-                              name="imageView"
-                              defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
-                              readOnly
-                              style={{ maxWidth: 'none' }}
-                            />
+                            <div className={styles.wrapperImageView}>
+                                {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
+                            </div>
                           </Form.Item>
                         }
                       </Column>

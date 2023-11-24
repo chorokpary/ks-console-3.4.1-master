@@ -565,12 +565,9 @@ const RegistModal = (props) => {
                                             {
                                                 selectImageName &&
                                                 <Form.Item>
-                                                    <Input
-                                                        name="imageView"
-                                                        defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
-                                                        readOnly
-                                                        style={{ maxWidth: 'none' }}
-                                                    />
+                                                     <div className={styles.wrapperImageView}>
+                                                        {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
+                                                    </div>
                                                 </Form.Item>
                                             }
                                         </Column>
