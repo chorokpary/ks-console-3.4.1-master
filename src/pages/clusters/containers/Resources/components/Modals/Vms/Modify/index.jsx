@@ -112,7 +112,7 @@ const ModifyModal = (props) => {
           </Form.Item>
 
           <div style={{ padding: 10 }} />
-          {t('보안 그룹')}<span className="form-item-required">*</span>
+          {t('보안그룹')}<span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
               {stateVariables['security'].length > 0 &&
@@ -136,7 +136,7 @@ const ModifyModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "security")}
                                 checked={dataListVariables['security'].length > 0 && stateVariables['security'].length === dataListVariables['security'].length ? true : false}/>
                           </th>
-                          <th><strong>보안 그룹 이름</strong></th>
+                          <th><strong>보안그룹 이름</strong></th>
                           <th><strong>설명</strong></th>
                           <th><strong>인바운드 규칙수</strong></th>
                           <th><strong>아웃바운드 규칙수</strong></th>

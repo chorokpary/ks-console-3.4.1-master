@@ -118,7 +118,7 @@ const DetailSecurityGroupList = (props) => {
 
   return (
     <>  
-          <Panel title={"보안 그룹"} >
+          <Panel title={"보안그룹"} >
             { (props.securityGroupData).map((obj, index) => {
               return (
                 <div className={styles.wrapper} key={index}>

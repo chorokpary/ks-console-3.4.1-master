@@ -824,7 +824,7 @@ const RegistModal = (props) => {
                   />
                 </Form.Item>
 
-                <Form.Item label={t('보안 그룹')} >
+                <Form.Item label={t('보안그룹')} >
                   <div className={styles.wrapper}>
                     {stateVariables['security'].length > 0 &&
                       <div className={classnames(styles.table_title, styles.table_title_bg)}>
@@ -847,7 +847,7 @@ const RegistModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "security")}
                                 checked={dataListVariables['security'].length > 0 && stateVariables['security'].length === dataListVariables['security'].length ? true : false} />
                             </th>
-                            <th><strong>보안 그룹 이름</strong></th>
+                            <th><strong>보안그룹 이름</strong></th>
                             <th><strong>설명</strong></th>
                             <th><strong>인바운드 규칙수</strong></th>
                             <th><strong>아웃바운드 규칙수</strong></th>
