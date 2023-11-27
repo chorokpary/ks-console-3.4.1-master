@@ -45,69 +45,73 @@ const DetailSecurityGroupList = (props) => {
   const renderExtraContent = (obj) => {
     return (
       <div className={styles.itemExtra}>
-          <div className={styles.containers} >
+        <div className={styles.containers} >
+          {obj.rules.filter(el => el.direction == "ingress").length > 0 &&
             <Panel title={"인바운드"} className={styles.panelWrapper}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                    </colgroup>
-                    <thead>
-                      <tr>
+                    <col width="25%" />
+                    <col width="25%" />
+                    <col width="25%" />
+                    <col width="25%" />
+                  </colgroup>
+                  <thead>
+                    <tr>
                       <th>프로토콜</th>
                       <th>포트범위</th>
                       <th>이더넷유형</th>
                       <th>원격IP범위</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(obj.rules).filter(el => el.direction == "ingress").map((obj, index) => (
+                      <tr key={obj.id}>
+                        <td>{obj.ethernet_type ? rule.protocol : 'ALL'}</td>
+                        <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
+                        <td>{obj.ethernet_type ?? 'ALL'}</td>
+                        <td>{obj.remote_ip_prefix ? obj.remote_ip_prefix : '-'}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {(obj.rules).filter(el => el.direction == "ingress").map((obj, index) => (
-                        <tr key={obj.id}>
-                          <td>{obj.protocol}</td>                          
-                          <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
-                          <td>{obj.ethernet_type}</td>
-                          <td>{obj.remote_ip_prefix}</td>
-                        </tr>
-                      ))}
-                    </tbody>
+                    ))}
+                  </tbody>
                 </table>
               </div>
-            </Panel>   
+            </Panel>
+          }
+          {obj.rules.filter(el => el.direction == "egress").length > 0 &&
             <Panel title={"아웃바인드"} className={styles.panelWrapper}>
               <div className={styles.table}>
-                  <table>
-                    <colgroup>
-                        <col width="25%"/>
-                        <col width="25%"/>
-                        <col width="25%"/>
-                        <col width="25%"/>
-                      </colgroup>
-                      <thead>
-                        <tr>
-                        <th>프로토콜</th>
-                        <th>포트범위</th>
-                        <th>이더넷유형</th>
-                        <th>원격IP범위</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(obj.rules).filter(el => el.direction == "egress").map((obj, index) => (
-                          <tr key={obj.id}>
-                            <td>{obj.protocol}</td>
-                            <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
-                            <td>{obj.ethernet_type}</td>
-                            <td>{obj.remote_ip_prefix}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                  </table>
-                </div>
+                <table>
+                  <colgroup>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>프로토콜</th>
+                      <th>포트범위</th>
+                      <th>이더넷유형</th>
+                      <th>원격IP범위</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(obj.rules).filter(el => el.direction == "egress").map((obj, index) => (
+                      <tr key={obj.id}>
+                        <td>{obj.ethernet_type ? rule.protocol : 'ALL'}</td>
+                        <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
+                        <td>{obj.ethernet_type ?? 'ALL'}</td>
+                        <td>{obj.remote_ip_prefix ? obj.remote_ip_prefix : '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Panel>      
-          </div>        
-        </div>
+          }
+        </div>        
+      </div>
     )
   }
 
@@ -133,7 +137,7 @@ const DetailSecurityGroupList = (props) => {
                     </div>
                     {renderContent(obj)}
                   </div>
-                    {renderExtraContent(obj)}
+                  {obj.rules.length > 0 && renderExtraContent(obj)}
                 </div>
               </div>
               )
