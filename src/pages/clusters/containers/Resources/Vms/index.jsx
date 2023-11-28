@@ -286,7 +286,7 @@ export default class Vms extends React.Component {
           if (!!networks) {
             networkIpList = networks.map((el) => {
               if (el.name != "k8s-pod-network") {
-                return <p key={el.name}>{el.ip}</p>
+                return <Link to={`/clusters/${cluster}/networks/${el.name}`}><p key={el.name}>{el.ip}</p></Link>
               }
             });
           } else {
@@ -317,7 +317,8 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (node) => {
-          const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
+          // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
+          const nodeLink = node == "N/A" ? node : node; 
           return (            
             nodeLink   
           )
