@@ -16,9 +16,15 @@ const Status = (props) => {
   useEffect(() => {
     setName(store.detail.volume?.used_by_vmi)
   }, [name])
+
   return (
     <>  
-    {name && 
+    {!!name && 
+      <div>
+        <DetailVmList type='볼륨' variables='name' name={name} />
+      </div>        
+    }
+     {!!!name && 
       <div>
         <DetailVmList type='볼륨' variables='name' name={name} />
       </div>        

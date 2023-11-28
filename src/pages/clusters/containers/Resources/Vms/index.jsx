@@ -249,7 +249,8 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: (image, record) => {
           const icon = "ico-os-" + record.image_detail?.distro_type;
-          return (
+          return (            
+            <Link to={`/clusters/${cluster}/images/${image}`}>
             <i
               style={{
                 backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
@@ -258,6 +259,7 @@ export default class Vms extends React.Component {
                 width: '40px',
                 height: '40px'
               }}></i>
+              </Link>           
           )
         },
       },
@@ -301,6 +303,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (floating, record) => {
+          
           const floatingList = this.props.store.floatingIpList;
           const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == record.name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
 
@@ -313,6 +316,12 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: (node) => {
+          const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
+          return (            
+            nodeLink   
+          )
+        },
       },
       {
         title: t('보안그룹'),
@@ -477,6 +486,11 @@ export default class Vms extends React.Component {
 
   getBanner = () => {
     return <i className="ico-type-vm"></i>
+  }
+
+  fnMoveDetail = (route, name) => {
+    const detailUrl = `clusters/default/${route}/${name}`
+    routing.push(listUrl)
   }
 
   render() {
