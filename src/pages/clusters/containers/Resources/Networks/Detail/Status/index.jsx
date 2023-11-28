@@ -27,8 +27,6 @@ const Status = (props) => {
 
         const networkName = props.match.params.name;
 
-        console.log("props.route : "+ JSON.stringify(props.route))
-
         const fnGetRouterData = async () => {
 
             const routerList = await routerStore.fetchList();

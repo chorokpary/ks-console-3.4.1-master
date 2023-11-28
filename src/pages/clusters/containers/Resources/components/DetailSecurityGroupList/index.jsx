@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import { Panel, Text } from 'components/Base'
 import { Icon} from '@kube-design/components'
 import styles from './index.scss'
+import { Link } from 'react-router-dom'
 
 import * as common from 'utils/resources'
 
@@ -13,13 +14,15 @@ const DetailSecurityGroupList = (props) => {
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
+
+  const cluster = props.cluster;
   
   const renderContent = (obj) => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-              <div>{obj.name}</div>
+              <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}`}>{obj.name}</Link></div>
               <p>이름</p>
           </div>
           <div className={styles.text}>
@@ -35,7 +38,9 @@ const DetailSecurityGroupList = (props) => {
               <p>아웃바운드 규칙</p>
           </div>
           <div className={styles.arrow}>
-            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
+            {(obj.ingress_count == 0 && obj.egress_count == 0) ? "" :
+              <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
+            }
           </div>
         </div>
        </>

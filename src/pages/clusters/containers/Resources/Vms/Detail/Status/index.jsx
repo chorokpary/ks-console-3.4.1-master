@@ -8,6 +8,7 @@ import axios from "axios";
 import { Panel, Text, Indicator } from 'components/Base'
 import { Icon, Button, Notify } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
+import { Link } from 'react-router-dom'
 
 import styles from './index.scss'
 
@@ -22,6 +23,8 @@ const Status = (props) => {
 
   const store = props.detailStore;
   const customStore = new CustomStore();
+
+  const { cluster } = props.match.params;
 
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailNetwork, setDetailNetwork] = useState([]);
@@ -273,7 +276,7 @@ const Status = (props) => {
                   <Icon name="apps" size={40} />
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
-                  <div>{detailFlavor.name}</div>
+                  <div><Link to={`/clusters/${cluster}/flavors/${detailFlavor.name}`}>{detailFlavor.name}</Link></div>
                   <p>이름</p>
                 </div>
                 <div className={styles.title}>
@@ -327,7 +330,7 @@ const Status = (props) => {
 
         {/* 보안그룹 */}
         {
-          store.detail.vm?.security_groups.length > 0 && <DetailSecurityGroupList securityGroupData={detailSecurityGroup} />
+          store.detail.vm?.security_groups.length > 0 && <DetailSecurityGroupList securityGroupData={detailSecurityGroup} cluster={cluster}/>
         }
 
         {/* 네트워크 */}
@@ -340,7 +343,7 @@ const Status = (props) => {
                     <Icon name="network-duotone" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div>{obj.name}</div>
+                    <div><Link to={`/clusters/${cluster}/networks/${obj.name}`}>{obj.name}</Link></div>
                     <p>이름</p>
                   </div>
                   <div className={styles.title}>
@@ -371,7 +374,7 @@ const Status = (props) => {
                     <Icon name="network-duotone" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div>{obj.name}</div>
+                    <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}`}>{obj.name}</Link></div>
                     <p>이름</p>
                   </div>
                   <div className={styles.title}>

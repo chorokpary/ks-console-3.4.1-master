@@ -5,6 +5,7 @@ import classnames from 'classnames'
 
 import { Panel, Text, Indicator } from 'components/Base'
 import { TinyArea } from 'components/Charts'
+import { Link } from 'react-router-dom'
 
 import styles from './index.scss'
 
@@ -36,6 +37,8 @@ const DetailVmList = (props) => {
 
   const store = new VmStore();
   const customStore = new CustomStore();
+
+  const cluster = props.detailStore?.detail.cluster;
 
   const [vmDataList, setVmDataList] = useState([]);
   const [vmSliceDataList, setVmSliceDataList] = useState([]);
@@ -227,7 +230,7 @@ const DetailVmList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              {obj.name}
+              <Link to={`/clusters/${cluster}/vms/${obj.name}`}>{obj.name}</Link>
               <Tooltip content={t('VNC')}>
                 <Icon
                   className="margin-l8"
@@ -493,5 +496,5 @@ const DetailVmList = (props) => {
   );
 };
 
-export default DetailVmList
+export default inject('detailStore')(DetailVmList)
 
