@@ -40,7 +40,7 @@
   }
 
   .title {
-    min-width: 20%;
+    min-width: 35%;
     text-align: left;
 
     & > div {
@@ -58,6 +58,22 @@
       width: 25%;
     }
   }
+
+  .complete {
+    min-width: 10%;
+    text-align: left;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
+    }
+  }
+
 
   :global {
     .tag {

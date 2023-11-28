@@ -376,6 +376,9 @@ export default class VmStore extends Base {
     const jsonData = {};
     const name = data.vmName;
     jsonData.action = data.actionType;
+    
+    console.log(`${this.getDetailUrl({ name: name, ...params })}/action`)
+    console.log(JSON.stringify(jsonData))
 
     await this.submitting(
       request.put(`${this.getDetailUrl({ name: name, ...params })}/action`, jsonData)
@@ -630,8 +633,6 @@ export default class VmStore extends Base {
   snapshotDelete(name) {  
 
     const url = `/edgetron/resources/kubevirt/vms/snapshots/${name}`;
-    console.log("url : "+ JSON.stringify(url))
-    
     return this.submitting(request.delete(url))
   }
 
@@ -646,9 +647,6 @@ export default class VmStore extends Base {
     restoreData.description = data.description;   
 
     jsonData.restore = restoreData;
-
-    console.log("url : " + url)
-    console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
     return res;

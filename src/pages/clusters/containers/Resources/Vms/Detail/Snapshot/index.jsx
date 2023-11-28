@@ -188,7 +188,7 @@ const Snapshot = (props) => {
                   <div>{get(obj, "description", "-")}</div>
                   <p>Description</p>
                 </div>      */}
-                <div className={styles.title}>
+                <div className={styles.complete}>
                   <div>{obj.complete ? "완료" : "미완료"}</div>
                   <p>Complete</p>
                 </div>
@@ -217,7 +217,9 @@ const Snapshot = (props) => {
       type: 'VM_DETAIL',
       name : name,
       store: store,
-      success: fnGetData,
+      success: () => {
+        fnGetRestoreData();
+      },
     })
   }
 
@@ -232,7 +234,9 @@ const Snapshot = (props) => {
       props.rootStore.triggerAction('vm.restorePop', {
         name : name,
         store: store,
-        success: fnGetData,
+        success: () => {
+          fnGetRestoreData();
+        },
       })
     }   
   }
