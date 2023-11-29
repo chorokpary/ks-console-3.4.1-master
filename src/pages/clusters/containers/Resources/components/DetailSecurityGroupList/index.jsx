@@ -37,11 +37,11 @@ const DetailSecurityGroupList = (props) => {
               <div>{obj.egress_count}</div>
               <p>아웃바운드 규칙</p>
           </div>
-          <div className={styles.arrow}>
-            {(obj.ingress_count == 0 && obj.egress_count == 0) ? "" :
-              <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
-            }
-          </div>
+          {(obj.ingress_count == 0 && obj.egress_count == 0) ? <div className={styles.text} style={{width: '5%'}}/> :
+            <div className={styles.arrow}  onClick={() => handleExpand(obj.name)}>
+              <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
+            </div>
+          }
         </div>
        </>
     )
@@ -136,7 +136,7 @@ const DetailSecurityGroupList = (props) => {
                     [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
                   })}
                 >
-                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
+                  <div className={styles.itemMain}>
                     <div className={styles.icon}>
                       <Icon name="shield" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
                     </div>

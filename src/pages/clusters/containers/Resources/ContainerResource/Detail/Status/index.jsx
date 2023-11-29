@@ -280,7 +280,7 @@ const Status = (props) => {
                 [styles.expanded]: (detail.name == expandItem ? isExpandFlag : false),
               })} key={index}
             >
-              <div className={styles.itemMain} onClick={() => handleExpand(detail.name)}>
+              <div className={styles.itemMain}>
 
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} type={detail.name != expandItem ? 'dark' : (detail.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
@@ -312,7 +312,7 @@ const Status = (props) => {
                     <p>IP(네트워크)</p>
                   </div>
                   {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network"))}
-                  <div className={styles.arrow}>
+                  <div className={styles.arrow} onClick={() => handleExpand(detail.name)}>
                     <Icon name="chevron-down" type={detail.name != expandItem ? '' : (detail.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                   </div>
                 </div>
@@ -332,7 +332,7 @@ const Status = (props) => {
                 [styles.expanded]: (detail.name == expandItem ? isExpandFlag : false),
               })} key={index}
             >
-              <div className={styles.itemMain} onClick={() => handleExpand(detail.name)}>
+              <div className={styles.itemMain}>
 
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} type={detail.name != expandItem ? 'dark' : (detail.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
@@ -364,7 +364,7 @@ const Status = (props) => {
                     <p>IP(네트워크)</p>
                   </div>
                   {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network"))}
-                  <div className={styles.arrow}>
+                  <div className={styles.arrow} onClick={() => handleExpand(detail.name)}>
                     <Icon name="chevron-down" type={detail.name != expandItem ? '' : (detail.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                   </div>
                 </div>
