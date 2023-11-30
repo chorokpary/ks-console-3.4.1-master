@@ -128,26 +128,26 @@ const DetailSecurityGroupList = (props) => {
   return (
     <>  
           <Panel title={"보안그룹"} >
-            { (props.securityGroupData).map((obj, index) => {
-              return (
-                <div className={styles.wrapper} key={index}>
-                <div
-                  className={classnames(styles.expandItem, "", {
-                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-                  })}
-                >
-                  <div className={styles.itemMain}>
-                    <div className={styles.icon}>
-                      <Icon name="shield" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+            <div className={styles.wrapper}>
+                { (props.securityGroupData).map((obj, index) => {
+                  return (
+                    <div
+                      className={classnames(styles.expandItem, "", {
+                        [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+                      })} key={index}
+                    >
+                      <div className={styles.itemMain}>
+                        <div className={styles.icon}>
+                          <Icon name="shield" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+                        </div>
+                        {renderContent(obj)}
+                      </div>
+                      {obj.rules.length > 0 && renderExtraContent(obj)}
                     </div>
-                    {renderContent(obj)}
-                  </div>
-                  {obj.rules.length > 0 && renderExtraContent(obj)}
-                </div>
-              </div>
-              )
-            }
-            )}
+                  )
+                }
+                )}
+            </div>
           </Panel>             
     </>
   );
