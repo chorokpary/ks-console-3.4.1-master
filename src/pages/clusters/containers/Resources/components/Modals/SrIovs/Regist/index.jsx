@@ -214,7 +214,7 @@ const RegistModal = (props) => {
 
   const handleNetworkType = (e) => {
     const { data } = form.current.props;
-    if (e == 'flat' || e == 'vlan') {
+    if (e == 'flat') {
       data.segment_id = ' ';
       const a = document.getElementById('segment_id')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
