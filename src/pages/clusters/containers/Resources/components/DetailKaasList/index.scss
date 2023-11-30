@@ -3,8 +3,6 @@
 
 .wrapper {
   padding: 4px;
-  margin-right: 8px;
-  margin-left: 8px;
   background-color: $card-bg-color;
   border-radius: $border-radius;
 }
@@ -41,7 +39,7 @@
 
   .title {
     min-width: 120px;
-    // text-align: left;
+    text-align: left;
 
     &>div {
       @include ellipsis;
@@ -54,8 +52,8 @@
     }
 
     &.name {
-      padding-right: 10px;
-      width: 33%;
+      padding-right: 5px;
+      width: 26%;
     }
   }
 
@@ -90,6 +88,8 @@
     left: 0;
     margin: 0 -4px;
     padding: 12px 16px;
+    margin-right: 4px;
+    margin-left: 4px;
     background-color: $dark-color07;
     border-color: $dark-color07;
 
@@ -122,6 +122,8 @@
   padding: 12px;
   height: 64px;
   line-height: 20px;
+  margin-right: 8px;
+  margin-left: 8px;
   background-color: $white;
   border: 1px solid $border-color;
   border-radius: 4px;
@@ -261,15 +263,17 @@
 .itemExtra {
   display: none;
   position: absolute;
-  width: 100%;
+  width: calc(100% - 16px);
   bottom: 0;
   padding: 12px;
+  margin-left: 8px;
   background-color: $white;
   border: 1px solid $dark-color01;
   border-top: 0;
   box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.2);
   border-radius: 0 0 4px 4px;
   z-index: 1;
+
 
   .containers>div {
     background-color: $white;
