@@ -1,19 +1,19 @@
 @import '~scss/variables';
 @import '~scss/mixins';
 
-// .wrapper {
-//   padding: 12px;
-//   background-color: $card-bg-color;
-//   border-radius: $border-radius;
-// }
-
 .wrapper {
-  padding: 4px;
-  margin-right: 8px;
-  margin-left: 8px;
+  padding: 12px;
   background-color: $card-bg-color;
   border-radius: $border-radius;
 }
+
+// .wrapper {
+//   padding: 4px;
+//   margin-right: 8px;
+//   margin-left: 8px;
+//   background-color: $card-bg-color;
+//   border-radius: $border-radius;
+// }
 
 
 .item {

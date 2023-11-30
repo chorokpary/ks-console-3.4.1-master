@@ -241,10 +241,6 @@ const VmDetail = (props) => {
           : "-"
       },
       {
-        name: t('SR-IOV 네트워크'),
-        value: "-",
-      },
-      {
         name: t('플로팅 IP'),
         value: floatingIp,
       },

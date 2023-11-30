@@ -371,7 +371,7 @@ const Status = (props) => {
               {detailVolume.map((obj, index) => (
                 <div className={classnames(styles.itemVolume)} key={index}>
                   <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} />
+                    <Icon name="storage" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}`}>{obj.name}</Link></div>

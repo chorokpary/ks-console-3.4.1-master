@@ -36,7 +36,8 @@ const RegistModal = (props) => {
 
   const [selectImageName, setSelectImageName] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
-
+  const [selectImageDistroType, setSelectImageDistroType] = useState();
+  
   const [imageOptionList, setImageOptionList] = useState([]);  
 
   const [vmName, setVmName] = useState('');
@@ -105,7 +106,8 @@ const RegistModal = (props) => {
 
   const storageClassOptions = [
     { label: 'longhorn', value: 'longhorn' },
-    { label: 'openebs-hostpath', value: 'openebs-hostpath' }
+    { label: 'openebs-hostpath', value: 'openebs-hostpath' },
+    { label: 'hostpath-csi', value: 'hostpath-csi' }
   ]
 
   const imageOptions = () => {
@@ -174,50 +176,35 @@ const RegistModal = (props) => {
       data.storageClass = (imageType == "I" && storageClass != "선택") ?  storageClass : "";
 
       let makeScriptStep_1 = false;
-      let makeScriptStep_2 = false;
-      let makeScriptStep_3 = false;
 
-      let makeScript = "#cloud-config\n"
-      makeScript += "chpasswd:\n"
-      makeScript += "list: | \n"
+      let userPasswordScript = "";
 
-      listPasswordRoute.map((obj) => {
-        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
-          makeScript += data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
-          makeScriptStep_1 = true;
-        }
-      })
-
-      makeScript += "expire: False\n"
-      makeScript += "write_files:\n"
-
-      listFileRoute.map((obj) => {
-        if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
-          makeScript += " - path: " + data['scriptPath_' + obj] + "\ncontent: | \n" + data['scriptContent_' + obj] + "\n"
-
-          makeScriptStep_2 = true;
-        }
-      })
-
-      makeScript += "packages:\n"
-
-      listPackageRoute.map((obj) => {
-        if (!!data['scriptPackage_' + obj]) {
-          if (data['scriptVersion_' + obj] == "" || data['scriptVersion_' + obj] == undefined) {
-            makeScript += " - " + data['scriptPackage_' + obj] + "\n"
-            makeScriptStep_3 = true;
-          } else {
-            makeScript += " - [" + data['scriptPackage_' + obj] + ", " + data['scriptVersion_' + obj] + "]\n"
-            makeScriptStep_3 = true;
+      if(listPasswordRoute.length == 1){
+        listPasswordRoute.map((obj) => {
+          if (!!data['scriptPassword_' + obj]) {
+            userPasswordScript += `#cloud-config\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
+            makeScriptStep_1 = true;
           }
-        }
-      })
+        })
+      }else{
+        userPasswordScript = "#cloud-config\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
+        listPasswordRoute.map((obj) => {
+          if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
+            userPasswordScript += "    " + data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
+            makeScriptStep_1 = true;
+          }
+        })
+        userPasswordScript += "  expire: False"
+      }
+     
 
-      if (!makeScriptStep_1 && !makeScriptStep_2 && !makeScriptStep_3) {
-        makeScript = "";
+      if (!makeScriptStep_1) {
+        userPasswordScript = "";
       }
 
-      data.makeScript = makeScript;
+      console.log(userPasswordScript)
+
+      data.makeScript = userPasswordScript;
 
       onOk({ ...data })
     })
@@ -597,7 +584,12 @@ const RegistModal = (props) => {
                               label: t('선택')
                             }}
                             options={imageOptions()}
-                            onChange={(e) => setSelectImageName(e)}
+                            onChange={(e) => {
+                              setSelectImageName(e);
+
+                              const distro_type = imageOptionList.filter(item => item.name == e).map(item => item.distro_type)[0];
+                              setSelectImageDistroType(distro_type);
+                            }}
                             defaultDescription={"이미지를 선택해 주세요."}
                           />
                         </Form.Item>
@@ -905,6 +897,8 @@ const RegistModal = (props) => {
                               <Input
                                 name={`scriptId_${obj}`}
                                 placeholder={t('ID')}
+                                defaultValue={obj == 1 ? selectImageDistroType : "" }
+                                disabled={obj == 1 ? true : false }
                               />
                             </Form.Item>
                           </Column>
@@ -921,7 +915,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => listPasswordRoute.length > 1 && handlePasswordRoute.delColumn(obj) }
+                          onClick={() => (listPasswordRoute.length > 1 && obj > 1) && handlePasswordRoute.delColumn(obj) }
                         />
                       </div>
                     ))}
