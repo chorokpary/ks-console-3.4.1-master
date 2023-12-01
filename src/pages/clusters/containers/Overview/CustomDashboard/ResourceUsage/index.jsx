@@ -125,9 +125,9 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
     setPodData(data)
   }
   const sumPodDataValue = (_podData) => {
-    const _values = _podData.map(obj => (obj.values))
+    const _values = _podData?.map(obj => (obj.values))
     let valueArr = [];
-    _values.map((arr, idx) => {
+    _values?.map((arr, idx) => {
       let a = 0;
       arr.map((arr2) => {
         a += Number(arr2[1]);

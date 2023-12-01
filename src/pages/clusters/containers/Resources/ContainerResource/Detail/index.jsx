@@ -99,7 +99,7 @@ const ResourceDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('containerresource.delete', {
+                props.rootStore.triggerAction('containerresource.remove', {
                     type: 'RESOURCE_DETAIL',
                     detail: toJS(store.detail.cluster),
                     store: store,
@@ -133,7 +133,7 @@ const ResourceDetail = (props) => {
                 name: t('Service CIDRS'),
                 value: detail.service_cidrs.length > 0 ?
                     detail.service_cidrs && (detail.service_cidrs).map((cidr) => {
-                        return  <p key={cidr}>{cidr}</p>
+                        return <p key={cidr}>{cidr}</p>
                     })
                     : "-",
             },
@@ -147,7 +147,7 @@ const ResourceDetail = (props) => {
             },
             {
                 name: t('이미지'),
-                value: detail.os_distro,
+                value: detail.kube_image,
             },
             {
                 name: t('버전'),
@@ -167,15 +167,15 @@ const ResourceDetail = (props) => {
             //},
             {
                 name: t('ELB'),
-                value: detail.elb ? detail.elb :  '-',
+                value: detail.elb ? detail.elb : '-',
             },
             {
                 name: t('Master Flavor'),
-                value: detailFlavor.length > 0 && detailFlavor.filter((obj) => obj.name.includes(detail.cp?.name) ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p> })
+                value: detailFlavor.length > 0 && detailFlavor.filter((obj) => obj.name.includes(detail.cp?.name)).map((machine, i) => { return <p key={i}>{machine?.flavor}</p> })
             },
             {
                 name: t('Worker Flavor'),
-                value: detailFlavor.length > 0 && detailFlavor.filter((obj, idx) => !obj.name.includes(detail.cp?.name) && idx===1 ).map((machine, i) => { return <p key={i}>{machine?.flavor}</p>})
+                value: detailFlavor.length > 0 && detailFlavor.filter((obj, idx) => !obj.name.includes(detail.cp?.name) && idx === 1).map((machine, i) => { return <p key={i}>{machine?.flavor}</p> })
             },
             //{
             //    name: t('Scalling'),

@@ -130,8 +130,8 @@ export default class LoadBalancers extends React.Component {
                 isHideable: true,
                 width: 'auto',
                 render: members => (
-                    members.map((member) => {
-                        return <p>{member}</p>
+                    members.map((member, i) => {
+                        return <p key={i}>{member}</p>
                     })
                 )
             },

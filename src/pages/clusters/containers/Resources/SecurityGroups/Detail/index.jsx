@@ -51,7 +51,7 @@ const SecurityGroupDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('securityGroup.delete', {
+                props.rootStore.triggerAction('securityGroup.remove', {
                     type: 'SECURITYGROUP_DETAIL',
                     detail: toJS(store.detail),
                     store: store,

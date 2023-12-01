@@ -92,7 +92,7 @@ const VolumeDetail = (props) => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('resourcesvolume.delete', {
+            props.rootStore.triggerAction('resourcesvolume.remove', {
             type: 'VOLUME_DETAIL',
             detail: toJS(store.detail),
             store: store,

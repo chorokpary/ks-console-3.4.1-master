@@ -211,6 +211,21 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-snapshot {
+  background: url('/assets/resources/images/icons/ico-type-snapshot.svg') center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-restore {
+  background: url('/assets/resources/images/icons/ico-type-restore.svg') center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-clone {
+  background: url('/assets/resources/images/icons/ico-type-clone.svg') center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 /* 24x24 */
 .ico-type24-clusternode {
   background: url('/assets/resources/images/icons/ico-type24-clusternode.svg') center no-repeat;
@@ -372,6 +387,21 @@ i {
   width: 24px;
   height: 24px;
 }
+.ico-type24-snapshot {
+  background: url('/assets/resources/images/icons/ico-type24-snapshot.svg') center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-restore {
+  background: url('/assets/resources/images/icons/ico-type24-restore.svg') center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-clone {
+  background: url('/assets/resources/images/icons/ico-type24-clone.svg') center no-repeat;
+  width: 24px;
+  height: 24px;
+}
 /* 40x40 */
 .ico-type40-vm {
   background: url('/assets/resources/images/icons/ico-type40-vm.svg') center no-repeat;
@@ -433,6 +463,23 @@ i {
   width: 40px;
   height: 40px;
 }
+/* 16x16 */
+.ico-type16-snapshot {
+  background: url('/assets/resources/images/icons/ico-type16-snapshot.svg') center no-repeat;
+  width: 16px;
+  height: 16px;
+}
+.ico-type16-restore {
+  background: url('/assets/resources/images/icons/ico-type16-restore.svg') center no-repeat;
+  width: 16px;
+  height: 16px;
+}
+.ico-type16-clone {
+  background: url('/assets/resources/images/icons/ico-type16-clone.svg') center no-repeat;
+  width: 16px;
+  height: 16px;
+}
+
 /* status */
 .ico-status-provisioning {
   background: url('/assets/resources/images/icons/ico-status-provisioning.svg') center no-repeat;

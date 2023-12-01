@@ -1,0 +1,52 @@
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.wrapper {
+  border-radius: $border-radius;
+  background-color: #ffffff;
+  box-shadow: $base-shadow;
+  margin-bottom: 12px;
+
+  & > div {
+    &:last-of-type {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+}
+
+.titleWrapper {
+  position: relative;
+  padding: 24px 20px 28px 20px;
+  overflow: hidden;
+
+  .icon {
+    @include vertical-center;
+    left: 20px;
+    padding: 6px;
+    border-radius: 100px 0 100px 100px;
+    background-color: $bg-color;
+  }
+
+
+  .divRight {
+    @include vertical-center;
+    text-align: center;
+    right: 20px;
+    padding: 6px;
+  }
+
+  .iconRight {
+    cursor: pointer;
+    margin-top: 5px;
+  }
+
+  .title {
+    padding-left: 72px;
+
+    :global {
+      .h3 {
+        line-height: 32px;
+      }
+    }
+  }
+}

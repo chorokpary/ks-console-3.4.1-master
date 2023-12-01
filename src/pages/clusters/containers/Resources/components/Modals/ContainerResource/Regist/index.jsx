@@ -234,8 +234,8 @@ const RegistModal = (props) => {
 
             if (isFirst) {
                 if (networkDataList.length > 0) {
-                    handleSingleCheck(networkDataList[0].name, "network");
-                    setNetworkName(networkDataList[0].name);
+                    handleSingleCheck(networkDataList.filter((el) => el.external)[0].name, "network");
+                    setNetworkName(networkDataList.filter((el) => el.external)[0].name);
                 }
                 setCniSelect(cnis[0].value);
                 setCsiSelect(csis[0].value);
@@ -565,12 +565,9 @@ const RegistModal = (props) => {
                                             {
                                                 selectImageName &&
                                                 <Form.Item>
-                                                    <Input
-                                                        name="imageView"
-                                                        defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
-                                                        readOnly
-                                                        style={{ maxWidth: 'none' }}
-                                                    />
+                                                     <div className={styles.wrapperImageView}>
+                                                        {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
+                                                    </div>
                                                 </Form.Item>
                                             }
                                         </Column>
@@ -648,7 +645,8 @@ const RegistModal = (props) => {
 
                             {/* 네트워크 설정 시작==========================================*/}
                             <div className={`${regStep == 2 ? "" : "hide"}`}>
-                                <Form.Item label={t('네트워크')}>
+                                {t('네트워크')}<span className="form-item-required">*</span>
+                                <Form.Item>
                                     <Form.Group>
                                         <Form.Item>
                                             <div>

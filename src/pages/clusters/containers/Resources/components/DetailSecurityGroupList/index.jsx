@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import { Panel, Text } from 'components/Base'
 import { Icon} from '@kube-design/components'
 import styles from './index.scss'
+import { Link } from 'react-router-dom'
 
 import * as common from 'utils/resources'
 
@@ -13,13 +14,15 @@ const DetailSecurityGroupList = (props) => {
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
+
+  const cluster = props.cluster;
   
   const renderContent = (obj) => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-              <div>{obj.name}</div>
+              <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}`}>{obj.name}</Link></div>
               <p>이름</p>
           </div>
           <div className={styles.text}>
@@ -34,9 +37,11 @@ const DetailSecurityGroupList = (props) => {
               <div>{obj.egress_count}</div>
               <p>아웃바운드 규칙</p>
           </div>
-          <div className={styles.arrow}>
-            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'}size={20} />
-          </div>
+          {(obj.ingress_count == 0 && obj.egress_count == 0) ? <div className={styles.text} style={{width: '5%'}}/> :
+            <div className={styles.arrow}  onClick={() => handleExpand(obj.name)}>
+              <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
+            </div>
+          }
         </div>
        </>
     )
@@ -45,69 +50,73 @@ const DetailSecurityGroupList = (props) => {
   const renderExtraContent = (obj) => {
     return (
       <div className={styles.itemExtra}>
-          <div className={styles.containers} >
+        <div className={styles.containers} >
+          {obj.rules.filter(el => el.direction == "ingress").length > 0 &&
             <Panel title={"인바운드"} className={styles.panelWrapper}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                    </colgroup>
-                    <thead>
-                      <tr>
+                    <col width="25%" />
+                    <col width="25%" />
+                    <col width="25%" />
+                    <col width="25%" />
+                  </colgroup>
+                  <thead>
+                    <tr>
                       <th>프로토콜</th>
                       <th>포트범위</th>
                       <th>이더넷유형</th>
                       <th>원격IP범위</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(obj.rules).filter(el => el.direction == "ingress").map((obj, index) => (
+                      <tr key={obj.id}>
+                        <td>{obj.ethernet_type ? rule.protocol : 'ALL'}</td>
+                        <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
+                        <td>{obj.ethernet_type ?? 'ALL'}</td>
+                        <td>{obj.remote_ip_prefix ? obj.remote_ip_prefix : '-'}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {(obj.rules).filter(el => el.direction == "ingress").map((obj, index) => (
-                        <tr key={obj.id}>
-                          <td>{obj.protocol}</td>                          
-                          <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
-                          <td>{obj.ethernet_type}</td>
-                          <td>{obj.remote_ip_prefix}</td>
-                        </tr>
-                      ))}
-                    </tbody>
+                    ))}
+                  </tbody>
                 </table>
               </div>
-            </Panel>   
+            </Panel>
+          }
+          {obj.rules.filter(el => el.direction == "egress").length > 0 &&
             <Panel title={"아웃바인드"} className={styles.panelWrapper}>
               <div className={styles.table}>
-                  <table>
-                    <colgroup>
-                        <col width="25%"/>
-                        <col width="25%"/>
-                        <col width="25%"/>
-                        <col width="25%"/>
-                      </colgroup>
-                      <thead>
-                        <tr>
-                        <th>프로토콜</th>
-                        <th>포트범위</th>
-                        <th>이더넷유형</th>
-                        <th>원격IP범위</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(obj.rules).filter(el => el.direction == "egress").map((obj, index) => (
-                          <tr key={obj.id}>
-                            <td>{obj.protocol}</td>
-                            <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
-                            <td>{obj.ethernet_type}</td>
-                            <td>{obj.remote_ip_prefix}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                  </table>
-                </div>
+                <table>
+                  <colgroup>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                    <col width="25%"/>
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>프로토콜</th>
+                      <th>포트범위</th>
+                      <th>이더넷유형</th>
+                      <th>원격IP범위</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(obj.rules).filter(el => el.direction == "egress").map((obj, index) => (
+                      <tr key={obj.id}>
+                        <td>{obj.ethernet_type ? rule.protocol : 'ALL'}</td>
+                        <td>{obj.port_range_min !== obj.port_range_max ? (obj.port_range_min ? obj.port_range_min : 0) + `-` : ''}{obj.ethernet_type ? obj.port_range_max : "0-65535"}</td>
+                        <td>{obj.ethernet_type ?? 'ALL'}</td>
+                        <td>{obj.remote_ip_prefix ? obj.remote_ip_prefix : '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </Panel>      
-          </div>        
-        </div>
+          }
+        </div>        
+      </div>
     )
   }
 
@@ -118,27 +127,27 @@ const DetailSecurityGroupList = (props) => {
 
   return (
     <>  
-          <Panel title={"보안 그룹"} >
-            { (props.securityGroupData).map((obj, index) => {
-              return (
-                <div className={styles.wrapper} key={index}>
-                <div
-                  className={classnames(styles.expandItem, "", {
-                    [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-                  })}
-                >
-                  <div className={styles.itemMain} onClick={() => handleExpand(obj.name)}>
-                    <div className={styles.icon}>
-                      <Icon name="shield" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+          <Panel title={"보안그룹"} >
+            <div className={styles.wrapper}>
+                { (props.securityGroupData).map((obj, index) => {
+                  return (
+                    <div
+                      className={classnames(styles.expandItem, "", {
+                        [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+                      })} key={index}
+                    >
+                      <div className={styles.itemMain}>
+                        <div className={styles.icon}>
+                          <Icon name="shield" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
+                        </div>
+                        {renderContent(obj)}
+                      </div>
+                      {obj.rules.length > 0 && renderExtraContent(obj)}
                     </div>
-                    {renderContent(obj)}
-                  </div>
-                    {renderExtraContent(obj)}
-                </div>
-              </div>
-              )
-            }
-            )}
+                  )
+                }
+                )}
+            </div>
           </Panel>             
     </>
   );

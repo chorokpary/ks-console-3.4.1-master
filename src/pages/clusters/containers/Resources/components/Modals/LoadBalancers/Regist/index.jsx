@@ -49,6 +49,7 @@ const RegistModal = (props) => {
     const [vmDataList, setVmDataList] = useState([]);
     const [isMembers, setIsMembers] = useState(true);
     const [isRules, setIsRules] = useState(true);
+    const [isDupRules, setIsDupRules] = useState(true);
 
     useEffect(() => {
 
@@ -78,28 +79,45 @@ const RegistModal = (props) => {
         return opt
     }
 
+    const isDuplicate = arr => {
+        let cnt = 0;
+        arr.some(function (x) {
+            formRulesFields.some(function (y) {
+                if (JSON.stringify(x) === JSON.stringify(y)) {
+                    cnt++
+                }
+            })
+        });
+        return cnt !== arr.length
+    }
+
     const handleOk = () => {
         const onOk = props.onOk;
         const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
         const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
-        setIsMembers(members.length > 0);
-        setIsRules(rules.length > 0);
-
+        setIsMembers(members.length > 0)
+        if (isDuplicate(rules)) {
+            setIsDupRules(false)
+        } else {
+            setIsDupRules(true)
+            setIsRules(rules.length > 0)
+        }
+        
         form.current.validator(() => {
 
-            if (members.length > 0 && rules.length > 0) {
+            if (members.length > 0 && rules.length > 0 && !isDuplicate(rules)) {
                 const { data } = form.current.props;
                 data.network = networkName
-                data.members = members;
+                data.members = members
 
-                data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)];
+                data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)]
                 onOk({ lb: data })
             }
 
         })
     }
-
+    
     // Validation 시작 ==================================================
     const nameValidator = (rule, value, callback) => {
         if (value == undefined) {
@@ -108,6 +126,13 @@ const RegistModal = (props) => {
             if (!regexName.test(value)) {
                 return callback({ message: t('이름을 확인해 주세요.') })
             }
+        }
+        callback()
+    }
+
+    const networkValidator = (rule, value, callback) => {
+        if (value == "선택" || value == "select") {
+            return callback({ message: t('네트워크 이름을 선택해 주세요.') })
         }
         callback()
     }
@@ -277,16 +302,15 @@ const RegistModal = (props) => {
     }
     //----------------end
 
-    const networkValidator = (rule, value, callback) => {
-        if (value == "선택" || value == "select") {
-            return callback({ message: t('네트워크 이름을 선택해 주세요.') })
-        }
-        callback()
-    }
-
     useEffect(() => {
         handleMemberIp.handleIpClear();
     }, [networkName])
+
+    useEffect(() => {
+        if (!isDuplicate(formRulesFields)) {
+            setIsDupRules(true);
+        }
+    }, [formRulesFields])
 
     return (
         <>
@@ -422,6 +446,7 @@ const RegistModal = (props) => {
                                     </tbody>
                                 </table>
                                 <div className={`form-item-error ${isRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>정책을 선택해 주세요.</div>
+                                <div className={`form-item-error ${isDupRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>중복된 정책이 있습니다.</div>
                             </div>
                             <div className="text-right">
                                 <Button

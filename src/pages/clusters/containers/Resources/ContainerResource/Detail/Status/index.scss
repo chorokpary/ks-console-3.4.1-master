@@ -121,7 +121,7 @@
     background-color: $white;
     border: 1px solid $border-color;
     border-radius: 4px;
-    cursor: pointer;
+    /*cursor: pointer;*/
     transition: all $trans-speed;
 
     .icon {
@@ -173,6 +173,7 @@
             vertical-align: middle;
             text-align: right;
             width: 5%;
+            cursor: pointer;
 
             :global(.icon) {
                 transition: all $trans-speed;

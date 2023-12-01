@@ -21,6 +21,7 @@ const index = (props) => {
   const [vmMemoryData, setVmMemoryData] = useState([]);
   const [vmInboundData, setVmInboundData] = useState({});
   const [vmOutboundData, setVmOutboundData] = useState({});
+  const [vmDiskData, setVmDiskData] = useState([]);
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -101,6 +102,7 @@ const index = (props) => {
 
     };
 
+    // vm inbound data
     const getVmInboundData = async () => {
       const vmInboundData = await customStore.fetchMetric({
         expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
@@ -129,11 +131,28 @@ const index = (props) => {
       setVmOutboundData(vmOutboundMetricData)
 
     };
+
+    const getVmDiskUsageData = async () => {
+      const vmDiskData = await customStore.fetchMetric({
+        expr: `(100 - ((sum by(pod) (node_filesystem_avail_bytes) * 100) / sum by(pod) (node_filesystem_size_bytes))) / 100`,
+        ...paramsData,
+      })
+
+      const vmDiskMetricData = _.find(vmDiskData, (data) => {
+        if (data.metric.pod === store.detail.name ) return data;
+      });
+  
+      // 배열 처리 
+      const vmDiskArray = [];
+      vmDiskArray.push(vmDiskMetricData)
+      setVmDiskData(vmDiskArray)
+    };
     
     getVmCpuUsageData();
     getVmMemoryUsageData();
     getVmInboundData();
-    getVmOutboundData()    
+    getVmOutboundData();  
+    getVmDiskUsageData();
 
   }
 
@@ -160,6 +179,13 @@ const index = (props) => {
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
         data: [vmOutboundData , vmInboundData],
+      },
+      {
+        type: 'utilisation',
+        title: '디스크 사용량',
+        unit: '%',
+        legend: ['디스크 사용량'],
+        data: vmDiskData,
       },
     ]
   }

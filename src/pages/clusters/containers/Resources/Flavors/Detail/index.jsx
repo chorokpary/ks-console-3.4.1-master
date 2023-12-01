@@ -65,7 +65,7 @@ const FlavorDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('flavor.delete', {
+                props.rootStore.triggerAction('flavor.remove', {
                     type: 'FLAVOR_DETAIL',
                     detail: toJS(store.detail),
                     store: store,

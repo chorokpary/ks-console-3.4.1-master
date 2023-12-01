@@ -62,6 +62,7 @@ module.exports = {
   KUBE_OCT_LH: '10월',
   KUBE_NOV_LH: '11월',
   KUBE_DEC_LH: '12월',
+  KUBE_YEAR: '년',
   // Resource Usage > Application Resource Usage
   APPLICATION_RESOURCE_USAGE: '애플리케이션 리소스 사용량',
   DEPLOYMENT: '디플로이먼트',

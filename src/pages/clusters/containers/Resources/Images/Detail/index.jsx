@@ -68,7 +68,7 @@ const ImageDetail = (props) => {
       type: 'danger',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('images.delete', {
+        props.rootStore.triggerAction('images.remove', {
           type: 'IMAGE_DETAIL',
           detail: toJS(store.detail),
           store: store,
@@ -156,6 +156,7 @@ const ImageDetail = (props) => {
             title: '상태',
             component: Status,
             exact: true,
+            name: props.match.params.name
           },
           getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
@@ -166,8 +167,9 @@ const ImageDetail = (props) => {
 
 export default inject('rootStore')(observer(ImageDetail));
 
-const Status = ({ match }) => {
-  const imageName = match.params.name
+const Status = ({ route }) => {
+  const imageName = route.name
+
   return (
     <DetailVmList type='가상머신 이미지' variables='image' name={imageName} />
   )

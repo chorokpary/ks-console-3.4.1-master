@@ -25,10 +25,15 @@ import ModifyModal from 'clusters/containers/Resources/components/Modals/Vms/Mod
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import AlertModal from 'clusters/containers/Resources/components/Modals/Alert'
 import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 import ConsoleLoglModal from 'clusters/containers/Resources/components/Modals/ConsoleLog'
 import VolumeModal from 'clusters/containers/Resources/components/Modals/Vms/VolumePop'
 import FloatingIpModal from 'clusters/containers/Resources/components/Modals/Vms/FloatingIpPop'
+
+import CloneModal from 'clusters/containers/Resources/components/Modals/Vms/ClonePop'
+import SnapshotModal from 'clusters/containers/Resources/components/Modals/Vms/SnapshotPop'
+import RestoreModal from 'clusters/containers/Resources/components/Modals/Vms/RestorePop'
 
 export default {
   'vm.regist': {
@@ -204,7 +209,10 @@ export default {
   'vm.volumePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '볼륨 연결',
+        onOk: () => {
+          success && success()
+        },
+        title: '볼륨 관리',
         modal: VolumeModal,
         store,
         ...props,
@@ -258,6 +266,106 @@ export default {
       })
     },
   },
-
+  'vm.snapshotPop': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        title: '스냅샷 생성',
+        modal: SnapshotModal,
+        store,
+        success,
+        ...props,
+      })
+    },
+  },  
+  'vm.snapshotDelete': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.snapshotDelete(name).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('삭제 되었습니다.') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        module: store.module,
+        name,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.restorePop': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        title: '복원 실행',
+        modal: RestoreModal,
+        name,
+        store,
+        success,
+        ...props,
+      })
+    },
+  },  
+  'vm.restoreDelete': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.restoreDelete(name).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('삭제 되었습니다.') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        module: store.module,
+        name,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.clonePop': {
+    on({ store, success, ...props }) {
+      const modal = Modal.open({
+        title: '클론 생성',
+        modal: CloneModal,
+        store,
+        success,
+        ...props,
+      })
+    },
+  },  
+  'vm.cloneDelete': {
+    on({ store, name, success, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.cloneDelete(name).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('삭제 되었습니다.') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        module: store.module,
+        name,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.alertPop': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        title: !!title ? title : '알림',
+        desc: !!desc ? desc : '알림 설명.',
+        modal: AlertModal,
+        module: store.module,
+        detail,
+        store,
+        ...props,
+      })
+    },
+  },
 
 }

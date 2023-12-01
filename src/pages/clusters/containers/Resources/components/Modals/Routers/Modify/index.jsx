@@ -21,7 +21,7 @@ const ModifyModal = (props) => {
   const [routerInternal, setRouterInternal] = useState([]);
   const [routerExternal, setRouterExternal] = useState([]);
 
-  const [radioSnatType, setRadioSnatType] = useState("T");
+  const [radioSnatType, setRadioSnatType] = useState(props.store.detail.router.enable_snat ? "T" : "F");
   const [radioExternal, setRadioExternal] = useState("");
 
   const detailInternal = props.store.detail.router.internal;
@@ -34,8 +34,8 @@ const ModifyModal = (props) => {
       const { data } = form.current.props;
 
       data.snatType = radioSnatType;
-      data.internal = internalCheckItems == "" ? props.store.detail.router.internal : internalCheckItems;
-      data.external = radioExternal == "" ? props.store.detail.router.external : radioExternal;
+      data.internal = internalCheckItems;
+      data.external = radioExternal;
 
       onOk({ ...data })
     })
@@ -47,11 +47,14 @@ const ModifyModal = (props) => {
 
   const externalRadioDeselect = () => {
     setRadioExternal("");
+    setRadioSnatType("F")
   }
 
   useEffect(() => {
 
     const routerList = props.store.dataList;
+
+    console.log("routerList : "+ JSON.stringify(routerList))
 
     setRouterExternal([]);
     routerList?.map((router) => {
@@ -108,7 +111,12 @@ const ModifyModal = (props) => {
   const handleAllCheck = (checked, type) => {
       if (checked) {
         const nameArray = [];
-        dataListVariables[type].forEach((el) => nameArray.push(el.name));
+        
+        dataListVariables[type].forEach((el) => nameArray.push(el.name));        
+        detailInternal.map((name) => {
+          nameArray.push(name)
+        })
+
         setVariables[type](nameArray);
       }else {
          setVariables[type]([]);
@@ -145,12 +153,7 @@ const ModifyModal = (props) => {
                 style={{ maxWidth: 'none' }}
               />   
             </Form.Item>
-            <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
-              <div className={styles.wrapper}>  
-                <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}}>사용</Radio>
-                <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}}>미사용</Radio>
-              </div>              
-            </Form.Item>
+
             <Form.Item label={t('내부 네트워크')} >
             <div className={styles.wrapper}>
               {stateVariables['internal'].length > 0 &&
@@ -292,6 +295,13 @@ const ModifyModal = (props) => {
                     </table> 
                   </div>
               </div>           
+            </Form.Item>
+
+            <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
+              <div className={styles.wrapper}>  
+                <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}} disabled={!!radioExternal ? false : true}>사용</Radio>
+                <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}} >미사용</Radio>
+              </div>              
             </Form.Item>
            
             <Form.Item

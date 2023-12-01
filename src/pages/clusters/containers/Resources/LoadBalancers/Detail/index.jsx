@@ -92,7 +92,7 @@ const LoadBalancerDetail = (props) => {
             type: 'danger',
             show: showEdit,
             onClick: () =>
-                props.rootStore.triggerAction('loadBalancer.delete', {
+                props.rootStore.triggerAction('loadBalancer.remove', {
                     type: 'LB_DETAIL',
                     detail: toJS(store.detail),
                     store: store,

@@ -2,7 +2,7 @@
 @import '~scss/mixins';
 
 .wrapper {
-  padding: 4px;
+  padding: 12px;
   background-color: $card-bg-color;
   border-radius: $border-radius;
 }
@@ -121,7 +121,7 @@
   background-color: $white;
   border: 1px solid $border-color;
   border-radius: 4px;
-  cursor: pointer;
+  /*cursor: pointer;*/
   transition: all $trans-speed;
 
   .icon {
@@ -173,6 +173,7 @@
       vertical-align: middle;
       text-align: right;
       width: 5%;
+      cursor: pointer;
 
       :global(.icon) {
         transition: all $trans-speed;
@@ -249,27 +250,27 @@
 }
 
 .itemExtra {
-  display: none;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  padding: 12px;
-  background-color: $white;
-  border: 1px solid $dark-color01;
-  border-top: 0;
-  box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.2);
-  border-radius: 0 0 4px 4px;
-  z-index: 1;
-
-  .containers > div {
+    display: none;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    padding: 12px;
     background-color: $white;
-    // border: 1px solid $light-color03;
-    margin-bottom: 12px;
+    border: 1px solid $dark-color01;
+    border-top: 0;
+    box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.2);
+    border-radius: 0 0 4px 4px;
+    z-index: 1;
 
-    &:last-child {
-      margin-bottom: 0;
+    .containers > div {
+        background-color: $white;
+        // border: 1px solid $light-color03;
+        margin-bottom: 12px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
-  }
 }
 
 .loading {

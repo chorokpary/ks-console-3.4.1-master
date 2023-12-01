@@ -219,7 +219,8 @@ export default class VmStore extends Base {
     }
 
     resourceData.description = data.description;
-    resourceData.storage_class = "openebs-hostpath"; // 고정값
+    resourceData.storage_class = data.storageClass
+    //resourceData.storage_class = "openebs-hostpath"; // 고정값
     // resourceData.storage_class = "longhorn"; // 고정값
 
     jsonData.vm = resourceData;
@@ -286,7 +287,7 @@ export default class VmStore extends Base {
     await this.fetchVmListFloating(params);
 
     // Volume 관련
-    //await this.fetchVolumeList(params);    
+    await this.fetchVolumeList(params);
 
     this.detail = detail
     this.isLoading = false
@@ -312,14 +313,20 @@ export default class VmStore extends Base {
   async fetchVmLog(params) {
     this.isLoading = true
 
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/log`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'vms' }
+    try {
+      const result = await request.get(
+        `${this.getResourceUrl(params)}/${params.name}/log`
+      )
+      const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
-    this.vmLog = response.log.message
-    this.isLoading = false
-    return response
+      this.vmLog = response.log.message
+      this.isLoading = false
+      return response
+    } catch (e) {
+      console.log(e)
+      this.vmLog = []
+      return []
+    }
   }
 
   @action
@@ -369,6 +376,9 @@ export default class VmStore extends Base {
     const jsonData = {};
     const name = data.vmName;
     jsonData.action = data.actionType;
+    
+    console.log(`${this.getDetailUrl({ name: name, ...params })}/action`)
+    console.log(JSON.stringify(jsonData))
 
     await this.submitting(
       request.put(`${this.getDetailUrl({ name: name, ...params })}/action`, jsonData)
@@ -393,14 +403,20 @@ export default class VmStore extends Base {
   async fetchVolumeList(params) {
     this.isLoading = true
 
-    const result = await request.get(
-      `/edgetron/resources/kubevirt/volumes`
-    )
-    const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
+    try {
+      const result = await request.get(
+        `/edgetron/resources/kubevirt/volumes`
+      )
+      const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
 
-    this.volumeList = dataList.volumes
-    this.isLoading = false
-    return dataList
+      this.volumeList = dataList.volumes
+      this.isLoading = false
+      return dataList
+    } catch (e) {
+      console.log(e)
+      this.volumeList = []
+      return []
+    }
   }
 
   // 등록 관련 데이터 시작 
@@ -583,4 +599,116 @@ export default class VmStore extends Base {
     return result.vms
   }
 
+  @action
+  async snapshotCreate(data, params = {}) {
+    const url = this.getResourceUrl(params) + "/snapshots";
+
+    const jsonData = {};
+    const snapshotData = {};
+
+    snapshotData.vm_name = data.vmName;
+    snapshotData.description = data.description;   
+
+    jsonData.snapshot = snapshotData;
+
+    const res = await request.post(url, jsonData)
+    return res;
+  }
+
+  @action
+  async snapshotList(name) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/snapshots/${name}`
+    )
+    result.snapshots.sort((a, b) => {
+      var x = a['timestamp'];
+      var y = b['timestamp'];
+      return x > y ? -1 : x < y ? 1 : 0;        
+    });
+
+    return result.snapshots
+  }
+
+  @action
+  snapshotDelete(name) {  
+
+    const url = `/edgetron/resources/kubevirt/vms/snapshots/${name}`;
+    return this.submitting(request.delete(url))
+  }
+
+  @action
+  async restoreCreate(data, params = {}) {
+    const url = this.getResourceUrl(params) + "/restores";
+
+    const jsonData = {};
+    const restoreData = {};
+
+    restoreData.snapshot_name = data.snapshotName;
+    restoreData.description = data.description;   
+
+    jsonData.restore = restoreData;
+
+    const res = await request.post(url, jsonData)
+    return res;
+  }
+
+  @action
+  async restoreList(name) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/restores/${name}`
+    )
+    result.restores.sort((a, b) => {
+      var x = a['timestamp'];
+      var y = b['timestamp'];
+      return x > y ? -1 : x < y ? 1 : 0;        
+    });
+
+    return result.restores
+  }
+
+  @action
+  restoreDelete(name) {  
+    const url = `/edgetron/resources/kubevirt/vms/restores/${name}`;
+    return this.submitting(request.delete(url))
+  }
+
+  @action
+  async cloneCreate(data, params = {}) {
+    const url = this.getResourceUrl(params) + "/clones";
+
+    const jsonData = {};
+    const cloneData = {};
+
+    cloneData.source_vm_name = data.source_vm_name;
+    cloneData.target_vm_name = data.target_vm_name;
+    cloneData.description = data.description;
+
+    jsonData.clone = cloneData;
+
+    const res = await request.post(url, jsonData)
+    return res;
+  }
+
+  @action
+  async cloneList(name) {
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/vms/clones`
+    )
+   
+    result.clones.sort((a, b) => {
+      var x = a['timestamp'];
+      var y = b['timestamp'];
+      return x > y ? -1 : x < y ? 1 : 0;        
+    });
+
+    const vm_clones = (result.clones).filter(item => item.source_vm_name == name);
+
+    return vm_clones;
+  }
+
+  @action
+  cloneDelete(name) {  
+    const url = `/edgetron/resources/kubevirt/vms/clones/${name}`;
+    return this.submitting(request.delete(url))
+  }
 }

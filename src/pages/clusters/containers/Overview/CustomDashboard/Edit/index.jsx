@@ -175,6 +175,9 @@ const CustomDashboardEdit = (props) => {
     if (dashboardName.trim().length == 0) {
       Notify.error({ content: t('대시보드 이름을 최소 1글자 이상 입력해주세요.') })
       document.getElementById('dashboardName').focus();
+    } else if (dashboardName.trim().length > 15) {
+      Notify.error({ content: t('대시보드 이름을 최대 15글자까지만 입력해주세요.') })
+      document.getElementById('dashboardName').focus();
     } else {
       var arr = JSON.parse(localStorage.getItem("dashboardArr"))
       var duplicateName = arr.find(el => el.name == dashboardName)
@@ -546,7 +549,7 @@ const CustomDashboardEdit = (props) => {
                   <input type="checkbox" id="clusterStatusPanel-toggle" className="toggle" defaultChecked={activeDashboard.clusterStatus} />
                   <span className="slider" onClick={(e) => toggleHandler(e, 'clusterStatus')}></span>
                 </label>
-                <label className="section-title">클러스터 컴포넌트 상태</label>
+                <label className="section-title">KaaS 컴포넌트 상태</label>
                 <button className="icon_preview open-popover-button "><i className="ico-etc-preview"></i></button>
 
                 <div className="popover-container">

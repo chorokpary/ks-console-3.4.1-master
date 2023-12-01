@@ -83,15 +83,18 @@ export default class BtnGroup extends Component {
   renderMoreOptions() {
     const { options, limit } = this.props
     const menus = options.slice(limit - 1)
+    
+    const items = menus.map(({ icon, text, disabled = false, show = true, ...rest }) => {
 
-    const items = menus.map(({ icon, text, show = true, ...rest }) => {
       if (!show) return null
       return (
-        <Menu.MenuItem {...rest}>
+        <Menu.MenuItem {...rest} disabled={disabled}>
           {icon &&
             (isFunction(icon) ? (
               icon()
             ) : (
+              icon.includes("resourceIcon") ? <i className={`ico-type16-${icon.split(":")[1]}`} style={{"margin-right" : "12px"}}></i>
+              :
               <Icon name={icon} type="light" />
             ))}{' '}
           <span data-test={`detail-${rest.key}`}>{text}</span>

@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react'
 
 import { getLocalTime } from 'utils'
 import { Card } from 'components/Base'
-import { Button, Notify } from '@kube-design/components'
+import { Button, Notify, Loading } from '@kube-design/components'
 
 import VmStore from 'stores/resources/vms'
 
@@ -17,6 +17,7 @@ const Event = (props) => {
   const vmStore = new VmStore();
 
   const [eventList, setEventList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getVmEventList = async () => {
@@ -24,6 +25,7 @@ const Event = (props) => {
       const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
       const response = await vmStore.fetchVmEventList(parms);
       setEventList(response.events)
+      setIsLoading(false);
 
     };
     getVmEventList();
@@ -31,8 +33,18 @@ const Event = (props) => {
 
   return (
     <>  
-        <div>
           <div className={styles.defaultWrapper}>
+
+          {eventList?.length == 0 &&
+            <div className={styles.wrapper}>
+                {isLoading ?
+                  <div className={styles.loading}><Loading /></div>
+                  : <div className={styles.empty}>이벤트 이력이 없습니다.</div>
+                }
+              </div>
+          }
+          
+          {eventList?.length > 0 &&
             <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -53,14 +65,7 @@ const Event = (props) => {
                         <th><strong>메시지</strong></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {!eventList?.length &&
-                          <tr>
-                            <td colSpan="6" className={styles.empty}>
-                              <p>데이터가 없습니다.</p>
-                            </td>
-                          </tr>
-                        }
+                    <tbody>                     
                         {eventList && eventList.map((obj, index) => (
                           <tr key={index}>
                             <td><p className="underline">{store.detail.name}</p></td>
@@ -73,9 +78,10 @@ const Event = (props) => {
                         ))}
                     </tbody>
                 </table>
-            </div>                
-          </div>
-      </div>         
+            </div>      
+           }
+
+          </div>          
     </>
   );
 };

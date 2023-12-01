@@ -14,6 +14,7 @@ import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 const RegistModal = (props) => {
 
   const form = useRef();
@@ -33,8 +34,11 @@ const RegistModal = (props) => {
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
 
-  const [selectImageName, setSelectImageName] = useState()
-  const [imageOptionList, setImageOptionList] = useState([]);
+  const [selectImageName, setSelectImageName] = useState();
+  const [selectFlavorName, setSelectFlavorName] = useState();
+  const [selectImageDistroType, setSelectImageDistroType] = useState();
+  
+  const [imageOptionList, setImageOptionList] = useState([]);  
 
   const [vmName, setVmName] = useState('');
   const [imageName, setImageName] = useState('');
@@ -46,6 +50,7 @@ const RegistModal = (props) => {
   const [description, setDescription] = useState('');
   const [keypairName, setKeypairName] = useState('');
   const [nodeName, setNodeName] = useState('');
+  const [storageClass, setStorageClass] = useState('선택');
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -57,6 +62,9 @@ const RegistModal = (props) => {
   const [isPackage, setIsPackage] = useState(false);
   const [isFileWrite, setIsFileWrite] = useState(false);
   const [isUserScript, setIsUserScript] = useState(false);
+
+  const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
+  
 
   useEffect(() => {
 
@@ -94,6 +102,12 @@ const RegistModal = (props) => {
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
     { label: 'etc', value: '', icon: 'ico-plus', }
+  ]
+
+  const storageClassOptions = [
+    { label: 'longhorn', value: 'longhorn' },
+    { label: 'openebs-hostpath', value: 'openebs-hostpath' },
+    { label: 'hostpath-csi', value: 'hostpath-csi' }
   ]
 
   const imageOptions = () => {
@@ -159,52 +173,38 @@ const RegistModal = (props) => {
       data.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
       data.keypair = data.keypair == "선택" ? "" : data.keypair;
       data.node = data.node == "선택" ? "" : data.node;
+      data.storageClass = (imageType == "I" && storageClass != "선택") ?  storageClass : "";
 
       let makeScriptStep_1 = false;
-      let makeScriptStep_2 = false;
-      let makeScriptStep_3 = false;
 
-      let makeScript = "#cloud-config\n"
-      makeScript += "chpasswd:\n"
-      makeScript += "list: | \n"
+      let userPasswordScript = "";
 
-      listPasswordRoute.map((obj) => {
-        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
-          makeScript += data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
-          makeScriptStep_1 = true;
-        }
-      })
-
-      makeScript += "expire: False\n"
-      makeScript += "write_files:\n"
-
-      listFileRoute.map((obj) => {
-        if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
-          makeScript += " - path: " + data['scriptPath_' + obj] + "\ncontent: | \n" + data['scriptContent_' + obj] + "\n"
-
-          makeScriptStep_2 = true;
-        }
-      })
-
-      makeScript += "packages:\n"
-
-      listPackageRoute.map((obj) => {
-        if (!!data['scriptPackage_' + obj]) {
-          if (data['scriptVersion_' + obj] == "" || data['scriptVersion_' + obj] == undefined) {
-            makeScript += " - " + data['scriptPackage_' + obj] + "\n"
-            makeScriptStep_3 = true;
-          } else {
-            makeScript += " - [" + data['scriptPackage_' + obj] + ", " + data['scriptVersion_' + obj] + "]\n"
-            makeScriptStep_3 = true;
+      if(listPasswordRoute.length == 1){
+        listPasswordRoute.map((obj) => {
+          if (!!data['scriptPassword_' + obj]) {
+            userPasswordScript += `#cloud-config\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
+            makeScriptStep_1 = true;
           }
-        }
-      })
+        })
+      }else{
+        userPasswordScript = "#cloud-config\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
+        listPasswordRoute.map((obj) => {
+          if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
+            userPasswordScript += "    " + data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
+            makeScriptStep_1 = true;
+          }
+        })
+        userPasswordScript += "  expire: False"
+      }
+     
 
-      if (!makeScriptStep_1 && !makeScriptStep_2 && !makeScriptStep_3) {
-        makeScript = "";
+      if (!makeScriptStep_1) {
+        userPasswordScript = "";
       }
 
-      data.makeScript = makeScript;
+      console.log(userPasswordScript)
+
+      data.makeScript = userPasswordScript;
 
       onOk({ ...data })
     })
@@ -218,12 +218,21 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     if (step == 1) {
-      if (imageType == "I" && (data.name == undefined || data.image == "선택" || data.flavor == "선택")) {
+
+      if (imageType == "I" && (data.name == undefined || !regexName.test(data.name)  || data.image == "선택" || data.flavor == "선택")) {
         handleOk();
-      } else if (imageType == "B" && (data.name == undefined || data.bootvolume == "선택" || data.flavor == "선택")) {
+      } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == "선택" || data.flavor == "선택")) {
         handleOk();
       } else {
-        setRegStep(2);
+        const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi','');
+        const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
+
+        if(flavorSize > imageSize){
+          setRegStep(2);
+          setFlavorSizeCheck(true);
+        }else{
+          setFlavorSizeCheck(false);
+        }        
       }
     }
     if (step == 3) {
@@ -347,6 +356,17 @@ const RegistModal = (props) => {
 
 
   // Validation 시작 ==================================================
+  const nameValidator = (rule, value, callback) => {
+    if (value == undefined) {
+      return callback({ message: t('이름을 입력해 주세요.') })
+    } else {
+      if (!regexName.test(value)) {
+        return callback({ message: t('이름을 확인해 주세요.') })
+      }
+    }
+    callback()
+  }
+
   const imageValidator = (rule, value, callback) => {
     if (value == "선택" || value == "select") {
       return callback({ message: t('이미지를 선택해 주세요.') })
@@ -499,7 +519,7 @@ const RegistModal = (props) => {
               <div className={`${regStep == 1 ? "" : "hide"}`}>
                 <Form.Item
                   label={t('이름')}
-                  rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                  rules={[{ required: true, validator: nameValidator }]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
@@ -511,6 +531,7 @@ const RegistModal = (props) => {
                   <Tabs type="button" activeName={tab} onChange={newTab => {
                     setTab(newTab);
                     setImageType(newTab);
+                    setStorageClass("");
                   }}>
                     <TabPanel label="이미지" name="I" />
                     <TabPanel label="부트볼륨" name="B" />
@@ -563,19 +584,21 @@ const RegistModal = (props) => {
                               label: t('선택')
                             }}
                             options={imageOptions()}
-                            onChange={(e) => setSelectImageName(e)}
+                            onChange={(e) => {
+                              setSelectImageName(e);
+
+                              const distro_type = imageOptionList.filter(item => item.name == e).map(item => item.distro_type)[0];
+                              setSelectImageDistroType(distro_type);
+                            }}
                             defaultDescription={"이미지를 선택해 주세요."}
                           />
                         </Form.Item>
                         {
                           selectImageName &&
                           <Form.Item>
-                            <Input
-                              name="imageView"
-                              defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
-                              readOnly
-                              style={{ maxWidth: 'none' }}
-                            />
+                            <div className={styles.wrapperImageView}>
+                                {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
+                            </div>
                           </Form.Item>
                         }
                       </Column>
@@ -596,22 +619,44 @@ const RegistModal = (props) => {
                     />
                   </Form.Item>
                 }
+                <Columns>
+                  <Column>
+                    {imageType == "B" &&
+                      <div style={{ padding: 8 }} />
+                    }
+                    <Form.Item
+                      label={t('Flavor')}
+                      rules={[{ required: true, validator: flavorValidator }]}
+                    >
+                      <TypeSelect
+                        name="flavor"
+                        defaultValue="선택"
+                        options={flavorOptions()}
+                        onChange={(e) => setSelectFlavorName(e)}
+                        placeholder={{
+                          label: t('선택')
+                        }}
+                        defaultDescription={"Flavor를 선택해 주세요."}
+                      />
+                    </Form.Item>
+                    <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>이미지 사이즈보다 큰 사이즈를 선택해 주세요.</div>
+                  </Column>
 
-                <Form.Item
-                  label={t('Flavor')}
-                  rules={[{ required: true, validator: flavorValidator }]}
-                >
-                  <TypeSelect
-                    name="flavor"
-                    defaultValue="선택"
-                    options={flavorOptions()}
-                    placeholder={{
-                      label: t('선택')
-                    }}
-                    className={styles.typeselectbox}
-                    defaultDescription={"Flavor를 선택해 주세요."}
-                  />
-                </Form.Item>
+                  <Column>
+                    <div style={{ padding: 12 }} />
+                    {imageType == "I" &&
+                      <Form.Group label={t('스토리지 클래스')} onChange={(e) => { setStorageClass("선택"); }} checkable>
+                        <Form.Item>
+                          <Select
+                            options={storageClassOptions}
+                            onChange={(el) => setStorageClass(el)}
+                            value={storageClass}
+                          />
+                        </Form.Item>
+                      </Form.Group>
+                    }
+                  </Column>
+                </Columns>
 
                 <Form.Item
                   className={styles.textarea}
@@ -771,7 +816,7 @@ const RegistModal = (props) => {
                   />
                 </Form.Item>
 
-                <Form.Item label={t('보안 그룹')} >
+                <Form.Item label={t('보안그룹')} >
                   <div className={styles.wrapper}>
                     {stateVariables['security'].length > 0 &&
                       <div className={classnames(styles.table_title, styles.table_title_bg)}>
@@ -794,7 +839,7 @@ const RegistModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "security")}
                                 checked={dataListVariables['security'].length > 0 && stateVariables['security'].length === dataListVariables['security'].length ? true : false} />
                             </th>
-                            <th><strong>보안 그룹 이름</strong></th>
+                            <th><strong>보안그룹 이름</strong></th>
                             <th><strong>설명</strong></th>
                             <th><strong>인바운드 규칙수</strong></th>
                             <th><strong>아웃바운드 규칙수</strong></th>
@@ -852,6 +897,8 @@ const RegistModal = (props) => {
                               <Input
                                 name={`scriptId_${obj}`}
                                 placeholder={t('ID')}
+                                defaultValue={obj == 1 ? selectImageDistroType : "" }
+                                disabled={obj == 1 ? true : false }
                               />
                             </Form.Item>
                           </Column>
@@ -868,7 +915,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => handlePasswordRoute.delColumn(obj)}
+                          onClick={() => (listPasswordRoute.length > 1 && obj > 1) && handlePasswordRoute.delColumn(obj) }
                         />
                       </div>
                     ))}
@@ -906,7 +953,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => handleFileRoute.delColumn(obj)}
+                          onClick={() => listFileRoute.length > 1 && handleFileRoute.delColumn(obj)}
                         />
                       </div>
                     ))}
@@ -944,7 +991,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => handlePackageRoute.delColumn(obj)}
+                          onClick={() => listPackageRoute.length > 1 && handlePackageRoute.delColumn(obj)}
                         />
                       </div>
                     ))}
