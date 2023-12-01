@@ -30,7 +30,7 @@ const Status = (props) => {
   const textClipboard = () => {
     const keyText = showSecret ? originData : encodeKey;
     navigator.clipboard.writeText(keyText);
-    Notify.success('복사 되었습니다.');
+    Notify.success(t('RESOURCES_COPY_SUCCESSFUL'));
   }
 
   // 초기 데이터 처리
@@ -47,7 +47,7 @@ const Status = (props) => {
           icon={showSecret ? 'eye' : 'eye-closed'}
           onClick={() => {setShowSecret(!showSecret)}}
         />
-        <Button onClick={() => textClipboard()}>복사</Button>
+        <Button onClick={() => textClipboard()}>{t('RESOURCES_COPY')}</Button>
       </div>
     )
   }

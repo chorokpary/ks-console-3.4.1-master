@@ -32,7 +32,7 @@ import KeypairStore from 'stores/resources/keypairs'
   store: new KeypairStore(),
   module: 'keypairs',
   authKey: 'keypairs',
-  name: '키페어',
+  name: t('RESOURCES_KEYPAIR'),
 })
 export default class Keypairs extends React.Component {
  
@@ -47,7 +47,7 @@ export default class Keypairs extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('삭제'),
+        text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -68,7 +68,7 @@ export default class Keypairs extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('keypair.regist', {
@@ -82,7 +82,7 @@ export default class Keypairs extends React.Component {
         {
           key: 'delete',
           type: 'danger',
-          text: t('REMOVE'),
+          text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
             trigger('keypair.remove.batch', {
@@ -104,7 +104,7 @@ export default class Keypairs extends React.Component {
     const { cluster } = this.props.match.params
     return [
       {
-        title: t('NAME'),
+        title: t('RESOURCES_NAME'),
         dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('name'),
@@ -126,7 +126,7 @@ export default class Keypairs extends React.Component {
         width: 'auto',
       },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
         width: 150,
@@ -149,7 +149,7 @@ export default class Keypairs extends React.Component {
     return [
       {
         dataIndex: 'name',
-        title: t('이름'),
+        title: t('RESOURCES_NAME'),
         search: true,
       },
       {
@@ -171,8 +171,8 @@ export default class Keypairs extends React.Component {
         {...bannerProps}
         icon="key"
         tabs={this.tabs}
-        title={t('키페어')}
-        description={t('키페어의 상태와 사용현황을 관리 할 수 있습니다.')}
+        title={t('RESOURCES_KEYPAIR')}
+        description={t('RESOURCES_KEYPAIR_DESC')}
       />
       <Table
         {...tableProps}
