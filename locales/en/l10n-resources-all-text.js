@@ -276,6 +276,7 @@ module.exports = {
   RESOURCES_STARTING: '시작 중',
   RESOURCES_RUNNING: '실행 중',
   RESOURCES_OUTBOUND: '아웃바운드',
+  RESOURCES_OUTBOUND_RULE: '아웃바운드 규칙',
   RESOURCES_OUTBOUND_RULE_COUNT: '아웃바운드 규칙수',
   RESOURCES_ALERTING_MESSAGE: '알림',
   RESOURCES_ALERTING_MESSAGE_DESCRIPTION: '알림 설명',
@@ -314,6 +315,7 @@ module.exports = {
   RESOURCES_ISSUE: '이슈',
   RESOURCES_PREVIOUS: '이전',
   RESOURCES_INBOUND: '인바운드',
+  RESOURCES_INBOUND_RULE: '인바운드 규칙',
   RESOURCES_INBOUND_RULE_COUNT: '인바운드 규칙수',
   RESOURCES_CERTIFICATE_EXPIRATION_PERIOD: '인증서 유효기간',
   RESOURCES_INTERFACE: '인터페이스',
@@ -343,6 +345,7 @@ module.exports = {
   RESOURCES_POLICY_COUNT: '정책 개수',
   RESOURCES_NO_POLICY: '정책이 없습니다.',
   RESOURCES_MANUFACTURING_NAME: '제조명',
+  RESOURCES_MANUFACTURING_COMPANY: '제조사',
   RESOURCES_MANUFACTURING_COMPANY_ID: '제조사 ID',
   RESOURCES_MANUFACTURING_COMPANY_NAME: '제조사명',
   RESOURCES_PRODUCT_ID: '제품 ID',
@@ -431,5 +434,6 @@ module.exports = {
   RESOURCES_DELETE_HOST_DEVICE_TIP: '호스트 디바이스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_HOST_DEVICE_TIP: '호스트 디바이스를 선택해 주세요.',
   RESOURCES_HOST_DEVICE_DESC: '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
+
 
 };

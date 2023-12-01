@@ -34,14 +34,14 @@ const ModifyModal = (props) => {
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
-                cancelText={'취소'}
+                cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
             >
                 <Form data={formData} ref={form}>
 
                     <Form.Item
-                        label={t('이름')}
-                        rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        label={t('RESOURCES_NAME')}
+                        rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
                     >
                         <Input
                             name="name"
@@ -56,7 +56,7 @@ const ModifyModal = (props) => {
 
                     <Form.Item
                         className={styles.textarea}
-                        label={t('설명')}
+                        label={t('RESOURCES_DESCRIPTION')}
                         desc={t('DESCRIPTION_DESC')}
                     >
                         <TextArea

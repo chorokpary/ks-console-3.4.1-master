@@ -29,7 +29,7 @@ import styles from './index.scss'
     store: new HostDeviceStore(),
     module: 'host_devices',
     authKey: 'host_devices',
-    name: '호스트 디바이스',
+    name: t('RESOURCES_HOST_DEVICE'),
 })
 export default class HostDevices extends React.Component {
 
@@ -43,7 +43,7 @@ export default class HostDevices extends React.Component {
             {
                 key: 'delete',
                 icon: 'trash',
-                text: t('REMOVE'),
+                text: t('RESOURCES_DELETE'),
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
@@ -64,7 +64,7 @@ export default class HostDevices extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('hostDevice.regist', {
@@ -78,7 +78,7 @@ export default class HostDevices extends React.Component {
                 {
                     key: 'delete',
                     type: 'danger',
-                    text: t('REMOVE'),
+                    text: t('RESOURCES_DELETE'),
                     action: 'delete',
                     onClick: () =>
                         trigger('hostDevice.remove.batch', {
@@ -99,7 +99,7 @@ export default class HostDevices extends React.Component {
         const { cluster } = this.props.match.params
         return [
             {
-                title: t('이름'),
+                title: t('RESOURCES_NAME'),
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
@@ -119,31 +119,31 @@ export default class HostDevices extends React.Component {
                 },
             },
             {
-                title: t('제조사 명'),
+                title: t('RESOURCES_MANUFACTURING_COMPANY_NAME'),
                 dataIndex: 'vendor_name',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('제품명'),
+                title: t('RESOURCES_PRODUCT_NAME'),
                 dataIndex: 'product_name',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('GPU 사용 여부'),
+                title: t('RESOURCES_GPU_USE_CHECK'),
                 dataIndex: 'is_gpu',
                 isHideable: true,
                 width: 'auto',
                 render: isGpu => (
-                    isGpu ? '사용' : '미사용'
+                    isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')
                 )
             },
         ]
     }
 
     get emptyProps() {
-        return { desc: t('데이터가 없습니다') }
+        return { desc: t('RESOURCES_NO_DATA') }
     }
 
     getBanner = () => {
@@ -159,8 +159,8 @@ export default class HostDevices extends React.Component {
                     icon={this.getBanner}
                     {...bannerProps}
                     tabs={this.tabs}
-                    title={t('호스트 디바이스')}
-                    description={t('호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('RESOURCES_HOST_DEVICE')}
+                    description={t('RESOURCES_HOST_DEVICE_DESC')}
                 />
                 <Table
                     {...tableProps}
