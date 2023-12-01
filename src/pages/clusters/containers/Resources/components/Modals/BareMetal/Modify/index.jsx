@@ -75,8 +75,8 @@ const RegistModal = (props) => {
           <Form data={formData} ref={form}>
 
             <Form.Item
-                label={t('이름')}
-                rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                label={t('RESOURCES_NAME')}
+                rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
                 desc={t('NAME_DESC')}
               >
               <Input
@@ -90,7 +90,7 @@ const RegistModal = (props) => {
 
             <Form.Item
                 label={t('IP')}
-                rules={[{ required: true, message: t('IP을 입력해 주세요.') }]}
+                rules={[{ required: true, message: t('RESOURCES_IP_EMPTY_DESC') }]}
               >
               <Input
                 name="ip"
@@ -187,7 +187,7 @@ const RegistModal = (props) => {
                     className={styles.add}
                     onClick={handleSystem.addColumn}
                   >
-                    추가
+                    {t('RESOURCES_ADD')}
                   </Button>
                 </div>
 

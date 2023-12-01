@@ -48,7 +48,7 @@ export default class Flavors extends React.Component {
             {
                 key: 'delete',
                 icon: 'trash',
-                text: t('REMOVE'),
+                text: t('RESOURCES_DELETE'),
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
@@ -69,7 +69,7 @@ export default class Flavors extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('flavor.regist', {
@@ -83,7 +83,7 @@ export default class Flavors extends React.Component {
                 {
                     key: 'delete',
                     type: 'danger',
-                    text: t('REMOVE'),
+                    text: t('RESOURCES_DELETE'),
                     action: 'delete',
                     onClick: () =>
                         trigger('flavor.remove.batch', {
@@ -104,7 +104,7 @@ export default class Flavors extends React.Component {
         const { cluster } = this.props.match.params
         return [
             {
-                title: t('이름'),
+                title: t('RESOURCES_NAME'),
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
@@ -124,7 +124,7 @@ export default class Flavors extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('메모리 (Gib)'),
+                title: t('RESOURCES_MEMORY')+' (Gib)',
                 dataIndex: 'ram',
                 isHideable: true,
                 width: 'auto',
@@ -135,13 +135,13 @@ export default class Flavors extends React.Component {
                 ),
             },
             {
-                title: t('루트 디스크 (Gib)'),
+                title: t('RESOURCES_ROOT_DISK')+' (Gib)',
                 dataIndex: 'root_disk',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('임시 디스크 (Gib)'),
+                title: t('RESOURCES_TEMPORARY_DISK')+' (Gib)',
                 dataIndex: 'ephemeral_disk',
                 isHideable: true,
                 width: 'auto',
@@ -158,7 +158,7 @@ export default class Flavors extends React.Component {
                 ),
             },
             {
-                title: t('등록일'),
+                title: t('RESOURCES_REGIST_DATE'),
                 dataIndex: 'timestamp',
                 isHideable: true,
                 sorter: true,
@@ -176,14 +176,14 @@ export default class Flavors extends React.Component {
     }
 
     get emptyProps() {
-        return { desc: t('데이터가 없습니다') }
+        return { desc: t('RESOURCES_NO_DATA') }
     }
 
     get columnSearch() {
         return [
             {
                 dataIndex: 'name',
-                title: t('이름'),
+                title: t('RESOURCES_NAME'),
                 search: true,
             },
         ]
@@ -199,7 +199,7 @@ export default class Flavors extends React.Component {
                     {...bannerProps}
                     tabs={this.tabs}
                     title={t('Flavor')}
-                    description={t('Flavor의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    description={t('RESOURCES_FLAVOR_DESC')}
                 />
                 <Table
                     {...tableProps}

@@ -130,7 +130,7 @@ const ModifyModal = (props) => {
     const handleHostDevice = {
 
         handleAddFields: () => {
-            const values = [...formDeviceFields, { name: '선택', quantity: 0, message: '' }];
+            const values = [...formDeviceFields, { name: t('RESOURCES_SELECT'), quantity: 0, message: '' }];
             setFormDeviceFields(values);
         },
 
@@ -146,7 +146,7 @@ const ModifyModal = (props) => {
                 values[i].name = val;
                 values[i].message = ""
             } else {
-                values[i].message = " 이미 선택한 디바이스 입니다.";
+                values[i].message = t('RESOURCES_ALREADY_SELECTED_DEVICE');
                 setTimeout(() => { handleHostDevice.deleteMessage(i) }, 1000);
             }
             setFormDeviceFields(values);
@@ -180,7 +180,7 @@ const ModifyModal = (props) => {
     const handleGpu = {
 
         handleAddFields: () => {
-            const values = [...formGpuFields, { name: '선택', quantity: 0, message: '' }];
+            const values = [...formGpuFields, { name: t('RESOURCES_SELECT'), quantity: 0, message: '' }];
             setFormGpuFields(values);
         },
 
@@ -196,7 +196,7 @@ const ModifyModal = (props) => {
                 values[i].name = val;
                 values[i].message = ""
             } else {
-                values[i].message = " 이미 선택한 GPU 입니다.";
+                values[i].message = t('RESOURCES_ALREADY_SELECTED_GPU');
                 setTimeout(() => { handleGpu.deleteMessage(i) }, 1000);
             }
             setFormGpuFields(values);
@@ -260,8 +260,8 @@ const ModifyModal = (props) => {
             data.root_disk = rootDisk;
             data.ephemeral_disk = ephemeralDisk;
             data.extra_specs = [...extraSpecsFields].filter(obj => delete obj.description);
-            data.devices = [...formDeviceFields].filter(obj => delete obj.message && (obj.name && obj.name !== "선택"));
-            data.gpus = [...formGpuFields].filter(obj => delete obj.message && (obj.name && obj.name !== "선택"));
+            data.devices = [...formDeviceFields].filter(obj => delete obj.message && (obj.name && obj.name !== t('RESOURCES_SELECT')));
+            data.gpus = [...formGpuFields].filter(obj => delete obj.message && (obj.name && obj.name !== t('RESOURCES_SELECT')));
             onOk({ flavor: data })
         })
     }
@@ -284,18 +284,18 @@ const ModifyModal = (props) => {
             <>
                 {regStep == 1 &&
                     <>
-                        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-                        <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>다음</Button>
+                        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+                        <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
                     </>
                 }
                 {regStep == 2 &&
                     <>
-                        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-                        <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
+                        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+                        <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
                         {submitButtonFlag ?
-                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>수정</Button>
+                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_EDIT')}</Button>
                             :
-                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>수정</Button>
+                            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_EDIT')}</Button>
                         }
                     </>
                 }
@@ -319,7 +319,7 @@ const ModifyModal = (props) => {
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
-                cancelText={'취소'}
+                cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
                 bodyClassName={styles.body}
                 hideFooter
@@ -336,8 +336,8 @@ const ModifyModal = (props) => {
                             </div>
                             <span className={styles.basic}></span>
                             <div className={styles.title}>
-                                <div className={styles.step_name}>기본 설정</div>
-                                <div className={styles.situation}>{regStep == 1 ? "현재" : regStep > 1 ? "설정완료" : "미설정"}</div>
+                                <div className={styles.step_name}>{t('RESOURCES_DEFAULT_SETTINGS')}</div>
+                                <div className={styles.situation}>{regStep == 1 ? t('RESOURCES_CURRENT') : regStep > 1 ? t('RESOURCES_COMPLETED_SETTINGS') : t('RESOURCES_NOT_SET')}</div>
                             </div>
                         </div>
                         <div className={classnames(styles.process_item, `${regStep == 2 ? styles.current : ''}`)}>
@@ -346,8 +346,8 @@ const ModifyModal = (props) => {
                             </div>
                             <span className={styles.detail}></span>
                             <div className={styles.title}>
-                                <div className={styles.step_name}>세부 설정</div>
-                                <div className={styles.situation}>{regStep == 2 ? "현재" : "미설정"}</div>
+                                <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
+                                <div className={styles.situation}>{regStep == 2 ? t('RESOURCES_CURRENT') : t('RESOURCES_NOT_SET')}</div>
                             </div>
                         </div>
                     </div>
@@ -356,8 +356,8 @@ const ModifyModal = (props) => {
 
                             <div className={`${regStep == 1 ? "" : "hide"}`}>
                                 <Form.Item
-                                    label={t('이름')}
-                                    rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                                    label={t('RESOURCES_NAME')}
+                                    rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
                                 >
                                     <Input
                                         name="name"
@@ -383,7 +383,7 @@ const ModifyModal = (props) => {
                                     <Column>
                                         <div>
                                             <Input type="hidden" name="byteFlag" value={byteFlag} />
-                                            <Form.Item label={t('메모리')} >
+                                            <Form.Item label={t('RESOURCES_MEMORY')} >
                                                 <div className={styles.divwrap}>
                                                     <div className={styles.div_left}>
                                                         <Input name="ram" value={ram} onChange={changeRam} />
@@ -400,7 +400,7 @@ const ModifyModal = (props) => {
                                     </Column>
                                 </Columns>
 
-                                <Form.Item label={t('루트 디스크')} >
+                                <Form.Item label={t('RESOURCES_ROOT_DISK')} >
                                     <Form.Group>
                                         <div style={{
                                             textAlign: "center",
@@ -420,7 +420,7 @@ const ModifyModal = (props) => {
                                     </Form.Group>
                                 </Form.Item>
 
-                                <Form.Item label={t('임시 디스크')} >
+                                <Form.Item label={t('RESOURCES_TEMPORARY_DISK')} >
                                     <Form.Group>
                                         <div style={{
                                             textAlign: "center",
@@ -440,7 +440,7 @@ const ModifyModal = (props) => {
 
                                 <Form.Item
                                     className={styles.textarea}
-                                    label={t('설명')}
+                                    label={t('RESOURCES_DESCRIPTION')}
                                     desc={t('DESCRIPTION_DESC')}
                                 >
                                     <TextArea
@@ -514,14 +514,14 @@ const ModifyModal = (props) => {
                                                 className={styles.add}
                                                 onClick={handleGpu.handleAddFields}
                                             >
-                                                추가
+                                                {t('RESOURCES_ADD')}
                                             </Button>
                                         </div>
 
                                     </Form.Group>
                                 </Form.Item>
 
-                                <Form.Item label={t('호스트 디바이스')} >
+                                <Form.Item label={t('RESOURCES_HOST_DEVICE')} >
                                     <Form.Group>
                                         {formDeviceFields.map((v, i) => (
                                             <div className={styles.item} key={i}>
@@ -554,7 +554,7 @@ const ModifyModal = (props) => {
                                                 className={styles.add}
                                                 onClick={handleHostDevice.handleAddFields}
                                             >
-                                                추가
+                                                {t('RESOURCES_ADD')}
                                             </Button>
                                         </div>
 
