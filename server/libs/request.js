@@ -142,6 +142,7 @@ const send_harbor_request = ({ path, params }) => {
             reject({
               code: response.status,
               ...res,
+              message: response.statusText, // 2023.12.01 추가 - noti alert 관련
               statusText: response.statusText,
             })
           })

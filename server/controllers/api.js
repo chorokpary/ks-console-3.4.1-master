@@ -27,7 +27,7 @@ const {
 } = require('../libs/request')
 const { getCache, root, getServerConfig } = require('../libs/utils')
 
-const { client: clientConfig } = getServerConfig()
+const { client: clientConfig, server: serverConfig } = getServerConfig()
 
 const NEED_OMIT_HEADERS = ['cookie', 'referer', 'host']
 const { decryptPassword } = require('../libs/utils')
@@ -160,8 +160,44 @@ const handleHarborProxy = async ctx => {
   }
 }
 
+
+const handleHarborProxyCustom = async ctx => {
+  const requestUrl = ctx.url.slice(14)
+  const headers = ctx.request.headers
+  const data = ctx.request.body
+
+  const [, protocol] = `${serverConfig.apiServer.harborUrl}`.match(/^(https?:\/\/)/)
+  let path = ''
+
+  if (requestUrl === 'users') {
+    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/users/current`;
+  } else if (requestUrl === 'public') {
+    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/repositories`;
+  } else if (requestUrl === 'private') {
+    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/projects/${data.projectName}/repositories`;
+  } else if (requestUrl === 'tags') {
+    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`;
+  }
+
+  try {
+    const res = await send_harbor_request({
+      params: {
+        isSkipTLS: true,
+        auth: data.auth,
+        protocol,
+      },
+      path: path,
+      headers: omit(headers, NEED_OMIT_HEADERS),
+    })
+    ctx.body = res
+  } catch (err) {
+    ctx.throw(400, err.message)
+  }
+}
+
 module.exports = {
   handleSampleData,
   handleDockerhubProxy,
   handleHarborProxy,
+  handleHarborProxyCustom,
 }

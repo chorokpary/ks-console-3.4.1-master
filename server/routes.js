@@ -38,6 +38,7 @@ const {
   handleSampleData,
   handleDockerhubProxy,
   handleHarborProxy,
+  handleHarborProxyCustom,
 } = require('./controllers/api')
 
 const {
@@ -70,7 +71,9 @@ router
   .use(proxy('/b2i_download/(.*)', b2iFileProxy))
   .post('/dockerhub/(.*)', parseBody, handleDockerhubProxy)
   .post('/harbor/(.*)', parseBody, handleHarborProxy)
+  .post('/customharbor/(.*)', parseBody, handleHarborProxyCustom)
   .get('/blank_md', renderMarkdown)
+
 
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
