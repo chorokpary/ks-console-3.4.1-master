@@ -25,7 +25,7 @@ const PATH = '/clusters/:cluster/baremetalmonitoring/:name'
 export default [
   {
     path: `${PATH}/monitorings`,
-    title: '시스템 모니터링',
+    title: t('RESOURCES_SYSTEM_MONITORING'),
     component: Monitorings,
     exact: true,
   },

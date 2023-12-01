@@ -146,19 +146,19 @@ const BareMetalDetail = (props) => {
   
       return [
         {
-          name: t('서버 모델명'),
+          name: t('RESOURCES_SERVER_MODEL_NAME'),
           value: metricModel,
         },
         {
-          name: t('상태'),
+          name: t('RESOURCES_STATE'),
           value: metricState,
         },
         {
-          name: t('유형'),
+          name: t('RESOURCES_TYPE_YOO'),
           value: metricType,
         },
         {
-          name: t('코어 수'),
+          name: t('RESOURCES_CORE_COUNT'),
           value: metricCore,
         },
       ]
@@ -176,7 +176,7 @@ const BareMetalDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('메인'),
+                label: t('RESOURCES_MAIN'),
                 url: listUrl,
             },
         ],

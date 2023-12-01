@@ -3,6 +3,7 @@ import { Loading } from '@kube-design/components'
 
 import * as common from 'utils/resources'
 import { cloneDeep, get, omit, find } from 'lodash'
+import { getLocalTime } from 'utils'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
 
@@ -104,7 +105,7 @@ const Carbon = (props) => {
            <div className="gridbox_wrap">
               <div className="grid_item">
                 <div className="grid_title">
-                    <label>탄소 지표 (2023.10)</label>
+                    <label>{t('RESOURCES_CARBON_INDICATOR')} ({getLocalTime(Date.now()).format('YYYY.MM')})</label>
                     {/* <!--<i className="ico-btn-trash"></i>--> */}
                   </div>
                 <div className="grid_info style_list">
@@ -115,7 +116,7 @@ const Carbon = (props) => {
                         <i className="ico-type-bmcnode"></i>
                       </div>
                       <div className="rgt">
-                      <div className="value">{serverTotalCount}<span>대</span></div>
+                      <div className="value">{serverTotalCount}<span>{t('RESOURCES_DAE')}</span></div>
                       <dl><dt>ARM</dt><dd>{armServerCount}</dd></dl>
                       <dl><dt>x86</dt><dd>{x86ServerCount}</dd></dl>
                       </div>
@@ -145,7 +146,7 @@ const Carbon = (props) => {
                         <i className="ico-type-tree"></i>
                       </div>
                       <div className="rgt">
-                      <div className="value">{useTree}<span>그루</span></div>
+                      <div className="value">{useTree}<span>{t('RESOURCES_TREE')}</span></div>
                       <dl><dt>ARM</dt><dd>{armTree}</dd></dl>
                       <dl><dt>x86</dt><dd>{x86Tree}</dd></dl>
                       </div>
@@ -155,7 +156,7 @@ const Carbon = (props) => {
                         <i className="ico-type-money"></i>
                       </div>
                       <div className="rgt">
-                      <div className="value">{usePrice}<span>원</span></div>
+                      <div className="value">{usePrice}<span>{t('RESOURCES_WON')}</span></div>
                       <dl><dt>ARM</dt><dd>{armPrice}</dd></dl>
                       <dl><dt>x86</dt><dd>{x86Price}</dd></dl>
                       </div>

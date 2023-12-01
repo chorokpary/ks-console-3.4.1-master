@@ -84,7 +84,7 @@ const FlavorDetail = (props) => {
 
         return [
             {
-                name: t('클러스터'),
+                name: t('RESOURCES_CLUSTER'),
                 value: detail.cluster,
             },
             {
@@ -92,15 +92,15 @@ const FlavorDetail = (props) => {
                 value: detail.flavor.vcpus,
             },
             {
-                name: t('몌모리'),
+                name: t('RESOURCES_MEMORY'),
                 value: common.fnSetBytes(detail.flavor.ram) + ' Gib',
             },
             {
-                name: t('루트 디스크'),
+                name: t('RESOURCES_ROOT_DISK'),
                 value: detail.flavor.root_disk + ' Gib',
             },
             {
-                name: t('임시 디스크'),
+                name: t('RESOURCES_TEMPORARY_DISK'),
                 value: detail.flavor.ephemeral_disk + ' Gib',
             },
             {
@@ -112,11 +112,11 @@ const FlavorDetail = (props) => {
                 value: detail.flavor.devices.length < 1 ? '-' : detail.flavor.devices.map((device) => (device.name) + '\r\n')
             },
             {
-                name: t('설명'),
+                name: t('RESOURCES_DESCRIPTION'),
                 value: detail.flavor.description ? detail.flavor.description : '-',
             },
             {
-                name: t('생성일'),
+                name: t('RESOURCES_CREATE_DAY'),
                 value: getLocalTime(detail.flavor.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]

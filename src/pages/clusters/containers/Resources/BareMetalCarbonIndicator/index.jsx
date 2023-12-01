@@ -68,16 +68,16 @@ const BareMetalCarbonIndicator = () => {
     const arr = [
       {
         type: 'utilisation',
-        title: '전력 사용량',
-        legend: ['전력 사용량'],
+        title: t('RESOURCES_POWER_USAGE'),
+        legend: [t('RESOURCES_POWER_USAGE')],
         unit: 'carbonPower',
         unitTxt: 'kWh',
         data,
       },
       {
         type: 'utilisation',
-        title: 'CO2 발생량',
-        legend: ['CO2 발생량'],
+        title: t('RESOURCES_CO2_EMISSIONS'),
+        legend: [t('RESOURCES_CO2_EMISSIONS')],
         unit: 'carbonCo2',
         unitTxt: 'Kg',
         dat: 1,
@@ -85,19 +85,19 @@ const BareMetalCarbonIndicator = () => {
       },
       {
         type: 'utilisation',
-        title: '전력 사용료',
-        legend: ['전력 사용료'],
+        title: t('RESOURCES_POWER_USAGE_FEE'),
+        legend: [t('RESOURCES_POWER_USAGE_FEE')],
         unit: 'carbonCost',
-        unitTxt: '원',
+        unitTxt: t('RESOURCES_WON'),
         dat: 0,
         data,
       },
       {
         type: 'utilisation',
-        title: '필요 소나무',
-        legend: ['필요 소나무'],
+        title: t('RESOURCES_NEED_TO_TREE'),
+        legend: [t('RESOURCES_NEED_TO_TREE')],
         unit: 'carbonTree',
-        unitTxt: '그루',
+        unitTxt: t('RESOURCES_TREE'),
         dat: 1,
         data,
       },
@@ -111,14 +111,14 @@ const BareMetalCarbonIndicator = () => {
     <>
       <Banner
         icon="linechart"
-        title={t('BareMetal 탄소 지표 통계')}
-        description={t('BareMetal 탄소 지표 통계는 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다.')}
+        title={t('RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS')}
+        description={t('RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS_DESC')}
       // description={t('MONITORING_CLUSTER_DESC')}
       // routes={this.routes}
       />
 
       <MonitoringController
-        title={t('탄소 지표 통계')}
+        title={t('RESOURCES_CARBON_INDICATOR_STATISTICS')}
         onFetch={fetchData}
         loading={loading}
       // refreshing={isRefreshing}

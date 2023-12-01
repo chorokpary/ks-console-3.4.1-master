@@ -213,7 +213,8 @@ const RegistModal = (props) => {
       if (!makeScriptStep_2) { fileScript = ""; }
       if (!makeScriptStep_3) { packageScript = ""; }
 
-      makeScript += userPasswordScript + fileScript + packageScript;
+      // makeScript += userPasswordScript + fileScript + packageScript;
+      makeScript += userPasswordScript;
 
       console.log(makeScript)
 

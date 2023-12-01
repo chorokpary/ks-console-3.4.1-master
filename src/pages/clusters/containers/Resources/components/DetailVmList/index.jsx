@@ -185,7 +185,7 @@ const DetailVmList = (props) => {
     if (vmSliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
-          리소스를 찾을 수 없음
+          {t('RESOURCES_NOT_FOUND_RESOURCE')}
         </div>
       )
       return content;
@@ -241,15 +241,15 @@ const DetailVmList = (props) => {
                 />
               </Tooltip>
             </div>
-            <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}에 생성 됨</p>
+            <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}{t('RESOURCES_CREATED')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.state}</div>
-            <p>상태</p>
+            <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.node != "N/A" ? obj.node : "-"}</div>
-            <p>노드</p>
+            <p>{t('RESOURCES_NODE')}</p>
           </div>
           {renderMonitorings(obj.name)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
@@ -282,7 +282,7 @@ const DetailVmList = (props) => {
                     : "-"
                 }
               </div>
-              <p>네트워크</p>
+              <p>{t('RESOURCES_NETWORK')}</p>
             </div>
             <div className={styles.title}>
               <Text
@@ -313,7 +313,7 @@ const DetailVmList = (props) => {
                 key='GPU'
                 icon='gpu'
                 title={obj.flavor_detail.gpus.length >= 1 ?
-                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개"
+                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " "+t('RESOURCES_BESIDES')+" " + (obj.flavor_detail.gpus.length - 1) + t('RESOURCES_COUNT')
                   : "-"}
                 description={t('GPU')}
               />
@@ -472,7 +472,7 @@ const DetailVmList = (props) => {
     <>
 
       {vmDataList.length > 0 &&
-        <Panel title={"가상 머신"}
+        <Panel title={t('RESOURCES_VM')}
           className={classnames(styles.main)}
         >
           {renderHeader()}
@@ -482,11 +482,11 @@ const DetailVmList = (props) => {
       }
 
       {vmDataList.length == 0 &&
-        <Panel title={"가상 머신"} >
+        <Panel title={t('RESOURCES_VM')} >
           <div className={styles.wrapper}>
             {isLoading ?
               <div><Loading /></div>
-              : <div className={styles.empty}>{props.type}{props.type === "보안그룹" ? "을" : "를"} 사용하는 가상머신이 없습니다.</div>
+              : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>
             }
           </div>
         </Panel>

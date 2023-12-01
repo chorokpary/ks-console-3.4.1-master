@@ -215,7 +215,7 @@ const index = (props) => {
         <div>
           <div className={styles.wrapper}>
           <MonitoringController
-              title={t('모니터링')}
+              title={t('RESOURCES_MONITORING')}
               onFetch={fetchData}
               loading={isLoading}
               refreshing={isRefreshing}       

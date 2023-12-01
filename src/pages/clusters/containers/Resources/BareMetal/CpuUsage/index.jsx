@@ -251,24 +251,24 @@ const CpuUsage = (props) => {
       <div className="gridbox_wrap">
         <div className="grid_item">
           <div className="grid_title" style={{ cursor: 'default' }}>
-            <label>CPU 소비 전력량 비교 (1대 평균)</label>
+            <label>{t('RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE')}</label>
             <div className="right">
               <div className="boxtab">
                 <label htmlFor="cpupower_name1">
                   <input type="radio" name="cpupower" id="cpupower_name1" value="name3" defaultChecked onClick={() => onClickTab('h')} />
-                  <span>최근 1시간</span>
+                  <span>{t('RESOURCES_LAST_TIME_HOUR')}</span>
                 </label>
                 <label htmlFor="cpupower_name2">
                   <input type="radio" name="cpupower" id="cpupower_name2" value="name4" onClick={() => onClickTab('d')} />
-                  <span>최근 1일</span>
+                  <span>{t('RESOURCES_LAST_TIME_DAY')}</span>
                 </label>
                 <label htmlFor="cpupower_name3">
                   <input type="radio" name="cpupower" id="cpupower_name3" value="name5" onClick={() => onClickTab('w')} />
-                  <span>최근 1주일</span>
+                  <span>{t('RESOURCES_LAST_TIME_WEEKEND')}</span>
                 </label>
                 <label htmlFor="cpupower_name4">
                   <input type="radio" name="cpupower" id="cpupower_name4" value="name6" onClick={() => onClickTab('m')} />
-                  <span>최근 1달</span>
+                  <span>{t('RESOURCES_LAST_TIME_MONTH')}</span>
                 </label>
               </div>
               {/* <!--<i className="ico-btn-trash"></i>--> */}
