@@ -23,19 +23,19 @@ const DetailSecurityGroupList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
               <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}`}>{obj.name}</Link></div>
-              <p>이름</p>
+              <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
               <div>{obj.description}</div>
-              <p>설명</p>
+              <p>{t('RESOURCES_DESCRIPTION')}</p>
           </div>
           <div className={styles.text}>
               <div>{obj.ingress_count}</div>
-              <p>인바운드 규칙</p>
+              <p>{t('RESOURCES_INBOUND_RULE:')}</p>
           </div>
           <div className={styles.text}>
               <div>{obj.egress_count}</div>
-              <p>아웃바운드 규칙</p>
+              <p>{t('RESOURCES_OUTBOUND_RULE:')}</p>
           </div>
           {(obj.ingress_count == 0 && obj.egress_count == 0) ? <div className={styles.text} style={{width: '5%'}}/> :
             <div className={styles.arrow}  onClick={() => handleExpand(obj.name)}>
@@ -52,7 +52,7 @@ const DetailSecurityGroupList = (props) => {
       <div className={styles.itemExtra}>
         <div className={styles.containers} >
           {obj.rules.filter(el => el.direction == "ingress").length > 0 &&
-            <Panel title={"인바운드"} className={styles.panelWrapper}>
+            <Panel title={t('RESOURCES_INBOUND:')} className={styles.panelWrapper}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -63,10 +63,10 @@ const DetailSecurityGroupList = (props) => {
                   </colgroup>
                   <thead>
                     <tr>
-                      <th>프로토콜</th>
-                      <th>포트범위</th>
-                      <th>이더넷유형</th>
-                      <th>원격IP범위</th>
+                      <th>{t('RESOURCES_PROTOCOL')}</th>
+                      <th>{t('RESOURCES_PORT_RANGE')}</th>
+                      <th>{t('RESOURCES_ETHERNET_TYPE')}</th>
+                      <th>{t('RESOURCES_REMOTE_IP_RANGE')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -84,7 +84,7 @@ const DetailSecurityGroupList = (props) => {
             </Panel>
           }
           {obj.rules.filter(el => el.direction == "egress").length > 0 &&
-            <Panel title={"아웃바인드"} className={styles.panelWrapper}>
+            <Panel title={t('RESOURCES_OUTBOUND')} className={styles.panelWrapper}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -95,10 +95,10 @@ const DetailSecurityGroupList = (props) => {
                   </colgroup>
                   <thead>
                     <tr>
-                      <th>프로토콜</th>
-                      <th>포트범위</th>
-                      <th>이더넷유형</th>
-                      <th>원격IP범위</th>
+                      <th>{t('RESOURCES_PROTOCOL')}</th>
+                      <th>{t('RESOURCES_PORT_RANGE')}</th>
+                      <th>{t('RESOURCES_ETHERNET_TYPE')}</th>
+                      <th>{t('RESOURCES_REMOTE_IP_RANGE')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -127,7 +127,7 @@ const DetailSecurityGroupList = (props) => {
 
   return (
     <>  
-          <Panel title={"보안그룹"} >
+          <Panel title={t('RESOURCES_SECURITY_GROUP')} >
             <div className={styles.wrapper}>
                 { (props.securityGroupData).map((obj, index) => {
                   return (

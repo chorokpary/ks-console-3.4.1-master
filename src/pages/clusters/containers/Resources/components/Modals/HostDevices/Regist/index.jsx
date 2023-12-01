@@ -165,17 +165,17 @@ const RegistModal = (props) => {
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
-                cancelText={'취소'}
+                cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
             >
                 <Form data={formData} ref={form}>
 
-                    {t('호스트 디바이스')}<span className="form-item-required">*</span>
-                    <Form.Item desc={t('이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다. ex) test/001')}>
+                    {t('RESOURCES_HOST_DEVICE')}<span className="form-item-required">*</span>
+                    <Form.Item desc={t('RESOURCES_NAME_VALID_DESC')+' ex) test/001'}>
                         <div>
                             <div className={styles.divwrap} style={{ marginBottom: '10px' }}>
-                                <Select name="select" options={[{ label: t('제조사명'), value: 1 }, { label: t('제품명'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
-                                <InputSearch onSearch={e => fnSearch(e)} placeholder={t('검색')} style={{ width: '40%' }} />
+                                <Select name="select" options={[{ label: t('RESOURCES_MANUFACTURING_COMPANY_NAME'), value: 1 }, { label: t('RESOURCES_PRODUCT_NAME'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
+                                <InputSearch onSearch={e => fnSearch(e)} placeholder={t('RESOURCES_SEARCH')} style={{ width: '40%' }} />
                             </div>
                             <div className={styles.wrapper}>
                                 <div className={styles.table}>
@@ -196,10 +196,10 @@ const RegistModal = (props) => {
                                                         onChange={(checked) => handleAllCheckModal(checked)}
                                                         checked={dataList.length > 0 && checkItems.length === dataList.length ? true : false} />
                                                 </th>
-                                                <th><strong>제조사 ID</strong></th>
-                                                <th><strong>제조명</strong></th>
-                                                <th><strong>제품 ID</strong></th>
-                                                <th><strong>제품명</strong></th>
+                                                <th><strong>{t('RESOURCES_MANUFACTURING_COMPANY_ID')}</strong></th>
+                                                <th><strong>{t('RESOURCES_MANUFACTURING_NAME')}</strong></th>
+                                                <th><strong>{t('RESOURCES_PRODUCT_ID')}</strong></th>
+                                                <th><strong>{t('RESOURCES_PRODUCT_NAME')}</strong></th>
                                                 <th><strong>External</strong></th>
                                                 <th><strong>GPU</strong></th>
                                             </tr>
@@ -208,7 +208,7 @@ const RegistModal = (props) => {
                                             {!dataList?.length &&
                                                 <tr>
                                                     <td colSpan="7" className="no-data" style={{ textAlign: 'center' }}>
-                                                        <p>할당 가능한 자원이 없습니다.</p>
+                                                        <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                                                     </td>
                                                 </tr>
                                             }
@@ -236,7 +236,7 @@ const RegistModal = (props) => {
                             </div>
 
                             {addRowList.length < 1 ?
-                                <div className={`form-item-error ${isCheck ? "" : "hide"}`} style={{ marginLeft: '10px' }}>호스트 디바이스를 선택해 주세요.</div>
+                                <div className={`form-item-error ${isCheck ? "" : "hide"}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_SELECT_HOST_DEVICE_TIP')}</div>
                                 :
                                 <div className={styles.wrapper}>
                                     <div className={styles.table}>
@@ -280,7 +280,7 @@ const RegistModal = (props) => {
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div className={`form-item-error ${isCheck && isCheckName ? "" : "hide"}`} style={{ marginLeft: '10px' }}>이름을 확인해 주세요.</div>
+                                    <div className={`form-item-error ${isCheck && isCheckName ? "" : "hide"}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_NAME_CHECK_DESC')}</div>
                                 </div>
                             }
                         </div>

@@ -73,31 +73,31 @@ const HostDeviceDetail = (props) => {
 
         return [
             {
-                name: t('클러스터'),
+                name: t('RESOURCES_CLUSTER'),
                 value: detail.cluster,
             },
             {
-                name: t('제조사 ID'),
+                name: t('RESOURCES_MANUFACTURING_COMPANY_ID'),
                 value: detail.host_device.vendor_id,
             },
             {
-                name: t('제조사'),
+                name: t('RESOURCES_MANUFACTURING_COMPANY'),
                 value: detail.host_device.description,
             },
             {
-                name: t('제품 ID'),
+                name: t('RESOURCES_PRODUCT_ID'),
                 value: detail.host_device.product_id,
             },
             {
                 name: t('External'),
-                value: detail.host_device.is_external ? '사용' : '미사용',
+                value: detail.host_device.is_external ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
             },
             {
                 name: t('GPU'),
-                value: detail.host_device.is_gpu ? '사용' : '미사용',
+                value: detail.host_device.is_gpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
             },
             {
-                name: t('설명'),
+                name: t('RESOURCES_DESCRIPTION'),
                 value: detail.host_device.description,
 
             },
@@ -116,7 +116,7 @@ const HostDeviceDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('호스트 디바이스'),
+                label: t('RESOURCES_HOST_DEVICE'),
                 url: listUrl,
             },
         ],

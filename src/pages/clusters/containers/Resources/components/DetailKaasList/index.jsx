@@ -88,7 +88,7 @@ const DetailKaasList = (props) => {
     if (vmSliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
-          리소스를 찾을 수 없음
+          {t('RESOURCES_NOT_FOUND_RESOURCE')}
         </div>
       )
       return content;
@@ -135,19 +135,19 @@ const DetailKaasList = (props) => {
             <div>
               {obj.name}
             </div>
-            <p>Name</p>
+            <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
-            <p>배포 단계</p>
+            <p>{t('RESOURCES_DEPLOY_STEP')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.cluster_ready ? "Ready" : "Not-ready"}</div>
-            <p>상태</p>
+            <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.kube_version}</div>
-            <p>Version</p>
+            <p>{t('RESOURCES_VERSION')}</p>
           </div>
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
@@ -164,14 +164,14 @@ const DetailKaasList = (props) => {
         <div className={styles.containers} >
           {machines.map((obj, idx) => (
             <>
-              {obj.name.includes('control-plane') ? 'Master 노드' : idx < 2 && 'Worker 노드'}
+              {obj.name.includes('control-plane') ? 'Master '+t('RESOURCES_NODE') : idx < 2 && 'Worker '+t('RESOURCES_NODE')}
               <div className={classnames(styles.item)} key={idx}>
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} />
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
                   <div>{obj.name}</div>
-                  <p>이름</p>
+                  <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.title}>
                   <div>{obj.phase}</div>
@@ -190,7 +190,7 @@ const DetailKaasList = (props) => {
                     // key='Memory'
                     // icon='memory'
                     title={obj.ready_status ? "Ready" : "Not-ready"}
-                    description={t('상태')}
+                    description={t('RESOURCES_STATE')}
                   />
                 </div>
                 <div className={styles.title}>
@@ -198,7 +198,7 @@ const DetailKaasList = (props) => {
                     // key='Disk'
                     // icon='storage'
                     title={obj.networks.filter(network => network.name != "k8s-pod-network").map(o => `${o.ip} (${o.name})`)}
-                    description={t('IP (네트워크)')}
+                    description={`IP (${t('RESOURCES_NETWORK')})`}
                   />
                 </div>
               </div>
@@ -287,7 +287,7 @@ const DetailKaasList = (props) => {
   return (
     <>
       {vmDataList.length > 0 &&
-        <Panel title={"Kaas 리소스"}
+        <Panel title={t('RESOURCES_KAAS_RESOURCE')}
           className={classnames(styles.main)}
         >
           {renderHeader()}
@@ -297,12 +297,12 @@ const DetailKaasList = (props) => {
       }
 
       {vmDataList.length == 0 &&
-        <Panel title={"Kaas 리소스"} >
+        <Panel title={t('RESOURCES_KAAS_RESOURCE')} >
           <div className={styles.wrapper}>
             {isLoading ?
               <div><Loading /></div>
               : <div>
-                {props.type} 를 사용하는 KaaS 리소스가 없습니다.</div>
+                {props.type} {t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_KAAS_RESOURCE')}</div>
             }
           </div>
         </Panel>
