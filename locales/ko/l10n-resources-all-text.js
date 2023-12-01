@@ -434,6 +434,5 @@ module.exports = {
   RESOURCES_DELETE_HOST_DEVICE_TIP: '호스트 디바이스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_HOST_DEVICE_TIP: '호스트 디바이스를 선택해 주세요.',
   RESOURCES_HOST_DEVICE_DESC: '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
-
-
+  RESOURCES_DELETE_DESC: '삭제하시겠습니까?',
 };
