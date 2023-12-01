@@ -94,8 +94,8 @@ const RegistModal = (props) => {
             <div className={styles.divwrap}>
               <div className={styles.div_left}>
                 <Form.Item
-                    label={t('이름')}
-                    rules={[{ required: true, message: t('키페어를 입력해 주세요.') }]}
+                    label={t('RESOURCES_NAME')}
+                    rules={[{ required: true, message: t('RESOURCES_KEYPAIR_EMPTY_DESC') }]}
                     desc={t('NAME_DESC')}
                   >
                   <Input
@@ -109,9 +109,9 @@ const RegistModal = (props) => {
               <div className={styles.div_right}>
               <Form.Item>
                 <div>
-                  {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>생성</Button> }
-                  {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>공개 키</Button> }
-                  {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>개인 키</Button> }
+                  {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button> }
+                  {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button> }
+                  {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button> }
                 </div>        
               </Form.Item>
               </div>
@@ -119,8 +119,8 @@ const RegistModal = (props) => {
 
             <Form.Item
               className={styles.textarea}
-              label={t('공개키')}
-              rules={[{ required: true, message: t('공개키를 입력해 주세요.') }]}
+              label={t('RESOURCES_PUBLIC_KEY')}
+              rules={[{ required: true, message: t('RESOURCES_PUBLIC_KEY_EMPTY_DESC') }]}
             >
               {loadingBar ? 
                 <Loading spinning={loadingBar}>
@@ -141,7 +141,7 @@ const RegistModal = (props) => {
             </Form.Item>
             <Form.Item
               className={styles.textarea}
-              label={t('설명')}
+              label={t('RESOURCES_DESCRIPTION')}
               desc={t('DESCRIPTION_DESC')}
             >
               <TextArea

@@ -37,7 +37,7 @@ const ModifyModal = (props) => {
         <Form data={formData} ref={form}>
 
           <Form.Item
-            label={t('이름')}
+            label={t('RESOURCES_NAME')}
           >
             <Input
               name="name"
@@ -51,7 +51,7 @@ const ModifyModal = (props) => {
 
           <Form.Item
             className={styles.textarea}
-            label={t('설명')}
+            label={t('RESOURCES_DESCRIPTION')}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea

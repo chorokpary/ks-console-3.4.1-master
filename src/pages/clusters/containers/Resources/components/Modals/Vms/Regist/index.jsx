@@ -176,18 +176,21 @@ const RegistModal = (props) => {
       data.storageClass = (imageType == "I" && storageClass != "선택") ?  storageClass : "";
 
       let makeScriptStep_1 = false;
+      let makeScriptStep_2 = false;
+      let makeScriptStep_3 = false;
 
+      let makeScript = "#cloud-config";
+      
       let userPasswordScript = "";
-
       if(listPasswordRoute.length == 1){
         listPasswordRoute.map((obj) => {
           if (!!data['scriptPassword_' + obj]) {
-            userPasswordScript += `#cloud-config\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
+            userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
             makeScriptStep_1 = true;
           }
         })
       }else{
-        userPasswordScript = "#cloud-config\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
+        userPasswordScript = "\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
         listPasswordRoute.map((obj) => {
           if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
             userPasswordScript += "    " + data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
@@ -197,14 +200,24 @@ const RegistModal = (props) => {
         userPasswordScript += "  expire: False"
       }
      
+      let fileScript = "";
+      fileScript += `\nwrite_files:\n - path: /test.txt\n content: |\n Here is a line.\n Another line is here.\n - path: /test02.txt\n content: |\n Here is a line02.\n Another line is here02.`
+      makeScriptStep_2 = true;
 
-      if (!makeScriptStep_1) {
-        userPasswordScript = "";
-      }
+      let packageScript = "";
+      packageScript += `\npackages:\n - package_1\n - package_2\n - [package_3, version_num]`
+      makeScriptStep_3 = true;
 
-      console.log(userPasswordScript)
 
-      data.makeScript = userPasswordScript;
+      if (!makeScriptStep_1) { userPasswordScript = ""; }
+      if (!makeScriptStep_2) { fileScript = ""; }
+      if (!makeScriptStep_3) { packageScript = ""; }
+
+      makeScript += userPasswordScript + fileScript + packageScript;
+
+      console.log(makeScript)
+
+      data.makeScript = makeScript;
 
       onOk({ ...data })
     })
