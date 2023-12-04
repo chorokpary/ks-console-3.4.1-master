@@ -19,13 +19,13 @@ const defaultImageSize = '12GB'
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 const regexVersion = /^v(\d+\.\d+\.\d+)$/;
 
-const defaultImageText = '컨테이너에 대한 이미지를 설정합니다.'
-const emptyImageText = '이미지를 찾을 수 없습니다.'
+const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
+const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE')
 const defaultRegistryUrl = 'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'
 
 const publicTypeOptions = [
-  { label: '퍼블릭', value: 'public', },
-  { label: '프라이빗', value: 'private', }
+  { label: t('RESOURCES_PUBLIC'), value: 'public', },
+  { label: t('RESOURCES_PRIVATE'), value: 'private', }
 ]
 
 const archTypeOptions = [
@@ -156,10 +156,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   const versionValidator = (rule, value, callback) => {
     if (!!!value) {
-      return callback({ message: t('버전을 입력해 주세요.') })
+      return callback({ message: t('RESOURCES_VERSION_EMPTY_DESC') })
     }
     if (!regexVersion.test(value)) {
-      return callback({ message: t('버전을 정확히 입력해 주세요.') })
+      return callback({ message: t('RESOURCES_VERSION_CHECK_DESC') })
     }
     callback()
   }
@@ -190,10 +190,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   const nameValidator = (rule, value, callback) => {
     if (value == undefined) {
-      return callback({ message: t('이름을 입력해 주세요.') })
+      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
     } else {
       if (!regexName.test(value)) {
-        return callback({ message: t('이름을 확인해 주세요.') })
+        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
       }
     }
     callback()
@@ -205,18 +205,18 @@ export default function ResourceImageModal({ title, store, onOk }) {
       <>
         {regStep == 1 &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>다음</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {regStep == 2 &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
             {submitButtonFlag ?
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>생성</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
               :
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>생성</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_CREATE')}</Button>
             }
           </>
         }
@@ -232,9 +232,9 @@ export default function ResourceImageModal({ title, store, onOk }) {
         width={1000}
         title={title}
         onOk={handleOk}
-        okText={'생성'}
+        okText={t('RESOURCES_CREATE')}
         onCancel={closeModal}
-        cancelText={'취소'}
+        cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
         bodyClassName={styles.body}
         hideFooter
@@ -250,8 +250,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
               </div>
               <span className={styles.basic}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>기본 설정</div>
-                <div className={styles.situation}>{regStep == 1 ? "현재" : regStep > 1 ? "설정완료" : "미설정"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_DEFAULT_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 1 ? t('RESOURCES_CURRENT') : regStep > 1 ? t('RESOURCES_COMPLETED_SETTINGS') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
             <div className={classnames(styles.process_item, `${regStep == 2 ? styles.current : ''}`)}>
@@ -260,8 +260,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
               </div>
               <span className={styles.detail}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>세부 설정</div>
-                <div className={styles.situation}>{regStep == 2 ? "현재" : "미설정"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 2 ? t('RESOURCES_CURRENT') : t('RESOURCES_NOT_SET')}}</div>
               </div>
             </div>
           </div>
@@ -269,7 +269,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
           <div className={styles.cont_boxwrap}>
             <div className={`${regStep == 1 ? "" : "hide"}`}>
               <Form.Item
-                label={t('이름')}
+                label={t('RESOURCES_NAME')}
                 rules={[
                   { required: true, validator: nameValidator },
                 ]}
@@ -284,7 +284,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 <Columns>
                   <Column>
                     <Form.Item
-                      label={t('이미지')}
+                      label={t('RESOURCES_IMAGE')}
                       rules={[{ required: true, }]}
                     >
                       <CardSelect
@@ -297,7 +297,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('배포판')}>
+                    <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
                       <TypeSelect
                         // name="distro_type"
                         onChange={(e) => setDistroType(e)}
@@ -320,7 +320,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 <Columns>
                   <Column>
                     <Form.Item
-                      label={t('CPU 타입')}
+                      label={t('RESOURCES_CPU_TYPE')}
                       rules={[
                         {
                           required: true,
@@ -335,7 +335,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   </Column>
                   <Column>
                     <Form.Item
-                      label={t('부트 타입')}
+                      label={t('RESOURCES_BOOT_TYPE')}
                       rules={[
                         {
                           required: true,
@@ -352,7 +352,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
               </Form.Item>
 
               <Form.Item
-                label={t('쿠버네티스 버전')}
+                label={t('RESOURCES_KUBERNETES_VERSION')}
                 rules={[{ required: true, validator: versionValidator }]}
               >
                 <Input name="kube_version" maxLength={253}
@@ -360,7 +360,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
               </Form.Item>
 
               <Form.Item
-                label={t('사이즈')}
+                label={t('RESOURCES_SIZE')}
                 rules={[{
                   required: true,
                 }]}>
@@ -376,8 +376,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                               <label htmlFor="chk-0" onClick={() => handleImageSizeActive()}></label>
                             </div>
                             <div className={styles.title}>
-                              <p>이미지 사이즈 지정</p>
-                              <span>이미지 사이즈를 설정합니다.</span>
+                              <p>{t('RESOURCES_SPECIFY_IMAGE_SIZE')}</p>
+                              <span>{t('RESOURCES_IMAGE_SIZE_TIP')}</span>
                             </div>
                           </h6>
                           {imageSizeActive &&
@@ -402,7 +402,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 </div>
               </Form.Item>
               {sizeEmpty &&
-                <div className="form-item-error">이미지 사이즈를 0 으로 설정할 수 없습니다.</div>
+                <div className="form-item-error">{t('RESOURCES_CANNOT_IMAGE_SIZE_SET_ZERO')}</div>
               }
             </div>
 
@@ -683,7 +683,7 @@ const Step2 = (
       auth: userAuth
     })
       .then(res => {
-        Notify.success({ content: t('유효성 체크가 완료되었습니다.') })
+        Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
         setHarborValid(true)
         setHarborValidError(false)
         setUserValidError(false)
@@ -719,7 +719,7 @@ const Step2 = (
   return (
     <div className={`${regStep == 2 ? "" : "hide"}`}>
       <Form.Item
-        label={t('소스')}
+        label={t('RESOURCES_SOURCE')}
         rules={[{
           required: true,
         }]}>
@@ -751,7 +751,7 @@ const Step2 = (
                     </div>
                     <div className={styles.title}>
                       <p>Registry URL</p>
-                      <span>이미지 레지스트리 URL을 설정합니다.</span>
+                      <span>{t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')}</span>
                     </div>
                   </h6>
                   {registryUrlActive &&
@@ -768,19 +768,19 @@ const Step2 = (
                         <div className={styles.regi_group_area}>
                           <div className={styles.formarea}>
                             <div className={styles.custom_input}>
-                              <label>사용자 이름</label>
+                              <label>{t('RESOURCES_USER_NAME')}</label>
                               <input type="text" name="username" defaultValue={userName} onChange={(e) => setUserName(e.target.value)} />
                             </div>
                             <div className={styles.custom_input}>
-                              <label>패스워드</label>
+                              <label>{t('RESOURCES_PASSWORD')}</label>
                               <input type="password" name="password" defaultValue={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
                             </div>
-                            <button type="button" className={classnames(styles.btn, styles.btn_control)} onClick={() => checkUserValid()}>유효성 체크</button>
+                            <button type="button" className={classnames(styles.btn, styles.btn_control)} onClick={() => checkUserValid()}>{t('RESOURCES_VALID')}</button>
                           </div>
                         </div>
                       }
                       {userValidError &&
-                        <div className="form-item-error" style={{ color: '#ca2621' }}>유효하지 않은 사용자입니다</div>
+                        <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FAIL_VALID_TIP')}</div>
                       }
                     </>
                   }
@@ -798,7 +798,7 @@ const Step2 = (
                         <div className={styles.sel_search}>
                           <i className={styles.ico_search_small}></i>
                           <div className={styles.input_search_pop}>
-                            <input type="text" placeholder="검색" onKeyDown={searchImageList}
+                            <input type="text" placeholder={t('RESOURCES_SEARCH')} onKeyDown={searchImageList}
                               style={{ border: 0 }} />
                           </div>
                         </div>
@@ -850,14 +850,14 @@ const Step2 = (
       </Form.Item>
 
       {sourceEmpty &&
-        <div className="form-item-error">이미지를 설정해주세요</div>
+        <div className="form-item-error">{t('RESOURCES_SETTING_IMAGE_TIP')}</div>
       }
       {harborValidError &&
-        <div className="form-item-error">유효성을 체크해주세요</div>
+        <div className="form-item-error">{t('RESOURCES_VALID_TIP')}</div>
       }
 
       <Form.Item
-        label={t('설명')}
+        label={t('RESOURCES_DESCRIPTION')}
         desc={t('DESCRIPTION_DESC')}
       >
         <TextArea
