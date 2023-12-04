@@ -5,7 +5,7 @@ const Panel = ({ lb }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-loadbalancer"></i>로드 밸런서</h5>
+                <h5><i className="ico-type24-loadbalancer"></i>{t('RESOURCES_LOAD_BALANCER')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

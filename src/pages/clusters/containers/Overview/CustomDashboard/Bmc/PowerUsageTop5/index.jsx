@@ -93,11 +93,11 @@ const PowerUsageTop5 = ({ x, y, w, h,
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>전력 사용량 Top 5</label>
+              <label>{t('RESOURCES_POWER_USAGE_TOP_FIVE')}</label>
               <div className="dash_boxtab">
                 <label htmlFor="name13" onClick={() => handleList('')}>
                   <input type="radio" name="box-tab5" id="name13" value="name3" defaultChecked />
-                  <span>전체</span>
+                  <span>{t('RESOURCES_ALL')}</span>
                 </label>
                 <label htmlFor="name14" onClick={() => handleList('arm')}>
                   <input type="radio" name="box-tab5" id="name14" value="name4" />
@@ -138,7 +138,7 @@ const PowerUsageTop5 = ({ x, y, w, h,
                 </Loading>
                 :
                 <div className="grid_text">
-                  <span>데이터가 없습니다.</span>
+                  <span>{t('RESOURCES_NO_DATA')}</span>
                 </div>
               }
             </div>

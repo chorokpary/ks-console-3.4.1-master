@@ -78,7 +78,7 @@ export const clusterNodePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>클러스터 노드</label>
+            <label>${t('RESOURCES_CLUSTER_NODE')}</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="grid_info style_status">
@@ -175,7 +175,7 @@ export const vmPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>가상머신</label>
+            <label>${t('RESOURCES_VM')}</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="grid_info style_status">
@@ -259,7 +259,7 @@ export const resourceUsagePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>리소스 사용량</label>
+            <label>${t('RESOURCES_RESOURCE_USAGE')}</label>
             <div class="right">
               <div class="dash_boxtab">
                 <label htmlFor="name2_1">
@@ -272,11 +272,11 @@ export const resourceUsagePanel = ({ x, y, w, h }) => {
                 </label>
                 <label htmlFor="name2_3">
                   <input type="radio" name="box-tab" id="name2_3" value="name5" />
-                  <span>가상머신</span>
+                  <span>${t('RESOURCES_VM')}</span>
                 </label>
                 <label htmlFor="name2_4">
                   <input type="radio" name="box-tab" id="name2_4" value="name6" />
-                  <span>쿠버네티스</span>
+                  <span>KaaS</span>
                 </label>
               </div>
               <i class="ico-btn-trash"></i>
@@ -305,7 +305,7 @@ export const resourceUsagePanel = ({ x, y, w, h }) => {
                 <div class="chart_tab">
                   <div class="title">
                     <i class="ico-type-memory"></i>
-                    <h5>메모리</h5>
+                    <h5>${t('RESOURCES_MEMORY')}</h5>
                   </div>
                   <div class="data">
                     <div class="number_wrap">
@@ -323,7 +323,7 @@ export const resourceUsagePanel = ({ x, y, w, h }) => {
                 <div class="chart_tab">
                   <div class="title">
                     <i class="ico-type-disk"></i>
-                    <h5>디스크</h5>
+                    <h5>${t('RESOURCES_DISK')}</h5>
                   </div>
                   <div class="data">
                     <div class="number_wrap">
@@ -356,7 +356,7 @@ export const networkTrafficPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>네트워크 트래픽</label>
+            <label>${t('RESOURCES_NETWORK_TRAFFIC')}</label>
             <div class="right">
               <div class="dash_boxtab">
                 <label htmlFor="name3">
@@ -369,11 +369,11 @@ export const networkTrafficPanel = ({ x, y, w, h }) => {
                 </label>
                 <label htmlFor="name5">
                   <input type="radio" name="box-tab1" id="name5" value="name5" />
-                  <span>가상머신</span>
+                  <span>${t('RESOURCES_VM')}</span>
                 </label>
                 <label htmlFor="name6">
                   <input type="radio" name="box-tab1" id="name6" value="name6" />
-                  <span>쿠버네티스</span>
+                  <span>KaaS</span>
                 </label>
               </div>
               <i class="ico-btn-trash"></i>
@@ -434,7 +434,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>리소스 사용량 Top 5</label>
+            <label>${t('RESOURCES_RESOURCE_USAGE_TOP')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -446,24 +446,24 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                   <div class="select-list-box">
                     <div class="selected-item single">
                       <p>
-                        <strong>CPU 사용량</strong>
+                        <strong>${t('RESOURCES_CPU_USAGE')}</strong>
                       </p>
                     </div>
 
                     <ul class="select-list scroll-gray">
                       <li class="selected">
                         <p>
-                          <strong>CPU 사용량</strong>
+                          <strong>${t('RESOURCES_CPU_USAGE')}</strong>
                         </p>
                       </li>
                       <li>
                         <p>
-                          <strong>메모리 사용량</strong>
+                          <strong>${t('RESOURCES_MEMORY_USAGE')}</strong>
                         </p>
                       </li>
                       <li>
                         <p>
-                          <strong>디스크 사용량</strong>
+                          <strong>${t('RESOURCES_DISK_USAGE')}</strong>
                         </p>
                       </li>
                     </ul>
@@ -473,14 +473,14 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                   <div class="select-list-box">
                     <div class="selected-item single">
                       <p>
-                        <strong>노드</strong>
+                        <strong>${t('RESOURCES_NODE')}</strong>
                       </p>
                     </div>
 
                     <ul class="select-list scroll-gray">
                       <li class="selected">
                         <p>
-                          <strong>노드</strong>
+                          <strong>${t('RESOURCES_NODE')}</strong>
                         </p>
                       </li>
                       <li>
@@ -490,12 +490,12 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                       </li>
                       <li>
                         <p>
-                          <strong>가상머신</strong>
+                          <strong>${t('RESOURCES_VM')}</strong>
                         </p>
                       </li>
                       <li>
                         <p>
-                          <strong>쿠버네티스</strong>
+                          <strong>KaaS</strong>
                         </p>
                       </li>
                     </ul>
@@ -514,7 +514,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                 </div>
                 <div class="info">
                   <h6>2%
-                    <span>CPU 사용량</span>
+                    <span>${t('RESOURCES_CPU_USAGE')}</span>
                   </h6>
                 </div>
               </li>
@@ -528,7 +528,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                 </div>
                 <div class="info">
                   <h6>2%
-                    <span>CPU 사용량</span>
+                    <span>${t('RESOURCES_CPU_USAGE')}</span>
                   </h6>
                 </div>
               </li>
@@ -542,7 +542,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                 </div>
                 <div class="info">
                   <h6>2%
-                    <span>CPU 사용량</span>
+                    <span>${t('RESOURCES_CPU_USAGE')}</span>
                   </h6>
                 </div>
               </li>
@@ -556,7 +556,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                 </div>
                 <div class="info warning">
                   <h6>80%
-                    <span>CPU 사용량</span>
+                    <span>${t('RESOURCES_CPU_USAGE')}</span>
                   </h6>
                 </div>
               </li>
@@ -570,7 +570,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                 </div>
                 <div class="info">
                   <h6>2%
-                    <span>CPU 사용량</span>
+                    <span>${t('RESOURCES_CPU_USAGE')}</span>
                   </h6>
                 </div>
               </li>
@@ -589,7 +589,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>최근 생성된 리소스 (1주일)</label>
+            <label>${t('RESOURCES_RECENT_CREATE_RESOURCE')} (${t('RESOURCES_WEEKEND')})</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="grid_info style_list">
@@ -603,7 +603,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_node">노드</span>
+                  <span class="type_node">${t('RESOURCES_NODE')}</span>
                 </div>
               </li>
               <li class="li_type_01">
@@ -627,7 +627,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_container">쿠버네티스</span>
+                  <span class="type_container">KaaS</span>
                 </div>
               </li>
               <li class="li_type_01">
@@ -639,7 +639,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_vm">가상머신</span>
+                  <span class="type_vm">${t('RESOURCES_VM')}</span>
                 </div>
               </li>
               <li class="li_type_01">
@@ -651,7 +651,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_vm">가상머신</span>
+                  <span class="type_vm">${t('RESOURCES_VM')}</span>
                 </div>
               </li>
               <li class="li_type_01">
@@ -663,7 +663,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_vm">가상머신</span>
+                  <span class="type_vm">${t('RESOURCES_VM')}</span>
                 </div>
               </li>
             </ul>
@@ -681,7 +681,7 @@ export const issuePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>이슈</label>
+            <label>${t('RESOURCES_ISSUE')}</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="grid_info style_list">
@@ -690,19 +690,19 @@ export const issuePanel = ({ x, y, w, h }) => {
                 <div class="lft">
                   <i class="ico-info-warning"></i>
                   <h6 class="list_title">
-                    worker02 노드의 사용량을 추가하십시오.
+                    Add the usage to 'worker02' node.
                     <span>2023-08-23</span>
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_node">노드</span>
+                  <span class="type_node">${t('RESOURCES_NODE')}</span>
                 </div>
               </li>
               <li class="li_type_01">
                 <div class="lft">
                   <i class="ico-info-warning"></i>
                   <h6 class="list_title">
-                    1개의 노드가 새로운 Pod를 예약할 수 없습니다.
+                    Can't reserve the new Pod by 1 node.
                     <span>2023-08-23</span>
                   </h6>
                 </div>
@@ -714,48 +714,48 @@ export const issuePanel = ({ x, y, w, h }) => {
                 <div class="lft">
                   <i class="ico-info-warning"></i>
                   <h6 class="list_title">
-                    abcnavme이 설치 종료되었습니다.
+                    abcnavme installation has ended.
                     <span>2023-08-21</span>
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_container">쿠버네티스</span>
+                  <span class="type_container">KaaS</span>
                 </div>
               </li>
               <li class="li_type_01">
                 <div class="lft">
                   <i class="ico-info-warning-2"></i>
                   <h6 class="list_title">
-                    pod_avme이 준비 상태입니다.
+                    pod_avme is Ready.
                     <span>2023-08-20</span>
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_vm">가상머신</span>
+                  <span class="type_vm">${t('RESOURCES_VM')}</span>
                 </div>
               </li>
               <li class="li_type_01">
                 <div class="lft">
                   <i class="ico-info-warning"></i>
                   <h6 class="list_title">
-                    worker02 노드의 메모리 사용량을 추가하십시오.
+                    Add the memory usage to 'worker02' node.
                     <span>2023-08-16</span>
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_vm">가상머신</span>
+                  <span class="type_vm">${t('RESOURCES_VM')}</span>
                 </div>
               </li>
               <li class="li_type_01">
                 <div class="lft">
                   <i class="ico-info-warning"></i>
                   <h6 class="list_title">
-                    worker02 노드의 사용량을 추가하십시오.
+                    Add the usage to 'worker02' node.
                     <span>2023-08-14</span>
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_vm">가상머신</span>
+                  <span class="type_vm">${t('RESOURCES_VM')}</span>
                 </div>
               </li>
             </ul>
@@ -773,7 +773,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>컴퓨팅 네트워크 현황</label>
+            <label>${t('RESOURCES_COMPUTING_NETWORK_CURRENT_SITUATION')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -783,7 +783,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
               <div class="grid_info style_status box_nth">
 
                 <div class="box type_status">
-                  <h5><i class="ico-type24-loadbalancer"></i>로드밸런서</h5>
+                  <h5><i class="ico-type24-loadbalancer"></i>${t('RESOURCES_LOAD_BALANCER')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -803,7 +803,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-floatingip"></i>플로팅 IP</h5>
+                  <h5><i class="ico-type24-floatingip"></i>${t('RESOURCES_FLOATING_IP')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -823,7 +823,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-security"></i>보안그룹</h5>
+                  <h5><i class="ico-type24-security"></i>${t('RESOURCES_SECURITY_GROUP')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -843,7 +843,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-router"></i>가상라우터</h5>
+                  <h5><i class="ico-type24-router"></i>${t('RESOURCES_VROUTER')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -863,7 +863,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-network"></i>네트워크</h5>
+                  <h5><i class="ico-type24-network"></i>${t('RESOURCES_NETWORK')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -883,7 +883,7 @@ export const computingNetworkPanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-soriv"></i>SR-IOV 네트워크</h5>
+                  <h5><i class="ico-type24-soriv"></i>${t('RESOURCES_SR_IOV_NETWORK')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -919,7 +919,7 @@ export const computingTemplatePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>컴퓨팅 템플릿 현황</label>
+            <label>${t('RESOURCES_COMPUTING_TEMPLATE_CURRENT_SITUATION')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -929,7 +929,7 @@ export const computingTemplatePanel = ({ x, y, w, h }) => {
               <div class="grid_info style_status box_nth">
 
                 <div class="box type_status">
-                  <h5><i class="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
+                  <h5><i class="ico-type24-mediatedvgpu"></i>${t('RESOURCES_MEDIATED_DEVICE')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -949,7 +949,7 @@ export const computingTemplatePanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-hostdevice"></i>Host 디바이스</h5>
+                  <h5><i class="ico-type24-hostdevice"></i>${t('RESOURCES_HOST_DEVICE')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -969,7 +969,7 @@ export const computingTemplatePanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-image"></i>이미지</h5>
+                  <h5><i class="ico-type24-image"></i>${t('RESOURCES_IMAGE')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -989,7 +989,7 @@ export const computingTemplatePanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-keypair"></i>키페어</h5>
+                  <h5><i class="ico-type24-keypair"></i>${t('RESOURCES_KEYPAIR')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -1029,7 +1029,7 @@ export const computingTemplatePanel = ({ x, y, w, h }) => {
                   </div>
                 </div>
                 <div class="box type_status">
-                  <h5><i class="ico-type24-kaasimage"></i>KaaS 이미지</h5>
+                  <h5><i class="ico-type24-kaasimage"></i>${t('RESOURCES_KAAS_IMAGE')}</h5>
                   <div class="cont_group">
                     <div class="cont1">
                       <div class="number_wrap">
@@ -1066,7 +1066,7 @@ export const resourceChangePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>리소스 변화량</label>
+            <label>${t('RESOURCES_RESOURCE_CHANGE_AMOUNT')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -1088,7 +1088,7 @@ export const resourceChangePanel = ({ x, y, w, h }) => {
               <div class="grid_info style_status box_long">
                 <div class="box type_status">
                   <div class="cont_group">
-                    <h5><i class="ico-type-vm"></i>가상머신</h5>
+                    <h5><i class="ico-type-vm"></i>${t('RESOURCES_VM')}</h5>
                     <div class="number_wrap">
                       <p><span class="em">7</span></p>
                     </div>
@@ -1100,7 +1100,7 @@ export const resourceChangePanel = ({ x, y, w, h }) => {
               <div class="grid_info style_status box_long">
                 <div class="box type_status">
                   <div class="cont_group">
-                    <h5><i class="ico-type-container"></i>쿠버네티스</h5>
+                    <h5><i class="ico-type-container"></i>KaaS</h5>
                     <div class="number_wrap">
                       <p><span class="em">1</span></p>
                     </div>
@@ -1124,7 +1124,7 @@ export const clusterStatusPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>클러스터 컴포넌트 상태</label>
+            <label>${t('RESOURCES_CLUSTER_COMPONENT_STATE')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -1199,12 +1199,12 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>베어메탈 노드 현황</label>
-            <div class="view-result">총 99건</div>
+            <label>${t('RESOURCES_BAREMETAL_NODE_CURRENT_SITUATION')}</label>
+            <div class="view-result">${t('RESOURCES_TOTAL')} 99${t('RESOURCES_COUNT')}</div>
             <div class="dash_boxtab">
               <label htmlFor="name9">
                 <input type="radio" name="box-tab2" id="name9" value="name3" checked />
-                <span>전체</span>
+                <span>${t('RESOURCES_ALL')}</span>
               </label>
               <label htmlFor="name10">
                 <input type="radio" name="box-tab2" id="name10" value="name4" />
@@ -1287,12 +1287,12 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
                         </colgroup>
                         <thead>
                           <tr>
-                            <th><strong>베어메탈 노드</strong></th>
+                            <th><strong>${t('RESOURCES_BAREMETAL_NODE')}</strong></th>
                             <th><strong>CPU</strong></th>
-                            <th><strong>메모리</strong></th>
-                            <th><strong>디스크</strong></th>
-                            <th><strong>파워</strong></th>
-                            <th><strong>온도</strong></th>
+                            <th><strong>${t('RESOURCES_MEMORY')}</strong></th>
+                            <th><strong>${t('RESOURCES_DISK')}</strong></th>
+                            <th><strong>${t('RESOURCES_POWER')}</strong></th>
+                            <th><strong>${t('RESOURCES_TEMPERRATURE')}</strong></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1458,24 +1458,24 @@ export const cpuPowerPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>CPU & 소비 전력량 비교 (1대 평균)</label>
+            <label>${t('RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE')}</label>
             <div class="right">
               <div class="dash_boxtab">
                 <label htmlFor="cpupower_name1">
                   <input type="radio" name="cpupower" id="cpupower_name1" value="name3" checked />
-                  <span>최근 1시간</span>
+                  <span>${t('RESOURCES_LAST_TIME_HOUR')}</span>
                 </label>
                 <label htmlFor="cpupower_name2">
                   <input type="radio" name="cpupower" id="cpupower_name2" value="name4" />
-                  <span>최근 1일</span>
+                  <span>${t('RESOURCES_LAST_TIME_DAY')}</span>
                 </label>
                 <label htmlFor="cpupower_name3">
                   <input type="radio" name="cpupower" id="cpupower_name3" value="name5" />
-                  <span>최근 1주일</span>
+                  <span>${t('RESOURCES_LAST_TIME_WEEKEND')}</span>
                 </label>
                 <label htmlFor="cpupower_name4">
                   <input type="radio" name="cpupower" id="cpupower_name4" value="name6" />
-                  <span>최근 1달</span>
+                  <span>${t('RESOURCES_LAST_TIME_MONTH')}</span>
                 </label>
               </div>
               <i class="ico-btn-trash"></i>
@@ -1545,7 +1545,7 @@ export const carbonPowerPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>탄소 발자국 - 전력 사용량</label>
+            <label>${t('RESOURCES_CARBON_FOOTPRINT')} - ${t('RESOURCES_POWER_USAGE')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -1596,7 +1596,7 @@ export const carbonCo2Panel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>탄소 발자국 - CO2 발생량</label>
+            <label>${t('RESOURCES_CARBON_FOOTPRINT')} - ${t('RESOURCES_CO2_EMISSIONS')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -1647,7 +1647,7 @@ export const carbonTreePanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>탄소 발자국 - 소나무</label>
+            <label>${t('RESOURCES_CARBON_FOOTPRINT')} - ${t('RESOURCES_PINE_TREE')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -1660,11 +1660,11 @@ export const carbonTreePanel = ({ x, y, w, h }) => {
                     <div class="bar_value">
                       <dl class="rgt">
                         <dt>ARM</dt>
-                        <dd>2,000 그루</dd>
+                        <dd>2,000 ${t('RESOURCES_TREE')}</dd>
                       </dl>
                       <dl>
                         <dt>x86</dt>
-                        <dd>3,000 그루</dd>
+                        <dd>3,000 ${t('RESOURCES_TREE')}</dd>
                       </dl>
                     </div>
                     <div class="bar_chart">
@@ -1698,7 +1698,7 @@ export const carbonCostPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>탄소 발자국 - 비용</label>
+            <label>${t('RESOURCES_CARBON_FOOTPRINT')} - ${t('RESOURCES_COST')}</label>
             <div class="right">
               <i class="ico-btn-trash"></i>
             </div>
@@ -1711,11 +1711,11 @@ export const carbonCostPanel = ({ x, y, w, h }) => {
                     <div class="bar_value">
                       <dl class="rgt">
                         <dt>ARM</dt>
-                        <dd>2,000,000 원</dd>
+                        <dd>2,000,000 ${t('RESOURCES_WON')}</dd>
                       </dl>
                       <dl>
                         <dt>x86</dt>
-                        <dd>3,000,000 원</dd>
+                        <dd>3,000,000 ${t('RESOURCES_WON')}</dd>
                       </dl>
                     </div>
                     <div class="bar_chart">
@@ -1749,7 +1749,7 @@ export const carbonIndicatorPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>탄소 지표 (2023.10)</label>
+            <label>${t('RESOURCES_CARBON_INDICATOR')} (2023.10)</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="spin-nested-loading">
@@ -1854,11 +1854,11 @@ export const powerUsageTop5Panel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>전력 사용량 Top 5</label>
+            <label>${t('RESOURCES_POWER_USAGE_TOP_FIVE')}</label>
             <div class="dash_boxtab">
               <label htmlFor="name13">
                 <input type="radio" name="box-tab5" id="name13" value="name3" checked />
-                <span>전체</span>
+                <span>${t('RESOURCES_ALL')}</span>
               </label>
               <label htmlFor="name14">
                 <input type="radio" name="box-tab5" id="name14" value="name4" />

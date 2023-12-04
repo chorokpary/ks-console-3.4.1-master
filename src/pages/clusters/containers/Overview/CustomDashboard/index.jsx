@@ -87,13 +87,13 @@ const CustomDashboard = (props) => {
         localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
         const spliceArr = JSON.parse(localStorage.getItem("dashboardArr"))
         Modal.close(modal)
-        Notify.success({ content: t('삭제 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
 
         setDashboardArr(spliceArr)
       },
       modal: DeleteModal,
-      title: '대시보드 삭제',
-      desc: `${name} 를 삭제하시겠습니까?`,
+      title: t('RESOURCES_DELETE_DASHBOARD'),
+      desc: `${name} ${t('RESOURCES_EUL')}/${t('RESOURCES_LEUL')} ${t('RESOURCES_DELETE_DESC')}`,
     })
   }
 
@@ -146,9 +146,9 @@ const CustomDashboard = (props) => {
                       <div className="tab-quick-menu" onClick={actvieQuick}>
                         <button type="button" className='btn_quick' ><i className="ico-quick-menu"></i></button>
                         <ul className="quick-menu-list">
-                          <li onClick={() => editDashboard(idx)}><i className="ico-quick-pannel"></i><span>대시보드 편집</span></li>
+                          <li onClick={() => editDashboard(idx)}><i className="ico-quick-pannel"></i><span>{t('RESOURCES_EDIT_DASHBOARD')}</span></li>
                           {dashboardArr.length > 1 &&
-                            <li onClick={() => deleteDashboard(idx, obj.name)}><i className="ico-quick-trash"></i><span>대시보드 삭제</span></li>
+                            <li onClick={() => deleteDashboard(idx, obj.name)}><i className="ico-quick-trash"></i><span>{t('RESOURCES_DELETE_DASHBOARD')}</span></li>
                           }
                         </ul>
                       </div>

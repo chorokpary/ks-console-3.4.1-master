@@ -47,7 +47,7 @@ const Issue = ({ x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>이슈</label>
+              <label>{t('RESOURCES_ISSUE')}</label>
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_list">
@@ -71,7 +71,7 @@ const Issue = ({ x, y, w, h }) => {
                   </ul>
                   :
                   <div className="grid_text">
-                    <span>데이터가 없습니다.</span>
+                    <span>{t('RESOURCES_NO_DATA')}</span>
                   </div>
                 }
               </div>

@@ -150,12 +150,12 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>네트워크 트래픽</label>
+              <label>{t('RESOURCES_NETWORK_TRAFFIC')}</label>
               <div className="right">
                 <div className="dash_boxtab">
                   <label htmlFor="name3">
                     <input type="radio" name="box-tab1" id="name3" value="name3" defaultChecked onClick={() => onClickRightTab('node', metricData)} />
-                    <span>노드</span>
+                    <span>{t('RESOURCES_NODE')}</span>
                   </label>
                   <label htmlFor="name4">
                     <input type="radio" name="box-tab1" id="name4" value="name4" onClick={() => onClickRightTab('pod', podData)} />
@@ -163,7 +163,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
                   </label>
                   <label htmlFor="name5">
                     <input type="radio" name="box-tab1" id="name5" value="name5" onClick={() => onClickRightTab('vm', vmData)} />
-                    <span>가상머신</span>
+                    <span>{t('RESOURCES_VM')}</span>
                   </label>
                   <label htmlFor="name6">
                     <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onClickRightTab('kaas', kaasData)} />
@@ -294,7 +294,7 @@ const TabContent = ({ option }) => {
         <SimpleArea {...commonProps} {...config} style={{ padding: '10px', color: 'white' }} />
         :
         <div className="grid_text">
-          <span>데이터가 없습니다.</span>
+          <span>{t('RESOURCES_NO_DATA')}</span>
         </div>
       }
     </>

@@ -1,6 +1,6 @@
 export default class DashboardInfo {
 
-    name = "대시보드"
+    name = 'dashboard'
     clusterNode = {
         x: 0,
         y: 0,

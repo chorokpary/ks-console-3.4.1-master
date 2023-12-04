@@ -30,7 +30,7 @@ const ClusterNode = ({ x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>클러스터 노드</label>
+              <label>{t('RESOURCES_CLUSTER_NODE')}</label>
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_status">

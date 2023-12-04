@@ -5,7 +5,7 @@ const Panel = ({ floatingIp }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-floatingip"></i>플로팅 IP</h5>
+                <h5><i className="ico-type24-floatingip"></i>{t('RESOURCES_FLOATING_IP')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

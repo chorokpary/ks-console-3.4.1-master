@@ -5,7 +5,7 @@ const Panel = ({ md }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-mediatedvgpu"></i>Mediated 디바이스</h5>
+                <h5><i className="ico-type24-mediatedvgpu"></i>{t('RESOURCES_MEDIATED_DEVICE')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

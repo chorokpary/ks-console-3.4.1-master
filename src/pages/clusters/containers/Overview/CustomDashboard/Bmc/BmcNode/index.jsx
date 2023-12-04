@@ -189,12 +189,12 @@ const BmcNode = ({ x, y, w, h,
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>베어메탈 노드 현황</label>
-              <div className="view-result">총 {nodeList.length}건</div>
+              <label>{t('RESOURCES_BAREMETAL_NODE_CURRENT_SITUATION')}</label>
+              <div className="view-result">{t('RESOURCES_TOTAL')} {nodeList.length}{t('RESOURCES_COUNT')}</div>
               <div className="dash_boxtab">
                 <label htmlFor="name9" onClick={() => handleList('')}>
                   <input type="radio" name="box-tab2" id="name9" value="name3" defaultChecked />
-                  <span>전체</span>
+                  <span>{t('RESOURCES_ALL')}</span>
                 </label>
                 <label htmlFor="name10" onClick={() => handleList('arm')}>
                   <input type="radio" name="box-tab2" id="name10" value="name4" />
@@ -244,7 +244,7 @@ const BmcNode = ({ x, y, w, h,
                       <div className="fixed_head_scroll">
                         <div className="box-radius none-shadow">
                           <table className="tbl_list">
-                            <caption>네트워크 목록</caption>
+                            <caption>{t('RESOURCES_LIST_NETWORK')}</caption>
                             <colgroup>
                               <col style={{ width: "auto" }} />
                               <col style={{ width: "15%" }} />
@@ -254,12 +254,12 @@ const BmcNode = ({ x, y, w, h,
                             </colgroup>
                             <thead>
                               <tr>
-                                <th><strong>베어메탈 노드</strong></th>
+                                <th><strong>{t('RESOURCES_BAREMETAL_NODE')}</strong></th>
                                 <th><strong>CPU</strong></th>
-                                <th><strong>메모리</strong></th>
-                                <th><strong>디스크</strong></th>
-                                <th><strong>파워</strong></th>
-                                <th><strong>온도</strong></th>
+                                <th><strong>{t('RESOURCES_MEMORY')}</strong></th>
+                                <th><strong>{t('RESOURCES_DISK')}</strong></th>
+                                <th><strong>{t('RESOURCES_POWER')}</strong></th>
+                                <th><strong>{t('RESOURCES_TEMPERRATURE')}</strong></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -292,7 +292,7 @@ const BmcNode = ({ x, y, w, h,
                                 <tr>
                                   <td colSpan="6">
                                     <div className="grid_text">
-                                      <p>데이터가 없습니다.</p>
+                                      <p>{t('RESOURCES_NO_DATA')}</p>
                                     </div>
                                   </td>
                                 </tr>
