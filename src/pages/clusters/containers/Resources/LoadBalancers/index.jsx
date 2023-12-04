@@ -35,7 +35,7 @@ import * as common from 'utils/resources'
     store: new LoadBalancerStore(),
     module: 'lbs',
     authKey: 'lbs',
-    name: '로드 밸런서',
+    name: t('RESOURCES_LOAD_BALANCER'),
 })
 export default class LoadBalancers extends React.Component {
 
@@ -70,7 +70,7 @@ export default class LoadBalancers extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('loadBalancer.regist', {
@@ -105,7 +105,7 @@ export default class LoadBalancers extends React.Component {
         const { cluster } = this.props.match.params
         return [
             {
-                title: t('이름'),
+                title: t('RESOURCES_NAME'),
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
@@ -119,13 +119,13 @@ export default class LoadBalancers extends React.Component {
                 ),
             },
             {
-                title: t('네트워크 이름'),
+                title: t('RESOURCES_NETWORK_NAME'),
                 dataIndex: 'network',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('멤버 IP'),
+                title: t('RESOURCES_MEMBER_IP'),
                 dataIndex: 'members',
                 isHideable: true,
                 width: 'auto',
@@ -142,13 +142,13 @@ export default class LoadBalancers extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('규칙수'),
+                title: t('RESOURCES_RULE_COUNT'),
                 dataIndex: 'rules_count',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('등록일'),
+                title: t('RESOURCES_REGIST_DATE'),
                 dataIndex: 'timestamp',
                 isHideable: true,
                 sorter: true,
@@ -166,7 +166,7 @@ export default class LoadBalancers extends React.Component {
     }
 
     get emptyProps() {
-        return { desc: t('데이터가 없습니다') }
+        return { desc: t('RESOURCES_NO_DATA') }
     }
 
     render() {
@@ -178,8 +178,8 @@ export default class LoadBalancers extends React.Component {
                     icon="loadbalancer"
                     {...bannerProps}
                     tabs={this.tabs}
-                    title={t('로드 밸런서')}
-                    description={t('로드 밸런서의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('RESOURCES_LOAD_BALANCER')}
+                    description={t('RESOURCES_LOAD_BALANCER_DESC')}
                 />
                 <Table
                     {...tableProps}

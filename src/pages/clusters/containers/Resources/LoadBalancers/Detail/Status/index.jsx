@@ -17,7 +17,7 @@ const Status = (props) => {
         <>
             <div>
                 {store.detail.lb?.rules.length > 0 &&
-                    <Panel title={"정책"}>
+                    <Panel title={t('RESOURCES_POLICY')}>
                         {store.detail.lb?.rules.map((rule, index) => (
                             <div className={styles.wrapper}>
                                 <div className={classnames(styles.item)}>
@@ -26,13 +26,13 @@ const Status = (props) => {
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
                                         <div>{rule.protocol}</div>
-                                        <p>프로토콜</p>
+                                        <p>{t('RESOURCES_PROTOCOL')}</p>
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
                                         <div>{store.detail.lb?.members.filter((el, idx) => idx < 2).map((obj, idx) =>
                                             <div>{obj}{store.detail.lb?.members.length > 2 && idx == 1 ? '...' : ''}</div>)}
                                         </div>
-                                        <p>멤버 IP</p>
+                                        <p>{t('RESOURCES_MEMBER_IP')}</p>
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
                                         <div>{store.detail.lb?.virtual_ip}</div>
@@ -40,7 +40,7 @@ const Status = (props) => {
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
                                         <div>{rule.port_range_min !== rule.port_range_max ? (rule.port_range_min ? rule.port_range_min : 0) + `-` : ''}{rule.protocol === 'all' ? "0-65535" : rule.port_range_max}</div>
-                                        <p>포트 범위</p>
+                                        <p>{t('RESOURCES_PORT_RANGE')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -48,9 +48,9 @@ const Status = (props) => {
                     </Panel>
                 }
                 {store.detail.lb?.rules.length == 0 &&
-                    <Panel title={"정책"}>
+                    <Panel title={t('RESOURCES_POLICY')}>
                         <div className={styles.wrapper}>
-                            <div>정책이 없습니다.</div>
+                            <div>{t('RESOURCES_NO_POLICY')}</div>
                         </div>
                     </Panel>
                 }

@@ -23,7 +23,7 @@ const FloatingIpModal = (props) => {
 
   const [vIp, setVIp] = useState(''); 
   const [networkName, setNetworkName] = useState(''); 
-  const [floatingIp, setFloatingIp] = useState('선택'); 
+  const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT')); 
 
   const [floatingId, setFloatingId] = useState(); 
 
@@ -48,7 +48,7 @@ const FloatingIpModal = (props) => {
       data.target_ip = vIp
       console.log(data)
       floatingStore.update(data, {name: data.id, ...data }).then(() => {
-        Notify.success({ content: t('정상적으로 연결 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
         closeModal();
       })
@@ -108,8 +108,8 @@ const FloatingIpModal = (props) => {
 
   // Validation 시작 ==================================================
   const floatingValidator = (rule, value, callback) => {
-    if(value == "선택" || value == "select"){
-      return callback({ message: t('플로팅 IP를 선택해 주세요.') })
+    if(value == t('RESOURCES_SELECT') || value == "select"){
+      return callback({ message: t('RESOURCES_SELECT_FLOATING_IP_TIP') })
     }
     callback()
   }
@@ -134,14 +134,14 @@ const FloatingIpModal = (props) => {
           </Form.Item>
 
           <Form.Item
-            label={t('플로팅 IP')}
+            label={t('RESOURCES_FLOATING_IP')}
             rules={[{ required: true, validator: floatingValidator }]}
           >
             <Select
               name="floatingIp"
               options={floatingOptions()} 
               onChange={(e) => handleSelect(e)}
-              defaultValue="선택"
+              defaultValue={t('RESOURCES_SELECT')}
             />
           </Form.Item>
         </Form>
