@@ -53,7 +53,7 @@ const RegistModal = (props) => {
   ]
 
   const bindingModeOptions = [
-    { label: '즉시바인딩', value: '즉시바인딩', },
+    { label: t('RESOURCES_IMMEDIATE_BINDING'), value: t('RESOURCES_IMMEDIATE_BINDING'), },
   ]
 
   //slider
@@ -100,15 +100,15 @@ const RegistModal = (props) => {
           <>
               {regStep == 1 &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
-                  <Button type="control" onClick={() => {stepMoveCheck(1)}} className={classnames(styles['btn'],styles['btn-control'])}>다음</Button>                    
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+                  <Button type="control" onClick={() => {stepMoveCheck(1)}} className={classnames(styles['btn'],styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>                    
                 </>
               }
               {regStep == 2 &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
-                  <Button onClick={() => {setRegStep(1)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
-                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >생성</Button>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+                  <Button onClick={() => {setRegStep(1)}} className={classnames(styles['btn'],styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
+                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
                 </>
               }
           </>
@@ -138,7 +138,7 @@ const RegistModal = (props) => {
                   </div>
                   <span className={styles.basic}></span>
                   <div className={styles.title}>
-                    <div className={styles.step_name}>기본 설정</div>
+                    <div className={styles.step_name}>{t('RESOURCES_DEFAULT_SETTINGS')}</div>
                     <div className={styles.situation}>{regStep == 1 ? "Current" : regStep > 1 ? "Done" : "To do"}</div>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ const RegistModal = (props) => {
                   </div>
                   <span className={styles.check}></span>
                   <div className={styles.title}>
-                    <div className={styles.step_name}>세부 설정</div>
+                    <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
                     <div className={styles.situation}>{regStep == 2 ? "Current" : "To do"}</div>
                   </div>
                 </div>
@@ -161,8 +161,8 @@ const RegistModal = (props) => {
                 {/* 기본설정 설정 시작==========================================*/}
                 <div className={`${regStep == 1 ? "" : "hide"}`}>
                   <Form.Item
-                    label={t('이름')}
-                    rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                    label={t('RESOURCES_NAME')}
+                    rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
                     desc={t('NAME_DESC')}
                   >
                   <Input name="name" autoFocus={true}  maxLength={63} style={{ maxWidth: 'none' }}/>   
@@ -170,7 +170,7 @@ const RegistModal = (props) => {
 
                   <Form.Item
                     className={styles.textarea}
-                    label={t('설명')}
+                    label={t('RESOURCES_DESCRIPTION')}
                     desc={t('DESCRIPTION_DESC')}
                   >
                     <TextArea
@@ -188,7 +188,7 @@ const RegistModal = (props) => {
                 <div className={`${regStep == 2 ? "" : "hide"}`}>
 
                   <Form.Item
-                    label={t('스토리지 클래스')}
+                    label={t('RESOURCES_STOREGE_CLASS')}
                   >
                     <Select
                       name="storage_class"
@@ -199,7 +199,7 @@ const RegistModal = (props) => {
                   </Form.Item>
 
                   <Form.Item
-                    label={t('접근 모드')}
+                    label={t('RESOURCES_ACCESS_MODE')}
                   >
                     <Select
                       name="access_mode"
@@ -209,7 +209,7 @@ const RegistModal = (props) => {
                     />
                   </Form.Item>
 
-                  <Form.Item label={t('루트 디스크')} >
+                  <Form.Item label={t('RESOURCES_ROOT_DISK')} >
                         <div style={{
                             textAlign: "center",
                             padding: 20
@@ -228,7 +228,7 @@ const RegistModal = (props) => {
                   </Form.Item>                    
 
                   <Form.Item
-                    label={t('입력 소스')}
+                    label={t('RESOURCES_INPUT_SOURCE')}
                   >
                     <Select
                       name="import_source"
@@ -242,7 +242,7 @@ const RegistModal = (props) => {
                     <Columns>
                       <Column>
                         <Form.Item
-                          label={t('볼륨 모드')}
+                          label={t('RESOURCES_VOLUME_MODE')}
                         >
                           <Select
                             name="volume_mode"

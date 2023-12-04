@@ -36,7 +36,7 @@ import styles from './index.scss'
   store: new VolumeStore(),
   module: 'resourcesvolumes',
   authKey: 'resourcesvolumes',
-  name: '볼륨',
+  name: t('RESOURCES_VOLUME'),
 })
 export default class ResourcesVolumes extends React.Component {
  
@@ -51,7 +51,7 @@ export default class ResourcesVolumes extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('삭제'),
+        text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -72,7 +72,7 @@ export default class ResourcesVolumes extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('resourcesvolume.regist', {
@@ -86,7 +86,7 @@ export default class ResourcesVolumes extends React.Component {
         {
           key: 'delete',
           type: 'danger',
-          text: t('REMOVE'),
+          text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
             trigger('resourcesvolume.remove.batch', {
@@ -140,21 +140,21 @@ export default class ResourcesVolumes extends React.Component {
         render: access_modes => this.mapperAccessMode(access_modes),
       },
       {
-        title: t('입력 소스'),
+        title: t('RESOURCES_INPUT_SOURCE'),
         dataIndex: 'import_source',
         isHideable: true,
         search: true,
         width: 'auto',
       },
       {
-        title: t('스토리지 클래스'),
+        title: t('RESOURCES_STOREGE_CLASS'),
         dataIndex: 'storage_class',
         isHideable: true,
         search: true,
         width: 'auto',
       },
       {
-        title: t('용량'),
+        title: t('RESOURCES_CAPACITY'),
         dataIndex: 'capacity',
         isHideable: true,
         search: true,
@@ -187,7 +187,7 @@ export default class ResourcesVolumes extends React.Component {
       //   },      
       // },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
         width: 150,
@@ -233,7 +233,7 @@ export default class ResourcesVolumes extends React.Component {
     return [
       {
         dataIndex: 'name',
-        title: t('이름'),
+        title: t('RESOURCES_NAME'),
         search: true,
       }
     ]
@@ -251,8 +251,8 @@ export default class ResourcesVolumes extends React.Component {
         {...bannerProps}
         icon="storage"
         tabs={this.tabs}
-        title={t('볼륨')}
-        description={t('볼륨의 상태와 사용현황을 관리 할 수 있습니다.')}
+        title={t('RESOURCES_VOLUME')}
+        description={t('RESOURCES_VOLUME_DESC')}
       />
       <Table
         {...tableProps}

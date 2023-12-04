@@ -37,11 +37,11 @@ export default {
             .create(data, { cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('저장 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
               success && success()
             })
         },
-        title: '볼륨 생성',
+        title: t('RESOURCES_CREATE_VOLUME'),
         modal: RegistModal,
         store,
         cluster,
@@ -60,11 +60,11 @@ export default {
             .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('수정 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
               success && success()
             })
         },
-        title: '볼륨 수정',
+        title: t('RESOURCES_EDIT_VOLUME'),
         modal: ModifyModal,
         store,
         module,
@@ -89,13 +89,13 @@ export default {
             .delete({ ...detail, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('삭제 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
             })
         },
         modal: DeleteModal,
-        title: t('삭제'),
-        desc: t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        title: t('RESOURCES_DELETE'),
+        desc: t.html('RESOURCES_DELETE_VOLUME_TIP', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -114,19 +114,19 @@ export default {
             .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('삭제 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
             })
         },
         modal: DeleteModal,
         title:
           usernames.split(', ').length === 1
-            ? t('삭제')
-            : t('일괄 삭제'),
+            ? t('RESOURCES_DELETE')
+            : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('볼륨 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('RESOURCES_DELETE_VOLUME_TIP', { resource: usernames })
+            : t.html('RESOURCES_DELETE_VOLUME_TIP', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
@@ -139,7 +139,7 @@ export default {
         onOk: () => {
           store.delete(detail).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('삭제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
           })
         },
@@ -155,7 +155,7 @@ export default {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
-          Notify.success({ content: t('수정 되었습니다.') })
+          Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
           Modal.close(modal)
           success && success()
         },
@@ -169,7 +169,7 @@ export default {
   'resourcesvolume.bindingPop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '바인딩',
+        title: t('RESOURCES_BINDING'),
         modal: BindingModal,
         store,
         success,
@@ -183,12 +183,12 @@ export default {
         onOk: () => {
           store.actionState({data, ...props}).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('분리 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_ISOLATE_SUCCESSFUL') })
             success && success()
           })
         },
-        title: '볼륨 분리',
-        desc: '분리 하시겠습니까?',
+        title: t('RESOURCES_VOLUME_ISOLATION'),
+        desc: t('RESOURCES_ISOLATE_TIP'),
         modal: ConfirmModal,
         store,
         ...props,
