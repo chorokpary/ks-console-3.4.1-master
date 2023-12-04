@@ -222,7 +222,7 @@ const VmDetail = (props) => {
       },
       {
         name: t('이미지'),
-        value: detail.vm.image,
+        value: detail.vm.image.name,
       },
       {
         name: t('Flavor'),
