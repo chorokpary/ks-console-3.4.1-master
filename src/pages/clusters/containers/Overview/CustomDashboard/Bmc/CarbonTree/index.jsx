@@ -33,7 +33,7 @@ const CarbonTree = ({ x, y, w, h,
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>탄소 발자국 - 소나무</label>
+              <label>{t('RESOURCES_CARBON_FOOTPRINT')} - {t('RESOURCES_PINE_TREE')}</label>
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_chart_2">
@@ -41,10 +41,10 @@ const CarbonTree = ({ x, y, w, h,
                   <div className="cont4">
                     <div className="bar_value">
                       <dl className="rgt">
-                        <dt>ARM</dt><dd>{common.fnAddCommar(arm)} 그루</dd>
+                        <dt>ARM</dt><dd>{common.fnAddCommar(arm)} {t('RESOURCES_TREE')}</dd>
                       </dl>
                       <dl>
-                        <dt>x86</dt><dd>{common.fnAddCommar(x86)} 그루</dd>
+                        <dt>x86</dt><dd>{common.fnAddCommar(x86)} {t('RESOURCES_TREE')}</dd>
                       </dl>
                     </div>
                     <div className="bar_chart">

@@ -90,7 +90,7 @@ const RecentResource = ({ x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>최근 생성된 리소스 (1주일)</label>
+              <label>{t('RESOURCES_RECENT_CREATE_RESOURCE')} ({t('RESOURCES_WEEKEND')})</label>
 
             </div>
             <div className="grid_info style_list">
@@ -152,7 +152,7 @@ const List = ({ nodeList, podList, vmList, kaasList }) => {
 
       {list.length == 0 &&
         <div className="grid_text">
-          <span>데이터가 없습니다.</span>
+          <span>{t('RESOURCES_NO_DATA')}</span>
         </div>
       }
     </>

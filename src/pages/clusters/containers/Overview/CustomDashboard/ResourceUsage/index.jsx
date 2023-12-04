@@ -182,12 +182,12 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>리소스 사용량</label>
+              <label>{t('RESOURCES_RESOURCE_USAGE')}</label>
               <div className="right">
                 <div className="dash_boxtab">
                   <label htmlFor="name2_1">
                     <input type="radio" name="box-tab" id="name2_1" value="name3" defaultChecked onClick={() => onClickRightTab('node', metricData)} />
-                    <span>노드</span>
+                    <span>{t('RESOURCES_NODE')}</span>
                   </label>
                   <label htmlFor="name2_2">
                     <input type="radio" name="box-tab" id="name2_2" value="name4" onClick={() => onClickRightTab('pod', podData)} />
@@ -195,7 +195,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
                   </label>
                   <label htmlFor="name2_3">
                     <input type="radio" name="box-tab" id="name2_3" value="name5" onClick={() => onClickRightTab('vm', vmData)} />
-                    <span>가상머신</span>
+                    <span>{t('RESOURCES_VM')}</span>
                   </label>
                   <label htmlFor="name2_4">
                     <input type="radio" name="box-tab" id="name2_4" value="name6" onClick={() => onClickRightTab('kaas', kaasData)} />
@@ -270,7 +270,7 @@ const TabContent = ({ option }) => {
         <SimpleArea {...commonProps} {...config} style={{ padding: '10px', color: 'white' }} />
         :
         <div className="grid_text">
-          <span>데이터가 없습니다.</span>
+          <span>{t('RESOURCES_NO_DATA')}</span>
         </div>
       }
     </>

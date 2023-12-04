@@ -34,7 +34,7 @@ const CabonIndicator = ({ x, y, w, h,
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>탄소 지표 ({getLocalTime(Date.now()).format('YYYY.MM')})</label>
+              <label>{t('RESOURCES_CARBON_INDICATOR')} ({getLocalTime(Date.now()).format('YYYY.MM')})</label>
               {/*<i className="ico-btn-trash"></i>*/}
             </div>
             <div className="grid_info style_list">
@@ -46,7 +46,7 @@ const CabonIndicator = ({ x, y, w, h,
                       <i className="ico-type-bmcnode"></i>
                     </div>
                     <div className="rgt">
-                      <div className="value">{serverTotalCount}<span>대</span></div>
+                      <div className="value">{serverTotalCount}<span>{t('RESOURCES_DAE')}</span></div>
                       <dl><dt>ARM</dt><dd>{armServerCount}</dd></dl>
                       <dl><dt>x86</dt><dd>{x86ServerCount}</dd></dl>
                     </div>
@@ -76,7 +76,7 @@ const CabonIndicator = ({ x, y, w, h,
                       <i className="ico-type-tree"></i>
                     </div>
                     <div className="rgt">
-                      <div className="value">{useTree}<span>그루</span></div>
+                      <div className="value">{useTree}<span>{t('RESOURCES_TREE')}</span></div>
                       <dl><dt>ARM</dt><dd>{armTree}</dd></dl>
                       <dl><dt>x86</dt><dd>{x86Tree}</dd></dl>
                     </div>
@@ -86,7 +86,7 @@ const CabonIndicator = ({ x, y, w, h,
                       <i className="ico-type-money"></i>
                     </div>
                     <div className="rgt">
-                      <div className="value">{common.fnAddCommar(usePrice)}<span>원</span></div>
+                      <div className="value">{common.fnAddCommar(usePrice)}<span>{t('RESOURCES_WON')}</span></div>
                       <dl><dt>ARM</dt><dd>{common.fnAddCommar(armPrice)}</dd></dl>
                       <dl><dt>x86</dt><dd>{common.fnAddCommar(x86Price)}</dd></dl>
                     </div>

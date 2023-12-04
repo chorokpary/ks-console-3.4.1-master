@@ -44,7 +44,7 @@ const ClusterStatus = ({ x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>클러스터 컴포넌트 상태</label>
+              <label>{t('RESOURCES_CLUSTER_COMPONENT_STATE')}</label>
               <div className="right">
               </div>
             </div>
