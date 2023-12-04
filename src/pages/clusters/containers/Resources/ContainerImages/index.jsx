@@ -71,7 +71,7 @@ export default class Images extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('containerimage.regist', {

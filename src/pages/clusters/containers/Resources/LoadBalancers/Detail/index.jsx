@@ -55,7 +55,7 @@ const LoadBalancerDetail = (props) => {
         {
             key: 'floatingIp',
             icon: 'intranet-routers',
-            text: floatingIp == undefined ? 'FIP 할당' : "FIP 해제",
+            text: floatingIp == undefined ? t('RESOURCES_ALLOCATE_FIP') : t('RESOURCES_DEALLOCATE_FIP'),
             action: 'view',
             onClick: () => {
                 if (floatingIp == undefined) {
@@ -111,32 +111,32 @@ const LoadBalancerDetail = (props) => {
 
         return [
             {
-                name: t('클러스터'),
+                name: t('RESOURCES_CLUSTER'),
                 value: detail.cluster,
             },
             {
-                name: t('네트워크 이름'),
+                name: t('RESOURCES_NETWORK_NAME'),
                 value: detail.lb.network,
             },
             {
-                name: t('멤버 IP'),
-                value: detail.lb.members.length > 1 ? detail.lb.members[0] + ' 외 ' + (detail.lb.members.length - 1) + '개' : detail.lb.members[0],
+                name: t('RESOURCES_MEMBER_IP'),
+                value: detail.lb.members.length > 1 ? detail.lb.members[0] + ' ' + t('RESOURCES_BESIDES') + ' ' + (detail.lb.members.length - 1) + t('RESOURCES_COUNT') : detail.lb.members[0],
             },
             {
                 name: t('VIP'),
                 value: detail.lb.virtual_ip,
             },
             {
-                name: t('정책'),
+                name: t('RESOURCES_POLICY'),
                 //value: detail.lb.rules.length < 1 ? '-' : detail.lb.rules.map((rule) => (rule.protocol) + '\r\n')
-                value: detail.lb.rules.length > 1 ? detail.lb.rules[0]?.protocol + ' 외 ' + (detail.lb.rules.length - 1) + '개' : detail.lb.rules[0]?.protocol,
+                value: detail.lb.rules.length > 1 ? detail.lb.rules[0]?.protocol + ' ' + t('RESOURCES_BESIDES') + ' ' + (detail.lb.rules.length - 1) + t('RESOURCES_COUNT') : detail.lb.rules[0]?.protocol,
             },
             {
-                name: t('설명'),
+                name: t('RESOURCES_DESCRIPTION'),
                 value: detail.lb.description,
             },
             {
-                name: t('생성일'),
+                name: t('RESOURCES_REGIST_DATE'),
                 value: getLocalTime(detail.lb.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
@@ -154,7 +154,7 @@ const LoadBalancerDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('로드 밸런서'),
+                label: t('RESOURCES_LOAD_BALANCER'),
                 url: listUrl,
             },
         ],

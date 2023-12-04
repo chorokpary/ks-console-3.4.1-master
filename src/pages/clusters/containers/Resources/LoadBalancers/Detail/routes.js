@@ -25,7 +25,7 @@ const PATH = '/clusters/:cluster/loadBalancers/:name'
 export default [
     {
         path: `${PATH}/status`,
-        title: '상태',
+        title: t('RESOURCES_STATE'),
         component: Status,
         exact: true,
     },
