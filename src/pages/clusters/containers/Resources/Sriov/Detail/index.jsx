@@ -87,15 +87,15 @@ const KeypairDetail = (props) => {
   
       return [
         {
-          name: t('클러스터'),
+          name: t('RESOURCES_CLUSTER'),
           value: detail.cluster,
         },
         {
-          name: t('네트워크 유형'),
+          name: t('RESOURCES_NETWORK_TYPE_YOO'),
           value: detail.network.type,
         },
         {
-          name: t('세그먼트 ID'),
+          name: t('RESOURCES_SEGMENT_ID'),
           value: detail.network.segment_id,
         },
         {
@@ -107,11 +107,11 @@ const KeypairDetail = (props) => {
           value: detail.network.cidr,
         },
         {
-          name: t('게이트웨이 IP'),
+          name: t('RESOURCES_GATEWAY_IP'),
           value: detail.network.gateway_ip,
         },
         {
-          name: t('IP POOL 정보'),
+          name: t('RESOURCES_IP_POOL_INFORMATION'),
           value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
         },
         {
@@ -119,13 +119,13 @@ const KeypairDetail = (props) => {
           value: detail.network.dns?.map(el => el + '\n'),
         },
         {
-          name: t('호스트 라우트'),
+          name: t('RESOURCES_HOST_ROUTE'),
           value: detail.network.host_routes?.map(obj =>
             'Destination: ' + obj.destination + '\n Nexthop:' + obj.nexthop + '\n'
           ),
         },
         {
-          name: t('설명'),
+          name: t('RESOURCES_DESCRIPTION'),
           value: detail.network.description,
         },
       ]

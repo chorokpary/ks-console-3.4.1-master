@@ -122,15 +122,15 @@ const ModifyModal = (props) => {
           <>
               {regStep == 1 &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
-                  <Button type="control" onClick={() => {stepMoveCheck(1)}} className={classnames(styles['btn'],styles['btn-control'])}>다음</Button>                    
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+                  <Button type="control" onClick={() => {stepMoveCheck(1)}} className={classnames(styles['btn'],styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>                    
                 </>
               }
               {regStep == 2 &&
                 <>
-                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>취소</Button>
-                  <Button onClick={() => {setRegStep(1)}} className={classnames(styles['btn'],styles['btn-default'])}>이전</Button>
-                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >수정</Button>
+                  <Button onClick={() => closeModal()} className={classnames(styles['btn'],styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+                  <Button onClick={() => {setRegStep(1)}} className={classnames(styles['btn'],styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
+                  <Button onClick={() => {handleOk()}} className={classnames(styles['btn'],styles['btn-control'])} >{t('RESOURCES_EDIT')}</Button>
                 </>
               }
           </>
@@ -294,7 +294,7 @@ const ModifyModal = (props) => {
                   </div>
                   <span className={styles.basic}></span>
                   <div className={styles.title}>
-                    <div className={styles.step_name}>기본 설정</div>
+                    <div className={styles.step_name}>{t('RESOURCES_DEFAULT_SETTINGS')}</div>
                     <div className={styles.situation}>{regStep == 1 ? "Current" : regStep > 1 ? "Done" : "To do"}</div>
                   </div>
                 </div>
@@ -304,7 +304,7 @@ const ModifyModal = (props) => {
                   </div>
                   <span className={styles.check}></span>
                   <div className={styles.title}>
-                    <div className={styles.step_name}>세부 설정</div>
+                    <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
                     <div className={styles.situation}>{regStep == 2 ? "Current" : "To do"}</div>
                   </div>
                 </div>
@@ -317,7 +317,7 @@ const ModifyModal = (props) => {
                 {/* 기본설정 설정 시작==========================================*/}
                 <div className={`${regStep == 1 ? "" : "hide"}`}>
                   <Form.Item
-                    label={t('리소스 이름')}
+                    label={t('RESOURCES_RESOURCE_NAME')}
                     rules={[{ required: true }]}
                   >
                       <Input
@@ -334,8 +334,8 @@ const ModifyModal = (props) => {
                     <Columns>
                       <Column>
                         <Form.Item
-                          label={t('네트워크 타입')}
-                          rules={[{ required: true, message: t('이름을 선택해 주세요') },]}
+                          label={t('RESOURCES_NETWORK_TYPE')}
+                          rules={[{ required: true, message: t('RESOURCES_SELECT_NAME_TIP') },]}
                         >
                            <Input
                               name="type"
@@ -351,7 +351,7 @@ const ModifyModal = (props) => {
                       </Column>
                       <Column>
                         <Form.Item
-                          label={t('세그먼트 ID')}
+                          label={t('RESOURCES_SEGMENT_ID')}
                         >
                           <NumberInput name="segment_id"
                             disabled={true}
@@ -362,14 +362,14 @@ const ModifyModal = (props) => {
                     </Columns>
                   </Form.Item>
 
-                  <Form.Item label={t('서브넷')}>
+                  <Form.Item label={t('RESOURCES_SUBNET')}>
                     <Form.Group>
                       <Form.Item>
                         <Columns>
                           <Column>
                             <Form.Item
                               label={t('CIDR')}
-                              rules={[{ required: true, message: t('CIDR을 입력해 주세요.') },]}
+                              rules={[{ required: true, message: t('RESOURCES_CIDR_EMPTY_DESC') },]}
                             >
                               <Input name="cidr"
                                 style={{ maxWidth: 'none' }}
@@ -382,8 +382,8 @@ const ModifyModal = (props) => {
                             <Columns>
                               <Column>
                                 <Form.Item
-                                  label={t('IP POOL 정보')}
-                                  rules={[{ required: true, message: t('IP POOL을 입력해 주세요.') },]}
+                                  label={t('RESOURCES_IP_POOL_INFORMATION')}
+                                  rules={[{ required: true, message: t('RESOURCES_IP_POOL_EMPTY_DESC') },]}
                                 >
                                   <Input name="ip_pool_start" 
                                   defaultValue={detail.ip_pool.start}
@@ -392,7 +392,7 @@ const ModifyModal = (props) => {
                               </Column>
                               <Column>
                                 <Form.Item
-                                  rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                                  rules={[{ required: true, message: t('RESOURCES_IP_POOL_EMPTY_DESC') },]}
                                 >
                                   <Input name="ip_pool_end"
                                     style={{ marginTop: '24px' }} 
@@ -409,7 +409,7 @@ const ModifyModal = (props) => {
                         <Columns>
                           <Column>                           
                              <Form.Item
-                              label={t('게이트웨이 IP')}
+                              label={t('RESOURCES_GATEWAY_IP')}
                               >
                               <Input name="gateway_ip" 
                                 defaultValue={detail.gateway_ip}
@@ -426,7 +426,7 @@ const ModifyModal = (props) => {
 
                   <Form.Item
                     className={styles.textarea}
-                    label={t('설명')}
+                    label={t('RESOURCES_DESCRIPTION')}
                     desc={t('DESCRIPTION_DESC')}
                   >
                     <TextArea
@@ -445,7 +445,7 @@ const ModifyModal = (props) => {
                     <Form.Item>
                       <div className={styles.wrapper}>
                         <div>
-                          총 {stateVariables['bond'].length}건
+                          {t('RESOURCES_TOTAL')} {stateVariables['bond'].length}{t('RESOURCES_COUNT')}
                         </div>
                         <div className={styles.table}>
                           <table>
@@ -460,14 +460,14 @@ const ModifyModal = (props) => {
                                           onChange={(checked) => handleAllCheck(checked, "bond")}
                                           checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}/>
                                     </th>
-                                    <th><strong>네트워크 이름</strong></th>
+                                    <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {sriovBondDataList.length == 0 &&
                                     <tr>
                                       <td colSpan="6" className="no-data">
-                                        <p>관련 데이터가 없습니다.</p>
+                                        <p>{t('RESOURCES_DETAIL_NO_DATA')}</p>
                                       </td>
                                     </tr>
                                   }
@@ -519,11 +519,11 @@ const ModifyModal = (props) => {
                     </Form.Group>
                   </Form.Item>
 
-                  <Form.Item label={t('호스트 라우트')}>
+                  <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
                     <Form.Group>
                       {detail.host_routes.length < 1 && (
                         <div>
-                         등록된 호스트 라우트가 없습니다.
+                         {t('RESOURCES_NO_REGISTERED_HOST_ROUTE')}
                         </div>
                       )}
                       {detail.host_routes && detail.host_routes.map((obj, index) => (
