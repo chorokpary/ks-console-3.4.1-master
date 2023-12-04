@@ -120,7 +120,7 @@ export default {
         title:
           usernames.split(', ').length === 1
             ? t('RESOURCES_DELETE')
-            : t('일괄 삭제'),
+            : t('RESOURCES_DELETE_MULTIPLE:'),
         desc:
           usernames.split(', ').length === 1
             ? t.html('RESOURCES_DELETE_HOST_DEVICE_TIP', { resource: usernames })
