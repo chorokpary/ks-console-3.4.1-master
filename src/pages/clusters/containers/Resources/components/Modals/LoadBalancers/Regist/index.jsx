@@ -132,7 +132,7 @@ const RegistModal = (props) => {
 
     const networkValidator = (rule, value, callback) => {
         if (value == t('RESOURCES_SELECT') || value == "select") {
-            return callback({ message: t('RESOURCES_SELECT_NETWORK_NM_TIP') })
+            return callback({ message: t('RESOURCES_SELECT_NETWORK_NAME_TIP') })
         }
         callback()
     }
