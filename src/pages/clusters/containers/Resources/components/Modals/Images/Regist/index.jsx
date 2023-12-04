@@ -13,9 +13,7 @@ import classnames from 'classnames'
 import axios from 'axios'
 import { Base64 } from 'js-base64'
 import { Loading } from '@kube-design/components'
-
 import { Notify } from '@kube-design/components'
-import { async } from 'q'
 
 const defaultImageSize = '12GB'
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
@@ -85,8 +83,6 @@ export default function ResourceImageModal({ title, store, onOk }) {
     getDistroTypeList();
 
   }, [])
-
-
 
   const handleImageSizeActive = () => {
     if (imageSizeActive) {
@@ -462,11 +458,6 @@ export default function ResourceImageModal({ title, store, onOk }) {
   )
 }
 
-const Step1 = () => {
-
-}
-
-
 /**
  * 이미지 세부설정
  * 소스(도커 이미지) 및 설명 부분
@@ -667,8 +658,9 @@ const Step2 = (
 
   // public image tag
   const getPulicImageTag = async (imageName) => {
-    //todo registry url > namespcae 로 edgestack 가져와야함.
-    const response = await axios.get(`https://quay.io/api/v1/repository/edgestack/${imageName}`, {
+    const urlParams = registryUrl.searchParams;
+    const namespace = urlParams.get('namespace')
+    const response = await axios.get(`https://quay.io/api/v1/repository/${namespace}/${imageName}`, {
       headers: {
         "X-Requested-With": "XMLHttpRequest",
       }

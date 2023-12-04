@@ -169,13 +169,13 @@ const handleHarborProxyCustom = async ctx => {
   const [, protocol] = `${serverConfig.apiServer.harborUrl}`.match(/^(https?:\/\/)/)
   let path = ''
 
-  if (requestUrl === 'users') {
+  if (requestUrl === 'users') { // 사용자 유효성 체크
     path = `${serverConfig.apiServer.harborUrl}/api/v2.0/users/current`;
-  } else if (requestUrl === 'public') {
+  } else if (requestUrl === 'public') { // private 이지만 url 입력 안한 경우
     path = `${serverConfig.apiServer.harborUrl}/api/v2.0/repositories`;
-  } else if (requestUrl === 'private') {
+  } else if (requestUrl === 'private') { // 직접 url 입력한 경우
     path = `${serverConfig.apiServer.harborUrl}/api/v2.0/projects/${data.projectName}/repositories`;
-  } else if (requestUrl === 'tags') {
+  } else if (requestUrl === 'tags') { // tag list
     path = `${serverConfig.apiServer.harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`;
   }
 
