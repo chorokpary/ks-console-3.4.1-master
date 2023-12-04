@@ -49,6 +49,7 @@ module.exports = {
   RESOURCES_FLAVOR_DESC: 'Flavor의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_SELECT_FLOATING_IP_TIP: 'Floating IP를 선택해 주세요.',
   RESOURCES_GPU_USE_CHECK: 'GPU 사용 여부',
+  RESOURCES_GPU_CHECK: 'GPU 여부',
   RESOURCES_HOST_DEVICE: 'Host 디바이스',
   RESOURCES_IP_POOL_EMPTY_DESC: 'IP POOL을 입력해주세요.',
   RESOURCES_IP_EMPTY_DESC: 'IP을 입력해 주세요.',
@@ -199,6 +200,7 @@ module.exports = {
   RESOURCES_PREVIEW: '미리보기',
   RESOURCES_NOT_USE: '미사용',
   RESOURCES_NOT_SET: '미설정',
+  RESOURCES_NOT_SUPPORT: '미지원',
   RESOURCES_DEPLOY_STEP: '배포 단계',
   RESOURCES_DISTRIBUTION: '배포판',
   RESOURCES_VERSION: '버전',
@@ -243,6 +245,7 @@ module.exports = {
   RESOURCES_SIZE: '사이즈',
   RESOURCES_DELETE: '삭제',
   RESOURCES_DELETE_SUCCESSFUL: '삭제 되었습니다.',
+  RESOURCES_DELETE_DESC: '삭제하시겠습니까?',
   RESOURCES_TERMINATING: '삭제 중',
   RESOURCES_STATE: '상태',
   RESOURCES_CHANGE_STATE: '상태 변경',
@@ -344,6 +347,7 @@ module.exports = {
   RESOURCES_POLICY: '정책',
   RESOURCES_POLICY_COUNT: '정책 개수',
   RESOURCES_NO_POLICY: '정책이 없습니다.',
+  RESOURCES_SUPPORT: '지원',
   RESOURCES_MANUFACTURING_NAME: '제조명',
   RESOURCES_MANUFACTURING_COMPANY: '제조사',
   RESOURCES_MANUFACTURING_COMPANY_ID: '제조사 ID',
@@ -434,5 +438,5 @@ module.exports = {
   RESOURCES_DELETE_HOST_DEVICE_TIP: '호스트 디바이스 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_HOST_DEVICE_TIP: '호스트 디바이스를 선택해 주세요.',
   RESOURCES_HOST_DEVICE_DESC: '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_DELETE_DESC: '삭제하시겠습니까?',
+
 };

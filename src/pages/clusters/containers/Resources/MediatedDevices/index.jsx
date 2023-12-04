@@ -30,7 +30,7 @@ import styles from './index.scss'
     store: new MediatedDeviceStore(),
     module: 'mediated_devices',
     authKey: 'mediated_devices',
-    name: 'Mediated 디바이스',
+    name: t('RESOURCES_MEDIATED_DEVICE'),
 })
 export default class MediatedDevice extends React.Component {
 
@@ -44,7 +44,7 @@ export default class MediatedDevice extends React.Component {
             {
                 key: 'delete',
                 icon: 'trash',
-                text: t('REMOVE'),
+                text: t('RESOURCES_DELETE'),
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
@@ -65,7 +65,7 @@ export default class MediatedDevice extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('mediatedDevice.regist', {
@@ -79,7 +79,7 @@ export default class MediatedDevice extends React.Component {
                 {
                     key: 'delete',
                     type: 'danger',
-                    text: t('REMOVE'),
+                    text: t('RESOURCES_DELETE'),
                     action: 'delete',
                     onClick: () =>
                         trigger('mediatedDevice.remove.batch', {
@@ -100,7 +100,7 @@ export default class MediatedDevice extends React.Component {
         const { cluster } = this.props.match.params
         return [
             {
-                title: t('이름'),
+                title: t('RESOURCES_NAME'),
                 dataIndex: 'resource_name',
                 sorter: true,
                 search: true,
@@ -120,22 +120,22 @@ export default class MediatedDevice extends React.Component {
                 },
             },
             {
-                title: t('Mediated 디바이스 이름'),
+                title: t('RESOURCES_MEDIATED_DEVICE_NAME'),
                 dataIndex: 'mediated_device_name',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('GPU 여부'),
+                title: t('RESOURCES_GPU_CHECK'),
                 dataIndex: 'is_gpu',
                 isHideable: true,
                 width: 'auto',
                 render: isGpu => (
-                    isGpu ? '사용' : '미사용'
+                    isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')
                 )
             },
             {
-                title: t('가용  개수'),
+                title: t('RESOURCES_AVAILABLE_COUNT'),
                 dataIndex: 'allocatable',
                 isHideable: true,
                 width: 'auto',
@@ -144,7 +144,7 @@ export default class MediatedDevice extends React.Component {
     }
 
     get emptyProps() {
-        return { desc: t('데이터가 없습니다') }
+        return { desc: t('RESOURCES_NO_DATA') }
     }
 
     getBanner = () => {
@@ -160,8 +160,8 @@ export default class MediatedDevice extends React.Component {
                     icon={this.getBanner}
                     {...bannerProps}
                     tabs={this.tabs}
-                    title={t('Mediated 디바이스')}
-                    description={t('Mediated 디바이스의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('RESOURCES_MEDIATED_DEVICE')}
+                    description={t('RESOURCES_MEDIATED_DEVICE_DESC')}
                 />
                 <Table
                     {...tableProps}
