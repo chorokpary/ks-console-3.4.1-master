@@ -33,7 +33,7 @@ import FloatingIpStore from 'stores/resources/floatingip'
     store: new FloatingIpStore(),
     module: 'floating_ips',
     authKey: 'floating_ips',
-    name: '플로팅 IP',
+    name: t('RESOURCES_FLOATING_IP'),
 })
 export default class FloatingIp extends React.Component {
 
@@ -68,7 +68,7 @@ export default class FloatingIp extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('floatingIp.regist', {
@@ -104,7 +104,7 @@ export default class FloatingIp extends React.Component {
 
         return [
             {
-                title: t('이름'),
+                title: t('RESOURCES_NAME'),
                 dataIndex: 'network',
                 sorter: true,
                 render: (name, floatingip) => (
@@ -117,7 +117,7 @@ export default class FloatingIp extends React.Component {
                 ),
             },
             {
-                title: t('리소스 타입'),
+                title: t('RESOURCES_RESOURCE_TYPE'),
                 dataIndex: 'instance_type',
                 isHideable: true,
                 width: 'auto',
@@ -128,7 +128,7 @@ export default class FloatingIp extends React.Component {
                 ),
             },
             {
-                title: t('리소스 이름'),
+                title: t('RESOURCES_RESOURCE_NAME'),
                 dataIndex: 'instance_name',
                 isHideable: true,
                 width: 'auto',
@@ -139,13 +139,13 @@ export default class FloatingIp extends React.Component {
                 ),
             },
             {
-                title: t('플로팅 IP'),
+                title: t('RESOURCES_FLOATING_IP'),
                 dataIndex: 'floating_ip',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('고정 IP'),
+                title: t('RESOURCES_STATIC_IP'),
                 dataIndex: 'target_ip',
                 isHideable: true,
                 width: 'auto',
@@ -154,7 +154,7 @@ export default class FloatingIp extends React.Component {
     }
 
     get emptyProps() {
-        return { desc: t('데이터가 없습니다') }
+        return { desc: t('RESOURCES_NO_DATA') }
     }
 
     render() {
@@ -168,8 +168,8 @@ export default class FloatingIp extends React.Component {
                     icon="intranet-routers"
                     {...bannerProps}
                     tabs={this.tabs}
-                    title={t('플로팅 IP')}
-                    description={t('플로팅 IP의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('RESOURCES_FLOATING_IP')}
+                    description={t('RESOURCES_FLOATING_IP_DESC')}
                 />
                 <Table
                     {...tableProps}

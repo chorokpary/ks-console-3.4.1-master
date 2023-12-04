@@ -70,8 +70,8 @@ const RegistModal = ({ title, onOk, store }) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
-        okText={'생성'}
-        cancelText={'취소'}
+        okText={t('RESOURCES_CREATE')}
+        cancelText={t('RESOURCES_CANCEL')}
       >
         <Form>
 
@@ -90,18 +90,18 @@ const RegistModal = ({ title, onOk, store }) => {
                   <thead>
                     <tr>
                       <th></th>
-                      <th><strong>네트워크 이름</strong></th>
-                      <th><strong>네트워크 유형</strong></th>
-                      <th><strong>기본 경로</strong></th>
+                      <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
+                      <th><strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong></th>
+                      <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
                       <th><strong>CIDR</strong></th>
-                      <th><strong>게이트웨이</strong></th>
+                      <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                     </tr>
                   </thead>
                   <tbody>
                     {!networkList?.length &&
                       <tr>
                         <td colSpan="6" className="no-data">
-                          <p>모든 자원이 할당 되었습니다.</p>
+                          <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                         </td>
                       </tr>
                     }
@@ -114,7 +114,7 @@ const RegistModal = ({ title, onOk, store }) => {
                         </td>
                         <td>{data.name}</td>
                         <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? "사용" : "미사용"}</td>
+                        <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
                         <td>{data.cidr}</td>
                         <td>{data.gateway_ip}</td>
                       </tr>
