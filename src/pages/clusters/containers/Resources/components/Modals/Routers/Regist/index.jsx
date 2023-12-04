@@ -125,8 +125,8 @@ const RegistModal = (props) => {
           <Form data={formData} ref={form}>
             
             <Form.Item
-                label={t('이름')}
-                rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                label={t('RESOURCES_NAME')}
+                rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
                 desc={t('NAME_DESC')}
               >
               <Input
@@ -136,11 +136,11 @@ const RegistModal = (props) => {
                 style={{ maxWidth: 'none' }}
               />   
             </Form.Item>
-            <Form.Item label={t('내부 네트워크')} >
+            <Form.Item label={t('RESOURCES_INTERNAL_NETWORK')} >
             <div className={styles.wrapper}>
               {stateVariables['internal'].length > 0 &&
                 <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "internal")}>전체 선택 해제</Button>  {stateVariables['internal'].length}개 선택
+                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "internal")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['internal'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                 </div>
               }
               <div className={styles.table}>
@@ -160,18 +160,18 @@ const RegistModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "internal")}
                                 checked={dataListVariables['internal'].length > 0 && stateVariables['internal'].length === dataListVariables['internal'].length ? true : false}/>
                           </th>
-                          <th><strong>네트워크 이름</strong></th>
-                          <th><strong>네트워크 유형</strong></th>
-                          <th><strong>기본 경로</strong></th>
+                          <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
+                          <th><strong>{t('RESOURCES_TYPE_YOO')}</strong></th>
+                          <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
                           <th><strong>CIDR</strong></th>
-                          <th><strong>게이트웨이</strong></th>
+                          <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                         </tr>
                       </thead>
                       <tbody>
                         {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).length &&
                           <tr>
                             <td colSpan="6" className="no-data">
-                              <p>모든 자원이 할당 되었습니다.</p>
+                              <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                             </td>
                           </tr>
                         }
@@ -183,7 +183,7 @@ const RegistModal = (props) => {
                             </td>
                             <td>{data.name}</td>
                             <td>{(data.type).toUpperCase()}</td>
-                            <td>{data.default_route ? "사용" : "미사용"}</td>
+                            <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
                             <td>{data.cidr}</td>
                             <td>{data.gateway_ip}</td>
                           </tr>
@@ -199,11 +199,11 @@ const RegistModal = (props) => {
             </div>
             </Form.Item>
             
-            <Form.Item label={t('외부 네트워크')} >   
+            <Form.Item label={t('RESOURCES_EXTERNAL_NETWORK')} >   
             <div className={styles.wrapper}>
               {!!radioExternal &&
                 <div className={classnames(styles.table_title, styles.table_title_bg, styles.divInRight)}>
-                  <Button className={styles.table_title_button} onClick={() => externalRadioDeselect()}>선택해제</Button>
+                  <Button className={styles.table_title_button} onClick={() => externalRadioDeselect()}>{t('RESOURCES_DESELECT')}</Button>
                 </div>
               }
               <div className={styles.table}>
@@ -219,18 +219,18 @@ const RegistModal = (props) => {
                       <thead>
                         <tr>
                           <th></th>
-                          <th><strong>네트워크 이름</strong></th>
-                          <th><strong>네트워크 유형</strong></th>
-                          <th><strong>기본 경로</strong></th>
+                          <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
+                          <th><strong>{t('RESOURCES_TYPE_YOO')}</strong></th>
+                          <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
                           <th><strong>CIDR</strong></th>
-                          <th><strong>게이트웨이</strong></th>
+                          <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                         </tr>
                       </thead>
                       <tbody>
                         {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).length &&
                           <tr>
                             <td colSpan="6" className="no-data">
-                              <p>모든 자원이 할당 되었습니다.</p>
+                              <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                             </td>
                           </tr>
                         }
@@ -242,7 +242,7 @@ const RegistModal = (props) => {
                             </td>
                             <td>{data.name}</td>
                             <td>{(data.type).toUpperCase()}</td>
-                            <td>{data.default_route ? "사용" : "미사용"}</td>
+                            <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
                             <td>{data.cidr}</td>
                             <td>{data.gateway_ip}</td>
                           </tr>
@@ -253,16 +253,16 @@ const RegistModal = (props) => {
             </div>               
             </Form.Item>
 
-            <Form.Item label={t('SNAT 옵션')} desc={t('트래픽의 출발지 IP주소를 변경하는 NAT')}>
+            <Form.Item label={t('RESOURCES_SNAT_OPTION')} desc={t('RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC')}>
               <div className={styles.wrapper}>
-                <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}} disabled={!!radioExternal ? false : true}>사용</Radio>
-                <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}}>미사용</Radio>
+                <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => {setRadioSnatType("T");}} disabled={!!radioExternal ? false : true}>{t('RESOURCES_USE')}</Radio>
+                <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => {setRadioSnatType("F");}}>{t('RESOURCES_NOT_USE')}</Radio>
               </div>              
             </Form.Item>
            
             <Form.Item
               className={styles.textarea}
-              label={t('설명')}
+              label={t('RESOURCES_DESCRIPTION')}
               desc={t('DESCRIPTION_DESC')}
             >
               <TextArea

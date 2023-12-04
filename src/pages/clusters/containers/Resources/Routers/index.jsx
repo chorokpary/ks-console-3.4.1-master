@@ -32,7 +32,7 @@ import RouterStore from 'stores/resources/routers'
   store: new RouterStore(),
   module: 'routers',
   authKey: 'routers',
-  name: '가상라우터',
+  name: t('RESOURCES_VROUTER'),
 })
 export default class Routers extends React.Component {
  
@@ -47,7 +47,7 @@ export default class Routers extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('삭제'),
+        text: t('REMOVE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -68,7 +68,7 @@ export default class Routers extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text:  t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('router.regist', {
@@ -119,24 +119,24 @@ export default class Routers extends React.Component {
         ),
       },
       {
-        title: t('SNAT 옵션'),
+        title: t('RESOURCES_SNAT_OPTION'),
         dataIndex: 'enable_snat',
         isHideable: true,
         search: true,
         width: 'auto',
         render: enable_snat => (
-          <p>{enable_snat ? "사용" : "미사용"}</p>
+          <p>{enable_snat ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</p>
         ),
       },
       {
-        title: t('가상 라우터 IP'),
+        title: t('RESOURCES_VROUTER_IP'),
         dataIndex: 'vrouter_ip',
         isHideable: true,
         search: true,
         width: 'auto',
       },
       {
-        title: t('내부 네트워크'),
+        title: t('RESOURCES_INTERNAL_NETWORK'),
         dataIndex: 'internal',
         isHideable: true,
         search: true,
@@ -146,14 +146,14 @@ export default class Routers extends React.Component {
         ),
       },
       {
-        title: t('외부 네트워크'),
+        title: t('RESOURCES_EXTERNAL_NETWORK'),
         dataIndex: 'external',
         isHideable: true,
         search: true,
         width: 'auto',
       },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
         width: 150,
@@ -176,12 +176,12 @@ export default class Routers extends React.Component {
     return [
       {
         dataIndex: 'name',
-        title: t('이름'),
+        title: t('RESOURCES_NAME'),
         search: true,
       },
       {
         dataIndex: 'enable_snat',
-        title: t('SNAT 옵션'),
+        title: t('RESOURCES_SNAT_OPTION'),
         search: true,
       }
     ]
@@ -198,8 +198,8 @@ export default class Routers extends React.Component {
         {...bannerProps}
         icon="router"
         tabs={this.tabs}
-        title={t('가상 라우터')}
-        description={t('가상 라우터의 상태와 사용현황을 관리 할 수 있습니다.')}
+        title={t('RESOURCES_VROUTER')}
+        description={t('RESOURCES_VROUTER_DESC')}
       />
       <Table
         {...tableProps}
