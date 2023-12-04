@@ -89,39 +89,39 @@ const ImageDetail = (props) => {
 
     return [
       {
-        name: t('클러스터'),
+        name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
       },
       {
-        name: t('CPU 타입'),
+        name: t('RESOURCES_CPU_TYPE'),
         value: detail.image.arch_type,
       },
       {
-        name: t('부트 타입'),
+        name: t('RESOURCES_BOOT_TYPE'),
         value: detail.image.boot_type,
       },
       {
-        name: t('리얼타임'),
-        value: detail.image.is_realtime ? '사용' : '미사용',
+        name: t('RESOURCES_REAL_TIME'),
+        value: detail.image.is_realtime ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
       },
       {
-        name: t('단계'),
+        name: t('RESOURCES_STEP'),
         value: detail.image.phase,
       },
       {
-        name: t('진행률'),
+        name: t('RESOURCES_PROGRESS'),
         value: detail.image.progress,
       },
       {
-        name: t('소스'),
+        name: t('RESOURCES_SOURCE'),
         value: detail.image.source,
       },
       {
-        name: t('설명'),
+        name: t('RESOURCES_DESCRIPTION'),
         value: detail.image.description,
       },
       {
-        name: t('생성일'),
+        name: t('RESOURCES_CREATE_DAY'),
         value: getLocalTime(detail.image.timestamp).format('YYYY-MM-DD HH:mm:ss'),
       },
     ]
@@ -140,7 +140,7 @@ const ImageDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('가상머신 이미지'),
+        label: t('RESOURCES_VM_IMAGE'),
         url: listUrl,
       },
     ],
@@ -153,7 +153,7 @@ const ImageDetail = (props) => {
         routes={[
           {
             path: `${PATH}/status`,
-            title: '상태',
+            title: t('RESOURCES_STATE'),
             component: Status,
             exact: true,
             name: props.match.params.name
@@ -171,6 +171,6 @@ const Status = ({ route }) => {
   const imageName = route.name
 
   return (
-    <DetailVmList type='가상머신 이미지' variables='image' name={imageName} />
+    <DetailVmList type={t('RESOURCES_VM_IMAGE')} variables='image' name={imageName} />
   )
 }

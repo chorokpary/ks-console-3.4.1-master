@@ -39,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: t('RESOURCES_CREATE_KAAS_IMAGE'),
+        title: t('RESOURCES_CREATE_VM_IMAGE'),
         modal: RegistModal,
         store,
         cluster,
@@ -62,7 +62,7 @@ export default {
               success && success()
             })
         },
-        title: t('RESOURCES_EDIT_KAAS_IMAGE'),
+        title: t('RESOURCES_EDIT_VM_IMAGE'),
         modal: ModifyModal,
         store,
         detail,
