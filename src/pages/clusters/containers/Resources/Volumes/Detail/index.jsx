@@ -66,7 +66,7 @@ const VolumeDetail = (props) => {
       {
         key: 'volume',
         icon: 'storage',
-        text: used_by_vmi == undefined  ? '바인딩' : "분리",
+        text: used_by_vmi == undefined  ? t('RESOURCES_BINDING') : t('RESOURCES_ISOLATE'),
         action: 'view',
         onClick: () => {
           if(used_by_vmi == undefined){
@@ -111,15 +111,15 @@ const VolumeDetail = (props) => {
   
       return [
         {
-          name: t('클러스터'),
+          name: t('RESOURCES_CLUSTER'),
           value: detail.cluster,
         },
         {
-          name: t('스토리지 클래스'),
+          name: t('RESOURCES_STOREGE_CLASS'),
           value: detail.volume.storage_class,
         },
         {
-          name: t('접근 모드'),
+          name: t('RESOURCES_ACCESS_MODE'),
           value: detail.volume.access_modes.length > 0 ? 
                 detail.volume.access_modes && (detail.volume.access_modes).map((volume) => (
                   <p key={volume}>{volume}</p>
@@ -127,23 +127,23 @@ const VolumeDetail = (props) => {
               : "-",
         },
         {
-          name: t('용량'),
+          name: t('RESOURCES_CAPACITY'),
           value: detail.volume.capacity,
         },
         {
-          name: t('입력 소스'),
+          name: t('RESOURCES_INPUT_SOURCE'),
           value: detail.volume.import_source,
         },
         {
-          name: t('볼륨 모드'),
+          name: t('RESOURCES_VOLUME_MODE'),
           value: detail.volume.volume_mode,
         },
         {
-          name: t('설명'),
+          name: t('RESOURCES_DESCRIPTION'),
           value: detail.volume.description,
         },
         {
-          name: t('생성일'),
+          name: t('RESOURCES_CREATE_DAY'),
           value: getLocalTime(detail.volume.timestamp).format('YYYY-MM-DD HH:mm:ss'),
         },
       ]
@@ -161,7 +161,7 @@ const VolumeDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('볼륨'),
+                label: t('RESOURCES_VOLUME'),
                 url: listUrl,
             },
         ],
