@@ -26,11 +26,11 @@ const Status = (props) => {
           <div className={styles.content} key={index}>
             <div className={styles.text}>
               <div>{obj.name}</div>
-              <p>이름</p>
+              <p>{t('RESOURCES_NAME')}</p>
             </div>
             <div className={styles.text}>
               <div>{obj.type}</div>
-              <p>유형</p>
+              <p>{t('RESOURCES_TYPE_YOO')}</p>
             </div>
             <div className={styles.text}>
               <div>{obj.cidr}</div>
@@ -38,7 +38,7 @@ const Status = (props) => {
             </div>
             <div className={styles.text}>
               <div>{obj.gateway_ip}</div>
-              <p>게이트웨이</p>
+              <p>{t('RESOURCES_GATEWAY')}</p>
             </div>
             <div className={styles.arrow}>
               {internalNetwork.length > 1 && <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />}
@@ -61,11 +61,11 @@ const Status = (props) => {
               </div>
               <div className={classnames(styles.title, styles.name)}>
                 <div>{obj.name}</div>
-                <p>이름</p>
+                <p>{t('RESOURCES_NAME')}</p>
               </div>
               <div className={styles.title}>
                 <div>{obj.type}</div>
-                <p>유형</p>
+                <p>{t('RESOURCES_TYPE_YOO')}</p>
               </div>
               <div className={styles.title}>
                 <div>{obj.cidr}</div>
@@ -73,7 +73,7 @@ const Status = (props) => {
               </div>
               <div className={styles.title}>
                 <div>{obj.gateway_ip}</div>
-                <p>게이트웨이</p>
+                <p>{t('RESOURCES_GATEWAY')}</p>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ const Status = (props) => {
   return (
     <>
       {!!externalNetwork &&
-        <Panel title={"외부 네트워크"}>
+        <Panel title={t('RESOURCES_EXTERNAL_NETWORK')}>
           <div className={styles.wrapper}>
             <div className={styles.itemMainRemoveCursor} >
               <div className={styles.icon}>
@@ -121,11 +121,11 @@ const Status = (props) => {
               <div className={styles.content}>
                 <div className={styles.text}>
                   <div>{externalNetwork.name}</div>
-                  <p>이름</p>
+                  <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
                   <div>{externalNetwork.type}</div>
-                  <p>유형</p>
+                  <p>{t('RESOURCES_TYPE_YOO')}</p>
                 </div>
                 <div className={styles.text}>
                   <div>{externalNetwork.cidr}</div>
@@ -133,7 +133,7 @@ const Status = (props) => {
                 </div>
                 <div className={styles.text}>
                   <div>{externalNetwork.gateway_ip}</div>
-                  <p>게이트웨이</p>
+                  <p>{t('RESOURCES_GATEWAY')}</p>
                 </div>
                 <div className={styles.arrow}>                 
                 </div>
@@ -144,7 +144,7 @@ const Status = (props) => {
       }
 
       {internalNetwork.length > 0 &&
-        <Panel title={"내부 네트워크"}>
+        <Panel title={t('RESOURCES_INTERNAL_NETWORK')}>
           <div className={styles.wrapper}>
             <div
               className={classnames(styles.expandItem, "", {
