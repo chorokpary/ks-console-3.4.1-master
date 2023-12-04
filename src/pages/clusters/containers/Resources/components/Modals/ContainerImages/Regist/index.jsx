@@ -261,7 +261,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
               <span className={styles.detail}></span>
               <div className={styles.title}>
                 <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
-                <div className={styles.situation}>{regStep == 2 ? t('RESOURCES_CURRENT') : t('RESOURCES_NOT_SET')}}</div>
+                <div className={styles.situation}>{regStep == 2 ? t('RESOURCES_CURRENT') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
           </div>
