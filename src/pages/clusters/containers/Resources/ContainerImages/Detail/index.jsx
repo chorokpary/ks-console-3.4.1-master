@@ -87,39 +87,39 @@ const ContainerImageDetail = (props) => {
 
     return [
       {
-        name: t('클러스터'),
+        name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
       },
       {
-        name: t('CPU 타입'),
+        name: t('RESOURCES_CPU_TYPE'),
         value: detail.image.arch_type,
       },
       {
-        name: t('부트 타입'),
+        name: t('RESOURCES_BOOT_TYPE'),
         value: detail.image.boot_type,
       },
       {
-        name: t('쿠베네티스 버전'),
+        name: t('RESOURCES_KUBERNETES_VERSION'),
         value: detail.image.kube_version,
       },
       {
-        name: t('단계'),
+        name: t('RESOURCES_STEP'),
         value: detail.image.phase,
       },
       {
-        name: t('진행률'),
+        name: t('RESOURCES_PROGRESS'),
         value: detail.image.progress,
       },
       {
-        name: t('소스'),
+        name: t('RESOURCES_SOURCE'),
         value: detail.image.source,
       },
       {
-        name: t('설명'),
+        name: t('RESOURCES_DESCRIPTION'),
         value: detail.image.description,
       },
       {
-        name: t('생성일'),
+        name: t('RESOURCES_REGIST_DATE'),
         value: getLocalTime(detail.image.timestamp).format('YYYY-MM-DD HH:mm:ss'),
       },
     ]
@@ -137,7 +137,7 @@ const ContainerImageDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('KaaS 이미지'),
+        label: t('RESOURCES_KAAS_IMAGE'),
         url: listUrl,
       },
     ],

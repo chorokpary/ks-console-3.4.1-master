@@ -16,7 +16,7 @@ const Status = (props) => {
   return (
     <>
       <div>
-        <DetailKaasList type='KaaS 이미지' variables='kube_image' name={props.match.params.name} />
+        <DetailKaasList type={t('RESOURCES_KAAS_IMAGE')} variables='kube_image' name={props.match.params.name} />
       </div>
     </>
   );
