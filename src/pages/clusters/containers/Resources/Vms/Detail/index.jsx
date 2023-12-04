@@ -72,7 +72,7 @@ const VmDetail = (props) => {
     {
       key: 'vnc',
       icon: 'vpn',
-      text: t('VNC 접속'),
+      text: t('RESOURCES_ACCESS_VNC'),
       action: 'view',
       onClick: () => {
         fnOpenVncPopup();
@@ -81,7 +81,7 @@ const VmDetail = (props) => {
     {
       key: 'floatingIp',
       icon: 'intranet-routers',
-      text: floatingIp == undefined ? 'FIP 할당' : "FIP 해제",
+      text: floatingIp == undefined ? t('RESOURCES_ALLOCATE_FIP') : t('RESOURCES_DEALLOCATE_FIP'),
       action: 'view',
       onClick: () => {
         if (floatingIp == undefined) {
@@ -102,7 +102,7 @@ const VmDetail = (props) => {
     {
       key: 'volume',
       icon: 'storage',
-      text: '볼륨 관리',
+      text: t('RESOURCES_VOLUME_MANAGEMENT'),
       action: 'view',
       onClick: () => {
         props.rootStore.triggerAction('vm.volumePop', {
@@ -127,7 +127,7 @@ const VmDetail = (props) => {
     {
       key: 'viewLog',
       icon: 'eye',
-      text: t('Console 로그'),
+      text: t('RESOURCES_CONSOLE_LOG'),
       action: 'view',
       onClick: () => {
         props.rootStore.triggerAction('vm.log.view', {
@@ -139,7 +139,7 @@ const VmDetail = (props) => {
     {
       key: 'migrate',
       icon: 'radio',
-      text: t('마이그레이션'),
+      text: t('RESOURCES_MIGRATION'),
       action: 'view',
       disabled: get(store.detail.vm, 'migratable') ? false : true,
       onClick: () => {
@@ -151,8 +151,8 @@ const VmDetail = (props) => {
         props.rootStore.triggerAction('vm.actionState', {
           data: data,
           store: store,
-          title: "마이그레이션",
-          desc: "마이그레이션을 진행 하시겠습니까?\n가상머신 상태가 마이그레이션중으로 변경되고,\n완료되면 가상머신 상태가 표시됩니다",
+          title: t('RESOURCES_MIGRATION'),
+          desc: t('RESOURCES_MIGRATION_TIP')+"\n"+t('RESOURCES_VM_MIGRATION_DESC'),
         },)
 
       },
@@ -160,7 +160,7 @@ const VmDetail = (props) => {
     {
       key: 'snapshot',
       icon: 'resourceIcon:snapshot',
-      text: "스냅샷",
+      text: t('RESOURCES_SNAPSHOT'),
       action: 'view',
       disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
@@ -177,7 +177,7 @@ const VmDetail = (props) => {
     {
       key: 'clone',
       icon: 'resourceIcon:clone',
-      text: "클론",
+      text: t('RESOURCES_CLONE'),
       action: 'view',
       onClick: () => {
         const data = {};
@@ -217,11 +217,11 @@ const VmDetail = (props) => {
 
     return [
       {
-        name: t('클러스터'),
+        name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
       },
       {
-        name: t('이미지'),
+        name: t('RESOURCES_IMAGE'),
         value: detail.vm.image,
       },
       {
@@ -229,7 +229,7 @@ const VmDetail = (props) => {
         value: detail.vm.flavor.name,
       },
       {
-        name: t('네트워크'),
+        name: t('RESOURCES_NETWORK'),
         value: detail.vm.networks.length > 0 ?
           detail.vm.networks && (detail.vm.networks).map((network) => {
             if (network.name != "k8s-pod-network") {
@@ -241,19 +241,19 @@ const VmDetail = (props) => {
           : "-"
       },
       {
-        name: t('플로팅 IP'),
+        name: t('RESOURCES_FLOATING_IP'),
         value: floatingIp,
       },
       {
-        name: t('키페어'),
+        name: t('RESOURCES_KEYPAIR'),
         value: detail.vm.keypair,
       },
       {
-        name: t('로드밸런서'),
+        name: t('RESOURCES_LOAD_BALANCER'),
         value: "-",
       },
       {
-        name: t('보안그룹'),
+        name: t('RESOURCES_SECURITY_GROUP'),
         value: detail.vm.security_groups.length > 0 ?
           detail.vm.security_groups && (detail.vm.security_groups).map((security) => (
             <p key={security}>{security}</p>
@@ -261,11 +261,11 @@ const VmDetail = (props) => {
           : "-",
       },
       {
-        name: t('설명'),
+        name: t('RESOURCES_DESCRIPTION'),
         value: detail.vm.description,
       },
       {
-        name: t('생성시간'),
+        name: t('RESOURCES_CREATE_TIME'),
         value: getLocalTime(detail.vm.creation_timestamp).format('YYYY-MM-DD HH:mm:ss'),
       },
     ]
@@ -284,7 +284,7 @@ const VmDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('가상머신'),
+        label: t('RESOURCES_VM'),
         url: listUrl,
       },
     ],

@@ -31,11 +31,11 @@ const DetailSecurityGroupList = (props) => {
           </div>
           <div className={styles.text}>
               <div>{obj.ingress_count}</div>
-              <p>{t('RESOURCES_INBOUND_RULE:')}</p>
+              <p>{t('RESOURCES_INBOUND_RULE')}</p>
           </div>
           <div className={styles.text}>
               <div>{obj.egress_count}</div>
-              <p>{t('RESOURCES_OUTBOUND_RULE:')}</p>
+              <p>{t('RESOURCES_OUTBOUND_RULE')}</p>
           </div>
           {(obj.ingress_count == 0 && obj.egress_count == 0) ? <div className={styles.text} style={{width: '5%'}}/> :
             <div className={styles.arrow}  onClick={() => handleExpand(obj.name)}>
@@ -52,7 +52,7 @@ const DetailSecurityGroupList = (props) => {
       <div className={styles.itemExtra}>
         <div className={styles.containers} >
           {obj.rules.filter(el => el.direction == "ingress").length > 0 &&
-            <Panel title={t('RESOURCES_INBOUND:')} className={styles.panelWrapper}>
+            <Panel title={t('RESOURCES_INBOUND')} className={styles.panelWrapper}>
               <div className={styles.table}>
                 <table>
                   <colgroup>

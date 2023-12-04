@@ -237,7 +237,7 @@ const Status = (props) => {
       <div>
 
         {/* 가상 머신 */}
-        <Panel title={"가상머신"}>
+        <Panel title={t('RESOURCES_VM')}>
           <div className={styles.wrapper}>
             <div className={styles.itemVm} >
               <div className={styles.icon}>
@@ -251,15 +251,15 @@ const Status = (props) => {
               <div className={styles.content}>
                 <div className={styles.text}>
                   <div>{store.detail.vm?.name}</div>
-                  <p>이름</p>
+                  <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
                   <div>{store.detail.vm?.state}</div>
-                  <p>상태</p>
+                  <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
                   <div>{store.detail.vm?.node}</div>
-                  <p>Node</p>
+                  <p>{t('RESOURCES_NODE')}</p>
                 </div>
                 {renderMonitorings()}
               </div>
@@ -277,17 +277,17 @@ const Status = (props) => {
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
                   <div><Link to={`/clusters/${cluster}/flavors/${detailFlavor.name}`}>{detailFlavor.name}</Link></div>
-                  <p>이름</p>
+                  <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.title}>
                   <div>
                     {
                       detailFlavor.devices.length >= 1 ?
-                        detailFlavor.devices.length == 1 ? detailFlavor.devices[0].name : detailFlavor.devices[0].name + " 외 " + (detailFlavor.devices.length - 1) + "개"
+                        detailFlavor.devices.length == 1 ? detailFlavor.devices[0].name : detailFlavor.devices[0].name + " "+t('RESOURCES_BESIDES')+" " + (detailFlavor.devices.length - 1) + t('RESOURCES_COUNT')
                         : "-"
                     }
                   </div>
-                  <p>호스트 디바이스</p>
+                  <p>{t('RESOURCES_HOST_DEVICE')}</p>
                 </div>
                 <div className={styles.title}>
                   <Text
@@ -318,7 +318,7 @@ const Status = (props) => {
                     key='GPU'
                     icon='gpu'
                     title={detailFlavor.gpus.length >= 1 ?
-                      detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0].name : detailFlavor.gpus[0].name + " 외 " + (detailFlavor.gpus.length - 1) + "개"
+                      detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0].name : detailFlavor.gpus[0].name + " "+t('RESOURCES_BESIDES')+" " + (detailFlavor.gpus.length - 1) + t('RESOURCES_COUNT')
                       : "-"}
                     description={t('GPU')}
                   />
@@ -344,11 +344,11 @@ const Status = (props) => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div><Link to={`/clusters/${cluster}/networks/${obj.name}`}>{obj.name}</Link></div>
-                    <p>이름</p>
+                    <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
                     <div>{obj.type}</div>
-                    <p>유형</p>
+                    <p>{t('RESOURCES_TYPE_YOO')}</p>
                   </div>
                   <div className={styles.title}>
                     <div>{obj.cidr}</div>
@@ -356,7 +356,7 @@ const Status = (props) => {
                   </div>
                   <div className={styles.title}>
                     <div>{obj.gateway_ip}</div>
-                    <p>게이트웨이</p>
+                    <p>{t('RESOURCES_GATEWAY')}</p>
                   </div>
                 </div>
               ))}
@@ -366,7 +366,7 @@ const Status = (props) => {
 
         {/* 볼륨 */}
         {detailVolume.length > 0 &&
-          <Panel title={"볼륨"}>
+          <Panel title={t('RESOURCES_VOLUME')}>
             <div className={styles.wrapper}>
               {detailVolume.map((obj, index) => (
                 <div className={classnames(styles.itemVolume)} key={index}>
@@ -375,21 +375,21 @@ const Status = (props) => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}`}>{obj.name}</Link></div>
-                    <p>이름</p>
+                    <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
                     <div>
                       {(obj.access_modes).map((mode) => (<p key={mode}>{mode}</p>))}
                     </div>
-                    <p>접근모드</p>
+                    <p>{t('RESOURCES_ACCESS_MODE')}</p>
                   </div>
                   <div className={styles.title}>
                     <div>{obj.capacity}</div>
-                    <p>용량</p>
+                    <p>{t('RESOURCES_CAPACITY')}</p>
                   </div>
                   <div className={styles.title}>
                     <div>{obj.phase}</div>
-                    <p>상태</p>
+                    <p>{t('RESOURCES_STATE')}</p>
                   </div>
                 </div>
               ))}

@@ -39,7 +39,7 @@ const Event = (props) => {
             <div className={styles.wrapper}>
                 {isLoading ?
                   <div className={styles.loading}><Loading /></div>
-                  : <div className={styles.empty}>이벤트 이력이 없습니다.</div>
+                  : <div className={styles.empty}>{t('RESOURCES_NO_DATA_EVENT_LOG')}</div>
                 }
               </div>
           }
@@ -58,11 +58,11 @@ const Event = (props) => {
                     <thead>
                       <tr>
                         <th><strong>VM</strong></th>
-                        <th><strong>사유</strong></th>
-                        <th><strong>타입</strong></th>
-                        <th><strong>시작 시간</strong></th>
-                        <th><strong>종료 시간</strong></th>
-                        <th><strong>메시지</strong></th>
+                        <th><strong>{t('RESOURCES_REASON')}사유</strong></th>
+                        <th><strong>{t('RESOURCES_TYPE')}타입</strong></th>
+                        <th><strong>{t('RESOURCES_START_TIME')}시작 시간</strong></th>
+                        <th><strong>{t('RESOURCES_END_TIME')}종료 시간</strong></th>
+                        <th><strong>{t('RESOURCES_MESSAGE')}메시지</strong></th>
                       </tr>
                     </thead>
                     <tbody>                     

@@ -30,37 +30,37 @@ const PATH = '/clusters/:cluster/vms/:name'
 export default [
   {
     path: `${PATH}/status`,
-    title: '상태',
+    title: t('RESOURCES_STATE'),
     component: Status,
     exact: true,
   },
   {
     path: `${PATH}/information`,
-    title: '구성정보',
+    title: t('RESOURCES_CONFIGURATION_INFORMATION'),
     component: Information,
     exact: true,
   },
   {
     path: `${PATH}/monitoring`,
-    title: '모니터링',
+    title: t('RESOURCES_MONITORING'),
     component: Monitoring,
     exact: true,
   },
   {
     path: `${PATH}/event`,
-    title: '이벤트',
+    title: t('RESOURCES_EVENT'),
     component: Event,
     exact: true,
   },
   {
     path: `${PATH}/snapshot`,
-    title: '스냅샷',
+    title: t('RESOURCES_SNAPSHOT'),
     component: Snapshot,
     exact: true,
   },
   {
     path: `${PATH}/clone`,
-    title: '클론 이력',
+    title: t('RESOURCES_CLONE_LOG'),
     component: Clone,
     exact: true,
   },
