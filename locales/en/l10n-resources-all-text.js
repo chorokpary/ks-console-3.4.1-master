@@ -476,6 +476,6 @@ module.exports = {
   RESOURCES_NO_DATA_SNAPSHOT_RESOURCE: '스냅샷 리소스가 없습니다.',
   RESOURCES_DESELECT: '선택해제',
   RESOURCES_STATIC_IP_NETWORK_INTERFACE_TIP: '고정 IP ( IP/네트워크 이름/인터페이스 )',
-
+  RESOURCES_START: '시작',
 
 };
