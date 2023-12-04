@@ -32,8 +32,8 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
   }, [])
 
   const realTimeOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
+    { label: t('RESOURCES_NOT_USE'), value: false, },
+    { label: t('RESOURCES_USE'), value: true, }
   ]
   const archTypeOptions = [
     { label: 'x86_64', value: 'x86_64', },
@@ -90,15 +90,15 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
         width={1000}
         title={title}
         onOk={handleOk}
-        okText={'수정'}
+        okText={t('RESOURCES_EDIT')}
         onCancel={closeModal}
-        cancelText={'취소'}
+        cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('이름')}
-            rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+            label={t('RESOURCES_NAME')}
+            rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
           >
             <Input name="name" maxLength={253}
               defaultValue={detail.name}
@@ -111,7 +111,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('이미지')}
+                  label={t('RESOURCES_IMAGE')}
                   rules={[{ required: true, }]}
                 >
                   <CardSelect
@@ -124,7 +124,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                 </Form.Item>
               </Column>
               <Column>
-                <Form.Item label={t('배포판')}>
+                <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
                   <TypeSelect
                     onChange={(e) => setDistroType(e)}
                     defaultValue={distroType}
@@ -146,7 +146,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('CPU 타입')}
+                  label={t('RESOURCES_CPU_TYPE')}
                   rules={[{ required: true, },]}
                 >
                   <Select
@@ -157,7 +157,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
               </Column>
               <Column>
                 <Form.Item
-                  label={t('부트 타입')}
+                  label={t('RESOURCES_BOOT_TYPE')}
                   rules={[{ required: true, },]}>
                   <Select
                     name="boot_type"
@@ -170,7 +170,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
           </Form.Item>
 
           <Form.Item
-            label={t('리얼 타임')}
+            label={t('RESOURCES_REAL_TIME')}
             rules={[{ required: true, },]}
           >
             <RadioGroup
@@ -188,8 +188,8 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
           </Form.Item>
 
           <Form.Item
-            label={t('설명')}
-            rules={[{ required: true, message: '설명을 입력해주세요.' }]}
+            label={t('RESOURCES_DESCRIPTION')}
+            rules={[{ required: true, message: 'RESOURCES_DESCRIPTION_EMPTY_DESC' }]}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
