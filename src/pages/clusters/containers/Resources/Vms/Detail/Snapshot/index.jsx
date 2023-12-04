@@ -87,7 +87,7 @@ const Snapshot = (props) => {
     if (sliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
-          리소스를 찾을 수 없습니다.
+          {t('RESOURCES_NOT_FOUND_RESOURCE')}
         </div>
       )
       return content;
@@ -137,7 +137,7 @@ const Snapshot = (props) => {
             <p>Phase</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.ready_to_use ? "사용" : "미사용"}</div>
+            <div>{obj.ready_to_use ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</div>
             <p>Ready to use</p>
           </div>
           <div className={styles.text}>
@@ -168,7 +168,7 @@ const Snapshot = (props) => {
             <div className={styles.containers} >
 
               {restoreFilterList.length == 0 && 
-                <div className={styles.emptyRestore}>복원 이력이 없습니다.</div>
+                <div className={styles.emptyRestore}>{t('RESOURCES_NO_DATA_RESTORE_LOG')}</div>
               }
 
               {restoreFilterList.map(obj => 
@@ -189,7 +189,7 @@ const Snapshot = (props) => {
                   <p>Description</p>
                 </div>      */}
                 <div className={styles.complete}>
-                  <div>{obj.complete ? "완료" : "미완료"}</div>
+                  <div>{obj.complete ? t('RESOURCES_COMPLETE') : t('RESOURCES_NOT_COMPLETE')}</div>
                   <p>Complete</p>
                 </div>
                 <div className={styles.arrow}>
@@ -227,7 +227,7 @@ const Snapshot = (props) => {
     if(vmState != "Stopped"){
       props.rootStore.triggerAction('vm.alertPop', {
         store: store,
-        desc: t('가상 머신이 종료되지 않았습니다. 확인 후 다시 진행해 주세요.'),
+        desc: t('RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP'),
         success: fnGetData,
       })
     }else{
@@ -325,7 +325,7 @@ const Snapshot = (props) => {
             <div className={styles.wrapper}>
               {isLoading ?
                 <div className={styles.loading}><Loading /></div>
-                : <div className={styles.empty}> 스냅샷 리소스가 없습니다.</div>
+                : <div className={styles.empty}>{t('RESOURCES_NO_DATA_SNAPSHOT_RESOURCE')}</div>
               }
             </div>
           </Panel>
