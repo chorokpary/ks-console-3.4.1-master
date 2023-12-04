@@ -37,7 +37,7 @@ import VmStore from 'stores/resources/vms'
   store: new VmStore(),
   module: 'vms',
   authKey: 'vms',
-  name: '가상머신',
+  name: t('RESOURCES_VM'),
 })
 export default class Vms extends React.Component {
 
@@ -95,7 +95,7 @@ export default class Vms extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('삭제'),
+        text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -116,7 +116,7 @@ export default class Vms extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('vm.regist', {
@@ -130,7 +130,7 @@ export default class Vms extends React.Component {
         {
           key: 'delete',
           type: 'danger',
-          text: t('REMOVE'),
+          text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
             trigger('vm.remove.batch', {
@@ -166,23 +166,23 @@ export default class Vms extends React.Component {
 
   getItemDesc(state) {
     if (state === 'Stopped') {
-      return "중지"
+      return t('RESOURCES_STOP')
     } else if (state === 'Provisioning') {
-      return "생성 중"
+      return t('RESOURCES_CREATING')
     } else if (state === 'Starting') {
-      return "시작 중"
+      return t('RESOURCES_STARTING')
     } else if (state === 'Running') {
-      return "실행 중"
+      return t('RESOURCES_RUNNING')
     } else if (state === 'Paused') {
-      return "일시 정지"
+      return t('RESOURCES_PAUSED')
     } else if (state === 'Migrating') {
-      return "이관 중"
+      return t('RESOURCES_MIGRATING')
     } else if (state === 'Stopping') {
-      return "정지 중"
+      return t('RESOURCES_STOPPING')
     } else if (state === 'Terminating') {
-      return "삭제 중"
+      return t('RESOURCES_TERMINATING')
     } else if (state === 'Unknown') {
-      return "알수없음"
+      return t('RESOURCES_UNKNOWN')
     } else {
       return "-"
     }
@@ -242,7 +242,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('이미지'),
+        title: t('RESOURCES_IMAGE'),
         dataIndex: 'image',
         isHideable: true,
         search: true,
@@ -264,7 +264,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('CPU 타입'),
+        title: t('RESOURCES_CPU_TYPE'),
         dataIndex: 'cpuType',
         isHideable: true,
         search: true,
@@ -275,7 +275,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('고정 IP'),
+        title: t('RESOURCES_STATIC_IP'),
         dataIndex: 'networks',
         isHideable: true,
         search: true,
@@ -297,7 +297,7 @@ export default class Vms extends React.Component {
         }
       },
       {
-        title: t('플로팅 IP'),
+        title: t('RESOURCES_FLOATING_IP'),
         dataIndex: 'floating',
         isHideable: true,
         search: true,
@@ -311,7 +311,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('노드'),
+        title: t('RESOURCES_NODE'),
         dataIndex: 'node',
         isHideable: true,
         search: true,
@@ -325,7 +325,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('보안그룹'),
+        title: t('RESOURCES_SECURITY_GROUP'),
         dataIndex: 'security_groups',
         isHideable: true,
         search: true,
@@ -342,7 +342,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('상태'),
+        title: t('RESOURCES_STATE'),
         dataIndex: 'state',
         filters: this.getVmsStatus(),
         isHideable: true,
@@ -373,7 +373,7 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'creation_timestamp',
         isHideable: true,
         width: 150,
@@ -391,11 +391,11 @@ export default class Vms extends React.Component {
   handleVmAction = (action, state, vmName) => {
 
     if ("Stopped" == state && "pause" == action) {
-      Notify.warning('Stopped 상태에서 Pause 할 수 없습니다.')
+      Notify.warning(t('RESOURCES_STOPED_PAUSE_DESC'))
       return;
     }
     if ("Stopped" == state && "restart" == action) {
-      Notify.warning('Stopped 상태에서 Restart 할 수 없습니다.')
+      Notify.warning(t('RESOURCES_STOPED_RESTART_DESC'))
       return;
     }
 
@@ -420,20 +420,20 @@ export default class Vms extends React.Component {
         {/* Stopped */}
         {state == "Stopped" &&
           <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmName)}>
-            <i className={styles['ico-quick-start']}></i><span>시작</span>
+            <i className={styles['ico-quick-start']}></i><span>{t('RESOURCES_START')}</span>
           </Menu.MenuItem>
         }
         {/* Running */}
         {state == "Running" &&
           <>
             <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-              <i className={styles['ico-quick-stop']}></i><span>중지</span>
+              <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
             <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmName)}>
-              <i className={styles['ico-quick-pause']}></i><span>일시중지</span>
+              <i className={styles['ico-quick-pause']}></i><span>{t('RESOURCES_PAUSED_JOONGI')}</span>
             </Menu.MenuItem>
             <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
-              <i className={styles['ico-quick-restart']}></i><span>재시작</span>
+              <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
         }
@@ -441,13 +441,13 @@ export default class Vms extends React.Component {
         {state == "Paused" &&
           <>
             <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
-              <i className={styles['ico-quick-stop']}></i><span>중지</span>
+              <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
             <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmName)}>
-              <i className={styles['ico-quick-unpause']}></i><span>일시중지 해제</span>
+              <i className={styles['ico-quick-unpause']}></i><span>{t('RESOURCES_UNPAUSE')}</span>
             </Menu.MenuItem>
             <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
-              <i className={styles['ico-quick-restart']}></i><span>재시작</span>
+              <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
         }
@@ -465,12 +465,12 @@ export default class Vms extends React.Component {
     return [
       {
         dataIndex: 'name',
-        title: t('이름'),
+        title: t('RESOURCES_NAME'),
         search: true,
       },
       {
         dataIndex: 'state',
-        title: t('상태'),
+        title: t('RESOURCES_STATE'),
         search: true,
       }
     ]
@@ -505,8 +505,8 @@ export default class Vms extends React.Component {
           // icon="templet"
           icon={this.getBanner}
           tabs={this.tabs}
-          title={t('가상머신')}
-          description={t('가상머신의 상태와 사용현황을 관리 할 수 있습니다.')}
+          title={t('RESOURCES_VM')}
+          description={t('RESOURCES_VM_DESC')}
         />
         <Table
           {...tableProps}
