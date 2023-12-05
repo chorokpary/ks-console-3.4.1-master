@@ -33,6 +33,7 @@ const RegistModal = (props) => {
   const [networkDataList, setNetworkDataList] = useState([]);
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
+  const [storegeClassDataList, setStoregeClassDataList] = useState([]);
 
   const [selectImageName, setSelectImageName] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
@@ -77,7 +78,8 @@ const RegistModal = (props) => {
       const listKeypair = await vmStore.fetchVmListKeypair();
       const listNode = await vmStore.fetchVmListNode();
       const listSecurityGroup = await vmStore.fetchVmListSecurityGroup();
-
+      const listStoregeClass = await vmStore.fetchVmListStoregeClass();
+      
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
       setImageOptionList(listImage.images);
@@ -87,6 +89,7 @@ const RegistModal = (props) => {
       setKeypairDataList(listKeypair.keypairs);
       setNodeDataList(listNode.nodes);
       setSecurityGroupDataList(listSecurityGroup);
+      setStoregeClassDataList(listStoregeClass.user_sces)
     };
 
     getVmCreateData();
@@ -104,11 +107,16 @@ const RegistModal = (props) => {
     { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
-  const storageClassOptions = [
-    { label: 'longhorn', value: 'longhorn' },
-    { label: 'openebs-hostpath', value: 'openebs-hostpath' },
-    { label: 'hostpath-csi', value: 'hostpath-csi' }
-  ]
+  const storageClassOptions = () => {
+    const opt = storegeClassDataList.map((obj) => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+
+    })
+    return opt
+  }
 
   const imageOptions = () => {
     const opt = imageOptionList.map((obj) => {
@@ -662,7 +670,7 @@ const RegistModal = (props) => {
                       <Form.Group label={t('RESOURCES_STOREGE_CLASS')} onChange={(e) => { setStorageClass(t('RESOURCES_SELECT')); }} checkable>
                         <Form.Item>
                           <Select
-                            options={storageClassOptions}
+                            options={storageClassOptions()}
                             onChange={(el) => setStorageClass(el)}
                             value={storageClass}
                           />

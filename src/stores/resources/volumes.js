@@ -35,6 +35,7 @@ export default class VolumeStore extends Base {
   getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/volumes`
   getListUrl = this.getResourceUrl
 
+
   @action
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
@@ -154,5 +155,19 @@ export default class VolumeStore extends Base {
       request.put(`${this.getDetailUrl({ name: data.volumeName, ...params })}/action`, jsonData)
     )
   }
+
+  @action
+  async fetchStoregeClass(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/storage_classes/user`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'user_sces' }
+
+    this.isLoading = false
+    return response;
+  }
+
 
 }

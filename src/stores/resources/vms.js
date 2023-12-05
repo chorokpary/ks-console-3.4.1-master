@@ -315,7 +315,7 @@ export default class VmStore extends Base {
         `${this.getResourceUrl(params)}/${params.name}/log`
       )
       const response = { ...params, ...this.mapper(result), kind: 'vms' }
-      
+
       this.isLoading = false
       return response.log.message
     } catch (e) {
@@ -571,6 +571,19 @@ export default class VmStore extends Base {
 
     this.isLoading = false
     return securityArray;
+  }
+
+  @action
+  async fetchVmListStoregeClass(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/storage_classes/user`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'user_sces' }
+
+    this.isLoading = false
+    return response;
   }
 
   // 등록 관련 데이터 끝
