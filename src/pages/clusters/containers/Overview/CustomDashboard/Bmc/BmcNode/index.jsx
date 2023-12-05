@@ -190,7 +190,7 @@ const BmcNode = ({ x, y, w, h,
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
               <label>{t('RESOURCES_BAREMETAL_NODE_CURRENT_SITUATION')}</label>
-              <div className="view-result">{t('RESOURCES_TOTAL')} {nodeList.length}{t('RESOURCES_COUNT')}</div>
+              <div className="view-result">{t('RESOURCES_TOTAL')} {nodeList.length}{t('RESOURCES_COUNT_GUN')}</div>
               <div className="dash_boxtab">
                 <label htmlFor="name9" onClick={() => handleList('')}>
                   <input type="radio" name="box-tab2" id="name9" value="name3" defaultChecked />
