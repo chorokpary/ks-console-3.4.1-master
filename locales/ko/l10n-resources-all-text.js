@@ -477,5 +477,8 @@ module.exports = {
   RESOURCES_DESELECT: '선택해제',
   RESOURCES_STATIC_IP_NETWORK_INTERFACE_TIP: '고정 IP ( IP/네트워크 이름/인터페이스 )',
   RESOURCES_START: '시작',
+  RESOURCES_RESTORE_SUCCESSFUL: '복원 되었습니다.',
+  RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP: '복원 사유 등 이력에 기재할 정보를 입력해주세요.',
+
 
 };
