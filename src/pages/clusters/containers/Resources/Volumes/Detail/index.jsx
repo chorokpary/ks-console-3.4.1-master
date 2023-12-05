@@ -154,6 +154,7 @@ const VolumeDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "storage",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),

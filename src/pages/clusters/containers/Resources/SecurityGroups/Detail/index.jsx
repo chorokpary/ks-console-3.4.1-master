@@ -89,6 +89,7 @@ const SecurityGroupDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "shield",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.security_group, 'description', ''),

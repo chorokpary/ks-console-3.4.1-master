@@ -277,6 +277,7 @@ const VmDetail = (props) => {
   }
 
   const sideProps = {
+    icon: "templet",
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),

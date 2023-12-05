@@ -147,6 +147,7 @@ const LoadBalancerDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "loadbalancer",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.lb, 'description', ''),

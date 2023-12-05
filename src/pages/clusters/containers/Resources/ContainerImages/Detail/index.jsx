@@ -130,6 +130,7 @@ const ContainerImageDetail = (props) => {
   }
 
   const sideProps = {
+    icon: "snapshot",
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
