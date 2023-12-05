@@ -121,7 +121,7 @@ module.exports = {
   RESOURCES_SELECT_VM_TIP: '가상머신을 선택해 주세요.',
   RESOURCES_AVAILABLE_COUNT: '가용  개수',
   RESOURCES_PRIVATE_KEY: '개인키',
-  RESOURCES_COUNT: '건',
+  RESOURCES_COUNT_GUN: '건',
   RESOURCES_SEARCH: '검색',
   RESOURCES_GATEWAY: '게이트웨이',
   RESOURCES_GATEWAY_IP: '게이트웨이 IP',
