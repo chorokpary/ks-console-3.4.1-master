@@ -1200,7 +1200,7 @@ export const bmcNodePanel = ({ x, y, w, h }) => {
         <div class="grid_item">
           <div class="grid_title">
             <label>${t('RESOURCES_BAREMETAL_NODE_CURRENT_SITUATION')}</label>
-            <div class="view-result">${t('RESOURCES_TOTAL')} 99${t('RESOURCES_COUNT')}</div>
+            <div class="view-result">${t('RESOURCES_TOTAL')} 99${t('RESOURCES_COUNT_GUN')}</div>
             <div class="dash_boxtab">
               <label htmlFor="name9">
                 <input type="radio" name="box-tab2" id="name9" value="name3" checked />
