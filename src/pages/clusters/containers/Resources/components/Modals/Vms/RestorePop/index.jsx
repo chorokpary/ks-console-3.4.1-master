@@ -29,7 +29,7 @@ const RestoreModal = (props) => {
       console.log("data : "+ JSON.stringify(data))
 
       vmStore.restoreCreate(data).then(() => {
-        Notify.success({ content: t('복원 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_RESTORE_SUCCESSFUL') })
         success();
         closeModal();
       })
@@ -53,8 +53,8 @@ const RestoreModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('설명')}
-            rules={[{ required: true, message: t('복원 사유 등 이력에 기재할 정보를 입력해주세요.') }]}
+            label={t('RESOURCES_DESCRIPTION')}
+            rules={[{ required: true, message: t('RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP') }]}
           >
             <Input
                 name="description"

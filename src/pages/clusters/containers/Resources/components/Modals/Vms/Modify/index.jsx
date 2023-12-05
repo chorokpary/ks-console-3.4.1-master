@@ -99,7 +99,7 @@ const ModifyModal = (props) => {
         <Form data={formData} ref={form}>
 
           <Form.Item
-            label={t('이름')}
+            label={t('RESOURCES_NAME')}
           >
             <Input
               name="name"
@@ -112,12 +112,12 @@ const ModifyModal = (props) => {
           </Form.Item>
 
           <div style={{ padding: 10 }} />
-          {t('보안그룹')}<span className="form-item-required">*</span>
+          {t('RESOURCES_SECURITY_GROUP')}<span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
               {stateVariables['security'].length > 0 &&
                 <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>전체 선택 해제</Button>  {stateVariables['security'].length}개 선택
+                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['security'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                 </div>
               }
               <div className={styles.table}>
@@ -136,17 +136,17 @@ const ModifyModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "security")}
                                 checked={dataListVariables['security'].length > 0 && stateVariables['security'].length === dataListVariables['security'].length ? true : false}/>
                           </th>
-                          <th><strong>보안그룹 이름</strong></th>
-                          <th><strong>설명</strong></th>
-                          <th><strong>인바운드 규칙수</strong></th>
-                          <th><strong>아웃바운드 규칙수</strong></th>
+                          <th><strong>{t('RESOURCES_SECURITY_GROUP_NAME')}</strong></th>
+                          <th><strong>{t('RESOURCES_DESCRIPTION')}</strong></th>
+                          <th><strong>{t('RESOURCES_INBOUND_RULE_COUNT')}</strong></th>
+                          <th><strong>{t('RESOURCES_OUTBOUND_RULE_COUNT')}</strong></th>
                         </tr>
                       </thead>
                       <tbody>
                       {!securityGroupDataList?.length &&
                           <tr>
                             <td colSpan="5" className="no-data">
-                              <p>할당 가능한 자원이 없습니다.</p>
+                              <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                             </td>
                           </tr>
                         }
@@ -170,13 +170,13 @@ const ModifyModal = (props) => {
                     )}                      
                   </div>
                 </div>
-                <div className={`form-item-error ${securityGroupCheckItems.length > 0 ? "hide" : ""}`}>보안그룹을 선택해 주세요.</div>
+                <div className={`form-item-error ${securityGroupCheckItems.length > 0 ? "hide" : ""}`}>{t('RESOURCES_SELECT_SECURITY_GROUP_TIP')}</div>
             </div>
           </Form.Item>
 
           <Form.Item
             className={styles.textarea}
-            label={t('설명')}
+            label={t('RESOURCES_DESCRIPTION')}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea

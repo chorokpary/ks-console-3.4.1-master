@@ -30,7 +30,7 @@ const SnapshotModal = (props) => {
       console.log("data : "+ JSON.stringify(data))
 
       vmStore.snapshotCreate(data).then(() => {
-        Notify.success({ content: t('생성 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();
         closeModal();
       })
@@ -54,8 +54,8 @@ const SnapshotModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('설명')}
-            rules={[{ required: true, message: t('스냅샷 실헹 이력에 기재할 정보를 입력해주세요.') }]}
+            label={t('RESOURCES_DESCRIPTION')}
+            rules={[{ required: true, message: t('RESOURCES_SNAPSHOT_LOG_INFORMATION_EMPTY_DESC') }]}
           >
             <Input
                 name="description"

@@ -458,7 +458,7 @@ export default class Vms extends React.Component {
 
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {
