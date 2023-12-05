@@ -129,9 +129,10 @@ const VmDetail = (props) => {
       icon: 'eye',
       text: t('RESOURCES_CONSOLE_LOG'),
       action: 'view',
-      onClick: () => {
+      onClick: async () => {        
+        const vmLog = await store.fetchVmLog(props.match.params);
         props.rootStore.triggerAction('vm.log.view', {
-          vmlog: store.vmLog,
+          vmlog: vmLog,
           readOnly: true,
         })
       },
