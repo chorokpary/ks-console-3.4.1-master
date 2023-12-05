@@ -127,6 +127,7 @@ const FlavorDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "apps",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
