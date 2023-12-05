@@ -21,7 +21,7 @@ import DetailPage from 'clusters/containers/Base/Detail'
 
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components';
+import { Loading, Icon } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import { getLocalTime } from 'utils'
 
@@ -200,8 +200,12 @@ const ResourceDetail = (props) => {
         return <Loading className="ks-page-loading" />;
     }
 
+    const getBanner = () => {
+        return <Icon name="kubernetes" size={40} />
+    }
+
     const sideProps = {
-        icon: "kubernetes",
+        icon: getBanner(),
         module: store.module,
         name: get(store.detail.cluster, 'name'),
         desc: get(store.detail.cluster, 'description', ''),
