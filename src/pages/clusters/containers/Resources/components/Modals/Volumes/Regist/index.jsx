@@ -9,8 +9,12 @@ import * as common from "utils/resources"
 import classnames from 'classnames'
 import styles from './index.scss'
 
+import VolumeStore from 'stores/resources/volumes'
+
 const RegistModal = (props) => {
 
+  const volumeStore = new VolumeStore();
+  
   const form = useRef();
   const [formData, setFormData] = useState({});
 
@@ -19,21 +23,31 @@ const RegistModal = (props) => {
 
   const [volumeCapacity, setVolumeCapacity] = useState(10);
 
+  const [storegeClassDataList, setStoregeClassDataList] = useState([]);
+
   useEffect(() => {
 
-    const getVmCreateData = async () => {
+    const getStoregeClassData = async () => {
+
+      const listStoregeClass = await volumeStore.fetchStoregeClass();
+      setStoregeClassDataList(listStoregeClass.user_sces)
 
     };
 
-    getVmCreateData();
+    getStoregeClassData();
 
   }, [])
 
-  const storageClassOptions = [
-    { label: 'openebs-hostpath', value: 'openebs-hostpath', },
-    { label: 'longhorn', value: 'longhorn', },
-    { label: 'hostpath-csi', value: 'hostpath-csi', },    
-  ]
+  const storageClassOptions = () => {
+    const opt = storegeClassDataList.map((obj) => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+
+    })
+    return opt
+  }
 
   const accessModeOptions = [
     { label: 'RWO (Read Write Once)', value: 'ReadWriteOnce', },
@@ -193,7 +207,7 @@ const RegistModal = (props) => {
                     <Select
                       name="storage_class"
                       defaultValue={"openebs-hostpath"}
-                      options={storageClassOptions}
+                      options={storageClassOptions()}
                       clearable
                     />
                   </Form.Item>
