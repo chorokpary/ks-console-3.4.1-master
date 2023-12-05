@@ -19,15 +19,15 @@ const RegistModal = (props) => {
     const regexPort = /[^0123456789-]/g;
 
     const ruleTypeOptions = [
-        { value: "CUSTOM", label: "사용자 지정", protocol: "TCP", port: "0" },
+        { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: "0" },
         { value: "ALL", label: "ALL", protocol: "TCP", port: "0-65535" },
         { value: "FTP", label: "FTP", protocol: "TCP", port: "20" },
         { value: "SSH", label: "SSH", protocol: "TCP", port: "22" },
         { value: "TELNET", label: "TELNET", protocol: "TCP", port: "23" },
         { value: "SMTP", label: "SMTP", protocol: "TCP", port: "25" },
         { value: "DNS", label: "DNS", protocol: "TCP", port: "53" },
-        { value: "DHCP서버", label: "DHCP서버", protocol: "UDP", port: "67" },
-        { value: "DHCP클라이언트", label: "DHCP클라이언트", protocol: "UDP", port: "68" },
+        { value: t('RESOURCES_DHCP_SERVER'), label: t('RESOURCES_DHCP_SERVER'), protocol: "UDP", port: "67" },
+        { value: t('RESOURCES_DHCP_CLIENT'), label: t('RESOURCES_DHCP_CLIENT'), protocol: "UDP", port: "68" },
         { value: "HTTP", label: "HTTP", protocol: "TCP", port: "80" },
         { value: "POP3", label: "POP3", protocol: "TCP", port: "110" },
         { value: "IMAP4", label: "IMAP4", protocol: "TCP", port: "143" },
@@ -49,7 +49,7 @@ const RegistModal = (props) => {
 
     const remoteIpPrefixOptions = [
         { value: "ALL", label: "ALL" },
-        { value: "", label: "직접입력" },
+        { value: "", label: t('RESOURCES_CONNTECT_DIRECT') },
     ];
 
     const [formRulesIngressFields, setFormRulesIngressFields] = useState([]);
@@ -59,7 +59,7 @@ const RegistModal = (props) => {
         handleAddFields: () => {
             const values = [...formRulesIngressFields,
             {
-                ruleType: '사용자 지정'
+                ruleType: t('RESOURCES_SPECIFY_USER')
                 , direction: 'Ingress'
                 , ethernetType: 'IPv4'
                 , remoteIpPrefix: ''
@@ -67,7 +67,7 @@ const RegistModal = (props) => {
                 , portRangeMin: 0
                 , portRangeMax: 0
                 , isCustom: true
-                , validPort: { isValid: false, message: "포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다." }
+                , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
             }];
             setFormRulesIngressFields(values);
         },
@@ -122,7 +122,7 @@ const RegistModal = (props) => {
         handleAddFields: () => {
             const values = [...formRulesEgressFields,
             {
-                ruleType: '사용자 지정'
+                ruleType: t('RESOURCES_SPECIFY_USER')
                 , direction: 'Egress'
                 , ethernetType: 'IPv4'
                 , remoteIpPrefix: ''
@@ -130,7 +130,7 @@ const RegistModal = (props) => {
                 , portRangeMin: 0
                 , portRangeMax: 0
                 , isCustom: true
-                , validPort: { isValid: false, message: "포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다." }
+                , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
             }];
             setFormRulesEgressFields(values);
         },
@@ -220,10 +220,10 @@ const RegistModal = (props) => {
     // Validation 시작 ==================================================
     const nameValidator = (rule, value, callback) => {
         if (value == undefined) {
-            return callback({ message: t('이름을 입력해 주세요.') })
+            return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
         } else {
             if (!regexName.test(value)) {
-                return callback({ message: t('이름을 확인해 주세요.') })
+                return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
             }
         }
         callback()
@@ -241,13 +241,13 @@ const RegistModal = (props) => {
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
-                cancelText={'취소'}
+                cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
             >
                 <Form data={formData} ref={form}>
 
                     <Form.Item
-                        label={t('이름')}
+                        label={t('RESOURCES_NAME')}
                         rules={[{ required: true, validator: nameValidator }]}
                         desc={t('NAME_DESC')}
                     >
@@ -261,9 +261,9 @@ const RegistModal = (props) => {
 
                     <div style={{ padding: 10 }} />
 
-                    <Form.Item label={t('보안정책')}>
+                    <Form.Item label={t('RESOURCES_SECURITY_RULE')}>
                         <Form.Group>
-                            <Form.Item label={t('인바운드')}>
+                            <Form.Item label={t('RESOURCES_INBOUND')}>
                                 <div className={styles.wrapper}>
                                     <div className={styles.table}>
                                         <table>
@@ -277,11 +277,11 @@ const RegistModal = (props) => {
                                             </colgroup>
                                             <thead>
                                                 <tr>
-                                                    <th><strong>정책</strong></th>
-                                                    <th><strong>프로토콜</strong></th>
-                                                    <th><strong>포트 범위</strong></th>
-                                                    <th><strong>이더넷 유형</strong></th>
-                                                    <th><strong>원격 IP 범위</strong></th>
+                                                    <th><strong>{t('RESOURCES_POLICY')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_PROTOCOL')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_PORT_RANGE')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_ETHERNET_TYPE')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong></th>
                                                     <th><strong></strong></th>
                                                 </tr>
                                             </thead>
@@ -333,7 +333,7 @@ const RegistModal = (props) => {
                                 </div>
                             </Form.Item>
 
-                            <Form.Item label={t('아웃바운드')}>
+                            <Form.Item label={t('RESOURCES_OUTBOUND')}>
                                 <div className={styles.wrapper}>
                                     <div className={styles.table}>
                                         <table>
@@ -347,11 +347,11 @@ const RegistModal = (props) => {
                                             </colgroup>
                                             <thead>
                                                 <tr>
-                                                    <th><strong>정책</strong></th>
-                                                    <th><strong>프로토콜</strong></th>
-                                                    <th><strong>포트 범위</strong></th>
-                                                    <th><strong>이더넷 유형</strong></th>
-                                                    <th><strong>원격 IP 범위</strong></th>
+                                                    <th><strong>{t('RESOURCES_POLICY')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_PROTOCOL')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_PORT_RANGE')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_ETHERNET_TYPE')}</strong></th>
+                                                    <th><strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong></th>
                                                     <th><strong></strong></th>
                                                 </tr>
                                             </thead>
@@ -398,7 +398,7 @@ const RegistModal = (props) => {
                                             onClick={handleEgressRules.handleAddFields}
                                             disabled={btnDimm}
                                         >
-                                            추가
+                                            {t('RESOURCES_ADD')}
                                         </Button>
                                     </div>
                                 </div>
@@ -410,7 +410,7 @@ const RegistModal = (props) => {
 
                     <Form.Item
                         className={styles.textarea}
-                        label={t('설명')}
+                        label={t('RESOURCES_DESCRIPTION')}
                         desc={t('DESCRIPTION_DESC')}
                     >
                         <TextArea
