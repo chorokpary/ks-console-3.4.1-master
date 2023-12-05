@@ -280,9 +280,6 @@ export default class VmStore extends Base {
     // Yaml 파일 관련 
     await this.fetchYaml(params);
 
-    // VmLog 관련 
-    await this.fetchVmLog(params);
-
     // FloatingIp 관련
     await this.fetchVmListFloating(params);
 
@@ -318,10 +315,9 @@ export default class VmStore extends Base {
         `${this.getResourceUrl(params)}/${params.name}/log`
       )
       const response = { ...params, ...this.mapper(result), kind: 'vms' }
-
-      this.vmLog = response.log.message
+      
       this.isLoading = false
-      return response
+      return response.log.message
     } catch (e) {
       console.log(e)
       this.vmLog = []
