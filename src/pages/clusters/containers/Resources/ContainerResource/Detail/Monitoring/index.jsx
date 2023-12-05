@@ -72,8 +72,8 @@ const index = (props) => {
                     <StatusCircle
                         theme="light"
                         className={styles.nodeStatus}
-                        name={t('노드 상태')}
-                        legend={['준비된 노드', 'ALL_NODES']}
+                        name={t('RESOURCES_NODE_STATE')}
+                        legend={[t('RESOURCES_READY_NODE'), 'ALL_NODES']}
                         used={health}
                         total={total}
                     />

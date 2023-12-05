@@ -133,7 +133,7 @@ const ClusterResourceStatus = (props) => {
                                         {kaasData.cpuData.length > 0 && kaasData.memoryData.length > 0 ?
                                             <TabContent option={tabContent}></TabContent>
                                             :
-                                            <div>모니터링 데이터가 없습니다.</div>
+                                            <div>{t('RESOURCES_NO_MONITORING_DATA')}</div>
                                         }
                                     </div>
                                 </div>

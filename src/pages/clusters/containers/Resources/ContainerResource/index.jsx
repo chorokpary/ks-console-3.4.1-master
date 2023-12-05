@@ -99,7 +99,7 @@ export default class Resource extends React.Component {
             {
                 key: 'delete',
                 icon: 'trash',
-                text: t('삭제'),
+                text: t('REMOVE'),
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
@@ -120,7 +120,7 @@ export default class Resource extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('containerresource.regist', {
@@ -204,7 +204,7 @@ export default class Resource extends React.Component {
                 }
             },
             {
-                title: t('배포 단계'),
+                title: t('RESOURCES_DEPLOY_STEP'),
                 dataIndex: 'phase',
                 isHideable: true,
                 width: 'auto',
@@ -213,7 +213,7 @@ export default class Resource extends React.Component {
                 ),
             },
             {
-                title: t('쿠버네티스 버전'),
+                title: t('RESOURCES_KUBERNETES_VERSION'),
                 dataIndex: 'kube_version',
                 isHideable: true,
                 width: 'auto',
@@ -231,7 +231,7 @@ export default class Resource extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('상태'),
+                title: t('RESOURCES_STATE'),
                 dataIndex: 'cluster_ready',
                 isHideable: true,
                 filters: this.getResourcesStatus(),
@@ -246,7 +246,7 @@ export default class Resource extends React.Component {
                 }
             },
             {
-                title: t('등록일'),
+                title: t('RESOURCES_REGIST_DATE'),
                 dataIndex: 'timestamp',
                 isHideable: true,
                 width: 150,
@@ -269,12 +269,12 @@ export default class Resource extends React.Component {
         return [
             {
                 dataIndex: 'name',
-                title: t('이름'),
+                title: t('NAME'),
                 search: true,
             },
             {
                 dataIndex: 'cluster_ready',
-                title: t('상태'),
+                title: t('RESOURCES_STATE'),
                 search: true,
             }
         ]
@@ -290,8 +290,8 @@ export default class Resource extends React.Component {
                     {...bannerProps}
                     icon="kubernetes"
                     tabs={this.tabs}
-                    title={t('KaaS 리소스')}
-                    description={t('KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('RESOURCES_KAAS_RESOURCE')}
+                    description={t('RESOURCES_KAAS_DESC')}
                 />
                 <Table
                     {...tableProps}

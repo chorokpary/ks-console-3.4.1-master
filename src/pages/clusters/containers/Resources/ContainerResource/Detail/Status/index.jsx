@@ -31,8 +31,8 @@ const Status = (props) => {
     { nums: store.detail?.cluster?.md?.replicas, unavailableNums: store.detail?.cluster?.md?.replicas }
   ]
 
-  const names = ['Master 개수', 'Worker 개수']
-  const text = { title: 'Worker 개수 조정', content: 'Worker 개수를 변경하시겠습니까?' }
+  const names = [t('RESOURCES_MASTER_COUNT'), t('RESOURCES_WORKER_COUNT')]
+  const text = { title: t('RESOURCES_ADJUST_WORKER') , content: t('RESOURCES_CHANGE_WORKER_COUNT') }
 
   const enabledActions = () => {
     return globals.app.getActions({
@@ -111,7 +111,7 @@ const Status = (props) => {
                 key='GPU'
                 icon='gpu'
                 title={obj.flavor_detail.gpus.length >= 1 ?
-                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " 외 " + (obj.flavor_detail.gpus.length - 1) + "개"
+                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + ' ' + t('RESOURCES_BESIDES') + ' ' + (obj.flavor_detail.gpus.length - 1) + t('RESOURCES_COUNT')
                   : "-"}
                 description={t('GPU')}
               />
@@ -309,7 +309,7 @@ const Status = (props) => {
                       :
                       <div>-</div>
                     }
-                    <p>IP(네트워크)</p>
+                    <p>IP({t('RESOURCES_NETWORK')})</p>
                   </div>
                   {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network"))}
                   <div className={styles.arrow} onClick={() => handleExpand(detail.name)}>
@@ -361,7 +361,7 @@ const Status = (props) => {
                       :
                       <div>-</div>
                     }
-                    <p>IP(네트워크)</p>
+                    <p>IP({t('RESOURCES_NETWORK')})</p>
                   </div>
                   {renderMonitorings(detail.name, isExpandFlag, detail.networks.find(obj => obj.name === "k8s-pod-network"))}
                   <div className={styles.arrow} onClick={() => handleExpand(detail.name)}>

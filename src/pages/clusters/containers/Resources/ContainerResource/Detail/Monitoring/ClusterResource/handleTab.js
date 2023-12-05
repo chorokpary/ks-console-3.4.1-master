@@ -64,14 +64,14 @@ function getNodeData(metricData) {
     },
     {
       activeTab: 'memory',
-      name: '메모리',
+      name: t('RESOURCES_MEMORY'),
       unitType: 'memory',
       used: getValue(lastData[MetricTypes.memory_usage]),
       total: getValue(lastData[MetricTypes.memory_total]),
     },
     {
       activeTab: 'disk',
-      name: '디스크',
+      name: t('RESOURCES_DISK'),
       unitType: 'disk',
       used: getValue(lastData[MetricTypes.disk_size_usage]),
       total: getValue(lastData[MetricTypes.disk_size_capacity]),
@@ -99,7 +99,7 @@ function getPodData(podData) {
     },
     {
       activeTab: 'memory',
-      name: '메모리',
+      name: t('RESOURCES_MEMORY'),
       unitType: 'memory',
       used: last(podData.pod_memory_usage[0].values)[1],
       total: 99999999,
@@ -136,7 +136,7 @@ function getVmData(data) {
     },
     {
       activeTab: 'memory',
-      name: '메모리',
+      name: t('RESOURCES_MEMORY'),
       unitType: 'memory',
       unit: 'Gi',
       used: memoryCnt,
@@ -174,7 +174,7 @@ function getKaasData(data) {
     },
     {
       activeTab: 'memory',
-      name: '메모리',
+      name: t('RESOURCES_MEMORY'),
       unitType: 'memory',
       unit: 'Gi',
       used: memoryCnt,
