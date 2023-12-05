@@ -17,8 +17,8 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
   const [cidrReducer, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
 
   const defaultRouteOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
+    { label: t('RESOURCES_NOT_USE'), value: false, },
+    { label: t('RESOURCES_USE'), value: true, }
   ]
 
   const handleOk = () => {
@@ -141,15 +141,15 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
         width={1000}
         title={title}
         onOk={handleOk}
-        okText={'수정'}
+        okText={t('RESOURCES_EDIT')}
         onCancel={closeModal}
-        cancelText={'취소'}
+        cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('이름')}
-            rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+            label={t('RESOURCES_NAME')}
+            rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
             desc={t('NAME_DESC')}
           >
             <Input name="name" maxLength={253}
@@ -159,7 +159,7 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
           </Form.Item>
           <Form.Item
             label={t('MTU')}
-            rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
+            rules={[{ required: true, message: t('RESOURCES_MTU_EMPTY_DESC') },]}
           >
             <NumberInput name="mtu"
               defaultValue={detail.mtu}
@@ -173,7 +173,7 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
               <Column>
                 <Form.Item
                   label={t('CIDR')}
-                  rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
+                  rules={[{ required: true, message: t('RESOURCES_CIDR_EMPTY_DESC') },]}
                 >
                   <Input name="cidr"
                     style={{ maxWidth: 'none' }}
@@ -186,15 +186,15 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
                 <Columns>
                   <Column>
                     <Form.Item
-                      label={t('IP POOL 정보')}
-                      rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                      label={t('RESOURCES_IP_POOL_INFORMATION')}
+                      rules={[{ required: true, message: t('RESOURCES_IP_POOL_EMPTY_DESC') },]}
                     >
                       <Input name="ip_pool_start" defaultValue={detail.ip_pool.start} />
                     </Form.Item>
                   </Column>
                   <Column>
                     <Form.Item
-                      rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                      rules={[{ required: true, message: t('RESOURCES_IP_POOL_EMPTY_DESC') },]}
                     >
                       <Input name="ip_pool_end"
                         style={{ marginTop: '24px' }} defaultValue={detail.ip_pool.end} />
@@ -209,7 +209,7 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('디폴트 라우트')}
+                  label={t('RESOURCES_DEFAULT_ROUTE')}
                   rules={[{ required: true },]}
                 >
                   <RadioGroup
@@ -228,8 +228,8 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
               </Column>
               <Column>
                 <Form.Item
-                  label={t('게이트웨이 IP')}
-                  rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
+                  label={t('RESOURCES_GATEWAY_IP')}
+                  rules={[{ required: true, message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC') },]}
                 >
                   <Input name="gateway_ip" defaultValue={detail.gateway_ip} />
                 </Form.Item>
@@ -301,8 +301,8 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
           </Form.Item> */}
 
           <Form.Item
-            label={t('설명')}
-            rules={[{ required: true, message: '설명을 입력해주세요.' }]}
+            label={t('RESOURCES_DESCRIPTION')}
+            rules={[{ required: true, message: t('RESOURCES_DESCRIPTION_EMPTY_DESC') }]}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea

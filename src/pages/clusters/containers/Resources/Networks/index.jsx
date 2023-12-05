@@ -37,7 +37,7 @@ import styles from './index.scss'
   store: new NetworkStore(),
   module: 'networks',
   authKey: 'networks',
-  name: '네트워크',
+  name: t('RESOURCES_NETWORK'),
 })
 export default class Networks extends React.Component {
 
@@ -73,7 +73,7 @@ export default class Networks extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('networks.regist', {
@@ -108,7 +108,7 @@ export default class Networks extends React.Component {
     const { cluster } = this.props.match.params
     return [
       {
-        title: t('이름'),
+        title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
         render: name => (
@@ -121,7 +121,7 @@ export default class Networks extends React.Component {
         ),
       },
       {
-        title: t('네트워크 타입'),
+        title: t('RESOURCES_NETWORK_TYPE'),
         dataIndex: 'type',
         isHideable: true,
         width: 'auto',
@@ -139,13 +139,13 @@ export default class Networks extends React.Component {
         width: 'auto',
       },
       {
-        title: t('게이트웨이 IP'),
+        title: t('RESOURCES_GATEWAY_IP'),
         dataIndex: 'gateway_ip',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
         sorter: true,
@@ -163,7 +163,7 @@ export default class Networks extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('데이터가 없습니다') }
+    return { desc: t('RESOURCES_NO_DATA') }
   }
 
   modalTopology  = () => {
@@ -185,16 +185,16 @@ export default class Networks extends React.Component {
                 <Icon name={'network-duotone'} size={48} />
             </div>
             <div className={styles.title}>
-              <div className="h3">{t('네트워크')}</div>
+              <div className="h3">{t('RESOURCES_NETWORK')}</div>
               <p className="text-second">
-                {t('네트워크의 상태와 사용현황을 관리 할 수 있습니다.')}
+                {t('RESOURCES_NETWORK_DESC')}
               </p>
             </div>
             <div className={styles.divRight}>
               <div className={styles.iconRight} onClick={() => this.modalTopology()}>
                   <Icon name={'topology'} size={36}/>             
               </div>
-              <p>{t('토폴로지')}</p>
+              <p>{t('RESOURCES_TOPOLOGY')}</p>
             </div>
           </div>
         </div>    

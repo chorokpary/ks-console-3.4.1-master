@@ -58,22 +58,22 @@ const Status = (props) => {
             <div>                
 
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type='네트워크' variables='networks' name={props.match.params.name} />
+                <DetailVmList type={t('RESOURCES_NETWORK')} variables='networks' name={props.match.params.name} />
 
                 {/* 라우터 */}
                 <div>
                     {routerList.length == 0 &&
-                        <Panel title={"라우터"}>
+                        <Panel title={t('RESOURCES_ROUTER')}>
                             <div className={styles.wrapper}>
                                 {isLoadingRouter ? <div className={styles.loading}><Loading /></div>
                                 :
-                                <div className={styles.empty}>네트워크를 사용하는 라우터가 없습니다.</div>
+                                <div className={styles.empty}>{t('RESOURCES_NO_ROUTER_USE_NETWORK')}</div>
                                  }                                
                             </div>
                         </Panel>
                     }
                     {routerList.length > 0 &&
-                        < Panel title={"라우터"}>
+                        < Panel title={t('RESOURCES_ROUTER')}>
                             {routerList.map((obj, index) => (
                                 <div className={styles.wrapper} key={index}>
                                     <div className={classnames(styles.item)}>
@@ -82,23 +82,23 @@ const Status = (props) => {
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
                                             <div>{obj.name}</div>
-                                            <p>이름</p>
+                                            <p>{t('NAME')}</p>
                                         </div>
                                         <div className={styles.title}>
-                                            <div>{obj.enable_snat ? "사용" : "미사용"}</div>
-                                            <p>SNAT 옵션</p>
+                                            <div>{obj.enable_snat ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</div>
+                                            <p>{t('RESOURCES_SNAT_OPTION')}</p>
                                         </div>
                                         <div className={styles.title}>
                                             <div>{obj.external}</div>
-                                            <p>외부 네트워크</p>
+                                            <p>{t('RESOURCES_EXTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
-                                            <div>{(obj.internal).length > 0 ?  store.detail.name + ` 외 ${(obj.internal).length-1}개`: "-"}</div>
-                                            <p>내부 네트워크</p>
+                                            <div>{(obj.internal).length > 0 ? store.detail.name + ` ${t('RESOURCES_BESIDES')} ${(obj.internal).length - 1}${t('RESOURCES_COUNT')}`: "-"}</div>
+                                            <p>{t('RESOURCES_INTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
                                             <div>{obj.vrouter_ip}</div>
-                                            <p>가상 라우터 IP</p>
+                                            <p>{t('RESOURCES_VROUTER_IP')}</p>
                                         </div>
                                        
                                     </div>
@@ -111,17 +111,17 @@ const Status = (props) => {
                 {/* 로드밸런서 */}
                 <div>
                     {loadbalancerList.length == 0 &&
-                        <Panel title={"로드밸런서"}>
+                        <Panel title={t('RESOURCES_LOAD_BALANCER')}>
                             <div className={styles.wrapper}>
                                 {isLoadingLoadBalancer ? <div className={styles.loading}><Loading /></div>
                                 :
-                                <div className={styles.empty}>네트워크를 사용하는 로드밸런서가 없습니다.</div>
+                                <div className={styles.empty}>{t('RESOURCES_NO_LOAD_BALANCER_NETWORK')}</div>
                                  }  
                             </div>
                         </Panel>
                     }
                     {loadbalancerList.length > 0 &&
-                        < Panel title={"로드밸런서"}>
+                        < Panel title={t('RESOURCES_LOAD_BALANCER')}>
                             {loadbalancerList.map((obj, index) => (
                                 <div className={styles.wrapper} key={index}>
                                     <div className={classnames(styles.item)}>
@@ -130,19 +130,19 @@ const Status = (props) => {
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
                                             <div>{obj.name}</div>
-                                            <p>이름</p>
+                                            <p>{t('NAME')}</p>
                                         </div>
                                         <div className={styles.title}>
                                             <div>{(obj.members).length > 0 ? (obj.members).map(item => <p>{item}</p>) : "-"}</div>
-                                            <p>멤버 IP</p>
+                                            <p>{t('RESOURCES_MEMBER_IP')}</p>
                                         </div>
                                         <div className={styles.title}>
                                             <div>{obj.virtual_ip}</div>
-                                            <p>가상 IP</p>
+                                            <p>{t('RESOURCES_VIRTUAL_IP')}</p>
                                         </div>
                                         <div className={styles.title}>
                                             <div>{obj.rules_count}</div>
-                                            <p>정책 갯수</p>
+                                            <p>{t('RESOURCES_POLICY_COUNT')}</p>
                                         </div>
                                     </div>
                                 </div>

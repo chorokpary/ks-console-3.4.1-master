@@ -36,12 +36,12 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
     { label: 'STT', value: 'STT', },
   ]
   const externalOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
+    { label: t('RESOURCES_NOT_USE'), value: false, },
+    { label: t('RESOURCES_USE'), value: true, }
   ]
   const defaultRouteOptions = [
-    { label: '미사용', value: false, },
-    { label: '사용', value: true, }
+    { label: t('RESOURCES_NOT_USE'), value: false, },
+    { label: t('RESOURCES_USE'), value: true, }
   ]
 
   const handleOk = () => {
@@ -210,15 +210,15 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
       <>
         {regStep == 1 &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>다음</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {regStep == 2 &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >생성</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
           </>
         }
       </>
@@ -247,8 +247,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
               </div>
               <span className={styles.basic}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>기본 설정</div>
-                <div className={styles.situation}>{regStep == 1 ? "Current" : regStep > 1 ? "Done" : "To do"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_DEFAULT_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 1 ? t('RESOURCES_CURRENT') : regStep > 1 ? t('RESOURCES_COMPLETED_SETTINGS') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
             <div className={classnames(styles.process_item, `${regStep == 2 ? styles.current : ''}`)}>
@@ -257,8 +257,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
               </div>
               <span className={styles.check}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>세부 설정</div>
-                <div className={styles.situation}>{regStep == 2 ? "Current" : "To do"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 2 ? t('RESOURCES_CURRENT') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
           </div>
@@ -272,8 +272,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
               <div className={`${regStep == 1 ? "" : "hide"}`}>
 
                 <Form.Item
-                  label={t('이름')}
-                  rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+                  label={t('RESOURCES_NAME')}
+                  rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" maxLength={253}
@@ -284,8 +284,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                   <Columns>
                     <Column>
                       <Form.Item
-                        label={t('네트워크 타입')}
-                        rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+                        label={t('RESOURCES_NETWORK_TYPE')}
+                        rules={[{ required: true, message: t('RESOURCES_SELECT_NETWORK_TIP') },]}
                       >
                         <Select
                           name="type"
@@ -296,8 +296,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                     </Column>
                     <Column>
                       <Form.Item
-                        label={t('세그먼트 ID')}
-                        rules={[{ required: true, message: t('세그먼트 ID를 입력해주세요') },]}
+                        label={t('RESOURCES_SEGMENT_ID')}
+                        rules={[{ required: true, message: t('RESOURCES_SEGMENT_ID_EMPTY_DESC') },]}
                       >
                         <NumberInput name="segment_id"
                           disabled={externalBool}
@@ -307,7 +307,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                   </Columns>
                 </Form.Item>
 
-                <Form.Item label={t('서브넷')}>
+                <Form.Item label={t('RESOURCES_SUBNET')}>
                   <Form.Group>
                     <Form.Item>
                       <Columns>
@@ -335,7 +335,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                         <Column>
                           <Form.Item
                             label={t('MTU')}
-                            rules={[{ required: true, message: t('MTU를 입력해주세요.') },]}
+                            rules={[{ required: true, message: t('RESOURCES_MTU_EMPTY_DESC') },]}
                           >
                             <NumberInput name="mtu"
                               defaultValue={1500}
@@ -352,7 +352,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                         <Column>
                           <Form.Item
                             label={t('CIDR')}
-                            rules={[{ required: true, message: t('CIDR을 입력해주세요.') },]}
+                            rules={[{ required: true, message: t('RESOURCES_CIDR_EMPTY_DESC') },]}
                           >
                             <Input name="cidr"
                               style={{ maxWidth: 'none' }}
@@ -364,15 +364,15 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                           <Columns>
                             <Column>
                               <Form.Item
-                                label={t('IP POOL 정보')}
-                                rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                                label={t('RESOURCES_IP_POOL_INFORMATION')}
+                                rules={[{ required: true, message: t('RESOURCES_IP_POOL_EMPTY_DESC') },]}
                               >
                                 <Input name="ip_pool_start" />
                               </Form.Item>
                             </Column>
                             <Column>
                               <Form.Item
-                                rules={[{ required: true, message: t('IP POOL을 입력해주세요.') },]}
+                                rules={[{ required: true, message: t('RESOURCES_IP_POOL_EMPTY_DESC') },]}
                               >
                                 <Input name="ip_pool_end"
                                   style={{ marginTop: '24px' }} />
@@ -387,7 +387,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('디폴트 라우트')}
+                            label={t('RESOURCES_DEFAULT_ROUTE')}
                             rules={[{ required: true },]}
                           >
                             <RadioGroup
@@ -406,8 +406,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                         </Column>
                         <Column>
                           <Form.Item
-                            label={t('게이트웨이 IP')}
-                            rules={[{ required: true, message: t('게이트웨이 IP를 입력해주세요.') },]}
+                            label={t('RESOURCES_GATEWAY_IP')}
+                            rules={[{ required: true, message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC') },]}
                           >
                             <Input name="gateway_ip" />
                           </Form.Item>
@@ -444,7 +444,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                   </Form.Group>
                 </Form.Item>
 
-                {/* <Form.Item label={t('호스트 라우트')}>
+                {/* <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
                     <Form.Group
                     // label={t('ADD_METADATA')}
                     // desc={t('VOLUME_ADD_METADATA_DESC')}
@@ -458,7 +458,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                   </Form.Item> */}
 
 
-                <Form.Item label={t('호스트 라우트')}>
+                <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
                   <Form.Group>
                     {listHostRoute.map((obj, idx) => (
                       <div className={styles.item} key={obj}>
@@ -493,7 +493,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                         className={styles.add}
                         onClick={handleHostRoute.addColumn}
                       >
-                        추가
+                        {t('RESOURCES_ADD')}
                       </Button>
                     </div>
 
