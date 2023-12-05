@@ -102,6 +102,7 @@ const KeypairDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "key",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
