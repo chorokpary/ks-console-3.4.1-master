@@ -100,7 +100,7 @@ const RouterDetail = (props) => {
         },
         {
           name: t('RESOURCES_INTERNAL_NETWORK'),
-            value: detail.router.internal.length >= 1 ? detail.router.internal.length == 1 ? detail.router.internal[0] : detail.router.internal[0] + + ' ' + t('RESOURCES_BESIDES') + ' ' + + (detail.router.internal.length - 1) + t('RESOURCES_COUNT') : "-",
+            value: detail.router.internal.length >= 1 ? detail.router.internal.length == 1 ? detail.router.internal[0] : detail.router.internal[0] + ' ' + t('RESOURCES_BESIDES') + ' ' + (detail.router.internal.length - 1) + t('RESOURCES_COUNT') : "-",
         },
         {
           name: t('RESOURCES_EXTERNAL_NETWORK'),

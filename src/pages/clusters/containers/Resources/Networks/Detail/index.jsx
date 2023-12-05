@@ -79,8 +79,8 @@ const NetworkDetail = (props) => {
               store: store,
               cluster: props.match.params.cluster,
               success: () => routing.push(listUrl),
-              okText: '삭제',
-              cancelText: '취소'
+              okText: t('RESOURCES_DELETE'),
+              cancelText: t('RESOURCES_CANCEL'),
             })
         },
       ]
@@ -94,15 +94,15 @@ const NetworkDetail = (props) => {
     
         return [
           {
-            name: t('클러스터'),
+            name: t('RESOURCES_CLUSTER'),
             value: detail.cluster,
           },
           {
-            name: t('네트워크 유형'),
+            name: t('RESOURCES_NETWORK_TYPE_YOO'),
             value: detail.network.type,
           },
           {
-            name: t('세그먼트 ID'),
+            name: t('RESOURCES_SEGMENT_ID'),
             value: detail.network.segment_id,
           },
           {
@@ -114,19 +114,19 @@ const NetworkDetail = (props) => {
             value: detail.network.cidr,
           },
           {
-            name: t('게이트웨이 IP'),
+            name: t('RESOURCES_GATEWAY_IP'),
             value: detail.network.gateway_ip,
           },
           {
-            name: t('디폴트 라우트'),
-            value: detail.network.default_route ? '사용' : '미사용',
+            name: t('RESOURCES_DEFAULT_ROUTE'),
+            value: detail.network.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
           },
           {
             name: t('External'),
-            value: detail.network.external ? '사용' : '미사용',
+            value: detail.network.external ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
           },
           {
-            name: t('IP POOL 정보'),
+            name: t('RESOURCES_IP_POOL_INFORMATION'),
             value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
           },
           {
@@ -134,17 +134,17 @@ const NetworkDetail = (props) => {
             value: detail.network.dns.map(el => el + '\n'),
           },
           {
-            name: t('호스트 라우트'),
+            name: t('RESOURCES_HOST_ROUTE'),
             value: detail.network.host_routes.map(obj =>
               'Destination: ' + obj.destination + '\n Nexthop:' + obj.nexthop + '\n'
             ),
           },
           {
-            name: t('설명'),
+            name: t('RESOURCES_DESCRIPTION'),
             value: detail.network.description,
           },
           {
-            name: t('생성일'),
+            name: t('RESOURCES_REGIST_DATE'),
             value: getLocalTime(detail.network.timestamp).format('YYYY-MM-DD HH:mm:ss'),
           },
         ]
@@ -163,7 +163,7 @@ const NetworkDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
           {
-            label: t('네트워크'),
+            label: t('RESOURCES_NETWORK'),
             url: listUrl,
           },
         ],
@@ -176,7 +176,7 @@ const NetworkDetail = (props) => {
             routes={[
             {
                 path: `${PATH_DETAIL}/status`,
-                title: '상태',
+                title: t('RESOURCES_STATE'),
                 component: Status,
                 exact: true,
             },
