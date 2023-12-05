@@ -70,15 +70,15 @@ const SecurityGroupDetail = (props) => {
 
         return [
             {
-                name: t('클러스터'),
+                name: t('RESOURCES_CLUSTER'),
                 value: detail.cluster,
             },
             {
-                name: t('설명'),
+                name: t('RESOURCES_DESCRIPTION'),
                 value: detail.security_group.description,
             },
             {
-                name: t('생성일'),
+                name: t('RESOURCES_REGIST_DATE'),
                 value: getLocalTime(detail.security_group.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
@@ -96,7 +96,7 @@ const SecurityGroupDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('보안그룹'),
+                label: t('RESOURCES_SECURITY_GROUP'),
                 url: listUrl,
             },
         ],

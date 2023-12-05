@@ -36,7 +36,7 @@ import * as common from 'utils/resources'
     store: new SecurityGroupStore(),
     module: 'security_groups',
     authKey: 'security_groups',
-    name: '보안그룹',
+    name: t('RESOURCES_SECURITY_GROUP'),
 })
 export default class SecurityGroups extends React.Component {
 
@@ -71,7 +71,7 @@ export default class SecurityGroups extends React.Component {
                 {
                     key: 'regist',
                     type: 'control',
-                    text: t('생성'),
+                    text: t('RESOURCES_CREATE'),
                     action: 'create',
                     onClick: () =>
                         trigger('securityGroup.regist', {
@@ -106,7 +106,7 @@ export default class SecurityGroups extends React.Component {
         const { cluster } = this.props.match.params
         return [
             {
-                title: t('이름'),
+                title: t('NAME'),
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
@@ -120,19 +120,19 @@ export default class SecurityGroups extends React.Component {
                 ),
             },
             {
-                title: t('인바운드 규칙수'),
+                title: t('RESOURCES_INBOUND_RULE_COUNT'),
                 dataIndex: 'ingress_count',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('아웃바운드 규칙수'),
+                title: t('RESOURCES_OUTBOUND_RULE_COUNT'),
                 dataIndex: 'egress_count',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('등록일'),
+                title: t('RESOURCES_REGIST_DATE'),
                 dataIndex: 'timestamp',
                 isHideable: true,
                 sorter: true,
@@ -150,7 +150,7 @@ export default class SecurityGroups extends React.Component {
     }
 
     get emptyProps() {
-        return { desc: t('데이터가 없습니다') }
+        return { desc: t('RESOURCES_NO_DATA') }
     }
 
     render() {
@@ -162,8 +162,8 @@ export default class SecurityGroups extends React.Component {
                     icon="shield"
                     {...bannerProps}
                     tabs={this.tabs}
-                    title={t('보안그룹')}
-                    description={t('보안그룹의 상태와 사용현황을 관리 할 수 있습니다.')}
+                    title={t('RESOURCES_SECURITY_GROUP')}
+                    description={t('RESOURCES_SECURITY_GROUP_DESC')}
                 />
                 <Table
                     {...tableProps}
