@@ -33,9 +33,10 @@ const ModifyModal = (props) => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
+      data.id = props.store.detail.router.id;
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
-      data.external = radioExternal;
+      data.external = radioExternal;   
 
       onOk({ ...data })
     })
@@ -53,8 +54,6 @@ const ModifyModal = (props) => {
   useEffect(() => {
 
     const routerList = props.store.dataList;
-
-    console.log("routerList : "+ JSON.stringify(routerList))
 
     setRouterExternal([]);
     routerList?.map((router) => {
