@@ -30,6 +30,7 @@ export default class NetworkStore extends Base {
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/networks`
     getListUrl = this.getResourceUrl
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async create(data, params = {}) {
@@ -61,7 +62,7 @@ export default class NetworkStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+            `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'Networks' }
 
@@ -78,7 +79,7 @@ export default class NetworkStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
+            `${this.getResourceUrl(params)}/${params.id}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
 
@@ -94,9 +95,9 @@ export default class NetworkStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(username =>
+                    rowKeys.map(id =>
                         request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
+                            `${this.getDetailUrl({ id, ...params })}`
                         )
                     )
                 )

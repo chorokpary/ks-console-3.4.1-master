@@ -215,7 +215,7 @@ export default [
     component: SecurityGroupDetail,
   },
   {
-    path: `${PATH}/networks/:name`,
+    path: `${PATH}/networks/:name/:id`,
     component: NetworkDetail,
   },
   {
