@@ -16,6 +16,7 @@ const ModifyModal = (props) => {
 
     form.current.validator(() => {
       const { data } = form.current.props;
+      data.id = props.store.detail.id;
       onOk({ ...data })
     })
   }

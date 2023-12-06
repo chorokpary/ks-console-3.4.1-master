@@ -39,10 +39,10 @@ const RegistModal = ({ title, onOk, store }) => {
   useEffect(() => {
     if (networkDataList.length > 0 && routerList.length > 0) {
       const list = networkDataList.filter((obj) => (
-        routerList.includes(obj.name)
+        routerList.includes(obj.id)
       ));
       setNetworkList(list);
-      setRadioExternal(list[0].name)
+      setRadioExternal(list[0].id)
     }
   }, [networkDataList, routerList])
 
@@ -109,8 +109,8 @@ const RegistModal = ({ title, onOk, store }) => {
                       <tr key={data.name}>
                         <td>
                           <Radio name="external" value={data.name}
-                            checked={radioExternal === data.name}
-                            onChange={(e) => { setRadioExternal(data.name); }} />
+                            checked={radioExternal === data.id}
+                            onChange={(e) => { setRadioExternal(data.id); }} />
                         </td>
                         <td>{data.name}</td>
                         <td>{(data.type).toUpperCase()}</td>

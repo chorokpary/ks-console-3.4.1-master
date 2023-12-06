@@ -20,7 +20,7 @@ import { getIndexRoute } from 'utils/router.config'
 
 import Status from 'clusters/containers/Resources/Keypairs/Detail/Status'
 
-const PATH = '/clusters/:cluster/keypairs/:name'
+const PATH = '/clusters/:cluster/keypairs/:name/:id'
 
 export default [
   {

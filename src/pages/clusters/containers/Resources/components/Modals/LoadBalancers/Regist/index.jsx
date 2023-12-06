@@ -96,7 +96,7 @@ const RegistModal = (props) => {
     const onOk = props.onOk;
     const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
     const rules = [...formRulesFields].filter(el => el.portRangeMax);
-    console.log(rules)
+
     setIsMembers(members.length > 0)
     if (isDuplicate(rules)) {
       setIsDupRules(false)
