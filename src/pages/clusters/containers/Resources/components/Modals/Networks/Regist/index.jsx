@@ -10,10 +10,11 @@ import DistroTypeStore from 'stores/resources/distrotype'
 import styles from './index.scss'
 import ObjectInput from 'components/Inputs/ObjectInput'
 import * as common from "utils/resources"
+import { ProjectSelect } from 'components/Inputs'
 
 import classnames from 'classnames'
 
-export default function ResourceNetworkModal({ title, store, onOk }) {
+const RegistModal = (props) => {
 
   const form = useRef();
   const [formData, setFormData] = useState({});
@@ -25,7 +26,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
 
   const [regStep, setRegStep] = useState(1);
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
-
+  const [projectName, setProjectName] = useState(props.namespace);
 
   const networkTypeOptions = [
     { label: 'VXLAN', value: 'VXLAN', },
@@ -45,7 +46,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
   ]
 
   const handleOk = () => {
-
+    const onOk = props.onOk;
 
     form.current.validator(() => {
       const { data } = form.current.props;
@@ -73,6 +74,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
       if (data.segment_id == " ") {
         delete data.segment_id;
       }
+      data.project = projectName;
 
       onOk({ network: data })
     })
@@ -230,7 +232,7 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
       <Modal
         icon="pen"
         width={960}
-        title={title}
+        title={props.title}
         onCancel={closeModal}
         bodyClassName={styles.body}
         visible={modelView}
@@ -270,7 +272,8 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
 
               {/* 기본설정 설정 시작==========================================*/}
               <div className={`${regStep == 1 ? "" : "hide"}`}>
-
+              <Columns>
+                <Column>
                 <Form.Item
                   label={t('RESOURCES_NAME')}
                   rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
@@ -279,6 +282,25 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
                   <Input name="name" maxLength={253}
                     style={{ maxWidth: 'none' }} />
                 </Form.Item>
+                </Column>
+                {!props.namespace && (
+                  <Column>
+                    <Form.Item
+                      label={t('PROJECT')}
+                      desc={t('SELECT_PROJECT_DESC')}
+                      rules={[
+                        { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                      ]}
+                    >
+                      <ProjectSelect
+                        name="namespace"
+                        cluster={props.cluster}
+                        onChange={(e) => setProjectName(e)}
+                      />
+                    </Form.Item>
+                  </Column>
+                )}
+               </Columns>
 
                 <Form.Item>
                   <Columns>
@@ -518,3 +540,5 @@ export default function ResourceNetworkModal({ title, store, onOk }) {
   )
 
 }
+
+export default RegistModal

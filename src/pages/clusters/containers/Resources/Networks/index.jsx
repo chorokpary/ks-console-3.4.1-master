@@ -38,6 +38,7 @@ import styles from './index.scss'
   module: 'networks',
   authKey: 'networks',
   name: t('RESOURCES_NETWORK'),
+  rowKey: 'id'
 })
 export default class Networks extends React.Component {
 
@@ -111,11 +112,11 @@ export default class Networks extends React.Component {
         title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
-        render: name => (
+        render: (name, item) => (
           <Avatar
             icon="network-duotone"
             iconSize={40}
-            to={`/clusters/${cluster}/networks/${name}`}
+            to={`/clusters/${cluster}/networks/${name}/${item.id}`}
             title={name}
           />
         ),
