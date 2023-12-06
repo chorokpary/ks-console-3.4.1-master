@@ -34,12 +34,14 @@ const LbPop = ({ title, onOk, store }) => {
 
     const fnGetRouterList = async () => {
       const routerData = await store.routerList()
+      console.log(routerData)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetLbList = async () => {
       const lbData = await store.lbList()
+      console.log(lbData)
       setLbList(lbData.lbs)
     };
 

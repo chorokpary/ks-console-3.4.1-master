@@ -195,7 +195,7 @@ export default [
     ],
   },
   {
-    path: `${PATH}/keypairs/:name`,
+    path: `${PATH}/keypairs/:name/:id`,
     component: KeypairDetail,
   },
   {
@@ -230,7 +230,7 @@ export default [
     path: `${PATH}/containerimages/:name`,
     component: ContainerImageDetail,
   },
- {
+  {
     path: `${PATH}/containerresource/:name`,
     component: ContainerResourceDetail,
   },
@@ -257,6 +257,6 @@ export default [
   {
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
-  },  
-  
+  },
+
 ]

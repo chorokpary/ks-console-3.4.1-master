@@ -1,9 +1,11 @@
 import { get } from 'lodash'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
-import { Form, Input, Select, TextArea, Button, Loading } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Loading, Column, Columns } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
+import { ProjectSelect } from 'components/Inputs'
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
 
@@ -12,10 +14,11 @@ const RegistModal = (props) => {
   const [formData, setFormData] = useState({});
 
   const handleOk = () => {
-    const onOk  = props.onOk;
+    const onOk = props.onOk;
 
     form.current.validator(() => {
       const { data } = form.current.props;
+      data.project = projectName
       onOk({ ...data })
     })
   }
@@ -24,36 +27,52 @@ const RegistModal = (props) => {
     setModalView(false);
   }
 
-  const [downloadBtnVisible, setDownloadBtnVisible] = useState(false); 
-  const [loadingBar, setLoadingBar] = useState(false); 
+  const [downloadBtnVisible, setDownloadBtnVisible] = useState(false);
+  const [loadingBar, setLoadingBar] = useState(false);
 
   const [privateKey, setPrivateKey] = useState("");
-  const [publicKey, setPublicKey] = useState(""); 
+  const [publicKey, setPublicKey] = useState("");
+  const [projectName, setProjectName] = useState(props.namespace);
 
-  const createKeypair = () => {
+  const createKeypair = async () => {
+    let valid = false;
+    await validCreate().then(res => {
+      if (res) valid = true
+    })
 
-    setLoadingBar(true);
+    if (valid) {
+      setLoadingBar(true);
 
-    setTimeout(() => {
-      let forge = require('node-forge');
-      let keyPair = forge.pki.rsa.generateKeyPair(2048)
+      setTimeout(() => {
+        let forge = require('node-forge');
+        let keyPair = forge.pki.rsa.generateKeyPair(2048)
 
-      let priveteKey = keyPair.privateKey
-      let publicKey = keyPair.publicKey
+        let priveteKey = keyPair.privateKey
+        let publicKey = keyPair.publicKey
 
-      // const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey, globals.user.email);
-      const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey);
-      const privateKeyToOpenSSH = forge.ssh.privateKeyToOpenSSH(priveteKey);
+        // const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey, globals.user.email);
+        const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey);
+        const privateKeyToOpenSSH = forge.ssh.privateKeyToOpenSSH(priveteKey);
 
-      setPublicKey(publicKeyToOpenSSH)
-      setPrivateKey(privateKeyToOpenSSH)
+        setPublicKey(publicKeyToOpenSSH)
+        setPrivateKey(privateKeyToOpenSSH)
 
-      // 신규키생성 버튼 클릭 후, 지문 & 공개 키 자동입력
-      setDownloadBtnVisible(true); // 다운로드버튼 활성화
-      setLoadingBar(false);
-    }, 300);
-
+        // 신규키생성 버튼 클릭 후, 지문 & 공개 키 자동입력
+        setDownloadBtnVisible(true); // 다운로드버튼 활성화
+        setLoadingBar(false);
+      }, 300);
+    }
   };
+
+  const validCreate = async () => {
+    // 이름과 프로젝트명을 입력해야만 공개키 생성되도록
+    await form.current.validator()
+    form.current.resetValidateResults("publicKey");
+    if (form.current.state.errors.length == 0) {
+      return true
+    }
+    return false
+  }
 
   const privateKeyDownload = () => {
     let fileName = 'Private_Key.txt';
@@ -79,81 +98,112 @@ const RegistModal = (props) => {
     element.click();
   }
 
+  const nameValidator = (rule, value, callback) => {
+    if (value == undefined) {
+      return callback({ message: t('RESOURCES_KEYPAIR_EMPTY_DESC') })
+    } else {
+      if (!regexName.test(value)) {
+        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
+      }
+    }
+    callback()
+  }
+
   return (
-    <>  
-        <Modal
-          icon="pen"
-          width={700}
-          title={props.title}
-          onOk={handleOk}
-          onCancel={closeModal}
-          visible={modelView}
-        >
-          <Form data={formData} ref={form}>
-            
-            <div className={styles.divwrap}>
-              <div className={styles.div_left}>
-                <Form.Item
+    <>
+      <Modal
+        icon="pen"
+        width={700}
+        title={props.title}
+        onOk={handleOk}
+        onCancel={closeModal}
+        visible={modelView}
+      >
+        <Form data={formData} ref={form}>
+          <div className={styles.divwrap}>
+            <div className={styles.div_left}>
+              <Columns>
+                <Column>
+                  <Form.Item
                     label={t('RESOURCES_NAME')}
-                    rules={[{ required: true, message: t('RESOURCES_KEYPAIR_EMPTY_DESC') }]}
+                    rules={[{ required: true, validator: nameValidator }]}
                     desc={t('NAME_DESC')}
                   >
-                  <Input
-                    name="name"
-                    autoFocus={true}
-                    maxLength={63}
-                    style={{ maxWidth: 'none' }}
-                  />   
-                </Form.Item>
-              </div>
-              <div className={styles.div_right}>
+                    <Input
+                      name="name"
+                      autoFocus={true}
+                      maxLength={63}
+                      style={{ maxWidth: 'none' }}
+                    />
+                  </Form.Item>
+                </Column>
+                {!props.namespace && (
+                  <Column>
+                    <Form.Item
+                      label={t('PROJECT')}
+                      desc={t('SELECT_PROJECT_DESC')}
+                      rules={[
+                        { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                      ]}
+                    >
+                      <ProjectSelect
+                        name="namespace"
+                        cluster={props.cluster}
+                        onChange={(e) => setProjectName(e)}
+                      />
+                    </Form.Item>
+                  </Column>
+                )}
+              </Columns>
+            </div>
+            <div className={styles.div_right}>
               <Form.Item>
                 <div>
-                  {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button> }
-                  {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button> }
-                  {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button> }
-                </div>        
+                  {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button>}
+                  {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button>}
+                  {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button>}
+                </div>
               </Form.Item>
-              </div>
             </div>
+          </div>
 
-            <Form.Item
-              className={styles.textarea}
-              label={t('RESOURCES_PUBLIC_KEY')}
-              rules={[{ required: true, message: t('RESOURCES_PUBLIC_KEY_EMPTY_DESC') }]}
-            >
-              {loadingBar ? 
-                <Loading spinning={loadingBar}>
-                  <TextArea
-                    name="publicKey"
-                    rows="8"
-                    defaultValue={publicKey}
-                    readOnly
-                  />
-                </Loading>  
+          <Form.Item
+            className={styles.textarea}
+            label={t('RESOURCES_PUBLIC_KEY')}
+            rules={[{ required: true, message: t('RESOURCES_PUBLIC_KEY_EMPTY_DESC') }]}
+          >
+            {loadingBar ?
+              <Loading spinning={loadingBar}>
+                <TextArea
+                  name="publicKey"
+                  rows="8"
+                  defaultValue={publicKey}
+                  readOnly
+                />
+              </Loading>
               : <TextArea
-                    name="publicKey"
-                    rows="8"
-                    defaultValue={publicKey}
-                    readOnly
-                  />
-              }
-            </Form.Item>
-            <Form.Item
-              className={styles.textarea}
-              label={t('RESOURCES_DESCRIPTION')}
-              desc={t('DESCRIPTION_DESC')}
-            >
-              <TextArea
-                name="description"
-                maxLength={256}
-                rows="1"    
-                defaultValue=""       
+                name="publicKey"
+                rows="8"
+                defaultValue={publicKey}
+                readOnly
               />
-            </Form.Item>
+            }
+          </Form.Item>
+          <Form.Item
+            className={styles.textarea}
+            label={t('RESOURCES_DESCRIPTION')}
+            desc={t('DESCRIPTION_DESC')}
+          >
+            <TextArea
+              name="description"
+              maxLength={256}
+              rows="1"
+              defaultValue=""
+            />
+          </Form.Item>
 
-          </Form>
-        </Modal>
+        </Form>
+      </Modal>
 
     </>
   );

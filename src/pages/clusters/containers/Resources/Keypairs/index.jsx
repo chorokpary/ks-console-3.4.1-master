@@ -33,9 +33,10 @@ import KeypairStore from 'stores/resources/keypairs'
   module: 'keypairs',
   authKey: 'keypairs',
   name: t('RESOURCES_KEYPAIR'),
+  rowKey: 'id'
 })
 export default class Keypairs extends React.Component {
- 
+
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -72,10 +73,10 @@ export default class Keypairs extends React.Component {
           action: 'create',
           onClick: () =>
             trigger('keypair.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -109,11 +110,11 @@ export default class Keypairs extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
+        render: (name, item) => (
           <Avatar
             icon="key"
             iconSize={40}
-            to={`/clusters/${cluster}/keypairs/${name}`}
+            to={`/clusters/${cluster}/keypairs/${name}/${item.id}`}
             title={name}
           />
         ),
@@ -162,29 +163,29 @@ export default class Keypairs extends React.Component {
 
 
   render() {
-    
+
     const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        icon="key"
-        tabs={this.tabs}
-        title={t('RESOURCES_KEYPAIR')}
-        description={t('RESOURCES_KEYPAIR_DESC')}
-      />
-      <Table
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-      />
-    </ListPage>
-     
+        <Banner
+          {...bannerProps}
+          icon="key"
+          tabs={this.tabs}
+          title={t('RESOURCES_KEYPAIR')}
+          description={t('RESOURCES_KEYPAIR_DESC')}
+        />
+        <Table
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+
     )
   }
 }

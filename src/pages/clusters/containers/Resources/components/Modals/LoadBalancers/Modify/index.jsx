@@ -59,7 +59,6 @@ const ModifyModal = (props) => {
                 const { id } = props.store.detail
                 data.members = members;
                 data.id = id;
-                console.log(data)
                 onOk({ lb: data })
             }
 
