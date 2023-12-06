@@ -33,6 +33,7 @@ import RouterStore from 'stores/resources/routers'
   module: 'routers',
   authKey: 'routers',
   name: t('RESOURCES_VROUTER'),
+  rowKey: 'id'
 })
 export default class Routers extends React.Component {
  
@@ -109,14 +110,21 @@ export default class Routers extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
+        render: (name, record) => (
           <Avatar
             icon="router"
             iconSize={40}
-            to={`/clusters/${cluster}/routers/${name}`}
+            to={`/clusters/${cluster}/routers/${name}/${record.id}`}
             title={name}
           />
         ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        search: true,
+        width: 'auto',
       },
       {
         title: t('RESOURCES_SNAT_OPTION'),
@@ -169,7 +177,7 @@ export default class Routers extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {

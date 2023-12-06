@@ -203,7 +203,7 @@ export default [
     component: ImageDetail,
   },
   {
-    path: `${PATH}/routers/:name`,
+    path: `${PATH}/routers/:name/:id`,
     component: RouterDetail,
   },
   {
