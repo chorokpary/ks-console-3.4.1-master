@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Button} from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
@@ -19,7 +19,7 @@ const ModifyModal = (props) => {
     const [isMembers, setIsMembers] = useState(true);
 
     useEffect(() => {
-        
+
         const getCreateData = async () => {
             const listVm = await loadBalancerStore.fetchVmList();
 
@@ -56,7 +56,10 @@ const ModifyModal = (props) => {
 
             if (members.length > 0) {
                 const { data } = form.current.props;
+                const { id } = props.store.detail
                 data.members = members;
+                data.id = id;
+                console.log(data)
                 onOk({ lb: data })
             }
 
@@ -202,7 +205,7 @@ const ModifyModal = (props) => {
                             </div>
                         </div>
                     </Form.Item>
-                    
+
 
                     <Form.Item
                         className={styles.textarea}

@@ -36,7 +36,7 @@ export default class LoadBalancerStore extends Base {
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/lbs`
     getListUrl = this.getResourceUrl
-
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async fetchList({
@@ -79,7 +79,7 @@ export default class LoadBalancerStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (lbs) => {
-            const lbsDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lbs.name);
+            const lbsDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lbs.id);
             lbs.rules_count = (lbsDetail.data.lb?.rules).length;
             dataArray.push(lbs);
         })
@@ -144,11 +144,10 @@ export default class LoadBalancerStore extends Base {
 
         let res = await this.submitting(request.post(this.getListUrl(params), data))
         if (res.message === "OK") {
-            console.log(data)
             const jsonData = {};
             const promises = data.lb.lb_rule.map(async (obj) => {
                 const ruleData = {};
-                ruleData.lb_name = data.lb.name;
+                ruleData.lb_id = data.lb.id;
                 ruleData.protocol = obj.protocol.toLowerCase();
                 if (obj.portRangeMax.indexOf("-") != -1) {
                     ruleData.port_range_min = obj.portRangeMax.split("-")[0];
@@ -175,7 +174,7 @@ export default class LoadBalancerStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+            `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'Lbs' }
 
@@ -195,7 +194,7 @@ export default class LoadBalancerStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
+            `${this.getResourceUrl(params)}/${params.id}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'Lbs' }
 
@@ -206,9 +205,9 @@ export default class LoadBalancerStore extends Base {
 
 
     @action
-    async update({ name, ...params }, data) {
+    async update({ id, ...params }, data) {
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.lb.name }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ id }), data))
 
         return res
     }
@@ -221,9 +220,9 @@ export default class LoadBalancerStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(username =>
+                    rowKeys.map(id =>
                         request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
+                            `${this.getDetailUrl({ id, ...params })}`
                         )
                     )
                 )

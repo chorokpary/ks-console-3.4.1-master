@@ -36,6 +36,7 @@ import * as common from 'utils/resources'
     module: 'lbs',
     authKey: 'lbs',
     name: t('RESOURCES_LOAD_BALANCER'),
+    rowKey: 'id'
 })
 export default class LoadBalancers extends React.Component {
 
@@ -109,11 +110,11 @@ export default class LoadBalancers extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: name => (
+                render: (name, item) => (
                     <Avatar
                         icon="loadbalancer"
                         iconSize={40}
-                        to={`/clusters/${cluster}/loadBalancers/${name}`}
+                        to={`/clusters/${cluster}/loadBalancers/${name}/${item.id}`}
                         title={name}
                     />
                 ),
