@@ -53,11 +53,11 @@ export default {
     },
   },
   'loadBalancer.edit': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -107,7 +107,13 @@ export default {
   'loadBalancer.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const usernames = rowKeys.join(', ')
+      let arr = new Array
+      store.dataList.map(obj => {
+        if (rowKeys.includes(obj.id)) {
+          arr.push(obj.name)
+        }
+      })
+      const names = arr.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -120,14 +126,14 @@ export default {
         },
         modal: DeleteModal,
         title:
-          usernames.split(', ').length === 1
+          rowKeys.length === 1
             ? t('RESOURCES_DELETE')
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
-          usernames.split(', ').length === 1
-            ? t.html('RESOURCES_DELETE_LOAD_BALANCER_TIP', { resource: usernames })
-            : t.html('RESOURCES_DELETE_LOAD_BALANCER_TIP', { resource: usernames }),
-        resource: usernames,
+          rowKeys.length === 1
+            ? t.html('RESOURCES_DELETE_LOAD_BALANCER_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_LOAD_BALANCER_TIP', { resource: names }),
+        resource: names,
         store,
         ...props,
       })
@@ -194,6 +200,6 @@ export default {
         ...props,
       })
     },
-    },
+  },
 
 }

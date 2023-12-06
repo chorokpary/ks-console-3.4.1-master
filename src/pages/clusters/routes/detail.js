@@ -247,7 +247,7 @@ export default [
     component: MediatedDeviceDetail,
   },
   {
-    path: `${PATH}/loadbalancers/:name`,
+    path: `${PATH}/loadbalancers/:name/:id`,
     component: LoadBalancerDetail,
   },
   {
