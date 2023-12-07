@@ -35,7 +35,7 @@ const CarbonPower = ({ x, y, w, h,
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>탄소 발자국 - 전력 사용량</label>
+              <label>{t('RESOURCES_CARBON_FOOTPRINT')} - {t('RESOURCES_POWER_USAGE')}</label>
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_chart_2">

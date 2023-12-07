@@ -137,7 +137,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>리소스 변화량</label>
+              <label>{t('RESOURCES_RESOURCE_CHANGE_AMOUNT')}</label>
               <div className="right">
 
               </div>
@@ -168,7 +168,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
                 <div className="grid_info style_status box_long">
                   <div className="box type_status">
                     <div className="cont_group">
-                      <h5><i className="ico-type-vm"></i>가상머신</h5>
+                      <h5><i className="ico-type-vm"></i>{t('RESOURCES_VM')}</h5>
                       <div className="number_wrap">
                         <p><span className="em">{vmCnt}</span></p>
                       </div>

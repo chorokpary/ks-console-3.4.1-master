@@ -115,12 +115,12 @@ const Information = (props) => {
                   </div>
                   <div className="data"><i className="ico-type24-memory"></i>
                     <div className="info_text">
-                      <h6>메모리</h6><span>{common.fnSetBytes(store.detail.vm?.flavor?.ram)} Gib</span>
+                      <h6>{t('RESOURCES_MEMORY')}</h6><span>{common.fnSetBytes(store.detail.vm?.flavor?.ram)} Gib</span>
                     </div>
                   </div>
                   <div className="data"><i className="ico-type24-disk"></i>
                     <div className="info_text">
-                      <h6>디스크</h6><span>{store.detail.vm?.flavor?.root_disk} Gib</span>
+                      <h6>{t('RESOURCES_DISK')}</h6><span>{store.detail.vm?.flavor?.root_disk} Gib</span>
                     </div>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ const Information = (props) => {
                         <div className="tree_box">
                           <div className="title_icon"><i className={hostDevice_icon}></i></div>
                           <div className="cont_box1">
-                            <h5><span className="bg_01">Host 디바이스</span>{device.name}</h5>
+                            <h5><span className="bg_01">{t('RESOURCES_HOST_DEVICE')}</span>{device.name}</h5>
                             <div className="group">
                               <div className="info"><span>{(device.name).split("/")[1]}</span></div>
                             </div>
@@ -157,7 +157,7 @@ const Information = (props) => {
                         <div className="tree_box">
                           <div className="title_icon"><i className={mediatedDevice_icon}></i></div>
                           <div className="cont_box1">
-                            <h5><span className="bg_01">Mediated 디바이스</span>{gpu.name}</h5>
+                            <h5><span className="bg_01">{t('RESOURCES_MEDIATED_DEVICE')}</span>{gpu.name}</h5>
                             <div className="group">
                               <div className="info"><span>{(gpu.name).split("/")[1]}</span></div>
                             </div>
@@ -176,10 +176,10 @@ const Information = (props) => {
                         <div className="tree_box">
                           <div className="title_icon"><i className="ico-type40-volume"></i></div>
                           <div className="cont_box1">
-                            <h5><span className="bg_03">Volume</span>{volume.name}</h5>
+                            <h5><span className="bg_03">{t('RESOURCES_VOLUME')}</span>{volume.name}</h5>
                             <div className="group">
-                              <div className="info_2"><span>용량</span><p>{volume.capacity}</p></div>
-                              <div className="info_2"><span>접근모드</span>
+                              <div className="info_2"><span>{t('RESOURCES_CAPACITY')}</span><p>{volume.capacity}</p></div>
+                              <div className="info_2"><span>{t('RESOURCES_ACCESS_MODE')}</span>
                                 <div className="info_box">
                                   {(volume.access_modes).map((mode) => (<p key={mode}>{mode}</p>))}
                                 </div>

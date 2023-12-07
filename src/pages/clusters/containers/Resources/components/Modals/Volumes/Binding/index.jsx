@@ -21,7 +21,7 @@ const BindingModal = (props) => {
   const volumeName = props.store.detail.name;
 
   const [vmList, setVmList] = useState([]);
-  const [vmName, setVmName] = useState('선택'); 
+  const [vmName, setVmName] = useState(t('RESOURCES_SELECT')); 
   const [radioPersist, setRadioPersist] = useState("T");
 
   const [volumeList, setVolumeList] = useState([]);
@@ -39,7 +39,7 @@ const BindingModal = (props) => {
       data.volumeName = volumeName,
 
       volumeStore.actionState({data, ...props }).then(() => {
-        Notify.success({ content: t('정상적으로 연결 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
         closeModal();
       })
@@ -82,8 +82,8 @@ const BindingModal = (props) => {
 
   // Validation 시작 ==================================================
   const vmValidator = (rule, value, callback) => {
-    if(value == "선택" || value == "select"){
-      return callback({ message: t('가상머신을 선택해 주세요.') })
+    if(value == t('RESOURCES_SELECT') || value == "select"){
+      return callback({ message: t('RESOURCES_SELECT_VM_TIP') })
     }
     callback()
   }
@@ -103,7 +103,7 @@ const BindingModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('가상 머신 이름')}
+            label={t('RESOURCES_VM_NAME')}
             rules={[{ required: true, validator: vmValidator }]}
           >
             <Select
@@ -116,8 +116,8 @@ const BindingModal = (props) => {
 
           <Form.Item label={t('Persist')}>
               <div className={styles.wrapper}>
-                <Radio name="snatType" value="T" checked={radioPersist === "T"} onChange={(e) => {setRadioPersist("T");}}>사용</Radio>
-                <Radio name="snatType" value="F" checked={radioPersist === "F"} onChange={(e) => {setRadioPersist("F");}}>미사용</Radio>
+                <Radio name="snatType" value="T" checked={radioPersist === "T"} onChange={(e) => {setRadioPersist("T");}}>{t('RESOURCES_USE')}</Radio>
+                <Radio name="snatType" value="F" checked={radioPersist === "F"} onChange={(e) => {setRadioPersist("F");}}>{t('RESOURCES_NOT_USE')}</Radio>
               </div>              
             </Form.Item>
         </Form>

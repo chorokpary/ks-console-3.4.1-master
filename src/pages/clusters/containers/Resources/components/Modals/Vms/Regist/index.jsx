@@ -33,6 +33,7 @@ const RegistModal = (props) => {
   const [networkDataList, setNetworkDataList] = useState([]);
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
+  const [storegeClassDataList, setStoregeClassDataList] = useState([]);
 
   const [selectImageName, setSelectImageName] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
@@ -50,7 +51,7 @@ const RegistModal = (props) => {
   const [description, setDescription] = useState('');
   const [keypairName, setKeypairName] = useState('');
   const [nodeName, setNodeName] = useState('');
-  const [storageClass, setStorageClass] = useState('선택');
+  const [storageClass, setStorageClass] = useState(t('RESOURCES_SELECT'));
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -77,7 +78,8 @@ const RegistModal = (props) => {
       const listKeypair = await vmStore.fetchVmListKeypair();
       const listNode = await vmStore.fetchVmListNode();
       const listSecurityGroup = await vmStore.fetchVmListSecurityGroup();
-
+      const listStoregeClass = await vmStore.fetchVmListStoregeClass();
+      
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
       setImageOptionList(listImage.images);
@@ -87,6 +89,7 @@ const RegistModal = (props) => {
       setKeypairDataList(listKeypair.keypairs);
       setNodeDataList(listNode.nodes);
       setSecurityGroupDataList(listSecurityGroup);
+      setStoregeClassDataList(listStoregeClass.user_sces)
     };
 
     getVmCreateData();
@@ -94,8 +97,8 @@ const RegistModal = (props) => {
   }, [])
 
   const imageTypeOptions = [
-    { label: '이미지', value: 'I', },
-    { label: '부트볼륨', value: 'B', }
+    { label: t('RESOURCES_IMAGE'), value: 'I', },
+    { label: t('RESOURCES_BOOT_VOLUME'), value: 'B', }
   ]
 
   const osTypeOptions = [
@@ -104,11 +107,16 @@ const RegistModal = (props) => {
     { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
-  const storageClassOptions = [
-    { label: 'longhorn', value: 'longhorn' },
-    { label: 'openebs-hostpath', value: 'openebs-hostpath' },
-    { label: 'hostpath-csi', value: 'hostpath-csi' }
-  ]
+  const storageClassOptions = () => {
+    const opt = storegeClassDataList.map((obj) => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+
+    })
+    return opt
+  }
 
   const imageOptions = () => {
     const opt = imageOptionList.map((obj) => {
@@ -170,24 +178,27 @@ const RegistModal = (props) => {
       data.securitygroup = securityGroupCheckItems;
       data.imageType = imageType;
 
-      data.bootvolume = data?.bootvolume == "선택" ? "" : data?.bootvolume;
-      data.keypair = data.keypair == "선택" ? "" : data.keypair;
-      data.node = data.node == "선택" ? "" : data.node;
-      data.storageClass = (imageType == "I" && storageClass != "선택") ?  storageClass : "";
+      data.bootvolume = data?.bootvolume == t('RESOURCES_SELECT') ? "" : data?.bootvolume;
+      data.keypair = data.keypair == t('RESOURCES_SELECT') ? "" : data.keypair;
+      data.node = data.node == t('RESOURCES_SELECT') ? "" : data.node;
+      data.storageClass = (imageType == "I" && storageClass != t('RESOURCES_SELECT')) ?  storageClass : "";
 
       let makeScriptStep_1 = false;
+      let makeScriptStep_2 = false;
+      let makeScriptStep_3 = false;
 
+      let makeScript = "#cloud-config";
+      
       let userPasswordScript = "";
-
       if(listPasswordRoute.length == 1){
         listPasswordRoute.map((obj) => {
           if (!!data['scriptPassword_' + obj]) {
-            userPasswordScript += `#cloud-config\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
+            userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
             makeScriptStep_1 = true;
           }
         })
       }else{
-        userPasswordScript = "#cloud-config\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
+        userPasswordScript = "\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
         listPasswordRoute.map((obj) => {
           if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
             userPasswordScript += "    " + data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
@@ -197,14 +208,25 @@ const RegistModal = (props) => {
         userPasswordScript += "  expire: False"
       }
      
+      let fileScript = "";
+      fileScript += `\nwrite_files:\n - path: /test.txt\n content: |\n Here is a line.\n Another line is here.\n - path: /test02.txt\n content: |\n Here is a line02.\n Another line is here02.`
+      makeScriptStep_2 = true;
 
-      if (!makeScriptStep_1) {
-        userPasswordScript = "";
-      }
+      let packageScript = "";
+      packageScript += `\npackages:\n - package_1\n - package_2\n - [package_3, version_num]`
+      makeScriptStep_3 = true;
 
-      console.log(userPasswordScript)
 
-      data.makeScript = userPasswordScript;
+      if (!makeScriptStep_1) { userPasswordScript = ""; }
+      if (!makeScriptStep_2) { fileScript = ""; }
+      if (!makeScriptStep_3) { packageScript = ""; }
+
+      // makeScript += userPasswordScript + fileScript + packageScript;
+      makeScript += userPasswordScript;
+
+      console.log(makeScript)
+
+      data.makeScript = makeScript;
 
       onOk({ ...data })
     })
@@ -219,9 +241,9 @@ const RegistModal = (props) => {
 
     if (step == 1) {
 
-      if (imageType == "I" && (data.name == undefined || !regexName.test(data.name)  || data.image == "선택" || data.flavor == "선택")) {
+      if (imageType == "I" && (data.name == undefined || !regexName.test(data.name)  || data.image == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
         handleOk();
-      } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == "선택" || data.flavor == "선택")) {
+      } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
         handleOk();
       } else {
         const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi','');
@@ -241,8 +263,8 @@ const RegistModal = (props) => {
       setBootVolumeName(data.bootvolume);
       setFlavorName(data.flavor);
       setDescription(data.description)
-      setKeypairName(data.keypair == "선택" ? "" : data.keypair);
-      setNodeName(data.node == "선택" ? "" : data.node);
+      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : data.keypair);
+      setNodeName(data.node == t('RESOURCES_SELECT') ? "" : data.node);
 
       const flavorData = flavorDataList.filter(obj => obj.name == data.flavor)
       setFlavorCpu(flavorData[0].vcpus)
@@ -261,32 +283,32 @@ const RegistModal = (props) => {
       <>
         {regStep == 1 &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>다음</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button type="control" onClick={() => { stepMoveCheck(1) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {(regStep == 2) &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button onClick={() => { setRegStep(regStep - 1) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
-            <Button type="control" onClick={() => { setRegStep(regStep + 1) }} className={classnames(styles['btn'], styles['btn-control'])}>다음</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button onClick={() => { setRegStep(regStep - 1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
+            <Button type="control" onClick={() => { setRegStep(regStep + 1) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {(regStep == 3) &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button onClick={() => { setRegStep(regStep - 1) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
-            <Button type="control" onClick={() => { stepMoveCheck(3) }} className={classnames(styles['btn'], styles['btn-control'])}>다음</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button onClick={() => { setRegStep(regStep - 1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
+            <Button type="control" onClick={() => { stepMoveCheck(3) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {regStep == 4 &&
           <>
-            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>취소</Button>
-            <Button onClick={() => { setRegStep(3) }} className={classnames(styles['btn'], styles['btn-default'])}>이전</Button>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            <Button onClick={() => { setRegStep(3) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
             {submitButtonFlag ?
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>생성</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
               :
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >생성</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
             }
           </>
         }
@@ -358,32 +380,32 @@ const RegistModal = (props) => {
   // Validation 시작 ==================================================
   const nameValidator = (rule, value, callback) => {
     if (value == undefined) {
-      return callback({ message: t('이름을 입력해 주세요.') })
+      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
     } else {
       if (!regexName.test(value)) {
-        return callback({ message: t('이름을 확인해 주세요.') })
+        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
       }
     }
     callback()
   }
 
   const imageValidator = (rule, value, callback) => {
-    if (value == "선택" || value == "select") {
-      return callback({ message: t('이미지를 선택해 주세요.') })
+    if (value == t('RESOURCES_SELECT') || value == "select") {
+      return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') })
     }
     callback()
   }
 
   const bootVolumeValidator = (rule, value, callback) => {
-    if (value == "선택" || value == "select") {
-      return callback({ message: t('부트볼륨을 선택해 주세요.') })
+    if (value == t('RESOURCES_SELECT') || value == "select") {
+      return callback({ message: t('RESOURCES_SELECT_BOOT_VOLUME_TIP') })
     }
     callback()
   }
 
   const flavorValidator = (rule, value, callback) => {
-    if (value == "선택" || value == "select") {
-      return callback({ message: t('Flavor를 선택해 주세요.') })
+    if (value == t('RESOURCES_SELECT') || value == "select") {
+      return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') })
     }
     callback()
   }
@@ -398,7 +420,7 @@ const RegistModal = (props) => {
 
     addColumn: () => {
       if (listPasswordRoute.length > 4) {
-        Notify.info('5개까지 추가 가능합니다.')
+        Notify.info('RESOURCES_ADD_UNTIL_FIVE')
         return false;
       }
       nextPasswordRoute.current += 1
@@ -417,7 +439,7 @@ const RegistModal = (props) => {
 
     addColumn: () => {
       if (listFileRoute.length > 4) {
-        Notify.info('5개까지 추가 가능합니다.')
+        Notify.info('RESOURCES_ADD_UNTIL_FIVE')
         return false;
       }
       nextFileRoute.current += 1
@@ -436,7 +458,7 @@ const RegistModal = (props) => {
 
     addColumn: () => {
       if (listPackageRoute.length > 4) {
-        Notify.info('5개까지 추가 가능합니다.')
+        Notify.info('RESOURCES_ADD_UNTIL_FIVE')
         return false;
       }
       nextPackageRoute.current += 1
@@ -475,8 +497,8 @@ const RegistModal = (props) => {
               </div>
               <span className={styles.basic}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>기본 설정</div>
-                <div className={styles.situation}>{regStep == 1 ? "현재" : regStep > 1 ? "설정완료" : "미설정"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_DEFAULT_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 1 ? t('RESOURCES_CURRENT') : regStep > 1 ? t('RESOURCES_COMPLETED_SETTINGS') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
             <div className={classnames(styles.process_item, `${regStep == 2 ? styles.current : ''}`)}>
@@ -485,8 +507,8 @@ const RegistModal = (props) => {
               </div>
               <span className={styles.network}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>네트워크 설정</div>
-                <div className={styles.situation}>{regStep == 2 ? "현재" : regStep > 2 ? "설정완료" : "미설정"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_NETWORK_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 2 ? t('RESOURCES_CURRENT') : regStep > 2 ? t('RESOURCES_COMPLETED_SETTINGS') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
             <div className={classnames(styles.process_item, `${regStep == 3 ? styles.current : ''}`)}>
@@ -495,8 +517,8 @@ const RegistModal = (props) => {
               </div>
               <span className={styles.detail}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>세부 설정</div>
-                <div className={styles.situation}>{regStep == 3 ? "현재" : regStep > 3 ? "설정완료" : "미설정"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_DETAIL_SETTINGS')}</div>
+                <div className={styles.situation}>{regStep == 3 ? t('RESOURCES_CURRENT') : regStep > 3 ? t('RESOURCES_COMPLETED_SETTINGS') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
             <div className={classnames(styles.process_item, `${regStep == 4 ? styles.current : ''}`)}>
@@ -505,8 +527,8 @@ const RegistModal = (props) => {
               </div>
               <span className={styles.check}></span>
               <div className={styles.title}>
-                <div className={styles.step_name}>입력 정보 확인</div>
-                <div className={styles.situation}>{regStep == 4 ? "현재" : "미설정"}</div>
+                <div className={styles.step_name}>{t('RESOURCES_CHECK_INPUT_INFORMATION')}</div>
+                <div className={styles.situation}>{regStep == 4 ? t('RESOURCES_CURRENT'): t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
           </div>
@@ -518,7 +540,7 @@ const RegistModal = (props) => {
               {/* 기본설정 설정 시작==========================================*/}
               <div className={`${regStep == 1 ? "" : "hide"}`}>
                 <Form.Item
-                  label={t('이름')}
+                  label={t('RESOURCES_NAME')}
                   rules={[{ required: true, validator: nameValidator }]}
                   desc={t('NAME_DESC')}
                 >
@@ -526,20 +548,20 @@ const RegistModal = (props) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('유형')}
+                  label={t('RESOURCES_TYPE_YOO')}
                 >
                   <Tabs type="button" activeName={tab} onChange={newTab => {
                     setTab(newTab);
                     setImageType(newTab);
                     setStorageClass("");
                   }}>
-                    <TabPanel label="이미지" name="I" />
-                    <TabPanel label="부트볼륨" name="B" />
+                    <TabPanel label={t('RESOURCES_IMAGE')} name="I" />
+                    <TabPanel label={t('RESOURCES_BOOT_VOLUME')} name="B" />
                   </Tabs>
                 </Form.Item>
 
                 {/* <Form.Item
-                    label={t('유형')}
+                    label={t('RESOURCES_TYPE_YOO')}
                   >
                     <RadioGroup
                       name="imageType"
@@ -560,8 +582,8 @@ const RegistModal = (props) => {
                     <Columns>
                       <Column>
                         <Form.Item
-                          label={t('OS 타입')}
-                          rules={[{ required: true, message: t('OS를 선택해주세요.') }]}
+                          label={t('RESOURCES_OS_TYPE')}
+                          rules={[{ required: true, message: t('RESOURCES_SELECT_OS_TIP') }]}
                         >
                           <CardSelect
                             className={styles.customUl}
@@ -574,14 +596,14 @@ const RegistModal = (props) => {
                       </Column>
                       <Column>
                         <Form.Item
-                          label={t('이미지')}
+                          label={t('RESOURCES_IMAGE')}
                           rules={[{ required: true, validator: imageValidator }]}
                         >
                           <TypeSelect
                             name="image"
-                            defaultValue={"선택"}
+                            defaultValue={t('RESOURCES_SELECT')}
                             placeholder={{
-                              label: t('선택')
+                              label: t('RESOURCES_SELECT')
                             }}
                             options={imageOptions()}
                             onChange={(e) => {
@@ -590,7 +612,7 @@ const RegistModal = (props) => {
                               const distro_type = imageOptionList.filter(item => item.name == e).map(item => item.distro_type)[0];
                               setSelectImageDistroType(distro_type);
                             }}
-                            defaultDescription={"이미지를 선택해 주세요."}
+                            defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
                           />
                         </Form.Item>
                         {
@@ -608,12 +630,12 @@ const RegistModal = (props) => {
 
                 {imageType == "B" &&
                   <Form.Item
-                    label={t('부트볼륨')}
+                    label={t('RESOURCES_BOOT_VOLUME')}
                     rules={[{ required: true, validator: bootVolumeValidator }]}
                   >
                     <Select
                       name="bootvolume"
-                      defaultValue={"선택"}
+                      defaultValue={t('RESOURCES_SELECT')}
                       options={bootvolumeOptions()}
                     // clearable
                     />
@@ -630,25 +652,25 @@ const RegistModal = (props) => {
                     >
                       <TypeSelect
                         name="flavor"
-                        defaultValue="선택"
+                        defaultValue={t('RESOURCES_SELECT')}
                         options={flavorOptions()}
                         onChange={(e) => setSelectFlavorName(e)}
                         placeholder={{
-                          label: t('선택')
+                          label: t('RESOURCES_SELECT')
                         }}
-                        defaultDescription={"Flavor를 선택해 주세요."}
+                        defaultDescription={t('RESOURCES_SELECT_FLAVOR_TIP')}
                       />
                     </Form.Item>
-                    <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>이미지 사이즈보다 큰 사이즈를 선택해 주세요.</div>
+                    <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>{t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')}</div>
                   </Column>
 
                   <Column>
                     <div style={{ padding: 12 }} />
                     {imageType == "I" &&
-                      <Form.Group label={t('스토리지 클래스')} onChange={(e) => { setStorageClass("선택"); }} checkable>
+                      <Form.Group label={t('RESOURCES_STOREGE_CLASS')} onChange={(e) => { setStorageClass(t('RESOURCES_SELECT')); }} checkable>
                         <Form.Item>
                           <Select
-                            options={storageClassOptions}
+                            options={storageClassOptions()}
                             onChange={(el) => setStorageClass(el)}
                             value={storageClass}
                           />
@@ -660,7 +682,7 @@ const RegistModal = (props) => {
 
                 <Form.Item
                   className={styles.textarea}
-                  label={t('설명')}
+                  label={t('RESOURCES_DESCRIPTION')}
                   desc={t('DESCRIPTION_DESC')}
                 >
                   <TextArea
@@ -677,11 +699,11 @@ const RegistModal = (props) => {
               {/* 네트워크 설정 시작==========================================*/}
               <div className={`${regStep == 2 ? "" : "hide"}`}>
 
-                <Form.Item label={t('네트워크')} >
+                <Form.Item label={t('RESOURCES_NETWORK')} >
                   <div className={styles.wrapper}>
                     {stateVariables['network'].length > 0 &&
                       <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "network")}>전체 선택 해제</Button>  {stateVariables['network'].length}개 선택
+                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "network")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['network'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                       </div>
                     }
                     <div className={styles.table}>
@@ -701,18 +723,18 @@ const RegistModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "network")}
                                 checked={dataListVariables['network'].length > 0 && stateVariables['network'].length === dataListVariables['network'].length ? true : false} />
                             </th>
-                            <th><strong>네트워크 이름</strong></th>
-                            <th><strong>네트워크 유형</strong></th>
-                            <th><strong>기본 경로</strong></th>
+                            <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
+                            <th><strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong></th>
+                            <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
                             <th><strong>CIDR</strong></th>
-                            <th><strong>게이트웨이</strong></th>
+                            <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                           </tr>
                         </thead>
                         <tbody>
                           {!networkDataList?.length &&
                             <tr>
                               <td colSpan="6" className="no-data">
-                                <p>할당 가능한 자원이 없습니다.</p>
+                                <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
@@ -724,7 +746,7 @@ const RegistModal = (props) => {
                               </td>
                               <td>{data.name}</td>
                               <td>{(data.type).toUpperCase()}</td>
-                              <td>{data.default_route ? "사용" : "미사용"}</td>
+                              <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
                               <td>{data.cidr}</td>
                               <td>{data.gateway_ip}</td>
                             </tr>
@@ -740,11 +762,11 @@ const RegistModal = (props) => {
                   </div>
                 </Form.Item>
 
-                <Form.Item label={t('SR-IOV 네트워크')} >
+                <Form.Item label={t('RESOURCES_SR_IOV_NETWORK')} >
                   <div className={styles.wrapper}>
                     {stateVariables['sriov'].length > 0 &&
                       <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "sriov")}>전체 선택 해제</Button>  {stateVariables['sriov'].length}개 선택
+                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "sriov")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['sriov'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                       </div>
                     }
                     <div className={styles.table}>
@@ -763,17 +785,17 @@ const RegistModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "sriov")}
                                 checked={dataListVariables['sriov'].length > 0 && stateVariables['sriov'].length === dataListVariables['sriov'].length ? true : false} />
                             </th>
-                            <th><strong>네트워크 이름</strong></th>
-                            <th><strong>네트워크 유형</strong></th>
+                            <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
+                            <th><strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong></th>
                             <th><strong>CIDR</strong></th>
-                            <th><strong>게이트웨이</strong></th>
+                            <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                           </tr>
                         </thead>
                         <tbody>
                           {!sriovNetworkDataList?.length &&
                             <tr>
                               <td colSpan="5" className="no-data">
-                                <p>할당 가능한 자원이 없습니다.</p>
+                                <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
@@ -849,7 +871,7 @@ const RegistModal = (props) => {
                           {!securityGroupDataList?.length &&
                             <tr>
                               <td colSpan="5" className="no-data">
-                                <p>할당 가능한 자원이 없습니다.</p>
+                                <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
@@ -877,7 +899,7 @@ const RegistModal = (props) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('노드')}
+                  label={t('RESOURCES_NODE')}
                 >
                   <Select
                     name="node"
@@ -887,8 +909,8 @@ const RegistModal = (props) => {
                   />
                 </Form.Item>
 
-                <Form.Group label={t('스크립트')} onChange={(e) => setIsScript(!isScript)} checkable>
-                  <Form.Group label="패스워드 변경" onChange={(e) => setIsPassword(!isPassword)} checkable >
+                <Form.Group label={t('RESOURCES_SCRIPT')} onChange={(e) => setIsScript(!isScript)} checkable>
+                  <Form.Group label={t('RESOURCES_CHANGE_PASSWORD')} onChange={(e) => setIsPassword(!isPassword)} checkable >
                     {listPasswordRoute.map((obj, idx) => (
                       <div className={styles.scriptitem} key={obj}>
                         <Columns>
@@ -924,11 +946,11 @@ const RegistModal = (props) => {
                         className={styles.scriptadd}
                         onClick={handlePasswordRoute.addColumn}
                       >
-                        추가
+                        {t('RESOURCES_ADD')}
                       </Button>
                     </div>
                   </Form.Group>
-                  <Form.Group label="파일 쓰기" onChange={(e) => setIsPackage(!isPackage)} checkable >
+                  <Form.Group label={t('RESOURCES_WRITE_FILE')} onChange={(e) => setIsPackage(!isPackage)} checkable >
                     {listFileRoute.map((obj, idx) => (
                       <div className={styles.scriptitem} key={obj}>
                         <Columns>
@@ -962,11 +984,11 @@ const RegistModal = (props) => {
                         className={styles.scriptadd}
                         onClick={handleFileRoute.addColumn}
                       >
-                        추가
+                        {t('RESOURCES_ADD')}
                       </Button>
                     </div>
                   </Form.Group>
-                  <Form.Group label="패키지 설치" onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
+                  <Form.Group label={t('RESOURCES_INSTALL_PACKAGE')} onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
                     {listPackageRoute.map((obj, idx) => (
                       <div className={styles.scriptitem} key={obj}>
                         <Columns>
@@ -1000,11 +1022,11 @@ const RegistModal = (props) => {
                         className={styles.scriptadd}
                         onClick={handlePackageRoute.addColumn}
                       >
-                        추가
+                        {t('RESOURCES_ADD')}
                       </Button>
                     </div>
                   </Form.Group>
-                  <Form.Group label="사용자 정의" onChange={(e) => setIsUserScript(!isUserScript)} checkable>
+                  <Form.Group label={t('RESOURCES_CUSTOM')} onChange={(e) => setIsUserScript(!isUserScript)} checkable>
                     <Form.Item
                       className={styles.textarea}
                     >
@@ -1027,17 +1049,17 @@ const RegistModal = (props) => {
                     <div className={styles.boxtitle}>
                       <div className={styles.titlename}>
                         <span className={styles.basic}></span>
-                        <label>기본 설정</label>
+                        <label>{t('RESOURCES_DEFAULT_SETTINGS')}</label>
                       </div>
                       <Button icon="pen" onClick={() => { setRegStep(1) }}></Button>
                     </div>
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
-                        <label>이름</label>
+                        <label>{t('RESOURCES_NAME')}</label>
                         <div className={styles.bold}>{vmName}</div>
                       </div>
                       <div className={styles.list}>
-                        <label>{`${imageType == "I" ? '이미지' : '부트볼륨'}`}</label>
+                        <label>{`${imageType == "I" ? t('RESOURCES_IMAGE') : t('RESOURCES_BOOT_VOLUME')}`}</label>
                         <div className={styles.multiline}>
                           <div className={styles.bold}>{`${imageType == "I" ? imageName : bootVolumeName}`}</div>
                         </div>
@@ -1052,7 +1074,7 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>설명</label>
+                        <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
                       </div>
                     </div>
@@ -1062,19 +1084,19 @@ const RegistModal = (props) => {
                     <div className={styles.boxtitle}>
                       <div className={styles.titlename}>
                         <span className={styles.network}></span>
-                        <label>네트워크 설정</label>
+                        <label>{t('RESOURCES_NETWORK_SETTINGS')}</label>
                       </div>
                       <Button icon="pen" onClick={() => { setRegStep(2) }}></Button>
                     </div>
-                    <label>네트워크</label>
+                    <label>{t('RESOURCES_NETWORK')}</label>
                     {networkDataList.filter(x => networkCheckItems.includes(x.name)).map((obj, index) => (
                       <div className={styles.greybgbox} key={index}>
                         <div className={styles.list}>
-                          <label>이름</label>
+                          <label>{t('RESOURCES_NAME')}</label>
                           <div>{obj.name}</div>
                         </div>
                         <div className={styles.list}>
-                          <label>유형</label>
+                          <label>{t('RESOURCES_TYPE_YOO')}</label>
                           <div className={styles.multiline}>
                             <div>{obj.type}</div>
                           </div>
@@ -1087,15 +1109,15 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                     ))}
-                    <label>SR-IOV 네트워크</label>
+                    <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
                     {sriovNetworkDataList.filter(x => sriovCheckItems.includes(x.name)).map((obj, index) => (
                       <div className={styles.greybgbox} key={index}>
                         <div className={styles.list}>
-                          <label>이름</label>
+                          <label>{t('RESOURCES_NAME')}</label>
                           <div>{obj.name}</div>
                         </div>
                         <div className={styles.list}>
-                          <label>유형</label>
+                          <label>{t('RESOURCES_TYPE_YOO')}</label>
                           <div className={styles.multiline}>
                             <div>{obj.type}</div>
                           </div>
@@ -1114,17 +1136,17 @@ const RegistModal = (props) => {
                     <div className={styles.boxtitle}>
                       <div className={styles.titlename}>
                         <span className={styles.detail}></span>
-                        <label>세부 설정</label>
+                        <label>{t('RESOURCES_DETAIL_SETTINGS')}</label>
                       </div>
                       <Button icon="pen" onClick={() => { setRegStep(3) }}></Button>
                     </div>
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
-                        <label>키 페어</label>
+                        <label>{t('RESOURCES_KEYPAIR')}</label>
                         <div>{keypairName}</div>
                       </div>
                       <div className={styles.list}>
-                        <label>보안그룹</label>
+                        <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div className={styles.multiline}>
                           {securityGroupCheckItems.map((name) => (
                             <div key={name}>{name}</div>
@@ -1132,13 +1154,13 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>노드</label>
+                        <label>{t('RESOURCES_NODE')}</label>
                         <div className={styles.multiline}>
                           <div>{nodeName}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>사용자이름</label>
+                        <label>{t('RESOURCES_USER_NAME')}</label>
                         <div>{globals.user.username}</div>
                       </div>
                     </div>

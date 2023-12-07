@@ -149,8 +149,8 @@ const VmPop = ({ title, onOk, store }) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
-        okText={'연결'}
-        cancelText={'취소'}
+        okText={t('RESOURCES_CONNECTION')}
+        cancelText={t('RESOURCES_CANCEL')}
       >
         <Form data={formData} ref={form}>
 
@@ -166,15 +166,15 @@ const VmPop = ({ title, onOk, store }) => {
                 <thead>
                   <tr>
                     <th></th>
-                    <th><strong>이름</strong></th>
-                    <th><strong>네트워크</strong></th>
+                    <th><strong>{t('RESOURCES_NAME')}</strong></th>
+                    <th><strong>{t('RESOURCES_NETWORK')}</strong></th>
                   </tr>
                 </thead>
                 <tbody>
                   {!list?.length &&
                     <tr>
                       <td colSpan="3" className="no-data" style={{ textAlign: 'center' }}>
-                        <p>모든 자원이 할당 되었습니다.</p>
+                        <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                       </td>
                     </tr>
                   }

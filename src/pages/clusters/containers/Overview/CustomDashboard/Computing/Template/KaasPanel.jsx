@@ -5,7 +5,7 @@ const Panel = ({ kaas }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-kaasimage"></i>KaaS 이미지</h5>
+                <h5><i className="ico-type24-kaasimage"></i>{t('RESOURCES_KAAS_IMAGE')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

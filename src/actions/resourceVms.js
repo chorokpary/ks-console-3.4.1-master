@@ -44,11 +44,11 @@ export default {
             .create(data, { cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('저장 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
               success && setTimeout(() => { success(); }, 1000)
             })
         },
-        title: '가상머신 생성',
+        title: t('RESOURCES_CREATE_VM'),
         modal: RegistModal,
         store,
         cluster,
@@ -67,11 +67,11 @@ export default {
             .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('수정 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
               success && success()
             })
         },
-        title: '가상머신 수정',
+        title: t('RESOURCES_EDIT_VM'),
         modal: ModifyModal,
         store,
         module,
@@ -96,13 +96,13 @@ export default {
             .delete({ ...detail, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('삭제 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
             })
         },
         modal: DeleteModal,
-        title: t('삭제'),
-        desc: t.html('가상머신 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        title: t('RESOURCES_DELETE'),
+        desc: t.html('RESOURCES_DELETE_VM_TIP', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -121,19 +121,19 @@ export default {
             .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('삭제 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
             })
         },
         modal: DeleteModal,
         title:
           usernames.split(', ').length === 1
-            ? t('삭제')
-            : t('일괄 삭제'),
+            ? t('RESOURCES_DELETE')
+            : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('가상머신 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('가상머신 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('RESOURCES_DELETE_VM_TIP', { resource: usernames })
+            : t.html('RESOURCES_DELETE_VM_TIP', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
@@ -146,7 +146,7 @@ export default {
         onOk: () => {
           store.delete(detail).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('삭제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
           })
         },
@@ -192,12 +192,12 @@ export default {
         onOk: () => {
           store.actionState({ data, ...props }).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('변경 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_CHANGED_SUCCESSFULLY') })
             success && success()
           })
         },
-        title: !!title ? title : '상태변경',
-        desc: !!desc ? desc : '가상머신 상태를 변경하시겠습니까?',
+        title: !!title ? title : t('RESOURCES_CHANGE_STATE'),
+        desc: !!desc ? desc : t('RESOURCES_CHANGE_VM_STATE'),
         modal: ConfirmModal,
         module: store.module,
         detail,
@@ -212,7 +212,7 @@ export default {
         onOk: () => {
           success && success()
         },
-        title: '볼륨 관리',
+        title: t('RESOURCES_VOLUME_MANAGEMENT'),
         modal: VolumeModal,
         store,
         ...props,
@@ -225,12 +225,12 @@ export default {
         onOk: () => {
           store.actionState({ data, ...props }).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('분리 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_ISOLATE_SUCCESSFUL') })
             success && success()
           })
         },
-        title: '볼륨 분리',
-        desc: '분리 하시겠습니까?',
+        title: t('RESOURCES_VOLUME_ISOLATION'),
+        desc: t('RESOURCES_ISOLATE_TIP'),
         modal: ConfirmModal,
         store,
         ...props,
@@ -240,7 +240,7 @@ export default {
   'vm.floatingIpPop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '플로팅 IP 설정',
+        title: t('RESOURCES_FLOATING_IP_SETTINGS'),
         modal: FloatingIpModal,
         store,
         success,
@@ -254,12 +254,12 @@ export default {
         onOk: () => {
           store.update(data, { name: data.id }).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('해제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_RELEASE_SUCCESSFULLY') })
             success && success()
           })
         },
-        title: '플로팅 IP 해제',
-        desc: '해제 하시겠습니까?',
+        title: t('RESOURCES_DEALLOCATE_FLOATING_IP'),
+        desc: t('RESOURCES_RELEAGE_DESC'),
         modal: ConfirmModal,
         store,
         ...props,
@@ -269,7 +269,7 @@ export default {
   'vm.snapshotPop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '스냅샷 생성',
+        title: t('RESOURCES_CREATE_SNAPSHOT'),
         modal: SnapshotModal,
         store,
         success,
@@ -283,7 +283,7 @@ export default {
         onOk: () => {
           store.snapshotDelete(name).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('삭제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
           })
         },
@@ -298,7 +298,7 @@ export default {
   'vm.restorePop': {
     on({ store, name, success, ...props }) {
       const modal = Modal.open({
-        title: '복원 실행',
+        title: t('RESOURCES_RUNNING_RESTORE'),
         modal: RestoreModal,
         name,
         store,
@@ -313,7 +313,7 @@ export default {
         onOk: () => {
           store.restoreDelete(name).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('삭제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
           })
         },
@@ -328,7 +328,7 @@ export default {
   'vm.clonePop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '클론 생성',
+        title: t('RESOURCES_CREATE_CLONE'),
         modal: CloneModal,
         store,
         success,
@@ -342,7 +342,7 @@ export default {
         onOk: () => {
           store.cloneDelete(name).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('삭제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
           })
         },
@@ -357,8 +357,8 @@ export default {
   'vm.alertPop': {
     on({ store, detail, success, data, title, desc, ...props }) {
       const modal = Modal.open({
-        title: !!title ? title : '알림',
-        desc: !!desc ? desc : '알림 설명.',
+        title: !!title ? title : t('RESOURCES_ALERTING_MESSAGE'),
+        desc: !!desc ? desc : t('RESOURCES_ALERTING_MESSAGE_DESCRIPTION'),
         modal: AlertModal,
         module: store.module,
         detail,

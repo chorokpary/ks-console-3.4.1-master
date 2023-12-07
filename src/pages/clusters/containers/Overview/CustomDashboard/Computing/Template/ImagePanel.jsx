@@ -5,7 +5,7 @@ const Panel = ({ image }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-image"></i>이미지</h5>
+                <h5><i className="ico-type24-image"></i>{t('RESOURCES_IMAGE')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

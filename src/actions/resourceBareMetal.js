@@ -35,11 +35,11 @@ export default {
             .create(data, { cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('저장 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
               success && success()
             })
         },
-        title: '베어메탈 시스템 추가',
+        title: t('RESOURCES_BAREMETAL_SYSTEM_ADD'),
         modal: RegistModal,
         store,
         cluster,
@@ -58,11 +58,11 @@ export default {
             .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.name }, data)
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('수정 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
               success && success()
             })
         },
-        title: 'BareMetal 수정',
+        title: t('RESOURCES_EDIT_BAREMETGAL'),
         modal: ModifyModal,
         store,
         module,
@@ -87,13 +87,13 @@ export default {
             .delete({ ...detail, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('삭제 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
             })
         },
         modal: DeleteModal,
-        title: t('삭제'),
-        desc: t.html('BareMetal 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', {
+        title: t('RESOURCES_DELETE'),
+        desc: t.html('RESOURCES_DELETE_BAREMETAL_TIP', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -112,19 +112,19 @@ export default {
             .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('삭제 되었습니다.') })
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
             })
         },
         modal: DeleteModal,
         title:
           usernames.split(', ').length === 1
-            ? t('삭제')
-            : t('일괄 삭제'),
+            ? t('RESOURCES_DELETE')
+            : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('BareMetal 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames })
-            : t.html('BareMetal 이름 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.', { resource: usernames }),
+            ? t.html('RESOURCES_DELETE_BAREMETAL_TIP', { resource: usernames })
+            : t.html('RESOURCES_DELETE_BAREMETAL_TIP', { resource: usernames }),
         resource: usernames,
         store,
         ...props,
@@ -137,7 +137,7 @@ export default {
         onOk: () => {
           store.delete(detail).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('삭제 되었습니다.') })
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
           })
         },
@@ -152,7 +152,7 @@ export default {
   'baremetal.action': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
-        title: '상태 변경',
+        title: t('RESOURCES_CHANGE_STATE'),
         modal: ActionModal,
         store,
         ...props,

@@ -21,7 +21,7 @@ import DetailPage from 'clusters/containers/Base/Detail'
 
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components';
+import { Loading, Icon } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import { getLocalTime } from 'utils'
 
@@ -118,7 +118,7 @@ const ResourceDetail = (props) => {
 
         return [
             {
-                name: t('클러스터'),
+                name: t('RESOURCES_CLUSTER'),
                 value: detail.infra.namespace,
             },
             {
@@ -138,7 +138,7 @@ const ResourceDetail = (props) => {
                     : "-",
             },
             {
-                name: t('쿠버네티스 서버 IP'),
+                name: t('RESOURCES_KUBERNETES_SERVER_IP'),
                 value: detail.cp_endpoint?.host,
             },
             {
@@ -146,11 +146,11 @@ const ResourceDetail = (props) => {
                 value: detail.cp_endpoint?.port,
             },
             {
-                name: t('이미지'),
+                name: t('RESOURCES_IMAGE'),
                 value: detail.kube_image,
             },
             {
-                name: t('버전'),
+                name: t('RESOURCES_VERSION'),
                 value: detail.kube_version,
             },
             {
@@ -182,15 +182,15 @@ const ResourceDetail = (props) => {
             //    value: "-",
             //},
             {
-                name: t('네트워크'),
+                name: t('RESOURCES_NETWORK'),
                 value: detail.network_name,
             },
             {
-                name: t('설명'),
+                name: t('RESOURCES_DESCRIPTION'),
                 value: detail.description ? detail.description : '-',
             },
             {
-                name: t('생성시간'),
+                name: t('RESOURCES_CREATE_DAY'),
                 value: getLocalTime(detail.timestamp).format('YYYY-MM-DD HH:mm:ss'),
             },
         ]
@@ -200,7 +200,12 @@ const ResourceDetail = (props) => {
         return <Loading className="ks-page-loading" />;
     }
 
+    const getBanner = () => {
+        return <Icon name="kubernetes" size={40} />
+    }
+
     const sideProps = {
+        icon: getBanner(),
         module: store.module,
         name: get(store.detail.cluster, 'name'),
         desc: get(store.detail.cluster, 'description', ''),
@@ -208,7 +213,7 @@ const ResourceDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('KaaS 리소스'),
+                label: t('RESOURCES_KAAS_RESOURCE'),
                 url: listUrl,
             },
         ],

@@ -71,7 +71,7 @@ const Clone = (props) => {
     if (sliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>
-          리소스를 찾을 수 없습니다.
+          {t('RESOURCES_NOT_FOUND_RESOURCE')}
         </div>
       )
       return content;
@@ -234,7 +234,7 @@ const Clone = (props) => {
             <div className={styles.wrapper}>
               {isLoading ?
                 <div className={styles.loading}><Loading /></div>
-                : <div className={styles.empty}> 클론 이력이 없습니다.</div>
+                : <div className={styles.empty}> {t('RESOURCES_NO_DATA_CLONE_LOG')}</div>
               }
             </div>
           </Panel>

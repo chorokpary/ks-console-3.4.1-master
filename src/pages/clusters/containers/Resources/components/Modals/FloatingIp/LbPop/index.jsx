@@ -91,8 +91,8 @@ const LbPop = ({ title, onOk, store }) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
-        okText={'연결'}
-        cancelText={'취소'}
+        okText={t('RESOURCES_CONNECTION')}
+        cancelText={t('RESOURCES_CANCEL')}
       >
         <Form>
 
@@ -109,8 +109,8 @@ const LbPop = ({ title, onOk, store }) => {
                   <thead>
                     <tr>
                       <th></th>
-                      <th><strong>이름</strong></th>
-                      <th><strong>네트워크</strong></th>
+                      <th><strong>{t('RESOURCES_NAME')}</strong></th>
+                      <th><strong>{t('RESOURCES_NETWORK')}</strong></th>
                       <th><strong>IP</strong></th>
                     </tr>
                   </thead>
@@ -118,7 +118,7 @@ const LbPop = ({ title, onOk, store }) => {
                     {!list?.length &&
                       <tr>
                         <td colSpan="4" className="no-data" style={{ textAlign: 'center' }}>
-                          <p>데이터가 없습니다</p>
+                          <p>{t('RESOURCES_NO_DATA')}</p>
                         </td>
                       </tr>
                     }

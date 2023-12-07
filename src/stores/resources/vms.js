@@ -276,9 +276,6 @@ export default class VmStore extends Base {
     // Yaml 파일 관련 
     await this.fetchYaml(params);
 
-    // VmLog 관련 
-    await this.fetchVmLog(params);
-
     // FloatingIp 관련
     await this.fetchVmListFloating(params);
 
@@ -315,9 +312,8 @@ export default class VmStore extends Base {
       )
       const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
-      this.vmLog = response.log.message
       this.isLoading = false
-      return response
+      return response.log.message
     } catch (e) {
       console.log(e)
       this.vmLog = []
@@ -571,6 +567,19 @@ export default class VmStore extends Base {
 
     this.isLoading = false
     return securityArray;
+  }
+
+  @action
+  async fetchVmListStoregeClass(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `/edgetron/resources/kubevirt/storage_classes/user`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'user_sces' }
+
+    this.isLoading = false
+    return response;
   }
 
   // 등록 관련 데이터 끝

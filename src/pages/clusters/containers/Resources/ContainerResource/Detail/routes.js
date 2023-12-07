@@ -26,13 +26,13 @@ const PATH = '/clusters/:cluster/containerResource/:name'
 export default [
   {
     path: `${PATH}/status`,
-    title: '상태',
+    title: t('RESOURCES_STATE'),
     component: Status,
     exact: true,
   },
   {
     path: `${PATH}/monitoring`,
-    title: '모니터링',
+    title: t('RESOURCES_MONITORING'),
     component: Monitoring,
     exact: true,
   },

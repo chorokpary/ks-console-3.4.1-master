@@ -87,11 +87,11 @@ const KeypairDetail = (props) => {
   
       return [
         {
-          name: t('클러스터'),
+          name: t('RESOURCES_CLUSTER'),
           value: detail.cluster,
         },
         {
-          name: t('설명'),
+          name: t('RESOURCES_DESCRIPTION'),
           value: detail.keypair.description,
         },
       ]
@@ -102,6 +102,7 @@ const KeypairDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "key",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
@@ -109,7 +110,7 @@ const KeypairDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('키페어'),
+                label: t('RESOURCES_KEYPAIR'),
                 url: listUrl,
             },
         ],

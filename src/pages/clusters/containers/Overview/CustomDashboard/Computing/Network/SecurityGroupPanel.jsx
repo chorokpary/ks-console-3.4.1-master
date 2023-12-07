@@ -5,7 +5,7 @@ const Panel = ({ sg }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-security"></i>보안그룹</h5>
+                <h5><i className="ico-type24-security"></i>{t('RESOURCES_SECURITY_GROUP')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

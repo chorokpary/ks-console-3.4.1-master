@@ -30,7 +30,7 @@ const CloneModal = (props) => {
       console.log("data : "+ JSON.stringify(data))
 
       vmStore.cloneCreate(data).then(() => {
-        Notify.success({ content: t('생성 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();
         closeModal();
       })
@@ -54,8 +54,8 @@ const CloneModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('이름')}
-            rules={[{ required: true, message: t('클론 데이터로 생성할 신규 가상머신 이름을 입력해주세요.') }]}
+            label={t('RESOURCES_NAME')}
+            rules={[{ required: true, message: t('RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP') }]}
           >
             <Input
                 name="target_vm_name"
@@ -64,8 +64,8 @@ const CloneModal = (props) => {
               />  
           </Form.Item>
           <Form.Item
-            label={t('설명')}
-            rules={[{ required: true, message: t('클론 생성의 목적 등 이력에 기재할 정보를 입력해주세요.') }]}
+            label={t('RESOURCES_DESCRIPTION')}
+            rules={[{ required: true, message: t('RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP') }]}
           >
             <Input
                 name="description"

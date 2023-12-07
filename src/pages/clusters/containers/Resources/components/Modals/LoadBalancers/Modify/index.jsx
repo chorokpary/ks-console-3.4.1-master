@@ -68,7 +68,7 @@ const ModifyModal = (props) => {
     }
 
     const memberIpObj = {
-        vmName: '선택'
+        vmName: t('RESOURCES_SELECT')
         , memberIp: ''
         , message: ''
     }
@@ -103,7 +103,7 @@ const ModifyModal = (props) => {
                 values[i].memberIp = opt[0][0].value;
                 setIsMembers(true);
             } else {
-                values[i].message = " 이미 선택한 가상 머신 이름 입니다.";
+                values[i].message = t('RESOURCES_ALREADY_SELECTED_VM_NAME');
                 setTimeout(() => { handleMemberIp.deleteMessage(i) }, 1000);
             }
 
@@ -134,14 +134,13 @@ const ModifyModal = (props) => {
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
-                cancelText={'취소'}
+                cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
             >
                 <Form data={formData} ref={form}>
 
                     <Form.Item
-                        label={t('이름')}
-                        rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+                        label={t('RESOURCES_NAME')}
                     >
                         <Input
                             name="name"
@@ -154,7 +153,7 @@ const ModifyModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('멤버 IP')}<span className="form-item-required">*</span>
+                    {t('RESOURCES_MEMBER_IP')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -166,8 +165,8 @@ const ModifyModal = (props) => {
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th><strong>가상 머신 이름</strong></th>
-                                            <th><strong>가상 머신 IP</strong></th>
+                                            <th><strong>{t('RESOURCES_VM_NAME')}</strong></th>
+                                            <th><strong>{t('RESOURCES_VM_IP')}</strong></th>
                                             <th><strong></strong></th>
                                         </tr>
                                     </thead>
@@ -191,14 +190,14 @@ const ModifyModal = (props) => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>가상 머신 이름을 선택해 주세요.</div>
+                                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_SELECT_VM_NAME_TIP')}</div>
                             </div>
                             <div className="text-right">
                                 <Button
                                     className={styles.add}
                                     onClick={handleMemberIp.handleAddFields}
                                 >
-                                    추가
+                                    {t('RESOURCES_ADD')}
                                 </Button>
                             </div>
                         </div>
@@ -207,7 +206,7 @@ const ModifyModal = (props) => {
 
                     <Form.Item
                         className={styles.textarea}
-                        label={t('설명')}
+                        label={t('RESOURCES_DESCRIPTION')}
                         desc={t('DESCRIPTION_DESC')}
                     >
                         <TextArea

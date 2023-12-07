@@ -10,7 +10,7 @@ import { getSuitableValue } from 'utils/monitoring'
 const typeOption = [
   {
     value: 'node',
-    label: '노드'
+    label: t('RESOURCES_NODE')
   },
   {
     value: 'pod',
@@ -18,7 +18,7 @@ const typeOption = [
   },
   {
     value: 'vm',
-    label: '가상머신'
+    label: t('RESOURCES_VM')
   },
   {
     value: 'kaas',
@@ -208,11 +208,11 @@ const UsageTop5 = ({ x, y, w, h }) => {
 
   useEffect(() => {
     if (sortMetric.includes('cpu')) {
-      setUnitType({ unit: 'cpu', value: 'CPU 사용량' })
+      setUnitType({ unit: 'cpu', value: t('RESOURCES_CPU_USAGE') })
     } else if (sortMetric.includes('memory')) {
-      setUnitType({ unit: 'memory', value: '메모리 사용량' })
+      setUnitType({ unit: 'memory', value: t('RESOURCES_MEMORY_USAGE') })
     } else if (sortMetric.includes('disk')) {
-      setUnitType({ unit: 'disk', value: '디스크 사용량' })
+      setUnitType({ unit: 'disk', value: t('RESOURCES_DISK_USAGE') })
     }
   }, [sortMetric])
 
@@ -223,7 +223,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>리소스 사용량 Top 5</label>
+              <label>{t('RESOURCES_RESOURCE_USAGE_TOP')}</label>
             </div>
             <div className="grid_info style_list">
               <div className="select_wrap">
@@ -334,7 +334,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
                 </>
                 :
                 <div className="grid_text">
-                  <span>데이터가 없습니다.</span>
+                  <span>{t('RESOURCES_NO_DATA')}</span>
                 </div>
               }
             </div>

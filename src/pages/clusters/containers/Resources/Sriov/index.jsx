@@ -62,7 +62,7 @@ export default class ResourcesVolumes extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('삭제'),
+        text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -83,7 +83,7 @@ export default class ResourcesVolumes extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('sriov.regist', {
@@ -97,7 +97,7 @@ export default class ResourcesVolumes extends React.Component {
         {
           key: 'delete',
           type: 'danger',
-          text: t('REMOVE'),
+          text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
             trigger('sriov.remove.batch', {
@@ -133,7 +133,7 @@ export default class ResourcesVolumes extends React.Component {
         ),
       },
       {
-        title: t('네트워크 타입'),
+        title: t('RESOURCES_NETWORK_TYPE:'),
         dataIndex: 'type',
         filters: this.getFilterType(),
         isHideable: true,
@@ -150,19 +150,19 @@ export default class ResourcesVolumes extends React.Component {
         width: 'auto',
       },
       {
-        title: t('게이트웨이 IP'),
+        title: t('RESOURCES_GATEWAY_IP'),
         dataIndex: 'gateway_ip',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('세그먼트 ID'),
+        title: t('RESOURCES_SEGMENT_ID'),
         dataIndex: 'segment_id',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
         width: 150,
@@ -185,7 +185,7 @@ export default class ResourcesVolumes extends React.Component {
     return [
       {
         dataIndex: 'name',
-        title: t('이름'),
+        title: t('RESOURCES_NAME'),
         search: true,
       },
       {
@@ -209,7 +209,7 @@ export default class ResourcesVolumes extends React.Component {
         icon="storage"
         tabs={this.tabs}
         title={t('SR-IOV')}
-        description={t('SR-IOV의 상태와 사용현황을 관리 할 수 있습니다.')}
+        description={t('RESOURCES_SR_IOV_DESC')}
       />
       <Table
         {...tableProps}

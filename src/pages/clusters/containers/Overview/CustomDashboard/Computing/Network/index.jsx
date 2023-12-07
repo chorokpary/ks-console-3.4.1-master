@@ -94,7 +94,7 @@ const ComputingNetwork = ({
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>컴퓨팅 네트워크 현황</label>
+              <label>{t('RESOURCES_COMPUTING_NETWORK_CURRENT_SITUATION')}</label>
               <div className="right">
                 {/* <i className="ico-btn-trash"></i> */}
               </div>

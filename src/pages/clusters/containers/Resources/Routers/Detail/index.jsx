@@ -87,31 +87,31 @@ const RouterDetail = (props) => {
   
       return [
         {
-          name: t('클러스터'),
+          name: t('RESOURCES_CLUSTER'),
           value: detail.cluster,
         },
         {
-          name: t('SNAT 옵션'),
-          value: detail.router.enable_snat ? "사용" : "미사용",
+          name: t('RESOURCES_SNAT_OPTION'),
+          value: detail.router.enable_snat ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
         },
         {
-          name: t('가상 라우터 IP'),
+          name: t('RESOURCES_VROUTER_IP'),
           value: detail.router.vrouter_ip,
         },
         {
-          name: t('내부 네트워크'),
-          value: detail.router.internal.length >= 1 ? detail.router.internal.length == 1 ? detail.router.internal[0] : detail.router.internal[0] + " 외 " + (detail.router.internal.length - 1) + "개" : "-",
+          name: t('RESOURCES_INTERNAL_NETWORK'),
+            value: detail.router.internal.length >= 1 ? detail.router.internal.length == 1 ? detail.router.internal[0] : detail.router.internal[0] + ' ' + t('RESOURCES_BESIDES') + ' ' + (detail.router.internal.length - 1) + t('RESOURCES_COUNT') : "-",
         },
         {
-          name: t('외부 네트워크'),
+          name: t('RESOURCES_EXTERNAL_NETWORK'),
           value: detail.router.external,
         },
         {
-          name: t('설명'),
+          name: t('RESOURCES_DESCRIPTION'),
           value: detail.router.description,
         },
         {
-          name: t('생성일'),
+          name: t('RESOURCES_REGIST_DATE'),
           value: getLocalTime(detail.router.timestamp).format('YYYY-MM-DD HH:mm:ss'),
         },
       ]
@@ -122,6 +122,7 @@ const RouterDetail = (props) => {
     }
 
     const sideProps = {
+        icon: "router",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
@@ -129,7 +130,7 @@ const RouterDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('가상 라우터'),
+                label: t('RESOURCES_VROUTER'),
                 url: listUrl,
             },
         ],

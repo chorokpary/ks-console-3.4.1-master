@@ -5,7 +5,7 @@ const Panel = ({ network }) => {
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-network"></i>네트워크</h5>
+                <h5><i className="ico-type24-network"></i>{t('RESOURCES_NETWORK')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

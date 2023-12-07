@@ -24,8 +24,8 @@ const FloatingIpModal = (props) => {
 
   const [floatingJsonData, setFloatingJsonData] = useState([]);
 
-  const [networkIp, setNetworkIp] = useState('선택'); 
-  const [floatingIp, setFloatingIp] = useState('선택'); 
+  const [networkIp, setNetworkIp] = useState(t('RESOURCES_SELECT')); 
+  const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT')); 
 
   const [networkName, setNetworkName] = useState(); 
   const [floatingId, setFloatingId] = useState(); 
@@ -53,7 +53,7 @@ const FloatingIpModal = (props) => {
       // console.log("form data :" + JSON.stringify(data))
 
       floatingStore.update(data, {name: data.id, ...data }).then(() => {
-        Notify.success({ content: t('정상적으로 연결 되었습니다.') })
+        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
         closeModal();
       })
@@ -155,7 +155,7 @@ const FloatingIpModal = (props) => {
             setFloatingId(data.floating_data[0].id);
             setFloatingIp(data.floating_data[0].floating_ip);
           }else{
-            setFloatingIp('선택');
+            setFloatingIp(t('RESOURCES_SELECT'));
           }
         }
       })
@@ -180,15 +180,15 @@ const FloatingIpModal = (props) => {
 
   // Validation 시작 ==================================================
   const networkValidator = (rule, value, callback) => {
-    if(value == "선택" || value == "select"){
-      return callback({ message: t('네트워크 IP를 선택해 주세요.') })
+    if(value == t('RESOURCES_SELECT') || value == "select"){
+      return callback({ message: t('RESOURCES_SELECT_NETWORK_IP_TIP') })
     }
     callback()
   }
 
   const floatingValidator = (rule, value, callback) => {
-    if(value == "선택" || value == "select"){
-      return callback({ message: t('Floating IP를 선택해 주세요.') })
+    if(value == t('RESOURCES_SELECT') || value == "select"){
+      return callback({ message: t('RESOURCES_SELECT_FLOATING_IP_TIP') })
     }
     callback()
   }
@@ -207,7 +207,7 @@ const FloatingIpModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('고정 IP ( IP/네트워크 이름/인터페이스 )')}
+            label={t('RESOURCES_STATIC_IP_NETWORK_INTERFACE_TIP')}
             rules={[{ required: true, validator: networkValidator }]}
           >
             <Select
@@ -219,7 +219,7 @@ const FloatingIpModal = (props) => {
           </Form.Item>
 
           <Form.Item
-            label={t('플로팅 IP')}
+            label={t('RESOURCES_FLOATING_IP')}
             // rules={[{ required: true, validator: floatingValidator }]}
           >
             <Select

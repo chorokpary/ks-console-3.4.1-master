@@ -65,7 +65,7 @@ const VolumeModal = (props) => {
     data.actionType = checked ? "A" : "D";
 
     volumeStore.actionState({ data, ...props }).then(() => {
-      Notify.success({ content: t('처리 되었습니다.') })
+      Notify.success({ content: t('RESOURCES_PROCESSED') })
       props.onOk();
     }).catch((error) => {
       setReFetch(!reFetch);
@@ -100,13 +100,13 @@ const VolumeModal = (props) => {
                   </colgroup>
                   <thead>
                     <tr>
-                      <th><strong>이름</strong></th>
-                      <th><strong>접근 모드</strong></th>
-                      <th><strong>입력 소스</strong></th>
-                      <th><strong>스토리지 클래스</strong></th>
-                      <th><strong>용량</strong></th>
-                      <th><strong>상태</strong></th>
-                      <th><strong>볼륨 위치</strong></th>
+                      <th><strong>{t('RESOURCES_NAME')}</strong></th>
+                      <th><strong>{t('RESOURCES_ACCESS_MODE')}</strong></th>
+                      <th><strong>{t('RESOURCES_INPUT_SOURCE')}</strong></th>
+                      <th><strong>{t('RESOURCES_STOREGE_CLASS')}</strong></th>
+                      <th><strong>{t('RESOURCES_CAPACITY')}</strong></th>
+                      <th><strong>{t('RESOURCES_STATE')}</strong></th>
+                      <th><strong>{t('RESOURCES_VOLUME_LOCATION')}</strong></th>
                       <th><strong>Action</strong></th>
                     </tr>
                   </thead>
@@ -115,7 +115,7 @@ const VolumeModal = (props) => {
                     {!volumeList?.length &&
                       <tr>
                         <td colSpan="7" className="no-data" style={{ textAlign: 'center' }}>
-                          <p>할당 가능한 자원이 없습니다.</p>
+                          <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                         </td>
                       </tr>
                     }

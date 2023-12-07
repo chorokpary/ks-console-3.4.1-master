@@ -182,9 +182,9 @@ const index = (props) => {
       },
       {
         type: 'utilisation',
-        title: '디스크 사용량',
+        title: t('RESOURCES_DISK_USAGE'),
         unit: '%',
-        legend: ['디스크 사용량'],
+        legend: [t('RESOURCES_DISK_USAGE')],
         data: vmDiskData,
       },
     ]
@@ -195,7 +195,7 @@ const index = (props) => {
 
   return (
       <MonitoringController
-          title={t('모니터링')}
+          title={t('RESOURCES_MONITORING')}
           onFetch={fetchData}
           loading={isLoading}
           refreshing={isRefreshing}       

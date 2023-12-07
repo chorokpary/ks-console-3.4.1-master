@@ -218,20 +218,20 @@ const index = (props) => {
     <>
       <Banner
         icon="linechart"
-        title={t('컴퓨팅/KaaS 리소스')}
-        description={t('컴퓨팅/KaaS 리소스 모니터링 데이터를 볼 수 있습니다.')}
+        title={t('RESOURCES_COMPUTING_KAAS_RESOURCE')}
+        description={t('RESOURCES_COMPUTING_KAAS_RESOURCE_MONITORING_DESC')}
       />
 
 
         <MonitoringController
-            title={t('컴퓨팅/KaaS 리소스')}
+            title={t('RESOURCES_COMPUTING_KAAS_RESOURCE')}
             onFetch={fetchData}
             loading={isLoading}
             refreshing={isRefreshing}       
           >
 
             <Card
-              title={'컴퓨팅 리소스 사용량'}
+              title={t('RESOURCES_COMPUTING_RESOURCE_USAGE')}
               empty={t('NO_MONITORING_DATA')}
               isEmpty={(cpuDataCom.length == 0)}
             >     
@@ -251,7 +251,7 @@ const index = (props) => {
             </Card>
 
             <Card
-              title={'KaaS 리소스 사용량'}
+              title={t('RESOURCES_KAAS_RESOURCE_USAGE')}
               empty={t('NO_MONITORING_DATA')}
               isEmpty={(cpuDataKaas.length == 0)}
             >     
@@ -271,7 +271,7 @@ const index = (props) => {
             </Card>
 
             <Card
-              title={'컴퓨팅 네트워크 트래픽'}
+              title={t('RESOURCES_COMPUTING_NETWORK_TRAFFIC')}
               empty={t('NO_MONITORING_DATA')}
               isEmpty={(!!!inboundDataCom && !!!outboundDataCom)}
             >     
@@ -286,7 +286,7 @@ const index = (props) => {
             </Card>
 
             <Card
-              title={'KaaS 네트워크 트래픽'}
+              title={t('RESOURCES_KAAS_NETWORK_TRAFFIC')}
               empty={t('NO_MONITORING_DATA')}
               isEmpty={(!!!inboundDataKaas && !!!outboundDataKaas)}
             >     

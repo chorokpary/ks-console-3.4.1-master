@@ -42,10 +42,10 @@ const RegistModal = (props) => {
     // Validation 시작 ==================================================
     const nameValidator = (rule, value, callback) => {
         if (value == undefined) {
-            return callback({ message: t('이름을 입력해 주세요.') })
+            return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
         } else {
             if (!regexName.test(value)) {
-                return callback({ message: t('이름을 확인해 주세요.') })
+                return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
             }
         }
         callback()
@@ -97,15 +97,15 @@ const RegistModal = (props) => {
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
-                cancelText={'취소'}
+                cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
             >
                 <Form data={formData} ref={form}>
 
                     <Form.Item
-                        label={t('이름')}
+                        label={t('RESOURCES_NAME')}
                         rules={[{ required: true, validator: nameValidator }]}
-                        desc={t('이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다. ex) test/001')}
+                        desc={t('RESOURCES_NAME_VALID_DESC')+' ex) test/001'}
                     >
                         <Input
                             name="name"
@@ -116,7 +116,7 @@ const RegistModal = (props) => {
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('Mediated 디바이스')}<span className="form-item-required">*</span>
+                    {t('RESOURCES_MEDIATED_DEVICE')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <div className={styles.wrapper}>
                             <div className={styles.table}>
@@ -134,13 +134,13 @@ const RegistModal = (props) => {
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th><strong>디바이스 ID</strong></th>
-                                            <th><strong>디바이스 이름</strong></th>
-                                            <th><strong>클래스</strong></th>
-                                            <th><strong>최대 개수</strong></th>
-                                            <th><strong>해상도</strong></th>
-                                            <th><strong>CUDA 지원 여부</strong></th>
-                                            <th><strong>픽셀수</strong></th>
+                                            <th><strong>{t('RESOURCES_DEVICE_ID')}</strong></th>
+                                            <th><strong>{t('RESOURCES_DEVICE_NAME')}</strong></th>
+                                            <th><strong>{t('RESOURCES_CLASS')}</strong></th>
+                                            <th><strong>{t('RESOURCES_MAX_COUNT')}</strong></th>
+                                            <th><strong>{t('RESOURCES_RESOLUTION')}</strong></th>
+                                            <th><strong>{t('RESOURCES_CUDA_SUPPORT_CHECK')}</strong></th>
+                                            <th><strong>{t('RESOURCES_PIXEL_COUNT')}</strong></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -149,7 +149,7 @@ const RegistModal = (props) => {
                                             deviceDataList?.length < 1 ?
                                             <tr>
                                                 <td colSpan="8" className="no-data">
-                                                    <p>할당 가능한 자원이 없습니다.</p>
+                                                    <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                                                 </td>
                                             </tr>
                                             :
@@ -165,26 +165,26 @@ const RegistModal = (props) => {
                                                 <td>{data.clazz}</td>
                                                 <td>{data.max_num}</td>
                                                 <td>{data.resolution}</td>
-                                                <td>{data.cuda ? '지원' : '미지원'}</td>
+                                                <td>{data.cuda ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>
                                                 <td>{data.pixels}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
-                            <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>디바이스를 선택해 주세요.</div>
+                            <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>{t('RESOURCES_SELECT_DEVICE_TIP')}</div>
                         </div>
                     </Form.Item>
                     <div style={{ padding: 10 }} />
 
-                    {t('GPU 여부')}<span className="form-item-required">*</span>
+                    {t('RESOURCES_GPU_CHECK')}<span className="form-item-required">*</span>
                     <Form.Item>
                         <Toggle showText onText="on" offText="off" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
                     </Form.Item>
 
                     <Form.Item
                         className={styles.textarea}
-                        label={t('설명')}
+                        label={t('RESOURCES_DESCRIPTION')}
                         desc={t('DESCRIPTION_DESC')}
                     >
                         <TextArea

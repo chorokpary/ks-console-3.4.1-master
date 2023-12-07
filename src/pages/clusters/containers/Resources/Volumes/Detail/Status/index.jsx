@@ -21,12 +21,12 @@ const Status = (props) => {
     <>  
     {!!name && 
       <div>
-        <DetailVmList type='볼륨' variables='name' name={name} />
+        <DetailVmList type={t('RESOURCES_VOLUME')} variables='name' name={name} />
       </div>        
     }
      {!!!name && 
       <div>
-        <DetailVmList type='볼륨' variables='name' name={name} />
+        <DetailVmList type={t('RESOURCES_VOLUME')} variables='name' name={name} />
       </div>        
     }
     </>

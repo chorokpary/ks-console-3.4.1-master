@@ -52,7 +52,7 @@ const FloatingIpDetail = (props) => {
         {
           key: 'edit1',
           icon: 'image',
-          text: t('플로팅 IP 해제'),
+          text: t('RESOURCES_DEALLOCATE_FLOATING_IP'),
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.deallocate', {
@@ -68,7 +68,7 @@ const FloatingIpDetail = (props) => {
         {
           key: 'delete',
           icon: 'trash',
-          text: t('삭제'),
+          text: t('RESOURCES_DELETE'),
           action: 'delete',
           type: 'danger',
           show: showEdit,
@@ -79,15 +79,15 @@ const FloatingIpDetail = (props) => {
               store: store,
               cluster: props.match.params.cluster,
               success: () => routing.push(listUrl),
-              okText: '삭제',
-              cancelText: '취소',
+              okText: t('RESOURCES_DELETE'),
+              cancelText: t('RESOURCES_CANCEL'),
               ...props
             })
         },
         {
           key: 'edit1',
           icon: 'image',
-          text: t('VM 연결'),
+          text: t('RESOURCES_CONNECTION_VM'),
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.vmPop', {
@@ -99,7 +99,7 @@ const FloatingIpDetail = (props) => {
         {
           key: 'edit2',
           icon: 'image',
-          text: t('LB 연결'),
+          text: t('RESOURCES_CONNECTION_LB'),
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.lbPop', {
@@ -125,15 +125,15 @@ const FloatingIpDetail = (props) => {
     // }
     return [
       {
-        name: t('클러스터'),
+        name: t('RESOURCES_CLUSTER'),
         value: get(store.detail, 'cluster'),
       },
       {
-        name: t('플로팅 IP'),
+        name: t('RESOURCES_FLOATING_IP'),
         value: detail?.floating_ip,
       },
       {
-        name: t('고정 IP'),
+        name: t('RESOURCES_STATIC_IP'),
         value: detail?.target_ip,
       },
     ]
@@ -152,7 +152,7 @@ const FloatingIpDetail = (props) => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('플로팅 IP'),
+        label: t('RESOURCES_FLOATING_IP'),
         url: listUrl,
       },
     ],
@@ -165,7 +165,7 @@ const FloatingIpDetail = (props) => {
         routes={[
           {
             path: `${PATH}/status`,
-            title: '상태',
+            title: t('RESOURCES_STATE'),
             component: Status,
             exact: true,
           },
@@ -181,10 +181,10 @@ export default inject('rootStore')(observer(FloatingIpDetail));
 const Status = (props) => {
   const detail = get(store.detail, 'floating_ip')
   if (detail.instance_type == 'vm') {
-    return <DetailVmList type='플로팅 IP' variables='name' name={detail.instance_name} />
+    return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='name' name={detail.instance_name} />
 
   } else if (detail.instance_type == 'lb') {
-    return <LbPanel type='플로팅 IP' variables='name' name={detail.instance_name} />
+    return <LbPanel type={t('RESOURCES_FLOATING_IP')} variables='name' name={detail.instance_name} />
   } else {
     return []
   }

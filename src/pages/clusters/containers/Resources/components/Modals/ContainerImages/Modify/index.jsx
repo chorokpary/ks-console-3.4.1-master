@@ -87,7 +87,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
   const versionValidator = (rule, value, callback) => {
 
     if(value == undefined){
-      return callback({ message: t('버전을 입력해 주세요.') })
+      return callback({ message: t('RESOURCES_VERSION_EMPTY_DESC') })
     }
     callback()
   }
@@ -99,15 +99,14 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
         width={1000}
         title={title}
         onOk={handleOk}
-        okText={'수정'}
+        okText={t('RESOURCES_EDIT')}
         onCancel={closeModal}
-        cancelText={'취소'}
+        cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('이름')}
-            rules={[{ required: true, message: t('이름을 입력해주세요') },]}
+            label={t('RESOURCES_NAME')}
           >
             <Input name="name" maxLength={253}
               defaultValue={store.detail.image.name}
@@ -120,7 +119,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('이미지')}
+                  label={t('RESOURCES_IMAGE')}
                   rules={[{ required: true, }]}
                 >
                   <CardSelect
@@ -133,7 +132,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                 </Form.Item>
               </Column>
               <Column>
-                <Form.Item label={t('배포판')}>
+                <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
                   <TypeSelect
                     onChange={(e) => setDistroType(e)}
                     defaultValue={distroType}
@@ -155,7 +154,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('CPU 타입')}
+                  label={t('RESOURCES_CPU_TYPE')}
                   rules={[{ required: true, },]}
                 >
                   <Select
@@ -166,7 +165,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
               </Column>
               <Column>
                 <Form.Item
-                  label={t('부트 타입')}
+                  label={t('RESOURCES_BOOT_TYPE')}
                   rules={[{ required: true, },]}>
                   <Select
                     name="boot_type"
@@ -179,7 +178,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
           </Form.Item>
 
           <Form.Item
-            label={t('쿠버네티스 버전')}
+            label={t('RESOURCES_KUBERNETES_VERSION')}
             rules={[{ required: true, validator: versionValidator }]}         
           >
             <Input name="kube_version" maxLength={253}
@@ -189,8 +188,8 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
           </Form.Item>
 
           <Form.Item
-            label={t('설명')}
-            rules={[{ required: true, message: '설명을 입력해주세요.' }]}
+            label={t('RESOURCES_DESCRIPTION')}
+            rules={[{ required: true, message: t('RESOURCES_DESCRIPTION_EMPTY_DESC') }]}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea

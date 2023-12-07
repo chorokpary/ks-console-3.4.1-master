@@ -33,7 +33,7 @@ import ImageStore from 'stores/resources/images'
   store: new ImageStore(),
   module: 'images',
   authKey: 'images',
-  name: '가상머신 이미지',
+  name: t('RESOURCES_VM_IMAGE'),
 })
 export default class Images extends React.Component {
 
@@ -68,7 +68,7 @@ export default class Images extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('생성'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('images.regist', {
@@ -103,7 +103,7 @@ export default class Images extends React.Component {
     const { cluster } = this.props.match.params
     return [
       {
-        title: t('이름'),
+        title: t('RESOURCES_NAME'),
         dataIndex: 'name',
         sorter: true,
         render: name => (
@@ -116,19 +116,19 @@ export default class Images extends React.Component {
         ),
       },
       {
-        title: t('CPU 타입'),
+        title: t('RESOURCES_CPU_TYPE'),
         dataIndex: 'arch_type',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('부트 타입'),
+        title: t('RESOURCES_BOOT_TYPE'),
         dataIndex: 'boot_type',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('배포판'),
+        title: t('RESOURCES_DISTRIBUTION'),
         dataIndex: 'distro_type',
         isHideable: true,
         width: 'auto',
@@ -147,19 +147,19 @@ export default class Images extends React.Component {
         },
       },
       {
-        title: t('단계'),
+        title: t('RESOURCES_STEP'),
         dataIndex: 'phase',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('진행률'),
+        title: t('RESOURCES_PROGRESS'),
         dataIndex: 'progress',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('등록일'),
+        title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
         sorter: true,
@@ -177,7 +177,7 @@ export default class Images extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('데이터가 없습니다') }
+    return { desc: t('RESOURCES_NO_DATA') }
   }
 
   render() {
@@ -190,8 +190,8 @@ export default class Images extends React.Component {
           icon="snapshot"
           {...bannerProps}
           tabs={this.tabs}
-          title={t('가상머신 이미지')}
-          description={t('가상머신 이미지의 상태와 사용현황을 관리 할 수 있습니다.')}
+          title={t('RESOURCES_VM_IMAGE')}
+          description={t('RESOURCES_VM_IMAGE_DESC')}
         />
         <Table
           {...tableProps}

@@ -40,7 +40,7 @@ import CpuUsage from './CpuUsage';
   store: new BareMetalStore(),
   module: 'baremetal',
   authKey: 'baremetal',
-  name: '베어메탈',
+  name: t('RESOURCES_BAREMETAL'),
 })
 export default class BareMetalDashboard extends React.Component {
 
@@ -258,7 +258,7 @@ export default class BareMetalDashboard extends React.Component {
         {
           key: 'regist',
           type: 'control',
-          text: t('등록'),
+          text: t('RESOURCES_REGISTRATION'),
           action: 'create',
           onClick: () =>
             trigger('baremetal.regist', {
@@ -301,7 +301,7 @@ export default class BareMetalDashboard extends React.Component {
     const { cluster } = this.props.match.params
     return [
       {
-        title: t('노드명'),
+        title: t('RESOURCES_NODE_NAME'),
         dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('job'),
@@ -316,7 +316,7 @@ export default class BareMetalDashboard extends React.Component {
         ),
       },
       {
-        title: t('상태'),
+        title: t('RESOURCES_STATE'),
         key: 'state',
         isHideable: true,
         render: record => {
@@ -328,7 +328,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('서버 모델명'),
+        title: t('RESOURCES_SERVER_MODEL_NAME'),
         key: 'model',
         isHideable: true,
         render: record => {
@@ -340,7 +340,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('유형'),
+        title: t('RESOURCES_TYPE_YOO'),
         key: 'type',
         isHideable: true,
         render: record => {
@@ -354,7 +354,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('코어 수'),
+        title: t('RESOURCES_CORE_COUNT'),
         key: 'core',
         isHideable: true,
         render: record => {
@@ -388,7 +388,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('메모리'),
+        title: t('RESOURCES_MEMORY'),
         key: 'memory',
         isHideable: true,
         render: record => {
@@ -406,7 +406,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('디스크'),
+        title: t('RESOURCES_DISK'),
         key: 'disk',
         isHideable: true,
         render: record => {
@@ -424,7 +424,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('파워(Watt)'),
+        title: t('RESOURCES_POWER')+'(Watt)',
         key: 'power',
         isHideable: true,
         render: record => {
@@ -435,7 +435,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('온도(°C)'),
+        title: t('RESOURCES_TEMPERRATURE')+'(°C)',
         key: 'temperature',
         isHideable: true,
         render: record => {
@@ -446,7 +446,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('탄소 배출량(Kg)'),
+        title: t('RESOURCES_CARBON_EMISSIONS'+'(Kg)'),
         key: 'carbon',
         isHideable: true,
         render: record => {
@@ -461,7 +461,7 @@ export default class BareMetalDashboard extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
 
@@ -495,7 +495,7 @@ export default class BareMetalDashboard extends React.Component {
         <div className="value_box">
           <div className="div_value">
             <div className="txt_group">
-              <div className="text_title">전체</div>
+              <div className="text_title">{t('RESOURCES_ALL')}</div>
             </div>
             <div className="number_wrap">{totalCount}</div>
           </div>
