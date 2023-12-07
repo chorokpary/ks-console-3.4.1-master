@@ -37,9 +37,10 @@ import styles from './index.scss'
   module: 'resourcesvolumes',
   authKey: 'resourcesvolumes',
   name: t('RESOURCES_VOLUME'),
+  rowKey: 'id'
 })
 export default class ResourcesVolumes extends React.Component {
- 
+
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -76,10 +77,10 @@ export default class ResourcesVolumes extends React.Component {
           action: 'create',
           onClick: () =>
             trigger('resourcesvolume.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -113,11 +114,11 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
+        render: (name, item) => (
           <Avatar
             icon="storage"
             iconSize={40}
-            to={`/clusters/${cluster}/resourcesvolumes/${name}`}
+            to={`/clusters/${cluster}/resourcesvolumes/${name}/${item.id}`}
             title={name}
           />
         ),
@@ -241,30 +242,30 @@ export default class ResourcesVolumes extends React.Component {
 
 
   render() {
-    
+
     const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        icon="storage"
-        tabs={this.tabs}
-        title={t('RESOURCES_VOLUME')}
-        description={t('RESOURCES_VOLUME_DESC')}
-      />
-      <Table
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-      />
-    </ListPage>
-     
+        <Banner
+          {...bannerProps}
+          icon="storage"
+          tabs={this.tabs}
+          title={t('RESOURCES_VOLUME')}
+          description={t('RESOURCES_VOLUME_DESC')}
+        />
+        <Table
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+
     )
   }
 }

@@ -102,10 +102,10 @@ const DetailVmList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await store.fetchList();
-    const vmFilterData = vmList?.filter((row) => 
-                          props.variables === 'security_groups' ? row[props.variables].includes(props.name)  :
-                          props.variables === 'networks' ? _.find(row[props.variables], {'name': props.name}) : row[props.variables] === props.name
-                        )
+    const vmFilterData = vmList?.filter((row) =>
+      props.variables === 'security_groups' ? row[props.variables].includes(props.id) :
+        props.variables === 'networks' ? _.find(row[props.variables], { 'id': props.id }) : row[props.variables] === props.id
+    )
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
 
     const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
@@ -261,7 +261,6 @@ const DetailVmList = (props) => {
   }
 
   const renderExtraContent = (obj) => {
-
     const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
     return (
       <div className={styles.itemExtra}>
@@ -313,7 +312,7 @@ const DetailVmList = (props) => {
                 key='GPU'
                 icon='gpu'
                 title={obj.flavor_detail.gpus.length >= 1 ?
-                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " "+t('RESOURCES_BESIDES')+" " + (obj.flavor_detail.gpus.length - 1) + t('RESOURCES_COUNT')
+                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " " + t('RESOURCES_BESIDES') + " " + (obj.flavor_detail.gpus.length - 1) + t('RESOURCES_COUNT')
                   : "-"}
                 description={t('GPU')}
               />
