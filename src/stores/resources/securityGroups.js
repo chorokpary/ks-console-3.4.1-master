@@ -36,6 +36,7 @@ export default class SecurityGroupStore extends Base {
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/security_groups`
     getListUrl = this.getResourceUrl
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async fetchList({
@@ -78,7 +79,7 @@ export default class SecurityGroupStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (security_group) => {
-            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security_group.name);
+            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security_group.id);
             security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
             security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
             dataArray.push(security_group);
@@ -179,7 +180,7 @@ export default class SecurityGroupStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+            `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
 
@@ -196,7 +197,7 @@ export default class SecurityGroupStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
+            `${this.getResourceUrl(params)}/${params.id}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
 
@@ -213,14 +214,14 @@ export default class SecurityGroupStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(async (username) => {
-                        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + username);
+                    rowKeys.map(async (id) => {
+                        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + id);
                         securityDetail.data.security_group.rules.map((rule) => {
                             request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
                         })
 
                         await request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
+                            `${this.getDetailUrl({ id, ...params })}`
                         )
                     })
                 )

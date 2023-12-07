@@ -37,6 +37,7 @@ import * as common from 'utils/resources'
     module: 'security_groups',
     authKey: 'security_groups',
     name: t('RESOURCES_SECURITY_GROUP'),
+    rowKey: 'id'
 })
 export default class SecurityGroups extends React.Component {
 
@@ -110,11 +111,11 @@ export default class SecurityGroups extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: name => (
+                render: (name, item) => (
                     <Avatar
                         icon="shield"
                         iconSize={40}
-                        to={`/clusters/${cluster}/securityGroups/${name}`}
+                        to={`/clusters/${cluster}/securityGroups/${name}/${item.id}`}
                         title={name}
                     />
                 ),
