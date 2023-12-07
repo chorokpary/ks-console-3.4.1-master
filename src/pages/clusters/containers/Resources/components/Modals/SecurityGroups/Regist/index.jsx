@@ -283,8 +283,6 @@ const RegistModal = (props) => {
                         )}
                     </Columns>
 
-                    <div style={{ padding: 10 }} />
-
                     <Form.Item label={t('RESOURCES_SECURITY_RULE')}>
                         <Form.Group>
                             <Form.Item label={t('RESOURCES_INBOUND')}>
