@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Form, Input, Select, TextArea, Button, Columns, Column, Tooltip } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
+import { ProjectSelect } from 'components/Inputs'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
@@ -13,6 +14,7 @@ const RegistModal = (props) => {
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
 
+    const [projectName, setProjectName] = useState(props.namespace);
     const [btnDimm, setBtnDimm] = useState(false);
 
     const regexRemoteIp = /[^0123456789.\/]/g;
@@ -213,6 +215,7 @@ const RegistModal = (props) => {
             const { data } = form.current.props;
             data.security_group_rules = [...formRulesIngressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)
                 , ...formRulesEgressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)];
+            data.project = projectName
             onOk({ security_group: data })
         })
     }
@@ -246,18 +249,39 @@ const RegistModal = (props) => {
             >
                 <Form data={formData} ref={form}>
 
-                    <Form.Item
-                        label={t('RESOURCES_NAME')}
-                        rules={[{ required: true, validator: nameValidator }]}
-                        desc={t('NAME_DESC')}
-                    >
-                        <Input
-                            name="name"
-                            autoFocus={true}
-                            maxLength={63}
-                            style={{ maxWidth: 'none' }}
-                        />
-                    </Form.Item>
+                    <Columns>
+                        <Column>
+                        <Form.Item
+                            label={t('RESOURCES_NAME')}
+                            rules={[{ required: true, validator: nameValidator }]}
+                            desc={t('NAME_DESC')}
+                        >
+                            <Input
+                                name="name"
+                                autoFocus={true}
+                                maxLength={63}
+                                style={{ maxWidth: 'none' }}
+                            />
+                        </Form.Item>
+                        </Column>
+                        {!props.namespace && (
+                            <Column>
+                                <Form.Item
+                                    label={t('PROJECT')}
+                                    desc={t('SELECT_PROJECT_DESC')}
+                                    rules={[
+                                        { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                                    ]}
+                                >
+                                    <ProjectSelect
+                                        name="namespace"
+                                        cluster={props.cluster}
+                                        onChange={(e) => setProjectName(e)}
+                                    />
+                                </Form.Item>
+                            </Column>
+                        )}
+                    </Columns>
 
                     <div style={{ padding: 10 }} />
 

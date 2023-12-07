@@ -211,7 +211,7 @@ export default [
     component: FlavorDetail,
   },
   {
-    path: `${PATH}/securitygroups/:name`,
+    path: `${PATH}/securitygroups/:id`,
     component: SecurityGroupDetail,
   },
   {
