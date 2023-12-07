@@ -5,7 +5,7 @@ import DetailPage from 'clusters/containers/Base/Detail'
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components';
+import { Loading, Icon } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
@@ -39,6 +39,7 @@ const VmDetail = (props) => {
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
   const vmName = props.match.params.name;
+  const vmId = props.match.params.id;
   const floatingData = toJS(store.floatingList)
   const floatingId = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.id)[0]
   const floatingIp = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.floating_ip)[0]
@@ -147,6 +148,7 @@ const VmDetail = (props) => {
 
         const data = {};
         data.vmName = vmName;
+        data.vmId = vmId;
         data.actionType = "migrate";
 
         props.rootStore.triggerAction('vm.actionState', {
@@ -167,6 +169,7 @@ const VmDetail = (props) => {
       onClick: () => {
         const data = {};
         data.vmName = vmName;
+        data.vmId = vmId;
 
         props.rootStore.triggerAction('vm.snapshotPop', {
           data: data,
@@ -183,6 +186,7 @@ const VmDetail = (props) => {
       onClick: () => {
         const data = {};
         data.vmName = vmName;
+        data.vmId = vmId;
 
         props.rootStore.triggerAction('vm.clonePop', {
           data: data,
@@ -223,7 +227,7 @@ const VmDetail = (props) => {
       },
       {
         name: t('RESOURCES_IMAGE'),
-        value: detail.vm.image,
+        value: detail.vm.image.name,
       },
       {
         name: t('Flavor'),
@@ -276,8 +280,12 @@ const VmDetail = (props) => {
     return <Loading className="ks-page-loading" />;
   }
 
-  const sideProps = {
-    icon: "templet",
+  const getBanner = () => {
+    return <Icon name="templet" size={40} />
+  }
+
+const sideProps = {
+    icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),

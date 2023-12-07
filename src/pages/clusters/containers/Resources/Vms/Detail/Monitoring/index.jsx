@@ -75,7 +75,7 @@ const index = (props) => {
       })
 
       const vmCpuMetricData = _.find(vmCpuData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
+        if (data.metric.pod === store.detail.id ) return data;
       });
   
       // 배열 처리 
@@ -92,7 +92,7 @@ const index = (props) => {
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
+        if (data.metric.pod === store.detail.id ) return data;
       });
 
       // 배열 처리 
@@ -110,7 +110,7 @@ const index = (props) => {
       })
 
       const vmInboundMetricData = _.find(vmInboundData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
+        if (data.metric.pod === store.detail.id ) return data;
       });
 
       setVmInboundData(vmInboundMetricData)
@@ -125,7 +125,7 @@ const index = (props) => {
       })
 
       const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
+        if (data.metric.pod === store.detail.id ) return data;
       });
 
       setVmOutboundData(vmOutboundMetricData)
@@ -139,7 +139,7 @@ const index = (props) => {
       })
 
       const vmDiskMetricData = _.find(vmDiskData, (data) => {
-        if (data.metric.pod === store.detail.name ) return data;
+        if (data.metric.pod === store.detail.id ) return data;
       });
   
       // 배열 처리 

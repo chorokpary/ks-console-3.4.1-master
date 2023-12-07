@@ -1,7 +1,8 @@
-import { get, omit } from 'lodash'
+import { get, find, omit } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
 import { Modal, } from 'components/Base'
+import { ProjectSelect } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox, InputPassword, Notify, Tabs, Icon } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
@@ -41,6 +42,7 @@ const RegistModal = (props) => {
   
   const [imageOptionList, setImageOptionList] = useState([]);  
 
+  const [projectName, setProjectName] = useState();
   const [vmName, setVmName] = useState('');
   const [imageName, setImageName] = useState('');
   const [bootVolumeName, setBootVolumeName] = useState('');
@@ -96,11 +98,6 @@ const RegistModal = (props) => {
 
   }, [])
 
-  const imageTypeOptions = [
-    { label: t('RESOURCES_IMAGE'), value: 'I', },
-    { label: t('RESOURCES_BOOT_VOLUME'), value: 'B', }
-  ]
-
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
@@ -151,7 +148,7 @@ const RegistModal = (props) => {
   const keypairOptions = () => {
     const opt = keypairDataList.map((obj) => ({
       label: t(obj.name),
-      value: t(obj.name),
+      value: t(obj.id),
     }))
     return opt
   }
@@ -173,6 +170,7 @@ const RegistModal = (props) => {
 
       const { data } = form.current.props;
 
+      data.project = projectName;
       data.network = networkCheckItems;
       data.sriov = sriovCheckItems;
       data.securitygroup = securityGroupCheckItems;
@@ -223,11 +221,9 @@ const RegistModal = (props) => {
 
       // makeScript += userPasswordScript + fileScript + packageScript;
       makeScript += userPasswordScript;
-
-      console.log(makeScript)
+      //console.log(makeScript)
 
       data.makeScript = makeScript;
-
       onOk({ ...data })
     })
   }
@@ -263,7 +259,7 @@ const RegistModal = (props) => {
       setBootVolumeName(data.bootvolume);
       setFlavorName(data.flavor);
       setDescription(data.description)
-      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : data.keypair);
+      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairDataList, {'id' : data.keypair}), 'name'));
       setNodeName(data.node == t('RESOURCES_SELECT') ? "" : data.node);
 
       const flavorData = flavorDataList.filter(obj => obj.name == data.flavor)
@@ -363,7 +359,7 @@ const RegistModal = (props) => {
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = [];
-      dataListVariables[type].forEach((el) => nameArray.push(el.name));
+      dataListVariables[type].forEach((el) => type == "sriov" ? nameArray.push(el.name) : nameArray.push(el.id));
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
@@ -539,13 +535,48 @@ const RegistModal = (props) => {
 
               {/* 기본설정 설정 시작==========================================*/}
               <div className={`${regStep == 1 ? "" : "hide"}`}>
-                <Form.Item
+
+                <Columns>
+                  <Column>
+                      <Form.Item
+                          label={t('RESOURCES_NAME')}
+                          rules={[{ required: true, validator: nameValidator }]}
+                          desc={t('NAME_DESC')}
+                      >
+                          <Input
+                              name="name"
+                              autoFocus={true}
+                              maxLength={63}
+                              style={{ maxWidth: 'none' }}
+                          />
+                      </Form.Item>
+                  </Column>
+                  {!props.namespace && (
+                      <Column>
+                          <Form.Item
+                              label={t('PROJECT')}
+                              desc={t('SELECT_PROJECT_DESC')}
+                              rules={[
+                                  { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                              ]}
+                          >
+                              <ProjectSelect
+                                  name="metadata.namespace"
+                                  cluster={props.cluster}
+                                  onChange={(e) => setProjectName(e)}
+                              />
+                          </Form.Item>
+                      </Column>
+                  )}
+                </Columns>
+                
+                {/* <Form.Item
                   label={t('RESOURCES_NAME')}
                   rules={[{ required: true, validator: nameValidator }]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                   label={t('RESOURCES_TYPE_YOO')}
@@ -559,23 +590,6 @@ const RegistModal = (props) => {
                     <TabPanel label={t('RESOURCES_BOOT_VOLUME')} name="B" />
                   </Tabs>
                 </Form.Item>
-
-                {/* <Form.Item
-                    label={t('RESOURCES_TYPE_YOO')}
-                  >
-                    <RadioGroup
-                      name="imageType"
-                      wrapClassName="radio"
-                      defaultValue={imageType}
-                      onChange={value => setImageType(value)}
-                    >
-                      {imageTypeOptions.map(option => (
-                        <RadioButton key={option.value} value={option.value}>
-                          {option.label}
-                        </RadioButton>
-                      ))}
-                    </RadioGroup>
-                  </Form.Item>     */}
 
                 {imageType == "I" &&
                   <Form.Item>
@@ -739,10 +753,10 @@ const RegistModal = (props) => {
                             </tr>
                           }
                           {networkDataList?.map((data, key) => (
-                            <tr key={data.name}>
+                            <tr key={data.id}>
                               <td>
-                                <Checkbox name={`select-${data.name}`} checked={stateVariables['network'].includes(data.name) ? true : false}
-                                  onChange={(checked) => handleSingleCheck(checked, data.name, "network")} />
+                                <Checkbox name={`select-${data.id}`} checked={stateVariables['network'].includes(data.id) ? true : false}
+                                  onChange={(checked) => handleSingleCheck(checked, data.id, "network")} />
                               </td>
                               <td>{data.name}</td>
                               <td>{(data.type).toUpperCase()}</td>
@@ -754,8 +768,10 @@ const RegistModal = (props) => {
                         </tbody>
                       </table>
                       <div className={styles.removeCheckWrapper}>
-                        {networkCheckItems?.map((name) =>
-                          <span key={name}><Button icon="close" onClick={() => handleDelete(name, "network")}>{name}</Button></span>
+                        {networkCheckItems?.map((id) =>{
+                            const name = networkDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                            return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "network")}>{name}</Button></span>
+                          }                          
                         )}
                       </div>
                     </div>
@@ -828,21 +844,21 @@ const RegistModal = (props) => {
               <div className={`${regStep == 3 ? "" : "hide"}`}>
 
                 <Form.Item
-                  label={t('키페어')}
+                  label={t('RESOURCES_KEYPAIR')}
                 >
                   <Select
                     name="keypair"
-                    placeholder={t('SELECT')}
+                    placeholder={t('RESOURCES_SELECT')}
                     options={keypairOptions()}
                     clearable
                   />
                 </Form.Item>
 
-                <Form.Item label={t('보안그룹')} >
+                <Form.Item label={t('RESOURCES_SECURITY_GROUP')} >
                   <div className={styles.wrapper}>
                     {stateVariables['security'].length > 0 &&
                       <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>전체 선택 해제</Button>  {stateVariables['security'].length}개 선택
+                        <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['security'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                       </div>
                     }
                     <div className={styles.table}>
@@ -861,10 +877,10 @@ const RegistModal = (props) => {
                                 onChange={(checked) => handleAllCheck(checked, "security")}
                                 checked={dataListVariables['security'].length > 0 && stateVariables['security'].length === dataListVariables['security'].length ? true : false} />
                             </th>
-                            <th><strong>보안그룹 이름</strong></th>
-                            <th><strong>설명</strong></th>
-                            <th><strong>인바운드 규칙수</strong></th>
-                            <th><strong>아웃바운드 규칙수</strong></th>
+                            <th><strong>{t('RESOURCES_SECURITY_GROUP_NAME')}</strong></th>
+                            <th><strong>{t('RESOURCES_DESCRIPTION')}</strong></th>
+                            <th><strong>{t('RESOURCES_INBOUND_RULE_COUNT')}</strong></th>
+                            <th><strong>{t('RESOURCES_OUTBOUND_RULE_COUNT')}</strong></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -876,10 +892,10 @@ const RegistModal = (props) => {
                             </tr>
                           }
                           {securityGroupDataList?.map((data, key) => (
-                            <tr key={data.name}>
+                            <tr key={data.id}>
                               <td>
-                                <Checkbox name={`select-${data.name}`} checked={stateVariables['security'].includes(data.name) ? true : false}
-                                  onChange={(checked) => handleSingleCheck(checked, data.name, "security")} />
+                                <Checkbox name={`select-${data.id}`} checked={stateVariables['security'].includes(data.id) ? true : false}
+                                  onChange={(checked) => handleSingleCheck(checked, data.id, "security")} />
                               </td>
                               <td>{data.name}</td>
                               <td>{data.description}</td>
@@ -890,8 +906,10 @@ const RegistModal = (props) => {
                         </tbody>
                       </table>
                       <div className={styles.removeCheckWrapper}>
-                        {securityGroupCheckItems?.map((name) =>
-                          <span key={name}><Button icon="close" onClick={() => handleDelete(name, "security")}>{name}</Button></span>
+                        {securityGroupCheckItems?.map((id) =>{
+                          const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                          return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
+                         }                          
                         )}
                       </div>
                     </div>
@@ -903,7 +921,7 @@ const RegistModal = (props) => {
                 >
                   <Select
                     name="node"
-                    placeholder={t('SELECT')}
+                    placeholder={t('RESOURCES_SELECT')}
                     options={nodeOptions()}
                     clearable
                   />
@@ -1089,7 +1107,7 @@ const RegistModal = (props) => {
                       <Button icon="pen" onClick={() => { setRegStep(2) }}></Button>
                     </div>
                     <label>{t('RESOURCES_NETWORK')}</label>
-                    {networkDataList.filter(x => networkCheckItems.includes(x.name)).map((obj, index) => (
+                    {networkDataList.filter(x => networkCheckItems.includes(x.id)).map((obj, index) => (
                       <div className={styles.greybgbox} key={index}>
                         <div className={styles.list}>
                           <label>{t('RESOURCES_NAME')}</label>
@@ -1148,8 +1166,8 @@ const RegistModal = (props) => {
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div className={styles.multiline}>
-                          {securityGroupCheckItems.map((name) => (
-                            <div key={name}>{name}</div>
+                          {securityGroupCheckItems.map((id) => (
+                            <div key={id}>{get(find(securityGroupDataList, {'id' : id}), 'name')}</div>
                           ))}
                         </div>
                       </div>
