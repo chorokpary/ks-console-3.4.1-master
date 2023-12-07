@@ -1,5 +1,5 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
@@ -11,24 +11,24 @@ const Status = (props) => {
 
   const store = props.detailStore;
 
-  const [name, setName] = useState()
+  const [id, setId] = useState()
 
   useEffect(() => {
-    setName(store.detail.volume?.used_by_vmi)
-  }, [name])
+    setId(store.detail.volume?.used_by_vmi)
+  }, [id])
 
   return (
-    <>  
-    {!!name && 
-      <div>
-        <DetailVmList type={t('RESOURCES_VOLUME')} variables='name' name={name} />
-      </div>        
-    }
-     {!!!name && 
-      <div>
-        <DetailVmList type={t('RESOURCES_VOLUME')} variables='name' name={name} />
-      </div>        
-    }
+    <>
+      {!!id &&
+        <div>
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='id' id={id} />
+        </div>
+      }
+      {!!!id &&
+        <div>
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='id' id={id} />
+        </div>
+      }
     </>
   );
 };

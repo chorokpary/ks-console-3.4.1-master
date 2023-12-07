@@ -17,11 +17,9 @@ const BindingModal = (props) => {
 
   const vmStore = new VmStore();
   const volumeStore = new VolumeStore();
- 
-  const volumeName = props.store.detail.name;
 
   const [vmList, setVmList] = useState([]);
-  const [vmName, setVmName] = useState(t('RESOURCES_SELECT')); 
+  const [vmId, setVmId] = useState();
   const [radioPersist, setRadioPersist] = useState("T");
 
   const [volumeList, setVolumeList] = useState([]);
@@ -30,15 +28,16 @@ const BindingModal = (props) => {
   const handleOk = () => {
     const success = props.success;
 
-    form.current.validator(() => {    
+    form.current.validator(() => {
 
-      const data = {};
-      data.vmName = vmName,
-      data.persist = radioPersist == "T" ? true : false,
-      data.actionType = "A",
-      data.volumeName = volumeName,
+      const data = {}
 
-      volumeStore.actionState({data, ...props }).then(() => {
+      data.vmId = vmId
+      data.persist = radioPersist == "T" ? true : false
+      data.actionType = "A"
+      data.id = props.store.detail.id
+
+      volumeStore.actionState({ data, ...props }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
         closeModal();
@@ -66,15 +65,15 @@ const BindingModal = (props) => {
 
   }, [])
 
-  const handleSelect = (name) => {
-    setVmName(name);
+  const handleSelect = (id) => {
+    setVmId(id);
   }
 
   const vmOptions = () => {
     const opt = vmList.map((obj) => {
       return {
         label: obj.name,
-        value: t(obj.name),
+        value: t(obj.id),
       }
     })
     return opt
@@ -82,7 +81,7 @@ const BindingModal = (props) => {
 
   // Validation 시작 ==================================================
   const vmValidator = (rule, value, callback) => {
-    if(value == t('RESOURCES_SELECT') || value == "select"){
+    if (value == t('RESOURCES_SELECT') || value == "select") {
       return callback({ message: t('RESOURCES_SELECT_VM_TIP') })
     }
     callback()
@@ -108,18 +107,18 @@ const BindingModal = (props) => {
           >
             <Select
               name="vmSelect"
-              defaultValue={vmName}
+              defaultValue={t('RESOURCES_SELECT')}
               options={vmOptions()}
-              onChange={(value) => handleSelect(value)}              
+              onChange={(value) => handleSelect(value)}
             />
           </Form.Item>
 
           <Form.Item label={t('Persist')}>
-              <div className={styles.wrapper}>
-                <Radio name="snatType" value="T" checked={radioPersist === "T"} onChange={(e) => {setRadioPersist("T");}}>{t('RESOURCES_USE')}</Radio>
-                <Radio name="snatType" value="F" checked={radioPersist === "F"} onChange={(e) => {setRadioPersist("F");}}>{t('RESOURCES_NOT_USE')}</Radio>
-              </div>              
-            </Form.Item>
+            <div className={styles.wrapper}>
+              <Radio name="snatType" value="T" checked={radioPersist === "T"} onChange={(e) => { setRadioPersist("T"); }}>{t('RESOURCES_USE')}</Radio>
+              <Radio name="snatType" value="F" checked={radioPersist === "F"} onChange={(e) => { setRadioPersist("F"); }}>{t('RESOURCES_NOT_USE')}</Radio>
+            </div>
+          </Form.Item>
         </Form>
       </Modal>
 
