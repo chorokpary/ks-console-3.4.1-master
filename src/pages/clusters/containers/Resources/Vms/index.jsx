@@ -38,6 +38,7 @@ import VmStore from 'stores/resources/vms'
   module: 'vms',
   authKey: 'vms',
   name: t('RESOURCES_VM'),
+  rowKey: 'id'
 })
 export default class Vms extends React.Component {
 
@@ -234,12 +235,19 @@ export default class Vms extends React.Component {
                 />
               </div>
               <div>
-                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}`}>{name} </Link>
+                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}/${record.id}`}>{name} </Link>
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
             </div>
           )
         },
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        search: true,
+        width: 'auto',
       },
       {
         title: t('RESOURCES_IMAGE'),
@@ -248,7 +256,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (image, record) => {
-          const icon = "ico-os-" + record.image_detail?.distro_type;
+          const icon = "ico-os-" + record.image_object?.distro_type;
           return (            
             <Link to={`/clusters/${cluster}/images/${image}`}>
             <i
@@ -270,7 +278,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (cpuType, record) => {
-          const arch_type = <p>{record.image_detail?.arch_type}</p>
+          const arch_type = <p>{record.image_object?.arch_type}</p>
           return arch_type
         },
       },
@@ -477,7 +485,6 @@ export default class Vms extends React.Component {
   }
 
   handleFetch = (params, refresh) => {
-    console.log(params)
     this.routing.query(params, refresh)
   }
 

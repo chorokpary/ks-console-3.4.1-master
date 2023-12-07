@@ -82,7 +82,7 @@ const RegistModal = (props) => {
   const [internalCheckItems, setInternalCheckItems] = useState([]);
 
   const dataListVariables = {
-    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))),
+    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))),
   };
 
   const stateVariables = {
@@ -212,18 +212,18 @@ const RegistModal = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).length &&
+                        {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).length &&
                           <tr>
                             <td colSpan="6" className="no-data">
                               <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                             </td>
                           </tr>
                         }
-                        {internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).map((data, key) => {
-                            return <tr key={data.name}>
+                        {internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).map((data, key) => {
+                            return <tr key={data.id}>
                             <td>
-                              <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
-                              onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
+                              <Checkbox name={`select-${data.id}`} checked={stateVariables['internal'].includes(data.id) ? true : false}
+                              onChange={(checked) => handleSingleCheck(checked, data.id, "internal")} />
                             </td>
                             <td>{data.name}</td>
                             <td>{(data.type).toUpperCase()}</td>
@@ -235,8 +235,10 @@ const RegistModal = (props) => {
                       </tbody>
                   </table> 
                   <div className={styles.removeCheckWrapper}>
-                    {internalCheckItems?.map((name) => 
-                    <span key={name}><Button icon="close" onClick={() => handleDelete(name, "internal")}>{name}</Button> </span>
+                    {internalCheckItems?.map((id) => {
+                        const name = internalNetworkList?.filter((data) => data.id == id).map(item => item.name)[0]
+                       return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "internal")}>{name}</Button> </span> 
+                      }                    
                     )}                      
                   </div>
                 </div>
@@ -271,18 +273,18 @@ const RegistModal = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).length &&
+                        {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).length &&
                           <tr>
                             <td colSpan="6" className="no-data">
                               <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                             </td>
                           </tr>
                         }
-                        {externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).map((data) => {
+                        {externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).map((data) => {
                           return <tr key={data.name}>
                             <td>
-                              <Radio name="external" value={data.name} checked={radioExternal === data.name} 
-                              onChange={(e) => {setRadioExternal(data.name);}}/>
+                              <Radio name="external" value={data.id} checked={radioExternal === data.id} 
+                              onChange={(e) => {setRadioExternal(data.id);}}/>
                             </td>
                             <td>{data.name}</td>
                             <td>{(data.type).toUpperCase()}</td>

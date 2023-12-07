@@ -64,7 +64,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -114,7 +114,13 @@ export default {
   'vm.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const usernames = rowKeys.join(', ')
+      let arr = new Array
+      store.dataList.map(obj => {
+        if(rowKeys.includes(obj.id)){
+          arr.push(obj.name)
+        }
+      })
+      const usernames = arr.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -278,10 +284,10 @@ export default {
     },
   },  
   'vm.snapshotDelete': {
-    on({ store, name, success, ...props }) {
+    on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.snapshotDelete(name).then(() => {
+          store.snapshotDelete(id).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -289,7 +295,7 @@ export default {
         },
         modal: DeleteModal,
         module: store.module,
-        name,
+        id,
         store,
         ...props,
       })
@@ -308,10 +314,10 @@ export default {
     },
   },  
   'vm.restoreDelete': {
-    on({ store, name, success, ...props }) {
+    on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.restoreDelete(name).then(() => {
+          store.restoreDelete(id).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -319,7 +325,7 @@ export default {
         },
         modal: DeleteModal,
         module: store.module,
-        name,
+        id,
         store,
         ...props,
       })
@@ -337,10 +343,10 @@ export default {
     },
   },  
   'vm.cloneDelete': {
-    on({ store, name, success, ...props }) {
+    on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.cloneDelete(name).then(() => {
+          store.cloneDelete(id).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -348,7 +354,7 @@ export default {
         },
         modal: DeleteModal,
         module: store.module,
-        name,
+        id,
         store,
         ...props,
       })

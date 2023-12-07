@@ -223,7 +223,7 @@ export default [
     component: FloatingIpDetail,
   },
   {
-    path: `${PATH}/vms/:name`,
+    path: `${PATH}/vms/:name/:id`,
     component: VmDetail,
   },
   {

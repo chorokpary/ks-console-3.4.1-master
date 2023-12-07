@@ -11,7 +11,7 @@ import VmStore from 'stores/resources/vms'
 const CloneModal = (props) => {
 
   const vmStore = new VmStore();
-  const vmName = props.store.detail.name;
+  const vmId = props.store.detail.id;
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -25,7 +25,7 @@ const CloneModal = (props) => {
     form.current.validator(async () => {   
       
       const { data } = form.current.props;
-      data.source_vm_name = vmName;
+      data.source_vm_id = vmId;
 
       console.log("data : "+ JSON.stringify(data))
 
