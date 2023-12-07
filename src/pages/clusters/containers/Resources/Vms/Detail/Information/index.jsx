@@ -48,16 +48,15 @@ const Information = (props) => {
     };
 
     const fnGetImage = async () => {
-      const response = await axios.get(`/edgetron/resources/kubevirt/images/${store.detail.vm?.image}`);
+      const response = await axios.get(`/edgetron/resources/kubevirt/images/${store.detail.vm?.image?.name}`);
       setDetailImage(response.data.image);
     };
 
     store.detail.vm?.flavor && fnGetFlavor();
+    store.detail.vm?.image && fnGetImage();
     fnGetVolume();
     fnGetHostDevices();
     fnGetMediatedDevices();
-    fnGetImage();
-
   }, []);
 
   const fnGetHostDeviceIsGpu = (name) => {
@@ -103,7 +102,7 @@ const Information = (props) => {
                     <div className="info"><i className={(store.detail.vm?.cpu_arch)?.includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch)?.includes('x86') ? "X86" : "ARM"}</span></div>
                     <div className="info">
                       <i className={`ico-os-${detailImage?.distro_type}`}></i>
-                      <span>{store.detail.vm?.image}</span>
+                      <span>{store.detail.vm?.image?.name}</span>
                     </div>
                   </div>
                 </div>

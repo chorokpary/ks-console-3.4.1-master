@@ -44,8 +44,8 @@ client:
   title: ARM CMP
   description: ""
   encryptKey: kubesphere
-  serverlocation: "86"
-  # serverlocation: "TB"
+  # serverlocation: "86"
+  serverlocation: "TB"
 
   version:
     kubesphere: 3.1.0
