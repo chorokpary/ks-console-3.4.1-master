@@ -20,7 +20,7 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
@@ -29,9 +29,9 @@ import { ICON_TYPES } from 'utils/constants'
 import RoleStore from 'stores/role'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
 import * as common from 'utils/resources'
+import ResourceTable from 'clusters/components/ResourceTable'
 
-
-@withList({
+@withClusterList({
     store: new LoadBalancerStore(),
     module: 'lbs',
     authKey: 'lbs',
@@ -120,6 +120,12 @@ export default class LoadBalancers extends React.Component {
                 ),
             },
             {
+                title: t('PROJECT'),
+                dataIndex: 'project',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
                 title: t('RESOURCES_NETWORK_NAME'),
                 dataIndex: 'network',
                 isHideable: true,
@@ -182,7 +188,7 @@ export default class LoadBalancers extends React.Component {
                     title={t('RESOURCES_LOAD_BALANCER')}
                     description={t('RESOURCES_LOAD_BALANCER_DESC')}
                 />
-                <Table
+                <ResourceTable
                     {...tableProps}
                     emptyProps={this.emptyProps}
                     tableActions={this.tableActions}
