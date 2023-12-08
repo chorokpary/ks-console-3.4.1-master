@@ -261,6 +261,7 @@ const DetailVmList = (props) => {
   }
 
   const renderExtraContent = (obj) => {
+    console.log(obj)
     const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
     return (
       <div className={styles.itemExtra}>
@@ -270,7 +271,7 @@ const DetailVmList = (props) => {
               <Icon name="apps" size={40} />
             </div>
             <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.flavor_detail.name}</div>
+              <div>{obj.flavor_object.name}</div>
               <p>Flavor</p>
             </div>
             <div className={styles.title}>
@@ -287,7 +288,7 @@ const DetailVmList = (props) => {
               <Text
                 key='CPU'
                 icon='cpu'
-                title={obj.flavor_detail.vcpus + " Core"}
+                title={obj.flavor_object.vcpus + " Core"}
                 description={t('CPU')}
               />
             </div>
@@ -295,7 +296,7 @@ const DetailVmList = (props) => {
               <Text
                 key='Memory'
                 icon='memory'
-                title={common.fnSetBytes(obj.flavor_detail.ram) + " Gib"}
+                title={common.fnSetBytes(obj.flavor_object.ram) + " Gib"}
                 description={t('Memory')}
               />
             </div>
@@ -303,7 +304,7 @@ const DetailVmList = (props) => {
               <Text
                 key='Disk'
                 icon='storage'
-                title={obj.flavor_detail.root_disk + " Gib"}
+                title={obj.flavor_object.root_disk + " Gib"}
                 description={t('Disk')}
               />
             </div>
@@ -311,8 +312,8 @@ const DetailVmList = (props) => {
               <Text
                 key='GPU'
                 icon='gpu'
-                title={obj.flavor_detail.gpus.length >= 1 ?
-                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " " + t('RESOURCES_BESIDES') + " " + (obj.flavor_detail.gpus.length - 1) + t('RESOURCES_COUNT')
+                title={obj.flavor_object.gpus.length >= 1 ?
+                  obj.flavor_object.gpus.length == 1 ? obj.flavor_object.gpus[0].name : obj.flavor_object.gpus[0].name + " " + t('RESOURCES_BESIDES') + " " + (obj.flavor_object.gpus.length - 1) + t('RESOURCES_COUNT')
                   : "-"}
                 description={t('GPU')}
               />
