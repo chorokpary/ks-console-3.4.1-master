@@ -89,6 +89,10 @@ export default class SecurityGroupStore extends Base {
         // 초기 데이터 처리 
         this.dataList = dataArray;
 
+        if (namespace) {
+            params.project = namespace;
+        }
+
         // 검색 관련 처리 
         const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
         const searchArray = Object.keys(params).map((key) => {
