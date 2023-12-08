@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
@@ -28,7 +29,7 @@ import { ICON_TYPES } from 'utils/constants'
 
 import KeypairStore from 'stores/resources/keypairs'
 
-@withList({
+@withClusterList({
   store: new KeypairStore(),
   module: 'keypairs',
   authKey: 'keypairs',
@@ -120,6 +121,12 @@ export default class Keypairs extends React.Component {
         ),
       },
       {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
         title: t('Finger Print'),
         dataIndex: 'finger_print',
         isHideable: true,
@@ -165,17 +172,15 @@ export default class Keypairs extends React.Component {
   render() {
 
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
     return (
       <ListPage {...this.props}>
         <Banner
           {...bannerProps}
           icon="key"
-          tabs={this.tabs}
           title={t('RESOURCES_KEYPAIR')}
           description={t('RESOURCES_KEYPAIR_DESC')}
         />
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
