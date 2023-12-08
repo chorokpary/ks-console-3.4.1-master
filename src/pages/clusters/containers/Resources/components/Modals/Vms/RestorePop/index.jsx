@@ -11,7 +11,7 @@ import VmStore from 'stores/resources/vms'
 const RestoreModal = (props) => {
 
   const vmStore = new VmStore();
-  const snapshotName = props.name;
+  const snapshotId = props.id;
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -24,9 +24,7 @@ const RestoreModal = (props) => {
     form.current.validator(async () => {   
       
       const { data } = form.current.props;
-      data.snapshotName = snapshotName;
-
-      console.log("data : "+ JSON.stringify(data))
+      data.snapshotId = snapshotId;
 
       vmStore.restoreCreate(data).then(() => {
         Notify.success({ content: t('RESOURCES_RESTORE_SUCCESSFUL') })

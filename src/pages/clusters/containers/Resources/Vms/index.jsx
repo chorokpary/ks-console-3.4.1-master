@@ -363,7 +363,7 @@ export default class Vms extends React.Component {
             return (
               <div>
                 <Dropdown content={<Menu>
-                  {this.fnGetActionColumn(state, record.name)}
+                  {this.fnGetActionColumn(state, record.id)}
                 </Menu>}>
                   <div className={styles.iconwrapper}>
                     <i className={styles[`ico-status-${state.toLowerCase()}`]} /><p>{state}</p>
@@ -396,7 +396,7 @@ export default class Vms extends React.Component {
     ]
   }
 
-  handleVmAction = (action, state, vmName) => {
+  handleVmAction = (action, state, vmId) => {
 
     if ("Stopped" == state && "pause" == action) {
       Notify.warning(t('RESOURCES_STOPED_PAUSE_DESC'))
@@ -410,7 +410,7 @@ export default class Vms extends React.Component {
     const { getData, trigger } = this.props
 
     const data = {};
-    data.vmName = vmName;
+    data.vmId = vmId;
     data.state = state;
     data.actionType = action;
 
@@ -421,26 +421,26 @@ export default class Vms extends React.Component {
     },)
   }
 
-  fnGetActionColumn = (state, vmName) => {
+  fnGetActionColumn = (state, vmId) => {
     let elements = "";
     elements =
       <>
         {/* Stopped */}
         {state == "Stopped" &&
-          <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmName)}>
+          <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmId)}>
             <i className={styles['ico-quick-start']}></i><span>{t('RESOURCES_START')}</span>
           </Menu.MenuItem>
         }
         {/* Running */}
         {state == "Running" &&
           <>
-            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmId)}>
               <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmName)}>
+            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmId)}>
               <i className={styles['ico-quick-pause']}></i><span>{t('RESOURCES_PAUSED_JOONGI')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmId)}>
               <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
@@ -448,13 +448,13 @@ export default class Vms extends React.Component {
         {/* Paused */}
         {state == "Paused" &&
           <>
-            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmId)}>
               <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmName)}>
+            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmId)}>
               <i className={styles['ico-quick-unpause']}></i><span>{t('RESOURCES_UNPAUSE')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmId)}>
               <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>

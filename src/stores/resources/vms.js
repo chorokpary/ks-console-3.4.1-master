@@ -351,14 +351,11 @@ export default class VmStore extends Base {
   async actionState({ data, ...params }) {
 
     const jsonData = {};
-    const name = data.vmName;
+    const id = data.vmId;
     jsonData.action = data.actionType;
-    
-    console.log(`${this.getDetailUrl({ name: name, ...params })}/action`)
-    console.log(JSON.stringify(jsonData))
 
     await this.submitting(
-      request.put(`${this.getDetailUrl({ name: name, ...params })}/action`, jsonData)
+      request.put(`${this.getDetailUrl({ name: id, ...params })}/action`, jsonData)
     )
   }
 
@@ -597,11 +594,11 @@ export default class VmStore extends Base {
     const jsonData = {};
     const snapshotData = {};
 
-    snapshotData.vm_name = data.vmName;
+    snapshotData.vm_id = data.vmId;
     snapshotData.description = data.description;   
 
     jsonData.snapshot = snapshotData;
-
+    console.log("snapshot : "+ JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
     return res;
   }
@@ -634,7 +631,7 @@ export default class VmStore extends Base {
     const jsonData = {};
     const restoreData = {};
 
-    restoreData.snapshot_name = data.snapshotName;
+    restoreData.snapshot_id = data.snapshotId;
     restoreData.description = data.description;   
 
     jsonData.restore = restoreData;

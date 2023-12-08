@@ -44,7 +44,6 @@ const Snapshot = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState();
 
-
   const handleExpand = (name) => {
     setExpandItem(name);
     setIsExpandFlag(!isExpandFlag)
@@ -67,8 +66,7 @@ const Snapshot = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const filterData = await store.snapshotList(props.match.params.
-      );
+    const filterData = await store.snapshotList(props.match.params.id);
     const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
     const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
@@ -100,7 +98,7 @@ const Snapshot = (props) => {
           <div className={styles.wrapper} key={index}>
             <div
               className={classnames(styles.expandItem, "", {
-                [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
+                [styles.expanded]: (obj.id == expandItem ? isExpandFlag : false),
               })}
             >
               <div className={styles.itemMain}>
@@ -109,7 +107,7 @@ const Snapshot = (props) => {
                 </div>
                 {renderContentDetail(obj)}
               </div>
-              {renderExtraContent(obj.name)}
+              {renderExtraContent(obj.id)}
             </div>
           </div>
         )
@@ -130,8 +128,8 @@ const Snapshot = (props) => {
             <p>Timestamp</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.name}</div>
-            <p>Name</p>
+            <div>{obj.id}</div>
+            <p>ID</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
@@ -150,20 +148,20 @@ const Snapshot = (props) => {
             <p>Description</p>
           </div>      */}
           <div className={styles.button}>
-              <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.name)}>Restore</Button></div>
-              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.name)} style={{width: "92.69px"}}>Delete</Button></div>  
+              <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
+              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{width: "92.69px"}}>Delete</Button></div>  
           </div> 
-          <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
-            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
+          <div className={styles.arrow} onClick={() => handleExpand(obj.id)}>
+            <Icon name="chevron-down" type={obj.id != expandItem ? '' : (obj.id == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
           </div>
         </div>
       </>
     )
   }
 
-  const renderExtraContent = (name) => {
+  const renderExtraContent = (id) => {
 
-    const restoreFilterList = restoreDataList.filter(item => item.snapshot_name == name);
+    const restoreFilterList = restoreDataList.filter(item => item.snapshot_id == id);
     return (
       <div className={styles.itemExtra}>
             <div className={styles.containers} >
@@ -182,8 +180,8 @@ const Snapshot = (props) => {
                   <p>Timestamp</p>
                 </div>
                 <div className={styles.title}>
-                  <div>{obj.name}</div>
-                  <p>Name</p>
+                  <div>{obj.id}</div>
+                  <p>ID</p>
                 </div>
                 {/* <div className={styles.text}>
                   <div>{get(obj, "description", "-")}</div>
@@ -194,7 +192,7 @@ const Snapshot = (props) => {
                   <p>Complete</p>
                 </div>
                 <div className={styles.arrow}>
-                  <Button type="danger" onClick={() => handleDeleteRestore(obj.name)}>Delete</Button>
+                  <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>Delete</Button>
                 </div>
               </div>  
               )}
@@ -204,19 +202,19 @@ const Snapshot = (props) => {
     )
   }
 
-  const handleDeleteSnapshot = (name) => {
+  const handleDeleteSnapshot = (id) => {
     props.rootStore.triggerAction('vm.snapshotDelete', {
       type: 'VM_DETAIL',
-      name : name,
+      id : id,
       store: store,
       success: fnGetData,
     })
   }
 
-  const handleDeleteRestore = (name) => {
+  const handleDeleteRestore = (id) => {
     props.rootStore.triggerAction('vm.restoreDelete', {
       type: 'VM_DETAIL',
-      name : name,
+      id : id,
       store: store,
       success: () => {
         fnGetRestoreData();
@@ -224,7 +222,7 @@ const Snapshot = (props) => {
     })
   }
 
-  const handleRestore = (name) => {
+  const handleRestore = (id) => {
     if(vmState != "Stopped"){
       props.rootStore.triggerAction('vm.alertPop', {
         store: store,
@@ -233,7 +231,7 @@ const Snapshot = (props) => {
       })
     }else{
       props.rootStore.triggerAction('vm.restorePop', {
-        name : name,
+        id : id,
         store: store,
         success: () => {
           fnGetRestoreData();
