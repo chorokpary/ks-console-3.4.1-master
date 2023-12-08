@@ -180,16 +180,16 @@ const RegistModal = (props) => {
     }
 
     const expirationOption = [
-        { label: "1"+t('RESOURCES_YEAR'), value: 1 },
-        { label: "2"+ t('RESOURCES_YEAR'), value: 2 },
-        { label: "3"+t('RESOURCES_YEAR'), value: 3 },
-        { label: "4"+t('RESOURCES_YEAR'), value: 4 },
-        { label: "5"+t('RESOURCES_YEAR'), value: 5 },
-        { label: "6"+t('RESOURCES_YEAR'), value: 6 },
-        { label: "7"+t('RESOURCES_YEAR'), value: 7 },
-        { label: "8"+t('RESOURCES_YEAR'), value: 8 },
-        { label: "9"+t('RESOURCES_YEAR'), value: 9 },
-        { label: "10"+t('RESOURCES_YEAR'), value: 10 }
+        { label: "1" + t('RESOURCES_YEAR'), value: 1 },
+        { label: "2" + t('RESOURCES_YEAR'), value: 2 },
+        { label: "3" + t('RESOURCES_YEAR'), value: 3 },
+        { label: "4" + t('RESOURCES_YEAR'), value: 4 },
+        { label: "5" + t('RESOURCES_YEAR'), value: 5 },
+        { label: "6" + t('RESOURCES_YEAR'), value: 6 },
+        { label: "7" + t('RESOURCES_YEAR'), value: 7 },
+        { label: "8" + t('RESOURCES_YEAR'), value: 8 },
+        { label: "9" + t('RESOURCES_YEAR'), value: 9 },
+        { label: "10" + t('RESOURCES_YEAR'), value: 10 }
     ];
 
     const handleOk = () => {
@@ -234,8 +234,8 @@ const RegistModal = (props) => {
 
             if (isFirst) {
                 if (networkDataList.length > 0) {
-                    handleSingleCheck(networkDataList.filter((el) => el.external)[0].name, "network");
-                    setNetworkName(networkDataList.filter((el) => el.external)[0].name);
+                    handleSingleCheck(networkDataList.filter((el) => el.external)[0].id, "network");
+                    setNetworkName(networkDataList.filter((el) => el.external)[0].id);
                 }
                 setCniSelect(cnis[0].value);
                 setCsiSelect(csis[0].value);
@@ -565,7 +565,7 @@ const RegistModal = (props) => {
                                             {
                                                 selectImageName &&
                                                 <Form.Item>
-                                                     <div className={styles.wrapperImageView}>
+                                                    <div className={styles.wrapperImageView}>
                                                         {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
                                                     </div>
                                                 </Form.Item>
@@ -693,8 +693,8 @@ const RegistModal = (props) => {
                                                                 <tr key={data.name}>
                                                                     <td>
                                                                         <Radio name={`select-${data.name}`}
-                                                                            checked={data.name === networkCheckItem}
-                                                                            onChange={(e) => handleSingleCheck(data.name, "network")} />
+                                                                            checked={data.id === networkCheckItem}
+                                                                            onChange={(e) => handleSingleCheck(data.id, "network")} />
                                                                     </td>
                                                                     <td>{data.name}</td>
                                                                     <td>{(data.type).toUpperCase()}</td>
@@ -956,7 +956,7 @@ const RegistModal = (props) => {
                                             <Button icon="pen" onClick={() => { setRegStep(2) }}></Button>
                                         </div>
                                         <label className={`${networkFlag === 1 ? '' : 'hide'}`}>{t('RESOURCES_NETWORK')}</label>
-                                        {networkDataList.filter(x => networkCheckItem === x.name).map((obj, index) => (
+                                        {networkDataList.filter(x => networkCheckItem === x.id).map((obj, index) => (
                                             <div className={styles.greybgbox} key={index}>
                                                 <div className={styles.list}>
                                                     <label>{t('RESOURCES_NAME')}</label>
