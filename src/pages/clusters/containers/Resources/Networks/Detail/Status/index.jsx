@@ -25,13 +25,13 @@ const Status = (props) => {
 
     useEffect(() => {
 
-        const networkName = props.match.params.name;
+        const networkId = props.match.params.id;
 
         const fnGetRouterData = async () => {
 
             const routerList = await routerStore.fetchList();
-            const routerExternalList =  await routerList.filter(item => item.external == networkName );
-            const routerInternalList =  await routerList.filter(item => (item.internal).includes(networkName));
+            const routerExternalList = await routerList.filter(item => item.external == networkId );
+            const routerInternalList = await routerList.filter(item => (item.internal).includes(networkId));
 
             const routerTernalList = routerExternalList.length > 0 ? routerExternalList : routerInternalList;
 
@@ -42,7 +42,7 @@ const Status = (props) => {
         
         const fnGetLoadBalancerData = async () => {
             const loadBalancerList = await loadBalancerStore.fetchList();
-            const loadBalancerFilterList =  loadBalancerList.filter(item => item.network == networkName ) ;
+            const loadBalancerFilterList = loadBalancerList.filter(item => item.network == networkId ) ;
             
             setLoadBalancerList(loadBalancerFilterList);
             setIsLoadingLoadBalancer(false)
@@ -58,7 +58,7 @@ const Status = (props) => {
             <div>                
 
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type={t('RESOURCES_NETWORK')} variables='networks' name={props.match.params.name} />
+                <DetailVmList type={t('RESOURCES_NETWORK')} variables='networks' id={props.match.params.id} />
 
                 {/* 라우터 */}
                 <div>
