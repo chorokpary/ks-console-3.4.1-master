@@ -20,7 +20,7 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import classNames from 'classnames'
 import Indicator from 'components/Base/Indicator'
@@ -31,8 +31,8 @@ import { getLocalTime, map_accessModes } from 'utils'
 import VolumeStore from 'stores/resources/volumes'
 
 import styles from './index.scss'
-
-@withList({
+import ResourceTable from 'clusters/components/ResourceTable'
+@withClusterList({
   store: new VolumeStore(),
   module: 'resourcesvolumes',
   authKey: 'resourcesvolumes',
@@ -122,6 +122,12 @@ export default class ResourcesVolumes extends React.Component {
             title={name}
           />
         ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
       },
       // {
       //   title: t('볼륨 모드'),
@@ -255,7 +261,7 @@ export default class ResourcesVolumes extends React.Component {
           title={t('RESOURCES_VOLUME')}
           description={t('RESOURCES_VOLUME_DESC')}
         />
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
