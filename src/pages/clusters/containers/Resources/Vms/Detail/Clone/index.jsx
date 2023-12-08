@@ -53,7 +53,6 @@ const Clone = (props) => {
     const page = get(params, "page", 1);
 
     const filterData = await store.cloneList(props.match.params.id);
-    console.log("filterData : "+ JSON.stringify(filterData))
     const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
     const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
@@ -114,7 +113,7 @@ const Clone = (props) => {
           </div>
           <div className={styles.name}>
             <div>{obj.id}</div>
-            <p>Name</p>
+            <p>ID</p>
           </div>
           <div className={styles.text}>
             <div>{obj.target_vm_id}</div>
@@ -124,11 +123,11 @@ const Clone = (props) => {
             <div>{obj.phase}</div>
             <p>Phase</p>
           </div>
-          <div className={styles.text}>
+          {/* <div className={styles.text}>
             <div>{obj.state}</div>
             {(obj.networks).length > 0 ? (obj.networks).map((item) => <div>{item.name}</div>) : "-"}
             <p>Networks</p>
-          </div>
+          </div> */}
           {/* <div className={styles.text}>
             <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
