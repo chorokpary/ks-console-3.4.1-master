@@ -61,7 +61,7 @@ const Status = (props) => {
     };
 
     const fnGetVolume = async () => {
-      const volumeData = store.volumeList?.filter(el => el.used_by_vmi == store.detail.vm?.name);
+      const volumeData = store.volumeList?.filter(el => el.used_by_vmi == store.detail.vm?.id);
       setDetailVolume(volumeData);
     };
 
@@ -369,7 +369,7 @@ const Status = (props) => {
                     <Icon name="storage" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}`}>{obj.name}</Link></div>
+                    <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>

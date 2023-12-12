@@ -21,7 +21,7 @@ const VolumeModal = (props) => {
   const [reFetch, setReFetch] = useState(false);
 
   const vmName = props.store.detail.name;
-
+  const vmId = props.store.detail.id;
 
   const closeModal = () => {
     setModalView(false);
@@ -51,7 +51,7 @@ const VolumeModal = (props) => {
   }, [reFetch])
 
     ;
-  const handleVolumeToggle = (checked, name) => {
+  const handleVolumeToggle = (checked, name, id) => {
 
     if (checked) {
       setVolumeCheckItems(prev => [...prev, name]);
@@ -61,7 +61,9 @@ const VolumeModal = (props) => {
 
     const data = {};
     data.vmName = vmName;
+    data.vmId = vmId;
     data.volumeName = name;
+    data.id = id;
     data.actionType = checked ? "A" : "D";
 
     volumeStore.actionState({ data, ...props }).then(() => {
@@ -132,7 +134,7 @@ const VolumeModal = (props) => {
                           {(data.selected_node == props.store.detail.vm.node || !data.selected_node) &&
                             <Toggle
                               checked={volumeCheckItems.includes(data.name) ? true : false}
-                              onChange={(e) => handleVolumeToggle(e, data.name)}
+                              onChange={(e) => handleVolumeToggle(e, data.name, data.id)}
                               onText={t('ON')}
                               offText={t('OFF')}
                             />
