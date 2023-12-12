@@ -20,15 +20,17 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import ResourceTable from 'clusters/components/ResourceTable'
 
-import { getLocalTime } from 'utils'
+import { Link } from 'react-router-dom'
+import { getLocalTime, showNameAndAlias } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import RouterStore from 'stores/resources/routers'
 
-@withList({
+@withClusterList({
   store: new RouterStore(),
   module: 'routers',
   authKey: 'routers',
@@ -125,6 +127,11 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}`}>
+            {showNameAndAlias(project, 'project')}
+          </Link>
+        ),
       },
       {
         title: t('RESOURCES_SNAT_OPTION'),
@@ -209,7 +216,7 @@ export default class Routers extends React.Component {
         title={t('RESOURCES_VROUTER')}
         description={t('RESOURCES_VROUTER_DESC')}
       />
-      <Table
+      <ResourceTable
         {...tableProps}
         emptyProps={this.emptyProps}
         className={'table-2-6 table-4-3'}

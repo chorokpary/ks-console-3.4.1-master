@@ -68,7 +68,7 @@ const TopologyItem = (props) => {
         obj.num = (index+1);
         obj.network_type = networkType;
       })
-
+      console.log("unionArray : "+ JSON.stringify(unionArray))
       setNetworkUnionList(unionArray);
      
   }, [networkList, sriovList])
@@ -80,13 +80,13 @@ const TopologyItem = (props) => {
         networkUnionList.map(async (obj) => {
 
           // sriov 와 network 구분해서 처리 해야 함
-          const elementVmList = vmList.filter(item => _.find(item.networks, {'name':obj.name}))
+          const elementVmList = vmList.filter(item => _.find(item.networks, {'name':obj.id}))
           obj.elementVmList = elementVmList;
 
-          const elementRouterList = obj.external ? routerList.filter(item => item.external == obj.name) : routerList.filter(item => (item.internal).includes(obj.name));
+          const elementRouterList = obj.external ? routerList.filter(item => item.external == obj.name) : routerList.filter(item => (item.internal).includes(obj.id));
           obj.elementRouterList = elementRouterList;
 
-          const elementLoadBalancerList = loadbalancerList.filter(item => item.network == obj.name)
+          const elementLoadBalancerList = loadbalancerList.filter(item => item.network == obj.id)
           obj.elementLoadBalancerList = elementLoadBalancerList;
         })
       )
@@ -95,118 +95,6 @@ const TopologyItem = (props) => {
 
     getNetworkElementsData();
   }, [networkUnionList, vmList, routerList, loadbalancerList])
-
-  // useEffect(() => {
-
-  //   var dragScroll = false;
-  //   var x, y, pre_x, pre_y;
-  //   var zoomLevel = 1;
-  //   var zoomStep = 0.1;
-  //   var box = document.getElementById('box');
-  //   var box_zoom = document.getElementById('box_zoom');
-  //   var result = document.getElementById('result');
-  //   var zoomInButton = document.getElementById('zoomIn');
-  //   var zoomOutButton = document.getElementById('zoomOut');
-  //   var resetZoomButton = document.getElementById('resetZoom');
-  //   var initialScrollLeft = 0;
-  //   var initialScrollTop = 0;
-  //   var initialBoxZoomPosition = { left: 0, top: 0 };
-
-  //   box_zoom.style.border ="1px solid red"
-   
-  //   function updateZoomDisplay() {
-  //     result.innerHTML = (zoomLevel * 100).toFixed(0) + '%';
-  //   }
-   
-  //   function zoomIn() {
-  //     if(zoomLevel.toFixed(1) >= 2){ 
-  //       return false;
-  //     };
-  //     updateZoom(1);
-  //   }
-   
-  //   function zoomOut() {
-  //      if(zoomLevel.toFixed(1) <= 0.1){ 
-  //       return false;
-  //     };
-  //     updateZoom(-1);
-  //   }
-   
-  //   function updateZoom(direction) {      
-  //     initialScrollLeft = box.scrollLeft;
-  //     initialScrollTop = box.scrollTop;
-  //     zoomLevel += direction * zoomStep;      
-  //     box_zoom.style.transform = 'scale(' + zoomLevel + ')';
-  //     box.scrollLeft = initialScrollLeft;
-  //     box.scrollTop = initialScrollTop;
-
-
-  //       // box_zoom.style.left = '100px';
-  //       // box_zoom.style.top =  '100px';
-
-   
-  //     // box_zoom.style.left = (direction === 1)
-  //     //   ? parseInt(box_zoom.style.left || 0) + 550 + 'px'
-  //     //   : parseInt(box_zoom.style.left || 0) - 0 + 'px';
-  //     // box_zoom.style.top = (direction === 1)
-  //     //   ? parseInt(box_zoom.style.top || 0) + 50 + 'px'
-  //     //   : parseInt(box_zoom.style.top || 0) + 0 + 'px';
-   
-  //     // if (zoomLevel <= 0.6) {
-  //     //   box_zoom.style.left = parseInt(box_zoom.style.left || 0) - 100 + 'px';
-  //     //   box_zoom.style.top = parseInt(box_zoom.style.top || 0) - 50 + 'px';
-  //     // }
-   
-  //     updateZoomDisplay();
-  //   }
-   
-  //   function resetZoom() {
-  //     console.log("initialBoxZoomPosition : "+ initialBoxZoomPosition.left)
-  //     console.log("initialBoxZoomPosition : "+ initialBoxZoomPosition.top)
-  //     zoomLevel = 1;
-  //     box_zoom.style.transform = 'scale(1)';
-  //     box.scrollLeft = initialScrollLeft;
-  //     box.scrollTop = initialScrollTop;
-  //     box_zoom.style.left = initialBoxZoomPosition.left + 'px';
-  //     box_zoom.style.top = initialBoxZoomPosition.top + 'px';
-  //     updateZoomDisplay();
-  //   }
-   
-  //   zoomInButton.addEventListener('click', zoomIn);
-  //   zoomOutButton.addEventListener('click', zoomOut);
-  //   resetZoomButton.addEventListener('click', resetZoom);
-   
-  //   box.addEventListener('mousedown', function (e) {
-  //     dragScroll = true;
-  //     x = box.scrollLeft;
-  //     y = box.scrollTop;
-  //     pre_x = e.screenX;
-  //     pre_y = e.screenY;
-  //     box.style.cursor = "move";
-  //   });
-   
-  //   box.addEventListener('mousemove', function (e) {
-  //     if (dragScroll) {
-  //       box.scrollLeft = x - e.screenX + pre_x;
-  //       box.scrollTop = y - e.screenY + pre_y;
-  //       e.preventDefault();
-  //     }
-  //   });
-   
-  //   function endDragScroll() {
-  //     dragScroll = false;
-  //     box.style.cursor = "default";
-  //   }
-   
-  //   box.addEventListener('mouseup', endDragScroll);
-  //   document.body.addEventListener('mouseup', endDragScroll);
-   
-  //   initialBoxZoomPosition.left = parseInt(box_zoom.style.left || 0);
-  //   initialBoxZoomPosition.top = parseInt(box_zoom.style.top || 0);
-   
-  //   updateZoomDisplay();
-
-  // },[])
 
   const getState = (state) => {
     if (state === 'Provisioning'
@@ -300,7 +188,6 @@ const TopologyItem = (props) => {
           <div className="network_name">
             <div className={`hexagon_circle color_${colorNum}`}></div><i className={`ico-type-${networkIcon}-wh`}></i>
             <div className="name"><em>{ternalType}</em><span>{cidr}</span></div>
-            {/* <div className="name"><em>{ternalType}</em><span>{barNum}</span></div> */}
           </div>
           <div className={`network_line color_${colorNum}`}><span>{obj.name}</span></div>
         </li>
@@ -465,7 +352,7 @@ const TopologyItem = (props) => {
                     <h4>VM</h4>
                     <p>
                       <i className={`ico-type24-vm ${getState(vm.state)}`}></i>
-                      <span>{vm.name}<a href={`/clusters/default/vms/${vm.name}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                      <span>{vm.name}<a href={`/clusters/default/vms/${vm.name}/${vm.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
                     </p>
                     {floatingData.length > 0 &&
                       <div>
@@ -533,7 +420,7 @@ const TopologyItem = (props) => {
                   <h4 className="type2">VRouter</h4>
                   <p>
                     <i className="ico-type24-router on"></i>
-                    <span>{router.name}<a href={`/clusters/default/routers/${router.name}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{router.name}<a href={`/clusters/default/routers/${router.name}/${router.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                 </div>
                 <div className="element right">
@@ -595,7 +482,7 @@ const TopologyItem = (props) => {
                   <h4 className="type2">Load balancer</h4>
                   <p>
                     <i className="ico-type24-router on"></i>
-                    <span>{load.name}<a href={`/clusters/default/loadBalancers/${load.name}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{load.name}<a href={`/clusters/default/loadBalancers/${load.name}/${load.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                 </div>
                 <div className="element right">
@@ -688,9 +575,6 @@ const TopologyItem = (props) => {
       {/* left menu */}
       {renderLeftMenu()}
       
-      {/* Zoon In/Out */}
-      {/* {renderZoon()} */}
-
     </div>  
   )
 }

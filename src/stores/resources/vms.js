@@ -89,6 +89,10 @@ export default class VmStore extends Base {
     // FloatingIp List 추출
     await this.fetchFloatingList(params);
 
+    // namespace(project) 있는 경우
+    if (namespace) {
+      params.project = namespace;
+    }
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];

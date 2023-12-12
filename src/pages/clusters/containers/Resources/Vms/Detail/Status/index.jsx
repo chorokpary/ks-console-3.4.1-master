@@ -338,7 +338,7 @@ const Status = (props) => {
                     <Icon name="network-duotone" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/clusters/${cluster}/networks/${obj.name}`}>{obj.name}</Link></div>
+                    <div><Link to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>

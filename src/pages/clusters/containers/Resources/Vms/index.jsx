@@ -20,12 +20,13 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status, Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import { cloneDeep, get, isEmpty, omit } from 'lodash'
 import { Link } from 'react-router-dom'
-import { getLocalTime } from 'utils'
+import { getLocalTime, showNameAndAlias } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 import { Dropdown, Menu, Button, Notify, Icon } from '@kube-design/components'
 
@@ -33,7 +34,7 @@ import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
-@withList({
+@withClusterList({
   store: new VmStore(),
   module: 'vms',
   authKey: 'vms',
@@ -248,6 +249,11 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}`}>
+            {showNameAndAlias(project, 'project')}
+          </Link>
+        ),
       },
       {
         title: t('RESOURCES_IMAGE'),
@@ -515,7 +521,7 @@ export default class Vms extends React.Component {
           title={t('RESOURCES_VM')}
           description={t('RESOURCES_VM_DESC')}
         />
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
