@@ -68,7 +68,8 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
       // vm list
       const vmList = await vmStore.vmList()
       let vmUuid = '';
-      vmList.map(obj => vmUuid = vmUuid + obj.id + "|")
+      vmList.map(obj =>
+        vmUuid = vmUuid + obj.id + "|")
 
       // vm cpu data
       const step = '5m'

@@ -96,13 +96,15 @@ function sumVmData(config) {
   if (config.data.length > 0) {
     const lastData = config.data[config.data.length - 1];
     const { ...others } = lastData;
+
+    delete others.time // 이전과 다르게 time 파라미터가 추가됨
     const values = Object.values(others)
     const sum = values.reduce((a, b) => {
       return a + b
     }, 0);
-
-    lastData.sum = sum ? sum : 0
+    lastData.sum = sum ? sum.toFixed(2) : 0
     lastData.unit = config.unit
+
     return lastData
   } else {
     return { sum: 0, unit: '' }

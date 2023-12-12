@@ -52,21 +52,24 @@ const Bmc = ({ bmc }) => {
     const getData = async () => {
       setLoading(true)
 
-      const data = await bareMetalStore.fetchList()
+      try {
+        const data = await bareMetalStore.fetchList()
 
-      const getMetricType = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
-      })
+        const getMetricType = await customStore.fetchMetric({
+          expr: `max by(instance, machine) (node_uname_info)`,
+        })
 
-      const getMetricData = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
-      })
+        const getMetricData = await customStore.fetchMetric({
+          expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+        })
+        if (cleanupTrigger) {
+          setNodeData(data)
+          setMetricType(getMetricType)
+          setMetricData(getMetricData)
 
-      if (cleanupTrigger) {
-        setNodeData(data)
-        setMetricType(getMetricType)
-        setMetricData(getMetricData)
-
+          setLoading(false)
+        }
+      } catch (e) {
         setLoading(false)
       }
     };
