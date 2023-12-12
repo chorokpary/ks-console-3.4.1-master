@@ -101,7 +101,7 @@ function sumVmData(config) {
       return a + b
     }, 0);
 
-    lastData.sum = sum ? sum.toFixed(2) : 0
+    lastData.sum = sum ? sum : 0
     lastData.unit = config.unit
     return lastData
   } else {
