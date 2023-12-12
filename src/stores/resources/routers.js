@@ -76,6 +76,11 @@ export default class RouterStore extends Base {
         // 초기 데이터 처리 
         this.dataList = data;
 
+        // namespace(project) 있는 경우
+        if (namespace) {
+          params.project = namespace;
+        }
+
         // 검색 관련 처리 
         const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
         const searchArray = Object.keys(params).map((key) => {

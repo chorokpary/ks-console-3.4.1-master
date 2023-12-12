@@ -43,14 +43,14 @@ const VmDetail = (props) => {
   const floatingData = toJS(store.floatingList)
   const floatingId = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.id)[0]
   const floatingIp = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.floating_ip)[0]
-
+  
   const fnOpenVncPopup = () => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://" + location.hostname + ":30020";
     var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
-    param = param + vmName + "/vnc";
+    param = param + vmId + "/vnc";
 
-    var popupName = vmName.replaceAll("-", "");
+    var popupName = vmId.replaceAll("-", "");
     window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840');
   }
 
