@@ -80,7 +80,7 @@ const Status = (props) => {
                     }
                 </div>
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type={t('RESOURCES_SECURITY_GROUP')} variables='security_groups' id={props.match.params.id} />
+                <DetailVmList type={t('RESOURCES_SECURITY_GROUP')} variables='security_groups' id={props.match.params.name} />
             </div>
         </>
     );
