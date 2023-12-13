@@ -6,7 +6,7 @@ const Status = (props) => {
   return (
     <>  
        {/* 가상 머신 상세 관련 샘플 */}
-       <DetailVmList type='Flavor' variables='flavor' name={props.match.params.name} />
+       <DetailVmList type='Flavor' variables='flavor_object' name={props.match.params.name} />
       
     </>
   );
