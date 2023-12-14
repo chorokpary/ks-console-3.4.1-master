@@ -94,8 +94,20 @@ const BareMetalDetail = (props) => {
 
     };
 
-    const fetchData = () => {
-        store.fetchDetail(props.match.params);
+    const getSystemType = async (name) => {
+      const dataList = await store.fetchList();
+      const systemType = dataList.filter(item => item.name = name).map(obj => obj.system_type)[0];
+
+      return systemType;
+    }
+
+    const fetchData = async () => {      
+      const systemType = await getSystemType(props.match.params.name);
+
+      let params = props.match.params;
+      params.systemType = systemType
+
+      store.fetchDetail(params);
     }
     
     const { cluster } = props.match.params
@@ -127,7 +139,7 @@ const BareMetalDetail = (props) => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('baremetal.delete', {
+            props.rootStore.triggerAction('baremetal.remove', {
             type: 'BAREMETAL_DETAIL',
             detail: toJS(store.detail),
             store: store,

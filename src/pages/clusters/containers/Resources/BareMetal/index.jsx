@@ -186,13 +186,15 @@ export default class BareMetalDashboard extends React.Component {
         icon: 'pen',
         text: t('Force-Off'),
         action: 'delete',
-        show: this.showAction,
-        onClick: item =>
+        show: record => this.showAction(record),
+        onClick: item => {
           trigger('baremetal.action', {
             detail: item,
+            resetType: "ForceOff",
             success: getData,
             ...this.props.match.params,
-          }),
+          })
+        },         
       },
       {
         key: 'action2',
@@ -203,6 +205,7 @@ export default class BareMetalDashboard extends React.Component {
         onClick: item =>
           trigger('baremetal.action', {
             detail: item,
+            resetType: "GracefulRestart",
             success: getData,
             ...this.props.match.params,
           }),
@@ -216,6 +219,7 @@ export default class BareMetalDashboard extends React.Component {
         onClick: item =>
           trigger('baremetal.action', {
             detail: item,
+            resetType: "GracefulShutdown",
             success: getData,
             ...this.props.match.params,
           }),
@@ -229,6 +233,7 @@ export default class BareMetalDashboard extends React.Component {
         onClick: item =>
           trigger('baremetal.action', {
             detail: item,
+            resetType: "On",
             success: getData,
             ...this.props.match.params,
           }),
@@ -305,15 +310,17 @@ export default class BareMetalDashboard extends React.Component {
         dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('job'),
-        render: (name, record) => (
-          <Avatar
+        render: (name, record) => {
+          return (
+            <Avatar
             icon="nodes"
             iconSize={40}
             to={`/clusters/${cluster}/baremetalmonitoring/${name}`}
             title={name}
             desc={record.ip}
           />
-        ),
+          )
+        } 
       },
       {
         title: t('RESOURCES_STATE'),
@@ -446,7 +453,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('RESOURCES_CARBON_EMISSIONS'+'(Kg)'),
+        title: t('RESOURCES_CARBON_EMISSIONS')+'(Kg)',
         key: 'carbon',
         isHideable: true,
         render: record => {
@@ -544,7 +551,7 @@ export default class BareMetalDashboard extends React.Component {
       return (
         <Empty
           name="BareMetal"
-          desc="Please create a data"
+          desc={t('RESOURCES_PLEASE_CREATE_DATA')}
           action={
             showCreate ? (
               <Button onClick={showCreate} type="control">

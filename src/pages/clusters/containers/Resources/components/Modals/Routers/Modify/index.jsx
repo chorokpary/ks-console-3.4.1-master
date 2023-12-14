@@ -37,7 +37,7 @@ const ModifyModal = (props) => {
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
       data.external = radioExternal;   
-
+      console.log("data : "+ JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -76,11 +76,11 @@ const ModifyModal = (props) => {
     fnGetNetworkList();
 
     // 초기 선택 
-    detailInternal.map((name) => {
-      handleSingleCheck(true, name, "internal")
+    detailInternal.map((item) => {
+      handleSingleCheck(true, item.id, "internal")
     })
     
-    detailExternal && setRadioExternal(detailExternal);
+    detailExternal && setRadioExternal(detailExternal.id);
 
   }, [])
 
@@ -111,9 +111,9 @@ const ModifyModal = (props) => {
       if (checked) {
         const nameArray = [];
         
-        dataListVariables[type].forEach((el) => nameArray.push(el.name));        
-        detailInternal.map((name) => {
-          nameArray.push(name)
+        dataListVariables[type].forEach((el) => nameArray.push(el.id));        
+        detailInternal.map((item) => {
+          nameArray.includes(item.id) ? "" : nameArray.push(item.id);
         })
 
         setVariables[type](nameArray);

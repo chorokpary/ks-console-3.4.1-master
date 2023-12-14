@@ -18,8 +18,6 @@ const ModifyModal = (props) => {
 
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
 
-  const vmStore = new VmStore();
-
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -41,12 +39,11 @@ const ModifyModal = (props) => {
   useEffect(() => {
 
     const getVmCreateData = async () => {
+      const securityData = props.store.securigyGroupList;
+      setSecurityGroupDataList(securityData);
 
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup();
-      setSecurityGroupDataList(listSecurityGroup);
-      
-      const nameConvertId = listSecurityGroup?.filter((item) => (props.store.detail.vm.security_groups).includes(item.name)).map(item => item.id)
-      setSecurityGroupCheckItems(nameConvertId)
+      const securityIdArray = props.store.detail.vm.security_groups.map(item => item.id)
+      setSecurityGroupCheckItems(securityIdArray)
     };
 
     getVmCreateData();

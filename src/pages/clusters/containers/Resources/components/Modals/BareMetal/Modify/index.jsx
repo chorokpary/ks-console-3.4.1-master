@@ -1,16 +1,16 @@
 import { toJS } from 'mobx'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 
 import { get, omit } from 'lodash'
 import { Modal } from 'components/Base'
-import { Form, Input, Select, TextArea, Button, Checkbox } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Checkbox, Tabs } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
 import styles from './index.scss'
 
-const RegistModal = (props) => {
+const EditModal = (props) => {
 
-  const detailInfo = toJS(props.store.detail.nodes).find(item => get(item, 'name') === props.store.detail.name) 
+  const detailInfo = toJS(props.store.list.data).find(item => get(item, 'name') == props.store.detail.name) 
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -21,16 +21,9 @@ const RegistModal = (props) => {
 
     form.current.validator(() => {
       const { data } = form.current.props;
+      data.systemType = detailInfo.system_type;
 
-      const target_array = []
-      data.TargetIp?.map((el, idx) => {
-        if (el != '') {
-          target_array.push(data.TargetIp[idx])
-        }
-      })
-
-      data.target_ip_array = target_array 
-
+      console.log("data :" + JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -38,29 +31,7 @@ const RegistModal = (props) => {
   const closeModal = () => {
     setModalView(false);
   }
-
-  const nextSystem = useRef(1);
-  const [listSystem, setListSystem] = useState([1]);
-
-  const handleSystem = {
-
-    addColumn: () => {
-      nextSystem.current += 1
-      setListSystem(listSystem => [...listSystem, nextSystem.current]);
-
-    },
-    delColumn: (id) => {
-      setListSystem(listSystem.filter((el) => el !== id));
-    },
-  }
-
-  useEffect(() => {    
-    if(detailInfo['redfish-exporter']['target'].length > 0){
-      (detailInfo['redfish-exporter']['target']).map((obj, index) => {
-        index > 0 ? handleSystem.addColumn() : "";
-      })
-    }
-  }, [])
+  
 
   return (
     <>  
@@ -75,10 +46,10 @@ const RegistModal = (props) => {
           <Form data={formData} ref={form}>
 
             <Form.Item
-                label={t('RESOURCES_NAME')}
-                rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
-                desc={t('NAME_DESC')}
-              >
+              label={t('이름')}
+              rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+              desc={t('NAME_DESC')}
+            >
               <Input
                 name="name"
                 autoFocus={true}
@@ -88,21 +59,25 @@ const RegistModal = (props) => {
               />   
             </Form.Item>
 
-            <Form.Item
-                label={t('IP')}
-                rules={[{ required: true, message: t('RESOURCES_IP_EMPTY_DESC') }]}
-              >
-              <Input
-                name="ip"
-                autoFocus={true}
-                defaultValue={detailInfo.ip}
-                disabled
-              />   
-            </Form.Item>
-
+          {detailInfo.system_type == "B" && 
             <Form.Item label={t('Node Exporter')}>
-              <Form.Group>
-                <Form.Item>
+                <Form.Group>
+
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                            label={t('IP')}
+                          >
+                          <Input
+                            name="nodeIp"
+                            placeholder={t('192.168.XX.XX')}
+                            defaultValue={detailInfo.nodeExporter.ip}
+                          />   
+                        </Form.Item>
+                    </Column>
+                    <Column></Column>                 
+                  </Columns>
+
                   <Columns>
                     <Column>
                       <Form.Item
@@ -110,8 +85,8 @@ const RegistModal = (props) => {
                       >
                         <Input
                           name="nodeInterval"
-                          placeholder={t('60')}
-                          defaultValue={(detailInfo.nodeExporter.ScrapeInterval).replace('s','')}
+                          placeholder={t('Interval')}
+                          defaultValue={!!detailInfo.nodeExporter?.scrapeInterval ? (detailInfo.nodeExporter.scrapeInterval).replace('s','') : ""}                         
                         />
                       </Form.Item>
                     </Column>
@@ -127,72 +102,55 @@ const RegistModal = (props) => {
                       </Form.Item>
                     </Column>
                   </Columns>
-                </Form.Item>
+
               </Form.Group>
             </Form.Item>
+            }
 
-            <Form.Item label={t('Redfish Exporter')}>
-              <Form.Group>
-                <Form.Item>
-                  <Columns>
+            <Form.Group label={t('BMC')} desc={t('RESOURCES_BMC_SYSTEM_TIP')}> 
+                <div className={styles.item}>
+                 <Columns>
                     <Column>
-                      <Form.Item
-                        label={t('Scrape Interval')}
-                      >
+                      <Form.Item>
                         <Input
-                          name="refishInterval"
-                          placeholder={t('60')}
-                          defaultValue={(detailInfo['redfish-exporter']['ScrapeInterval']).replace('s','')}
+                          name={`bmcIp`}
+                          placeholder={t('IP')}
+                          defaultValue={detailInfo.openBMC.address}
                         />
                       </Form.Item>
                     </Column>
                     <Column>
-                      <Form.Item
-                        label={t('Port')}
-                      >
-                        <Input
-                          name="refishPort"
-                          placeholder={t('9610')}
-                          defaultValue={detailInfo['redfish-exporter']['port']}
-                        />
-                      </Form.Item>
-                    </Column>
-                  </Columns>
-                </Form.Item>
-              </Form.Group>
-            </Form.Item>
-
-            <Form.Item label={t('Redfish Exporter Target')}>
-              <Form.Group >
-                {listSystem.map((obj, idx) => (
-                  <div className={styles.item} key={obj}>
                     <Form.Item>
                       <Input
-                        name={`TargetIp.${obj}`}
-                        placeholder={t('192.168.XX.XX:11000')}
-                        style={{ maxWidth: 'none' }}
-                        defaultValue={detailInfo['redfish-exporter']['target'].length > 0 ? detailInfo['redfish-exporter']['target'][idx] : ''}
+                        name={`bmcInterval`}
+                        placeholder={t('Interval')}
+                        defaultValue={!!detailInfo.openBMC?.scrapeInterval ? (detailInfo.openBMC.scrapeInterval).replace('s','') : ""}  
                       />
-                    </Form.Item>  
-                    <Button
-                      type="flat"
-                      icon="trash"
-                      className={styles.delete}
-                      onClick={() => handleSystem.delColumn(obj)}
-                    />
-                  </div>
-                ))}
-                <div className="text-right">
-                  <Button
-                    className={styles.add}
-                    onClick={handleSystem.addColumn}
-                  >
-                    {t('RESOURCES_ADD')}
-                  </Button>
+                    </Form.Item>
+                    </Column>
+                    <Column>
+                    <Form.Item>
+                      <Input
+                        name={`bmcId`}
+                        placeholder={t('ID')}
+                        defaultValue={detailInfo.openBMC.username}
+                      />
+                    </Form.Item>
+                    </Column>
+                    <Column>
+                    <Form.Item>
+                      <Input
+                        name={`bmcPassword`}
+                        placeholder={t('Password')}
+                        type="password"
+                        defaultValue={detailInfo.openBMC.password}
+                      />
+                    </Form.Item>
+                    </Column>
+                  </Columns>
                 </div>
+            </Form.Group>
 
-              </Form.Group>
-            </Form.Item>
 
           </Form>
         </Modal>
@@ -201,5 +159,5 @@ const RegistModal = (props) => {
   );
 };
 
-export default RegistModal
+export default EditModal
 

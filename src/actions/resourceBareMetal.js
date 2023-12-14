@@ -150,13 +150,25 @@ export default {
     },
   },
   'baremetal.action': {
-    on({ store, success, ...props }) {
+    on({ store, detail, resetType, success, ...props }) {
       const modal = Modal.open({
+        onOk: data => {
+          store
+            .actionState(data)
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_CHANGED_SUCCESSFULLY') })
+              success && success()
+            })
+        },
         title: t('RESOURCES_CHANGE_STATE'),
         modal: ActionModal,
+        detail,
+        resetType,
         store,
         ...props,
       })
     },
   },
 }
+
