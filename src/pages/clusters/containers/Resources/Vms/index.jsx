@@ -340,14 +340,14 @@ export default class Vms extends React.Component {
       },
       {
         title: t('RESOURCES_SECURITY_GROUP'),
-        dataIndex: 'security_groups',
+        dataIndex: 'security_group_objects',
         isHideable: true,
         search: true,
         width: 'auto',
-        render: security => {
+        render: security_group_objects => {
           let securityGroupText = ""
-          if (!!security) {
-            securityGroupText = security.length > 1 ? security[0] + " 외 " + (security.length - 1) + "개" : security[0]
+          if (!!security_group_objects) {
+            securityGroupText = security_group_objects.length > 1 ? security_group_objects[0].name + " 외 " + (security_group_objects.length - 1) + "개" : security_group_objects.length == 1 ? security_group_objects[0].name : "-"
           } else {
             securityGroupText = ""
           }

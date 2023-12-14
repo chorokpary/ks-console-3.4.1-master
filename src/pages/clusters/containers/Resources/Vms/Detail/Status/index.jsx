@@ -56,7 +56,8 @@ const Status = (props) => {
     const fnGetSecurityGroup = async () => {
       setDetailSecurityGroup([]);
       const securityData = store.securigyGroupList;
-      const filterData = securityData.filter(item => (store.detail.vm.security_groups).includes(item.name));
+      const securityIdArray = store.detail.vm.security_groups.map(item => item.id)
+      const filterData = securityData.filter(item => securityIdArray.includes(item.id));
       setDetailSecurityGroup(filterData);
     };
 
