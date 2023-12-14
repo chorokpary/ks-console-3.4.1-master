@@ -34,14 +34,12 @@ const LbPop = ({ title, onOk, store }) => {
 
     const fnGetRouterList = async () => {
       const routerData = await store.routerList()
-      console.log(routerData)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetLbList = async () => {
       const lbData = await store.lbList()
-      console.log(lbData)
       setLbList(lbData.lbs)
     };
 
@@ -50,8 +48,8 @@ const LbPop = ({ title, onOk, store }) => {
 
   useEffect(() => {
     if (lbList.length > 0 && routerList.length > 0) {
-      const internalList = routerList.find((obj) => obj.external == fipDetail.network)?.internal;
-      const list = lbList.filter((obj) => internalList.includes(obj.network))
+      const internalList = routerList.find((obj) => obj.external.id == fipDetail.network)?.internal || [];
+      const list = lbList.filter((obj) => internalList.find(it => it.id == obj.network))
       setList(list)
       if (list.length > 0) handleLbData(list[0])
     }
