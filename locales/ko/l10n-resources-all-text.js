@@ -480,5 +480,6 @@ module.exports = {
   RESOURCES_RESTORE_SUCCESSFUL: '복원 되었습니다.',
   RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP: '복원 사유 등 이력에 기재할 정보를 입력해주세요.',
   RESOURCES_BMC_SYSTEM_TIP: 'BMC 시스템 등록 정보를 입력해주세요.',
+  RESOURCES_CHANGE_NODE_STATE: '노드 상태를 변경하시겠습니까?',
 
 };

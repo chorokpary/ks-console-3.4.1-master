@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react'
 
 import { get, omit } from 'lodash'
 import { Modal } from 'components/Base'
-import { Form, Input, Select, TextArea, Button, Checkbox } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Checkbox, Tabs } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
 import styles from './index.scss'
@@ -16,21 +16,20 @@ const RegistModal = (props) => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
+  const [tab, setTab] = useState("C");
+  const { TabPanel } = Tabs;
+
+  const [isBmc, setIsBmc] = useState(false);
+  const [systemType, setSystemType] = useState('C')
+
   const handleOk = () => {
     const onOk  = props.onOk;
 
     form.current.validator(() => {
       const { data } = form.current.props;
+      data.systemType = systemType;
 
-      const target_array = []
-      data.TargetIp?.map((el, idx) => {
-        if (el != '') {
-          target_array.push(data.TargetIp[idx])
-        }
-      })
-
-      data.target_ip_array = target_array 
-
+      console.log("data :" + JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -38,22 +37,6 @@ const RegistModal = (props) => {
   const closeModal = () => {
     setModalView(false);
   }
-
-  const nextSystem = useRef(1);
-  const [listSystem, setListSystem] = useState([1]);
-
-  const handleSystem = {
-
-    addColumn: () => {
-      nextSystem.current += 1
-      setListSystem(listSystem => [...listSystem, nextSystem.current]);
-
-    },
-    delColumn: (id) => {
-      setListSystem(listSystem.filter((el) => el !== id));
-    },
-  }
-
   
   // Validation 시작 ==================================================
   const resourceIpValidator = (rule, value, callback) => {
@@ -72,7 +55,6 @@ const RegistModal = (props) => {
   }
   // Validation 끝 ==================================================
 
-
   return (
     <>  
         <Modal
@@ -85,35 +67,48 @@ const RegistModal = (props) => {
         >
           <Form data={formData} ref={form}>
 
-            {/* <div className={styles.divwrap}>
-              <div className={styles.div_top}>시스템 정보 입력</div>
-              <div className={styles.div_bottom}>등록 하려는 시스템의 IP, 노드명 정보를 입력해주세요.</div>
-            </div> */}
+            <Form.Item>
+              <Tabs type="button" activeName={tab} onChange={newTab => {
+                setTab(newTab);
+                setSystemType(newTab);
+                
+              }}>
+                <TabPanel label={t('RESOURCES_CLUSTER')} name="C" />
+                <TabPanel label={t('RESOURCES_BAREMETAL')} name="B" />
+              </Tabs>
+            </Form.Item>
 
             <Form.Item
               label={t('이름')}
               rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
               desc={t('NAME_DESC')}
             >
-            <Input
-              name="name"
-              autoFocus={true}
-              maxLength={63}
-            />   
-          </Form.Item>
-
-            <Form.Item
-                label={t('IP')}
-                rules={[{ required: true, validator: resourceIpValidator }]}
-              >
               <Input
-                name="ip"
+                name="name"
+                autoFocus={true}
+                maxLength={63}
               />   
             </Form.Item>
 
+          {systemType == "B" && 
             <Form.Item label={t('Node Exporter')}>
-              <Form.Group>
-                <Form.Item>
+                <Form.Group>
+
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                            label={t('IP')}
+                            // rules={[{ required: true, validator: resourceIpValidator }]}
+                          >
+                          <Input
+                            name="nodeIp"
+                            placeholder={t('192.168.XX.XX')}
+                          />   
+                        </Form.Item>
+                    </Column>
+                    <Column></Column>                 
+                  </Columns>
+
                   <Columns>
                     <Column>
                       <Form.Item
@@ -136,71 +131,51 @@ const RegistModal = (props) => {
                       </Form.Item>
                     </Column>
                   </Columns>
-                </Form.Item>
+
               </Form.Group>
             </Form.Item>
+            }
 
-            <Form.Item label={t('Redfish Exporter')}>
-              <Form.Group>
-                <Form.Item>
-                  <Columns>
+            <Form.Group label={t('BMC')} onChange={(e) => setIsBmc(!isBmc)} checkable desc={t('RESOURCES_BMC_SYSTEM_TIP')}> 
+                <div className={styles.item}>
+                 <Columns>
                     <Column>
-                      <Form.Item
-                        label={t('Scrape Interval')}
-                      >
-                        <Input
-                          name="refishInterval"
-                          placeholder={t('60')}
-                        />
-                      </Form.Item>
-                    </Column>
-                    <Column>
-                      <Form.Item
-                        label={t('Port')}
-                      >
-                        <Input
-                          name="refishPort"
-                          placeholder={t('9610')}
-                        />
-                      </Form.Item>
-                    </Column>
-                  </Columns>
-                </Form.Item>
-              </Form.Group>
-            </Form.Item>
-
-            <Form.Item label={t('Redfish Exporter Target')}>
-              <Form.Group >
-                {listSystem.map((obj, idx) => (
-                  <div className={styles.item} key={obj}>
-
                       <Form.Item>
                         <Input
-                          name={`TargetIp.${obj}`}
-                          placeholder={t('192.168.XX.XX:11000')}
-                          style={{ maxWidth: 'none' }}
+                          name={`bmcIp`}
+                          placeholder={t('IP')}
                         />
                       </Form.Item>
-
-                    <Button
-                      type="flat"
-                      icon="trash"
-                      className={styles.delete}
-                      onClick={() => handleSystem.delColumn(obj)}
-                    />
-                  </div>
-                ))}
-                <div className="text-right">
-                  <Button
-                    className={styles.add}
-                    onClick={handleSystem.addColumn}
-                  >
-                    추가
-                  </Button>
+                    </Column>
+                    <Column>
+                    <Form.Item>
+                      <Input
+                        name={`bmcInterval`}
+                        placeholder={t('Interval')}
+                      />
+                    </Form.Item>
+                    </Column>
+                    <Column>
+                    <Form.Item>
+                      <Input
+                        name={`bmcId`}
+                        placeholder={t('ID')}
+                      />
+                    </Form.Item>
+                    </Column>
+                    <Column>
+                    <Form.Item>
+                      <Input
+                        name={`bmcPassword`}
+                        type="password"
+                        placeholder={t('Password')}
+                      />
+                    </Form.Item>
+                    </Column>
+                  </Columns>
                 </div>
+            </Form.Group>
 
-              </Form.Group>
-            </Form.Item>
 
           </Form>
         </Modal>
