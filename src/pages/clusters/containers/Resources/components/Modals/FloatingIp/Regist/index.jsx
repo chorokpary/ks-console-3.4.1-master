@@ -40,9 +40,9 @@ const RegistModal = ({ title, onOk, store }) => {
     if (networkDataList.length > 0 && routerList.length > 0) {
       const list = networkDataList.filter((obj) => (
         routerList.includes(obj.id)
-      ));
+      )) || [];
       setNetworkList(list);
-      setRadioExternal(list[0].id)
+      setRadioExternal(list[0]?.id)
     }
   }, [networkDataList, routerList])
 
@@ -55,7 +55,7 @@ const RegistModal = ({ title, onOk, store }) => {
     data.filter((obj) => (
       obj.external
     )).map((obj) => (
-      arr.push(obj.external)
+      arr.push(obj.external.id)
     ));
     return arr;
   }

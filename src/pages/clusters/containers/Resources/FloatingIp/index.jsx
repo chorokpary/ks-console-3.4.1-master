@@ -112,7 +112,7 @@ export default class FloatingIp extends React.Component {
                         icon="intranet-routers"
                         iconSize={40}
                         to={`/clusters/${cluster}/floatingip/${name}/${floatingip.id}`}
-                        title={name}
+                        title={floatingip.network_alias}
                     />
                 ),
             },

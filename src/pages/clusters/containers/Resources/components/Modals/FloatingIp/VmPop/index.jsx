@@ -79,7 +79,7 @@ const VmPop = ({ title, onOk, store }) => {
 
   useEffect(() => {
     if (vmList.length > 0 && routerList.length > 0) {
-      const internalList = routerList.find((obj) => obj.external == fipDetail.network)?.internal;
+      const internalList = routerList.find((obj) => obj.external.id == fipDetail.network)?.internal || [];
       setInternalList(internalList)
 
       const arr = new Set();
@@ -87,7 +87,7 @@ const VmPop = ({ title, onOk, store }) => {
         var net = obj.networks;
         net.map((obj2) => {
           internalList.forEach(el => {
-            if (el == obj2.name) {
+            if (el.id == obj2.name) {
               arr.add(obj);
             }
           })
@@ -124,10 +124,10 @@ const VmPop = ({ title, onOk, store }) => {
     let defaultValue = '';
     data?.map((networks) => (
       internalList.map((el) => {
-        if (el == networks.name) {
+        if (el.id == networks.name) {
           if (idx == 0) defaultValue = `${networks.name} ${networks.ip}`
           options.push({
-            label: `${networks.name} ${networks.ip}`,
+            label: `${networks.alias} ${networks.ip}`,
             value: `${networks.name} ${networks.ip}`
           })
           idx++;
