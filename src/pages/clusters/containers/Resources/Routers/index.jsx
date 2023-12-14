@@ -112,14 +112,17 @@ export default class Routers extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: (name, record) => (
-          <Avatar
-            icon="router"
-            iconSize={40}
-            to={`/clusters/${cluster}/routers/${name}/${record.id}`}
-            title={name}
-          />
-        ),
+        render: (name, record) => {
+          return (
+            <Avatar
+              icon="router"
+              iconSize={40}
+              to={`/clusters/${cluster}/routers/${name}/${record.id}`}
+              title={name}
+            />
+          )
+        }
+        
       },
       {
         title: t('PROJECT'),
@@ -157,7 +160,7 @@ export default class Routers extends React.Component {
         search: true,
         width: 'auto',
         render: internal => (
-          internal.map((name) => (<p>{name}</p>))
+          internal.map((item) => (<p>{item.name}</p>))
         ),
       },
       {
@@ -166,6 +169,9 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: external => (
+          <p>{external.name}</p>
+        ),
       },
       {
         title: t('RESOURCES_REGIST_DATE'),

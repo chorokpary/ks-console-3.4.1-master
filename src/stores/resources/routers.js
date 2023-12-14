@@ -251,6 +251,8 @@ export default class RouterStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
+    console.log("user : "+ JSON.stringify(user))
+    console.log(`${this.getDetailUrl(user)}`)
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
