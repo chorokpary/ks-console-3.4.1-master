@@ -103,8 +103,7 @@ const DetailVmList = (props) => {
 
     const vmList = await store.fetchList();
     const vmFilterData = vmList?.filter((row) =>
-      props.variables === 'security_groups' ? row[props.variables].includes(props.id) :
-      props.variables === 'networks' ? _.find(row[props.variables], { 'id': props.id }) : 
+      props.variables === 'security_group_objects' || props.variables === 'networks' ? _.find(row[props.variables], { 'id': props.id }) : 
       props.variables === 'flavor_object' ? row[props.variables].name === props.name : row[props.variables] === props.name
     )
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
