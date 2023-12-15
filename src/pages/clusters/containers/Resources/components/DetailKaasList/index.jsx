@@ -72,7 +72,11 @@ const DetailKaasList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await kaasStore.fetchList();
-    const vmFilterData = vmList?.filter((row) => row['kube_image'] === props.name)
+    const vmi = props.name
+    const propsName = vmi?.includes('control-plane') ? vmi?.substring(0, vmi.indexOf('-control-plane')) : vmi
+
+    const vmFilterData = vmList?.filter((row) => row[props.variables] === propsName)
+
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
     const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
       (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
