@@ -1,5 +1,5 @@
 import { toJS } from 'mobx'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef,useEffect } from 'react'
 
 import { get, omit } from 'lodash'
 import { Modal } from 'components/Base'
@@ -7,8 +7,11 @@ import { Form, Input, Select, TextArea, Button, Checkbox, Tabs } from '@kube-des
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
 import styles from './index.scss'
+import NodeStore from 'stores/node'
 
 const RegistModal = (props) => {
+
+  const nodeStore = new NodeStore()
 
   const dataList = props.store.dataList;
 
@@ -21,6 +24,8 @@ const RegistModal = (props) => {
 
   const [isBmc, setIsBmc] = useState(false);
   const [systemType, setSystemType] = useState('C')
+
+  const [clusterNodeDataList, setClusterNodeDataList] = useState([]);
 
   const handleOk = () => {
     const onOk  = props.onOk;
@@ -37,9 +42,28 @@ const RegistModal = (props) => {
   const closeModal = () => {
     setModalView(false);
   }
+
+  useEffect(() => {
+    
+    const getClusterNodeData = async () => {
+      const clusterNodeData = await nodeStore.fetchList();
+      const clusterNodeArray = clusterNodeData.map(item => item.name);
+      setClusterNodeDataList(clusterNodeArray);  
+    };
+
+    getClusterNodeData();
+  }, [])
+
+
+  const nodeNameOptions = clusterNodeDataList.map((name) => {
+    return {
+      label: name, value: name,
+    }
+  })
+
   
   // Validation 시작 ==================================================
-  const resourceIpValidator = (rule, value, callback) => {
+  const instanceIpValidator = (rule, value, callback) => {
   
     const duplicate = dataList.filter((el) => el.ip == value)
     
@@ -51,6 +75,13 @@ const RegistModal = (props) => {
       return callback({ message: t('IP를 입력해 주세요.') })
     }
    
+    callback()
+  }
+
+  const clusteNodeNameValidator = (rule, value, callback) => {
+    if (value ==  t('SELECT') || value == "") {
+      return callback({ message: t('RESOURCES_SELECT_NAME_TIP') })
+    }
     callback()
   }
   // Validation 끝 ==================================================
@@ -78,6 +109,19 @@ const RegistModal = (props) => {
               </Tabs>
             </Form.Item>
 
+           {systemType == "C" && 
+             <Form.Item
+                label={t('RESOURCES_NAME')}
+                rules={[{ required: true, validator: clusteNodeNameValidator }]}
+              >
+                  <Select
+                    name="cluserName" 
+                    defaultValue={t('SELECT')}                 
+                    options={nodeNameOptions}/>
+              </Form.Item>
+           }
+
+           {systemType == "B" && 
             <Form.Item
               label={t('이름')}
               rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
@@ -89,6 +133,7 @@ const RegistModal = (props) => {
                 maxLength={63}
               />   
             </Form.Item>
+          }
 
           {systemType == "B" && 
             <Form.Item label={t('Node Exporter')}>
@@ -98,7 +143,7 @@ const RegistModal = (props) => {
                     <Column>
                       <Form.Item
                             label={t('IP')}
-                            // rules={[{ required: true, validator: resourceIpValidator }]}
+                            rules={[{ required: true, validator: instanceIpValidator }]}
                           >
                           <Input
                             name="nodeIp"

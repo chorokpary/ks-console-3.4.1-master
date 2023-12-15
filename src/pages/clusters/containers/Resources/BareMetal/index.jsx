@@ -199,7 +199,7 @@ export default class BareMetalDashboard extends React.Component {
       {
         key: 'action2',
         icon: 'pen',
-        text: t('Force-Restart'),
+        text: t('Graceful-Restart'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -279,13 +279,13 @@ export default class BareMetalDashboard extends React.Component {
   }
 
   getMetricData = (metricData, record) => {
-    const instance = toJS(record.ip)
+    const instance = record.system_type == "C" ? record.name : record.nodeExporter.ip;
     const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
     return metrics;
   }
 
   getMetricValue = (metricData, record) => {
-    const instance = toJS(record.ip)
+    const instance = record.system_type == "C" ? record.name : record.nodeExporter.ip;
     const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
     const value = get(metrics, 'value[1]', '0');
     return value;
@@ -486,6 +486,8 @@ export default class BareMetalDashboard extends React.Component {
   renderNodeStateContent() {
 
     const { metricStateData } = this.state;
+
+    console.log("metricStateData : "+ JSON.stringify(metricStateData))
 
     const { data } = toJS(this.props.store.list)
 

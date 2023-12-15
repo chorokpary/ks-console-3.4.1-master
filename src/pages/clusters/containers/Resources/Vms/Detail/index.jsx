@@ -215,6 +215,7 @@ const VmDetail = (props) => {
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
+    console.log("detail : "+ JSON.stringify(detail))
 
     if (isEmpty(detail)) {
       return
@@ -251,7 +252,7 @@ const VmDetail = (props) => {
       },
       {
         name: t('RESOURCES_KEYPAIR'),
-        value: detail.vm.keypair,
+        value: detail.vm.keypair.name,
       },
       {
         name: t('RESOURCES_LOAD_BALANCER'),
