@@ -103,8 +103,7 @@ const DetailVmList = (props) => {
 
     const vmList = await store.fetchList();
     const vmFilterData = vmList?.filter((row) =>
-      props.variables === 'security_group_objects' || props.variables === 'networks' ? _.find(row[props.variables], { 'id': props.id }) : 
-      props.variables === 'flavor_object' ? row[props.variables].name === props.name : row[props.variables] === props.name
+      variablesFilter(row)
     )
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
 
@@ -118,6 +117,17 @@ const DetailVmList = (props) => {
 
     setIsLoading(false);
   };
+
+  const variablesFilter = (row) => {
+    if (props.variables === 'security_group_objects' || props.variables === 'networks') {
+      return _.find(row[props.variables], { 'id': props.id })
+    } else if (props.variables === 'flavor_object') {
+      return row[props.variables].name === props.name
+    } else if (props.variables == 'id') {
+      return row[props.variables] === props.id
+    }
+    return row[props.variables] === props.name
+  }
 
   const fetchData = async () => {
 
@@ -220,7 +230,7 @@ const DetailVmList = (props) => {
       )
     )
 
-    return <Loading spinning={isLoading}>{content}</Loading>
+    return <Loading spinning={isLoading}><>{content}</></Loading>
   }
 
   const renderContentDetail = (obj) => {
@@ -278,7 +288,7 @@ const DetailVmList = (props) => {
               <div>
                 {
                   networkList.length >= 1 ?
-                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개"
+                    networkList.length == 1 ? networkList[0].alias : networkList[0].alias + " 외 " + (networkList.length - 1) + "개"
                     : "-"
                 }
               </div>
