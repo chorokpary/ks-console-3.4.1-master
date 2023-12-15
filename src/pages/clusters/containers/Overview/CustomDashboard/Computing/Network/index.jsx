@@ -72,7 +72,7 @@ const ComputingNetwork = ({
     if (sgList.length > 0) {
       var hs = new Set()
       vmList.map(obj => {
-        obj['security_groups'].map(el => (
+        obj['security_groups']?.map(el => (
           hs.add(el)
         ))
       })
