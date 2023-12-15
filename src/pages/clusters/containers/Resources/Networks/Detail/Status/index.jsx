@@ -30,8 +30,8 @@ const Status = (props) => {
         const fnGetRouterData = async () => {
 
             const routerList = await routerStore.fetchList();
-            const routerExternalList = await routerList.filter(item => item.external == networkId );
-            const routerInternalList = await routerList.filter(item => (item.internal).includes(networkId));
+            const routerExternalList = await routerList.filter(item => item.external.id === networkId );
+            const routerInternalList = await routerList.filter(item => _.find(item['internal'], { 'id': networkId }));
 
             const routerTernalList = routerExternalList.length > 0 ? routerExternalList : routerInternalList;
 
@@ -89,7 +89,7 @@ const Status = (props) => {
                                             <p>{t('RESOURCES_SNAT_OPTION')}</p>
                                         </div>
                                         <div className={styles.title}>
-                                            <div>{obj.external}</div>
+                                            <div>{obj.external.name}</div>
                                             <p>{t('RESOURCES_EXTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
