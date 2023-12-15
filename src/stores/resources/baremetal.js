@@ -176,7 +176,7 @@ export default class BareMetalStore extends Base {
     bmcData.username = data.bmcId;
     bmcData.password = data.bmcPassword; 
 
-    jsonData.name = data.name;
+    jsonData.name = data.systemType == "C" ? data.cluserName : data.name;
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
     jsonData.openBMC= bmcData;    
 
@@ -265,15 +265,16 @@ export default class BareMetalStore extends Base {
     const url = 'cmp-apiserver/redfish/v1alpha2/reset'
 
     const jsonData = {};
-    jsonData.address = data.address,
-    jsonData.id = data.username,
+    jsonData.address = "https://"+data.address,
+    jsonData.id = data.id,
     jsonData.password = data.password,
-    jsonData.reseType = data.resetType,
+    jsonData.resetType = data.resetType,
     jsonData.systemId = data.systemId
     
-    console.log("jsonData : "+ JSON.stringify(data))
+    console.log("jsonData : "+ JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
+    console.log("res : "+ JSON.stringify(res))
     return res
   }
 }

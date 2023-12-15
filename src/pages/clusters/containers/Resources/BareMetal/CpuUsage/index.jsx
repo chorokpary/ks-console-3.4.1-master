@@ -87,7 +87,9 @@ const CpuUsage = (props) => {
       let total_arm_count = 0;
 
       await data.map((obj) => {
-        const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+        const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
+
+        const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
         const type = get(type_data, 'metric.machine', '')
         const x86Array = ['x86_64', 'amd']             
         x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
