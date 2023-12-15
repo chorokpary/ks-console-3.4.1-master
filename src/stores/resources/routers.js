@@ -170,6 +170,8 @@ export default class RouterStore extends Base {
 
     jsonData.router = routersData;
 
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+
     // id로 수정해야해서 치환
     params.name = id;
     await this.submitting(

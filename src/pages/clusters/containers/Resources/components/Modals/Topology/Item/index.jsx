@@ -149,23 +149,6 @@ const TopologyItem = (props) => {
     )
   }
 
-  const renderZoon = () => {
-    return (
-      <div className="zoomin_icon">
-        <button id="zoomIn" className="btn_zoom_icon">
-          <i className="ico-plus"></i>
-        </button>
-        <button id="zoomOut" className="btn_zoom_icon">
-          <i className="ico-minus"></i>
-        </button>
-        <button id="resetZoom" className="btn_zoom_icon">
-          <i className="ico-reset"></i>
-        </button>
-        <div id="result"></div>
-      </div>
-    )
-  }
-
    const renderNetworkBarList = () => {
 
     const networkBaritems = networkUnionList.map((obj) => {

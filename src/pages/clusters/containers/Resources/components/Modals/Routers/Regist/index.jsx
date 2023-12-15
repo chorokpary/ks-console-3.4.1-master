@@ -93,26 +93,26 @@ const RegistModal = (props) => {
     internal: setInternalCheckItems,
   };
 
-  const handleSingleCheck = (checked, name, type) => {
+  const handleSingleCheck = (checked, id, type) => {
       if (checked) {
-        setVariables[type](prev => [...prev, name]);
+        setVariables[type](prev => [...prev, id]);
       } else {
-        setVariables[type](stateVariables[type].filter((el) => el !== name));
+        setVariables[type](stateVariables[type].filter((el) => el !== id));
       }
   };
 
   const handleAllCheck = (checked, type) => {
       if (checked) {
         const nameArray = [];
-        dataListVariables[type].forEach((el) => nameArray.push(el.name));
+        dataListVariables[type].forEach((el) => nameArray.push(el.id));
         setVariables[type](nameArray);
       }else {
          setVariables[type]([]);
       }
   }
 
-  const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter((el) => el !== name));
+  const handleDelete = (id, type) => {
+    setVariables[type](stateVariables[type].filter((el) => el !== id));
   };
 
   // 체크 리스트 끝 ==================================================
