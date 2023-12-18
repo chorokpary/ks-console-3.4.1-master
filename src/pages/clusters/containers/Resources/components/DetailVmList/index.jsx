@@ -119,8 +119,10 @@ const DetailVmList = (props) => {
   };
 
   const variablesFilter = (row) => {
-    if (props.variables === 'security_group_objects' || props.variables === 'networks') {
+    if (props.variables === 'security_group_objects') {
       return _.find(row[props.variables], { 'id': props.id })
+    } else if (props.variables === 'networks') {
+      return _.find(row[props.variables], { 'name': props.id })
     } else if (props.variables === 'flavor_object') {
       return row[props.variables].name === props.name
     } else if (props.variables == 'id') {
