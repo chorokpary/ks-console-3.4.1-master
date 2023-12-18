@@ -242,7 +242,7 @@ const DetailVmList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/vms/${obj.name}`}>{obj.name}</Link>
+              <Link to={`/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>{obj.name}</Link>
               <Tooltip content={t('VNC')}>
                 <Icon
                   className="margin-l8"
