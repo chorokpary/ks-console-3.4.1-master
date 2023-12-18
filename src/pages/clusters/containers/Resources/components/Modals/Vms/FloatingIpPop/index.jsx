@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, find, some } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 import { observer, inject } from 'mobx-react';
 
@@ -18,6 +18,7 @@ const FloatingIpModal = (props) => {
   const vmStore = new VmStore();
  
   const vmName = props.store.detail.name;
+  const vmId = props.store.detail.id;
 
   const [networkList, setNetworkList] = useState([]);
   const [floatingList, setFloatingList] = useState([]);
@@ -46,11 +47,11 @@ const FloatingIpModal = (props) => {
       data.name = floatingId,
       data.id = floatingId,
       data.instance_type = 'vm'
-      data.instance_name = vmName
+      data.instance_id = vmId
       data.target_network = networkName
       data.target_ip = networkIp
 
-      // console.log("form data :" + JSON.stringify(data))
+      console.log("form data :" + JSON.stringify(data))
 
       floatingStore.update(data, {name: data.id, ...data }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
@@ -79,12 +80,12 @@ const FloatingIpModal = (props) => {
       const vmNetworkList = (vmNetworks).map((network) => network.name);
 
       // 네트워크 리스트 중 Internal 및 VM에 포함된 네트워크 추출
-      const vmInternalNetworkList = await (networkListData.networks).filter((network) => network.external == false && vmNetworkList.includes(network.name));
+      const vmInternalNetworkList = await (networkListData.networks).filter((network) => network.external == false && vmNetworkList.includes(network.id));
 
       // 고정 ip, interface 추가 
       await vmInternalNetworkList.map((network) => {
         (vmNetworks).map((row) => {
-            if(network.name == row.name){
+            if(network.id == row.name){
             network.network_ip = row.ip;
             network.interface = row.interface;
             }
@@ -94,9 +95,9 @@ const FloatingIpModal = (props) => {
       // VM 이 가지고 있는 internal 네트워크 중 Router 리스트에 포함된 네트워크 리스트
       const vmInRouterInternalList = [];
       await (routerListData.routers).map((router) => {
-        vmInternalNetworkList.map((network) => {
-            if((router.internal).includes(network.name)){
-            vmInRouterInternalList.push(network.name);
+        vmInternalNetworkList.map((network) => {      
+            if(some(router.internal, {id: network.id})){
+            vmInRouterInternalList.push(network.id);
             }
         })        
       })
@@ -105,20 +106,20 @@ const FloatingIpModal = (props) => {
       const vmInRouterData = [];
       await vmInRouterInternalList.map((name) => {
         (routerListData.routers).map((router) => {
-            if((router.internal).includes(name)){
+            if(some(router.internal, {id: name})){
               let jsonData = {};
               jsonData.internal = name;
               jsonData.external = router.external;
               vmInRouterData.push(jsonData);
             }
         })        
-      })
+      }) 
 
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가 
       await vmInRouterData.map((data) => {
         let floatingIpArray = [];
-        (floatingListData.floating_ips).map((floating) => {          
-          if(floating.network == data.external && !!!floating.target_ip){
+        (floatingListData.floating_ips).map((floating) => {       
+          if(floating.network == data.external.id && !!!floating.target_ip){
               let jsonData = {};
               jsonData.id = floating.id;
               jsonData.floating_ip = floating.floating_ip
@@ -137,10 +138,10 @@ const FloatingIpModal = (props) => {
 
   }, [])
 
-  const handleSelect = (name) => {
-
+  const handleSelect = (id) => {
     networkList.map((obj) => {
-      if(obj.name == name){
+      console.log(obj.id +"=="+ id)
+      if(obj.id == id){
         setNetworkName(obj.name)
         setNetworkIp(obj.network_ip)
       }
@@ -149,7 +150,7 @@ const FloatingIpModal = (props) => {
     // 셀렉트 선택 시 셋팅 변경
     if(floatingJsonData.length > 0 ){
       floatingJsonData.map((data) => {
-        if(data.internal == name){
+        if(data.internal == id){
           setFloatingList(data.floating_data);
           if(data.floating_data.length > 0 ){
             setFloatingId(data.floating_data[0].id);
@@ -165,7 +166,7 @@ const FloatingIpModal = (props) => {
   const networkOptions = () => {
     const opt = networkList.map((obj) => ({
       label: obj.network_ip+"/"+obj.name+"/"+obj.interface,
-      value: t(obj.name),
+      value: t(obj.id),
     }))
     return opt
   }

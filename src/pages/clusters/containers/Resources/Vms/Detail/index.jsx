@@ -215,7 +215,6 @@ const VmDetail = (props) => {
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
-    console.log("detail : "+ JSON.stringify(detail))
 
     if (isEmpty(detail)) {
       return
