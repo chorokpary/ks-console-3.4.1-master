@@ -252,7 +252,7 @@ const VmDetail = (props) => {
       },
       {
         name: t('RESOURCES_KEYPAIR'),
-        value: detail.vm.keypair.name,
+        value: get(detail.vm.keypair, "name", "-"),
       },
       {
         name: t('RESOURCES_LOAD_BALANCER'),

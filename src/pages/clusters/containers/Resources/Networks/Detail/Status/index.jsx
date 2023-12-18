@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import { Panel, Text } from 'components/Base'
 import { Icon, Loading } from '@kube-design/components'
 import styles from './index.scss'
+import { Link } from 'react-router-dom'
 
 import RouterStore from 'stores/resources/routers'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
@@ -13,6 +14,7 @@ import LoadBalancerStore from 'stores/resources/loadbalancers'
 const Status = (props) => {
     // console.log("props : "+ JSON.stringify(props))
     const store = props.detailStore;
+    const cluster = props.detailStore?.detail.cluster;
 
     const routerStore = new RouterStore();
     const loadBalancerStore = new LoadBalancerStore();
@@ -81,7 +83,7 @@ const Status = (props) => {
                                             <Icon name="router" size={40} />
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
-                                            <div>{obj.name}</div>
+                                            <div><Link to={`/clusters/${cluster}/routers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                                             <p>{t('NAME')}</p>
                                         </div>
                                         <div className={styles.title}>
@@ -129,7 +131,7 @@ const Status = (props) => {
                                             <Icon name="router" size={40} />
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
-                                            <div>{obj.name}</div>
+                                            <div><Link to={`/clusters/${cluster}/loadBalancers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                                             <p>{t('NAME')}</p>
                                         </div>
                                         <div className={styles.title}>
