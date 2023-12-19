@@ -127,7 +127,7 @@ export default class LoadBalancers extends React.Component {
             },
             {
                 title: t('RESOURCES_NETWORK_NAME'),
-                dataIndex: 'network',
+                dataIndex: 'network.name',
                 isHideable: true,
                 width: 'auto',
             },
