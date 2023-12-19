@@ -106,7 +106,7 @@ const VmPop = ({ title, onOk, store }) => {
     onOk({
       id: fipDetail.id,
       instance_type: 'vm',
-      instance_name: radioExternal,
+      instance_id: radioExternal,
       target_network: network[0],
       target_ip: network[1]
     })
@@ -114,7 +114,7 @@ const VmPop = ({ title, onOk, store }) => {
 
   const handleVmData = (data, idx) => {
     setVmData(data)
-    setRadioExternal(data.name)
+    setRadioExternal(data.id)
     setRadioExternalIdx(idx)
   }
 
@@ -183,7 +183,7 @@ const VmPop = ({ title, onOk, store }) => {
                       <td>
                         <Form.Item >
                           <Radio name="external" value={data.name}
-                            checked={radioExternal === data.name}
+                            checked={radioExternal === data.id}
                             onChange={(e) => { handleVmData(data, idx); }} />
                         </Form.Item>
                       </td>

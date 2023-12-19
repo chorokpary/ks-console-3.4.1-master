@@ -129,12 +129,12 @@ export default class FloatingIp extends React.Component {
             },
             {
                 title: t('RESOURCES_RESOURCE_NAME'),
-                dataIndex: 'instance_name',
+                dataIndex: 'instance_id',
                 isHideable: true,
                 width: 'auto',
-                render: (instance_name) => (
+                render: (instance_id) => (
                     <Avatar
-                        title={instance_name}
+                        title={instance_id}
                     />
                 ),
             },
