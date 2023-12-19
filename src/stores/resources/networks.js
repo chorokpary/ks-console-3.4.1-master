@@ -46,12 +46,12 @@ export default class NetworkStore extends Base {
         return res
     }
     @action
-    async update({ name, ...params }, data) {
+    async update({ id, ...params }, data) {
         const jsonData = {};
         jsonData.network = data;
 
         await this.submitting(
-            request.put(this.getDetailUrl({ name, ...params }), jsonData)
+            request.put(this.getDetailUrl({ id, ...params }), jsonData)
         )
     }
 
