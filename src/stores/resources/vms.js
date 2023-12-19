@@ -250,9 +250,7 @@ export default class VmStore extends Base {
 
     this.isLoading = true
 
-    const url = globals.config.serverlocation == "TB"
-      ? `${this.getResourceUrl(params)}/${params.id}/info`
-      : `${this.getResourceUrl(params)}/${params.name}`;
+    const url = `${this.getResourceUrl(params)}/${params.id}/info`;
 
     const result = await request.get(url)
     const detail = { ...params, ...this.mapper(result), kind: 'vms' }
