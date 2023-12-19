@@ -57,7 +57,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id}, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -97,9 +97,9 @@ export default {
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
         desc: t.html('RESOURCES_DELETE_NETWORK_TIP', {
-          resource: detail.name,
+          resource: detail.id,
         }),
-        resource: detail.name,
+        resource: detail.id,
         store,
         ...props,
       })

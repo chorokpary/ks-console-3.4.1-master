@@ -240,7 +240,7 @@ export default class SecurityGroupStore extends Base {
             return
         }
 
-        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + user.name);
+        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + user.id);
         Promise.all(
             securityDetail.data.security_group.rules.map((rule) => {
                 request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
