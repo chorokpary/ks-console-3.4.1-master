@@ -151,11 +151,10 @@ export default class SecurityGroupStore extends Base {
         let res = await this.submitting(request.post(this.getListUrl(params), data))
         if (res.message === "OK") {
 
-            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + data.security_group.name);
             const jsonData = {};
             const promises = data.security_group.security_group_rules.map(async  (obj) => {
                 const data = {};
-                data.security_group_id = securityDetail.data.security_group.id;
+                data.security_group_id = res.id;
                 data.direction = obj.direction.toLowerCase();
                 data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
                 data.protocol = obj.protocol.toLowerCase();

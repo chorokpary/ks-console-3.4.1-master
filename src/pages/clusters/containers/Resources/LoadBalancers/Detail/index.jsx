@@ -116,7 +116,7 @@ const LoadBalancerDetail = (props) => {
             },
             {
                 name: t('RESOURCES_NETWORK_NAME'),
-                value: detail.lb.network,
+                value: detail.lb.network.name,
             },
             {
                 name: t('RESOURCES_MEMBER_IP'),
