@@ -180,7 +180,6 @@ export default inject('rootStore')(observer(FloatingIpDetail));
 
 const Status = (props) => {
   const detail = get(store.detail, 'floating_ip')
-  console.log(detail)
   if (detail.instance_type == 'vm') {
     return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='id' id={detail.instance_id} />
 

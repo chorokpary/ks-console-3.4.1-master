@@ -152,7 +152,7 @@ export default class LoadBalancerStore extends Base {
             const jsonData = {};
             const promises = data.lb.lb_rule.map(async (obj) => {
                 const ruleData = {};
-                ruleData.lb_id = data.lb.id;
+                ruleData.lb_id = res.id;
                 ruleData.protocol = obj.protocol.toLowerCase();
                 if (obj.portRangeMax.indexOf("-") != -1) {
                     ruleData.port_range_min = obj.portRangeMax.split("-")[0];

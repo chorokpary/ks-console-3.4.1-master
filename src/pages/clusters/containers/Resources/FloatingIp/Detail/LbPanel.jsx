@@ -24,7 +24,7 @@ const LbPanel = (props) => {
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>{obj.network}</div>
+            <div>{obj.network.name}</div>
             <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
@@ -53,7 +53,7 @@ const LbPanel = (props) => {
   return (
     <>
       {lbDetail &&
-        <Panel title={"RESOURCES_LOAD_BALANCER"} >
+        <Panel title={t("RESOURCES_LOAD_BALANCER")} >
           <div className={styles.wrapper}>
             <div
               className={classNames(styles.expandItem, "", {

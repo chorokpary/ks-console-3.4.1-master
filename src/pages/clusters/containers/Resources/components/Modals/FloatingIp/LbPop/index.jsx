@@ -12,6 +12,7 @@ const LbPop = ({ title, onOk, store }) => {
   // Router의 external 이면서
   // 해당 Router의 internal 이
   // LB의 network 인 것.
+
   // router list 중 external이 fip의 network인 것을 찾고,
   // 해당 router 의 internal이 LB list 중 network와 일치하는 것.
 
@@ -49,7 +50,7 @@ const LbPop = ({ title, onOk, store }) => {
   useEffect(() => {
     if (lbList.length > 0 && routerList.length > 0) {
       const internalList = routerList.find((obj) => obj.external.id == fipDetail.network)?.internal || [];
-      const list = lbList.filter((obj) => internalList.find(it => it.id == obj.network))
+      const list = lbList.filter((obj) => internalList.find(it => it.id == obj.network.id))
       setList(list)
       if (list.length > 0) handleLbData(list[0])
     }
@@ -60,8 +61,8 @@ const LbPop = ({ title, onOk, store }) => {
       {
         id: fipDetail.id,
         instance_type: 'lb',
-        instance_name: lbData.name,
-        target_network: lbData.network,
+        instance_id: lbData.id,
+        target_network: lbData.network.id,
         target_ip: lbData.virtual_ip
       })
   }
@@ -80,7 +81,6 @@ const LbPop = ({ title, onOk, store }) => {
     ));
     return arr;
   }
-
 
   return (
     <>
@@ -130,7 +130,7 @@ const LbPop = ({ title, onOk, store }) => {
                             onChange={(e) => { handleLbData(data); }} />
                         </td>
                         <td>{data.name}</td>
-                        <td>{data.network}</td>
+                        <td>{data.network.name}</td>
                         <td>{data.virtual_ip}</td>
                       </tr>
                     ))}
