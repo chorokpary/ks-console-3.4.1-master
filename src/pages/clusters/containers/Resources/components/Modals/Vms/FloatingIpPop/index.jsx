@@ -28,7 +28,7 @@ const FloatingIpModal = (props) => {
   const [networkIp, setNetworkIp] = useState(t('RESOURCES_SELECT')); 
   const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT')); 
 
-  const [networkName, setNetworkName] = useState(); 
+  const [networkId, setNetworkId] = useState(); 
   const [floatingId, setFloatingId] = useState(); 
 
   const handleOk = () => {
@@ -48,10 +48,10 @@ const FloatingIpModal = (props) => {
       data.id = floatingId,
       data.instance_type = 'vm'
       data.instance_id = vmId
-      data.target_network = networkName
+      data.target_network = networkId
       data.target_ip = networkIp
 
-      console.log("form data :" + JSON.stringify(data))
+      // console.log("form data :" + JSON.stringify(data))
 
       floatingStore.update(data, {name: data.id, ...data }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
@@ -140,9 +140,8 @@ const FloatingIpModal = (props) => {
 
   const handleSelect = (id) => {
     networkList.map((obj) => {
-      console.log(obj.id +"=="+ id)
       if(obj.id == id){
-        setNetworkName(obj.name)
+        setNetworkId(obj.id)
         setNetworkIp(obj.network_ip)
       }
     })
