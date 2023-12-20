@@ -61,14 +61,15 @@ const VmPop = ({ title, onOk, store }) => {
   useEffect(() => {
     if (fipList.length > 0 && vmDataList.length > 0) {
       const arr = new Set();
+      console.log(fipList)
       fipList.map(obj => {
         if (obj.target_ip != null && obj.instance_type == 'vm') {
-          arr.add(obj.instance_name)
+          arr.add(obj.instance_id)
         }
       })
       const vmArr = new Set();
       vmDataList.map(obj => {
-        if (!arr.has(obj.name)) {
+        if (!arr.has(obj.id)) {
           vmArr.add(obj)
         }
       })
