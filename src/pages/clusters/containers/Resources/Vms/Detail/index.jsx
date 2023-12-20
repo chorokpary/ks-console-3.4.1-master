@@ -41,9 +41,9 @@ const VmDetail = (props) => {
   const vmName = props.match.params.name;
   const vmId = props.match.params.id;
   const floatingData = toJS(store.floatingList)
-  const floatingId = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.id)[0]
-  const floatingIp = floatingData?.filter((row) => row.instance_name == vmName).map((el) => el.floating_ip)[0]
-  
+  const floatingId = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.id)[0]
+  const floatingIp = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.floating_ip)[0]
+
   const fnOpenVncPopup = () => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://" + location.hostname + ":30020";
@@ -130,7 +130,7 @@ const VmDetail = (props) => {
       icon: 'eye',
       text: t('RESOURCES_CONSOLE_LOG'),
       action: 'view',
-      onClick: async () => {        
+      onClick: async () => {
         const vmLog = await store.fetchVmLog(props.match.params);
         props.rootStore.triggerAction('vm.log.view', {
           vmlog: vmLog,
@@ -155,7 +155,7 @@ const VmDetail = (props) => {
           data: data,
           store: store,
           title: t('RESOURCES_MIGRATION'),
-          desc: t('RESOURCES_MIGRATION_TIP')+"\n"+t('RESOURCES_VM_MIGRATION_DESC'),
+          desc: t('RESOURCES_MIGRATION_TIP') + "\n" + t('RESOURCES_VM_MIGRATION_DESC'),
         },)
 
       },
@@ -284,7 +284,7 @@ const VmDetail = (props) => {
     return <Icon name="templet" size={40} />
   }
 
-const sideProps = {
+  const sideProps = {
     icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),

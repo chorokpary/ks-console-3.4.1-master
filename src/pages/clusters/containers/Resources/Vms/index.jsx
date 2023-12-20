@@ -263,17 +263,17 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: (image, record) => {
           const icon = "ico-os-" + record.image_object?.distro_type;
-          return (            
+          return (
             <Link to={`/clusters/${cluster}/images/${image}`}>
-            <i
-              style={{
-                backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                width: '40px',
-                height: '40px'
-              }}></i>
-              </Link>           
+              <i
+                style={{
+                  backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  width: '40px',
+                  height: '40px'
+                }}></i>
+            </Link>
           )
         },
       },
@@ -317,9 +317,9 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (floating, record) => {
-          
+
           const floatingList = this.props.store.floatingIpList;
-          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == record.name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
+          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_id == record.id).map((el) => <p key={el.id}>{el.floating_ip}</p>);
 
           return floatingIp == "" ? "-" : floatingIp
         },
@@ -332,9 +332,9 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: (node) => {
           // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
-          const nodeLink = node == "N/A" ? node : node; 
-          return (            
-            nodeLink   
+          const nodeLink = node == "N/A" ? node : node;
+          return (
+            nodeLink
           )
         },
       },
