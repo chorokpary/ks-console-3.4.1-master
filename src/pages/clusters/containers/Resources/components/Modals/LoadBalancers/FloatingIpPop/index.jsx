@@ -16,16 +16,16 @@ const FloatingIpModal = (props) => {
   const [formData, setFormData] = useState({});
 
   const loadBalancerStore = new LoadBalancerStore();
- 
-  const lbName = props.store.detail.name;
+
+  const lbId = props.store.detail.id;
 
   const [floatingList, setFloatingList] = useState([]);
 
-  const [vIp, setVIp] = useState(''); 
-  const [networkName, setNetworkName] = useState(''); 
-  const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT')); 
+  const [vIp, setVIp] = useState('');
+  const [networkName, setNetworkName] = useState('');
+  const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT'));
 
-  const [floatingId, setFloatingId] = useState(); 
+  const [floatingId, setFloatingId] = useState();
 
   const handleOk = () => {
 
@@ -33,21 +33,21 @@ const FloatingIpModal = (props) => {
 
     form.current.validator(() => {
 
-      if(floatingId == undefined){
+      if (floatingId == undefined) {
         return false;
       }
 
       const floatingStore = new FloatingIpStore();
 
       const data = {};
-      data.name = floatingId,
-      data.id = floatingId,
+      data.name = floatingId
+      data.id = floatingId
       data.instance_type = 'lb'
-      data.instance_name = lbName
+      data.instance_id = lbId
       data.target_network = networkName
       data.target_ip = vIp
-      console.log(data)
-      floatingStore.update(data, {name: data.id, ...data }).then(() => {
+
+      floatingStore.update(data, { name: data.id, ...data }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
         closeModal();
@@ -67,19 +67,19 @@ const FloatingIpModal = (props) => {
       const floatingListData = await loadBalancerStore.fetchFloatingList();
 
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가 
-        let floatingIpArray = [];
-        (floatingListData.floating_ips).map((floating) => {          
-          if(!!!floating.target_ip){
-              let jsonData = {};
-              jsonData.id = floating.id;
-              jsonData.floating_ip = floating.floating_ip
-              jsonData.network = floating.network
-              floatingIpArray.push(jsonData);
-          }
-        })
+      let floatingIpArray = [];
+      (floatingListData.floating_ips).map((floating) => {
+        if (!!!floating.target_ip) {
+          let jsonData = {};
+          jsonData.id = floating.id;
+          jsonData.floating_ip = floating.floating_ip
+          jsonData.network = floating.network
+          floatingIpArray.push(jsonData);
+        }
+      })
 
-        setFloatingList(floatingIpArray);
-        setVIp(props.store.detail.lb.virtual_ip)
+      setFloatingList(floatingIpArray);
+      setVIp(props.store.detail.lb.virtual_ip)
     };
 
     getCreateData();
@@ -91,24 +91,24 @@ const FloatingIpModal = (props) => {
       value: t(obj.floating_ip),
     }))
     return opt
-    }
+  }
 
-    const handleSelect = (ip) => {
-        // 셀렉트 선택 시 셋팅 변경
-        if (floatingList.length > 0) {
-            floatingList.map((data) => {
-                if (data.floating_ip === ip) {
-                    setFloatingId(data.id);
-                    setFloatingIp(data.floating_ip);
-                    setNetworkName(data.network)
-                }
-            })
+  const handleSelect = (ip) => {
+    // 셀렉트 선택 시 셋팅 변경
+    if (floatingList.length > 0) {
+      floatingList.map((data) => {
+        if (data.floating_ip === ip) {
+          setFloatingId(data.id);
+          setFloatingIp(data.floating_ip);
+          setNetworkName(data.network)
         }
+      })
     }
+  }
 
   // Validation 시작 ==================================================
   const floatingValidator = (rule, value, callback) => {
-    if(value == t('RESOURCES_SELECT') || value == "select"){
+    if (value == t('RESOURCES_SELECT') || value == "select") {
       return callback({ message: t('RESOURCES_SELECT_FLOATING_IP_TIP') })
     }
     callback()
@@ -130,7 +130,7 @@ const FloatingIpModal = (props) => {
           <Form.Item
             label={t('VIP')}
           >
-            <Input type="text" value={vIp} disabled/>
+            <Input type="text" value={vIp} disabled />
           </Form.Item>
 
           <Form.Item
@@ -139,7 +139,7 @@ const FloatingIpModal = (props) => {
           >
             <Select
               name="floatingIp"
-              options={floatingOptions()} 
+              options={floatingOptions()}
               onChange={(e) => handleSelect(e)}
               defaultValue={t('RESOURCES_SELECT')}
             />

@@ -56,9 +56,10 @@ const ModifyModal = (props) => {
 
             if (members.length > 0) {
                 const { data } = form.current.props;
-                const { id } = props.store.detail
+                const { id, lb } = props.store.detail
                 data.members = members;
                 data.id = id;
+                data.network = lb.network.id
                 onOk({ lb: data })
             }
 
