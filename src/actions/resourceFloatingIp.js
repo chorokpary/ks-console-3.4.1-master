@@ -161,6 +161,7 @@ export default {
             devops,
             ...props
         }) {
+            console.log(detail)
             const modal = Modal.open({
                 onOk: () => {
                     store
@@ -172,8 +173,11 @@ export default {
                         })
                 },
                 modal: DeleteModal,
-                title: t('RESOURCES_DELETE_FLOATING_IP'),
-                desc: t('RESOURCES_DELETE_DESC'),
+                title: t('RESOURCES_DELETE'),
+                desc: t.html('RESOURCES_DELETE_FLOATING_IP_TIP', {
+                    resource: detail.network_alias,
+                }),
+                resource: detail.network_alias,
                 module: store.module,
                 detail,
                 store,
@@ -184,7 +188,13 @@ export default {
     'floatingIp.remove.batch': {
         on({ store, cluster, workspace, namespace, success, devops, ...props }) {
             const rowKeys = toJS(store.list.selectedRowKeys)
-            const usernames = rowKeys.join(', ')
+            let arr = new Array
+            store.dataList.map(obj => {
+                if (rowKeys.includes(obj.id)) {
+                    arr.push(obj.network_alias)
+                }
+            })
+            const names = arr.join(', ')
             const modal = Modal.open({
                 onOk: () => {
                     store
@@ -197,14 +207,15 @@ export default {
                 },
                 modal: DeleteModal,
                 title:
-                    usernames.split(', ').length === 1
-                        ? t('RESOURCES_DELETE_FLOATING_IP')
-                        : t('RESOURCES_DELETE_MULTIPLE_FLOATING_IP'),
+                    names.length === 1
+                        ? t('RESOURCES_DELETE')
+                        : t('RESOURCES_DELETE_MULTIPLE'),
                 desc:
-                    usernames.split(', ').length === 1
-                        ? t.html('RESOURCES_DELETE_SELECT_FLOATING_IP_DESC', { resource: usernames })
-                        : t.html('RESOURCES_DELETE_MULTIPLE_SELECT_FLOATING_IP_DESC', { resource: usernames }),
-                module: usernames,
+                    names.length === 1
+                        ? t.html('RESOURCES_DELETE_FLOATING_IP_TIP', { resource: names })
+                        : t.html('RESOURCES_DELETE_FLOATING_IP_TIP', { resource: names }),
+                module: names,
+                resource: names,
                 store,
                 ...props,
             })
