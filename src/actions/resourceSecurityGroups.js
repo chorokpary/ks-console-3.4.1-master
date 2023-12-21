@@ -73,9 +73,9 @@ export default {
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
         desc: t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', {
-          resource: detail.id,
+          resource: detail.name,
         }),
-        resource: detail.id,
+        resource: detail.name,
         store,
         ...props,
       })

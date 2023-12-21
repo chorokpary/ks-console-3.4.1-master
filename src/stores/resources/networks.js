@@ -108,6 +108,8 @@ export default class NetworkStore extends Base {
 
     @action
     delete(user) {
+        // id로 삭제해야해서 치환
+        user.name = user.id;
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
