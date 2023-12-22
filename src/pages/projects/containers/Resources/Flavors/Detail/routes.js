@@ -18,16 +18,16 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'projects/containers/Resources/Keypairs/Detail/Status'
+import Status from 'projects/containers/Resources/Flavors/Detail/Status'
 
-const PATH = '/:workspace/clusters/:cluster/projects/:namespace/keypairs/:name/:id'
+const PATH = '/:workspace/clusters/:cluster/projects/:namespace/flavors/:name/'
 
 export default [
-  {
-    path: `${PATH}/status`,
-    title: t('RESOURCES_STATE'),
-    component: Status,
-    exact: true,
-  },
-  getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
+    {
+        path: `${PATH}/status`,
+        title: t('RESOURCES_STATE'),
+        component: Status,
+        exact: true,
+    },
+    getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
 ]

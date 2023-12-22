@@ -39,9 +39,11 @@ import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 
 //MM3 Detail Page
 import KeypairDetail from '../containers/Resources/Keypairs/Detail'
+import FlavorDetail from '../containers/Resources/Flavors/Detail'
+
 // import ImageDetail from '../containers/Resources/Images/Detail'
 // import RouterDetail from '../containers/Resources/Routers/Detail'
-// import FlavorDetail from '../containers/Resources/Flavors/Detail'
+
 // import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 // import NetworkDetail from '../containers/Resources/Networks/Detail'
 // import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
@@ -141,4 +143,9 @@ export default PATH => [
     path: `${PATH}/keypairs/:name/:id`,
     component: KeypairDetail,
   },
+  {
+    path: `${PATH}/flavors/:name`,
+    component: FlavorDetail,
+  },
+  
 ]

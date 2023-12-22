@@ -38,7 +38,9 @@ const DetailVmList = (props) => {
   const store = new VmStore();
   const customStore = new CustomStore();
 
+  const workspace = props.detailStore?.detail.workspace;
   const cluster = props.detailStore?.detail.cluster;
+  const namespace = props.detailStore?.detail.namespace;
 
   const [vmDataList, setVmDataList] = useState([]);
   const [vmSliceDataList, setVmSliceDataList] = useState([]);
@@ -242,7 +244,7 @@ const DetailVmList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>{obj.name}</Link>
+              <Link to={`/${workspace}/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>{obj.name}</Link>
               <Tooltip content={t('VNC')}>
                 <Icon
                   className="margin-l8"

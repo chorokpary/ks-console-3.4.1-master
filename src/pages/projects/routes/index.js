@@ -54,10 +54,11 @@ import Gateway from '../containers/Gateway'
 
 import Vms from '../containers/Resources/Vms'
 import Keypairs from '../containers/Resources/Keypairs'
+import Flavors from '../containers/Resources/Flavors'
 
 // import Images from '../containers/Resources/Images'
 // import Routers from '../containers/Resources/Routers'
-// import Flavors from '../containers/Resources/Flavors'
+
 // import SecurityGroups from '../containers/Resources/SecurityGroups'
 // import Networks from '../containers/Resources/Networks'
 // import FloatingIp from '../containers/Resources/FloatingIp'
@@ -171,10 +172,16 @@ export default [
         exact: true,
       },
       {
-      path: `${PATH}/keypairs`,
-      component: Keypairs,
-      exact: true,
+        path: `${PATH}/keypairs`,
+        component: Keypairs,
+        exact: true,
       },
+      {
+        path: `${PATH}/flavors`,
+        component: Flavors,
+        exact: true,
+      },
+      
       
 
       getIndexRoute({
