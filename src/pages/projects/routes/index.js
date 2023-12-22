@@ -53,6 +53,21 @@ import getDetailPath from './detail'
 import Gateway from '../containers/Gateway'
 
 import Vms from '../containers/Resources/Vms'
+import Keypairs from '../containers/Resources/Keypairs'
+
+// import Images from '../containers/Resources/Images'
+// import Routers from '../containers/Resources/Routers'
+// import Flavors from '../containers/Resources/Flavors'
+// import SecurityGroups from '../containers/Resources/SecurityGroups'
+// import Networks from '../containers/Resources/Networks'
+// import FloatingIp from '../containers/Resources/FloatingIp'
+// import ResourcesVolumes from '../containers/Resources/Volumes'
+// import Sriov from '../containers/Resources/Sriov'
+// import HostDevices from '../containers/Resources/HostDevices'
+// import MediatedDevices from '../containers/Resources/MediatedDevices'
+// import LoadBalancers from '../containers/Resources/LoadBalancers'
+
+
 
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
@@ -150,12 +165,17 @@ export default [
         component: CustomMonitoring,
         exact: true,
       },
-
       {
         path: `${PATH}/vms`,
         component: Vms,
         exact: true,
       },
+      {
+      path: `${PATH}/keypairs`,
+      component: Keypairs,
+      exact: true,
+      },
+      
 
       getIndexRoute({
         path: `${PATH}/workloads`,

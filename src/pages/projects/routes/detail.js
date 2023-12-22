@@ -37,6 +37,25 @@ import RoleDetail from '../containers/Roles/Detail'
 import ImageBuilderDetail from '../containers/ImageBuilder/Detail'
 import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 
+//MM3 Detail Page
+import KeypairDetail from '../containers/Resources/Keypairs/Detail'
+// import ImageDetail from '../containers/Resources/Images/Detail'
+// import RouterDetail from '../containers/Resources/Routers/Detail'
+// import FlavorDetail from '../containers/Resources/Flavors/Detail'
+// import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
+// import NetworkDetail from '../containers/Resources/Networks/Detail'
+// import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
+// import VmDetail from '../containers/Resources/Vms/Detail'
+// import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
+// import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
+// import VolumeDetail from '../containers/Resources/Volumes/Detail'
+// import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
+// import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
+// import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
+// import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
+// import SrIovDetail from '../containers/Resources/Sriov/Detail'
+
+
 export default PATH => [
   {
     path: `${PATH}/deployments/:name`,
@@ -117,5 +136,9 @@ export default PATH => [
   {
     path: [`${PATH}/alert-rules/builtin/:name`, `${PATH}/alert-rules/:name`],
     component: AlertPoliciesDetail,
+  },
+  {
+    path: `${PATH}/keypairs/:name/:id`,
+    component: KeypairDetail,
   },
 ]

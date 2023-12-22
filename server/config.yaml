@@ -50,8 +50,6 @@ client:
   title: ARM CMP
   description: ""
   encryptKey: kubesphere
-  # serverlocation: "86"
-  serverlocation: "TB"
 
   version:
     kubesphere: 3.1.0
@@ -528,7 +526,88 @@ client:
           showInDisable: true   
           children: 
             - { name: vms, title: "가상머신"}
-            - { name: containerResource, title: "KaaS" }
+        - name: computing
+          title: "컴퓨팅 설정"
+          icon: computing-setting
+          showInDisable: true
+          children:            
+            - {
+              name: networks,
+              title: 네트워크,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: securityGroups,
+              title: "보안그룹",
+              skipAuth: true,
+              showInDisable: true,
+            }  
+            - {
+              name: routers,
+              title: 가상 라우터,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: floatingip,
+              title: "플로팅 IP",
+              skipAuth: true,
+              showInDisable: true,
+            }   
+            - {
+             name: loadBalancers,
+             title: "로드 밸런서",
+             skipAuth: true,
+             showInDisable: true,
+            }
+            - {
+              name: sriovs,
+              title: "SR-IOV 네트워크",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: resourcesVolumes,
+              title: "볼륨",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+             name: hostDevices,
+             title: "호스트 디바이스",
+             skipAuth: true,
+             showInDisable: true,
+            }
+            - {
+             name: mediatedDevices,
+             title: "Mediated 디바이스",
+             skipAuth: true,
+             showInDisable: true,
+            }          
+        - name: resources
+          title: "리소스 템플릿"
+          icon: resource
+          showInDisable: true   
+          children: 
+            - {
+              name: flavors,
+              title: "Flavor",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: keypairs,
+              title: "키페어",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: images,
+              title: 가상머신 이미지,
+              skipAuth: true,
+              showInDisable: true,
+            }                 
         - name: storage
           title: STORAGE
           icon: database
