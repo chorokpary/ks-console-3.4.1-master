@@ -20,12 +20,13 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status, Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import { cloneDeep, get, isEmpty, omit } from 'lodash'
 import { Link } from 'react-router-dom'
-import { getLocalTime } from 'utils'
+import { getLocalTime, showNameAndAlias } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 import { Dropdown, Menu, Button, Notify, Icon } from '@kube-design/components'
 
@@ -33,11 +34,12 @@ import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
-@withList({
+@withClusterList({
   store: new VmStore(),
   module: 'vms',
   authKey: 'vms',
   name: t('RESOURCES_VM'),
+  rowKey: 'id'
 })
 export default class Vms extends React.Component {
 
@@ -234,12 +236,24 @@ export default class Vms extends React.Component {
                 />
               </div>
               <div>
-                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}`}>{name} </Link>
+                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}/${record.id}`}>{name} </Link>
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
             </div>
           )
         },
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}`}>
+            {showNameAndAlias(project, 'project')}
+          </Link>
+        ),
       },
       {
         title: t('RESOURCES_IMAGE'),
@@ -248,18 +262,18 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (image, record) => {
-          const icon = "ico-os-" + record.image_detail?.distro_type;
-          return (            
+          const icon = "ico-os-" + record.image_object?.distro_type;
+          return (
             <Link to={`/clusters/${cluster}/images/${image}`}>
-            <i
-              style={{
-                backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                width: '40px',
-                height: '40px'
-              }}></i>
-              </Link>           
+              <i
+                style={{
+                  backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  width: '40px',
+                  height: '40px'
+                }}></i>
+            </Link>
           )
         },
       },
@@ -270,7 +284,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (cpuType, record) => {
-          const arch_type = <p>{record.image_detail?.arch_type}</p>
+          const arch_type = <p>{record.image_object?.arch_type}</p>
           return arch_type
         },
       },
@@ -303,9 +317,9 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (floating, record) => {
-          
+
           const floatingList = this.props.store.floatingIpList;
-          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_name == record.name).map((el) => <p key={el.id}>{el.floating_ip}</p>);
+          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_id == record.id).map((el) => <p key={el.id}>{el.floating_ip}</p>);
 
           return floatingIp == "" ? "-" : floatingIp
         },
@@ -318,22 +332,22 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: (node) => {
           // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
-          const nodeLink = node == "N/A" ? node : node; 
-          return (            
-            nodeLink   
+          const nodeLink = node == "N/A" ? node : node;
+          return (
+            nodeLink
           )
         },
       },
       {
         title: t('RESOURCES_SECURITY_GROUP'),
-        dataIndex: 'security_groups',
+        dataIndex: 'security_group_objects',
         isHideable: true,
         search: true,
         width: 'auto',
-        render: security => {
+        render: security_group_objects => {
           let securityGroupText = ""
-          if (!!security) {
-            securityGroupText = security.length > 1 ? security[0] + " 외 " + (security.length - 1) + "개" : security[0]
+          if (!!security_group_objects) {
+            securityGroupText = security_group_objects.length > 1 ? security_group_objects[0].name + " 외 " + (security_group_objects.length - 1) + "개" : security_group_objects.length == 1 ? security_group_objects[0].name : "-"
           } else {
             securityGroupText = ""
           }
@@ -355,7 +369,7 @@ export default class Vms extends React.Component {
             return (
               <div>
                 <Dropdown content={<Menu>
-                  {this.fnGetActionColumn(state, record.name)}
+                  {this.fnGetActionColumn(state, record.id)}
                 </Menu>}>
                   <div className={styles.iconwrapper}>
                     <i className={styles[`ico-status-${state.toLowerCase()}`]} /><p>{state}</p>
@@ -388,7 +402,7 @@ export default class Vms extends React.Component {
     ]
   }
 
-  handleVmAction = (action, state, vmName) => {
+  handleVmAction = (action, state, vmId) => {
 
     if ("Stopped" == state && "pause" == action) {
       Notify.warning(t('RESOURCES_STOPED_PAUSE_DESC'))
@@ -402,7 +416,7 @@ export default class Vms extends React.Component {
     const { getData, trigger } = this.props
 
     const data = {};
-    data.vmName = vmName;
+    data.vmId = vmId;
     data.state = state;
     data.actionType = action;
 
@@ -413,26 +427,26 @@ export default class Vms extends React.Component {
     },)
   }
 
-  fnGetActionColumn = (state, vmName) => {
+  fnGetActionColumn = (state, vmId) => {
     let elements = "";
     elements =
       <>
         {/* Stopped */}
         {state == "Stopped" &&
-          <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmName)}>
+          <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmId)}>
             <i className={styles['ico-quick-start']}></i><span>{t('RESOURCES_START')}</span>
           </Menu.MenuItem>
         }
         {/* Running */}
         {state == "Running" &&
           <>
-            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmId)}>
               <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmName)}>
+            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmId)}>
               <i className={styles['ico-quick-pause']}></i><span>{t('RESOURCES_PAUSED_JOONGI')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmId)}>
               <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
@@ -440,13 +454,13 @@ export default class Vms extends React.Component {
         {/* Paused */}
         {state == "Paused" &&
           <>
-            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmName)}>
+            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmId)}>
               <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmName)}>
+            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmId)}>
               <i className={styles['ico-quick-unpause']}></i><span>{t('RESOURCES_UNPAUSE')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmName)}>
+            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmId)}>
               <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
@@ -477,7 +491,6 @@ export default class Vms extends React.Component {
   }
 
   handleFetch = (params, refresh) => {
-    console.log(params)
     this.routing.query(params, refresh)
   }
 
@@ -508,7 +521,7 @@ export default class Vms extends React.Component {
           title={t('RESOURCES_VM')}
           description={t('RESOURCES_VM_DESC')}
         />
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}

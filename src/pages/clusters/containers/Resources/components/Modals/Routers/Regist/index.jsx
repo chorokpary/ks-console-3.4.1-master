@@ -1,7 +1,9 @@
 import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
-import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from '@kube-design/components'
+import { ProjectSelect } from 'components/Inputs'
+import { Form, Input, Select, TextArea, Button, Tooltip, Column, Columns, Radio, Checkbox } from '@kube-design/components'
+
 import { Modal } from 'components/Base'
 
 import classnames from 'classnames'
@@ -25,6 +27,9 @@ const RegistModal = (props) => {
   const [radioSnatType, setRadioSnatType] = useState("F");
   const [radioExternal, setRadioExternal] = useState("");
 
+  const [projectName, setProjectName] = useState();
+  
+
   const handleOk = () => {
     const onOk  = props.onOk;
 
@@ -34,7 +39,8 @@ const RegistModal = (props) => {
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
       data.external = radioExternal;
-
+      data.project = projectName;
+      console.log("data : "+ JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -76,7 +82,7 @@ const RegistModal = (props) => {
   const [internalCheckItems, setInternalCheckItems] = useState([]);
 
   const dataListVariables = {
-    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))),
+    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))),
   };
 
   const stateVariables = {
@@ -87,29 +93,45 @@ const RegistModal = (props) => {
     internal: setInternalCheckItems,
   };
 
-  const handleSingleCheck = (checked, name, type) => {
+  const handleSingleCheck = (checked, id, type) => {
       if (checked) {
-        setVariables[type](prev => [...prev, name]);
+        setVariables[type](prev => [...prev, id]);
       } else {
-        setVariables[type](stateVariables[type].filter((el) => el !== name));
+        setVariables[type](stateVariables[type].filter((el) => el !== id));
       }
   };
 
   const handleAllCheck = (checked, type) => {
       if (checked) {
         const nameArray = [];
-        dataListVariables[type].forEach((el) => nameArray.push(el.name));
+        dataListVariables[type].forEach((el) => nameArray.push(el.id));
         setVariables[type](nameArray);
       }else {
          setVariables[type]([]);
       }
   }
 
-  const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter((el) => el !== name));
+  const handleDelete = (id, type) => {
+    setVariables[type](stateVariables[type].filter((el) => el !== id));
   };
 
   // 체크 리스트 끝 ==================================================
+
+   // Validation 시작 ==================================================
+  const nameValidator = (rule, value, callback) => {
+    
+    const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+  
+    if (value == undefined) {
+      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
+    } else {
+      if (!regexName.test(value)) {
+        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
+      }
+    }
+    callback()
+  }
+   // Validation 끝 ==================================================
   
 
   return (
@@ -123,19 +145,41 @@ const RegistModal = (props) => {
           visible={modelView}
         >
           <Form data={formData} ref={form}>
-            
-            <Form.Item
-                label={t('RESOURCES_NAME')}
-                rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
-                desc={t('NAME_DESC')}
-              >
-              <Input
-                name="routerName"
-                autoFocus={true}
-                maxLength={63}
-                style={{ maxWidth: 'none' }}
-              />   
-            </Form.Item>
+
+            <Columns>
+              <Column>
+                  <Form.Item
+                      label={t('RESOURCES_NAME')}
+                      rules={[{ required: true, validator: nameValidator }]}
+                      desc={t('NAME_DESC')}
+                  >
+                      <Input
+                          name="routerName"
+                          autoFocus={true}
+                          maxLength={63}
+                          style={{ maxWidth: 'none' }}
+                      />
+                  </Form.Item>
+              </Column>
+              {!props.namespace && (
+                  <Column>
+                      <Form.Item
+                          label={t('PROJECT')}
+                          desc={t('SELECT_PROJECT_DESC')}
+                          rules={[
+                              { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                          ]}
+                      >
+                          <ProjectSelect
+                              name="metadata.namespace"
+                              cluster={props.cluster}
+                              onChange={(e) => setProjectName(e)}
+                          />
+                      </Form.Item>
+                  </Column>
+              )}
+            </Columns>
+
             <Form.Item label={t('RESOURCES_INTERNAL_NETWORK')} >
             <div className={styles.wrapper}>
               {stateVariables['internal'].length > 0 &&
@@ -168,18 +212,18 @@ const RegistModal = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).length &&
+                        {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).length &&
                           <tr>
                             <td colSpan="6" className="no-data">
                               <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                             </td>
                           </tr>
                         }
-                        {internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).map((data, key) => {
-                            return <tr key={data.name}>
+                        {internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).map((data, key) => {
+                            return <tr key={data.id}>
                             <td>
-                              <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
-                              onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
+                              <Checkbox name={`select-${data.id}`} checked={stateVariables['internal'].includes(data.id) ? true : false}
+                              onChange={(checked) => handleSingleCheck(checked, data.id, "internal")} />
                             </td>
                             <td>{data.name}</td>
                             <td>{(data.type).toUpperCase()}</td>
@@ -191,8 +235,10 @@ const RegistModal = (props) => {
                       </tbody>
                   </table> 
                   <div className={styles.removeCheckWrapper}>
-                    {internalCheckItems?.map((name) => 
-                    <span key={name}><Button icon="close" onClick={() => handleDelete(name, "internal")}>{name}</Button> </span>
+                    {internalCheckItems?.map((id) => {
+                        const name = internalNetworkList?.filter((data) => data.id == id).map(item => item.name)[0]
+                       return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "internal")}>{name}</Button> </span> 
+                      }                    
                     )}                      
                   </div>
                 </div>
@@ -227,18 +273,18 @@ const RegistModal = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).length &&
+                        {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).length &&
                           <tr>
                             <td colSpan="6" className="no-data">
                               <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                             </td>
                           </tr>
                         }
-                        {externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).map((data) => {
+                        {externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).map((data) => {
                           return <tr key={data.name}>
                             <td>
-                              <Radio name="external" value={data.name} checked={radioExternal === data.name} 
-                              onChange={(e) => {setRadioExternal(data.name);}}/>
+                              <Radio name="external" value={data.id} checked={radioExternal === data.id} 
+                              onChange={(e) => {setRadioExternal(data.id);}}/>
                             </td>
                             <td>{data.name}</td>
                             <td>{(data.type).toUpperCase()}</td>

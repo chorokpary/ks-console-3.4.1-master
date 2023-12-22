@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
@@ -33,11 +34,12 @@ import NetworkStore from 'stores/resources/networks'
 
 import styles from './index.scss'
 
-@withList({
+@withClusterList({
   store: new NetworkStore(),
   module: 'networks',
   authKey: 'networks',
   name: t('RESOURCES_NETWORK'),
+  rowKey: 'id'
 })
 export default class Networks extends React.Component {
 
@@ -111,14 +113,20 @@ export default class Networks extends React.Component {
         title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
-        render: name => (
+        render: (name, item) => (
           <Avatar
             icon="network-duotone"
             iconSize={40}
-            to={`/clusters/${cluster}/networks/${name}`}
+            to={`/clusters/${cluster}/networks/${name}/${item.id}`}
             title={name}
           />
         ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
       },
       {
         title: t('RESOURCES_NETWORK_TYPE'),
@@ -198,7 +206,7 @@ export default class Networks extends React.Component {
             </div>
           </div>
         </div>    
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           tableActions={this.tableActions}

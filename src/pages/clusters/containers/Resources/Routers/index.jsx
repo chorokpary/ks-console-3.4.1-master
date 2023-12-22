@@ -20,19 +20,22 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import ResourceTable from 'clusters/components/ResourceTable'
 
-import { getLocalTime } from 'utils'
+import { Link } from 'react-router-dom'
+import { getLocalTime, showNameAndAlias } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import RouterStore from 'stores/resources/routers'
 
-@withList({
+@withClusterList({
   store: new RouterStore(),
   module: 'routers',
   authKey: 'routers',
   name: t('RESOURCES_VROUTER'),
+  rowKey: 'id'
 })
 export default class Routers extends React.Component {
  
@@ -109,13 +112,28 @@ export default class Routers extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
-          <Avatar
-            icon="router"
-            iconSize={40}
-            to={`/clusters/${cluster}/routers/${name}`}
-            title={name}
-          />
+        render: (name, record) => {
+          return (
+            <Avatar
+              icon="router"
+              iconSize={40}
+              to={`/clusters/${cluster}/routers/${name}/${record.id}`}
+              title={name}
+            />
+          )
+        }
+        
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}`}>
+            {showNameAndAlias(project, 'project')}
+          </Link>
         ),
       },
       {
@@ -142,7 +160,7 @@ export default class Routers extends React.Component {
         search: true,
         width: 'auto',
         render: internal => (
-          internal.map((name) => (<p>{name}</p>))
+          internal.map((item) => (<p>{item.name}</p>))
         ),
       },
       {
@@ -151,6 +169,9 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: external => (
+          <p>{external.name}</p>
+        ),
       },
       {
         title: t('RESOURCES_REGIST_DATE'),
@@ -169,7 +190,7 @@ export default class Routers extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {
@@ -201,7 +222,7 @@ export default class Routers extends React.Component {
         title={t('RESOURCES_VROUTER')}
         description={t('RESOURCES_VROUTER_DESC')}
       />
-      <Table
+      <ResourceTable
         {...tableProps}
         emptyProps={this.emptyProps}
         className={'table-2-6 table-4-3'}

@@ -33,10 +33,11 @@ const ModifyModal = (props) => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
+      data.id = props.store.detail.router.id;
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
-      data.external = radioExternal;
-
+      data.external = radioExternal;   
+      console.log("data : "+ JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -53,8 +54,6 @@ const ModifyModal = (props) => {
   useEffect(() => {
 
     const routerList = props.store.dataList;
-
-    console.log("routerList : "+ JSON.stringify(routerList))
 
     setRouterExternal([]);
     routerList?.map((router) => {
@@ -77,11 +76,11 @@ const ModifyModal = (props) => {
     fnGetNetworkList();
 
     // 초기 선택 
-    detailInternal.map((name) => {
-      handleSingleCheck(true, name, "internal")
+    detailInternal.map((item) => {
+      handleSingleCheck(true, item.id, "internal")
     })
     
-    detailExternal && setRadioExternal(detailExternal);
+    detailExternal && setRadioExternal(detailExternal.id);
 
   }, [])
 
@@ -89,7 +88,7 @@ const ModifyModal = (props) => {
   const [internalCheckItems, setInternalCheckItems] = useState([]);
 
   const dataListVariables = {
-    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))),
+    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))),
   };
 
   const stateVariables = {
@@ -112,9 +111,9 @@ const ModifyModal = (props) => {
       if (checked) {
         const nameArray = [];
         
-        dataListVariables[type].forEach((el) => nameArray.push(el.name));        
-        detailInternal.map((name) => {
-          nameArray.push(name)
+        dataListVariables[type].forEach((el) => nameArray.push(el.id));        
+        detailInternal.map((item) => {
+          nameArray.includes(item.id) ? "" : nameArray.push(item.id);
         })
 
         setVariables[type](nameArray);
@@ -186,18 +185,18 @@ const ModifyModal = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                      {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).length &&
+                      {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).length &&
                         <tr>
                           <td colSpan="6" className="no-data">
                             <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                           </td>
                         </tr>
                       }
-                      {internalNetworkList?.filter((data) => (!routerInternal.includes(data.name))).map((data, key) => {
-                          return <tr key={data.name}>
+                      {internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).map((data, key) => {
+                          return <tr key={data.id}>
                           <td>
-                            <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
-                            onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
+                            <Checkbox name={`select-${data.id}`} checked={stateVariables['internal'].includes(data.id) ? true : false}
+                            onChange={(checked) => handleSingleCheck(checked, data.id, "internal")} />
                           </td>
                           <td>{data.name}</td>
                           <td>{(data.type).toUpperCase()}</td>
@@ -206,11 +205,11 @@ const ModifyModal = (props) => {
                           <td>{data.gateway_ip}</td>
                         </tr>
                       })}
-                      {internalNetworkList?.filter((data) => (detailInternal.includes(data.name))).map((data, key) => {
-                          return <tr key={data.name}>
+                      {internalNetworkList?.filter((data) => (detailInternal.includes(data.id))).map((data, key) => {
+                          return <tr key={data.id}>
                           <td>
-                            <Checkbox name={`select-${data.name}`} checked={stateVariables['internal'].includes(data.name) ? true : false}
-                            onChange={(checked) => handleSingleCheck(checked, data.name, "internal")} />
+                            <Checkbox name={`select-${data.id}`} checked={stateVariables['internal'].includes(data.id) ? true : false}
+                            onChange={(checked) => handleSingleCheck(checked, data.id, "internal")} />
                           </td>
                           <td>{data.name}</td>
                           <td>{(data.type).toUpperCase()}</td>
@@ -222,8 +221,10 @@ const ModifyModal = (props) => {
                       </tbody>
                   </table> 
                   <div className={styles.removeCheckWrapper}>
-                    {internalCheckItems?.map((name) => 
-                    <span key={name}><Button icon="close" onClick={() => handleDelete(name, "internal")}>{name}</Button></span>
+                   {internalCheckItems?.map((id) => {
+                        const name = internalNetworkList?.filter((data) => data.id == id).map(item => item.name)[0]
+                       return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "internal")}>{name}</Button> </span> 
+                      }                    
                     )}                      
                   </div>
                 </div>
@@ -258,18 +259,18 @@ const ModifyModal = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).length &&
+                          {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).length &&
                             <tr>
                               <td colSpan="6" className="no-data">
                                 <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                               </td>
                             </tr>
                           }
-                          {externalNetworkList?.filter((data) => (!routerExternal.includes(data.name))).map((data) => {
-                            return <tr key={data.name}>
+                          {externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).map((data) => {
+                            return <tr key={data.id}>
                               <td>
-                                <Radio name="external" value={data.name} checked={radioExternal === data.name} 
-                                onChange={(e) => {setRadioExternal(data.name);}}/>
+                                <Radio name="external" value={data.id} checked={radioExternal === data.id} 
+                                onChange={(e) => {setRadioExternal(data.id);}}/>
                               </td>
                               <td>{data.name}</td>
                               <td>{(data.type).toUpperCase()}</td>
@@ -278,11 +279,11 @@ const ModifyModal = (props) => {
                               <td>{data.gateway_ip}</td>
                             </tr>
                           })}
-                          {externalNetworkList?.filter((data) => data.name == detailExternal).map((data) => {
+                          {externalNetworkList?.filter((data) => data.id == detailExternal).map((data) => {
                             return <tr key={data.name}>
                               <td>
-                                <Radio name="external" value={data.name} checked={radioExternal === data.name} 
-                                onChange={(e) => {setRadioExternal(data.name);}}/>
+                                <Radio name="external" value={data.id} checked={radioExternal === data.id} 
+                                onChange={(e) => {setRadioExternal(data.id);}}/>
                               </td>
                               <td>{data.name}</td>
                               <td>{(data.type).toUpperCase()}</td>

@@ -30,6 +30,7 @@ export default class NetworkStore extends Base {
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/networks`
     getListUrl = this.getResourceUrl
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async create(data, params = {}) {
@@ -45,12 +46,12 @@ export default class NetworkStore extends Base {
         return res
     }
     @action
-    async update({ name, ...params }, data) {
+    async update({ id, ...params }, data) {
         const jsonData = {};
         jsonData.network = data;
 
         await this.submitting(
-            request.put(this.getDetailUrl({ name, ...params }), jsonData)
+            request.put(this.getDetailUrl({ id, ...params }), jsonData)
         )
     }
 
@@ -61,7 +62,7 @@ export default class NetworkStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+            `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'Networks' }
 
@@ -78,7 +79,7 @@ export default class NetworkStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
+            `${this.getResourceUrl(params)}/${params.id}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
 
@@ -94,9 +95,9 @@ export default class NetworkStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(username =>
+                    rowKeys.map(id =>
                         request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
+                            `${this.getDetailUrl({ id, ...params })}`
                         )
                     )
                 )
@@ -107,6 +108,8 @@ export default class NetworkStore extends Base {
 
     @action
     delete(user) {
+        // id로 삭제해야해서 치환
+        user.name = user.id;
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return

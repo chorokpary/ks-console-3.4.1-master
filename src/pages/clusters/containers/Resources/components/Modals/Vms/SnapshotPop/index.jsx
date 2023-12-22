@@ -12,6 +12,7 @@ const SnapshotModal = (props) => {
 
   const vmStore = new VmStore();
   const vmName = props.store.detail.name;
+  const vmId = props.store.detail.id;
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -26,9 +27,8 @@ const SnapshotModal = (props) => {
       
       const { data } = form.current.props;
       data.vmName = vmName;
-
-      console.log("data : "+ JSON.stringify(data))
-
+      data.vmId = vmId;
+      
       vmStore.snapshotCreate(data).then(() => {
         Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();

@@ -8,8 +8,9 @@ import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/
 import styles from './index.scss'
 import * as common from "utils/resources"
 
-export default function ResourceNetworkModal({ title, store, onOk, detail }) {
 
+const ModifyModal = (props) => {
+  const detail = props.detail
   const form = useRef();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
@@ -22,10 +23,11 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
   ]
 
   const handleOk = () => {
+    const onOk = props.onOk;
 
     form.current.validator(() => {
       const { data } = form.current.props;
-
+      const { id } = detail
       const dns = []
       data.dns?.map((el) => {
         if (el != '') {
@@ -47,7 +49,8 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
       data.ip_pool = {
         start: data.ip_pool_start,
         end: data.ip_pool_end
-      }
+        }
+      data.id = id;
 
       onOk({ ...data })
     })
@@ -139,7 +142,7 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
       <Modal
         icon="pen"
         width={1000}
-        title={title}
+        title={props.title}
         onOk={handleOk}
         okText={t('RESOURCES_EDIT')}
         onCancel={closeModal}
@@ -321,3 +324,5 @@ export default function ResourceNetworkModal({ title, store, onOk, detail }) {
   )
 
 }
+
+export default ModifyModal

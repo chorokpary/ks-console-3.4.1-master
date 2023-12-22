@@ -195,7 +195,7 @@ export default [
     ],
   },
   {
-    path: `${PATH}/keypairs/:name`,
+    path: `${PATH}/keypairs/:name/:id`,
     component: KeypairDetail,
   },
   {
@@ -203,7 +203,7 @@ export default [
     component: ImageDetail,
   },
   {
-    path: `${PATH}/routers/:name`,
+    path: `${PATH}/routers/:name/:id`,
     component: RouterDetail,
   },
   {
@@ -211,11 +211,11 @@ export default [
     component: FlavorDetail,
   },
   {
-    path: `${PATH}/securitygroups/:name`,
+    path: `${PATH}/securitygroups/:name/:id`,
     component: SecurityGroupDetail,
   },
   {
-    path: `${PATH}/networks/:name`,
+    path: `${PATH}/networks/:name/:id`,
     component: NetworkDetail,
   },
   {
@@ -223,19 +223,19 @@ export default [
     component: FloatingIpDetail,
   },
   {
-    path: `${PATH}/vms/:name`,
+    path: `${PATH}/vms/:name/:id`,
     component: VmDetail,
   },
   {
     path: `${PATH}/containerimages/:name`,
     component: ContainerImageDetail,
   },
- {
+  {
     path: `${PATH}/containerresource/:name`,
     component: ContainerResourceDetail,
   },
   {
-    path: `${PATH}/resourcesvolumes/:name`,
+    path: `${PATH}/resourcesvolumes/:name/:id`,
     component: VolumeDetail,
   },
   {
@@ -247,7 +247,7 @@ export default [
     component: MediatedDeviceDetail,
   },
   {
-    path: `${PATH}/loadbalancers/:name`,
+    path: `${PATH}/loadbalancers/:name/:id`,
     component: LoadBalancerDetail,
   },
   {
@@ -257,6 +257,6 @@ export default [
   {
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
-  },  
-  
+  },
+
 ]

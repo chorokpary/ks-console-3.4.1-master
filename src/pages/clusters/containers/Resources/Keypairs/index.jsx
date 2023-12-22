@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
@@ -28,14 +29,15 @@ import { ICON_TYPES } from 'utils/constants'
 
 import KeypairStore from 'stores/resources/keypairs'
 
-@withList({
+@withClusterList({
   store: new KeypairStore(),
   module: 'keypairs',
   authKey: 'keypairs',
   name: t('RESOURCES_KEYPAIR'),
+  rowKey: 'id'
 })
 export default class Keypairs extends React.Component {
- 
+
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -72,10 +74,10 @@ export default class Keypairs extends React.Component {
           action: 'create',
           onClick: () =>
             trigger('keypair.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -109,14 +111,20 @@ export default class Keypairs extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
+        render: (name, item) => (
           <Avatar
             icon="key"
             iconSize={40}
-            to={`/clusters/${cluster}/keypairs/${name}`}
+            to={`/clusters/${cluster}/keypairs/${name}/${item.id}`}
             title={name}
           />
         ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
       },
       {
         title: t('Finger Print'),
@@ -162,29 +170,27 @@ export default class Keypairs extends React.Component {
 
 
   render() {
-    
+
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        icon="key"
-        tabs={this.tabs}
-        title={t('RESOURCES_KEYPAIR')}
-        description={t('RESOURCES_KEYPAIR_DESC')}
-      />
-      <Table
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-      />
-    </ListPage>
-     
+        <Banner
+          {...bannerProps}
+          icon="key"
+          title={t('RESOURCES_KEYPAIR')}
+          description={t('RESOURCES_KEYPAIR_DESC')}
+        />
+        <ResourceTable
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+
     )
   }
 }

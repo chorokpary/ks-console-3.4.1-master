@@ -102,10 +102,9 @@ const DetailVmList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await store.fetchList();
-    const vmFilterData = vmList?.filter((row) => 
-                          props.variables === 'security_groups' ? row[props.variables].includes(props.name)  :
-                          props.variables === 'networks' ? _.find(row[props.variables], {'name': props.name}) : row[props.variables] === props.name
-                        )
+    const vmFilterData = vmList?.filter((row) =>
+      variablesFilter(row)
+    )
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
 
     const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
@@ -118,6 +117,19 @@ const DetailVmList = (props) => {
 
     setIsLoading(false);
   };
+
+  const variablesFilter = (row) => {
+    if (props.variables === 'security_group_objects') {
+      return _.find(row[props.variables], { 'id': props.id })
+    } else if (props.variables === 'networks') {
+      return _.find(row[props.variables], { 'name': props.id })
+    } else if (props.variables === 'flavor_object') {
+      return row[props.variables].name === props.name
+    } else if (props.variables == 'id') {
+      return row[props.variables] === props.id
+    }
+    return row[props.variables] === props.name
+  }
 
   const fetchData = async () => {
 
@@ -220,7 +232,7 @@ const DetailVmList = (props) => {
       )
     )
 
-    return <Loading spinning={isLoading}>{content}</Loading>
+    return <Loading spinning={isLoading}><>{content}</></Loading>
   }
 
   const renderContentDetail = (obj) => {
@@ -230,14 +242,14 @@ const DetailVmList = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/vms/${obj.name}`}>{obj.name}</Link>
+              <Link to={`/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>{obj.name}</Link>
               <Tooltip content={t('VNC')}>
                 <Icon
                   className="margin-l8"
                   name="terminal"
                   size={16}
                   clickable
-                  onClick={() => handleOpenVnc(obj.name)}
+                  onClick={() => handleOpenVnc(obj.id)}
                 />
               </Tooltip>
             </div>
@@ -271,14 +283,14 @@ const DetailVmList = (props) => {
               <Icon name="apps" size={40} />
             </div>
             <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.flavor_detail.name}</div>
+              <div>{obj.flavor_object.name}</div>
               <p>Flavor</p>
             </div>
             <div className={styles.title}>
               <div>
                 {
                   networkList.length >= 1 ?
-                    networkList.length == 1 ? networkList[0].name : networkList[0].name + " 외 " + (networkList.length - 1) + "개"
+                    networkList.length == 1 ? networkList[0].alias : networkList[0].alias + " 외 " + (networkList.length - 1) + "개"
                     : "-"
                 }
               </div>
@@ -288,7 +300,7 @@ const DetailVmList = (props) => {
               <Text
                 key='CPU'
                 icon='cpu'
-                title={obj.flavor_detail.vcpus + " Core"}
+                title={obj.flavor_object.vcpus + " Core"}
                 description={t('CPU')}
               />
             </div>
@@ -296,7 +308,7 @@ const DetailVmList = (props) => {
               <Text
                 key='Memory'
                 icon='memory'
-                title={common.fnSetBytes(obj.flavor_detail.ram) + " Gib"}
+                title={common.fnSetBytes(obj.flavor_object.ram) + " Gib"}
                 description={t('Memory')}
               />
             </div>
@@ -304,7 +316,7 @@ const DetailVmList = (props) => {
               <Text
                 key='Disk'
                 icon='storage'
-                title={obj.flavor_detail.root_disk + " Gib"}
+                title={obj.flavor_object.root_disk + " Gib"}
                 description={t('Disk')}
               />
             </div>
@@ -312,8 +324,8 @@ const DetailVmList = (props) => {
               <Text
                 key='GPU'
                 icon='gpu'
-                title={obj.flavor_detail.gpus.length >= 1 ?
-                  obj.flavor_detail.gpus.length == 1 ? obj.flavor_detail.gpus[0].name : obj.flavor_detail.gpus[0].name + " "+t('RESOURCES_BESIDES')+" " + (obj.flavor_detail.gpus.length - 1) + t('RESOURCES_COUNT')
+                title={obj.flavor_object.gpus.length >= 1 ?
+                  obj.flavor_object.gpus.length == 1 ? obj.flavor_object.gpus[0].name : obj.flavor_object.gpus[0].name + " " + t('RESOURCES_BESIDES') + " " + (obj.flavor_object.gpus.length - 1) + t('RESOURCES_COUNT')
                   : "-"}
                 description={t('GPU')}
               />
@@ -458,13 +470,13 @@ const DetailVmList = (props) => {
     }
   }
 
-  const handleOpenVnc = (vmName) => {
+  const handleOpenVnc = (vmId) => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://" + location.hostname + ":30020";
     var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
-    param = param + vmName + "/vnc";
+    param = param + vmId + "/vnc";
 
-    var popupName = vmName.replaceAll("-", "");
+    var popupName = vmId.replaceAll("-", "");
     window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840');
   }
 

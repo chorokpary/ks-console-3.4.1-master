@@ -74,6 +74,7 @@ router
   .post('/customharbor/(.*)', parseBody, handleHarborProxyCustom)
   .get('/blank_md', renderMarkdown)
 
+  .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
 
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
@@ -82,8 +83,6 @@ router
 
   .all('/edgetron/(.*)', mm3CheckToken)
   .use(proxy('/edgetron/(.*)', webMm3Proxy))
-
-  .use(proxy('/cmp/(.*)', webCmpProxy))
 
   // session
   .post('/login', parseBody, handleLogin)

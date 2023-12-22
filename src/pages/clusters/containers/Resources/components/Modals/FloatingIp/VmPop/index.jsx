@@ -61,14 +61,15 @@ const VmPop = ({ title, onOk, store }) => {
   useEffect(() => {
     if (fipList.length > 0 && vmDataList.length > 0) {
       const arr = new Set();
+      console.log(fipList)
       fipList.map(obj => {
         if (obj.target_ip != null && obj.instance_type == 'vm') {
-          arr.add(obj.instance_name)
+          arr.add(obj.instance_id)
         }
       })
       const vmArr = new Set();
       vmDataList.map(obj => {
-        if (!arr.has(obj.name)) {
+        if (!arr.has(obj.id)) {
           vmArr.add(obj)
         }
       })
@@ -79,7 +80,7 @@ const VmPop = ({ title, onOk, store }) => {
 
   useEffect(() => {
     if (vmList.length > 0 && routerList.length > 0) {
-      const internalList = routerList.find((obj) => obj.external == fipDetail.network)?.internal;
+      const internalList = routerList.find((obj) => obj.external.id == fipDetail.network)?.internal || [];
       setInternalList(internalList)
 
       const arr = new Set();
@@ -87,7 +88,7 @@ const VmPop = ({ title, onOk, store }) => {
         var net = obj.networks;
         net.map((obj2) => {
           internalList.forEach(el => {
-            if (el == obj2.name) {
+            if (el.id == obj2.name) {
               arr.add(obj);
             }
           })
@@ -106,7 +107,7 @@ const VmPop = ({ title, onOk, store }) => {
     onOk({
       id: fipDetail.id,
       instance_type: 'vm',
-      instance_name: radioExternal,
+      instance_id: radioExternal,
       target_network: network[0],
       target_ip: network[1]
     })
@@ -114,7 +115,7 @@ const VmPop = ({ title, onOk, store }) => {
 
   const handleVmData = (data, idx) => {
     setVmData(data)
-    setRadioExternal(data.name)
+    setRadioExternal(data.id)
     setRadioExternalIdx(idx)
   }
 
@@ -124,10 +125,10 @@ const VmPop = ({ title, onOk, store }) => {
     let defaultValue = '';
     data?.map((networks) => (
       internalList.map((el) => {
-        if (el == networks.name) {
+        if (el.id == networks.name) {
           if (idx == 0) defaultValue = `${networks.name} ${networks.ip}`
           options.push({
-            label: `${networks.name} ${networks.ip}`,
+            label: `${networks.alias} ${networks.ip}`,
             value: `${networks.name} ${networks.ip}`
           })
           idx++;
@@ -183,7 +184,7 @@ const VmPop = ({ title, onOk, store }) => {
                       <td>
                         <Form.Item >
                           <Radio name="external" value={data.name}
-                            checked={radioExternal === data.name}
+                            checked={radioExternal === data.id}
                             onChange={(e) => { handleVmData(data, idx); }} />
                         </Form.Item>
                       </td>

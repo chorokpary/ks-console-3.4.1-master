@@ -90,14 +90,14 @@ const Status = (props) => {
   useEffect(() => {
 
     const fnGetExternalNetwork = async () => {
-      const externalData = await axios.get(`/edgetron/resources/kubevirt/networks/${store.detail.router.external}`);
+      const externalData = await axios.get(`/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
       setExternalNetwork(externalData.data.network);
     };
 
     const fnGetInternalNetwork = async () => {
       setInternalNetwork([]);
-      const promises = (store.detail.router?.internal).map(async (name) => {
-        const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + name);
+      const promises = (store.detail.router?.internal).map(async (item) => {
+        const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + item. id);
         setInternalNetwork(internalNetwork => [...internalNetwork, internalData.data.network])
       })
       await Promise.all(promises);

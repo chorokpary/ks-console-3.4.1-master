@@ -18,15 +18,15 @@ const ModifyModal = (props) => {
 
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
 
-  const vmStore = new VmStore();
-
   const handleOk = () => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
       if(securityGroupCheckItems.length > 0){
         const { data } = form.current.props;
+        data.id = props.store.detail.vm.id;
         data.scurityGroups = securityGroupCheckItems;
+
         onOk({ ...data })
       }
     })
@@ -39,8 +39,11 @@ const ModifyModal = (props) => {
   useEffect(() => {
 
     const getVmCreateData = async () => {
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup();
-      setSecurityGroupDataList(listSecurityGroup);
+      const securityData = props.store.securigyGroupList;
+      setSecurityGroupDataList(securityData);
+
+      const securityIdArray = props.store.detail.vm.security_groups.map(item => item.id)
+      setSecurityGroupCheckItems(securityIdArray)
     };
 
     getVmCreateData();
@@ -48,7 +51,7 @@ const ModifyModal = (props) => {
   }, [])
 
   // 체크 리스트 시작 ==================================================
-  const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState(toJS(props.store.detail.vm.security_groups));
+  const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([]);
 
   const dataListVariables = {
     security: securityGroupDataList,
@@ -73,7 +76,7 @@ const ModifyModal = (props) => {
   const handleAllCheck = (checked, type) => {
       if (checked) {
         const nameArray = [];
-        dataListVariables[type].forEach((el) => nameArray.push(el.name));
+        dataListVariables[type].forEach((el) => nameArray.push(el.id));
         setVariables[type](nameArray);
       }else {
          setVariables[type]([]);
@@ -151,10 +154,10 @@ const ModifyModal = (props) => {
                           </tr>
                         }
                         {securityGroupDataList?.map((data, key) => (
-                          <tr key={data.name}>
+                          <tr key={data.id}>
                             <td>
-                              <Checkbox name={`select-${data.name}`} checked={stateVariables['security'].includes(data.name) ? true : false}
-                              onChange={(checked) => handleSingleCheck(checked, data.name, "security")} />
+                              <Checkbox name={`select-${data.id}`} checked={stateVariables['security'].includes(data.id) ? true : false}
+                              onChange={(checked) => handleSingleCheck(checked, data.id, "security")} />
                             </td>
                             <td>{data.name}</td>
                             <td>{data.description}</td>
@@ -165,8 +168,10 @@ const ModifyModal = (props) => {
                       </tbody>
                   </table> 
                   <div className={styles.removeCheckWrapper}>
-                    {securityGroupCheckItems?.map((name) => 
-                    <span key={name}><Button icon="close" onClick={() => handleDelete(name, "security")}>{name}</Button></span>
+                    {securityGroupCheckItems?.map((id) => {
+                        const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                        return <span key={name}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
+                      }                    
                     )}                      
                   </div>
                 </div>

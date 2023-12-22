@@ -22,7 +22,7 @@ const DetailSecurityGroupList = (props) => {
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-              <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}`}>{obj.name}</Link></div>
+              <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
               <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>

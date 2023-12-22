@@ -181,10 +181,10 @@ export default inject('rootStore')(observer(FloatingIpDetail));
 const Status = (props) => {
   const detail = get(store.detail, 'floating_ip')
   if (detail.instance_type == 'vm') {
-    return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='name' name={detail.instance_name} />
+    return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='id' id={detail.instance_id} />
 
   } else if (detail.instance_type == 'lb') {
-    return <LbPanel type={t('RESOURCES_FLOATING_IP')} variables='name' name={detail.instance_name} />
+    return <LbPanel type={t('RESOURCES_FLOATING_IP')} variables='id' id={detail.instance_id} />
   } else {
     return []
   }

@@ -84,7 +84,13 @@ export default {
   'securityGroup.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const usernames = rowKeys.join(', ')
+      let arr = new Array
+      store.dataList.map(obj => {
+        if (rowKeys.includes(obj.id)) {
+          arr.push(obj.name)
+        }
+      })
+      const names = arr.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -97,14 +103,14 @@ export default {
         },
         modal: DeleteModal,
         title:
-          usernames.split(', ').length === 1
+          rowKeys.length === 1
             ? t('RESOURCES_DELETE')
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
-          usernames.split(', ').length === 1
-            ? t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', { resource: usernames })
-            : t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', { resource: usernames }),
-        resource: usernames,
+          rowKeys.length === 1
+            ? t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', { resource: names }),
+        resource: names,
         store,
         ...props,
       })

@@ -183,7 +183,7 @@ const ResourceDetail = (props) => {
             //},
             {
                 name: t('RESOURCES_NETWORK'),
-                value: detail.network_name,
+                value: detail.network.name,
             },
             {
                 name: t('RESOURCES_DESCRIPTION'),

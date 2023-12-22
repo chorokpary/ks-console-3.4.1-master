@@ -23,8 +23,7 @@ const Information = (props) => {
   useEffect(() => {
 
     const fnGetFlavor = async () => {
-      const response = await axios.get(`/edgetron/resources/kubevirt/flavors/${store.detail.vm?.flavor?.name}`);
-      setDetailFlavor(response.data.flavor);
+      setDetailFlavor(store.detail.vm?.flavor);
     };
 
     const fnGetVolume = async () => {
@@ -48,8 +47,7 @@ const Information = (props) => {
     };
 
     const fnGetImage = async () => {
-      const response = await axios.get(`/edgetron/resources/kubevirt/images/${store.detail.vm?.image?.name}`);
-      setDetailImage(response.data.image);
+      setDetailImage(store.detail.vm?.image);
     };
 
     store.detail.vm?.flavor && fnGetFlavor();
@@ -102,7 +100,7 @@ const Information = (props) => {
                     <div className="info"><i className={(store.detail.vm?.cpu_arch)?.includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch)?.includes('x86') ? "X86" : "ARM"}</span></div>
                     <div className="info">
                       <i className={`ico-os-${detailImage?.distro_type}`}></i>
-                      <span>{store.detail.vm?.image?.name}</span>
+                      <span>{store.detail.vm?.image.name}</span>
                     </div>
                   </div>
                 </div>

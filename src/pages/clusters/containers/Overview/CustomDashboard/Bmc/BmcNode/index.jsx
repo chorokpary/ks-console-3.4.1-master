@@ -98,7 +98,8 @@ const BmcNode = ({ x, y, w, h,
   }, [])
 
   const getMetricValue = (metricData, data) => {
-    const instance = toJS(data.ip)
+    // const instance = toJS(data.ip) // 기존
+    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
     const metrics = metricData.find(item => get(item, 'metric.instance').split(":")[0] === instance)
     const value = get(metrics, 'value[1]', '0');
     return value;
@@ -106,7 +107,8 @@ const BmcNode = ({ x, y, w, h,
 
   const getType = (data) => {
     var iconText = "arm"
-    const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === data.ip))
+    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
+    const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
     const type = get(type_data, 'metric.machine', '')
     const x86Array = ['x86_64', 'amd']
     iconText = x86Array.includes(type.toLowerCase()) ? "x86" : "arm"
@@ -152,7 +154,8 @@ const BmcNode = ({ x, y, w, h,
       arr = nodeData
     } else {
       nodeData.map(obj => {
-        const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+        const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
+        const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
         const type = get(type_data, 'metric.machine', '')
         if (nodeType == 'x86') {
           if (type.includes(nodeType)) arr.push(obj)

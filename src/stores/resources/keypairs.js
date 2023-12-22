@@ -35,6 +35,7 @@ export default class KeypairStore extends Base {
 
   getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/keypairs`
   getListUrl = this.getResourceUrl
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
   @action
   async create(data, params = {}) {
@@ -45,6 +46,7 @@ export default class KeypairStore extends Base {
 
     keypairData.name = data.name;
     keypairData.public_key = data.publicKey;
+    keypairData.project = data.project;
     keypairData.description = data?.description;
 
     jsonData.keypair = keypairData;
@@ -59,7 +61,7 @@ export default class KeypairStore extends Base {
     const jsonData = {};
     const keypairData = {};
 
-    keypairData.name = data.name;
+    keypairData.id = data.id;
     keypairData.description = data?.description;
 
     jsonData.keypair = keypairData;
@@ -75,7 +77,7 @@ export default class KeypairStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
+      `${this.getResourceUrl(params)}/${params.id}`
     )
     const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' }
 
@@ -90,12 +92,12 @@ export default class KeypairStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-    
+
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
+      `${this.getResourceUrl(params)}/${params.id}/manifest`
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' }
-  
+
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData
@@ -108,9 +110,9 @@ export default class KeypairStore extends Base {
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
+          rowKeys.map(id =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${this.getDetailUrl({ id, ...params })}`
             )
           )
         )

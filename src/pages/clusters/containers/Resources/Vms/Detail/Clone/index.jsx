@@ -52,7 +52,7 @@ const Clone = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const filterData = await store.cloneList(props.match.params.name);
+    const filterData = await store.cloneList(props.match.params.id);
     const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
     const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
@@ -112,39 +112,39 @@ const Clone = (props) => {
             <p>Timestamp</p>
           </div>
           <div className={styles.name}>
-            <div>{obj.name}</div>
-            <p>Name</p>
+            <div>{obj.id}</div>
+            <p>ID</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.target_vm_name}</div>
+            <div>{obj.target_vm_id}</div>
             <p>Target VM name</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
             <p>Phase</p>
           </div>
-          <div className={styles.text}>
+          {/* <div className={styles.text}>
             <div>{obj.state}</div>
             {(obj.networks).length > 0 ? (obj.networks).map((item) => <div>{item.name}</div>) : "-"}
             <p>Networks</p>
-          </div>
+          </div> */}
           {/* <div className={styles.text}>
             <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
           </div>         */}
           <div className={styles.arrow}>
-            <Button type="danger" onClick={() => handleDelete(obj.name)}>Delete</Button>
+            <Button type="danger" onClick={() => handleDelete(obj.id)}>Delete</Button>
           </div>
         </div>
       </>
     )
   }
 
-  const handleDelete = (name) => {
+  const handleDelete = (id) => {
     console.log("handleDelete!!");
     props.rootStore.triggerAction('vm.cloneDelete', {
       type: 'VM_DETAIL',
-      name : name,
+      id : id,
       store: store,
       success: fnGetData,
     })
@@ -159,7 +159,7 @@ const Clone = (props) => {
   const getSearchData = (data, searchText) => {
     setIsSearchFlag(true);
     const resultList = data.filter((row) => {
-      return row["name"]?.toLowerCase().includes(searchText.toLowerCase());
+      return row["target_vm_id"]?.toLowerCase().includes(searchText.toLowerCase());
     });
     return resultList;
   }

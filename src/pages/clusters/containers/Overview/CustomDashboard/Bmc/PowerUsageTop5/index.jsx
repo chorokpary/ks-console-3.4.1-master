@@ -53,7 +53,7 @@ const PowerUsageTop5 = ({ x, y, w, h,
   }, [])
 
   const getMetricValue = (metricData, data) => {
-    const instance = toJS(data.ip)
+    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
     const metrics = metricData.find(item => get(item, 'metric.instance').split(":")[0] === instance)
     const value = get(metrics, 'value[1]', '0');
     return value;
@@ -61,7 +61,8 @@ const PowerUsageTop5 = ({ x, y, w, h,
 
   const getType = (data) => {
     var iconText = "arm"
-    const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === data.ip))
+    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
+    const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
     const type = get(type_data, 'metric.machine', '')
     if (type.includes('x86')) iconText = 'x86'
     return iconText

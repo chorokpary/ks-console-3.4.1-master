@@ -20,7 +20,7 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import classNames from 'classnames'
 import Indicator from 'components/Base/Indicator'
@@ -31,15 +31,16 @@ import { getLocalTime, map_accessModes } from 'utils'
 import VolumeStore from 'stores/resources/volumes'
 
 import styles from './index.scss'
-
-@withList({
+import ResourceTable from 'clusters/components/ResourceTable'
+@withClusterList({
   store: new VolumeStore(),
   module: 'resourcesvolumes',
   authKey: 'resourcesvolumes',
   name: t('RESOURCES_VOLUME'),
+  rowKey: 'id'
 })
 export default class ResourcesVolumes extends React.Component {
- 
+
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -76,10 +77,10 @@ export default class ResourcesVolumes extends React.Component {
           action: 'create',
           onClick: () =>
             trigger('resourcesvolume.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -113,14 +114,20 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
+        render: (name, item) => (
           <Avatar
             icon="storage"
             iconSize={40}
-            to={`/clusters/${cluster}/resourcesvolumes/${name}`}
+            to={`/clusters/${cluster}/resourcesvolumes/${name}/${item.id}`}
             title={name}
           />
         ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
       },
       // {
       //   title: t('볼륨 모드'),
@@ -241,30 +248,30 @@ export default class ResourcesVolumes extends React.Component {
 
 
   render() {
-    
+
     const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        icon="storage"
-        tabs={this.tabs}
-        title={t('RESOURCES_VOLUME')}
-        description={t('RESOURCES_VOLUME_DESC')}
-      />
-      <Table
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-      />
-    </ListPage>
-     
+        <Banner
+          {...bannerProps}
+          icon="storage"
+          tabs={this.tabs}
+          title={t('RESOURCES_VOLUME')}
+          description={t('RESOURCES_VOLUME_DESC')}
+        />
+        <ResourceTable
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+
     )
   }
 }

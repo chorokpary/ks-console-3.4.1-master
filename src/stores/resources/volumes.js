@@ -34,7 +34,7 @@ export default class VolumeStore extends Base {
 
   getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/volumes`
   getListUrl = this.getResourceUrl
-
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
   @action
   async create(data, params = {}) {
@@ -49,28 +49,29 @@ export default class VolumeStore extends Base {
     volumeData.storage_class = data.storage_class;
     volumeData.import_source = data.import_source;
     volumeData.volume_mode = data.volume_mode;
+    volumeData.project = data.project;
     volumeData.description = !!data.description ? data.description : "";
 
     jsonData.volume = volumeData;
-    
+
     // console.log("jsonData : "+ JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
     return res
   }
 
   @action
-  async update({ name, ...params }, data) {
+  async update({ id, ...params }, data) {
 
     const jsonData = {};
     const volumeData = {};
 
-    volumeData.name = data.name;
+    volumeData.id = id;
     volumeData.description = data?.description;
 
     jsonData.volume = volumeData;
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(this.getDetailUrl({ id, ...params }), jsonData)
     )
   }
 
@@ -80,7 +81,7 @@ export default class VolumeStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
+      `${this.getResourceUrl(params)}/${params.id}`
     )
     const detail = { ...params, ...this.mapper(result), kind: 'Volumes' }
 
@@ -95,12 +96,12 @@ export default class VolumeStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-    
+
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
+      `${this.getResourceUrl(params)}/${params.id}/manifest`
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'Volumes' }
-  
+
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData
@@ -113,9 +114,9 @@ export default class VolumeStore extends Base {
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
+          rowKeys.map(id =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${this.getDetailUrl({ id, ...params })}`
             )
           )
         )
@@ -135,24 +136,22 @@ export default class VolumeStore extends Base {
   }
 
   @action
-  async actionState({data, ...params}) {
-
+  async actionState({ data, ...params }) {
     const jsonData = {};
     const actionData = {};
 
-    if(data.actionType == "A"){
-        actionData.vm_name = data.vmName;
-        actionData.persist = data.persist;
-        actionData.action = "attach";
-    }else{
-        actionData.vm_name = data.vmName;
-        actionData.action = "detach";
+    actionData.vm_id = data.vmId;
+    if (data.actionType == "A") {
+      actionData.persist = data.persist;
+      actionData.action = "attach";
+    } else {
+      actionData.action = "detach";
     }
 
     jsonData.action = actionData;
 
     await this.submitting(
-      request.put(`${this.getDetailUrl({ name: data.volumeName, ...params })}/action`, jsonData)
+      request.put(`${this.getDetailUrl({ id: data.id, ...params })}/action`, jsonData)
     )
   }
 

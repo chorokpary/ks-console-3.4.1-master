@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import { Panel, Text } from 'components/Base'
 import { Icon, Loading } from '@kube-design/components'
 import styles from './index.scss'
+import { Link } from 'react-router-dom'
 
 import RouterStore from 'stores/resources/routers'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
@@ -13,6 +14,7 @@ import LoadBalancerStore from 'stores/resources/loadbalancers'
 const Status = (props) => {
     // console.log("props : "+ JSON.stringify(props))
     const store = props.detailStore;
+    const cluster = props.detailStore?.detail.cluster;
 
     const routerStore = new RouterStore();
     const loadBalancerStore = new LoadBalancerStore();
@@ -25,13 +27,13 @@ const Status = (props) => {
 
     useEffect(() => {
 
-        const networkName = props.match.params.name;
+        const networkId = props.match.params.id;
 
         const fnGetRouterData = async () => {
 
             const routerList = await routerStore.fetchList();
-            const routerExternalList =  await routerList.filter(item => item.external == networkName );
-            const routerInternalList =  await routerList.filter(item => (item.internal).includes(networkName));
+            const routerExternalList = await routerList.filter(item => item.external.id === networkId );
+            const routerInternalList = await routerList.filter(item => _.find(item['internal'], { 'id': networkId }));
 
             const routerTernalList = routerExternalList.length > 0 ? routerExternalList : routerInternalList;
 
@@ -42,7 +44,7 @@ const Status = (props) => {
         
         const fnGetLoadBalancerData = async () => {
             const loadBalancerList = await loadBalancerStore.fetchList();
-            const loadBalancerFilterList =  loadBalancerList.filter(item => item.network == networkName ) ;
+            const loadBalancerFilterList = loadBalancerList.filter(item => item.network == networkId ) ;
             
             setLoadBalancerList(loadBalancerFilterList);
             setIsLoadingLoadBalancer(false)
@@ -58,7 +60,7 @@ const Status = (props) => {
             <div>                
 
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type={t('RESOURCES_NETWORK')} variables='networks' name={props.match.params.name} />
+                <DetailVmList type={t('RESOURCES_NETWORK')} variables='networks' id={props.match.params.id} />
 
                 {/* 라우터 */}
                 <div>
@@ -81,7 +83,7 @@ const Status = (props) => {
                                             <Icon name="router" size={40} />
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
-                                            <div>{obj.name}</div>
+                                            <div><Link to={`/clusters/${cluster}/routers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                                             <p>{t('NAME')}</p>
                                         </div>
                                         <div className={styles.title}>
@@ -89,7 +91,7 @@ const Status = (props) => {
                                             <p>{t('RESOURCES_SNAT_OPTION')}</p>
                                         </div>
                                         <div className={styles.title}>
-                                            <div>{obj.external}</div>
+                                            <div>{obj.external.name}</div>
                                             <p>{t('RESOURCES_EXTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
@@ -129,7 +131,7 @@ const Status = (props) => {
                                             <Icon name="router" size={40} />
                                         </div>
                                         <div className={classnames(styles.title, styles.name)}>
-                                            <div>{obj.name}</div>
+                                            <div><Link to={`/clusters/${cluster}/loadBalancers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                                             <p>{t('NAME')}</p>
                                         </div>
                                         <div className={styles.title}>

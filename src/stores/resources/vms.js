@@ -77,33 +77,22 @@ export default class VmStore extends Base {
       ...this.mapper(item),
     }))
 
-    // VMS 일때 Flavor, Image 정보 추가 
-    const vmArray = [];
-    if (apiName == "vms") {
 
-      const promises = data.map(async (vm) => {
-        vm.flavor_detail = vm.flavor_object;
-        vm.image_detail = vm.image_object;
+    // 초기 정렬 처리
+     data.sort((a, b) => {
+      return a.creation_timestamp < b.creation_timestamp ? 1 : a.creation_timestamp > b.creation_timestamp ? -1 : 0;
+    });
 
-        vmArray.push(vm);
-      })
-      await Promise.all(promises);
-
-      // 초기 정렬 처리
-      vmArray.sort((a, b) => {
-        return a.creation_timestamp < b.creation_timestamp ? 1 : a.creation_timestamp > b.creation_timestamp ? -1 : 0;
-      });
-
-      // 초기 데이터 처리 
-      this.dataList = vmArray;
-    } else {
-      // 초기 데이터 처리 
-      this.dataList = data;
-    }
+    // 초기 데이터 처리 
+    this.dataList = data;
 
     // FloatingIp List 추출
     await this.fetchFloatingList(params);
 
+    // namespace(project) 있는 경우
+    if (namespace) {
+      params.project = namespace;
+    }
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -163,11 +152,10 @@ export default class VmStore extends Base {
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
 
-    console.log(JSON.stringify(data))
-
     const jsonData = {};
     const resourceData = {};
 
+    resourceData.project = data.project;
     resourceData.name = data.name;
     resourceData.image = data.imageType == "I" ? data.image : "";
     resourceData.flavor = data.flavor;
@@ -194,7 +182,6 @@ export default class VmStore extends Base {
     // resourceData.username = globals.user.username; // Failed to validate the cloud-init script 오류나서 안보냄
     resourceData.username = "";
     resourceData.user_script = (data.userScript == "" || data.userScript == undefined) ? data.makeScript : data.userScript;
-    //resourceData.user_script = "#cloud-config\npassword: rocky\nchpasswd: {expire: False}\nssh_pwauth: True\nssh_svcname: ssh\nssh_deletekeys: True\nssh_genkeytypes: ['rsa', 'ecdsa']"
 
     const sriovNetworksArray = [];
     data.sriov.map((name) => {
@@ -216,39 +203,36 @@ export default class VmStore extends Base {
 
     resourceData.description = data.description;
     resourceData.storage_class = data.storageClass
-    //resourceData.storage_class = "openebs-hostpath"; // 고정값
-    // resourceData.storage_class = "longhorn"; // 고정값
 
     jsonData.vm = resourceData;
-
-    console.log(JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
     return res
   }
 
   @action
-  async update({ name, ...params }, data) {
+  async update({ id, ...params }, data) {
 
     const scurityGroups = data.scurityGroups;
 
     const jsonData = {};
     const vmData = {};
 
-    vmData.name = name;
+    vmData.id = id;
     vmData.description = !!data.description ? data.description : "";
 
     jsonData.vm = vmData;
 
-    // API 에서 수정이 안됨
+    // id로 수정해야해서 치환
+    params.name = id;
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(this.getDetailUrl({ id, ...params }), jsonData)
     )
 
     const jsonDataSecurity = {};
     const vmDataSecurity = {};
 
-    vmDataSecurity.name = name;
+    vmDataSecurity.id = id;
     vmDataSecurity.security_groups = scurityGroups;
 
     jsonDataSecurity.vm = vmDataSecurity;
@@ -256,7 +240,7 @@ export default class VmStore extends Base {
     console.log("jsonDataSecurity : " + JSON.stringify(jsonDataSecurity))
 
     await this.submitting(
-      request.put("/edgetron/resources/kubevirt/vms/" + name + "/security_groups", jsonDataSecurity)
+      request.put("/edgetron/resources/kubevirt/vms/" + id + "/security_groups", jsonDataSecurity)
     )
   }
 
@@ -266,9 +250,7 @@ export default class VmStore extends Base {
 
     this.isLoading = true
 
-    const url = globals.config.serverlocation == "TB"
-      ? `${this.getResourceUrl(params)}/${params.name}/info`
-      : `${this.getResourceUrl(params)}/${params.name}`;
+    const url = `${this.getResourceUrl(params)}/${params.id}/info`;
 
     const result = await request.get(url)
     const detail = { ...params, ...this.mapper(result), kind: 'vms' }
@@ -282,6 +264,9 @@ export default class VmStore extends Base {
     // Volume 관련
     await this.fetchVolumeList(params);
 
+    // SecurityGroup 관련
+    await this.fetchVmListSecurityGroup(params);
+    
     this.detail = detail
     this.isLoading = false
 
@@ -293,7 +278,7 @@ export default class VmStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
+      `${this.getResourceUrl(params)}/${params.id}/manifest`
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -308,7 +293,7 @@ export default class VmStore extends Base {
 
     try {
       const result = await request.get(
-        `${this.getResourceUrl(params)}/${params.name}/log`
+        `${this.getResourceUrl(params)}/${params.id}/log`
       )
       const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -326,7 +311,7 @@ export default class VmStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/event`
+      `${this.getResourceUrl(params)}/${params.id}/event`
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -341,9 +326,9 @@ export default class VmStore extends Base {
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
+          rowKeys.map(id =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${this.getResourceUrl(params)}/${id}`
             )
           )
         )
@@ -354,6 +339,8 @@ export default class VmStore extends Base {
 
   @action
   delete(user) {
+    // id로 삭제해야해서 치환
+    user.name = user.id;
     if (user.name === globals.user.username) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
@@ -366,14 +353,11 @@ export default class VmStore extends Base {
   async actionState({ data, ...params }) {
 
     const jsonData = {};
-    const name = data.vmName;
+    const id = data.vmId;
     jsonData.action = data.actionType;
-    
-    console.log(`${this.getDetailUrl({ name: name, ...params })}/action`)
-    console.log(JSON.stringify(jsonData))
 
     await this.submitting(
-      request.put(`${this.getDetailUrl({ name: name, ...params })}/action`, jsonData)
+      request.put(`${this.getDetailUrl({ name: id, ...params })}/action`, jsonData)
     )
   }
 
@@ -555,7 +539,7 @@ export default class VmStore extends Base {
     const securityArray = [];
     const promises = (response.security_groups).map(async (security) => {
 
-      const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security.name);
+      const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security.id);
 
       securityDetail.data.security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
       securityDetail.data.security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
@@ -565,6 +549,7 @@ export default class VmStore extends Base {
 
     await Promise.all(promises);
 
+    this.securigyGroupList = securityArray;
     this.isLoading = false
     return securityArray;
   }
@@ -611,19 +596,19 @@ export default class VmStore extends Base {
     const jsonData = {};
     const snapshotData = {};
 
-    snapshotData.vm_name = data.vmName;
+    snapshotData.vm_id = data.vmId;
     snapshotData.description = data.description;   
 
     jsonData.snapshot = snapshotData;
-
+    console.log("snapshot : "+ JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
     return res;
   }
 
   @action
-  async snapshotList(name) {
+  async snapshotList(id) {
     const result = await request.get(
-      `/edgetron/resources/kubevirt/vms/snapshots/${name}`
+      `/edgetron/resources/kubevirt/vms/snapshots/${id}`
     )
     result.snapshots.sort((a, b) => {
       var x = a['timestamp'];
@@ -635,9 +620,9 @@ export default class VmStore extends Base {
   }
 
   @action
-  snapshotDelete(name) {  
+  snapshotDelete(id) {  
 
-    const url = `/edgetron/resources/kubevirt/vms/snapshots/${name}`;
+    const url = `/edgetron/resources/kubevirt/vms/snapshots/${id}`;
     return this.submitting(request.delete(url))
   }
 
@@ -648,7 +633,7 @@ export default class VmStore extends Base {
     const jsonData = {};
     const restoreData = {};
 
-    restoreData.snapshot_name = data.snapshotName;
+    restoreData.snapshot_id = data.snapshotId;
     restoreData.description = data.description;   
 
     jsonData.restore = restoreData;
@@ -658,9 +643,9 @@ export default class VmStore extends Base {
   }
 
   @action
-  async restoreList(name) {
+  async restoreList(id) {
     const result = await request.get(
-      `/edgetron/resources/kubevirt/vms/restores/${name}`
+      `/edgetron/resources/kubevirt/vms/restores/${id}`
     )
     result.restores.sort((a, b) => {
       var x = a['timestamp'];
@@ -672,8 +657,8 @@ export default class VmStore extends Base {
   }
 
   @action
-  restoreDelete(name) {  
-    const url = `/edgetron/resources/kubevirt/vms/restores/${name}`;
+  restoreDelete(id) {  
+    const url = `/edgetron/resources/kubevirt/vms/restores/${id}`;
     return this.submitting(request.delete(url))
   }
 
@@ -684,8 +669,8 @@ export default class VmStore extends Base {
     const jsonData = {};
     const cloneData = {};
 
-    cloneData.source_vm_name = data.source_vm_name;
-    cloneData.target_vm_name = data.target_vm_name;
+    cloneData.source_vm_id = data.source_vm_id;
+    cloneData.target_vm_id = data.target_vm_name;
     cloneData.description = data.description;
 
     jsonData.clone = cloneData;
@@ -695,7 +680,7 @@ export default class VmStore extends Base {
   }
 
   @action
-  async cloneList(name) {
+  async cloneList(id) {
     const result = await request.get(
       `/edgetron/resources/kubevirt/vms/clones`
     )
@@ -706,14 +691,14 @@ export default class VmStore extends Base {
       return x > y ? -1 : x < y ? 1 : 0;        
     });
 
-    const vm_clones = (result.clones).filter(item => item.source_vm_name == name);
+    const vm_clones = (result.clones).filter(item => item.source_vm_id == id);
 
     return vm_clones;
   }
 
   @action
-  cloneDelete(name) {  
-    const url = `/edgetron/resources/kubevirt/vms/clones/${name}`;
+  cloneDelete(id) {  
+    const url = `/edgetron/resources/kubevirt/vms/clones/${id}`;
     return this.submitting(request.delete(url))
   }
 }

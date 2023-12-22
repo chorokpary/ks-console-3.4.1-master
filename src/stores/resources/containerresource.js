@@ -303,7 +303,7 @@ export default class ResourceStore extends Base {
 
     const dataArray = [];
     const promises = response._originData.lbs.map(async (lb) => {
-      const lbDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lb.name);
+      const lbDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lb.id);
       lb.rulesCount = lbDetail.data.lb.rules.length;
       dataArray.push(lb);
     })

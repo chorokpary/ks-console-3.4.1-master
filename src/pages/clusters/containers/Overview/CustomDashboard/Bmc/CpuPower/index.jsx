@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
-
+import { toJS } from 'mobx'
 import { get, remove } from 'lodash'
 import { getAreaChartOps } from 'utils/monitoring'
 
@@ -190,7 +190,8 @@ const CpuPower = ({ x, y, w, h,
 
     let cnt = 0;
     nodeList.map((obj) => {
-      const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+      const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
+      const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
       const type = get(type_data, 'metric.machine', '')
       if (nodeType == 'x86') {
         if (type.includes(nodeType)) cnt++;

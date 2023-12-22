@@ -39,8 +39,7 @@ const Status = (props) => {
   useEffect(() => {
 
     const fnGetFlavor = async () => {
-      const response = await axios.get(`/edgetron/resources/kubevirt/flavors/${store.detail.vm?.flavor?.name}`);
-      setDetailFlavor(response.data.flavor);
+      setDetailFlavor(store.detail.vm?.flavor);
     };
 
     const fnGetNetwork = async () => {
@@ -56,17 +55,14 @@ const Status = (props) => {
 
     const fnGetSecurityGroup = async () => {
       setDetailSecurityGroup([]);
-      const promises = (store.detail.vm.security_groups).map(async (name) => {
-        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + name);
-        securityDetail.data.security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
-        securityDetail.data.security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
-        setDetailSecurityGroup(detailSecurityGroup => [...detailSecurityGroup, securityDetail.data.security_group])
-      })
-      await Promise.all(promises);
+      const securityData = store.securigyGroupList;
+      const securityIdArray = store.detail.vm.security_groups.map(item => item.id)
+      const filterData = securityData.filter(item => securityIdArray.includes(item.id));
+      setDetailSecurityGroup(filterData);
     };
 
     const fnGetVolume = async () => {
-      const volumeData = store.volumeList?.filter(el => el.used_by_vmi == store.detail.vm?.name);
+      const volumeData = store.volumeList?.filter(el => el.used_by_vmi == store.detail.vm?.id);
       setDetailVolume(volumeData);
     };
 
@@ -128,7 +124,7 @@ const Status = (props) => {
       })
 
       const vmCpuMetricData = _.find(vmCpuData, (data) => {
-        if (data.metric.pod === store.detail.name) return data;
+        if (data.metric.pod === store.detail.id) return data;
       });
 
       // 배열 처리 
@@ -145,7 +141,7 @@ const Status = (props) => {
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
-        if (data.metric.pod === store.detail.name) return data;
+        if (data.metric.pod === store.detail.id) return data;
       });
 
       // 배열 처리 
@@ -343,7 +339,7 @@ const Status = (props) => {
                     <Icon name="network-duotone" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/clusters/${cluster}/networks/${obj.name}`}>{obj.name}</Link></div>
+                    <div><Link to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
@@ -374,7 +370,7 @@ const Status = (props) => {
                     <Icon name="storage" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}`}>{obj.name}</Link></div>
+                    <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>

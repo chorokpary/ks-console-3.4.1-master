@@ -1,9 +1,10 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
+import DetailKaasList from 'pages/clusters/containers/Resources/components/DetailKaasList'
 
 import styles from './index.scss'
 
@@ -11,24 +12,33 @@ const Status = (props) => {
 
   const store = props.detailStore;
 
-  const [name, setName] = useState()
+  const [id, setId] = useState()
 
   useEffect(() => {
-    setName(store.detail.volume?.used_by_vmi)
-  }, [name])
+    setId(store.detail.volume?.used_by_vmi)
+  }, [id])
 
   return (
-    <>  
-    {!!name && 
-      <div>
-        <DetailVmList type={t('RESOURCES_VOLUME')} variables='name' name={name} />
-      </div>        
-    }
-     {!!!name && 
-      <div>
-        <DetailVmList type={t('RESOURCES_VOLUME')} variables='name' name={name} />
-      </div>        
-    }
+    <>
+
+      {id && !id?.includes('control-plane') &&
+        // used_by_vmi 가 VM 일 경우
+        <div>
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='id' id={id} />
+        </div>
+      }
+      {!id && !id?.includes('control-plane') &&
+        // used_by_vmi 가 비어있는 경우
+        <div>
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='id' id={id} />
+        </div>
+      }
+      {id && id?.includes('control-plane') &&
+        // used_by_vmi 가 KaaS 일 경우
+        <div>
+          <DetailKaasList type={t('RESOURCES_VOLUME')} variables='name' name={id} />
+        </div>
+      }
     </>
   );
 };

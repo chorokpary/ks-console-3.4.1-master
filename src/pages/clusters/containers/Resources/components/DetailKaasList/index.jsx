@@ -1,5 +1,5 @@
 import { get, groupBy, isEmpty } from 'lodash'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
@@ -53,9 +53,11 @@ const DetailKaasList = (props) => {
   const [machines, setMachines] = useState([]);
 
   const handleExpand = async (name) => {
-    await kaasStore.fetchDetail({ name });
-    setMachines(kaasStore.machines)
-    setExpandItem(name);
+    if (!isExpandFlag) {
+      await kaasStore.fetchDetail({ name });
+      setMachines(kaasStore.machines)
+      setExpandItem(name);
+    }
     setIsExpandFlag(!isExpandFlag)
   }
 
@@ -70,7 +72,11 @@ const DetailKaasList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await kaasStore.fetchList();
-    const vmFilterData = vmList?.filter((row) => row['kube_image'] === props.name)
+    const vmi = props.name
+    const propsName = vmi?.includes('control-plane') ? vmi?.substring(0, vmi.indexOf('-control-plane')) : vmi
+
+    const vmFilterData = vmList?.filter((row) => row[props.variables] === propsName)
+
     const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
     const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
       (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
@@ -124,7 +130,7 @@ const DetailKaasList = (props) => {
       )
     )
 
-    return <Loading spinning={isLoading}>{content}</Loading>
+    return <Loading spinning={isLoading}><>{content}</></Loading>
   }
 
   const renderContentDetail = (obj) => {
@@ -163,9 +169,9 @@ const DetailKaasList = (props) => {
       <div className={styles.itemExtra}>
         <div className={styles.containers} >
           {machines.map((obj, idx) => (
-            <>
-              {obj.name.includes('control-plane') ? 'Master '+t('RESOURCES_NODE') : idx < 2 && 'Worker '+t('RESOURCES_NODE')}
-              <div className={classnames(styles.item)} key={idx}>
+            <Fragment key={idx}>
+              {obj.name.includes('control-plane') ? 'Master ' + t('RESOURCES_NODE') : idx < 2 && 'Worker ' + t('RESOURCES_NODE')}
+              <div className={classnames(styles.item)} >
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} />
                 </div>
@@ -202,7 +208,7 @@ const DetailKaasList = (props) => {
                   />
                 </div>
               </div>
-            </>
+            </Fragment>
           ))}
         </div>
       </div>

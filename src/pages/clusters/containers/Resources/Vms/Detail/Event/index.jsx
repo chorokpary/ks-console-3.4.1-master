@@ -22,7 +22,7 @@ const Event = (props) => {
   useEffect(() => {
     const getVmEventList = async () => {
 
-      const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
+      const parms = {"cluster": store.detail.cluster,"name": store.detail.name,"id": store.detail.id}
       const response = await vmStore.fetchVmEventList(parms);
       setEventList(response.events)
       setIsLoading(false);
@@ -58,11 +58,11 @@ const Event = (props) => {
                     <thead>
                       <tr>
                         <th><strong>VM</strong></th>
-                        <th><strong>{t('RESOURCES_REASON')}사유</strong></th>
-                        <th><strong>{t('RESOURCES_TYPE')}타입</strong></th>
-                        <th><strong>{t('RESOURCES_START_TIME')}시작 시간</strong></th>
-                        <th><strong>{t('RESOURCES_END_TIME')}종료 시간</strong></th>
-                        <th><strong>{t('RESOURCES_MESSAGE')}메시지</strong></th>
+                        <th><strong>{t('RESOURCES_REASON')}</strong></th>
+                        <th><strong>{t('RESOURCES_TYPE')}</strong></th>
+                        <th><strong>{t('RESOURCES_START_TIME')}</strong></th>
+                        <th><strong>{t('RESOURCES_END_TIME')}</strong></th>
+                        <th><strong>{t('RESOURCES_MESSAGE')}</strong></th>
                       </tr>
                     </thead>
                     <tbody>                     

@@ -4,6 +4,7 @@ import { Loading } from '@kube-design/components'
 import BareMetalStore from 'stores/resources/baremetal'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { get } from 'lodash'
+import { toJS } from 'mobx'
 import { getLocalTime } from 'utils'
 import CabonIndicator from './CabonIndicator';
 import PowerUsageTop5 from './PowerUsageTop5';
@@ -52,21 +53,24 @@ const Bmc = ({ bmc }) => {
     const getData = async () => {
       setLoading(true)
 
-      const data = await bareMetalStore.fetchList()
+      try {
+        const data = await bareMetalStore.fetchList()
 
-      const getMetricType = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
-      })
+        const getMetricType = await customStore.fetchMetric({
+          expr: `max by(instance, machine) (node_uname_info)`,
+        })
 
-      const getMetricData = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
-      })
+        const getMetricData = await customStore.fetchMetric({
+          expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+        })
+        if (cleanupTrigger) {
+          setNodeData(data)
+          setMetricType(getMetricType)
+          setMetricData(getMetricData)
 
-      if (cleanupTrigger) {
-        setNodeData(data)
-        setMetricType(getMetricType)
-        setMetricData(getMetricData)
-
+          setLoading(false)
+        }
+      } catch (e) {
         setLoading(false)
       }
     };
@@ -90,7 +94,8 @@ const Bmc = ({ bmc }) => {
       let used_x86_cnt = 0;
       let used_arm_cnt = 0;
       nodeData.map(obj => {
-        const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+        const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
+        const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
 
         const type = get(type_data, 'metric.machine', '')
 
@@ -100,7 +105,7 @@ const Bmc = ({ bmc }) => {
 
         if (metricData.length > 0) {
 
-          const power_data = metricData.find(item => (get(item, 'metric.instance').split(":")[0] === obj.ip))
+          const power_data = metricData.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
           const power = Number(get(power_data, 'value[1]', 0));
 
           total_power += power;

@@ -22,7 +22,7 @@ import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
-
+import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -45,8 +45,8 @@ export default class BareMetalStore extends Base {
     isLoading: true,
   }
 
-  getResourceUrl = (params = {}) => `cmp/baremetal/nodes`
-  getListUrl = this.getResourceUrl
+  getResourceUrlCluster = (params = {}) => `cmp-apiserver/node/v1alpha2/clusters`
+  getResourceUrlBareMetal = (params = {}) => `cmp-apiserver/node/v1alpha2/baremetals`
 
   @action
   async fetchList({
@@ -74,20 +74,28 @@ export default class BareMetalStore extends Base {
 
     params.limit = params.limit || 10
 
-    const result = await request.get(
-      this.getResourceUrl()
+
+    const resultBareMatalData = await request.get(
+      this.getResourceUrlBareMetal()
     )
 
-    const data = (get(result, 'nodes') || []).map(item => ({
-      cluster,
-      namespace,
-      ...this.mapper(item),
-    }))
+    const resultClusterData = await request.get(
+      this.getResourceUrlCluster()
+    )
 
-    // const dataArray = [];
-    // data.map((obj) => {
-    //     dataArray.push(obj.metric)
-    // })
+    const resultCluster = get(resultClusterData, 'clusters', [])
+    const resultBareMatal = get(resultBareMatalData, 'baremetals', [])
+
+    await resultCluster.map(item => (
+      item.system_type = "C"
+    ))
+
+    await resultBareMatal.map(item => (
+      item.system_type = "B"
+    ))
+
+    const result = [...resultCluster, ...resultBareMatal]
+    const data = result;
 
     // 초기 정렬 처리
     data.sort((a, b) => {
@@ -145,30 +153,32 @@ export default class BareMetalStore extends Base {
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
 
-    // console.log(data)
+    //console.log(this.dataList)
 
-    return data
+    return this.dataList 
   }
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
+
+    const url = data.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
 
     const jsonData = {};
     const nodeData = {};
-    const redfishData = {};
+    const bmcData = {};
 
-    nodeData.ScrapeInterval = data.nodeInterval + "s";
+    nodeData.ip = data.nodeIp;
+    nodeData.scrapeInterval = !!data.nodeInterval ? data.nodeInterval + "s" : "";
     nodeData.port = Number(data.nodePort);
 
-    redfishData.ScrapeInterval = data.refishInterval + "s";
-    redfishData.port = Number(data.refishPort);
-    redfishData.target = data.target_ip_array;
+    bmcData.address = data.bmcIp;
+    bmcData.scrapeInterval = !!data.bmcInterval ? data.bmcInterval + "s" : "";
+    bmcData.username = data.bmcId;
+    bmcData.password = data.bmcPassword; 
 
-    jsonData.name = data.name;
-    jsonData.ip = data.ip;
-    jsonData.nodeExporter = nodeData;
-    jsonData['redfish-exporter'] = redfishData;
+    jsonData.name = data.systemType == "C" ? data.cluserName : data.name;
+    data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
+    jsonData.openBMC= bmcData;    
 
     const res = await request.post(url, jsonData)
     return res
@@ -176,23 +186,27 @@ export default class BareMetalStore extends Base {
 
   @action
   async update({ name, ...params }, data) {
-    const url = this.getResourceUrl(params);
+
+    const url = data.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
 
     const jsonData = {};
     const nodeData = {};
-    const redfishData = {};
+    const bmcData = {};
 
-    nodeData.ScrapeInterval = data.nodeInterval + "s";
+    nodeData.ip = data.nodeIp;
+    nodeData.scrapeInterval = data.nodeInterval + "s";
     nodeData.port = Number(data.nodePort);
 
-    redfishData.ScrapeInterval = data.refishInterval + "s";
-    redfishData.port = Number(data.refishPort);
-    redfishData.target = data.target_ip_array;
-
+    bmcData.address = data.bmcIp;
+    bmcData.scrapeInterval = data.bmcInterval + "s";
+    bmcData.username = data.bmcId;
+    bmcData.password = data.bmcPassword; 
+    
     jsonData.name = data.name;
-    jsonData.ip = data.ip;
-    jsonData.nodeExporter = nodeData;
-    jsonData['redfish-exporter'] = redfishData;
+    data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
+    jsonData.openBMC= bmcData;   
+
+    console.log("jsonData : "+ JSON.stringify(jsonData))
 
     const res = await request.put(url, jsonData)
     return res
@@ -203,10 +217,9 @@ export default class BareMetalStore extends Base {
   async fetchDetail(params) {
     this.isLoading = true
 
-    const result = await request.get(
-      `${this.getResourceUrl(params)}`
-    )
+    const url = params.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
 
+    const result = await request.get(url)
     const detail = { ...params, ...this.mapper(result), kind: 'Baremetal' }
 
     this.detail = detail
@@ -219,11 +232,14 @@ export default class BareMetalStore extends Base {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
+
+      const url = params.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
+
       await this.submitting(
         Promise.all(
           rowKeys.map(username =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${url}/${username})}`
             )
           )
         )
@@ -239,7 +255,26 @@ export default class BareMetalStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    const url = user.systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
+
+    return this.submitting(request.delete(`${url}/${user.name}`))
   }
 
+  @action
+  async actionState(data) {
+    const url = 'cmp-apiserver/redfish/v1alpha2/reset'
+
+    const jsonData = {};
+    jsonData.address = "https://"+data.address,
+    jsonData.id = data.id,
+    jsonData.password = data.password,
+    jsonData.resetType = data.resetType,
+    jsonData.systemId = data.systemId
+    
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+
+    const res = await request.post(url, jsonData)
+    console.log("res : "+ JSON.stringify(res))
+    return res
+  }
 }

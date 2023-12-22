@@ -36,6 +36,7 @@ export default class SecurityGroupStore extends Base {
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/security_groups`
     getListUrl = this.getResourceUrl
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async fetchList({
@@ -78,7 +79,7 @@ export default class SecurityGroupStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (security_group) => {
-            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security_group.name);
+            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security_group.id);
             security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
             security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
             dataArray.push(security_group);
@@ -87,6 +88,10 @@ export default class SecurityGroupStore extends Base {
 
         // 초기 데이터 처리 
         this.dataList = dataArray;
+
+        if (namespace) {
+            params.project = namespace;
+        }
 
         // 검색 관련 처리 
         const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -146,11 +151,10 @@ export default class SecurityGroupStore extends Base {
         let res = await this.submitting(request.post(this.getListUrl(params), data))
         if (res.message === "OK") {
 
-            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + data.security_group.name);
             const jsonData = {};
             const promises = data.security_group.security_group_rules.map(async  (obj) => {
                 const data = {};
-                data.security_group_id = securityDetail.data.security_group.id;
+                data.security_group_id = res.id;
                 data.direction = obj.direction.toLowerCase();
                 data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
                 data.protocol = obj.protocol.toLowerCase();
@@ -179,7 +183,7 @@ export default class SecurityGroupStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+            `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
 
@@ -196,7 +200,7 @@ export default class SecurityGroupStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
+            `${this.getResourceUrl(params)}/${params.id}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
 
@@ -213,14 +217,14 @@ export default class SecurityGroupStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(async (username) => {
-                        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + username);
+                    rowKeys.map(async (id) => {
+                        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + id);
                         securityDetail.data.security_group.rules.map((rule) => {
                             request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
                         })
 
                         await request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
+                            `${this.getDetailUrl({ id, ...params })}`
                         )
                     })
                 )
@@ -231,12 +235,14 @@ export default class SecurityGroupStore extends Base {
 
     @action
     async delete(user) {
+        // id로 삭제해야해서 치환
+        user.name = user.id;
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
 
-        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + user.name);
+        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + user.id);
         Promise.all(
             securityDetail.data.security_group.rules.map((rule) => {
                 request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);

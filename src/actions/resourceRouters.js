@@ -55,7 +55,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.routerName }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -105,7 +105,13 @@ export default {
   'router.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const usernames = rowKeys.join(', ')
+      let arr = new Array
+      store.dataList.map(obj => {
+        if(rowKeys.includes(obj.id)){
+          arr.push(obj.name)
+        }
+      })
+      const usernames = arr.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store

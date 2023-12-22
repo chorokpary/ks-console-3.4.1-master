@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
@@ -32,11 +33,12 @@ import * as common from 'utils/resources'
 
 
 
-@withList({
+@withClusterList({
     store: new SecurityGroupStore(),
     module: 'security_groups',
     authKey: 'security_groups',
     name: t('RESOURCES_SECURITY_GROUP'),
+    rowKey: 'id'
 })
 export default class SecurityGroups extends React.Component {
 
@@ -110,14 +112,20 @@ export default class SecurityGroups extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: name => (
+                render: (name, item) => (
                     <Avatar
                         icon="shield"
                         iconSize={40}
-                        to={`/clusters/${cluster}/securityGroups/${name}`}
+                        to={`/clusters/${cluster}/securityGroups/${name}/${item.id}`}
                         title={name}
                     />
                 ),
+            },
+            {
+                title: t('PROJECT'),
+                dataIndex: 'project',
+                isHideable: true,
+                width: 'auto',
             },
             {
                 title: t('RESOURCES_INBOUND_RULE_COUNT'),
@@ -165,7 +173,7 @@ export default class SecurityGroups extends React.Component {
                     title={t('RESOURCES_SECURITY_GROUP')}
                     description={t('RESOURCES_SECURITY_GROUP_DESC')}
                 />
-                <Table
+                <ResourceTable
                     {...tableProps}
                     emptyProps={this.emptyProps}
                     tableActions={this.tableActions}
