@@ -25,6 +25,8 @@ import { renderRoutes } from 'utils/router.config'
 
 import ProjectStore from 'stores/project'
 import ClusterStore from 'stores/cluster'
+import './custom_style.css'
+import './custom_icon.css'
 
 import routes from './routes'
 

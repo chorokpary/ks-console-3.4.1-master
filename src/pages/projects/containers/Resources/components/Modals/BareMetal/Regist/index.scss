@@ -1,0 +1,49 @@
+@import "~scss/variables";
+@import "~scss/mixins";
+
+.textarea {
+  :global .textarea {
+    max-width: 100%;
+  }
+}
+
+.divwrap {
+  position: relative;
+  padding-left: 10px;
+  padding-bottom: 15px;
+  .div_top {
+    width: 100%;
+  }
+  .div_bottom {
+    width: 100%;
+    margin-top: 5px;
+  }
+}
+
+.item {
+  height: 46px;
+  position: relative;
+  padding: 6px 17px 6px 17px;
+  border-radius: 60px;
+  background-color: $bg-color;
+  border: solid 1px $border-color;
+
+  &+.item {
+      margin-top: 8px;
+  }
+
+  &>input {
+      max-width: none !important;
+  }
+}
+
+.delete {
+  right: 6px;
+  @include vertical-center;
+}
+
+.add {
+  margin-top: 12px;
+}
+
+

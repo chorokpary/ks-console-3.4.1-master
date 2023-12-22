@@ -52,6 +52,8 @@ import grayReleaseRoutes from './grayrelease'
 import getDetailPath from './detail'
 import Gateway from '../containers/Gateway'
 
+import Vms from '../containers/Resources/Vms'
+
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
 export default [
@@ -148,6 +150,13 @@ export default [
         component: CustomMonitoring,
         exact: true,
       },
+
+      {
+        path: `${PATH}/vms`,
+        component: Vms,
+        exact: true,
+      },
+
       getIndexRoute({
         path: `${PATH}/workloads`,
         to: `${PATH}/deployments`,
