@@ -41,9 +41,9 @@ import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import FlavorDetail from '../containers/Resources/Flavors/Detail'
 
+
 // import ImageDetail from '../containers/Resources/Images/Detail'
 // import RouterDetail from '../containers/Resources/Routers/Detail'
-
 // import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 // import NetworkDetail from '../containers/Resources/Networks/Detail'
 // import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
@@ -51,11 +51,11 @@ import FlavorDetail from '../containers/Resources/Flavors/Detail'
 // import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 // import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
 // import VolumeDetail from '../containers/Resources/Volumes/Detail'
-// import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 // import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 // import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 // import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 // import SrIovDetail from '../containers/Resources/Sriov/Detail'
+// import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 
 
 export default PATH => [
@@ -147,5 +147,5 @@ export default PATH => [
     path: `${PATH}/flavors/:name`,
     component: FlavorDetail,
   },
-  
+
 ]

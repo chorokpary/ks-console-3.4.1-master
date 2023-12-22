@@ -55,6 +55,7 @@ import Gateway from '../containers/Gateway'
 import Vms from '../containers/Resources/Vms'
 import Keypairs from '../containers/Resources/Keypairs'
 import Flavors from '../containers/Resources/Flavors'
+import HostDevices from '../containers/Resources/HostDevices'
 
 // import Images from '../containers/Resources/Images'
 // import Routers from '../containers/Resources/Routers'
@@ -64,7 +65,7 @@ import Flavors from '../containers/Resources/Flavors'
 // import FloatingIp from '../containers/Resources/FloatingIp'
 // import ResourcesVolumes from '../containers/Resources/Volumes'
 // import Sriov from '../containers/Resources/Sriov'
-// import HostDevices from '../containers/Resources/HostDevices'
+
 // import MediatedDevices from '../containers/Resources/MediatedDevices'
 // import LoadBalancers from '../containers/Resources/LoadBalancers'
 
@@ -181,7 +182,12 @@ export default [
         component: Flavors,
         exact: true,
       },
-      
+      {
+        path: `${PATH}/hostDevices`,
+        component: HostDevices,
+        exact: true,
+      },
+
       
 
       getIndexRoute({

@@ -154,7 +154,7 @@ export default class BaseStore {
     this.dataList = data;
 
     // namespace(project) 있는 경우 
-    const projectExceptionArray = ['images', 'flavors',  'floating_ips','security_groups' ]
+    const projectExceptionArray = ['images', 'flavors',  'host_devices' ]
     if (namespace) {
        projectExceptionArray.includes(this.module) ? "" : params.project = namespace;
     }
