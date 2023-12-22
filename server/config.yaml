@@ -522,6 +522,13 @@ client:
                 - { name: cronjobs, title: CRONJOB_PL }
             - { name: ingresses, title: ROUTE_PL }
             - { name: pods, title: POD_PL }
+        - name : computing-workloads
+          title: "컴퓨팅 워크로드"
+          icon: templet
+          showInDisable: true   
+          children: 
+            - { name: vms, title: "가상머신"}
+            - { name: containerResource, title: "KaaS" }
         - name: storage
           title: STORAGE
           icon: database
