@@ -131,7 +131,7 @@ const VolumeModal = (props) => {
                         <td >{data.phase}</td>
                         <td >{data.selected_node}</td>
                         <td>
-                          {data.selected_node == props.store.detail.vm.node &&
+                          {(data.selected_node == props.store.detail.vm.node || !data.selected_node) &&
                             <Toggle
                               checked={volumeCheckItems.includes(data.name) ? true : false}
                               onChange={(e) => handleVolumeToggle(e, data.name, data.id)}

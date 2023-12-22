@@ -51,11 +51,10 @@ const Information = (props) => {
     };
 
     store.detail.vm?.flavor && fnGetFlavor();
+    store.detail.vm?.image && fnGetImage();
     fnGetVolume();
     fnGetHostDevices();
     fnGetMediatedDevices();
-    fnGetImage();
-
   }, []);
 
   const fnGetHostDeviceIsGpu = (name) => {
