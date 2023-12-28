@@ -62,7 +62,7 @@ import HostDevices from '../containers/Resources/HostDevices'
 
 // import SecurityGroups from '../containers/Resources/SecurityGroups'
 // import Networks from '../containers/Resources/Networks'
-// import FloatingIp from '../containers/Resources/FloatingIp'
+import FloatingIp from '../containers/Resources/FloatingIp'
 // import ResourcesVolumes from '../containers/Resources/Volumes'
 // import Sriov from '../containers/Resources/Sriov'
 
@@ -187,8 +187,13 @@ export default [
         component: HostDevices,
         exact: true,
       },
+      {
+        path: `${PATH}/floatingip`,
+        component: FloatingIp,
+        exact: true,
+      },
 
-      
+
 
       getIndexRoute({
         path: `${PATH}/workloads`,

@@ -46,7 +46,7 @@ import FlavorDetail from '../containers/Resources/Flavors/Detail'
 // import RouterDetail from '../containers/Resources/Routers/Detail'
 // import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 // import NetworkDetail from '../containers/Resources/Networks/Detail'
-// import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
+import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 // import VmDetail from '../containers/Resources/Vms/Detail'
 // import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 // import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
@@ -147,5 +147,10 @@ export default PATH => [
     path: `${PATH}/flavors/:name`,
     component: FlavorDetail,
   },
+  {
+    path: `${PATH}/floatingip/:name/:id`,
+    component: FloatingIpDetail,
+  },
+
 
 ]
