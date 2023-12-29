@@ -57,7 +57,7 @@ import Keypairs from '../containers/Resources/Keypairs'
 import Flavors from '../containers/Resources/Flavors'
 import HostDevices from '../containers/Resources/HostDevices'
 
-// import Images from '../containers/Resources/Images'
+import Images from '../containers/Resources/Images'
 // import Routers from '../containers/Resources/Routers'
 
 // import SecurityGroups from '../containers/Resources/SecurityGroups'
@@ -190,6 +190,11 @@ export default [
       {
         path: `${PATH}/floatingip`,
         component: FloatingIp,
+        exact: true,
+      },
+      {
+        path: `${PATH}/images`,
+        component: Images,
         exact: true,
       },
 
