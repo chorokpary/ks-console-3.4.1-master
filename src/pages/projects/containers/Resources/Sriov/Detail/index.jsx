@@ -1,0 +1,134 @@
+
+import React, { useEffect } from 'react'
+import DetailPage from 'clusters/containers/Base/Detail'
+
+import { useParams } from 'react-router-dom';
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components';
+import { observer, inject } from 'mobx-react';
+import { Card } from 'components/Base'
+import { getLocalTime } from 'utils'
+
+import * as common from 'utils/resources'
+import routes from './routes'
+
+import SriovStore from 'stores/resources/sriovs'
+
+const store = new SriovStore();
+
+const KeypairDetail = (props) => {
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const fetchData = () => {
+        store.fetchDetail(props.match.params);
+    }
+    
+    const { workspace, cluster, namespace } = props.match.params
+    const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/sriovs`
+
+    const routing = props.rootStore.routing;
+    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+
+    const getOperations = () => [
+      {
+        key: 'viewYaml',
+        icon: 'eye',
+        text: t('VIEW_YAML'),
+        action: 'view',
+        onClick: () => {
+            props.rootStore.triggerAction('sriov.yaml.view', {
+            yaml: store.yaml,
+            readOnly: true,
+          })
+        },
+      },
+    ]
+
+    const getAttrs = () => {
+      const detail = toJS(store.detail)
+  
+      if (isEmpty(detail)) {
+        return
+      }
+  
+      return [
+        {
+          name: t('RESOURCES_CLUSTER'),
+          value: detail.cluster,
+        },
+        {
+          name: t('RESOURCES_NETWORK_TYPE_YOO'),
+          value: detail.network.type,
+        },
+        {
+          name: t('RESOURCES_SEGMENT_ID'),
+          value: detail.network.segment_id,
+        },
+        {
+          name: t('MTU'),
+          value: detail.network.mtu,
+        },
+        {
+          name: t('CIDR'),
+          value: detail.network.cidr,
+        },
+        {
+          name: t('RESOURCES_GATEWAY_IP'),
+          value: detail.network.gateway_ip,
+        },
+        {
+          name: t('RESOURCES_IP_POOL_INFORMATION'),
+          value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
+        },
+        {
+          name: t('DNS'),
+          value: detail.network.dns?.map(el => el + '\n'),
+        },
+        {
+          name: t('RESOURCES_HOST_ROUTE'),
+          value: detail.network.host_routes?.map(obj =>
+            'Destination: ' + obj.destination + '\n Nexthop:' + obj.nexthop + '\n'
+          ),
+        },
+        {
+          name: t('RESOURCES_DESCRIPTION'),
+          value: detail.network.description,
+        },
+      ]
+    }
+
+    if (store.isLoading) {
+        return <Loading className="ks-page-loading" />;
+    }
+
+    const sideProps = {
+        icon: "storage",
+        module: store.module,
+        name: get(store.detail, 'name'),
+        desc: get(store.detail.flavor, 'description', ''),
+        operations: getOperations(),
+        attrs: getAttrs(),
+        breadcrumbs: [
+            {
+                label: t('SR-IOV'),
+                url: listUrl,
+            },
+        ],
+    }
+
+    return (
+        <>
+            <DetailPage
+                stores={{ detailStore: store }}
+                routes={routes}
+                {...sideProps} />
+        </>
+    )
+}
+
+export default inject('rootStore')(observer(KeypairDetail));
+

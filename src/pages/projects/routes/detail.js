@@ -54,7 +54,7 @@ import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 // import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 // import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 // import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
-// import SrIovDetail from '../containers/Resources/Sriov/Detail'
+import SrIovDetail from '../containers/Resources/Sriov/Detail'
 // import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 
 
@@ -167,5 +167,9 @@ export default PATH => [
     path: `${PATH}/routers/:name/:id`,
     component: RouterDetail,
   },
-
+  {
+    path: `${PATH}/sriovs/:name`,
+    component: SrIovDetail,
+  },
+  
 ]
