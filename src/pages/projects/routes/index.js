@@ -60,7 +60,7 @@ import HostDevices from '../containers/Resources/HostDevices'
 import Images from '../containers/Resources/Images'
 // import Routers from '../containers/Resources/Routers'
 
-// import SecurityGroups from '../containers/Resources/SecurityGroups'
+import SecurityGroups from '../containers/Resources/SecurityGroups'
 // import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 // import ResourcesVolumes from '../containers/Resources/Volumes'
@@ -197,6 +197,14 @@ export default [
         component: Images,
         exact: true,
       },
+      {
+        path: `${PATH}/securityGroups`,
+        component: SecurityGroups,
+        exact: true,
+      },
+
+      
+      
 
 
 
