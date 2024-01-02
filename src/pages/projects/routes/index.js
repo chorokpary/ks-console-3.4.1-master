@@ -58,15 +58,14 @@ import Flavors from '../containers/Resources/Flavors'
 import HostDevices from '../containers/Resources/HostDevices'
 
 import Images from '../containers/Resources/Images'
-// import Routers from '../containers/Resources/Routers'
-
+import Routers from '../containers/Resources/Routers'
 import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 // import ResourcesVolumes from '../containers/Resources/Volumes'
 // import Sriov from '../containers/Resources/Sriov'
 
-// import MediatedDevices from '../containers/Resources/MediatedDevices'
+import MediatedDevices from '../containers/Resources/MediatedDevices'
 // import LoadBalancers from '../containers/Resources/LoadBalancers'
 
 
@@ -207,10 +206,18 @@ export default [
         component: Networks,
         exact: true,
       },
+      {
+        path: `${PATH}/routers`,
+        component: Routers,
+        exact: true,
+      },
+      {
+        path: `${PATH}/mediatedDevices`,
+        component: MediatedDevices,
+        exact: true,
+      },
 
       
-
-
       getIndexRoute({
         path: `${PATH}/workloads`,
         to: `${PATH}/deployments`,

@@ -43,7 +43,7 @@ import FlavorDetail from '../containers/Resources/Flavors/Detail'
 
 
 import ImageDetail from '../containers/Resources/Images/Detail'
-// import RouterDetail from '../containers/Resources/Routers/Detail'
+import RouterDetail from '../containers/Resources/Routers/Detail'
 import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
@@ -163,10 +163,9 @@ export default PATH => [
     path: `${PATH}/networks/:name/:id`,
     component: NetworkDetail,
   },
-
-  
-
-  
-
+  {
+    path: `${PATH}/routers/:name/:id`,
+    component: RouterDetail,
+  },
 
 ]
