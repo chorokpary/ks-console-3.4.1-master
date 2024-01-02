@@ -345,8 +345,15 @@ const RegistModal = (props) => {
                               onChange={value => handleExternal(value)}
                             >
                               {externalOptions.map((option, idx) => (
+                              !props.namespace ?
                                 <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
                                   disabled={!externalBool && idx == 1 ? true : false}
+                                >
+                                  {option.label}
+                                </RadioButton>
+                                :
+                                <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
+                                  disabled={idx == 1 ? true : false}
                                 >
                                   {option.label}
                                 </RadioButton>

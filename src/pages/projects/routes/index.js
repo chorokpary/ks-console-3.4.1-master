@@ -61,7 +61,7 @@ import Images from '../containers/Resources/Images'
 // import Routers from '../containers/Resources/Routers'
 
 import SecurityGroups from '../containers/Resources/SecurityGroups'
-// import Networks from '../containers/Resources/Networks'
+import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 // import ResourcesVolumes from '../containers/Resources/Volumes'
 // import Sriov from '../containers/Resources/Sriov'
@@ -202,10 +202,13 @@ export default [
         component: SecurityGroups,
         exact: true,
       },
+      {
+        path: `${PATH}/networks`,
+        component: Networks,
+        exact: true,
+      },
 
       
-      
-
 
 
       getIndexRoute({

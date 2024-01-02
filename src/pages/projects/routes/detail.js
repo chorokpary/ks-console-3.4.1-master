@@ -45,7 +45,7 @@ import FlavorDetail from '../containers/Resources/Flavors/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
 // import RouterDetail from '../containers/Resources/Routers/Detail'
 import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
-// import NetworkDetail from '../containers/Resources/Networks/Detail'
+import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 // import VmDetail from '../containers/Resources/Vms/Detail'
 // import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
@@ -159,6 +159,12 @@ export default PATH => [
     path: `${PATH}/securityGroups/:name/:id`,
     component: SecurityGroupDetail,
   },
+  {
+    path: `${PATH}/networks/:name/:id`,
+    component: NetworkDetail,
+  },
+
+  
 
   
 
