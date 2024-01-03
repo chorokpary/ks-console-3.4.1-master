@@ -62,7 +62,7 @@ import Routers from '../containers/Resources/Routers'
 import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
-// import ResourcesVolumes from '../containers/Resources/Volumes'
+import ResourcesVolumes from '../containers/Resources/Volumes'
 import Sriov from '../containers/Resources/Sriov'
 
 import MediatedDevices from '../containers/Resources/MediatedDevices'
@@ -225,8 +225,11 @@ export default [
         component: LoadBalancers,
         exact: true,
       },
-
-
+      {
+        path: `${PATH}/resourcesvolumes`,
+        component: ResourcesVolumes,
+        exact: true,
+      },
 
       getIndexRoute({
         path: `${PATH}/workloads`,

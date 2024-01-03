@@ -1,0 +1,31 @@
+@charset "utf-8";
+
+@import '~scss/variables';
+@import '~scss/mixins';
+
+
+.iconwrapper {
+  display: flex;
+    i {
+      margin-right: 5px;
+    }
+}
+
+.indicator {
+  display: inline-block;
+  margin-right: 8px;
+  margin-top: 2px;
+  vertical-align: top !important;
+}
+
+.mode_title {
+  display: flex;
+  align-items: center;
+
+  .question {
+    margin-left: 6px;
+  }
+}
+
+
+

@@ -26,7 +26,7 @@ import PodDetail from '../containers/Pods/Detail'
 import ContainerDetail from '../containers/Pods/Containers/Detail'
 import ServiceDetail from '../containers/Services/Detail'
 import RouteDetail from '../containers/Routes/Detail'
-import VolumeDetail from '../containers/Volumes/Detail'
+import Volume from '../containers/Volumes/Detail'
 import VolumeSnapshotDetail from '../containers/VolumeSnapshots/Detail'
 import SecretDetail from '../containers/Secrets/Detail'
 import ConfigMapDetail from '../containers/ConfigMaps/Detail'
@@ -50,7 +50,7 @@ import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
 // import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 // import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
-// import VolumeDetail from '../containers/Resources/Volumes/Detail'
+import VolumeDetail from '../containers/Resources/Volumes/Detail'
 // import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 // import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
@@ -97,7 +97,7 @@ export default PATH => [
   },
   {
     path: `${PATH}/volumes/:name`,
-    component: VolumeDetail,
+    component: Volume,
   },
   {
     path: `${PATH}/volume-snapshots/:name`,
@@ -179,6 +179,10 @@ export default PATH => [
     path: `${PATH}/vms/:name/:id`,
     component: VmDetail,
   },
-  
-  
+  {
+    path: `${PATH}/resourcesvolumes/:name/:id`,
+    component: VolumeDetail,
+  },
+
+
 ]
