@@ -25,7 +25,7 @@ import Event from './Event'
 import Snapshot from './Snapshot'
 import Clone from './Clone'
 
-const PATH = '/clusters/:cluster/vms/:name/:id'
+const PATH = '/:workspace/clusters/:cluster/projects/:namespace/vms/:name/:id'
 
 export default [
   {

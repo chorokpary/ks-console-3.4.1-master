@@ -15,14 +15,14 @@ const DetailSecurityGroupList = (props) => {
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
 
-  const cluster = props.cluster;
+  const { workspace, cluster, namespace } = props.params;
   
   const renderContent = (obj) => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-              <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+              <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/securityGroups/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
               <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>

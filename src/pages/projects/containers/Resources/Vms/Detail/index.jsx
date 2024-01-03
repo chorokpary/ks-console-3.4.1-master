@@ -32,8 +32,8 @@ const VmDetail = (props) => {
     store.fetchDetail(props.match.params);
   }
 
-  const { cluster } = props.match.params
-  const listUrl = `/clusters/${cluster}/vms`
+  const { workspace, cluster, namespace } = props.match.params
+  const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/vms`
 
   const routing = props.rootStore.routing;
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);

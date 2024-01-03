@@ -222,7 +222,7 @@ export default class Vms extends React.Component {
         search: true,
         render: (name, record) => {
 
-          const { cluster } = this.props.match.params
+          const { workspace, cluster, namespace } = this.props.match.params
           const { state } = record
 
           return (
@@ -236,7 +236,7 @@ export default class Vms extends React.Component {
                 />
               </div>
               <div>
-                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}/${record.id}`}>{name} </Link>
+                <Link className={styles.title} to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${name}/${record.id}`}>{name} </Link>
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
             </div>

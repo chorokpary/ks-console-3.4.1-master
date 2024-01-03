@@ -47,7 +47,7 @@ import RouterDetail from '../containers/Resources/Routers/Detail'
 import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
-// import VmDetail from '../containers/Resources/Vms/Detail'
+import VmDetail from '../containers/Resources/Vms/Detail'
 // import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 // import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
 // import VolumeDetail from '../containers/Resources/Volumes/Detail'
@@ -171,5 +171,10 @@ export default PATH => [
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
   },
+  {
+    path: `${PATH}/vms/:name/:id`,
+    component: VmDetail,
+  },
+  
   
 ]

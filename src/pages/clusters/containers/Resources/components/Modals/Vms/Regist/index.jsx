@@ -42,7 +42,7 @@ const RegistModal = (props) => {
   
   const [imageOptionList, setImageOptionList] = useState([]);  
 
-  const [projectName, setProjectName] = useState();
+  const [projectName, setProjectName] = useState(props.namespace);
   const [vmName, setVmName] = useState('');
   const [imageName, setImageName] = useState('');
   const [bootVolumeName, setBootVolumeName] = useState('');

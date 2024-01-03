@@ -27,7 +27,7 @@ const RegistModal = (props) => {
   const [radioSnatType, setRadioSnatType] = useState("F");
   const [radioExternal, setRadioExternal] = useState("");
 
-  const [projectName, setProjectName] = useState();
+  const [projectName, setProjectName] = useState(props.namespace);
   
 
   const handleOk = () => {
@@ -283,7 +283,7 @@ const RegistModal = (props) => {
                         {externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).map((data) => {
                           return <tr key={data.name}>
                             <td>
-                              <Radio name="external" value={data.id} checked={radioExternal === data.id} 
+                              <Radio name="external" value={data.id} checked={radioExternal === data.id} disabled={true}
                               onChange={(e) => {setRadioExternal(data.id);}}/>
                             </td>
                             <td>{data.name}</td>

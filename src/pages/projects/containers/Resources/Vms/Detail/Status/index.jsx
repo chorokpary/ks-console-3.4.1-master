@@ -15,7 +15,7 @@ import styles from './index.scss'
 import * as common from 'utils/resources'
 import { getAreaChartOps } from 'utils/monitoring'
 
-import DetailSecurityGroupList from 'pages/clusters/containers/Resources/components/DetailSecurityGroupList'
+import DetailSecurityGroupList from 'pages/projects/containers/Resources/components/DetailSecurityGroupList'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
 
@@ -24,7 +24,7 @@ const Status = (props) => {
   const store = props.detailStore;
   const customStore = new CustomStore();
 
-  const { cluster } = props.match.params;
+  const { workspace, cluster, namespace } = props.match.params
 
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailNetwork, setDetailNetwork] = useState([]);
@@ -272,7 +272,7 @@ const Status = (props) => {
                   <Icon name="apps" size={40} />
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
-                  <div><Link to={`/clusters/${cluster}/flavors/${detailFlavor.name}`}>{detailFlavor.name}</Link></div>
+                  <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/flavors/${detailFlavor.name}`}>{detailFlavor.name}</Link></div>
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.title}>
@@ -326,7 +326,7 @@ const Status = (props) => {
 
         {/* 보안그룹 */}
         {
-          store.detail.vm?.security_groups.length > 0 && <DetailSecurityGroupList securityGroupData={detailSecurityGroup} cluster={cluster}/>
+          store.detail.vm?.security_groups.length > 0 && <DetailSecurityGroupList securityGroupData={detailSecurityGroup} params={props.match.params}/>
         }
 
         {/* 네트워크 */}
@@ -339,7 +339,7 @@ const Status = (props) => {
                     <Icon name="network-duotone" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+                    <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
@@ -370,7 +370,7 @@ const Status = (props) => {
                     <Icon name="storage" size={40} />
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/clusters/${cluster}/resourcesvolumes/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+                    <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
