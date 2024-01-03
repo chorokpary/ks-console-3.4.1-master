@@ -73,6 +73,7 @@ const VolumeDetail = (props) => {
             type: 'VOLUME_DETAIL',
             store: store,
             success: fetchData,
+            ...props,
           })
         } else {
           props.rootStore.triggerAction('resourcesvolume.detach', {
