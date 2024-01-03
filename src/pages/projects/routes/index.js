@@ -66,8 +66,7 @@ import FloatingIp from '../containers/Resources/FloatingIp'
 import Sriov from '../containers/Resources/Sriov'
 
 import MediatedDevices from '../containers/Resources/MediatedDevices'
-// import LoadBalancers from '../containers/Resources/LoadBalancers'
-
+import LoadBalancers from '../containers/Resources/LoadBalancers'
 
 
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
@@ -221,9 +220,14 @@ export default [
         component: Sriov,
         exact: true,
       },
-      
+      {
+        path: `${PATH}/loadbalancers`,
+        component: LoadBalancers,
+        exact: true,
+      },
 
-      
+
+
       getIndexRoute({
         path: `${PATH}/workloads`,
         to: `${PATH}/deployments`,
