@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import * as common from 'utils/resources'
+import { toJS } from 'mobx'
 
 import { isEmpty, omit, get, find } from 'lodash'
 
@@ -13,6 +14,10 @@ import {
 } from "react-zoom-pan-pinch";
 
 const TopologyItem = (props) => {
+  
+  const workspace = props.workspace;
+  const cluster = props.cluster;
+  const namespace = props.namespace;
 
   const store = new TopologyStore();
 
@@ -335,7 +340,7 @@ const TopologyItem = (props) => {
                     <h4>VM</h4>
                     <p>
                       <i className={`ico-type24-vm ${getState(vm.state)}`}></i>
-                      <span>{vm.name}<a href={`/clusters/default/vms/${vm.name}/${vm.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                      <span>{vm.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${vm.name}/${vm.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
                     </p>
                     {floatingData.length > 0 &&
                       <div>
@@ -403,7 +408,7 @@ const TopologyItem = (props) => {
                   <h4 className="type2">VRouter</h4>
                   <p>
                     <i className="ico-type24-router on"></i>
-                    <span>{router.name}<a href={`/clusters/default/routers/${router.name}/${router.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{router.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${router.name}/${router.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                 </div>
                 <div className="element right">
@@ -465,7 +470,7 @@ const TopologyItem = (props) => {
                   <h4 className="type2">Load balancer</h4>
                   <p>
                     <i className="ico-type24-router on"></i>
-                    <span>{load.name}<a href={`/clusters/default/loadBalancers/${load.name}/${load.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{load.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${load.name}/${load.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                 </div>
                 <div className="element right">

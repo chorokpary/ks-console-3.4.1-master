@@ -25,8 +25,9 @@ import DeleteModal from 'components/Modals/Delete'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/Networks/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/Networks/Modify'
-import TopologyModal from 'clusters/containers/Resources/components/Modals/Topology'
 
+import TopologyModal from 'clusters/containers/Resources/components/Modals/Topology'
+import TopologyModalProject from 'projects/containers/Resources/components/Modals/Topology'
 
 export default {
   'networks.regist': {
@@ -188,4 +189,17 @@ export default {
       })
     },
   },
+  'networks.topology.project': {
+    on({ store, detail, success, ...props }) {
+      const modal = Modal.open({
+        onOk: async data => {
+          Modal.close(modal)
+        },
+        detail,
+        store,
+        modal: TopologyModalProject,
+        ...props,
+      })
+    },
+  },  
 }
