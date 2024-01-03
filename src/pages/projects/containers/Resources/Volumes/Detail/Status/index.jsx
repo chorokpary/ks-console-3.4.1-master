@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
-import DetailKaasList from 'pages/clusters/containers/Resources/components/DetailKaasList'
+import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList'
+import DetailKaasList from 'pages/projects/containers/Resources/components/DetailKaasList'
 
 import styles from './index.scss'
 

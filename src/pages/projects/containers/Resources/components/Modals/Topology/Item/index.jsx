@@ -73,7 +73,7 @@ const TopologyItem = (props) => {
         obj.num = (index+1);
         obj.network_type = networkType;
       })
-      console.log("unionArray : "+ JSON.stringify(unionArray))
+      // console.log("unionArray : "+ JSON.stringify(unionArray))
       setNetworkUnionList(unionArray);
      
   }, [networkList, sriovList])
