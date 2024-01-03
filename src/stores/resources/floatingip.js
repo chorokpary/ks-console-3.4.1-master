@@ -117,17 +117,64 @@ export default class FloatingIpStore extends Base {
     }
     @action
     async lbList(params) {
+        let dataList = []
+
         const result = await request.get(
             `/edgetron/resources/kubevirt/lbs`
         )
-        return result
+
+        if (params.namespace) {
+            params.project = params.namespace;
+        }
+        const searchArray = Object.keys(params).map((key) => {
+            let value = params[key];
+            let searchData = {
+                "searchKeywordType": key,
+                "searchKeywordText": value
+            }
+            return searchData
+        })
+
+        if (searchArray.length > 0) {
+            searchArray.map((search) => {
+                let resultList = result.lbs.filter((row) => {
+                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                });
+                dataList = resultList;
+            })
+        }
+
+        return dataList
     }
     @action
     async vmList(params) {
+        let dataList = []
+
         const result = await request.get(
             `/edgetron/resources/kubevirt/vms`
         )
-        return result
+        if (params.namespace) {
+            params.project = params.namespace;
+        }
+        const searchArray = Object.keys(params).map((key) => {
+            let value = params[key];
+            let searchData = {
+                "searchKeywordType": key,
+                "searchKeywordText": value
+            }
+            return searchData
+        })
+
+        if (searchArray.length > 0) {
+            searchArray.map((search) => {
+                let resultList = result.vms.filter((row) => {
+                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                });
+                dataList = resultList;
+            })
+        }
+
+        return dataList
     }
     @action
     async fipList(params) {

@@ -6,7 +6,7 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { toJS } from 'mobx'
 
-const VmPop = ({ title, onOk, store }) => {
+const VmPop = ({ title, onOk, store, match }) => {
   // VM list
   // FIP 상세의 network가
   // Router의 external 이면서
@@ -14,7 +14,6 @@ const VmPop = ({ title, onOk, store }) => {
   // VM의 networks의 포함되어 있는 것.
   // router list 중 external이 fip의 network인 것을 찾고,
   // 해당 router 의 internal이 VM list의 networks와 포함되는 것
-
   const form = useRef();
   const [formData, setFormData] = useState({});
   const fipDetail = toJS(store.detail.floating_ip);
@@ -40,14 +39,14 @@ const VmPop = ({ title, onOk, store }) => {
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList()
+      const routerData = await store.routerList(match.params)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetVmList = async () => {
-      const vmData = await store.vmList()
-      setVmDataList(vmData.vms)
+      const vmData = await store.vmList(match.params)
+      setVmDataList(vmData)
     };
     fnGetVmList();
 
@@ -61,7 +60,7 @@ const VmPop = ({ title, onOk, store }) => {
   useEffect(() => {
     if (fipList.length > 0 && vmDataList.length > 0) {
       const arr = new Set();
-      console.log(fipList)
+
       fipList.map(obj => {
         if (obj.target_ip != null && obj.instance_type == 'vm') {
           arr.add(obj.instance_id)

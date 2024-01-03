@@ -6,7 +6,7 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { toJS } from 'mobx'
 
-const LbPop = ({ title, onOk, store }) => {
+const LbPop = ({ title, onOk, store, match }) => {
   // LB list
   // FIP 상세의 network가
   // Router의 external 이면서
@@ -34,14 +34,14 @@ const LbPop = ({ title, onOk, store }) => {
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList()
+      const routerData = await store.routerList(match.params)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetLbList = async () => {
-      const lbData = await store.lbList()
-      setLbList(lbData.lbs)
+      const lbData = await store.lbList(match.params)
+      setLbList(lbData)
     };
 
     fnGetLbList();
