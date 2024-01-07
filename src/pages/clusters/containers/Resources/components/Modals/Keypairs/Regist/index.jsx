@@ -32,7 +32,7 @@ const RegistModal = (props) => {
 
   const [privateKey, setPrivateKey] = useState("");
   const [publicKey, setPublicKey] = useState("");
-  const [projectName, setProjectName] = useState(props.namespace);
+  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
 
   const createKeypair = async () => {
     let valid = false;
@@ -148,6 +148,7 @@ const RegistModal = (props) => {
                     >
                       <ProjectSelect
                         name="namespace"
+                        defaultValue={projectName}
                         cluster={props.cluster}
                         onChange={(e) => setProjectName(e)}
                       />

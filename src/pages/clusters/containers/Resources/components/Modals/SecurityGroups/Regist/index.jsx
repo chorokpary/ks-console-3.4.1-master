@@ -14,7 +14,7 @@ const RegistModal = (props) => {
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
 
-    const [projectName, setProjectName] = useState(props.namespace);
+    const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
     const [btnDimm, setBtnDimm] = useState(false);
 
     const regexRemoteIp = /[^0123456789.\/]/g;
@@ -251,18 +251,18 @@ const RegistModal = (props) => {
 
                     <Columns>
                         <Column>
-                        <Form.Item
-                            label={t('RESOURCES_NAME')}
-                            rules={[{ required: true, validator: nameValidator }]}
-                            desc={t('NAME_DESC')}
-                        >
-                            <Input
-                                name="name"
-                                autoFocus={true}
-                                maxLength={63}
-                                style={{ maxWidth: 'none' }}
-                            />
-                        </Form.Item>
+                            <Form.Item
+                                label={t('RESOURCES_NAME')}
+                                rules={[{ required: true, validator: nameValidator }]}
+                                desc={t('NAME_DESC')}
+                            >
+                                <Input
+                                    name="name"
+                                    autoFocus={true}
+                                    maxLength={63}
+                                    style={{ maxWidth: 'none' }}
+                                />
+                            </Form.Item>
                         </Column>
                         {!props.namespace && (
                             <Column>
@@ -275,6 +275,7 @@ const RegistModal = (props) => {
                                 >
                                     <ProjectSelect
                                         name="namespace"
+                                        defaultValue={projectName}
                                         cluster={props.cluster}
                                         onChange={(e) => setProjectName(e)}
                                     />

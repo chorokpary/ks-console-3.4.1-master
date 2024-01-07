@@ -26,7 +26,7 @@ const RegistModal = (props) => {
 
   const [regStep, setRegStep] = useState(1);
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
-  const [projectName, setProjectName] = useState(props.namespace);
+  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
 
   const networkTypeOptions = [
     { label: 'VXLAN', value: 'VXLAN', },
@@ -272,35 +272,36 @@ const RegistModal = (props) => {
 
               {/* 기본설정 설정 시작==========================================*/}
               <div className={`${regStep == 1 ? "" : "hide"}`}>
-              <Columns>
-                <Column>
-                <Form.Item
-                  label={t('RESOURCES_NAME')}
-                  rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
-                  desc={t('NAME_DESC')}
-                >
-                  <Input name="name" maxLength={253}
-                    style={{ maxWidth: 'none' }} />
-                </Form.Item>
-                </Column>
-                {!props.namespace && (
+                <Columns>
                   <Column>
                     <Form.Item
-                      label={t('PROJECT')}
-                      desc={t('SELECT_PROJECT_DESC')}
-                      rules={[
-                        { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
-                      ]}
+                      label={t('RESOURCES_NAME')}
+                      rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
+                      desc={t('NAME_DESC')}
                     >
-                      <ProjectSelect
-                        name="namespace"
-                        cluster={props.cluster}
-                        onChange={(e) => setProjectName(e)}
-                      />
+                      <Input name="name" maxLength={253}
+                        style={{ maxWidth: 'none' }} />
                     </Form.Item>
                   </Column>
-                )}
-               </Columns>
+                  {!props.namespace && (
+                    <Column>
+                      <Form.Item
+                        label={t('PROJECT')}
+                        desc={t('SELECT_PROJECT_DESC')}
+                        rules={[
+                          { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                        ]}
+                      >
+                        <ProjectSelect
+                          name="namespace"
+                          defaultValue={projectName}
+                          cluster={props.cluster}
+                          onChange={(e) => setProjectName(e)}
+                        />
+                      </Form.Item>
+                    </Column>
+                  )}
+                </Columns>
 
                 <Form.Item>
                   <Columns>
@@ -345,18 +346,18 @@ const RegistModal = (props) => {
                               onChange={value => handleExternal(value)}
                             >
                               {externalOptions.map((option, idx) => (
-                              !props.namespace ?
-                                <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
-                                  disabled={!externalBool && idx == 1 ? true : false}
-                                >
-                                  {option.label}
-                                </RadioButton>
-                                :
-                                <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
-                                  disabled={idx == 1 ? true : false}
-                                >
-                                  {option.label}
-                                </RadioButton>
+                                !props.namespace ?
+                                  <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
+                                    disabled={!externalBool && idx == 1 ? true : false}
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                  :
+                                  <RadioButton id={`radio.${idx}`} key={option.value} value={option.value}
+                                    disabled={idx == 1 ? true : false}
+                                  >
+                                    {option.label}
+                                  </RadioButton>
                               ))}
                             </RadioGroup>
                           </Form.Item>

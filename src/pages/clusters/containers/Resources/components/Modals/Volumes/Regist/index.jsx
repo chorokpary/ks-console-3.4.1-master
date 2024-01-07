@@ -25,7 +25,7 @@ const RegistModal = (props) => {
   const [volumeCapacity, setVolumeCapacity] = useState(10);
 
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
-  const [projectName, setProjectName] = useState(props.namespace);
+  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
 
   useEffect(() => {
 
@@ -198,6 +198,7 @@ const RegistModal = (props) => {
                       >
                         <ProjectSelect
                           name="namespace"
+                          defaultValue={projectName}
                           cluster={props.cluster}
                           onChange={(e) => setProjectName(e)}
                         />
