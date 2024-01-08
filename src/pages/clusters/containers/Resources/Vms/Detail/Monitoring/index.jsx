@@ -139,9 +139,9 @@ const index = (props) => {
       })
 
       const vmDiskMetricData = _.find(vmDiskData, (data) => {
-        if (data.metric.pod === store.detail.id ) return data;
+        if (data.metric?.pod === store.detail.id ) return data;
       });
-  
+      
       // 배열 처리 
       const vmDiskArray = [];
       vmDiskArray.push(vmDiskMetricData)
