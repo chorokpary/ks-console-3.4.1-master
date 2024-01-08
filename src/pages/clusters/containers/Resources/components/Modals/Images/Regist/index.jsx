@@ -658,7 +658,7 @@ const Step2 = (
 
   // public image tag
   const getPulicImageTag = async (imageName) => {
-    const urlParams = registryUrl.searchParams;
+    const urlParams = new URLSearchParams(registryUrl)
     const namespace = urlParams.get('namespace')
     const response = await axios.get(`https://quay.io/api/v1/repository/${namespace}/${imageName}`, {
       headers: {
