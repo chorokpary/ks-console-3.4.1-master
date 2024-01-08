@@ -62,8 +62,9 @@ export default class Vms extends React.Component {
 
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list);
+    const project = this.props.clusterStore.project || ''
     if (this.isRuning) {
-      this.getData({ silent: true, page, limit })
+      this.getData({ silent: true, page, limit, project })
     } else {
       clearInterval(this.refreshTimer)
       this.refreshTimer = null
