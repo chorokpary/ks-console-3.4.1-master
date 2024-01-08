@@ -8,7 +8,8 @@ import HostDeviceStore from 'stores/resources/hostdevices'
 import classnames from 'classnames'
 import { COLORS_MAP } from 'utils/constants'
 
-const regexName = /^([a-z]+)\/([a-z0-9]+)$/;
+const regexName = /^([a-z.]+)\/([a-z0-9]+)$/;
+
 const RegistModal = (props) => {
     const hostDeviceStore = new HostDeviceStore();
 
@@ -29,7 +30,7 @@ const RegistModal = (props) => {
                 , vendor_name: data.vendor_name
                 , device_id: data.device_id
                 , device_name: data.device_name
-                , isExternal: true
+                , isExternal: false
                 , isGpu: false
             })));
     };
