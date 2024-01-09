@@ -170,7 +170,7 @@ export default class Routers extends React.Component {
         search: true,
         width: 'auto',
         render: external => (
-          <p>{external.name}</p>
+          <p>{external?.name}</p>
         ),
       },
       {

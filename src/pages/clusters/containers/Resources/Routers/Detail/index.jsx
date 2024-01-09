@@ -104,7 +104,7 @@ const RouterDetail = (props) => {
         },
         {
           name: t('RESOURCES_EXTERNAL_NETWORK'),
-          value: detail.router.external.name,
+          value: detail.router.external?.name,
         },
         {
           name: t('RESOURCES_DESCRIPTION'),
