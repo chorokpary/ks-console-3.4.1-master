@@ -3,7 +3,7 @@
 # that can be found in the LICENSE file.
 
 REPO?=registry.gitlab.com/sonaproject
-TAG?=v3.4.0-rc
+TAG?=v3.4.0-infra
 
 .PHONY: all
 all: test build serve
