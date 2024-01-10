@@ -53,7 +53,7 @@ const ComputingNetwork = ({
       let external = 0;
       let internal = 0;
       routerList.map(obj => {
-        obj.external.length > 0 ? external++ : '';
+        obj.external ? external++ : '';
         obj.internal.length > 0 ? internal++ : '';
       })
       setRouter({ external, internal })

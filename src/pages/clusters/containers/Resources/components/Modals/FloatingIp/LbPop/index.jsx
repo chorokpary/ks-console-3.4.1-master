@@ -49,7 +49,7 @@ const LbPop = ({ title, onOk, store, match }) => {
 
   useEffect(() => {
     if (lbList.length > 0 && routerList.length > 0) {
-      const internalList = routerList.find((obj) => obj.external.id == fipDetail.network)?.internal || [];
+      const internalList = routerList.find((obj) => obj.external?.id == fipDetail.network)?.internal || [];
       const list = lbList.filter((obj) => internalList.find(it => it.id == obj.network.id))
       setList(list)
       if (list.length > 0) handleLbData(list[0])
