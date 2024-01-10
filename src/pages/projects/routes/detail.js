@@ -26,7 +26,7 @@ import PodDetail from '../containers/Pods/Detail'
 import ContainerDetail from '../containers/Pods/Containers/Detail'
 import ServiceDetail from '../containers/Services/Detail'
 import RouteDetail from '../containers/Routes/Detail'
-import VolumeDetail from '../containers/Volumes/Detail'
+import Volume from '../containers/Volumes/Detail'
 import VolumeSnapshotDetail from '../containers/VolumeSnapshots/Detail'
 import SecretDetail from '../containers/Secrets/Detail'
 import ConfigMapDetail from '../containers/ConfigMaps/Detail'
@@ -36,6 +36,20 @@ import OPAppDetail from '../containers/Applications/OPAppDetail'
 import RoleDetail from '../containers/Roles/Detail'
 import ImageBuilderDetail from '../containers/ImageBuilder/Detail'
 import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
+
+//MM3 Detail Page
+import KeypairDetail from '../containers/Resources/Keypairs/Detail'
+import FlavorDetail from '../containers/Resources/Flavors/Detail'
+import ImageDetail from '../containers/Resources/Images/Detail'
+import RouterDetail from '../containers/Resources/Routers/Detail'
+import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
+import NetworkDetail from '../containers/Resources/Networks/Detail'
+import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
+import VmDetail from '../containers/Resources/Vms/Detail'
+import VolumeDetail from '../containers/Resources/Volumes/Detail'
+import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
+import SrIovDetail from '../containers/Resources/Sriov/Detail'
+
 
 export default PATH => [
   {
@@ -76,7 +90,7 @@ export default PATH => [
   },
   {
     path: `${PATH}/volumes/:name`,
-    component: VolumeDetail,
+    component: Volume,
   },
   {
     path: `${PATH}/volume-snapshots/:name`,
@@ -118,4 +132,50 @@ export default PATH => [
     path: [`${PATH}/alert-rules/builtin/:name`, `${PATH}/alert-rules/:name`],
     component: AlertPoliciesDetail,
   },
+  {
+    path: `${PATH}/keypairs/:name/:id`,
+    component: KeypairDetail,
+  },
+  {
+    path: `${PATH}/flavors/:name`,
+    component: FlavorDetail,
+  },
+  {
+    path: `${PATH}/floatingip/:name/:id`,
+    component: FloatingIpDetail,
+  },
+  {
+    path: `${PATH}/images/:name`,
+    component: ImageDetail,
+  },
+  {
+    path: `${PATH}/securityGroups/:name/:id`,
+    component: SecurityGroupDetail,
+  },
+  {
+    path: `${PATH}/networks/:name/:id`,
+    component: NetworkDetail,
+  },
+  {
+    path: `${PATH}/routers/:name/:id`,
+    component: RouterDetail,
+  },
+  {
+    path: `${PATH}/sriovs/:name`,
+    component: SrIovDetail,
+  },
+  {
+    path: `${PATH}/loadbalancers/:name/:id`,
+    component: LoadBalancerDetail,
+  },
+  {
+    path: `${PATH}/vms/:name/:id`,
+    component: VmDetail,
+  },
+  {
+    path: `${PATH}/resourcesvolumes/:name/:id`,
+    component: VolumeDetail,
+  },
+
+
 ]

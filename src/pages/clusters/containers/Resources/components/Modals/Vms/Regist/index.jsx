@@ -39,10 +39,10 @@ const RegistModal = (props) => {
   const [selectImageName, setSelectImageName] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
   const [selectImageDistroType, setSelectImageDistroType] = useState();
-  
-  const [imageOptionList, setImageOptionList] = useState([]);  
 
-  const [projectName, setProjectName] = useState();
+  const [imageOptionList, setImageOptionList] = useState([]);
+
+  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
   const [vmName, setVmName] = useState('');
   const [imageName, setImageName] = useState('');
   const [bootVolumeName, setBootVolumeName] = useState('');
@@ -67,7 +67,7 @@ const RegistModal = (props) => {
   const [isUserScript, setIsUserScript] = useState(false);
 
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
-  
+
 
   useEffect(() => {
 
@@ -81,7 +81,7 @@ const RegistModal = (props) => {
       const listNode = await vmStore.fetchVmListNode();
       const listSecurityGroup = await vmStore.fetchVmListSecurityGroup();
       const listStoregeClass = await vmStore.fetchVmListStoregeClass();
-      
+
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
       setImageOptionList(listImage.images);
@@ -179,23 +179,23 @@ const RegistModal = (props) => {
       data.bootvolume = data?.bootvolume == t('RESOURCES_SELECT') ? "" : data?.bootvolume;
       data.keypair = data.keypair == t('RESOURCES_SELECT') ? "" : data.keypair;
       data.node = data.node == t('RESOURCES_SELECT') ? "" : data.node;
-      data.storageClass = (imageType == "I" && storageClass != t('RESOURCES_SELECT')) ?  storageClass : "";
+      data.storageClass = (imageType == "I" && storageClass != t('RESOURCES_SELECT')) ? storageClass : "";
 
       let makeScriptStep_1 = false;
       let makeScriptStep_2 = false;
       let makeScriptStep_3 = false;
 
       let makeScript = "#cloud-config";
-      
+
       let userPasswordScript = "";
-      if(listPasswordRoute.length == 1){
+      if (listPasswordRoute.length == 1) {
         listPasswordRoute.map((obj) => {
           if (!!data['scriptPassword_' + obj]) {
             userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
             makeScriptStep_1 = true;
           }
         })
-      }else{
+      } else {
         userPasswordScript = "\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
         listPasswordRoute.map((obj) => {
           if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
@@ -205,7 +205,7 @@ const RegistModal = (props) => {
         })
         userPasswordScript += "  expire: False"
       }
-     
+
       let fileScript = "";
       fileScript += `\nwrite_files:\n - path: /test.txt\n content: |\n Here is a line.\n Another line is here.\n - path: /test02.txt\n content: |\n Here is a line02.\n Another line is here02.`
       makeScriptStep_2 = true;
@@ -237,20 +237,20 @@ const RegistModal = (props) => {
 
     if (step == 1) {
 
-      if (imageType == "I" && (data.name == undefined || !regexName.test(data.name)  || data.image == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
+      if (imageType == "I" && (data.name == undefined || !regexName.test(data.name) || data.image == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
         handleOk();
       } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
         handleOk();
       } else {
-        const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi','');
+        const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi', '');
         const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
 
-        if(flavorSize > imageSize){
+        if (flavorSize > imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
-        }else{
+        } else {
           setFlavorSizeCheck(false);
-        }        
+        }
       }
     }
     if (step == 3) {
@@ -259,7 +259,7 @@ const RegistModal = (props) => {
       setBootVolumeName(data.bootvolume);
       setFlavorName(data.flavor);
       setDescription(data.description)
-      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairDataList, {'id' : data.keypair}), 'name'));
+      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairDataList, { 'id': data.keypair }), 'name'));
       setNodeName(data.node == t('RESOURCES_SELECT') ? "" : data.node);
 
       const flavorData = flavorDataList.filter(obj => obj.name == data.flavor)
@@ -524,7 +524,7 @@ const RegistModal = (props) => {
               <span className={styles.check}></span>
               <div className={styles.title}>
                 <div className={styles.step_name}>{t('RESOURCES_CHECK_INPUT_INFORMATION')}</div>
-                <div className={styles.situation}>{regStep == 4 ? t('RESOURCES_CURRENT'): t('RESOURCES_NOT_SET')}</div>
+                <div className={styles.situation}>{regStep == 4 ? t('RESOURCES_CURRENT') : t('RESOURCES_NOT_SET')}</div>
               </div>
             </div>
           </div>
@@ -538,38 +538,39 @@ const RegistModal = (props) => {
 
                 <Columns>
                   <Column>
-                      <Form.Item
-                          label={t('RESOURCES_NAME')}
-                          rules={[{ required: true, validator: nameValidator }]}
-                          desc={t('NAME_DESC')}
-                      >
-                          <Input
-                              name="name"
-                              autoFocus={true}
-                              maxLength={63}
-                              style={{ maxWidth: 'none' }}
-                          />
-                      </Form.Item>
+                    <Form.Item
+                      label={t('RESOURCES_NAME')}
+                      rules={[{ required: true, validator: nameValidator }]}
+                      desc={t('NAME_DESC')}
+                    >
+                      <Input
+                        name="name"
+                        autoFocus={true}
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}
+                      />
+                    </Form.Item>
                   </Column>
                   {!props.namespace && (
-                      <Column>
-                          <Form.Item
-                              label={t('PROJECT')}
-                              desc={t('SELECT_PROJECT_DESC')}
-                              rules={[
-                                  { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
-                              ]}
-                          >
-                              <ProjectSelect
-                                  name="metadata.namespace"
-                                  cluster={props.cluster}
-                                  onChange={(e) => setProjectName(e)}
-                              />
-                          </Form.Item>
-                      </Column>
+                    <Column>
+                      <Form.Item
+                        label={t('PROJECT')}
+                        desc={t('SELECT_PROJECT_DESC')}
+                        rules={[
+                          { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                        ]}
+                      >
+                        <ProjectSelect
+                          name="metadata.namespace"
+                          defaultValue={projectName}
+                          cluster={props.cluster}
+                          onChange={(e) => setProjectName(e)}
+                        />
+                      </Form.Item>
+                    </Column>
                   )}
                 </Columns>
-                
+
                 {/* <Form.Item
                   label={t('RESOURCES_NAME')}
                   rules={[{ required: true, validator: nameValidator }]}
@@ -633,7 +634,7 @@ const RegistModal = (props) => {
                           selectImageName &&
                           <Form.Item>
                             <div className={styles.wrapperImageView}>
-                                {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
+                              {osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + selectImageName}
                             </div>
                           </Form.Item>
                         }
@@ -768,10 +769,10 @@ const RegistModal = (props) => {
                         </tbody>
                       </table>
                       <div className={styles.removeCheckWrapper}>
-                        {networkCheckItems?.map((id) =>{
-                            const name = networkDataList?.filter((data) => data.id == id).map(item => item.name)[0]
-                            return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "network")}>{name}</Button></span>
-                          }                          
+                        {networkCheckItems?.map((id) => {
+                          const name = networkDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                          return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "network")}>{name}</Button></span>
+                        }
                         )}
                       </div>
                     </div>
@@ -906,10 +907,10 @@ const RegistModal = (props) => {
                         </tbody>
                       </table>
                       <div className={styles.removeCheckWrapper}>
-                        {securityGroupCheckItems?.map((id) =>{
+                        {securityGroupCheckItems?.map((id) => {
                           const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
                           return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
-                         }                          
+                        }
                         )}
                       </div>
                     </div>
@@ -937,8 +938,8 @@ const RegistModal = (props) => {
                               <Input
                                 name={`scriptId_${obj}`}
                                 placeholder={t('ID')}
-                                defaultValue={obj == 1 ? selectImageDistroType : "" }
-                                disabled={obj == 1 ? true : false }
+                                defaultValue={obj == 1 ? selectImageDistroType : ""}
+                                disabled={obj == 1 ? true : false}
                               />
                             </Form.Item>
                           </Column>
@@ -955,7 +956,7 @@ const RegistModal = (props) => {
                           type="flat"
                           icon="trash"
                           className={styles.scriptdelete}
-                          onClick={() => (listPasswordRoute.length > 1 && obj > 1) && handlePasswordRoute.delColumn(obj) }
+                          onClick={() => (listPasswordRoute.length > 1 && obj > 1) && handlePasswordRoute.delColumn(obj)}
                         />
                       </div>
                     ))}
@@ -1167,7 +1168,7 @@ const RegistModal = (props) => {
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div className={styles.multiline}>
                           {securityGroupCheckItems.map((id) => (
-                            <div key={id}>{get(find(securityGroupDataList, {'id' : id}), 'name')}</div>
+                            <div key={id}>{get(find(securityGroupDataList, { 'id': id }), 'name')}</div>
                           ))}
                         </div>
                       </div>

@@ -23,6 +23,9 @@ import { Modal } from 'components/Base'
 import RegistModal from 'clusters/containers/Resources/components/Modals/Routers/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/Routers/Modify'
 
+import RegistModalProject from 'projects/containers/Resources/components/Modals/Routers/Regist'
+import ModifyModalProject from 'projects/containers/Resources/components/Modals/Routers/Modify'
+
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
@@ -166,6 +169,49 @@ export default {
         detail,
         store,
         modal: EditYamlModal,
+        ...props,
+      })
+    },
+  },
+  'router.regist.project': {
+    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .create(data, { cluster, workspace, namespace, devops })
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        title: t('RESOURCES_CREATE_VROUTER'),
+        modal: RegistModalProject,
+        store,
+        cluster,
+        workspace,
+        namespace,
+        devops,
+        ...props,
+      })
+    },
+  },
+  'router.edit.project': {
+    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        title: t('RESOURCES_EDIT_VROUTER'),
+        modal: ModifyModalProject,
+        store,
+        module,
         ...props,
       })
     },

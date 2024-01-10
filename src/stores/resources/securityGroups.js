@@ -219,9 +219,11 @@ export default class SecurityGroupStore extends Base {
                 Promise.all(
                     rowKeys.map(async (id) => {
                         const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + id);
-                        securityDetail.data.security_group.rules.map((rule) => {
-                            request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
-                        })
+                        Promise.all( 
+                            securityDetail.data.security_group.rules.map((rule) => {
+                                request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
+                            })
+                        )
 
                         await request.delete(
                             `${this.getDetailUrl({ id, ...params })}`

@@ -52,6 +52,22 @@ import grayReleaseRoutes from './grayrelease'
 import getDetailPath from './detail'
 import Gateway from '../containers/Gateway'
 
+//MM3 List Page
+import Vms from '../containers/Resources/Vms'
+import Keypairs from '../containers/Resources/Keypairs'
+import Flavors from '../containers/Resources/Flavors'
+import HostDevices from '../containers/Resources/HostDevices'
+import Images from '../containers/Resources/Images'
+import Routers from '../containers/Resources/Routers'
+import SecurityGroups from '../containers/Resources/SecurityGroups'
+import Networks from '../containers/Resources/Networks'
+import FloatingIp from '../containers/Resources/FloatingIp'
+import ResourcesVolumes from '../containers/Resources/Volumes'
+import Sriov from '../containers/Resources/Sriov'
+import MediatedDevices from '../containers/Resources/MediatedDevices'
+import LoadBalancers from '../containers/Resources/LoadBalancers'
+
+
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
 export default [
@@ -148,6 +164,72 @@ export default [
         component: CustomMonitoring,
         exact: true,
       },
+      {
+        path: `${PATH}/vms`,
+        component: Vms,
+        exact: true,
+      },
+      {
+        path: `${PATH}/keypairs`,
+        component: Keypairs,
+        exact: true,
+      },
+      {
+        path: `${PATH}/flavors`,
+        component: Flavors,
+        exact: true,
+      },
+      {
+        path: `${PATH}/hostDevices`,
+        component: HostDevices,
+        exact: true,
+      },
+      {
+        path: `${PATH}/floatingip`,
+        component: FloatingIp,
+        exact: true,
+      },
+      {
+        path: `${PATH}/images`,
+        component: Images,
+        exact: true,
+      },
+      {
+        path: `${PATH}/securityGroups`,
+        component: SecurityGroups,
+        exact: true,
+      },
+      {
+        path: `${PATH}/networks`,
+        component: Networks,
+        exact: true,
+      },
+      {
+        path: `${PATH}/routers`,
+        component: Routers,
+        exact: true,
+      },
+      {
+        path: `${PATH}/mediatedDevices`,
+        component: MediatedDevices,
+        exact: true,
+      },
+      {
+        path: `${PATH}/sriovs`,
+        component: Sriov,
+        exact: true,
+      },
+      {
+        path: `${PATH}/loadbalancers`,
+        component: LoadBalancers,
+        exact: true,
+      },
+      {
+        path: `${PATH}/resourcesvolumes`,
+        component: ResourcesVolumes,
+        exact: true,
+      },
+
       getIndexRoute({
         path: `${PATH}/workloads`,
         to: `${PATH}/deployments`,

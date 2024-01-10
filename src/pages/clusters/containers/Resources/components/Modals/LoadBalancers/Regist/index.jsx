@@ -50,7 +50,7 @@ const RegistModal = (props) => {
   const [isMembers, setIsMembers] = useState(true);
   const [isRules, setIsRules] = useState(true);
   const [isDupRules, setIsDupRules] = useState(true);
-  const [projectName, setProjectName] = useState(props.namespace);
+  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
 
   useEffect(() => {
 
@@ -352,6 +352,7 @@ const RegistModal = (props) => {
                 >
                   <ProjectSelect
                     name="namespace"
+                    defaultValue={projectName}
                     cluster={props.cluster}
                     onChange={(e) => setProjectName(e)}
                   />

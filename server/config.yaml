@@ -28,10 +28,16 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://ks-apiserver
-    wsUrl: ws://ks-apiserver
-    mm3Url: http://edgetron-service.edgestack.svc.cluster.local:8080
-    cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
+    # url: http://192.168.16.86:30881
+    # wsUrl: ws://192.168.16.86:30881
+    # mm3Url: http://192.168.16.80:32080 
+    # cmpUrl: http://192.168.16.86:31000 
+    # harborUrl: http://192.168.16.86:30002
+    url: http://10.24.3.34:30881
+    wsUrl: ws://10.24.3.34:30881
+    mm3Url: http://10.24.3.34:32080 
+    cmpUrl: http://10.24.3.34:31000
+    
 
   mm3UserInfo:
     userName: "edgetron"
@@ -44,8 +50,6 @@ client:
   title: ARM CMP
   description: ""
   encryptKey: kubesphere
-  # serverlocation: "86"
-  serverlocation: "TB"
 
   version:
     kubesphere: 3.1.0
@@ -516,6 +520,94 @@ client:
                 - { name: cronjobs, title: CRONJOB_PL }
             - { name: ingresses, title: ROUTE_PL }
             - { name: pods, title: POD_PL }
+        - name : computing-workloads
+          title: "컴퓨팅 워크로드"
+          icon: templet
+          showInDisable: true   
+          children: 
+            - { name: vms, title: "가상머신"}
+        - name: computing
+          title: "컴퓨팅 설정"
+          icon: computing-setting
+          showInDisable: true
+          children:            
+            - {
+              name: networks,
+              title: 네트워크,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: securityGroups,
+              title: "보안그룹",
+              skipAuth: true,
+              showInDisable: true,
+            }  
+            - {
+              name: routers,
+              title: 가상 라우터,
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: floatingip,
+              title: "플로팅 IP",
+              skipAuth: true,
+              showInDisable: true,
+            }   
+            - {
+             name: loadBalancers,
+             title: "로드 밸런서",
+             skipAuth: true,
+             showInDisable: true,
+            }
+            - {
+              name: sriovs,
+              title: "SR-IOV 네트워크",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: resourcesVolumes,
+              title: "볼륨",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+             name: hostDevices,
+             title: "호스트 디바이스",
+             skipAuth: true,
+             showInDisable: true,
+            }
+            - {
+             name: mediatedDevices,
+             title: "Mediated 디바이스",
+             skipAuth: true,
+             showInDisable: true,
+            }          
+        - name: resources
+          title: "리소스 템플릿"
+          icon: resource
+          showInDisable: true   
+          children: 
+            - {
+              name: flavors,
+              title: "Flavor",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: keypairs,
+              title: "키페어",
+              skipAuth: true,
+              showInDisable: true,
+            }
+            - {
+              name: images,
+              title: 가상머신 이미지,
+              skipAuth: true,
+              showInDisable: true,
+            }                 
         - name: storage
           title: STORAGE
           icon: database

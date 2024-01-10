@@ -93,13 +93,21 @@ export default class TopologyStore extends Base {
   async fetchListRouter(params) {
     this.isLoading = true
 
-    const result = await request.get(
-      `/edgetron/resources/kubevirt/routers`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'routers' }
+    try {
+      const result = await request.get(
+        `/edgetron/resources/kubevirt/routers`
+      )
+      const response = { ...params, ...this.mapper(result), kind: 'routers' }
+  
+      this.isLoading = false
+      return response;
 
-    this.isLoading = false
-    return response;
+    } catch (e) {
+      console.log(e)
+      this.isLoading = false
+      return []
+    }
+
   }
 
   @action

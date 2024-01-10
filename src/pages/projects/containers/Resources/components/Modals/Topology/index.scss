@@ -1,0 +1,16 @@
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.editor {
+  height: 100%;
+  :global {
+    .ace_editor {
+      min-height: 100%;
+    }
+  }
+}
+
+.readOnly {
+  bottom: 0px !important;
+  max-height: unset;
+}
