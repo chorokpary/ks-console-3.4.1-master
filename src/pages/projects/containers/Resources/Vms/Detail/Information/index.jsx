@@ -27,7 +27,7 @@ const Information = (props) => {
     };
 
     const fnGetVolume = async () => {
-      const volumeData = store.volumeList?.filter(el => el.used_by_vmi == store.detail.vm?.name);
+      const volumeData = store.volumeList?.filter(el => el.used_by_vmi == store.detail.vm?.id);
       setDetailVolume(volumeData);
     };
 
