@@ -32,7 +32,7 @@ const Status = (props) => {
         const fnGetRouterData = async () => {
 
             const routerList = await routerStore.fetchList();
-            const routerExternalList = await routerList.filter(item => item.external.id === networkId );
+            const routerExternalList = await routerList.filter(item => item.external?.id === networkId );
             const routerInternalList = await routerList.filter(item => _.find(item['internal'], { 'id': networkId }));
 
             const routerTernalList = routerExternalList.length > 0 ? routerExternalList : routerInternalList;
