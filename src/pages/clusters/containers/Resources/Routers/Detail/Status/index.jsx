@@ -13,79 +13,9 @@ import styles from './index.scss'
 const Status = (props) => {
 
   const store = props.detailStore;
-  const [isExpandInternal, setIsExpandInternal] = useState(false)
 
   const [externalNetwork, setExternalNetwork] = useState(null);
   const [internalNetwork, setInternalNetwork] = useState([]);
-
-  const renderContentNetwork = () => {
-    return (
-      <>
-        {internalNetwork.map((obj, index) => (
-          index == 0 &&
-          <div className={styles.content} key={index}>
-            <div className={styles.text}>
-              <div>{obj.name}</div>
-              <p>{t('RESOURCES_NAME')}</p>
-            </div>
-            <div className={styles.text}>
-              <div>{obj.type}</div>
-              <p>{t('RESOURCES_TYPE_YOO')}</p>
-            </div>
-            <div className={styles.text}>
-              <div>{obj.cidr}</div>
-              <p>CIDR</p>
-            </div>
-            <div className={styles.text}>
-              <div>{obj.gateway_ip}</div>
-              <p>{t('RESOURCES_GATEWAY')}</p>
-            </div>
-            <div className={styles.arrow}>
-              {internalNetwork.length > 1 && <Icon name="chevron-down" type={isExpandInternal ? 'light' : ''} size={20} />}
-            </div>
-          </div>
-        ))}
-      </>
-    )
-  }
-
-  const renderExtraContentNetwork = () => {
-    return (
-      <div className={styles.itemExtra}>
-        {internalNetwork.map((obj, index) => (
-          index > 0 &&
-          <div className={styles.containers} key={index}>
-            <div className={classnames(styles.item)}>
-              <div className={styles.icon}>
-                <Icon name="network" size={40} />
-              </div>
-              <div className={classnames(styles.title, styles.name)}>
-                <div>{obj.name}</div>
-                <p>{t('RESOURCES_NAME')}</p>
-              </div>
-              <div className={styles.title}>
-                <div>{obj.type}</div>
-                <p>{t('RESOURCES_TYPE_YOO')}</p>
-              </div>
-              <div className={styles.title}>
-                <div>{obj.cidr}</div>
-                <p>CIDR</p>
-              </div>
-              <div className={styles.title}>
-                <div>{obj.gateway_ip}</div>
-                <p>{t('RESOURCES_GATEWAY')}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-
-      </div>
-    )
-  }
-
-  const handleExpandExtra = () => {
-    setIsExpandInternal(!isExpandInternal)
-  }
 
   useEffect(() => {
 
@@ -97,7 +27,7 @@ const Status = (props) => {
     const fnGetInternalNetwork = async () => {
       setInternalNetwork([]);
       const promises = (store.detail.router?.internal).map(async (item) => {
-        const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + item. id);
+        const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + item.id);
         setInternalNetwork(internalNetwork => [...internalNetwork, internalData.data.network])
       })
       await Promise.all(promises);
@@ -135,7 +65,7 @@ const Status = (props) => {
                   <div>{externalNetwork.gateway_ip}</div>
                   <p>{t('RESOURCES_GATEWAY')}</p>
                 </div>
-                <div className={styles.arrow}>                 
+                <div className={styles.arrow}>
                 </div>
               </div>
             </div>
@@ -146,28 +76,33 @@ const Status = (props) => {
       {internalNetwork.length > 0 &&
         <Panel title={t('RESOURCES_INTERNAL_NETWORK')}>
           <div className={styles.wrapper}>
-            <div
-              className={classnames(styles.expandItem, "", {
-                [styles.expanded]: isExpandInternal,
-              })}
-            >
-              {internalNetwork.length > 1 ?
-                <div className={styles.itemMain} onClick={() => handleExpandExtra()}>
-                  <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
-                  </div>
-                  {renderContentNetwork()}
-                </div>
-                :
+            {internalNetwork.map((obj, index) => (
+              <div className={classnames(styles.expandItem)}>
                 <div className={styles.itemMainRemoveCursor} >
                   <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} type={isExpandInternal ? 'light' : 'dark'} />
+                    <Icon name="network-duotone" size={40} type={'dark'} />
                   </div>
-                  {renderContentNetwork()}
+                  <div className={styles.content} key={index}>
+                    <div className={styles.text}>
+                      <div>{obj.name}</div>
+                      <p>{t('RESOURCES_NAME')}</p>
+                    </div>
+                    <div className={styles.text}>
+                      <div>{obj.type}</div>
+                      <p>{t('RESOURCES_TYPE_YOO')}</p>
+                    </div>
+                    <div className={styles.text}>
+                      <div>{obj.cidr}</div>
+                      <p>CIDR</p>
+                    </div>
+                    <div className={styles.text}>
+                      <div>{obj.gateway_ip}</div>
+                      <p>{t('RESOURCES_GATEWAY')}</p>
+                    </div>
+                  </div>
                 </div>
-              }             
-              {internalNetwork.length > 1 && renderExtraContentNetwork()}
-            </div>
+              </div>
+            ))}
           </div>
         </Panel>
       }
