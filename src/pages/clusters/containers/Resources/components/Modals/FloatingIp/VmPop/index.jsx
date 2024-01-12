@@ -39,13 +39,13 @@ const VmPop = ({ title, onOk, store, match }) => {
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList(match.params)
+      const routerData = await store.routerList(match?.params)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetVmList = async () => {
-      const vmData = await store.vmList(match.params)
+      const vmData = await store.vmList(match?.params)
       setVmDataList(vmData)
     };
     fnGetVmList();
@@ -79,7 +79,7 @@ const VmPop = ({ title, onOk, store, match }) => {
 
   useEffect(() => {
     if (vmList.length > 0 && routerList.length > 0) {
-      const internalList = routerList.find((obj) => obj.external.id == fipDetail.network)?.internal || [];
+      const internalList = routerList.find((obj) => obj.external?.id == fipDetail.network)?.internal || [];
       setInternalList(internalList)
 
       const arr = new Set();

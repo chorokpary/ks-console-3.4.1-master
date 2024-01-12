@@ -32,7 +32,7 @@ const Status = (props) => {
         const fnGetRouterData = async () => {
 
             const routerList = await routerStore.fetchList();
-            const routerExternalList = await routerList.filter(item => item.external.id === networkId );
+            const routerExternalList = await routerList.filter(item => item.external?.id === networkId);
             const routerInternalList = await routerList.filter(item => _.find(item['internal'], { 'id': networkId }));
 
             const routerTernalList = routerExternalList.length > 0 ? routerExternalList : routerInternalList;
@@ -41,23 +41,23 @@ const Status = (props) => {
             setIsLoadingRouter(false);
         }
 
-        
+
         const fnGetLoadBalancerData = async () => {
             const loadBalancerList = await loadBalancerStore.fetchList();
-            const loadBalancerFilterList = loadBalancerList.filter(item => item.network == networkId ) ;
-            
+            const loadBalancerFilterList = loadBalancerList.filter(item => item.network == networkId);
+
             setLoadBalancerList(loadBalancerFilterList);
             setIsLoadingLoadBalancer(false)
         }
 
-       fnGetRouterData();
-       fnGetLoadBalancerData();
+        fnGetRouterData();
+        fnGetLoadBalancerData();
 
-    },[]);
+    }, []);
 
     return (
         <>
-            <div>                
+            <div>
 
                 {/* 가상 머신 상세 관련 샘플 */}
                 <DetailVmList type={t('RESOURCES_NETWORK')} variables='networks' id={props.match.params.id} />
@@ -68,9 +68,9 @@ const Status = (props) => {
                         <Panel title={t('RESOURCES_ROUTER')}>
                             <div className={styles.wrapper}>
                                 {isLoadingRouter ? <div className={styles.loading}><Loading /></div>
-                                :
-                                <div className={styles.empty}>{t('RESOURCES_NO_ROUTER_USE_NETWORK')}</div>
-                                 }                                
+                                    :
+                                    <div className={styles.empty}>{t('RESOURCES_NO_ROUTER_USE_NETWORK')}</div>
+                                }
                             </div>
                         </Panel>
                     }
@@ -95,14 +95,14 @@ const Status = (props) => {
                                             <p>{t('RESOURCES_EXTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
-                                            <div>{(obj.internal).length > 0 ? store.detail.name + ` ${t('RESOURCES_BESIDES')} ${(obj.internal).length - 1}${t('RESOURCES_COUNT')}`: "-"}</div>
+                                            <div>{(obj.internal).length > 0 ? store.detail.name + ` ${t('RESOURCES_BESIDES')} ${(obj.internal).length - 1}${t('RESOURCES_COUNT')}` : "-"}</div>
                                             <p>{t('RESOURCES_INTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
                                             <div>{obj.vrouter_ip}</div>
                                             <p>{t('RESOURCES_VROUTER_IP')}</p>
                                         </div>
-                                       
+
                                     </div>
                                 </div>
                             ))}
@@ -116,9 +116,9 @@ const Status = (props) => {
                         <Panel title={t('RESOURCES_LOAD_BALANCER')}>
                             <div className={styles.wrapper}>
                                 {isLoadingLoadBalancer ? <div className={styles.loading}><Loading /></div>
-                                :
-                                <div className={styles.empty}>{t('RESOURCES_NO_LOAD_BALANCER_NETWORK')}</div>
-                                 }  
+                                    :
+                                    <div className={styles.empty}>{t('RESOURCES_NO_LOAD_BALANCER_NETWORK')}</div>
+                                }
                             </div>
                         </Panel>
                     }
@@ -151,7 +151,7 @@ const Status = (props) => {
                             ))}
                         </Panel>
                     }
-              
+
                 </div>
 
             </div>

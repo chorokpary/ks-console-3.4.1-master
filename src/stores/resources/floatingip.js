@@ -116,16 +116,16 @@ export default class FloatingIpStore extends Base {
         return result
     }
     @action
-    async lbList(params) {
-        let dataList = []
-
+    async lbList(params = {}) {
         const result = await request.get(
             `/edgetron/resources/kubevirt/lbs`
         )
+        let dataList = result?.lbs || [];
 
         if (params.namespace) {
             params.project = params.namespace;
         }
+
         const searchArray = Object.keys(params).map((key) => {
             let value = params[key];
             let searchData = {
@@ -147,15 +147,16 @@ export default class FloatingIpStore extends Base {
         return dataList
     }
     @action
-    async vmList(params) {
-        let dataList = []
-
+    async vmList(params = {}) {
         const result = await request.get(
             `/edgetron/resources/kubevirt/vms`
         )
+        let dataList = result?.vms || [];
+
         if (params.namespace) {
             params.project = params.namespace;
         }
+
         const searchArray = Object.keys(params).map((key) => {
             let value = params[key];
             let searchData = {

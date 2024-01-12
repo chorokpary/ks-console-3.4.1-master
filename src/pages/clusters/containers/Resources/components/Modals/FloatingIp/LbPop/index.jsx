@@ -34,13 +34,13 @@ const LbPop = ({ title, onOk, store, match }) => {
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList(match.params)
+      const routerData = await store.routerList(match?.params)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetLbList = async () => {
-      const lbData = await store.lbList(match.params)
+      const lbData = await store.lbList(match?.params)
       setLbList(lbData)
     };
 
