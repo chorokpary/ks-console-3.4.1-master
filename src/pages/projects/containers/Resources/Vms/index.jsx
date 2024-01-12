@@ -24,7 +24,7 @@ import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import ResourceTable from 'clusters/components/ResourceTable'
 
-import { cloneDeep, get, isEmpty, omit } from 'lodash'
+import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
 import { Link } from 'react-router-dom'
 import { getLocalTime, showNameAndAlias } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
@@ -296,11 +296,13 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: networks => {
           let networkIpList = ""
-
+          const networksList = this.props.store.networksList;
+          const { workspace, cluster, namespace } = this.props.match.params;
           if (!!networks) {
             networkIpList = networks.map((el) => {
               if (el.name != "k8s-pod-network") {
-                return <Link to={`/clusters/${cluster}/networks/${el.name}`}><p key={el.name}>{el.ip}</p></Link>
+                const networkName = get(find(networksList, {'id' : el.name}),"name");
+                return <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${networkName}/${el.name}`}><p key={el.name}>{el.ip}</p></Link>
               }
             });
           } else {
