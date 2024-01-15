@@ -141,11 +141,12 @@ input.input:focus {
 }
 
 /* 토글 스위치 색상 */
-.toggle.checked:hover {
+.toggle.checked:hover,
+.toggle.checked:active {
   background-color: #250ba6 !important;
 }
 
-.toggle.checked  {
+.toggle.checked {
   background-color: #3617ce !important;
 }
 
@@ -508,9 +509,9 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 /* 앱스토어, 워크벤치 : 아이콘, 텍스트 컬러변경 */
 .src-components-Cards-App-index__wrapper .src-components-Cards-App-index__title p > strong,
-.src-components-Base-Text-index__wrapper > div:hover *,
-.src-components-Base-Text-index__clickable:hover svg,
-.src-components-Base-Text-index__clickable:hover,
+.src-pages-console-containers-Dashboard-index__wrapper .src-components-Base-Text-index__wrapper > div:hover *,
+.src-pages-console-containers-Dashboard-index__wrapper .src-components-Base-Text-index__clickable:hover svg,
+.src-pages-console-containers-Dashboard-index__wrapper .src-components-Base-Text-index__clickable:hover,
 .src-pages-console-containers-Dashboard-Admin-PlatformStatus-index__resource:hover > div *,
 .src-pages-console-containers-Dashboard-Admin-History-index__text:hover > *,
 .src-pages-console-containers-Dashboard-Admin-History-index__histories a:hover > *,
