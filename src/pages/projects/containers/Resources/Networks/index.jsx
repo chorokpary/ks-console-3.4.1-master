@@ -20,7 +20,7 @@ import ResourceTable from 'clusters/components/ResourceTable'
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
+import Tabs from 'components/Cards/Banner/Tabs'
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
@@ -42,6 +42,11 @@ import styles from './index.scss'
   rowKey: 'id'
 })
 export default class Networks extends React.Component {
+
+  handleTabChange = value => {
+    const { cluster, workspace, namespace } = this.props.match.params
+    this.props.routing.push(`/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`)
+  }
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -174,7 +179,24 @@ export default class Networks extends React.Component {
     return { desc: t('RESOURCES_NO_DATA') }
   }
 
-  modalTopology  = () => {
+  get tabs() {
+    return {
+      value: this.props.module,
+      onChange: this.handleTabChange,
+      options: [
+        {
+          value: 'networks',
+          label: t('RESOURCES_NETWORK_TAB1'),
+        },
+        {
+          value: 'sriovs',
+          label: t('RESOURCES_NETWORK_TAB2'),
+        },
+      ],
+    }
+  }
+
+  modalTopology = () => {
     const { getData, trigger } = this.props
 
     trigger('networks.topology.project', {
@@ -191,7 +213,7 @@ export default class Networks extends React.Component {
         <div className={classnames(styles.wrapper)}>
           <div className={styles.titleWrapper}>
             <div className={styles.icon}>
-                <Icon name={'network-duotone'} size={48} />
+              <Icon name={'network-duotone'} size={48} />
             </div>
             <div className={styles.title}>
               <div className="h3">{t('RESOURCES_NETWORK')}</div>
@@ -201,12 +223,14 @@ export default class Networks extends React.Component {
             </div>
             <div className={styles.divRight}>
               <div className={styles.iconRight} onClick={() => this.modalTopology()}>
-                  <Icon name={'topology'} size={36}/>             
+                <Icon name={'topology'} size={36} />
               </div>
               <p>{t('RESOURCES_TOPOLOGY')}</p>
             </div>
           </div>
-        </div>    
+          <Tabs tabs={this.tabs} />
+        </div>
+
         <Table
           {...tableProps}
           emptyProps={this.emptyProps}

@@ -190,12 +190,13 @@ client:
           icon: computing-setting
           showInDisable: true
           children:            
-            - {
-              name: networks,
-              title: 네트워크,
-              skipAuth: true,
-              showInDisable: true,
-            }
+            - name: networks
+              title: 네트워크
+              skipAuth: true
+              showInDisable: true
+              tabs:
+                - { name: networks, title: 네트워크 }
+                - { name: sriovs, title: SR-IOV }
             - {
               name: securityGroups,
               title: "보안그룹",
@@ -220,12 +221,12 @@ client:
              skipAuth: true,
              showInDisable: true,
             }
-            - {
-              name: sriovs,
-              title: "SR-IOV 네트워크",
-              skipAuth: true,
-              showInDisable: true,
-            }
+            # - {
+            #   name: sriovs,
+            #   title: "SR-IOV 네트워크",
+            #   skipAuth: true,
+            #   showInDisable: true,
+            # }
             - {
               name: resourcesVolumes,
               title: "볼륨",
@@ -531,12 +532,13 @@ client:
           icon: computing-setting
           showInDisable: true
           children:            
-            - {
-              name: networks,
-              title: 네트워크,
-              skipAuth: true,
-              showInDisable: true,
-            }
+            - name: networks
+              title: 네트워크
+              skipAuth: true
+              showInDisable: true
+              tabs:
+                - { name: networks, title: 네트워크 }
+                - { name: sriovs, title: SR-IOV }
             - {
               name: securityGroups,
               title: "보안그룹",
@@ -561,12 +563,12 @@ client:
              skipAuth: true,
              showInDisable: true,
             }
-            - {
-              name: sriovs,
-              title: "SR-IOV 네트워크",
-              skipAuth: true,
-              showInDisable: true,
-            }
+            # - {
+            #   name: sriovs,
+            #   title: "SR-IOV 네트워크",
+            #   skipAuth: true,
+            #   showInDisable: true,
+            # }
             - {
               name: resourcesVolumes,
               title: "볼륨",
