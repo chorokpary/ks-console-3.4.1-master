@@ -485,5 +485,14 @@ module.exports = {
   RESOURCES_BMC_SYSTEM_TIP: 'BMC 시스템 등록 정보를 입력해주세요.',
   RESOURCES_CHANGE_NODE_STATE: '노드 상태를 변경하시겠습니까?',
   RESOURCES_NO_SYSTEM_ID: '시스템 ID가 없습니다.',
+  RESOURCES_TAG_EMPTY_DESC: '태그를 입력해 주세요.',
+  RESOURCES_TAG_DESC: '태그 정보를 입력합니다. 최대 길이는 63자입니다.',
+  RESOURCES_OS_INFORMATION_EMPTY_DESC: '이미지 OS 정보를 입력해 주세요.',
+  RESOURCES_OS_DESC: '이미지 OS 정보를 입력합니다. 최대 길이는 63자입니다.',
+  RESOURCES_TAG: '태그',
+  RESOURCES_OS_INFORMATION: 'OS 정보',
+  RESOURCES_FILE_NAME: '파일명',
+  RESOURCES_IMAGE_FILE_UPLOAD: '이미지 파일 업로드',
+  RESOURCES_FLAVOR: 'Flavor',
 
 };
