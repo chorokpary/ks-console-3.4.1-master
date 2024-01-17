@@ -310,17 +310,20 @@ class ResourceUsage extends React.Component {
 
   getComputingResourceData = () => {
     const resource = toJS(this.computingStore.resource)
+    console.log("resource : "+ JSON.stringify(resource))
     return resource;
   }
 
   renderComputingResource() {
     const { isLoading, resources } = this.computingStore
 
+    console.log("isLoading : "+ isLoading)
+    console.log("resources : "+ JSON.stringify(resources))
     return (
       <Loading spinning={isLoading}>
         <div className={styles.resources}>
-          {resources?.map((item) => (
-               <ComputingResourceItem
+          {resources?.map(item => (
+              <ComputingResourceItem
                 {...this.props.match.params}
                 {...item}
                 name={item.name}
