@@ -86,12 +86,12 @@ export default class ResourceCard extends React.Component {
       num,
       onClick,
     } = this.props
-    console.log("icon  : "+ icon )
+
     return (
       <div data-name={name} className={classnames(styles.card, className)}>
         <div className={styles.icon}>
           {
-            icon.includes('ico-') ? <i className={icon}></i> : <Icon name={icon} size={iconSize} />
+            icon.includes('ico-') ? <i className={icon}></i> : <Icon name={icon} size={30} />
           }
         </div>
         <div

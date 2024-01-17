@@ -68,7 +68,7 @@ class ResourceUsage extends React.Component {
     super(props)
 
     this.state = {
-      resourceType: 'application',
+      resourceType: 'computing',
       range: 43200,
     }
 
@@ -131,6 +131,7 @@ class ResourceUsage extends React.Component {
 
   fetchMetrics = params => {
     const { resourceType, range } = this.state
+    
     if (resourceType === 'application') {
       this.appResourceMonitorStore.fetchMetrics({
         ...this.props.match.params,
@@ -307,14 +308,21 @@ class ResourceUsage extends React.Component {
     )
   }
 
+  getComputingResourceData = () => {
+    const resource = toJS(this.computingStore.resource)
+    console.log("resource : "+ JSON.stringify(resource))
+    return resource;
+  }
+
   renderComputingResource() {
     const { isLoading, resources } = this.computingStore
+
+    console.log("isLoading : "+ isLoading)
     console.log("resources : "+ JSON.stringify(resources))
     return (
       <Loading spinning={isLoading}>
         <div className={styles.resources}>
-          {resources
-            .map(item => (
+          {resources?.map(item => (
               <ComputingResourceItem
                 {...this.props.match.params}
                 {...item}
@@ -338,15 +346,15 @@ class ResourceUsage extends React.Component {
           onChange={this.handleResouceTypeChange}
           size="small"
         >
+          <RadioButton value="computing">
+            {t('컴퓨팅 리소스')}
+          </RadioButton>
           <RadioButton value="application">
             {t('APPLICATION_RESOURCE_PL')}
           </RadioButton>
           <RadioButton value="physical">
             {t('PHYSICAL_RESOURCE_PL')}
-          </RadioButton>
-          <RadioButton value="computing">
-            {t('컴퓨팅 리소스')}
-          </RadioButton>
+          </RadioButton>         
         </RadioGroup>
         <Select
           className={styles.timeSelect}
@@ -360,6 +368,7 @@ class ResourceUsage extends React.Component {
 
   render() {
     const { resourceType } = this.state
+
     return (
       <Panel className={styles.wrapper} title={t('RESOURCE_STATUS')}>
         {this.renderHeader()}

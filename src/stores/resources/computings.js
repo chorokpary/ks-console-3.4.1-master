@@ -42,30 +42,33 @@ export default class ComputingStore extends Base {
     this.isLoading = true
 
     const apiUrl = 'edgetron/resources/kubevirt/';
+
     const apiArray = [
-                      {type : 'vms', name : t('RESOURCES_VM'), routeName : 'vms', multitenancy: true, icon : 'ico-type40-vm'},
-                      {type : 'networks', name : t('RESOURCES_NETWORK'), routeName : 'networks', multitenancy: true, icon : 'network-duotone'},
-                      {type : 'security_groups', name : t('RESOURCES_SECURITY_GROUP'), routeName : 'securityGroups', multitenancy: true, icon : 'shield'},
-                      {type : 'routers', name : t('RESOURCES_VROUTER'), routeName : 'routers', multitenancy: true, icon : 'router'},
-                      {type : 'floating_ips', name : t('RESOURCES_FLOATING_IP'), routeName : 'floatingip', multitenancy: false, icon : 'intranet-routers'},
-                      {type : 'lbs', name : t('RESOURCES_LOAD_BALANCER'), routeName : 'loadBalancers', multitenancy: true, icon : 'loadbalancer'},
-                      {type : 'sriov_networks', name : t('RESOURCES_SR_IOV_NETWORK'), routeName : 'sriovs', multitenancy: true, icon : 'storage'},
+                      {type : 'vms', name : t('RESOURCES_VM'), routeName : 'vms', multitenancy: true, icon : 'ico-type-vm'},
+                      {type : 'images', name : t('RESOURCES_VM_IMAGE'), routeName : 'images', multitenancy: false, icon : 'snapshot'},
                       {type : 'volumes', name : t('RESOURCES_VOLUME'), routeName : 'resourcesVolumes', multitenancy: true, icon : 'storage'},
-                      {type : 'host_devices', name : t('RESOURCES_HOST_DEVICE'), routeName : 'hostDevices', multitenancy: false, icon : 'ico-type40-hostdevice'},
-                      {type : 'mediated_devices', name : t('RESOURCES_MEDIATED_DEVICE'), routeName : 'mediatedDevices', multitenancy: false, icon : 'ico-type40-mediatedvgpu'},
                       {type : 'flavors', name : t('RESOURCES_FLAVOR'), routeName : 'flavors', multitenancy: false, icon : 'apps'},
                       {type : 'keypairs', name : t('RESOURCES_KEYPAIR'), routeName : 'keypairs', multitenancy: true, icon : 'key'},
-                      {type : 'images', name : t('RESOURCES_VM_IMAGE'), routeName : 'images', multitenancy: false, icon : 'snapshot'},
+                      {type : 'networks', name : t('RESOURCES_NETWORK'), routeName : 'networks', multitenancy: true, icon : 'network-duotone'},
+                      {type : 'sriov_networks', name : t('RESOURCES_SR_IOV_NETWORK'), routeName : 'sriovs', multitenancy: true, icon : 'ico-type-sriov'},
+                      {type : 'routers', name : t('RESOURCES_VROUTER'), routeName : 'routers', multitenancy: true, icon : 'router'},
+                      {type : 'floating_ips', name : t('RESOURCES_FLOATING_IP'), routeName : 'floatingip', multitenancy: false, icon : 'intranet-routers'},
+                      {type : 'lbs', name : t('RESOURCES_LOAD_BALANCER'), routeName : 'loadBalancers', multitenancy: true, icon : 'loadbalancer'},                      
+                      {type : 'security_groups', name : t('RESOURCES_SECURITY_GROUP'), routeName : 'securityGroups', multitenancy: true, icon : 'shield'},
+                      {type : 'host_devices', name : t('RESOURCES_HOST_DEVICE'), routeName : 'hostDevices', multitenancy: false, icon : 'ico-type-hostdevice'},
+                      {type : 'mediated_devices', name : t('RESOURCES_MEDIATED_DEVICE'), routeName : 'mediatedDevices', multitenancy: false, icon : 'ico-type-mediatedvgpu'},
                     ];
 
     const computingDataArray = [];
    
-    apiArray.map(async (item) => {
+    const promises = apiArray.map(async (item) => {
       const result = get(await request.get(`${apiUrl}/${item.type}`), item.type, []);
       const resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;
       computingDataArray.push({count : resultCount, name : item.name, routeName : item.routeName, icon : item.icon});
     })
-          
+    
+    await Promise.all(promises);
+
     this.resources = computingDataArray;
     this.isLoading = false
   }
