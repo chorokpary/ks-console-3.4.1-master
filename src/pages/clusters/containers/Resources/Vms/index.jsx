@@ -24,7 +24,7 @@ import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import ResourceTable from 'clusters/components/ResourceTable'
 
-import { cloneDeep, get, isEmpty, omit } from 'lodash'
+import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
 import { Link } from 'react-router-dom'
 import { getLocalTime, showNameAndAlias } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
@@ -211,6 +211,18 @@ export default class Vms extends React.Component {
     }))
   }
 
+  getVmsCpuType() {
+    const VMS_CPU_TYPE = [
+      { text: 'x86_64', value: 'x86_64' },
+      { text: 'arm', value: 'arm' },
+    ]
+
+    return VMS_CPU_TYPE.map(status => ({
+      text: status.text,
+      value: status.value,
+    }))
+  }
+
   getColumns = () => {
     const { getSortOrder } = this.props
     const { cluster } = this.props.match.params
@@ -280,12 +292,13 @@ export default class Vms extends React.Component {
       },
       {
         title: t('RESOURCES_CPU_TYPE'),
-        dataIndex: 'cpuType',
+        dataIndex: 'cpu_arch',
+        filters: this.getVmsCpuType(),
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (cpuType, record) => {
-          const arch_type = <p>{record.image_object?.arch_type}</p>
+        render: (cpu_arch, record) => {
+          const arch_type = <p>{cpu_arch}</p>
           return arch_type
         },
       },
@@ -296,12 +309,14 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: networks => {
-          let networkIpList = ""
+          let networkIpList = ""          
+          const networksList = this.props.store.networksList;
 
           if (!!networks) {
             networkIpList = networks.map((el) => {
               if (el.name != "k8s-pod-network") {
-                return <Link to={`/clusters/${cluster}/networks/${el.name}`}><p key={el.name}>{el.ip}</p></Link>
+                const networkName = get(find(networksList, {'id' : el.name}),"name");
+                return <Link to={`/clusters/${cluster}/networks/${networkName}/${el.name}`}><p key={el.name}>{el.ip}</p></Link>
               }
             });
           } else {
@@ -332,8 +347,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (node) => {
-          // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
-          const nodeLink = node == "N/A" ? node : node;
+          const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
           return (
             nodeLink
           )
@@ -486,6 +500,11 @@ export default class Vms extends React.Component {
       {
         dataIndex: 'state',
         title: t('RESOURCES_STATE'),
+        search: true,
+      },
+      {
+        dataIndex: 'cpu_arch',
+        title: t('RESOURCES_CPU_TYPE'),
         search: true,
       }
     ]

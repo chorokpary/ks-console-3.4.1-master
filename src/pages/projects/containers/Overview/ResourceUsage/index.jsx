@@ -26,6 +26,7 @@ import { ICON_TYPES } from 'utils/constants'
 import { startAutoRefresh, stopAutoRefresh } from 'utils/monitoring'
 import OverviewStore from 'stores/overview'
 import ProjectMonitorStore from 'stores/monitoring/project'
+import ComputingStore from 'stores/resources/computings'
 
 import {
   Select,
@@ -37,6 +38,7 @@ import { Panel } from 'components/Base'
 
 import AppResourceItem from './AppResourceItem'
 import PhysicalResourceItem from './PhysicalResourceItem'
+import ComputingResourceItem from './ComputingResourceItem'
 
 import styles from './index.scss'
 
@@ -73,6 +75,7 @@ class ResourceUsage extends React.Component {
     this.overviewStore = new OverviewStore()
     this.appResourceMonitorStore = new ProjectMonitorStore()
     this.physicalResourceMonitorStore = new ProjectMonitorStore()
+    this.computingStore = new ComputingStore()
 
     this.fetchData(this.props.match.params)
   }
@@ -123,6 +126,7 @@ class ResourceUsage extends React.Component {
   fetchData = params => {
     this.fetchMetrics()
     this.overviewStore.fetchResourceStatus(params)
+    this.computingStore.fetchComputingData(params)
   }
 
   fetchMetrics = params => {
@@ -303,6 +307,28 @@ class ResourceUsage extends React.Component {
     )
   }
 
+  renderComputingResource() {
+    const { isLoading, resources } = this.computingStore
+    console.log("resources : "+ JSON.stringify(resources))
+    return (
+      <Loading spinning={isLoading}>
+        <div className={styles.resources}>
+          {resources
+            .map(item => (
+              <ComputingResourceItem
+                {...this.props.match.params}
+                {...item}
+                name={item.name}
+                num={item.count}
+                routeName={item.routeName}
+                icon={item.icon}
+              />
+            ))}
+        </div>
+      </Loading>
+    )
+  }
+
   renderHeader() {
     return (
       <div className={styles.header}>
@@ -317,6 +343,9 @@ class ResourceUsage extends React.Component {
           </RadioButton>
           <RadioButton value="physical">
             {t('PHYSICAL_RESOURCE_PL')}
+          </RadioButton>
+          <RadioButton value="computing">
+            {t('컴퓨팅 리소스')}
           </RadioButton>
         </RadioGroup>
         <Select
@@ -336,7 +365,11 @@ class ResourceUsage extends React.Component {
         {this.renderHeader()}
         {resourceType === 'application'
           ? this.renderApplicationResource()
-          : this.renderPhysicalResource()}
+          : resourceType === 'physical'
+          ? this.renderPhysicalResource()
+          : this.renderComputingResource()
+        }
+          
       </Panel>
     )
   }

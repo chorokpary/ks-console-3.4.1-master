@@ -82,6 +82,8 @@ import BareMetal from '../containers/Resources/BareMetal'
 import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator'
 import ComKassResource from '../containers/Resources/ComKassResource'
 
+import ImageBuild from '../containers/Resources/ImageBuild'
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -366,6 +368,14 @@ export default [
             component: BareMetal,
             exact: true,
           },
+          {
+            path: `${PATH}/imageBuild`,
+            component: ImageBuild,
+            exact: true,
+          },
+          
+
+
           {
             path: `${PATH}/baremetal-carbon-indicator`,
             component: BareMetalCarbonIndicator,

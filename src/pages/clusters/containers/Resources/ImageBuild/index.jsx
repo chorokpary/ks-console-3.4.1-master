@@ -20,33 +20,24 @@ import ResourceTable from 'clusters/components/ResourceTable'
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
-import Tabs from 'components/Cards/Banner/Tabs'
+import Banner from 'components/Cards/Banner'
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
-import { Icon } from '@kube-design/components'
-import classnames from 'classnames'
 
-import RoleStore from 'stores/role'
-import NetworkStore from 'stores/resources/networks'
-
-import styles from './index.scss'
+import KeypairStore from 'stores/resources/keypairs'
 
 @withList({
-  store: new NetworkStore(),
-  module: 'networks',
-  authKey: 'networks',
-  name: t('RESOURCES_NETWORK'),
+  store: new KeypairStore(),
+  module: 'keypairs',
+  authKey: 'keypairs',
+  name: t('RESOURCES_KEYPAIR'),
   rowKey: 'id'
 })
-export default class Networks extends React.Component {
+export default class ImageBuild extends React.Component {
 
-  handleTabChange = value => {
-    const { cluster, workspace, namespace } = this.props.match.params
-    this.props.routing.push(`/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`)
-  }
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -58,11 +49,11 @@ export default class Networks extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('REMOVE'),
+        text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('networks.remove', {
+          trigger('imagebuild.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -73,7 +64,6 @@ export default class Networks extends React.Component {
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props
-
     return {
       ...tableProps.tableActions,
       actions: [
@@ -83,7 +73,7 @@ export default class Networks extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('networks.regist', {
+            trigger('imagebuild.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -94,10 +84,10 @@ export default class Networks extends React.Component {
         {
           key: 'delete',
           type: 'danger',
-          text: t('REMOVE'),
+          text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('networks.remove.batch', {
+            trigger('imagebuild.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -110,65 +100,73 @@ export default class Networks extends React.Component {
     }
   }
 
+
   getColumns = () => {
     const { getSortOrder } = this.props
-    const { workspace, cluster, namespace } = this.props.match.params
+    const { cluster } = this.props.match.params
     return [
       {
-        title: t('NAME'),
+        title: t('RESOURCES_NAME'),
         dataIndex: 'name',
         sorter: true,
+        sortOrder: getSortOrder('name'),
+        search: true,
         render: (name, item) => (
           <Avatar
-            icon="network-duotone"
+            icon="key"
             iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${name}/${item.id}`}
+            to={`/clusters/${cluster}/imagebuild/${name}/${item.id}`}
             title={name}
           />
         ),
       },
       {
-        title: t('PROJECT'),
+        title: t('RESOURCES_CPU_TYPE'),
         dataIndex: 'project',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('RESOURCES_NETWORK_TYPE'),
-        dataIndex: 'type',
+        title: t('RESOURCES_TAG'),
+        dataIndex: 'project',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('MTU'),
-        dataIndex: 'mtu',
+        title: t('RESOURCES_OS_INFORMATION'),
+        dataIndex: 'project',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('CIDR'),
-        dataIndex: 'cidr',
+        title: t('RESOURCES_FILE_NAME'),
+        dataIndex: 'project',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('RESOURCES_GATEWAY_IP'),
-        dataIndex: 'gateway_ip',
+        title: t('RESOURCES_SIZE'),
+        dataIndex: 'project',
         isHideable: true,
         width: 'auto',
       },
+      {
+        title: t('RESOURCES_STATE'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
+      },
+
       {
         title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
-        sorter: true,
-        sortOrder: getSortOrder('descend'),
         width: 150,
-        render: date => (
+        sorter: true,
+        sortOrder: getSortOrder('timestamp'),
+        render: timestamp => (
           <p>
-            {date
-              ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-              : t('-')}
+            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
           </p>
         ),
       },
@@ -176,72 +174,47 @@ export default class Networks extends React.Component {
   }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') }
+    return { desc: t('Please create a data.') }
   }
 
-  get tabs() {
-    return {
-      value: this.props.module,
-      onChange: this.handleTabChange,
-      options: [
-        {
-          value: 'networks',
-          label: t('RESOURCES_NETWORK_TAB1'),
-        },
-        {
-          value: 'sriovs',
-          label: t('RESOURCES_NETWORK_TAB2'),
-        },
-      ],
-    }
+  get columnSearch() {
+    return [
+      {
+        dataIndex: 'name',
+        title: t('RESOURCES_NAME'),
+        search: true,
+      },
+      {
+        dataIndex: 'finger_print',
+        title: t('FINGER PRINT'),
+        search: true,
+      }
+    ]
   }
 
-  modalTopology = () => {
-    const { getData, trigger } = this.props
-
-    trigger('networks.topology.project', {
-      success: getData,
-      ...this.props.match.params,
-    })
-  }
 
   render() {
 
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <div className={classnames(styles.wrapper)}>
-          <div className={styles.titleWrapper}>
-            <div className={styles.icon}>
-              <Icon name={'network-duotone'} size={48} />
-            </div>
-            <div className={styles.title}>
-              <div className="h3">{t('RESOURCES_NETWORK')}</div>
-              <p className="text-second">
-                {t('RESOURCES_NETWORK_DESC')}
-              </p>
-            </div>
-            <div className={styles.divRight}>
-              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
-                <Icon name={'topology'} size={36} />
-              </div>
-              <p>{t('RESOURCES_TOPOLOGY')}</p>
-            </div>
-          </div>
-          <Tabs tabs={this.tabs} />
-        </div>
-
+        <Banner
+          {...bannerProps}
+          icon="key"
+          title={t('이미지 빌드')}
+          description={t('이미지 빌드 상세 설명')}
+        />
         <Table
           {...tableProps}
           emptyProps={this.emptyProps}
-          tableActions={this.tableActions}
+          className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}
+          tableActions={this.tableActions}
           columns={this.getColumns()}
-          searchType="name"
+          columnSearch={this.columnSearch}
         />
       </ListPage>
+
     )
   }
 }
-
-

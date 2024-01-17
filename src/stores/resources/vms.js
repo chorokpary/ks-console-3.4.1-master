@@ -89,6 +89,9 @@ export default class VmStore extends Base {
     // FloatingIp List 추출
     await this.fetchFloatingList(params);
 
+    // Network List 추출
+    await this.fetchVmListNetwork(params);    
+
     // namespace(project) 있는 경우
     if (namespace) {
       params.project = namespace;
@@ -456,7 +459,7 @@ export default class VmStore extends Base {
       `/edgetron/resources/kubevirt/networks`
     )
     const response = { ...params, ...this.mapper(result), kind: 'networks' }
-
+    this.networksList = response.networks
     this.isLoading = false
     return response;
   }
