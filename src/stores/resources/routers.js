@@ -163,7 +163,7 @@ export default class RouterStore extends Base {
     const routersData = {};
 
     routersData.id = data.id;
-    routersData.enable_snat = data.snapType == "T" ? true : false;
+    routersData.enable_snat = data.snatType == "T" ? true : false;
     routersData.internal = data.internal;
     routersData.external = data.external;
     routersData.description = data.description;

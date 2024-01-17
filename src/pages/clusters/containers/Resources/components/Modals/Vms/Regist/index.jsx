@@ -465,6 +465,13 @@ const RegistModal = (props) => {
       setlistPackageRoute(listPackageRoute.filter((el) => el !== id));
     },
   }
+
+  const handleIamgeDistroType = (distro_type) => {
+    setSelectImageDistroType(distro_type);
+    const { data } = form.current.props;
+    data['scriptId_1'] = distro_type
+  }
+
   // 스크립트 끝 ==================================================
 
 
@@ -625,7 +632,7 @@ const RegistModal = (props) => {
                               setSelectImageName(e);
 
                               const distro_type = imageOptionList.filter(item => item.name == e).map(item => item.distro_type)[0];
-                              setSelectImageDistroType(distro_type);
+                              handleIamgeDistroType(distro_type)
                             }}
                             defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
                           />

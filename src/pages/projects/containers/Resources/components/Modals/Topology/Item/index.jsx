@@ -1,9 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import * as common from 'utils/resources'
-import { toJS } from 'mobx'
 
-import { isEmpty, omit, get, find } from 'lodash'
+import { isEmpty, omit, get, find, some } from 'lodash'
 
 import TopologyStore from 'stores/resources/topology'
 
@@ -14,7 +13,7 @@ import {
 } from "react-zoom-pan-pinch";
 
 const TopologyItem = (props) => {
-  
+
   const workspace = props.workspace;
   const cluster = props.cluster;
   const namespace = props.namespace;
@@ -88,10 +87,10 @@ const TopologyItem = (props) => {
           const elementVmList = vmList.filter(item => _.find(item.networks, {'name':obj.id}))
           obj.elementVmList = elementVmList;
 
-          const elementRouterList = obj.external ? routerList.filter(item => item.external == obj.name) : routerList.filter(item => (item.internal).includes(obj.id));
+          const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { id : obj.id}));
           obj.elementRouterList = elementRouterList;
 
-          const elementLoadBalancerList = loadbalancerList.filter(item => item.network == obj.id)
+          const elementLoadBalancerList = loadbalancerList.filter(item => item.network?.id == obj.id)
           obj.elementLoadBalancerList = elementLoadBalancerList;
         })
       )
@@ -186,7 +185,7 @@ const TopologyItem = (props) => {
 
    }
 
-   const vmDuplicationElements = (name) => {
+   const vmDuplicationElements = () => {
 
     const vmArray = [];
     const duplicationArray = [];
@@ -201,7 +200,7 @@ const TopologyItem = (props) => {
 
           obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
 
-            const vmNetworkIp = (vm.networks).filter(network => network.name == obj.name).map(item => item.ip)
+            const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip)
 
             if(vmArray.includes(vm.name)){          
               const duplicationJson = {
@@ -225,7 +224,7 @@ const TopologyItem = (props) => {
 
    }
 
-   const routerDuplicationElements = (name) => {
+   const routerDuplicationElements = () => {
 
     const routerArray = [];
     const duplicationArray = [];
@@ -262,7 +261,7 @@ const TopologyItem = (props) => {
 
    }
 
-   const loadbalancerDuplicationElements = (name) => {
+   const loadbalancerDuplicationElements = () => {
 
     const loadbalancerArray = [];
     const duplicationArray = [];
@@ -317,14 +316,14 @@ const TopologyItem = (props) => {
 
           // VM 연결
           obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {  
-            
-            const vmNetworkIp = (vm.networks).filter(network => network.name == obj.name).map(item => item.ip);
-            const vmNetworkName = (vm.networks).filter(network => network.name == obj.name).map(item => item.name);
+
+            const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip);
+            const vmNetworkName = (vm.networks).filter(network => network.name == obj.id).map(item => item.name);
             
             const sriovCheck = (sriovList).map(item => item.name).includes(vmNetworkName.toString());
             const bondingLeft = !sriovCheck ? "" : "bonding";
 
-            const rightElementsArray = duplicationVmList.filter(item => item.vm_name == vm.name);          
+            const rightElementsArray = duplicationVmList.filter(item => item.vm_name == vm.name);        
 
             if(!vmArray.includes(vm.name)){
 
@@ -377,6 +376,7 @@ const TopologyItem = (props) => {
   const renderRouterElements = () => {
 
     const duplicationRouterList = routerDuplicationElements();
+    // console.log("duplicationRouterList : "+ JSON.stringify(duplicationRouterList))
 
     const roterArray = [];
     const duplicationRoterArray = [];

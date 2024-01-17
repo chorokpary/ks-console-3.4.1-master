@@ -19,26 +19,32 @@
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
+import Tabs from 'components/Cards/Banner/Tabs'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
-import classNames from 'classnames'
 import Indicator from 'components/Base/Indicator'
-
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
+import { Icon } from '@kube-design/components'
+import classnames from 'classnames'
 
 import SriovStore from 'stores/resources/sriovs'
+import styles from './index.scss'
 
 @withList({
   store: new SriovStore(),
   module: 'sriovs',
   authKey: 'sriovs',
-  name: 'SR-IOV',
+  name: t('SR-IOV'),
 })
 export default class ResourcesVolumes extends React.Component {
- 
+
+  handleTabChange = value => {
+    const { cluster } = this.props.match.params
+    this.props.routing.push(`/clusters/${cluster}/${value}`)
+  }
+
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -87,10 +93,10 @@ export default class ResourcesVolumes extends React.Component {
           action: 'create',
           onClick: () =>
             trigger('sriov.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -196,32 +202,71 @@ export default class ResourcesVolumes extends React.Component {
     ]
   }
 
+  get tabs() {
+    return {
+      value: this.props.module,
+      onChange: this.handleTabChange,
+      options: [
+        {
+          value: 'networks',
+          label: t('RESOURCES_NETWORK_TAB1'),
+        },
+        {
+          value: 'sriovs',
+          label: t('RESOURCES_NETWORK_TAB2'),
+        },
+      ],
+    }
+  }
+
+  modalTopology = () => {
+    const { getData, trigger } = this.props
+    trigger('networks.topology', {
+      success: getData,
+      ...this.props.match.params,
+    })
+  }
+
 
   render() {
-    
+
     const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        icon="storage"
-        tabs={this.tabs}
-        title={t('SR-IOV')}
-        description={t('RESOURCES_SR_IOV_DESC')}
-      />
-      <Table
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-      />
-    </ListPage>
-     
+        <div className={classnames(styles.wrapper)}>
+          <div className={styles.titleWrapper}>
+            <div className={styles.icon}>
+              <Icon name={'network-duotone'} size={48} />
+            </div>
+            <div className={styles.title}>
+              <div className="h3">{t('RESOURCES_NETWORK')}</div>
+              <p className="text-second">
+                {t('RESOURCES_NETWORK_DESC')}
+              </p>
+            </div>
+            <div className={styles.divRight}>
+              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
+                <Icon name={'topology'} size={36} />
+              </div>
+              <p>{t('RESOURCES_TOPOLOGY')}</p>
+            </div>
+          </div>
+          <Tabs tabs={this.tabs} />
+        </div>
+
+        <Table
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+
     )
   }
 }

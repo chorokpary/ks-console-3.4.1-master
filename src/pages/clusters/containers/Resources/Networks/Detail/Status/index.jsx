@@ -91,7 +91,7 @@ const Status = (props) => {
                                             <p>{t('RESOURCES_SNAT_OPTION')}</p>
                                         </div>
                                         <div className={styles.title}>
-                                            <div>{obj.external.name}</div>
+                                            <div>{obj.external?.name}</div>
                                             <p>{t('RESOURCES_EXTERNAL_NETWORK')}</p>
                                         </div>
                                         <div className={styles.title}>
