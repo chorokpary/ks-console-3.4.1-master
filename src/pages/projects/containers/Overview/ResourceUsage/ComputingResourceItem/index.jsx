@@ -37,10 +37,10 @@ const ResourceCard = (props) => {
   const [loading, setLoading] = useState(true);
 
   const resourceType = props.routeName;
-  const resourceData = props.dataList; 
+  const resourceData = props.dataList;
   const resourceCreateField = props.createField;
 
-  const graphExceptionArray = ['floatingip','hostDevices','mediatedDevices']
+  const graphExceptionArray = ['floatingip', 'hostDevices', 'mediatedDevices']
 
   const [vmData, setVmData] = useState({});
   const [imageData, setImageData] = useState({});
@@ -57,33 +57,33 @@ const ResourceCard = (props) => {
   const [mediatedDevicesData, setMediatedDevicesData] = useState({});
 
   const stateVariables = {
-    vms: vmData,        
-    images: imageData,         
-    resourcesVolumes: volumeData,   
+    vms: vmData,
+    images: imageData,
+    resourcesVolumes: volumeData,
     flavors: flavorData,
-    keypairs: keypairData,   
-    networks: networkData,       
-    sriovs: sriovData,             
+    keypairs: keypairData,
+    networks: networkData,
+    sriovs: sriovData,
     routers: routerData,
-    floatingip: floatingData, 
-    loadBalancers: loadBalancerData,  
-    securityGroups: securityGroupData,     
+    floatingip: floatingData,
+    loadBalancers: loadBalancerData,
+    securityGroups: securityGroupData,
     hostDevices: hostDeviceData,
     mediatedDevices: mediatedDevicesData,
   };
 
   const setVariables = {
-    vms: setVmData,        
-    images: setImageData,         
-    resourcesVolumes: setVolumeData,   
+    vms: setVmData,
+    images: setImageData,
+    resourcesVolumes: setVolumeData,
     flavors: setFlavorData,
-    keypairs: setKeypairData,   
-    networks: setNetworkData,       
-    sriovs: setSriovData,             
+    keypairs: setKeypairData,
+    networks: setNetworkData,
+    sriovs: setSriovData,
     routers: setRouterData,
-    floatingip: setFloatingData, 
-    loadBalancers: setLoadBalancerData,  
-    securityGroups: setSecurityGroupData,     
+    floatingip: setFloatingData,
+    loadBalancers: setLoadBalancerData,
+    securityGroups: setSecurityGroupData,
     hostDevices: setHostDeviceData,
     mediatedDevices: setMediatedDevicesData,
   };
@@ -114,16 +114,16 @@ const ResourceCard = (props) => {
   const handleDate = (list, dateType, resourceType) => {
 
     let sortData = "";
-    if(dateType != "not"){
-       sortData = list.sort((a, b) => {
+    if (dateType != "not") {
+      sortData = list.sort((a, b) => {
         var x = a[dateType];
         var y = b[dateType];
 
         // return x < y ? -1 : x > y ? 1 : 0;  // asc
         return x > y ? -1 : x < y ? 1 : 0; // desc
-          
+
       });
-    }else{
+    } else {
       sortData = list;
     }
 
