@@ -5,6 +5,10 @@
 $box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
 $size-ssmall: 11px;
 
+.hide {
+    display: none;
+}
+
 .textarea {
   :global .textarea {
     max-width: 100%;
@@ -14,19 +18,35 @@ $size-ssmall: 11px;
 .divwrap {
   display: flex;
   position: relative;
-  padding-bottom: 12px;
-
+  
   .div_left {
     position: relative;
-    width: 71%;
+    width: 5%;
+    margin-top: 24px;
+  }
+
+  .div_middle {
+    position: relative;
+    width: 90%;
   }
 
   .div_right {
     position: relative;
-    width: 29%;
-    margin-top: 24px;
-    padding-left: 10px;
+    width: 5%;
+    margin-top: 18px;
   }
+}
+
+.file_input {
+    margin-right: 10px;
+}
+
+.progressbar_wrap {
+    padding: 20px 15px 5px 2px;
+
+    .right {
+        float:right;
+    }
 }
 
 .content_box_wrap {
