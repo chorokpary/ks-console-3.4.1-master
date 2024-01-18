@@ -498,7 +498,9 @@ const DetailVmList = (props) => {
           <div className={styles.wrapper}>
             {isLoading ?
               <div><Loading /></div>
-              : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>
+              : props.variables == "project"
+              ? <div className={styles.empty}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
+              : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>             
             }
           </div>
         </Panel>
