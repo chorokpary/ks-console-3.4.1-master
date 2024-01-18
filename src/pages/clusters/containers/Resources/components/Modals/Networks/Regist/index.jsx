@@ -28,14 +28,22 @@ const RegistModal = (props) => {
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
   const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
 
-  const networkTypeOptions = [
-    { label: 'VXLAN', value: 'VXLAN', },
-    { label: 'VLAN', value: 'VLAN', },
-    { label: 'FLAT', value: 'FLAT', },
-    { label: 'GRE', value: 'GRE', },
-    { label: 'GENEVE', value: 'GENEVE', },
-    { label: 'STT', value: 'STT', },
-  ]
+  const networkTypeOptions = props.namespace ?
+    [
+      { label: 'VXLAN', value: 'VXLAN', },
+      { label: 'GRE', value: 'GRE', },
+      { label: 'GENEVE', value: 'GENEVE', },
+      { label: 'STT', value: 'STT', },
+    ] :
+    [
+      { label: 'VXLAN', value: 'VXLAN', },
+      { label: 'VLAN', value: 'VLAN', },
+      { label: 'FLAT', value: 'FLAT', },
+      { label: 'GRE', value: 'GRE', },
+      { label: 'GENEVE', value: 'GENEVE', },
+      { label: 'STT', value: 'STT', },
+    ]
+
   const externalOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false, },
     { label: t('RESOURCES_USE'), value: true, }
