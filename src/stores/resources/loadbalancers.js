@@ -32,6 +32,8 @@ export default class LoadBalancerStore extends Base {
 
     records = new List()
 
+    networkDataList = [];
+
     module = 'lbs'
 
     getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/lbs`
@@ -267,10 +269,11 @@ export default class LoadBalancerStore extends Base {
         const result = await request.get(
             `/edgetron/resources/kubevirt/networks`
         )
-        const response = { ...params, ...this.mapper(result), kind: 'networks' }
+        this.networkDataList = result.networks;
 
         this.isLoading = false
-        return response;
+
+        return this.networkDataList
     }
 
     @action

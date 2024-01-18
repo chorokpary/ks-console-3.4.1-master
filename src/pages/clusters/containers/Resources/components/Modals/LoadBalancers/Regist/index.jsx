@@ -58,7 +58,9 @@ const RegistModal = (props) => {
       const listNetwork = await loadBalancerStore.fetchNetworkList();
       const listVm = await loadBalancerStore.fetchVmList();
 
-      setNetworkDataList(listNetwork.networks);
+      const networkList = listNetwork.filter(obj => obj.project === projectName) || []
+      setNetworkDataList(networkList)
+
       setVmDataList(listVm.vms);
     };
 
