@@ -22,6 +22,7 @@ import Overview from './Overview'
 import Pods from './Pods'
 import Gateway from './Gateway'
 import Quota from './Quota'
+import Vms from './Vms'
 
 const PATH = '/clusters/:cluster/projects/:namespace'
 
@@ -32,6 +33,7 @@ export default [
     component: Overview,
     exact: true,
   },
+  { path: `${PATH}/vms`, title: 'RESOURCES_VM', component: Vms, exact: true },
   { path: `${PATH}/pods`, title: 'POD_PL', component: Pods, exact: true },
   {
     path: `${PATH}/gateway`,
@@ -45,5 +47,6 @@ export default [
     component: Quota,
     exact: true,
   },
+  
   getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
 ]
