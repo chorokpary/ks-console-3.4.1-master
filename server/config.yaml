@@ -28,15 +28,15 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    # url: http://192.168.16.86:30881
-    # wsUrl: ws://192.168.16.86:30881
-    # mm3Url: http://192.168.16.80:32080 
-    # cmpUrl: http://192.168.16.86:31000 
-    # harborUrl: http://192.168.16.86:30002
-    url: http://10.24.3.34:30881
-    wsUrl: ws://10.24.3.34:30881
-    mm3Url: http://10.24.3.34:32080 
-    cmpUrl: http://10.24.3.34:31000
+    url: http://192.168.16.86:30881
+    wsUrl: ws://192.168.16.86:30881
+    mm3Url: http://192.168.16.80:32080 
+    cmpUrl: http://192.168.16.86:31000 
+    harborUrl: http://192.168.16.86:30002
+    # url: http://10.24.3.34:30881
+    # wsUrl: ws://10.24.3.34:30881
+    # mm3Url: http://10.24.3.34:32080 
+    # cmpUrl: http://10.24.3.34:31000
     
 
   mm3UserInfo:
@@ -108,7 +108,7 @@ client:
     - cate: cluster
       items:
         - name: overview
-          title: 대시보드
+          title: RESOURCES_DASHBOARD
           icon: dashboard
           skipAuth: true
           showInDisable: true
@@ -179,45 +179,45 @@ client:
             - { name: services, title: SERVICE_PL }
             - { name: ingresses, title: ROUTE_PL }            
         - name : computing-workloads
-          title: "컴퓨팅 워크로드"
+          title: RESOURCES_WORKLOAD
           icon: templet
           showInDisable: true   
           children: 
-            - { name: vms, title: "가상머신"}
+            - { name: vms, title: "RESOURCES_VM"}
             - { name: containerResource, title: "KaaS" }
         - name: computing
-          title: "컴퓨팅 설정"
+          title: RESOURCES_SETTINGS
           icon: computing-setting
           showInDisable: true
           children:            
             - name: networks
-              title: 네트워크
+              title: RESOURCES_NETWORK
               skipAuth: true
               showInDisable: true
               tabs:
-                - { name: networks, title: 네트워크 }
+                - { name: networks, title: RESOURCES_NETWORK }
                 - { name: sriovs, title: SR-IOV }
             - {
               name: securityGroups,
-              title: "보안그룹",
+              title: RESOURCES_SECURITY_GROUP,
               skipAuth: true,
               showInDisable: true,
             }  
             - {
               name: routers,
-              title: 가상 라우터,
+              title: RESOURCES_VROUTER,
               skipAuth: true,
               showInDisable: true,
             }
             - {
               name: floatingip,
-              title: "플로팅 IP",
+              title: RESOURCES_FLOATING_IP,
               skipAuth: true,
               showInDisable: true,
             }   
             - {
              name: loadBalancers,
-             title: "로드 밸런서",
+             title: RESOURCES_LOAD_BALANCER,
              skipAuth: true,
              showInDisable: true,
             }
@@ -229,24 +229,24 @@ client:
             # }
             - {
               name: resourcesVolumes,
-              title: "볼륨",
+              title: RESOURCES_VOLUME,
               skipAuth: true,
               showInDisable: true,
             }
             - {
              name: hostDevices,
-             title: "호스트 디바이스",
+             title: RESOURCES_HOST_DEVICE,
              skipAuth: true,
              showInDisable: true,
             }
             - {
              name: mediatedDevices,
-             title: "Mediated 디바이스",
+             title: RESOURCES_MEDIATED_DEVICE,
              skipAuth: true,
              showInDisable: true,
             }            
         - name: resources
-          title: "리소스 템플릿"
+          title: RESOURCES_RESOURCE_TEMPLATE
           icon: resource
           showInDisable: true   
           children: 
@@ -258,22 +258,28 @@ client:
             }
             - {
               name: keypairs,
-              title: "키페어",
+              title: RESOURCES_KEYPAIR,
               skipAuth: true,
               showInDisable: true,
             }
             - {
               name: images,
-              title: 가상머신 이미지,
+              title: RESOURCES_VM_IMAGE,
               skipAuth: true,
               showInDisable: true,
             }               
             - {
               name: containerImages,
-              title: "KaaS 이미지",
+              title: RESOURCES_KAAS_IMAGE,
               skipAuth: true,
               showInDisable: true,
             }   
+            # - {
+            #   name: imageBuild,
+            #   title: "이미지 빌드",
+            #   skipAuth: true,
+            #   showInDisable: true,
+            # }   
         # - name: virtualmachine-management
         #   title: "컴퓨팅 애플리케이션 관리"
         #   icon: cron-job
@@ -377,7 +383,7 @@ client:
             #   }
             - {
                 name: baremetalmonitoring,
-                title: "BareMetal 모니터링",
+                title: RESOURCES_BAREMETAL_MONITORING,
               }
             - {
                 name: baremetal-carbon-indicator,
@@ -385,7 +391,7 @@ client:
               }              
             - {
                 name: 'computingkaasmonitoring',
-                title: "컴퓨팅/KaaS 리소스",
+                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
               }            
             # - {
             #     name: fault-analysis,
@@ -522,44 +528,44 @@ client:
             - { name: ingresses, title: ROUTE_PL }
             - { name: pods, title: POD_PL }
         - name : computing-workloads
-          title: "컴퓨팅 워크로드"
+          title: RESOURCES_WORKLOAD
           icon: templet
           showInDisable: true   
           children: 
-            - { name: vms, title: "가상머신"}
+            - { name: vms, title: RESOURCES_VM, skipAuth: true}
         - name: computing
-          title: "컴퓨팅 설정"
+          title: RESOURCES_SETTINGS
           icon: computing-setting
           showInDisable: true
           children:            
             - name: networks
-              title: 네트워크
+              title: RESOURCES_NETWORK
               skipAuth: true
               showInDisable: true
               tabs:
-                - { name: networks, title: 네트워크 }
-                - { name: sriovs, title: SR-IOV }
+                - { name: networks, title: RESOURCES_NETWORK, skipAuth: true}
+                - { name: sriovs, title: SR-IOV, skipAuth: true }
             - {
               name: securityGroups,
-              title: "보안그룹",
+              title: RESOURCES_SECURITY_GROUP,
               skipAuth: true,
               showInDisable: true,
             }  
             - {
               name: routers,
-              title: 가상 라우터,
+              title: RESOURCES_VROUTER,
               skipAuth: true,
               showInDisable: true,
             }
             - {
               name: floatingip,
-              title: "플로팅 IP",
+              title: RESOURCES_FLOATING_IP,
               skipAuth: true,
               showInDisable: true,
             }   
             - {
              name: loadBalancers,
-             title: "로드 밸런서",
+             title: RESOURCES_LOAD_BALANCER,
              skipAuth: true,
              showInDisable: true,
             }
@@ -571,24 +577,24 @@ client:
             # }
             - {
               name: resourcesVolumes,
-              title: "볼륨",
+              title: RESOURCES_VOLUME,
               skipAuth: true,
               showInDisable: true,
             }
             - {
              name: hostDevices,
-             title: "호스트 디바이스",
+             title: RESOURCES_HOST_DEVICE,
              skipAuth: true,
              showInDisable: true,
             }
             - {
              name: mediatedDevices,
-             title: "Mediated 디바이스",
+             title: RESOURCES_MEDIATED_DEVICE,
              skipAuth: true,
              showInDisable: true,
             }          
         - name: resources
-          title: "리소스 템플릿"
+          title: RESOURCES_RESOURCE_TEMPLATE
           icon: resource
           showInDisable: true   
           children: 
@@ -600,13 +606,13 @@ client:
             }
             - {
               name: keypairs,
-              title: "키페어",
+              title: RESOURCES_KEYPAIR,
               skipAuth: true,
               showInDisable: true,
             }
             - {
               name: images,
-              title: 가상머신 이미지,
+              title: RESOURCES_VM_IMAGE,
               skipAuth: true,
               showInDisable: true,
             }                 
