@@ -134,7 +134,7 @@ const index = (props) => {
 
     const getVmDiskUsageData = async () => {
       const vmDiskData = await customStore.fetchMetric({
-        expr: `(100 - ((sum by(pod) (node_filesystem_avail_bytes) * 100) / sum by(pod) (node_filesystem_size_bytes))) / 100`,
+        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`,
         ...paramsData,
       })
 
