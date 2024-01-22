@@ -362,7 +362,7 @@ const index = (props) => {
             </Card>
 
             <Card
-              title={t('컴퓨팅 디스크 사용량')}
+              title={t('RESOURCES_COMPUTING_DISK_USAGE')}
               empty={t('NO_MONITORING_DATA')}
               isEmpty={(diskDataCom.length == 0)}
             >     
@@ -378,7 +378,7 @@ const index = (props) => {
             </Card>
 
             <Card
-              title={t('KaaS 디스크 사용량')}
+              title={t('RESOURCES_KAAS_DISK_USAGE')}
               empty={t('NO_MONITORING_DATA')}
               isEmpty={(diskDataKass.length == 0)}
             >     
