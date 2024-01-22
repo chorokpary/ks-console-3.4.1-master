@@ -65,8 +65,8 @@ const index = (props) => {
 
     let promsql_pod_vm_list = ""
     vmList.map((obj) => {
-      const vmName = get(obj, 'name')
-      promsql_pod_vm_list += promsql_pod_vm_list != "" ?  ("|" + vmName) : vmName;
+      const vmId = get(obj, 'id')
+      promsql_pod_vm_list += promsql_pod_vm_list != "" ?  ("|" + vmId) : vmId;
     })
 
     const paramsData = Object.assign(params, {
@@ -83,6 +83,7 @@ const index = (props) => {
     }    
 
     const getVmCpuUsageData = async () => {
+    
       const cpuDataCom = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_vm_list}"}[5m])) * 100)) / 100`,
         // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
