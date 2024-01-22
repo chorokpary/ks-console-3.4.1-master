@@ -75,11 +75,11 @@ const RegistModal = (props) => {
       const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk' });
       const listImage = await vmStore.fetchVmListImage();
       const listBootVolume = await vmStore.fetchVmListBootVolume();
-      const listNetwork = await vmStore.fetchVmListNetwork();
-      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork();
-      const listKeypair = await vmStore.fetchVmListKeypair();
+      const listNetwork = await vmStore.fetchVmListNetwork({ namespace : props.namespace});
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ namespace : props.namespace});
+      const listKeypair = await vmStore.fetchVmListKeypair({ namespace : props.namespace});
       const listNode = await vmStore.fetchVmListNode();
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup();
+      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({ namespace : props.namespace});
       const listStoregeClass = await vmStore.fetchVmListStoregeClass();
 
       setFlavorDataList(listFlavor.flavors);

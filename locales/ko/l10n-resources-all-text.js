@@ -494,5 +494,7 @@ module.exports = {
   RESOURCES_FILE_NAME: '파일명',
   RESOURCES_IMAGE_FILE_UPLOAD: '이미지 파일 업로드',
   RESOURCES_FLAVOR: 'Flavor',
+  RESOURCES_COMPUTING_DISK_USAGE: '컴퓨팅 디스크 사용량',
+  RESOURCES_KAAS_DISK_USAGE: 'KaaS 디스크 사용량',
 
 };
