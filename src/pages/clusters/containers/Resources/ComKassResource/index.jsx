@@ -76,6 +76,12 @@ const index = (props) => {
       promsql_pod_vm_list += promsql_pod_vm_list != "" ?  ("|" + vmId) : vmId;
     })
 
+    let promsql_pod_kaas_list = ""
+    kaasList.map((obj) => {
+      const kaasName = get(obj, 'name')
+      promsql_pod_kaas_list += promsql_pod_kaas_list != "" ?  ("|" + kaasName) : kaasName;
+    })
+
     const paramsData = Object.assign(params, {
       start : params.start,
       end : params.end,
