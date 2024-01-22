@@ -68,8 +68,8 @@ const index = (props) => {
       paramsData.end = timeRange.end
     }
 
-    const metricData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
-    const instance = get(metricData, 'ip')
+    const detailData = toJS(store.detail)
+    const instance = detailData.systemType == "C" ? detailData.name : (detailData.baremetals).find(item => item.name == detailData.name).nodeExporter.ip;
 
     // cpu 사용량
     const getNodeCpuUsageData = async () => {

@@ -311,13 +311,14 @@ export default class BareMetalDashboard extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('job'),
         render: (name, record) => {
+          const ip = record.system_type == "C" ? "" : record.nodeExporter.ip;
           return (
             <Avatar
             icon="nodes"
             iconSize={40}
             to={`/clusters/${cluster}/baremetalmonitoring/${name}`}
             title={name}
-            desc={record.ip}
+            desc={ip}
           />
           )
         } 
@@ -347,14 +348,14 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('RESOURCES_TYPE_YOO'),
+        title: t('RESOURCES_CPU_TYPE'),
         key: 'type',
         isHideable: true,
         render: record => {
           const metrics = this.getMetricData('metricTypeData', record)
           const machine = get(metrics, 'metric.machine', "NOT")
           const x86Array = ['x86_64', 'amd']
-          const typeText = x86Array.includes(machine.toLowerCase()) ? "X86" : machine == "NOT" ? "-" : "ARM"
+          const typeText = x86Array.includes(machine.toLowerCase()) ? "AMD64" : machine == "NOT" ? "-" : "ARM64"
           return (
             <Text title={`${typeText}`} />
           )
