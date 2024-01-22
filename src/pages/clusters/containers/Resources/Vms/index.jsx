@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*
  * This file is part of KubeSphere Console.
  * Copyright (C) 2019 The KubeSphere Console Authors.
@@ -18,32 +19,28 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status, Indicator } from 'components/Base'
+import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import { ListPage, withClusterList } from 'components/HOCs/withList'
 import ResourceTable from 'clusters/components/ResourceTable'
 
-import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
+import { get, find } from 'lodash'
 import { Link } from 'react-router-dom'
 import { getLocalTime, showNameAndAlias } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-import { Dropdown, Menu, Button, Notify, Icon } from '@kube-design/components'
-
-import styles from './index.scss'
+import { Dropdown, Menu, Notify } from '@kube-design/components'
 
 import VmStore from 'stores/resources/vms'
+import styles from './index.scss'
 
 @withClusterList({
   store: new VmStore(),
   module: 'vms',
   authKey: 'vms',
   name: t('RESOURCES_VM'),
-  rowKey: 'id'
+  rowKey: 'id',
 })
 export default class Vms extends React.Component {
-
-  //auto refresh start  ##################################
+  // auto refresh start  ##################################
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
@@ -61,7 +58,7 @@ export default class Vms extends React.Component {
   }
 
   refreshHandler = () => {
-    const { page, limit } = toJS(this.props.store.list);
+    const { page, limit } = toJS(this.props.store.list)
     const project = this.props.clusterStore.project || ''
     if (this.isRuning) {
       this.getData({ silent: true, page, limit, project })
@@ -73,7 +70,7 @@ export default class Vms extends React.Component {
 
   get isRuning() {
     const { selectedRowKeys } = toJS(this.props.store.list)
-    const runingFlag = selectedRowKeys.length > 0 ? false : true;
+    const runingFlag = !(selectedRowKeys.length > 0)
     return runingFlag
   }
 
@@ -81,12 +78,10 @@ export default class Vms extends React.Component {
     this.props.store.fetchList({
       ...this.props.match.params,
       ...params,
-      ...this.props.query // search param
+      ...this.props.query, // search param
     })
   }
-  //auto refresh end  ##################################
-
-
+  // auto refresh end  ##################################
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -150,45 +145,56 @@ export default class Vms extends React.Component {
   }
 
   getState(state) {
-    if (state === 'Provisioning'
-      || state === 'Starting'
-      || state === 'Stopping'
-      || state === 'Terminating'
-      || state === 'Migrating') {
-      return "waiting"
-    } else if (state === 'Running') {
-      return "running"
-    } else if (state === 'Stopped' || state === 'Paused') {
-      return "stopped"
-    } else if (state === 'Unknown') {
-      return "error"
-    } else {
-      return "error"
+    if (
+      state === 'Provisioning' ||
+      state === 'Starting' ||
+      state === 'Stopping' ||
+      state === 'Terminating' ||
+      state === 'Migrating'
+    ) {
+      return 'waiting'
     }
+    if (state === 'Running') {
+      return 'running'
+    }
+    if (state === 'Stopped' || state === 'Paused') {
+      return 'stopped'
+    }
+    if (state === 'Unknown') {
+      return 'error'
+    }
+    return 'error'
   }
 
   getItemDesc(state) {
     if (state === 'Stopped') {
       return t('RESOURCES_STOP')
-    } else if (state === 'Provisioning') {
-      return t('RESOURCES_CREATING')
-    } else if (state === 'Starting') {
-      return t('RESOURCES_STARTING')
-    } else if (state === 'Running') {
-      return t('RESOURCES_RUNNING')
-    } else if (state === 'Paused') {
-      return t('RESOURCES_PAUSED')
-    } else if (state === 'Migrating') {
-      return t('RESOURCES_MIGRATING')
-    } else if (state === 'Stopping') {
-      return t('RESOURCES_STOPPING')
-    } else if (state === 'Terminating') {
-      return t('RESOURCES_TERMINATING')
-    } else if (state === 'Unknown') {
-      return t('RESOURCES_UNKNOWN')
-    } else {
-      return "-"
     }
+    if (state === 'Provisioning') {
+      return t('RESOURCES_CREATING')
+    }
+    if (state === 'Starting') {
+      return t('RESOURCES_STARTING')
+    }
+    if (state === 'Running') {
+      return t('RESOURCES_RUNNING')
+    }
+    if (state === 'Paused') {
+      return t('RESOURCES_PAUSED')
+    }
+    if (state === 'Migrating') {
+      return t('RESOURCES_MIGRATING')
+    }
+    if (state === 'Stopping') {
+      return t('RESOURCES_STOPPING')
+    }
+    if (state === 'Terminating') {
+      return t('RESOURCES_TERMINATING')
+    }
+    if (state === 'Unknown') {
+      return t('RESOURCES_UNKNOWN')
+    }
+    return '-'
   }
 
   getVmsStatus() {
@@ -214,7 +220,7 @@ export default class Vms extends React.Component {
   getVmsCpuType() {
     const VMS_CPU_TYPE = [
       { text: 'x86_64', value: 'x86_64' },
-      { text: 'arm', value: 'arm' },
+      { text: 'aarch64', value: 'aarch64' },
     ]
 
     return VMS_CPU_TYPE.map(status => ({
@@ -234,8 +240,7 @@ export default class Vms extends React.Component {
         sortOrder: getSortOrder('name'),
         search: true,
         render: (name, record) => {
-
-          const { cluster } = this.props.match.params
+        //   const { cluster } = this.props.match.params
           const { state } = record
 
           return (
@@ -249,7 +254,12 @@ export default class Vms extends React.Component {
                 />
               </div>
               <div>
-                <Link className={styles.title} to={`/clusters/${cluster}/vms/${name}/${record.id}`}>{name} </Link>
+                <Link
+                  className={styles.title}
+                  to={`/clusters/${cluster}/vms/${name}/${record.id}`}
+                >
+                  {name}{' '}
+                </Link>
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
             </div>
@@ -275,7 +285,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (image, record) => {
-          const icon = "ico-os-" + record.image_object?.distro_type;
+          const icon = `ico-os-${record.image_object?.distro_type}`
           return (
             <Link to={`/clusters/${cluster}/images/${image}`}>
               <i
@@ -284,8 +294,9 @@ export default class Vms extends React.Component {
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
                   width: '40px',
-                  height: '40px'
-                }}></i>
+                  height: '40px',
+                }}
+              ></i>
             </Link>
           )
         },
@@ -309,22 +320,31 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: networks => {
-          let networkIpList = ""          
-          const networksList = this.props.store.networksList;
+          let networkIpList = ''
+          const networksList = this.props.store.networksList
 
-          if (!!networks) {
-            networkIpList = networks.map((el) => {
-              if (el.name != "k8s-pod-network") {
-                const networkName = get(find(networksList, {'id' : el.name}),"name");
-                return <Link to={`/clusters/${cluster}/networks/${networkName}/${el.name}`}><p key={el.name}>{el.ip}</p></Link>
+          if (networks) {
+            networkIpList = networks.map(el => {
+              if (el.name !== 'k8s-pod-network') {
+                const networkName = get(
+                  find(networksList, { id: el.name }),
+                  'name'
+                )
+                return (
+                  <Link
+                    to={`/clusters/${cluster}/networks/${networkName}/${el.name}`}
+                  >
+                    <p key={el.name}>{el.ip}</p>
+                  </Link>
+                )
               }
-            });
+            })
           } else {
             networkIpList = <p>-</p>
           }
 
           return networkIpList
-        }
+        },
       },
       {
         title: t('RESOURCES_FLOATING_IP'),
@@ -333,11 +353,14 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (floating, record) => {
+          const floatingList = this.props.store.floatingIpList
+          const floatingIp =
+            floatingList &&
+            floatingList
+              ?.filter(row => row.instance_id === record.id)
+              .map(el => <p key={el.id}>{el.floating_ip}</p>)
 
-          const floatingList = this.props.store.floatingIpList;
-          const floatingIp = floatingList && floatingList?.filter((row) => row.instance_id == record.id).map((el) => <p key={el.id}>{el.floating_ip}</p>);
-
-          return floatingIp == "" ? "-" : floatingIp
+          return floatingIp === '' ? '-' : floatingIp
         },
       },
       {
@@ -346,11 +369,14 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (node) => {
-          const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>; 
-          return (
-            nodeLink
-          )
+        render: node => {
+          const nodeLink =
+            node === 'N/A' ? (
+              node
+            ) : (
+              <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>
+            )
+          return nodeLink
         },
       },
       {
@@ -360,11 +386,18 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: security_group_objects => {
-          let securityGroupText = ""
-          if (!!security_group_objects) {
-            securityGroupText = security_group_objects.length > 1 ? security_group_objects[0].name + " 외 " + (security_group_objects.length - 1) + "개" : security_group_objects.length == 1 ? security_group_objects[0].name : "-"
+          let securityGroupText = ''
+          if (security_group_objects) {
+            securityGroupText =
+              security_group_objects.length > 1
+                ? `${
+                    security_group_objects[0].name
+                  } 외 ${security_group_objects.length - 1}개`
+                : security_group_objects.length === 1
+                ? security_group_objects[0].name
+                : '-'
           } else {
-            securityGroupText = ""
+            securityGroupText = ''
           }
 
           return securityGroupText
@@ -383,22 +416,27 @@ export default class Vms extends React.Component {
           if (stateArray.includes(state)) {
             return (
               <div>
-                <Dropdown content={<Menu>
-                  {this.fnGetActionColumn(state, record.id)}
-                </Menu>}>
+                <Dropdown
+                  content={
+                    <Menu>{this.fnGetActionColumn(state, record.id)}</Menu>
+                  }
+                >
                   <div className={styles.iconwrapper}>
-                    <i className={styles[`ico-status-${state.toLowerCase()}`]} /><p>{state}</p>
+                    <i
+                      className={styles[`ico-status-${state.toLowerCase()}`]}
+                    />
+                    <p>{state}</p>
                   </div>
                 </Dropdown>
               </div>
             )
-          } else {
-            return (
-              <div className={styles.iconwrapper}>
-                <i className={styles[`ico-status-${state.toLowerCase()}`]} /><p>{state}</p>
-              </div>
-            )
           }
+          return (
+            <div className={styles.iconwrapper}>
+              <i className={styles[`ico-status-${state.toLowerCase()}`]} />
+              <p>{state}</p>
+            </div>
+          )
         },
       },
       {
@@ -418,73 +456,100 @@ export default class Vms extends React.Component {
   }
 
   handleVmAction = (action, state, vmId) => {
-
-    if ("Stopped" == state && "pause" == action) {
+    if (state === 'Stopped' && action === 'pause') {
       Notify.warning(t('RESOURCES_STOPED_PAUSE_DESC'))
-      return;
+      return
     }
-    if ("Stopped" == state && "restart" == action) {
+    if (state === 'Stopped' && action === 'restart') {
       Notify.warning(t('RESOURCES_STOPED_RESTART_DESC'))
-      return;
+      return
     }
 
     const { getData, trigger } = this.props
 
-    const data = {};
-    data.vmId = vmId;
-    data.state = state;
-    data.actionType = action;
+    const data = {}
+    data.vmId = vmId
+    data.state = state
+    data.actionType = action
 
     trigger('vm.actionState', {
-      data: data,
+      data,
       success: getData,
       ...this.props.match.params,
-    },)
+    })
   }
 
   fnGetActionColumn = (state, vmId) => {
-    let elements = "";
-    elements =
+    let elements = ''
+    elements = (
       <>
         {/* Stopped */}
-        {state == "Stopped" &&
-          <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("start", state, vmId)}>
-            <i className={styles['ico-quick-start']}></i><span>{t('RESOURCES_START')}</span>
+        {state === 'Stopped' && (
+          <Menu.MenuItem
+            key="option-1"
+            onClick={() => this.handleVmAction('start', state, vmId)}
+          >
+            <i className={styles['ico-quick-start']}></i>
+            <span>{t('RESOURCES_START')}</span>
           </Menu.MenuItem>
-        }
+        )}
         {/* Running */}
-        {state == "Running" &&
+        {state === 'Running' && (
           <>
-            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmId)}>
-              <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
+            <Menu.MenuItem
+              key="option-1"
+              onClick={() => this.handleVmAction('stop', state, vmId)}
+            >
+              <i className={styles['ico-quick-stop']}></i>
+              <span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("pause", state, vmId)}>
-              <i className={styles['ico-quick-pause']}></i><span>{t('RESOURCES_PAUSED_JOONGI')}</span>
+            <Menu.MenuItem
+              key="option-2"
+              onClick={() => this.handleVmAction('pause', state, vmId)}
+            >
+              <i className={styles['ico-quick-pause']}></i>
+              <span>{t('RESOURCES_PAUSED_JOONGI')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmId)}>
-              <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
+            <Menu.MenuItem
+              key="option-3"
+              onClick={() => this.handleVmAction('restart', state, vmId)}
+            >
+              <i className={styles['ico-quick-restart']}></i>
+              <span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
-        }
+        )}
         {/* Paused */}
-        {state == "Paused" &&
+        {state === 'Paused' && (
           <>
-            <Menu.MenuItem key="option-1" onClick={() => this.handleVmAction("stop", state, vmId)}>
-              <i className={styles['ico-quick-stop']}></i><span>{t('RESOURCES_STOP')}</span>
+            <Menu.MenuItem
+              key="option-1"
+              onClick={() => this.handleVmAction('stop', state, vmId)}
+            >
+              <i className={styles['ico-quick-stop']}></i>
+              <span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-2" onClick={() => this.handleVmAction("unpause", state, vmId)}>
-              <i className={styles['ico-quick-unpause']}></i><span>{t('RESOURCES_UNPAUSE')}</span>
+            <Menu.MenuItem
+              key="option-2"
+              onClick={() => this.handleVmAction('unpause', state, vmId)}
+            >
+              <i className={styles['ico-quick-unpause']}></i>
+              <span>{t('RESOURCES_UNPAUSE')}</span>
             </Menu.MenuItem>
-            <Menu.MenuItem key="option-3" onClick={() => this.handleVmAction("restart", state, vmId)}>
-              <i className={styles['ico-quick-restart']}></i><span>{t('RESOURCES_RESTART')}</span>
+            <Menu.MenuItem
+              key="option-3"
+              onClick={() => this.handleVmAction('restart', state, vmId)}
+            >
+              <i className={styles['ico-quick-restart']}></i>
+              <span>{t('RESOURCES_RESTART')}</span>
             </Menu.MenuItem>
           </>
-        }
+        )}
       </>
+    )
 
-    return elements;
+    return elements
   }
-
 
   get emptyProps() {
     return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
@@ -506,7 +571,7 @@ export default class Vms extends React.Component {
         dataIndex: 'cpu_arch',
         title: t('RESOURCES_CPU_TYPE'),
         search: true,
-      }
+      },
     ]
   }
 
@@ -529,7 +594,7 @@ export default class Vms extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    //console.log({ ...this.props })
+    // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>
@@ -552,7 +617,6 @@ export default class Vms extends React.Component {
           onFetch={this.handleFetch}
         />
       </ListPage>
-
     )
   }
 }
