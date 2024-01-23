@@ -33,6 +33,7 @@ export default class LoadBalancerStore extends Base {
     records = new List()
 
     networkDataList = [];
+    floatingIpsList = [];
 
     module = 'lbs'
 
@@ -251,14 +252,37 @@ export default class LoadBalancerStore extends Base {
     @action
     async fetchFloatingList(params) {
         this.isLoading = true
-
         const result = await request.get(
             `/edgetron/resources/kubevirt/floating_ips`
         )
-        const dataList = { ...params, ...this.mapper(result), kind: 'floating' }
 
-        this.floatingIpList = dataList.floating_ips
+        let dataList = result?.floating_ips || [];
+
+        if (params.namespace) {
+            params.project = params.namespace;
+        }
+
+        const searchArray = Object.keys(params).map((key) => {
+            let value = params[key];
+            let searchData = {
+                "searchKeywordType": key,
+                "searchKeywordText": value
+            }
+            return searchData
+        })
+
+        if (searchArray.length > 0) {
+            searchArray.map((search) => {
+                let resultList = result.floating_ips.filter((row) => {
+                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                });
+                dataList = resultList;
+            })
+        }
+        this.floatingIpsList = dataList
+
         this.isLoading = false
+
         return dataList
     }
 

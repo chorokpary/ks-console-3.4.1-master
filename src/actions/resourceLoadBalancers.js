@@ -173,12 +173,13 @@ export default {
     },
   },
   'loadBalancer.floatingIpPop': {
-    on({ store, success, ...props }) {
+    on({ store, success, namespace, ...props }) {
       const modal = Modal.open({
         title: t('RESOURCES_FLOATING_IP_SETTINGS'),
         modal: FloatingIpModal,
         store,
         success,
+        namespace,
         ...props,
       })
     },

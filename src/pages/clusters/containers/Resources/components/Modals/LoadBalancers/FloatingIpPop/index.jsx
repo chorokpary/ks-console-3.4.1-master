@@ -15,8 +15,6 @@ const FloatingIpModal = (props) => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  const loadBalancerStore = new LoadBalancerStore();
-
   const lbId = props.store.detail.id;
 
   const [floatingList, setFloatingList] = useState([]);
@@ -64,11 +62,10 @@ const FloatingIpModal = (props) => {
 
     const getCreateData = async () => {
 
-      const floatingListData = await loadBalancerStore.fetchFloatingList();
-
+      const floatingListData = props.store.floatingIpsList;
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가 
       let floatingIpArray = [];
-      (floatingListData.floating_ips).map((floating) => {
+      (floatingListData).map((floating) => {
         if (!!!floating.target_ip) {
           let jsonData = {};
           jsonData.id = floating.id;
