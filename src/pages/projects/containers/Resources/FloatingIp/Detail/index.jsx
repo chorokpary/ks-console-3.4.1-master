@@ -90,6 +90,12 @@ const FloatingIpDetail = (props) => {
     )
   }
 
+  const handleConnectSuccess = (bool) => {
+    setFipConnected(bool)
+    fetchData()
+  }
+
+
   const getAttrs = () => {
     const detail = toJS(store.detail)
 
