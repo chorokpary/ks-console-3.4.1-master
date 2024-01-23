@@ -33,6 +33,7 @@ export default class LoadBalancerStore extends Base {
     records = new List()
 
     networkDataList = [];
+    floatingIpsList = [];
 
     module = 'lbs'
 
