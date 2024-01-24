@@ -315,18 +315,20 @@ class ResourceUsage extends React.Component {
 
   renderComputingResource() {
     const { isLoading, resources } = this.computingStore
-    
+
     return (
       <Loading spinning={isLoading}>
         <div className={styles.resources}>
-          {resources?.map(item => (
-              <ComputingResourceItem
+          {resources?.map((item) => (
+               <ComputingResourceItem
                 {...this.props.match.params}
                 {...item}
                 name={item.name}
                 num={item.count}
                 routeName={item.routeName}
                 icon={item.icon}
+                dataList={item.dataList}
+                createField={item.createField}
               />
             ))}
         </div>
@@ -353,12 +355,14 @@ class ResourceUsage extends React.Component {
             {t('PHYSICAL_RESOURCE_PL')}
           </RadioButton>         
         </RadioGroup>
-        <Select
-          className={styles.timeSelect}
-          defaultValue={this.state.range}
-          options={this.timeOptions}
-          onChange={this.handleRangeChange}
-        />
+        {this.state.resourceType != "computing" &&
+          <Select
+            className={styles.timeSelect}
+            defaultValue={this.state.range}
+            options={this.timeOptions}
+            onChange={this.handleRangeChange}
+          />
+        }
       </div>
     )
   }
