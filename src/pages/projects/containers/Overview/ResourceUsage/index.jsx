@@ -315,12 +315,12 @@ class ResourceUsage extends React.Component {
 
   renderComputingResource() {
     const { isLoading, resources } = this.computingStore
-    
+
     return (
       <Loading spinning={isLoading}>
         <div className={styles.resources}>
-          {resources?.map(item => (
-              <ComputingResourceItem
+          {resources?.map((item) => (
+               <ComputingResourceItem
                 {...this.props.match.params}
                 {...item}
                 name={item.name}
