@@ -23,6 +23,8 @@ import { Columns, Column, Loading, Icon } from '@kube-design/components'
 import { Card } from 'components/Base'
 import { StatusCircle } from 'components/Cards/Monitoring'
 import { default as ClusterResourceStatus } from './ClusterResource'
+import ClusterResourceSeparation  from './ClusterResourceSeparation'
+
 import ResourceStore from 'stores/resources/containerresource'
 
 import styles from './index.scss'
@@ -89,7 +91,8 @@ const index = (props) => {
             </Columns>
             <Columns>
                 <Column className="is-12">
-                    <ClusterResourceStatus cluster={cluster()} kaasName={props.match.params.name} />
+                    {/* <ClusterResourceStatus cluster={cluster()} kaasName={props.match.params.name} /> */}
+                    <ClusterResourceSeparation cluster={cluster()} kaasName={props.match.params.name} />
                 </Column>
             </Columns>
         </div>
