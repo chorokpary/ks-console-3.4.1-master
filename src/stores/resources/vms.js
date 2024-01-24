@@ -460,7 +460,7 @@ export default class VmStore extends Base {
     )
     const response = { ...params, ...this.mapper(result), kind: 'networks' }
 
-    if (params.namespace) {
+    if (params?.namespace) {
       const dataList = response.networks.filter(item => item.project == params.namespace);
       response.networks = dataList;
     }
@@ -479,7 +479,7 @@ export default class VmStore extends Base {
     )
     const response = { ...params, ...this.mapper(result), kind: 'sriov_networks' }
 
-    if (params.namespace) {
+    if (params?.namespace) {
       const dataList = response.sriov_networks?.filter(item => item.project == params.namespace);
       response.sriov_networks = dataList;
     }

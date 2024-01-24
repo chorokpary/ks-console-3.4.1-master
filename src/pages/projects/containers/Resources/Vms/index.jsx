@@ -213,7 +213,7 @@ export default class Vms extends React.Component {
   getVmsCpuType() {
     const VMS_CPU_TYPE = [
       { text: 'x86_64', value: 'x86_64' },
-      { text: 'arm', value: 'arm' },
+      { text: 'aarch64', value: 'aarch64' },
     ]
 
     return VMS_CPU_TYPE.map(status => ({
