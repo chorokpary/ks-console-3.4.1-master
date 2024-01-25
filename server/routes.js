@@ -25,6 +25,7 @@ const checkToken = require('./middlewares/checkToken')
 const checkIfExist = require('./middlewares/checkIfExist')
 
 const mm3CheckToken = require('./middlewares/mm3CheckToken')
+const k8sGptCheckToken = require('./middlewares/k8sGptCheckToken')
 
 const {
   k8sResourceProxy,
@@ -32,6 +33,7 @@ const {
   b2iFileProxy,
   webMm3Proxy,
   webCmpProxy,
+  k8sGptProxy,
 } = require('./proxy')
 
 const {
@@ -76,13 +78,19 @@ router
 
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
 
+  // apis/core.k8sgpt.ai/v1alpha1/namespaces/k8sgpt-operator-system
+
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
+
+  .all('/apis/core.k8sgpt.ai/(.*)', k8sGptCheckToken)
+  .use(proxy('/apis/core.k8sgpt.ai/(.*)', k8sGptProxy))
 
   .get('/sample/:app', parseBody, handleSampleData)
 
   .all('/edgetron/(.*)', mm3CheckToken)
   .use(proxy('/edgetron/(.*)', webMm3Proxy))
+
 
   // session
   .post('/login', parseBody, handleLogin)

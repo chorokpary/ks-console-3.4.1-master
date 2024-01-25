@@ -67,6 +67,7 @@ import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
+import ClusterFaultSetting from '../containers/Resources/ClusterFault/Setting'
 
 const PATH = '/clusters/:cluster'
 
@@ -257,6 +258,10 @@ export default [
   {
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
+  },
+  {
+    path: `${PATH}/clusterfault/setting`,
+    component: ClusterFaultSetting,
   },
 
 ]
