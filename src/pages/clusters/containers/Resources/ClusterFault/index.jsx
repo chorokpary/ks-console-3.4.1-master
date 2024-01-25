@@ -27,6 +27,8 @@ import styles from './index.scss'
 import { Icon } from '@kube-design/components'
 
 import ClusterFaultStore from 'stores/resources/clusterFault'
+import { Modal } from 'components/Base'
+import DetailModal from 'clusters/containers/Resources/components/Modals/ClusterFault'
 
 @withClusterList({
   store: new ClusterFaultStore(),
@@ -49,8 +51,7 @@ export default class ClusterFault extends React.Component {
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { workspace, cluster, namespace } = this.props.match.params
+    const { trigger, ...props } = this.props
     return [
       {
         title: t('RESOURCES_CLUSTER_FAULT_NAMESPACE'),
@@ -87,15 +88,15 @@ export default class ClusterFault extends React.Component {
       },
       {
         title: t('RESOURCES_CLUSTER_FAULT_SOLUTION'),
-        dataIndex: 'timestamp',
+        dataIndex: 'solution',
         width: 40,
-        render: (namespace, item, index) => (
-          <Avatar
-            icon="cluster"
-            iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${name}/${item.id}`}
-            title={index}
-          />
+        render: (solution, item) => (
+          <div className={styles.iconRight} onClick={() => trigger('clusterfault.detail', {
+            detail: item,
+            ...this.props.match.params,
+          })}>
+            <Icon name={'topology'} size={36} />
+          </div>
         ),
       },
     ]
@@ -123,7 +124,7 @@ export default class ClusterFault extends React.Component {
             </div>
             <div className={styles.divRight}>
               <div className={styles.iconRight} onClick={() => this.modalTopology()}>
-                <Icon name={'topology'} size={36} />
+                <Icon name={'hammer'} size={36} />
               </div>
               <p>{t('RESOURCES_CLUSTER_FAULT_SET')}</p>
             </div>
