@@ -38,8 +38,6 @@ export default class ClusterFaultStore extends Base {
         devops,
         ...params
     } = {}) {
-
-        console.log(params)
         this.list.isLoading = true
 
         if (!params.sortBy && params.ascending === undefined) {
@@ -83,6 +81,10 @@ export default class ClusterFaultStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = this.dataList.filter((row) => {
+                    if (search.searchKeywordType === 'project') {
+                        let [projectName, _] = get(row, 'spec.name').split('/')
+                        return projectName?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                    }
                     return get(row, search.searchKeywordType)?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
                 });
                 this.searchList = resultList;
