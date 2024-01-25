@@ -16,7 +16,7 @@ import FloatingIpStore from 'stores/resources/floatingip';
 const store = new LoadBalancerStore();
 const floatingstore = new FloatingIpStore()
 
-const LoadBalancerDetail = (props) => {
+const ClusterFaultSetting = (props) => {
 
     useEffect(() => {
         fetchData();
@@ -171,5 +171,5 @@ const LoadBalancerDetail = (props) => {
     )
 }
 
-export default inject('rootStore')(observer(LoadBalancerDetail));
+export default inject('rootStore')(observer(ClusterFaultSetting));
 
