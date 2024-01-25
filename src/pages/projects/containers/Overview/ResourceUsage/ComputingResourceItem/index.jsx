@@ -39,7 +39,6 @@ const ResourceCard = (props) => {
   const resourceType = props.routeName;
   const resourceData = props.dataList; 
   const resourceCreateField = props.createField;
-  console.log("resourceType : "+ resourceType)
 
   const [vmData, setVmData] = useState({});
   const [imageData, setImageData] = useState({});
@@ -133,12 +132,10 @@ const ResourceCard = (props) => {
     while (arrIdx >= 0 && idx < sortData.length) {
 
       if (unixTime > new Date(sortData[idx][dateType])) {
-        console.log("AA")
         arr[arrIdx] = cnt;
         unixTime -= 86400000; // the day before
         arrIdx--;
       } else {
-        console.log("BB")
         idx++;
         cnt--;
       }
