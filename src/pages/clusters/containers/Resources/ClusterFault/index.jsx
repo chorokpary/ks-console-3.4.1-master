@@ -18,8 +18,9 @@
 
 import React from 'react'
 import { Avatar } from 'components/Base'
-import withList, { ListPage } from 'components/HOCs/withList'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import ResourceTable from 'clusters/components/ResourceTable'
 import classnames from 'classnames'
 import styles from './index.scss'
 
@@ -27,7 +28,7 @@ import { Icon } from '@kube-design/components'
 
 import ClusterFaultStore from 'stores/resources/clusterFault'
 
-@withList({
+@withClusterList({
   store: new ClusterFaultStore(),
   module: 'clusterFault',
   authKey: 'clusterFault',
@@ -71,7 +72,6 @@ export default class ClusterFault extends React.Component {
         dataIndex: 'spec.name',
         isHideable: true,
         sorter: true,
-        search: true,
         width: 200,
       },
       {
@@ -129,7 +129,7 @@ export default class ClusterFault extends React.Component {
             </div>
           </div>
         </div>
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           tableActions={this.tableActions}
