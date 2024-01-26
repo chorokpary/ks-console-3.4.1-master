@@ -56,7 +56,7 @@ export default class AuthorizationList extends React.Component {
         loading={isLoading}
         isEmpty={Object.keys(templates).length <= 0}
       >
-        <RuleList templates={templates} />
+        <RuleList templates={templates} memberRole={this.props.detailStore.detail.name}/>
       </Card>
     )
   }
