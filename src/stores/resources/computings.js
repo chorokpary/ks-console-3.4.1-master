@@ -64,7 +64,7 @@ export default class ComputingStore extends Base {
     const promises = apiArray.map(async (item) => {
       const result = get(await request.get(`${apiUrl}/${item.type}`), item.type, []);
       const resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;
-      computingDataArray.push({count : resultCount, name : item.name, routeName : item.routeName, icon : item.icon, dataList: result, createField : item.createField});
+      computingDataArray.push({count : resultCount, name : item.name, routeName : item.routeName, icon : item.icon, dataList: result, createField : item.createField, multitenancy : item.multitenancy});
     })
     
     await Promise.all(promises);
