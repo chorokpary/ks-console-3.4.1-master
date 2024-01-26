@@ -95,7 +95,7 @@ export default class UsersStore extends Base {
     }
 
     // 멤버관련 프로젝트 Role 추출 시작
-    const projectMemberRoleResp = await request.get(`/kapis/iam.kubesphere.io/v1alpha2/namespaces/${params.namespace}/members?name=${name}`)
+    const projectMemberRoleResp = await request.get('/kapis/iam.kubesphere.io/v1alpha2/namespaces/ked-project/members?name='+name)
     const projectMemberRole = get(projectMemberRoleResp['items'][0],"metadata.annotations['iam.kubesphere.io/role']", {})
                  
     const resp = await request.get(
