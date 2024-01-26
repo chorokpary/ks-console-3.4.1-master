@@ -40,6 +40,8 @@ const ResourceCard = (props) => {
   const resourceData = props.dataList; 
   const resourceCreateField = props.createField;
 
+  const graphExceptionArray = ['floatingip','hostDevices','mediatedDevices']
+
   const [vmData, setVmData] = useState({});
   const [imageData, setImageData] = useState({});
   const [volumeData, setVolumeData] = useState({});
@@ -93,7 +95,10 @@ const ResourceCard = (props) => {
       setLoading(true)
 
       if (cleanupTrigger) {
-        handleDate(resourceData, resourceCreateField, resourceType)
+
+        const dataList = props.multitenancy ? resourceData.filter(item => item.project == props.namespace) : resourceData;
+
+        handleDate(dataList, resourceCreateField, resourceType)
         setLoading(false)
       }
     };
@@ -202,7 +207,9 @@ const ResourceCard = (props) => {
         <strong>{num}</strong>
         <span>{num === '1' ? t(name) : t(`${name}`)}</span>
       </div>
-      <TinyArea width={330} height={44} bgColor="transparent" {...stateVariables[resourceType]} />
+      {graphExceptionArray.includes(resourceType) == false &&
+        <TinyArea width={330} height={44} bgColor="transparent" {...stateVariables[resourceType]} />
+      }
     </div>
   );
 };
