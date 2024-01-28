@@ -260,7 +260,7 @@ const DetailVmList = (props) => {
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.node != "N/A" ? obj.node : "-"}</div>
+            <div>{obj.node != "N/A" ? <Link to={`/clusters/${cluster}/nodes/${obj.node}`}>{obj.node}</Link> : "-"}</div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
           {renderMonitorings(obj.id)}
@@ -283,7 +283,7 @@ const DetailVmList = (props) => {
               <Icon name="apps" size={40} />
             </div>
             <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.flavor_object.name}</div>
+              <div><Link to={`/clusters/${cluster}/flavors/${obj.flavor_object.name}`}>{obj.flavor_object.name}</Link></div>
               <p>Flavor</p>
             </div>
             <div className={styles.title}>
