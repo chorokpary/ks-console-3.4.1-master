@@ -65,27 +65,27 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
       // vm inbound data
       var currentTime = Math.floor(Date.now() / 1000);
       const vmInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])) )`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // vm outbound data
       const vmOutboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])) * 100)`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       const kaasInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // vm outbound data
       const kaasOutboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
         start: currentTime - 30000,
         end: currentTime,
       })

@@ -257,15 +257,17 @@ function getVmResult(data) {
       type: 'utilisation',
       title: 'CPU_USAGE',
       unit: '%',
-      legend:
-        data.cpuData.map(item => (
-          item.metric.pod
-        ))
-      ,
-      data:
-        data.cpuData.map(item => (
-          item
-        ))
+      legend: ['USAGE'],
+      data: data.cpuData
+      // legend:
+      //   data.cpuData.map(item => (
+      //     item.metric.pod
+      //   ))
+      // ,
+      // data:
+      //   data.cpuData.map(item => (
+      //     item
+      //   ))
     },
     {
       activeTab: 'memory',
@@ -274,15 +276,16 @@ function getVmResult(data) {
       unit: '%',
       unitType: 'memory',
       legend: ['USAGE'],
-      legend:
-        data.memoryData.map(item => (
-          item.metric.pod
-        ))
-      ,
-      data:
-        data.memoryData.map(item => (
-          item
-        ))
+      data: data.memoryData
+      // legend:
+      //   data.memoryData.map(item => (
+      //     item.metric.pod
+      //   ))
+      // ,
+      // data:
+      //   data.memoryData.map(item => (
+      //     item
+      //   ))
     },
   ]
   return result
@@ -295,15 +298,17 @@ function getKaasResult(data) {
       type: 'utilisation',
       title: 'CPU_USAGE',
       unit: '%',
-      legend:
-        data.cpuData.map(item => (
-          item.metric.pod
-        ))
-      ,
-      data:
-        data.cpuData.map(item => (
-          item
-        ))
+      legend: ['USAGE'],
+      data: data.cpuData
+      // legend:
+      //   data.cpuData.map(item => (
+      //     item.metric.pod
+      //   ))
+      // ,
+      // data:
+      //   data.cpuData.map(item => (
+      //     item
+      //   ))
     },
     {
       activeTab: 'memory',
@@ -312,15 +317,16 @@ function getKaasResult(data) {
       unit: '%',
       unitType: 'memory',
       legend: ['USAGE'],
-      legend:
-        data.memoryData.map(item => (
-          item.metric.pod
-        ))
-      ,
-      data:
-        data.memoryData.map(item => (
-          item
-        ))
+      data: data.memoryData
+      // legend:
+      //   data.memoryData.map(item => (
+      //     item.metric.pod
+      //   ))
+      // ,
+      // data:
+      //   data.memoryData.map(item => (
+      //     item
+      //   ))
     },
   ]
   return result

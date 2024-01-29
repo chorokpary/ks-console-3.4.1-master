@@ -85,8 +85,10 @@ function getVmData(data) {
   const lastData = {
     OUT: outSumData.sum,
     IN: inSumData.sum,
-    UNIT: outSumData.unit || inSumData.unit,
-    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+    UNIT_OUT: getSuitableUnit(outSumData.sum, 'traffic'),
+    UNIT_IN: getSuitableUnit(inSumData.sum, 'traffic'),
+    UNIT: getSuitableUnit(outSumData.sum, 'traffic') || getSuitableUnit(inSumData.sum, 'traffic'),
+    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
   }
 
   return lastData
@@ -128,8 +130,10 @@ function getKaasData(data) {
   const lastData = {
     OUT: outSumData.sum,
     IN: inSumData.sum,
-    UNIT: outSumData.unit || inSumData.unit,
-    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+    UNIT_OUT: getSuitableUnit(outSumData.sum, 'traffic'),
+    UNIT_IN: getSuitableUnit(inSumData.sum, 'traffic'),
+    UNIT: getSuitableUnit(outSumData.sum, 'traffic') || getSuitableUnit(inSumData.sum, 'traffic'),
+    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
   }
 
   return lastData
@@ -176,31 +180,35 @@ function getVmResult(data) {
       activeTab: 'OUT',
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
-      unitType: 'bandwidth',
-      legend:
-        data.vmOutboundData.map(item => (
-          item.metric.pod + '-' + item.metric.device
-        ))
-      ,
-      data:
-        data.vmOutboundData.map(item => (
-          item
-        ))
+      unitType: 'traffic',
+      legend: ['USAGE'],
+      data: data.vmOutboundData,
+      // legend:
+      //   data.vmOutboundData.map(item => (
+      //     item.metric.pod + '-' + item.metric.device
+      //   ))
+      // ,
+      // data:
+      //   data.vmOutboundData.map(item => (
+      //     item
+      //   ))
     },
     {
       activeTab: 'IN',
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
-      unitType: 'bandwidth',
-      legend:
-        data.vmInboundData.map(item => (
-          item.metric.pod + '-' + item.metric.device
-        ))
-      ,
-      data:
-        data.vmInboundData.map(item => (
-          item
-        ))
+      unitType: 'traffic',
+      legend: ['USAGE'],
+      data: data.vmInboundData,
+      // legend:
+      //   data.vmInboundData.map(item => (
+      //     item.metric.pod + '-' + item.metric.device
+      //   ))
+      // ,
+      // data:
+      //   data.vmInboundData.map(item => (
+      //     item
+      //   ))
     },
   ]
 
@@ -213,31 +221,35 @@ function getKaasResult(data) {
       activeTab: 'OUT',
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
-      unitType: 'bandwidth',
-      legend:
-        data.vmOutboundData.map(item => (
-          item.metric.pod + '-' + item.metric.device
-        ))
-      ,
-      data:
-        data.vmOutboundData.map(item => (
-          item
-        ))
+      unitType: 'traffic',
+      legend: ['USAGE'],
+      data: data.vmOutboundData,
+      // legend:
+      //   data.vmOutboundData.map(item => (
+      //     item.metric.pod + '-' + item.metric.device
+      //   ))
+      // ,
+      // data:
+      //   data.vmOutboundData.map(item => (
+      //     item
+      //   ))
     },
     {
       activeTab: 'IN',
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
-      unitType: 'bandwidth',
-      legend:
-        data.vmInboundData.map(item => (
-          item.metric.pod + '-' + item.metric.device
-        ))
-      ,
-      data:
-        data.vmInboundData.map(item => (
-          item
-        ))
+      unitType: 'traffic',
+      legend: ['USAGE'],
+      data: data.vmInboundData,
+      // legend:
+      //   data.vmInboundData.map(item => (
+      //     item.metric.pod + '-' + item.metric.device
+      //   ))
+      // ,
+      // data:
+      //   data.vmInboundData.map(item => (
+      //     item
+      //   ))
     },
   ]
 
