@@ -99,6 +99,8 @@ export default class RouterStore extends Base {
         let resultList = this.dataList.filter((row) => {
           if (typeof row[search.searchKeywordType] === "boolean") {
             return (row[search.searchKeywordType] ? '사용' : '미사용').includes(search.searchKeywordText);
+          } else if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
           } else {
             return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
           }

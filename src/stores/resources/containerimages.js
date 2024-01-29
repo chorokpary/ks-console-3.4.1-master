@@ -67,7 +67,7 @@ export default class ContainerImagesStore extends Base {
     // mm3 api 관련 
     const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes']
     const apiName = mm3Array.includes(this.module) ? this.module : "";
-    
+
     const data = (get(result, apiName.replace('resources', '')) || []).map(item => ({
       cluster,
       namespace,
@@ -90,8 +90,8 @@ export default class ContainerImagesStore extends Base {
     });
 
     // 초기 데이터 처리 
-    this.dataList = imageArray; 
-    
+    this.dataList = imageArray;
+
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
     const searchArray = Object.keys(params).map((key) => {
@@ -106,6 +106,9 @@ export default class ContainerImagesStore extends Base {
     if (searchArray.length > 0) {
       searchArray.map((search) => {
         let resultList = this.dataList.filter((row) => {
+          if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+          }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
         this.searchList = resultList;
@@ -150,7 +153,7 @@ export default class ContainerImagesStore extends Base {
 
     const url = this.getResourceUrl(params);
 
-    console.log("data : "+ JSON.stringify(data))
+    console.log("data : " + JSON.stringify(data))
     const res = await request.post(url, data)
     return res
   }
@@ -160,7 +163,7 @@ export default class ContainerImagesStore extends Base {
 
     const jsonData = {};
     jsonData.image = data;
-    
+
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
     )
@@ -186,12 +189,12 @@ export default class ContainerImagesStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-    
+
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}/manifest`
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'Containerimages' }
-  
+
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData

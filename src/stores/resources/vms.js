@@ -79,7 +79,7 @@ export default class VmStore extends Base {
 
 
     // 초기 정렬 처리
-     data.sort((a, b) => {
+    data.sort((a, b) => {
       return a.creation_timestamp < b.creation_timestamp ? 1 : a.creation_timestamp > b.creation_timestamp ? -1 : 0;
     });
 
@@ -90,7 +90,7 @@ export default class VmStore extends Base {
     await this.fetchFloatingList(params);
 
     // Network List 추출
-    await this.fetchVmListNetwork(params);    
+    await this.fetchVmListNetwork(params);
 
     // namespace(project) 있는 경우
     if (namespace) {
@@ -111,6 +111,9 @@ export default class VmStore extends Base {
     if (searchArray.length > 0) {
       searchArray.map((search) => {
         let resultList = this.dataList.filter((row) => {
+          if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+          }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
         this.searchList = resultList;
@@ -269,7 +272,7 @@ export default class VmStore extends Base {
 
     // SecurityGroup 관련
     await this.fetchVmListSecurityGroup(params);
-    
+
     this.detail = detail
     this.isLoading = false
 
@@ -572,7 +575,7 @@ export default class VmStore extends Base {
     if (params.namespace) {
       namespaceDataList = securityArray.filter(item => item.project == params.namespace);
     }
-   
+
     const dataList = params.namespace ? namespaceDataList : securityArray;
 
     this.securigyGroupList = dataList;
@@ -623,10 +626,10 @@ export default class VmStore extends Base {
     const snapshotData = {};
 
     snapshotData.vm_id = data.vmId;
-    snapshotData.description = data.description;   
+    snapshotData.description = data.description;
 
     jsonData.snapshot = snapshotData;
-    console.log("snapshot : "+ JSON.stringify(jsonData))
+    console.log("snapshot : " + JSON.stringify(jsonData))
     const res = await request.post(url, jsonData)
     return res;
   }
@@ -639,14 +642,14 @@ export default class VmStore extends Base {
     result.snapshots.sort((a, b) => {
       var x = a['timestamp'];
       var y = b['timestamp'];
-      return x > y ? -1 : x < y ? 1 : 0;        
+      return x > y ? -1 : x < y ? 1 : 0;
     });
 
     return result.snapshots
   }
 
   @action
-  snapshotDelete(id) {  
+  snapshotDelete(id) {
 
     const url = `/edgetron/resources/kubevirt/vms/snapshots/${id}`;
     return this.submitting(request.delete(url))
@@ -660,7 +663,7 @@ export default class VmStore extends Base {
     const restoreData = {};
 
     restoreData.snapshot_id = data.snapshotId;
-    restoreData.description = data.description;   
+    restoreData.description = data.description;
 
     jsonData.restore = restoreData;
 
@@ -676,14 +679,14 @@ export default class VmStore extends Base {
     result.restores.sort((a, b) => {
       var x = a['timestamp'];
       var y = b['timestamp'];
-      return x > y ? -1 : x < y ? 1 : 0;        
+      return x > y ? -1 : x < y ? 1 : 0;
     });
 
     return result.restores
   }
 
   @action
-  restoreDelete(id) {  
+  restoreDelete(id) {
     const url = `/edgetron/resources/kubevirt/vms/restores/${id}`;
     return this.submitting(request.delete(url))
   }
@@ -710,11 +713,11 @@ export default class VmStore extends Base {
     const result = await request.get(
       `/edgetron/resources/kubevirt/vms/clones`
     )
-   
+
     result.clones.sort((a, b) => {
       var x = a['timestamp'];
       var y = b['timestamp'];
-      return x > y ? -1 : x < y ? 1 : 0;        
+      return x > y ? -1 : x < y ? 1 : 0;
     });
 
     const vm_clones = (result.clones).filter(item => item.source_vm_id == id);
@@ -723,7 +726,7 @@ export default class VmStore extends Base {
   }
 
   @action
-  cloneDelete(id) {  
+  cloneDelete(id) {
     const url = `/edgetron/resources/kubevirt/vms/clones/${id}`;
     return this.submitting(request.delete(url))
   }

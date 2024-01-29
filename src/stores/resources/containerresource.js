@@ -109,6 +109,8 @@ export default class ResourceStore extends Base {
         let resultList = this.dataList.filter((row) => {
           if (typeof row[search.searchKeywordType] === "boolean") {
             return (row[search.searchKeywordType] ? 'Ready' : 'Not-ready').includes(search.searchKeywordText);
+          } else if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
           } else {
             return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
           }
@@ -336,7 +338,7 @@ export default class ResourceStore extends Base {
     this.isLoading = false
     return response;
   }
-  
+
   @action
   async fetchMachines(params) {
     this.isLoading = true

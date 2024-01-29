@@ -173,6 +173,9 @@ export default class BaseStore {
     if (searchArray.length > 0) {
       searchArray.map((search) => {
         let resultList = this.dataList.filter((row) => {
+          if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+          }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
         this.searchList = resultList;
