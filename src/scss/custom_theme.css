@@ -145,6 +145,11 @@ input.input:focus {
   background: #0fa1e3 !important;
 }
 
+/* 탭라디오 개수 태그 색상 공통 */
+.badge-wrapper > span.badge.is-default {
+  background: #0fa1e3 !important;
+}
+
 /* 토글 스위치 색상 */
 .toggle.checked:hover,
 .toggle.checked:active {
