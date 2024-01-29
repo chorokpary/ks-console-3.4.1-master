@@ -18,8 +18,8 @@ const RegistModal = (props) => {
 
   const [networkDataList, setNetworkDataList] = useState([]);
 
-  const internalNetworkList = networkDataList?.filter((row) => row.external == false);
-  const externalNetworkList = networkDataList?.filter((row) => row.external == true);
+  const internalNetworkList = networkDataList?.filter((row) => row.external == false) || [];
+  const externalNetworkList = networkDataList?.filter((row) => row.external == true) || [];
 
   const [routerInternal, setRouterInternal] = useState([]);
   const [routerExternal, setRouterExternal] = useState([]);
@@ -72,17 +72,23 @@ const RegistModal = (props) => {
     //Network List 추출
     const fnGetNetworkList = async () => {
       const networkData = await props.store.networkList()
-      setNetworkDataList(networkData.networks)
+      const networkList = networkData.filter(obj => obj.project === projectName) || []
+      setNetworkDataList(networkList)
     };
 
     fnGetNetworkList();
   }, [])
 
+  useEffect(() => {
+    const networkList = props.store.networkDataList.filter(obj => obj.project === projectName) || []
+    setNetworkDataList(networkList)
+  }, [projectName])
+
   // 체크 리스트 시작 ==================================================
   const [internalCheckItems, setInternalCheckItems] = useState([]);
 
   const dataListVariables = {
-    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))),
+    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))) || [],
   };
 
   const stateVariables = {
@@ -138,7 +144,7 @@ const RegistModal = (props) => {
     <>
       <Modal
         icon="pen"
-        width={800}
+        width={960}
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
@@ -171,7 +177,7 @@ const RegistModal = (props) => {
                   ]}
                 >
                   <ProjectSelect
-                    name="metadata.namespace"
+                    name="namespace"
                     defaultValue={projectName}
                     cluster={props.cluster}
                     onChange={(e) => setProjectName(e)}

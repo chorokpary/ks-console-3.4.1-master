@@ -76,28 +76,28 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
       const times = 100
       var currentTime = Math.floor(Date.now() / 1000);
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${vmUuid}"}[${step}])) * ${times})) / 100`,
+        expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${vmUuid}"}[${step}])) * ${times})) / 100`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // vm memory data
       const vmMemoryData = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmUuid}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmUuid}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmUuid}"}`,
+        expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmUuid}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmUuid}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${vmUuid}"})`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // kaas cpu data
       const kaasCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod!~"${vmUuid}"}[${step}])) * ${times})) / 100`,
+        expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod!~"${vmUuid}"}[${step}])) * ${times})) / 100`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // kaas memory data
       const kaasMemoryData = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmUuid}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmUuid}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmUuid}"}`,
+        expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmUuid}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmUuid}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${vmUuid}"})`,
         start: currentTime - 30000,
         end: currentTime,
       })

@@ -22,7 +22,7 @@ import styles from './index.scss'
 
 export default class RuleList extends React.Component {
   render() {
-    const { templates } = this.props
+    const { templates, memberRole } = this.props
 
     return (
       <ul className={styles.wrapper} data-test="rule-list">
@@ -44,6 +44,27 @@ export default class RuleList extends React.Component {
             </div>
           </li>
         ))}
+        <li key={Object.keys(templates).length+1}>
+            <div className={styles.name}>{t('RESOURCES_WORKLOAD')}</div>
+            <div> 
+                  {t('RESOURCES_WORKLOAD_VIEW')} 
+                  {memberRole != "viewer" && `  |   ${t('RESOURCES_WORKLOAD_MANAGE')}`}
+            </div>
+        </li>
+        <li key={Object.keys(templates).length+2}>
+            <div className={styles.name}>{t('RESOURCES_SETTINGS')}</div>
+            <div> 
+                  {t('RESOURCES_SETTINGS_VIEW')} 
+                  {memberRole != "viewer" && `  |   ${t('RESOURCES_SETTINGS_MANAGE')}`}
+            </div>
+        </li>
+        <li key={Object.keys(templates).length+3}>
+            <div className={styles.name}>{t('RESOURCES_RESOURCE_TEMPLATE')}</div>
+            <div> 
+                  {t('RESOURCES_RESOURCE_TEMPLATE_VIEW')} 
+                  {memberRole != "viewer" && `  |   ${t('RESOURCES_RESOURCE_TEMPLATE_MANAGE')}`}
+            </div>
+        </li>      
       </ul>
     )
   }

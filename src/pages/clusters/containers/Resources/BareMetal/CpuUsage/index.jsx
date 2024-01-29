@@ -60,6 +60,12 @@ const CpuUsage = (props) => {
 
     const { data } = props.store.list;
 
+    let instanceJoinText = ""
+    await data.map(obj => {
+      const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip+":"+obj.nodeExporter.port;
+      instanceJoinText += instance + "|"
+    })
+
     const paramsData = Object.assign(params, {
       start: params.start,
       end: params.end,
@@ -81,6 +87,7 @@ const CpuUsage = (props) => {
 
       const metric_power_last = await customStore.fetchMetric({
         expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
       })
 
       let total_x86_count = 0;
@@ -124,8 +131,10 @@ const CpuUsage = (props) => {
     };
 
     const getCpuUsageData = async () => {
+       
       const metric_cpu = await customStore.fetchMetric({
         expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
+        // expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"})))`,
         ...paramsData
       })
 
@@ -151,6 +160,7 @@ const CpuUsage = (props) => {
 
       const metric_power = await customStore.fetchMetric({
         expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
         ...paramsData
       })
 

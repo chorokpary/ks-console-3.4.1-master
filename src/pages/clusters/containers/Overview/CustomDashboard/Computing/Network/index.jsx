@@ -101,12 +101,12 @@ const ComputingNetwork = ({
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_status box_nth">
-                <LbPanel lb={lb} />
-                <FloatingIpPanel floatingIp={floatingIp} />
-                <SecurityGroupPanel sg={sg} />
-                <RouterPanel router={router} />
                 <NetworkPanel network={network} />
                 <SriovPanel sriov={sriov} />
+                <RouterPanel router={router} />
+                <LbPanel lb={lb} />
+                <SecurityGroupPanel sg={sg} />
+                <FloatingIpPanel floatingIp={floatingIp} />
               </div>
             </Loading>
           </div>

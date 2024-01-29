@@ -125,12 +125,12 @@ const ComputingTemplate = ({
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_status box_nth">
-                <MediatedDevicePanel md={md} />
-                <HostDevicePanel hd={hd} />
                 <ImagePanel image={image} />
-                <KeypairPanel keypair={keypair} />
-                <FlavorPanel flavor={flavor} />
                 <KaasPanel kaas={kaas} />
+                <FlavorPanel flavor={flavor} />
+                <KeypairPanel keypair={keypair} />
+                <HostDevicePanel hd={hd} />
+                <MediatedDevicePanel md={md} />
               </div>
             </Loading>
           </div>

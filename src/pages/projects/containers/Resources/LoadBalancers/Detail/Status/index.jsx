@@ -19,7 +19,7 @@ const Status = (props) => {
                 {store.detail.lb?.rules.length > 0 &&
                     <Panel title={t('RESOURCES_POLICY')}>
                         {store.detail.lb?.rules.map((rule, index) => (
-                            <div className={styles.wrapper}>
+                            <div className={styles.wrapper} key={index}>
                                 <div className={classnames(styles.item)}>
                                     <div className={styles.icon}>
                                         <Icon name="shield" size={40} />
@@ -30,7 +30,7 @@ const Status = (props) => {
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
                                         <div>{store.detail.lb?.members.filter((el, idx) => idx < 2).map((obj, idx) =>
-                                            <div>{obj}{store.detail.lb?.members.length > 2 && idx == 1 ? '...' : ''}</div>)}
+                                            <div key={obj}>{obj}{store.detail.lb?.members.length > 2 && idx == 1 ? '...' : ''}</div>)}
                                         </div>
                                         <p>{t('RESOURCES_MEMBER_IP')}</p>
                                     </div>

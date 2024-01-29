@@ -70,9 +70,9 @@ const BareMetalDetail = (props) => {
         start: currentTime,
         end: currentTime,
       })
-
-      const detailData = toJS(store.detail.nodes).find(item => get(item, 'name') === store.detail.name) 
-      const instance = get(detailData, 'ip')
+  
+      const detailData = toJS(store.detail)
+      const instance = detailData.systemType == "C" ? detailData.name : (detailData.baremetals).find(item => item.name == detailData.name).nodeExporter.ip;
 
       const metrics = metric_model.find(item => get(item, 'metric.instance').split(":")[0] === instance)
       const modelName = get(metrics, 'metric.model')  
@@ -85,7 +85,7 @@ const BareMetalDetail = (props) => {
 
       const data_type = metric_type.find(item => get(item, 'metric.instance').split(":")[0] === instance)
       const machine = get(data_type, 'metric.machine',"NOT")     
-      const typeText = (machine == "NOT") ? "-" : machine.includes('x86') ? "X86" : "ARM"
+      const typeText = (machine == "NOT") ? "-" : machine.includes('x86') ? "AMD64" : "ARM64"
       setMetricType(typeText)
 
       const data_core = metric_core.find(item => get(item, 'metric.instance').split(":")[0] === instance)
@@ -96,8 +96,7 @@ const BareMetalDetail = (props) => {
 
     const getSystemType = async (name) => {
       const dataList = await store.fetchList();
-      const systemType = dataList.filter(item => item.name = name).map(obj => obj.system_type)[0];
-
+      const systemType = dataList.filter(item => item.name == name).map(obj => obj.system_type)[0];
       return systemType;
     }
 
@@ -166,7 +165,7 @@ const BareMetalDetail = (props) => {
           value: metricState,
         },
         {
-          name: t('RESOURCES_TYPE_YOO'),
+          name: t('RESOURCES_CPU_TYPE'),
           value: metricType,
         },
         {

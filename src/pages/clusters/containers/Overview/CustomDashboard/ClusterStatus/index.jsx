@@ -13,9 +13,29 @@ const ClusterStatus = ({ x, y, w, h }) => {
   const [componentData, setComponentData] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const componentItemList = document.querySelectorAll('.type_component');
+  componentItemList.forEach((comp) => {
+    comp.addEventListener('mouseover', () => {
+      const tooltip = comp.querySelector('.box_pop');
+      const compRect = comp.getBoundingClientRect();
+
+      tooltip.style.display = 'block';
+      tooltip.style.top = compRect.bottom + 'px';
+      tooltip.style.left = compRect.left + 'px';
+      tooltip.style.width = compRect.width + 'px';
+    });
+
+    comp.addEventListener('mouseout', () => {
+      const tooltip = comp.querySelector('.box_pop');
+      tooltip.style.display = 'none';
+    });
+  }
+  );
+
   useEffect(() => {
 
     let cleanupTrigger = true;
+
     const getK8sStatusData = async () => {
       setLoading(true)
       await componentStore.fetchList({ cluster: 'default' })
@@ -30,6 +50,9 @@ const ClusterStatus = ({ x, y, w, h }) => {
       }
     };
     getK8sStatusData();
+
+
+
     return () => {
       cleanupTrigger = false
       setLoading(false)
@@ -40,7 +63,7 @@ const ClusterStatus = ({ x, y, w, h }) => {
   return (
     <>
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content pop_over">
+        <div className="grid-stack-item-content">
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>

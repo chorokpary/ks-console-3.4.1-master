@@ -140,6 +140,11 @@ input.input:focus {
   box-shadow: none !important;
 }
 
+/* 탭라디오 개수 태그 색상 공통 */
+.badge-wrapper > span.badge.is-success {
+  background: #0fa1e3 !important;
+}
+
 /* 토글 스위치 색상 */
 .toggle.checked:hover,
 .toggle.checked:active {
@@ -558,6 +563,10 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   fill: #8155ff !important;
 }
 
+.src-components-Cards-Monitoring-StatusTabs-index__tabList .src-components-Cards-Monitoring-StatusTabs-index__tab.src-components-Cards-Monitoring-StatusTabs-index__active .recharts-pie-sector path {
+  fill: #ffffff !important;
+}
+
 /* dot-area chart circle */
 .recharts-area-dots > * {
   stroke: #4487ec !important;
@@ -835,4 +844,4 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   height: 120px;
   text-align: center;
   background: linear-gradient(90deg, #522FE0 6.51%, #3F78FF 98.9%);
-}
+}/*# sourceMappingURL=custom_theme.css.map */

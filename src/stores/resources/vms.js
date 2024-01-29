@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
+import { get, find, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
@@ -459,6 +459,12 @@ export default class VmStore extends Base {
       `/edgetron/resources/kubevirt/networks`
     )
     const response = { ...params, ...this.mapper(result), kind: 'networks' }
+
+    if (params?.namespace) {
+      const dataList = response.networks.filter(item => item.project == params.namespace);
+      response.networks = dataList;
+    }
+
     this.networksList = response.networks
     this.isLoading = false
     return response;
@@ -473,6 +479,11 @@ export default class VmStore extends Base {
     )
     const response = { ...params, ...this.mapper(result), kind: 'sriov_networks' }
 
+    if (params?.namespace) {
+      const dataList = response.sriov_networks?.filter(item => item.project == params.namespace);
+      response.sriov_networks = dataList;
+    }
+
     this.isLoading = false
     return response;
   }
@@ -485,6 +496,11 @@ export default class VmStore extends Base {
       `/edgetron/resources/kubevirt/keypairs`
     )
     const response = { ...params, ...this.mapper(result), kind: 'keypairs' }
+
+    if (params.namespace) {
+      const dataList = response.keypairs.filter(item => item.project == params.namespace);
+      response.keypairs = dataList;
+    }
 
     this.isLoading = false
     return response;
@@ -552,9 +568,16 @@ export default class VmStore extends Base {
 
     await Promise.all(promises);
 
-    this.securigyGroupList = securityArray;
+    let namespaceDataList = [];
+    if (params.namespace) {
+      namespaceDataList = securityArray.filter(item => item.project == params.namespace);
+    }
+   
+    const dataList = params.namespace ? namespaceDataList : securityArray;
+
+    this.securigyGroupList = dataList;
     this.isLoading = false
-    return securityArray;
+    return dataList;
   }
 
   @action

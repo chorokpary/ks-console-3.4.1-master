@@ -68,7 +68,7 @@ class ResourceUsage extends React.Component {
     super(props)
 
     this.state = {
-      resourceType: 'application',
+      resourceType: 'computing',
       range: 43200,
     }
 
@@ -131,6 +131,7 @@ class ResourceUsage extends React.Component {
 
   fetchMetrics = params => {
     const { resourceType, range } = this.state
+    
     if (resourceType === 'application') {
       this.appResourceMonitorStore.fetchMetrics({
         ...this.props.match.params,
@@ -307,21 +308,27 @@ class ResourceUsage extends React.Component {
     )
   }
 
+  getComputingResourceData = () => {
+    const resource = toJS(this.computingStore.resource)
+    return resource;
+  }
+
   renderComputingResource() {
     const { isLoading, resources } = this.computingStore
-    console.log("resources : "+ JSON.stringify(resources))
+
     return (
       <Loading spinning={isLoading}>
         <div className={styles.resources}>
-          {resources
-            .map(item => (
-              <ComputingResourceItem
+          {resources?.map((item) => (
+               <ComputingResourceItem
                 {...this.props.match.params}
                 {...item}
                 name={item.name}
                 num={item.count}
                 routeName={item.routeName}
                 icon={item.icon}
+                dataList={item.dataList}
+                createField={item.createField}
               />
             ))}
         </div>
@@ -338,28 +345,31 @@ class ResourceUsage extends React.Component {
           onChange={this.handleResouceTypeChange}
           size="small"
         >
+          <RadioButton value="computing">
+            {t('컴퓨팅 리소스')}
+          </RadioButton>
           <RadioButton value="application">
             {t('APPLICATION_RESOURCE_PL')}
           </RadioButton>
           <RadioButton value="physical">
             {t('PHYSICAL_RESOURCE_PL')}
-          </RadioButton>
-          <RadioButton value="computing">
-            {t('컴퓨팅 리소스')}
-          </RadioButton>
+          </RadioButton>         
         </RadioGroup>
-        <Select
-          className={styles.timeSelect}
-          defaultValue={this.state.range}
-          options={this.timeOptions}
-          onChange={this.handleRangeChange}
-        />
+        {this.state.resourceType != "computing" &&
+          <Select
+            className={styles.timeSelect}
+            defaultValue={this.state.range}
+            options={this.timeOptions}
+            onChange={this.handleRangeChange}
+          />
+        }
       </div>
     )
   }
 
   render() {
     const { resourceType } = this.state
+
     return (
       <Panel className={styles.wrapper} title={t('RESOURCE_STATUS')}>
         {this.renderHeader()}
