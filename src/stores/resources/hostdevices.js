@@ -106,6 +106,9 @@ export default class HostDeviceStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = this.dataList.filter((row) => {
+                    if (search.searchKeywordType === 'project') {
+                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+                    }
                     return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
                 });
                 this.searchList = resultList;
@@ -204,7 +207,7 @@ export default class HostDeviceStore extends Base {
     @action
     async update({ name, ...params }, data) {
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.hostDevice.name }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ name: data.hostDevice.name }), data))
 
         return res
     }

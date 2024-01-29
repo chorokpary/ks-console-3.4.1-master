@@ -107,6 +107,9 @@ export default class SecurityGroupStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = this.dataList.filter((row) => {
+                    if (search.searchKeywordType === 'project') {
+                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+                    }
                     return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
                 });
                 this.searchList = resultList;
@@ -152,7 +155,7 @@ export default class SecurityGroupStore extends Base {
         if (res.message === "OK") {
 
             const jsonData = {};
-            const promises = data.security_group.security_group_rules.map(async  (obj) => {
+            const promises = data.security_group.security_group_rules.map(async (obj) => {
                 const data = {};
                 data.security_group_id = res.id;
                 data.direction = obj.direction.toLowerCase();
@@ -219,7 +222,7 @@ export default class SecurityGroupStore extends Base {
                 Promise.all(
                     rowKeys.map(async (id) => {
                         const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + id);
-                        Promise.all( 
+                        Promise.all(
                             securityDetail.data.security_group.rules.map((rule) => {
                                 request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
                             })
