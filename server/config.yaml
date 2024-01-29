@@ -47,8 +47,8 @@ server:
   dockerHubUrl: https://hub.docker.com
 
 client:
-  title: ARM CMP
-  description: ""
+  title: Petasus Cloud
+  description: "SK Telecom Cloud Platform"
   encryptKey: kubesphere
 
   version:
