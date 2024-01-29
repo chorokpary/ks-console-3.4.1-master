@@ -54,7 +54,6 @@ function getNodeData(metricData) {
 }
 
 function getPodData(podData) {
-
   const inbound = last(get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}).values)?.[1]
   const outbound = last(get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}).values)?.[1]
   const totalVal = Number(inbound) + Number(outbound)
@@ -69,71 +68,30 @@ function getPodData(podData) {
 }
 
 function getVmData(data) {
-  var outboundCnt = 0;
-  data.vmOutboundData.map(obj => {
-    outboundCnt += Number(last(obj.values)[1])
-  })
-  var inboundCnt = 0;
-  data.vmInboundData.map(obj => {
-    inboundCnt += Number(last(obj.values)[1])
-  })
+  const inbound = last(data.vmInboundData[0]?.values)?.[1]
+  const outbound = last(data.vmOutboundData[0]?.values)?.[1]
+  const totalVal = Number(inbound) + Number(outbound)
+  const config = getAreaChartOps(getVmResult(data)[0])
 
-  const totalVal = outboundCnt + inboundCnt
-  const outSumData = sumVmData(getAreaChartOps(getVmResult(data)[0]))
-  const inSumData = sumVmData(getAreaChartOps(getVmResult(data)[1]))
-
-  const lastData = {
-    OUT: outSumData.sum,
-    IN: inSumData.sum,
-    UNIT_OUT: getSuitableUnit(outSumData.sum, 'traffic'),
-    UNIT_IN: getSuitableUnit(inSumData.sum, 'traffic'),
-    UNIT: getSuitableUnit(outSumData.sum, 'traffic') || getSuitableUnit(inSumData.sum, 'traffic'),
-    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
+  var lastData = config.data[config.data.length - 1];
+  if (lastData) {
+    lastData.UNIT = config.unit
+    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
   }
 
   return lastData
 }
 
-function sumVmData(config) {
-  if (config.data.length > 0) {
-    const lastData = config.data[config.data.length - 1];
-    const { ...others } = lastData;
-
-    delete others.time // 이전과 다르게 time 파라미터가 추가됨
-    const values = Object.values(others)
-    const sum = values.reduce((a, b) => {
-      return a + b
-    }, 0);
-    lastData.sum = sum ? sum.toFixed(2) : 0
-    lastData.unit = config.unit
-
-    return lastData
-  } else {
-    return { sum: 0, unit: '' }
-  }
-}
-
 function getKaasData(data) {
-  var outboundCnt = 0;
-  data.vmOutboundData.map(obj => {
-    outboundCnt += Number(last(obj.values)[1])
-  })
-  var inboundCnt = 0;
-  data.vmInboundData.map(obj => {
-    inboundCnt += Number(last(obj.values)[1])
-  })
+  const inbound = last(data.vmInboundData[0]?.values)?.[1]
+  const outbound = last(data.vmOutboundData[0]?.values)?.[1]
+  const totalVal = Number(inbound) + Number(outbound)
+  const config = getAreaChartOps(getKaasResult(data)[0])
 
-  const totalVal = outboundCnt + inboundCnt
-  const outSumData = sumVmData(getAreaChartOps(getKaasResult(data)[0]))
-  const inSumData = sumVmData(getAreaChartOps(getKaasResult(data)[1]))
-
-  const lastData = {
-    OUT: outSumData.sum,
-    IN: inSumData.sum,
-    UNIT_OUT: getSuitableUnit(outSumData.sum, 'traffic'),
-    UNIT_IN: getSuitableUnit(inSumData.sum, 'traffic'),
-    UNIT: getSuitableUnit(outSumData.sum, 'traffic') || getSuitableUnit(inSumData.sum, 'traffic'),
-    TOTAL: getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
+  var lastData = config.data[config.data.length - 1];
+  if (lastData) {
+    lastData.UNIT = config.unit
+    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
   }
 
   return lastData
@@ -177,38 +135,14 @@ function getPodResult(podData) {
 function getVmResult(data) {
   const result = [
     {
-      activeTab: 'OUT',
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
       unitType: 'traffic',
-      legend: ['USAGE'],
-      data: data.vmOutboundData,
-      // legend:
-      //   data.vmOutboundData.map(item => (
-      //     item.metric.pod + '-' + item.metric.device
-      //   ))
-      // ,
-      // data:
-      //   data.vmOutboundData.map(item => (
-      //     item
-      //   ))
-    },
-    {
-      activeTab: 'IN',
-      type: 'bandwidth',
-      title: 'NETWORK_TRAFFIC',
-      unitType: 'traffic',
-      legend: ['USAGE'],
-      data: data.vmInboundData,
-      // legend:
-      //   data.vmInboundData.map(item => (
-      //     item.metric.pod + '-' + item.metric.device
-      //   ))
-      // ,
-      // data:
-      //   data.vmInboundData.map(item => (
-      //     item
-      //   ))
+      legend: ['OUT', 'IN'],
+      data: [
+        data.vmOutboundData[0],
+        data.vmInboundData[0],
+      ],
     },
   ]
 
@@ -218,38 +152,14 @@ function getVmResult(data) {
 function getKaasResult(data) {
   const result = [
     {
-      activeTab: 'OUT',
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
       unitType: 'traffic',
-      legend: ['USAGE'],
-      data: data.vmOutboundData,
-      // legend:
-      //   data.vmOutboundData.map(item => (
-      //     item.metric.pod + '-' + item.metric.device
-      //   ))
-      // ,
-      // data:
-      //   data.vmOutboundData.map(item => (
-      //     item
-      //   ))
-    },
-    {
-      activeTab: 'IN',
-      type: 'bandwidth',
-      title: 'NETWORK_TRAFFIC',
-      unitType: 'traffic',
-      legend: ['USAGE'],
-      data: data.vmInboundData,
-      // legend:
-      //   data.vmInboundData.map(item => (
-      //     item.metric.pod + '-' + item.metric.device
-      //   ))
-      // ,
-      // data:
-      //   data.vmInboundData.map(item => (
-      //     item
-      //   ))
+      legend: ['OUT', 'IN'],
+      data: [
+        data.vmOutboundData[0],
+        data.vmInboundData[0],
+      ],
     },
   ]
 
