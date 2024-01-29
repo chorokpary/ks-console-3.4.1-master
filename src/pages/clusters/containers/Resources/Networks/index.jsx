@@ -17,6 +17,7 @@
  */
 import ResourceTable from 'clusters/components/ResourceTable'
 
+import { Link } from 'react-router-dom'
 import React from 'react'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
@@ -132,6 +133,11 @@ export default class Networks extends React.Component {
         dataIndex: 'project',
         isHideable: true,
         width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}/overview`}>
+            {project}
+          </Link>
+        ),
       },
       {
         title: t('RESOURCES_NETWORK_TYPE'),
