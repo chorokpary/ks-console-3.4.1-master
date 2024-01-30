@@ -23,6 +23,12 @@ const index = (props) => {
   const [kaasCpuLegend, setKaasCpuLegend] = useState([]);
   const [kaasMemoryLegend, setKaasMemoryLegend] = useState([]);
 
+  const [kaasInboundData, setKaasInboundData] = useState([]);
+  const [kaasInboundLegend, setKaasInboundLegend] = useState([]);
+
+  const [kaasOutboundData, setKaasOutboundData] = useState([]);
+  const [kaasOutboundLegend, setKaasOutboundLegend] = useState([]);
+
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
     let value = parseFloat(timeStr)
@@ -103,12 +109,57 @@ const index = (props) => {
             kaasMemoryLegendArray.push(obj.metric.pod)
           }
       })
+
       setKaasMemoryData(kaasMemoryArray)
       setKaasMemoryLegend(kaasMemoryLegendArray);
     };
 
+    // inbound data
+    const getKaasInboundData = async () => {
+      const kaasInboundData = await customStore.fetchMetric({
+        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
+        ...paramsData,
+      })
+
+      // 배열 처리 
+      const kaasInboundArray = [];
+      const kaasInboundLegendArray = [];
+      kaasInboundData.map(obj => {
+          if (obj.metric.pod.split("-control-")[0] === store.detail.cluster.name || obj.metric.pod.split("-md-")[0] === store.detail.cluster.name) {
+            kaasInboundArray.push(obj)
+            kaasInboundLegendArray.push(obj.metric.pod)
+          }
+      })
+
+      setKaasInboundData(kaasInboundArray);
+      setKaasInboundLegend(kaasInboundLegendArray);      
+    };
+
+    // outbound data
+    const getKaasOutboundData = async () => {
+      const kaasOutboundData = await customStore.fetchMetric({
+        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
+        ...paramsData,
+      })
+
+      // 배열 처리 
+      const kaasOutboundArray = [];
+      const kaasOutboundLegendArray = [];
+      kaasOutboundData.map(obj => {
+          if (obj.metric.pod.split("-control-")[0] === store.detail.cluster.name || obj.metric.pod.split("-md-")[0] === store.detail.cluster.name) {
+            kaasOutboundArray.push(obj)
+            kaasOutboundLegendArray.push(obj.metric.pod)
+          }
+      })
+
+      setKaasOutboundData(kaasOutboundArray);
+      setKaasOutboundLegend(kaasOutboundLegendArray);      
+    };
+
     getKaasCpuUsageData();
     getKaasMemoryUsageData();
+    getKaasInboundData();
+    getKaasOutboundData();
 
   }
 
@@ -128,6 +179,20 @@ const index = (props) => {
         unitType: 'memory',
         legend: kaasMemoryLegend,
         data: kaasMemoryData,
+      },
+      {
+        type: 'bandwidth',
+        title: 'RESOURCES_NETWORK_TRAFFIC_IN',
+        unitType: 'bandwidth',
+        legend: kaasInboundLegend,
+        data: kaasInboundData,
+      },
+      {
+        type: 'bandwidth',
+        title: 'RESOURCES_NETWORK_TRAFFIC_OUT',
+        unitType: 'bandwidth',
+        legend: kaasOutboundLegend,
+        data: kaasOutboundData,
       },
     ]
   }
