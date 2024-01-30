@@ -27,8 +27,6 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
   const [tabContent, setTabContent] = useState();
   const [tabContentActive, setTabContentActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [tabActive, setTabActive] = useState('OUT');
-  const [rightTabActive, setRightTabActive] = useState('node');
 
   const [podData, setPodData] = useState([]);
 
@@ -65,27 +63,27 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
       // vm inbound data
       var currentTime = Math.floor(Date.now() / 1000);
       const vmInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])) )`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // vm outbound data
       const vmOutboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])) * 100)`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       const kaasInboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
         start: currentTime - 30000,
         end: currentTime,
       })
 
       // vm outbound data
       const kaasOutboundData = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])`,
+        expr: `sum(avg by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
         start: currentTime - 30000,
         end: currentTime,
       })
@@ -122,18 +120,10 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
     setTabContentData(getContentOptions(rightTabActive, data))
   }
 
-  // left tab active
-  const onClickLeftTab = (activeTab) => {
-    setTabActive(activeTab)
-    setTabContent(tabContentData.filter(obj => obj.activeTab == activeTab)[0])
-  }
-
   // right tab active
   const onClickRightTab = (tab, data) => {
-    setRightTabActive(tab)
     handleContenOption(tab, data)
     handleData(tab, data)
-    setTabActive('OUT')
   }
 
   useEffect(() => {
@@ -173,7 +163,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
 
               </div>
             </div>
-            {(rightTabActive != 'vm' && rightTabActive != 'kaas') &&
+            <Loading spinning={loading}>
               <div className="grid_info style_chart">
                 <div className="box type_chart">
                   <div className="cont1">
@@ -219,56 +209,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
                   </div>
                 </div>
               </div>
-            }
-            {(rightTabActive == 'vm' || rightTabActive == 'kaas') &&
-              <Loading spinning={loading}>
-                <div className="grid_info style_chart">
-                  <div className="box type_chart">
-                    <div className="cont1">
-                      <div className={`chart_tab ${tabActive == 'OUT' ? 'on' : ''}`} onClick={() => onClickLeftTab('OUT')}>
-                        <div className="title">
-                          <i className="ico-type-outbound"></i>
-                          <h5>Outbound</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className={`chart_tab ${tabActive == 'IN' ? 'on' : ''}`} onClick={() => onClickLeftTab('IN')}>
-                        <div className="title">
-                          <i className="ico-type-inbound"></i>
-                          <h5>Inbound</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="chart_tab no-tab">
-                        <div className="title">
-                          <i className="ico-type-network"></i>
-                          <h5>Total</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="cont2">
-                      {tabContentActive &&
-                        <TabContent option={tabContent}></TabContent>
-                      }
-                      {/* <div className="chart_02"></div> */}
-                    </div>
-                  </div>
-                </div>
-              </Loading>
-            }
+            </Loading>
           </div>
           {/* // grid_item */}
         </div>

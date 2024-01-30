@@ -119,6 +119,9 @@ export default class BareMetalStore extends Base {
     if (searchArray.length > 0) {
       searchArray.map((search) => {
         let resultList = this.dataList.filter((row) => {
+          if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+          }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
         this.searchList = resultList;
@@ -155,7 +158,7 @@ export default class BareMetalStore extends Base {
 
     //console.log(this.dataList)
 
-    return this.dataList 
+    return this.dataList
   }
 
   @action
@@ -174,11 +177,11 @@ export default class BareMetalStore extends Base {
     bmcData.address = data.bmcIp;
     bmcData.scrapeInterval = !!data.bmcInterval ? data.bmcInterval + "s" : "";
     bmcData.username = data.bmcId;
-    bmcData.password = data.bmcPassword; 
+    bmcData.password = data.bmcPassword;
 
     jsonData.name = data.systemType == "C" ? data.cluserName : data.name;
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
-    jsonData.openBMC= bmcData;    
+    jsonData.openBMC = bmcData;
 
     const res = await request.post(url, jsonData)
     return res
@@ -200,13 +203,13 @@ export default class BareMetalStore extends Base {
     bmcData.address = data.bmcIp;
     bmcData.scrapeInterval = data.bmcInterval + "s";
     bmcData.username = data.bmcId;
-    bmcData.password = data.bmcPassword; 
-    
+    bmcData.password = data.bmcPassword;
+
     jsonData.name = data.name;
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
-    jsonData.openBMC= bmcData;   
+    jsonData.openBMC = bmcData;
 
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.put(url, jsonData)
     return res
@@ -254,8 +257,9 @@ export default class BareMetalStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-
-    const url = user.systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
+    
+    const systemType = !!user.systemType ? user.systemType : user.system_type ;
+    const url = systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
 
     return this.submitting(request.delete(`${url}/${user.name}`))
   }
@@ -265,16 +269,16 @@ export default class BareMetalStore extends Base {
     const url = 'cmp-apiserver/redfish/v1alpha2/reset'
 
     const jsonData = {};
-    jsonData.address = "https://"+data.address,
-    jsonData.id = data.id,
-    jsonData.password = data.password,
-    jsonData.resetType = data.resetType,
-    jsonData.systemId = data.systemId
-    
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    jsonData.address = "https://" + data.address,
+      jsonData.id = data.id,
+      jsonData.password = data.password,
+      jsonData.resetType = data.resetType,
+      jsonData.systemId = data.systemId
+
+    console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
-    console.log("res : "+ JSON.stringify(res))
+    console.log("res : " + JSON.stringify(res))
     return res
   }
 }

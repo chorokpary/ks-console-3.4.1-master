@@ -98,6 +98,9 @@ export default class MediatedDeviceStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = this.dataList.filter((row) => {
+                    if (search.searchKeywordType === 'project') {
+                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+                    }
                     return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
                 });
                 this.searchList = resultList;
@@ -221,7 +224,7 @@ export default class MediatedDeviceStore extends Base {
         const responseNodes = { ...params, ...this.mapper(resultNodes), kind: 'nodes' }
         responseNodes.nodes.map(async obj => {
             const resultPgpus = await request.get(`/edgetron/resources/kubevirt/gpus/pgpus/${obj.name}`)
-            const responsePgpus = {...params, ...this.mapper(resultPgpus), kind: 'pgpu_models'}
+            const responsePgpus = { ...params, ...this.mapper(resultPgpus), kind: 'pgpu_models' }
 
             responsePgpus.pgpu_models.map(async obj => {
                 const resultVgpus = await request.get(`/edgetron/resources/kubevirt/gpus/vgpus/${obj.model_num}`)

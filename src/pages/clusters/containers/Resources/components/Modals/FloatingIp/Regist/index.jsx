@@ -72,6 +72,7 @@ const RegistModal = ({ title, onOk, store }) => {
         visible={modelView}
         okText={t('RESOURCES_CREATE')}
         cancelText={t('RESOURCES_CANCEL')}
+        disableSubmit={networkList.length === 0 && true}
       >
         <Form>
 
