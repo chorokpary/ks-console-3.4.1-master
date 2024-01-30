@@ -89,7 +89,7 @@ const RegistModal = (props) => {
         setCheckItems(checkItems.filter((el) => el !== name));
         setAddRowList(addRowList.filter((el) => el.device_name !== name));
         console.log(addRowList.filter((el) => regexName.test(el.name)).length)
-        if (addRowList.length-1 < 1 || addRowList.filter((el) => regexName.test(el.name)).length == addRowList.length-1) {
+        if (addRowList.length - 1 < 1 || addRowList.filter((el) => regexName.test(el.name)).length == addRowList.length - 1) {
             setIsCheckName(false)
         }
     };
@@ -168,11 +168,12 @@ const RegistModal = (props) => {
                 onCancel={closeModal}
                 cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
+                disableSubmit={dataList.length === 0 && true}
             >
                 <Form data={formData} ref={form}>
 
                     {t('RESOURCES_HOST_DEVICE')}<span className="form-item-required">*</span>
-                    <Form.Item desc={t('RESOURCES_NAME_VALID_DESC')+' ex) test/001'}>
+                    <Form.Item desc={t('RESOURCES_NAME_VALID_DESC') + ' ex) test/001'}>
                         <div>
                             <div className={styles.divwrap} style={{ marginBottom: '10px' }}>
                                 <Select name="select" options={[{ label: t('RESOURCES_MANUFACTURING_COMPANY_NAME'), value: 1 }, { label: t('RESOURCES_PRODUCT_NAME'), value: 2 }]} onChange={e => setKeyword(e)} value={keyword} className={styles.div_input} />
@@ -259,7 +260,7 @@ const RegistModal = (props) => {
                                                 {addRowList?.map((v, i) => (
                                                     <tr key={i}>
                                                         <td>
-                                                            <Button icon="substract" type="flat" onClick={() => handleDelete(v.device_name)} size="small"/>
+                                                            <Button icon="substract" type="flat" onClick={() => handleDelete(v.device_name)} size="small" />
                                                         </td>
                                                         <td><Form.Item><Input type="text" value={v.name} placeholder="이름" onChange={(e) => handleInput(e, i, 'name')} /></Form.Item></td>
                                                         <td>{v.vendor_id}</td>
