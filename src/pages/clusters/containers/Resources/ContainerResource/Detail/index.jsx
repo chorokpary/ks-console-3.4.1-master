@@ -63,41 +63,36 @@ const ResourceDetail = props => {
           });
         },
       },
-    ];
-
-    if (!kaasName.includes('boot-volume')) {
-      operations.push(
-        {
-          key: 'viewConfig',
-          icon: 'eye',
-          text: t('kubeconfig'),
-          action: 'view',
-          onClick: () => {
-            props.rootStore.triggerAction('containerresource.config.view', {
-              resourceConfig: window.atob(store.resourceConfig),
-              store,
-              readOnly: true,
-            });
-          },
+      {
+        key: 'viewConfig',
+        icon: 'eye',
+        text: t('kubeconfig'),
+        action: 'view',
+        onClick: () => {
+          props.rootStore.triggerAction('containerresource.config.view', {
+            resourceConfig: window.atob(store.resourceConfig),
+            store,
+            readOnly: true,
+          });
         },
-        {
-          key: 'delete',
-          icon: 'trash',
-          text: t('DELETE'),
-          action: 'delete',
-          type: 'danger',
-          show: showEdit,
-          onClick: () =>
-            props.rootStore.triggerAction('containerresource.remove', {
-              type: 'RESOURCE_DETAIL',
-              detail: toJS(store.detail.cluster),
-              store,
-              cluster: props.match.params.cluster,
-              success: () => routing.push(listUrl()),
-            }),
-        }
-      );
-    }
+      },
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('containerresource.remove', {
+            type: 'RESOURCE_DETAIL',
+            detail: toJS(store.detail.cluster),
+            store,
+            cluster: props.match.params.cluster,
+            success: () => routing.push(listUrl()),
+          }),
+      },
+    ];
 
     return operations;
   };
