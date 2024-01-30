@@ -1,5 +1,5 @@
 import { get, isEmpty, find } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import Banner from 'components/Cards/Banner'
@@ -36,7 +36,7 @@ const index = (props) => {
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
     let value = parseFloat(timeStr)
-  
+
     switch (unit) {
       default:
       case 's':
@@ -58,7 +58,7 @@ const index = (props) => {
     const interval = parseFloat(step) * times
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
-  
+
     return { start, end }
   }
 
@@ -73,38 +73,36 @@ const index = (props) => {
     let promsql_pod_vm_list = ""
     vmList.map((obj) => {
       const vmId = get(obj, 'id')
-      promsql_pod_vm_list += promsql_pod_vm_list != "" ?  ("|" + vmId) : vmId;
+      promsql_pod_vm_list += promsql_pod_vm_list != "" ? ("|" + vmId) : vmId;
     })
-
     let promsql_pod_kaas_list = ""
     kaasList.map((obj) => {
       const kaasName = get(obj, 'name')
-      promsql_pod_kaas_list += promsql_pod_kaas_list != "" ?  ("|" + kaasName) : kaasName;
+      promsql_pod_kaas_list += promsql_pod_kaas_list != "" ? ("|" + kaasName + '.*') : kaasName + '.*';
     })
 
     const paramsData = Object.assign(params, {
-      start : params.start,
-      end : params.end,
+      start: params.start,
+      end: params.end,
       step: getMinuteValue(params.step),
-      times : params.times ,
+      times: params.times,
     })
 
     if (!paramsData.start || !paramsData.end) {
       const timeRange = getTimeRange(paramsData)
       paramsData.start = timeRange.start
       paramsData.end = timeRange.end
-    }    
+    }
 
     const getVmCpuUsageData = async () => {
-    
+
       const cpuDataCom = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_vm_list}"}[5m])) * 100)) / 100`,
+        expr: `sum((100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_vm_list}"}[5m])) * 100)) / 100)`,
         // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
         ...paramsData,
       })
-
       const cpuDataKaas = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_kaas_list}"}[5m])) * 100)) / 100`,
+        expr: `sum((100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod!~"${promsql_pod_vm_list}"}[5m])) * 100)) / 100)`,
         // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
         ...paramsData,
       })
@@ -116,12 +114,12 @@ const index = (props) => {
     // vm memory data
     const getVmMemoryUsageData = async () => {
       const memoryDataCom = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}`,
+        expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"})`,
         ...paramsData,
       })
 
       const memoryDataKaas = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_kaas_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_kaas_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_kaas_list}"}`,
+        expr: `(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_vm_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_vm_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_vm_list}"})`,
         ...paramsData,
       })
 
@@ -132,28 +130,28 @@ const index = (props) => {
     // vm inbound data
     const getVmInboundData = async () => {
       const inboundDataCom = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${promsql_pod_vm_list}"}[5m])`,
+        expr: `sum(irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${promsql_pod_vm_list}"}[5m]))`,
         ...paramsData,
       })
 
       const inboundDataKaas = await customStore.fetchMetric({
-        expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${promsql_pod_kaas_list}"}[5m])`,
+        expr: `sum(irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${promsql_pod_vm_list}"}[5m]))`,
         ...paramsData,
       })
-      
+
       setInboundDataCom(inboundDataCom[0])
       setInboundDataKaas(inboundDataKaas[0])
     };
-   
+
     // vm outbound data
     const getVmOutboundData = async () => {
       const outboundDataCom = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${promsql_pod_vm_list}"}[5m])`,
+        expr: `sum(irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${promsql_pod_vm_list}"}[5m]))`,
         ...paramsData,
       })
 
       const outboundDataKaas = await customStore.fetchMetric({
-        expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${promsql_pod_kaas_list}"}[5m])`,
+        expr: `sum(irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${promsql_pod_vm_list}"}[5m]))`,
         ...paramsData,
       })
 
@@ -163,23 +161,23 @@ const index = (props) => {
 
     const getVmDiskUsageData = async () => {
       const diskDataCom = await customStore.fetchMetric({
-        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes{pod=~"${promsql_pod_vm_list}"})) / sum by(pod) (node_filesystem_size_bytes{pod=~"${promsql_pod_vm_list}"})) * 100)) / 100`,
+        expr: `sum((100 - (((sum by(pod) (node_filesystem_avail_bytes{pod=~"${promsql_pod_vm_list}"})) / sum by(pod) (node_filesystem_size_bytes{pod=~"${promsql_pod_vm_list}"})) * 100)) / 100)`,
         ...paramsData,
       })
 
       const diskDataKass = await customStore.fetchMetric({
-        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes{pod=~"${promsql_pod_kaas_list}"})) / sum by(pod) (node_filesystem_size_bytes{pod=~"${promsql_pod_kaas_list}"})) * 100)) / 100`,
+        expr: `sum((100 - (((sum by(pod) (node_filesystem_avail_bytes{pod=~"${promsql_pod_kaas_list}"})) / sum by(pod) (node_filesystem_size_bytes{pod=~"${promsql_pod_kaas_list}"})) * 100)) / 100)`,
         ...paramsData,
       })
 
       setDiskDataCom(diskDataCom)
       setDiskDataKass(diskDataKass)
     };
-    
+
     getVmCpuUsageData();
     getVmMemoryUsageData();
     getVmInboundData();
-    getVmOutboundData();  
+    getVmOutboundData();
     getVmDiskUsageData();
 
   }
@@ -193,8 +191,8 @@ const index = (props) => {
         unit: '%',
         legend: ['CPU_USAGE'],
         data: cpuDataCom,
-        graphType : 'm',
-        dataType : 'cpu'
+        graphType: 'm',
+        dataType: 'cpu'
       },
       {
         type: 'utilisation',
@@ -203,17 +201,17 @@ const index = (props) => {
         unitType: 'memory',
         legend: ['MEMORY_USAGE'],
         data: memoryDataCom,
-        graphType : 'm',
-        dataType : 'memory'
+        graphType: 'm',
+        dataType: 'memory'
       },
       {
         type: 'bandwidth',
         title: '',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
-        data: [outboundDataCom , inboundDataCom],
-        graphType : 's',
-        dataType : 'network'
+        data: [outboundDataCom, inboundDataCom],
+        graphType: 's',
+        dataType: 'network'
       },
       {
         type: 'utilisation',
@@ -221,8 +219,8 @@ const index = (props) => {
         unit: '%',
         legend: [t('RESOURCES_DISK_USAGE')],
         data: diskDataCom,
-        graphType : 's',
-        dataType : 'disk'
+        graphType: 's',
+        dataType: 'disk'
       },
     ]
   }
@@ -236,8 +234,8 @@ const index = (props) => {
         unit: '%',
         legend: ['CPU_USAGE'],
         data: cpuDataKaas,
-        graphType : 'm',
-        dataType : 'cpu'
+        graphType: 'm',
+        dataType: 'cpu'
       },
       {
         type: 'utilisation',
@@ -246,17 +244,17 @@ const index = (props) => {
         unitType: 'memory',
         legend: ['MEMORY_USAGE'],
         data: memoryDataKaas,
-        graphType : 'm',
-        dataType : 'memory'
+        graphType: 'm',
+        dataType: 'memory'
       },
       {
         type: 'bandwidth',
         title: '',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
-        data: [outboundDataKaas , inboundDataKaas],
-        graphType : 's',
-        dataType : 'network'
+        data: [outboundDataKaas, inboundDataKaas],
+        graphType: 's',
+        dataType: 'network'
       },
       {
         type: 'utilisation',
@@ -264,8 +262,8 @@ const index = (props) => {
         unit: '%',
         legend: [t('RESOURCES_DISK_USAGE')],
         data: diskDataKass,
-        graphType : 's',
-        dataType : 'disk'
+        graphType: 's',
+        dataType: 'disk'
       },
     ]
   }
@@ -283,119 +281,120 @@ const index = (props) => {
       />
 
 
-        <MonitoringController
-            title={t('RESOURCES_COMPUTING_KAAS_RESOURCE')}
-            onFetch={fetchData}
-            loading={isLoading}
-            refreshing={isRefreshing}       
-          >
+      <MonitoringController
+        title={t('RESOURCES_COMPUTING_KAAS_RESOURCE')}
+        onFetch={fetchData}
+        loading={isLoading}
+        refreshing={isRefreshing}
+      >
 
-            <Card
-              title={t('RESOURCES_COMPUTING_RESOURCE_USAGE')}
-              empty={t('NO_MONITORING_DATA')}
-              isEmpty={(cpuDataCom.length == 0)}
-            >     
-              <div className={styles.divwrap}>
-                {configs_com.map((item, index) => {
-                  const config = getAreaChartOps(item)
-                  if (isEmpty(config.data)) return null
-                  if (item.type != "utilisation") return null
-                  if (item.graphType != "m") return null
-                  return (
-                    <div key={config.title} className={index%2 == 1 ? styles.div_right : styles.div_left}>
-                        <MediumArea width="100%" height={100} {...config} />
-                    </div>
-                  )
-                })}
-              </div>
-            </Card>
+        <Card
+          title={t('RESOURCES_COMPUTING_RESOURCE_USAGE')}
+          empty={t('NO_MONITORING_DATA')}
+          isEmpty={(cpuDataCom.length == 0)}
+        >
+          <div className={styles.divwrap}>
+            {configs_com.map((item, index) => {
+              const config = getAreaChartOps(item)
 
-            <Card
-              title={t('RESOURCES_KAAS_RESOURCE_USAGE')}
-              empty={t('NO_MONITORING_DATA')}
-              isEmpty={(cpuDataKaas.length == 0)}
-            >     
-              <div className={styles.divwrap}>
-                {configs_kaas.map((item, index) => {
-                  const config = getAreaChartOps(item)
+              if (isEmpty(config.data)) return null
+              if (item.type != "utilisation") return null
+              if (item.graphType != "m") return null
+              return (
+                <div key={config.title} className={index % 2 == 1 ? styles.div_right : styles.div_left}>
+                  <MediumArea width="100%" height={100} {...config} />
+                </div>
+              )
+            })}
+          </div>
+        </Card>
 
-                  if (isEmpty(config.data)) return null
-                  if (item.type != "utilisation") return null
-                  if (item.graphType != "m") return null
-                  return (
-                    <div key={config.title} className={index%2 == 1 ? styles.div_right : styles.div_left}>
-                        <MediumArea width="100%" height={100} {...config} />
-                    </div>
-                  )
-                })}
-              </div>
-            </Card>
+        <Card
+          title={t('RESOURCES_KAAS_RESOURCE_USAGE')}
+          empty={t('NO_MONITORING_DATA')}
+          isEmpty={(cpuDataKaas.length == 0)}
+        >
+          <div className={styles.divwrap}>
+            {configs_kaas.map((item, index) => {
+              const config = getAreaChartOps(item)
 
-            <Card
-              title={t('RESOURCES_COMPUTING_NETWORK_TRAFFIC')}
-              empty={t('NO_MONITORING_DATA')}
-              isEmpty={(!!!inboundDataCom && !!!outboundDataCom)}
-            >     
-              {configs_com.map((item, index) => {
-                const config = getAreaChartOps(item)
+              if (isEmpty(config.data)) return null
+              if (item.type != "utilisation") return null
+              if (item.graphType != "m") return null
+              return (
+                <div key={config.title} className={index % 2 == 1 ? styles.div_right : styles.div_left}>
+                  <MediumArea width="100%" height={100} {...config} />
+                </div>
+              )
+            })}
+          </div>
+        </Card>
 
-                if (isEmpty(config.data)) return null
-                if (item.type != "bandwidth") return null
-                return <SimpleArea key={config.title} width="100%" {...config} />
+        <Card
+          title={t('RESOURCES_COMPUTING_NETWORK_TRAFFIC')}
+          empty={t('NO_MONITORING_DATA')}
+          isEmpty={(!!!inboundDataCom && !!!outboundDataCom)}
+        >
+          {configs_com.map((item, index) => {
+            const config = getAreaChartOps(item)
 
-              })}
-            </Card>
+            if (isEmpty(config.data)) return null
+            if (item.type != "bandwidth") return null
+            return <SimpleArea key={config.title} width="100%" {...config} />
 
-            <Card
-              title={t('RESOURCES_KAAS_NETWORK_TRAFFIC')}
-              empty={t('NO_MONITORING_DATA')}
-              isEmpty={(!!!inboundDataKaas && !!!outboundDataKaas)}
-            >     
-                {configs_kaas.map((item, index) => {
-                const config = getAreaChartOps(item)
+          })}
+        </Card>
 
-                if (isEmpty(config.data)) return null
-                if (item.type != "bandwidth") return null
-                return <SimpleArea key={config.title} width="100%" {...config} />
+        <Card
+          title={t('RESOURCES_KAAS_NETWORK_TRAFFIC')}
+          empty={t('NO_MONITORING_DATA')}
+          isEmpty={(!!!inboundDataKaas && !!!outboundDataKaas)}
+        >
+          {configs_kaas.map((item, index) => {
+            const config = getAreaChartOps(item)
 
-              })}
-            </Card>
+            if (isEmpty(config.data)) return null
+            if (item.type != "bandwidth") return null
+            return <SimpleArea key={config.title} width="100%" {...config} />
 
-            <Card
-              title={t('RESOURCES_COMPUTING_DISK_USAGE')}
-              empty={t('NO_MONITORING_DATA')}
-              isEmpty={(diskDataCom.length == 0)}
-            >     
-              {configs_com.map((item, index) => {
-                const config = getAreaChartOps(item)
+          })}
+        </Card>
 
-                if (isEmpty(config.data)) return null
-                if (item.type != "utilisation") return null
-                if (item.dataType != "disk") return null
-                return <SimpleArea key={config.title} width="100%" {...config} />
+        <Card
+          title={t('RESOURCES_COMPUTING_DISK_USAGE')}
+          empty={t('NO_MONITORING_DATA')}
+          isEmpty={(diskDataCom.length == 0)}
+        >
+          {configs_com.map((item, index) => {
+            const config = getAreaChartOps(item)
 
-              })}
-            </Card>
+            if (isEmpty(config.data)) return null
+            if (item.type != "utilisation") return null
+            if (item.dataType != "disk") return null
+            return <SimpleArea key={config.title} width="100%" {...config} />
 
-            <Card
-              title={t('RESOURCES_KAAS_DISK_USAGE')}
-              empty={t('NO_MONITORING_DATA')}
-              isEmpty={(diskDataKass.length == 0)}
-            >     
-              {configs_com.map((item, index) => {
-                const config = getAreaChartOps(item)
+          })}
+        </Card>
 
-                if (isEmpty(config.data)) return null
-                if (item.type != "utilisation") return null
-                if (item.dataType != "disk") return null
-                return <SimpleArea key={config.title} width="100%" {...config} />
+        <Card
+          title={t('RESOURCES_KAAS_DISK_USAGE')}
+          empty={t('NO_MONITORING_DATA')}
+          isEmpty={(diskDataKass.length == 0)}
+        >
+          {configs_kaas.map((item, index) => {
+            const config = getAreaChartOps(item)
 
-              })}
-            </Card>
+            if (isEmpty(config.data)) return null
+            if (item.type != "utilisation") return null
+            if (item.dataType != "disk") return null
+            return <SimpleArea key={config.title} width="100%" {...config} />
 
-          </MonitoringController>    
+          })}
+        </Card>
 
-      
+      </MonitoringController>
+
+
     </>
   );
 };
