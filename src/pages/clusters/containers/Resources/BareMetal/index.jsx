@@ -238,19 +238,19 @@ export default class BareMetalDashboard extends React.Component {
             ...this.props.match.params,
           }),
       },
-      // {
-      //   key: 'delete',
-      //   icon: 'trash',
-      //   text: t('삭제'),
-      //   action: 'delete',
-      //   show: this.showAction,
-      //   onClick: item =>
-      //     trigger('keypair.remove', {
-      //       detail: item,
-      //       success: getData,
-      //       ...this.props.match.params,
-      //     }),
-      // },
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('삭제'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('baremetal.remove', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
     ]
   }
 
