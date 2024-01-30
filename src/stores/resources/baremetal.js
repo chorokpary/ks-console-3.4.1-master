@@ -257,8 +257,9 @@ export default class BareMetalStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-
-    const url = user.systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
+    
+    const systemType = !!user.systemType ? user.systemType : user.system_type ;
+    const url = systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
 
     return this.submitting(request.delete(`${url}/${user.name}`))
   }
