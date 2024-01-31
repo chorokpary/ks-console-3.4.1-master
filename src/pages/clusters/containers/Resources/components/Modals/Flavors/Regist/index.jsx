@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 
 import {
   Form,
@@ -13,53 +13,58 @@ import {
   Column,
   Columns,
   Tooltip,
-} from '@kube-design/components'
-import { Modal } from 'components/Base'
-import classnames from 'classnames'
-import axios from 'axios'
-import styles from './index.scss'
+} from '@kube-design/components';
+import classnames from 'classnames';
+import axios from 'axios';
+import { UnitSlider, NumberInput } from 'components/Inputs';
+import { Modal } from 'components/Base';
+import styles from './index.scss';
 
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/
+const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = props => {
-  const form = useRef()
-  const [modelView, setModalView] = useState(true)
-  const [formData, setFormData] = useState({})
+  const form = useRef();
+  const [modelView, setModalView] = useState(true);
+  const [formData, setFormData] = useState({});
 
-  const [rootDisk, setRootDisk] = useState(10)
-  const [ephemeralDisk, setEphemeralDisk] = useState(0)
+  const [rootDisk, setRootDisk] = useState(10);
+  const [ephemeralDisk, setEphemeralDisk] = useState(0);
+  const [ephemeralDiskActive, setEphemeralDiskActive] = useState(false);
 
-  const [vcpus, setVcpus] = useState(1)
+  const [vcpus, setVcpus] = useState(1);
 
-  const [devices, setDevices] = useState([])
-  const [gpus, setGpus] = useState([])
-  const [extraSpecsFields, setExtraSpecsFields] = useState([])
-  const [ram, setRam] = useState(2)
-  const [byteFlag, setByteFlag] = useState(true)
+  const [devices, setDevices] = useState([]);
+  const [gpus, setGpus] = useState([]);
+  const [extraSpecsFields, setExtraSpecsFields] = useState([]);
+  const [ram, setRam] = useState(2);
+  const [byteFlag, setByteFlag] = useState(true);
 
-  const [regStep, setRegStep] = useState(1)
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
+  const [regStep, setRegStep] = useState(1);
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+
+  const [tab, setTab] = useState('GiB');
+  const { TabPanel } = Tabs;
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/host_devices`)
-    const res = []
+    const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
+    const res = [];
     data.then(response => {
       if (response.data.host_devices) {
         for (let i = 0, n = response.data.host_devices.length; i < n; i += 1) {
           res.push({
             label: response.data.host_devices[i].name,
             value: response.data.host_devices[i].name,
-          })
+          });
         }
-        setDevices(res)
+        setDevices(res);
       }
-    })
+    });
     //  setDevices([{ label: "device1", value: "device1" }, { label: "device2", value: "device2" }]);
-  }, [])
+  }, []);
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`)
-    const res = []
+    const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
+    const res = [];
     data.then(response => {
       if (response.data.mediated_devices) {
         for (
@@ -70,17 +75,17 @@ const RegistModal = props => {
           res.push({
             label: response.data.mediated_devices[i].resource_name,
             value: response.data.mediated_devices[i].resource_name,
-          })
+          });
         }
-        setGpus(res)
+        setGpus(res);
       }
-    })
+    });
     // setGpus([{ label: "intel.com/x710", value: "intel.com/x710" }, { label: "intel.com/x880", value: "intel.com/x880" }]);
-  }, [])
+  }, []);
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/extra_specs`)
-    const res = []
+    const data = axios.get(`/edgetron/resources/kubevirt/extra_specs`);
+    const res = [];
     data.then(response => {
       if (response.data.extra_specs) {
         for (let i = 0, n = response.data.extra_specs.length; i < n; i += 1) {
@@ -88,237 +93,226 @@ const RegistModal = props => {
             key: response.data.extra_specs[i].name,
             description: response.data.extra_specs[i].description,
             value: false,
-          })
+          });
         }
-        setExtraSpecsFields(res)
+        setExtraSpecsFields(res);
       }
-    })
+    });
     // setExtraSpecsFields([{ name: "hugepage", description: "ddeessccrriippttiioonn", checked: false }
     //     , { name: "etc", description: "eettccddeesscc", checked: false }]);
-  }, [])
-
-  // slider
-  const handleRootDisk = {
-    onChangeSlider: e => {
-      setRootDisk(e)
-    },
-  }
-  const handleEphemeralDisk = {
-    onChangeSlider: e => {
-      setEphemeralDisk(e)
-    },
-  }
+  }, []);
 
   // extrSpec check
   const handCheckExtrSpec = (i, e) => {
-    const values = [...extraSpecsFields]
-    values[i].value = e
-    setExtraSpecsFields(values)
-  }
+    const values = [...extraSpecsFields];
+    values[i].value = e;
+    setExtraSpecsFields(values);
+  };
 
   //  cpu count
   const addVcpus = e => {
-    e.preventDefault()
-    setVcpus(vcpus + 1)
-  }
+    e.preventDefault();
+    setVcpus(vcpus + 1);
+  };
   const minusVcpus = e => {
-    e.preventDefault()
+    e.preventDefault();
     if (vcpus > 0) {
-      setVcpus(vcpus - 1)
+      setVcpus(vcpus - 1);
     }
-  }
+  };
 
   const [formDeviceFields, setFormDeviceFields] = useState([
     { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-  ])
+  ]);
+
   //  hostDevice handler
   const handleHostDevice = {
     handleAddFields: () => {
       const values = [
         ...formDeviceFields,
         { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-      ]
-      setFormDeviceFields(values)
+      ];
+      setFormDeviceFields(values);
     },
 
     handleRemoveFields: i => {
-      const values = [...formDeviceFields].filter((obj, idx) => idx !== i)
-      setFormDeviceFields(values)
+      const values = [...formDeviceFields].filter((obj, idx) => idx !== i);
+      setFormDeviceFields(values);
     },
 
     handleSelectClick: (i, val) => {
-      const values = [...formDeviceFields]
+      const values = [...formDeviceFields];
 
       if (
         !values.map(obj => obj.name).includes(val) ||
         values[i].name === val ||
         val === ''
       ) {
-        values[i].name = val
-        values[i].message = ''
+        values[i].name = val;
+        values[i].message = '';
       } else {
-        values[i].message = t('RESOURCES_ALREADY_SELECTED_DEVICE')
+        values[i].message = t('RESOURCES_ALREADY_SELECTED_DEVICE');
         setTimeout(() => {
-          handleHostDevice.deleteMessage(i)
-        }, 1000)
+          handleHostDevice.deleteMessage(i);
+        }, 1000);
       }
-      setFormDeviceFields(values)
+      setFormDeviceFields(values);
     },
 
     deleteMessage: i => {
-      const values = [...formDeviceFields]
-      values[i].message = ''
-      setFormDeviceFields(values)
+      const values = [...formDeviceFields];
+      values[i].message = '';
+      setFormDeviceFields(values);
     },
 
     addCnt: (i, val) => {
-      const values = [...formDeviceFields]
+      const values = [...formDeviceFields];
 
-      values[i].quantity = Number(val) + 1
-      setFormDeviceFields(values)
+      values[i].quantity = Number(val) + 1;
+      setFormDeviceFields(values);
     },
     minusCnt: (i, val) => {
-      const values = [...formDeviceFields]
-      const numVal = Number(val)
+      const values = [...formDeviceFields];
+      const numVal = Number(val);
 
       if (numVal > 0) {
-        values[i].quantity = numVal - 1
-        setFormDeviceFields(values)
+        values[i].quantity = numVal - 1;
+        setFormDeviceFields(values);
       }
     },
-  } // end hostDevice
+  }; // end hostDevice
 
   const [formGpuFields, setFormGpuFields] = useState([
     { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-  ])
+  ]);
   // GPU handler
   const handleGpu = {
     handleAddFields: () => {
       const values = [
         ...formGpuFields,
         { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-      ]
-      setFormGpuFields(values)
+      ];
+      setFormGpuFields(values);
     },
 
     handleRemoveFields: i => {
-      const values = [...formGpuFields].filter((obj, idx) => idx !== i)
-      setFormGpuFields(values)
+      const values = [...formGpuFields].filter((obj, idx) => idx !== i);
+      setFormGpuFields(values);
     },
 
     handleSelectClick: (i, val) => {
-      const values = [...formGpuFields]
+      const values = [...formGpuFields];
 
       if (
         !values.map(obj => obj.name).includes(val) ||
         values[i].name === val ||
         val === ''
       ) {
-        values[i].name = val
-        values[i].message = ''
+        values[i].name = val;
+        values[i].message = '';
       } else {
-        values[i].message = t('RESOURCES_ALREADY_SELECTED_GPU')
+        values[i].message = t('RESOURCES_ALREADY_SELECTED_GPU');
         setTimeout(() => {
-          handleGpu.deleteMessage(i)
-        }, 1000)
+          handleGpu.deleteMessage(i);
+        }, 1000);
       }
-      setFormGpuFields(values)
+      setFormGpuFields(values);
     },
 
     deleteMessage: i => {
-      const values = [...formGpuFields]
-      values[i].message = ''
-      setFormGpuFields(values)
+      const values = [...formGpuFields];
+      values[i].message = '';
+      setFormGpuFields(values);
     },
 
     addCnt: (i, val) => {
-      const values = [...formGpuFields]
+      const values = [...formGpuFields];
 
-      values[i].quantity = Number(val) + 1
-      setFormGpuFields(values)
+      values[i].quantity = Number(val) + 1;
+      setFormGpuFields(values);
     },
     minusCnt: (i, val) => {
-      const values = [...formGpuFields]
-      const numVal = Number(val)
+      const values = [...formGpuFields];
+      const numVal = Number(val);
 
       if (numVal > 0) {
-        values[i].quantity = numVal - 1
-        setFormGpuFields(values)
+        values[i].quantity = numVal - 1;
+        setFormGpuFields(values);
       }
     },
-  } // end GPU
+  }; // end GPU
 
   // ram num check
   const changeRam = e => {
-    const { value } = e.target
-    const onlyNumber = value.replace(/[^0-9]/g, '')
-    setRam(Number(onlyNumber))
-  }
+    const { value } = e.target;
+    const onlyNumber = value.replace(/[^0-9]/g, '');
+    setRam(Number(onlyNumber));
+  };
 
   const handleByte = size => {
     if (size === 'MiB') {
       if (ram !== 0) {
-        setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024))
+        setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
       }
-      setByteFlag(false)
+      setByteFlag(false);
     } else {
       if (ram !== 0) {
-        setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024))
+        setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
       }
-      setByteFlag(true)
+      setByteFlag(true);
     }
-  }
+  };
 
   const handleOk = () => {
-    const onOk = props.onOk
+    const onOk = props.onOk;
 
     form.current.validator(() => {
-      const { data } = form.current.props
-      data.vcpus = vcpus
-      data.ram = byteFlag ? ram * 1024 : ram
-      data.root_disk = rootDisk
-      data.ephemeral_disk = ephemeralDisk
+      const { data } = form.current.props;
+      data.vcpus = vcpus;
+      data.ram = byteFlag ? ram * 1024 : ram;
+      data.root_disk = rootDisk;
+      data.ephemeral_disk = ephemeralDisk;
       data.extra_specs = [...extraSpecsFields].filter(
         obj => delete obj.description
-      )
+      );
       data.devices = [...formDeviceFields].filter(
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
-      )
+      );
       data.gpus = [...formGpuFields].filter(
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
-      )
-      onOk({ flavor: data })
-    })
-  }
+      );
+      onOk({ flavor: data });
+    });
+  };
 
   const stepMoveCheck = step => {
-    const { data } = form.current.props
+    const { data } = form.current.props;
     if (step === 1) {
       if (data.name === undefined || !regexName.test(data.name)) {
-        handleOk()
+        handleOk();
       } else {
-        setRegStep(2)
-        setSubmitButtonFlag(false)
+        setRegStep(2);
+        setSubmitButtonFlag(false);
       }
     }
-  }
+  };
 
   //  Validation 시작 ==================================================
   const nameValidator = (rule, value, callback) => {
     if (value === undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
+      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') });
     }
-    callback()
-  }
+    if (!regexName.test(value)) {
+      return callback({ message: t('RESOURCES_NAME_CHECK_DESC') });
+    }
+
+    callback();
+  };
 
   const fnGetModalFooter = () => {
-    let elements = ''
+    let elements = '';
     elements = (
       <>
         {regStep === 1 && (
@@ -332,7 +326,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(1)
+                stepMoveCheck(1);
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -350,7 +344,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(1)
+                setRegStep(1);
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -359,7 +353,7 @@ const RegistModal = props => {
             {submitButtonFlag ? (
               <Button
                 onClick={() => {
-                  handleOk()
+                  handleOk();
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
                 disabled
@@ -370,7 +364,7 @@ const RegistModal = props => {
             ) : (
               <Button
                 onClick={() => {
-                  handleOk()
+                  handleOk();
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
               >
@@ -380,17 +374,23 @@ const RegistModal = props => {
           </>
         )}
       </>
-    )
+    );
 
-    return elements
-  }
+    return elements;
+  };
 
   const closeModal = () => {
-    setModalView(false)
-  }
+    setModalView(false);
+  };
 
-  const [tab, setTab] = useState('GiB')
-  const { TabPanel } = Tabs
+  const handleEphemeralDiskActive = () => {
+    if (ephemeralDiskActive) {
+      setEphemeralDiskActive(false);
+      setEphemeralDisk(0);
+    } else {
+      setEphemeralDiskActive(true);
+    }
+  };
 
   return (
     <>
@@ -516,8 +516,8 @@ const RegistModal = props => {
                             type="button"
                             activeName={tab}
                             onChange={newTab => {
-                              setTab(newTab)
-                              handleByte(newTab)
+                              setTab(newTab);
+                              handleByte(newTab);
                             }}
                           >
                             <TabPanel label="GiB" name="GiB" />
@@ -553,43 +553,60 @@ const RegistModal = props => {
                       style={{ width: '10%' }}
                       value={rootDisk}
                       unit={'GiB'}
-                      onChange={e => handleRootDisk.onChangeSlider(e)}
+                      onChange={e => setRootDisk(e)}
                       withInput
                     />
                   </div>
                 </Form.Group>
               </Form.Item>
 
-              {/* <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
-                <Form.Group>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: 20,
-                    }}
-                  >
-                    <Input
-                      type="hidden"
-                      name="ephemeralDisk"
-                      value={ephemeralDisk}
-                    />
-                    <Slider
-                      max={40}
-                      marks={{
-                        0: '0',
-                        10: '10',
-                        20: '20',
-                        30: '30',
-                        40: '40',
-                      }}
-                      value={ephemeralDisk}
-                      unit={'GiB'}
-                      onChange={e => handleEphemeralDisk.onChangeSlider(e)}
-                      withInput
-                    />
+              {/* 수정중 */}
+              <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
+                <div className={styles.content_box_wrap}>
+                  <div className={styles.content_box}>
+                    <div className={styles.cont_box_wrap}>
+                      <div className={styles.cont_box_section}>
+                        <div className={styles.cont_box_wrap}>
+                          <h6 className={styles.label}>
+                            <div className={styles.form_check}>
+                              <input type="checkbox" name="chk-0" id="chk-0" />
+                              <label
+                                htmlFor="chk-0"
+                                onClick={() => handleEphemeralDiskActive()}
+                              ></label>
+                            </div>
+                            <div className={styles.title}>
+                              <p>{`임시디스크 지정`}</p>
+                              <span>{`임시디스크를 설정합니다.`}</span>
+                            </div>
+                          </h6>
+                          {ephemeralDiskActive && (
+                            // <Form.Group>
+                            <div className={`${styles.select_inner_content}`}>
+                              <Slider
+                                max={40}
+                                marks={{
+                                  0: '0',
+                                  10: '10',
+                                  20: '20',
+                                  30: '30',
+                                  40: '40',
+                                }}
+                                value={ephemeralDisk}
+                                unit={'GiB'}
+                                onChange={e => setEphemeralDisk(e)}
+                                withInput
+                                style={{ padding: '5px' }}
+                              />
+                            </div>
+                            // </Form.Group>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </Form.Group>
-              </Form.Item> */}
+                </div>
+              </Form.Item>
 
               <Form.Item
                 className={styles.textarea}
@@ -756,7 +773,7 @@ const RegistModal = props => {
         </Form>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default RegistModal
+export default RegistModal;
