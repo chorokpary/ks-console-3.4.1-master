@@ -301,8 +301,8 @@ client:
                 name: serviceaccounts,
                 title: SERVICE_ACCOUNT_PL,
                 requiredClusterVersion: v3.1.0,
-              }                
-        - { name: customresources, title: CRD_PL, icon: select, admin: true }      
+              }   
+            - { name: customresources, title: CRD_PL, icon: select, admin: true }   
         - name: network
           title: NETWORK
           icon: earth
@@ -353,6 +353,23 @@ client:
                 authKey: monitoring,
               }
             - {
+                name: 'computingkaasmonitoring',
+                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
+              } 
+            - {
+                name: baremetalmonitoring,
+                title: RESOURCES_BAREMETAL_MONITORING,
+              }
+            - {
+                name: baremetal-carbon-indicator,
+                title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
+              } 
+            - {
+                name: custom-monitoring,
+                title: CUSTOM_MONITORING,
+                requiredClusterVersion: v3.1.0,
+              }
+            - {
                 name: alerts,
                 title: ALERTING_MESSAGE_PL,
                 icon: loudspeaker,
@@ -366,27 +383,11 @@ client:
                 clusterModule: alerting,
                 requiredClusterVersion: v3.1.0,
               }
-            - {
-                name: custom-monitoring,
-                title: CUSTOM_MONITORING,
-                requiredClusterVersion: v3.1.0,
-              }
+            
             # - {
             #     name: kubeeye-monitoring,
             #     title: "KubeEye 모니터링",
-            #   }
-            - {
-                name: baremetalmonitoring,
-                title: RESOURCES_BAREMETAL_MONITORING,
-              }
-            - {
-                name: baremetal-carbon-indicator,
-                title: "BareMetal 탄소지표 통계",
-              }              
-            - {
-                name: 'computingkaasmonitoring',
-                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
-              }            
+            #   }                                              
             # - {
             #     name: fault-analysis,
             #     title: "장애 분석",
