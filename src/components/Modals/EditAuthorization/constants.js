@@ -85,6 +85,19 @@ export const ROLE_MODULES = {
       name: 'Project Settings',
       icon: 'project',
     },
+    {
+      name: 'Computing Workloads',
+      icon: 'project',
+    },
+    {
+      name: 'Computing Settings',
+      icon: 'project',
+    },
+    {
+      name: 'Resource Template',
+      icon: 'project',
+    },
+
   ],
   devopsrolesNotHostCluster: [
     {
