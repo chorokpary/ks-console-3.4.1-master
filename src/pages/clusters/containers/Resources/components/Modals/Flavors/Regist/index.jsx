@@ -596,7 +596,7 @@ const RegistModal = props => {
                                 unit={'GiB'}
                                 onChange={e => setEphemeralDisk(e)}
                                 withInput
-                                style={{ padding: '5px' }}
+                                style={{ padding: '5px', marginLeft: '23px' }}
                               />
                             </div>
                             // </Form.Group>
