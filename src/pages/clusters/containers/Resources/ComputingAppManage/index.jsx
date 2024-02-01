@@ -53,7 +53,7 @@ export default class ImageBuild extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('imagebuild.remove', {
+          trigger('computingappmanage.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -73,7 +73,7 @@ export default class ImageBuild extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('imagebuild.regist', {
+            trigger('computingappmanage.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -87,7 +87,7 @@ export default class ImageBuild extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('imagebuild.remove.batch', {
+            trigger('computingappmanage.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -113,9 +113,9 @@ export default class ImageBuild extends React.Component {
         search: true,
         render: (name, item) => (
           <Avatar
-            icon="image"
+            icon="application"
             iconSize={40}
-            to={`/clusters/${cluster}/imagebuild/${name}/${item.id}`}
+            to={`/clusters/${cluster}/computingappmanage/${name}/${item.id}`}
             title={name}
           />
         ),
@@ -200,9 +200,9 @@ export default class ImageBuild extends React.Component {
       <ListPage {...this.props}>
         <Banner
           {...bannerProps}
-          icon="image"
-          title={t('이미지 빌드')}
-          description={t('이미지 빌드 상세 설명')}
+          icon="application"
+          title={t('애플리케이션 배포 관리')}
+          description={t('애플리케이션의 배포를 관리 할 수 있습니다')}
         />
         <Table
           {...tableProps}
