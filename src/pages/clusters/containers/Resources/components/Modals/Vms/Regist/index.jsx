@@ -416,7 +416,7 @@ const RegistModal = (props) => {
 
     addColumn: () => {
       if (listPasswordRoute.length > 4) {
-        Notify.info('RESOURCES_ADD_UNTIL_FIVE')
+        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
         return false;
       }
       nextPasswordRoute.current += 1
@@ -435,7 +435,7 @@ const RegistModal = (props) => {
 
     addColumn: () => {
       if (listFileRoute.length > 4) {
-        Notify.info('RESOURCES_ADD_UNTIL_FIVE')
+        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
         return false;
       }
       nextFileRoute.current += 1
@@ -454,7 +454,7 @@ const RegistModal = (props) => {
 
     addColumn: () => {
       if (listPackageRoute.length > 4) {
-        Notify.info('RESOURCES_ADD_UNTIL_FIVE')
+        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
         return false;
       }
       nextPackageRoute.current += 1
