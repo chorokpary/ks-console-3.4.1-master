@@ -17,12 +17,12 @@ import axios from "axios";
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
 
-const CONFIG_CPU_MASTER = 4;
-const CONFIG_RAM_MASTER = 8;
-const CONFIG_DISK_MASTER = 80;
-const CONFIG_CPU_WORKER = 8;
-const CONFIG_RAM_WORKER = 16;
-const CONFIG_DISK_WORKER = 160;
+const CONFIG_CPU_MASTER = 8;
+const CONFIG_RAM_MASTER = 16;
+const CONFIG_DISK_MASTER = 160;
+const CONFIG_CPU_WORKER = 4;
+const CONFIG_RAM_WORKER = 8;
+const CONFIG_DISK_WORKER = 80;
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
