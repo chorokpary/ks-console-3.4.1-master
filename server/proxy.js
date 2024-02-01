@@ -62,21 +62,6 @@ const webMm3Proxy = {
   },
 }
 
-const k8sGptProxy = {
-  target: `${serverConfig.apiServer.k8sGptUrl}`,
-  changeOrigin: true,
-  events: {
-    proxyReq(proxyReq, req) {
-      // Set authorization
-      if (req.k8sGptAccessToken) {
-        proxyReq.setHeader('Authorization', `Bearer ${req.k8sGptAccessToken}`)
-      }
-      NEED_OMIT_HEADERS.forEach(key => proxyReq.removeHeader(key))
-    },
-  },
-}
-
-
 const webCmpProxy = {
   target: `${serverConfig.apiServer.cmpUrl}`,
   changeOrigin: true,
@@ -125,5 +110,4 @@ module.exports = {
   b2iFileProxy,
   webMm3Proxy,
   webCmpProxy,
-  k8sGptProxy,
 }

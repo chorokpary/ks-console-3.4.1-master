@@ -32,21 +32,15 @@ server:
     wsUrl: ws://192.168.16.86:30881
     mm3Url: http://192.168.16.80:32080 
     cmpUrl: http://192.168.16.86:31000 
-    k8sGptUrl: http://192.168.16.80:30881
     harborUrl: http://192.168.16.86:30002
     # url: http://10.24.3.34:30881
     # wsUrl: ws://10.24.3.34:30881
     # mm3Url: http://10.24.3.34:32080 
     # cmpUrl: http://10.24.3.34:31000
-    
 
   mm3UserInfo:
     userName: "edgetron"
     passWord: "password"
-
-  k8sGptUserInfo:
-    userName: "ntels"
-    passWord: "Ntels1234"
 
   # docker image search default url
   dockerHubUrl: https://hub.docker.com
