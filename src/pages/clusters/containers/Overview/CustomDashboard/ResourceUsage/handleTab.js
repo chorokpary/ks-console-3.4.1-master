@@ -94,14 +94,14 @@ function getPodData(podData) {
       activeTab: 'cpu',
       name: 'CPU',
       unitType: 'cpu',
-      used: last(podData.pod_cpu_usage[0].values)[1],
+      used: podData.pod_cpu_usage ? last(podData.pod_cpu_usage[0].values)[1] : 0,
       total: 1,
     },
     {
       activeTab: 'memory',
       name: '메모리',
       unitType: 'memory',
-      used: last(podData.pod_memory_usage[0].values)[1],
+      used: podData.pod_memory_usage ? last(podData.pod_memory_usage[0].values)[1] : 0,
       total: 99999999,
     },
   ]
