@@ -16,11 +16,11 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getIndexRoute } from 'utils/router.config'
+import { getIndexRoute } from 'utils/router.config';
 
-import Status from 'clusters/containers/Resources/Sriov/Detail/Status'
+import Status from 'clusters/containers/Resources/Sriov/Detail/Status';
 
-const PATH = '/clusters/:cluster/sriovs/:name'
+const PATH = '/clusters/:cluster/sriovs/:name';
 
 export default [
   {
@@ -30,4 +30,4 @@ export default [
     exact: true,
   },
   getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
-]
+];
