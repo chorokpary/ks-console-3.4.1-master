@@ -1,4 +1,78 @@
 @import '~scss/variables';
+@import '~scss/mixins';
+
+.wrapper {
+  padding: 12px;
+  background-color: $card-bg-color;
+  border-radius: $border-radius;
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 56px;
+}
+.item {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 12px;
+  margin-bottom: 8px;
+  line-height: 20px;
+  background-color: $white;
+  border-radius: 4px;
+  border: 1px solid $border-color;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .icon {
+    position: relative;
+    width: 40px;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+
+  .title {
+    min-width: 120px;
+    width: 25%;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
+    }
+
+    &.name {
+      padding-right: 20px;
+      width: 25%;
+    }
+  }
+
+  :global {
+    .tag {
+      height: 20px;
+    }
+  }
+}
 
 .defaultWrapper {
   padding: 12px;

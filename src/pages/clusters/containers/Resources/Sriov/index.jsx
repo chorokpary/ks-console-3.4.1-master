@@ -16,21 +16,21 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Tabs from 'components/Cards/Banner/Tabs'
-import withList, { ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
-import Indicator from 'components/Base/Indicator'
+import React from 'react';
+import { toJS } from 'mobx';
+import { Icon } from '@kube-design/components';
+import classnames from 'classnames';
+import { Avatar, Status } from 'components/Base';
+import Tabs from 'components/Cards/Banner/Tabs';
+import withList, { ListPage } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
+import Indicator from 'components/Base/Indicator';
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-import { Icon } from '@kube-design/components'
-import classnames from 'classnames'
+import { getLocalTime } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
 
-import SriovStore from 'stores/resources/sriovs'
-import styles from './index.scss'
+import SriovStore from 'stores/resources/sriovs';
+import styles from './index.scss';
 
 @withList({
   store: new SriovStore(),
@@ -39,31 +39,29 @@ import styles from './index.scss'
   name: t('SR-IOV'),
 })
 export default class ResourcesVolumes extends React.Component {
-
   handleTabChange = value => {
-    const { cluster } = this.props.match.params
-    this.props.routing.push(`/clusters/${cluster}/${value}`)
-  }
-
+    const { cluster } = this.props.match.params;
+    this.props.routing.push(`/clusters/${cluster}/${value}`);
+  };
 
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   getFilterType() {
     const NETWORK_TYPE = [
       { text: 'VLAN', value: 'vlan' },
       { text: 'FLAT', value: 'flat' },
-    ]
+    ];
 
     return NETWORK_TYPE.map(status => ({
       text: status.text,
       value: status.value,
-    }))
+    }));
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -78,11 +76,11 @@ export default class ResourcesVolumes extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -116,12 +114,12 @@ export default class ResourcesVolumes extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('NAME'),
@@ -145,9 +143,7 @@ export default class ResourcesVolumes extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: type => (
-          <p>{type.toUpperCase()}</p>
-        ),
+        render: type => <p>{type.toUpperCase()}</p>,
       },
       {
         title: t('CIDR'),
@@ -175,16 +171,14 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('timestamp'),
         render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('Please create a data.') };
   }
 
   get columnSearch() {
@@ -198,8 +192,8 @@ export default class ResourcesVolumes extends React.Component {
         dataIndex: 'cidr',
         title: t('CIDR'),
         search: true,
-      }
-    ]
+      },
+    ];
   }
 
   get tabs() {
@@ -216,21 +210,19 @@ export default class ResourcesVolumes extends React.Component {
           label: t('RESOURCES_NETWORK_TAB2'),
         },
       ],
-    }
+    };
   }
 
   modalTopology = () => {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     trigger('networks.topology', {
       success: getData,
       ...this.props.match.params,
-    })
-  }
-
+    });
+  };
 
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     // console.log({ ...this.props })
 
     return (
@@ -242,12 +234,13 @@ export default class ResourcesVolumes extends React.Component {
             </div>
             <div className={styles.title}>
               <div className="h3">{t('RESOURCES_NETWORK')}</div>
-              <p className="text-second">
-                {t('RESOURCES_NETWORK_DESC')}
-              </p>
+              <p className="text-second">{t('RESOURCES_NETWORK_DESC')}</p>
             </div>
             <div className={styles.divRight}>
-              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
+              <div
+                className={styles.iconRight}
+                onClick={() => this.modalTopology()}
+              >
                 <Icon name={'topology'} size={36} />
               </div>
               <p>{t('RESOURCES_TOPOLOGY')}</p>
@@ -266,7 +259,6 @@ export default class ResourcesVolumes extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-
-    )
+    );
   }
 }
