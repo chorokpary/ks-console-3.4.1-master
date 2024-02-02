@@ -95,7 +95,7 @@ const KeypairDetail = props => {
       },
       {
         name: t('RESOURCES_NETWORK_TYPE_YOO'),
-        value: detail.network.type,
+        value: detail.network.type.toUpperCase(),
       },
       {
         name: t('RESOURCES_SEGMENT_ID'),
@@ -139,7 +139,7 @@ const KeypairDetail = props => {
   }
 
   const sideProps = {
-    icon: 'storage',
+    icon: 'network-duotone',
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),

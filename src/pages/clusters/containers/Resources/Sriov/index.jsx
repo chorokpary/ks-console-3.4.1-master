@@ -28,6 +28,7 @@ import Indicator from 'components/Base/Indicator';
 
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
+import { Link } from 'react-router-dom'
 
 import SriovStore from 'stores/resources/sriovs';
 import styles from './index.scss';
@@ -127,17 +128,27 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
-          <Avatar
-            icon="storage"
-            iconSize={40}
-            to={`/clusters/${cluster}/sriovs/${name}`}
-            title={name}
-          />
-        ),
+        render: (name, record) => {
+
+            return (
+              <div className={styles.avatar}>
+                <div className={styles.icon}>
+                  <i className="ico-type-sriov"></i>
+                </div>
+                <div>
+                  <Link
+                    className={styles.title}
+                    to={`/clusters/${cluster}/sriovs/${name}`}                    
+                  >
+                    {name}
+                  </Link>
+                </div>
+              </div>
+            )
+          },
       },
       {
-        title: t('RESOURCES_NETWORK_TYPE:'),
+        title: t('RESOURCES_NETWORK_TYPE'),
         dataIndex: 'type',
         filters: this.getFilterType(),
         isHideable: true,
