@@ -42,11 +42,65 @@ export default class Images extends React.Component {
   }
 
   get itemActions() {
-    return []
-  }
+    const { getData, trigger } = this.props
+    return [ ]
+}
 
   get tableActions() {
-    return {}
+    const { trigger, getData, routing, tableProps } = this.props
+    return {
+        ...tableProps.tableActions,
+        selectActions: [
+        ],
+        getCheckboxProps: record => ({
+            disabled: !this.showAction(record),
+            name: record.name,
+        }),
+    }
+}
+
+  get columnSearch() {
+    return [
+      {
+        dataIndex: 'name',
+        title: t('RESOURCES_NAME'),
+        search: true,
+      },
+      {
+        dataIndex: 'arch_type',
+        title: t('RESOURCES_CPU_TYPE'),
+        search: true,
+      },
+      {
+        dataIndex: 'boot_type',
+        title: t('RESOURCES_BOOT_TYPE'),
+        search: true,
+      },
+    ]
+  }
+
+  getCpuType() {
+    const CPU_TYPE = [
+      { text: 'x86_64', value: 'x86_64' },
+      { text: 'aarch64', value: 'aarch64' },
+    ]
+
+    return CPU_TYPE.map(status => ({
+      text: status.text,
+      value: status.value,
+    }))
+  }
+
+  getBootType() {
+    const BOOT_TYPE = [
+      { text: 'legacy', value: 'legacy' },
+      { text: 'uefi', value: 'uefi' },
+    ]
+
+    return BOOT_TYPE.map(status => ({
+      text: status.text,
+      value: status.value,
+    }))
   }
 
   getColumns = () => {
@@ -69,13 +123,17 @@ export default class Images extends React.Component {
       {
         title: t('RESOURCES_CPU_TYPE'),
         dataIndex: 'arch_type',
+        filters: this.getCpuType(),
         isHideable: true,
+        search: true,
         width: 'auto',
       },
       {
         title: t('RESOURCES_BOOT_TYPE'),
         dataIndex: 'boot_type',
+        filters: this.getBootType(),
         isHideable: true,
+        search: true,
         width: 'auto',
       },
       {
@@ -149,7 +207,7 @@ export default class Images extends React.Component {
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
-          searchType="name"
+          columnSearch={this.columnSearch}
         />
       </ListPage>
     )
