@@ -138,8 +138,12 @@ const KeypairDetail = props => {
     return <Loading className="ks-page-loading" />;
   }
 
+  getBanner = () => {
+    return <i className="ico-type-sriov"></i>;
+  };
+
   const sideProps = {
-    icon: 'network-duotone',
+    icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
