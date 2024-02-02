@@ -238,7 +238,13 @@ client:
              title: RESOURCES_MEDIATED_DEVICE,
              skipAuth: true,
              showInDisable: true,
-            }            
+            }        
+            # - {
+            #     name: computingappdeploy,
+            #     title: "애플리케이션 배포",
+            #     skipAuth: true,
+            #     showInDisable: true,
+            # }      
         - name: resources
           title: RESOURCES_RESOURCE_TEMPLATE
           icon: resource
@@ -269,28 +275,11 @@ client:
               showInDisable: true,
             }   
             # - {
-            #   name: imageBuild,
-            #   title: "이미지 빌드",
+            #   name: imagebuild,
+            #   title: "가상머신 이미지 빌드",
             #   skipAuth: true,
             #   showInDisable: true,
             # }   
-        # - name: virtualmachine-management
-        #   title: "컴퓨팅 애플리케이션 관리"
-        #   icon: cron-job
-        #   showInDisable: true   
-        #   children:   
-        #     - {
-        #         name: virtualmachinebackup,
-        #         title: "가상머신 백업/복구",
-        #         skipAuth: true,
-        #         showInDisable: true,
-        #     }  
-        #     - {
-        #         name: applicationmanagement,
-        #         title: "애플리케이션 관리",
-        #         skipAuth: true,
-        #         showInDisable: true,
-        #     }  
         - name: config
           title: CONFIGURATION
           icon: hammer

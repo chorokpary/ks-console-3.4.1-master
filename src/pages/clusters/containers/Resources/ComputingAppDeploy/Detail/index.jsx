@@ -28,7 +28,7 @@ const AppManageDetail = (props) => {
     }
     
     const { cluster } = props.match.params
-    const listUrl = `/clusters/${cluster}/computingappmanage`
+    const listUrl = `/clusters/${cluster}/computingappdeploy`
 
     const routing = props.rootStore.routing;
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
@@ -41,7 +41,7 @@ const AppManageDetail = (props) => {
         action: 'edit',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('computingappmanage.edit', {
+            props.rootStore.triggerAction('computingappdeploy.edit', {
             type: 'KEYPAIR_DETAIL',
             detail: toJS(store.detail),
             store: store,
@@ -54,7 +54,7 @@ const AppManageDetail = (props) => {
         text: t('VIEW_YAML'),
         action: 'view',
         onClick: () => {
-            props.rootStore.triggerAction('computingappmanage.yaml.view', {
+            props.rootStore.triggerAction('computingappdeploy.yaml.view', {
             yaml: store.yaml,
             readOnly: true,
           })
@@ -68,7 +68,7 @@ const AppManageDetail = (props) => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-            props.rootStore.triggerAction('computingappmanage.remove', {
+            props.rootStore.triggerAction('computingappdeploy.remove', {
             type: 'KEYPAIR_DETAIL',
             detail: toJS(store.detail),
             store: store,

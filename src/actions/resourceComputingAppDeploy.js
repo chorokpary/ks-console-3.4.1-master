@@ -23,13 +23,13 @@ import { Modal } from 'components/Base'
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
-import RegistModal from 'clusters/containers/Resources/components/Modals/ComputingAppManage/Regist'
-import ModifyModal from 'clusters/containers/Resources/components/Modals/ComputingAppManage/Modify'
+import RegistModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Regist'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Modify'
 
 import UploadModal from 'clusters/containers/Resources/components/Modals/UploadImage'
 
 export default {
-  'computingappmanage.regist': {
+  'computingappdeploy.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -52,7 +52,7 @@ export default {
       })
     },
   },
-  'computingappmanage.edit': {
+  'computingappdeploy.edit': {
     on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
@@ -73,7 +73,7 @@ export default {
       })
     },
   },
-  'computingappmanage.remove': {
+  'computingappdeploy.remove': {
     on({
       store,
       detail,
@@ -105,7 +105,7 @@ export default {
       })
     },
   },
-  'computingappmanage.remove.batch': {
+  'computingappdeploy.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       let arr = new Array
@@ -140,7 +140,7 @@ export default {
       })
     },
   },
-  'computingappmanage.delete': {
+  'computingappdeploy.delete': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
@@ -160,7 +160,7 @@ export default {
       })
     },
   },
-  'computingappmanage.yaml.view': {
+  'computingappdeploy.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
@@ -175,7 +175,7 @@ export default {
       })
     },
   },
-  'computingappmanage.image.upload': {
+  'computingappdeploy.image.upload': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: async data => {

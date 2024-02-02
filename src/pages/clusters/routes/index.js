@@ -83,7 +83,7 @@ import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonInd
 import ComKassResource from '../containers/Resources/ComKassResource'
 
 import ImageBuild from '../containers/Resources/ImageBuild'
-import ComputingAppManage from '../containers/Resources/ComputingAppManage'
+import ComputingAppDeploy from '../containers/Resources/ComputingAppDeploy'
 
 const PATH = '/clusters/:cluster'
 
@@ -375,8 +375,8 @@ export default [
             exact: true,
           },
           {
-            path: `${PATH}/computingappmanage`,
-            component: ComputingAppManage,
+            path: `${PATH}/computingappdeploy`,
+            component: ComputingAppDeploy,
             exact: true,
           },        
           {
