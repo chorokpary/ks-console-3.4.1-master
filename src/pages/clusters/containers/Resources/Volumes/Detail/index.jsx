@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable prettier/prettier */
 import React, { useEffect } from 'react';
-import DetailPage from 'clusters/containers/Base/Detail';
 
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
+import DetailPage from 'clusters/containers/Base/Detail';
 import { getLocalTime } from 'utils';
 
 import VolumeStore from 'stores/resources/volumes';
@@ -62,7 +62,11 @@ const VolumeDetail = props => {
       },
     ];
 
-    if (!volumeName.includes('boot-dv')) {
+    if (
+      !volumeName.includes('boot-dv') &&
+      !volumeName.includes('boot-volume')
+    ) {
+      console.log('was1 \n');
       operations.push(
         {
           key: 'volume',

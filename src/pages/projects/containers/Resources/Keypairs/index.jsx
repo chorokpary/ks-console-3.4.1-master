@@ -18,6 +18,7 @@
 import ResourceTable from 'clusters/components/ResourceTable'
 
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
@@ -126,6 +127,11 @@ export default class Keypairs extends React.Component {
         dataIndex: 'project',
         isHideable: true,
         width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}/overview`}>
+            {project}
+          </Link>
+        ),
       },
       {
         title: t('Finger Print'),

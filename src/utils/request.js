@@ -206,7 +206,6 @@ function formatError(response, data) {
   if (data.code < 100) {
     data.code = 500
   }
-
   const result = {
     status: response.status,
     reason: response.statusText,
@@ -220,8 +219,8 @@ function formatError(response, data) {
     result.status = data.status
   }
 
-  if (data.reason || data.error) {
-    result.reason = data.reason || data.error
+  if (data.error_code || data.reason || data.error) {
+    result.reason = data.error_code ? data.error_code + ' ' + data.description : (data.reason || data.error)
   }
 
   result.message = data.message || data.Error || JSON.stringify(data.details)

@@ -99,13 +99,14 @@ const RegistModal = (props) => {
                 onCancel={closeModal}
                 cancelText={t('RESOURCES_CANCEL')}
                 visible={modelView}
+                disableSubmit={deviceDataList.length === 0 && true}
             >
                 <Form data={formData} ref={form}>
 
                     <Form.Item
                         label={t('RESOURCES_NAME')}
                         rules={[{ required: true, validator: nameValidator }]}
-                        desc={t('RESOURCES_NAME_VALID_DESC')+' ex) test/001'}
+                        desc={t('RESOURCES_NAME_VALID_DESC') + ' ex) test/001'}
                     >
                         <Input
                             name="name"
@@ -147,28 +148,28 @@ const RegistModal = (props) => {
                                         {isLoading ? <tr><td colSpan="8" className="no-data" style={{ textAlign: 'center' }}><Loading /></td></tr>
                                             :
                                             deviceDataList?.length < 1 ?
-                                            <tr>
-                                                <td colSpan="8" className="no-data">
-                                                    <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
-                                                </td>
-                                            </tr>
-                                            :
-                                            deviceDataList?.map((data, key) => (
-                                            <tr key={data.name}>
-                                                <td>
-                                                    <Radio name={`select-${data.name}`}
-                                                        checked={data.name === deviceCheckItem}
-                                                        onChange={(e) => setDeviceCheckItem(data.name)} />
-                                                </td>
-                                                <td>{data.mdev_id}</td>
-                                                <td>{data.name}</td>
-                                                <td>{data.clazz}</td>
-                                                <td>{data.max_num}</td>
-                                                <td>{data.resolution}</td>
-                                                <td>{data.cuda ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>
-                                                <td>{data.pixels}</td>
-                                            </tr>
-                                        ))}
+                                                <tr>
+                                                    <td colSpan="8" className="no-data">
+                                                        <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
+                                                    </td>
+                                                </tr>
+                                                :
+                                                deviceDataList?.map((data, key) => (
+                                                    <tr key={data.name}>
+                                                        <td>
+                                                            <Radio name={`select-${data.name}`}
+                                                                checked={data.name === deviceCheckItem}
+                                                                onChange={(e) => setDeviceCheckItem(data.name)} />
+                                                        </td>
+                                                        <td>{data.mdev_id}</td>
+                                                        <td>{data.name}</td>
+                                                        <td>{data.clazz}</td>
+                                                        <td>{data.max_num}</td>
+                                                        <td>{data.resolution}</td>
+                                                        <td>{data.cuda ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>
+                                                        <td>{data.pixels}</td>
+                                                    </tr>
+                                                ))}
                                     </tbody>
                                 </table>
                             </div>

@@ -201,8 +201,9 @@ const RegistModal = (props) => {
 }
 
   const fnAbort = async () => {
+    console.log("fnAbort~~~~~~~~~!!!!")
     uploader.abort();
-    setFileUploadingFlag(false);
+    // setFileUploadingFlag(false);
   };
 
   const fnProgress = (totalLoaded, fileSize, percentage) => {
@@ -341,22 +342,22 @@ const RegistModal = (props) => {
                 <Button type="primary" onClick={() => handleButtonClick()} disabled={fileUploadCompleteFlag ? true : false} >
                   {t('파일 찾기')}
                 </Button>             
-                {(!fileUploadingFlag && file && !fileUploadCompleteFlag) &&
+                {/* {(!fileUploadingFlag && file && !fileUploadCompleteFlag) && */}
                   <Button
                   type="control"
                   onClick={() => startOrResumeUpload(uploader)}
                   >
                     {t('업로드')}
                   </Button>
-                }
-                {(fileUploadingFlag && file && !fileUploadCompleteFlag) &&
+                {/* } */}
+                {/* {(fileUploadingFlag && file && !fileUploadCompleteFlag) && */}
                   <Button
                   type="control"
                   onClick={() => fnAbort()}
                   >
                     {t('일시중지')}
                   </Button>
-                }        
+                {/* }         */}
               </div>
               <div className={ fileUploadStartFlag ? '' : styles.hide }>    
                   

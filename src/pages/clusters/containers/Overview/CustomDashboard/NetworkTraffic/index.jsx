@@ -26,9 +26,8 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
   const [tabContentData, setTabContentData] = useState([]);
   const [tabContent, setTabContent] = useState();
   const [tabContentActive, setTabContentActive] = useState(false);
+  const [rightTab, setRightTab] = useState('node')
   const [loading, setLoading] = useState(false);
-  const [tabActive, setTabActive] = useState('OUT');
-  const [rightTabActive, setRightTabActive] = useState('node');
 
   const [podData, setPodData] = useState([]);
 
@@ -49,6 +48,9 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         // step: '3600s', // 최근 7일
         // times: 160,
       })
+      handleData('node', metricData);
+      handleContenOption('node', metricData);
+      setMetricData(metricData)
 
       // pod data
       const podData = await podStore.fetchMetrics({
@@ -56,6 +58,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         step: '5m',
         times: 100,
       })
+      setPodData(podData)
 
       // vm list
       const vmList = await vmStore.vmList()
@@ -76,6 +79,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         start: currentTime - 30000,
         end: currentTime,
       })
+      setVmData({ ...vmData, ['vmInboundData']: vmInboundData, ['vmOutboundData']: vmOutboundData })
 
       const kaasInboundData = await customStore.fetchMetric({
         expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
@@ -89,12 +93,9 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
         start: currentTime - 30000,
         end: currentTime,
       })
+      setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundData, ['vmOutboundData']: kaasOutboundData })
 
       if (cleanupTrigger) {
-        setMetricData(metricData)
-        setPodData(podData)
-        setVmData({ ...vmData, ['vmInboundData']: vmInboundData, ['vmOutboundData']: vmOutboundData })
-        setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundData, ['vmOutboundData']: kaasOutboundData })
         setLoading(false)
       }
     };
@@ -106,12 +107,6 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
 
   }, [])
 
-  // first render
-  useEffect(() => {
-    handleData('node', metricData);
-    handleContenOption('node', metricData);
-  }, [metricData])
-
   // handle left data
   const handleData = (rightTabActive, data) => {
     setTabData(getData(rightTabActive, data))
@@ -122,18 +117,21 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
     setTabContentData(getContentOptions(rightTabActive, data))
   }
 
-  // left tab active
-  const onClickLeftTab = (activeTab) => {
-    setTabActive(activeTab)
-    setTabContent(tabContentData.filter(obj => obj.activeTab == activeTab)[0])
-  }
-
   // right tab active
-  const onClickRightTab = (tab, data) => {
-    setRightTabActive(tab)
+  const onClickRightTab = (tab) => {
+    let data;
+    if (tab === 'node') {
+      data = metricData;
+    } else if (tab === 'pod') {
+      data = podData;
+    } else if (tab === 'vm') {
+      data = vmData;
+    } else if (tab === 'kaas') {
+      data = kaasData;
+    }
     handleContenOption(tab, data)
     handleData(tab, data)
-    setTabActive('OUT')
+    setRightTab(tab)
   }
 
   useEffect(() => {
@@ -142,6 +140,12 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
       setTabContentActive(true)
     }
   }, [tabContentData])
+
+  useEffect(() => {
+    if (!loading) {
+      onClickRightTab(rightTab)
+    }
+  }, [loading])
 
   return (
     <>
@@ -154,26 +158,26 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
               <div className="right">
                 <div className="dash_boxtab">
                   <label htmlFor="name3">
-                    <input type="radio" name="box-tab1" id="name3" value="name3" defaultChecked onClick={() => onClickRightTab('node', metricData)} />
+                    <input type="radio" name="box-tab1" id="name3" value="name3" defaultChecked onClick={() => onClickRightTab('node')} />
                     <span>{t('RESOURCES_NODE')}</span>
                   </label>
                   <label htmlFor="name4">
-                    <input type="radio" name="box-tab1" id="name4" value="name4" onClick={() => onClickRightTab('pod', podData)} />
+                    <input type="radio" name="box-tab1" id="name4" value="name4" onClick={() => onClickRightTab('pod')} />
                     <span>Pod</span>
                   </label>
                   <label htmlFor="name5">
-                    <input type="radio" name="box-tab1" id="name5" value="name5" onClick={() => onClickRightTab('vm', vmData)} />
+                    <input type="radio" name="box-tab1" id="name5" value="name5" onClick={() => onClickRightTab('vm')} />
                     <span>{t('RESOURCES_VM')}</span>
                   </label>
                   <label htmlFor="name6">
-                    <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onClickRightTab('kaas', kaasData)} />
+                    <input type="radio" name="box-tab1" id="name6" value="name6" onClick={() => onClickRightTab('kaas')} />
                     <span>KaaS</span>
                   </label>
                 </div>
 
               </div>
             </div>
-            {(rightTabActive != 'vm' && rightTabActive != 'kaas') &&
+            <Loading spinning={loading && rightTab !== 'node'}>
               <div className="grid_info style_chart">
                 <div className="box type_chart">
                   <div className="cont1">
@@ -219,56 +223,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
                   </div>
                 </div>
               </div>
-            }
-            {(rightTabActive == 'vm' || rightTabActive == 'kaas') &&
-              <Loading spinning={loading}>
-                <div className="grid_info style_chart">
-                  <div className="box type_chart">
-                    <div className="cont1">
-                      <div className={`chart_tab ${tabActive == 'OUT' ? 'on' : ''}`} onClick={() => onClickLeftTab('OUT')}>
-                        <div className="title">
-                          <i className="ico-type-outbound"></i>
-                          <h5>Outbound</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.OUT}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className={`chart_tab ${tabActive == 'IN' ? 'on' : ''}`} onClick={() => onClickLeftTab('IN')}>
-                        <div className="title">
-                          <i className="ico-type-inbound"></i>
-                          <h5>Inbound</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.IN}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="chart_tab no-tab">
-                        <div className="title">
-                          <i className="ico-type-network"></i>
-                          <h5>Total</h5>
-                        </div>
-                        <div className="data">
-                          <div className="number_wrap data-r">
-                            <p><span className="em">{tabData?.TOTAL}</span> <span className="unit">{tabData?.UNIT}</span></p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="cont2">
-                      {tabContentActive &&
-                        <TabContent option={tabContent}></TabContent>
-                      }
-                      {/* <div className="chart_02"></div> */}
-                    </div>
-                  </div>
-                </div>
-              </Loading>
-            }
+            </Loading>
           </div>
           {/* // grid_item */}
         </div>

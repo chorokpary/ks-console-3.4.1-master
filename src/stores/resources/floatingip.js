@@ -138,6 +138,9 @@ export default class FloatingIpStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = result.lbs.filter((row) => {
+                    if (search.searchKeywordType === 'project') {
+                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+                    }
                     return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
                 });
                 dataList = resultList;
@@ -169,6 +172,9 @@ export default class FloatingIpStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = result.vms.filter((row) => {
+                    if (search.searchKeywordType === 'project') {
+                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+                    }
                     return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
                 });
                 dataList = resultList;

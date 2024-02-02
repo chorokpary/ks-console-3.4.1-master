@@ -23,6 +23,7 @@ import RunningStatus from './RunningStatus'
 import Pods from './Pods'
 import Monitoring from './Monitoring'
 import Events from './Events'
+import Vms from './Vms'
 
 const PATH = '/clusters/:cluster/nodes/:node'
 
@@ -33,6 +34,7 @@ export default [
     component: RunningStatus,
     exact: true,
   },
+  { path: `${PATH}/vms`, title: 'RESOURCES_VM', component: Vms, exact: true },
   { path: `${PATH}/pods`, title: 'PODS', component: Pods, exact: true },
   {
     path: `${PATH}/metadata`,

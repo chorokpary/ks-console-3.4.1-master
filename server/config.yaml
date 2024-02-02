@@ -28,10 +28,16 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    url: http://ks-apiserver
-    wsUrl: ws://ks-apiserver
-    mm3Url: http://edgetron-service.edgestack.svc.cluster.local:8080
-    cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
+    url: http://192.168.16.86:30881
+    wsUrl: ws://192.168.16.86:30881
+    mm3Url: http://192.168.16.86:32080 
+    cmpUrl: http://192.168.16.86:31000 
+    harborUrl: http://192.168.16.86:30002
+    # url: http://10.24.3.34:30881
+    # wsUrl: ws://10.24.3.34:30881
+    # mm3Url: http://10.24.3.34:32080 
+    # cmpUrl: http://10.24.3.34:31000
+    
 
   mm3UserInfo:
     userName: "edgetron"
@@ -238,7 +244,13 @@ client:
              title: RESOURCES_MEDIATED_DEVICE,
              skipAuth: true,
              showInDisable: true,
-            }            
+            }        
+            # - {
+            #     name: computingappdeploy,
+            #     title: "애플리케이션 배포",
+            #     skipAuth: true,
+            #     showInDisable: true,
+            # }      
         - name: resources
           title: RESOURCES_RESOURCE_TEMPLATE
           icon: resource
@@ -269,28 +281,11 @@ client:
               showInDisable: true,
             }   
             # - {
-            #   name: imageBuild,
-            #   title: "이미지 빌드",
+            #   name: imagebuild,
+            #   title: "가상머신 이미지 빌드",
             #   skipAuth: true,
             #   showInDisable: true,
             # }   
-        # - name: virtualmachine-management
-        #   title: "컴퓨팅 애플리케이션 관리"
-        #   icon: cron-job
-        #   showInDisable: true   
-        #   children:   
-        #     - {
-        #         name: virtualmachinebackup,
-        #         title: "가상머신 백업/복구",
-        #         skipAuth: true,
-        #         showInDisable: true,
-        #     }  
-        #     - {
-        #         name: applicationmanagement,
-        #         title: "애플리케이션 관리",
-        #         skipAuth: true,
-        #         showInDisable: true,
-        #     }  
         - name: config
           title: CONFIGURATION
           icon: hammer
@@ -301,8 +296,8 @@ client:
                 name: serviceaccounts,
                 title: SERVICE_ACCOUNT_PL,
                 requiredClusterVersion: v3.1.0,
-              }                
-        - { name: customresources, title: CRD_PL, icon: select, admin: true }      
+              }   
+            - { name: customresources, title: CRD_PL, icon: select, admin: true }   
         - name: network
           title: NETWORK
           icon: earth
@@ -353,6 +348,23 @@ client:
                 authKey: monitoring,
               }
             - {
+                name: 'computingkaasmonitoring',
+                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
+              } 
+            - {
+                name: baremetalmonitoring,
+                title: RESOURCES_BAREMETAL_MONITORING,
+              }
+            - {
+                name: baremetal-carbon-indicator,
+                title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
+              } 
+            - {
+                name: custom-monitoring,
+                title: CUSTOM_MONITORING,
+                requiredClusterVersion: v3.1.0,
+              }
+            - {
                 name: alerts,
                 title: ALERTING_MESSAGE_PL,
                 icon: loudspeaker,
@@ -366,27 +378,11 @@ client:
                 clusterModule: alerting,
                 requiredClusterVersion: v3.1.0,
               }
-            - {
-                name: custom-monitoring,
-                title: CUSTOM_MONITORING,
-                requiredClusterVersion: v3.1.0,
-              }
+            
             # - {
             #     name: kubeeye-monitoring,
             #     title: "KubeEye 모니터링",
-            #   }
-            - {
-                name: baremetalmonitoring,
-                title: RESOURCES_BAREMETAL_MONITORING,
-              }
-            - {
-                name: baremetal-carbon-indicator,
-                title: "BareMetal 탄소지표 통계",
-              }              
-            - {
-                name: 'computingkaasmonitoring',
-                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
-              }            
+            #   }                                              
             # - {
             #     name: fault-analysis,
             #     title: "장애 분석",

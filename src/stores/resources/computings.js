@@ -52,7 +52,7 @@ export default class ComputingStore extends Base {
                       {num : 6, type : 'networks', name : t('RESOURCES_NETWORK'), routeName : 'networks', multitenancy: true, icon : 'network-duotone', createField : 'timestamp'},
                       {num : 7, type : 'sriov_networks', name : t('RESOURCES_SR_IOV_NETWORK'), routeName : 'sriovs', multitenancy: true, icon : 'ico-type-sriov', createField : ''},
                       {num : 8, type : 'routers', name : t('RESOURCES_VROUTER'), routeName : 'routers', multitenancy: true, icon : 'router', createField : 'timestamp'},
-                      {num : 9, type : 'floating_ips', name : t('RESOURCES_FLOATING_IP'), routeName : 'floatingip', multitenancy: false, icon : 'intranet-routers', createField : 'not'},
+                      {num : 9, type : 'floating_ips', name : t('RESOURCES_FLOATING_IP'), routeName : 'floatingip', multitenancy: true, icon : 'intranet-routers', createField : 'not'},
                       {num : 10, type : 'lbs', name : t('RESOURCES_LOAD_BALANCER'), routeName : 'loadBalancers', multitenancy: true, icon : 'loadbalancer', createField : 'timestamp'},                      
                       {num : 11, type : 'security_groups', name : t('RESOURCES_SECURITY_GROUP'), routeName : 'securityGroups', multitenancy: true, icon : 'shield', createField : 'timestamp'},
                       {num : 12, type : 'host_devices', name : t('RESOURCES_HOST_DEVICE'), routeName : 'hostDevices', multitenancy: false, icon : 'ico-type-hostdevice', createField : 'not'},
@@ -64,10 +64,16 @@ export default class ComputingStore extends Base {
     const promises = apiArray.map(async (item) => {
       const result = get(await request.get(`${apiUrl}/${item.type}`), item.type, []);
       const resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;
-      computingDataArray.push({count : resultCount, name : item.name, routeName : item.routeName, icon : item.icon, dataList: result, createField : item.createField, multitenancy : item.multitenancy});
+      computingDataArray.push({num : item.num, count : resultCount, name : item.name, routeName : item.routeName, icon : item.icon, dataList: result, createField : item.createField, multitenancy : item.multitenancy});
     })
     
     await Promise.all(promises);
+
+    await computingDataArray.sort((a, b) => {
+      var x = a["num"];
+      var y = b["num"];
+      return x < y ? -1 : x > y ? 1 : 0;
+    });
 
     this.resources = computingDataArray;
     this.isLoading = false

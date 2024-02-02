@@ -113,7 +113,7 @@ export default class ImageBuild extends React.Component {
         search: true,
         render: (name, item) => (
           <Avatar
-            icon="key"
+            icon="image"
             iconSize={40}
             to={`/clusters/${cluster}/imagebuild/${name}/${item.id}`}
             title={name}
@@ -200,7 +200,7 @@ export default class ImageBuild extends React.Component {
       <ListPage {...this.props}>
         <Banner
           {...bannerProps}
-          icon="key"
+          icon="image"
           title={t('이미지 빌드')}
           description={t('이미지 빌드 상세 설명')}
         />
