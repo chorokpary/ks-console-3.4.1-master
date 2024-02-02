@@ -95,7 +95,7 @@ const KeypairDetail = props => {
       },
       {
         name: t('RESOURCES_NETWORK_TYPE_YOO'),
-        value: detail.network.type,
+        value: detail.network.type.toUpperCase(),
       },
       {
         name: t('RESOURCES_SEGMENT_ID'),
@@ -138,8 +138,12 @@ const KeypairDetail = props => {
     return <Loading className="ks-page-loading" />;
   }
 
+  getBanner = () => {
+    return <i className="ico-type-sriov"></i>;
+  };
+
   const sideProps = {
-    icon: 'storage',
+    icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
