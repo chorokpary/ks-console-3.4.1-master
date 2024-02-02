@@ -515,5 +515,6 @@ module.exports = {
   PERMISSION_RESOURCE_TEMPLATE_VIEW_DESC: '프로젝트 컴퓨팅 리소스 템플릿을 조회합니다.',
   RESOURCES_NETWORK_TRAFFIC_IN: '네트워크 트래픽 IN',
   RESOURCES_NETWORK_TRAFFIC_OUT: '네트워크 트래픽 OUT',
-  
+  RESOURCES_REPLICA_DESIRE: 'Desired',
+  RESOURCES_REPLICA_CURRENT: 'Current',
 };
