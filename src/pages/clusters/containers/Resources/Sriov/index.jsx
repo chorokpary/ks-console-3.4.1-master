@@ -138,9 +138,9 @@ export default class ResourcesVolumes extends React.Component {
                 <div>
                   <Link
                     className={styles.title}
-                    to={`/clusters/${cluster}/sriovs/${name}`}                    
+                    to={`/clusters/${cluster}/sriovs/${name}/${name}`}
                   >
-                    {name}
+                    {name}{' '}
                   </Link>
                 </div>
               </div>
