@@ -53,7 +53,7 @@ export default class ImageBuild extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('computingappmanage.remove', {
+          trigger('computingappdeploy.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -73,7 +73,7 @@ export default class ImageBuild extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('computingappmanage.regist', {
+            trigger('computingappdeploy.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -87,7 +87,7 @@ export default class ImageBuild extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('computingappmanage.remove.batch', {
+            trigger('computingappdeploy.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -115,7 +115,7 @@ export default class ImageBuild extends React.Component {
           <Avatar
             icon="application"
             iconSize={40}
-            to={`/clusters/${cluster}/computingappmanage/${name}/${item.id}`}
+            to={`/clusters/${cluster}/computingappdeploy/${name}/${item.id}`}
             title={name}
           />
         ),

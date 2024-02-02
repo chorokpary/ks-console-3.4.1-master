@@ -68,7 +68,7 @@ import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
 import ImageBuildDetail from '../containers/Resources/ImageBuild/Detail'
-import ComputingAppManageDetail from '../containers/Resources/ComputingAppManage/Detail'
+import ComputingAppDeployDetail from '../containers/Resources/ComputingAppDeploy/Detail'
 
 
 const PATH = '/clusters/:cluster'
@@ -266,8 +266,8 @@ export default [
     component: ImageBuildDetail,
   },
   {
-    path: `${PATH}/computingappmanage/:name/:id`,
-    component: ComputingAppManageDetail,
+    path: `${PATH}/computingappdeploy/:name/:id`,
+    component: ComputingAppDeployDetail,
   },
 
 

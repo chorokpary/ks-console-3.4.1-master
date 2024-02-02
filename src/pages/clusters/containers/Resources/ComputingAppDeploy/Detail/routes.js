@@ -18,9 +18,9 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/ComputingAppManage/Detail/Status'
+import Status from 'clusters/containers/Resources/ComputingAppDeploy/Detail/Status'
 
-const PATH = '/clusters/:cluster/computingappmanage/:name/:id'
+const PATH = '/clusters/:cluster/computingappdeploy/:name/:id'
 
 export default [
   {
