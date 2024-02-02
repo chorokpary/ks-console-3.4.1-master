@@ -116,7 +116,7 @@ const PodList = ({ label }) => {
       {podList.length > 0 &&
         <>
           <div className="box_pop">
-            <h6>Kubeproxy</h6>
+            <h6>Metric-Server</h6>
             {podList.map((item, idx) => (
               <div className="status_wrap" key={idx}>
                 <p className={`status 
