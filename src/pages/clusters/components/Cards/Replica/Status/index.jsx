@@ -149,8 +149,8 @@ export default class ReplicaStatus extends React.Component {
         const { theme, className, name, text, current } = this.props
         const { showConfirm, seconds, desire } = this.state
         const nameText = t(name)
-        const currentText = t('Current')
-        const desireText = t('Desired')
+        const currentText = t('RESOURCES_REPLICA_CURRENT')
+        const desireText = t('RESOURCES_REPLICA_DESIRE')
 
         return (
             <div className={classnames(styles.card, className, styles[theme])}>
@@ -168,10 +168,10 @@ export default class ReplicaStatus extends React.Component {
                     <div className={styles.title}>{nameText}</div>
                     <div className={styles.detail}>
                         <p>
-                            <label>{desireText}:</label> {desire}
+                            <label>{currentText}:</label> {current}
                         </p>
                         <p>
-                            <label>{currentText}:</label> {current}
+                            <label>{desireText}:</label> {desire}
                         </p>
                     </div>
                 </div>
