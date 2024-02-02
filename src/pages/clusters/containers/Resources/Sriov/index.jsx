@@ -137,7 +137,7 @@ export default class ResourcesVolumes extends React.Component {
         ),
       },
       {
-        title: t('RESOURCES_NETWORK_TYPE:'),
+        title: t('RESOURCES_NETWORK_TYPE'),
         dataIndex: 'type',
         filters: this.getFilterType(),
         isHideable: true,

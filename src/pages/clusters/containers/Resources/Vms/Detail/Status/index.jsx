@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable prettier/prettier */
 import { get, groupBy, isEmpty } from 'lodash';
 import React, { useState, useEffect } from 'react';
@@ -35,6 +36,7 @@ const Status = props => {
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
   const intiParams = { times: 50, step: '10m' };
+  const [networkType, setNetworkType] = useState('network');
 
   useEffect(() => {
     if (!store.detail.vm) return;
@@ -44,20 +46,25 @@ const Status = props => {
     };
 
     const fnGetNetwork = async () => {
-      setDetailNetwork([]);
-
+      console.log('was ist network ?? \n', store.detail.vm?.networks);
+      store.detail.vm?.networks.map(test => {
+        console.log('test\n', test);
+        console.log('test\n', test.name);
+        return test;
+      });
       // Network List
       const url = `/edgetron/resources/kubevirt/networks`;
       const response = await axios.get(url);
       const networks = response?.data.networks;
 
-      const promises = store.detail.vm.networks.map(async network => {
-        networks?.filter(async nList => {
+      const promises = store.detail.vm.networks?.map(network => {
+        return networks?.filter(async nList => {
           if (network.name !== 'k8s-pod-network' && nList.id === network.name) {
             const networkDetail = await axios.get(
               `/edgetron/resources/kubevirt/networks/${network.name}`
             );
             setDetailNetwork(value => [...value, networkDetail.data.network]);
+            setNetworkType('network');
           } else if (
             network.name !== 'k8s-pod-network' &&
             nList.id !== network.name
@@ -67,9 +74,11 @@ const Status = props => {
             );
             setDetailNetwork([networkDetail.data.network]);
             // setDetailNetwork(value => [...value, networkDetail.data.network]);
+            setNetworkType('sriovNetwork');
           }
         });
       });
+
       await Promise.all(promises);
     };
 
@@ -97,7 +106,11 @@ const Status = props => {
     store.detail.vm?.security_groups && fnGetSecurityGroup();
     fnGetVolume();
     fetchData(intiParams);
-  }, []);
+  }, [store]);
+
+  useEffect(() => {
+    console.log('1. detailNetwork\n', detailNetwork);
+  }, [detailNetwork]);
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1);
@@ -382,20 +395,30 @@ const Status = props => {
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} />
+                    {networkType === 'network' ? (
+                      <Icon name={`network-duotone`} size={40} />
+                    ) : (
+                      <i className="ico-type-sriov"></i>
+                    )}
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      <Link
-                        to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}
-                      >
-                        {obj.name}
-                      </Link>
+                      {networkType === 'network' ? (
+                        <Link
+                          to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}
+                        >
+                          {obj.name}
+                        </Link>
+                      ) : (
+                        <Link to={`/clusters/${cluster}/sriovs/${obj.name}`}>
+                          {obj.name}
+                        </Link>
+                      )}
                     </div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.type}</div>
+                    <div>{obj.type.toUpperCase()}</div>
                     <p>{t('RESOURCES_TYPE_YOO')}</p>
                   </div>
                   <div className={styles.title}>
@@ -416,39 +439,41 @@ const Status = props => {
         {detailVolume.length > 0 && (
           <Panel title={t('RESOURCES_VOLUME')}>
             <div className={styles.wrapper}>
-              {detailVolume.map((obj, index) => (
-                <div className={classnames(styles.itemVolume)} key={index}>
-                  <div className={styles.icon}>
-                    <Icon name="storage" size={40} />
-                  </div>
-                  <div className={classnames(styles.title, styles.name)}>
-                    <div>
-                      <Link
-                        to={`/clusters/${cluster}/resourcesvolumes/${obj.name}/${obj.id}`}
-                      >
-                        {obj.name}
-                      </Link>
+              {detailVolume.map((obj, index) => {
+                return (
+                  <div className={classnames(styles.itemVolume)} key={index}>
+                    <div className={styles.icon}>
+                      <Icon name="storage" size={40} />
                     </div>
-                    <p>{t('RESOURCES_NAME')}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>
-                      {obj.access_modes.map(mode => (
-                        <p key={mode}>{mode}</p>
-                      ))}
+                    <div className={classnames(styles.title, styles.name)}>
+                      <div>
+                        <Link
+                          to={`/clusters/${cluster}/resourcesvolumes/${obj.name}/${obj.id}`}
+                        >
+                          {obj.name}
+                        </Link>
+                      </div>
+                      <p>{t('RESOURCES_NAME')}</p>
                     </div>
-                    <p>{t('RESOURCES_ACCESS_MODE')}</p>
+                    <div className={styles.title}>
+                      <div>
+                        {obj.access_modes.map(mode => (
+                          <p key={mode}>{mode}</p>
+                        ))}
+                      </div>
+                      <p>{t('RESOURCES_ACCESS_MODE')}</p>
+                    </div>
+                    <div className={styles.title}>
+                      <div>{obj.capacity}</div>
+                      <p>{t('RESOURCES_CAPACITY')}</p>
+                    </div>
+                    <div className={styles.title}>
+                      <div>{obj.phase}</div>
+                      <p>{t('RESOURCES_STATE')}</p>
+                    </div>
                   </div>
-                  <div className={styles.title}>
-                    <div>{obj.capacity}</div>
-                    <p>{t('RESOURCES_CAPACITY')}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>{obj.phase}</div>
-                    <p>{t('RESOURCES_STATE')}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </Panel>
         )}
