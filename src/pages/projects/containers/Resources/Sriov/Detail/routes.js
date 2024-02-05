@@ -20,7 +20,7 @@ import { getIndexRoute } from 'utils/router.config'
 
 import Status from 'projects/containers/Resources/Sriov/Detail/Status'
 
-const PATH = '/:workspace/clusters/:cluster/projects/:namespace/keypairs/:name'
+const PATH = '/:workspace/clusters/:cluster/projects/:namespace/sriovs/:name'
 
 export default [
   {

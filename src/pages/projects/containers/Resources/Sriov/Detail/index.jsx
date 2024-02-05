@@ -105,8 +105,12 @@ const KeypairDetail = (props) => {
         return <Loading className="ks-page-loading" />;
     }
 
+    const getBanner = () => {
+      return <i className="ico-type24-sriov"></i>
+    }
+
     const sideProps = {
-        icon: "storage",
+        icon: getBanner(),
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
