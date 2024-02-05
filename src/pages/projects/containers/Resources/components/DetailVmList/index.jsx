@@ -103,7 +103,7 @@ const DetailVmList = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const vmList = await store.fetchList();
+    const vmList = await store.fetchList({ namespace : namespace});
     const vmFilterData = vmList?.filter((row) =>
       variablesFilter(row)
     )

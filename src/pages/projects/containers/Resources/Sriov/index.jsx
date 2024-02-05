@@ -27,6 +27,8 @@ import Indicator from 'components/Base/Indicator'
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
+import { Link } from 'react-router-dom'
+
 import { Icon } from '@kube-design/components'
 import classnames from 'classnames'
 
@@ -88,18 +90,27 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: name => (
-          <Avatar
-            icon="storage"
-            iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/sriovs/${name}`}
+        render: (name, record) => {
 
-            title={name}
-          />
-        ),
+          return (
+            <div className={styles.avatar}>
+              <div className={styles.icon}>
+                <i className="ico-type-sriov"></i>
+              </div>
+              <div>
+                <Link
+                  className={styles.title}
+                  to={`/${workspace}/clusters/${cluster}/projects/${namespace}/sriovs/${name}`}                   
+                >
+                  {name}
+                </Link>
+              </div>
+            </div>
+          )
+        },
       },
       {
-        title: t('RESOURCES_NETWORK_TYPE:'),
+        title: t('RESOURCES_NETWORK_TYPE'),
         dataIndex: 'type',
         filters: this.getFilterType(),
         isHideable: true,
