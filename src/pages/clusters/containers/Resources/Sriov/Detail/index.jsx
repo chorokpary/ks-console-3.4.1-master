@@ -143,7 +143,7 @@ const KeypairDetail = props => {
   }
 
   const sideProps = {
-    icon: 'network-duotone',
+    icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
