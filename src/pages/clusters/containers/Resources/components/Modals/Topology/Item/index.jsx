@@ -76,11 +76,12 @@ const TopologyItem = (props) => {
   useEffect(() => {
 
     const getNetworkElementsData = async () => {
+
       Promise.all(          
         networkUnionList.map(async (obj) => {
 
           // sriov 와 network 구분해서 처리 해야 함
-          const elementVmList = vmList.filter(item => _.find(item.networks, {'name':obj.id}))
+          const elementVmList = vmList.filter(item => obj.network_type == "N" ?_.find(item.networks, {'name':obj.id}) : _.find(item.networks, {'name':obj.name}))
           obj.elementVmList = elementVmList;
 
           const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { id : obj.id}));
