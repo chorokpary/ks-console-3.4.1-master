@@ -302,8 +302,8 @@ const VmDetail = props => {
   }
 
   const getBanner = () => {
-    return <Icon name="templet" size={40} />;
-  };
+    return <i className="ico-type24-vm"></i>
+  }
 
   const sideProps = {
     icon: getBanner(),
