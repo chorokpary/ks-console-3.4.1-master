@@ -178,9 +178,8 @@ export default class BaseStore {
           }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
-        this.searchList = resultList;
+        this.dataList = resultList;
       })
-      this.dataList = this.searchList;
     }
 
     //정렬 처리
@@ -209,8 +208,6 @@ export default class BaseStore {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
-
-    // console.log(data)
 
     return data
   }
