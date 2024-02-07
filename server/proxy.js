@@ -48,18 +48,38 @@ const devopsWebhookProxy = {
   },
 }
 
+// const webMm3Proxy = {
+//   target: `${serverConfig.apiServer.mm3Url}`,
+//   changeOrigin: true,
+//   events: {
+//     proxyReq(proxyReq, req) {
+//       // Set authorization
+//       if (req.mm3AccessToken) {
+//         proxyReq.setHeader('Authorization', `Bearer ${req.mm3AccessToken}`)
+//       }
+//       NEED_OMIT_HEADERS.forEach(key => proxyReq.removeHeader(key))
+//     },
+//   },
+// }
+
+// const webCmpProxy = {
+//   target: `${serverConfig.apiServer.cmpUrl}`,
+//   changeOrigin: true,
+// }
+
 const webMm3Proxy = {
-  target: `${serverConfig.apiServer.mm3Url}`,
+  target: serverConfig.apiServer.url+'/kapis/edgestack.kubesphere.io/v1alpha1',
   changeOrigin: true,
   events: {
     proxyReq(proxyReq, req) {
       // Set authorization
-      if (req.mm3AccessToken) {
-        proxyReq.setHeader('Authorization', `Bearer ${req.mm3AccessToken}`)
+      if (req.token) {
+        proxyReq.setHeader('Authorization', `Bearer ${req.token}`)
       }
+
       NEED_OMIT_HEADERS.forEach(key => proxyReq.removeHeader(key))
     },
-  },
+  },  
 }
 
 const webAppDeployProxy = {
@@ -68,7 +88,7 @@ const webAppDeployProxy = {
 }
 
 const webCmpProxy = {
-  target: `${serverConfig.apiServer.cmpUrl}`,
+  target: serverConfig.apiServer.url+'/kapis/cmp.kubesphere.io/v1alpha1',
   changeOrigin: true,
 }
 
