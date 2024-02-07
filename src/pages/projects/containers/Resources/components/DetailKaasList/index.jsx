@@ -114,7 +114,7 @@ const DetailKaasList = (props) => {
                   <Icon name="kubernetes" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
                   <Indicator
                     className={styles.indicator}
-                    type={getState(obj.cluster_ready)}
+                    type={getState(obj.cluster_ready, obj.phase)}
                     flicker
                   />
                 </div>
@@ -282,7 +282,12 @@ const DetailKaasList = (props) => {
     )
   }
 
-  const getState = (state) => {
+  const getState = (state, phase) => {
+
+    if(phase != "Provisioned"){
+      return "updating"
+    }
+
     if (state) {
       return "running"
     } else {

@@ -133,7 +133,7 @@ const DetailKaasList = props => {
                 />
                 <Indicator
                   className={styles.indicator}
-                  type={getState(obj.cluster_ready)}
+                  type={getState(obj.cluster_ready, obj.phase)}
                   flicker
                 />
               </div>
@@ -317,7 +317,12 @@ const DetailKaasList = props => {
     );
   };
 
-  const getState = state => {
+  const getState = (state, phase) => {
+
+    if(phase != "Provisioned"){
+      return "updating"
+    }
+
     if (state) {
       return 'running';
     }
