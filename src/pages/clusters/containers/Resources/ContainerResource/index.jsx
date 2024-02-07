@@ -191,8 +191,6 @@ export default class Resource extends React.Component {
                     const { cluster } = this.props.match.params
                     const { cluster_ready, phase } = record
 
-                    console.log("phase : "+ phase)
-
                     return (
                         <div className={styles.avatar}>
                             <div className={styles.icon}>
