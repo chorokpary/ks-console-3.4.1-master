@@ -58,12 +58,18 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
         // times: 160,
       })
 
+      // first render
+      handleData('node', metricData);
+      handleContenOption('node', metricData);
+      setMetricData(metricData)
+
       // pod data
       const podData = await podStore.fetchMetrics({
         metrics: Object.values(MetricTypes),
         step: '5m',
         times: 100,
       })
+      handlePodData(podData)
 
       // vm list
       const vmList = await vmStore.vmList()
@@ -87,6 +93,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
         start: currentTime - 30000,
         end: currentTime,
       })
+      setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })
 
       // kaas cpu data
       const kaasCpuData = await customStore.fetchMetric({
@@ -101,12 +108,9 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
         start: currentTime - 30000,
         end: currentTime,
       })
+      setKaasData({ ...kaasData, ['cpuData']: kaasCpuData, ['memoryData']: kaasMemoryData })
 
       if (cleanupTrigger) {
-        setMetricData(metricData)
-        handlePodData(podData)
-        setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })
-        setKaasData({ ...kaasData, ['cpuData']: kaasCpuData, ['memoryData']: kaasMemoryData })
         setLoading(false)
       }
     };
@@ -138,12 +142,6 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
     return valueArr;
   }
 
-  // first render
-  useEffect(() => {
-    handleData('node', metricData);
-    handleContenOption('node', metricData);
-  }, [metricData])
-
   // handle left data
   const handleData = (rightTabActive, metricData) => {
     setTabData(getData(rightTabActive, metricData))
@@ -161,7 +159,17 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
   }
 
   // right tab active
-  const onClickRightTab = (tab, data) => {
+  const onClickRightTab = (tab) => {
+    let data;
+    if (tab === 'node') {
+      data = metricData;
+    } else if (tab === 'pod') {
+      data = podData;
+    } else if (tab === 'vm') {
+      data = vmData;
+    } else if (tab === 'kaas') {
+      data = kaasData;
+    }
     handleContenOption(tab, data)
     handleData(tab, data)
     setTabActive('cpu')
@@ -175,6 +183,12 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
     }
   }, [tabContentData])
 
+  useEffect(() => {
+    if (!loading) {
+      onClickRightTab(rightTab)
+    }
+  }, [loading])
+
 
   return (
     <>
@@ -187,25 +201,25 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
               <div className="right">
                 <div className="dash_boxtab">
                   <label htmlFor="name2_1">
-                    <input type="radio" name="box-tab" id="name2_1" value="name3" defaultChecked onClick={() => onClickRightTab('node', metricData)} />
+                    <input type="radio" name="box-tab" id="name2_1" value="name3" defaultChecked onClick={() => onClickRightTab('node')} />
                     <span>{t('RESOURCES_NODE')}</span>
                   </label>
                   <label htmlFor="name2_2">
-                    <input type="radio" name="box-tab" id="name2_2" value="name4" onClick={() => onClickRightTab('pod', podData)} />
+                    <input type="radio" name="box-tab" id="name2_2" value="name4" onClick={() => onClickRightTab('pod')} />
                     <span>Pod</span>
                   </label>
                   <label htmlFor="name2_3">
-                    <input type="radio" name="box-tab" id="name2_3" value="name5" onClick={() => onClickRightTab('vm', vmData)} />
+                    <input type="radio" name="box-tab" id="name2_3" value="name5" onClick={() => onClickRightTab('vm')} />
                     <span>{t('RESOURCES_VM')}</span>
                   </label>
                   <label htmlFor="name2_4">
-                    <input type="radio" name="box-tab" id="name2_4" value="name6" onClick={() => onClickRightTab('kaas', kaasData)} />
+                    <input type="radio" name="box-tab" id="name2_4" value="name6" onClick={() => onClickRightTab('kaas')} />
                     <span>KaaS</span>
                   </label>
                 </div>
               </div>
             </div>
-            <Loading spinning={loading}>
+            <Loading spinning={loading && rightTab !== 'node'}>
               <div className="grid_info style_chart">
                 <div className="box type_chart">
                   <div className="cont1">

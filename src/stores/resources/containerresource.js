@@ -115,9 +115,8 @@ export default class ResourceStore extends Base {
             return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
           }
         });
-        this.searchList = resultList;
+        this.dataList = resultList;
       })
-      this.dataList = this.searchList;
     }
 
     //정렬 처리

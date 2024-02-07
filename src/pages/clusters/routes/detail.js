@@ -67,6 +67,9 @@ import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
+import ImageBuildDetail from '../containers/Resources/ImageBuild/Detail'
+import ComputingAppDeployDetail from '../containers/Resources/ComputingAppDeploy/Detail'
+
 
 const PATH = '/clusters/:cluster'
 
@@ -258,5 +261,14 @@ export default [
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
   },
+  {
+    path: `${PATH}/imagebuild/:name/:id`,
+    component: ImageBuildDetail,
+  },
+  {
+    path: `${PATH}/computingappdeploy/:name/:id`,
+    component: ComputingAppDeployDetail,
+  },
+
 
 ]

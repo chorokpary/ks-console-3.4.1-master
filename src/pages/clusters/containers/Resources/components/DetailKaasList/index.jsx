@@ -1,18 +1,7 @@
-import { get, groupBy, isEmpty } from 'lodash'
-import React, { useState, useEffect, Fragment } from 'react'
-import { observer, inject } from 'mobx-react'
-import classnames from 'classnames'
-
-import { Panel, Text, Indicator } from 'components/Base'
-import { TinyArea } from 'components/Charts'
-
-import styles from './index.scss'
-
-import ContainerResourceStore from 'stores/resources/containerresource'
-import CustomStore from 'stores/monitoring/custom/monitor'
-import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
-import { getAreaChartOps } from 'utils/monitoring'
+import { get, groupBy, isEmpty } from 'lodash';
+import React, { useState, useEffect, Fragment } from 'react';
+import { observer, inject } from 'mobx-react';
+import classnames from 'classnames';
 
 import {
   Button,
@@ -23,12 +12,21 @@ import {
   LevelRight,
   Loading,
   Pagination,
-  Tooltip
-} from '@kube-design/components'
-import { async } from 'q'
+  Tooltip,
+} from '@kube-design/components';
+import { async } from 'q';
+import { Panel, Text, Indicator } from 'components/Base';
+import { TinyArea } from 'components/Charts';
 
-const DetailKaasList = (props) => {
+import styles from './index.scss';
 
+import ContainerResourceStore from 'stores/resources/containerresource';
+import CustomStore from 'stores/monitoring/custom/monitor';
+import { getLocalTime } from 'utils';
+import * as common from 'utils/resources';
+import { getAreaChartOps } from 'utils/monitoring';
+
+const DetailKaasList = props => {
   // props = {
   //   type : '이미지' // 빈 화면 일때 사용할 이름,
   //   variables : 'image' // vm 데이터 내에서 비교할 파라미터,
@@ -41,7 +39,7 @@ const DetailKaasList = (props) => {
   const [vmSliceDataList, setVmSliceDataList] = useState([]);
   const [vmSearchDataList, setVmSearchDataList] = useState([]);
 
-  const [isExpandFlag, setIsExpandFlag] = useState(false)
+  const [isExpandFlag, setIsExpandFlag] = useState(false);
   const [expandItem, setExpandItem] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchFlag, setIsSearchFlag] = useState(false);
@@ -52,95 +50,114 @@ const DetailKaasList = (props) => {
 
   const [machines, setMachines] = useState([]);
 
-  const handleExpand = async (name) => {
+  const handleExpand = async name => {
     if (!isExpandFlag) {
       await kaasStore.fetchDetail({ name });
-      setMachines(kaasStore.machines)
+      setMachines(kaasStore.machines);
       setExpandItem(name);
     }
-    setIsExpandFlag(!isExpandFlag)
-  }
+    setIsExpandFlag(!isExpandFlag);
+  };
 
   useEffect(() => {
     fnGetData();
-  }, [])
+  }, []);
 
   const fnGetData = async ({ ...params } = {}) => {
-
     setIsLoading(true);
     setIsSearchFlag(false);
-    const page = get(params, "page", 1);
+    const page = get(params, 'page', 1);
 
     const vmList = await kaasStore.fetchList();
-    const vmi = props.name
-    const propsName = vmi?.includes('control-plane') ? vmi?.substring(0, vmi.indexOf('-control-plane')) : vmi
+    const vmi = props.name;
+    let propsName = '';
+    if (vmi?.includes('control-plane')) {
+      propsName = vmi?.substring(0, vmi.indexOf('-control-plane'));
+    } else if (vmi?.includes('-md')) {
+      propsName = vmi?.substring(0, vmi.indexOf('-md'));
+    } else {
+      propsName = vmi;
+    }
 
-    const vmFilterData = vmList?.filter((row) => row[props.variables] === propsName)
+    const vmFilterData = vmList?.filter(
+      row => row[props.variables] === propsName
+    );
 
-    const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
-    const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
-      (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
+    const vmSearchData =
+      params.name != '' && params.name != undefined
+        ? getSearchData(vmFilterData, params.name)
+        : [];
+    const vmSliceData =
+      vmSearchData.length > 0
+        ? getSliceData(vmSearchData, page)
+        : params.name != '' && params.name != undefined
+        ? getSliceData(vmSearchData, page)
+        : getSliceData(vmFilterData, page);
 
     setCurrentPage(page);
     setVmDataList(vmFilterData);
     setVmSliceDataList(vmSliceData);
-    setVmSearchDataList(vmSearchData)
+    setVmSearchDataList(vmSearchData);
 
     setIsLoading(false);
   };
 
   const renderContent = () => {
-
     if (vmSliceDataList.length == 0) {
       const content = (
-        <div className={styles.nodata}>
-          {t('RESOURCES_NOT_FOUND_RESOURCE')}
-        </div>
-      )
+        <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
+      );
       return content;
     }
 
-    const content = (
-      vmSliceDataList.map((obj, index) => {
-        return (
-          <div className={styles.wrapper} key={index}>
-            <div
-              className={classnames(styles.expandItem, "", {
-                [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-              })}
-            >
-              <div className={styles.itemMain}>
-                <div className={styles.icon}>
-                  <Icon name="kubernetes" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
-                  <Indicator
-                    className={styles.indicator}
-                    type={getState(obj.cluster_ready)}
-                    flicker
-                  />
-                </div>
-                {renderContentDetail(obj)}
+    const content = vmSliceDataList.map((obj, index) => {
+      return (
+        <div className={styles.wrapper} key={index}>
+          <div
+            className={classnames(styles.expandItem, '', {
+              [styles.expanded]: obj.name == expandItem ? isExpandFlag : false,
+            })}
+          >
+            <div className={styles.itemMain}>
+              <div className={styles.icon}>
+                <Icon
+                  name="kubernetes"
+                  size={40}
+                  type={
+                    obj.name != expandItem
+                      ? 'dark'
+                      : obj.name == expandItem && isExpandFlag == false
+                      ? 'dark'
+                      : 'light'
+                  }
+                />
+                <Indicator
+                  className={styles.indicator}
+                  type={getState(obj.cluster_ready, obj.phase)}
+                  flicker
+                />
               </div>
-              {machines.length > 0 &&
-                renderExtraContent(obj)
-              }
+              {renderContentDetail(obj)}
             </div>
+            {machines.length > 0 && renderExtraContent(obj)}
           </div>
-        )
-      }
-      )
-    )
+        </div>
+      );
+    });
 
-    return <Loading spinning={isLoading}><>{content}</></Loading>
-  }
+    return (
+      <Loading spinning={isLoading}>
+        <>{content}</>
+      </Loading>
+    );
+  };
 
-  const renderContentDetail = (obj) => {
+  const renderContentDetail = obj => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>
-              {obj.name}
-            </div>
+            <div>{obj.name}</div>
             <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
@@ -148,7 +165,7 @@ const DetailKaasList = (props) => {
             <p>{t('RESOURCES_DEPLOY_STEP')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.cluster_ready ? "Ready" : "Not-ready"}</div>
+            <div>{obj.cluster_ready ? 'Ready' : 'Not-ready'}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
@@ -156,22 +173,33 @@ const DetailKaasList = (props) => {
             <p>{t('RESOURCES_VERSION')}</p>
           </div>
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
-            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
+            <Icon
+              name="chevron-down"
+              type={
+                obj.name != expandItem
+                  ? ''
+                  : obj.name == expandItem && isExpandFlag == false
+                  ? ''
+                  : 'light'
+              }
+              size={20}
+            />
           </div>
         </div>
       </>
-    )
-  }
+    );
+  };
 
   const renderExtraContent = () => {
-
     return (
       <div className={styles.itemExtra}>
-        <div className={styles.containers} >
+        <div className={styles.containers}>
           {machines.map((obj, idx) => (
             <Fragment key={idx}>
-              {obj.name.includes('control-plane') ? 'Master ' + t('RESOURCES_NODE') : idx < 2 && 'Worker ' + t('RESOURCES_NODE')}
-              <div className={classnames(styles.item)} >
+              {obj.name.includes('control-plane')
+                ? `Master ${t('RESOURCES_NODE')}`
+                : idx < 2 && `Worker ${t('RESOURCES_NODE')}`}
+              <div className={classnames(styles.item)}>
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} />
                 </div>
@@ -195,7 +223,7 @@ const DetailKaasList = (props) => {
                   <Text
                     // key='Memory'
                     // icon='memory'
-                    title={obj.ready_status ? "Ready" : "Not-ready"}
+                    title={obj.ready_status ? 'Ready' : 'Not-ready'}
                     description={t('RESOURCES_STATE')}
                   />
                 </div>
@@ -203,7 +231,9 @@ const DetailKaasList = (props) => {
                   <Text
                     // key='Disk'
                     // icon='storage'
-                    title={obj.networks.filter(network => network.name != "k8s-pod-network").map(o => `${o.ip} (${o.name})`)}
+                    title={obj.networks
+                      .filter(network => network.name != 'k8s-pod-network')
+                      .map(o => `${o.ip} (${o.name})`)}
                     description={`IP (${t('RESOURCES_NETWORK')})`}
                   />
                 </div>
@@ -212,45 +242,50 @@ const DetailKaasList = (props) => {
           ))}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const getPagination = () => {
     const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
-    const pagination = { "page": currentPage, "limit": perPage, "total": total }
-    return pagination
-  }
+    const pagination = { page: currentPage, limit: perPage, total: total };
+    return pagination;
+  };
 
   const getSearchData = (data, searchText) => {
     setIsSearchFlag(true);
-    const resultList = data.filter((row) => {
-      return row["name"]?.toLowerCase().includes(searchText.toLowerCase());
+    const resultList = data.filter(row => {
+      return row['name']?.toLowerCase().includes(searchText.toLowerCase());
     });
     return resultList;
-  }
+  };
 
   const getSliceData = (data, page) => {
     const currentPage = page;
-    const sliceData = data.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    const sliceData = data.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    );
     return sliceData;
-  }
+  };
 
   const handleSearch = value => {
     setSearchValue(value);
     fnGetData({
       name: value,
-    })
-  }
+    });
+  };
 
   const handleRefresh = () => {
-    const params = searchValue ? { name: searchValue, page: currentPage } : { page: currentPage }
+    const params = searchValue
+      ? { name: searchValue, page: currentPage }
+      : { page: currentPage };
     fnGetData(params);
-  }
+  };
 
   const handlePage = page => {
-    const params = page ? { page: page } : {}
+    const params = page ? { page: page } : {};
     fnGetData(params);
-  }
+  };
 
   const renderHeader = () => {
     return (
@@ -265,12 +300,12 @@ const DetailKaasList = (props) => {
           <Button type="flat" icon="refresh" onClick={handleRefresh} />
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderFooter = () => {
-    const pagination = getPagination()
-    const { total } = pagination
+    const pagination = getPagination();
+    const { total } = pagination;
 
     return (
       <Level className={styles.footer}>
@@ -279,43 +314,52 @@ const DetailKaasList = (props) => {
           <Pagination {...pagination} onChange={handlePage} />
         </LevelRight>
       </Level>
-    )
-  }
+    );
+  };
 
-  const getState = (state) => {
-    if (state) {
-      return "running"
-    } else {
-      return "inactive"
+  const getState = (state, phase) => {
+
+    if(phase != "Provisioned"){
+      return "updating"
     }
-  }
+
+    if (state) {
+      return 'running';
+    }
+    return 'inactive';
+  };
 
   return (
     <>
-      {vmDataList.length > 0 &&
-        <Panel title={t('RESOURCES_KAAS_RESOURCE')}
+      {vmDataList.length > 0 && (
+        <Panel
+          title={t('RESOURCES_KAAS_RESOURCE')}
           className={classnames(styles.main)}
         >
           {renderHeader()}
           {renderContent()}
           {renderFooter()}
         </Panel>
-      }
+      )}
 
-      {vmDataList.length == 0 &&
-        <Panel title={t('RESOURCES_KAAS_RESOURCE')} >
+      {vmDataList.length == 0 && (
+        <Panel title={t('RESOURCES_KAAS_RESOURCE')}>
           <div className={styles.wrapper}>
-            {isLoading ?
-              <div><Loading /></div>
-              : <div>
-                {props.type} {t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_KAAS_RESOURCE')}</div>
-            }
+            {isLoading ? (
+              <div>
+                <Loading />
+              </div>
+            ) : (
+              <div>
+                {props.type} {t('RESOURCES_LEUL')}{' '}
+                {t('RESOURCES_NO_USE_KAAS_RESOURCE')}
+              </div>
+            )}
           </div>
         </Panel>
-      }
+      )}
     </>
   );
 };
 
-export default DetailKaasList
-
+export default DetailKaasList;

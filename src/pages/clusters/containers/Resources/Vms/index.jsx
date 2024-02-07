@@ -331,11 +331,7 @@ export default class Vms extends React.Component {
                   'name'
                 )
                 return (
-                  <Link
-                    to={`/clusters/${cluster}/networks/${networkName}/${el.name}`}
-                  >
                     <p key={el.name}>{el.ip}</p>
-                  </Link>
                 )
               }
             })

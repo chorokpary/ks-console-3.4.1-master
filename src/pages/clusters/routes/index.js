@@ -83,6 +83,7 @@ import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonInd
 import ComKassResource from '../containers/Resources/ComKassResource'
 
 import ImageBuild from '../containers/Resources/ImageBuild'
+import ComputingAppDeploy from '../containers/Resources/ComputingAppDeploy'
 
 const PATH = '/clusters/:cluster'
 
@@ -369,13 +370,15 @@ export default [
             exact: true,
           },
           {
-            path: `${PATH}/imageBuild`,
+            path: `${PATH}/imagebuild`,
             component: ImageBuild,
             exact: true,
           },
-          
-
-
+          {
+            path: `${PATH}/computingappdeploy`,
+            component: ComputingAppDeploy,
+            exact: true,
+          },        
           {
             path: `${PATH}/baremetal-carbon-indicator`,
             component: BareMetalCarbonIndicator,
@@ -386,10 +389,6 @@ export default [
             component: ComKassResource,
             exact: true,
           },
-
-
-
-
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({

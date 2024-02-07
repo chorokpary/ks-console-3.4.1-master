@@ -23,8 +23,9 @@ import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
-import { getLocalTime } from 'utils'
+import { Link } from 'react-router-dom'
 import { ICON_TYPES } from 'utils/constants'
+import { getLocalTime, showNameAndAlias } from 'utils'
 
 import RoleStore from 'stores/role'
 import FloatingIpStore from 'stores/resources/floatingip'
@@ -65,6 +66,18 @@ export default class FloatingIp extends React.Component {
             to={`/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip/${name}/${floatingip.id}`}
             title={floatingip.network_alias}
           />
+        ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: project => (
+          <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
+            {showNameAndAlias(project, 'project')}
+          </Link>
         ),
       },
       {

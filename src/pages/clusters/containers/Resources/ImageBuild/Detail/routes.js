@@ -18,9 +18,9 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/imageBuild/Detail/Status'
+import Status from 'clusters/containers/Resources/ImageBuild/Detail/Status'
 
-const PATH = '/clusters/:cluster/imageBuild/:name'
+const PATH = '/clusters/:cluster/imagebuild/:name/:id'
 
 export default [
   {

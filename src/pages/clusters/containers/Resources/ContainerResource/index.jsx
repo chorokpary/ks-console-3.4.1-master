@@ -162,7 +162,12 @@ export default class Resource extends React.Component {
         }))
     }
 
-    getState(state) {
+    getState(state, phase) {
+
+        if(phase != "Provisioned"){
+            return "updating"
+        }
+
         if (state) {
             return "running"
         } else {
@@ -184,7 +189,9 @@ export default class Resource extends React.Component {
                 render: (name, record) => {
 
                     const { cluster } = this.props.match.params
-                    const { cluster_ready } = record
+                    const { cluster_ready, phase } = record
+
+                    console.log("phase : "+ phase)
 
                     return (
                         <div className={styles.avatar}>
@@ -192,7 +199,7 @@ export default class Resource extends React.Component {
                                 <Icon name="kubernetes" size={40} />
                                 <Indicator
                                     className={styles.indicator}
-                                    type={this.getState(cluster_ready)}
+                                    type={this.getState(cluster_ready, phase)}
                                     flicker
                                 />
                             </div>

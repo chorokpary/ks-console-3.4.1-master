@@ -124,9 +124,8 @@ export default class BareMetalStore extends Base {
           }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
-        this.searchList = resultList;
+        this.dataList = resultList;
       })
-      this.dataList = this.searchList;
     }
 
     //정렬 처리
@@ -257,8 +256,8 @@ export default class BareMetalStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-    
-    const systemType = !!user.systemType ? user.systemType : user.system_type ;
+
+    const systemType = !!user.systemType ? user.systemType : user.system_type;
     const url = systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
 
     return this.submitting(request.delete(`${url}/${user.name}`))

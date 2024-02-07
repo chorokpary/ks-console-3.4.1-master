@@ -1,0 +1,81 @@
+@charset "utf-8";
+@import "~scss/variables";
+@import "~scss/mixins";
+
+$box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
+$size-ssmall: 11px;
+
+.hide {
+    display: none;
+}
+
+.textarea {
+  :global .textarea {
+    max-width: 100%;
+  }
+}
+
+.divwrap {
+  display: flex;
+  position: relative;
+  
+  .div_left {
+    position: relative;
+    width: 5%;
+    margin-top: 24px;
+  }
+
+  .div_middle {
+    position: relative;
+    width: 90%;
+  }
+
+  .div_right {
+    position: relative;
+    width: 5%;
+    margin-top: 18px;
+  }
+}
+
+.file_input {
+    margin-right: 10px;
+}
+
+.progressbar_wrap {
+    padding: 20px 15px 5px 2px;
+
+    .right {
+        float:right;
+    }
+}
+.scriptitem {
+    height: 46px;
+    position: relative;
+    padding: 6px 68px 6px 17px;
+    border-radius: 60px;
+    background-color: $bg-color;
+    border: solid 1px $border-color;
+  
+    &+.scriptitem {
+        margin-top: 8px;
+    }
+  
+    &>input {
+        max-width: none !important;
+    }
+  }
+  
+  .scriptdelete {
+    right: 6px;
+    @include vertical-center;
+  }
+  
+  .scriptadd {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+.formErrorStyle {
+  border: solid 1px #ca2621 !important;
+  margin-bottom: 0 !important;
+}
