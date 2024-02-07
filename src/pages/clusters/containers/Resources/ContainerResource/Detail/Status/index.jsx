@@ -63,8 +63,6 @@ const Status = (props) => {
 
   const getState = (state, phase) => {
 
-    console.log("phase : "+ phase)
-
     if(phase != "Provisioned"){
       return "updating"
     }
