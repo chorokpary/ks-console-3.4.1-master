@@ -61,7 +61,14 @@ const Status = (props) => {
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
 
-  const getState = (state) => {
+  const getState = (state, phase) => {
+
+    console.log("phase : "+ phase)
+
+    if(phase != "Provisioned"){
+      return "updating"
+    }
+
     if (state) {
       return "running"
     } else {
@@ -286,7 +293,7 @@ const Status = (props) => {
                   <Icon name="nodes" size={40} type={detail.name != expandItem ? 'dark' : (detail.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
                   <Indicator
                     className={styles.indicator}
-                    type={getState(detail?.ready_status)}
+                    type={getState(detail?.ready_status, detail?.phase)}
                     flicker
                   />
                 </div>
@@ -338,7 +345,7 @@ const Status = (props) => {
                   <Icon name="nodes" size={40} type={detail.name != expandItem ? 'dark' : (detail.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} />
                   <Indicator
                     className={styles.indicator}
-                    type={getState(detail?.ready_status)}
+                    type={getState(detail?.ready_status, detail?.phase)}
                     flicker
                   />
                 </div>
