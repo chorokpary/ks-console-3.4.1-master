@@ -38,7 +38,7 @@ const {
   safeBase64,
 } = require('../libs/utils')
 
-const { send_gateway_request, sendMm3Request } = require('../libs/request')
+const { send_gateway_request } = require('../libs/request')
 
 const handleLogin = async ctx => {
   const params = ctx.request.body
@@ -118,16 +118,6 @@ const handleLogin = async ctx => {
     ctx.body = error
     return
   }
-
-  const mm3Params = {
-    username: 'edgetron',
-    password: 'password',
-  }
-  const mmsData = await sendMm3Request({
-    method: 'POST',
-    url: '/edgetron/auth/generate_token',
-    params: mm3Params,
-  })
 
   const lastToken = ctx.cookies.get('token')
 
