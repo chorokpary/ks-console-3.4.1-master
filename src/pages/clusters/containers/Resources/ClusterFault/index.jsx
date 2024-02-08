@@ -27,8 +27,6 @@ import styles from './index.scss'
 import { Icon } from '@kube-design/components'
 
 import ClusterFaultStore from 'stores/resources/clusterFault'
-import { Modal } from 'components/Base'
-import DetailModal from 'clusters/containers/Resources/components/Modals/ClusterFault'
 
 @withClusterList({
   store: new ClusterFaultStore(),
@@ -89,13 +87,14 @@ export default class ClusterFault extends React.Component {
       {
         title: t('RESOURCES_CLUSTER_FAULT_SOLUTION'),
         dataIndex: 'solution',
-        width: 40,
+        width: 60,
         render: (solution, item) => (
+
           <div className={styles.iconRight} onClick={() => trigger('clusterfault.detail', {
             detail: item,
             ...this.props.match.params,
           })}>
-            <Icon name={'topology'} size={36} />
+            <i className="ico-type24-solution"></i>
           </div>
         ),
       },
@@ -108,7 +107,8 @@ export default class ClusterFault extends React.Component {
 
   render() {
 
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps, rootStore } = this.props
+    const { cluster } = this.props.match.params;
     return (
       <ListPage {...this.props}>
         <div className={classnames(styles.wrapper)}>
@@ -123,7 +123,7 @@ export default class ClusterFault extends React.Component {
               </p>
             </div>
             <div className={styles.divRight}>
-              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
+              <div className={styles.iconRight} onClick={() => rootStore.routing.push(`/clusters/${cluster}/clusterfault/setting`)}>
                 <Icon name={'hammer'} size={36} />
               </div>
               <p>{t('RESOURCES_CLUSTER_FAULT_SET')}</p>

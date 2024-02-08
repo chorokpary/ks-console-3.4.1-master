@@ -19,15 +19,29 @@
 import { get, isEmpty } from 'lodash'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
-import DetailModal from 'clusters/containers/Resources/components/Modals/ClusterFault'
+import DetailModal from 'clusters/containers/Resources/components/Modals/ClusterFault/Detail'
+import RegistModal from 'clusters/containers/Resources/components/Modals/ClusterFault/Regist'
 import FORM_TEMPLATES from 'utils/form.templates'
 
 export default {
     'clusterfault.detail': {
         on({ store, cluster, workspace, namespace, ...props }) {
             const modal = Modal.open({
-                title: t('RESOURCES_CLUSTER_FAULT_TITLE'),
+                title: t('RESOURCES_CLUSTER_FAULT_SOLUTION_DETAIL'),
                 modal: DetailModal,
+                store,
+                cluster,
+                workspace,
+                namespace,
+                ...props,
+            })
+        },
+    },
+    'clusterfault.regist': {
+        on({ store, cluster, workspace, namespace, ...props }) {
+            const modal = Modal.open({
+                title: t('RESOURCES_CLUSTER_FAULT_TITLE') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET'),
+                modal: RegistModal,
                 store,
                 cluster,
                 workspace,
