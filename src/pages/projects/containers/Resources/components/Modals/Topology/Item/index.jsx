@@ -45,13 +45,13 @@ const TopologyItem = (props) => {
 
   useEffect(() => {
     const getData = async () => {
-      await store.fetchData()
+      await store.fetchData({ workspace : workspace, cluster : cluster, namespace : namespace})
 
-      setVmList(store.vmList)
-      setNetworkList(store.networkList)
+      setVmList((store.vmList).filter(item => item.project == namespace))
+      setNetworkList((store.networkList).filter(item => item.project == namespace))
       setSriovList(store.sriovList)
-      setRouterList(store.routerList)
-      setFloatingList(store.floatingList)
+      setRouterList((store.routerList).filter(item => item.project == namespace))
+      setFloatingList((store.floatingList).filter(item => item.project == namespace))
       setLoadBalancerList(store.loadbalancerList)
 
       const internalNetworkList = store.networkList?.filter((row) => row.external == false);
@@ -84,7 +84,7 @@ const TopologyItem = (props) => {
         networkUnionList.map(async (obj) => {
 
           // sriov 와 network 구분해서 처리 해야 함
-          const elementVmList = vmList.filter(item => _.find(item.networks, {'name':obj.id}))
+          const elementVmList = vmList.filter(item => obj.network_type == "N" ?_.find(item.networks, {'name':obj.id}) : _.find(item.networks, {'name':obj.name}))
           obj.elementVmList = elementVmList;
 
           const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { id : obj.id}));

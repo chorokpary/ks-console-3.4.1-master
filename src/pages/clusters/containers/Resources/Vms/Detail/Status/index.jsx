@@ -46,40 +46,44 @@ const Status = props => {
     };
 
     const fnGetNetwork = async () => {
-      console.log('was ist network ?? \n', store.detail.vm?.networks);
-      store.detail.vm?.networks.map(test => {
-        console.log('test\n', test);
-        console.log('test\n', test.name);
-        return test;
-      });
-      // Network List
-      const url = `/edgetron/resources/kubevirt/networks`;
-      const response = await axios.get(url);
-      const networks = response?.data.networks;
+      setDetailNetwork([]);
 
-      const promises = store.detail.vm.networks?.map(network => {
-        return networks?.filter(async nList => {
-          if (network.name !== 'k8s-pod-network' && nList.id === network.name) {
+      const networkData = store.networksList;
+      const networkNameArray = store.detail.vm?.networks.map(item => item.name);
+      const filterData = networkData.filter(item => {
+        return networkNameArray.includes(item.id);
+      });
+
+      const sriovNetworkData = store.sriov_networks;
+      const sriovFilterData = sriovNetworkData.filter(item => {
+        return networkNameArray.includes(item.name);
+      });
+
+      if (filterData.length > 0) {
+        const promises = filterData.filter(async network => {
+          if (network.name != 'k8s-pod-network') {
             const networkDetail = await axios.get(
-              `/edgetron/resources/kubevirt/networks/${network.name}`
+              `/edgetron/resources/kubevirt/networks/${network.id}`
             );
             setDetailNetwork(value => [...value, networkDetail.data.network]);
             setNetworkType('network');
-          } else if (
-            network.name !== 'k8s-pod-network' &&
-            nList.id !== network.name
-          ) {
+          }
+        });
+        await Promise.all(promises);
+      }
+
+      if (sriovFilterData.length > 0) {
+        const promises = sriovFilterData.filter(async network => {
+          if (network.name != 'k8s-pod-network') {
             const networkDetail = await axios.get(
               `/edgetron/resources/kubevirt/sriov_networks/${network.name}`
             );
-            setDetailNetwork([networkDetail.data.network]);
-            // setDetailNetwork(value => [...value, networkDetail.data.network]);
-            setNetworkType('sriovNetwork');
+            setDetailNetwork(value => [...value, networkDetail.data.network]);
+            setNetworkType('sriovnetwork');
           }
         });
-      });
-
-      await Promise.all(promises);
+        await Promise.all(promises);
+      }
     };
 
     const fnGetSecurityGroup = async () => {
@@ -101,16 +105,12 @@ const Status = props => {
       setDetailVolume(volumeData);
     };
 
-    store.detail.vm?.flavor && fnGetFlavor();
-    store.detail.vm?.networks && fnGetNetwork();
-    store.detail.vm?.security_groups && fnGetSecurityGroup();
+    fnGetFlavor();
+    fnGetNetwork();
+    fnGetSecurityGroup();
     fnGetVolume();
     fetchData(intiParams);
   }, [store]);
-
-  useEffect(() => {
-    console.log('1. detailNetwork\n', detailNetwork);
-  }, [detailNetwork]);
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1);

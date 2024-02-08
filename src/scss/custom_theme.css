@@ -145,11 +145,6 @@ input.input:focus {
   background: #0fa1e3 !important;
 }
 
-/* 탭라디오 개수 태그 색상 공통 */
-.badge-wrapper > span.badge.is-default {
-  background: #0fa1e3 !important;
-}
-
 /* 토글 스위치 색상 */
 .toggle.checked:hover,
 .toggle.checked:active {
@@ -221,7 +216,7 @@ div.flatpickr-calendar .flatpickr-months .flatpickr-month .flatpickr-dropdown .d
   padding-top: 20px !important;
 }
 
-/* header 탑메뉴 정렬 및 색상 */
+/* header 탑메뉴 정렬 및 색상 로고 */
 .src-components-Layout-Header-index__navs {
   display: flex !important;
 }
@@ -230,6 +225,10 @@ div.flatpickr-calendar .flatpickr-months .flatpickr-month .flatpickr-dropdown .d
 }
 .src-components-Layout-Header-index__navs > button.button-flat.button-size-normal.has-icon:hover {
   background: #e3e9ef !important;
+}
+
+.src-components-Layout-Header-index__logo {
+  height: auto !important;
 }
 
 /* 좌메뉴 타이틀 박스 */
