@@ -40,12 +40,12 @@
   .title {
     min-width: 120px;
 
-    & > div {
+    &>div {
       @include ellipsis;
       @include TypographyTitleH6($dark-color07);
     }
 
-    & > p {
+    &>p {
       @include ellipsis;
       @include TypographyParagraph($dark-color01);
     }
@@ -93,6 +93,7 @@
     border-color: $dark-color07;
 
     .content .text {
+
       div,
       a,
       p {
@@ -189,7 +190,7 @@
         justify-content: space-between;
         margin: 0 -10px;
 
-        & > div {
+        &>div {
           margin: 0 10px;
           width: calc(50% - 20px);
         }
@@ -219,12 +220,12 @@
         width: 28%;
       }
 
-      & > div {
+      &>div {
         @include ellipsis;
         @include TypographyTitleH6($dark-color07);
       }
 
-      & > p {
+      &>p {
         @include ellipsis;
         @include TypographyParagraph($dark-color01);
       }
@@ -233,19 +234,23 @@
 
   .ipTip {
     width: 176px;
+
     ul {
       margin-top: 8px;
     }
+
     li {
       display: flex;
       font-weight: normal;
+
       :global {
         .icon {
           margin-right: 4px;
         }
       }
     }
-    li + li {
+
+    li+li {
       margin-top: 4px;
     }
   }
@@ -265,7 +270,7 @@
   border-radius: 0 0 4px 4px;
   z-index: 1;
 
-  .containers > div {
+  .containers>div {
     background-color: $white;
     border: 1px solid $light-color03;
     margin-bottom: 12px;
@@ -277,47 +282,66 @@
 }
 
 .loading {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
 }
 
 .empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 56px;
 }
 
 .cluster {
-    width: 260px;
-    margin-right: 12px;
+  width: 260px;
+  margin-right: 12px;
 }
 
+.table {
+  // margin: -12px;
+  border-radius: $border-radius;
+  overflow: hidden;
+}
 
-.table table {
-    width: 100%;
-    text-align: left;
+.main {
+  .header {
+    display: flex;
+    padding: 12px;
+    background-color: $th-bg-color;
 
-    thead {
-        th {
-            text-transform: uppercase;
-            padding: 10px;
-        }
+    .search {
+      width: 100%;
     }
 
-    tbody {
-        tr {
-            border-bottom: 1px solid #F1F1F1;
-            color: #75787b;
+    .actions {
+      flex: 1 0 auto;
 
-            td {
-                padding: 10px;
-            }
+      :global {
+        button {
+          margin-left: 12px;
 
-            th {
-                padding-left: 10px;
-            }
+          &:hover {
+            background-color: $bg-color;
+          }
         }
+      }
     }
+  }
+
+  .body {
+    min-height: 80px;
+    padding: 12px;
+    background-color: $th-bg-color;
+  }
+
+  .footer {
+    padding: 10px 12px;
+    background-color: $th-bg-color;
+
+    :global .level-left {
+      @include TypographyParagraph($dark-color01);
+    }
+  }
 }

@@ -20,12 +20,12 @@ import { getIndexRoute } from 'utils/router.config'
 
 import Setting from 'clusters/containers/Resources/ClusterFault/Setting/Status'
 
-const PATH = '/:workspace/clusters/:cluster/projects/:namespace/clusterfault/setting'
+const PATH = '/clusters/:cluster/clusterfault/setting'
 
 export default [
     {
         path: `${PATH}/status`,
-        title: t('RESOURCES_STATE'),
+        title: t('RESOURCES_CLUSTER_FAULT_OPERATOR'),
         component: Setting,
         exact: true,
     },
