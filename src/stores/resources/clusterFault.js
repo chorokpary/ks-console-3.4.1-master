@@ -122,7 +122,6 @@ export default class ClusterFaultStore extends Base {
         return data
     }
 
-
     @action
     async fetchCrList({
         cluster,
@@ -144,8 +143,8 @@ export default class ClusterFaultStore extends Base {
         }
 
         const result = await request.get(
-            // `${this.getResourceUrl()}/list-k8sgpts`
-            `${this.getResourceUrl()}/k8sgpts`
+            `${this.getResourceUrl()}/list-k8sgpts`
+            // `${this.getResourceUrl()}/k8sgpts`
         )
 
         params.limit = params.limit || 10
@@ -176,11 +175,7 @@ export default class ClusterFaultStore extends Base {
         if (searchArray.length > 0) {
             searchArray.map((search) => {
                 let resultList = this.dataList.filter((row) => {
-                    if (search.searchKeywordType === 'project') {
-                        let [projectName, _] = get(row, 'spec.name').split('/')
-                        return projectName?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                    }
-                    return get(row, search.searchKeywordType)?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                    return get(row, search.searchKeywordType)?.toLowerCase().includes(search.searchKeywordText?.toLowerCase());
                 });
                 this.searchList = resultList;
             })
@@ -213,8 +208,28 @@ export default class ClusterFaultStore extends Base {
             isLoading: false,
             ...(this.list.silent ? {} : { selectedRowKeys: [] }),
         })
-        console.log(this.list)
 
         return this.dataList
+    }
+
+
+    @action
+    async activeCrDetail() {
+        const result = await request.get(
+            `${this.getResourceUrl()}/k8sgpts\?labelSelector=list-k8sgpt/enabled`
+        )
+
+        const detail = get(result, 'items[0].metadata.name') || ''
+
+        return detail
+    }
+
+
+    @action
+    async activateCr(data, params = {}) {
+        let res = await this.submitting(
+            request.post(`${this.getResourceUrl()}`, data)
+        )
+        return res
     }
 }
