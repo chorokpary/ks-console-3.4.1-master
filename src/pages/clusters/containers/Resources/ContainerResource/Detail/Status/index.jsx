@@ -62,8 +62,7 @@ const Status = (props) => {
   const [expandItem, setExpandItem] = useState();
 
   const getState = (state, phase) => {
-
-    if(phase != "Provisioned"){
+    if(phase != "Provisioned" && phase != "Running" ){
       return "updating"
     }
 
