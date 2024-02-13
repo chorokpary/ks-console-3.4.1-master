@@ -214,7 +214,7 @@ const DetailKaasList = props => {
                 </div>
                 <div className={styles.title}>
                   <div>{obj.phase}</div>
-                  <p>Phase2</p>
+                  <p>Phase</p>
                 </div>
                 <div className={styles.title}>
                   <Text

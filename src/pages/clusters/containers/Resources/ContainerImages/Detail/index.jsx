@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
 import { useParams } from 'react-router-dom';
@@ -19,9 +19,14 @@ const store = new ContainerImageStore();
 
 const ContainerImageDetail = (props) => {
 
+  const [refreshTimer, setRefreshTimer] = useState(0)
+
   useEffect(() => {
-    fetchData();
-  }, [])
+    setTimeout(() => {
+      fetchData();
+      setRefreshTimer(refreshTimer + 1);
+    }, 4000);
+  }, [refreshTimer])
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);
@@ -125,7 +130,7 @@ const ContainerImageDetail = (props) => {
     ]
   }
 
-  if (store.isLoading) {
+  if (store.isLoading && !store.detail.name) {
     return <Loading className="ks-page-loading" />;
   }
 
