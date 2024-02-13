@@ -4,18 +4,15 @@ import styles from './index.scss'
 import { get } from 'lodash'
 
 import classnames from 'classnames'
-import { Table } from '@kube-design/components'
-// import Table from 'components/Tables/List'
-// 1. kube design 은 직접 custom
-// 2. Tables/List 는 기존 tableaction 적용됨
-// 1을 이용하면 2를 참고해서 드롭다운 구현해야하고
-// 2를 이용하면 헤더푸터도 달라져서 코드 수정해야함
 
 import { Panel, Text, Indicator } from 'components/Base'
 import { getLocalTime } from 'utils'
 
 import ClusterFaultStore from 'stores/resources/clusterFault'
 import {
+  Table,
+  Menu,
+  Dropdown,
   Button,
   Icon,
   InputSearch,
@@ -27,22 +24,42 @@ import {
 } from '@kube-design/components'
 import { Radio } from '@kube-design/components/lib/components/Radio'
 
+const moreAction = [
+  {
+    key: 'triangle-right',
+    text: '사용 대상 설정',
+    onClick: (item) => {
+      console.log(item)
+    }
+  },
+  {
+    key: 'pen',
+    text: '정보 편집',
+    onClick: (item) => {
+      console.log(item)
+    }
+  },
+  {
+    key: 'trash',
+    text: '삭제',
+    onClick: (item) => {
+      console.log(item)
+    }
+  },
+]
+
 const store = new ClusterFaultStore();
 
 const Status = (props) => {
 
-  const [vmDataList, setVmDataList] = useState([]);
-  const [vmSliceDataList, setVmSliceDataList] = useState([]);
-  const [vmSearchDataList, setVmSearchDataList] = useState([]);
+  const [crList, setCrList] = useState([]);
+  const [sliceDataList, setSliceDataList] = useState([]);
+  const [searchDataList, setSearchDataList] = useState([]);
 
-  const [isExpandFlag, setIsExpandFlag] = useState(false)
-  const [expandItem, setExpandItem] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isSearchFlag, setIsSearchFlag] = useState(false);
 
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
-
+  const [activeCr, setActiveCr] = useState('')
   const perPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState();
@@ -52,13 +69,17 @@ const Status = (props) => {
   }, [])
 
   const fnGetData = async ({ ...params }) => {
-    let asd = await store.fetchCrList(params)
-    console.log(asd)
-    setVmDataList(asd);
+    let activeCr = await store.activeCrDetail()
+    setActiveCr(activeCr)
+
+    let crList = await store.fetchCrList(params)
+    console.log(crList)
+    setIsLoading(false)
+    setCrList(crList);
   }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
+    const total = !isSearchFlag ? crList.length : searchDataList.length;
     const pagination = { "page": currentPage, "limit": perPage, "total": total }
     return pagination
   }
@@ -79,13 +100,12 @@ const Status = (props) => {
 
   const handleSearch = value => {
     setSearchValue(value);
-    fnGetData({
-      name: value,
-    })
+    const params = value && value !== '' ? { ['metadata.name']: value } : {}
+    fnGetData(params)
   }
 
   const handleRefresh = () => {
-    const params = searchValue ? { name: searchValue, page: currentPage } : { page: currentPage }
+    const params = searchValue ? { ['metadata.name']: searchValue, page: currentPage } : { page: currentPage }
     fnGetData(params);
   }
 
@@ -131,8 +151,8 @@ const Status = (props) => {
     {
       title: t('사용'),
       dataIndex: '',
-      render: (a) => (
-        <Radio />
+      render: (_, item) => (
+        item.metadata.name === activeCr ? <Icon name="check" /> : ''
       )
     },
     {
@@ -153,49 +173,62 @@ const Status = (props) => {
     {
       key: 'more',
       width: 20,
-      // render: renderMore(),
-      render: () => (
-        <Button icon="more" type="flat" />
+      render: (more, item) => (
+        renderMore(item)
       ),
     },
   ]
 
-  // const renderMore = (field, record) => {
-  //   if (isEmpty(this.enabledItemActions)) {
-  //     return null
-  //   }
+  /**
+   * row별 more btn
+   */
+  const renderMore = (item) => {
+    const content = renderMoreMenu(item)
 
-  //   const content = this.renderMoreMenu(record)
-
-  //   if (content === null) {
-  //     return null
-  //   }
-
-  //   return (
-  //     <Dropdown content={content} trigger="click" placement="bottomRight">
-  //       <Button icon="more" type="flat" />
-  //     </Dropdown>
-  //   )
-  // }
-
-  const itemActions = () => {
-    return [
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('DELETE'),
-        action: 'delete',
-        show: true,
-        // onClick: item =>
-        //   props.rootStore.triggerAction('clusterfault.regist', {
-        //     type: 'qwe',
-        //     detail: item,
-        //   }),
-      },
-    ]
+    return (
+      <Dropdown content={content} trigger="click" placement="bottomRight">
+        <Button icon="more" type="flat" />
+      </Dropdown>
+    )
   }
 
+  /**
+   * moreAction 에서 메뉴 리스트 rendering
+   */
+  const renderMoreMenu = item => {
+    const actionList = [...moreAction]
+    item.metadata.name === activeCr ? delete actionList[0] : actionList
+    const items = actionList.map(obj => {
+      return (
+        <Menu.MenuItem key={obj.key}>
+          <Icon name={obj.key} />{' '}
+          <span data-test={`table-item-${obj.key}`}>{obj.text}</span>
+        </Menu.MenuItem>
+      )
+    })
 
+    return (
+      <Menu onClick={handleMoreMenuClick(item)}>
+        {items}
+      </Menu>
+    )
+  }
+
+  /**
+   * more btn별 action 주입
+   */
+  const handleMoreMenuClick = item => (e, key) => {
+    const action = moreAction.find(
+      _action => _action.key === key
+    )
+    if (action && action.onClick) {
+      action.onClick(item)
+    }
+  }
+
+  /**
+   * 생성 버튼
+   */
   const showCreate = () => {
     const { match, module } = props
     return props.rootStore.triggerAction('clusterfault.regist', {
@@ -209,41 +242,27 @@ const Status = (props) => {
     return (
       <Table
         className={styles.table}
-        dataSource={vmDataList}
-        itemActions={itemActions()}
+        dataSource={crList}
         columns={getColumns()}
-      // onCreate={() => showCreate()}
-      // loading={loading}
+        loading={isLoading}
+        emptyText={renderEmpty()}
       />
     )
   }
 
-  return (
-    <>
-      {vmDataList.length > 0 &&
-        <Panel
-          className={classnames(styles.main)}
-          styles={{ padding: '0px !important' }}
-        >
-          {renderHeader()}
-          {renderContent()}
-          {renderFooter()}
-        </Panel>
-      }
+  const renderEmpty = () => {
+    return <div className={styles.empty}>{props.type}{t('RESOURCES_NO_DATA')}</div>
+  }
 
-      {vmDataList.length == 0 &&
-        <Panel styles={{ padding: '0px !important' }}>
-          <div className={styles.wrapper}>
-            {isLoading ?
-              <div><Loading /></div>
-              : props.variables == "project"
-                ? <div className={styles.empty}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
-                : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>
-            }
-          </div>
-        </Panel>
-      }
-    </>
+  return (
+    <Panel
+      className={classnames(styles.main)}
+      styles={{ padding: '0px !important' }}
+    >
+      {renderHeader()}
+      {renderContent()}
+      {renderFooter()}
+    </Panel>
   );
 };
 
