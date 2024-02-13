@@ -521,5 +521,6 @@ module.exports = {
   RESOURCES_ARM: 'ARM',
   RESOURCES_AMD64: 'AMD64',
   RESOURCES_ARM64: 'ARM64',
-
+  RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC: '부트볼륨 사이즈보다 큰 사이즈를 선택해 주세요',
+  
 };

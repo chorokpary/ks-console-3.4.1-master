@@ -238,7 +238,7 @@ const VmDetail = props => {
       },
       {
         name: t('RESOURCES_IMAGE'),
-        value: detail.vm.image.name,
+        value: detail.vm.image?.name,
       },
       {
         name: t('Flavor'),
