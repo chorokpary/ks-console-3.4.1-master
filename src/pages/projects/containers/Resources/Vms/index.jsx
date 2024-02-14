@@ -276,7 +276,7 @@ export default class Vms extends React.Component {
         render: (image, record) => {
           const icon = "ico-os-" + record.image_object?.distro_type;
           return (
-            image && 
+            image ? 
             <Link to={`/clusters/${cluster}/images/${image}`}>
               <i
                 style={{
@@ -287,6 +287,7 @@ export default class Vms extends React.Component {
                   height: '40px'
                 }}></i>
             </Link>
+            : <p className={styles.textCenter}>N/A</p>
           )
         },
       },
