@@ -62,6 +62,11 @@ const webMm3Proxy = {
   },
 }
 
+const webAppDeployProxy = {
+  target: `${serverConfig.apiServer.appdeployUrl}`,
+  changeOrigin: true,
+}
+
 const webCmpProxy = {
   target: `${serverConfig.apiServer.cmpUrl}`,
   changeOrigin: true,
@@ -110,4 +115,5 @@ module.exports = {
   b2iFileProxy,
   webMm3Proxy,
   webCmpProxy,
+  webAppDeployProxy,
 }
