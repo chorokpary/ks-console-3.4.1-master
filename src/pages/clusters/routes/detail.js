@@ -266,7 +266,7 @@ export default [
     component: ImageBuildDetail,
   },
   {
-    path: `${PATH}/computingappdeploy/:name/:id`,
+    path: `${PATH}/computingappdeploy/:name`,
     component: ComputingAppDeployDetail,
   },
 
