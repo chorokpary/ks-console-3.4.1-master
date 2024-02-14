@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import { observer, inject } from 'mobx-react'
 import styles from './index.scss'
 import { get } from 'lodash'
@@ -21,81 +21,124 @@ import {
   LevelRight,
   Loading,
   Pagination,
+  Notify,
 } from '@kube-design/components'
-import { Radio } from '@kube-design/components/lib/components/Radio'
-
-const moreAction = [
-  {
-    key: 'triangle-right',
-    text: '사용 대상 설정',
-    onClick: (item) => {
-      console.log(item)
-    }
-  },
-  {
-    key: 'pen',
-    text: '정보 편집',
-    onClick: (item) => {
-      console.log(item)
-    }
-  },
-  {
-    key: 'trash',
-    text: '삭제',
-    onClick: (item) => {
-      console.log(item)
-    }
-  },
-]
 
 const store = new ClusterFaultStore();
 
 const Status = (props) => {
 
   const [crList, setCrList] = useState([]);
-  const [sliceDataList, setSliceDataList] = useState([]);
-  const [searchDataList, setSearchDataList] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isSearchFlag, setIsSearchFlag] = useState(false);
 
   const [activeCr, setActiveCr] = useState('')
-  const perPage = 6;
+  const perPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState();
 
+  const [activationDeleting, setActivationDeleting] = useState(false);
+  const [activationTrigger, setActivationTrigger] = useReducer(activationTrigger => !activationTrigger, false);
+
+  const moreAction = [
+    {
+      key: 'triangle-right',
+      text: '사용 대상 설정',
+      onClick: (item) => {
+        props.rootStore.triggerAction('clusterfault.activateCr', {
+          store: store,
+          activeCr: activeCr,
+          item,
+          name: get(item, 'metadata.name'),
+          success: () => {
+            activeCrListTrigger()
+            fnGetData()
+          }
+        })
+      }
+    },
+    {
+      key: 'pen',
+      text: '정보 편집',
+      onClick: (item) => {
+        showCreate(item)
+      }
+    },
+    {
+      key: 'trash',
+      text: '삭제',
+      onClick: (item) => {
+        props.rootStore.triggerAction('clusterfault.delete', {
+          store,
+          activeCr: activeCr,
+          name: get(item, 'metadata.name'),
+          success: fnGetData,
+        })
+      }
+    },
+  ]
+  let timer = 0;
+
+  /**
+   * 10초마다 활성 CR check
+   */
+  const activeCrListTimer = () => {
+    timer = setTimeout(() => {
+      activeCrListTrigger()
+    }, 10000)
+  }
+
+  const activeCrListTrigger = async () => {
+    clearTimeout(timer)
+    const activeCrList = await store.activeCrList();
+
+    let del = false;
+    activeCrList.find(obj => {
+      let deletionTimestamp = get(obj, 'metadata.deletionTimestamp') || false;
+      del = deletionTimestamp || del
+    })
+
+    // deletionTimestamp 가 있는 경우, 삭제중인 CR 이 있는것으로 판단하여
+    // more action 기능 통제
+    if (del) {
+      setActivationDeleting(true);
+      setActivationTrigger();
+    } else {
+      setActivationDeleting(false);
+    }
+  }
+
+  // activationTrigger 로 timer 주고
+  // 화면 이탈 시, cleanup 적용을 위해 useeffect 활용
+  useEffect(() => {
+    activeCrListTimer()
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [activationTrigger])
+
   useEffect(() => {
     fnGetData();
+    // 화면 첫 진입 시, 전체 활성 CR정보 check trigger
+    activeCrListTrigger();
   }, [])
 
   const fnGetData = async ({ ...params }) => {
+    // 활성화된 CR
     let activeCr = await store.activeCrDetail()
     setActiveCr(activeCr)
 
+    // CR list
     let crList = await store.fetchCrList(params)
-    console.log(crList)
     setIsLoading(false)
     setCrList(crList);
   }
 
+  // --------------------- search  -------------------------
   const getPagination = () => {
-    const total = !isSearchFlag ? crList.length : searchDataList.length;
+    const total = crList.length;
     const pagination = { "page": currentPage, "limit": perPage, "total": total }
     return pagination
-  }
-
-  const getSearchData = (data, searchText) => {
-    setIsSearchFlag(true);
-    const resultList = data.filter((row) => {
-      return row["name"]?.toLowerCase().includes(searchText.toLowerCase());
-    });
-    return resultList;
-  }
-
-  const getSliceData = (data, page) => {
-    const currentPage = page;
-    const sliceData = data.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-    return sliceData;
   }
 
   const handleSearch = value => {
@@ -112,6 +155,19 @@ const Status = (props) => {
   const handlePage = page => {
     const params = page ? { page: page } : {}
     fnGetData(params);
+  }
+  // -------------------------------------------------------
+
+  /**
+   * 생성 버튼
+   */
+  const showCreate = () => {
+    const { match, module } = props
+    return props.rootStore.triggerAction('clusterfault.regist', {
+      module,
+      store,
+      success: fnGetData,
+    })
   }
 
   const renderHeader = () => {
@@ -179,6 +235,10 @@ const Status = (props) => {
     },
   ]
 
+  const disableMoreMenu = () => {
+    return activationDeleting ? Notify.info('이전 Operator가 비활성화중입니다.') : ''
+  }
+
   /**
    * row별 more btn
    */
@@ -186,7 +246,7 @@ const Status = (props) => {
     const content = renderMoreMenu(item)
 
     return (
-      <Dropdown content={content} trigger="click" placement="bottomRight">
+      <Dropdown content={!activationDeleting ? content : ''} trigger="click" placement="bottomRight" onClick={() => disableMoreMenu()}>
         <Button icon="more" type="flat" />
       </Dropdown>
     )
@@ -227,15 +287,10 @@ const Status = (props) => {
   }
 
   /**
-   * 생성 버튼
+   * 데이터 없는 경우
    */
-  const showCreate = () => {
-    const { match, module } = props
-    return props.rootStore.triggerAction('clusterfault.regist', {
-      module,
-      namespace: match.params.namespace,
-      cluster: match.params.cluster,
-    })
+  const renderEmpty = () => {
+    return <div className={styles.empty}>{props.type}{t('RESOURCES_NO_DATA')}</div>
   }
 
   const renderContent = () => {
@@ -250,9 +305,6 @@ const Status = (props) => {
     )
   }
 
-  const renderEmpty = () => {
-    return <div className={styles.empty}>{props.type}{t('RESOURCES_NO_DATA')}</div>
-  }
 
   return (
     <Panel
