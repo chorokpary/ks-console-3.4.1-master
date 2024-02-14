@@ -507,4 +507,6 @@ module.exports = {
   RESOURCES_CLUSTER_FAULT_ERROR: '에러 내용',
   RESOURCES_CLUSTER_FAULT_SOLUTION: '솔루션',
   RESOURCES_CLUSTER_FAULT_SOLUTION_DETAIL: '솔루션 조회',
+  RESOURCES_DELETE_CR_TIP: 'Operator 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_ACTIVATE_CR: 'Operator 이름 <strong>{resource}</strong> 을 사용 설정하시겠습니까? </p> 기존에 사용 설정된 Operator가 있는 경우, 해당 Operator는 비활성화 됩니다.',
 };

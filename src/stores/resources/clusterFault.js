@@ -19,6 +19,7 @@
 import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
+import { safeBtoa } from 'utils/base64'
 
 import Base from '../basemm3'
 
@@ -29,6 +30,10 @@ export default class ClusterFaultStore extends Base {
     getResourceUrl = (params = {}) => `apis/core.k8sgpt.ai/v1alpha1/namespaces/k8sgpt-operator-system`
     getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.id}`
 
+    /**
+     * cr solution 정보
+     * @returns 
+     */
     @action
     async fetchList({
         cluster,
@@ -122,6 +127,10 @@ export default class ClusterFaultStore extends Base {
         return data
     }
 
+    /**
+     * 생성된 CR list
+     * @returns 
+     */
     @action
     async fetchCrList({
         cluster,
@@ -212,7 +221,10 @@ export default class ClusterFaultStore extends Base {
         return this.dataList
     }
 
-
+    /**
+     * 활성화된 CR 정보
+     * @returns 
+     */
     @action
     async activeCrDetail() {
         const result = await request.get(
@@ -224,12 +236,243 @@ export default class ClusterFaultStore extends Base {
         return detail
     }
 
-
+    /**
+     * k8sgpts 전체 CR 정보
+     * @returns 
+     */
     @action
-    async activateCr(data, params = {}) {
+    async activeCrList() {
+        const result = await request.get(`${this.getResourceUrl()}/k8sgpts`)
+
+        return get(result, 'items')
+    }
+
+
+    /**
+     * CR 활성화
+     * @returns 
+     */
+    @action
+    async activateCr(data) {
+        // 기존 CR 존재할경우 비활성화
+        if (data.activeCr) {
+            await this.deactivateCr(data.activeCr);
+        }
+
+        let params;
+        let operator = get(data, 'spec.ai.backend');
+        if (operator === 'localai') {
+            params = {
+                "apiVersion": "core.k8sgpt.ai/v1alpha1",
+                "kind": "K8sGPT",
+                "metadata": {
+                    "name": `${get(data, 'metadata.name')}`,
+                    "namespace": "k8sgpt-operator-system",
+                    "labels": {
+                        "list-k8sgpt/enabled": ""
+                    }
+                },
+                "spec": {
+                    "ai": {
+                        "backend": "localai",
+                        "baseUrl": `${get(data, 'spec.ai.baseUrl')}`,
+                        "model": `${get(data, 'spec.ai.model')}`,
+                        "enabled": true
+                    },
+                    "repository": "ghcr.io/k8sgpt-ai/k8sgpt",
+                    "version": "v0.3.26"
+                }
+            }
+        } else if (operator === 'openai') {
+            params = {
+                "apiVersion": "core.k8sgpt.ai/v1alpha1",
+                "kind": "K8sGPT",
+                "metadata": {
+                    "name": `${get(data, 'metadata.name')}`,
+                    "namespace": "k8sgpt-operator-system",
+                    "labels": {
+                        "list-k8sgpt/enabled": ""
+                    }
+                },
+                "spec": {
+                    "ai": {
+                        "backend": "openai",
+                        "secret": {
+                            "name": `${get(data, 'metadata.name')}-secret`,
+                            "key": "openai-api-key"
+                        },
+                        "model": `${get(data, 'spec.ai.model')}`,
+                        "enabled": true
+                    },
+                    "repository": "ghcr.io/k8sgpt-ai/k8sgpt",
+                    "version": "v0.3.26"
+                }
+            }
+        }
         let res = await this.submitting(
-            request.post(`${this.getResourceUrl()}`, data)
+            request.post(`${this.getResourceUrl()}/k8sgpts`, params)
         )
         return res
+    }
+
+    /**
+     * CR 비활성화
+     * @returns 
+     */
+    @action
+    async deactivateCr(name) {
+        await this.deactivateCrCheck(name)
+        await this.submitting(
+            request.delete(`${this.getResourceUrl()}/k8sgpts/${name}`)
+        )
+    }
+
+    /**
+     * CR 비활성화 check
+     * @returns 
+     */
+    @action
+    async deactivateCrCheck(name) {
+        let params = {
+            "metadata": {
+                "labels": {
+                    "list-k8sgpt/enabled": null
+                }
+            }
+        }
+
+        await this.submitting(
+            request.patch(`${this.getResourceUrl()}/k8sgpts/${name}`, params, {
+                headers: {
+                    'content-type': 'application/merge-patch+json',
+                },
+            })
+        )
+    }
+
+
+    /**
+     * local ai 생성
+     * @returns 
+     */
+    @action
+    async createLocalAi(data, params = {}) {
+        params = {
+            "apiVersion": "core.k8sgpt.ai/v1alpha1",
+            "kind": "List-K8sGPT",
+            "metadata": {
+                "name": `${data.name}`,
+                "namespace": "k8sgpt-operator-system"
+            },
+            "spec": {
+                "ai": {
+                    "backend": "localai",
+                    "baseUrl": `${data.baseurl}`,
+                    "model": `${data.model}`
+                },
+                "repository": "ghcr.io/k8sgpt-ai/k8sgpt",
+                "version": "v0.3.26"
+            }
+        }
+        let res = await this.submitting(
+            request.post(`${this.getResourceUrl()}/list-k8sgpts`, params)
+        )
+        return res
+    }
+
+    /**
+     * open ai 생성
+     * @returns 
+     */
+    @action
+    async createOpenAi(data, params = {}) {
+        let secretRes = await this.createOpenAiSecretKey(data)
+
+        const owner_ref = {
+            apiVersion: get(secretRes, 'apiVersion'),
+            kind: get(secretRes, 'kind'),
+            name: get(secretRes, 'metadata.name'),
+            uid: get(secretRes, 'metadata.uid'),
+        }
+        const cr_secret_key = data.secret
+
+        params = {
+            "apiVersion": "v1",
+            "kind": "Secret",
+            "metadata": {
+                "name": `${data.name}-secret`,
+                "namespace": "k8sgpt-operator-system",
+                "ownerReferences": [owner_ref]
+            },
+            "data": {
+                "openai-api-key": safeBtoa(cr_secret_key) // base64 encode
+            },
+            "type": "Opaque"
+        }
+
+        try {
+            // secret key 적용
+            let res = await this.submitting(
+                request.post(`api/v1/namespaces/k8sgpt-operator-system/secrets`, params)
+            )
+            return res;
+        } catch (e) {
+            // secret key 적용 시, 에러 발생할 경우 createOpenAiSecretKey rollback
+            await this.deleteCr({ name: data.name })
+            throw Error(e)
+        }
+    }
+
+    /**
+     * open ai 생성 및 secret key 추출
+     * @returns 
+     */
+    @action
+    async createOpenAiSecretKey(data) {
+        let params = {
+            "apiVersion": "core.k8sgpt.ai/v1alpha1",
+            "kind": "List-K8sGPT",
+            "metadata": {
+                "name": `${data.name}`,
+                "namespace": "k8sgpt-operator-system",
+                "labels": {
+                    "kubesphere-list": ""
+                }
+            },
+            "spec": {
+                "ai": {
+                    "backend": "openai",
+                    "secret": {
+                        "name": `${data.name}-secret`,
+                        "key": "openai-api-key"
+                    },
+                    "model": `${data.model}`
+                },
+                "repository": "ghcr.io/k8sgpt-ai/k8sgpt",
+                "version": "v0.3.26"
+            }
+        }
+        let res = await this.submitting(
+            request.post(`${this.getResourceUrl()}/list-k8sgpts`, params)
+        )
+        return res;
+    }
+
+    /**
+     * CR 삭제
+     * @returns 
+     */
+    @action
+    async deleteCr({ name, activeCr }) {
+
+        // 활성화된 CR 비활성화
+        if (activeCr && name === activeCr) {
+            await this.deactivateCr(name)
+        }
+
+        // 목록에서 삭제
+        await this.submitting(
+            request.delete(`${this.getResourceUrl()}/list-k8sgpts/${name}`)
+        )
     }
 }

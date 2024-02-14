@@ -1,7 +1,6 @@
 import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
-import { ProjectSelect } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Tooltip, Column, Columns, Radio, Checkbox } from '@kube-design/components'
 
 import { Modal } from 'components/Base'
@@ -12,8 +11,10 @@ import styles from './index.scss'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
-const DetailModal = (props) => {
+const RegistModal = (props) => {
   // const detail = props.detail;
+  const form = useRef();
+  const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
   const [operator, setOperator] = useState('')
 
@@ -21,30 +22,20 @@ const DetailModal = (props) => {
     setModalView(false);
   }
 
-  const distroTypeOptions = () => {
-    // const opt = distroTypeList.map((obj) => ({
-    //   label: t(obj.name),
-    //   description: t(obj.vendor),
-    //   icon: `ico-os-${obj.name}`,
-    //   value: t(obj.name),
-    // }))
-
-    const opt = [
-      {
-        label: 'Open AI',
-        description: 'Open AI 엔진 기반으로 분석합니다.',
-        icon: `ico-type24-solution`,
-        value: 'openai',
-      },
-      {
-        label: 'Local AI',
-        description: 'Local AI 엔진 기반으로 분석합니다.',
-        icon: `ico-type24-solution`,
-        value: 'localai',
-      }
-    ]
-    return opt
-  }
+  const operatorOptions = [
+    {
+      label: 'Open AI',
+      description: 'Open AI 엔진 기반으로 분석합니다.',
+      icon: `ico-type24-solution`,
+      value: 'openai',
+    },
+    {
+      label: 'Local AI',
+      description: 'Local AI 엔진 기반으로 분석합니다.',
+      icon: `ico-type24-solution`,
+      value: 'localai',
+    }
+  ]
 
   const nameValidator = (rule, value, callback) => {
     if (value == undefined) {
@@ -58,15 +49,12 @@ const DetailModal = (props) => {
   }
 
   const handleOk = () => {
-    // const onOk = props.onOk;
+    const onOk = props.onOk;
 
-    // form.current.validator(() => {
-    //     const { data } = form.current.props;
-    //     data.security_group_rules = [...formRulesIngressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)
-    //         , ...formRulesEgressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)];
-    //     data.project = projectName
-    //     onOk({ security_group: data })
-    // })
+    form.current.validator(() => {
+      const { data } = form.current.props;
+      onOk(data)
+    })
   }
 
   return (
@@ -80,7 +68,7 @@ const DetailModal = (props) => {
         onOk={handleOk}
         onCancel={closeModal}
       >
-        <Form>
+        <Form data={formData} ref={form}>
 
           {/* 이름 */}
           <Form.Item
@@ -100,7 +88,7 @@ const DetailModal = (props) => {
           {/* Operator 설정 */}
           <Form.Item
             label={t('Operator 설정')}
-            rules={[{ required: true },]}
+            rules={[{ required: true, message: t('Operator를 선택해주세요.') },]}
           >
             <TypeSelect
               name="operator"
@@ -110,7 +98,7 @@ const DetailModal = (props) => {
                 label: t('선택')
               }}
               defaultDescription={t('분석 엔진을 선택합니다.')}
-              options={distroTypeOptions()}
+              options={operatorOptions}
             />
           </Form.Item>
 
@@ -118,11 +106,11 @@ const DetailModal = (props) => {
           <Form.Item
             label={t('모델')}
             desc={t('모델 입력 최대 길이는 63자입니다.')}
-            rules={[{ required: true },]}
+            rules={[{ required: true, message: t('모델을 입력해주세요.') },]}
           >
             <TextArea
               style={{ maxWidth: 'none' }}
-              name="description"
+              name="model"
               maxLength={63}
             />
           </Form.Item>
@@ -132,12 +120,12 @@ const DetailModal = (props) => {
           {operator !== '' &&
             <Form.Item
               label={t('세부 설정')}
-              rules={[{ required: true },]}
             >
               <Form.Group>
                 {/* open ai - secret key */}
                 {operator === 'openai' &&
-                  <Form.Item label={t('Secret Key')}>
+                  <Form.Item label={t('Secret Key')}
+                    rules={[{ required: true, message: t('Secret Key를 입력해주세요.') },]}>
                     <TextArea
                       style={{ maxWidth: 'none' }}
                       name="secret"
@@ -148,7 +136,8 @@ const DetailModal = (props) => {
 
                 {/* local ai - base url */}
                 {operator === 'localai' &&
-                  <Form.Item label={t('Base URL')}>
+                  <Form.Item label={t('Base URL')}
+                    rules={[{ required: true, message: t('Base URL을 입력해주세요.') },]}>
                     <TextArea
                       style={{ maxWidth: 'none' }}
                       name="baseurl"
@@ -166,5 +155,5 @@ const DetailModal = (props) => {
   );
 };
 
-export default DetailModal
+export default RegistModal
 
