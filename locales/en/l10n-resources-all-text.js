@@ -522,5 +522,15 @@ module.exports = {
   RESOURCES_AMD64: 'AMD64',
   RESOURCES_ARM64: 'ARM64',
   RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC: '부트볼륨 사이즈보다 큰 사이즈를 선택해 주세요',
+  RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC: '부트볼륨 사이즈보다 큰 사이즈를 선택해 주세요.',
+  RESOURCES_APP_DEPLOY_MANAGE: '애플리케이션 배포 관리',
+  RESOURCES_APP_DEPLOY_MANAGE_DESC: '애플리케이션의 배포를 관리 할 수 있습니다.',
+  RESOURCES_PLAYBOOK: 'Playbook',
+  RESOURCES_APP_DEPLOY_PLAYBOOK_ADD: 'Playbook 등록',
+  RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC: 'Playbook 과 애플리케이션을 함께 압축하여 등록합니다.',
+  RESOURCES_APP_DEPLOY_VM_ADD_DESC: '애플리케이션이 배포될 가상머신을 등록합니다.',
+  RESOURCES_TASK: '테스크',
+  RESOURCES_TASK_ID: '테스크 ID',
+  RESOURCES_NO_DATA_TASK_LOG: '태스크 이력이 없습니다.',
 
 };
