@@ -70,10 +70,20 @@ export default class AppDeployStore extends Base {
       this.getResourceUrl()
     )
 
-    const data = result;
+    const data = result.templates;
+
+    // 초기 정렬 처리
+    data.sort((a, b) => {
+      return a.registrationDate < b.registrationDate
+        ? 1
+        : a.registrationDate > b.registrationDate
+        ? -1
+        : 0;
+    });
+
 
     // 초기 데이터 처리 
-    this.dataList = data.templates;
+    this.dataList = data;
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
