@@ -26,15 +26,15 @@ import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
+import * as common from 'utils/resources'
 
-import KeypairStore from 'stores/resources/keypairs'
+import AppDeployStore from 'stores/resources/appdeploy'
 
 @withList({
-  store: new KeypairStore(),
-  module: 'keypairs',
-  authKey: 'keypairs',
+  store: new AppDeployStore(),
+  module: 'appdeploy',
+  authKey: 'appdeploy',
   name: t('RESOURCES_KEYPAIR'),
-  rowKey: 'id'
 })
 export default class ImageBuild extends React.Component {
 
@@ -47,6 +47,19 @@ export default class ImageBuild extends React.Component {
     const { getData, trigger } = this.props
     return [
       {
+        key: 'deploy',
+        icon: 'blue-green-deployment',
+        text: t('RESOURCES_DEPLOY'),
+        action: 'edit',
+        show: this.showAction,
+        onClick: item =>
+          trigger('computingappdeploy.deploy', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
+      {
         key: 'delete',
         icon: 'trash',
         text: t('RESOURCES_DELETE'),
@@ -58,7 +71,7 @@ export default class ImageBuild extends React.Component {
             success: getData,
             ...this.props.match.params,
           }),
-      },
+      },     
     ]
   }
 
@@ -115,38 +128,14 @@ export default class ImageBuild extends React.Component {
           <Avatar
             icon="application"
             iconSize={40}
-            to={`/clusters/${cluster}/computingappdeploy/${name}/${item.id}`}
+            to={`/clusters/${cluster}/computingappdeploy/${name}`}
             title={name}
           />
         ),
       },
       {
-        title: t('RESOURCES_CPU_TYPE'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_TAG'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_OS_INFORMATION'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_FILE_NAME'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_SIZE'),
-        dataIndex: 'project',
+        title: t('RESOURCES_VERSION'),
+        dataIndex: 'version',
         isHideable: true,
         width: 'auto',
       },
@@ -156,17 +145,56 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
       },
+      {
+        title: t('Playbook'),
+        dataIndex: 'playbookName',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_VM'),
+        dataIndex: 'vm',
+        isHideable: true,
+        width: 'auto',
+        render: vm => {
+          let vmGroupText = ''
+          if (vm) {
+            vmGroupText =
+            vm.length > 1
+                ? `${
+                  vm[0].name
+                  } 외 ${vm.length - 1}개`
+                : vm.length === 1
+                ? vm[0].name
+                : '-'
+          } else {
+            vmGroupText = ''
+          }
+          return vmGroupText
+        },
+      },
+      {
+        title: t('RESOURCES_SIZE'),
+        dataIndex: 'playbookSize',
+        isHideable: true,
+        width: 'auto',
+        render: playbookSize => (
+          <p>
+            {common.fnFormatBytes((playbookSize).toString())}
+          </p>
+        ),        
+      },
 
       {
         title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'timestamp',
+        dataIndex: 'registrationDate',
         isHideable: true,
         width: 150,
         sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
+        sortOrder: getSortOrder('registrationDate'),
+        render: registrationDate => (
           <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
+            {getLocalTime(registrationDate).format('YYYY-MM-DD HH:mm:ss')}
           </p>
         ),
       },
@@ -201,8 +229,8 @@ export default class ImageBuild extends React.Component {
         <Banner
           {...bannerProps}
           icon="application"
-          title={t('애플리케이션 배포 관리')}
-          description={t('애플리케이션의 배포를 관리 할 수 있습니다')}
+          title={t('RESOURCES_APP_DEPLOY_MANAGE')}
+          description={t('RESOURCES_APP_DEPLOY_MANAGE_DESC')}
         />
         <Table
           {...tableProps}

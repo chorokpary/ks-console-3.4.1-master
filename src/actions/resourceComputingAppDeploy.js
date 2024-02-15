@@ -22,6 +22,7 @@ import { Modal } from 'components/Base'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
+import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Modify'
@@ -33,15 +34,20 @@ export default {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .create(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-              success && success()
-            })
+
+          Modal.close(modal)
+          Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+          success && success()
+
+          // store
+          //   .create(data, { cluster, workspace, namespace, devops })
+          //   .then(() => {
+          //     Modal.close(modal)
+          //     Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+          //     success && success()
+          //   })
         },
-        title: t('템플릿 생성'),
+        title: t('RESOURCES_CREATE_TEMPLATE'),
         modal: RegistModal,
         store,
         cluster,
@@ -64,7 +70,7 @@ export default {
               success && success()
             })
         },
-        title: t('템플릿 수정'),
+        title: t('RESOURCES_EDIT_TEMPLATE'),
         modal: ModifyModal,
         store,
         detail,
@@ -96,7 +102,7 @@ export default {
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
-        desc: t.html('RESOURCES_DELETE_NETWORK_TIP', {
+        desc: t.html('RESOURCES_DELETE_APP_DEPLOY_TIP', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -108,13 +114,8 @@ export default {
   'computingappdeploy.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
-      store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
-            arr.push(obj.name)
-        }
-      })
-      const names = arr.join(', ')
+      const names = rowKeys.join(', ')
+
       const modal = Modal.open({
         onOk: () => {
           store
@@ -132,8 +133,8 @@ export default {
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           rowKeys.length === 1
-            ? t.html('RESOURCES_DELETE_NETWORK_TIP', { resource: names })
-            : t.html('RESOURCES_DELETE_NETWORK_TIP', { resource: names }),
+            ? t.html('RESOURCES_DELETE_APP_DEPLOY_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_APP_DEPLOY_TIP', { resource: names }),
         resource: names,
         store,
         ...props,
@@ -160,21 +161,6 @@ export default {
       })
     },
   },
-  'computingappdeploy.yaml.view': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: async data => {
-          Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-          Modal.close(modal)
-          success && success()
-        },
-        detail,
-        store,
-        modal: EditYamlModal,
-        ...props,
-      })
-    },
-  },
   'computingappdeploy.image.upload': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
@@ -184,6 +170,26 @@ export default {
         detail,
         store,
         modal: UploadModal,
+        ...props,
+      })
+    },
+  },
+  'computingappdeploy.deploy': {
+    on({ store, detail, success, data, title, desc, ...props }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.deploy({ detail, ...props }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DEPLOYED_SUCCESSFULLY') })
+            success && success()
+          })
+        },
+        title: !!title ? title : t('RESOURCES_TASK_DEPLOY'),
+        desc: !!desc ? desc : t('RESOURCES_DEPLOY_DESC'),
+        modal: ConfirmModal,
+        module: store.module,
+        detail,
+        store,
         ...props,
       })
     },

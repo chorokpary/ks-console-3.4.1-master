@@ -7,10 +7,12 @@ import { Modal } from 'components/Base'
 import classnames from 'classnames'
 import styles from './index.scss'
 import * as common from "utils/resources"
+import axios from 'axios'
 
 import VmStore from 'stores/resources/vms'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
 
 const RegistModal = (props) => {
 
@@ -22,24 +24,86 @@ const RegistModal = (props) => {
 
   const [file, setFile] = useState(null);
   const [fileValidError, setFilerValidError] = useState(false);
+  const [fileExtError, setFileExtError] = useState(false);
+  const [vmValidError, setVmValidError] = useState(false);
 
-  const [vmDataList, setVmDataList] = useState([]);
   const [vmOptionList, setVmOptionList] = useState([]);
 
   const handleOk = () => {
     const onOk = props.onOk;
 
+    const { data } = form.current.props;
+
+    listVmInventory.map((obj) => {
+      if(!!data['vm_'+obj] && !!data['ip_'+obj] && !!data['user_'+obj] && !!data['private_key_'+obj]){
+        const isValidIpAddress = regexIp.test(data['ip_'+obj]) ? false : true;
+        setVmValidError(isValidIpAddress);
+        return false;
+      }else{
+        setVmValidError(true)
+      }  
+    })
+
     if(!file){
-      setFilerValidError(true);
+      setFilerValidError(true)
+      setFileExtError(false)
       return false;
-    }else{
-      setFilerValidError(false)
+    }else{    
+      const ext =  (file.name).split('.').pop().toLowerCase();
+      const isValidExt = ext == "zip" ? true : false;
+      if(isValidExt){
+        setFilerValidError(false)
+      }else{
+        setFilerValidError(false)
+        setFileExtError(true)
+        return false;
+      }     
     }
 
-    form.current.validator(() => {
-      const { data } = form.current.props;
-      console.log("data : "+ JSON.stringify(data))
-      //onOk({ ...data })
+    form.current.validator(() => {      
+      // console.log("data : "+ JSON.stringify(data))
+      // console.log(file)
+
+      const timestamp = new Date().toUTCString()
+
+      const jsonData = {};
+      const vmDataArray = [];
+  
+      jsonData.name = data.name;
+      jsonData.version = data['version'];
+      jsonData.registrant = globals.user.username;
+      jsonData.registrationDate = timestamp;
+
+      listVmInventory.map((item) => {
+        const vmData = {
+          name : data['vm_'+item],
+          host : data['ip_'+item],
+          user : data['user_'+item],
+          privateKey : data['private_key_'+item]
+        }
+        vmDataArray.push(vmData)
+      })
+
+      jsonData.vm = vmDataArray
+
+      const formData = new FormData();
+      formData.append("body", JSON.stringify(jsonData));
+      formData.append("playbook", file);
+      
+      axios.post('/app-manager/v1alpha1/templates', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+          console.log(res.data);
+          onOk({ ...data })
+      }).catch((err) => {
+          console.log("AAAAAAAAAA");
+          console.error(err);
+          Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+          console.log(err);
+      });
+
     })
   }
 
@@ -58,18 +122,20 @@ const RegistModal = (props) => {
     callback()
   }
 
+  const versionValidator = (rule, value, callback) => {
+    if (!!!value) {
+      return callback({ message: t('RESOURCES_VERSION_EMPTY_DESC') })
+    }
+    callback()
+  }
 
   const fnSelectedVmOption = async () => {
     const { data } = form.current.props;
     
-    console.log("listVmInventory : "+ JSON.stringify(listVmInventory))
-    console.log("data : "+ JSON.stringify(data))
     const selectedVmArray = [];
     await listVmInventory.map((item) => {
       !!data['vm_' + item] && selectedVmArray.push(data['vm_' + item])
     })
-
-    console.log("selectedVmArray : "+ JSON.stringify(selectedVmArray))
 
     const checkVmDisabled = await vmOptionList.map((item) => ({
       ...item,
@@ -77,17 +143,14 @@ const RegistModal = (props) => {
     }));
   
     setVmOptionList(checkVmDisabled);
-
   }
 
   useEffect(() => {
     const getVmData = async () => {
       const listVms = await vmStore.fetchList();
-      setVmDataList(listVms);
-
       const opt = listVms.map((obj) => ({
         label: t(obj.name),
-        value: t(obj.id),
+        value: t(obj.name),
         disabled: false,
       }))
       setVmOptionList(opt)
@@ -95,15 +158,25 @@ const RegistModal = (props) => {
 
     getVmData();
   }, [])
+  
+  // 가상머신 selectbox disabled 처리 Start ############################################
+  const [vmSelect,setVmSelect] = useState([]);
+  const fnChangeSelect = (val) => {
+    setVmSelect(val)
+  }
 
-  // 가상머신 Start ############################################
+  useEffect(()=>{
+    fnSelectedVmOption();
+  },[vmSelect]);
+  // 가상머신 selectbox disabled 처리 End ############################################
+
+  // 가상머신 Add, Delete Start ############################################
   const nextVm = useRef(1);
   const [listVmInventory, setListVmInventory] = useState([1]);
 
   const handleVmInventory = {
     addColumn: () => {
-      if (listVmInventory.length > 4) {
-        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
+      if (listVmInventory.length > (vmOptionList.length-1)) {
         return false;
       }
       nextVm.current += 1
@@ -111,11 +184,11 @@ const RegistModal = (props) => {
 
     },
     delColumn: async (id) => {
+      fnChangeSelect(listVmInventory.filter((el) => el !== id));
       setListVmInventory(listVmInventory.filter((el) => el !== id));    
-      setTimeout(()=>{ fnSelectedVmOption() }, 1000)
     },
   }
-  // 가상머신 End ############################################
+  // 가상머신 Add, Delete End ############################################
 
 
   // File Upload Start ############################################
@@ -157,10 +230,19 @@ const RegistModal = (props) => {
               style={{ maxWidth: 'none' }}
             />
           </Form.Item>
+
+          <Form.Item
+                label={t('RESOURCES_VERSION')}
+                rules={[{ required: true, validator: versionValidator }]}
+              >
+                <Input name="version" maxLength={253}
+                  style={{ maxWidth: 'none' }} placeholder="v1" />
+              </Form.Item>
    
           <Form.Item>     
           <>
-            {t('Playbook 등록')}<span className="form-item-required">*</span>   
+            {t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD')}<span className="form-item-required">*</span>
+            <div style={{ color: '#79879c' }}>({t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC')})</div>  
             <Form.Group>
               <div>
                 <input type="file" 
@@ -169,24 +251,28 @@ const RegistModal = (props) => {
                   ref={el => {
                     fileInputRef.current = el
                   }}
+                  accept=".zip"
                 />  
                 <Input name="fileName" className={styles.file_input} value={fileName ? fileName : ''} readOnly />                     
                 <Button type="primary" onClick={() => handleButtonClick()} >
-                  {t('파일 찾기')}
+                  {t('RESOURCES_FIND_FILE')}
                 </Button>             
               </div>
-
-
+              
               {fileValidError &&
-                <div className="form-item-error" style={{ color: '#ca2621' }}>{t('파일을 업로드해 주세요.')}</div>
-              }
-              </Form.Group>             
+                <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FILE_EMPTY_DESC')}</div>
+              }    
+              {fileExtError &&
+                <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_ONLY_UPLOAD_ZIP_FILE')}</div>
+              }        
+              </Form.Group>                         
           </>
           </Form.Item>   
 
           <Form.Item>     
             <>
-              {t('가상머신')}<span className="form-item-required">*</span>   
+              {t('RESOURCES_VM')}<span className="form-item-required">*</span>    
+              <div style={{ color: '#79879c' }}>({t('RESOURCES_APP_DEPLOY_VM_ADD_DESC')})</div>            
               <Form.Group>
                 {listVmInventory.map((obj, idx) => (
                   <div className={styles.scriptitem} key={obj}>
@@ -195,7 +281,7 @@ const RegistModal = (props) => {
                         <Form.Item>
                         <Select
                            name={`vm_${obj}`}
-                            placeholder={t('이름')}
+                            placeholder={t('RESOURCES_NAME')}
                             options={vmOptionList}
                             onChange={() => fnSelectedVmOption()}
                         />
@@ -243,8 +329,11 @@ const RegistModal = (props) => {
                   >
                     {t('RESOURCES_ADD')}
                   </Button>
-                </div>
-              </Form.Group>
+                </div>   
+                {vmValidError &&
+                  <div className="form-item-error" style={{ color: '#ca2621' }}>{t('애플리케이션이 배포될 가상머신을 입력해 주세요.')}</div>
+                }                    
+              </Form.Group>              
             </>
           </Form.Item>   
 

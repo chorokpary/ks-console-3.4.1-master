@@ -34,6 +34,9 @@ export default class AppDeployStore extends Base {
   module = 'appdeploy'
 
   getResourceUrl = (params = {}) => `app-manager/v1alpha1/templates`
+  getHistoryUrl = (params = {}) => `app-manager/v1alpha1/taskhistories`
+  getDeployUrl = (params = {}) => `app-manager/v1alpha1/tasks`
+
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
@@ -168,8 +171,6 @@ export default class AppDeployStore extends Base {
     )
     const detail = { ...params, ...this.mapper(result), kind: 'AppDeploy' }
 
-    console.log("detail : "+ JSON.stringify(detail))
-
     this.detail = detail
     this.isLoading = false
     return detail
@@ -182,9 +183,9 @@ export default class AppDeployStore extends Base {
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(id =>
+          rowKeys.map(username =>
             request.delete(
-              `${this.getDetailUrl({ id, ...params })}`
+              `${this.getDetailUrl({ name: username, ...params })}`
             )
           )
         )
@@ -203,4 +204,37 @@ export default class AppDeployStore extends Base {
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 
+  @action
+  async fetchHistoryList(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getHistoryUrl(params)}/${params.name}`
+    );
+    const response = { ...params, ...this.mapper(result), kind: 'records' };
+
+    console.log("response : "+ JSON.stringify(response))
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async deploy({ detail, ...params }) {
+    const jsonData = {};
+    jsonData.action = "deploy";
+    jsonData.templateName = detail.name;
+
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+
+    // await this.submitting(
+    //   request.post(
+    //     `${this.getDeployUrl(params)}`,
+    //     jsonData
+    //   )
+    // );
+  }
+
 }
+
+
+
