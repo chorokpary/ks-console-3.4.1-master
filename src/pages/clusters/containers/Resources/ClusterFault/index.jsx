@@ -77,7 +77,7 @@ export default class ClusterFault extends React.Component {
         title: t('RESOURCES_CLUSTER_FAULT_PROVIDER'),
         dataIndex: 'metadata.labels["k8sgpts.k8sgpt.ai/name"]',
         isHideable: true,
-        width: 120,
+        width: 130,
       },
       {
         title: t('RESOURCES_CLUSTER_FAULT_ERROR'),

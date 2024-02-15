@@ -22,6 +22,7 @@ import { Modal } from 'components/Base'
 import DeleteModal from 'components/Modals/Delete'
 import DetailModal from 'clusters/containers/Resources/components/Modals/ClusterFault/Detail'
 import RegistModal from 'clusters/containers/Resources/components/Modals/ClusterFault/Regist'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/ClusterFault/Modify'
 import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 import FORM_TEMPLATES from 'utils/form.templates'
 
@@ -68,6 +69,29 @@ export default {
             })
         },
     },
+    'clusterfault.modify': {
+        on({ store, cluster, workspace, namespace, item, success, ...props }) {
+            const modal = Modal.open({
+                title: t('RESOURCES_CLUSTER_FAULT_TITLE') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET'),
+                onOk: data => {
+                    store
+                        .modifyCr(data)
+                        .then((res) => {
+                            Modal.close(modal)
+                            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+                            success && success()
+                        })
+                },
+                item,
+                modal: ModifyModal,
+                store,
+                cluster,
+                workspace,
+                namespace,
+                ...props,
+            })
+        },
+    },
     'clusterfault.delete': {
         on({ store, cluster, workspace, namespace, success, activeCr, name, ...props }) {
             const modal = Modal.open({
@@ -78,7 +102,7 @@ export default {
                         success && success()
                     })
                 },
-                title: t('Operator 삭제'),
+                title: t('RESOURCES_CLUSTER_FAULT_DELETE'),
                 desc: t.html('RESOURCES_DELETE_CR_TIP', { resource: name }),
                 resource: name,
                 modal: DeleteModal,
@@ -96,11 +120,11 @@ export default {
                 onOk: () => {
                     store.activateCr({ ...item, activeCr }).then(() => {
                         Modal.close(modal)
-                        Notify.success({ content: t('Operator 사용 대상이 설정되었습니다.') })
+                        Notify.success({ content: t('RESOURCES_CLUSTER_FAULT_ACTIVE_CR_SUCCESS') })
                         success && success()
                     })
                 },
-                title: t('사용 대상 설정'),
+                title: t('RESOURCES_CLUSTER_FAULT_ACTIVE_CR_TITLE'),
                 desc: t.html('RESOURCES_ACTIVATE_CR', { resource: name }),
                 modal: ConfirmModal,
                 store,
