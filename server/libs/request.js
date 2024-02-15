@@ -88,11 +88,11 @@ const send_harbor_request = ({ path, params }) => {
   const httpsAgent =
     protocol === 'https://'
       ? new https.Agent({
-          rejectUnauthorized: !isSkipTLS,
-        })
+        rejectUnauthorized: !isSkipTLS,
+      })
       : new http.Agent({
-          rejectUnauthorized: !isSkipTLS,
-        })
+        rejectUnauthorized: !isSkipTLS,
+      })
 
   let AuthorizationHeader = {}
 
