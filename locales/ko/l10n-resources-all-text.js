@@ -531,5 +531,16 @@ module.exports = {
   RESOURCES_TASK: '테스크',
   RESOURCES_TASK_ID: '테스크 ID',
   RESOURCES_NO_DATA_TASK_LOG: '태스크 이력이 없습니다.',
+  RESOURCES_CREATE_TEMPLATE: '템플릿 생성',
+  RESOURCES_EDIT_TEMPLATE: '템플릿 수정',
+  RESOURCES_APP_DEPLOY_VM_EMPTY_DESC: '애플리케이션이 배포될 가상머신을 입력해 주세요.',
+  RESOURCES_FIND_FILE: '파일 찾기',
+  RESOURCES_FILE_EMPTY_DESC: '파일을 업로드해 주세요.',
+  RESOURCES_ONLY_UPLOAD_ZIP_FILE: 'ZIP 파일만 업로드해 주세요.',
+  RESOURCES_DELETE_APP_DEPLOY_TIP: '애플리케이션 배포 관리의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_TASK_DEPLOY: '태스크 실행 ',
+  RESOURCES_DEPLOY_DESC: '배포 하시겠습니까?',
+  RESOURCES_DEPLOYED_SUCCESSFULLY: '배포 되었습니다.',
+  RESOURCES_DEPLOY: '배포',
 
 };

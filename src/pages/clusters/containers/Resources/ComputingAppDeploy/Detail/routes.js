@@ -25,7 +25,7 @@ const PATH = '/clusters/:cluster/computingappdeploy/:name'
 export default [
   {
     path: `${PATH}/status`,
-    title: t('RESOURCES_STATE'),
+    title: t('RESOURCES_TASK'),
     component: Status,
     exact: true,
   },

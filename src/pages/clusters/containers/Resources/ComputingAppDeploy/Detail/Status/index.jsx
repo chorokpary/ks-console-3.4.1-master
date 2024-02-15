@@ -3,70 +3,83 @@ import React, {useState, useEffect} from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
-import { Card } from 'components/Base'
-import { Button, Notify } from '@kube-design/components'
+import { Button, Notify, Loading } from '@kube-design/components'
+
+import AppDeployStore from 'stores/resources/appdeploy'
 
 import styles from './index.scss'
 
 const Status = (props) => {
 
   const store = props.detailStore;
+  const appDeployStore = new AppDeployStore();
 
-  const [showSecret, setShowSecret] = useState(false);
+  const [historyList, setHistoryList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [encodeKey, setEncodeKey] = useState();
-  const [originData, setOriginData] = useState();
-
-  const createEncode64 = (key) => {
-    let forge = require('node-forge');
-    const encoded = forge.util.encode64(key);
-    return encoded;
-  }
-
-  const convert = () => {
-    return showSecret ? originData : encodeKey
-  }
-
-  const textClipboard = () => {
-    const keyText = showSecret ? originData : encodeKey;
-    navigator.clipboard.writeText(keyText);
-    Notify.success(t('RESOURCES_COPY_SUCCESSFUL'));
-  }
-
-  // 초기 데이터 처리
   useEffect(() => {
-    setOriginData(get(store.detail.keypair, 'public_key', ''));
-    setEncodeKey(createEncode64(get(store.detail.keypair, 'public_key', '')));
-  }, [])
+    const getHistoryList = async () => {
 
-  const renderOperations = () =>{
-    return (
-      <div>
-        <Button
-          type="flat"
-          icon={showSecret ? 'eye' : 'eye-closed'}
-          onClick={() => {setShowSecret(!showSecret)}}
-        />
-        <Button onClick={() => textClipboard()}>{t('RESOURCES_COPY')}</Button>
-      </div>
-    )
-  }
+      const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
+      const response = await appDeployStore.fetchHistoryList(parms);
+      // setHistoryList(response.events)
+      setIsLoading(false);
+
+    };
+    getHistoryList();
+  }, [])
 
   return (
     <>  
-        <div>
-         <Card operations={renderOperations()}>
-          <div className={styles.defaultWrapper}>
-              <ul>
-                  <li>
-                    <span>
-                      <pre>{convert()}</pre>
-                    </span>
-                  </li>
-              </ul>
-            </div>
-         </Card>
-      </div>         
+       <div className={styles.defaultWrapper}>
+
+          {historyList?.length == 0 &&
+            <div className={styles.wrapper}>
+                {isLoading ?
+                  <div className={styles.loading}><Loading /></div>
+                  : <div className={styles.empty}>{t('RESOURCES_NO_DATA_TASK_LOG')}</div>
+                }
+              </div>
+          }
+
+          {historyList?.length > 0 &&
+            <div className={styles.table}>
+                <table>
+                  <colgroup>
+                      <col width="10%"/>
+                      <col width="15%"/>
+                      <col width="15%"/>
+                      <col width="20%"/>
+                      <col width="20%"/>
+                      <col width="20%"/>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th><strong>{t('RESOURCES_TASK_ID')}</strong></th>
+                        <th><strong>{t('RESOURCES_VERSION')}</strong></th>
+                        <th><strong>{t('RESOURCES_STATE')}</strong></th>
+                        <th><strong>{t('RESOURCES_START_TIME')}</strong></th>
+                        <th><strong>{t('RESOURCES_END_TIME')}</strong></th>
+                        <th><strong>{t('RESOURCES_DESCRIPTION')}</strong></th>
+                      </tr>
+                    </thead>
+                    <tbody>                     
+                        {historyList && historyList.map((obj, index) => (
+                          <tr key={index}>
+                            <td><p className="underline">{obj.id}</p></td>
+                            <td><p>-</p></td>
+                            <td><p>{obj.status}</p></td>
+                            <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
+                            <td><p>{getLocalTime(obj.endTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
+                            <td><p>{obj.explanation}</p></td>
+                          </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>      
+          }
+
+          </div>                 
     </>
   );
 };
