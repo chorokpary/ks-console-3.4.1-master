@@ -8,6 +8,7 @@ import classnames from 'classnames'
 import styles from './index.scss'
 import * as common from "utils/resources"
 import axios from 'axios'
+import moment from 'moment-mini'
 
 import VmStore from 'stores/resources/vms'
 
@@ -32,39 +33,45 @@ const RegistModal = (props) => {
   const handleOk = () => {
     const onOk = props.onOk;
 
-    const { data } = form.current.props;
-
-    listVmInventory.map((obj) => {
-      if(!!data['vm_'+obj] && !!data['ip_'+obj] && !!data['user_'+obj] && !!data['private_key_'+obj]){
-        const isValidIpAddress = regexIp.test(data['ip_'+obj]) ? false : true;
-        setVmValidError(isValidIpAddress);
-        return false;
-      }else{
-        setVmValidError(true)
-      }  
-    })
-
-    if(!file){
-      setFilerValidError(true)
-      setFileExtError(false)
-      return false;
-    }else{    
-      const ext =  (file.name).split('.').pop().toLowerCase();
-      const isValidExt = ext == "zip" ? true : false;
-      if(isValidExt){
-        setFilerValidError(false)
-      }else{
-        setFilerValidError(false)
-        setFileExtError(true)
-        return false;
-      }     
-    }
-
     form.current.validator(() => {      
-      // console.log("data : "+ JSON.stringify(data))
-      // console.log(file)
 
-      const timestamp = new Date().toUTCString()
+      const { data } = form.current.props;
+
+      if(!file){
+        setFilerValidError(true)
+        setFileExtError(false)
+        return false;
+      }else{    
+        const ext =  (file.name).split('.').pop().toLowerCase();
+        const isValidExt = ext == "zip" ? true : false;
+        if(isValidExt){
+          setFilerValidError(false)
+        }else{
+          setFilerValidError(false)
+          setFileExtError(true)
+          return false;
+        }     
+      }
+  
+      const vmErrorArray = [];
+      listVmInventory.map((obj) => {
+        if(!!data['vm_'+obj] && !!data['ip_'+obj] && !!data['user_'+obj] && !!data['private_key_'+obj]){
+          const isValidIpAddress = regexIp.test(data['ip_'+obj]) ? false : true;
+          setVmValidError(isValidIpAddress);
+          vmErrorArray.push(isValidIpAddress)
+          return false;     
+        }else{
+          vmErrorArray.push(true)
+          setVmValidError(true)
+          return false;
+        }  
+      })
+
+      if(vmErrorArray.includes(true)){
+        return false;
+      }
+
+      const timestamp = moment(Date()).toISOString();
 
       const jsonData = {};
       const vmDataArray = [];
@@ -89,7 +96,7 @@ const RegistModal = (props) => {
       const formData = new FormData();
       formData.append("body", JSON.stringify(jsonData));
       formData.append("playbook", file);
-      
+
       axios.post('/app-manager/v1alpha1/templates', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -176,9 +183,9 @@ const RegistModal = (props) => {
 
   const handleVmInventory = {
     addColumn: () => {
-      if (listVmInventory.length > (vmOptionList.length-1)) {
-        return false;
-      }
+      // if (listVmInventory.length > (vmOptionList.length-1)) {
+      //   return false;
+      // }
       nextVm.current += 1
       setListVmInventory(listVmInventory => [...listVmInventory, nextVm.current]);
 
