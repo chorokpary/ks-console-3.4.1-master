@@ -11,15 +11,20 @@ import { observer, inject } from 'mobx-react';
 import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
 
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
+import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList'
 
 const store = new ImageStore();
 
 const ImageDetail = (props) => {
 
+  const [refreshTimer, setRefreshTimer] = useState(0)
+
   useEffect(() => {
-    fetchData();
-  }, [])
+    setTimeout(() => {
+      fetchData();
+      setRefreshTimer(refreshTimer + 1);
+    }, 4000);
+  }, [refreshTimer])
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);

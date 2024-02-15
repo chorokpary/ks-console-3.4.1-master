@@ -13,9 +13,9 @@ import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import routes from './routes'
 
-import KeypairStore from 'stores/resources/keypairs'
+import AppDeployStore from 'stores/resources/appdeploy'
 
-const store = new KeypairStore();
+const store = new AppDeployStore();
 
 const AppManageDetail = (props) => {
 
@@ -42,23 +42,11 @@ const AppManageDetail = (props) => {
         show: showEdit,
         onClick: () =>
             props.rootStore.triggerAction('computingappdeploy.edit', {
-            type: 'KEYPAIR_DETAIL',
+            type: 'APPDEPLOY_DETAIL',
             detail: toJS(store.detail),
             store: store,
             success: fetchData,
           }),
-      },
-      {
-        key: 'viewYaml',
-        icon: 'eye',
-        text: t('VIEW_YAML'),
-        action: 'view',
-        onClick: () => {
-            props.rootStore.triggerAction('computingappdeploy.yaml.view', {
-            yaml: store.yaml,
-            readOnly: true,
-          })
-        },
       },
       {
         key: 'delete',
@@ -69,7 +57,7 @@ const AppManageDetail = (props) => {
         show: showEdit,
         onClick: () =>
             props.rootStore.triggerAction('computingappdeploy.remove', {
-            type: 'KEYPAIR_DETAIL',
+            type: 'APPDEPLOY_DETAIL',
             detail: toJS(store.detail),
             store: store,
             cluster: props.match.params.cluster,
@@ -91,8 +79,33 @@ const AppManageDetail = (props) => {
           value: detail.cluster,
         },
         {
-          name: t('RESOURCES_DESCRIPTION'),
-          value: detail.keypair.description,
+          name: t('RESOURCES_NAME'),
+          value: detail.name,
+        },
+        {
+          name: t('RESOURCES_VERSION'),
+          value: detail.version,
+        },
+        {
+          name: t('Playbook'),
+          value: detail.playbookName,
+        },
+        {
+          name: t('RESOURCES_VM'),
+          value:  detail.vm.length > 0
+                  ? detail.vm&&
+                    detail.vm.map(vm => (
+                      <p key={vm.name}>{vm.name}</p>
+                    ))
+                  : '-',
+        },
+        {
+          name: t('RESOURCES_SIZE'),
+          value: common.fnFormatBytes((detail.playbookSize).toString()),
+        },
+        {
+          name: t('RESOURCES_REGIST_DATE'),
+          value: getLocalTime(detail.registrationDate).format('YYYY-MM-DD HH:mm:ss'),
         },
       ]
     }
@@ -102,7 +115,7 @@ const AppManageDetail = (props) => {
     }
 
     const sideProps = {
-        icon: "key",
+        icon: "application",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),
@@ -110,7 +123,7 @@ const AppManageDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('RESOURCES_KEYPAIR'),
+                label: t('RESOURCES_APP_DEPLOY_MANAGE'),
                 url: listUrl,
             },
         ],

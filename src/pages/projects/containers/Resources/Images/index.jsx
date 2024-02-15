@@ -37,6 +37,48 @@ import ImageStore from 'stores/resources/images'
 })
 export default class Images extends React.Component {
 
+  //auto refresh start  ##################################
+  constructor(props) {
+    super(props)
+    this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+  }
+
+  componentDidUpdate() {
+    if (this.refreshTimer === null && this.isRuning) {
+      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.refreshTimer)
+    this.unsubscribe && this.unsubscribe()
+  }
+
+  refreshHandler = () => {
+    const { page, limit } = toJS(this.props.store.list);
+    if (this.isRuning) {
+      this.getData({ silent: true, page, limit })
+    } else {
+      clearInterval(this.refreshTimer)
+      this.refreshTimer = null
+    }
+  }
+
+  get isRuning() {
+    const { selectedRowKeys } = toJS(this.props.store.list)
+    const runingFlag = selectedRowKeys.length > 0 ? false : true;
+    return runingFlag
+  }
+
+  getData = params => {
+    this.props.store.fetchList({
+      ...this.props.match.params,
+      ...params,
+      ...this.props.query // search param
+    })
+  }
+  //auto refresh end  ##################################
+
   showAction(record) {
     return globals.user.username !== record.name
   }

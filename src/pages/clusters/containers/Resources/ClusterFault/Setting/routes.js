@@ -18,16 +18,16 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/ComputingAppDeploy/Detail/Status'
+import Setting from 'clusters/containers/Resources/ClusterFault/Setting/Status'
 
-const PATH = '/clusters/:cluster/computingappdeploy/:name'
+const PATH = '/clusters/:cluster/clusterfault/setting'
 
 export default [
-  {
-    path: `${PATH}/status`,
-    title: t('RESOURCES_TASK'),
-    component: Status,
-    exact: true,
-  },
-  getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
+    {
+        path: `${PATH}/status`,
+        title: t('RESOURCES_CLUSTER_FAULT_PROVIDER'),
+        component: Setting,
+        exact: true,
+    },
+    getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
 ]

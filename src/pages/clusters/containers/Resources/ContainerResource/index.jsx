@@ -164,7 +164,7 @@ export default class Resource extends React.Component {
 
     getState(state, phase) {
 
-        if(phase != "Provisioned"){
+        if(phase != "Provisioned" && phase != "Running" ){
             return "updating"
         }
 

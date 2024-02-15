@@ -16,26 +16,29 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection, join } from 'lodash'
+import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
-import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
-export default class ContainerImagesStore extends Base {
+export default class AppDeployStore extends Base {
 
   records = new List()
 
-  module = 'images'
+  module = 'appdeploy'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/capk/images`
+  getResourceUrl = (params = {}) => `app-manager/v1alpha1/templates`
+  getHistoryUrl = (params = {}) => `app-manager/v1alpha1/taskhistories`
+  getDeployUrl = (params = {}) => `app-manager/v1alpha1/tasks`
+
   getListUrl = this.getResourceUrl
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
   @action
   async fetchList({
@@ -47,8 +50,9 @@ export default class ContainerImagesStore extends Base {
     silent,
     ...params
   } = {}) {
+    // console.log("silent : "+ silent)
     if (!silent) {
-      this.list.isLoading = true;
+      this.list.isLoading = true
     }
 
     if (!params.sortBy && params.ascending === undefined) {
@@ -63,36 +67,13 @@ export default class ContainerImagesStore extends Base {
     params.limit = params.limit || 10
 
     const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
-      this.getFilterParams(params)
+      this.getResourceUrl()
     )
 
-    // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes']
-    const apiName = mm3Array.includes(this.module) ? this.module : "";
-
-    const data = (get(result, apiName.replace('resources', '')) || []).map(item => ({
-      cluster,
-      namespace,
-      ...this.mapper(item),
-    }))
-
-    //Image Detail 정보 추가 
-    const imageArray = [];
-    const promises = data.map(async (image) => {
-      const imageDetail = await axios.get("/edgetron/resources/capk/images/" + image.name);
-      image.image_detail = imageDetail.data.image;
-      imageArray.push(image);
-    })
-    await Promise.all(promises);
-
-    // 초기 정렬 처리
-    imageArray.sort((a, b) => {
-      return a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0;
-    });
+    const data = result;
 
     // 초기 데이터 처리 
-    this.dataList = imageArray;
+    this.dataList = data.templates;
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -108,9 +89,6 @@ export default class ContainerImagesStore extends Base {
     if (searchArray.length > 0) {
       searchArray.map((search) => {
         let resultList = this.dataList.filter((row) => {
-          if (search.searchKeywordType === 'project') {
-            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-          }
           return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
         });
         this.dataList = resultList;
@@ -144,18 +122,26 @@ export default class ContainerImagesStore extends Base {
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
 
-    // console.log(data)
+    //console.log(this.dataList)
 
-    return data
+    return this.dataList
   }
 
   @action
   async create(data, params = {}) {
-
     const url = this.getResourceUrl(params);
 
-    console.log("data : " + JSON.stringify(data))
-    const res = await request.post(url, data)
+    const jsonData = {};
+    const appdeployData = {};
+
+    appdeployData.name = data.name;
+    appdeployData.public_key = data.publicKey;
+    appdeployData.project = data.project;
+    appdeployData.description = data?.description;
+
+    jsonData.appdeploy = appdeployData;
+
+    const res = await request.post(url, jsonData)
     return res
   }
 
@@ -163,12 +149,18 @@ export default class ContainerImagesStore extends Base {
   async update({ name, ...params }, data) {
 
     const jsonData = {};
-    jsonData.image = data;
+    const appdeployData = {};
+
+    appdeployData.id = data.id;
+    appdeployData.description = data?.description;
+
+    jsonData.appdeploy = appdeployData;
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
     )
   }
+
 
   @action
   async fetchDetail(params) {
@@ -177,28 +169,11 @@ export default class ContainerImagesStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
     )
-    const detail = { ...params, ...this.mapper(result), kind: 'Containerimages' }
-
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
+    const detail = { ...params, ...this.mapper(result), kind: 'AppDeploy' }
 
     this.detail = detail
     this.isLoading = false
     return detail
-  }
-
-  @action
-  async fetchYaml(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
-    )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Containerimages' }
-
-    this.yaml = yamlData.manifest
-    this.isLoading = false
-    return yamlData
   }
 
   @action
@@ -229,4 +204,37 @@ export default class ContainerImagesStore extends Base {
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 
+  @action
+  async fetchHistoryList(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getHistoryUrl(params)}/${params.name}`
+    );
+    const response = { ...params, ...this.mapper(result), kind: 'records' };
+
+    console.log("response : "+ JSON.stringify(response))
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async deploy({ detail, ...params }) {
+    const jsonData = {};
+    jsonData.action = "deploy";
+    jsonData.templateName = detail.name;
+
+    console.log("jsonData : "+ JSON.stringify(jsonData))
+
+    // await this.submitting(
+    //   request.post(
+    //     `${this.getDeployUrl(params)}`,
+    //     jsonData
+    //   )
+    // );
+  }
+
 }
+
+
+

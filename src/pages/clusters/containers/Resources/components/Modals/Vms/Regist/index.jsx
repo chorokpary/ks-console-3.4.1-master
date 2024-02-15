@@ -37,6 +37,7 @@ const RegistModal = (props) => {
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
 
   const [selectImageName, setSelectImageName] = useState();
+  const [selectBootId, setSelectBootId] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
   const [selectImageDistroType, setSelectImageDistroType] = useState();
 
@@ -140,7 +141,7 @@ const RegistModal = (props) => {
   const bootvolumeOptions = () => {
     const opt = bootVolumeDataList.map((obj) => ({
       label: t(obj.name),
-      value: t(obj.name),
+      value: t(obj.id),
     }))
     return opt
   }
@@ -242,9 +243,10 @@ const RegistModal = (props) => {
       } else if (imageType == "B" && (data.name == undefined || !regexName.test(data.name) || data.bootvolume == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
         handleOk();
       } else {
-        const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi', '');
+        const imageSize = imageType == "I" ? imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi', '')
+                                          : bootVolumeDataList.filter(item => item.id == selectBootId).map(item => item.capacity)[0].replace('Gi', '');
         const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
-
+        
         if (flavorSize > imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
@@ -660,6 +662,9 @@ const RegistModal = (props) => {
                       defaultValue={t('RESOURCES_SELECT')}
                       options={bootvolumeOptions()}
                     // clearable
+                      onChange={(e) => {
+                        setSelectBootId(e);
+                      }}
                     />
                   </Form.Item>
                 }
@@ -683,7 +688,7 @@ const RegistModal = (props) => {
                         defaultDescription={t('RESOURCES_SELECT_FLAVOR_TIP')}
                       />
                     </Form.Item>
-                    <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>{t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')}</div>
+                    <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>{imageType == "i" ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC') : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}</div>
                   </Column>
 
                   <Column>

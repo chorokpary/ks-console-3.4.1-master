@@ -202,6 +202,11 @@ const DetailKaasList = props => {
               <div className={classnames(styles.item)}>
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} />
+                  <Indicator
+                    className={styles.indicator}
+                    type={getState(obj?.ready_status, obj?.phase)}
+                    flicker
+                  />
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
                   <div>{obj.name}</div>
@@ -318,8 +323,7 @@ const DetailKaasList = props => {
   };
 
   const getState = (state, phase) => {
-
-    if(phase != "Provisioned"){
+    if(phase != "Provisioned" && phase != "Running" ){
       return "updating"
     }
 

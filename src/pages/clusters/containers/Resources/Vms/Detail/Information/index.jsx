@@ -15,7 +15,7 @@ const Information = (props) => {
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailVolume, setDetailVolume] = useState([]);
   const [detailNetwork, setDetailNetwork] = useState([]);
-  const [detailImage, setDetailImage] = useState(null);
+  const [detailImage, setDetailImage] = useState({});
 
   const [hostDevicesList, setHostDevicesList] = useState([]);
   const [mediatedDevicesList, setmMediatedDevicesList] = useState([]);
@@ -96,12 +96,13 @@ const Information = (props) => {
                 <div className="cont_box1">
                   <h5><span>VM</span>{store.detail.vm?.name}</h5>
                   <div className="group">
-
                     <div className="info"><i className={(store.detail.vm?.cpu_arch)?.includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch)?.includes('x86') ? "X86" : "ARM"}</span></div>
+                    {store.detail.vm?.image?.name &&
                     <div className="info">
                       <i className={`ico-os-${detailImage?.distro_type}`}></i>
-                      <span>{store.detail.vm?.image.name}</span>
+                      <span>{store.detail.vm?.image?.name}</span>
                     </div>
+                    }
                   </div>
                 </div>
                 <div className="cont_box2">
