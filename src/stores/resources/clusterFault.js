@@ -19,7 +19,7 @@
 import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import { safeBtoa } from 'utils/base64'
+import { safeBtoa, safeAtob } from 'utils/base64'
 
 import Base from '../basemm3'
 
@@ -230,7 +230,6 @@ export default class ClusterFaultStore extends Base {
         const result = await request.get(
             `${this.getResourceUrl()}/k8sgpts\?labelSelector=list-k8sgpt/enabled`
         )
-
         const detail = get(result, 'items[0].metadata.name') || ''
 
         return detail
@@ -242,7 +241,7 @@ export default class ClusterFaultStore extends Base {
      */
     @action
     async activeCrList() {
-        const result = await request.get(`${this.getResourceUrl()}/k8sgpts`)
+        const result = await request.get(`${this.getResourceUrl()}/k8sgpts`);
 
         return get(result, 'items')
     }
@@ -388,30 +387,38 @@ export default class ClusterFaultStore extends Base {
     async createOpenAi(data, params = {}) {
         let secretRes = await this.createOpenAiSecretKey(data)
 
-        const owner_ref = {
-            apiVersion: get(secretRes, 'apiVersion'),
-            kind: get(secretRes, 'kind'),
-            name: get(secretRes, 'metadata.name'),
-            uid: get(secretRes, 'metadata.uid'),
-        }
-        const cr_secret_key = data.secret
+        await this.applySecret(data, secretRes)
+    }
 
-        params = {
-            "apiVersion": "v1",
-            "kind": "Secret",
-            "metadata": {
-                "name": `${data.name}-secret`,
-                "namespace": "k8sgpt-operator-system",
-                "ownerReferences": [owner_ref]
-            },
-            "data": {
-                "openai-api-key": safeBtoa(cr_secret_key) // base64 encode
-            },
-            "type": "Opaque"
-        }
-
+    /**
+     * secret key 적용
+     * @returns 
+     */
+    @action
+    async applySecret(data, secretRes) {
         try {
-            // secret key 적용
+            const owner_ref = {
+                apiVersion: get(secretRes, 'apiVersion'),
+                kind: get(secretRes, 'kind'),
+                name: get(secretRes, 'metadata.name'),
+                uid: get(secretRes, 'metadata.uid'),
+            }
+            const cr_secret_key = data.secret
+
+            let params = {
+                "apiVersion": "v1",
+                "kind": "Secret",
+                "metadata": {
+                    "name": `${data.name}-secret`,
+                    "namespace": "k8sgpt-operator-system",
+                    "ownerReferences": [owner_ref]
+                },
+                "data": {
+                    "openai-api-key": safeBtoa(cr_secret_key) // base64 encode
+                },
+                "type": "Opaque"
+            }
+
             let res = await this.submitting(
                 request.post(`api/v1/namespaces/k8sgpt-operator-system/secrets`, params)
             )
@@ -474,5 +481,142 @@ export default class ClusterFaultStore extends Base {
         await this.submitting(
             request.delete(`${this.getResourceUrl()}/list-k8sgpts/${name}`)
         )
+    }
+
+    /**
+     * CR 수정
+     * @returns 
+     */
+    @action
+    async modifyCr(data) {
+        if (data.originOperator === 'localai') {
+            this.modifyLocalAi(data)
+        } else if (data.originOperator === 'openai') {
+            this.modifyOpenAi(data)
+        }
+    }
+
+    /**
+     * CR 수정 > localai to any
+     * @returns 
+     */
+    @action
+    async modifyLocalAi(data) {
+        if (data.operator === 'localai') { // localai > localai
+            let params = {
+                "spec": {
+                    "ai": {
+                        "baseUrl": data.baseurl,
+                        "model": data.model
+                    }
+                }
+            }
+            await this.submitting(
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                    headers: {
+                        'content-type': 'application/merge-patch+json',
+                    },
+                })
+            )
+        } else if (data.operator === 'openai') { // localai > openai
+            let params = {
+                "spec": {
+                    "ai": {
+                        "backend": data.operator,
+                        "baseUrl": null,
+                        "model": data.model,
+                        "secret": {
+                            "name": `${data.name}-secret`,
+                            "key": "openai-api-key"
+                        }
+                    }
+                }
+            }
+            let secretRes = await this.submitting(
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                    headers: {
+                        'content-type': 'application/merge-patch+json',
+                    },
+                })
+            )
+
+            await this.applySecret(data, secretRes)
+        }
+    }
+
+    /**
+     * CR 수정 > openai to any
+     * @returns 
+     */
+    @action
+    async modifyOpenAi(data) {
+        if (data.operator === 'localai') { // openai > localai
+            let params = {
+                "spec": {
+                    "ai": {
+                        "backend": data.operator,
+                        "baseUrl": data.baseurl,
+                        "model": data.model,
+                        "secret": null
+                    }
+                }
+
+            }
+            await this.submitting(
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                    headers: {
+                        'content-type': 'application/merge-patch+json',
+                    },
+                })
+            )
+            // secret 삭제
+            await this.submitting(
+                request.delete(`api/v1/namespaces/k8sgpt-operator-system/secrets/${data.name}-secret`)
+            )
+
+        } else if (data.operator === 'openai') { // openai > openai
+            let params = {
+                "spec": {
+                    "ai": {
+                        "model": data.model,
+                    }
+                }
+            }
+            // model 수정
+            await this.submitting(
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                    headers: {
+                        'content-type': 'application/merge-patch+json',
+                    },
+                })
+            )
+
+            // secret 수정
+            let secret = {
+                "data": {
+                    "openai-api-key": safeBtoa(data.secret) // base64 encode
+                }
+            }
+            await this.submitting(
+                request.patch(`api/v1/namespaces/k8sgpt-operator-system/secrets/${data.name}-secret`, secret, {
+                    headers: {
+                        'content-type': 'application/merge-patch+json',
+                    },
+                })
+            )
+        }
+    }
+
+    /**
+     * secret key 조회
+     * @returns 
+     */
+    @action
+    async getSecretKey(name) {
+        let res = await this.submitting(
+            request.get(`api/v1/namespaces/k8sgpt-operator-system/secrets/${name}-secret`)
+        )
+        let secretkey = get(res, 'data.openai-api-key');
+        return safeAtob(secretkey)
     }
 }

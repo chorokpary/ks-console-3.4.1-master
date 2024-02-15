@@ -43,7 +43,7 @@ const Status = (props) => {
   const moreAction = [
     {
       key: 'triangle-right',
-      text: '사용 대상 설정',
+      text: t('RESOURCES_CLUSTER_FAULT_ACTIVE_CR_TITLE'),
       onClick: (item) => {
         props.rootStore.triggerAction('clusterfault.activateCr', {
           store: store,
@@ -59,14 +59,14 @@ const Status = (props) => {
     },
     {
       key: 'pen',
-      text: '정보 편집',
+      text: t('RESOURCES_CLUSTER_FAULT_CR_EDIT'),
       onClick: (item) => {
-        showCreate(item)
+        showEdit(item)
       }
     },
     {
       key: 'trash',
-      text: '삭제',
+      text: t('RESOURCES_DELETE'),
       onClick: (item) => {
         props.rootStore.triggerAction('clusterfault.delete', {
           store,
@@ -170,6 +170,19 @@ const Status = (props) => {
     })
   }
 
+  /**
+   * 수정 버튼
+   */
+  const showEdit = (item) => {
+    const { match, module } = props
+    return props.rootStore.triggerAction('clusterfault.modify', {
+      module,
+      store,
+      item,
+      success: fnGetData,
+    })
+  }
+
   const renderHeader = () => {
     return (
       <div className={styles.header}>
@@ -183,7 +196,7 @@ const Status = (props) => {
           <Button type="flat" icon="refresh" onClick={handleRefresh} />
         </div>
         <Button type="control" onClick={showCreate} data-test="table-create">
-          생성
+          {t('RESOURCES_CREATE')}
         </Button>
       </div>
     )
@@ -205,22 +218,29 @@ const Status = (props) => {
 
   const getColumns = () => [
     {
-      title: t('사용'),
+      title: t('RESOURCES_USE'),
       dataIndex: '',
       render: (_, item) => (
         item.metadata.name === activeCr ? <Icon name="check" /> : ''
       )
     },
     {
-      title: t('이름'),
+      title: t('RESOURCES_NAME'),
       dataIndex: 'metadata.name',
+    },
+    {
+      title: t('RESOURCES_CLUSTER_FAULT_OPERATOR'),
+      dataIndex: 'spec.ai.backend',
+      render: (operator) => (
+        operator === 'localai' ? 'Local AI' : 'Open AI'
+      )
     },
     {
       title: t('Project/DevOps Project'),
       dataIndex: 'metadata.namespace',
     },
     {
-      title: t('등록일'),
+      title: t('RESOURCES_REGIST_DATE'),
       dataIndex: 'metadata.creationTimestamp',
       render: (creationTimestamp) => (
         getLocalTime(creationTimestamp).format('YYYY-MM-DD HH:mm:ss')
@@ -236,7 +256,7 @@ const Status = (props) => {
   ]
 
   const disableMoreMenu = () => {
-    return activationDeleting ? Notify.info('이전 Operator가 비활성화중입니다.') : ''
+    return activationDeleting ? Notify.info(t('RESOURCES_CLUSTER_FAULT_DELETING_CR')) : ''
   }
 
   /**

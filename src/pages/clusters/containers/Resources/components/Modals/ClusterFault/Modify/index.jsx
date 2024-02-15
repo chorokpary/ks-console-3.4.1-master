@@ -11,27 +11,40 @@ import styles from './index.scss'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
-const RegistModal = (props) => {
+const ModifyModal = (props) => {
+
   // const detail = props.detail;
   const form = useRef();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
-  const [operator, setOperator] = useState('')
+  const [operator, setOperator] = useState(get(props.item, 'spec.ai.backend'))
+  const [secretkey, setSecretkey] = useState('')
 
   const closeModal = () => {
     setModalView(false);
   }
 
+  useEffect(() => {
+    if (operator === 'openai') {
+      getSecretKey()
+    }
+  }, [])
+
+  const getSecretKey = async () => {
+    let secretkey = await props.store.getSecretKey(get(props.item, 'metadata.name'))
+    setSecretkey(secretkey)
+  }
+
   const operatorOptions = [
     {
       label: 'Open AI',
-      description: t('RESOURCES_CLUSTER_FAULT_MODAL_OPENAI_DESC'),
+      description: 'Open AI 엔진 기반으로 분석합니다.',
       icon: `ico-type24-solution`,
       value: 'openai',
     },
     {
       label: 'Local AI',
-      description: t('RESOURCES_CLUSTER_FAULT_MODAL_LOCALAI_DESC'),
+      description: 'Local AI 엔진 기반으로 분석합니다.',
       icon: `ico-type24-solution`,
       value: 'localai',
     }
@@ -53,6 +66,7 @@ const RegistModal = (props) => {
 
     form.current.validator(() => {
       const { data } = form.current.props;
+      data.originOperator = get(props.item, 'spec.ai.backend')
       onOk(data)
     })
   }
@@ -64,7 +78,7 @@ const RegistModal = (props) => {
         width={1000}
         minHeight={1000}
         title={props.title}
-        okText={t('RESOURCES_CREATE')}
+        okText={t('RESOURCES_EDIT')}
         visible={modelView}
         onOk={handleOk}
         onCancel={closeModal}
@@ -83,17 +97,18 @@ const RegistModal = (props) => {
             desc={t('NAME_DESC')}
           >
             <Input name="name" maxLength={63}
-              style={{ maxWidth: 'none' }} />
+              style={{ maxWidth: 'none' }} defaultValue={get(props.item, 'metadata.name')}
+              readOnly />
           </Form.Item>
 
           {/* Operator 설정 */}
           <Form.Item
-            label={t('RESOURCES_CLUSTER_FAULT_OPERATOR') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET')}
+            bel={t('RESOURCES_CLUSTER_FAULT_OPERATOR') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET')}
             rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_MSG') },]}
           >
             <TypeSelect
               name="operator"
-              defaultValue={operator}
+              defaultValue={get(props.item, 'spec.ai.backend')}
               onChange={(e) => setOperator(e)}
               placeholder={{
                 label: t('RESOURCES_SELECT')
@@ -113,42 +128,43 @@ const RegistModal = (props) => {
               style={{ maxWidth: 'none' }}
               name="model"
               maxLength={63}
+              defaultValue={get(props.item, 'spec.ai.model')}
             />
           </Form.Item>
 
 
           {/* 세부 설정 */}
-          {operator !== '' &&
-            <Form.Item
-              label={t('RESOURCES_DETAIL_SETTINGS')}
-            >
-              <Form.Group>
-                {/* open ai - secret key */}
-                {operator === 'openai' &&
-                  <Form.Item label={t('RESOURCES_CLUSTER_FAULT_SECRETKEY')}
-                    rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_SECRETKEY_MSG') },]}>
-                    <TextArea
-                      style={{ maxWidth: 'none' }}
-                      name="secret"
-                      maxLength={256}
-                    />
-                  </Form.Item>
-                }
+          <Form.Item
+            label={t('RESOURCES_DETAIL_SETTINGS')}
+          >
+            <Form.Group>
+              {/* open ai - secret key */}
+              {operator === 'openai' &&
+                <Form.Item label={t('RESOURCES_CLUSTER_FAULT_SECRETKEY')}
+                  rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_SECRETKEY_MSG') },]}>
+                  <TextArea
+                    style={{ maxWidth: 'none' }}
+                    name="secret"
+                    maxLength={256}
+                    defaultValue={secretkey}
+                  />
+                </Form.Item>
+              }
 
-                {/* local ai - base url */}
-                {operator === 'localai' &&
-                  <Form.Item label={t('RESOURCES_CLUSTER_FAULT_BASEURL')}
-                    rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_BASEURL_MSG') },]}>
-                    <TextArea
-                      style={{ maxWidth: 'none' }}
-                      name="baseurl"
-                      maxLength={256}
-                    />
-                  </Form.Item>
-                }
-              </Form.Group>
-            </Form.Item>
-          }
+              {/* local ai - base url */}
+              {operator === 'localai' &&
+                <Form.Item label={t('RESOURCES_CLUSTER_FAULT_BASEURL')}
+                  rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_BASEURL_MSG') },]}>
+                  <TextArea
+                    style={{ maxWidth: 'none' }}
+                    name="baseurl"
+                    maxLength={256}
+                    defaultValue={get(props.item, 'spec.ai.baseUrl')}
+                  />
+                </Form.Item>
+              }
+            </Form.Group>
+          </Form.Item>
         </Form>
       </Modal>
 
@@ -156,5 +172,5 @@ const RegistModal = (props) => {
   );
 };
 
-export default RegistModal
+export default ModifyModal
 

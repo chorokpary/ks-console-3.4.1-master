@@ -25,7 +25,7 @@ const PATH = '/clusters/:cluster/clusterfault/setting'
 export default [
     {
         path: `${PATH}/status`,
-        title: t('RESOURCES_CLUSTER_FAULT_OPERATOR'),
+        title: t('RESOURCES_CLUSTER_FAULT_PROVIDER'),
         component: Setting,
         exact: true,
     },
