@@ -1,3 +1,5 @@
+/* eslint-disable no-extra-boolean-cast */
+/* eslint-disable prettier/prettier */
 /*
  * This file is part of KubeSphere Console.
  * Copyright (C) 2019 The KubeSphere Console Authors.
@@ -16,39 +18,38 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
-import classNames from 'classnames'
-import Indicator from 'components/Base/Indicator'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { toJS } from 'mobx';
+import classNames from 'classnames';
+import { Icon, Tooltip } from '@kube-design/components';
+import { Avatar, Status } from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
+import Indicator from 'components/Base/Indicator';
 
-import { Icon, Tooltip } from '@kube-design/components'
-import { getLocalTime, map_accessModes } from 'utils'
+import { getLocalTime, map_accessModes } from 'utils';
 
-import VolumeStore from 'stores/resources/volumes'
+import VolumeStore from 'stores/resources/volumes';
 
-import styles from './index.scss'
-import ResourceTable from 'clusters/components/ResourceTable'
+import styles from './index.scss';
+import ResourceTable from 'clusters/components/ResourceTable';
+
 @withClusterList({
   store: new VolumeStore(),
   module: 'resourcesvolumes',
   authKey: 'resourcesvolumes',
   name: t('RESOURCES_VOLUME'),
-  rowKey: 'id'
+  rowKey: 'id',
 })
 export default class ResourcesVolumes extends React.Component {
-
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -63,11 +64,11 @@ export default class ResourcesVolumes extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -101,13 +102,12 @@ export default class ResourcesVolumes extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
-
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('NAME'),
@@ -179,7 +179,8 @@ export default class ResourcesVolumes extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: used_by_vmi => (!!used_by_vmi ? t('MOUNTED') : t('NOT_MOUNTED')),
+        render: used_by_vmi =>
+          !!used_by_vmi ? t('MOUNTED') : t('NOT_MOUNTED'),
       },
       // {
       //   title: t('상태'),
@@ -187,7 +188,7 @@ export default class ResourcesVolumes extends React.Component {
       //   isHideable: true,
       //   search: true,
       //   width: 'auto',
-      //   render: (phase, record) => {          
+      //   render: (phase, record) => {
       //     const type = !!phase == true ? phase : "Bound"
       //     const flicker = true;
 
@@ -195,9 +196,9 @@ export default class ResourcesVolumes extends React.Component {
       //         <div className={styles.iconwrapper}>
       //           <Indicator className={styles.indicator} type={type} flicker={flicker} />
       //           <p>{type}</p>
-      //         </div>  
-      //       )          
-      //   },      
+      //         </div>
+      //       )
+      //   },
       // },
       {
         title: t('RESOURCES_REGIST_DATE'),
@@ -207,18 +208,16 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('timestamp'),
         render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   mapperAccessMode = accessModes => {
-    const modes = map_accessModes(accessModes)
-    return <span>{modes.join(',')}</span>
-  }
+    const modes = map_accessModes(accessModes);
+    return <span>{modes.join(',')}</span>;
+  };
 
   renderAccessTitle = () => {
     const renderModeTip = (
@@ -227,7 +226,7 @@ export default class ResourcesVolumes extends React.Component {
         <div>{t('ROX_DESC')}</div>
         <div>{t('RWX_DESC')}</div>
       </div>
-    )
+    );
     return (
       <div className={styles.mode_title}>
         {t('ACCESS_MODE_TCAP')}
@@ -235,11 +234,11 @@ export default class ResourcesVolumes extends React.Component {
           <Icon name="question" size={16} className={styles.question}></Icon>
         </Tooltip>
       </div>
-    )
-  }
+    );
+  };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
   }
 
   get columnSearch() {
@@ -248,14 +247,12 @@ export default class ResourcesVolumes extends React.Component {
         dataIndex: 'name',
         title: t('RESOURCES_NAME'),
         search: true,
-      }
-    ]
+      },
+    ];
   }
 
-
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     // console.log({ ...this.props })
 
     return (
@@ -277,7 +274,6 @@ export default class ResourcesVolumes extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-
-    )
+    );
   }
 }
