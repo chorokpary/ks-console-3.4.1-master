@@ -82,7 +82,7 @@ const CpuUsage = (props) => {
     const getTypeData = async () => {
 
       const metric_type = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
+        expr: `group by(instance, machine) (node_uname_info)`,
       })
 
       const metric_power_last = await customStore.fetchMetric({
@@ -293,7 +293,7 @@ const CpuUsage = (props) => {
                   <div className="chart_group">
                     <div className="title">
                       <i className="ico-type24-arm"></i>
-                      <h5>ARM</h5>
+                      <h5>{t('RESOURCES_ARM')}</h5>
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
@@ -311,7 +311,7 @@ const CpuUsage = (props) => {
                   <div className="chart_group">
                     <div className="title">
                       <i className="ico-type24-x86"></i>
-                      <h5>x86</h5>
+                      <h5>{t('RESOURCES_X86')}</h5>
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">

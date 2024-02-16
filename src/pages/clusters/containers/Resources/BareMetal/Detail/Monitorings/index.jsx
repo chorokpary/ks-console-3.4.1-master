@@ -70,7 +70,9 @@ const index = (props) => {
 
     const detailData = toJS(store.detail)
     const instance = detailData.systemType == "C" ? detailData.name : (detailData.baremetals).find(item => item.name == detailData.name).nodeExporter.ip;
-
+    const target = detailData.systemType == "C" ? (detailData.clusters).find(item => item.name == detailData.name).openBMC?.address
+                                                : (detailData.baremetals).find(item => item.name == detailData.name).openBMC?.address;
+    
     // cpu 사용량
     const getNodeCpuUsageData = async () => {
       const nodeCpuData = await customStore.fetchMetric({
@@ -127,12 +129,12 @@ const index = (props) => {
     // 파워 사용량
     const getNodePowerUsageData = async () => {
       const nodePowerData = await customStore.fetchMetric({
-        expr: `sum(redfish_chassis_power_powersupply_last_power_output_watts) by (instance)`,        
+        expr: `avg(redfish_chassis_power_powersupply_last_power_output_watts) by (target)`,        
         ...paramsData,
       })
 
       const nodePowerMetricData = _.find(nodePowerData, (data) => {
-        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+        if (get(data, 'metric.target') === target ) return data;  
       });
 
       // 배열 처리 
@@ -144,14 +146,14 @@ const index = (props) => {
     // 온도
     const getNodeTemperatureData = async () => {
       const nodeTemperatureData = await customStore.fetchMetric({
-        expr: `sum(redfish_chassis_power_powersupply_last_power_output_watts) by (instance)`,        
+        expr: `avg(redfish_chassis_temperature_celsius) by (target)`,        
         ...paramsData,
       })
 
       const nodeTemperatureMetricData = _.find(nodeTemperatureData, (data) => {
-        if (get(data, 'metric.instance').split(":")[0] === instance ) return data;  
+        if (get(data, 'metric.target') === target ) return data;  
       });
-
+   
       // 배열 처리 
       const nodeTemperatureArray = [];
       nodeTemperatureArray.push(nodeTemperatureMetricData)

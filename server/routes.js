@@ -33,6 +33,7 @@ const {
   webMm3Proxy,
   webCmpProxy,
   webAppDeployProxy,
+  webBaremetalProxy,
 } = require('./proxy')
 
 const {
@@ -77,6 +78,7 @@ router
 
   .use(proxy('/app-manager/(.*)', webAppDeployProxy))  
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))  
+  .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))  
 
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
