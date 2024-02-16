@@ -72,6 +72,11 @@ const webCmpProxy = {
   changeOrigin: true,
 }
 
+const webBaremetalProxy = {
+  target: `${serverConfig.apiServer.baremetalUrl}`,
+  changeOrigin: true,
+}
+
 const b2iFileProxy = {
   target: serverConfig.apiServer.url,
   changeOrigin: true,
@@ -116,4 +121,5 @@ module.exports = {
   webMm3Proxy,
   webCmpProxy,
   webAppDeployProxy,
+  webBaremetalProxy,
 }
