@@ -543,6 +543,7 @@ module.exports = {
   RESOURCES_DEPLOYED_SUCCESSFULLY: '배포 되었습니다.',
   RESOURCES_DEPLOY: '배포',
   RESOURCES_CLUSTER_FAULT_TITLE: '클러스터 문제 진단',
+  RESOURCES_CLUSTER_FAULT_DETAIL: '생성형 AI를 기반으로 Petasus Cloud 클러스터의 문제를 감지하고 솔루션을 제시합니다.',
   RESOURCES_CLUSTER_FAULT_SET: '설정',
   RESOURCES_CLUSTER_FAULT_DESC: '문제 진단 Provider를 설정합니다.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: '네임스페이스',

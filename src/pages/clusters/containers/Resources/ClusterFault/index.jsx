@@ -119,7 +119,7 @@ export default class ClusterFault extends React.Component {
             <div className={styles.title}>
               <div className="h3">{t('RESOURCES_CLUSTER_FAULT_TITLE')}</div>
               <p className="text-second">
-                {t('')}
+                {t('RESOURCES_CLUSTER_FAULT_DETAIL')}
               </p>
             </div>
             <div className={styles.divRight}>
