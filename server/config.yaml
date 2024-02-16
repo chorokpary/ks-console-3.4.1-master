@@ -351,6 +351,10 @@ client:
                 authKey: monitoring,
               }
             - {
+                name: 'clusterfault',
+                title: RESOURCES_CLUSTER_FAULT_TITLE,
+              }   
+            - {
                 name: monitor-resource,
                 title: APPLICATION_RESOURCE_PL,
                 icon: linechart,
