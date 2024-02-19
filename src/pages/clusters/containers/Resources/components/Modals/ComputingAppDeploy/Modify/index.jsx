@@ -8,6 +8,7 @@ import classnames from 'classnames'
 import styles from './index.scss'
 import * as common from "utils/resources"
 import axios from 'axios'
+import moment from 'moment-mini'
 
 import VmStore from 'stores/resources/vms'
 
@@ -26,6 +27,8 @@ const ModifyModal = (props) => {
   const [fileValidError, setFilerValidError] = useState(false);
   const [fileExtError, setFileExtError] = useState(false);
   const [vmValidError, setVmValidError] = useState(false);
+
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
 
   const [vmOptionList, setVmOptionList] = useState([]);
 
@@ -72,11 +75,15 @@ const ModifyModal = (props) => {
         return false;
       }
 
+      const timestamp = moment(Date()).toISOString();
+
       const jsonData = {};
       const vmDataArray = [];
   
       jsonData.name = data.name;
       jsonData.version = data['version'];
+      jsonData.registrant = globals.user.username;
+      jsonData.registrationDate = timestamp;
 
       listVmInventory.map((item) => {
         const vmData = {
@@ -94,16 +101,25 @@ const ModifyModal = (props) => {
       formData.append("body", JSON.stringify(jsonData));
       formData.append("playbook", file);
 
+      setSubmitButtonFlag(true);
+      setFileUploadStartFlag(true);
+
       axios.put('/app-manager/v1alpha1/templates', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
+          console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
+        },
       }).then((res) => {
           console.log(res.data);
           onOk({ ...data })
       }).catch((err) => {
-          console.log("AAAAAAAAAA");
-          console.error(err);
+          // console.error(err);
           Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
           console.log(err);
       });
@@ -203,6 +219,12 @@ const ModifyModal = (props) => {
   const fileInputRef = useRef(null); 
   const [fileName, setFileName] = useState(); 
 
+  const [fileUploadStartFlag, setFileUploadStartFlag] = useState(false);
+  const uploadingText = useRef();
+  const progressText = useRef();
+  const progressbar = useRef();
+  const loadedText = useRef();
+
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
@@ -212,7 +234,23 @@ const ModifyModal = (props) => {
     setFileName(file.name);
     setFile(file);
   }
+
+  const fnProgress = (totalLoaded, fileSize, percentage) => {
+    if (!!progressText.current === true) {
+      progressText.current.textContent = percentage + " %";
+      progressbar.current.style.transform = "translateX(" + percentage + "%)";
+      loadedText.current.textContent =
+        " ( " +
+        fileSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " / " +
+        totalLoaded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " Bytes ) ";
+    }
+  };
   // File Upload End ############################################
+
+
+
 
   return (
     <>
@@ -222,9 +260,12 @@ const ModifyModal = (props) => {
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
+        bodyClassName={styles.body}
         visible={modelView}
+        hideFooter
       >
         <Form data={formData} ref={form}>
+         <div className={styles.cont_boxwrap}>
 
           <Form.Item
             label={t('RESOURCES_NAME')}
@@ -270,6 +311,39 @@ const ModifyModal = (props) => {
                   {t('RESOURCES_FIND_FILE')}
                 </Button>             
               </div>
+
+              <div className={ fileUploadStartFlag ? '' : styles.hide }>      
+                <div style={{margin: "10px 0 10px 0"}}>
+                  * <span ref={uploadingText}>Uploading</span> :{" "}
+                    <span ref={progressText}></span>
+                    <span ref={loadedText}></span>
+                  <div
+                    style={{
+                      backgroundColor: "#2275d7",
+                      borderRadius: "4px",
+                      boxShadow: "inset 0 0.5em 0.5em rgba(0,0,0,0.05)",
+                      height: "10px",
+                      margin: "2rem 0 2rem 0",
+                      overflow: "hidden",
+                      position: "relative",
+                      transform: "translateZ(0)",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      ref={progressbar}
+                      style={{
+                        backgroundColor: "#828e94",
+                        borderRadius: "4px",
+                        boxShadow:
+                          "inset 0 0.5em 0.5em rgba(94, 49, 49, 0.05)",
+                        height: "10px",
+                        transform: "translateX(0%)",
+                      }}
+                    ></div>
+                  </div>
+                </div>   
+              </div>
               
               {fileValidError &&
                 <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FILE_EMPTY_DESC')}</div>
@@ -285,59 +359,7 @@ const ModifyModal = (props) => {
             <>
               {t('RESOURCES_VM')}<span className="form-item-required">*</span>    
               <div style={{ color: '#79879c' }}>({t('RESOURCES_APP_DEPLOY_VM_ADD_DESC')})</div>            
-              <Form.Group>
-                {/* {(props.store.detail.vm).map((obj, idx) => (
-                  <div className={styles.scriptitem} key={idx+1}>
-                    <Columns>
-                      <Column>
-                        <Form.Item>
-                        <Select
-                          name={`vm_${idx+1}`}
-                            placeholder={t('RESOURCES_NAME')}
-                            options={vmOptionList}
-                            onChange={() => fnSelectedVmOption()}  
-                            defaultValue={obj.name}
-                        />
-                        </Form.Item>
-                      </Column>
-                      <Column>
-                        <Form.Item>
-                          <Input
-                            name={`ip_${idx+1}`}
-                            placeholder={t('IP')}          
-                            defaultValue={obj.host}                             
-                          />
-                        </Form.Item>
-                      </Column>
-                      <Column>
-                        <Form.Item>
-                          <Input
-                            name={`user_${idx+1}`}
-                            placeholder={t('User')}
-                            defaultValue={obj.user}                  
-                          />
-                        </Form.Item>
-                      </Column>
-                      <Column>
-                        <Form.Item>
-                          <TextArea
-                            name={`private_key_${idx+1}`}
-                            rows="1"
-                            placeholder={t('Private Key')}
-                            defaultValue={obj.privateKey}                  
-                          />
-                        </Form.Item>
-                      </Column>
-                    </Columns>
-                    <Button
-                      type="flat"
-                      icon="trash"
-                      className={styles.scriptdelete}
-                      onClick={() => handleVmInventory.delColumn(idx+1)}
-                    />
-                  </div>
-                ))} */}
-
+              <Form.Group>              
 
                 {listVmInventory.map((obj, idx) => (
                   <div className={styles.scriptitem} key={obj}>
@@ -404,8 +426,16 @@ const ModifyModal = (props) => {
               </Form.Group>              
             </>
           </Form.Item>   
-
+          </div>
         </Form>
+        <div className={styles['modal-footer']}>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            {submitButtonFlag ?
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CONFIRM')}</Button>
+              :
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
+            }
+        </div>
       </Modal>
 
     </>
