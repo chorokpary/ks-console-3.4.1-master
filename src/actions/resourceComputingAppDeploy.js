@@ -62,13 +62,18 @@ export default {
     on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id}, data)
-            .then(() => {
-              Modal.close(modal)
+
+          Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
               success && success()
-            })
+              
+          // store
+          //   .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id}, data)
+          //   .then(() => {
+          //     Modal.close(modal)
+          //     Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+          //     success && success()
+          //   })
         },
         title: t('RESOURCES_EDIT_TEMPLATE'),
         modal: ModifyModal,

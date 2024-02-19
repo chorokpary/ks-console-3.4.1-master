@@ -28,6 +28,8 @@ const RegistModal = (props) => {
   const [fileExtError, setFileExtError] = useState(false);
   const [vmValidError, setVmValidError] = useState(false);
 
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+
   const [vmOptionList, setVmOptionList] = useState([]);
 
   const handleOk = () => {
@@ -97,16 +99,25 @@ const RegistModal = (props) => {
       formData.append("body", JSON.stringify(jsonData));
       formData.append("playbook", file);
 
+      setSubmitButtonFlag(true);
+      setFileUploadStartFlag(true);
+
       axios.post('/app-manager/v1alpha1/templates', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
+          console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
+        },
       }).then((res) => {
           console.log(res.data);
           onOk({ ...data })
       }).catch((err) => {
-          console.log("AAAAAAAAAA");
-          console.error(err);
+          // console.error(err);
           Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
           console.log(err);
       });
@@ -202,6 +213,12 @@ const RegistModal = (props) => {
   const fileInputRef = useRef(null); 
   const [fileName, setFileName] = useState(); 
 
+  const [fileUploadStartFlag, setFileUploadStartFlag] = useState(false);
+  const uploadingText = useRef();
+  const progressText = useRef();
+  const progressbar = useRef();
+  const loadedText = useRef();
+
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
@@ -211,6 +228,19 @@ const RegistModal = (props) => {
     setFileName(file.name);
     setFile(file);
   }
+
+  const fnProgress = (totalLoaded, fileSize, percentage) => {
+    if (!!progressText.current === true) {
+      progressText.current.textContent = percentage + " %";
+      progressbar.current.style.transform = "translateX(" + percentage + "%)";
+      loadedText.current.textContent =
+        " ( " +
+        fileSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " / " +
+        totalLoaded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " Bytes ) ";
+    }
+  };
   // File Upload End ############################################
 
   return (
@@ -221,9 +251,12 @@ const RegistModal = (props) => {
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
+        bodyClassName={styles.body}
         visible={modelView}
+        hideFooter
       >
         <Form data={formData} ref={form}>
+         <div className={styles.cont_boxwrap}>
 
           <Form.Item
             label={t('RESOURCES_NAME')}
@@ -264,6 +297,39 @@ const RegistModal = (props) => {
                 <Button type="primary" onClick={() => handleButtonClick()} >
                   {t('RESOURCES_FIND_FILE')}
                 </Button>             
+              </div>
+
+              <div className={ fileUploadStartFlag ? '' : styles.hide }>      
+                <div style={{margin: "10px 0 10px 0"}}>
+                  * <span ref={uploadingText}>Uploading</span> :{" "}
+                    <span ref={progressText}></span>
+                    <span ref={loadedText}></span>
+                  <div
+                    style={{
+                      backgroundColor: "#2275d7",
+                      borderRadius: "4px",
+                      boxShadow: "inset 0 0.5em 0.5em rgba(0,0,0,0.05)",
+                      height: "10px",
+                      margin: "2rem 0 2rem 0",
+                      overflow: "hidden",
+                      position: "relative",
+                      transform: "translateZ(0)",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      ref={progressbar}
+                      style={{
+                        backgroundColor: "#828e94",
+                        borderRadius: "4px",
+                        boxShadow:
+                          "inset 0 0.5em 0.5em rgba(94, 49, 49, 0.05)",
+                        height: "10px",
+                        transform: "translateX(0%)",
+                      }}
+                    ></div>
+                  </div>
+                </div>   
               </div>
               
               {fileValidError &&
@@ -343,8 +409,16 @@ const RegistModal = (props) => {
               </Form.Group>              
             </>
           </Form.Item>   
-
+          </div>
         </Form>
+        <div className={styles['modal-footer']}>
+            <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+            {submitButtonFlag ?
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CONFIRM')}</Button>
+              :
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
+            }
+        </div>
       </Modal>
 
     </>

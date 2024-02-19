@@ -23,10 +23,13 @@ import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
+import { Dropdown, Menu, Notify } from '@kube-design/components';
 
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
 import * as common from 'utils/resources';
+
+import styles from './index.scss';
 
 import AppDeployStore from 'stores/resources/appdeploy';
 
@@ -111,6 +114,7 @@ export default class ImageBuild extends React.Component {
     };
   }
 
+
   getColumns = () => {
     const { getSortOrder } = this.props;
     const { cluster } = this.props.match.params;
@@ -138,9 +142,21 @@ export default class ImageBuild extends React.Component {
       },
       {
         title: t('RESOURCES_STATE'),
-        dataIndex: 'project',
+        dataIndex: 'status',
         isHideable: true,
         width: 'auto',
+        render: (status) => {
+          return <p>{(status)[0].toUpperCase()+ (status).slice(1, (status).length)}</p>
+        }
+      },
+      {
+        title: t('Last Task'),
+        dataIndex: 'lastTask',
+        isHideable: true,
+        width: 'auto',
+        render: (lastTask) => {
+          return <p>{lastTask}</p>
+        }
       },
       {
         title: t('Playbook'),
@@ -153,7 +169,8 @@ export default class ImageBuild extends React.Component {
         dataIndex: 'vm',
         isHideable: true,
         width: 'auto',
-        render: vm => {
+        render: (vm, record) => {
+
           let vmGroupText = '';
           if (vm) {
             vmGroupText =
@@ -165,8 +182,35 @@ export default class ImageBuild extends React.Component {
           } else {
             vmGroupText = '';
           }
-          return vmGroupText;
-        },
+
+          if(vm.length > 1){
+            return (
+              <div>
+                <Dropdown
+                  content={
+                    <Menu>
+                      {vm.map(item => {
+                         return <Menu.MenuItem key={item.name}>
+                         <span>{item.name}</span>
+                         </Menu.MenuItem>
+                      })}                      
+                    </Menu>
+                  }
+                >
+                  <div className={styles.iconwrapper}>
+                    <p>{vmGroupText}</p>
+                  </div>
+                </Dropdown>
+              </div>
+            );
+           }
+
+          return (
+            <div className={styles.iconwrapper}>
+              <p>{vmGroupText}</p>
+            </div>
+          );
+        }
       },
       {
         title: t('RESOURCES_SIZE'),

@@ -528,8 +528,8 @@ module.exports = {
   RESOURCES_APP_DEPLOY_PLAYBOOK_ADD: 'Playbook 등록',
   RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC: 'Playbook 과 애플리케이션을 함께 압축하여 등록합니다.',
   RESOURCES_APP_DEPLOY_VM_ADD_DESC: '애플리케이션이 배포될 가상머신을 등록합니다.',
-  RESOURCES_TASK: '테스크',
-  RESOURCES_TASK_ID: '테스크 ID',
+  RESOURCES_TASK: '태스크',
+  RESOURCES_TASK_ID: '태스크 ID',
   RESOURCES_NO_DATA_TASK_LOG: '태스크 이력이 없습니다.',
   RESOURCES_CREATE_TEMPLATE: '템플릿 생성',
   RESOURCES_EDIT_TEMPLATE: '템플릿 수정',
@@ -573,5 +573,6 @@ module.exports = {
   RESOURCES_CLUSTER_FAULT_SECRETKEY_MSG: 'Secret Key를 입력해주세요.',
   RESOURCES_CLUSTER_FAULT_BASEURL: 'Base URL',
   RESOURCES_CLUSTER_FAULT_BASEURL_MSG: 'Base URL을 입력해주세요.',
+  RESOURCES_CONFIRM: '확인',
 
 };
