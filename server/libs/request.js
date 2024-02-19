@@ -108,6 +108,7 @@ const send_harbor_request = ({ path, params }) => {
       mode: 'cors',
       credentials: 'include',
       headers: {
+        'host': 'edgestack.harbor.core:32443',
         'content-type': 'application/json',
         ...AuthorizationHeader,
       },

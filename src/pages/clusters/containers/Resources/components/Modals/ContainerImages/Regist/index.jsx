@@ -574,8 +574,8 @@ const Step2 = (
         projectName
       })
       const list = response.map(obj => {
-        const [projectName, name] = obj.name.split("/")
-        obj.name = name
+        const [projectName, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
         obj.project_name = projectName
         obj.popularity = obj.pull_count
         return obj
@@ -598,8 +598,8 @@ const Step2 = (
     try {
       const response = await request.post(`customharbor/public`)
       const list = response.map(obj => {
-        const [projectName, name] = obj.name.split("/")
-        obj.name = name
+        const [projectName, ...name] = obj.name.split("/")
+        obj.name = name.join('/')
         obj.project_name = projectName
         obj.popularity = obj.pull_count
         return obj
@@ -622,6 +622,7 @@ const Step2 = (
     setPopActive(false)
     setLoading(true)
     setImageName(imageName)
+    imageName = encodeURIComponent(imageName)
     if (publicType == 'public') {
       getPulicImageTag(imageName)
     } else {
