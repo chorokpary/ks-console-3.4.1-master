@@ -49,6 +49,16 @@ const ModifyModal = (props) => {
       value: 'localai',
     }
   ]
+  const modelOptions = [
+    {
+      label: 'llama2',
+      value: 'llama2',
+    },
+    {
+      label: 'mixtral-8x7b',
+      value: 'mixtral-8x7b',
+    }
+  ]
 
   const nameValidator = (rule, value, callback) => {
     if (value == undefined) {
@@ -121,14 +131,20 @@ const ModifyModal = (props) => {
           {/* 모델 */}
           <Form.Item
             label={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL')}
-            desc={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC')}
+            // desc={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC')}
             rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG') },]}
           >
-            <TextArea
+            {/* <TextArea
               style={{ maxWidth: 'none' }}
               name="model"
               maxLength={63}
               defaultValue={get(props.item, 'spec.ai.model')}
+            /> */}
+            <Select
+              style={{ maxWidth: 'none' }}
+              name="model"
+              defaultValue={get(props.item, 'spec.ai.model')}
+              options={modelOptions}
             />
           </Form.Item>
 
