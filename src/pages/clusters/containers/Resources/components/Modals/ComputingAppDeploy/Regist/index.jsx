@@ -95,32 +95,33 @@ const RegistModal = (props) => {
 
       jsonData.vm = vmDataArray
 
+      console.log(JSON.stringify(jsonData))      
+
       const formData = new FormData();
       formData.append("body", JSON.stringify(jsonData));
       formData.append("playbook", file);
 
-      setSubmitButtonFlag(true);
-      setFileUploadStartFlag(true);
+      // setSubmitButtonFlag(true);
+      // setFileUploadStartFlag(true);
 
-      axios.post('/app-manager/v1alpha1/templates', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
-          console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
-        },
-      }).then((res) => {
-          console.log(res.data);
-          onOk({ ...data })
-      }).catch((err) => {
-          // console.error(err);
-          Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-          console.log(err);
-      });
+      // axios.post('/app-manager/v1alpha1/templates', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data'
+      //   },
+      //   onUploadProgress: (progressEvent) => {
+      //     const percentCompleted = Math.round(
+      //       (progressEvent.loaded * 100) / progressEvent.total
+      //     );
+      //     fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
+      //     console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
+      //   },
+      // }).then((res) => {
+      //     console.log(res.data);
+      //     onOk({ ...data })
+      // }).catch((err) => {
+      //     // console.error(err);
+      //     console.log(err);
+      // });
 
     })
   }
@@ -349,8 +350,6 @@ const RegistModal = (props) => {
               <Form.Group>
                 {listVmInventory.map((obj, idx) => (
                   <div className={styles.scriptitem} key={obj}>
-                    <Columns>
-                      <Column>
                         <Form.Item>
                         <Select
                            name={`vm_${obj}`}
@@ -359,34 +358,34 @@ const RegistModal = (props) => {
                             onChange={() => fnSelectedVmOption()}
                         />
                         </Form.Item>
-                      </Column>
-                      <Column>
                         <Form.Item>
-                          <Input
-                            name={`ip_${obj}`}
-                            placeholder={t('IP')}
-                          />
+                          <div className={styles.scriptInput}>
+                            <Input
+                              name={`ip_${obj}`}
+                              placeholder={t('IP')}
+                              maxLength="15"
+                            />
+                          </div>
                         </Form.Item>
-                      </Column>
-                      <Column>
                         <Form.Item>
+                         <div className={styles.scriptInput}>
                           <Input
                             name={`user_${obj}`}
                             placeholder={t('User')}
                           />
+                          </div>
                         </Form.Item>
-                      </Column>
-                      <Column>
                         <Form.Item>
+                         <div className={styles.scriptTextArea}>
                           <TextArea
                             name={`private_key_${obj}`}
                             rows="1"
+                            cols="70"
                             defaultValue=""
                             placeholder={t('Private Key')}
                           />
+                          </div>
                         </Form.Item>
-                      </Column>
-                    </Columns>
                     <Button
                       type="flat"
                       icon="trash"

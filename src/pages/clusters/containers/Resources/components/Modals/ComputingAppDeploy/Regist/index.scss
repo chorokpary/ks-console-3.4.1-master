@@ -49,6 +49,7 @@ $size-ssmall: 11px;
     }
 }
 .scriptitem {
+    display: flex;
     height: 46px;
     position: relative;
     padding: 6px 68px 6px 17px;
@@ -62,7 +63,19 @@ $size-ssmall: 11px;
   
     &>input {
         max-width: none !important;
+        padding: 6px 68px 6px 17px;
     }
+  }
+
+  .scriptInput{
+    width: 120px;
+    margin-top: -12px;
+    margin-left: 10px;
+  }
+
+  .scriptTextArea{
+    margin-top: -13px;
+    margin-left: 10px;
   }
   
   .scriptdelete {
@@ -147,4 +160,9 @@ $size-ssmall: 11px;
 	z-index: 10;
 	overflow: hidden;
 	overflow-y: auto;
+}
+
+.vm_list {
+  display: flex;
+  align-items: center;
 }

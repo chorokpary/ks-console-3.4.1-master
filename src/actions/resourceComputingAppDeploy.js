@@ -27,25 +27,14 @@ import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confir
 import RegistModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Modify'
 
-import UploadModal from 'clusters/containers/Resources/components/Modals/UploadImage'
-
 export default {
   'computingappdeploy.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-
           Modal.close(modal)
           Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
           success && success()
-
-          // store
-          //   .create(data, { cluster, workspace, namespace, devops })
-          //   .then(() => {
-          //     Modal.close(modal)
-          //     Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-          //     success && success()
-          //   })
         },
         title: t('RESOURCES_CREATE_TEMPLATE'),
         modal: RegistModal,
@@ -62,18 +51,9 @@ export default {
     on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-
           Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-              
-          // store
-          //   .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id}, data)
-          //   .then(() => {
-          //     Modal.close(modal)
-          //     Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-          //     success && success()
-          //   })
+          Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+          success && success()
         },
         title: t('RESOURCES_EDIT_TEMPLATE'),
         modal: ModifyModal,
@@ -166,19 +146,6 @@ export default {
       })
     },
   },
-  'computingappdeploy.image.upload': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: async data => {
-          Modal.close(modal)
-        },
-        detail,
-        store,
-        modal: UploadModal,
-        ...props,
-      })
-    },
-  },
   'computingappdeploy.deploy': {
     on({ store, detail, success, data, title, desc, ...props }) {
       const modal = Modal.open({
@@ -189,8 +156,8 @@ export default {
             success && success()
           })
         },
-        title: !!title ? title : t('RESOURCES_TASK_DEPLOY'),
-        desc: !!desc ? desc : t('RESOURCES_DEPLOY_DESC'),
+        title: !!title ? title : t('RESOURCES_DEPLOY_DESC'),
+        desc: !!desc ? desc : detail.name + t('RESOURCES_EUL') +" "+ t('RESOURCES_DEPLOY_DESC'),
         modal: ConfirmModal,
         module: store.module,
         detail,

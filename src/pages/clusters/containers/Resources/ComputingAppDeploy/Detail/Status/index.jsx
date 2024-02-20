@@ -32,8 +32,6 @@ const Status = (props) => {
     getHistoryList();
   }, [])
 
-  console.log("historyList?.length : "+ historyList?.length)
-
   return (
     <>  
        <div className={styles.defaultWrapper}>
@@ -52,11 +50,11 @@ const Status = (props) => {
                 <table>
                   <colgroup>
                       <col width="10%"/>
-                      <col width="15%"/>
-                      <col width="15%"/>
-                      <col width="20%"/>
-                      <col width="20%"/>
-                      <col width="20%"/>
+                      <col width="5%"/>
+                      <col width="10%"/>
+                      <col width="10%"/>
+                      <col width="10%"/>
+                      <col width="*"/>
                     </colgroup>
                     <thead>
                       <tr>
@@ -77,10 +75,10 @@ const Status = (props) => {
                               <div className={styles.iconwrapper}>   
                                   <Indicator
                                     className={styles.indicator}
-                                    type={obj.status === 'success' ? 'running' : 'error'}
+                                    type={obj.status === 'success' ? 'running' : obj.status === 'create' ? 'completed' : 'error'}
                                     flicker
                                   /> 
-                                  <p className={obj.status === 'success' ? styles.success : styles.error}>{(obj.status)[0].toUpperCase()+ (obj.status).slice(1, (obj.status).length)}</p>
+                                  <p className={obj.status === 'success' ? styles.success : obj.status === 'create' ? styles.done : styles.error}>{(obj.status)[0].toUpperCase()+ (obj.status).slice(1, (obj.status).length)}</p>
                                </div>
                             </td>
                             <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
