@@ -19,7 +19,7 @@
 import React from 'react';
 import { toJS } from 'mobx';
 import ResourceTable from 'clusters/components/ResourceTable';
-import { Avatar, Status } from 'components/Base';
+import { Avatar, Status, Indicator} from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
@@ -146,7 +146,19 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (status) => {
-          return <p>{(status)[0].toUpperCase()+ (status).slice(1, (status).length)}</p>
+
+          return (
+          <div className={styles.iconwrapper}>   
+              {status != "-" &&
+                <Indicator
+                  className={styles.indicator}
+                  type={status === 'success' ? 'running' : 'error'}
+                  flicker
+                /> 
+              }
+              <p className={status === 'success' ? styles.success : status != "-" ? styles.error : ''}>{(status)[0].toUpperCase()+ (status).slice(1, (status).length)}</p>
+          </div>
+          )
         }
       },
       {

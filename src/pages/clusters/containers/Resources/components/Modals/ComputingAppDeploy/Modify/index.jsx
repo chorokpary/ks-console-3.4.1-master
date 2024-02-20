@@ -120,7 +120,6 @@ const ModifyModal = (props) => {
           onOk({ ...data })
       }).catch((err) => {
           // console.error(err);
-          Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
           console.log(err);
       });
 
@@ -363,8 +362,7 @@ const ModifyModal = (props) => {
 
                 {listVmInventory.map((obj, idx) => (
                   <div className={styles.scriptitem} key={obj}>
-                    <Columns>
-                      <Column>
+
                         <Form.Item>
                         <Select
                            name={`vm_${obj}`}
@@ -374,36 +372,37 @@ const ModifyModal = (props) => {
                             defaultValue={props.store.detail.vm[obj-1]?.name}                   
                         />
                         </Form.Item>
-                      </Column>
-                      <Column>
                         <Form.Item>
+                        <div className={styles.scriptInput}>
                           <Input
                             name={`ip_${obj}`}
                             placeholder={t('IP')}   
-                            defaultValue={props.store.detail.vm[obj-1]?.host}                   
+                            defaultValue={props.store.detail.vm[obj-1]?.host}   
+                            maxLength="15"                
                           />
+                          </div>
                         </Form.Item>
-                      </Column>
-                      <Column>
                         <Form.Item>
+                        <div className={styles.scriptInput}>
                           <Input
                             name={`user_${obj}`}
                             placeholder={t('User')}
                             defaultValue={props.store.detail.vm[obj-1]?.user} 
                           />
+                          </div>
                         </Form.Item>
-                      </Column>
-                      <Column>
                         <Form.Item>
+                        <div className={styles.scriptTextArea}>
                           <TextArea
                             name={`private_key_${obj}`}
                             rows="1"
+                            cols="70"
                             placeholder={t('Private Key')}
                             defaultValue={props.store.detail.vm[obj-1]?.privateKey} 
                           />
+                        </div>
                         </Form.Item>
-                      </Column>
-                    </Columns>
+
                     <Button
                       type="flat"
                       icon="trash"

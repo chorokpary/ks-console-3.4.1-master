@@ -80,11 +80,9 @@ export default class AppDeployStore extends Base {
         const records = (historyList.data.records).sort((a, b) => {
           return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
         });
-        console.log("records : "+ JSON.stringify(records))
 
         app.status = records[0].status;
-        app.lastTask = "#"+records[0].id;
-        
+        app.lastTask = "#"+records[0].id;        
       }else{
         app.status = "-"
         app.lastTask = "-"
@@ -155,42 +153,6 @@ export default class AppDeployStore extends Base {
 
     return this.dataList
   }
-
-  @action
-  async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
-
-    const jsonData = {};
-    const appdeployData = {};
-
-    appdeployData.name = data.name;
-    appdeployData.public_key = data.publicKey;
-    appdeployData.project = data.project;
-    appdeployData.description = data?.description;
-
-    jsonData.appdeploy = appdeployData;
-
-    const res = await request.post(url, jsonData)
-    return res
-  }
-
-  @action
-  async update({ name, ...params }, data) {
-
-    const jsonData = {};
-    const appdeployData = {};
-
-    appdeployData.name = data.name;
-    appdeployData.public_key = data.publicKey;
-    appdeployData.project = data.project;
-    appdeployData.description = data?.description;
-
-    jsonData.appdeploy = appdeployData;
-
-    // const res = await request.put(url, jsonData)
-    // return res
-  }
-
 
   @action
   async fetchDetail(params) {
@@ -277,25 +239,30 @@ export default class AppDeployStore extends Base {
         : 0;
     });
 
-
     this.isLoading = false;
     return data;
   }
 
   @action
   async deploy({ detail, ...params }) {
+
     const jsonData = {};
+    const template = {};
+    
+    template.name = detail.name;
+    template.version = detail.version;
+
     jsonData.action = "deploy";
-    jsonData.templateName = detail.name;
+    jsonData.template = template;
 
     console.log("jsonData : "+ JSON.stringify(jsonData))
 
-    // await this.submitting(
-    //   request.post(
-    //     `${this.getDeployUrl(params)}`,
-    //     jsonData
-    //   )
-    // );
+    await this.submitting(
+      request.post(
+        `${this.getDeployUrl(params)}`,
+        jsonData
+      )
+    );
   }
 
 }
