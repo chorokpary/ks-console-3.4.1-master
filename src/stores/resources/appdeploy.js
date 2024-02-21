@@ -73,22 +73,22 @@ export default class AppDeployStore extends Base {
 
     const data = result.templates;
 
-    const promises = data.map(async (app) => {
-      const historyList = await axios.get("/app-manager/v1alpha1/taskhistories/" + app.name);
+    // const promises = data.map(async (app) => {
+    //   const historyList = await axios.get("/app-manager/v1alpha1/taskhistories/" + app.name);
 
-      if(!!historyList.data){
-        const records = (historyList.data.records).sort((a, b) => {
-          return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
-        });
+    //   if(!!historyList.data){
+    //     const records = (historyList.data.records).sort((a, b) => {
+    //       return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
+    //     });
 
-        app.status = records[0].status;
-        app.lastTask = "#"+records[0].id;        
-      }else{
-        app.status = "-"
-        app.lastTask = "-"
-      }
-    })
-    await Promise.all(promises);
+    //     app.status = records[0].status;
+    //     app.lastTask = "#"+records[0].id;        
+    //   }else{
+    //     app.status = "-"
+    //     app.lastTask = "-"
+    //   }
+    // })
+    // await Promise.all(promises);
 
     // 초기 정렬 처리
     data.sort((a, b) => {

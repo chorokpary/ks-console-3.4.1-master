@@ -20,12 +20,12 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
-import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 
+import DetailModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Detail'
 import RegistModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Modify'
+import DeployModal from 'clusters/containers/Resources/components/Modals/ComputingAppDeploy/Deploy'
 
 export default {
   'computingappdeploy.regist': {
@@ -158,10 +158,22 @@ export default {
         },
         title: !!title ? title : t('RESOURCES_DEPLOY_DESC'),
         desc: !!desc ? desc : detail.name + t('RESOURCES_EUL') +" "+ t('RESOURCES_DEPLOY_DESC'),
-        modal: ConfirmModal,
+        modal: DeployModal,
         module: store.module,
         detail,
         store,
+        ...props,
+      })
+    },
+  },
+  'computingappdeploy.detail': {
+    on({ store, module, explanation, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        title: t('RESOURCES_DESCRIPTION'),
+        modal: DetailModal,
+        store,
+        explanation,
+        module,
         ...props,
       })
     },
