@@ -24,6 +24,7 @@ import Table from 'components/Tables/List'
 import Empty from 'components/Tables/Base/Empty'
 import classNames from 'classnames'
 
+import Banner from 'components/Cards/Banner'
 import { Button, Notify } from '@kube-design/components'
 import { cloneDeep, get, isEmpty, omit, find } from 'lodash'
 import { getValueByUnit } from 'utils/monitoring'
@@ -112,15 +113,15 @@ export default class BareMetalDashboard extends React.Component {
   getInitMetricData = async () => {
 
     const metric_state = await this.customStore.fetchMetric({
-      expr: `max by(instance) (redfish_system_power_state)`,
+      expr: `group by(target) (redfish_system_power_state)`,
     })
 
     const metric_model = await this.customStore.fetchMetric({
-      expr: `max by(instance, model) (redfish_chassis_model_info)`,
+      expr: `group by(target, model) (redfish_chassis_model_info)`,
     })
 
     const metric_type = await this.customStore.fetchMetric({
-      expr: `max by(instance, machine) (node_uname_info)`,
+      expr: `group by(instance, machine) (node_uname_info)`,
     })
 
     const metric_core = await this.customStore.fetchMetric({
@@ -148,11 +149,11 @@ export default class BareMetalDashboard extends React.Component {
     })
 
     const metric_power = await this.customStore.fetchMetric({
-      expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
     })
 
     const metric_temperature = await this.customStore.fetchMetric({
-      expr: `avg by(instance) (redfish_chassis_temperature_celsius)`,
+      expr: `avg by(target) (redfish_chassis_temperature_celsius)`,
     })
 
     this.setState({
@@ -278,15 +279,25 @@ export default class BareMetalDashboard extends React.Component {
     }
   }
 
-  getMetricData = (metricData, record) => {
+  getMetricData = (metricData, record, type) => {
     const instance = record.system_type == "C" ? record.name : record.nodeExporter.ip;
-    const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    const target = record.openBMC?.address;
+
+    const metrics = type == "redfish" ? this.state[metricData].find(item => get(item, 'metric.target') === target) 
+                                      : record.system_type == "C" 
+                                      ? this.state[metricData].find(item => get(item, 'metric.instance') === instance) 
+                                      : this.state[metricData].find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
     return metrics;
   }
 
-  getMetricValue = (metricData, record) => {
+  getMetricValue = (metricData, record, type) => {    
     const instance = record.system_type == "C" ? record.name : record.nodeExporter.ip;
-    const metrics = this.state[metricData].find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    const target = record.openBMC?.address;
+
+    const metrics = type == "redfish" ? this.state[metricData].find(item => get(item, 'metric.target') === target) 
+                                      : record.system_type == "C" 
+                                      ? this.state[metricData].find(item => get(item, 'metric.instance') === instance) 
+                                      : this.state[metricData].find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
     const value = get(metrics, 'value[1]', '0');
     return value;
   }
@@ -328,7 +339,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'state',
         isHideable: true,
         render: record => {
-          const state = this.getMetricValue('metricStateData', record)
+          const state = this.getMetricValue('metricStateData', record, 'redfish')
           const statText = (state == 1 || state == 3) ? "On" : (state == 2 || state == 4) ? "Off" : "Unknown"
           return (
             <Text title={`${statText}`} />
@@ -340,7 +351,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'model',
         isHideable: true,
         render: record => {
-          const metrics = this.getMetricData('metricModelData', record)
+          const metrics = this.getMetricData('metricModelData', record, 'redfish')
           const modelName = get(metrics, 'metric.model', '-')
           return (
             <Text title={`${modelName}`} />
@@ -355,7 +366,7 @@ export default class BareMetalDashboard extends React.Component {
           const metrics = this.getMetricData('metricTypeData', record)
           const machine = get(metrics, 'metric.machine', "NOT")
           const x86Array = ['x86_64', 'amd']
-          const typeText = x86Array.includes(machine.toLowerCase()) ? "AMD64" : machine == "NOT" ? "-" : "ARM64"
+          const typeText = x86Array.includes(machine.toLowerCase()) ? t('RESOURCES_AMD64') : machine == "NOT" ? "-" : t('RESOURCES_ARM64') 
           return (
             <Text title={`${typeText}`} />
           )
@@ -436,7 +447,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'power',
         isHideable: true,
         render: record => {
-          var power = this.getMetricValue('metricPowerData', record)
+          var power = this.getMetricValue('metricPowerData', record, 'redfish')
           return (
             <Text title={`${power}`} />
           )
@@ -447,7 +458,7 @@ export default class BareMetalDashboard extends React.Component {
         key: 'temperature',
         isHideable: true,
         render: record => {
-          const temperature = this.getMetricValue('metricTemperatureData', record)
+          const temperature = this.getMetricValue('metricTemperatureData', record, 'redfish')
           return (
             <Text title={`${Math.round(Number(temperature))}`} />
           )
@@ -487,9 +498,6 @@ export default class BareMetalDashboard extends React.Component {
   renderNodeStateContent() {
 
     const { metricStateData } = this.state;
-
-    console.log("metricStateData : "+ JSON.stringify(metricStateData))
-
     const { data } = toJS(this.props.store.list)
 
     const totalCount = data.length;
@@ -591,6 +599,10 @@ export default class BareMetalDashboard extends React.Component {
     )
   }
 
+  getBanner = () => {
+    return <i className="ico-type-bmcnode"></i>
+  }
+
   render() {
 
     const { bannerProps } = this.props
@@ -598,6 +610,13 @@ export default class BareMetalDashboard extends React.Component {
     return (
 
       <ListPage {...this.props}>
+
+      <Banner
+        // icon="linechart"
+        icon={this.getBanner}
+        title={t('RESOURCES_BAREMETAL_MONITORING')}
+        description={t('RESOURCES_BAREMETAL_MONITORING_DESC')}
+      />
 
         <div className="content_box_wrap">
           {/* CPU 소비 전력량 비교 */}

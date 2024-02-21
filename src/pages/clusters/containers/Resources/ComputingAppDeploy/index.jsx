@@ -15,37 +15,51 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable'
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import { toJS } from 'mobx';
+import ResourceTable from 'clusters/components/ResourceTable';
+import { Avatar, Status, Indicator} from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
+import { Dropdown, Menu, Notify, Icon } from '@kube-design/components';
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
+import { getLocalTime } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
+import * as common from 'utils/resources';
 
-import KeypairStore from 'stores/resources/keypairs'
+import styles from './index.scss';
+
+import AppDeployStore from 'stores/resources/appdeploy';
 
 @withList({
-  store: new KeypairStore(),
-  module: 'keypairs',
-  authKey: 'keypairs',
+  store: new AppDeployStore(),
+  module: 'appdeploy',
+  authKey: 'appdeploy',
   name: t('RESOURCES_KEYPAIR'),
-  rowKey: 'id'
 })
 export default class ImageBuild extends React.Component {
-
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
+      {
+        key: 'deploy',
+        icon: 'blue-green-deployment',
+        text: t('RESOURCES_DEPLOY'),
+        action: 'edit',
+        show: this.showAction,
+        onClick: item =>
+          trigger('computingappdeploy.deploy', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
       {
         key: 'delete',
         icon: 'trash',
@@ -59,11 +73,11 @@ export default class ImageBuild extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -97,13 +111,13 @@ export default class ImageBuild extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
 
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('RESOURCES_NAME'),
@@ -115,66 +129,98 @@ export default class ImageBuild extends React.Component {
           <Avatar
             icon="application"
             iconSize={40}
-            to={`/clusters/${cluster}/computingappdeploy/${name}/${item.id}`}
+            to={`/clusters/${cluster}/computingappdeploy/${name}`}
             title={name}
           />
         ),
       },
       {
-        title: t('RESOURCES_CPU_TYPE'),
-        dataIndex: 'project',
+        title: t('RESOURCES_VERSION'),
+        dataIndex: 'version',
+        isHideable: true,
+        width: 'auto',
+      },     
+      {
+        title: t('Playbook'),
+        dataIndex: 'playbookName',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('RESOURCES_TAG'),
-        dataIndex: 'project',
+        title: t('RESOURCES_VM'),
+        dataIndex: 'vm',
         isHideable: true,
         width: 'auto',
-      },
-      {
-        title: t('RESOURCES_OS_INFORMATION'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_FILE_NAME'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
+        render: (vm, record) => {
+
+          let vmGroupText = '';
+          if (vm) {
+            vmGroupText =
+              vm.length > 1
+                ? `${vm[0].name} 외 ${vm.length - 1}개`
+                : vm.length === 1
+                ? vm[0].name
+                : '-';
+          } else {
+            vmGroupText = '';
+          }
+
+          if(vm.length > 1){
+            return (
+              <div>
+                <Dropdown
+                  content={
+                    <Menu>
+                      {vm.map(item => {
+                         return <Menu.MenuItem key={item.name}>
+                         <span>{item.name}</span>
+                         </Menu.MenuItem>
+                      })}                      
+                    </Menu>
+                  }
+                >
+                  <div className={styles.iconwrapper}>
+                    <p>{vmGroupText}</p>
+                    <Icon name="triangle-down"/>
+                  </div>
+                </Dropdown>
+              </div>
+            );
+           }
+
+          return (
+            <div className={styles.iconwrapper}>
+              <p>{vmGroupText}</p>
+            </div>
+          );
+        }
       },
       {
         title: t('RESOURCES_SIZE'),
-        dataIndex: 'project',
+        dataIndex: 'playbookSize',
         isHideable: true,
         width: 'auto',
-      },
-      {
-        title: t('RESOURCES_STATE'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
+        render: playbookSize => (
+          <p>{common.fnFormatBytes(playbookSize.toString())}</p>
+        ),
       },
 
       {
         title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'timestamp',
+        dataIndex: 'registrationDate',
         isHideable: true,
         width: 150,
         sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+        sortOrder: getSortOrder('registrationDate'),
+        render: registrationDate => (
+          <p>{getLocalTime(registrationDate).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
   }
 
   get columnSearch() {
@@ -188,21 +234,19 @@ export default class ImageBuild extends React.Component {
         dataIndex: 'finger_print',
         title: t('FINGER PRINT'),
         search: true,
-      }
-    ]
+      },
+    ];
   }
 
-
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     return (
       <ListPage {...this.props}>
         <Banner
           {...bannerProps}
           icon="application"
-          title={t('애플리케이션 배포 관리')}
-          description={t('애플리케이션의 배포를 관리 할 수 있습니다')}
+          title={t('RESOURCES_APP_DEPLOY_MANAGE')}
+          description={t('RESOURCES_APP_DEPLOY_MANAGE_DESC')}
         />
         <Table
           {...tableProps}
@@ -214,7 +258,6 @@ export default class ImageBuild extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-
-    )
+    );
   }
 }

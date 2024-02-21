@@ -186,7 +186,6 @@ const RegistModal = (props) => {
                 name="publicKey"
                 rows="8"
                 defaultValue={publicKey}
-                readOnly
               />
             }
           </Form.Item>

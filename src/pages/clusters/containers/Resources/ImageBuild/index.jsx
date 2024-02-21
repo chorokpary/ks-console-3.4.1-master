@@ -15,36 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable'
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import { toJS } from 'mobx';
+import ResourceTable from 'clusters/components/ResourceTable';
+import { Avatar, Status } from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
+import { getLocalTime } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
 
-import KeypairStore from 'stores/resources/keypairs'
+import KeypairStore from 'stores/resources/keypairs';
 
 @withList({
   store: new KeypairStore(),
   module: 'keypairs',
   authKey: 'keypairs',
   name: t('RESOURCES_KEYPAIR'),
-  rowKey: 'id'
+  rowKey: 'id',
 })
 export default class ImageBuild extends React.Component {
-
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -59,11 +57,11 @@ export default class ImageBuild extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -97,13 +95,12 @@ export default class ImageBuild extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
-
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('RESOURCES_NAME'),
@@ -165,16 +162,14 @@ export default class ImageBuild extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('timestamp'),
         render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
   }
 
   get columnSearch() {
@@ -188,14 +183,12 @@ export default class ImageBuild extends React.Component {
         dataIndex: 'finger_print',
         title: t('FINGER PRINT'),
         search: true,
-      }
-    ]
+      },
+    ];
   }
 
-
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     return (
       <ListPage {...this.props}>
         <Banner
@@ -214,7 +207,6 @@ export default class ImageBuild extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-
-    )
+    );
   }
 }

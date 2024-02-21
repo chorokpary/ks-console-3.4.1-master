@@ -81,11 +81,11 @@ const send_harbor_request = ({ path, params }) => {
   const httpsAgent =
     protocol === 'https://'
       ? new https.Agent({
-          rejectUnauthorized: !isSkipTLS,
-        })
+        rejectUnauthorized: !isSkipTLS,
+      })
       : new http.Agent({
-          rejectUnauthorized: !isSkipTLS,
-        })
+        rejectUnauthorized: !isSkipTLS,
+      })
 
   let AuthorizationHeader = {}
 
@@ -101,6 +101,7 @@ const send_harbor_request = ({ path, params }) => {
       mode: 'cors',
       credentials: 'include',
       headers: {
+        'host': 'edgestack.harbor.core:32443',
         'content-type': 'application/json',
         ...AuthorizationHeader,
       },

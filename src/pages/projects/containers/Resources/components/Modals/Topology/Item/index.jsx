@@ -52,10 +52,10 @@ const TopologyItem = (props) => {
       setSriovList(store.sriovList)
       setRouterList((store.routerList).filter(item => item.project == namespace))
       setFloatingList((store.floatingList).filter(item => item.project == namespace))
-      setLoadBalancerList(store.loadbalancerList)
+      setLoadBalancerList((store.loadbalancerList).filter(item => item.project == namespace))
 
-      const internalNetworkList = store.networkList?.filter((row) => row.external == false);
-      const externalNetworkList = store.networkList?.filter((row) => row.external == true);
+      const internalNetworkList = store.networkList?.filter((row) => (row.external == false && row.project == namespace));
+      const externalNetworkList = store.networkList?.filter((row) => (row.external == true && row.project == namespace));
 
       setInternalList(internalNetworkList)
       setExternalList(externalNetworkList)

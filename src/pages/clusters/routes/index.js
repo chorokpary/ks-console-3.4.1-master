@@ -84,6 +84,7 @@ import ComKassResource from '../containers/Resources/ComKassResource'
 
 import ImageBuild from '../containers/Resources/ImageBuild'
 import ComputingAppDeploy from '../containers/Resources/ComputingAppDeploy'
+import ClusterFault from '../containers/Resources/ClusterFault'
 
 const PATH = '/clusters/:cluster'
 
@@ -378,7 +379,7 @@ export default [
             path: `${PATH}/computingappdeploy`,
             component: ComputingAppDeploy,
             exact: true,
-          },        
+          },
           {
             path: `${PATH}/baremetal-carbon-indicator`,
             component: BareMetalCarbonIndicator,
@@ -387,6 +388,11 @@ export default [
           {
             path: `${PATH}/computingkaasmonitoring`,
             component: ComKassResource,
+            exact: true,
+          },
+          {
+            path: `${PATH}/clusterfault`,
+            component: ClusterFault,
             exact: true,
           },
 

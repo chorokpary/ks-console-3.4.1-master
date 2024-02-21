@@ -69,6 +69,7 @@ import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
 import ImageBuildDetail from '../containers/Resources/ImageBuild/Detail'
 import ComputingAppDeployDetail from '../containers/Resources/ComputingAppDeploy/Detail'
+import ClusterFaultSetting from '../containers/Resources/ClusterFault/Setting'
 
 
 const PATH = '/clusters/:cluster'
@@ -266,8 +267,12 @@ export default [
     component: ImageBuildDetail,
   },
   {
-    path: `${PATH}/computingappdeploy/:name/:id`,
+    path: `${PATH}/computingappdeploy/:name`,
     component: ComputingAppDeployDetail,
+  },
+  {
+    path: `${PATH}/clusterfault/setting`,
+    component: ClusterFaultSetting,
   },
 
 

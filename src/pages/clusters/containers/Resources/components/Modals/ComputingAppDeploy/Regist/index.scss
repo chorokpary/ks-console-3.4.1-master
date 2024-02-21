@@ -49,6 +49,7 @@ $size-ssmall: 11px;
     }
 }
 .scriptitem {
+    display: flex;
     height: 46px;
     position: relative;
     padding: 6px 68px 6px 17px;
@@ -62,7 +63,19 @@ $size-ssmall: 11px;
   
     &>input {
         max-width: none !important;
+        padding: 6px 68px 6px 17px;
     }
+  }
+
+  .scriptInput{
+    width: 120px;
+    margin-top:  0px;
+    margin-left: 10px;
+  }
+
+  .scriptTextArea{
+    margin-top:  0px;
+    margin-left: 10px;
   }
   
   .scriptdelete {
@@ -78,4 +91,78 @@ $size-ssmall: 11px;
 .formErrorStyle {
   border: solid 1px #ca2621 !important;
   margin-bottom: 0 !important;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-radius: 0 0 4px 4px;
+  background: #f9fbfd;
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 12px 20px;
+}
+
+*.btn {
+	border-radius: 16px;
+	min-width: 90px;
+	height: 32px;
+	line-height: 20px;
+	font-size: 12px;
+	font-weight: 700;
+	padding: 5px 23px;
+  &.btn-short {
+    flex: 0 0 auto !important;
+    min-width: inherit;
+    width: auto;
+    padding: 5px 20px;
+  }
+
+  &.btn-default {
+    flex: 0 0 auto !important;
+    border: 1px solid #ccd3db;
+    background: #eff4f9;
+    color: #36435c;
+    box-shadow: none;
+    &:hover {
+      background-color: #e3e9ef;
+      border-color: #c1c9d1;
+    }
+  }
+  &.btn-control {
+    flex: 0 0 auto !important;
+    background: #3744b9;
+    color: #fff;
+    box-shadow: 0 4px 8px 0 rgba(35, 45, 65, 0.28);
+    &:hover {
+      box-shadow: none;
+    }
+  }
+  &.btn-cancel {
+    flex: 0 0 auto !important;
+    background: #ca2621;
+    color: #fff;
+  }
+}
+
+.body {
+  padding: 0;
+  overflow: hidden;
+  max-height: none;
+}
+
+/* boxwrap */
+.cont_boxwrap {
+	flex: 1;
+	position: relative;
+	padding: 20px;
+	z-index: 10;
+	overflow: hidden;
+	overflow-y: auto;
+}
+
+.vm_list {
+  display: flex;
+  align-items: center;
 }

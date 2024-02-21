@@ -1,0 +1,25 @@
+@charset "utf-8";
+
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.iconwrapper {
+  display: flex;
+
+  .indicator {
+    right: 0px;
+    bottom: -2px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+  }
+
+  .success{
+    color: #55bc8a;
+  }
+
+  .error{
+    color: #ab2f29;
+  }
+
+}

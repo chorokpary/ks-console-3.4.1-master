@@ -38,7 +38,8 @@ const ClusterStatus = ({ x, y, w, h }) => {
 
     const getK8sStatusData = async () => {
       setLoading(true)
-      await componentStore.fetchList({ cluster: 'default' })
+      let cluster = globals.currentCluster
+      await componentStore.fetchList({ cluster })
       const { data } = componentStore.list;
       const componentData = data['kubernetes']
       // kubesphere

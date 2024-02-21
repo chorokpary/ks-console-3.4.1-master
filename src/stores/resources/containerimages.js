@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
+import { get, set, uniq, isArray, intersection, join } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
@@ -44,9 +44,12 @@ export default class ContainerImagesStore extends Base {
     namespace,
     more,
     devops,
+    silent,
     ...params
   } = {}) {
-    this.list.isLoading = true
+    if (!silent) {
+      this.list.isLoading = true;
+    }
 
     if (!params.sortBy && params.ascending === undefined) {
       params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
@@ -73,7 +76,6 @@ export default class ContainerImagesStore extends Base {
       namespace,
       ...this.mapper(item),
     }))
-
 
     //Image Detail 정보 추가 
     const imageArray = [];

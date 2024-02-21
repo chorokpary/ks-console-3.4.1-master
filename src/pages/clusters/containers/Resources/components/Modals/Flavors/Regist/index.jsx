@@ -265,13 +265,33 @@ const RegistModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk;
+    const removeText = 'GiB';
 
     form.current.validator(() => {
       const { data } = form.current.props;
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
-      data.root_disk = rootDisk;
-      data.ephemeral_disk = ephemeralDisk;
+
+      if (`${rootDisk}`.includes(removeText)) {
+        const numRookDisk = rootDisk.substring(0, rootDisk.indexOf(removeText));
+        const intRookDisk = parseInt(numRookDisk, 10);
+        data.root_disk = intRookDisk;
+      } else {
+        data.root_disk = parseInt(rootDisk, 10);
+      }
+
+      if (`${ephemeralDisk}`.includes(removeText)) {
+        const numEphemeralDisk = ephemeralDisk.substring(
+          0,
+          ephemeralDisk.indexOf(removeText)
+        );
+        const intEphemeralDisk = parseInt(numEphemeralDisk, 10);
+
+        data.ephemeral_disk = intEphemeralDisk;
+      } else {
+        data.ephemeral_disk = parseInt(ephemeralDisk, 10);
+      }
+
       data.extra_specs = [...extraSpecsFields].filter(
         obj => delete obj.description
       );
@@ -560,7 +580,6 @@ const RegistModal = props => {
                 </Form.Group>
               </Form.Item>
 
-              {/* 수정중 */}
               <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>

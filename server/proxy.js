@@ -82,8 +82,18 @@ const webMm3Proxy = {
   },  
 }
 
+const webAppDeployProxy = {
+  target: `${serverConfig.apiServer.appdeployUrl}`,
+  changeOrigin: true,
+}
+
 const webCmpProxy = {
   target: serverConfig.apiServer.url+'/kapis/cmp.kubesphere.io/v1alpha1',
+  changeOrigin: true,
+}
+
+const webBaremetalProxy = {
+  target: `${serverConfig.apiServer.baremetalUrl}`,
   changeOrigin: true,
 }
 
@@ -130,4 +140,6 @@ module.exports = {
   b2iFileProxy,
   webMm3Proxy,
   webCmpProxy,
+  webAppDeployProxy,
+  webBaremetalProxy,
 }
