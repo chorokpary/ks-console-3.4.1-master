@@ -83,7 +83,8 @@ const ModifyModal = (props) => {
       jsonData.name = data.name;
       jsonData.version = data['version'];
       jsonData.registrant = globals.user.username;
-      jsonData.registrationDate = timestamp;
+      jsonData.registrationDate = props.store.detail.registrationDate;
+      jsonData.modificationDate = timestamp;
 
       listVmInventory.map((item) => {
         const vmData = {
@@ -362,7 +363,6 @@ const ModifyModal = (props) => {
 
                 {listVmInventory.map((obj, idx) => (
                   <div className={styles.scriptitem} key={obj}>
-
                         <Form.Item>
                         <Select
                            name={`vm_${obj}`}
@@ -372,27 +372,27 @@ const ModifyModal = (props) => {
                             defaultValue={props.store.detail.vm[obj-1]?.name}                   
                         />
                         </Form.Item>
-                        <Form.Item>
                         <div className={styles.scriptInput}>
+                        <Form.Item>
                           <Input
                             name={`ip_${obj}`}
                             placeholder={t('IP')}   
                             defaultValue={props.store.detail.vm[obj-1]?.host}   
                             maxLength="15"                
                           />
-                          </div>
                         </Form.Item>
-                        <Form.Item>
+                        </div>
                         <div className={styles.scriptInput}>
+                        <Form.Item>
                           <Input
                             name={`user_${obj}`}
                             placeholder={t('User')}
                             defaultValue={props.store.detail.vm[obj-1]?.user} 
                           />
-                          </div>
                         </Form.Item>
-                        <Form.Item>
+                        </div>
                         <div className={styles.scriptTextArea}>
+                        <Form.Item>                        
                           <TextArea
                             name={`private_key_${obj}`}
                             rows="1"
@@ -400,9 +400,8 @@ const ModifyModal = (props) => {
                             placeholder={t('Private Key')}
                             defaultValue={props.store.detail.vm[obj-1]?.privateKey} 
                           />
-                        </div>
                         </Form.Item>
-
+                        </div>
                     <Button
                       type="flat"
                       icon="trash"

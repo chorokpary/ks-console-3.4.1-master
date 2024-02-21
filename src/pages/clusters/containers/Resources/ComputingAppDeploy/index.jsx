@@ -23,7 +23,7 @@ import { Avatar, Status, Indicator} from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
-import { Dropdown, Menu, Notify } from '@kube-design/components';
+import { Dropdown, Menu, Notify, Icon } from '@kube-design/components';
 
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
@@ -139,37 +139,7 @@ export default class ImageBuild extends React.Component {
         dataIndex: 'version',
         isHideable: true,
         width: 'auto',
-      },
-      {
-        title: t('RESOURCES_STATE'),
-        dataIndex: 'status',
-        isHideable: true,
-        width: 'auto',
-        render: (status) => {
-
-          return (
-          <div className={styles.iconwrapper}>   
-              {status != "-" &&
-                <Indicator
-                  className={styles.indicator}
-                  type={status === 'success' ? 'running' : 'error'}
-                  flicker
-                /> 
-              }
-              <p className={status === 'success' ? styles.success : status != "-" ? styles.error : ''}>{(status)[0].toUpperCase()+ (status).slice(1, (status).length)}</p>
-          </div>
-          )
-        }
-      },
-      {
-        title: t('Last Task'),
-        dataIndex: 'lastTask',
-        isHideable: true,
-        width: 'auto',
-        render: (lastTask) => {
-          return <p>{lastTask}</p>
-        }
-      },
+      },     
       {
         title: t('Playbook'),
         dataIndex: 'playbookName',
@@ -211,6 +181,7 @@ export default class ImageBuild extends React.Component {
                 >
                   <div className={styles.iconwrapper}>
                     <p>{vmGroupText}</p>
+                    <Icon name="triangle-down"/>
                   </div>
                 </Dropdown>
               </div>

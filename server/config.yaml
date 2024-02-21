@@ -255,12 +255,12 @@ client:
              skipAuth: true,
              showInDisable: true,
             }        
-            # - {
-            #     name: computingappdeploy,
-            #     title: "애플리케이션 배포",
-            #     skipAuth: true,
-            #     showInDisable: true,
-            # }      
+            - {
+                name: computingappdeploy,
+                title: RESOURCES_APP_DEPLOY,
+                skipAuth: true,
+                showInDisable: true,
+            }      
         - name: resources
           title: RESOURCES_RESOURCE_TEMPLATE
           icon: resource

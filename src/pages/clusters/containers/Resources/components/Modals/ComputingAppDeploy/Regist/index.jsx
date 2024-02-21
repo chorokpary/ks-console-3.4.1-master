@@ -101,27 +101,27 @@ const RegistModal = (props) => {
       formData.append("body", JSON.stringify(jsonData));
       formData.append("playbook", file);
 
-      // setSubmitButtonFlag(true);
-      // setFileUploadStartFlag(true);
+      setSubmitButtonFlag(true);
+      setFileUploadStartFlag(true);
 
-      // axios.post('/app-manager/v1alpha1/templates', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data'
-      //   },
-      //   onUploadProgress: (progressEvent) => {
-      //     const percentCompleted = Math.round(
-      //       (progressEvent.loaded * 100) / progressEvent.total
-      //     );
-      //     fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
-      //     console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
-      //   },
-      // }).then((res) => {
-      //     console.log(res.data);
-      //     onOk({ ...data })
-      // }).catch((err) => {
-      //     // console.error(err);
-      //     console.log(err);
-      // });
+      axios.post('/app-manager/v1alpha1/templates', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
+          console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
+        },
+      }).then((res) => {
+          console.log(res.data);
+          onOk({ ...data })
+      }).catch((err) => {
+          // console.error(err);
+          console.log(err);
+      });
 
     })
   }
@@ -358,25 +358,25 @@ const RegistModal = (props) => {
                             onChange={() => fnSelectedVmOption()}
                         />
                         </Form.Item>
-                        <Form.Item>
-                          <div className={styles.scriptInput}>
+                        <div className={styles.scriptInput}>
+                        <Form.Item>                          
                             <Input
                               name={`ip_${obj}`}
                               placeholder={t('IP')}
                               maxLength="15"
                             />
-                          </div>
                         </Form.Item>
+                        </div>
+                        <div className={styles.scriptInput}>
                         <Form.Item>
-                         <div className={styles.scriptInput}>
                           <Input
                             name={`user_${obj}`}
                             placeholder={t('User')}
                           />
-                          </div>
                         </Form.Item>
-                        <Form.Item>
-                         <div className={styles.scriptTextArea}>
+                        </div>
+                        <div className={styles.scriptTextArea}>
+                        <Form.Item>                         
                           <TextArea
                             name={`private_key_${obj}`}
                             rows="1"
@@ -384,8 +384,8 @@ const RegistModal = (props) => {
                             defaultValue=""
                             placeholder={t('Private Key')}
                           />
-                          </div>
                         </Form.Item>
+                        </div>
                     <Button
                       type="flat"
                       icon="trash"
