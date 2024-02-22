@@ -32,7 +32,7 @@ export default class SriovStore extends Base {
 
   module = 'sriov'
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_networks`
+  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/sriov_networks`
   getListUrl = this.getResourceUrl
 
   @action
@@ -248,7 +248,7 @@ export default class SriovStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_resources`
+      `/edgetron/resources/kubevirt/sriov_resources`
     )
     // console.log("result : "+ JSON.stringify(result))
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
@@ -262,7 +262,7 @@ export default class SriovStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_resources`
+      `/edgetron/resources/kubevirt/sriov_resources`
     )
     // console.log("bond : "+ JSON.stringify(result))
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }

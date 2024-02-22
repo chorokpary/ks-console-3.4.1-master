@@ -33,7 +33,7 @@ export default class FlavorStore extends Base {
 
     module = 'flavors'
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/flavors`
+    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/flavors`
     getListUrl = this.getResourceUrl
 
 
@@ -119,7 +119,7 @@ export default class FlavorStore extends Base {
     @action
     async update({ name, ...params }, data) {
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ name: data.flavor.name }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.flavor.name }), data))
 
         return res
     }

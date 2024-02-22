@@ -23,6 +23,8 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
+import axios from "axios";
+
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
@@ -32,7 +34,7 @@ export default class SecurityGroupStore extends Base {
 
     module = 'security_groups'
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups`
+    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/security_groups`
     getListUrl = this.getResourceUrl
     getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
@@ -77,7 +79,7 @@ export default class SecurityGroupStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (security_group) => {
-            const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + security_group.id);
+            const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + security_group.id);
             security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
             security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
             dataArray.push(security_group);
@@ -170,7 +172,7 @@ export default class SecurityGroupStore extends Base {
 
                 jsonData.security_group_rule = data;
 
-                await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
+                await this.submitting(request.post("/edgetron/resources/kubevirt/security_group_rules", jsonData));
             })
             await Promise.all(promises);
 
@@ -219,10 +221,10 @@ export default class SecurityGroupStore extends Base {
             await this.submitting(
                 Promise.all(
                     rowKeys.map(async (id) => {
-                        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + id);
+                        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + id);
                         Promise.all(
                             securityDetail.data.security_group.rules.map((rule) => {
-                                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
+                                request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
                             })
                         )
 
@@ -245,10 +247,10 @@ export default class SecurityGroupStore extends Base {
             return
         }
 
-        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + user.id);
+        const securityDetail = await axios.get("/edgetron/resources/kubevirt/security_groups/" + user.id);
         Promise.all(
             securityDetail.data.security_group.rules.map((rule) => {
-                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
+                request.delete("/edgetron/resources/kubevirt/security_group_rules/" + rule.id);
             })
         )
 
