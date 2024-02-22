@@ -35,7 +35,7 @@ export default class RouterStore extends Base {
 
   module = 'routers'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/routers`
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
   getListUrl = this.getResourceUrl
 
   @action
@@ -266,7 +266,7 @@ export default class RouterStore extends Base {
   async networkList(params) {
 
     const result = await request.get(
-      `/edgetron/resources/kubevirt/networks`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
     )
     this.networkDataList = result.networks;
 
