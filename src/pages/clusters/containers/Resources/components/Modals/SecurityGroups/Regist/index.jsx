@@ -6,6 +6,8 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { ProjectSelect } from 'components/Inputs'
 
+import { PATTERN_NAME } from 'utils/constants'
+
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
@@ -253,7 +255,14 @@ const RegistModal = (props) => {
                         <Column>
                             <Form.Item
                                 label={t('RESOURCES_NAME')}
-                                rules={[{ required: true, validator: nameValidator }]}
+                                rules={[
+                                    { required: true, message: t('NAME_EMPTY_DESC') },
+                                    {
+                                      pattern: PATTERN_NAME,
+                                      message: t('INVALID_NAME_DESC'),
+                                    },
+                                    { validator: nameValidator },
+                                  ]}
                                 desc={t('NAME_DESC')}
                             >
                                 <Input

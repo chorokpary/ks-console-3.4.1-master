@@ -15,6 +15,8 @@ import { Modal, TypeSelect } from 'components/Base';
 import * as common from 'utils/resources';
 import { ProjectSelect } from 'components/Inputs';
 
+import { PATTERN_NAME } from 'utils/constants'
+
 import styles from './index.scss';
 
 import VolumeStore from 'stores/resources/volumes';
@@ -256,9 +258,10 @@ const RegistModal = props => {
                     <Form.Item
                       label={t('RESOURCES_NAME')}
                       rules={[
+                        { required: true, message: t('NAME_EMPTY_DESC') },
                         {
-                          required: true,
-                          message: t('RESOURCES_NAME_EMPTY_DESC'),
+                          pattern: PATTERN_NAME,
+                          message: t('INVALID_NAME_DESC'),
                         },
                       ]}
                       desc={t('NAME_DESC')}

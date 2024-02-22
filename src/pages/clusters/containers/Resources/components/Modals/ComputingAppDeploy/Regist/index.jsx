@@ -10,6 +10,8 @@ import * as common from "utils/resources"
 import axios from 'axios'
 import moment from 'moment-mini'
 
+import { PATTERN_NAME } from 'utils/constants'
+
 import VmStore from 'stores/resources/vms'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
@@ -261,7 +263,13 @@ const RegistModal = (props) => {
 
           <Form.Item
             label={t('RESOURCES_NAME')}
-            rules={[{ required: true, validator: nameValidator }]}
+            rules={[
+              { required: true, message: t('NAME_EMPTY_DESC') },
+              {
+                pattern: PATTERN_NAME,
+                message: t('INVALID_NAME_DESC'),
+              },
+            ]}
             desc={t('NAME_DESC')}
           >
             <Input

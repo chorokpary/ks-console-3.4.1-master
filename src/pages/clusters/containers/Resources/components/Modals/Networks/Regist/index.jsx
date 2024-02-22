@@ -284,10 +284,16 @@ const RegistModal = (props) => {
                   <Column>
                     <Form.Item
                       label={t('RESOURCES_NAME')}
-                      rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
+                      rules={[
+                        { required: true, message: t('NAME_EMPTY_DESC') },
+                        {
+                          pattern: PATTERN_NAME,
+                          message: t('INVALID_NAME_DESC'),
+                        },
+                      ]}
                       desc={t('NAME_DESC')}
                     >
-                      <Input name="name" maxLength={253}
+                      <Input name="name" maxLength={63}
                         style={{ maxWidth: 'none' }} />
                     </Form.Item>
                   </Column>
