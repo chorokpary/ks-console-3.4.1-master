@@ -49,7 +49,7 @@ export default class FloatingIp extends React.Component {
             {
                 key: 'delete',
                 icon: 'trash',
-                text: t('REMOVE'),
+                text: t('RESOURCES_DELETE'),
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
@@ -84,7 +84,7 @@ export default class FloatingIp extends React.Component {
                 {
                     key: 'delete',
                     type: 'danger',
-                    text: t('REMOVE'),
+                    text: t('RESOURCES_DELETE'),
                     action: 'delete',
                     onClick: () =>
                         trigger('floatingIp.remove.batch', {
