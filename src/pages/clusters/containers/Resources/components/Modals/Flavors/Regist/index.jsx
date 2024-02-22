@@ -22,6 +22,8 @@ import FlavorStore from 'stores/resources/flavors';
 
 import { PATTERN_NAME } from 'utils/constants';
 
+import { PATTERN_NAME } from 'utils/constants'
+
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 const RegistModal = props => {
   const store = new FlavorStore();
