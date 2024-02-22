@@ -34,7 +34,7 @@ export default class ContainerImagesStore extends Base {
 
   module = 'images'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/capk/images`
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images`
   getListUrl = this.getResourceUrl
 
   @action
@@ -80,7 +80,7 @@ export default class ContainerImagesStore extends Base {
     //Image Detail 정보 추가 
     const imageArray = [];
     const promises = data.map(async (image) => {
-      const imageDetail = await axios.get("/edgetron/resources/capk/images/" + image.name);
+      const imageDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images/` + image.name);
       image.image_detail = imageDetail.data.image;
       imageArray.push(image);
     })
