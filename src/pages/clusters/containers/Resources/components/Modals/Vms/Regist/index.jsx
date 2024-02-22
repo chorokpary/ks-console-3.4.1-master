@@ -303,7 +303,7 @@ const RegistModal = (props) => {
           <>
             <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
             <Button onClick={() => { setRegStep(3) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
-            {submitButtonFlag ?
+            {(submitButtonFlag && props.isSubmitting) ?
               <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
               :
               <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
@@ -475,8 +475,8 @@ const RegistModal = (props) => {
   }
 
   // 스크립트 끝 ==================================================
-
-
+  
+  
   const [tab, setTab] = useState("I");
   const { TabPanel } = Tabs;
 

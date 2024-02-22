@@ -255,7 +255,7 @@ export default class VmStore extends Base {
 
     jsonData.vm = resourceData;
 
-    const res = await request.post(url, jsonData);
+    const res = await this.submitting(request.post(url, jsonData));
     return res;
   }
 
@@ -284,8 +284,6 @@ export default class VmStore extends Base {
     vmDataSecurity.security_groups = scurityGroups;
 
     jsonDataSecurity.vm = vmDataSecurity;
-
-    console.log(`jsonDataSecurity : ${JSON.stringify(jsonDataSecurity)}`);
 
     await this.submitting(
       request.put(
