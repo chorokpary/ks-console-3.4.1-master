@@ -28,7 +28,7 @@ export default class NetworkStore extends Base {
 
     module = 'networks'
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
+    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/networks`
     getListUrl = this.getResourceUrl
     getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
