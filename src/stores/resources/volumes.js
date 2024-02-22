@@ -32,7 +32,7 @@ export default class VolumeStore extends Base {
 
   module = 'resourcesvolumes'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/volumes`
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/volumes`
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
@@ -160,7 +160,7 @@ export default class VolumeStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/kubevirt/storage_classes/user`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/storage_classes/user`
     )
     const response = { ...params, ...this.mapper(result), kind: 'user_sces' }
 

@@ -23,8 +23,6 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
-import axios from "axios";
-
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
@@ -37,7 +35,7 @@ export default class LoadBalancerStore extends Base {
 
     module = 'lbs'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/lbs`
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
     getListUrl = this.getResourceUrl
     getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
@@ -82,7 +80,7 @@ export default class LoadBalancerStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (lbs) => {
-            const lbsDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lbs.id);
+            const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs/` + lbs.id);
             lbs.rules_count = (lbsDetail.data.lb?.rules).length;
             dataArray.push(lbs);
         })
@@ -170,7 +168,7 @@ export default class LoadBalancerStore extends Base {
 
                 jsonData.lb_rule = ruleData;
 
-                await this.submitting(request.post("/edgetron/resources/kubevirt/lb_rules", jsonData));
+                await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
             })
             await Promise.all(promises);
 

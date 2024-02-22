@@ -33,7 +33,7 @@ export default class DistroTypeStore extends Base {
 
     module = 'distro_types'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/metadata/distro_types`
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/metadata/distro_types`
     getListUrl = this.getResourceUrl
 
 }
