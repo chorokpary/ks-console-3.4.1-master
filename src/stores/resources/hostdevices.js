@@ -33,7 +33,7 @@ export default class HostDeviceStore extends Base {
 
     module = 'host_devices'
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/host_devices`
+    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/host_devices`
     getListUrl = this.getResourceUrl
 
 
@@ -222,7 +222,7 @@ export default class HostDeviceStore extends Base {
                 Promise.all(
                     rowKeys.map(username => {
                         const replaceName = username.replace("/", "%5C");
-                        request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/host_devices/` + replaceName)
+                        request.delete('edgetron/resources/kubevirt/host_devices/' + replaceName)
                     })
                 )
             )
@@ -246,7 +246,7 @@ export default class HostDeviceStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}//edgetron/resources/kubevirt/pci_devices`
+            `/edgetron/resources/kubevirt/pci_devices`
         )
         const response = { ...params, ...this.mapper(result), kind: 'pciDevices' }
 

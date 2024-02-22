@@ -33,7 +33,7 @@ export default class KeypairStore extends Base {
 
   module = 'keypairs'
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/keypairs`
+  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/keypairs`
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
