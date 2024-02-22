@@ -10,6 +10,8 @@ import * as common from "utils/resources"
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
+import { PATTERN_NAME } from 'utils/constants'
+
 import classnames from 'classnames'
 import styles from './index.scss'
 
@@ -549,7 +551,14 @@ const RegistModal = (props) => {
               <div className={`${regStep == 1 ? "" : "hide"}`}>
                 <Form.Item
                   label={t('NAME')}
-                  rules={[{ required: true, validator: nameValidator }]}
+                  rules={[
+                    { required: true, message: t('NAME_EMPTY_DESC') },
+                    {
+                      pattern: PATTERN_NAME,
+                      message: t('INVALID_NAME_DESC'),
+                    },
+                    { validator: nameValidator },
+                  ]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />

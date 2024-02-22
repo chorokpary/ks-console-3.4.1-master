@@ -10,6 +10,8 @@ import * as common from "utils/resources"
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
+import { PATTERN_NAME } from 'utils/constants'
+
 import classnames from 'classnames'
 import styles from './index.scss'
 
@@ -549,8 +551,16 @@ const RegistModal = (props) => {
                   <Column>
                     <Form.Item
                       label={t('RESOURCES_NAME')}
-                      rules={[{ required: true, validator: nameValidator }]}
+                      rules={[
+                        { required: true, message: t('NAME_EMPTY_DESC') },
+                        {
+                          pattern: PATTERN_NAME,
+                          message: t('INVALID_NAME_DESC'),
+                        },
+                        { validator: nameValidator },
+                      ]}
                       desc={t('NAME_DESC')}
+                      
                     >
                       <Input
                         name="name"
