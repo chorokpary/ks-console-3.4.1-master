@@ -76,7 +76,7 @@ export default class BaseStore {
     `${this.getWatchListUrl(params)}/${params.name}`
 
   getResourceUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/${this.module
+    `kapis/resources.kubesphere.io/v1alpha3${this.getPath(params)}/${this.module
     }`
 
   getFilterParams = params => {
