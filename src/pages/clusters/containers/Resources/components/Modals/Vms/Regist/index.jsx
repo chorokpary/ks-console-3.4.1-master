@@ -523,8 +523,8 @@ const RegistModal = (props) => {
   }
 
   // 스크립트 끝 ==================================================
-
-
+  
+  
   const [tab, setTab] = useState("I");
   const { TabPanel } = Tabs;
 
