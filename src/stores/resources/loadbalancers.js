@@ -81,7 +81,7 @@ export default class LoadBalancerStore extends Base {
 
         const promises = data.map(async (lbs) => {
             const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs/` + lbs.id);
-            lbs.rules_count = (lbsDetail.data.lb?.rules).length;
+            lbs.rules_count = (lbsDetail.lb?.rules).length;
             dataArray.push(lbs);
         })
         await Promise.all(promises);
