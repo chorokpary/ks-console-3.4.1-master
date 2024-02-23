@@ -15,10 +15,11 @@ import {
   Tooltip,
 } from '@kube-design/components';
 import classnames from 'classnames';
-import axios from 'axios';
 import { UnitSlider, NumberInput } from 'components/Inputs';
 import { Modal } from 'components/Base';
 import styles from './index.scss';
+
+import { PATTERN_NAME } from 'utils/constants'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
@@ -46,7 +47,7 @@ const RegistModal = props => {
   const { TabPanel } = Tabs;
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
+    const data = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/kubevirt/host_devices`);
     const res = [];
     data.then(response => {
       if (response.data.host_devices) {
@@ -63,7 +64,7 @@ const RegistModal = props => {
   }, []);
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
+    const data = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/kubevirt/mediated_devices`);
     const res = [];
     data.then(response => {
       if (response.data.mediated_devices) {
@@ -84,7 +85,7 @@ const RegistModal = props => {
   }, []);
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/extra_specs`);
+    const data = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/kubevirt/extra_specs`);
     const res = [];
     data.then(response => {
       if (response.data.extra_specs) {
@@ -437,13 +438,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep === 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -455,8 +455,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -468,13 +468,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
-                      ? styles.current
-                      : regStep > 2
+                  className={`${regStep === 2
+                    ? styles.current
+                    : regStep > 2
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -495,7 +494,13 @@ const RegistModal = props => {
             <div className={`${regStep === 1 ? '' : 'hide'}`}>
               <Form.Item
                 label={t('RESOURCES_NAME')}
-                rules={[{ required: true, validator: nameValidator }]}
+                rules={[
+                  { required: true, message: t('NAME_EMPTY_DESC') },
+                  {
+                    pattern: PATTERN_NAME,
+                    message: t('INVALID_NAME_DESC'),
+                  },
+                ]}
                 desc={t('NAME_DESC')}
               >
                 <Input

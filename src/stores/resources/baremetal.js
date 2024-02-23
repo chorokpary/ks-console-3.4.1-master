@@ -49,9 +49,9 @@ export default class BareMetalStore extends Base {
   // getResourceUrlBareMetal = (params = {}) => `cmp-apiserver/node/v1alpha2/baremetals`
   // getResourceUrlReset = (params = {}) => `cmp-apiserver/redfish/v1alpha2/reset`
 
-  getResourceUrlCluster = (params = {}) => `baremetal-monitor/v1alpha1/clusters`
-  getResourceUrlBareMetal = (params = {}) => `baremetal-monitor/v1alpha1/baremetals`
-  getResourceUrlReset = (params = {}) => `baremetal-monitor/v1alpha1/redfish/reset`
+  getResourceUrlCluster = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/clusters`
+  getResourceUrlBareMetal = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/baremetals`
+  getResourceUrlReset = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/redfish/reset`
 
   @action
   async fetchList({

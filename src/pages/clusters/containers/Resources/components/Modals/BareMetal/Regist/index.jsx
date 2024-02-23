@@ -6,6 +6,8 @@ import { Modal } from 'components/Base'
 import { Form, Input, Select, TextArea, Button, Checkbox, Tabs } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
+import { PATTERN_NAME } from 'utils/constants'
+
 import styles from './index.scss'
 import NodeStore from 'stores/node'
 
@@ -123,8 +125,14 @@ const RegistModal = (props) => {
 
            {systemType == "B" && 
             <Form.Item
-              label={t('이름')}
-              rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+              label={t('RESOURCES_NAME')}
+              rules={[
+                { required: true, message: t('NAME_EMPTY_DESC') },
+                {
+                  pattern: PATTERN_NAME,
+                  message: t('INVALID_NAME_DESC'),
+                },
+              ]}
               desc={t('NAME_DESC')}
             >
               <Input

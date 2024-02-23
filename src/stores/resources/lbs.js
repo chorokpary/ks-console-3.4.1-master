@@ -28,7 +28,7 @@ export default class LbsIpStore extends Base {
 
     module = 'lbs'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/lbs`
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
     getListUrl = this.getResourceUrl
 
     @action

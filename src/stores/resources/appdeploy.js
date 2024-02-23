@@ -34,9 +34,9 @@ export default class AppDeployStore extends Base {
 
   module = 'appdeploy'
 
-  getResourceUrl = (params = {}) => `app-manager/v1alpha1/templates`
-  getHistoryUrl = (params = {}) => `app-manager/v1alpha1/taskhistories`
-  getDeployUrl = (params = {}) => `app-manager/v1alpha1/tasks`
+  getResourceUrl = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
+  getHistoryUrl = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/taskhistories`
+  getDeployUrl = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/tasks`
 
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`

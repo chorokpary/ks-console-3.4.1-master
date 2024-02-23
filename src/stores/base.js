@@ -63,8 +63,7 @@ export default class BaseStore {
   }
 
   getListUrl = (params = {}) =>
-    `${this.apiVersion}${this.getPath(params)}/${this.module}${
-      params.dryRun ? '?dryRun=All' : ''
+    `${this.apiVersion}${this.getPath(params)}/${this.module}${params.dryRun ? '?dryRun=All' : ''
     }`
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
@@ -76,8 +75,7 @@ export default class BaseStore {
     `${this.getWatchListUrl(params)}/${params.name}`
 
   getResourceUrl = (params = {}) =>
-    `kapis/resources.kubesphere.io/v1alpha3${this.getPath(params)}/${
-      this.module
+    `kapis/resources.kubesphere.io/v1alpha3${this.getPath(params)}/${this.module
     }`
 
   getFilterParams = params => {
@@ -101,7 +99,7 @@ export default class BaseStore {
 
     setTimeout(() => {
       promise
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => {
           this.isSubmitting = false
         })
@@ -136,14 +134,14 @@ export default class BaseStore {
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)
     )
-    
+
     const data = (get(result, 'items') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
- 
+
     this.list.update({
       data: more ? [...this.list.data, ...data] : data,
       total: result.totalItems || result.total_count || data.length || 0,
@@ -180,10 +178,10 @@ export default class BaseStore {
 
     const data = Array.isArray(result.items)
       ? result.items.map(item => ({
-          cluster,
-          module: module || this.module,
-          ...this.mapper(item),
-        }))
+        cluster,
+        module: module || this.module,
+        ...this.mapper(item),
+      }))
       : []
 
     this.list.update({

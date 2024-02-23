@@ -3,13 +3,11 @@ import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
-import axios from "axios";
 import * as common from 'utils/resources'
 
 import styles from './index.scss'
 
 const Information = (props) => {
-
   const store = props.detailStore;
 
   const [detailFlavor, setDetailFlavor] = useState(null);
@@ -37,13 +35,13 @@ const Information = (props) => {
     }
 
     const fnGetHostDevices = async () => {
-      const response = await axios.get(`/edgetron/resources/kubevirt/host_devices`);
-      setHostDevicesList(response.data.host_devices);
+      const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/host_devices`);
+      setHostDevicesList(response.host_devices);
     };
 
     const fnGetMediatedDevices = async () => {
-      const response = await axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
-      setmMediatedDevicesList(response.data.mediated_devices);
+      const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/mediated_devices`);
+      setmMediatedDevicesList(response.mediated_devices);
     };
 
     const fnGetImage = async () => {
@@ -98,10 +96,10 @@ const Information = (props) => {
                   <div className="group">
                     <div className="info"><i className={(store.detail.vm?.cpu_arch)?.includes('x86') ? "ico-type24-x86" : "ico-type24-arm"}></i><span>{(store.detail.vm?.cpu_arch)?.includes('x86') ? "X86" : "ARM"}</span></div>
                     {store.detail.vm?.image?.name &&
-                    <div className="info">
-                      <i className={`ico-os-${detailImage?.distro_type}`}></i>
-                      <span>{store.detail.vm?.image?.name}</span>
-                    </div>
+                      <div className="info">
+                        <i className={`ico-os-${detailImage?.distro_type}`}></i>
+                        <span>{store.detail.vm?.image?.name}</span>
+                      </div>
                     }
                   </div>
                 </div>

@@ -10,6 +10,8 @@ import * as common from "utils/resources"
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
+import { PATTERN_NAME } from 'utils/constants'
+
 import classnames from 'classnames'
 import styles from './index.scss'
 
@@ -26,7 +28,6 @@ const CONFIG_DISK_WORKER = 80;
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
-
   const form = useRef();
   const [formData, setFormData] = useState({});
 
@@ -105,30 +106,31 @@ const RegistModal = (props) => {
 
   useEffect(() => {
 
-    const csiData = axios.get(`/edgetron/resources/capk/metadata/csis`);
+    const csiData = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/csis`);
     let resCsi = [];
+    console.log(csiData)
     csiData.then(response => {
-      if (response.data.csis) {
-        for (let i = 0, n = response.data.csis.length; i < n; i += 1) {
+      if (response.csis) {
+        for (let i = 0, n = response.csis.length; i < n; i += 1) {
           resCsi.push({
-            label: response.data.csis[i].name,
-            value: response.data.csis[i].name,
+            label: response.csis[i].name,
+            value: response.csis[i].name,
           });
         };
         setCsis(resCsi);
       }
     });
 
-    const featureData = axios.get(`/edgetron/resources/capk/metadata/features`);
+    const featureData = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/features`);
     let resFeature = [{ label: t('RESOURCES_SELECT_ALL'), value: 'all', icon: 'ico-etc-checkall' }];
     featureData.then(response => {
-      if (response.data.features) {
-        for (let i = 0, n = response.data.features.length; i < n; i += 1) {
+      if (response.features) {
+        for (let i = 0, n = response.features.length; i < n; i += 1) {
           resFeature.push({
-            label: response.data.features[i].name,
-            value: response.data.features[i].name,
+            label: response.features[i].name,
+            value: response.features[i].name,
             //icon: response.data.features[i].name.toLowerCase(),
-            icon: 'ico-etc-' + response.data.features[i].name.toLowerCase(),
+            icon: 'ico-etc-' + response.features[i].name.toLowerCase(),
           });
         };
         setFeatures(resFeature);
@@ -146,14 +148,14 @@ const RegistModal = (props) => {
 
   useEffect(() => {
     if (selectOsDistro) {
-      const cniData = axios.get(`/edgetron/resources/capk/metadata/cnis/${selectOsDistro}`);
+      const cniData = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/cnis/${selectOsDistro}`);
       let resCni = [];
       cniData.then(response => {
-        if (response.data.cnis) {
-          for (let i = 0, n = response.data.cnis.length; i < n; i += 1) {
+        if (response.cnis) {
+          for (let i = 0, n = response.cnis.length; i < n; i += 1) {
             resCni.push({
-              label: response.data.cnis[i].name,
-              value: response.data.cnis[i].name,
+              label: response.cnis[i].name,
+              value: response.cnis[i].name,
             });
           };
           setCnis(resCni);
@@ -259,8 +261,8 @@ const RegistModal = (props) => {
           handleSingleCheck(networkDataList.filter((el) => el.external)[0].id, "network");
           setNetworkName(networkDataList.filter((el) => el.external)[0].id);
         }
-        setCniSelect(cnis[0].value);
-        setCsiSelect(csis[0].value);
+        setCniSelect(cnis?.[0]?.value || '');
+        setCsiSelect(csis?.[0]?.value || '');
         setIsFirst(false)
       }
 
@@ -549,7 +551,14 @@ const RegistModal = (props) => {
               <div className={`${regStep == 1 ? "" : "hide"}`}>
                 <Form.Item
                   label={t('NAME')}
-                  rules={[{ required: true, validator: nameValidator }]}
+                  rules={[
+                    { required: true, message: t('NAME_EMPTY_DESC') },
+                    {
+                      pattern: PATTERN_NAME,
+                      message: t('INVALID_NAME_DESC'),
+                    },
+                    { validator: nameValidator },
+                  ]}
                   desc={t('NAME_DESC')}
                 >
                   <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />

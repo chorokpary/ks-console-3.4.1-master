@@ -15,7 +15,6 @@ import routes from './routes'
 const store = new FlavorStore();
 
 const FlavorDetail = (props) => {
-
     useEffect(() => {
         fetchData();
     }, [])
@@ -44,6 +43,7 @@ const FlavorDetail = (props) => {
                     detail: toJS(store.detail),
                     store: store,
                     success: fetchData,
+                    ...props
                 })
         },
         {

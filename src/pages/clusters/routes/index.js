@@ -16,77 +16,78 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getIndexRoute } from 'utils/router.config'
+import { getIndexRoute } from 'utils/router.config';
 
-import AlertMessages from 'projects/containers/Alerting/Messages'
-import AlertPolicies from 'projects/containers/Alerting/Policies'
+import AlertMessages from 'projects/containers/Alerting/Messages';
+import AlertPolicies from 'projects/containers/Alerting/Policies';
 
-import ClusterLayout from '../containers/layout'
-import ListLayout from '../containers/Base/List'
+import ClusterLayout from '../containers/layout';
+import ListLayout from '../containers/Base/List';
 
-import Clusters from '../containers/Clusters'
-import Overview from '../containers/Overview'
-import StorageClasses from '../containers/Storage/StorageClasses'
-import VolumeSnapshots from '../containers/Storage/VolumeSnapshots'
-import VolumeSnapshotClasses from '../containers/Storage/VolumeSnapshotClasses'
-import Volumes from '../containers/Storage/Volumes'
-import Nodes from '../containers/Nodes'
-import EdgeNodes from '../containers/EdgeNodes/index'
-import ServiceComponents from '../containers/ServiceComponents'
-import Projects from '../containers/Projects'
-import CustomResources from '../containers/CustomResources'
+import Clusters from '../containers/Clusters';
+import Overview from '../containers/Overview';
+import StorageClasses from '../containers/Storage/StorageClasses';
+import VolumeSnapshots from '../containers/Storage/VolumeSnapshots';
+import VolumeSnapshotClasses from '../containers/Storage/VolumeSnapshotClasses';
+import Volumes from '../containers/Storage/Volumes';
+import Nodes from '../containers/Nodes';
+import EdgeNodes from '../containers/EdgeNodes/index';
+import ServiceComponents from '../containers/ServiceComponents';
+import Projects from '../containers/Projects';
+import CustomResources from '../containers/CustomResources';
 
-import Deployments from '../containers/Workload/Deployments'
-import StatefulSets from '../containers/Workload/StatefulSets'
-import DaemonSets from '../containers/Workload/DaemonSets'
-import Jobs from '../containers/Workload/Jobs'
-import CronJobs from '../containers/Workload/CronJobs'
-import Pods from '../containers/Workload/Pods'
-import Services from '../containers/Workload/Services'
-import Routes from '../containers/Workload/Routes'
-import Secrets from '../containers/Secrets'
-import ConfigMaps from '../containers/ConfigMaps'
-import ServiceAccounts from '../containers/ServiceAccounts'
-import ClusterMonitor from '../containers/Monitor/Cluster'
-import ResourceMonitor from '../containers/Monitor/Resource'
-import Members from '../containers/Members'
-import Roles from '../containers/Roles'
-import BaseInfo from '../containers/BaseInfo'
-import Visibility from '../containers/Visibility'
-import KubeConfig from '../containers/KubeConfig'
-import NetworkPolicies from '../containers/Network/Policies'
-import IPPools from '../containers/Network/IPPools'
-import LogCollections from '../containers/LogCollections'
-import CustomMonitoring from '../containers/CustomMonitoring'
-import detail from './detail'
-import Gateway from '../containers/Gateway'
+import Deployments from '../containers/Workload/Deployments';
+import StatefulSets from '../containers/Workload/StatefulSets';
+import DaemonSets from '../containers/Workload/DaemonSets';
+import Jobs from '../containers/Workload/Jobs';
+import CronJobs from '../containers/Workload/CronJobs';
+import Pods from '../containers/Workload/Pods';
+import Services from '../containers/Workload/Services';
+import Routes from '../containers/Workload/Routes';
+import Secrets from '../containers/Secrets';
+import ConfigMaps from '../containers/ConfigMaps';
+import ServiceAccounts from '../containers/ServiceAccounts';
+import ClusterMonitor from '../containers/Monitor/Cluster';
+import ResourceMonitor from '../containers/Monitor/Resource';
+import Members from '../containers/Members';
+import Roles from '../containers/Roles';
+import BaseInfo from '../containers/BaseInfo';
+import Visibility from '../containers/Visibility';
+import KubeConfig from '../containers/KubeConfig';
+import NetworkPolicies from '../containers/Network/Policies';
+import IPPools from '../containers/Network/IPPools';
+import LogCollections from '../containers/LogCollections';
+import CustomMonitoring from '../containers/CustomMonitoring';
+import detail from './detail';
+import Gateway from '../containers/Gateway';
 
-import Images from '../containers/Resources/Images'
-import Keypairs from '../containers/Resources/Keypairs'
-import Routers from '../containers/Resources/Routers'
-import Flavors from '../containers/Resources/Flavors'
-import SecurityGroups from '../containers/Resources/SecurityGroups'
-import Networks from '../containers/Resources/Networks'
-import FloatingIp from '../containers/Resources/FloatingIp'
-import Vms from '../containers/Resources/Vms'
-import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
-import ContainerImage from '../containers/Resources/ContainerImages'
-import ContainerResource from '../containers/Resources/ContainerResource'
-import ResourcesVolumes from '../containers/Resources/Volumes'
-import Sriov from '../containers/Resources/Sriov'
-import HostDevices from '../containers/Resources/HostDevices'
-import MediatedDevices from '../containers/Resources/MediatedDevices'
-import LoadBalancers from '../containers/Resources/LoadBalancers'
+import Images from '../containers/Resources/Images';
+import Keypairs from '../containers/Resources/Keypairs';
+import Routers from '../containers/Resources/Routers';
+import Flavors from '../containers/Resources/Flavors';
+import SecurityGroups from '../containers/Resources/SecurityGroups';
+import Networks from '../containers/Resources/Networks';
+import FloatingIp from '../containers/Resources/FloatingIp';
+import Vms from '../containers/Resources/Vms';
+import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit';
+import ContainerImage from '../containers/Resources/ContainerImages';
+import ContainerResource from '../containers/Resources/ContainerResource';
+import ResourcesVolumes from '../containers/Resources/Volumes';
+import Sriov from '../containers/Resources/Sriov';
+import HostDevices from '../containers/Resources/HostDevices';
+import MediatedDevices from '../containers/Resources/MediatedDevices';
+import LoadBalancers from '../containers/Resources/LoadBalancers';
 
-import BareMetal from '../containers/Resources/BareMetal'
-import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator'
-import ComKassResource from '../containers/Resources/ComKassResource'
+import BareMetal from '../containers/Resources/BareMetal';
+import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator';
+import ComKassResource from '../containers/Resources/ComKassResource';
 
-import ImageBuild from '../containers/Resources/ImageBuild'
-import ComputingAppDeploy from '../containers/Resources/ComputingAppDeploy'
-import ClusterFault from '../containers/Resources/ClusterFault'
+import ImageBuild from '../containers/Resources/ImageBuild';
+import ComputingAppDeploy from '../containers/Resources/ComputingAppDeploy';
+import ClusterFault from '../containers/Resources/ClusterFault';
+import ClusterInspection from '../containers/Resources/ClusterInspection';
 
-const PATH = '/clusters/:cluster'
+const PATH = '/clusters/:cluster';
 
 export default [
   {
@@ -95,10 +96,10 @@ export default [
     redirect: globals.app.isMultiCluster
       ? null
       : {
-        from: '/clusters',
-        to: '/clusters/default/overview',
-        exact: true,
-      },
+          from: '/clusters',
+          to: '/clusters/default/overview',
+          exact: true,
+        },
     exact: true,
   },
   {
@@ -395,6 +396,11 @@ export default [
             component: ClusterFault,
             exact: true,
           },
+          {
+            path: `${PATH}/kubeeye-monitoring`,
+            component: ClusterInspection,
+            exact: true,
+          },
 
           getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
           getIndexRoute({
@@ -417,4 +423,4 @@ export default [
       },
     ],
   },
-]
+];
