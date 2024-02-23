@@ -221,7 +221,7 @@ export default class SecurityGroupStore extends Base {
                     rowKeys.map(async (id) => {
                         const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + id);
                         Promise.all(
-                            securityDetail.data.security_group.rules.map((rule) => {
+                            securityDetail.security_group.rules.map((rule) => {
                                 request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
                             })
                         )
@@ -247,7 +247,7 @@ export default class SecurityGroupStore extends Base {
 
         const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + user.id);
         Promise.all(
-            securityDetail.data.security_group.rules.map((rule) => {
+            securityDetail.security_group.rules.map((rule) => {
                 request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
             })
         )
