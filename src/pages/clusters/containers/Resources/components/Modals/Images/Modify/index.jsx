@@ -189,7 +189,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
 
           <Form.Item
             label={t('RESOURCES_DESCRIPTION')}
-            rules={[{ required: true, message: 'RESOURCES_DESCRIPTION_EMPTY_DESC' }]}
+            rules={[{ required: true, message: t('RESOURCES_DESCRIPTION_EMPTY_DESC')}]}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
