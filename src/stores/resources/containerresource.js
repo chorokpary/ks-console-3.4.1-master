@@ -305,7 +305,7 @@ export default class ResourceStore extends Base {
     const dataArray = [];
     const promises = response._originData.lbs.map(async (lb) => {
       const lbDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs/` + lb.id);
-      lb.rulesCount = lbDetail.data.lb.rules.length;
+      lb.rulesCount = lbDetail.lb.rules.length;
       dataArray.push(lb);
     })
     await Promise.all(promises);
@@ -326,7 +326,7 @@ export default class ResourceStore extends Base {
     const dataArray = [];
     const promises = response._originData.machines.map(async (machine) => {
       const flavorData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/flavors/` + machine.flavor);
-      machine.flavor_detail = flavorData.data.flavor;
+      machine.flavor_detail = flavorData.flavor;
       dataArray.push(machine);
     })
     await Promise.all(promises);

@@ -28,19 +28,19 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    # url: http://ks-apiserver
-    # wsUrl: ws://ks-apiserver
+    url: http://ks-apiserver
+    wsUrl: ws://ks-apiserver
     # mm3Url: http://edgetron-service.edgestack.svc.cluster.local:8080
     # cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
     # harborUrl: http://registry-harbor-portal.harbor.svc.cluster.local:80
 
-    url: http://192.168.16.80:30881
-    wsUrl: ws://192.168.16.80:30881
-    mm3Url: http://192.168.16.80:32080 
-    cmpUrl: http://192.168.16.86:31000 
-    harborUrl: https://192.168.16.80:32443
-    appdeployUrl: http://192.168.16.86:30010
-    baremetalUrl: http://192.168.16.86:30011
+    # url: http://192.168.16.80:30881
+    # wsUrl: ws://192.168.16.80:30881
+    # mm3Url: http://192.168.16.80:32080 
+    # cmpUrl: http://192.168.16.86:31000 
+    # harborUrl: https://192.168.16.80:32443
+    # appdeployUrl: http://192.168.16.86:30010
+    # baremetalUrl: http://192.168.16.86:30011
 
     # url: http://10.24.3.34:30881
     # wsUrl: ws://10.24.3.34:30881
