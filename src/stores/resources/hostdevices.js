@@ -232,12 +232,13 @@ export default class HostDeviceStore extends Base {
 
     @action
     delete(user) {
+        let cluster = globals.currentCluster
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
         user.name = user.name.replace("/", "%5C");
-        return this.submitting(request.delete('edgetron/resources/kubevirt/host_devices/' + user.name))
+        return this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/host_devices/` + user.name))
     }
 
     // 등록 관련 데이터
@@ -246,7 +247,7 @@ export default class HostDeviceStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}//edgetron/resources/kubevirt/pci_devices`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/pci_devices`
         )
         const response = { ...params, ...this.mapper(result), kind: 'pciDevices' }
 

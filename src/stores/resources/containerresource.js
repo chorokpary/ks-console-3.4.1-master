@@ -283,7 +283,7 @@ export default class ResourceStore extends Base {
     const imageArray = [];
     const promises = (response._originData.images).map(async (image) => {
       const imageDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images/` + image.name);
-      image.image_detail = imageDetail.data.image;
+      image.image_detail = imageDetail.image;
       imageArray.push(image);
     })
     await Promise.all(promises);

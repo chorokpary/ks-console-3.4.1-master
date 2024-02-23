@@ -6,7 +6,6 @@ import { toJS } from 'mobx';
 import { observer, inject } from 'mobx-react';
 import classnames from 'classnames';
 
-import axios from 'axios';
 import { Icon, Button, Notify } from '@kube-design/components';
 import { Link } from 'react-router-dom';
 import { Panel, Text, Indicator } from 'components/Base';
@@ -62,8 +61,8 @@ const Status = props => {
       if (filterData.length > 0) {
         const promises = filterData.filter(async network => {
           if (network.name != 'k8s-pod-network') {
-            const networkDetail = await axios.get(
-              `/edgetron/resources/kubevirt/networks/${network.id}`
+            const networkDetail = await request.get(
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.id}`
             );
             setDetailNetwork(value => [...value, networkDetail.data.network]);
             setNetworkType('network');
@@ -75,8 +74,8 @@ const Status = props => {
       if (sriovFilterData.length > 0) {
         const promises = sriovFilterData.filter(async network => {
           if (network.name != 'k8s-pod-network') {
-            const networkDetail = await axios.get(
-              `/edgetron/resources/kubevirt/sriov_networks/${network.name}`
+            const networkDetail = await request.get(
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
             );
             setDetailNetwork(value => [...value, networkDetail.data.network]);
             setNetworkType('sriovnetwork');
@@ -325,10 +324,10 @@ const Status = props => {
                       ? detailFlavor.devices.length == 1
                         ? detailFlavor.devices[0].name
                         : `${detailFlavor.devices[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${detailFlavor.devices.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
+                          'RESOURCES_BESIDES'
+                        )} ${detailFlavor.devices.length - 1}${t(
+                          'RESOURCES_COUNT'
+                        )}`
                       : '-'}
                   </div>
                   <p>{t('RESOURCES_HOST_DEVICE')}</p>
@@ -366,10 +365,10 @@ const Status = props => {
                         ? detailFlavor.gpus.length == 1
                           ? detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
-                              'RESOURCES_BESIDES'
-                            )} ${detailFlavor.gpus.length - 1}${t(
-                              'RESOURCES_COUNT'
-                            )}`
+                            'RESOURCES_BESIDES'
+                          )} ${detailFlavor.gpus.length - 1}${t(
+                            'RESOURCES_COUNT'
+                          )}`
                         : '-'
                     }
                     description={t('GPU')}

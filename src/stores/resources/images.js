@@ -50,7 +50,6 @@ export default class ImageStore extends Base {
     if (!silent) {
       this.list.isLoading = true;
     }
-
     if (!params.sortBy && params.ascending === undefined) {
       params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp';
     }
