@@ -78,8 +78,8 @@ export default class SecurityGroupStore extends Base {
 
         const promises = data.map(async (security_group) => {
             const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + security_group.id);
-            security_group.egress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "egress").length;
-            security_group.ingress_count = (securityDetail.data.security_group.rules).filter(el => el.direction == "ingress").length;
+            security_group.egress_count = (securityDetail.security_group.rules).filter(el => el.direction == "egress").length;
+            security_group.ingress_count = (securityDetail.security_group.rules).filter(el => el.direction == "ingress").length;
             dataArray.push(security_group);
         })
         await Promise.all(promises);

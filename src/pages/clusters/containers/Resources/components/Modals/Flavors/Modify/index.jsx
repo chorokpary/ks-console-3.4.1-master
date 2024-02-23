@@ -6,10 +6,7 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import classnames from 'classnames'
 
-import axios from "axios";
-
 const ModifyModal = (props) => {
-
     const form = useRef();
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
@@ -38,7 +35,7 @@ const ModifyModal = (props) => {
     }, [])
 
     useEffect(() => {
-        const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
+        const data = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/host_devices`);
         var res = [];
         data.then(response => {
             if (response.data.host_devices) {
@@ -55,7 +52,7 @@ const ModifyModal = (props) => {
     }, [])
 
     useEffect(() => {
-        const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
+        const data = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/mediated_devices`);
         var res = [];
         data.then(response => {
             if (response.data.mediated_devices) {
@@ -72,7 +69,7 @@ const ModifyModal = (props) => {
     }, [])
 
     useEffect(() => {
-        const data = axios.get(`/edgetron/resources/kubevirt/extra_specs`);
+        const data = request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/extra_specs`);
         var res = [];
         data.then(response => {
             if (response.data.extra_specs) {
@@ -352,217 +349,217 @@ const ModifyModal = (props) => {
                         </div>
                     </div>
 
-                        <div className={styles.cont_boxwrap}>
+                    <div className={styles.cont_boxwrap}>
 
-                            <div className={`${regStep == 1 ? "" : "hide"}`}>
-                                <Form.Item
-                                    label={t('RESOURCES_NAME')}
-                                    rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
-                                >
-                                    <Input
-                                        name="name"
-                                        autoFocus={true}
-                                        maxLength={63}
-                                        style={{ maxWidth: 'none' }}
-                                        defaultValue={props.store.detail.flavor.name}
-                                        disabled
-                                    />
-                                </Form.Item>
+                        <div className={`${regStep == 1 ? "" : "hide"}`}>
+                            <Form.Item
+                                label={t('RESOURCES_NAME')}
+                                rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') }]}
+                            >
+                                <Input
+                                    name="name"
+                                    autoFocus={true}
+                                    maxLength={63}
+                                    style={{ maxWidth: 'none' }}
+                                    defaultValue={props.store.detail.flavor.name}
+                                    disabled
+                                />
+                            </Form.Item>
 
-                                <div style={{ padding: 10 }} />
-                                <Columns>
-                                    <Column>
-                                        <Form.Item label={t('CPU')} >
-                                            <div>
-                                                <Button icon="substract" onClick={minusVcpus}></Button>&nbsp;&nbsp;
-                                                <Input name="vcpus" value={vcpus} style={{ width: '30%' }} />&nbsp;&nbsp;
-                                                <Button icon="add" onClick={addVcpus} />
+                            <div style={{ padding: 10 }} />
+                            <Columns>
+                                <Column>
+                                    <Form.Item label={t('CPU')} >
+                                        <div>
+                                            <Button icon="substract" onClick={minusVcpus}></Button>&nbsp;&nbsp;
+                                            <Input name="vcpus" value={vcpus} style={{ width: '30%' }} />&nbsp;&nbsp;
+                                            <Button icon="add" onClick={addVcpus} />
+                                        </div>
+                                    </Form.Item>
+                                </Column>
+                                <Column>
+                                    <div>
+                                        <Input type="hidden" name="byteFlag" value={byteFlag} />
+                                        <Form.Item label={t('RESOURCES_MEMORY')} >
+                                            <div className={styles.divwrap}>
+                                                <div className={styles.div_left}>
+                                                    <Input name="ram" value={ram} onChange={changeRam} />
+                                                </div>
+                                                <div className={styles.div_right}>
+                                                    <Tabs type="button" activeName={tab} onChange={newTab => { setTab(newTab); handleByte(newTab) }} >
+                                                        <TabPanel label="GiB" name="GiB" />
+                                                        <TabPanel label="MiB" name="MiB" />
+                                                    </Tabs>
+                                                </div>
                                             </div>
                                         </Form.Item>
-                                    </Column>
-                                    <Column>
-                                        <div>
-                                            <Input type="hidden" name="byteFlag" value={byteFlag} />
-                                            <Form.Item label={t('RESOURCES_MEMORY')} >
-                                                <div className={styles.divwrap}>
-                                                    <div className={styles.div_left}>
-                                                        <Input name="ram" value={ram} onChange={changeRam} />
-                                                    </div>
-                                                    <div className={styles.div_right}>
-                                                        <Tabs type="button" activeName={tab} onChange={newTab => { setTab(newTab); handleByte(newTab) }} >
-                                                            <TabPanel label="GiB" name="GiB" />
-                                                            <TabPanel label="MiB" name="MiB" />
-                                                        </Tabs>
-                                                    </div>
-                                                </div>
-                                            </Form.Item>
-                                        </div>
-                                    </Column>
-                                </Columns>
+                                    </div>
+                                </Column>
+                            </Columns>
 
-                                <Form.Item label={t('RESOURCES_ROOT_DISK')} >
-                                    <Form.Group>
-                                        <div style={{
-                                            textAlign: "center",
-                                            padding: 20
-                                        }}>
-                                            <Input type="hidden" name="rootDisk" value={rootDisk} />
-                                            <Slider max={320} marks={{
-                                                0: "0",
-                                                10: "10",
-                                                20: "20",
-                                                40: "40",
-                                                80: "80",
-                                                160: "160",
-                                                320: "320",
-                                            }} style={{ width: '10%' }} value={rootDisk} unit={"GiB"} onChange={e => handleRootDisk.onChangeSlider(e)} withInput />
-                                        </div>
-                                    </Form.Group>
-                                </Form.Item>
+                            <Form.Item label={t('RESOURCES_ROOT_DISK')} >
+                                <Form.Group>
+                                    <div style={{
+                                        textAlign: "center",
+                                        padding: 20
+                                    }}>
+                                        <Input type="hidden" name="rootDisk" value={rootDisk} />
+                                        <Slider max={320} marks={{
+                                            0: "0",
+                                            10: "10",
+                                            20: "20",
+                                            40: "40",
+                                            80: "80",
+                                            160: "160",
+                                            320: "320",
+                                        }} style={{ width: '10%' }} value={rootDisk} unit={"GiB"} onChange={e => handleRootDisk.onChangeSlider(e)} withInput />
+                                    </div>
+                                </Form.Group>
+                            </Form.Item>
 
-                                <Form.Item label={t('RESOURCES_TEMPORARY_DISK')} >
-                                    <Form.Group>
-                                        <div style={{
-                                            textAlign: "center",
-                                            padding: 20
-                                        }}>
-                                            <Input type="hidden" name="ephemeralDisk" value={ephemeralDisk} />
-                                            <Slider max={40} marks={{
-                                                0: "0",
-                                                10: "10",
-                                                20: "20",
-                                                30: "30",
-                                                40: "40",
-                                            }} value={ephemeralDisk} unit={"GiB"} onChange={e => handleEphemeralDisk.onChangeSlider(e)} withInput />
-                                        </div>
-                                    </Form.Group>
-                                </Form.Item>
+                            <Form.Item label={t('RESOURCES_TEMPORARY_DISK')} >
+                                <Form.Group>
+                                    <div style={{
+                                        textAlign: "center",
+                                        padding: 20
+                                    }}>
+                                        <Input type="hidden" name="ephemeralDisk" value={ephemeralDisk} />
+                                        <Slider max={40} marks={{
+                                            0: "0",
+                                            10: "10",
+                                            20: "20",
+                                            30: "30",
+                                            40: "40",
+                                        }} value={ephemeralDisk} unit={"GiB"} onChange={e => handleEphemeralDisk.onChangeSlider(e)} withInput />
+                                    </div>
+                                </Form.Group>
+                            </Form.Item>
 
-                                <Form.Item
-                                    className={styles.textarea}
-                                    label={t('RESOURCES_DESCRIPTION')}
-                                    desc={t('DESCRIPTION_DESC')}
-                                >
-                                    <TextArea
-                                        name="description"
-                                        maxLength={256}
-                                        rows="1"
-                                        defaultValue={props.store.detail.flavor.description}
-                                        style={{ maxWidth: 'none' }}
-                                    />
-                                </Form.Item>
-                            </div>
-
-                            <div className={`${regStep == 2 ? "" : "hide"}`}>
-                                <Form.Item label={t('EXTRSPEC')} >
-                                    <Form.Group>
-                                        <CheckboxGroup options={extraSpecsFields}>
-                                            {extraSpecsFields.map((v, i) => (
-                                                <>
-                                                    <Input
-                                                        type="hidden"
-                                                        name={`extraSpecs.${i}.key`}
-                                                        value={v.key}
-                                                        key={i}
-                                                    />
-                                                    <Tooltip content={v.description} placement="top">
-                                                        <Checkbox
-                                                            checked={v.value}
-                                                            name={`extraSpecs.${i}.value`}
-                                                            value={v.value}
-                                                            onChange={(e) => handCheckExtrSpec(i, e)}
-                                                        >
-                                                            {v.key}
-                                                        </Checkbox>
-                                                    </Tooltip>
-                                                </>
-                                            ))}
-                                        </CheckboxGroup>
-                                    </Form.Group>
-                                </Form.Item>
-
-                                <Form.Item label={t('GPU')} >
-                                    <Form.Group>
-                                        {formGpuFields.map((v, i) => (
-                                            <div className={styles.item} key={i}>
-                                                <Columns>
-                                                    <Column>
-                                                        <Form.Item>
-                                                            <Select value={v.message ? v.message : v.name} options={gpus} onChange={(e) => handleGpu.handleSelectClick(i, e)} />
-                                                        </Form.Item>
-                                                    </Column>
-                                                    <Column>
-                                                        <Form.Item>
-                                                            <div style={{ marginLeft: "45%" }}>
-                                                                <Button icon="substract" onClick={() => handleGpu.minusCnt(i, v.quantity)}></Button>&nbsp;&nbsp;
-                                                                <Input name={`gpus.${i}.quantity`} value={v.quantity} style={{ width: '30%' }} />&nbsp;&nbsp;
-                                                                <Button icon="add" onClick={() => handleGpu.addCnt(i, v.quantity)} />
-                                                            </div>
-                                                        </Form.Item>
-                                                    </Column>
-                                                </Columns>
-                                                <Button
-                                                    type="flat"
-                                                    icon="trash"
-                                                    className={styles.delete}
-                                                    onClick={() => handleGpu.handleRemoveFields(i)}
-                                                />
-                                            </div>
-                                        ))}
-                                        <div className="text-right">
-                                            <Button
-                                                className={styles.add}
-                                                onClick={handleGpu.handleAddFields}
-                                            >
-                                                {t('RESOURCES_ADD')}
-                                            </Button>
-                                        </div>
-
-                                    </Form.Group>
-                                </Form.Item>
-
-                                <Form.Item label={t('RESOURCES_HOST_DEVICE')} >
-                                    <Form.Group>
-                                        {formDeviceFields.map((v, i) => (
-                                            <div className={styles.item} key={i}>
-                                                <Columns>
-                                                    <Column>
-                                                        <Form.Item>
-                                                            <Select value={v.message ? v.message : v.name} options={devices} onChange={(e) => handleHostDevice.handleSelectClick(i, e)} />
-                                                        </Form.Item>
-                                                    </Column>
-                                                    <Column>
-                                                        <Form.Item>
-                                                            <div style={{ marginLeft: "45%" }}>
-                                                                <Button icon="substract" onClick={() => handleHostDevice.minusCnt(i, v.quantity)}></Button>&nbsp;&nbsp;
-                                                                <Input name={`devices.${i}.quantity`} value={v.quantity} style={{ width: '30%' }} />&nbsp;&nbsp;
-                                                                <Button icon="add" onClick={() => handleHostDevice.addCnt(i, v.quantity)} />
-                                                            </div>
-                                                        </Form.Item>
-                                                    </Column>
-                                                </Columns>
-                                                <Button
-                                                    type="flat"
-                                                    icon="trash"
-                                                    className={styles.delete}
-                                                    onClick={() => handleHostDevice.handleRemoveFields(i)}
-                                                />
-                                            </div>
-                                        ))}
-                                        <div className="text-right">
-                                            <Button
-                                                className={styles.add}
-                                                onClick={handleHostDevice.handleAddFields}
-                                            >
-                                                {t('RESOURCES_ADD')}
-                                            </Button>
-                                        </div>
-
-                                    </Form.Group>
-                                </Form.Item>
-
-                            </div>
+                            <Form.Item
+                                className={styles.textarea}
+                                label={t('RESOURCES_DESCRIPTION')}
+                                desc={t('DESCRIPTION_DESC')}
+                            >
+                                <TextArea
+                                    name="description"
+                                    maxLength={256}
+                                    rows="1"
+                                    defaultValue={props.store.detail.flavor.description}
+                                    style={{ maxWidth: 'none' }}
+                                />
+                            </Form.Item>
                         </div>
+
+                        <div className={`${regStep == 2 ? "" : "hide"}`}>
+                            <Form.Item label={t('EXTRSPEC')} >
+                                <Form.Group>
+                                    <CheckboxGroup options={extraSpecsFields}>
+                                        {extraSpecsFields.map((v, i) => (
+                                            <>
+                                                <Input
+                                                    type="hidden"
+                                                    name={`extraSpecs.${i}.key`}
+                                                    value={v.key}
+                                                    key={i}
+                                                />
+                                                <Tooltip content={v.description} placement="top">
+                                                    <Checkbox
+                                                        checked={v.value}
+                                                        name={`extraSpecs.${i}.value`}
+                                                        value={v.value}
+                                                        onChange={(e) => handCheckExtrSpec(i, e)}
+                                                    >
+                                                        {v.key}
+                                                    </Checkbox>
+                                                </Tooltip>
+                                            </>
+                                        ))}
+                                    </CheckboxGroup>
+                                </Form.Group>
+                            </Form.Item>
+
+                            <Form.Item label={t('GPU')} >
+                                <Form.Group>
+                                    {formGpuFields.map((v, i) => (
+                                        <div className={styles.item} key={i}>
+                                            <Columns>
+                                                <Column>
+                                                    <Form.Item>
+                                                        <Select value={v.message ? v.message : v.name} options={gpus} onChange={(e) => handleGpu.handleSelectClick(i, e)} />
+                                                    </Form.Item>
+                                                </Column>
+                                                <Column>
+                                                    <Form.Item>
+                                                        <div style={{ marginLeft: "45%" }}>
+                                                            <Button icon="substract" onClick={() => handleGpu.minusCnt(i, v.quantity)}></Button>&nbsp;&nbsp;
+                                                            <Input name={`gpus.${i}.quantity`} value={v.quantity} style={{ width: '30%' }} />&nbsp;&nbsp;
+                                                            <Button icon="add" onClick={() => handleGpu.addCnt(i, v.quantity)} />
+                                                        </div>
+                                                    </Form.Item>
+                                                </Column>
+                                            </Columns>
+                                            <Button
+                                                type="flat"
+                                                icon="trash"
+                                                className={styles.delete}
+                                                onClick={() => handleGpu.handleRemoveFields(i)}
+                                            />
+                                        </div>
+                                    ))}
+                                    <div className="text-right">
+                                        <Button
+                                            className={styles.add}
+                                            onClick={handleGpu.handleAddFields}
+                                        >
+                                            {t('RESOURCES_ADD')}
+                                        </Button>
+                                    </div>
+
+                                </Form.Group>
+                            </Form.Item>
+
+                            <Form.Item label={t('RESOURCES_HOST_DEVICE')} >
+                                <Form.Group>
+                                    {formDeviceFields.map((v, i) => (
+                                        <div className={styles.item} key={i}>
+                                            <Columns>
+                                                <Column>
+                                                    <Form.Item>
+                                                        <Select value={v.message ? v.message : v.name} options={devices} onChange={(e) => handleHostDevice.handleSelectClick(i, e)} />
+                                                    </Form.Item>
+                                                </Column>
+                                                <Column>
+                                                    <Form.Item>
+                                                        <div style={{ marginLeft: "45%" }}>
+                                                            <Button icon="substract" onClick={() => handleHostDevice.minusCnt(i, v.quantity)}></Button>&nbsp;&nbsp;
+                                                            <Input name={`devices.${i}.quantity`} value={v.quantity} style={{ width: '30%' }} />&nbsp;&nbsp;
+                                                            <Button icon="add" onClick={() => handleHostDevice.addCnt(i, v.quantity)} />
+                                                        </div>
+                                                    </Form.Item>
+                                                </Column>
+                                            </Columns>
+                                            <Button
+                                                type="flat"
+                                                icon="trash"
+                                                className={styles.delete}
+                                                onClick={() => handleHostDevice.handleRemoveFields(i)}
+                                            />
+                                        </div>
+                                    ))}
+                                    <div className="text-right">
+                                        <Button
+                                            className={styles.add}
+                                            onClick={handleHostDevice.handleAddFields}
+                                        >
+                                            {t('RESOURCES_ADD')}
+                                        </Button>
+                                    </div>
+
+                                </Form.Group>
+                            </Form.Item>
+
+                        </div>
+                    </div>
 
                     {/* Footer */}
                     <div className={styles['modal-footer']}>

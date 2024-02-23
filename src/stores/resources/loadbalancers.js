@@ -254,7 +254,7 @@ export default class LoadBalancerStore extends Base {
     async fetchFloatingList(params) {
         this.isLoading = true
         const result = await request.get(
-            `/edgetron/resources/kubevirt/floating_ips`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
         )
 
         let dataList = result?.floating_ips || [];
@@ -295,7 +295,7 @@ export default class LoadBalancerStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `/edgetron/resources/kubevirt/networks`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
         )
         this.networkDataList = result.networks;
 
@@ -309,7 +309,7 @@ export default class LoadBalancerStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `/edgetron/resources/kubevirt/vms`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
         )
         const response = { ...params, ...this.mapper(result), kind: 'vms' }
 

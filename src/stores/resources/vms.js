@@ -584,7 +584,7 @@ export default class VmStore extends Base {
     this.isLoading = true;
 
     const result = await request.get(
-      `/edgetron/resources/kubevirt/floating_ips`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
     );
     const response = {
       ...params,
@@ -616,14 +616,14 @@ export default class VmStore extends Base {
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/${security.id}`
       );
 
-      securityDetail.data.security_group.egress_count = securityDetail.data.security_group.rules.filter(
+      securityDetail.security_group.egress_count = securityDetail.security_group.rules.filter(
         el => el.direction == 'egress'
       ).length;
-      securityDetail.data.security_group.ingress_count = securityDetail.data.security_group.rules.filter(
+      securityDetail.security_group.ingress_count = securityDetail.security_group.rules.filter(
         el => el.direction == 'ingress'
       ).length;
 
-      securityArray.push(securityDetail.data.security_group);
+      securityArray.push(securityDetail.security_group);
     });
 
     await Promise.all(promises);
@@ -691,8 +691,9 @@ export default class VmStore extends Base {
 
   @action
   async snapshotList(id) {
+    let cluster = globals.currentCluster
     const result = await request.get(
-      `/edgetron/resources/kubevirt/vms/snapshots/${id}`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/vms/snapshots/${id}`
     );
     result.snapshots.sort((a, b) => {
       const x = a['timestamp'];
@@ -705,7 +706,8 @@ export default class VmStore extends Base {
 
   @action
   snapshotDelete(id) {
-    const url = `/edgetron/resources/kubevirt/vms/snapshots/${id}`;
+    let cluster = globals.currentCluster
+    const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/vms/snapshots/${id}`;
     return this.submitting(request.delete(url));
   }
 
@@ -727,8 +729,9 @@ export default class VmStore extends Base {
 
   @action
   async restoreList(id) {
+    let cluster = globals.currentCluster
     const result = await request.get(
-      `/edgetron/resources/kubevirt/vms/restores/${id}`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/vms/restores/${id}`
     );
     result.restores.sort((a, b) => {
       const x = a['timestamp'];
@@ -741,7 +744,8 @@ export default class VmStore extends Base {
 
   @action
   restoreDelete(id) {
-    const url = `/edgetron/resources/kubevirt/vms/restores/${id}`;
+    let cluster = globals.currentCluster
+    const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/vms/restores/${id}`;
     return this.submitting(request.delete(url));
   }
 
@@ -764,7 +768,8 @@ export default class VmStore extends Base {
 
   @action
   async cloneList(id) {
-    const result = await request.get(`/edgetron/resources/kubevirt/vms/clones`);
+    let cluster = globals.currentCluster
+    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/vms/clones`);
 
     result.clones.sort((a, b) => {
       const x = a['timestamp'];
@@ -779,7 +784,8 @@ export default class VmStore extends Base {
 
   @action
   cloneDelete(id) {
-    const url = `/edgetron/resources/kubevirt/vms/clones/${id}`;
+    let cluster = globals.currentCluster
+    const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/vms/clones/${id}`;
     return this.submitting(request.delete(url));
   }
 }
