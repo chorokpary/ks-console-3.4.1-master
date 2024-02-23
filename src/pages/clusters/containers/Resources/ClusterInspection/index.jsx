@@ -2,7 +2,6 @@ import React, { PureComponent, useState } from 'react';
 import { toJS } from 'mobx';
 import { PieChart, Pie, Label, Cell } from 'recharts';
 import Banner from 'components/Cards/Banner';
-import Tabs from 'components/Cards/Banner/Tabs';
 import { Panel, Text } from 'components/Base';
 import DetailClusterList from 'pages/clusters/containers/Resources/components/DetailClusterList';
 import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
@@ -54,9 +53,9 @@ export default class ClusterInspection extends React.Component {
     const sumDanger = arrDanger.reduce((prev, curr) => prev + curr, 0);
 
     const chartOption = [
-      { name: 'Group A', value: sumPass },
-      { name: 'Group B', value: sumWarning },
-      { name: 'Group C', value: sumDanger },
+      { name: 'Group A', value: sumPass, color: '#55BC8A' },
+      { name: 'Group B', value: sumWarning, color: '#F5A623' },
+      { name: 'Group C', value: sumDanger, color: '#CA2621' },
     ];
     const COLORS = ['#55BC8A', '#F5A623', '#CA2621'];
 
@@ -82,14 +81,15 @@ export default class ClusterInspection extends React.Component {
                               //   cy={200}
                               innerRadius={60}
                               outerRadius={80}
-                              fill={COLORS}
+                              //   fill={COLORS}
                               paddingAngle={1}
                               dataKey="value"
                             />
                             {chartOption.map((entry, index) => (
                               <Cell
                                 key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
+                                // fill={COLORS[index % COLORS.length]}
+                                fill={entry.color}
                               />
                             ))}
                           </PieChart>
