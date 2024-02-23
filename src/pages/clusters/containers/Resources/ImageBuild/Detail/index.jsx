@@ -34,32 +34,32 @@ const ImageBuildDetail = (props) => {
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
     const getOperations = () => [
-      {
-        key: 'edit',
-        icon: 'pen',
-        text: t('EDIT_INFORMATION'),
-        action: 'edit',
-        show: showEdit,
-        onClick: () =>
-            props.rootStore.triggerAction('imagebuild.edit', {
-            type: 'KEYPAIR_DETAIL',
-            detail: toJS(store.detail),
-            store: store,
-            success: fetchData,
-          }),
-      },
-      {
-        key: 'viewYaml',
-        icon: 'eye',
-        text: t('VIEW_YAML'),
-        action: 'view',
-        onClick: () => {
-            props.rootStore.triggerAction('imagebuild.yaml.view', {
-            yaml: store.yaml,
-            readOnly: true,
-          })
-        },
-      },
+      // {
+      //   key: 'edit',
+      //   icon: 'pen',
+      //   text: t('EDIT_INFORMATION'),
+      //   action: 'edit',
+      //   show: showEdit,
+      //   onClick: () =>
+      //       props.rootStore.triggerAction('imagebuild.edit', {
+      //       type: 'KEYPAIR_DETAIL',
+      //       detail: toJS(store.detail),
+      //       store: store,
+      //       success: fetchData,
+      //     }),
+      // },
+      // {
+      //   key: 'viewYaml',
+      //   icon: 'eye',
+      //   text: t('VIEW_YAML'),
+      //   action: 'view',
+      //   onClick: () => {
+      //       props.rootStore.triggerAction('imagebuild.yaml.view', {
+      //       yaml: store.yaml,
+      //       readOnly: true,
+      //     })
+      //   },
+      // },
       {
         key: 'delete',
         icon: 'trash',
@@ -110,7 +110,7 @@ const ImageBuildDetail = (props) => {
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('RESOURCES_KEYPAIR'),
+                label: t('이미지 빌드'),
                 url: listUrl,
             },
         ],

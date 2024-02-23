@@ -230,11 +230,6 @@ export default class ImageBuild extends React.Component {
         title: t('RESOURCES_NAME'),
         search: true,
       },
-      {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
-        search: true,
-      },
     ];
   }
 

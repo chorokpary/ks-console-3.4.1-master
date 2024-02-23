@@ -52,6 +52,7 @@ const RegistModal = (props) => {
 
   const externalRadioDeselect = () => {
     setRadioExternal("");
+    setRadioSnatType("F");
   }
 
   useEffect(() => {
