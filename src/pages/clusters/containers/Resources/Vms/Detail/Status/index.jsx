@@ -64,7 +64,7 @@ const Status = props => {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.id}`
             );
-            setDetailNetwork(value => [...value, networkDetail.data.network]);
+            setDetailNetwork(value => [...value, networkDetail.network]);
             setNetworkType('network');
           }
         });
@@ -77,7 +77,7 @@ const Status = props => {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
             );
-            setDetailNetwork(value => [...value, networkDetail.data.network]);
+            setDetailNetwork(value => [...value, networkDetail.network]);
             setNetworkType('sriovnetwork');
           }
         });

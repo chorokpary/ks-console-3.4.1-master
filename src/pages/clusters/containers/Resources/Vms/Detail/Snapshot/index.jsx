@@ -125,23 +125,23 @@ const Snapshot = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-            <p>Timestamp</p>
+            <p>{t('RESOURCES_REGIST_DATE')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.id}</div>
-            <p>ID</p>
+            <p>{t('RESOURCES_ID')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
-            <p>Phase</p>
+            <p>{t('RESOURCES_STEP')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.ready_to_use ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</div>
-            <p>Ready to use</p>
+            <p>{t('RESOURCES_READY_USE')}</p>
           </div>
           <div className={styles.text}>
             {(obj.snapshot_volumes).length > 0 ? (obj.snapshot_volumes).map((item) => <div>{item}</div>) : "-"}
-            <p>Snapshot Volume</p>
+            <p>{t('RESOURCES_SNAPSHOT_VOLUME')}</p>
           </div>  
           {/* <div className={styles.text}>
             <div>{get(obj, "description", "-")}</div>
@@ -149,7 +149,7 @@ const Snapshot = (props) => {
           </div>      */}
           <div className={styles.button}>
               <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
-              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{width: "92.69px"}}>Delete</Button></div>  
+              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{width: "92.69px"}}>{t('RESOURCES_DELETE')}</Button></div>  
           </div> 
           <div className={styles.arrow} onClick={() => handleExpand(obj.id)}>
             <Icon name="chevron-down" type={obj.id != expandItem ? '' : (obj.id == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
@@ -177,11 +177,11 @@ const Snapshot = (props) => {
                 </div>
                 <div className={classnames(styles.title, styles.name)}>
                   <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-                  <p>Timestamp</p>
+                  <p>{t('RESOURCES_REGIST_DATE')}</p>
                 </div>
                 <div className={styles.title}>
                   <div>{obj.id}</div>
-                  <p>ID</p>
+                  <p>{t('RESOURCES_ID')}</p>
                 </div>
                 {/* <div className={styles.text}>
                   <div>{get(obj, "description", "-")}</div>
@@ -189,10 +189,10 @@ const Snapshot = (props) => {
                 </div>      */}
                 <div className={styles.complete}>
                   <div>{obj.complete ? t('RESOURCES_COMPLETE') : t('RESOURCES_NOT_COMPLETE')}</div>
-                  <p>Complete</p>
+                  <p>{t('RESOURCES_COMPLETE')}</p>
                 </div>
                 <div className={styles.arrow}>
-                  <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>Delete</Button>
+                  <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>{t('RESOURCES_DELETE')}</Button>
                 </div>
               </div>  
               )}
