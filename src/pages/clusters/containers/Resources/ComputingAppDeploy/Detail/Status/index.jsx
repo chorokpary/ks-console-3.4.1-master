@@ -16,8 +16,6 @@ const Status = (props) => {
   const store = props.detailStore;
   const appDeployStore = new AppDeployStore();
 
-  console.log(props)
-
   const [historyList, setHistoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
