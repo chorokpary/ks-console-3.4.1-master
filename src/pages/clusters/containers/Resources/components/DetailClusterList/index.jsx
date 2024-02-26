@@ -1,5 +1,5 @@
 import { get, groupBy, isEmpty } from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { observer, inject } from 'mobx-react';
 import classnames from 'classnames';
 import { toJS } from 'mobx';
@@ -37,7 +37,7 @@ const DetailClusterList = props => {
   const [buttonWarning, setButtonWarning] = useState(false);
   const [buttonDanger, setButtonDanger] = useState(false);
 
-  const [tabValue, setTabValue] = useState('namespace');
+  const [tabValue, setTabValue] = useState('cluster');
 
   const [showPopup, setShowPopup] = useState(false);
 
@@ -71,11 +71,15 @@ const DetailClusterList = props => {
       setButtonDanger(false);
       setButtonPass(false);
       setButtonWarning(false);
+      setExpandItem('false');
+      setIsExpandFlag(!isExpandFlag);
     } else if (value === 'namespace') {
       setTabValue('namespace');
       setButtonDanger(false);
       setButtonPass(false);
       setButtonWarning(false);
+      setExpandItem('');
+      setIsExpandFlag(!isExpandFlag);
     }
   };
 
@@ -128,46 +132,46 @@ const DetailClusterList = props => {
           }
           return true;
         })
-        ?.map(value => {
-          return value?.resourceInfos?.items?.map((obj, idx) => {
-            return (
-              <div className={styles.wrapper} key={`cluster-${idx}`}>
-                <div
-                  className={classnames(styles.expandItem, '', {
-                    [styles.expanded]:
-                      obj.name == expandItem ? isExpandFlag : false,
-                  })}
-                >
-                  <div className={styles.itemMain}>
-                    <div className={styles.icon}>
-                      <i
-                        className="ico-type24-disk"
-                        type={
-                          obj.name != expandItem
-                            ? 'dark'
-                            : obj.name == expandItem && isExpandFlag == false
-                            ? 'dark'
-                            : 'light'
-                        }
-                      ></i>
-                    </div>
-
-                    {renderContentDetail(value)}
+        ?.map((value, idx) => {
+          //   return value.resourceInfos?.items?.map((obj, idx) => {
+          return (
+            <div className={styles.wrapper} key={`cluster-${idx}`}>
+              <div
+                className={classnames(styles.expandItem, '', {
+                  [styles.expanded]:
+                    value?.resourceInfos?.name == expandItem
+                      ? isExpandFlag
+                      : false,
+                })}
+              >
+                <div className={styles.itemMain}>
+                  <div className={styles.icon}>
+                    <i
+                      className="ico-type24-disk"
+                      type={
+                        value?.resourceInfos?.name != expandItem
+                          ? 'dark'
+                          : value?.resourceInfos?.name == expandItem &&
+                            isExpandFlag == false
+                          ? 'dark'
+                          : 'light'
+                      }
+                    ></i>
                   </div>
 
-                  {renderExtraContent(value, obj.name)}
+                  {renderContentDetail(value)}
                 </div>
+
+                {renderExtraContent(value)}
+                {/* {renderExtraContent(value, obj.name)} */}
               </div>
-            );
-          });
+            </div>
+          );
+          //   });
         });
       return content;
     }
 
-    // const namespaceResult = namespace?.map(ns => ns?.resultInfos.flat()).flat();
-    // console.log('namespaceResult', namespaceResult);
-    console.log('....namespace', namespace);
-    //
     if (tabValue === 'namespace') {
       const content = namespace?.map((value, index) => {
         return value?.resultInfos?.map((obj, idx) => {
@@ -196,7 +200,7 @@ const DetailClusterList = props => {
 
                   {renderContentDetail(obj)}
                 </div>
-                {renderExtraContent(obj, obj.resourceInfos.name)}
+                {renderExtraContent(obj)}
               </div>
             </div>
           );
@@ -212,7 +216,6 @@ const DetailClusterList = props => {
     // );
   };
   const renderContentDetail = obj => {
-    // console.log('objobj\n', obj);
     const counts = {};
 
     (obj.resourceInfos.items || []).forEach(item => {
@@ -292,7 +295,7 @@ const DetailClusterList = props => {
               <p className="dot_value">
                 {/* <p className={styles.text}> */}
                 <label>Pass</label>
-                <span className="data">{counts.pass || 0}</span>
+                <span className="data">{counts.ignore || 0}</span>
                 <label>Warning</label>
                 <span className="data">{counts.warning || 0}</span>
                 <label>Danger</label>
@@ -330,144 +333,112 @@ const DetailClusterList = props => {
       <>
         <div className={styles.itemExtra} key={`extra-content-${index}`}>
           <div className={styles.containers}>
-            {obj?.resourceInfos?.items?.map((item, indexNum) => {
-              //   console.log('itemitemitemitemitem\n', item);
-
-              //   const funtionMessage = (value, level) => {
-              //     if (buttonDanger) {
-              //       if (level === 'danger') {
-              //         return value;
-              //       }
-              //     }
-              //     if (buttonWarning) {
-              //       if (level === 'warning') {
-              //         return value;
-              //       }
-              //     }
-              //     if (buttonPass) {
-              //       if (level === 'ignore') {
-              //         return value;
-              //       }
-              //     }
-              //     return value;
-              //   };
-
-              //   const funtionLevel = value => {
-              //     if (buttonDanger) {
-              //       if (value === 'danger') {
-              //         return value;
-              //       }
-              //     }
-              //     if (buttonWarning) {
-              //       if (value === 'warning') {
-              //         return value;
-              //       }
-              //     }
-              //     if (buttonPass) {
-              //       if (value === 'ignore') {
-              //         return value;
-              //       }
-              //     }
-              //     return value;
-              //   };
-              return (
-                <>
-                  <div
-                    className={classnames(styles.item)}
-                    key={`extra-item-${indexNum}`}
-                    onClick={e => {
-                      return setShowPopup(true);
-                    }}
-                  >
-                    <div className={styles.icon}>
-                      <i className="ico-type24-disk"></i>
-                    </div>
-                    <div className={classnames(styles.title, styles.name)}>
-                      <div>
-                        {item.message}
-                        {/* {() => {
-                          funtionMessage(item.message, item.level);
-                        }} */}
+            {obj?.resourceInfos?.items
+              ?.filter(item => {
+                if (buttonWarning) {
+                  return item.level === 'warning';
+                }
+                if (buttonDanger) {
+                  return item.level === 'danger';
+                }
+                if (buttonPass) {
+                  return item.level === 'ignore';
+                }
+                return true;
+              })
+              ?.map((item, indexNum) => {
+                return (
+                  <>
+                    <div
+                      className={classnames(styles.item)}
+                      key={`extra-item-${indexNum}`}
+                      onClick={e => {
+                        return setShowPopup(true);
+                      }}
+                    >
+                      <div className={styles.icon}>
+                        <i className="ico-type24-disk"></i>
                       </div>
-                      <p>{`이름`}</p>
-                    </div>
-                    <div className={styles.title}>
-                      <div>
-                        {item.level}
-                        {/* {() => funtionLevel(item.level)} */}
+                      <div className={classnames(styles.title, styles.name)}>
+                        <div>{item.message}</div>
+                        <p>{`이름`}</p>
                       </div>
-                      <p>{`상태`}</p>
+                      <div className={styles.title}>
+                        <div>{item.level}</div>
+                        <p>{`상태`}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  {showPopup && (
-                    <>
-                      <div class="content_box_wrap">
-                        <div
-                          className={`sub_layer_pop  ${
-                            showPopup ? 'show' : ''
-                          }`}
-                          id="sub_layer_pop"
-                        >
-                          <div className="layer_pop_header status_wrap">
-                            <div className="tit">
-                              ImageTagIsLatest
-                              <p className="status warning">
-                                <span>warning</span>
-                              </p>
+                    {showPopup && (
+                      <>
+                        <div class="content_box_wrap">
+                          <div
+                            className={`sub_layer_pop  ${
+                              showPopup ? 'show' : ''
+                            }`}
+                            id="sub_layer_pop"
+                          >
+                            <div className="layer_pop_header status_wrap">
+                              <div className="tit">
+                                ImageTagIsLatest
+                                <p className="status warning">
+                                  <span>warning</span>
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                className="close"
+                                onClick={e => closeDrawer(e)}
+                              >
+                                {/* onClick={setShowPopup(false)} */}
+                                <i className="ico ico-close-small"></i>
+                              </button>
                             </div>
-                            <button
-                              type="button"
-                              className="close"
-                              onClick={e => closeDrawer(e)}
-                            >
-                              {/* onClick={setShowPopup(false)} */}
-                              <i className="ico ico-close-small"></i>
-                            </button>
-                          </div>
-                          <div className="msg">
-                            <i className="ico ico-check"></i>
-                            <label className="label">Discovered :</label>
-                            <span>1 min ago</span>
-                          </div>
-                          <div className="disc">
-                            Describe Kubernetes typically caches images on
-                            worker nodes. By default, the image will only be
-                            pulled if it is not already cached on the node
-                            trying to run it. However, leveraging cached
-                            versions of Docker images can be a reliability
-                            issue. It can cause different images to run on
-                            different nodes, resulting in inconsistent behavior.
-                            This can also be a security issue because the
-                            workload can access the cached image even if it does
-                            not have access to the remote Docker repository (via
-                            imagePullSecret). Specifying pullPolicy=Always will
-                            prevent these issues by ensuring that the latest
-                            image is downloaded every time a new pod is created.
-                            reference View documentation- How to solve In your
-                            Pod specification, set imagePullPolicy to Always .
-                            Describe Kubernetes typically caches images on
-                            worker nodes. By default, the image will only be
-                            pulled if it is not already cached on the node
-                            trying to run it. However, leveraging cached
-                            versions of Docker images can be a reliability
-                            issue. It can cause different images to run on
-                            different nodes, resulting in inconsistent behavior.
-                            This can also be a security issue because the
-                            workload can access the cached image even if it does
-                            not have access to the remote Docker repository (via
-                            imagePullSecret). Specifying pullPolicy=Always will
-                            prevent these issues by ensuring that the latest
-                            image is downloaded every time a new pod is created.
-                            reference
+                            <div className="msg">
+                              <i className="ico ico-check"></i>
+                              <label className="label">Discovered :</label>
+                              <span>1 min ago</span>
+                            </div>
+                            <div className="disc">
+                              Describe Kubernetes typically caches images on
+                              worker nodes. By default, the image will only be
+                              pulled if it is not already cached on the node
+                              trying to run it. However, leveraging cached
+                              versions of Docker images can be a reliability
+                              issue. It can cause different images to run on
+                              different nodes, resulting in inconsistent
+                              behavior. This can also be a security issue
+                              because the workload can access the cached image
+                              even if it does not have access to the remote
+                              Docker repository (via imagePullSecret).
+                              Specifying pullPolicy=Always will prevent these
+                              issues by ensuring that the latest image is
+                              downloaded every time a new pod is created.
+                              reference View documentation- How to solve In your
+                              Pod specification, set imagePullPolicy to Always .
+                              Describe Kubernetes typically caches images on
+                              worker nodes. By default, the image will only be
+                              pulled if it is not already cached on the node
+                              trying to run it. However, leveraging cached
+                              versions of Docker images can be a reliability
+                              issue. It can cause different images to run on
+                              different nodes, resulting in inconsistent
+                              behavior. This can also be a security issue
+                              because the workload can access the cached image
+                              even if it does not have access to the remote
+                              Docker repository (via imagePullSecret).
+                              Specifying pullPolicy=Always will prevent these
+                              issues by ensuring that the latest image is
+                              downloaded every time a new pod is created.
+                              reference
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </>
-                  )}
-                </>
-              );
-            })}
+                      </>
+                    )}
+                  </>
+                );
+              })}
           </div>
         </div>
         ;
@@ -542,6 +513,8 @@ const DetailClusterList = props => {
                 onClick={e => {
                   clickButton(e);
                   setButtonPass(!buttonPass);
+                  setButtonWarning(false);
+                  setButtonDanger(false);
                 }}
                 value="pass"
               >
@@ -554,7 +527,11 @@ const DetailClusterList = props => {
                     : 'btn tab_toggle on status warning'
                 }`}
                 type="button"
-                onClick={() => setButtonWarning(!buttonWarning)}
+                onClick={() => {
+                  setButtonWarning(!buttonWarning);
+                  setButtonPass(false);
+                  setButtonDanger(false);
+                }}
                 value="pass"
               >
                 <span>Warning</span>
@@ -566,13 +543,15 @@ const DetailClusterList = props => {
                     : 'btn tab_toggle on status danger'
                 }`}
                 type="button"
-                onClick={() => setButtonDanger(!buttonDanger)}
+                onClick={() => {
+                  setButtonDanger(!buttonDanger);
+                  setButtonWarning(false);
+                  setButtonPass(false);
+                }}
                 value="pass"
               >
                 <span>Danger</span>
               </button>
-              {/* <!-- on 클래스 추가-->
-				<button id="popupButton" className="btn tab_toggle" type="button"><span>우측레이어 열기</span></button> */}
             </div>
           </div>
         </div>
