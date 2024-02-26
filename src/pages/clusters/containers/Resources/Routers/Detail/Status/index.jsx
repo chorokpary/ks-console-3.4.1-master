@@ -20,14 +20,14 @@ const Status = (props) => {
 
     const fnGetExternalNetwork = async () => {
       const externalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
-      setExternalNetwork(externalData.data.network);
+      setExternalNetwork(externalData?.network);
     };
 
     const fnGetInternalNetwork = async () => {
       setInternalNetwork([]);
       const promises = (store.detail.router?.internal).map(async (item) => {
         const internalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` + item.id);
-        setInternalNetwork(internalNetwork => [...internalNetwork, internalData.data.network])
+        setInternalNetwork(internalNetwork => [...internalNetwork, internalData?.network])
       })
       await Promise.all(promises);
     };
