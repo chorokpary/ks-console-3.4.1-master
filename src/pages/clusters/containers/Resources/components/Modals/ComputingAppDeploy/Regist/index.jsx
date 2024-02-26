@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, find } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
 import { Form, Input, Select, TextArea, Button, Loading, Column, Columns, Icon, Notify } from '@kube-design/components'
@@ -32,6 +32,7 @@ const RegistModal = (props) => {
 
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
 
+  const [vmList, setVmList] = useState([]);
   const [vmOptionList, setVmOptionList] = useState([]);
 
   const handleOk = () => {
@@ -97,8 +98,6 @@ const RegistModal = (props) => {
 
       jsonData.vm = vmDataArray
 
-      console.log(JSON.stringify(jsonData))      
-
       const formData = new FormData();
       formData.append("body", JSON.stringify(jsonData));
       formData.append("playbook", file);
@@ -156,6 +155,7 @@ const RegistModal = (props) => {
     const selectedVmArray = [];
     await listVmInventory.map((item) => {
       !!data['vm_' + item] && selectedVmArray.push(data['vm_' + item])
+      getVmIp(item);
     })
 
     const checkVmDisabled = await vmOptionList.map((item) => ({
@@ -166,14 +166,25 @@ const RegistModal = (props) => {
     setVmOptionList(checkVmDisabled);
   }
 
+  const getVmIp = (num) => {
+    const { data } = form.current.props;
+    const vmName = data['vm_'+num];
+    const vmIp = get(get(find(vmList, { name : vmName}), 'networks', []).find(item => item.name == 'k8s-pod-network'), 'ip', '')
+    data['ip_' + num] = vmIp;
+  }
+
   useEffect(() => {
     const getVmData = async () => {
       const listVms = await vmStore.fetchList();
-      const opt = listVms.map((obj) => ({
+
+      const cloneNotList = listVms.filter(item => !(item.name).includes("-clone"))
+
+      const opt = cloneNotList.map((obj) => ({
         label: t(obj.name),
         value: t(obj.name),
         disabled: false,
       }))
+      setVmList(cloneNotList);
       setVmOptionList(opt)
     };
 
@@ -245,6 +256,7 @@ const RegistModal = (props) => {
     }
   };
   // File Upload End ############################################
+
 
   return (
     <>
