@@ -8,6 +8,7 @@ import { Button, Icon, Loading, Tooltip } from '@kube-design/components';
 
 import Tabs from 'components/Cards/Banner/Tabs';
 import { TinyArea } from 'components/Charts';
+import { Panel, Text, Indicator } from 'components/Base';
 
 import styles from './index.scss';
 
@@ -294,12 +295,11 @@ const DetailClusterList = props => {
               </div>
               <p className="dot_value">
                 {/* <p className={styles.text}> */}
-                <label>Pass</label>
-                <span className="data">{counts.ignore || 0}</span>
-                <label>Warning</label>
-                <span className="data">{counts.warning || 0}</span>
-                <label>Danger</label>
-                <span className="data">{counts.danger || 0}</span>
+                <label>Pass {counts.ignore || 0} </label>
+                <label>Warning {counts.warning || 0}</label>
+                {/* <span className="data"></span> */}
+                <label>Danger {counts.danger || 0}</label>
+                <span className="data"></span>
               </p>
             </div>
           </div>
@@ -326,6 +326,19 @@ const DetailClusterList = props => {
         </div>
       </>
     );
+  };
+
+  const getState = state => {
+    if (state === 'ignore') {
+      return 'running';
+    }
+    if (state === 'warning') {
+      return 'warning';
+    }
+    if (state === 'danger') {
+      return 'error';
+    }
+    return 'error';
   };
 
   const renderExtraContent = (obj, rName, index) => {
@@ -359,12 +372,32 @@ const DetailClusterList = props => {
                       <div className={styles.icon}>
                         <i className="ico-type24-disk"></i>
                       </div>
+
                       <div className={classnames(styles.title, styles.name)}>
                         <div>{item.message}</div>
                         <p>{`이름`}</p>
                       </div>
                       <div className={styles.title}>
-                        <div>{item.level}</div>
+                        {/* <div className={styles.indicator}> */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: '5px',
+                          }}
+                        >
+                          <Indicator
+                            className={styles.indicator}
+                            type={getState(item.level)}
+                            flicker
+                            //   style={{
+                            //     bottom: '45px !important',
+                            //     right: '26px !important',
+                            //   }}
+                          />
+                          <div>{item.level}</div>
+                        </div>
                         <p>{`상태`}</p>
                       </div>
                     </div>
@@ -441,7 +474,6 @@ const DetailClusterList = props => {
               })}
           </div>
         </div>
-        ;
       </>
     );
   };

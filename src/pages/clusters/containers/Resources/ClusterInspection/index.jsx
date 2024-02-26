@@ -53,11 +53,10 @@ export default class ClusterInspection extends React.Component {
     const sumDanger = arrDanger.reduce((prev, curr) => prev + curr, 0);
 
     const chartOption = [
-      { name: 'Group A', value: sumPass, color: '#55BC8A' },
-      { name: 'Group B', value: sumWarning, color: '#F5A623' },
-      { name: 'Group C', value: sumDanger, color: '#CA2621' },
+      { name: 'padding_1', value: sumPass, color: '#55BC8A' },
+      { name: 'padding_2', value: sumWarning, color: '#F5A623' },
+      { name: 'padding_3', value: sumDanger, color: '#CA2621' },
     ];
-    const COLORS = ['#55BC8A', '#F5A623', '#CA2621'];
 
     return (
       <>
@@ -81,17 +80,16 @@ export default class ClusterInspection extends React.Component {
                               //   cy={200}
                               innerRadius={60}
                               outerRadius={80}
-                              //   fill={COLORS}
                               paddingAngle={1}
                               dataKey="value"
-                            />
-                            {chartOption.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                // fill={COLORS[index % COLORS.length]}
-                                fill={entry.color}
-                              />
-                            ))}
+                            >
+                              {chartOption.map((entry, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={entry.color}
+                                />
+                              ))}
+                            </Pie>
                           </PieChart>
                         </div>
                       </div>
