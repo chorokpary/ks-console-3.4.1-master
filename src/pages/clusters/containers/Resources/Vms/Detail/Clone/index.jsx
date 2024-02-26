@@ -104,36 +104,29 @@ const Clone = (props) => {
 
   const renderContentDetail = (obj) => {
 
+    console.log(JSON.stringify(obj))
+
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
             <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-            <p>Timestamp</p>
+            <p>{t('RESOURCES_REGIST_DATE')}</p>
           </div>
           <div className={styles.name}>
             <div>{obj.id}</div>
-            <p>ID</p>
+            <p>{t('RESOURCES_ID')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.target_vm_id}</div>
-            <p>Target VM name</p>
+            <div>{obj.alias}</div>
+            <p>{t('RESOURCES_TARGET_VM_NAME')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
-            <p>Phase</p>
+            <p>{t('RESOURCES_STEP')}</p>
           </div>
-          {/* <div className={styles.text}>
-            <div>{obj.state}</div>
-            {(obj.networks).length > 0 ? (obj.networks).map((item) => <div>{item.name}</div>) : "-"}
-            <p>Networks</p>
-          </div> */}
-          {/* <div className={styles.text}>
-            <div>{get(obj, "description", "-")}</div>
-            <p>Description</p>
-          </div>         */}
           <div className={styles.arrow}>
-            <Button type="danger" onClick={() => handleDelete(obj.id)}>Delete</Button>
+            <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
           </div>
         </div>
       </>
@@ -141,7 +134,6 @@ const Clone = (props) => {
   }
 
   const handleDelete = (id) => {
-    console.log("handleDelete!!");
     props.rootStore.triggerAction('vm.cloneDelete', {
       type: 'VM_DETAIL',
       id : id,

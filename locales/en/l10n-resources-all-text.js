@@ -575,6 +575,13 @@ module.exports = {
   RESOURCES_CLUSTER_FAULT_BASEURL_MSG: 'Base URL을 입력해주세요.',
   RESOURCES_CONFIRM: '확인',
   RESOURCES_APP_DEPLOY: '애플리케이션 배포',
+  RESOURCES_ID: '아이디',
+  RESOURCES_TARGET_VM_NAME: '타겟 가상머신 이름',
+  RESOURCES_READY_USE: '사용 준비',
+  RESOURCES_SNAPSHOT_VOLUME: '스냅샷 볼륨',
+  RESOURCES_COMPLETE: '완료',
+
+
 
 
 };
