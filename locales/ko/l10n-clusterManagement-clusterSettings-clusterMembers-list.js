@@ -17,8 +17,8 @@
  */
 module.exports = {
   // Banner
-  CLUSTER_MEMBER_PL: '클러스터 맴버',
-  CLUSTER_MEMBER: '클러스터 맴버',
+  CLUSTER_MEMBER_PL: '클러스터 멤버',
+  CLUSTER_MEMBER: '클러스터 멤버',
   // Invite
   INVITE_CLUSTER_MEMBER_DESC: '사용자를 클러스터로 초대합니다.'
 };

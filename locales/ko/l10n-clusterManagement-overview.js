@@ -18,7 +18,7 @@
 module.exports = {
   // Banner
   HOST_CLUSTER: '호스트 클러스터',
-  MEMBER_CLUSTER: '맴버 클러스터',
+  MEMBER_CLUSTER: '멤버 클러스터',
   // Baisc Information
   PROVIDER: 'Provider',
   KUBERNETES_VERSION: 'Kubernetes 버전',
