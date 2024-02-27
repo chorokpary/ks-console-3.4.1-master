@@ -60,9 +60,6 @@ export default class BaseStore {
     if (cluster) {
       path += `/klusters/${cluster}`
     }
-    if (namespace) {
-      path += `/namespaces/${namespace}`
-    }
     return path
   }
 
