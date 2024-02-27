@@ -106,7 +106,12 @@ const ModifyModal = (props) => {
       setSubmitButtonFlag(true);
       setFileUploadStartFlag(true);
 
-      axios.put('/app-manager/v1alpha1/templates', formData, {
+      // const url = props.cluster ? `/kapis/cmp.kubesphere.io/v1alpha1/klusters/${props.cluster}/app-manager/v1alpha1/templates`
+      //                           : `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
+
+      const url = `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
+
+      axios.put(url, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
