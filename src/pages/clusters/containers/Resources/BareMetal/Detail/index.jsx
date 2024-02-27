@@ -36,13 +36,11 @@ const BareMetalDetail = (props) => {
       const currentTime = Math.floor(Date.now() / 1000);
 
       const metric_state = await customStore.fetchMetric({
-        expr: `group by(instance) (redfish_system_power_state)`,
-        start: currentTime,
-        end: currentTime,
+        expr: `group by(target) (redfish_system_power_state)`,
       })
-  
+
       const metric_model = await customStore.fetchMetric({
-        expr: `group by(instance, model) (redfish_chassis_model_info)`,
+        expr: `group by(target, model) (redfish_chassis_model_info)`,
         start: currentTime,
         end: currentTime,
       })
@@ -73,13 +71,14 @@ const BareMetalDetail = (props) => {
   
       const detailData = toJS(store.detail)
       const instance = detailData.systemType == "C" ? detailData.name : (detailData.baremetals).find(item => item.name == detailData.name).nodeExporter.ip;
-
-      const metrics = metric_model.find(item => get(item, 'metric.instance').split(":")[0] === instance)
+      const target = get(get(detailData, 'clusters', [])[0], 'openBMC.address', '')
+    
+      const metrics = metric_model.find(item => get(item, 'metric.target') === target)
       const modelName = get(metrics, 'metric.model')  
       setMetricModel(modelName)
 
-      const data_state = metric_state.find(item => get(item, 'metric.instance').split(":")[0] === instance)
-      const state = get(data_state, 'values[0][1]');
+      const data_state = metric_state.find(item => get(item, 'metric.target') === target)
+      const state = get(data_state, 'value[1]');
       const statText = (state == 1 || state == 3) ? "On" : (state == 2 || state == 4) ? "Off" : "Unknown"
       setMetricState(statText);
 
