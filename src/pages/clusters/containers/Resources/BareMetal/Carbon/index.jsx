@@ -6,10 +6,12 @@ import { cloneDeep, get, omit, find } from 'lodash'
 import { getLocalTime } from 'utils'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
+import BareMetalStore from 'stores/resources/baremetal'
 
 const Carbon = (props) => {
 
   const customStore = new CustomStore();
+  const bareMetalStore = new BareMetalStore();
 
   const [serverTotalCount, setServerTotalCount] = useState(0)
   const [armServerCount, setArmServerCount] = useState(0)
@@ -41,8 +43,17 @@ const Carbon = (props) => {
     
     const { data } = props.store.list;
 
+    // node list
+    const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
+
+    let promql_node_list = ""
+    nodeList.map((obj) => {
+      const nodeName = get(obj, 'name')
+      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+    })
+
     const metric_type = await customStore.fetchMetric({
-      expr: `group by(instance, machine) (node_uname_info)`,
+      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
     })
 
     const metric_power = await customStore.fetchMetric({
