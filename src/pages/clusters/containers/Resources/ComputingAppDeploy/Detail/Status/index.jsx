@@ -16,10 +16,10 @@ const Status = (props) => {
   const store = props.detailStore;
   const appDeployStore = new AppDeployStore();
 
-  console.log(props)
-
   const [historyList, setHistoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const statusType = ['success', 'running']
 
   useEffect(() => {
     const getHistoryList = async () => {
@@ -86,10 +86,10 @@ const Status = (props) => {
                               <div className={styles.iconwrapper}>   
                                   <Indicator
                                     className={styles.indicator}
-                                    type={obj.status === 'success' ? 'running' : obj.status === 'create' ? 'completed' : 'error'}
+                                    type={statusType.includes(obj.status) ? 'running' : obj.status === 'create' ? 'completed' : 'error'}
                                     flicker
                                   /> 
-                                  <p className={obj.status === 'success' ? styles.success : obj.status === 'create' ? styles.done : styles.error}>{(obj.status)[0].toUpperCase()+ (obj.status).slice(1, (obj.status).length)}</p>
+                                  <p className={statusType.includes(obj.status) ? styles.success : obj.status === 'create' ? styles.done : styles.error}>{(obj.status)[0].toUpperCase()+ (obj.status).slice(1, (obj.status).length)}</p>
                                </div>
                             </td>
                             <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>

@@ -1,8 +1,7 @@
 import React, { PureComponent, useState } from 'react';
 import { toJS } from 'mobx';
-import { PieChart, Pie, Label, Cell } from 'recharts';
+import { PieChart, Pie, Label, Cell, Tooltip as ChartTooltip } from 'recharts';
 import Banner from 'components/Cards/Banner';
-import Tabs from 'components/Cards/Banner/Tabs';
 import { Panel, Text } from 'components/Base';
 import DetailClusterList from 'pages/clusters/containers/Resources/components/DetailClusterList';
 import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
@@ -32,33 +31,44 @@ export default class ClusterInspection extends React.Component {
 
   renderChart() {
     const { data } = toJS(this.props.store.list);
-    // console.log('this.props.store', this.props.store.list);
+
     const clusterInfo = data?.clusterInfo;
 
-    const arrPass = [];
-    const arrWarning = [];
-    const arrDanger = [];
+    // const arrPass = [];
+    // const arrWarning = [];
+    // const arrDanger = [];
 
-    data?.auditResults?.map(auditResult => {
-      return auditResult.resultInfos.map(resultInfo => {
-        return resultInfo.resourceInfos.items.filter(item => {
-          arrPass.push(item.level === 'ignore');
-          arrWarning.push(item.level === 'warning');
-          arrDanger.push(item.level === 'danger');
-        });
-      });
-    });
+    // data?.auditResults?.map(auditResult => {
+    //   return auditResult.resultInfos.map(resultInfo => {
+    //     return resultInfo.resourceInfos.items.filter(item => {
+    //       arrPass.push(item.level === 'ignore');
+    //       arrWarning.push(item.level === 'warning');
+    //       arrDanger.push(item.level === 'danger');
+    //     });
+    //   });
+    // });
 
-    const sumPass = arrPass.reduce((prev, curr) => prev + curr, 0);
-    const sumWarning = arrWarning.reduce((prev, curr) => prev + curr, 0);
-    const sumDanger = arrDanger.reduce((prev, curr) => prev + curr, 0);
+    // const sumPass = arrPass.reduce((prev, curr) => prev + curr, 0);
+    // const sumWarning = arrWarning.reduce((prev, curr) => prev + curr, 0);
+    // const sumDanger = arrDanger.reduce((prev, curr) => prev + curr, 0);
 
     const chartOption = [
-      { name: 'Group A', value: sumPass },
-      { name: 'Group B', value: sumWarning },
-      { name: 'Group C', value: sumDanger },
+      {
+        name: 'passing',
+        value: data?.scoreInfo?.passing || 0,
+        color: '#55BC8A',
+      },
+      {
+        name: 'warning',
+        value: data?.scoreInfo?.warning || 0,
+        color: '#F5A623',
+      },
+      {
+        name: 'dangerous',
+        value: data?.scoreInfo?.dangerous || 0,
+        color: '#CA2621',
+      },
     ];
-    const COLORS = ['#55BC8A', '#F5A623', '#CA2621'];
 
     return (
       <>
@@ -82,16 +92,30 @@ export default class ClusterInspection extends React.Component {
                               //   cy={200}
                               innerRadius={60}
                               outerRadius={80}
-                              fill={COLORS}
                               paddingAngle={1}
                               dataKey="value"
-                            />
-                            {chartOption.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
-                              />
-                            ))}
+                            >
+                              {chartOption.map((entry, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={entry.color}
+                                />
+                              ))}
+                              {/* <Tooltip
+                                formatter={(value, name) => [
+                                  `${name}: ${value}`,
+                                  'Total',
+                                ]}
+                              /> */}
+                              {/* <Label value="Data" position="center" /> */}
+                            </Pie>
+                            {/* <Tooltip
+                              formatter={(value, name) => [
+                                `${name}: ${value}`,
+                                'Total',
+                              ]}
+                            /> */}
+                            <ChartTooltip />
                           </PieChart>
                         </div>
                       </div>
@@ -100,27 +124,31 @@ export default class ClusterInspection extends React.Component {
                           <p className="status title">
                             <span>전체 점검 항목</span>
                           </p>
-                          <div className="value">
-                            {sumPass + sumWarning + sumDanger}
-                          </div>
+                          <div className="value">{data?.scoreInfo?.total}</div>
                         </div>
                         <div className="status_wrap">
                           <p className="status pass">
                             <span>Pass</span>
                           </p>
-                          <div className="value">{sumPass}</div>
+                          <div className="value">
+                            {data?.scoreInfo?.passing}
+                          </div>
                         </div>
                         <div className="status_wrap">
                           <p className="status warning">
                             <span>Warning</span>
                           </p>
-                          <div className="value">{sumWarning}</div>
+                          <div className="value">
+                            {data?.scoreInfo?.warning}
+                          </div>
                         </div>
                         <div className="status_wrap">
                           <p className="status danger">
                             <span>Danger</span>
                           </p>
-                          <div className="value">{sumDanger}</div>
+                          <div className="value">
+                            {data?.scoreInfo?.dangerous}
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -33,7 +33,7 @@ const BmcNode = ({ x, y, w, h,
     const getData = async () => {
       setLoading(true)
       const metric_type = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
+        expr: `group by(instance, machine) (node_uname_info)`,
       })
 
       const metric_cpu = await customStore.fetchMetric({
@@ -61,15 +61,15 @@ const BmcNode = ({ x, y, w, h,
       })
 
       const metric_power = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+        expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       })
 
       const metric_temperature = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_temperature_celsius)`,
+        expr: `avg by(target) (redfish_chassis_temperature_celsius)`,
       })
 
       const metric_state = await customStore.fetchMetric({
-        expr: `max by(instance) (redfish_system_power_state)`,
+        expr: `group by(target) (redfish_system_power_state)`,
       })
 
       if (cleanupTrigger) {
@@ -97,10 +97,14 @@ const BmcNode = ({ x, y, w, h,
 
   }, [])
 
-  const getMetricValue = (metricData, data) => {
-    // const instance = toJS(data.ip) // 기존
+  const getMetricValue = (metricData, data, type) => {
     const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
-    const metrics = metricData.find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    const target = data.openBMC?.address;
+
+    const metrics = type == "redfish" ? metricData.find(item => get(item, 'metric.target') === target)
+      : data.system_type == "C"
+        ? metricData.find(item => get(item, 'metric.instance') === instance)
+        : metricData.find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
     const value = get(metrics, 'value[1]', '0');
     return value;
   }
@@ -284,10 +288,10 @@ const BmcNode = ({ x, y, w, h,
                                       {getDisk(obj)}
                                     </td>
                                     <td>
-                                      <p>{getMetricValue(metricPower, obj)} <span className="unit">Watt</span></p>
+                                      <p>{getMetricValue(metricPower, obj, 'redfish')} <span className="unit">Watt</span></p>
                                     </td>
                                     <td>
-                                      <p>{Math.round(Number(getMetricValue(metricTemperature, obj)))} <span className="unit">°C</span></p>
+                                      <p>{Math.round(Number(getMetricValue(metricTemperature, obj, 'redfish')))} <span className="unit">°C</span></p>
                                     </td>
                                   </tr>
                                 ))

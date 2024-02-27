@@ -1,16 +1,14 @@
 import { get, groupBy, isEmpty } from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { observer, inject } from 'mobx-react';
 import classnames from 'classnames';
 import { toJS } from 'mobx';
 
-import { Link } from 'react-router-dom';
 import { Button, Icon, Loading, Tooltip } from '@kube-design/components';
-import { namespace } from 'd3-selection';
-import { Panel, Text, Indicator } from 'components/Base';
 
 import Tabs from 'components/Cards/Banner/Tabs';
 import { TinyArea } from 'components/Charts';
+import { Panel, Text, Indicator } from 'components/Base';
 
 import styles from './index.scss';
 
@@ -35,15 +33,14 @@ const DetailClusterList = props => {
   const [expandItem, setExpandItem] = useState();
   //   const [isLoading, setIsLoading] = useState(true);
 
-  const [clusterInspectionData, setClusterInspectionData] = useState();
-  const [ciPropsAuditResult, setCiPropsAuditResult] = useState();
-
   // button
   const [buttonPass, setButtonPass] = useState(false);
   const [buttonWarning, setButtonWarning] = useState(false);
   const [buttonDanger, setButtonDanger] = useState(false);
 
   const [tabValue, setTabValue] = useState('cluster');
+
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const fnGetData = async ({ ...params } = {}) => {
@@ -72,8 +69,18 @@ const DetailClusterList = props => {
   const handleTabChange = value => {
     if (value === 'cluster') {
       setTabValue('cluster');
+      setButtonDanger(false);
+      setButtonPass(false);
+      setButtonWarning(false);
+      setExpandItem('false');
+      setIsExpandFlag(!isExpandFlag);
     } else if (value === 'namespace') {
       setTabValue('namespace');
+      setButtonDanger(false);
+      setButtonPass(false);
+      setButtonWarning(false);
+      setExpandItem('');
+      setIsExpandFlag(!isExpandFlag);
     }
   };
 
@@ -93,6 +100,12 @@ const DetailClusterList = props => {
       ],
     };
   };
+
+  const closeDrawer = e => {
+    e.stopPropagation();
+    setShowPopup(false);
+  };
+
   const renderContent = () => {
     if (ciDataList?.length == 0) {
       const content = (
@@ -101,11 +114,70 @@ const DetailClusterList = props => {
       return content;
     }
 
+    const withoutNamespaceResult = withoutNamespace
+      ?.map(ns => ns?.resultInfos.flat())
+      .flat();
+
     if (tabValue === 'cluster') {
-      const content = withoutNamespace?.map((value, index) => {
+      const content = withoutNamespaceResult
+        ?.filter(rslt => {
+          const items = rslt?.resourceInfos?.items ?? [];
+          if (buttonDanger) {
+            return items.some(itm => itm?.level === 'danger');
+          }
+          if (buttonPass) {
+            return items.some(itm => itm?.level === 'ignore');
+          }
+          if (buttonWarning) {
+            return items.some(itm => itm?.level === 'warning');
+          }
+          return true;
+        })
+        ?.map((value, idx) => {
+          //   return value.resourceInfos?.items?.map((obj, idx) => {
+          return (
+            <div className={styles.wrapper} key={`cluster-${idx}`}>
+              <div
+                className={classnames(styles.expandItem, '', {
+                  [styles.expanded]:
+                    value?.resourceInfos?.name == expandItem
+                      ? isExpandFlag
+                      : false,
+                })}
+              >
+                <div className={styles.itemMain}>
+                  <div className={styles.icon}>
+                    <i
+                      className="ico-type24-disk"
+                      type={
+                        value?.resourceInfos?.name != expandItem
+                          ? 'dark'
+                          : value?.resourceInfos?.name == expandItem &&
+                            isExpandFlag == false
+                          ? 'dark'
+                          : 'light'
+                      }
+                    ></i>
+                  </div>
+
+                  {renderContentDetail(value)}
+                </div>
+
+                {renderExtraContent(value)}
+                {/* {renderExtraContent(value, obj.name)} */}
+              </div>
+            </div>
+          );
+          //   });
+        });
+      return content;
+    }
+
+    if (tabValue === 'namespace') {
+      const content = namespace?.map((value, index) => {
         return value?.resultInfos?.map((obj, idx) => {
           return (
-            <div className={styles.wrapper} key={idx}>
+            <div className={styles.wrapper} key={`namespace-${idx}`}>
               <div
                 className={classnames(styles.expandItem, '', {
                   [styles.expanded]:
@@ -114,7 +186,6 @@ const DetailClusterList = props => {
               >
                 <div className={styles.itemMain}>
                   <div className={styles.icon}>
-                    {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
                     <i
                       className="ico-type24-disk"
                       type={
@@ -130,34 +201,7 @@ const DetailClusterList = props => {
 
                   {renderContentDetail(obj)}
                 </div>
-
-                {renderExtraContent(obj, obj.resourceInfos.name)}
-              </div>
-            </div>
-          );
-        });
-      });
-      return content;
-    }
-    if (tabValue === 'namespace') {
-      const content = namespace?.map((value, index) => {
-        return value?.resultInfos?.map((obj, idx) => {
-          return (
-            <div className={styles.wrapper} key={index}>
-              <div
-                className={classnames(styles.expandItem, '', {
-                  [styles.expanded]:
-                    obj.resourceInfos.name == expandItem ? isExpandFlag : false,
-                })}
-              >
-                <div className={styles.itemMain}>
-                  <div className={styles.icon}>
-                    <i className="ico-type24-disk"></i>
-                  </div>
-
-                  {renderContentDetail(obj)}
-                </div>
-                {renderExtraContent(obj, obj.resourceInfos.name)}
+                {renderExtraContent(obj)}
               </div>
             </div>
           );
@@ -172,9 +216,9 @@ const DetailClusterList = props => {
     //   </Loading>
     // );
   };
-  const [resourcesInfoName, setResourcesInfoName] = useState();
   const renderContentDetail = obj => {
     const counts = {};
+
     (obj.resourceInfos.items || []).forEach(item => {
       const level = item.level;
       counts[level] = (counts[level] || 0) + 1;
@@ -183,31 +227,54 @@ const DetailClusterList = props => {
     // Function to generate dot bars based on counts
     const generateDotBars = () => {
       const dotBars = [];
-
-      // Generate danger dot bars
-      for (let i = 0; i < (counts.danger || 0); i++) {
-        dotBars.push(
-          <div key={`danger-${i}`} className="dot_bar status danger"></div>
-        );
+      if (buttonDanger) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
+          dotBars.push(
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>
+          );
+        }
+        return dotBars;
+      }
+      if (buttonWarning) {
+        for (let i = 0; i < (counts.warning || 0); i++) {
+          dotBars.push(
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>
+          );
+        }
+        return dotBars;
+      }
+      if (buttonPass) {
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+          );
+        }
+        return dotBars;
       }
 
-      // Generate warning dot bars
-      for (let i = 0; i < (counts.warning || 0); i++) {
-        dotBars.push(
-          <div key={`warning-${i}`} className="dot_bar status warning"></div>
-        );
-      }
+      if (!(buttonDanger || buttonWarning || buttonPass)) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
+          dotBars.push(
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>
+          );
+        }
 
-      // Generate ignore dot bars
-      for (let i = 0; i < (counts.ignore || 0); i++) {
-        dotBars.push(
-          <div key={`ignore-${i}`} className="dot_bar status pass"></div>
-        );
-      }
-      //   setResourcesInfoName(obj.resourceInfos.name);
+        for (let i = 0; i < (counts.warning || 0); i++) {
+          dotBars.push(
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>
+          );
+        }
 
-      return dotBars;
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+          );
+        }
+
+        return dotBars;
+      }
     };
+
     return (
       <>
         <div className={styles.content}>
@@ -220,7 +287,7 @@ const DetailClusterList = props => {
             <div>{obj.resourceType}</div>
             <p>{`타입`}</p>
           </div>
-          <div class="content_box_wrap">
+          <div className="content_box_wrap">
             <div className="dot_chart_wrap">
               <div className="dot_chart">
                 {generateDotBars()}
@@ -228,12 +295,11 @@ const DetailClusterList = props => {
               </div>
               <p className="dot_value">
                 {/* <p className={styles.text}> */}
-                <label>Pass</label>
-                <span className="data">{counts.pass || 0}</span>
-                <label>Warning</label>
-                <span className="data">{counts.warning || 0}</span>
-                <label>Danger</label>
-                <span className="data">{counts.danger || 0}</span>
+                <label>Pass {counts.ignore || 0} </label>
+                <label>Warning {counts.warning || 0}</label>
+                {/* <span className="data"></span> */}
+                <label>Danger {counts.danger || 0}</label>
+                <span className="data"></span>
               </p>
             </div>
           </div>
@@ -262,161 +328,155 @@ const DetailClusterList = props => {
     );
   };
 
-  const [openPopup, setOpenPopup] = useState(false);
-  const subLayerPopup = () => {
-    return (
-      <>
-        <div class="sub_layer_pop" id="sub_layer_pop">
-          <div class="layer_pop_header status_wrap">
-            <div class="tit">
-              ImageTagIsLatest
-              <p class="status danger">
-                <span>Danger</span>
-              </p>
-            </div>
-            <button type="button" class="close">
-              <i class="ico ico-close-small"></i>
-            </button>
-          </div>
-          <div class="msg">
-            <i class="ico ico-check"></i>
-            <label class="label">Discovered :</label>
-            <span>1 min ago</span>
-          </div>
-          <div class="disc">
-            Describe Kubernetes typically caches images on worker nodes. By
-            default, the image will only be pulled if it is not already cached
-            on the node trying to run it. However, leveraging cached versions of
-            Docker images can be a reliability issue. It can cause different
-            images to run on different nodes, resulting in inconsistent
-            behavior. This can also be a security issue because the workload can
-            access the cached image even if it does not have access to the
-            remote Docker repository (via imagePullSecret). Specifying
-            pullPolicy=Always will prevent these issues by ensuring that the
-            latest image is downloaded every time a new pod is created.
-            reference View documentation-> How to solve In your Pod
-            specification, set imagePullPolicy to Always . Describe Kubernetes
-            typically caches images on worker nodes. By default, the image will
-            only be pulled if it is not already cached on the node trying to run
-            it. However, leveraging cached versions of Docker images can be a
-            reliability issue. It can cause different images to run on different
-            nodes, resulting in inconsistent behavior. This can also be a
-            security issue because the workload can access the cached image even
-            if it does not have access to the remote Docker repository (via
-            imagePullSecret). Specifying pullPolicy=Always will prevent these
-            issues by ensuring that the latest image is downloaded every time a
-            new pod is created. reference
-          </div>
-        </div>
-      </>
-    );
+  const getState = state => {
+    if (state === 'ignore') {
+      return 'running';
+    }
+    if (state === 'warning') {
+      return 'warning';
+    }
+    if (state === 'danger') {
+      return 'error';
+    }
+    return 'error';
   };
 
-  const renderExtraContent = (obj, index) => {
+  const renderExtraContent = (obj, rName, index) => {
     return (
       <>
-        <div className={styles.itemExtra} key={index}>
+        <div className={styles.itemExtra} key={`extra-content-${index}`}>
           <div className={styles.containers}>
-            {obj?.resourceInfos?.items?.map((item, indexNum) => (
-              <>
-                <div className={classnames(styles.item)} key={indexNum}>
-                  <div className={styles.icon}>
-                    <i className="ico-type24-disk"></i>
-                  </div>
-                  <div className={classnames(styles.title, styles.name)}>
-                    <div>{item.message}</div>
-                    <p>{`이름`}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>{item.level}</div>
-                    <p>{`상태`}</p>
-                  </div>
-                </div>
-              </>
-            ))}{' '}
+            {obj?.resourceInfos?.items
+              ?.filter(item => {
+                if (buttonWarning) {
+                  return item.level === 'warning';
+                }
+                if (buttonDanger) {
+                  return item.level === 'danger';
+                }
+                if (buttonPass) {
+                  return item.level === 'ignore';
+                }
+                return true;
+              })
+              ?.map((item, indexNum) => {
+                return (
+                  <>
+                    <div
+                      className={classnames(styles.item)}
+                      key={`extra-item-${indexNum}`}
+                      onClick={e => {
+                        return setShowPopup(true);
+                      }}
+                    >
+                      <div className={styles.icon}>
+                        <i className="ico-type24-disk"></i>
+                      </div>
+
+                      <div className={classnames(styles.title, styles.name)}>
+                        <div>{item.message}</div>
+                        <p>{`이름`}</p>
+                      </div>
+                      <div className={styles.title}>
+                        {/* <div className={styles.indicator}> */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: '5px',
+                          }}
+                        >
+                          <Indicator
+                            className={styles.indicator}
+                            type={getState(item.level)}
+                            flicker
+                            //   style={{
+                            //     bottom: '45px !important',
+                            //     right: '26px !important',
+                            //   }}
+                          />
+                          <div>{item.level}</div>
+                        </div>
+                        <p>{`상태`}</p>
+                      </div>
+                    </div>
+
+                    {showPopup && (
+                      <>
+                        <div class="content_box_wrap">
+                          <div
+                            className={`sub_layer_pop  ${
+                              showPopup ? 'show' : ''
+                            }`}
+                            id="sub_layer_pop"
+                          >
+                            <div className="layer_pop_header status_wrap">
+                              <div className="tit">
+                                ImageTagIsLatest
+                                <p className="status warning">
+                                  <span>warning</span>
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                className="close"
+                                onClick={e => closeDrawer(e)}
+                              >
+                                {/* onClick={setShowPopup(false)} */}
+                                <i className="ico ico-close-small"></i>
+                              </button>
+                            </div>
+                            <div className="msg">
+                              <i className="ico ico-check"></i>
+                              <label className="label">Discovered :</label>
+                              <span>1 min ago</span>
+                            </div>
+                            <div className="disc">
+                              Describe Kubernetes typically caches images on
+                              worker nodes. By default, the image will only be
+                              pulled if it is not already cached on the node
+                              trying to run it. However, leveraging cached
+                              versions of Docker images can be a reliability
+                              issue. It can cause different images to run on
+                              different nodes, resulting in inconsistent
+                              behavior. This can also be a security issue
+                              because the workload can access the cached image
+                              even if it does not have access to the remote
+                              Docker repository (via imagePullSecret).
+                              Specifying pullPolicy=Always will prevent these
+                              issues by ensuring that the latest image is
+                              downloaded every time a new pod is created.
+                              reference View documentation- How to solve In your
+                              Pod specification, set imagePullPolicy to Always .
+                              Describe Kubernetes typically caches images on
+                              worker nodes. By default, the image will only be
+                              pulled if it is not already cached on the node
+                              trying to run it. However, leveraging cached
+                              versions of Docker images can be a reliability
+                              issue. It can cause different images to run on
+                              different nodes, resulting in inconsistent
+                              behavior. This can also be a security issue
+                              because the workload can access the cached image
+                              even if it does not have access to the remote
+                              Docker repository (via imagePullSecret).
+                              Specifying pullPolicy=Always will prevent these
+                              issues by ensuring that the latest image is
+                              downloaded every time a new pod is created.
+                              reference
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </>
+                );
+              })}
           </div>
         </div>
-        ;
       </>
     );
   };
-
-  //   const renderExtraContent = (obj, ObjName) => {
-  //     // console.log('obj', obj.resourceInfos);
-  //     console.log('Json obj', JSON.stringify(obj.resourceInfos));
-  //     // console.log('ObjName', ObjName);
-
-  //     // 특정 name에 대한 items 추출
-  //     // if (obj.resourceInfos.name === ObjName) {
-  //     const elements =
-  //       obj.resourceInfos?.items &&
-  //       obj.resourceInfos?.items?.map((item, index) => {
-  //         return (
-  //           <div className={styles.itemExtra} key={index}>
-  //             <div className={styles.containers}>
-  //               <div className={classnames(styles.item)}>
-  //                 <div className={styles.icon}>
-  //                   <i className="ico-type24-disk"></i>
-  //                 </div>
-  //                 <div className={classnames(styles.title, styles.name)}>
-  //                   <div>{item.message}</div>
-  //                   <p>{`이름`}</p>
-  //                 </div>
-  //                 <div className={styles.title}>
-  //                   <div>{item.level}</div>
-  //                   <p>{`상태`}</p>
-  //                 </div>
-  //                 <div className={styles.title}>
-  //                   <div>{item.reason}</div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           </div>
-  //         );
-  //       });
-
-  //     return elements; // 배열을 반환
-  //     // }
-  //   };
-
-  //   const renderExtraContent = obj => {
-  //     console.log('const obj', obj);
-  //     return (
-  //       obj.resourceInfos.name === expandItem &&
-  //       obj.resourceInfos.items?.map(item => {
-  //         //   console.log('item\n ', item);
-  //         return (
-  //           <>
-  //             <div className={styles.itemExtra}>
-  //               <div className={styles.containers}>
-  //                 <div
-  //                   className={classnames(styles.item)}
-  //                   // onClick={e => subLayerPopup(e.stopPropagation)}
-  //                 >
-  //                   <div className={styles.icon}>
-  //                     {/* <Icon name="ico-type24-disk" size={40} /> */}
-  //                     <i className="ico-type24-disk"></i>
-  //                   </div>
-
-  //                   <div className={classnames(styles.title, styles.name)}>
-  //                     <div>{item.message}</div>
-  //                     <p>{`이름`}</p>
-  //                   </div>
-  //                   <div className={styles.title}>
-  //                     <div>{item.level}</div>
-  //                     <p>{`상태`}</p>
-  //                   </div>
-  //                   <div className={styles.title}>
-  //                     <div>{item.reason}</div>
-  //                   </div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           </>
-  //         );
-  //       })
-  //     );
-  //   };
 
   const renderMonitorings = vmId => {
     const isExpand = false;
@@ -458,6 +518,14 @@ const DetailClusterList = props => {
       </div>
     );
   };
+  const clickButton = e => {
+    const value = e.target.value;
+    if (tabValue === 'cluster') {
+      if (value === 'pass') {
+        withoutNamespace?.map(() => {});
+      }
+    }
+  };
 
   return (
     <>
@@ -465,7 +533,7 @@ const DetailClusterList = props => {
       <div className="grid_item">
         <div className="grid_title">
           <label>클러스터 상태</label>
-          <div class="content_box_wrap">
+          <div className="content_box_wrap">
             <div className="tab_toggle_wrap status_wrap">
               <button
                 className={`${
@@ -474,7 +542,13 @@ const DetailClusterList = props => {
                     : 'btn tab_toggle on status pass'
                 }`}
                 type="button"
-                onClick={() => setButtonPass(true)}
+                onClick={e => {
+                  clickButton(e);
+                  setButtonPass(!buttonPass);
+                  setButtonWarning(false);
+                  setButtonDanger(false);
+                }}
+                value="pass"
               >
                 <span>Pass</span>
               </button>
@@ -485,7 +559,12 @@ const DetailClusterList = props => {
                     : 'btn tab_toggle on status warning'
                 }`}
                 type="button"
-                onClick={() => setButtonWarning(true)}
+                onClick={() => {
+                  setButtonWarning(!buttonWarning);
+                  setButtonPass(false);
+                  setButtonDanger(false);
+                }}
+                value="pass"
               >
                 <span>Warning</span>
               </button>
@@ -496,12 +575,15 @@ const DetailClusterList = props => {
                     : 'btn tab_toggle on status danger'
                 }`}
                 type="button"
-                onClick={() => setButtonDanger(true)}
+                onClick={() => {
+                  setButtonDanger(!buttonDanger);
+                  setButtonWarning(false);
+                  setButtonPass(false);
+                }}
+                value="pass"
               >
                 <span>Danger</span>
               </button>
-              {/* <!-- on 클래스 추가-->
-				<button id="popupButton" className="btn tab_toggle" type="button"><span>우측레이어 열기</span></button> */}
             </div>
           </div>
         </div>
