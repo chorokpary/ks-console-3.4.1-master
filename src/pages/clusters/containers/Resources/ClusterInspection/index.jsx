@@ -1,6 +1,14 @@
 import React, { PureComponent, useState } from 'react';
 import { toJS } from 'mobx';
-import { PieChart, Pie, Label, Cell, Tooltip as ChartTooltip } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Label,
+  LabelList,
+  Cell,
+  Tooltip as ChartTooltip,
+} from 'recharts';
+// import { Tooltip } from '@kubed/components';
 import Banner from 'components/Cards/Banner';
 import { Panel, Text } from 'components/Base';
 import DetailClusterList from 'pages/clusters/containers/Resources/components/DetailClusterList';
@@ -10,10 +18,6 @@ import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
 
 import withList, { ListPage } from 'components/HOCs/withList';
 
-// import { getLocalTime } from 'utils';
-// import { ICON_TYPES } from 'utils/constants';
-
-// import RoleStore from 'stores/role';
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
 import * as common from 'utils/resources';
 
@@ -31,27 +35,7 @@ export default class ClusterInspection extends React.Component {
 
   renderChart() {
     const { data } = toJS(this.props.store.list);
-
     const clusterInfo = data?.clusterInfo;
-
-    // const arrPass = [];
-    // const arrWarning = [];
-    // const arrDanger = [];
-
-    // data?.auditResults?.map(auditResult => {
-    //   return auditResult.resultInfos.map(resultInfo => {
-    //     return resultInfo.resourceInfos.items.filter(item => {
-    //       arrPass.push(item.level === 'ignore');
-    //       arrWarning.push(item.level === 'warning');
-    //       arrDanger.push(item.level === 'danger');
-    //     });
-    //   });
-    // });
-
-    // const sumPass = arrPass.reduce((prev, curr) => prev + curr, 0);
-    // const sumWarning = arrWarning.reduce((prev, curr) => prev + curr, 0);
-    // const sumDanger = arrDanger.reduce((prev, curr) => prev + curr, 0);
-
     const chartOption = [
       {
         name: 'passing',
@@ -85,11 +69,10 @@ export default class ClusterInspection extends React.Component {
                       <div className="cont1">
                         <div className="chart_pie">
                           <PieChart width={500} height={160}>
-                            {/* width={800} height={400} */}
                             <Pie
                               data={chartOption}
-                              //   cs={120}
-                              //   cy={200}
+                              cx={300}
+                              cy={75}
                               innerRadius={60}
                               outerRadius={80}
                               paddingAngle={1}
@@ -101,20 +84,20 @@ export default class ClusterInspection extends React.Component {
                                   fill={entry.color}
                                 />
                               ))}
-                              {/* <Tooltip
-                                formatter={(value, name) => [
-                                  `${name}: ${value}`,
-                                  'Total',
-                                ]}
-                              /> */}
-                              {/* <Label value="Data" position="center" /> */}
+                              <Label
+                                value={data?.scoreInfo?.score}
+                                position="center"
+                                fontSize={50}
+                                dy={-10}
+                              />
+                              <Label
+                                value={`Health Score`}
+                                position="bottom"
+                                fontSize={13}
+                                dy={25}
+                                dx={70}
+                              />
                             </Pie>
-                            {/* <Tooltip
-                              formatter={(value, name) => [
-                                `${name}: ${value}`,
-                                'Total',
-                              ]}
-                            /> */}
                             <ChartTooltip />
                           </PieChart>
                         </div>
@@ -124,14 +107,16 @@ export default class ClusterInspection extends React.Component {
                           <p className="status title">
                             <span>전체 점검 항목</span>
                           </p>
-                          <div className="value">{data?.scoreInfo?.total}</div>
+                          <div className="value">
+                            {data?.scoreInfo?.total || 0}
+                          </div>
                         </div>
                         <div className="status_wrap">
                           <p className="status pass">
                             <span>Pass</span>
                           </p>
                           <div className="value">
-                            {data?.scoreInfo?.passing}
+                            {data?.scoreInfo?.passing || 0}
                           </div>
                         </div>
                         <div className="status_wrap">
@@ -139,7 +124,7 @@ export default class ClusterInspection extends React.Component {
                             <span>Warning</span>
                           </p>
                           <div className="value">
-                            {data?.scoreInfo?.warning}
+                            {data?.scoreInfo?.warning || 0}
                           </div>
                         </div>
                         <div className="status_wrap">
@@ -147,7 +132,7 @@ export default class ClusterInspection extends React.Component {
                             <span>Danger</span>
                           </p>
                           <div className="value">
-                            {data?.scoreInfo?.dangerous}
+                            {data?.scoreInfo?.dangerous || 0}
                           </div>
                         </div>
                       </div>
@@ -169,14 +154,16 @@ export default class ClusterInspection extends React.Component {
                         <i className="ico-type24-container"></i>
                         <h6 className="list_title">쿠버네티스 버전</h6>
                       </div>
-                      <div className="value">{clusterInfo?.version}</div>
+                      <div className="value">{clusterInfo?.version || 0}</div>
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
                         <i className="ico-type24-clusternode"></i>
                         <h6 className="list_title">클러스터 노드</h6>
                       </div>
-                      <div className="value">{clusterInfo?.nodesCount}</div>
+                      <div className="value">
+                        {clusterInfo?.nodesCount || 0}
+                      </div>
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
@@ -184,7 +171,7 @@ export default class ClusterInspection extends React.Component {
                         <h6 className="list_title">네임스페이스 개수</h6>
                       </div>
                       <div className="value">
-                        {clusterInfo?.namespacesCount}
+                        {clusterInfo?.namespacesCount || 0}
                       </div>
                     </li>
                     <li className="li_type_01">
@@ -192,7 +179,9 @@ export default class ClusterInspection extends React.Component {
                         <i className="ico-type24-clusternode"></i>
                         <h6 className="list_title">워크로드 개수</h6>
                       </div>
-                      <div className="value">{clusterInfo?.workloadsCount}</div>
+                      <div className="value">
+                        {clusterInfo?.workloadsCount || 0}
+                      </div>
                     </li>
                   </ul>
                 </div>
@@ -217,7 +206,6 @@ export default class ClusterInspection extends React.Component {
           description={`클러스터의 상태를 모니터링 합니다.`}
         />
         {this.renderChart()}
-        {/* <Tabs tabs={this.tabs} /> */}
 
         <DetailClusterList {...data} tabValue={tabValue} />
       </>

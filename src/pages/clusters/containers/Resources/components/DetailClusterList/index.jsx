@@ -120,21 +120,23 @@ const DetailClusterList = props => {
 
     if (tabValue === 'cluster') {
       const content = withoutNamespaceResult
-        ?.filter(rslt => {
-          const items = rslt?.resourceInfos?.items ?? [];
-          if (buttonDanger) {
-            return items.some(itm => itm?.level === 'danger');
-          }
-          if (buttonPass) {
-            return items.some(itm => itm?.level === 'ignore');
-          }
-          if (buttonWarning) {
-            return items.some(itm => itm?.level === 'warning');
-          }
-          return true;
-        })
+        // ?.filter(rslt => {
+        //   const items = rslt?.resourceInfos?.items ?? [];
+        //   //   if (buttonPass) {
+        //   //     return items.some(itm => itm?.level === 'ignore');
+        //   //   }
+        //   if (buttonPass) {
+        //     return items.some(itm => itm?.level === 'pass');
+        //   }
+        //   if (buttonWarning) {
+        //     return items.some(itm => itm?.level === 'warning');
+        //   }
+        //   if (buttonDanger) {
+        //     return items.some(itm => itm?.level === 'danger');
+        //   }
+        //   return true;
+        // })
         ?.map((value, idx) => {
-          //   return value.resourceInfos?.items?.map((obj, idx) => {
           return (
             <div className={styles.wrapper} key={`cluster-${idx}`}>
               <div
@@ -164,17 +166,15 @@ const DetailClusterList = props => {
                 </div>
 
                 {renderExtraContent(value)}
-                {/* {renderExtraContent(value, obj.name)} */}
               </div>
             </div>
           );
-          //   });
         });
       return content;
     }
 
     if (tabValue === 'namespace') {
-      const content = namespace?.map((value, index) => {
+      const content = namespace?.map(value => {
         return value?.resultInfos?.map((obj, idx) => {
           return (
             <div className={styles.wrapper} key={`namespace-${idx}`}>
@@ -243,6 +243,15 @@ const DetailClusterList = props => {
         }
         return dotBars;
       }
+      //   if (buttonPass) {
+      //     for (let i = 0; i < (counts.pass || 0); i++) {
+      //       dotBars.push(
+      //         <div key={`pass-${i}`} className="dot_bar status pass"></div>
+      //       );
+      //     }
+      //     return dotBars;
+      //   }
+
       if (buttonPass) {
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
@@ -265,6 +274,11 @@ const DetailClusterList = props => {
           );
         }
 
+        // for (let i = 0; i < (counts.pass || 0); i++) {
+        //   dotBars.push(
+        //     <div key={`pass-${i}`} className="dot_bar status pass"></div>
+        //   );
+        // }
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
             <div key={`ignore-${i}`} className="dot_bar status pass"></div>
@@ -294,10 +308,9 @@ const DetailClusterList = props => {
                 <div className="dot_bar"></div>
               </div>
               <p className="dot_value">
-                {/* <p className={styles.text}> */}
+                {/* <label>Pass {counts.pass || 0} </label> */}
                 <label>Pass {counts.ignore || 0} </label>
                 <label>Warning {counts.warning || 0}</label>
-                {/* <span className="data"></span> */}
                 <label>Danger {counts.danger || 0}</label>
                 <span className="data"></span>
               </p>
@@ -338,8 +351,12 @@ const DetailClusterList = props => {
     if (state === 'danger') {
       return 'error';
     }
+    // if (state === 'ignore') {
+    //   return 'unknown';
+    // }
     return 'error';
   };
+  const [level, setLevel] = useState();
 
   const renderExtraContent = (obj, rName, index) => {
     return (
@@ -348,6 +365,9 @@ const DetailClusterList = props => {
           <div className={styles.containers}>
             {obj?.resourceInfos?.items
               ?.filter(item => {
+                // if (buttonPass) {
+                //   return item.level === 'pass';
+                // }
                 if (buttonWarning) {
                   return item.level === 'warning';
                 }
@@ -366,7 +386,8 @@ const DetailClusterList = props => {
                       className={classnames(styles.item)}
                       key={`extra-item-${indexNum}`}
                       onClick={e => {
-                        return setShowPopup(true);
+                        setShowPopup(true);
+                        setLevel(item.level);
                       }}
                     >
                       <div className={styles.icon}>
@@ -378,7 +399,6 @@ const DetailClusterList = props => {
                         <p>{`이름`}</p>
                       </div>
                       <div className={styles.title}>
-                        {/* <div className={styles.indicator}> */}
                         <div
                           style={{
                             display: 'flex',
@@ -391,17 +411,25 @@ const DetailClusterList = props => {
                             className={styles.indicator}
                             type={getState(item.level)}
                             flicker
-                            //   style={{
-                            //     bottom: '45px !important',
-                            //     right: '26px !important',
-                            //   }}
                           />
-                          <div>{item.level}</div>
+                          <div>
+                            {item.level === 'ignore'
+                              ? 'pass'
+                              : item.level === 'warning'
+                              ? 'warning'
+                              : item.level === 'danger'
+                              ? 'danger'
+                              : ''}
+                          </div>
                         </div>
                         <p>{`상태`}</p>
                       </div>
                     </div>
 
+                    {/* {showPopup &&
+                      (() => {
+                        drawerComponent(item.level);
+                      })} */}
                     {showPopup && (
                       <>
                         <div class="content_box_wrap">
@@ -414,8 +442,19 @@ const DetailClusterList = props => {
                             <div className="layer_pop_header status_wrap">
                               <div className="tit">
                                 ImageTagIsLatest
-                                <p className="status warning">
-                                  <span>warning</span>
+                                {/* <p className="status warning"> */}
+                                <p
+                                  className={`status ${
+                                    level === 'ignore'
+                                      ? 'pass'
+                                      : level === 'warning'
+                                      ? 'warning'
+                                      : level === 'danger'
+                                      ? 'danger'
+                                      : ''
+                                  }`}
+                                >
+                                  <span>{level}</span>
                                 </p>
                               </div>
                               <button
@@ -423,17 +462,16 @@ const DetailClusterList = props => {
                                 className="close"
                                 onClick={e => closeDrawer(e)}
                               >
-                                {/* onClick={setShowPopup(false)} */}
                                 <i className="ico ico-close-small"></i>
                               </button>
                             </div>
                             <div className="msg">
                               <i className="ico ico-check"></i>
-                              <label className="label">Discovered :</label>
-                              <span>1 min ago</span>
+                              <label className="label">{`Discovered :`}</label>
+                              <span>{`1 min ago`}</span>
                             </div>
                             <div className="disc">
-                              Describe Kubernetes typically caches images on
+                              {`Describe Kubernetes typically caches images on
                               worker nodes. By default, the image will only be
                               pulled if it is not already cached on the node
                               trying to run it. However, leveraging cached
@@ -463,7 +501,7 @@ const DetailClusterList = props => {
                               Specifying pullPolicy=Always will prevent these
                               issues by ensuring that the latest image is
                               downloaded every time a new pod is created.
-                              reference
+                              reference`}
                             </div>
                           </div>
                         </div>
@@ -518,14 +556,14 @@ const DetailClusterList = props => {
       </div>
     );
   };
-  const clickButton = e => {
-    const value = e.target.value;
-    if (tabValue === 'cluster') {
-      if (value === 'pass') {
-        withoutNamespace?.map(() => {});
-      }
-    }
-  };
+  //   const clickButton = e => {
+  //     const value = e.target.value;
+  //     if (tabValue === 'cluster') {
+  //       if (value === 'pass') {
+  //         withoutNamespace?.map(() => {});
+  //       }
+  //     }
+  //   };
 
   return (
     <>
@@ -543,10 +581,11 @@ const DetailClusterList = props => {
                 }`}
                 type="button"
                 onClick={e => {
-                  clickButton(e);
+                  //   clickButton(e);
                   setButtonPass(!buttonPass);
                   setButtonWarning(false);
                   setButtonDanger(false);
+                  setShowPopup(false);
                 }}
                 value="pass"
               >
@@ -563,6 +602,7 @@ const DetailClusterList = props => {
                   setButtonWarning(!buttonWarning);
                   setButtonPass(false);
                   setButtonDanger(false);
+                  setShowPopup(false);
                 }}
                 value="pass"
               >
@@ -579,6 +619,7 @@ const DetailClusterList = props => {
                   setButtonDanger(!buttonDanger);
                   setButtonWarning(false);
                   setButtonPass(false);
+                  setShowPopup(false);
                 }}
                 value="pass"
               >

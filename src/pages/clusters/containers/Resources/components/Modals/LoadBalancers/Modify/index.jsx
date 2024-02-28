@@ -60,6 +60,7 @@ const ModifyModal = (props) => {
                 data.members = members;
                 data.id = id;
                 data.network = lb.network.id
+                data.description = data.description || ''
                 onOk({ lb: data })
             }
 
@@ -216,7 +217,7 @@ const ModifyModal = (props) => {
                             name="description"
                             maxLength={256}
                             rows="1"
-                            defaultValue={props.store.detail.lb.description}
+                            defaultValue={props.store.detail.lb.description || ''}
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

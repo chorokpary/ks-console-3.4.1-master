@@ -41,7 +41,7 @@ const RegistModal = (props) => {
       data.internal = internalCheckItems;
       data.external = radioExternal;
       data.project = projectName;
-      console.log("data : " + JSON.stringify(data))
+
       onOk({ ...data })
     })
   }

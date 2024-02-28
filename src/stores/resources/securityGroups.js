@@ -245,10 +245,10 @@ export default class SecurityGroupStore extends Base {
             return
         }
 
-        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + user.id);
+        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(user)}/edgetron/resources/kubevirt/security_groups/` + user.id);
         Promise.all(
             securityDetail.security_group.rules.map((rule) => {
-                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
+                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(user)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
             })
         )
 

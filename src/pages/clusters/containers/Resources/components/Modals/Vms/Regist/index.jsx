@@ -78,16 +78,16 @@ const RegistModal = (props) => {
       const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk' });
       const listImage = await vmStore.fetchVmListImage();
       const listBootVolume = await vmStore.fetchVmListBootVolume();
-      const listNetwork = await vmStore.fetchVmListNetwork({ namespace : props.namespace});
-      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ namespace : props.namespace});
-      const listKeypair = await vmStore.fetchVmListKeypair({ namespace : props.namespace});
+      const listNetwork = await vmStore.fetchVmListNetwork({ namespace: props.namespace });
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ namespace: props.namespace });
+      const listKeypair = await vmStore.fetchVmListKeypair({ namespace: props.namespace });
       const listNode = await vmStore.fetchVmListNode();
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({ namespace : props.namespace});
+      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({ namespace: props.namespace });
       const listStoregeClass = await vmStore.fetchVmListStoregeClass();
 
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
-      setImageOptionList(listImage.images);
+      setImageOptionList(listImage.images.filter(obj => obj.os_type != 'windows'));
       setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
@@ -246,9 +246,9 @@ const RegistModal = (props) => {
         handleOk();
       } else {
         const imageSize = imageType == "I" ? imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi', '')
-                                          : bootVolumeDataList.filter(item => item.id == selectBootId).map(item => item.capacity)[0].replace('Gi', '');
+          : bootVolumeDataList.filter(item => item.id == selectBootId).map(item => item.capacity)[0].replace('Gi', '');
         const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
-        
+
         if (flavorSize > imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
@@ -317,11 +317,13 @@ const RegistModal = (props) => {
     return elements;
   }
 
+  // 설명이 길어지면 ui가 깨짐
   const handleOsType = (value) => {
     setOsType(value)
     setSelectImageName('')
-    if (value == 'window') {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type == 'window'))
+    console.log(imageDataList)
+    if (value == 'windows') {
+      setImageOptionList(imageDataList.filter(obj => obj.os_type == 'windows'))
     } else if (value == 'linux') {
       setImageOptionList(imageDataList.filter(obj => obj.os_type != 'windows'))
     } else {
@@ -477,8 +479,8 @@ const RegistModal = (props) => {
   }
 
   // 스크립트 끝 ==================================================
-  
-  
+
+
   const [tab, setTab] = useState("I");
   const { TabPanel } = Tabs;
 
@@ -560,7 +562,7 @@ const RegistModal = (props) => {
                         { validator: nameValidator },
                       ]}
                       desc={t('NAME_DESC')}
-                      
+
                     >
                       <Input
                         name="name"
@@ -671,7 +673,7 @@ const RegistModal = (props) => {
                       name="bootvolume"
                       defaultValue={t('RESOURCES_SELECT')}
                       options={bootvolumeOptions()}
-                    // clearable
+                      // clearable
                       onChange={(e) => {
                         setSelectBootId(e);
                       }}

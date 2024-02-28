@@ -66,18 +66,17 @@ const VolumeDetail = props => {
       !volumeName.includes('boot-dv') &&
       !volumeName.includes('boot-volume')
     ) {
-      console.log('was1 \n');
       operations.push(
         {
           key: 'volume',
           icon: 'storage',
           text:
-            used_by_vmi === undefined
+            !used_by_vmi
               ? t('RESOURCES_BINDING')
               : t('RESOURCES_ISOLATE'),
           action: 'view',
           onClick: () => {
-            if (used_by_vmi === undefined) {
+            if (!used_by_vmi) {
               props.rootStore.triggerAction('resourcesvolume.bindingPop', {
                 type: 'VOLUME_DETAIL',
                 store,
@@ -135,9 +134,9 @@ const VolumeDetail = props => {
         value:
           detail.volume.access_modes.length > 0
             ? detail.volume.access_modes &&
-              detail.volume.access_modes.map(volume => (
-                <p key={volume}>{volume}</p>
-              ))
+            detail.volume.access_modes.map(volume => (
+              <p key={volume}>{volume}</p>
+            ))
             : '-',
       },
       {

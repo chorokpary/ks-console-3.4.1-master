@@ -23,6 +23,8 @@ const CpuPower = ({ x, y, w, h,
     setNodeList(nodeData)
   }, [nodeData])
 
+
+
   const customStore = new CustomStore();
 
   const [loading, setLoading] = useState(false);
@@ -41,12 +43,19 @@ const CpuPower = ({ x, y, w, h,
     const getData = async () => {
       setLoading(true)
 
+
+      let promql_node_list = ""
+      nodeList.map((obj) => {
+        const nodeName = get(obj, 'name')
+        promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+      })
+
       const metric_type = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
+        expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
       })
 
       const metric_power_last = await customStore.fetchMetric({
-        expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+        expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
       })
 
       if (cleanupTrigger) {
@@ -105,8 +114,15 @@ const CpuPower = ({ x, y, w, h,
       times: params.times
     }
 
+    let promql_node_list = ""
+    nodeList.map((obj) => {
+      const nodeName = get(obj, 'name')
+      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+    })
+
+
     const metric_cpu = await customStore.fetchMetric({
-      expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
+      expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})))`,
       ...paramsData
     })
 
@@ -128,7 +144,7 @@ const CpuPower = ({ x, y, w, h,
     setArmCpuData(armCpuArray)
 
     const metric_power = await customStore.fetchMetric({
-      expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+      expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
       ...paramsData
     })
 

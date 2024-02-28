@@ -125,9 +125,9 @@ export default class FloatingIp extends React.Component {
                 search: true,
                 width: 'auto',
                 render: project => (
-                  <Link to={`/clusters/${cluster}/projects/${project}`}>
-                    {showNameAndAlias(project, 'project')}
-                  </Link>
+                    <Link to={`/clusters/${cluster}/projects/${project}`}>
+                        {showNameAndAlias(project, 'project')}
+                    </Link>
                 ),
             },
             {
@@ -191,7 +191,7 @@ export default class FloatingIp extends React.Component {
                     tableActions={this.tableActions}
                     itemActions={this.itemActions}
                     columns={this.getColumns()}
-                    searchType="network"
+                    searchType="network_alias"
                 />
             </ListPage>
         )
