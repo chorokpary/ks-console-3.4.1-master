@@ -141,7 +141,7 @@ export default class FloatingIp extends React.Component {
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
-          searchType="network"
+          searchType="network_alias"
         />
       </ListPage>
     )

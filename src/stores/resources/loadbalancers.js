@@ -258,33 +258,7 @@ export default class LoadBalancerStore extends Base {
         )
 
         let dataList = result?.floating_ips || [];
-
-        if (params.namespace) {
-            params.project = params.namespace;
-        }
-
-        const searchArray = Object.keys(params).map((key) => {
-            let value = params[key];
-            let searchData = {
-                "searchKeywordType": key,
-                "searchKeywordText": value
-            }
-            return searchData
-        })
-
-        if (searchArray.length > 0) {
-            searchArray.map((search) => {
-                let resultList = result.floating_ips.filter((row) => {
-                    if (search.searchKeywordType === 'project') {
-                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                    }
-                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                });
-                dataList = resultList;
-            })
-        }
         this.floatingIpsList = dataList
-
         this.isLoading = false
 
         return dataList
