@@ -82,6 +82,11 @@ const webMm3Proxy = {
   },  
 }
 
+const webImageBuildProxy = {
+  target: `${serverConfig.apiServer.imagebuildlUrl}`,
+  changeOrigin: true,
+}
+
 const webAppDeployProxy = {
   target: `${serverConfig.apiServer.appdeployUrl}`,
   changeOrigin: true,
@@ -142,4 +147,5 @@ module.exports = {
   webCmpProxy,
   webAppDeployProxy,
   webBaremetalProxy,
+  webImageBuildProxy,
 }

@@ -580,6 +580,7 @@ module.exports = {
   RESOURCES_READY_USE: '사용 준비',
   RESOURCES_SNAPSHOT_VOLUME: '스냅샷 볼륨',
   RESOURCES_COMPLETE: '완료',
+  RESOURCES_VM_IIMAGE_BUILD: '가상머신 이미지 빌드',
 
 
 

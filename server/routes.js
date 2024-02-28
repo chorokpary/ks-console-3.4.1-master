@@ -34,6 +34,7 @@ const {
   webCmpProxy,
   webAppDeployProxy,
   webBaremetalProxy,
+  webImageBuildProxy,
 } = require('./proxy')
 
 const {
@@ -76,6 +77,7 @@ router
   .post('/customharbor/(.*)', parseBody, handleHarborProxyCustom)
   .get('/blank_md', renderMarkdown)
 
+  .use(proxy('/builder/(.*)', webImageBuildProxy))
   .use(proxy('/app-manager/(.*)', webAppDeployProxy))
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
   // .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))  

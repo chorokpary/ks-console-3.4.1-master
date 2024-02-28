@@ -41,6 +41,8 @@ server:
     # harborUrl: https://192.168.16.80:32443
     # appdeployUrl: http://192.168.16.86:30010
     # baremetalUrl: http://192.168.16.86:30011
+    # imagebuildlUrl: http://192.168.16.80:31001
+    # imagebuildHarborUrl: https://192.168.61.145
 
     # url: http://10.24.3.34:30881
     # wsUrl: ws://10.24.3.34:30881
@@ -49,6 +51,8 @@ server:
     # harborUrl: https://10.24.3.34:32443
     # appdeployUrl: http://10.24.3.34:30010
     # baremetalUrl: http://10.24.3.34:30011
+    # imagebuildlUrl: http://10.24.3.34:31001
+    # imagebuildHarborUrl: https://192.168.61.145
 
   mm3UserInfo:
     userName: 'edgetron'
@@ -287,12 +291,12 @@ client:
                 skipAuth: true,
                 showInDisable: true,
               }
-            # - {
-            #   name: imagebuild,
-            #   title: "가상머신 이미지 빌드",
-            #   skipAuth: true,
-            #   showInDisable: true,
-            # }
+            - {
+              name: imagebuild,
+              title: RESOURCES_VM_IIMAGE_BUILD,
+              skipAuth: true,
+              showInDisable: true,
+            }
         - name: config
           title: CONFIGURATION
           icon: hammer

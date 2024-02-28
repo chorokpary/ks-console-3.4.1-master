@@ -232,7 +232,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
                         {rightTab == 'node' ?
                           <div className="data">
                             <div className="number_wrap">
-                              <p><span className="em">{data._used}</span> / {data._total} <span className="unit">{t(data._unit)}</span></p>
+                              <p><span className="em">{data._used}</span> / {data._total}<span className="unit" style={{ marginLeft: '3px' }}>{' '}{t(data._unit)}</span></p>
                               <p>{Math.round(data._percent)}%</p>
                             </div>
                             <div className="graph_wrap">

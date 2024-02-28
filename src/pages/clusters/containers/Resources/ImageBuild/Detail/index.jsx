@@ -13,9 +13,9 @@ import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import routes from './routes'
 
-import KeypairStore from 'stores/resources/keypairs'
+import ImageBuildStore from 'stores/resources/imagebuild';
 
-const store = new KeypairStore();
+const store = new ImageBuildStore();
 
 const ImageBuildDetail = (props) => {
 
@@ -90,10 +90,10 @@ const ImageBuildDetail = (props) => {
           name: t('RESOURCES_CLUSTER'),
           value: detail.cluster,
         },
-        {
-          name: t('RESOURCES_DESCRIPTION'),
-          value: detail.keypair.description,
-        },
+        // {
+        //   name: t('RESOURCES_DESCRIPTION'),
+        //   value: detail.keypair.description,
+        // },
       ]
     }
 
@@ -102,7 +102,7 @@ const ImageBuildDetail = (props) => {
     }
 
     const sideProps = {
-        icon: "key",
+        icon: "image",
         module: store.module,
         name: get(store.detail, 'name'),
         desc: get(store.detail.flavor, 'description', ''),

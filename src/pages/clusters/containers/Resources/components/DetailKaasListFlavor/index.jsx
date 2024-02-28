@@ -26,7 +26,7 @@ import { getLocalTime } from 'utils';
 import * as common from 'utils/resources';
 import { getAreaChartOps } from 'utils/monitoring';
 
-const DetailKaasList = props => {
+const DetailKaasListFlavor = props => {
   // props = {
   //   type : '이미지' // 빈 화면 일때 사용할 이름,
   //   variables : 'image' // vm 데이터 내에서 비교할 파라미터,
@@ -51,11 +51,11 @@ const DetailKaasList = props => {
   const [machines, setMachines] = useState([]);
   const [machinesData, setMachinesData] = useState([]);
 
-  const handleExpand = async name => {
+  const handleExpand = obj => {
     if (!isExpandFlag) {
-      let filter = machinesData.filter(arr => arr.cluster === name)
+      let filter = machinesData.filter(arr => arr.cluster === obj.name)
       setMachines(filter);
-      setExpandItem(name);
+      setExpandItem(obj.name);
     }
     setIsExpandFlag(!isExpandFlag);
   };
@@ -72,21 +72,20 @@ const DetailKaasList = props => {
     const vmList = await kaasStore.fetchList();
     const machineList = await kaasStore.fetchMachinesAll();
 
-    const vmi = props.name;
-    let propsName = '';
-    if (vmi?.includes('control-plane')) {
-      propsName = vmi?.substring(0, vmi.indexOf('-control-plane'));
-    } else if (vmi?.includes('-md')) {
-      propsName = vmi?.substring(0, vmi.indexOf('-md'));
-    } else {
-      propsName = vmi;
-    }
+    let availableMachine = new Set();
+    const machineFilterData = machineList.filter((row) => {
+      if (row[props.variables] === props.name) {
+        availableMachine.add(row.cluster)
+        return row
+      }
+    });
+    setMachinesData(machineFilterData);
 
-    setMachinesData(machineList);
-
-    const vmFilterData = vmList?.filter(
-      row => row[props.variables] === propsName
-    );
+    const vmFilterData = vmList?.filter((row) => {
+      if (availableMachine.has(row.name)) {
+        return row
+      }
+    });
 
     const vmSearchData =
       params.name != '' && params.name != undefined
@@ -177,7 +176,7 @@ const DetailKaasList = props => {
             <div>{obj.kube_version}</div>
             <p>{t('RESOURCES_VERSION')}</p>
           </div>
-          <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
+          <div className={styles.arrow} onClick={() => handleExpand(obj)}>
             <Icon
               name="chevron-down"
               type={
@@ -373,4 +372,4 @@ const DetailKaasList = props => {
   );
 };
 
-export default DetailKaasList;
+export default DetailKaasListFlavor;

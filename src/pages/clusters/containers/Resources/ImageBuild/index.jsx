@@ -18,6 +18,7 @@
 
 import React from 'react';
 import { toJS } from 'mobx';
+import { get, find } from 'lodash';
 import ResourceTable from 'clusters/components/ResourceTable';
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
@@ -27,14 +28,14 @@ import Table from 'components/Tables/List';
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
 
-import KeypairStore from 'stores/resources/keypairs';
+import ImageBuildStore from 'stores/resources/imagebuild';
+
 
 @withList({
-  store: new KeypairStore(),
-  module: 'keypairs',
-  authKey: 'keypairs',
-  name: t('RESOURCES_KEYPAIR'),
-  rowKey: 'id',
+  store: new ImageBuildStore(),
+  module: 'imagebuild',
+  authKey: 'imagebuild',
+  name: t('이미지 빌드'),
 })
 export default class ImageBuild extends React.Component {
   showAction(record) {
@@ -108,63 +109,79 @@ export default class ImageBuild extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: (name, item) => (
+        render: (name, record) => (
           <Avatar
             icon="image"
             iconSize={40}
-            to={`/clusters/${cluster}/imagebuild/${name}/${item.id}`}
+            to={`/clusters/${cluster}/imagebuild/${name}/${record.name}`}
             title={name}
           />
         ),
       },
       {
-        title: t('RESOURCES_CPU_TYPE'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
         title: t('RESOURCES_TAG'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_OS_INFORMATION'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_FILE_NAME'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_SIZE'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_STATE'),
-        dataIndex: 'project',
+        dataIndex: 'name',
         isHideable: true,
         width: 'auto',
       },
 
       {
-        title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'timestamp',
+        title: t('RESOURCES_FILE_NAME'),
+        dataIndex: 'filename',
         isHideable: true,
-        width: 150,
-        sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
-          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
-        ),
+        width: 'auto',
+        render: (filename, record) => {
+          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+
+          if(!!uploadInfo) {
+            const name = uploadInfo[0]['upload-file-info']['file-info']['ID'];
+            return name
+          }
+          return '-'
+        },
       },
+      {
+        title: t('RESOURCES_SIZE'),
+        dataIndex: 'size',
+        isHideable: true,
+        width: 'auto',
+        render: (size, record) => {
+          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+
+          if(!!uploadInfo) {
+            const fileSize = uploadInfo[0]['file-size'];
+            return fileSize
+          }
+          return '-'
+        },
+      },
+      {
+        title: t('RESOURCES_STATE'),
+        dataIndex: 'status',
+        isHideable: true,
+        width: 'auto',
+        render: (status, record) => {
+          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+
+          if(!!uploadInfo) {
+            const status = uploadInfo[0]['upload-file-info']['Status'];
+            return status
+          }
+          return '-'
+        },
+      },
+
+      // {
+      //   title: t('RESOURCES_REGIST_DATE'),
+      //   dataIndex: 'timestamp',
+      //   isHideable: true,
+      //   width: 150,
+      //   sorter: true,
+      //   sortOrder: getSortOrder('timestamp'),
+      //   render: timestamp => (
+      //     <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+      //   ),
+      // },
     ];
   };
 
@@ -177,11 +194,6 @@ export default class ImageBuild extends React.Component {
       {
         dataIndex: 'name',
         title: t('RESOURCES_NAME'),
-        search: true,
-      },
-      {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
         search: true,
       },
     ];

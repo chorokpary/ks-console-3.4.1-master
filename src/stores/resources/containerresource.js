@@ -352,4 +352,20 @@ export default class ResourceStore extends Base {
     this.isLoading = false
     return response;
   }
+
+
+  @action
+  async fetchMachinesAll(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/machines`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'machines' }
+
+    this.machines = response._originData.machines
+
+    this.isLoading = false
+    return this.machines;
+  }
 }
