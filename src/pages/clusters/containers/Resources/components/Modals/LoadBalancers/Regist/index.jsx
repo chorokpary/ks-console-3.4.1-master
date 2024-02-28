@@ -210,7 +210,7 @@ const RegistModal = (props) => {
   }//end 멤버 IP
 
   const rulsObj = {
-    ruleType: t('RESOURCES_SELECT')
+    ruleType: t('RESOURCES_SPECIFY_USER')
     , protocol: 'TCP'
     , portRangeMin: '0'
     , portRangeMax: '0'

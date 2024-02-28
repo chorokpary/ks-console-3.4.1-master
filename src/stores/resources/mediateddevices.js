@@ -213,7 +213,7 @@ export default class MediatedDeviceStore extends Base {
             return
         }
         user.name = user.name.replace("/", "%5C");
-        return this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}edgetron/resources/kubevirt/mediated_devices/` + user.name))
+        return this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/mediated_devices/` + user.name))
     }
 
     @action
