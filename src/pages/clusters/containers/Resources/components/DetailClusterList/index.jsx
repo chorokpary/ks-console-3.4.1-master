@@ -243,23 +243,23 @@ const DetailClusterList = props => {
         }
         return dotBars;
       }
-      if (buttonPass) {
-        for (let i = 0; i < (counts.pass || 0); i++) {
-          dotBars.push(
-            <div key={`pass-${i}`} className="dot_bar status pass"></div>
-          );
-        }
-        return dotBars;
-      }
-
       //   if (buttonPass) {
-      //     for (let i = 0; i < (counts.ignore || 0); i++) {
+      //     for (let i = 0; i < (counts.pass || 0); i++) {
       //       dotBars.push(
-      //         <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+      //         <div key={`pass-${i}`} className="dot_bar status pass"></div>
       //       );
       //     }
       //     return dotBars;
       //   }
+
+      if (buttonPass) {
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+          );
+        }
+        return dotBars;
+      }
 
       if (!(buttonDanger || buttonWarning || buttonPass)) {
         for (let i = 0; i < (counts.danger || 0); i++) {
@@ -274,16 +274,16 @@ const DetailClusterList = props => {
           );
         }
 
-        for (let i = 0; i < (counts.pass || 0); i++) {
-          dotBars.push(
-            <div key={`pass-${i}`} className="dot_bar status pass"></div>
-          );
-        }
-        // for (let i = 0; i < (counts.ignore || 0); i++) {
+        // for (let i = 0; i < (counts.pass || 0); i++) {
         //   dotBars.push(
-        //     <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+        //     <div key={`pass-${i}`} className="dot_bar status pass"></div>
         //   );
         // }
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+          );
+        }
 
         return dotBars;
       }
@@ -308,8 +308,8 @@ const DetailClusterList = props => {
                 <div className="dot_bar"></div>
               </div>
               <p className="dot_value">
-                <label>Pass {counts.pass || 0} </label>
-                {/* <label>Pass {counts.ignore || 0} </label> */}
+                {/* <label>Pass {counts.pass || 0} </label> */}
+                <label>Pass {counts.ignore || 0} </label>
                 <label>Warning {counts.warning || 0}</label>
                 <label>Danger {counts.danger || 0}</label>
                 <span className="data"></span>
@@ -342,7 +342,7 @@ const DetailClusterList = props => {
   };
 
   const getState = state => {
-    if (state === 'pass') {
+    if (state === 'ignore') {
       return 'running';
     }
     if (state === 'warning') {
@@ -351,9 +351,9 @@ const DetailClusterList = props => {
     if (state === 'danger') {
       return 'error';
     }
-    if (state === 'ignore') {
-      return 'unknown';
-    }
+    // if (state === 'ignore') {
+    //   return 'unknown';
+    // }
     return 'error';
   };
   const [level, setLevel] = useState();
@@ -365,18 +365,18 @@ const DetailClusterList = props => {
           <div className={styles.containers}>
             {obj?.resourceInfos?.items
               ?.filter(item => {
-                if (buttonPass) {
-                  return item.level === 'pass';
-                }
+                // if (buttonPass) {
+                //   return item.level === 'pass';
+                // }
                 if (buttonWarning) {
                   return item.level === 'warning';
                 }
                 if (buttonDanger) {
                   return item.level === 'danger';
                 }
-                // if (buttonPass) {
-                //   return item.level === 'ignore';
-                // }
+                if (buttonPass) {
+                  return item.level === 'ignore';
+                }
                 return true;
               })
               ?.map((item, indexNum) => {
@@ -412,7 +412,15 @@ const DetailClusterList = props => {
                             type={getState(item.level)}
                             flicker
                           />
-                          <div>{item.level}</div>
+                          <div>
+                            {item.level === 'ignore'
+                              ? 'pass'
+                              : item.level === 'warning'
+                              ? 'warning'
+                              : item.level === 'danger'
+                              ? 'danger'
+                              : ''}
+                          </div>
                         </div>
                         <p>{`상태`}</p>
                       </div>
@@ -437,13 +445,13 @@ const DetailClusterList = props => {
                                 {/* <p className="status warning"> */}
                                 <p
                                   className={`status ${
-                                    level === 'pass'
+                                    level === 'ignore'
                                       ? 'pass'
                                       : level === 'warning'
                                       ? 'warning'
                                       : level === 'danger'
                                       ? 'danger'
-                                      : 'ignore'
+                                      : ''
                                   }`}
                                 >
                                   <span>{level}</span>
@@ -548,14 +556,14 @@ const DetailClusterList = props => {
       </div>
     );
   };
-  const clickButton = e => {
-    const value = e.target.value;
-    if (tabValue === 'cluster') {
-      if (value === 'pass') {
-        withoutNamespace?.map(() => {});
-      }
-    }
-  };
+  //   const clickButton = e => {
+  //     const value = e.target.value;
+  //     if (tabValue === 'cluster') {
+  //       if (value === 'pass') {
+  //         withoutNamespace?.map(() => {});
+  //       }
+  //     }
+  //   };
 
   return (
     <>
@@ -573,7 +581,7 @@ const DetailClusterList = props => {
                 }`}
                 type="button"
                 onClick={e => {
-                  clickButton(e);
+                  //   clickButton(e);
                   setButtonPass(!buttonPass);
                   setButtonWarning(false);
                   setButtonDanger(false);
