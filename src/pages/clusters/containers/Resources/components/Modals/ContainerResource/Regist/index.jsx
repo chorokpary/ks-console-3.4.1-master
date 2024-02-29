@@ -187,6 +187,7 @@ const RegistModal = (props) => {
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
         description: t(obj.image_detail.description),
+        disabled: obj.phase !== 'Succeeded' ? true : false
       }
     })
     return opt

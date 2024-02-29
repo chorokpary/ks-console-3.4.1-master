@@ -103,7 +103,7 @@ const RegistModal = (props) => {
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
-    { label: 'etc', value: '', icon: 'ico-plus', }
+    // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
   const storageClassOptions = () => {
@@ -124,6 +124,7 @@ const RegistModal = (props) => {
         icon: `ico-os-${obj.distro_type}`,
         description: t(obj.description),
         value: t(obj.name),
+        disabled: obj.phase !== 'Succeeded' ? true : false
       }
 
     })
@@ -325,7 +326,6 @@ const RegistModal = (props) => {
   const handleOsType = (value) => {
     setOsType(value)
     setSelectImageName('')
-    console.log(imageDataList)
     if (value == 'windows') {
       setImageOptionList(imageDataList.filter(obj => obj.os_type == 'windows'))
     } else if (value == 'linux') {
@@ -634,7 +634,7 @@ const RegistModal = (props) => {
                           />
                         </Form.Item>
                       </Column>
-                      <Column>
+                      <Column style={{ maxWidth: '472px' }}>
                         <Form.Item
                           label={t('RESOURCES_IMAGE')}
                           rules={[{ required: true, validator: imageValidator }]}
