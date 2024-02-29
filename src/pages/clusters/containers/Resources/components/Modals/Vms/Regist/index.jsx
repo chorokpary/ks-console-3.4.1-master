@@ -71,7 +71,6 @@ const RegistModal = (props) => {
 
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
 
-
   useEffect(() => {
 
     const getVmCreateData = async () => {
@@ -132,10 +131,15 @@ const RegistModal = (props) => {
   }
 
   const flavorOptions = () => {
+    let selectedRootDisk = bootVolumeDataList.find(obj => obj.id === selectBootId)
+    let regex = /[^0-9]/g;
+    let size = selectedRootDisk?.capacity.replace(regex, "") || 0;
+
     const opt = flavorDataList.map((obj) => ({
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib / Disk ${obj.root_disk} Gib`,
       value: t(obj.name),
+      disabled: Number(obj.root_disk) < Number(size) ? true : false
     }))
     return opt
   }
@@ -249,7 +253,7 @@ const RegistModal = (props) => {
           : bootVolumeDataList.filter(item => item.id == selectBootId).map(item => item.capacity)[0].replace('Gi', '');
         const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
 
-        if (flavorSize > imageSize) {
+        if (flavorSize >= imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
         } else {
