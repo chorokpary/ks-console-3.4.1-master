@@ -132,9 +132,16 @@ const RegistModal = (props) => {
   }
 
   const flavorOptions = () => {
-    let selectedRootDisk = bootVolumeDataList.find(obj => obj.id === selectBootId)
+    let size;
     let regex = /[^0-9]/g;
-    let size = selectedRootDisk?.capacity.replace(regex, "") || 0;
+    let selectedRootDisk = 0;
+    if (imageType == "I") {
+      selectedRootDisk = imageDataList.find(item => item.name == selectImageName)
+      size = selectedRootDisk?.size.replace(regex, "") || 0;
+    } else {
+      selectedRootDisk = bootVolumeDataList.find(obj => obj.id === selectBootId)
+      size = selectedRootDisk?.capacity.replace(regex, "") || 0;
+    }
 
     const opt = flavorDataList.map((obj) => ({
       label: t(obj.name),
