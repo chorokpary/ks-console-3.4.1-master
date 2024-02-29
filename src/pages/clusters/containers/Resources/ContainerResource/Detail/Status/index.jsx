@@ -26,13 +26,25 @@ const Status = (props) => {
   const machines = props.detailStore.machines;
   const customStore = new CustomStore();
 
-  const state = [
-    { nums: store.detail?.cluster?.cp?.replicas, unavailableNums: store.detail?.cluster?.cp?.replicas },
-    { nums: store.detail?.cluster?.md?.replicas, unavailableNums: store.detail?.cluster?.md?.replicas }
-  ]
+  const [masterNode, setMasterNode] = useState(machines?.filter(obj => obj.name.includes('-control-plane-')))
+  const [workerNode, setWorkerNode] = useState(machines?.filter(obj => !obj.name.includes('-control-plane-')))
 
+  const state = [
+    {
+      nums: masterNode?.length,
+      unavailableNums: masterNode?.reduce((prev, obj) => {
+        if (obj.ready_status === true) return ++prev
+      }, 0)
+    },
+    {
+      nums: workerNode?.length,
+      unavailableNums: workerNode?.reduce((prev, obj) => {
+        if (obj.ready_status === true) return ++prev
+      }, 0)
+    }
+  ]
   const names = [t('RESOURCES_MASTER_COUNT'), t('RESOURCES_WORKER_COUNT')]
-  const text = { title: t('RESOURCES_ADJUST_WORKER') , content: t('RESOURCES_CHANGE_WORKER_COUNT') }
+  const text = { title: t('RESOURCES_ADJUST_WORKER'), content: t('RESOURCES_CHANGE_WORKER_COUNT') }
 
   const enabledActions = () => {
     return globals.app.getActions({
@@ -62,7 +74,7 @@ const Status = (props) => {
   const [expandItem, setExpandItem] = useState();
 
   const getState = (state, phase) => {
-    if(phase != "Provisioned" && phase != "Running" ){
+    if (phase != "Provisioned" && phase != "Running") {
       return "updating"
     }
 
