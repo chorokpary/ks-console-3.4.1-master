@@ -34,6 +34,10 @@ export default class NetworkStore extends Base {
 
     @action
     async create(data, params = {}) {
+        if (data.network.type == "FLAT") {
+            delete data.network.segment_id
+        }
+
         let res
         if (params.workspace) {
             res = await this.submitting(
