@@ -56,7 +56,7 @@ const RegistModal = (props) => {
   const [description, setDescription] = useState('');
   const [keypairName, setKeypairName] = useState('');
   const [nodeName, setNodeName] = useState('');
-  const [storageClass, setStorageClass] = useState(t('RESOURCES_SELECT'));
+  const [storageClass, setStorageClass] = useState('');
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -194,7 +194,7 @@ const RegistModal = (props) => {
       data.bootvolume = data?.bootvolume == t('RESOURCES_SELECT') ? "" : data?.bootvolume;
       data.keypair = data.keypair == t('RESOURCES_SELECT') ? "" : data.keypair;
       data.node = data.node == t('RESOURCES_SELECT') ? "" : data.node;
-      data.storageClass = (imageType == "I" && storageClass != t('RESOURCES_SELECT')) ? storageClass : "";
+      data.storageClass = storageClass;
 
       let makeScriptStep_1 = false;
       let makeScriptStep_2 = false;
@@ -717,12 +717,12 @@ const RegistModal = (props) => {
                   <Column>
                     <div style={{ padding: 12 }} />
                     {imageType == "I" &&
-                      <Form.Group label={t('RESOURCES_STOREGE_CLASS')} onChange={(e) => { setStorageClass(t('RESOURCES_SELECT')); }} checkable>
+                      <Form.Group label={t('RESOURCES_STOREGE_CLASS')} onChange={(e) => { setStorageClass(''); }} checkable>
                         <Form.Item>
                           <Select
                             options={storageClassOptions()}
                             onChange={(el) => setStorageClass(el)}
-                            value={storageClass}
+                            value={storageClass !== '' ? storageClass : t('RESOURCES_SELECT')}
                           />
                         </Form.Item>
                       </Form.Group>
@@ -1112,6 +1112,12 @@ const RegistModal = (props) => {
                         <label>{t('RESOURCES_NAME')}</label>
                         <div className={styles.bold}>{vmName}</div>
                       </div>
+                      {projectName &&
+                        <div className={styles.list}>
+                          <label>{t('프로젝트')}</label>
+                          <div className={styles.bold}>{projectName}</div>
+                        </div>
+                      }
                       <div className={styles.list}>
                         <label>{`${imageType == "I" ? t('RESOURCES_IMAGE') : t('RESOURCES_BOOT_VOLUME')}`}</label>
                         <div className={styles.multiline}>
@@ -1127,11 +1133,36 @@ const RegistModal = (props) => {
                           </p>
                         </div>
                       </div>
+                    </div>
+
+                    {imageType == 'I' &&
+                      <div className={styles.greybgbox}>
+                        <div className={styles.list}>
+                          <label>os타입</label>
+                          <div className={styles.multiline}>
+                            <div className={styles.bold}>{osType}</div>
+                          </div>
+                        </div>
+                        {storageClass &&
+                          <div className={styles.list}>
+                            <label>스토리지</label>
+                            <div className={styles.multiline}>
+                              <div className={styles.bold}>{storageClass}</div>
+                            </div>
+                          </div>
+                        }
+                        <div className={styles.list}>
+                          <label>{t('RESOURCES_DESCRIPTION')}</label>
+                          <div>{description}</div>
+                        </div>
+                      </div>
+                    }
+                    {imageType == 'B' && description &&
                       <div className={styles.list}>
                         <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
                       </div>
-                    </div>
+                    }
                   </div>
 
                   <div className={styles.box_style}>
