@@ -74,22 +74,27 @@ const RegistModal = props => {
     form.current.validator(() => {
       setSubmitButtonFlag(true);
 
+      let error = document.querySelectorAll('.form-item-error');
+      for (let i of error) {
+        if (!i.classList.contains('hide')) {
+          return;
+        }
+      }
+
       const { data } = form.current.props;
-
       const dns = [];
-      if (!!data.dns_primary) {
-        dns.push(data.dns_primary);
-      }
-      if (!!data.dns_secondary) {
-        dns.push(data.dns_secondary);
-      }
-
-      const host_routes = [];
-      data.Destination?.map((el, idx) => {
+      data.dns?.map((el) => {
         if (el != '') {
-          host_routes.push({ destination: el, nexthop: data.Nexthop[idx] });
+          dns.push(el)
         }
       });
+      const host_routes = [];
+      listHostRoute.map(el => {
+        if (data.Destination[el] && data.Nexthop[el]) {
+          host_routes.push({ destination: data.Destination[el], nexthop: data.Nexthop[el] });
+        }
+      })
+
       data.ip_pool = {
         start: data.ip_pool_start,
         end: data.ip_pool_end,
@@ -98,10 +103,7 @@ const RegistModal = props => {
       data.host_routes = host_routes;
       data.networks = [];
 
-      if (data.segment_id == ' ') {
-        delete data.segment_id;
-      }
-
+      // console.log(data)
       onOk({ ...data });
     });
   };
@@ -115,9 +117,9 @@ const RegistModal = props => {
 
     if (step == 1) {
       if (
-        data.resource_name == undefined ||
-        data.resource_name == '선택' ||
-        data.resource_name == '' ||
+        // data.resource_name == undefined ||
+        // data.resource_name == '선택' ||
+        // data.resource_name == '' ||
         data.cidr == undefined ||
         data.cidr == '' ||
         data.ip_pool_start == undefined ||
@@ -202,6 +204,12 @@ const RegistModal = props => {
       setListHostRoute(listHostRoute.filter(el => el !== id));
     },
   };
+  useEffect(() => {
+    if (listHostRoute.length == 0) {
+      const a = document.getElementById('hostRoute')
+      a.classList.add('hide')
+    }
+  }, [listHostRoute])
 
   // ip 정규식
   const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
@@ -345,6 +353,50 @@ const RegistModal = props => {
   };
   // Validation 끝 ==================================================
 
+  const onChangeDns = (e, id) => {
+    const a = document.getElementById(id)
+    if (e.length > 0 && !regexIp.test(e)) {
+      a.parentElement.parentElement.nextElementSibling.classList.remove('hide')
+      a.parentElement.parentElement.classList.add("error-item");
+    } else {
+      a.parentElement.parentElement.nextElementSibling.classList.add('hide')
+      a.parentElement.parentElement.classList.remove("error-item");
+    }
+  }
+
+  const onChangeDestination = (e, idx) => {
+    const a = document.getElementById('hostRoute')
+    const nexthop = document.getElementById(`Nexthop.${idx}`).value
+
+    if (e.length > 0 || nexthop.length > 0) {
+      if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])
+        || !regexIp.test(nexthop)
+      ) {
+        a.classList.remove('hide')
+      } else {
+        a.classList.add('hide')
+      }
+    } else {
+      a.classList.add('hide')
+    }
+  }
+  const onChangeNexthop = (e, idx) => {
+    const a = document.getElementById('hostRoute')
+    const destination = document.getElementById(`Destination.${idx}`).value
+
+    if (e.length > 0 || destination.length > 0) {
+      if (destination.split("/").length != 2 || !isValidIpAddress(destination.split("/")[0]) || !fnCheckCidrClass(destination.split("/")[1])
+        || !regexIp.test(e)
+      ) {
+        a.classList.remove('hide')
+      } else {
+        a.classList.add('hide')
+      }
+    } else {
+      a.classList.add('hide')
+    }
+  }
+
   return (
     <>
       <Modal
@@ -368,13 +420,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -386,8 +437,8 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -423,7 +474,6 @@ const RegistModal = props => {
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('RESOURCES_RESOURCE_NAME')}
-                  rules={[{ required: true, validator: resourceNameValidator }]}
                 >
                   <Select
                     name="resource_name"
@@ -639,13 +689,17 @@ const RegistModal = props => {
                     <Columns>
                       <Column>
                         <Form.Item label={t('Primary')}>
-                          <Input name="dns_primary" />
+                          <Input name="dns.1"
+                            onChange={(e) => onChangeDns(e, 'dns.1')} />
                         </Form.Item>
+                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                       <Column>
                         <Form.Item label={t('Secondary')}>
-                          <Input name="dns_secondary" />
+                          <Input name="dns.2"
+                            onChange={(e) => onChangeDns(e, 'dns.2')} />
                         </Form.Item>
+                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                     </Columns>
                   </Form.Group>
@@ -661,6 +715,7 @@ const RegistModal = props => {
                               <Input
                                 name={`Destination.${obj}`}
                                 placeholder={t('Destination')}
+                                onChange={(e) => onChangeDestination(e, obj)}
                               />
                             </Form.Item>
                           </Column>
@@ -669,6 +724,7 @@ const RegistModal = props => {
                               <Input
                                 name={`Nexthop.${obj}`}
                                 placeholder={t('Nexthop')}
+                                onChange={(e) => onChangeNexthop(e, obj)}
                               />
                             </Form.Item>
                           </Column>
@@ -691,6 +747,7 @@ const RegistModal = props => {
                     </div>
                   </Form.Group>
                 </Form.Item>
+                <div className="form-item-error hide" id="hostRoute">{t.html('RESOURCES_HOSTROUTE_VALID', {})}</div>
               </div>
               {/* 세부 설정 끝========================================== */}
             </div>

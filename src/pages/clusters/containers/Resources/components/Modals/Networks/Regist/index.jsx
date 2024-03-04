@@ -72,11 +72,12 @@ const RegistModal = (props) => {
         }
       });
       const host_routes = []
-      data.Destination?.map((el, idx) => {
-        if (el != '') {
-          host_routes.push({ destination: el, nexthop: data.Nexthop[idx] })
+      listHostRoute.map(el => {
+        if (data.Destination[el] && data.Nexthop[el]) {
+          host_routes.push({ destination: data.Destination[el], nexthop: data.Nexthop[el] });
         }
       })
+
       data.ip_pool = {
         start: data.ip_pool_start,
         end: data.ip_pool_end
@@ -109,6 +110,12 @@ const RegistModal = (props) => {
       setListHostRoute(listHostRoute.filter((el) => el !== id));
     },
   }
+  useEffect(() => {
+    if (listHostRoute.length == 0) {
+      const a = document.getElementById('hostRoute')
+      a.classList.add('hide')
+    }
+  }, [listHostRoute])
 
   // ip 정규식
   const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
