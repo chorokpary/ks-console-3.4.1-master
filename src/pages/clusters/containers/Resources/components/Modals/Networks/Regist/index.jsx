@@ -57,8 +57,14 @@ const RegistModal = (props) => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
-      const { data } = form.current.props;
+      let error = document.querySelectorAll('.form-item-error');
+      for (let i of error) {
+        if (!i.classList.contains('hide')) {
+          return;
+        }
+      }
 
+      const { data } = form.current.props;
       const dns = []
       data.dns?.map((el) => {
         if (el != '') {
@@ -79,12 +85,9 @@ const RegistModal = (props) => {
       data.dns = dns
       data.host_routes = host_routes
       data.networktype_app = false
-
-      if (data.segment_id == " ") {
-        delete data.segment_id;
-      }
       data.project = projectName;
 
+      // console.log(data)
       onOk({ network: data })
     })
   }
@@ -116,6 +119,8 @@ const RegistModal = (props) => {
 
   // ip 정규식
   const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
+  const regexIp2 = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+
   // const regexIpzero = /(^(\d{1,3}\.){3}([0])$)/; // 끝자리 0 정규식
   // 숫자 정규식
   const regexNumber = /^[0-9]+$/;
@@ -134,7 +139,7 @@ const RegistModal = (props) => {
     return true;
   }
 
-  const onChaneCidr = (e) => {
+  const onChangeCidr = (e) => {
     const { data } = form.current.props;
     if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])) {
       data.ip_pool_start = '';
@@ -240,6 +245,50 @@ const RegistModal = (props) => {
         }
       </>
     return elements;
+  }
+
+  const onChangeDns = (e, id) => {
+    const a = document.getElementById(id)
+    if (e.length > 0 && !regexIp.test(e)) {
+      a.parentElement.parentElement.nextElementSibling.classList.remove('hide')
+      a.parentElement.parentElement.classList.add("error-item");
+    } else {
+      a.parentElement.parentElement.nextElementSibling.classList.add('hide')
+      a.parentElement.parentElement.classList.remove("error-item");
+    }
+  }
+
+  const onChangeDestination = (e, idx) => {
+    const a = document.getElementById('hostRoute')
+    const nexthop = document.getElementById(`Nexthop.${idx}`).value
+
+    if (e.length > 0 || nexthop.length > 0) {
+      if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])
+        || !regexIp.test(nexthop)
+      ) {
+        a.classList.remove('hide')
+      } else {
+        a.classList.add('hide')
+      }
+    } else {
+      a.classList.add('hide')
+    }
+  }
+  const onChangeNexthop = (e, idx) => {
+    const a = document.getElementById('hostRoute')
+    const destination = document.getElementById(`Destination.${idx}`).value
+
+    if (e.length > 0 || destination.length > 0) {
+      if (destination.split("/").length != 2 || !isValidIpAddress(destination.split("/")[0]) || !fnCheckCidrClass(destination.split("/")[1])
+        || !regexIp.test(e)
+      ) {
+        a.classList.remove('hide')
+      } else {
+        a.classList.add('hide')
+      }
+    } else {
+      a.classList.add('hide')
+    }
   }
 
   return (
@@ -407,7 +456,7 @@ const RegistModal = (props) => {
                           >
                             <Input name="cidr"
                               style={{ maxWidth: 'none' }}
-                              onChange={(e) => onChaneCidr(e)}
+                              onChange={(e) => onChangeCidr(e)}
                             />
                           </Form.Item>
                         </Column>
@@ -481,33 +530,25 @@ const RegistModal = (props) => {
                         <Form.Item
                           label={t('Primary')}
                         >
-                          <Input name="dns.1" />
+                          <Input name="dns.1"
+                            onChange={(e) => onChangeDns(e, 'dns.1')}
+                          />
                         </Form.Item>
+                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                       <Column>
                         <Form.Item
                           label={t('Secondary')}
                         >
-                          <Input name="dns.2" />
+                          <Input name="dns.2"
+                            onChange={(e) => onChangeDns(e, 'dns.2')}
+                          />
                         </Form.Item>
+                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                     </Columns>
                   </Form.Group>
                 </Form.Item>
-
-                {/* <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
-                    <Form.Group
-                    // label={t('ADD_METADATA')}
-                    // desc={t('VOLUME_ADD_METADATA_DESC')}
-                    // keepDataWhenUnCheck
-                    // checkable
-                    >
-                      <Form.Item>
-                        <PropertiesInput name="metadata.labels" addText={t('ADD')} />
-                      </Form.Item>
-                    </Form.Group>
-                  </Form.Item> */}
-
 
                 <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
                   <Form.Group>
@@ -519,6 +560,7 @@ const RegistModal = (props) => {
                               <Input
                                 name={`Destination.${obj}`}
                                 placeholder={t('Destination')}
+                                onChange={(e) => onChangeDestination(e, obj)}
                               />
                             </Form.Item>
                           </Column>
@@ -527,6 +569,7 @@ const RegistModal = (props) => {
                               <Input
                                 name={`Nexthop.${obj}`}
                                 placeholder={t('Nexthop')}
+                                onChange={(e) => onChangeNexthop(e, obj)}
                               />
                             </Form.Item>
                           </Column>
@@ -550,6 +593,7 @@ const RegistModal = (props) => {
 
                   </Form.Group>
                 </Form.Item>
+                <div className="form-item-error hide" id="hostRoute">{t.html('RESOURCES_HOSTROUTE_VALID', {})}</div>
 
               </div>
               {/* 세부 설정 끝==========================================*/}
