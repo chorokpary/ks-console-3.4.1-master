@@ -91,7 +91,7 @@ const RegistModal = (props) => {
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
       setKeypairDataList(listKeypair.keypairs);
-      setNodeDataList(listNode.nodes);
+      setNodeDataList(listNode.nodes.filter(obj => obj.node_role != 'master'));
       setSecurityGroupDataList(listSecurityGroup);
       setStoregeClassDataList(listStoregeClass.user_sces)
     };
