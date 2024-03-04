@@ -1138,14 +1138,14 @@ const RegistModal = (props) => {
                     {imageType == 'I' &&
                       <div className={styles.greybgbox}>
                         <div className={styles.list}>
-                          <label>os타입</label>
+                          <label>{t('RESOURCES_OS_TYPE')}</label>
                           <div className={styles.multiline}>
                             <div className={styles.bold}>{osType}</div>
                           </div>
                         </div>
                         {storageClass &&
                           <div className={styles.list}>
-                            <label>스토리지</label>
+                            <label>{t('RESOURCES_STOREGE_CLASS')}</label>
                             <div className={styles.multiline}>
                               <div className={styles.bold}>{storageClass}</div>
                             </div>
