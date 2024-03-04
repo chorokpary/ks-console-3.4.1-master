@@ -53,7 +53,7 @@ export default class ImageBuildStore extends Base {
     }
 
     if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'create-time'
     }
 
     if (params.limit === Infinity || params.limit === -1) {
@@ -67,7 +67,6 @@ export default class ImageBuildStore extends Base {
       this.getListUrl()
     )
 
-    console.log("result : "+ JSON.stringify(result))
     const data = result.locations;
 
     // 초기 정렬 처리
@@ -157,6 +156,8 @@ export default class ImageBuildStore extends Base {
     console.log("jsonData : "+ JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
+
+    console.log("res : "+ JSON.stringify(res))
     return res
   }
 
