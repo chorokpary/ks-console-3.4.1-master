@@ -222,20 +222,53 @@ const RegistModal = (props) => {
       }
 
       let fileScript = "";
-      fileScript += `\nwrite_files:\n - path: /test.txt\n content: |\n Here is a line.\n Another line is here.\n - path: /test02.txt\n content: |\n Here is a line02.\n Another line is here02.`
-      makeScriptStep_2 = true;
+      if (listFileRoute.length == 1) {
+        listFileRoute.map((obj) => {
+          if (!!data['scriptPath_' + obj]) {
+            fileScript += `\nwrite_files:\n  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
+            makeScriptStep_2 = true;
+          }
+        })
+      } else {
+        fileScript += `\nwrite_files:\n`
+        listFileRoute.map((obj) => {
+          if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
+            fileScript += `  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
+            makeScriptStep_2 = true;
+          }
+        })
+      }
 
       let packageScript = "";
-      packageScript += `\npackages:\n - package_1\n - package_2\n - [package_3, version_num]`
-      makeScriptStep_3 = true;
-
+      if (listPackageRoute.length == 1) {
+        listPackageRoute.map((obj) => {
+          if (!!data['scriptPackage_' + obj]) {
+            if(!!data['scriptVersion_' + obj]){
+              packageScript += `packages:\n  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+            }else{
+              packageScript += `packages:\n  - ${data['scriptPackage_' + obj]}\n`
+            }            
+            makeScriptStep_3 = true;
+          }
+        })
+      } else {
+        packageScript += `packages:\n`
+        listPackageRoute.map((obj) => {
+            if(!!data['scriptVersion_' + obj]){
+              packageScript += `  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+            }else{
+              packageScript += `  - ${data['scriptPackage_' + obj]}\n`
+            }          
+            makeScriptStep_3 = true;
+        })
+      }
 
       if (!makeScriptStep_1) { userPasswordScript = ""; }
       if (!makeScriptStep_2) { fileScript = ""; }
       if (!makeScriptStep_3) { packageScript = ""; }
 
-      // makeScript += userPasswordScript + fileScript + packageScript;
-      makeScript += userPasswordScript;
+      makeScript += userPasswordScript + fileScript + packageScript;
+      // makeScript += userPasswordScript;
       //console.log(makeScript)
 
       data.makeScript = makeScript;
