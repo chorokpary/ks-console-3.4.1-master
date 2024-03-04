@@ -57,6 +57,19 @@ export default class ImageBuild extends React.Component {
             success: getData,
             ...this.props.match.params,
           }),
+      },     
+      {
+        key: 'upload',
+        icon: 'upload',
+        text: t('RESOURCES_IMAGE_FILE_UPLOAD'),
+        action: 'edit',
+        show: this.showAction,
+        onClick: item =>
+          trigger('imagebuild.image.upload', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
       },
     ];
   }
@@ -109,20 +122,32 @@ export default class ImageBuild extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: (name, record) => (
-          <Avatar
+        render: (name, record) => {
+          const tags = get(record, 'tags')
+          const imageName = get(tags, 'image-name', "-")
+          console.log("imageName : "+ imageName)
+
+           return (
+            <Avatar
             icon="image"
             iconSize={40}
-            to={`/clusters/${cluster}/imagebuild/${name}/${record.name}`}
-            title={name}
-          />
-        ),
+            to={`/clusters/${cluster}/imagebuild/${name}/${name}`}
+            title={imageName}
+           />
+           )
+        },
       },
       {
         title: t('RESOURCES_TAG'),
-        dataIndex: 'name',
+        dataIndex: 'tag',
         isHideable: true,
         width: 'auto',
+        render: (tag, record) => {
+          const tags = get(record, 'tags')
+          const tagName = get(tags, 'tag', "-")
+          console.log("tagName : "+ tagName)
+          return tagName;
+        },
       },
 
       {
@@ -170,18 +195,17 @@ export default class ImageBuild extends React.Component {
           return '-'
         },
       },
-
-      // {
-      //   title: t('RESOURCES_REGIST_DATE'),
-      //   dataIndex: 'timestamp',
-      //   isHideable: true,
-      //   width: 150,
-      //   sorter: true,
-      //   sortOrder: getSortOrder('timestamp'),
-      //   render: timestamp => (
-      //     <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
-      //   ),
-      // },
+      {
+        title: t('RESOURCES_REGIST_DATE'),
+        dataIndex: 'create-time',
+        isHideable: true,
+        width: 150,
+        sorter: true,
+        sortOrder: getSortOrder('create-time'),
+        render: (timestamp, record) => (
+          <p>{getLocalTime(record['create-time']).format('YYYY-MM-DD HH:mm:ss')}</p>
+        ),
+      },
     ];
   };
 

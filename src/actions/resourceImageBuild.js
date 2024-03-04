@@ -137,6 +137,7 @@ export default {
   },
   'imagebuild.image.upload': {
     on({ store, detail, success, ...props }) {
+      console.log("detail : "+ JSON.stringify(detail))
       const modal = Modal.open({
         onOk: async data => {
           Modal.close(modal)
