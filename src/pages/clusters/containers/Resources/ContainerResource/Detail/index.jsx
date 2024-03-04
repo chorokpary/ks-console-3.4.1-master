@@ -114,9 +114,9 @@ const ResourceDetail = props => {
         value:
           detail.pod_cidrs.length > 0
             ? detail.pod_cidrs &&
-              detail.pod_cidrs.map(cidr => {
-                return <p key={cidr}>{cidr}</p>;
-              })
+            detail.pod_cidrs.map(cidr => {
+              return <p key={cidr}>{cidr}</p>;
+            })
             : '-',
       },
       {
@@ -124,9 +124,9 @@ const ResourceDetail = props => {
         value:
           detail.service_cidrs.length > 0
             ? detail.service_cidrs &&
-              detail.service_cidrs.map(cidr => {
-                return <p key={cidr}>{cidr}</p>;
-              })
+            detail.service_cidrs.map(cidr => {
+              return <p key={cidr}>{cidr}</p>;
+            })
             : '-',
       },
       {
@@ -214,7 +214,7 @@ const ResourceDetail = props => {
     icon: getBanner(),
     module: store.module,
     name: get(store.detail.cluster, 'name'),
-    desc: get(store.detail.cluster, 'description', ''),
+    // desc: get(store.detail.cluster, 'description', ''),
     operations: getOperations(kaasResourceName),
     attrs: getAttrs(),
     breadcrumbs: [
