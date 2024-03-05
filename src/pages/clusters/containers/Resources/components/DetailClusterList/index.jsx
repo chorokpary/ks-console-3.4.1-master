@@ -1,6 +1,4 @@
-import { get, groupBy, isEmpty } from 'lodash';
 import React, { useState, useEffect, useReducer } from 'react';
-import { observer, inject } from 'mobx-react';
 import classnames from 'classnames';
 import { toJS } from 'mobx';
 
@@ -31,6 +29,8 @@ const DetailClusterList = props => {
 
   const [isExpandFlag, setIsExpandFlag] = useState(false);
   const [expandItem, setExpandItem] = useState();
+  const [expandItemNamespace, setExpandItemNamespace] = useState();
+  const [expandItemType, setExpandItemType] = useState();
   //   const [isLoading, setIsLoading] = useState(true);
 
   // button
@@ -41,6 +41,8 @@ const DetailClusterList = props => {
   const [tabValue, setTabValue] = useState('cluster');
 
   const [showPopup, setShowPopup] = useState(false);
+
+  const [level, setLevel] = useState();
 
   useEffect(() => {
     const fnGetData = async ({ ...params } = {}) => {
@@ -61,8 +63,10 @@ const DetailClusterList = props => {
     fnGetData();
   }, []);
 
-  const handleExpand = name => {
+  const handleExpand = (name, valueNamespace, valueType) => {
     setExpandItem(name);
+    setExpandItemNamespace(valueNamespace);
+    setExpandItemType(valueType);
     setIsExpandFlag(!isExpandFlag);
   };
 
@@ -72,7 +76,7 @@ const DetailClusterList = props => {
       setButtonDanger(false);
       setButtonPass(false);
       setButtonWarning(false);
-      setExpandItem('false');
+      setExpandItem('');
       setIsExpandFlag(!isExpandFlag);
     } else if (value === 'namespace') {
       setTabValue('namespace');
@@ -116,7 +120,10 @@ const DetailClusterList = props => {
 
     const withoutNamespaceResult = withoutNamespace
       ?.map(ns => ns?.resultInfos.flat())
-      .flat();
+      .flat()
+      .sort((a, b) => {
+        return a.resourceInfos.name > b.resourceInfos.name ? 1 : -1;
+      });
 
     if (tabValue === 'cluster') {
       const content = withoutNamespaceResult
@@ -172,56 +179,225 @@ const DetailClusterList = props => {
         });
       return content;
     }
-
     if (tabValue === 'namespace') {
       const content = namespace?.map(value => {
-        return value?.resultInfos?.map((obj, idx) => {
-          return (
-            <div className={styles.wrapper} key={`namespace-${idx}`}>
+        return (
+          <>
+            <div
+              style={{
+                padding: '4px',
+                backgroundColor: '#f9fbfd',
+                borderRadius: '4px',
+              }}
+            >
               <div
-                className={classnames(styles.expandItem, '', {
-                  [styles.expanded]:
-                    obj.resourceInfos.name == expandItem ? isExpandFlag : false,
-                })}
+                style={{
+                  // paddingLeft : "13px",
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  wordWrap: 'normal',
+                  overflow: 'hidden',
+                  fontSize: '12px',
+                  lineHeight: 1.67,
+                  // fontFamily: 'Roboto', "PingFang SC", "Lantinghei SC", "Helvetica Neue", 'Helvetica', 'Arial', "Microsoft YaHei", 微软雅黑, STHeitiSC-Light, simsun, 宋体, "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", sans-serif,
+                  fontStyle: 'normal',
+                  fontStretch: 'normal',
+                  letterSpacing: 'normal',
+                  fontWeight: 'bold',
+                  color: '#242e42',
+                }}
               >
-                <div className={styles.itemMain}>
-                  <div className={styles.icon}>
-                    <i
-                      className="ico-type24-disk"
-                      type={
-                        obj.resourceInfos.name != expandItem
-                          ? 'dark'
-                          : obj.resourceInfos.name == expandItem &&
-                            isExpandFlag == false
-                          ? 'dark'
-                          : 'light'
-                      }
-                    ></i>
-                  </div>
-
-                  {renderContentDetail(obj)}
-                </div>
-                {renderExtraContent(obj)}
+                {value.namespace}
               </div>
+
+              {value?.resultInfos
+                .sort((a, b) => {
+                  return a.resourceInfos.name > b.resourceInfos.name ? 1 : -1;
+                })
+                ?.map((obj, idx) => {
+                  const counts = {};
+
+                  (obj.resourceInfos.items || []).forEach(item => {
+                    const itemLevel = item.level;
+                    counts[itemLevel] = (counts[itemLevel] || 0) + 1;
+                  });
+
+                  // Function to generate dot bars based on counts
+                  const generateDotBars = () => {
+                    const dotBars = [];
+                    if (buttonDanger) {
+                      for (let i = 0; i < (counts.danger || 0); i++) {
+                        dotBars.push(
+                          <div
+                            key={`danger-${i}`}
+                            className="dot_bar status danger"
+                          ></div>
+                        );
+                      }
+                      return dotBars;
+                    }
+                    if (buttonWarning) {
+                      for (let i = 0; i < (counts.warning || 0); i++) {
+                        dotBars.push(
+                          <div
+                            key={`warning-${i}`}
+                            className="dot_bar status warning"
+                          ></div>
+                        );
+                      }
+                      return dotBars;
+                    }
+                    if (buttonPass) {
+                      for (let i = 0; i < (counts.ignore || 0); i++) {
+                        dotBars.push(
+                          <div
+                            key={`ignore-${i}`}
+                            className="dot_bar status pass"
+                          ></div>
+                        );
+                      }
+                      return dotBars;
+                    }
+
+                    if (!(buttonDanger || buttonWarning || buttonPass)) {
+                      for (let i = 0; i < (counts.danger || 0); i++) {
+                        dotBars.push(
+                          <div
+                            key={`danger-${i}`}
+                            className="dot_bar status danger"
+                          ></div>
+                        );
+                      }
+
+                      for (let i = 0; i < (counts.warning || 0); i++) {
+                        dotBars.push(
+                          <div
+                            key={`warning-${i}`}
+                            className="dot_bar status warning"
+                          ></div>
+                        );
+                      }
+                      for (let i = 0; i < (counts.ignore || 0); i++) {
+                        dotBars.push(
+                          <div
+                            key={`ignore-${i}`}
+                            className="dot_bar status pass"
+                          ></div>
+                        );
+                      }
+
+                      return dotBars;
+                    }
+                  };
+
+                  return (
+                    <div>
+                      <div className={styles.wrapper} key={`namespace-${idx}`}>
+                        <div
+                          className={classnames(styles.expandItem, '', {
+                            [styles.expanded]:
+                              obj.resourceInfos.name === expandItem &&
+                              value.namespace === expandItemNamespace &&
+                              obj.resourceType === expandItemType
+                                ? isExpandFlag
+                                : false,
+                          })}
+                        >
+                          <div className={styles.itemMain}>
+                            <div className={styles.icon}>
+                              <i
+                                className="ico-type24-disk"
+                                type={
+                                  obj.resourceInfos.name !== expandItem ||
+                                  value.namespace !== expandItemNamespace ||
+                                  obj.resourceType !== expandItemType
+                                    ? 'dark'
+                                    : obj.resourceInfos.name === expandItem &&
+                                      value.namespace === expandItemNamespace &&
+                                      obj.resourceType === expandItemType &&
+                                      isExpandFlag === false
+                                    ? 'dark'
+                                    : 'light'
+                                }
+                              ></i>
+                            </div>
+
+                            <div className={styles.content}>
+                              <div className={styles.text}>
+                                <div>{obj?.resourceInfos?.name}</div>
+                                <p>{`이름`}</p>
+                              </div>
+
+                              <div className={styles.text}>
+                                <div>{obj?.resourceType}</div>
+                                <p>{`타입`}</p>
+                              </div>
+                              <div className="content_box_wrap">
+                                <div className="dot_chart_wrap">
+                                  <div className="dot_chart">
+                                    {generateDotBars()}
+                                    <div className="dot_bar"></div>
+                                  </div>
+                                  <p className="dot_value">
+                                    <label>Pass {counts.ignore || 0} </label>
+                                    <label>Warning {counts.warning || 0}</label>
+                                    <label>Danger {counts.danger || 0}</label>
+                                    <span className="data"></span>
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* {renderMonitorings(obj.resourceInfos)} */}
+
+                              <div
+                                className={styles.arrow}
+                                onClick={() =>
+                                  handleExpand(
+                                    obj.resourceInfos.name,
+                                    value.namespace,
+                                    obj.resourceType
+                                  )
+                                }
+                              >
+                                <Icon
+                                  name="chevron-down"
+                                  type={
+                                    obj.resourceInfos.name !== expandItem ||
+                                    value.namespace !== expandItemNamespace ||
+                                    obj.resourceType !== expandItemType
+                                      ? ''
+                                      : obj.resourceInfos.name === expandItem &&
+                                        value.namespace ===
+                                          expandItemNamespace &&
+                                        obj.resourceType === expandItemType &&
+                                        isExpandFlag === false
+                                      ? ''
+                                      : 'light'
+                                  }
+                                  size={20}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          {renderExtraContent(obj)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
-          );
-        });
+          </>
+        );
       });
       return content;
     }
-
-    // return (
-    //   <Loading spinning={isLoading}>
-    //     <>{content}</>
-    //   </Loading>
-    // );
   };
   const renderContentDetail = obj => {
     const counts = {};
 
     (obj.resourceInfos.items || []).forEach(item => {
-      const level = item.level;
-      counts[level] = (counts[level] || 0) + 1;
+      const itemLevel = item.level;
+      counts[itemLevel] = (counts[itemLevel] || 0) + 1;
     });
 
     // Function to generate dot bars based on counts
@@ -308,7 +484,6 @@ const DetailClusterList = props => {
                 <div className="dot_bar"></div>
               </div>
               <p className="dot_value">
-                {/* <label>Pass {counts.pass || 0} </label> */}
                 <label>Pass {counts.ignore || 0} </label>
                 <label>Warning {counts.warning || 0}</label>
                 <label>Danger {counts.danger || 0}</label>
@@ -351,23 +526,16 @@ const DetailClusterList = props => {
     if (state === 'danger') {
       return 'error';
     }
-    // if (state === 'ignore') {
-    //   return 'unknown';
-    // }
     return 'error';
   };
-  const [level, setLevel] = useState();
 
-  const renderExtraContent = (obj, rName, index) => {
+  const renderExtraContent = (obj, index) => {
     return (
       <>
         <div className={styles.itemExtra} key={`extra-content-${index}`}>
           <div className={styles.containers}>
             {obj?.resourceInfos?.items
               ?.filter(item => {
-                // if (buttonPass) {
-                //   return item.level === 'pass';
-                // }
                 if (buttonWarning) {
                   return item.level === 'warning';
                 }
@@ -378,6 +546,10 @@ const DetailClusterList = props => {
                   return item.level === 'ignore';
                 }
                 return true;
+              })
+              .sort((a, b) => {
+                const levelOrder = { danger: 1, warning: 2, ignore: 3 };
+                return levelOrder[a.level] - levelOrder[b.level];
               })
               ?.map((item, indexNum) => {
                 return (
@@ -426,10 +598,6 @@ const DetailClusterList = props => {
                       </div>
                     </div>
 
-                    {/* {showPopup &&
-                      (() => {
-                        drawerComponent(item.level);
-                      })} */}
                     {showPopup && (
                       <>
                         <div class="content_box_wrap">
@@ -556,14 +724,6 @@ const DetailClusterList = props => {
       </div>
     );
   };
-  //   const clickButton = e => {
-  //     const value = e.target.value;
-  //     if (tabValue === 'cluster') {
-  //       if (value === 'pass') {
-  //         withoutNamespace?.map(() => {});
-  //       }
-  //     }
-  //   };
 
   return (
     <>
@@ -628,7 +788,6 @@ const DetailClusterList = props => {
             </div>
           </div>
         </div>
-
         {renderContent()}
       </div>
     </>
