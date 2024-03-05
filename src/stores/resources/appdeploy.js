@@ -23,6 +23,7 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
+import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -33,9 +34,9 @@ export default class AppDeployStore extends Base {
 
   module = 'appdeploy'
 
-  getResourceUrl = (params = {}) => `app-manager/v1alpha1/templates`
-  getHistoryUrl = (params = {}) => `app-manager/v1alpha1/taskhistories`
-  getDeployUrl = (params = {}) => `app-manager/v1alpha1/tasks`
+  getResourceUrl = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
+  getHistoryUrl = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/taskhistories`
+  getDeployUrl = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/tasks`
 
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
@@ -70,10 +71,36 @@ export default class AppDeployStore extends Base {
       this.getResourceUrl()
     )
 
-    const data = result;
+    const data = result.templates;
+
+    // const promises = data.map(async (app) => {
+    //   const historyList = await axios.get("/app-manager/v1alpha1/taskhistories/" + app.name);
+
+    //   if(!!historyList.data){
+    //     const records = (historyList.data.records).sort((a, b) => {
+    //       return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
+    //     });
+
+    //     app.status = records[0].status;
+    //     app.lastTask = "#"+records[0].id;        
+    //   }else{
+    //     app.status = "-"
+    //     app.lastTask = "-"
+    //   }
+    // })
+    // await Promise.all(promises);
+
+    // 초기 정렬 처리
+    data.sort((a, b) => {
+      return a.registrationDate < b.registrationDate
+        ? 1
+        : a.registrationDate > b.registrationDate
+        ? -1
+        : 0;
+    });
 
     // 초기 데이터 처리 
-    this.dataList = data.templates;
+    this.dataList = data;
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -128,41 +155,6 @@ export default class AppDeployStore extends Base {
   }
 
   @action
-  async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
-
-    const jsonData = {};
-    const appdeployData = {};
-
-    appdeployData.name = data.name;
-    appdeployData.public_key = data.publicKey;
-    appdeployData.project = data.project;
-    appdeployData.description = data?.description;
-
-    jsonData.appdeploy = appdeployData;
-
-    const res = await request.post(url, jsonData)
-    return res
-  }
-
-  @action
-  async update({ name, ...params }, data) {
-
-    const jsonData = {};
-    const appdeployData = {};
-
-    appdeployData.id = data.id;
-    appdeployData.description = data?.description;
-
-    jsonData.appdeploy = appdeployData;
-
-    await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    )
-  }
-
-
-  @action
   async fetchDetail(params) {
     this.isLoading = true
 
@@ -212,26 +204,65 @@ export default class AppDeployStore extends Base {
       `${this.getHistoryUrl(params)}/${params.name}`
     );
     const response = { ...params, ...this.mapper(result), kind: 'records' };
+    const data = !!response.records ? response.records : [];
 
-    console.log("response : "+ JSON.stringify(response))
+    // 초기 정렬 처리
+    data.sort((a, b) => {
+      return a.id < b.id
+        ? 1
+        : a.id > b.id
+        ? -1
+        : 0;
+    });
+
     this.isLoading = false;
-    return response;
+    return data;
+  }
+
+  @action
+  async fetchHistoryLast(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getHistoryUrl(params)}/${params.name}`
+    );
+    const response = { ...params, ...this.mapper(result), kind: 'records' };
+
+    const data = response.records;
+
+    // 초기 정렬 처리
+    data.sort((a, b) => {
+      return a.id < b.id
+        ? 1
+        : a.id > b.id
+        ? -1
+        : 0;
+    });
+
+    this.isLoading = false;
+    return data;
   }
 
   @action
   async deploy({ detail, ...params }) {
+
     const jsonData = {};
+    const template = {};
+    
+    template.name = detail.name;
+    template.version = detail.version;
+
     jsonData.action = "deploy";
-    jsonData.templateName = detail.name;
+    jsonData.template = template;
 
     console.log("jsonData : "+ JSON.stringify(jsonData))
 
-    // await this.submitting(
-    //   request.post(
-    //     `${this.getDeployUrl(params)}`,
-    //     jsonData
-    //   )
-    // );
+    await this.submitting(
+      request.post(
+        `${this.getDeployUrl(params)}`,
+        jsonData
+      )
+    );
   }
 
 }

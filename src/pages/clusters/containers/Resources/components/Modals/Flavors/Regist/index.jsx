@@ -15,14 +15,17 @@ import {
   Tooltip,
 } from '@kube-design/components';
 import classnames from 'classnames';
-import axios from 'axios';
 import { UnitSlider, NumberInput } from 'components/Inputs';
 import { Modal } from 'components/Base';
 import styles from './index.scss';
+import FlavorStore from 'stores/resources/flavors';
+
+import { PATTERN_NAME } from 'utils/constants';
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
-
 const RegistModal = props => {
+  const store = new FlavorStore();
+
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
@@ -33,9 +36,9 @@ const RegistModal = props => {
 
   const [vcpus, setVcpus] = useState(1);
 
-  const [devices, setDevices] = useState([]);
-  const [gpus, setGpus] = useState([]);
-  const [extraSpecsFields, setExtraSpecsFields] = useState([]);
+  const [hostDevices, setHostDevices] = useState();
+  const [gpus, setGpus] = useState();
+  const [extraSpecsFields, setExtraSpecsFields] = useState();
   const [ram, setRam] = useState(2);
   const [byteFlag, setByteFlag] = useState(true);
 
@@ -46,60 +49,52 @@ const RegistModal = props => {
   const { TabPanel } = Tabs;
 
   useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/host_devices`);
-    const res = [];
-    data.then(response => {
-      if (response.data.host_devices) {
-        for (let i = 0, n = response.data.host_devices.length; i < n; i += 1) {
-          res.push({
-            label: response.data.host_devices[i].name,
-            value: response.data.host_devices[i].name,
-          });
-        }
-        setDevices(res);
-      }
-    });
-    //  setDevices([{ label: "device1", value: "device1" }, { label: "device2", value: "device2" }]);
-  }, []);
+    const useEffectFunction = async () => {
+      // hostDevices
+      const listHostDevices = await store.fetchFlavorHostDevices(props.cluster);
+      const responseHostDevices = listHostDevices?.host_devices;
 
-  useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/mediated_devices`);
-    const res = [];
-    data.then(response => {
-      if (response.data.mediated_devices) {
-        for (
-          let i = 0, n = response.data.mediated_devices.length;
-          i < n;
-          i += 1
-        ) {
-          res.push({
-            label: response.data.mediated_devices[i].resource_name,
-            value: response.data.mediated_devices[i].resource_name,
-          });
-        }
-        setGpus(res);
-      }
-    });
-    // setGpus([{ label: "intel.com/x710", value: "intel.com/x710" }, { label: "intel.com/x880", value: "intel.com/x880" }]);
-  }, []);
+      const resHostDevices = [];
+      responseHostDevices?.forEach(items => {
+        resHostDevices.push({
+          label: items.name,
+          value: items.name,
+        });
+      });
+      setHostDevices(resHostDevices);
 
-  useEffect(() => {
-    const data = axios.get(`/edgetron/resources/kubevirt/extra_specs`);
-    const res = [];
-    data.then(response => {
-      if (response.data.extra_specs) {
-        for (let i = 0, n = response.data.extra_specs.length; i < n; i += 1) {
-          res.push({
-            key: response.data.extra_specs[i].name,
-            description: response.data.extra_specs[i].description,
-            value: false,
-          });
-        }
-        setExtraSpecsFields(res);
-      }
-    });
-    // setExtraSpecsFields([{ name: "hugepage", description: "ddeessccrriippttiioonn", checked: false }
-    //     , { name: "etc", description: "eettccddeesscc", checked: false }]);
+      // setGpus
+      const mediatedDevices = await store.fetchFlavorMediatedDevices(
+        props.cluster
+      );
+      const responseMediatedDevices = mediatedDevices?.mediated_devices;
+
+      const resMediatedDevices = [];
+      responseMediatedDevices?.forEach(items => {
+        resMediatedDevices.push({
+          label: items.name,
+          value: items.name,
+        });
+      });
+
+      setGpus(resMediatedDevices);
+
+      // extraSpecs
+      const extraSpecs = await store.fetchFlavorExtraSpecs(props.cluster);
+      const responseExtraSpecs = extraSpecs?.extra_specs;
+
+      const resExtraSpecs = [];
+      responseExtraSpecs?.forEach(items => {
+        resExtraSpecs.push({
+          key: items.name,
+          description: items.description,
+          value: false,
+        });
+      });
+
+      setExtraSpecsFields(resExtraSpecs);
+    };
+    useEffectFunction();
   }, []);
 
   // extrSpec check
@@ -144,7 +139,7 @@ const RegistModal = props => {
       const values = [...formDeviceFields];
 
       if (
-        !values.map(obj => obj.name).includes(val) ||
+        !values?.map(obj => obj.name).includes(val) ||
         values[i].name === val ||
         val === ''
       ) {
@@ -204,7 +199,7 @@ const RegistModal = props => {
       const values = [...formGpuFields];
 
       if (
-        !values.map(obj => obj.name).includes(val) ||
+        !values?.map(obj => obj.name).includes(val) ||
         values[i].name === val ||
         val === ''
       ) {
@@ -495,7 +490,13 @@ const RegistModal = props => {
             <div className={`${regStep === 1 ? '' : 'hide'}`}>
               <Form.Item
                 label={t('RESOURCES_NAME')}
-                rules={[{ required: true, validator: nameValidator }]}
+                rules={[
+                  { required: true, message: t('NAME_EMPTY_DESC') },
+                  {
+                    pattern: PATTERN_NAME,
+                    message: t('INVALID_NAME_DESC'),
+                  },
+                ]}
                 desc={t('NAME_DESC')}
               >
                 <Input
@@ -645,7 +646,7 @@ const RegistModal = props => {
               <Form.Item label={t('EXTRSPEC')}>
                 <Form.Group>
                   <CheckboxGroup options={extraSpecsFields}>
-                    {extraSpecsFields.map((v, i) => (
+                    {extraSpecsFields?.map((v, i) => (
                       <>
                         <Input
                           type="hidden"
@@ -670,7 +671,7 @@ const RegistModal = props => {
               </Form.Item>
               <Form.Item label={t('GPU')}>
                 <Form.Group>
-                  {formGpuFields.map((v, i) => (
+                  {formGpuFields?.map((v, i) => (
                     <div className={styles.item} key={i}>
                       <Columns>
                         <Column>
@@ -727,14 +728,14 @@ const RegistModal = props => {
 
               <Form.Item label={t('RESOURCES_HOST_DEVICE')}>
                 <Form.Group>
-                  {formDeviceFields.map((v, i) => (
+                  {formDeviceFields?.map((v, i) => (
                     <div className={styles.item} key={i}>
                       <Columns>
                         <Column>
                           <Form.Item>
                             <Select
                               value={v.message ? v.message : v.name}
-                              options={devices}
+                              options={hostDevices}
                               onChange={e =>
                                 handleHostDevice.handleSelectClick(i, e)
                               }
@@ -752,7 +753,7 @@ const RegistModal = props => {
                               ></Button>
                               &nbsp;&nbsp;
                               <Input
-                                name={`devices.${i}.quantity`}
+                                name={`hostDevices.${i}.quantity`}
                                 value={v.quantity}
                                 style={{ width: '30%' }}
                               />

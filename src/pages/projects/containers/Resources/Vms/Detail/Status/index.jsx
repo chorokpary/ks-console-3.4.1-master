@@ -46,7 +46,7 @@ const Status = (props) => {
       setDetailNetwork([]);
       const promises = (store.detail.vm.networks).map(async (network) => {
         if (network.name != "k8s-pod-network") {
-          const networkDetail = await axios.get("/edgetron/resources/kubevirt/networks/" + network.name);
+          const networkDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` + network.name);
           setDetailNetwork(detailNetwork => [...detailNetwork, networkDetail.data.network])
         }
       })
@@ -279,7 +279,7 @@ const Status = (props) => {
                   <div>
                     {
                       detailFlavor.devices.length >= 1 ?
-                        detailFlavor.devices.length == 1 ? detailFlavor.devices[0].name : detailFlavor.devices[0].name + " "+t('RESOURCES_BESIDES')+" " + (detailFlavor.devices.length - 1) + t('RESOURCES_COUNT')
+                        detailFlavor.devices.length == 1 ? detailFlavor.devices[0].name : detailFlavor.devices[0].name + " " + t('RESOURCES_BESIDES') + " " + (detailFlavor.devices.length - 1) + t('RESOURCES_COUNT')
                         : "-"
                     }
                   </div>
@@ -314,7 +314,7 @@ const Status = (props) => {
                     key='GPU'
                     icon='gpu'
                     title={detailFlavor.gpus.length >= 1 ?
-                      detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0].name : detailFlavor.gpus[0].name + " "+t('RESOURCES_BESIDES')+" " + (detailFlavor.gpus.length - 1) + t('RESOURCES_COUNT')
+                      detailFlavor.gpus.length == 1 ? detailFlavor.gpus[0].name : detailFlavor.gpus[0].name + " " + t('RESOURCES_BESIDES') + " " + (detailFlavor.gpus.length - 1) + t('RESOURCES_COUNT')
                       : "-"}
                     description={t('GPU')}
                   />
@@ -326,7 +326,7 @@ const Status = (props) => {
 
         {/* 보안그룹 */}
         {
-          store.detail.vm?.security_groups.length > 0 && <DetailSecurityGroupList securityGroupData={detailSecurityGroup} params={props.match.params}/>
+          store.detail.vm?.security_groups.length > 0 && <DetailSecurityGroupList securityGroupData={detailSecurityGroup} params={props.match.params} />
         }
 
         {/* 네트워크 */}

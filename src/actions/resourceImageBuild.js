@@ -20,12 +20,8 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
-
 import RegistModal from 'clusters/containers/Resources/components/Modals/ImageBuild/Regist'
-import ModifyModal from 'clusters/containers/Resources/components/Modals/ImageBuild/Modify'
-
 import UploadModal from 'clusters/containers/Resources/components/Modals/UploadImage'
 
 export default {
@@ -48,27 +44,6 @@ export default {
         workspace,
         namespace,
         devops,
-        ...props,
-      })
-    },
-  },
-  'imagebuild.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
-      const modal = Modal.open({
-        onOk: data => {
-          store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id}, data)
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
-        },
-        title: t('이미지 빌드 수정'),
-        modal: ModifyModal,
-        store,
-        detail,
-        module,
         ...props,
       })
     },
@@ -160,23 +135,9 @@ export default {
       })
     },
   },
-  'imagebuild.yaml.view': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: async data => {
-          Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-          Modal.close(modal)
-          success && success()
-        },
-        detail,
-        store,
-        modal: EditYamlModal,
-        ...props,
-      })
-    },
-  },
   'imagebuild.image.upload': {
     on({ store, detail, success, ...props }) {
+      console.log("detail : "+ JSON.stringify(detail))
       const modal = Modal.open({
         onOk: async data => {
           Modal.close(modal)

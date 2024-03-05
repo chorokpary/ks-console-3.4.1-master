@@ -14,6 +14,7 @@ import axios from 'axios'
 import { Base64 } from 'js-base64'
 import { Loading } from '@kube-design/components'
 import { Notify } from '@kube-design/components'
+import { PATTERN_NAME } from 'utils/constants'
 
 const defaultImageSize = '12GB'
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
@@ -263,15 +264,11 @@ export default function ResourceImageModal({ title, store, onOk }) {
               <Form.Item
                 label={t('RESOURCES_NAME')}
                 rules={[
-                  // { required: true, message: t('NAME_EMPTY_DESC') },
-                  { required: true, validator: nameValidator },
-                  // {
-                  //   pattern: PATTERN_NAME,
-                  //   message: t('INVALID_NAME_DESC', {
-                  //     message: t('LONG_NAME_DESC'),
-                  //   }),
-                  // },
-
+                  { required: true, message: t('NAME_EMPTY_DESC') },
+                  {
+                    pattern: PATTERN_NAME,
+                    message: t('INVALID_NAME_DESC'),
+                  },
                 ]}
                 desc={t('NAME_DESC')}
               >
@@ -601,8 +598,8 @@ const Step2 = (
         projectName
       })
       const list = response.map(obj => {
-        const [projectName, name] = obj.name.split("/")
-        obj.name = name
+        const [projectName, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
         obj.project_name = projectName
         obj.popularity = obj.pull_count
         return obj
@@ -625,8 +622,8 @@ const Step2 = (
     try {
       const response = await request.post(`customharbor/public`)
       const list = response.map(obj => {
-        const [projectName, name] = obj.name.split("/")
-        obj.name = name
+        const [projectName, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
         obj.project_name = projectName
         obj.popularity = obj.pull_count
         return obj
@@ -649,6 +646,7 @@ const Step2 = (
     setPopActive(false)
     setLoading(true)
     setImageName(imageName)
+    imageName = encodeURIComponent(imageName)
     if (publicType == 'public') {
       getPulicImageTag(imageName)
     } else {

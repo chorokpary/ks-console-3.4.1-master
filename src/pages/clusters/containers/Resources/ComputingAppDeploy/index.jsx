@@ -15,20 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable'
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import { toJS } from 'mobx';
+import ResourceTable from 'clusters/components/ResourceTable';
+import { Avatar, Status, Indicator} from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
+import { Dropdown, Menu, Notify, Icon } from '@kube-design/components';
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-import * as common from 'utils/resources'
+import { getLocalTime } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
+import * as common from 'utils/resources';
 
-import AppDeployStore from 'stores/resources/appdeploy'
+import styles from './index.scss';
+
+import AppDeployStore from 'stores/resources/appdeploy';
 
 @withList({
   store: new AppDeployStore(),
@@ -37,14 +40,12 @@ import AppDeployStore from 'stores/resources/appdeploy'
   name: t('RESOURCES_KEYPAIR'),
 })
 export default class ImageBuild extends React.Component {
-
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'deploy',
@@ -71,12 +72,12 @@ export default class ImageBuild extends React.Component {
             success: getData,
             ...this.props.match.params,
           }),
-      },     
-    ]
+      },
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -110,13 +111,13 @@ export default class ImageBuild extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
 
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('RESOURCES_NAME'),
@@ -138,13 +139,7 @@ export default class ImageBuild extends React.Component {
         dataIndex: 'version',
         isHideable: true,
         width: 'auto',
-      },
-      {
-        title: t('RESOURCES_STATE'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
+      },     
       {
         title: t('Playbook'),
         dataIndex: 'playbookName',
@@ -156,22 +151,49 @@ export default class ImageBuild extends React.Component {
         dataIndex: 'vm',
         isHideable: true,
         width: 'auto',
-        render: vm => {
-          let vmGroupText = ''
+        render: (vm, record) => {
+
+          let vmGroupText = '';
           if (vm) {
             vmGroupText =
-            vm.length > 1
-                ? `${
-                  vm[0].name
-                  } 외 ${vm.length - 1}개`
+              vm.length > 1
+                ? `${vm[0].name} 외 ${vm.length - 1}개`
                 : vm.length === 1
                 ? vm[0].name
-                : '-'
+                : '-';
           } else {
-            vmGroupText = ''
+            vmGroupText = '';
           }
-          return vmGroupText
-        },
+
+          if(vm.length > 1){
+            return (
+              <div>
+                <Dropdown
+                  content={
+                    <Menu>
+                      {vm.map(item => {
+                         return <Menu.MenuItem key={item.name}>
+                         <span>{item.name}</span>
+                         </Menu.MenuItem>
+                      })}                      
+                    </Menu>
+                  }
+                >
+                  <div className={styles.iconwrapper}>
+                    <p>{vmGroupText}</p>
+                    <Icon name="triangle-down"/>
+                  </div>
+                </Dropdown>
+              </div>
+            );
+           }
+
+          return (
+            <div className={styles.iconwrapper}>
+              <p>{vmGroupText}</p>
+            </div>
+          );
+        }
       },
       {
         title: t('RESOURCES_SIZE'),
@@ -179,10 +201,8 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: playbookSize => (
-          <p>
-            {common.fnFormatBytes((playbookSize).toString())}
-          </p>
-        ),        
+          <p>{common.fnFormatBytes(playbookSize.toString())}</p>
+        ),
       },
 
       {
@@ -193,16 +213,14 @@ export default class ImageBuild extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('registrationDate'),
         render: registrationDate => (
-          <p>
-            {getLocalTime(registrationDate).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+          <p>{getLocalTime(registrationDate).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
   }
 
   get columnSearch() {
@@ -212,18 +230,11 @@ export default class ImageBuild extends React.Component {
         title: t('RESOURCES_NAME'),
         search: true,
       },
-      {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
-        search: true,
-      }
-    ]
+    ];
   }
 
-
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     return (
       <ListPage {...this.props}>
         <Banner
@@ -242,7 +253,6 @@ export default class ImageBuild extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-
-    )
+    );
   }
 }

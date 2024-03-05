@@ -2,8 +2,10 @@ import { get, groupBy } from 'lodash'
 import React, {useState, useEffect} from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
+import { getLocalTime } from 'utils'
 
-import { Button, Notify, Loading } from '@kube-design/components'
+import { Button, Notify, Loading, Icon } from '@kube-design/components'
+import { Panel, Text, Indicator } from 'components/Base'
 
 import AppDeployStore from 'stores/resources/appdeploy'
 
@@ -17,17 +19,29 @@ const Status = (props) => {
   const [historyList, setHistoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const statusType = ['success', 'running']
+
   useEffect(() => {
     const getHistoryList = async () => {
 
       const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
       const response = await appDeployStore.fetchHistoryList(parms);
-      // setHistoryList(response.events)
+
+      setHistoryList(response)
       setIsLoading(false);
 
     };
     getHistoryList();
   }, [])
+
+
+  const fnExplanation = (ex) => {
+    return props.rootStore.triggerAction('computingappdeploy.detail', {
+      type: 'APPDEPLOY_DETAIL',
+      explanation : ex,
+    })
+  }
+
 
   return (
     <>  
@@ -47,11 +61,11 @@ const Status = (props) => {
                 <table>
                   <colgroup>
                       <col width="10%"/>
-                      <col width="15%"/>
-                      <col width="15%"/>
+                      <col width="10%"/>
                       <col width="20%"/>
-                      <col width="20%"/>
-                      <col width="20%"/>
+                      <col width="25%"/>
+                      <col width="25%"/>
+                      <col width="10%"/>
                     </colgroup>
                     <thead>
                       <tr>
@@ -66,12 +80,23 @@ const Status = (props) => {
                     <tbody>                     
                         {historyList && historyList.map((obj, index) => (
                           <tr key={index}>
-                            <td><p className="underline">{obj.id}</p></td>
-                            <td><p>-</p></td>
-                            <td><p>{obj.status}</p></td>
+                            <td><p className={styles.taskId}>#{obj.id}</p></td>
+                            <td><p>{obj.templateVersion}</p></td>
+                            <td>
+                              <div className={styles.iconwrapper}>   
+                                  <Indicator
+                                    className={styles.indicator}
+                                    type={statusType.includes(obj.status) ? 'running' : obj.status === 'create' ? 'completed' : 'error'}
+                                    flicker
+                                  /> 
+                                  <p className={statusType.includes(obj.status) ? styles.success : obj.status === 'create' ? styles.done : styles.error}>{(obj.status)[0].toUpperCase()+ (obj.status).slice(1, (obj.status).length)}</p>
+                               </div>
+                            </td>
                             <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
                             <td><p>{getLocalTime(obj.endTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
-                            <td><p>{obj.explanation}</p></td>
+                            <td>
+                                <Icon name="more" size={30} onClick={() => fnExplanation(obj.explanation)} style={{ cursor: 'pointer' }}/>
+                            </td>
                           </tr>
                         ))}
                     </tbody>
@@ -84,5 +109,6 @@ const Status = (props) => {
   );
 };
 
-export default inject('detailStore')(observer(Status))
+export default inject('detailStore', 'rootStore')(observer(Status))
+
 

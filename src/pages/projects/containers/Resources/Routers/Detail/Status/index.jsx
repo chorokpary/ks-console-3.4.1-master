@@ -4,7 +4,6 @@ import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import axios from "axios";
 import { Panel } from 'components/Base'
 import { Icon, Button, Notify } from '@kube-design/components'
 
@@ -20,15 +19,15 @@ const Status = (props) => {
   useEffect(() => {
 
     const fnGetExternalNetwork = async () => {
-      const externalData = await axios.get(`/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
-      setExternalNetwork(externalData.data.network);
+      const externalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
+      setExternalNetwork(externalData?.network);
     };
 
     const fnGetInternalNetwork = async () => {
       setInternalNetwork([]);
       const promises = (store.detail.router?.internal).map(async (item) => {
-        const internalData = await axios.get("/edgetron/resources/kubevirt/networks/" + item.id);
-        setInternalNetwork(internalNetwork => [...internalNetwork, internalData.data.network])
+        const internalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` + item.id);
+        setInternalNetwork(internalNetwork => [...internalNetwork, internalData?.network])
       })
       await Promise.all(promises);
     };

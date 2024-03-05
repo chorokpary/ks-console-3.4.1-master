@@ -194,6 +194,7 @@ const VmDetail = props => {
       icon: 'resourceIcon:clone',
       text: t('RESOURCES_CLONE'),
       action: 'view',
+      disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
         const data = {};
         data.vmName = vmName;

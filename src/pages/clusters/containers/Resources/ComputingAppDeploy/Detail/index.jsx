@@ -49,6 +49,20 @@ const AppManageDetail = (props) => {
           }),
       },
       {
+        key: 'deploy',
+        icon: 'blue-green-deployment',
+        text: t('RESOURCES_DEPLOY'),
+        action: 'view',
+        onClick: () => {
+            props.rootStore.triggerAction('computingappdeploy.deploy', {
+            type: 'APPDEPLOY_DETAIL',
+            detail: toJS(store.detail),
+            store: store,
+            success: fetchData,
+          })
+        },
+      },
+      {
         key: 'delete',
         icon: 'trash',
         text: t('DELETE'),

@@ -48,6 +48,41 @@
   background-color: #141313;
 }
 
+.divwrap {
+  display: flex;
+  position: relative;
+  padding: 20px 15px 5px 2px;
+  
+  .div_left {
+    position: relative;
+    width: 5%;
+    margin-top: 24px;
+  }
+
+  .div_middle {
+    position: relative;
+    width: 90%;
+  }
+
+  .div_right {
+    position: relative;
+    width: 5%;
+    margin-top: 18px;
+  }
+}
+
+.file_input {
+  margin-right: 10px;
+}
+
+.progressbar_wrap {
+  padding: 20px 15px 5px 2px;
+
+  .right {
+      float:right;
+  }
+}
+
 .footer {
   padding: 10px 20px;
   border-radius: 0 0 $border-radius $border-radius;

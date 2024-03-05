@@ -32,7 +32,7 @@ export default class SriovStore extends Base {
 
   module = 'sriov'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/sriov_networks`
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_networks`
   getListUrl = this.getResourceUrl
 
   @action
@@ -135,6 +135,10 @@ export default class SriovStore extends Base {
   @action
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
+
+    if (data.type == "flat") {
+      delete data.segment_id
+    }
 
     const jsonData = {};
     const networkData = {};
@@ -248,7 +252,7 @@ export default class SriovStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/kubevirt/sriov_resources`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_resources`
     )
     // console.log("result : "+ JSON.stringify(result))
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
@@ -262,7 +266,7 @@ export default class SriovStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/kubevirt/sriov_resources`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_resources`
     )
     // console.log("bond : "+ JSON.stringify(result))
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }

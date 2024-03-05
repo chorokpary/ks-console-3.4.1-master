@@ -10,6 +10,7 @@ import classnames from 'classnames'
 import styles from './index.scss'
 
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+const defaultBaseUrl = 'http://local-ai.local-ai.svc.cluster.local:80/v1';
 
 const RegistModal = (props) => {
   // const detail = props.detail;
@@ -36,6 +37,17 @@ const RegistModal = (props) => {
       value: 'localai',
     }
   ]
+  const modelOptions = [
+    {
+      label: 'llama2',
+      value: 'llama2',
+    },
+    {
+      label: 'mixtral-8x7b',
+      value: 'mixtral-8x7b',
+    }
+  ]
+
 
   const nameValidator = (rule, value, callback) => {
     if (value == undefined) {
@@ -106,13 +118,22 @@ const RegistModal = (props) => {
           {/* 모델 */}
           <Form.Item
             label={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL')}
-            desc={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC')}
-            rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG') },]}
+            // desc={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC')}
+            rules={[{
+              required: true,
+              message: t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG')
+            },]}
           >
-            <TextArea
+            {/* <TextArea
               style={{ maxWidth: 'none' }}
               name="model"
               maxLength={63}
+            /> */}
+            <Select
+              style={{ maxWidth: 'none' }}
+              name="model"
+              defaultValue="llama2"
+              options={modelOptions}
             />
           </Form.Item>
 
@@ -143,6 +164,7 @@ const RegistModal = (props) => {
                       style={{ maxWidth: 'none' }}
                       name="baseurl"
                       maxLength={256}
+                      defaultValue={defaultBaseUrl}
                     />
                   </Form.Item>
                 }

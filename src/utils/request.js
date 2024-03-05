@@ -218,12 +218,14 @@ function formatError(response, data) {
   if (data.status) {
     result.status = data.status
   }
-
+  
   if (data.error_code || data.reason || data.error) {
-    result.reason = data.error_code ? data.error_code + ' ' + data.description : (data.reason || data.error)
+    // result.reason = data.error_code ? data.error_code + ' ' + data.description : (data.reason || data.error)
+    result.reason = data.error_code ? data.error_code + ' ' + t(`RESOURCES_MMS_ERROR_${data.error_code}`) : (data.reason || data.error)
   }
 
-  result.message = data.message || data.Error || JSON.stringify(data.details)
+  // result.message = data.message || data.Error || JSON.stringify(data.details)
+  result.message = data.error_code ? t(`RESOURCES_MMS_ERROR_DESC_${data.error_code}`) : data.message || data.Error || JSON.stringify(data.details)
 
   return result
 }

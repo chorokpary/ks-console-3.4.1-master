@@ -34,7 +34,7 @@ export default class ResourceStore extends Base {
 
   module = 'clusters'
 
-  getResourceUrl = (params = {}) => `edgetron/resources/capk/clusters`
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/clusters`
   getListUrl = this.getResourceUrl
 
 
@@ -275,15 +275,15 @@ export default class ResourceStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/capk/images`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images`
     )
     const response = { ...params, ...this.mapper(result), kind: 'images' }
 
     //Image Detail 정보 추가 
     const imageArray = [];
     const promises = (response._originData.images).map(async (image) => {
-      const imageDetail = await axios.get("/edgetron/resources/capk/images/" + image.name);
-      image.image_detail = imageDetail.data.image;
+      const imageDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images/` + image.name);
+      image.image_detail = imageDetail.image;
       imageArray.push(image);
     })
     await Promise.all(promises);
@@ -297,15 +297,15 @@ export default class ResourceStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/kubevirt/lbs`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
     )
 
     const response = { ...params, ...this.mapper(result), kind: 'lbs' }
 
     const dataArray = [];
     const promises = response._originData.lbs.map(async (lb) => {
-      const lbDetail = await axios.get("/edgetron/resources/kubevirt/lbs/" + lb.id);
-      lb.rulesCount = lbDetail.data.lb.rules.length;
+      const lbDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs/` + lb.id);
+      lb.rulesCount = lbDetail.lb.rules.length;
       dataArray.push(lb);
     })
     await Promise.all(promises);
@@ -320,13 +320,13 @@ export default class ResourceStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/capk/clusters/${params.name}/machines`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/clusters/${params.name}/machines`
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
     const dataArray = [];
     const promises = response._originData.machines.map(async (machine) => {
-      const flavorData = await axios.get("/edgetron/resources/kubevirt/flavors/" + machine.flavor);
-      machine.flavor_detail = flavorData.data.flavor;
+      const flavorData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/flavors/` + machine.flavor);
+      machine.flavor_detail = flavorData.flavor;
       dataArray.push(machine);
     })
     await Promise.all(promises);
@@ -343,7 +343,7 @@ export default class ResourceStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `/edgetron/resources/capk/clusters/${params.name}/machines`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/clusters/${params.name}/machines`
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
 
@@ -351,5 +351,21 @@ export default class ResourceStore extends Base {
 
     this.isLoading = false
     return response;
+  }
+
+
+  @action
+  async fetchMachinesAll(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/machines`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'machines' }
+
+    this.machines = response._originData.machines
+
+    this.isLoading = false
+    return this.machines;
   }
 }

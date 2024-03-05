@@ -49,7 +49,7 @@ export default class FloatingIp extends React.Component {
             {
                 key: 'delete',
                 icon: 'trash',
-                text: t('REMOVE'),
+                text: t('RESOURCES_DELETE'),
                 action: 'delete',
                 show: this.showAction,
                 onClick: item =>
@@ -84,7 +84,7 @@ export default class FloatingIp extends React.Component {
                 {
                     key: 'delete',
                     type: 'danger',
-                    text: t('REMOVE'),
+                    text: t('RESOURCES_DELETE'),
                     action: 'delete',
                     onClick: () =>
                         trigger('floatingIp.remove.batch', {
@@ -125,9 +125,9 @@ export default class FloatingIp extends React.Component {
                 search: true,
                 width: 'auto',
                 render: project => (
-                  <Link to={`/clusters/${cluster}/projects/${project}`}>
-                    {showNameAndAlias(project, 'project')}
-                  </Link>
+                    <Link to={`/clusters/${cluster}/projects/${project}`}>
+                        {showNameAndAlias(project, 'project')}
+                    </Link>
                 ),
             },
             {
@@ -191,7 +191,7 @@ export default class FloatingIp extends React.Component {
                     tableActions={this.tableActions}
                     itemActions={this.itemActions}
                     columns={this.getColumns()}
-                    searchType="network"
+                    searchType="network_alias"
                 />
             </ListPage>
         )

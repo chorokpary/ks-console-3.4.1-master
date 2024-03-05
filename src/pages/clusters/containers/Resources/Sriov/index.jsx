@@ -20,6 +20,7 @@ import React from 'react';
 import { toJS } from 'mobx';
 import { Icon } from '@kube-design/components';
 import classnames from 'classnames';
+import { Link } from 'react-router-dom';
 import { Avatar, Status } from 'components/Base';
 import Tabs from 'components/Cards/Banner/Tabs';
 import withList, { ListPage } from 'components/HOCs/withList';
@@ -28,7 +29,6 @@ import Indicator from 'components/Base/Indicator';
 
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
-import { Link } from 'react-router-dom'
 
 import SriovStore from 'stores/resources/sriovs';
 import styles from './index.scss';
@@ -129,23 +129,22 @@ export default class ResourcesVolumes extends React.Component {
         sortOrder: getSortOrder('name'),
         search: true,
         render: (name, record) => {
-
-            return (
-              <div className={styles.avatar}>
-                <div className={styles.icon}>
-                  <i className="ico-type-sriov"></i>
-                </div>
-                <div>
-                  <Link
-                    className={styles.title}
-                    to={`/clusters/${cluster}/sriovs/${name}`}                    
-                  >
-                    {name}
-                  </Link>
-                </div>
+          return (
+            <div className={styles.avatar}>
+              <div className={styles.icon}>
+                <i className="ico-type-sriov"></i>
               </div>
-            )
-          },
+              <div>
+                <Link
+                  className={styles.title}
+                  to={`/clusters/${cluster}/sriovs/${name}`}
+                >
+                  {name}
+                </Link>
+              </div>
+            </div>
+          );
+        },
       },
       {
         title: t('RESOURCES_NETWORK_TYPE'),
@@ -189,7 +188,7 @@ export default class ResourcesVolumes extends React.Component {
   };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {

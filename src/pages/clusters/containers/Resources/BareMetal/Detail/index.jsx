@@ -36,19 +36,17 @@ const BareMetalDetail = (props) => {
       const currentTime = Math.floor(Date.now() / 1000);
 
       const metric_state = await customStore.fetchMetric({
-        expr: `max by(instance) (redfish_system_power_state)`,
-        start: currentTime,
-        end: currentTime,
+        expr: `group by(target) (redfish_system_power_state)`,
       })
-  
+
       const metric_model = await customStore.fetchMetric({
-        expr: `max by(instance, model) (redfish_chassis_model_info)`,
+        expr: `group by(target, model) (redfish_chassis_model_info)`,
         start: currentTime,
         end: currentTime,
       })
   
       const metric_type = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
+        expr: `group by(instance, machine) (node_uname_info)`,
         start: currentTime,
         end: currentTime,
       })
@@ -60,32 +58,33 @@ const BareMetalDetail = (props) => {
       })
     
       const metric_power = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+        expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
         start: currentTime,
         end: currentTime,
       })  
      
       const metric_temperature = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_temperature_celsius)`,
+        expr: `avg by(target) (redfish_chassis_temperature_celsius)`,
         start: currentTime,
         end: currentTime,
       })
   
       const detailData = toJS(store.detail)
       const instance = detailData.systemType == "C" ? detailData.name : (detailData.baremetals).find(item => item.name == detailData.name).nodeExporter.ip;
-
-      const metrics = metric_model.find(item => get(item, 'metric.instance').split(":")[0] === instance)
+      const target = get(get(detailData, 'clusters', [])[0], 'openBMC.address', '')
+    
+      const metrics = metric_model.find(item => get(item, 'metric.target') === target)
       const modelName = get(metrics, 'metric.model')  
       setMetricModel(modelName)
 
-      const data_state = metric_state.find(item => get(item, 'metric.instance').split(":")[0] === instance)
-      const state = get(data_state, 'values[0][1]');
-      const statText = (state == 1 || state == 3) ? "On" : "Off"
+      const data_state = metric_state.find(item => get(item, 'metric.target') === target)
+      const state = get(data_state, 'value[1]');
+      const statText = (state == 1 || state == 3) ? "On" : (state == 2 || state == 4) ? "Off" : "Unknown"
       setMetricState(statText);
 
       const data_type = metric_type.find(item => get(item, 'metric.instance').split(":")[0] === instance)
       const machine = get(data_type, 'metric.machine',"NOT")     
-      const typeText = (machine == "NOT") ? "-" : machine.includes('x86') ? "AMD64" : "ARM64"
+      const typeText = (machine == "NOT") ? "-" : machine.includes('x86') ? t('RESOURCES_AMD64')  : t('RESOURCES_ARM64') 
       setMetricType(typeText)
 
       const data_core = metric_core.find(item => get(item, 'metric.instance').split(":")[0] === instance)

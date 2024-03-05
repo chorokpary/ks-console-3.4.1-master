@@ -8,10 +8,11 @@ const Issue = ({ x, y, w, h }) => {
   const store = new MessageStore()
 
   const fetchData = async () => {
+    let cluster = globals.currentCluster
     return await store.fetchList({
       sortBy: 'activeAt',
       type: 'builtin',
-      cluster: 'default'
+      cluster
     })
   }
   const [list, error, loading] = cleanupTrigger(fetchData, [])

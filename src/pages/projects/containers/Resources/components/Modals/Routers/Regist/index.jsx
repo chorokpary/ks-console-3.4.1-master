@@ -9,6 +9,7 @@ import { Modal } from 'components/Base'
 import classnames from 'classnames'
 import styles from './index.scss'
 
+import { PATTERN_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
 
@@ -40,7 +41,7 @@ const RegistModal = (props) => {
       data.internal = internalCheckItems;
       data.external = radioExternal;
       data.project = projectName;
-      console.log("data : " + JSON.stringify(data))
+      
       onOk({ ...data })
     })
   }
@@ -51,6 +52,7 @@ const RegistModal = (props) => {
 
   const externalRadioDeselect = () => {
     setRadioExternal("");
+    setRadioSnatType("F");
   }
 
   useEffect(() => {
@@ -151,7 +153,13 @@ const RegistModal = (props) => {
             <Column>
               <Form.Item
                 label={t('RESOURCES_NAME')}
-                rules={[{ required: true, validator: nameValidator }]}
+                rules={[
+                  { required: true, message: t('NAME_EMPTY_DESC') },
+                  {
+                    pattern: PATTERN_NAME,
+                    message: t('INVALID_NAME_DESC'),
+                  },
+                ]}
                 desc={t('NAME_DESC')}
               >
                 <Input

@@ -16,141 +16,241 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
-import { observable, action } from 'mobx'
-import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
+import { get, set, uniq, isArray, intersection } from 'lodash';
+import { observable, action } from 'mobx';
+import { Notify } from '@kube-design/components';
+import { LIST_DEFAULT_ORDER } from 'utils/constants';
+import ObjectMapper from 'utils/object.mapper';
+import cookie from 'utils/cookie';
 
-
-import Base from '../basemm3' // mm3 관련 추가 파일
-import List from '../base.list'
+import Base from '../basemm3'; // mm3 관련 추가 파일
+import List from '../base.list';
 
 export default class FlavorStore extends Base {
+  records = new List();
 
-    records = new List()
+  module = 'flavors';
 
-    module = 'flavors'
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/flavors`;
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/flavors`
-    getListUrl = this.getResourceUrl
+  getListUrl = this.getResourceUrl;
 
+  // @action
+  // async fetchList({ devops, workspace, cluster, more, ...params } = {}) {
+  //   this.list.isLoading = true
 
-    // @action
-    // async fetchList({ devops, workspace, cluster, more, ...params } = {}) {
-    //   this.list.isLoading = true
+  //   if (params.limit === Infinity || params.limit === -1) {
+  //     params.limit = -1
+  //     params.page = 1
+  //   }
 
-    //   if (params.limit === Infinity || params.limit === -1) {
-    //     params.limit = -1
-    //     params.page = 1
-    //   }
+  //   params.limit = params.limit || 10
 
-    //   params.limit = params.limit || 10
+  //   const url = `${this.getResourceUrl({ namespace: devops, cluster })}`
 
-    //   const url = `${this.getResourceUrl({ namespace: devops, cluster })}`
+  //   const result = await request.get(url, { ...params }, {}, () => {
+  //     return []
+  //   })
 
-    //   const result = await request.get(url, { ...params }, {}, () => {
-    //     return []
-    //   })
+  //   const data = Array.isArray(result.items)
+  //     ? result.items.map(item => {
+  //         return { ...this.mapper({ ...item, devops }) }
+  //       })
+  //     : []
 
-    //   const data = Array.isArray(result.items)
-    //     ? result.items.map(item => {
-    //         return { ...this.mapper({ ...item, devops }) }
-    //       })
-    //     : []
+  //   this.list.update({
+  //     data: more ? [...this.list.data, ...data] : data,
+  //     total: result.totalItems || result.total_count || data.length || 0,
+  //     ...params,
+  //     limit: Number(params.limit) || 10,
+  //     page: Number(params.page) || 1,
+  //     isLoading: false,
+  //     ...(this.list.silent ? {} : { selectedRowKeys: [] }),
+  //   })
 
-    //   this.list.update({
-    //     data: more ? [...this.list.data, ...data] : data,
-    //     total: result.totalItems || result.total_count || data.length || 0,
-    //     ...params,
-    //     limit: Number(params.limit) || 10,
-    //     page: Number(params.page) || 1,
-    //     isLoading: false,
-    //     ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-    //   })
+  //   console.log(data)
 
-    //   console.log(data)
+  //   return data
+  // }
 
-    //   return data
-    // }
+  @action
+  async create(data, params = {}) {
+    const res = await this.submitting(
+      request.post(this.getListUrl(params), data)
+    );
 
-    @action
-    async create(data, params = {}) {
+    return res;
+  }
 
-        let res = await this.submitting(request.post(this.getListUrl(params), data))
+  @action
+  async fetchDetail(params) {
+    this.isLoading = true;
 
-        return res
-    }
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.name}`
+    );
+    const detail = { ...params, ...this.mapper(result), kind: 'Flavors' };
 
+    // Yaml 파일 관련
+    await this.fetchYaml(params);
 
-    @action
-    async fetchDetail(params) {
-        this.isLoading = true
+    this.detail = detail;
+    this.isLoading = false;
+    return detail;
+  }
 
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
-        )
-        const detail = { ...params, ...this.mapper(result), kind: 'Flavors' }
+  @action
+  async fetchYaml(params) {
+    this.isLoading = true;
 
-        // Yaml 파일 관련 
-        await this.fetchYaml(params);
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.name}/manifest`
+    );
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Flavors' };
 
-        this.detail = detail
-        this.isLoading = false
-        return detail
-    }
+    this.yaml = yamlData.manifest;
+    this.isLoading = false;
+    return yamlData;
+  }
 
-    @action
-    async fetchYaml(params) {
-        this.isLoading = true
+  @action
+  async update({ name, ...params }, data) {
+    const res = await this.submitting(
+      request.put(this.getDetailUrl({ name: data.flavor.name }), data)
+    );
 
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
-        )
-        const yamlData = { ...params, ...this.mapper(result), kind: 'Flavors' }
+    return res;
+  }
 
-        this.yaml = yamlData.manifest
-        this.isLoading = false
-        return yamlData
-    }
-
-
-    @action
-    async update({ name, ...params }, data) {
-
-        let res = await this.submitting(request.put(this.getDetailUrl({ name : data.flavor.name }), data))
-
-        return res
-    }
-
-
-    @action
-    async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-        } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(username =>
-                        request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
-                        )
-                    )
-                )
+  @action
+  async batchDelete({ rowKeys, ...params }) {
+    if (rowKeys.includes(globals.user.username)) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+    } else {
+      await this.submitting(
+        Promise.all(
+          rowKeys.map(username =>
+            request.delete(
+              `${this.getDetailUrl({ name: username, ...params })}`
             )
-        }
-        this.list.selectedRowKeys = []
+          )
+        )
+      );
+    }
+    this.list.selectedRowKeys = [];
+  }
+
+  @action
+  delete(user) {
+    if (user.name === globals.user.username) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+      return;
     }
 
-    @action
-    delete(user) {
-        if (user.name === globals.user.username) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-            return
-        }
+    return this.submitting(request.delete(`${this.getDetailUrl(user)}`));
+  }
 
-        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  // 등록 관련 데이터 시작
+  @action
+  async fetchFlavorHostDevices(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/host_devices`
+    );
+
+    const response = { ...params, ...this.mapper(result), kind: 'hostDevices' };
+
+    console.log('was ist das \n', response);
+    const sortType = params?.ascending ? 'desc' : 'asc';
+    if (params?.sortBy) {
+      response.mediated_devices.sort((a, b) => {
+        const x = a[params.sortBy];
+        const y = b[params.sortBy];
+        if (sortType == 'desc') {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+        if (sortType == 'asc') {
+          return x < y ? -1 : x > y ? 1 : 0;
+        }
+      });
     }
 
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async fetchFlavorMediatedDevices(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/mediated_devices`
+    );
+
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'mediatedDevices',
+    };
+
+    const sortType = params?.ascending ? 'desc' : 'asc';
+    if (params?.sortBy) {
+      response.flavors.sort((a, b) => {
+        const x = a[params.sortBy];
+        const y = b[params.sortBy];
+        if (sortType == 'desc') {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+        if (sortType == 'asc') {
+          return x < y ? -1 : x > y ? 1 : 0;
+        }
+      });
+    }
+
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async fetchFlavorExtraSpecs(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/extra_specs`
+    );
+
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'extraSpecs',
+    };
+
+    const sortType = params?.ascending ? 'desc' : 'asc';
+    if (params?.sortBy) {
+      response.extra_specs.sort((a, b) => {
+        const x = a[params.sortBy];
+        const y = b[params.sortBy];
+        if (sortType == 'desc') {
+          return x > y ? -1 : x < y ? 1 : 0;
+        }
+        if (sortType == 'asc') {
+          return x < y ? -1 : x > y ? 1 : 0;
+        }
+      });
+    }
+
+    this.isLoading = false;
+
+    return response;
+  }
 }

@@ -33,6 +33,8 @@ const {
   webMm3Proxy,
   webCmpProxy,
   webAppDeployProxy,
+  webBaremetalProxy,
+  webImageBuildProxy,
 } = require('./proxy')
 
 const {
@@ -75,17 +77,18 @@ router
   .post('/customharbor/(.*)', parseBody, handleHarborProxyCustom)
   .get('/blank_md', renderMarkdown)
 
-  .use(proxy('/app-manager/(.*)', webAppDeployProxy))  
-  .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))  
+  .use(proxy('/builder/(.*)', webImageBuildProxy))
+  .use(proxy('/app-manager/(.*)', webAppDeployProxy))
+  .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
+  // .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))  
 
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
 
   .get('/sample/:app', parseBody, handleSampleData)
 
-  .all('/edgetron/(.*)', mm3CheckToken)
-  .use(proxy('/edgetron/(.*)', webMm3Proxy))
-
+  // .all('/edgetron/(.*)', mm3CheckToken)
+  // .use(proxy('/edgetron/(.*)', webMm3Proxy))
 
   // session
   .post('/login', parseBody, handleLogin)

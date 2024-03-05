@@ -28,12 +28,16 @@ export default class NetworkStore extends Base {
 
     module = 'networks'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/networks`
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
     getListUrl = this.getResourceUrl
     getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async create(data, params = {}) {
+        if (data.network.type == "FLAT") {
+            delete data.network.segment_id
+        }
+
         let res
         if (params.workspace) {
             res = await this.submitting(

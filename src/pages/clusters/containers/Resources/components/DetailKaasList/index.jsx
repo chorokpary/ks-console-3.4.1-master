@@ -49,11 +49,12 @@ const DetailKaasList = props => {
   const [searchValue, setSearchValue] = useState();
 
   const [machines, setMachines] = useState([]);
+  const [machinesData, setMachinesData] = useState([]);
 
   const handleExpand = async name => {
     if (!isExpandFlag) {
-      await kaasStore.fetchDetail({ name });
-      setMachines(kaasStore.machines);
+      let filter = machinesData.filter(arr => arr.cluster === name)
+      setMachines(filter);
       setExpandItem(name);
     }
     setIsExpandFlag(!isExpandFlag);
@@ -69,6 +70,8 @@ const DetailKaasList = props => {
     const page = get(params, 'page', 1);
 
     const vmList = await kaasStore.fetchList();
+    const machineList = await kaasStore.fetchMachinesAll();
+
     const vmi = props.name;
     let propsName = '';
     if (vmi?.includes('control-plane')) {
@@ -78,6 +81,8 @@ const DetailKaasList = props => {
     } else {
       propsName = vmi;
     }
+
+    setMachinesData(machineList);
 
     const vmFilterData = vmList?.filter(
       row => row[props.variables] === propsName
@@ -91,8 +96,8 @@ const DetailKaasList = props => {
       vmSearchData.length > 0
         ? getSliceData(vmSearchData, page)
         : params.name != '' && params.name != undefined
-        ? getSliceData(vmSearchData, page)
-        : getSliceData(vmFilterData, page);
+          ? getSliceData(vmSearchData, page)
+          : getSliceData(vmFilterData, page);
 
     setCurrentPage(page);
     setVmDataList(vmFilterData);
@@ -127,8 +132,8 @@ const DetailKaasList = props => {
                     obj.name != expandItem
                       ? 'dark'
                       : obj.name == expandItem && isExpandFlag == false
-                      ? 'dark'
-                      : 'light'
+                        ? 'dark'
+                        : 'light'
                   }
                 />
                 <Indicator
@@ -179,8 +184,8 @@ const DetailKaasList = props => {
                 obj.name != expandItem
                   ? ''
                   : obj.name == expandItem && isExpandFlag == false
-                  ? ''
-                  : 'light'
+                    ? ''
+                    : 'light'
               }
               size={20}
             />
@@ -323,7 +328,7 @@ const DetailKaasList = props => {
   };
 
   const getState = (state, phase) => {
-    if(phase != "Provisioned" && phase != "Running" ){
+    if (phase != "Provisioned" && phase != "Running") {
       return "updating"
     }
 
@@ -355,8 +360,10 @@ const DetailKaasList = props => {
               </div>
             ) : (
               <div>
-                {props.type} {t('RESOURCES_LEUL')}{' '}
-                {t('RESOURCES_NO_USE_KAAS_RESOURCE')}
+                <div className={styles.empty}>
+                  {props.type} {t('RESOURCES_LEUL')}{' '}
+                  {t('RESOURCES_NO_USE_KAAS_RESOURCE')}
+                </div>
               </div>
             )}
           </div>

@@ -38,7 +38,7 @@ const {
   safeBase64,
 } = require('../libs/utils')
 
-const { send_gateway_request, sendMm3Request } = require('../libs/request')
+const { send_gateway_request } = require('../libs/request')
 
 const handleLogin = async ctx => {
   const params = ctx.request.body
@@ -119,16 +119,6 @@ const handleLogin = async ctx => {
     return
   }
 
-  const mm3Params = {
-    username: 'edgetron',
-    password: 'password',
-  }
-  const mmsData = await sendMm3Request({
-    method: 'POST',
-    url: '/edgetron/auth/generate_token',
-    params: mm3Params,
-  })
-
   const lastToken = ctx.cookies.get('token')
 
   ctx.cookies.set('token', user.token)
@@ -136,8 +126,8 @@ const handleLogin = async ctx => {
   ctx.cookies.set('refreshToken', user.refreshToken)
   ctx.cookies.set('referer', null)
 
-  ctx.cookies.set('mm3AccessToken', mmsData.access_token)
-  ctx.cookies.set('mm3RefreshToken', mmsData.refresh_token)
+  // ctx.cookies.set('mm3AccessToken', mmsData.access_token)
+  // ctx.cookies.set('mm3RefreshToken', mmsData.refresh_token)
 
   if (user.username === 'system:pre-registration') {
     const extraname = safeBase64.safeBtoa(user.extraname)
@@ -172,8 +162,8 @@ const handleLogout = async ctx => {
   ctx.cookies.set('refreshToken', null)
   ctx.cookies.set('oAuthLoginInfo', null)
 
-  ctx.cookies.set('mm3AccessToken', null)
-  ctx.cookies.set('mm3RefreshToken', null)
+  // ctx.cookies.set('mm3AccessToken', null)
+  // ctx.cookies.set('mm3RefreshToken', null)
 
   if (
     !isEmpty(oAuthLoginInfo) &&

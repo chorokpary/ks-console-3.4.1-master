@@ -6,10 +6,12 @@ import { cloneDeep, get, omit, find } from 'lodash'
 import { getLocalTime } from 'utils'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
+import BareMetalStore from 'stores/resources/baremetal'
 
 const Carbon = (props) => {
 
   const customStore = new CustomStore();
+  const bareMetalStore = new BareMetalStore();
 
   const [serverTotalCount, setServerTotalCount] = useState(0)
   const [armServerCount, setArmServerCount] = useState(0)
@@ -41,12 +43,21 @@ const Carbon = (props) => {
     
     const { data } = props.store.list;
 
+    // node list
+    const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
+
+    let promql_node_list = ""
+    nodeList.map((obj) => {
+      const nodeName = get(obj, 'name')
+      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+    })
+
     const metric_type = await customStore.fetchMetric({
-      expr: `max by(instance, machine) (node_uname_info)`,
+      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
     })
 
     const metric_power = await customStore.fetchMetric({
-      expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
     })
 
     let total_power = 0;
@@ -58,6 +69,7 @@ const Carbon = (props) => {
 
     await data.map((obj) => {   
       const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
+      const target = obj.openBMC?.address;
 
       const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
       const type = get(type_data, 'metric.machine','')
@@ -65,7 +77,7 @@ const Carbon = (props) => {
 
       x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
 
-      const power_data = metric_power.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
+      const power_data = metric_power.find(item => (get(item, 'metric.target') === target))
       const power = Number(get(power_data, 'value[1]', 0)) / 1000;
 
       total_power += power;
@@ -119,8 +131,8 @@ const Carbon = (props) => {
                       </div>
                       <div className="rgt">
                       <div className="value">{serverTotalCount}<span>{t('RESOURCES_DAE')}</span></div>
-                      <dl><dt>ARM</dt><dd>{armServerCount}</dd></dl>
-                      <dl><dt>x86</dt><dd>{x86ServerCount}</dd></dl>
+                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armServerCount}</dd></dl>
+                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86ServerCount}</dd></dl>
                       </div>
                     </li>
                     <li className="li_type_02">
@@ -129,8 +141,8 @@ const Carbon = (props) => {
                       </div>
                       <div className="rgt">
                       <div className="value">{useKwh}<span>kWh</span></div>
-                      <dl><dt>ARM</dt><dd>{armKwh}</dd></dl>
-                      <dl><dt>x86</dt><dd>{x86Kwh}</dd></dl>
+                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armKwh}</dd></dl>
+                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Kwh}</dd></dl>
                       </div>
                     </li>
                     <li className="li_type_02">
@@ -139,8 +151,8 @@ const Carbon = (props) => {
                       </div>
                       <div className="rgt">
                       <div className="value">{useCo2}<span>KG</span></div>
-                      <dl><dt>ARM</dt><dd>{armCo2}</dd></dl>
-                      <dl><dt>x86</dt><dd>{x86Co2}</dd></dl>
+                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armCo2}</dd></dl>
+                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Co2}</dd></dl>
                       </div>
                     </li>
                     <li className="li_type_02">
@@ -149,8 +161,8 @@ const Carbon = (props) => {
                       </div>
                       <div className="rgt">
                       <div className="value">{useTree}<span>{t('RESOURCES_TREE')}</span></div>
-                      <dl><dt>ARM</dt><dd>{armTree}</dd></dl>
-                      <dl><dt>x86</dt><dd>{x86Tree}</dd></dl>
+                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armTree}</dd></dl>
+                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Tree}</dd></dl>
                       </div>
                     </li>
                     <li className="li_type_02">
@@ -159,8 +171,8 @@ const Carbon = (props) => {
                       </div>
                       <div className="rgt">
                       <div className="value">{usePrice}<span>{t('RESOURCES_WON')}</span></div>
-                      <dl><dt>ARM</dt><dd>{armPrice}</dd></dl>
-                      <dl><dt>x86</dt><dd>{x86Price}</dd></dl>
+                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armPrice}</dd></dl>
+                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Price}</dd></dl>
                       </div>
                     </li>
                   </ul>

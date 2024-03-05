@@ -15,36 +15,35 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable'
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import { toJS } from 'mobx';
+import { get, find } from 'lodash';
+import ResourceTable from 'clusters/components/ResourceTable';
+import { Avatar, Status } from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
+import { getLocalTime } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
 
-import KeypairStore from 'stores/resources/keypairs'
+import ImageBuildStore from 'stores/resources/imagebuild';
+
 
 @withList({
-  store: new KeypairStore(),
-  module: 'keypairs',
-  authKey: 'keypairs',
-  name: t('RESOURCES_KEYPAIR'),
-  rowKey: 'id'
+  store: new ImageBuildStore(),
+  module: 'imagebuild',
+  authKey: 'imagebuild',
+  name: t('이미지 빌드'),
 })
 export default class ImageBuild extends React.Component {
-
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -58,12 +57,25 @@ export default class ImageBuild extends React.Component {
             success: getData,
             ...this.props.match.params,
           }),
+      },     
+      {
+        key: 'upload',
+        icon: 'upload',
+        text: t('RESOURCES_IMAGE_FILE_UPLOAD'),
+        action: 'edit',
+        show: this.showAction,
+        onClick: item =>
+          trigger('imagebuild.image.upload', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -97,13 +109,12 @@ export default class ImageBuild extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
-
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('RESOURCES_NAME'),
@@ -111,70 +122,95 @@ export default class ImageBuild extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: (name, item) => (
-          <Avatar
+        render: (name, record) => {
+          const tags = get(record, 'tags')
+          const imageName = get(tags, 'image-name', "-")
+          console.log("imageName : "+ imageName)
+
+           return (
+            <Avatar
             icon="image"
             iconSize={40}
-            to={`/clusters/${cluster}/imagebuild/${name}/${item.id}`}
-            title={name}
-          />
-        ),
-      },
-      {
-        title: t('RESOURCES_CPU_TYPE'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
+            to={`/clusters/${cluster}/imagebuild/${name}/${name}`}
+            title={imageName}
+           />
+           )
+        },
       },
       {
         title: t('RESOURCES_TAG'),
-        dataIndex: 'project',
+        dataIndex: 'tag',
         isHideable: true,
         width: 'auto',
+        render: (tag, record) => {
+          const tags = get(record, 'tags')
+          const tagName = get(tags, 'tag', "-")
+          console.log("tagName : "+ tagName)
+          return tagName;
+        },
       },
-      {
-        title: t('RESOURCES_OS_INFORMATION'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-      },
+
       {
         title: t('RESOURCES_FILE_NAME'),
-        dataIndex: 'project',
+        dataIndex: 'filename',
         isHideable: true,
         width: 'auto',
+        render: (filename, record) => {
+          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+
+          if(!!uploadInfo) {
+            const name = uploadInfo[0]['upload-file-info']['file-info']['ID'];
+            return name
+          }
+          return '-'
+        },
       },
       {
         title: t('RESOURCES_SIZE'),
-        dataIndex: 'project',
+        dataIndex: 'size',
         isHideable: true,
         width: 'auto',
+        render: (size, record) => {
+          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+
+          if(!!uploadInfo) {
+            const fileSize = uploadInfo[0]['file-size'];
+            return fileSize
+          }
+          return '-'
+        },
       },
       {
         title: t('RESOURCES_STATE'),
-        dataIndex: 'project',
+        dataIndex: 'status',
         isHideable: true,
         width: 'auto',
-      },
+        render: (status, record) => {
+          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
+          if(!!uploadInfo) {
+            const status = uploadInfo[0]['upload-file-info']['Status'];
+            return status
+          }
+          return '-'
+        },
+      },
       {
         title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'timestamp',
+        dataIndex: 'create-time',
         isHideable: true,
         width: 150,
         sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+        sortOrder: getSortOrder('create-time'),
+        render: (timestamp, record) => (
+          <p>{getLocalTime(record['create-time']).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('Please create a data.') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
   }
 
   get columnSearch() {
@@ -184,18 +220,11 @@ export default class ImageBuild extends React.Component {
         title: t('RESOURCES_NAME'),
         search: true,
       },
-      {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
-        search: true,
-      }
-    ]
+    ];
   }
 
-
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     return (
       <ListPage {...this.props}>
         <Banner
@@ -214,7 +243,6 @@ export default class ImageBuild extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-
-    )
+    );
   }
 }

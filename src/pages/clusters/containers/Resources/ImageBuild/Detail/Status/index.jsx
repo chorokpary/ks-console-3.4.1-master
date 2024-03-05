@@ -55,7 +55,7 @@ const Status = (props) => {
   return (
     <>  
         <div>
-         <Card operations={renderOperations()}>
+         {/* <Card operations={renderOperations()}>
           <div className={styles.defaultWrapper}>
               <ul>
                   <li>
@@ -65,7 +65,7 @@ const Status = (props) => {
                   </li>
               </ul>
             </div>
-         </Card>
+         </Card> */}
       </div>         
     </>
   );

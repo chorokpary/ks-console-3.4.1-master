@@ -6,14 +6,19 @@ import { getChartData, getAreaChartOps } from 'utils/monitoring'
 import { getLocalTime } from 'utils'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
+import BareMetalStore from 'stores/resources/baremetal'
+
 import { CustomChart } from 'components/Charts'
 
 const CpuUsage = (props) => {
 
   const customStore = new CustomStore();
+  const bareMetalStore = new BareMetalStore();
 
   const [stepParams, setStepParams] = useState({ step: '6m', times: 10 })
 
+  const [nodeList, setNodeList] = useState();
+  
   const [x86CpuData, setX86CpuData] = useState([]);
   const [armCpuData, setArmCpuData] = useState([]);
   const [x86PowerData, setX86PowerData] = useState([]);
@@ -52,6 +57,7 @@ const CpuUsage = (props) => {
     return { start, end }
   }
 
+
   useEffect(() => {
     fetchData(stepParams);
   }, [stepParams])
@@ -59,6 +65,15 @@ const CpuUsage = (props) => {
   const fetchData = async (params) => {
 
     const { data } = props.store.list;
+
+    // node list
+    const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
+
+    let promql_node_list = ""
+    nodeList.map((obj) => {
+      const nodeName = get(obj, 'name')
+      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+    })
 
     let instanceJoinText = ""
     await data.map(obj => {
@@ -82,11 +97,12 @@ const CpuUsage = (props) => {
     const getTypeData = async () => {
 
       const metric_type = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
+        expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
       })
 
       const metric_power_last = await customStore.fetchMetric({
-        expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+        expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
+        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
         // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
       })
 
@@ -133,7 +149,8 @@ const CpuUsage = (props) => {
     const getCpuUsageData = async () => {
        
       const metric_cpu = await customStore.fetchMetric({
-        expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
+        expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})))`,
+        // expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
         // expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"})))`,
         ...paramsData
       })
@@ -150,7 +167,7 @@ const CpuUsage = (props) => {
       const armCpuArray = [];
 
       x86CpuArray.push(x86CpuMetricData)
-      x86CpuArray.push(armCpuMetricData)
+      armCpuArray.push(armCpuMetricData)
 
       setX86CpuData(x86CpuArray)
       setArmCpuData(armCpuArray)
@@ -159,7 +176,8 @@ const CpuUsage = (props) => {
     const getPowerUsageData = async () => {
 
       const metric_power = await customStore.fetchMetric({
-        expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+        expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
+        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
         // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
         ...paramsData
       })
@@ -293,7 +311,7 @@ const CpuUsage = (props) => {
                   <div className="chart_group">
                     <div className="title">
                       <i className="ico-type24-arm"></i>
-                      <h5>ARM</h5>
+                      <h5>{t('RESOURCES_ARM')}</h5>
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
@@ -311,7 +329,7 @@ const CpuUsage = (props) => {
                   <div className="chart_group">
                     <div className="title">
                       <i className="ico-type24-x86"></i>
-                      <h5>x86</h5>
+                      <h5>{t('RESOURCES_X86')}</h5>
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">

@@ -28,7 +28,7 @@ export default class FloatingIpStore extends Base {
 
     module = 'floating_ips'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/floating_ips`
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
     getListUrl = this.getResourceUrl
 
     @action
@@ -104,21 +104,21 @@ export default class FloatingIpStore extends Base {
     @action
     async networkList(params) {
         const result = await request.get(
-            `/edgetron/resources/kubevirt/networks`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
         )
         return result
     }
     @action
     async routerList(params) {
         const result = await request.get(
-            `/edgetron/resources/kubevirt/routers`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
         )
         return result
     }
     @action
     async lbList(params = {}) {
         const result = await request.get(
-            `/edgetron/resources/kubevirt/lbs`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
         )
         let dataList = result?.lbs || [];
 
@@ -152,7 +152,7 @@ export default class FloatingIpStore extends Base {
     @action
     async vmList(params = {}) {
         const result = await request.get(
-            `/edgetron/resources/kubevirt/vms`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
         )
         let dataList = result?.vms || [];
 
@@ -186,7 +186,7 @@ export default class FloatingIpStore extends Base {
     @action
     async fipList(params) {
         const result = await request.get(
-            `/edgetron/resources/kubevirt/floating_ips`
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
         )
         return result
     }

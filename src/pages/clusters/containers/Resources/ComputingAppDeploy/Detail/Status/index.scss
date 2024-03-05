@@ -73,3 +73,34 @@
     }
   }
 }
+
+
+.taskId{
+  color: #55bc8a;
+}
+
+
+.iconwrapper {
+  display: flex;
+
+  .indicator {
+    right: 0px;
+    bottom: -2px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+  }
+
+  .success{
+    color: #55bc8a;
+  }
+
+  .error{
+    color: #ab2f29;
+  }
+
+  .done{
+    color: #86929d;
+  }
+
+}

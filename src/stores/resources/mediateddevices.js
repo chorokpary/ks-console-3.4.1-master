@@ -33,7 +33,7 @@ export default class MediatedDeviceStore extends Base {
 
     module = 'mediated_devices'
 
-    getResourceUrl = (params = {}) => `edgetron/resources/kubevirt/mediated_devices`
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_devices`
     getListUrl = this.getResourceUrl
 
 
@@ -197,7 +197,7 @@ export default class MediatedDeviceStore extends Base {
                 Promise.all(
                     rowKeys.map(username => {
                         const replaceName = username.replace("/", "%5C");
-                        request.delete('edgetron/resources/kubevirt/mediated_devices/' + replaceName)
+                        request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_devices/` + replaceName)
                     })
                 )
             )
@@ -207,12 +207,13 @@ export default class MediatedDeviceStore extends Base {
 
     @action
     delete(user) {
+        let cluster = globals.currentCluster
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
         user.name = user.name.replace("/", "%5C");
-        return this.submitting(request.delete('edgetron/resources/kubevirt/mediated_devices/' + user.name))
+        return this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/mediated_devices/` + user.name))
     }
 
     @action
@@ -220,14 +221,14 @@ export default class MediatedDeviceStore extends Base {
         this.isLoading = true
 
         const dataArray = [];
-        const resultNodes = await request.get(`/edgetron/resources/kubevirt/nodes`)
+        const resultNodes = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/nodes`)
         const responseNodes = { ...params, ...this.mapper(resultNodes), kind: 'nodes' }
         responseNodes.nodes.map(async obj => {
-            const resultPgpus = await request.get(`/edgetron/resources/kubevirt/gpus/pgpus/${obj.name}`)
+            const resultPgpus = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/pgpus/${obj.name}`)
             const responsePgpus = { ...params, ...this.mapper(resultPgpus), kind: 'pgpu_models' }
 
             responsePgpus.pgpu_models.map(async obj => {
-                const resultVgpus = await request.get(`/edgetron/resources/kubevirt/gpus/vgpus/${obj.model_num}`)
+                const resultVgpus = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/vgpus/${obj.model_num}`)
                 const responseVgpus = { ...params, ...this.mapper(resultVgpus), kind: 'vgpu_profiles' }
 
                 responseVgpus.vgpu_profiles.map(obj => dataArray.push(obj))

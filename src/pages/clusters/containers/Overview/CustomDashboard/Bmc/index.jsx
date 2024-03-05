@@ -56,8 +56,16 @@ const Bmc = ({ bmc }) => {
       try {
         const data = await bareMetalStore.fetchList()
 
+        let promql_node_list = ""
+        data.map((obj) => {
+          const nodeName = get(obj, 'name')
+          promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+        })
+
+        console.log("promql_node_list : "+ JSON.stringify(promql_node_list))
+
         const getMetricType = await customStore.fetchMetric({
-          expr: `max by(instance, machine) (node_uname_info)`,
+          expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
         })
 
         const getMetricData = await customStore.fetchMetric({
@@ -95,6 +103,8 @@ const Bmc = ({ bmc }) => {
       let used_arm_cnt = 0;
       nodeData.map(obj => {
         const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
+        const target = toJS(obj.openBMC?.address);
+
         const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
 
         const type = get(type_data, 'metric.machine', '')
@@ -105,7 +115,7 @@ const Bmc = ({ bmc }) => {
 
         if (metricData.length > 0) {
 
-          const power_data = metricData.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
+          const power_data = metricData.find(item => (get(item, 'metric.target') === target))
           const power = Number(get(power_data, 'value[1]', 0));
 
           total_power += power;
