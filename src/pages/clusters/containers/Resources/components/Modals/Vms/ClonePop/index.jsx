@@ -17,7 +17,10 @@ const CloneModal = (props) => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const defaultCloneName = props.data.vmName + "-clone"
+
   const handleOk = () => {
 
     const success = props.success;
@@ -28,10 +31,13 @@ const CloneModal = (props) => {
       data.source_vm_id = vmId;
 
       console.log("data : "+ JSON.stringify(data))
+      
+      setButtonDisabled(true);
 
       vmStore.cloneCreate(data).then(() => {
         Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();
+        setButtonDisabled(false);
         closeModal();
       })
 
@@ -48,31 +54,54 @@ const CloneModal = (props) => {
         icon="pen"
         width={600}
         title={props.title}
+        bodyClassName={styles.modalBody}
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+        hideFooter
       >
-        <Form data={formData} ref={form}>
-          <Form.Item
-            label={t('RESOURCES_NAME')}
-            rules={[{ required: true, message: t('RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP') }]}
+        <div className={styles.body}>
+          <Form data={formData} ref={form}>
+            <Form.Item
+              label={t('RESOURCES_NAME')}
+              rules={[{ required: true, message: t('RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP') }]}
+            >
+              <Input
+                  name="target_vm_name"
+                  autoFocus={true}
+                  style={{ maxWidth: 'none' }}
+                  defaultValue={defaultCloneName}
+                />  
+            </Form.Item>
+            <Form.Item
+              label={t('RESOURCES_DESCRIPTION')}
+              rules={[{ required: true, message: t('RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP') }]}
+            >
+              <Input
+                  name="description"
+                  style={{ maxWidth: 'none' }}
+                />  
+            </Form.Item> 
+          </Form>
+        </div>
+        <div className={styles.footer}>
+          <Button 
+            onClick={() => closeModal()} 
+            data-test="modal-cancel"
+            disabled={buttonDisabled}
           >
-            <Input
-                name="target_vm_name"
-                autoFocus={true}
-                style={{ maxWidth: 'none' }}
-              />  
-          </Form.Item>
-          <Form.Item
-            label={t('RESOURCES_DESCRIPTION')}
-            rules={[{ required: true, message: t('RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP') }]}
+            {t('CANCEL')}
+          </Button>
+          <Button
+            type="control"
+            onClick={() => handleOk()}
+            data-test="modal-ok"
+            disabled={buttonDisabled}
           >
-            <Input
-                name="description"
-                style={{ maxWidth: 'none' }}
-              />  
-          </Form.Item>
-        </Form>
+            {t('OK')}
+          </Button>
+        </div>        
+
       </Modal>
 
     </>

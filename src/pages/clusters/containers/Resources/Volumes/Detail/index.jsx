@@ -64,7 +64,8 @@ const VolumeDetail = props => {
 
     if (
       !volumeName.includes('boot-dv') &&
-      !volumeName.includes('boot-volume')
+      !volumeName.includes('boot-volume') &&
+      !volumeName.includes('bootdisk')
     ) {
       operations.push(
         {

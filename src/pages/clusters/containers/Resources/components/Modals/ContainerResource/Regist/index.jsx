@@ -187,6 +187,7 @@ const RegistModal = (props) => {
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
         description: t(obj.image_detail.description),
+        disabled: obj.phase !== 'Succeeded' ? true : false
       }
     })
     return opt
@@ -958,14 +959,14 @@ const RegistModal = (props) => {
                       <div className={styles.list}>
                         <label style={{ width: '100%' }}>Master Flavor</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{masterFlavorSelect}</div>
+                          <div className={styles.bold}>{masterFlavorSelect} / {masterFlavorNumber}</div>
                           <p>
                             CPU {masterFlavorCpu} Cores / Memory {masterFlavorMemory} Gib / Disk {masterFlavorDisk} Gib
                           </p>
                         </div>
                         <label style={{ width: '100%' }}>Worker Flavor</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{workerFlavorSelect}</div>
+                          <div className={styles.bold}>{workerFlavorSelect} / {workerFlavorNumber}</div>
                           <p>
                             CPU {workerFlavorCpu} Cores / Memory {workerFlavorMemory} Gib / Disk {workerFlavorDisk} Gib
                           </p>
@@ -1100,6 +1101,8 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                       <div className={styles.list}>
+                        <label style={{ width: '100%' }}>{t('RESOURCES_CONTAINER_IMAGE')}</label>
+                        <div>{tab == 'private' ? t('RESOURCES_PRIVATE') : t('RESOURCES_PUBLIC')}</div>
                         <label style={{ width: '100%' }}>{t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}</label>
                         <div>{expirationSelect}{t('RESOURCES_YEAR')}</div>
                       </div>

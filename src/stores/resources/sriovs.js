@@ -136,6 +136,10 @@ export default class SriovStore extends Base {
   async create(data, params = {}) {
     const url = this.getResourceUrl(params);
 
+    if (data.type == "flat") {
+      delete data.segment_id
+    }
+
     const jsonData = {};
     const networkData = {};
 

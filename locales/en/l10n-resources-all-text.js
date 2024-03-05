@@ -581,7 +581,13 @@ module.exports = {
   RESOURCES_SNAPSHOT_VOLUME: '스냅샷 볼륨',
   RESOURCES_COMPLETE: '완료',
   RESOURCES_VM_IIMAGE_BUILD: '가상머신 이미지 빌드',
+  RESOURCES_INTERVAL_EMPTY_DESC: 'Interval를 입력해 주세요.',
+  RESOURCES_PORT_EMPTY_DESC: 'Port를 입력해 주세요.',
+  RESOURCES_ENTER_60_MORE: '60 이상 입력해 주세요.',
+  RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
 
+  RESOURCES_DNS_VALID: 'DNS 정보를 정확히 입력해주세요.',
+  RESOURCES_HOSTROUTE_VALID: '호스트 라우트 정보를 정확히 입력해주세요.</p> Destination - ipv4network, nexthop - ipv4',
 
 
 

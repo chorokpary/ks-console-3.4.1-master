@@ -18,12 +18,15 @@ import VolumeStore from 'stores/resources/volumes'
 const store = new VolumeStore();
 
 const VolumeDetail = (props) => {
+
+  const volumnName = props.match.params.name;
+  
   useEffect(() => {
     fetchData();
   }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params);
+    store.fetchDetail(props.match.params);    
   }
 
   const { workspace, cluster, namespace } = props.match.params
@@ -35,72 +38,87 @@ const VolumeDetail = (props) => {
   const id = props.match.params.id;
   const used_by_vmi = store.detail.volume?.used_by_vmi
 
-  const getOperations = () => [
-    {
-      key: 'edit',
-      icon: 'pen',
-      text: t('EDIT_INFORMATION'),
-      action: 'edit',
-      show: showEdit,
-      onClick: () =>
-        props.rootStore.triggerAction('resourcesvolume.edit', {
-          type: 'VOLUME_DETAIL',
-          detail: toJS(store.detail),
-          store: store,
-          success: fetchData,
-        }),
-    },
-    {
-      key: 'viewYaml',
-      icon: 'eye',
-      text: t('VIEW_YAML'),
-      action: 'view',
-      onClick: () => {
-        props.rootStore.triggerAction('resourcesvolume.yaml.view', {
-          yaml: store.yaml,
-          readOnly: true,
-        })
-      },
-    },
-    {
-      key: 'volume',
-      icon: 'storage',
-      text: used_by_vmi == undefined ? t('RESOURCES_BINDING') : t('RESOURCES_ISOLATE'),
-      action: 'view',
-      onClick: () => {
-        if (used_by_vmi == undefined) {
-          props.rootStore.triggerAction('resourcesvolume.bindingPop', {
+  const getOperations = volumeName => {
+    const operations = [
+      {
+        key: 'edit',
+        icon: 'pen',
+        text: t('EDIT_INFORMATION'),
+        action: 'edit',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('resourcesvolume.edit', {
             type: 'VOLUME_DETAIL',
-            store: store,
+            detail: toJS(store.detail),
+            store,
             success: fetchData,
-            ...props,
-          })
-        } else {
-          props.rootStore.triggerAction('resourcesvolume.detach', {
-            data: { id, vmId: used_by_vmi, actionType: "D" },
-            store: store,
-            success: fetchData,
-          })
-        }
+          }),
       },
-    },
-    {
-      key: 'delete',
-      icon: 'trash',
-      text: t('DELETE'),
-      action: 'delete',
-      type: 'danger',
-      show: showEdit,
-      onClick: () =>
-        props.rootStore.triggerAction('resourcesvolume.remove', {
-          type: 'VOLUME_DETAIL',
-          detail: toJS(store.detail),
-          store: store,
-          cluster: props.match.params.cluster,
-          success: () => routing.push(listUrl),
-        }),
-    },
-  ]
+      {
+        key: 'viewYaml',
+        icon: 'eye',
+        text: t('VIEW_YAML'),
+        action: 'view',
+        onClick: () => {
+          props.rootStore.triggerAction('resourcesvolume.yaml.view', {
+            yaml: store.yaml,
+            readOnly: true,
+          });
+        },
+      },
+    ];
+
+    if (
+      !volumeName.includes('boot-dv') &&
+      !volumeName.includes('boot-volume') &&
+      !volumeName.includes('bootdisk')
+    ) {
+      operations.push(
+        {
+          key: 'volume',
+          icon: 'storage',
+          text:
+            !used_by_vmi
+              ? t('RESOURCES_BINDING')
+              : t('RESOURCES_ISOLATE'),
+          action: 'view',
+          onClick: () => {
+            if (!used_by_vmi) {
+              props.rootStore.triggerAction('resourcesvolume.bindingPop', {
+                type: 'VOLUME_DETAIL',
+                store,
+                success: fetchData,
+              });
+            } else {
+              props.rootStore.triggerAction('resourcesvolume.detach', {
+                data: { id, vmId: used_by_vmi, actionType: 'D' },
+                store,
+                success: fetchData,
+              });
+            }
+          },
+        },
+        {
+          key: 'delete',
+          icon: 'trash',
+          text: t('DELETE'),
+          action: 'delete',
+          type: 'danger',
+          show: showEdit,
+          onClick: () =>
+            props.rootStore.triggerAction('resourcesvolume.remove', {
+              type: 'VOLUME_DETAIL',
+              detail: toJS(store.detail),
+              store,
+              cluster: props.match.params.cluster,
+              success: () => routing.push(listUrl),
+            }),
+        }
+      );
+    }
+
+    return operations;
+  };
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
@@ -158,7 +176,7 @@ const VolumeDetail = (props) => {
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
-    operations: getOperations(),
+    operations: getOperations(volumnName),
     attrs: getAttrs(),
     breadcrumbs: [
       {

@@ -56,7 +56,7 @@ const RegistModal = (props) => {
   const [description, setDescription] = useState('');
   const [keypairName, setKeypairName] = useState('');
   const [nodeName, setNodeName] = useState('');
-  const [storageClass, setStorageClass] = useState(t('RESOURCES_SELECT'));
+  const [storageClass, setStorageClass] = useState('');
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -70,7 +70,6 @@ const RegistModal = (props) => {
   const [isUserScript, setIsUserScript] = useState(false);
 
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
-
 
   useEffect(() => {
 
@@ -92,7 +91,7 @@ const RegistModal = (props) => {
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
       setKeypairDataList(listKeypair.keypairs);
-      setNodeDataList(listNode.nodes);
+      setNodeDataList(listNode.nodes.filter(obj => obj.node_role != 'master'));
       setSecurityGroupDataList(listSecurityGroup);
       setStoregeClassDataList(listStoregeClass.user_sces)
     };
@@ -104,7 +103,7 @@ const RegistModal = (props) => {
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
-    { label: 'etc', value: '', icon: 'ico-plus', }
+    // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
   const storageClassOptions = () => {
@@ -125,6 +124,7 @@ const RegistModal = (props) => {
         icon: `ico-os-${obj.distro_type}`,
         description: t(obj.description),
         value: t(obj.name),
+        disabled: obj.phase !== 'Succeeded' ? true : false
       }
 
     })
@@ -132,10 +132,22 @@ const RegistModal = (props) => {
   }
 
   const flavorOptions = () => {
+    let size;
+    let regex = /[^0-9]/g;
+    let selectedRootDisk = 0;
+    if (imageType == "I") {
+      selectedRootDisk = imageDataList.find(item => item.name == selectImageName)
+      size = selectedRootDisk?.size.replace(regex, "") || 0;
+    } else {
+      selectedRootDisk = bootVolumeDataList.find(obj => obj.id === selectBootId)
+      size = selectedRootDisk?.capacity.replace(regex, "") || 0;
+    }
+
     const opt = flavorDataList.map((obj) => ({
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(obj.ram)} Gib / Disk ${obj.root_disk} Gib`,
       value: t(obj.name),
+      disabled: Number(obj.root_disk) < Number(size) ? true : false
     }))
     return opt
   }
@@ -182,7 +194,7 @@ const RegistModal = (props) => {
       data.bootvolume = data?.bootvolume == t('RESOURCES_SELECT') ? "" : data?.bootvolume;
       data.keypair = data.keypair == t('RESOURCES_SELECT') ? "" : data.keypair;
       data.node = data.node == t('RESOURCES_SELECT') ? "" : data.node;
-      data.storageClass = (imageType == "I" && storageClass != t('RESOURCES_SELECT')) ? storageClass : "";
+      data.storageClass = storageClass;
 
       let makeScriptStep_1 = false;
       let makeScriptStep_2 = false;
@@ -210,20 +222,53 @@ const RegistModal = (props) => {
       }
 
       let fileScript = "";
-      fileScript += `\nwrite_files:\n - path: /test.txt\n content: |\n Here is a line.\n Another line is here.\n - path: /test02.txt\n content: |\n Here is a line02.\n Another line is here02.`
-      makeScriptStep_2 = true;
+      if (listFileRoute.length == 1) {
+        listFileRoute.map((obj) => {
+          if (!!data['scriptPath_' + obj]) {
+            fileScript += `\nwrite_files:\n  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
+            makeScriptStep_2 = true;
+          }
+        })
+      } else {
+        fileScript += `\nwrite_files:\n`
+        listFileRoute.map((obj) => {
+          if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
+            fileScript += `  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
+            makeScriptStep_2 = true;
+          }
+        })
+      }
 
       let packageScript = "";
-      packageScript += `\npackages:\n - package_1\n - package_2\n - [package_3, version_num]`
-      makeScriptStep_3 = true;
-
+      if (listPackageRoute.length == 1) {
+        listPackageRoute.map((obj) => {
+          if (!!data['scriptPackage_' + obj]) {
+            if(!!data['scriptVersion_' + obj]){
+              packageScript += `packages:\n  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+            }else{
+              packageScript += `packages:\n  - ${data['scriptPackage_' + obj]}\n`
+            }            
+            makeScriptStep_3 = true;
+          }
+        })
+      } else {
+        packageScript += `packages:\n`
+        listPackageRoute.map((obj) => {
+            if(!!data['scriptVersion_' + obj]){
+              packageScript += `  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+            }else{
+              packageScript += `  - ${data['scriptPackage_' + obj]}\n`
+            }          
+            makeScriptStep_3 = true;
+        })
+      }
 
       if (!makeScriptStep_1) { userPasswordScript = ""; }
       if (!makeScriptStep_2) { fileScript = ""; }
       if (!makeScriptStep_3) { packageScript = ""; }
 
-      // makeScript += userPasswordScript + fileScript + packageScript;
-      makeScript += userPasswordScript;
+      makeScript += userPasswordScript + fileScript + packageScript;
+      // makeScript += userPasswordScript;
       //console.log(makeScript)
 
       data.makeScript = makeScript;
@@ -249,7 +294,7 @@ const RegistModal = (props) => {
           : bootVolumeDataList.filter(item => item.id == selectBootId).map(item => item.capacity)[0].replace('Gi', '');
         const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
 
-        if (flavorSize > imageSize) {
+        if (flavorSize >= imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
         } else {
@@ -321,7 +366,6 @@ const RegistModal = (props) => {
   const handleOsType = (value) => {
     setOsType(value)
     setSelectImageName('')
-    console.log(imageDataList)
     if (value == 'windows') {
       setImageOptionList(imageDataList.filter(obj => obj.os_type == 'windows'))
     } else if (value == 'linux') {
@@ -630,7 +674,7 @@ const RegistModal = (props) => {
                           />
                         </Form.Item>
                       </Column>
-                      <Column>
+                      <Column style={{ maxWidth: '472px' }}>
                         <Form.Item
                           label={t('RESOURCES_IMAGE')}
                           rules={[{ required: true, validator: imageValidator }]}
@@ -706,12 +750,12 @@ const RegistModal = (props) => {
                   <Column>
                     <div style={{ padding: 12 }} />
                     {imageType == "I" &&
-                      <Form.Group label={t('RESOURCES_STOREGE_CLASS')} onChange={(e) => { setStorageClass(t('RESOURCES_SELECT')); }} checkable>
+                      <Form.Group label={t('RESOURCES_STOREGE_CLASS')} onChange={(e) => { setStorageClass(''); }} checkable>
                         <Form.Item>
                           <Select
                             options={storageClassOptions()}
                             onChange={(el) => setStorageClass(el)}
-                            value={storageClass}
+                            value={storageClass !== '' ? storageClass : t('RESOURCES_SELECT')}
                           />
                         </Form.Item>
                       </Form.Group>
@@ -1101,6 +1145,12 @@ const RegistModal = (props) => {
                         <label>{t('RESOURCES_NAME')}</label>
                         <div className={styles.bold}>{vmName}</div>
                       </div>
+                      {projectName &&
+                        <div className={styles.list}>
+                          <label>{t('프로젝트')}</label>
+                          <div className={styles.bold}>{projectName}</div>
+                        </div>
+                      }
                       <div className={styles.list}>
                         <label>{`${imageType == "I" ? t('RESOURCES_IMAGE') : t('RESOURCES_BOOT_VOLUME')}`}</label>
                         <div className={styles.multiline}>
@@ -1116,11 +1166,36 @@ const RegistModal = (props) => {
                           </p>
                         </div>
                       </div>
+                    </div>
+
+                    {imageType == 'I' &&
+                      <div className={styles.greybgbox}>
+                        <div className={styles.list}>
+                          <label>{t('RESOURCES_OS_TYPE')}</label>
+                          <div className={styles.multiline}>
+                            <div className={styles.bold}>{osType}</div>
+                          </div>
+                        </div>
+                        {storageClass &&
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_STOREGE_CLASS')}</label>
+                            <div className={styles.multiline}>
+                              <div className={styles.bold}>{storageClass}</div>
+                            </div>
+                          </div>
+                        }
+                        <div className={styles.list}>
+                          <label>{t('RESOURCES_DESCRIPTION')}</label>
+                          <div>{description}</div>
+                        </div>
+                      </div>
+                    }
+                    {imageType == 'B' && description &&
                       <div className={styles.list}>
                         <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
                       </div>
-                    </div>
+                    }
                   </div>
 
                   <div className={styles.box_style}>
