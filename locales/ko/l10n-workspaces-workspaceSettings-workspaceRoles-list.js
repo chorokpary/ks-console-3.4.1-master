@@ -18,7 +18,7 @@
 module.exports = {
   // Banner
   WORKSPACE_ROLE_PL: '워크스페이스 역할',
-  WORKSPACE_ROLE_DESC: '워크스페이스 맴버의 역할에 따라 워크스페이스에서 맴버의 사용 권한이 결정됩니다.',
+  WORKSPACE_ROLE_DESC: '워크스페이스 멤버의 역할에 따라 워크스페이스에서 멤버의 사용 권한이 결정됩니다.',
   // List
   WORKSPACE_ROLE_EMPTY_DESC: '워크스페이스 역할을 생성하십시오.',
   ROLE_WORKSPACE_ADMIN: '워크스페이스 내 모든 리소스를 관리합니다.',
@@ -58,13 +58,13 @@ module.exports = {
   PERMISSION_WORKSPACE_APP_TEMPLATES_MANAGEMENT_DESC: '워크스페이스 내 앱 템플릿을 업로드, 편집 및 삭제하고, 플랫폼 앱스토어에서 앱을 릴리스 및 삭제합니다.',
   // List > Create > Edit Permissions > Access Control
   PERMISSION_WORKSPACE_GROUPS_VIEW: '부서 보기',
-  PERMISSION_WORKSPACE_GROUPS_VIEW_DESC: '워크스페이스 부서의 구조 및 맴버를 봅니다.',
+  PERMISSION_WORKSPACE_GROUPS_VIEW_DESC: '워크스페이스 부서의 구조 및 멤버를 봅니다.',
   PERMISSION_WORKSPACE_GROUPS_MANAGEMENT: '부서 관리',
-  PERMISSION_WORKSPACE_GROUPS_MANAGEMENT_DESC: '워크스페이스 부서의 구조, 맴버 및 권한을 관리합니다.',
-  PERMISSION_WORKSPACE_MEMBERS_VIEW: '맴버 보기',
-  PERMISSION_WORKSPACE_MEMBERS_VIEW_DESC: '워크스페이스 맴버를 조회합니다.',
-  PERMISSION_WORKSPACE_MEMBERS_MANAGEMENT: '맴버 관리',
-  PERMISSION_WORKSPACE_MEMBERS_MANAGEMENT_DESC: '워크스페이스 맴버를 초대, 편집 및 삭제합니다.',
+  PERMISSION_WORKSPACE_GROUPS_MANAGEMENT_DESC: '워크스페이스 부서의 구조, 멤버 및 권한을 관리합니다.',
+  PERMISSION_WORKSPACE_MEMBERS_VIEW: '멤버 보기',
+  PERMISSION_WORKSPACE_MEMBERS_VIEW_DESC: '워크스페이스 멤버를 조회합니다.',
+  PERMISSION_WORKSPACE_MEMBERS_MANAGEMENT: '멤버 관리',
+  PERMISSION_WORKSPACE_MEMBERS_MANAGEMENT_DESC: '워크스페이스 멤버를 초대, 편집 및 삭제합니다.',
   PERMISSION_WORKSPACE_ROLES_VIEW: '역할 보기',
   PERMISSION_WORKSPACE_ROLES_VIEW_DESC: '워크스페이스 역할을 조회합니다.',
   PERMISSION_WORKSPACE_ROLES_MANAGEMENT: '역할 관리',

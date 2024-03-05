@@ -27,7 +27,7 @@ export default class ClusterFaultStore extends Base {
 
     module = 'clusterFault'
 
-    getResourceUrl = (params = {}) => `apis/core.k8sgpt.ai/v1alpha1/namespaces/k8sgpt-operator-system`
+    getResourceUrl = (params = {}) => `apis/core.k8sgpt.ai/v1alpha1`
     getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.id}`
 
     /**
@@ -152,7 +152,7 @@ export default class ClusterFaultStore extends Base {
         }
 
         const result = await request.get(
-            `${this.getResourceUrl()}/list-k8sgpts`
+            `${this.getResourceUrl()}/k8sgpts`
             // `${this.getResourceUrl()}/k8sgpts`
         )
 
@@ -266,7 +266,7 @@ export default class ClusterFaultStore extends Base {
                 "kind": "K8sGPT",
                 "metadata": {
                     "name": `${get(data, 'metadata.name')}`,
-                    "namespace": "k8sgpt-operator-system",
+                    "namespace": "local-ai",
                     "labels": {
                         "list-k8sgpt/enabled": ""
                     }
@@ -288,7 +288,7 @@ export default class ClusterFaultStore extends Base {
                 "kind": "K8sGPT",
                 "metadata": {
                     "name": `${get(data, 'metadata.name')}`,
-                    "namespace": "k8sgpt-operator-system",
+                    "namespace": "local-ai",
                     "labels": {
                         "list-k8sgpt/enabled": ""
                     }
@@ -361,7 +361,7 @@ export default class ClusterFaultStore extends Base {
             "kind": "List-K8sGPT",
             "metadata": {
                 "name": `${data.name}`,
-                "namespace": "k8sgpt-operator-system"
+                "namespace": "local-ai"
             },
             "spec": {
                 "ai": {
@@ -374,7 +374,7 @@ export default class ClusterFaultStore extends Base {
             }
         }
         let res = await this.submitting(
-            request.post(`${this.getResourceUrl()}/list-k8sgpts`, params)
+            request.post(`${this.getResourceUrl()}/k8sgpts`, params)
         )
         return res
     }
@@ -410,7 +410,7 @@ export default class ClusterFaultStore extends Base {
                 "kind": "Secret",
                 "metadata": {
                     "name": `${data.name}-secret`,
-                    "namespace": "k8sgpt-operator-system",
+                    "namespace": "local-ai",
                     "ownerReferences": [owner_ref]
                 },
                 "data": {
@@ -420,7 +420,7 @@ export default class ClusterFaultStore extends Base {
             }
 
             let res = await this.submitting(
-                request.post(`api/v1/namespaces/k8sgpt-operator-system/secrets`, params)
+                request.post(`api/v1/namespaces/local-ai/secrets`, params)
             )
             return res;
         } catch (e) {
@@ -441,7 +441,7 @@ export default class ClusterFaultStore extends Base {
             "kind": "List-K8sGPT",
             "metadata": {
                 "name": `${data.name}`,
-                "namespace": "k8sgpt-operator-system",
+                "namespace": "local-ai",
                 "labels": {
                     "kubesphere-list": ""
                 }
@@ -460,7 +460,7 @@ export default class ClusterFaultStore extends Base {
             }
         }
         let res = await this.submitting(
-            request.post(`${this.getResourceUrl()}/list-k8sgpts`, params)
+            request.post(`${this.getResourceUrl()}/k8sgpts`, params)
         )
         return res;
     }
@@ -479,7 +479,7 @@ export default class ClusterFaultStore extends Base {
 
         // 목록에서 삭제
         await this.submitting(
-            request.delete(`${this.getResourceUrl()}/list-k8sgpts/${name}`)
+            request.delete(`${this.getResourceUrl()}/k8sgpts/${name}`)
         )
     }
 
@@ -512,7 +512,7 @@ export default class ClusterFaultStore extends Base {
                 }
             }
             await this.submitting(
-                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -533,7 +533,7 @@ export default class ClusterFaultStore extends Base {
                 }
             }
             let secretRes = await this.submitting(
-                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -563,7 +563,7 @@ export default class ClusterFaultStore extends Base {
 
             }
             await this.submitting(
-                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -571,7 +571,7 @@ export default class ClusterFaultStore extends Base {
             )
             // secret 삭제
             await this.submitting(
-                request.delete(`api/v1/namespaces/k8sgpt-operator-system/secrets/${data.name}-secret`)
+                request.delete(`api/v1/namespaces/local-ai/secrets/${data.name}-secret`)
             )
 
         } else if (data.operator === 'openai') { // openai > openai
@@ -584,7 +584,7 @@ export default class ClusterFaultStore extends Base {
             }
             // model 수정
             await this.submitting(
-                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -598,7 +598,7 @@ export default class ClusterFaultStore extends Base {
                 }
             }
             await this.submitting(
-                request.patch(`api/v1/namespaces/k8sgpt-operator-system/secrets/${data.name}-secret`, secret, {
+                request.patch(`api/v1/namespaces/local-ai/secrets/${data.name}-secret`, secret, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -614,7 +614,7 @@ export default class ClusterFaultStore extends Base {
     @action
     async getSecretKey(name) {
         let res = await this.submitting(
-            request.get(`api/v1/namespaces/k8sgpt-operator-system/secrets/${name}-secret`)
+            request.get(`api/v1/namespaces/local-ai/secrets/${name}-secret`)
         )
         let secretkey = get(res, 'data.openai-api-key');
         return safeAtob(secretkey)

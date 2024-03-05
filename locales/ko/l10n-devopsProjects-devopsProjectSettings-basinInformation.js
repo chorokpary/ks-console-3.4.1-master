@@ -22,8 +22,8 @@ module.exports = {
   // Basic Information
   DEVOPS_PROJECT_ROLE_SCAP: '데브옵스 프로젝트 역할',
   DEVOPS_PROJECT_SCAP: '데브옵스 프로젝트',
-  DEVOPS_PROJECT_MEMBER_SCAP: '데브옵스 프로젝트 맴버',
-  DEVOPS_PROJECT_MEMBER_PL_SCAP: '데브옵스 프로젝트 맴버',
+  DEVOPS_PROJECT_MEMBER_SCAP: '데브옵스 프로젝트 멤버',
+  DEVOPS_PROJECT_MEMBER_PL_SCAP: '데브옵스 프로젝트 멤버',
   DEVOPS_PROJECT_ROLE_PL_SCAP: '데브옵스 프로젝트 역할',
   // Continuous Deployment Allowlist
   CD_ALLOWLIST: '지속적 배포 허용 목록',

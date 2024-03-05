@@ -47,7 +47,7 @@ module.exports = {
   PROJECT_SCAP: '프로젝트',
   SERVICE_SCAP: '서비스',
   HOST_CLUSTER_SCAP: '호스트 클러스터',
-  MEMBER_CLUSTER_SCAP: '맴버 클러스터',
+  MEMBER_CLUSTER_SCAP: '멤버 클러스터',
   // Consumtion History
   CONSUMPTION_HISTORY: '소비 내역',
   BILLING_CYCLE: '결제 주기',
