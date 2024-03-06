@@ -163,8 +163,7 @@ const TopologyItem = (props) => {
       const networkType = networkCheck == "" ? "N" : "S"
 
       const ternalCheck = get(obj, "external", false)
-      const ternalType = ternalCheck ? "EXternal" :"Internal";
-
+      const ternalType = networkType == "S" ? "" : ternalCheck ? "EXternal" : "Internal"; 
       const networkIcon = networkType == "S" ? "sriov" : ternalCheck ? "externalnetwork" : "network";
 
       return (
