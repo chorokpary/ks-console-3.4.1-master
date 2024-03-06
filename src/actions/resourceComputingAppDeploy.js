@@ -169,7 +169,7 @@ export default {
   'computingappdeploy.detail': {
     on({ store, module, explanation, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
-        title: t('RESOURCES_DESCRIPTION'),
+        title: t('RESOURCES_LOG'),
         modal: DetailModal,
         store,
         explanation,
