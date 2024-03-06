@@ -19,9 +19,8 @@ const ModifyModal = (props) => {
     const [isMembers, setIsMembers] = useState(true);
 
     useEffect(() => {
-
         const getCreateData = async () => {
-            const listVm = await loadBalancerStore.fetchVmList();
+            const listVm = await loadBalancerStore.fetchVmList(props);
 
             setVmDataList(listVm.vms);
         };

@@ -41,7 +41,7 @@ export default class ComputingStore extends Base {
   } = {}) {
     this.isLoading = true
 
-    const apiUrl = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/`;
+    const apiUrl = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt`;
 
     const apiArray = [
       { num: 1, type: 'vms', name: t('RESOURCES_VM'), routeName: 'vms', multitenancy: true, icon: 'ico-type-vm', createField: 'creation_timestamp' },

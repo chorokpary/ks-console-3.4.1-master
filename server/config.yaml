@@ -398,7 +398,6 @@ client:
                 name: baremetal-carbon-indicator,
                 title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
               }
-            - { name: 'clusterfault', title: RESOURCES_CLUSTER_FAULT_TITLE }
 
             - { name: kubeeye-monitoring, title: 'KubeEye 모니터링' }
             # - {

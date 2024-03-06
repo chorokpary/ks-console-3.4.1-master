@@ -85,12 +85,12 @@ const RegistModal = (props) => {
   useEffect(() => {
 
     const getVmCreateData = async () => {
-      const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk' });
-      const listNetwork = await vmStore.fetchVmListNetwork();
-      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork();
+      const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk', ...props });
+      const listNetwork = await vmStore.fetchVmListNetwork(props);
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork(props);
 
-      const listImage = await resourceStore.fetchListImage();
-      const listLoadBalancer = await resourceStore.fetchListLoadBalancer();
+      const listImage = await resourceStore.fetchListImage(props);
+      const listLoadBalancer = await resourceStore.fetchListLoadBalancer(props);
 
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage._originData.images);

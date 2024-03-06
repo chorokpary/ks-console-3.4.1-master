@@ -50,6 +50,7 @@ const LoadBalancerDetail = (props) => {
                     detail: toJS(store.detail),
                     store: store,
                     success: fetchData,
+                    ...props.match.params
                 })
         },
         {

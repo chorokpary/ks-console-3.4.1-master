@@ -55,10 +55,9 @@ const RegistModal = (props) => {
   const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
 
   useEffect(() => {
-
     const getCreateData = async () => {
-      const listNetwork = await loadBalancerStore.fetchNetworkList();
-      const listVm = await loadBalancerStore.fetchVmList();
+      const listNetwork = await loadBalancerStore.fetchNetworkList(props);
+      const listVm = await loadBalancerStore.fetchVmList(props);
 
       const networkList = listNetwork.filter(obj => obj.project === projectName) || []
       setNetworkDataList(networkList)

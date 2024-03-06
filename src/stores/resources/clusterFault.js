@@ -152,8 +152,7 @@ export default class ClusterFaultStore extends Base {
         }
 
         const result = await request.get(
-            `${this.getResourceUrl()}/k8sgpts`
-            // `${this.getResourceUrl()}/k8sgpts`
+            `${this.getResourceUrl()}/list-k8sgpts`
         )
 
         params.limit = params.limit || 10
@@ -460,7 +459,7 @@ export default class ClusterFaultStore extends Base {
             }
         }
         let res = await this.submitting(
-            request.post(`${this.getResourceUrl()}/k8sgpts`, params)
+            request.post(`${this.getResourceUrl()}/list-k8sgpts`, params)
         )
         return res;
     }
@@ -479,7 +478,7 @@ export default class ClusterFaultStore extends Base {
 
         // 목록에서 삭제
         await this.submitting(
-            request.delete(`${this.getResourceUrl()}/k8sgpts/${name}`)
+            request.delete(`${this.getResourceUrl()}/list-k8sgpts/${name}`)
         )
     }
 
@@ -512,7 +511,7 @@ export default class ClusterFaultStore extends Base {
                 }
             }
             await this.submitting(
-                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -533,7 +532,7 @@ export default class ClusterFaultStore extends Base {
                 }
             }
             let secretRes = await this.submitting(
-                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -563,7 +562,7 @@ export default class ClusterFaultStore extends Base {
 
             }
             await this.submitting(
-                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
@@ -584,7 +583,7 @@ export default class ClusterFaultStore extends Base {
             }
             // model 수정
             await this.submitting(
-                request.patch(`${this.getResourceUrl()}/k8sgpts/${data.name}`, params, {
+                request.patch(`${this.getResourceUrl()}/list-k8sgpts/${data.name}`, params, {
                     headers: {
                         'content-type': 'application/merge-patch+json',
                     },
