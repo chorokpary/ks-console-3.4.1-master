@@ -34,32 +34,6 @@ const ImageBuildDetail = (props) => {
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
     const getOperations = () => [
-      // {
-      //   key: 'edit',
-      //   icon: 'pen',
-      //   text: t('EDIT_INFORMATION'),
-      //   action: 'edit',
-      //   show: showEdit,
-      //   onClick: () =>
-      //       props.rootStore.triggerAction('imagebuild.edit', {
-      //       type: 'KEYPAIR_DETAIL',
-      //       detail: toJS(store.detail),
-      //       store: store,
-      //       success: fetchData,
-      //     }),
-      // },
-      // {
-      //   key: 'viewYaml',
-      //   icon: 'eye',
-      //   text: t('VIEW_YAML'),
-      //   action: 'view',
-      //   onClick: () => {
-      //       props.rootStore.triggerAction('imagebuild.yaml.view', {
-      //       yaml: store.yaml,
-      //       readOnly: true,
-      //     })
-      //   },
-      // },
       {
         key: 'delete',
         icon: 'trash',
@@ -69,7 +43,7 @@ const ImageBuildDetail = (props) => {
         show: showEdit,
         onClick: () =>
             props.rootStore.triggerAction('imagebuild.remove', {
-            type: 'KEYPAIR_DETAIL',
+            type: 'IMAGE_BUILD_DETAIL',
             detail: toJS(store.detail),
             store: store,
             cluster: props.match.params.cluster,
@@ -90,10 +64,38 @@ const ImageBuildDetail = (props) => {
           name: t('RESOURCES_CLUSTER'),
           value: detail.cluster,
         },
-        // {
-        //   name: t('RESOURCES_DESCRIPTION'),
-        //   value: detail.keypair.description,
-        // },
+        {
+          name: t('RESOURCES_CPU_TYPE'),
+          value: detail.tags.cpuType,
+        },
+        {
+          name: t('RESOURCES_TAG'),
+          value: detail.tags.tag,
+        },
+        {
+          name: t('RESOURCES_OS_INFORMATION'),
+          value: detail.tags.os,
+        },
+        {
+          name: t('RESOURCES_FILE_NAME'),
+          value: detail.cluster,
+        },
+        {
+          name: t('RESOURCES_SIZE'),
+          value: detail.cluster,
+        },
+        {
+          name: t('Registry URL'),
+          value: detail.cluster,
+        },
+        {
+          name: t('RESOURCES_STATE'),
+          value: detail.cluster,
+        },
+        {
+          name: t('RESOURCES_DESCRIPTION'),
+          value: detail.cluster,
+        },
       ]
     }
 
@@ -104,13 +106,12 @@ const ImageBuildDetail = (props) => {
     const sideProps = {
         icon: "image",
         module: store.module,
-        name: get(store.detail, 'name'),
-        desc: get(store.detail.flavor, 'description', ''),
+        name: get(store.detail.tags, 'image-name'),
         operations: getOperations(),
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('이미지 빌드'),
+                label: t('RESOURCES_VM_IMAGE_BUILD'),
                 url: listUrl,
             },
         ],
