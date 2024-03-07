@@ -13,7 +13,7 @@ export default class ClusterInspectionStore extends Base {
   module = 'clusterInspection';
 
   getResourceUrl = (params = {}) =>
-    `apis/kubeeye.kubesphere.io/v1alpha1/clusterinsights/clusterinsight-sample`;
+    `apis/kubeeye.kubesphere.io/v1alpha1/clusterinsights/clusterinsight`;
 
   @action
   async fetchList({
