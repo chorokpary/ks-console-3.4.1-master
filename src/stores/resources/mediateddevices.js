@@ -240,4 +240,59 @@ export default class MediatedDeviceStore extends Base {
         this.isLoading = false
         return dataArray;
     }
+
+    @action
+    async fetchNodeList(params) {
+        this.isLoading = true;
+
+        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/nodes`);
+        const response = result.nodes
+
+        this.isLoading = false;
+        return response;
+    }
+
+    @action
+    async fetchPgpuList(params) {
+        this.isLoading = true;
+
+        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/pgpus/${params.node}`);
+        const response = result.pgpu_models;
+
+        this.isLoading = false;
+        return response;
+    }
+
+    @action
+    async fetchVgpuList(params) {
+        this.isLoading = true;
+
+        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/vgpus/${params.model_num}`);
+        const response = result.vgpu_profiles;
+
+        this.isLoading = false;
+        return response;
+    }
+
+    @action
+    async createMediatedDeviceType(data, params = {}) {
+        this.isLoading = true;
+
+        let res = await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_device_types`, data));
+
+        this.isLoading = false;
+        return res
+    }
+
+    @action
+    async fetchMediatedDeviceType(params) {
+        this.isLoading = true;
+
+        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_device_types/${params.node}`);
+        const response = result.mediated_device_types;
+
+        this.isLoading = false;
+        return response;
+    }
+
 }

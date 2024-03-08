@@ -592,7 +592,9 @@ module.exports = {
   RESOURCES_IMAGE_BUILD: '이미지 빌드',
   RESOURCES_IMAGE_BUILD_DESC: '이미지 빌드의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_DELETE_IMAGE_BUILD_TIP: '이미지 빌드의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-
-
-
+  RESOURCES_SELECT_NODE_TIP: '노드를 선택해 주세요.',
+  RESOURCES_SELECT_MDT_TIP: 'Mediated Device Type을 선택하세요.',
+  RESOURCES_SELECT_MDT_CREATE: 'Mediated Device Type 생성',
+  RESOURCES_SELECT_MDT_CREATE_DESC: 'Mediated Device Type을 생성합니다.',
+  RESOURCES_SELECT_MDT_CREATE_SUCCESS: 'Mediated Device Type가 생성되었습니다.',
 };
