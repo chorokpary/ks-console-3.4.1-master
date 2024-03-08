@@ -38,9 +38,9 @@ const DetailVmList = (props) => {
   const store = new VmStore();
   const customStore = new CustomStore();
 
-  const workspace = props.detailStore?.detail.workspace;
-  const cluster = props.detailStore?.detail.cluster;
-  const namespace = props.detailStore?.detail.namespace;
+  const workspace = props.workspace;
+  const cluster = props.cluster;
+  const namespace = props.namespace;
 
   const [vmDataList, setVmDataList] = useState([]);
   const [vmSliceDataList, setVmSliceDataList] = useState([]);
@@ -103,7 +103,7 @@ const DetailVmList = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const vmList = await store.fetchList({ namespace : namespace});
+    const vmList = await store.fetchList({ cluster, namespace });
     const vmFilterData = vmList?.filter((row) =>
       variablesFilter(row)
     )
@@ -154,6 +154,7 @@ const DetailVmList = (props) => {
       const vmCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
+        cluster, namespace
       })
 
       setVmCpuData(vmCpuData)
@@ -164,6 +165,7 @@ const DetailVmList = (props) => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
+        cluster, namespace
       })
 
       setVmMemoryData(vmMemoryData)

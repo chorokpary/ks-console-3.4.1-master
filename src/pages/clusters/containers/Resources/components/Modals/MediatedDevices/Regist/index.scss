@@ -4,9 +4,9 @@
 @import '/assets/fonts/Roboto/stylesheet.css';
 
 .textarea {
-  :global .textarea {
-    max-width: 640px;
-  }
+    :global .textarea {
+        max-width: 640px;
+    }
 }
 
 .customUl {
@@ -21,11 +21,11 @@
     background-color: $bg-color;
     border: solid 1px $border-color;
 
-    & + .item {
+    &+.item {
         margin-top: 8px;
     }
 
-    & > input {
+    &>input {
         max-width: none !important;
     }
 }
@@ -124,11 +124,11 @@
     background-color: $bg-color;
     border: solid 1px $border-color;
 
-    & + .scriptitem {
+    &+.scriptitem {
         margin-top: 8px;
     }
 
-    & > input {
+    &>input {
         max-width: none !important;
     }
 }
@@ -206,6 +206,7 @@ i {
     width: 100%;
     padding: 12px 20px;
 }
+
 /* button */
 button {
     cursor: pointer;
@@ -275,7 +276,7 @@ button {
         display: flex;
         gap: 12px;
 
-        > .box_style {
+        >.box_style {
             position: relative;
             width: 100%;
             height: fit-content;
@@ -373,7 +374,7 @@ button {
                         }
                     }
 
-                    & > label + div {
+                    &>label+div {
                         font-weight: 600;
                     }
 
@@ -402,7 +403,7 @@ button {
                                 font-size: 11px;
                                 line-height: 15px;
 
-                                > em {
+                                >em {
                                     display: inline-block;
                                     background: #36435c;
                                     color: #fff;
@@ -420,6 +421,7 @@ button {
         }
     }
 }
+
 /* modal popup tab_process */
 .tab_process {
     align-items: flex-start;
@@ -546,5 +548,5 @@ button {
         color: #79879C;
     }
 }
-//tab_process
 
+//tab_process

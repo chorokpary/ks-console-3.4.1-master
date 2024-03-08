@@ -18,7 +18,7 @@
 module.exports = {
   // Banner
   PROJECT_ROLE_PL: '프로젝트 역할',
-  PROJECT_ROLE_DESC: '프로젝트 역할은 프로젝트 맴버의 권한을 정의합니다.',
+  PROJECT_ROLE_DESC: '프로젝트 역할은 프로젝트 멤버의 권한을 정의합니다.',
   // List
   ROLE_PROJECT_ADMIN: '프로젝트의 모든 리소스를 관리합니다.',
   ROLE_PROJECT_REGULAR: '프로젝트의 사용자 및 역할 이외의 리소스를 관리합니다.',
@@ -72,10 +72,10 @@ module.exports = {
   PERMISSION_CUSTOM_MONITORING_MANAGEMENT: '커스텀 모니터링 관리',
   PERMISSION_CUSTOM_MONITORING_MANAGEMENT_DESC: '프로젝트의 커스텀 모니터링 대시보드를 생성, 편집 및 삭제합니다.',
   // List > Edit Permissions > Access Control
-  PERMISSION_PROJECT_MEMBERS_VIEW: '맴버 보기',
-  PERMISSION_PROJECT_MEMBERS_VIEW_DESC: '프로젝트 맴버를 조회합니다.',
-  PERMISSION_PROJECT_MEMBERS_MANAGEMENT: '맴버 관리',
-  PERMISSION_PROJECT_MEMBERS_MANAGEMENT_DESC: '프로젝트 맴버를 초대, 편집 및 삭제합니다.',
+  PERMISSION_PROJECT_MEMBERS_VIEW: '멤버 보기',
+  PERMISSION_PROJECT_MEMBERS_VIEW_DESC: '프로젝트 멤버를 조회합니다.',
+  PERMISSION_PROJECT_MEMBERS_MANAGEMENT: '멤버 관리',
+  PERMISSION_PROJECT_MEMBERS_MANAGEMENT_DESC: '프로젝트 멤버를 초대, 편집 및 삭제합니다.',
   PERMISSION_PROJECT_ROLES_VIEW: '역할 보기',
   PERMISSION_PROJECT_ROLES_VIEW_DESC: '프로젝트 역할을 조회합니다.',
   PERMISSION_PROJECT_ROLES_MANAGEMENT: '역할 관리',

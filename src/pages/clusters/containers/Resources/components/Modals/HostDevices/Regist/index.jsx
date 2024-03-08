@@ -23,7 +23,7 @@ const RegistModal = (props) => {
     const [isCheckName, setIsCheckName] = useState(false);
 
     const getCreateData = async () => {
-        const listPciDevice = await hostDeviceStore.fetchListPciDevices();
+        const listPciDevice = await hostDeviceStore.fetchListPciDevices(props);
         setDataList(
             listPciDevice.pci_devices.map(data => ({
                 vendor_id: data.vendor_id

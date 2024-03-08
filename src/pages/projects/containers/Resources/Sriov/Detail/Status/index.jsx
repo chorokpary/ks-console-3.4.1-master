@@ -29,7 +29,7 @@ const Status = props => {
     const sriovNetworkId = props.match.params.id;
 
     const fnGetRouterData = async () => {
-      const routers = await routerStore.fetchList();
+      const routers = await routerStore.fetchList(props.match.params);
 
       const routerExternalList = await routers.filter(item => {
         return item.external?.id === sriovNetworkId;
@@ -47,7 +47,7 @@ const Status = props => {
     };
 
     const fnGetLoadBalancerData = async () => {
-      const loadBalancerList = await loadBalancerStore.fetchList();
+      const loadBalancerList = await loadBalancerStore.fetchList(props.match.params);
       const loadBalancerFilterList = loadBalancerList.filter(item => {
         return item.network == sriovNetworkId;
       });
@@ -67,7 +67,8 @@ const Status = props => {
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
           variables="networks"
-          id={props.match.params.name}
+          id={props.match.params.id}
+          {...props.match.params}
         />
       </div>
     </>

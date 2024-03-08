@@ -22,16 +22,19 @@ const Status = (props) => {
   const statusType = ['success', 'running']
 
   useEffect(() => {
-    const getHistoryList = async () => {
+       getHistoryList();
+  }, [])
 
-      const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
-      const response = await appDeployStore.fetchHistoryList(parms);
+  const getHistoryList = async () => {
+    const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
+    const response = await appDeployStore.fetchHistoryList(parms);
 
-      setHistoryList(response)
-      setIsLoading(false);
+    setHistoryList(response)
+    setIsLoading(false);
+  };
 
-    };
-    getHistoryList();
+  useEffect(() => {
+    let timer = setInterval(()=>{ getHistoryList() }, 3000);
   }, [])
 
 
@@ -74,7 +77,7 @@ const Status = (props) => {
                         <th><strong>{t('RESOURCES_STATE')}</strong></th>
                         <th><strong>{t('RESOURCES_START_TIME')}</strong></th>
                         <th><strong>{t('RESOURCES_END_TIME')}</strong></th>
-                        <th><strong>{t('RESOURCES_DESCRIPTION')}</strong></th>
+                        <th><strong>{t('RESOURCES_LOG')}</strong></th>
                       </tr>
                     </thead>
                     <tbody>                     
@@ -93,9 +96,9 @@ const Status = (props) => {
                                </div>
                             </td>
                             <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
-                            <td><p>{getLocalTime(obj.endTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
+                            <td><p>{obj.endTime == "" ? "-" : getLocalTime(obj.endTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
                             <td>
-                                <Icon name="more" size={30} onClick={() => fnExplanation(obj.explanation)} style={{ cursor: 'pointer' }}/>
+                                <Icon name="log" size={20} onClick={() => fnExplanation(obj.explanation)} style={{ cursor: 'pointer' }}/>
                             </td>
                           </tr>
                         ))}

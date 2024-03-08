@@ -88,7 +88,7 @@ router
   .get('/sample/:app', parseBody, handleSampleData)
 
   // .all('/edgetron/(.*)', mm3CheckToken)
-  .use(proxy('/edgetron/(.*)', webMm3Proxy))
+  // .use(proxy('/edgetron/(.*)', webMm3Proxy))
 
   // session
   .post('/login', parseBody, handleLogin)

@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import LbsIpStore from 'stores/resources/lbs';
+import LbsIpStore from 'stores/resources/loadbalancers';
 import { Icon } from '@kube-design/components'
 import { Panel, Text } from 'components/Base'
 import styles from './index.scss'
 import classNames from 'classnames';
+import { inject } from 'mobx-react';
 
 const LbPanel = (props) => {
 
   const store = new LbsIpStore();
   const [lbDetail, setLbDetail] = useState();
-
+  console.log(props)
   useEffect(() => {
     const fnGetLbDetail = async () => {
-      const lbDetail = await store.fetchDetail(props.id);
+      const lbDetail = await store.fetchDetailLbs({ ...props.detailStore.detail, id: props.id });
       setLbDetail(lbDetail.lb)
     };
 
@@ -74,4 +75,4 @@ const LbPanel = (props) => {
   )
 }
 
-export default LbPanel
+export default inject('detailStore')(LbPanel)

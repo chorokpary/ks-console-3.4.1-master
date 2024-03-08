@@ -80,7 +80,7 @@ export default class LoadBalancerStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (lbs) => {
-            const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs/` + lbs.id);
+            const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/lbs/` + lbs.id);
             lbs.rules_count = (lbsDetail.lb?.rules).length;
             dataArray.push(lbs);
         })
@@ -192,6 +192,19 @@ export default class LoadBalancerStore extends Base {
 
         // FloatingIp List 추출
         await this.fetchFloatingList(params);
+
+        this.detail = detail
+        this.isLoading = false
+        return detail
+    }
+
+    @action
+    async fetchDetailLbs(params) {
+        this.isLoading = true
+        const result = await request.get(
+            `${this.getResourceUrl(params)}/${params.id}`
+        )
+        const detail = { ...params, ...this.mapper(result), kind: 'Lbs' }
 
         this.detail = detail
         this.isLoading = false

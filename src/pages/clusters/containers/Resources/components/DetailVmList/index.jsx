@@ -101,7 +101,7 @@ const DetailVmList = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const vmList = await store.fetchList();
+    const vmList = await store.fetchList({ cluster });
     const vmFilterData = vmList?.filter((row) =>
       variablesFilter(row)
     )
@@ -152,6 +152,7 @@ const DetailVmList = (props) => {
       const vmCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
+        cluster
       })
 
       setVmCpuData(vmCpuData)
@@ -162,6 +163,7 @@ const DetailVmList = (props) => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
+        cluster
       })
 
       setVmMemoryData(vmMemoryData)
@@ -499,8 +501,8 @@ const DetailVmList = (props) => {
             {isLoading ?
               <div><Loading /></div>
               : props.variables == "project"
-              ? <div className={styles.empty}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
-              : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>             
+                ? <div className={styles.empty}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
+                : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>
             }
           </div>
         </Panel>

@@ -1,38 +1,36 @@
 @import '~scss/variables';
 
-.defaultWrapper {
+.wrapper {
+  display: flex;
+  border-radius: $border-radius;
+  background-color: $card-bg-color;
+}
+
+.info,
+.condition {
+  position: relative;
   padding: 12px;
-  border-radius: 4px;
-  background-color: #ffffff;
-  border: solid 1px $light-color03;
+  background-color: $card-bg-color;
+}
 
-  ul > li {
-    display: flex;
-    padding: 12px 20px;
-    border-radius: 22px;
-    background-color: $bg-color;
-    border: solid 1px $border-color;
+.info {
+  background-color: transparent;
+}
 
-    & + li {
-      margin-top: 8px;
-    }
+.header .info {
+  margin: -12px;
+}
 
-    & > span {
-      font-family: $font-family-id;
-      word-break: break-all;
-
-      &:first-child {
-        min-width: 160px;
-        margin-right: 80px;
-        color: #79879c;
-      }
-
-      & > pre {
-        font-family: $font-family-id;
-        padding: 0;
-        background: transparent;
-        white-space: pre-wrap;
-      }
-    }
+.content {
+  .condition {
+    display: inline-flex;
+    width: calc(100% - 6px);
+    margin-top: 12px;
   }
+}
+
+.status {
+  position: absolute;
+  top: 38px;
+  left: 38px;
 }

@@ -20,13 +20,13 @@ const store = new VolumeStore();
 const VolumeDetail = (props) => {
 
   const volumnName = props.match.params.name;
-  
+
   useEffect(() => {
     fetchData();
   }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params);    
+    store.fetchDetail(props.match.params);
   }
 
   const { workspace, cluster, namespace } = props.match.params
@@ -52,6 +52,7 @@ const VolumeDetail = (props) => {
             detail: toJS(store.detail),
             store,
             success: fetchData,
+            ...props.match.params
           }),
       },
       {
@@ -88,12 +89,14 @@ const VolumeDetail = (props) => {
                 type: 'VOLUME_DETAIL',
                 store,
                 success: fetchData,
+                ...props.match.params
               });
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
                 data: { id, vmId: used_by_vmi, actionType: 'D' },
                 store,
                 success: fetchData,
+                ...props.match.params
               });
             }
           },
@@ -110,8 +113,8 @@ const VolumeDetail = (props) => {
               type: 'VOLUME_DETAIL',
               detail: toJS(store.detail),
               store,
-              cluster: props.match.params.cluster,
               success: () => routing.push(listUrl),
+              ...props.match.params
             }),
         }
       );

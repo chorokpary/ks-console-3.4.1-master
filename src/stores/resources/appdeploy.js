@@ -71,8 +71,8 @@ export default class AppDeployStore extends Base {
       this.getResourceUrl()
     )
 
-    const data = result.templates;
-
+    const data = (get(result, 'templates') || []);
+   
     // const promises = data.map(async (app) => {
     //   const historyList = await axios.get("/app-manager/v1alpha1/taskhistories/" + app.name);
 
@@ -89,6 +89,8 @@ export default class AppDeployStore extends Base {
     //   }
     // })
     // await Promise.all(promises);
+
+    console.log("data : "+ JSON.stringify(data))
 
     // 초기 정렬 처리
     data.sort((a, b) => {
