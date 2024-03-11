@@ -104,7 +104,7 @@ const VmPop = ({ title, onOk, store, match }) => {
     const network = data.network[radioExternalIdx].split(" ")
 
     onOk({
-      ...match.params,
+      ...match?.params,
       id: fipDetail.id,
       instance_type: 'vm',
       instance_id: radioExternal,
