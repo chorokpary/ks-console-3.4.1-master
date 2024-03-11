@@ -47,7 +47,10 @@ export default class FloatingIp extends React.Component {
   }
 
   get tableActions() {
-    return {}
+    const { tableProps } = this.props
+    return {
+      ...tableProps.tableActions,
+    }
   }
 
   getColumns = () => {
@@ -141,7 +144,7 @@ export default class FloatingIp extends React.Component {
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
-          searchType="network_alias"
+          searchType='network_alias'
         />
       </ListPage>
     )

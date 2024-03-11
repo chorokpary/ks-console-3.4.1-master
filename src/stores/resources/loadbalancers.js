@@ -227,9 +227,9 @@ export default class LoadBalancerStore extends Base {
 
 
     @action
-    async update({ id, ...params }, data) {
+    async update({ ...params }, data) {
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ id }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.id }), data))
 
         return res
     }

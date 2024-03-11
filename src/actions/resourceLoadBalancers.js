@@ -197,7 +197,7 @@ export default {
     on({ store, detail, success, data, title, desc, cluster, namespace, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.update(data, { name: data.id }).then(() => {
+          store.update(data, cluster, namespace, { name: data.id }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_RELEASE_SUCCESSFULLY') })
             success && success()

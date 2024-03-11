@@ -60,7 +60,7 @@ const ModifyModal = (props) => {
                 data.id = id;
                 data.network = lb.network.id
                 data.description = data.description || ''
-                onOk({ lb: data })
+                onOk({ lb: data, ...props })
             }
 
         })
