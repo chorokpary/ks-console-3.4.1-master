@@ -10,7 +10,7 @@ const LbPanel = (props) => {
 
   const store = new LbsIpStore();
   const [lbDetail, setLbDetail] = useState();
-  console.log(props)
+
   useEffect(() => {
     const fnGetLbDetail = async () => {
       const lbDetail = await store.fetchDetailLbs({ ...props.detailStore.detail, id: props.id });

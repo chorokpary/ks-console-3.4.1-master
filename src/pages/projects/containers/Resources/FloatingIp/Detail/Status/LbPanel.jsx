@@ -13,7 +13,7 @@ const LbPanel = (props) => {
 
   useEffect(() => {
     const fnGetLbDetail = async () => {
-      const lbDetail = await store.fetchDetailLbs({ ...props.detailstore.detail, id: props.id });
+      const lbDetail = await store.fetchDetailLbs({ ...props.detailStore.detail, id: props.id });
       setLbDetail(lbDetail.lb)
     };
 
