@@ -41,7 +41,7 @@ const RegistModal = (props) => {
       data.internal = internalCheckItems;
       data.external = radioExternal;
       data.project = projectName;
-      
+
       onOk({ ...data })
     })
   }
@@ -73,7 +73,7 @@ const RegistModal = (props) => {
 
     //Network List 추출
     const fnGetNetworkList = async () => {
-      const networkData = await props.store.networkList()
+      const networkData = await props.store.networkList({ ...props })
       const networkList = networkData.filter(obj => obj.project === projectName) || []
       setNetworkDataList(networkList)
     };

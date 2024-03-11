@@ -68,7 +68,7 @@ const LoadBalancerDetail = (props) => {
                     })
                 } else {
                     props.rootStore.triggerAction('loadBalancer.floatingIpPop.deallocate', {
-                        data: { id: floatingId },
+                        data: { ...props.match.params, id: floatingId },
                         store: floatingstore,
                         success: fetchData,
                         ...props.match.params

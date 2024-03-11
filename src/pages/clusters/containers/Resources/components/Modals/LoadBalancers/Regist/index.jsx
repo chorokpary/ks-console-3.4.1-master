@@ -48,6 +48,7 @@ const RegistModal = (props) => {
   const [btnDimm, setBtnDimm] = useState(false);
 
   const [networkDataList, setNetworkDataList] = useState([]);
+  const [networkList, setNetworkList] = useState([]);
   const [vmDataList, setVmDataList] = useState([]);
   const [isMembers, setIsMembers] = useState(true);
   const [isRules, setIsRules] = useState(true);
@@ -59,17 +60,25 @@ const RegistModal = (props) => {
       const listNetwork = await loadBalancerStore.fetchNetworkList(props);
       const listVm = await loadBalancerStore.fetchVmList(props);
 
-      const networkList = listNetwork.filter(obj => obj.project === projectName) || []
-      setNetworkDataList(networkList)
-
+      setNetworkDataList(listNetwork)
       setVmDataList(listVm.vms);
     };
 
     getCreateData();
   }, [])
 
+  useEffect(() => {
+    getNetworkFilterList(projectName)
+  }, [networkDataList])
+
+  const getNetworkFilterList = (projectName) => {
+    const networkList = networkDataList.filter(obj => obj.project === projectName) || []
+    setNetworkList(networkList)
+  }
+
+
   const networkOptions = () => {
-    const opt = networkDataList.filter((el) => !el.external).map((obj) => ({
+    const opt = networkList.filter((el) => !el.external).map((obj) => ({
       label: t(obj.name),
       value: t(obj.id),
     }))
@@ -363,7 +372,10 @@ const RegistModal = (props) => {
                     name="namespace"
                     defaultValue={projectName}
                     cluster={props.cluster}
-                    onChange={(e) => setProjectName(e)}
+                    onChange={(e) => {
+                      setProjectName(e)
+                      getNetworkFilterList(e)
+                    }}
                   />
                 </Form.Item>
               </Column>
