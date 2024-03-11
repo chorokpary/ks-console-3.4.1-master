@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { toJS } from 'mobx'
 
 import { Panel, Text, Indicator } from 'components/Base'
+import { Link } from 'react-router-dom'
 
 import styles from './index.scss'
 
@@ -26,6 +27,8 @@ import {
 } from '@kube-design/components'
 
 const Clone = (props) => {
+
+  const cluster = props.match?.params.cluster;
 
   const store = new VmStore();
 
@@ -109,31 +112,22 @@ const Clone = (props) => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-            <p>Timestamp</p>
+            <p>{t('RESOURCES_REGIST_DATE')}</p>
           </div>
           <div className={styles.name}>
             <div>{obj.id}</div>
-            <p>ID</p>
+            <p>{t('RESOURCES_ID')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.target_vm_id}</div>
-            <p>Target VM name</p>
+            <div><Link to={`/clusters/${cluster}/vms/${obj.alias}/${obj.target_vm_id}`}>{obj.alias}</Link></div>
+            <p>{t('RESOURCES_TARGET_VM_NAME')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
-            <p>Phase</p>
+            <p>{t('RESOURCES_STATE')}</p>
           </div>
-          {/* <div className={styles.text}>
-            <div>{obj.state}</div>
-            {(obj.networks).length > 0 ? (obj.networks).map((item) => <div>{item.name}</div>) : "-"}
-            <p>Networks</p>
-          </div> */}
-          {/* <div className={styles.text}>
-            <div>{get(obj, "description", "-")}</div>
-            <p>Description</p>
-          </div>         */}
           <div className={styles.arrow}>
-            <Button type="danger" onClick={() => handleDelete(obj.id)}>Delete</Button>
+            <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
           </div>
         </div>
       </>
