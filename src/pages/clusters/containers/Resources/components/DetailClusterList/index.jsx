@@ -127,22 +127,19 @@ const DetailClusterList = props => {
 
     if (tabValue === 'cluster') {
       const content = withoutNamespaceResult
-        // ?.filter(rslt => {
-        //   const items = rslt?.resourceInfos?.items ?? [];
-        //   //   if (buttonPass) {
-        //   //     return items.some(itm => itm?.level === 'ignore');
-        //   //   }
-        //   if (buttonPass) {
-        //     return items.some(itm => itm?.level === 'pass');
-        //   }
-        //   if (buttonWarning) {
-        //     return items.some(itm => itm?.level === 'warning');
-        //   }
-        //   if (buttonDanger) {
-        //     return items.some(itm => itm?.level === 'danger');
-        //   }
-        //   return true;
-        // })
+        ?.filter(rslt => {
+          const items = rslt?.resourceInfos?.items ?? [];
+          if (buttonPass) {
+            return items.some(itm => itm?.level === 'pass');
+          }
+          if (buttonWarning) {
+            return items.some(itm => itm?.level === 'warning');
+          }
+          if (buttonDanger) {
+            return items.some(itm => itm?.level === 'danger');
+          }
+          return true;
+        })
         ?.map((value, idx) => {
           return (
             <div className={styles.wrapper} key={`cluster-${idx}`}>
@@ -156,8 +153,29 @@ const DetailClusterList = props => {
               >
                 <div className={styles.itemMain}>
                   <div className={styles.icon}>
-                    <i
-                      className="ico-type24-disk"
+                    {value.resourceType === 'Node' ? (
+                      <Icon name="nodes" size={40} />
+                    ) : value.resourceType === 'ClusterRole' ? (
+                      <Icon name="cluster" size={40} />
+                    ) : value.resourceType === 'Deployment' ? (
+                      <Icon name="nodes" size={40} />
+                    ) : value.resourceType === 'DaemonSet' ? (
+                      <Icon name="deamon-set" size={40} />
+                    ) : value.resourceType === 'Role' ? (
+                      <Icon name="role" size={40} />
+                    ) : value.resourceType === 'StatefulSet' ? (
+                      <Icon name="stateful-set" size={40} />
+                    ) : value.resourceType === 'Event' ? (
+                      <Icon name="event" size={40} />
+                    ) : value.resourceType === 'Job' ? (
+                      <Icon name="job" size={40} />
+                    ) : value.resourceType === 'CronJob' ? (
+                      <Icon name="cron-job" size={40} />
+                    ) : (
+                      ''
+                    )}
+                    {/* <i
+                      className="cluster"
                       type={
                         value?.resourceInfos?.name != expandItem
                           ? 'dark'
@@ -166,7 +184,7 @@ const DetailClusterList = props => {
                           ? 'dark'
                           : 'light'
                       }
-                    ></i>
+                    ></i> */}
                   </div>
 
                   {renderContentDetail(value)}
@@ -180,215 +198,268 @@ const DetailClusterList = props => {
       return content;
     }
     if (tabValue === 'namespace') {
-      const content = namespace?.map(value => {
-        return (
-          <>
-            <div
-              style={{
-                padding: '4px',
-                backgroundColor: '#f9fbfd',
-                borderRadius: '4px',
-              }}
-            >
+      const content = namespace
+        ?.sort((a, b) => {
+          return a.namespace > b.namespace ? 1 : -1;
+        })
+        ?.map(value => {
+          return (
+            <>
               <div
                 style={{
-                  // paddingLeft : "13px",
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  wordWrap: 'normal',
-                  overflow: 'hidden',
-                  fontSize: '12px',
-                  lineHeight: 1.67,
-                  // fontFamily: 'Roboto', "PingFang SC", "Lantinghei SC", "Helvetica Neue", 'Helvetica', 'Arial', "Microsoft YaHei", 微软雅黑, STHeitiSC-Light, simsun, 宋体, "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", sans-serif,
-                  fontStyle: 'normal',
-                  fontStretch: 'normal',
-                  letterSpacing: 'normal',
-                  fontWeight: 'bold',
-                  color: '#242e42',
+                  padding: '4px',
+                  backgroundColor: '#f9fbfd',
+                  borderRadius: '4px',
                 }}
               >
-                {value.namespace}
-              </div>
+                <div
+                  style={{
+                    // paddingLeft : "13px",
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    wordWrap: 'normal',
+                    overflow: 'hidden',
+                    fontSize: '12px',
+                    lineHeight: 1.67,
+                    // fontFamily: 'Roboto', "PingFang SC", "Lantinghei SC", "Helvetica Neue", 'Helvetica', 'Arial', "Microsoft YaHei", 微软雅黑, STHeitiSC-Light, simsun, 宋体, "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", sans-serif,
+                    fontStyle: 'normal',
+                    fontStretch: 'normal',
+                    letterSpacing: 'normal',
+                    fontWeight: 'bold',
+                    color: '#242e42',
+                  }}
+                >
+                  {value.namespace}
+                </div>
 
-              {value?.resultInfos
-                .sort((a, b) => {
-                  return a.resourceInfos.name > b.resourceInfos.name ? 1 : -1;
-                })
-                ?.map((obj, idx) => {
-                  const counts = {};
-
-                  (obj.resourceInfos.items || []).forEach(item => {
-                    const itemLevel = item.level;
-                    counts[itemLevel] = (counts[itemLevel] || 0) + 1;
-                  });
-
-                  // Function to generate dot bars based on counts
-                  const generateDotBars = () => {
-                    const dotBars = [];
-                    if (buttonDanger) {
-                      for (let i = 0; i < (counts.danger || 0); i++) {
-                        dotBars.push(
-                          <div
-                            key={`danger-${i}`}
-                            className="dot_bar status danger"
-                          ></div>
-                        );
-                      }
-                      return dotBars;
+                {value?.resultInfos
+                  .sort((a, b) => {
+                    // return a.resourceInfos.name > b.resourceInfos.name ? 1 : -1;
+                    if (a.resourceInfos.name > b.resourceInfos.name) {
+                      return 1;
+                    }
+                    if (a.resourceInfos.name < b.resourceInfos.name) {
+                      return -1;
+                    }
+                    return 0;
+                  })
+                  ?.filter(rslt => {
+                    const items = rslt?.resourceInfos?.items ?? [];
+                    if (buttonPass) {
+                      return items.some(itm => itm?.level === 'ignore');
                     }
                     if (buttonWarning) {
-                      for (let i = 0; i < (counts.warning || 0); i++) {
-                        dotBars.push(
-                          <div
-                            key={`warning-${i}`}
-                            className="dot_bar status warning"
-                          ></div>
-                        );
-                      }
-                      return dotBars;
+                      return items.some(itm => itm?.level === 'warning');
                     }
-                    if (buttonPass) {
-                      for (let i = 0; i < (counts.ignore || 0); i++) {
-                        dotBars.push(
-                          <div
-                            key={`ignore-${i}`}
-                            className="dot_bar status pass"
-                          ></div>
-                        );
-                      }
-                      return dotBars;
+                    if (buttonDanger) {
+                      return items.some(itm => itm?.level === 'danger');
                     }
+                    return true;
+                  })
+                  ?.map((obj, idx) => {
+                    const counts = {};
 
-                    if (!(buttonDanger || buttonWarning || buttonPass)) {
-                      for (let i = 0; i < (counts.danger || 0); i++) {
-                        dotBars.push(
-                          <div
-                            key={`danger-${i}`}
-                            className="dot_bar status danger"
-                          ></div>
-                        );
+                    (obj.resourceInfos.items || []).forEach(item => {
+                      const itemLevel = item.level;
+                      counts[itemLevel] = (counts[itemLevel] || 0) + 1;
+                    });
+
+                    // Function to generate dot bars based on counts
+                    const generateDotBars = () => {
+                      const dotBars = [];
+                      if (buttonPass) {
+                        for (let i = 0; i < (counts.ignore || 0); i++) {
+                          dotBars.push(
+                            <div
+                              key={`ignore-${i}`}
+                              className="dot_bar status pass"
+                            ></div>
+                          );
+                        }
+                        return dotBars;
                       }
-
-                      for (let i = 0; i < (counts.warning || 0); i++) {
-                        dotBars.push(
-                          <div
-                            key={`warning-${i}`}
-                            className="dot_bar status warning"
-                          ></div>
-                        );
+                      if (buttonWarning) {
+                        for (let i = 0; i < (counts.warning || 0); i++) {
+                          dotBars.push(
+                            <div
+                              key={`warning-${i}`}
+                              className="dot_bar status warning"
+                            ></div>
+                          );
+                        }
+                        return dotBars;
                       }
-                      for (let i = 0; i < (counts.ignore || 0); i++) {
-                        dotBars.push(
-                          <div
-                            key={`ignore-${i}`}
-                            className="dot_bar status pass"
-                          ></div>
-                        );
+                      if (buttonDanger) {
+                        for (let i = 0; i < (counts.danger || 0); i++) {
+                          dotBars.push(
+                            <div
+                              key={`danger-${i}`}
+                              className="dot_bar status danger"
+                            ></div>
+                          );
+                        }
+                        return dotBars;
                       }
+                      if (!(buttonDanger || buttonWarning || buttonPass)) {
+                        for (let i = 0; i < (counts.danger || 0); i++) {
+                          dotBars.push(
+                            <div
+                              key={`danger-${i}`}
+                              className="dot_bar status danger"
+                            ></div>
+                          );
+                        }
 
-                      return dotBars;
-                    }
-                  };
+                        for (let i = 0; i < (counts.warning || 0); i++) {
+                          dotBars.push(
+                            <div
+                              key={`warning-${i}`}
+                              className="dot_bar status warning"
+                            ></div>
+                          );
+                        }
 
-                  return (
-                    <div>
-                      <div className={styles.wrapper} key={`namespace-${idx}`}>
+                        for (let i = 0; i < (counts.ignore || 0); i++) {
+                          dotBars.push(
+                            <div
+                              key={`ignore-${i}`}
+                              className="dot_bar status pass"
+                            ></div>
+                          );
+                        }
+
+                        return dotBars;
+                      }
+                    };
+
+                    return (
+                      <div>
                         <div
-                          className={classnames(styles.expandItem, '', {
-                            [styles.expanded]:
-                              obj.resourceInfos.name === expandItem &&
-                              value.namespace === expandItemNamespace &&
-                              obj.resourceType === expandItemType
-                                ? isExpandFlag
-                                : false,
-                          })}
+                          className={styles.wrapper}
+                          key={`namespace-${idx}`}
                         >
-                          <div className={styles.itemMain}>
-                            <div className={styles.icon}>
-                              <i
-                                className="ico-type24-disk"
-                                type={
-                                  obj.resourceInfos.name !== expandItem ||
-                                  value.namespace !== expandItemNamespace ||
-                                  obj.resourceType !== expandItemType
-                                    ? 'dark'
-                                    : obj.resourceInfos.name === expandItem &&
-                                      value.namespace === expandItemNamespace &&
-                                      obj.resourceType === expandItemType &&
-                                      isExpandFlag === false
-                                    ? 'dark'
-                                    : 'light'
-                                }
-                              ></i>
-                            </div>
-
-                            <div className={styles.content}>
-                              <div className={styles.text}>
-                                <div>{obj?.resourceInfos?.name}</div>
-                                <p>{`이름`}</p>
-                              </div>
-
-                              <div className={styles.text}>
-                                <div>{obj?.resourceType}</div>
-                                <p>{`타입`}</p>
-                              </div>
-                              <div className="content_box_wrap">
-                                <div className="dot_chart_wrap">
-                                  <div className="dot_chart">
-                                    {generateDotBars()}
-                                    <div className="dot_bar"></div>
-                                  </div>
-                                  <p className="dot_value">
-                                    <label>Pass {counts.ignore || 0} </label>
-                                    <label>Warning {counts.warning || 0}</label>
-                                    <label>Danger {counts.danger || 0}</label>
-                                    <span className="data"></span>
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* {renderMonitorings(obj.resourceInfos)} */}
-
-                              <div
-                                className={styles.arrow}
-                                onClick={() =>
-                                  handleExpand(
-                                    obj.resourceInfos.name,
-                                    value.namespace,
-                                    obj.resourceType
-                                  )
-                                }
-                              >
-                                <Icon
-                                  name="chevron-down"
+                          <div
+                            className={classnames(styles.expandItem, '', {
+                              [styles.expanded]:
+                                obj.resourceInfos.name === expandItem &&
+                                value.namespace === expandItemNamespace &&
+                                obj.resourceType === expandItemType
+                                  ? isExpandFlag
+                                  : false,
+                            })}
+                          >
+                            <div className={styles.itemMain}>
+                              <div className={styles.icon}>
+                                {obj.resourceType === 'Node' ? (
+                                  <Icon name="nodes" size={40} />
+                                ) : obj.resourceType === 'ClusterRole' ? (
+                                  <Icon name="cluster" size={40} />
+                                ) : obj.resourceType === 'Deployment' ? (
+                                  //   <Icon name="blue-green-deploymen" size={40} />
+                                  <Icon name="nodes" size={40} />
+                                ) : obj.resourceType === 'DaemonSet' ? (
+                                  <Icon name="deamon-set" size={40} />
+                                ) : obj.resourceType === 'Role' ? (
+                                  <Icon name="role" size={40} />
+                                ) : obj.resourceType === 'StatefulSet' ? (
+                                  <Icon name="stateful-set" size={40} />
+                                ) : obj.resourceType === 'Event' ? (
+                                  <Icon name="event" size={40} />
+                                ) : obj.resourceType === 'Job' ? (
+                                  <Icon name="job" size={40} />
+                                ) : obj.resourceType === 'CronJob' ? (
+                                  <Icon name="cron-job" size={40} />
+                                ) : (
+                                  ''
+                                )}
+                                {/* <i
+                                  className="ico-type24-disk"
                                   type={
                                     obj.resourceInfos.name !== expandItem ||
                                     value.namespace !== expandItemNamespace ||
                                     obj.resourceType !== expandItemType
-                                      ? ''
+                                      ? 'dark'
                                       : obj.resourceInfos.name === expandItem &&
                                         value.namespace ===
                                           expandItemNamespace &&
                                         obj.resourceType === expandItemType &&
                                         isExpandFlag === false
-                                      ? ''
+                                      ? 'dark'
                                       : 'light'
                                   }
-                                  size={20}
-                                />
+                                ></i> */}
+                              </div>
+
+                              <div className={styles.content}>
+                                <div className={styles.text}>
+                                  <div>{obj?.resourceInfos?.name}</div>
+                                  <p>{`이름`}</p>
+                                </div>
+
+                                <div className={styles.text}>
+                                  <div>{obj?.resourceType}</div>
+                                  <p>{`타입`}</p>
+                                </div>
+                                <div className="content_box_wrap">
+                                  <div className="dot_chart_wrap">
+                                    <div className="dot_chart">
+                                      {generateDotBars()}
+                                      <div className="dot_bar"></div>
+                                    </div>
+                                    <p className="dot_value">
+                                      <label>Pass {counts.ignore || 0} </label>
+                                      <label>
+                                        Warning {counts.warning || 0}
+                                      </label>
+                                      <label>Danger {counts.danger || 0}</label>
+                                      <span className="data"></span>
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* {renderMonitorings(obj.resourceInfos)} */}
+
+                                <div
+                                  className={styles.arrow}
+                                  onClick={() =>
+                                    handleExpand(
+                                      obj.resourceInfos.name,
+                                      value.namespace,
+                                      obj.resourceType
+                                    )
+                                  }
+                                >
+                                  <Icon
+                                    name="chevron-down"
+                                    type={
+                                      obj.resourceInfos.name !== expandItem ||
+                                      value.namespace !== expandItemNamespace ||
+                                      obj.resourceType !== expandItemType
+                                        ? ''
+                                        : obj.resourceInfos.name ===
+                                            expandItem &&
+                                          value.namespace ===
+                                            expandItemNamespace &&
+                                          obj.resourceType === expandItemType &&
+                                          isExpandFlag === false
+                                        ? ''
+                                        : 'light'
+                                    }
+                                    size={20}
+                                  />
+                                </div>
                               </div>
                             </div>
+                            {renderExtraContent(obj)}
                           </div>
-                          {renderExtraContent(obj)}
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </>
-        );
-      });
+                    );
+                  })}
+              </div>
+            </>
+          );
+        });
       return content;
     }
   };
@@ -400,13 +471,12 @@ const DetailClusterList = props => {
       counts[itemLevel] = (counts[itemLevel] || 0) + 1;
     });
 
-    // Function to generate dot bars based on counts
     const generateDotBars = () => {
       const dotBars = [];
-      if (buttonDanger) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
+      if (buttonPass) {
+        for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
           );
         }
         return dotBars;
@@ -419,19 +489,10 @@ const DetailClusterList = props => {
         }
         return dotBars;
       }
-      //   if (buttonPass) {
-      //     for (let i = 0; i < (counts.pass || 0); i++) {
-      //       dotBars.push(
-      //         <div key={`pass-${i}`} className="dot_bar status pass"></div>
-      //       );
-      //     }
-      //     return dotBars;
-      //   }
-
-      if (buttonPass) {
-        for (let i = 0; i < (counts.ignore || 0); i++) {
+      if (buttonDanger) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
           dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>
           );
         }
         return dotBars;
@@ -450,11 +511,6 @@ const DetailClusterList = props => {
           );
         }
 
-        // for (let i = 0; i < (counts.pass || 0); i++) {
-        //   dotBars.push(
-        //     <div key={`pass-${i}`} className="dot_bar status pass"></div>
-        //   );
-        // }
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
             <div key={`ignore-${i}`} className="dot_bar status pass"></div>
@@ -536,18 +592,19 @@ const DetailClusterList = props => {
           <div className={styles.containers}>
             {obj?.resourceInfos?.items
               ?.filter(item => {
+                if (buttonPass) {
+                  return item.level === 'ignore';
+                }
                 if (buttonWarning) {
                   return item.level === 'warning';
                 }
                 if (buttonDanger) {
                   return item.level === 'danger';
                 }
-                if (buttonPass) {
-                  return item.level === 'ignore';
-                }
+
                 return true;
               })
-              .sort((a, b) => {
+              ?.sort((a, b) => {
                 const levelOrder = { danger: 1, warning: 2, ignore: 3 };
                 return levelOrder[a.level] - levelOrder[b.level];
               })
@@ -563,7 +620,29 @@ const DetailClusterList = props => {
                       }}
                     >
                       <div className={styles.icon}>
-                        <i className="ico-type24-disk"></i>
+                        {obj.resourceType === 'Node' ? (
+                          <Icon name="nodes" size={40} />
+                        ) : obj.resourceType === 'ClusterRole' ? (
+                          <Icon name="cluster" size={40} />
+                        ) : obj.resourceType === 'Deployment' ? (
+                          <Icon name="blue-green-deployment" size={40} />
+                        ) : obj.resourceType === 'DaemonSet' ? (
+                          <Icon name="deamon-set" size={40} />
+                        ) : obj.resourceType === 'Role' ? (
+                          <Icon name="role" size={40} />
+                        ) : obj.resourceType === 'StatefulSet' ? (
+                          <Icon name="stateful-set" size={40} />
+                        ) : obj.resourceType === 'Event' ? (
+                          <Icon name="event" size={40} />
+                        ) : obj.resourceType === 'Job' ? (
+                          <Icon name="job" size={40} />
+                        ) : obj.resourceType === 'CronJob' ? (
+                          <Icon name="cron-job" size={40} />
+                        ) : (
+                          ''
+                        )}
+                        {/* <Icon name="cluster" size={40} /> */}
+                        {/* <i className="ico-type24-disk"></i> */}
                       </div>
 
                       <div className={classnames(styles.title, styles.name)}>
@@ -582,7 +661,6 @@ const DetailClusterList = props => {
                           <Indicator
                             className={styles.indicator}
                             type={getState(item.level)}
-                            flicker
                           />
                           <div>
                             {item.level === 'ignore'
@@ -600,17 +678,20 @@ const DetailClusterList = props => {
 
                     {showPopup && (
                       <>
-                        <div class="content_box_wrap">
+                        <div
+                          class="content_box_wrap"
+                          style={{ border: 'none' }}
+                        >
                           <div
                             className={`sub_layer_pop  ${
                               showPopup ? 'show' : ''
                             }`}
                             id="sub_layer_pop"
+                            // style={{ top: '-64px' }}
                           >
                             <div className="layer_pop_header status_wrap">
                               <div className="tit">
                                 ImageTagIsLatest
-                                {/* <p className="status warning"> */}
                                 <p
                                   className={`status ${
                                     level === 'ignore'
@@ -741,8 +822,9 @@ const DetailClusterList = props => {
                 }`}
                 type="button"
                 onClick={e => {
-                  //   clickButton(e);
                   setButtonPass(!buttonPass);
+                  //   setButtonDanger(!buttonDanger);
+                  //   setButtonWarning(!buttonWarning);
                   setButtonWarning(false);
                   setButtonDanger(false);
                   setShowPopup(false);
@@ -760,6 +842,8 @@ const DetailClusterList = props => {
                 type="button"
                 onClick={() => {
                   setButtonWarning(!buttonWarning);
+                  //   setButtonPass(!buttonPass);
+                  //   setButtonDanger(!buttonDanger);
                   setButtonPass(false);
                   setButtonDanger(false);
                   setShowPopup(false);
@@ -777,6 +861,8 @@ const DetailClusterList = props => {
                 type="button"
                 onClick={() => {
                   setButtonDanger(!buttonDanger);
+                  //   setButtonWarning(!buttonWarning);
+                  //   setButtonPass(!buttonPass);
                   setButtonWarning(false);
                   setButtonPass(false);
                   setShowPopup(false);
