@@ -31,50 +31,8 @@ export default class FlavorStore extends Base {
 
   module = 'flavors';
 
-  getResourceUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/kubevirt/flavors`;
-
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/flavors`;
   getListUrl = this.getResourceUrl;
-
-  // @action
-  // async fetchList({ devops, workspace, cluster, more, ...params } = {}) {
-  //   this.list.isLoading = true
-
-  //   if (params.limit === Infinity || params.limit === -1) {
-  //     params.limit = -1
-  //     params.page = 1
-  //   }
-
-  //   params.limit = params.limit || 10
-
-  //   const url = `${this.getResourceUrl({ namespace: devops, cluster })}`
-
-  //   const result = await request.get(url, { ...params }, {}, () => {
-  //     return []
-  //   })
-
-  //   const data = Array.isArray(result.items)
-  //     ? result.items.map(item => {
-  //         return { ...this.mapper({ ...item, devops }) }
-  //       })
-  //     : []
-
-  //   this.list.update({
-  //     data: more ? [...this.list.data, ...data] : data,
-  //     total: result.totalItems || result.total_count || data.length || 0,
-  //     ...params,
-  //     limit: Number(params.limit) || 10,
-  //     page: Number(params.page) || 1,
-  //     isLoading: false,
-  //     ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-  //   })
-
-  //   console.log(data)
-
-  //   return data
-  // }
 
   @action
   async create(data, params = {}) {

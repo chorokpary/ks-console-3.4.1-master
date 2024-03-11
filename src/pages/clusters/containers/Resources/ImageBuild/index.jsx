@@ -27,6 +27,7 @@ import Table from 'components/Tables/List';
 
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
+import * as common from 'utils/resources';
 
 import ImageBuildStore from 'stores/resources/imagebuild';
 
@@ -35,7 +36,8 @@ import ImageBuildStore from 'stores/resources/imagebuild';
   store: new ImageBuildStore(),
   module: 'imagebuild',
   authKey: 'imagebuild',
-  name: t('이미지 빌드'),
+  name: t('RESOURCES_VM_IMAGE_BUILD'),
+  rowKey: 'name',
 })
 export default class ImageBuild extends React.Component {
   showAction(record) {
@@ -118,23 +120,32 @@ export default class ImageBuild extends React.Component {
     return [
       {
         title: t('RESOURCES_NAME'),
-        dataIndex: 'name',
+        dataIndex: 'imagename',
         sorter: true,
-        sortOrder: getSortOrder('name'),
+        sortOrder: getSortOrder('imagename'),
         search: true,
-        render: (name, record) => {
-          const tags = get(record, 'tags')
-          const imageName = get(tags, 'image-name', "-")
-          console.log("imageName : "+ imageName)
+        render: (imagename, record) => {
+          const name = record.name;
 
            return (
             <Avatar
             icon="image"
             iconSize={40}
-            to={`/clusters/${cluster}/imagebuild/${name}/${name}`}
-            title={imageName}
+            to={`/clusters/${cluster}/imagebuild/${imagename}/${name}`}
+            title={imagename}
            />
            )
+        },
+      },
+      {
+        title: t('RESOURCES_CPU_TYPE'),
+        dataIndex: 'cputype',
+        isHideable: true,
+        width: 'auto',
+        render: (cputype, record) => {
+          const tags = get(record, 'tags')
+          const cpuType = get(tags, 'cpuType', "-")
+          return cpuType;
         },
       },
       {
@@ -145,11 +156,20 @@ export default class ImageBuild extends React.Component {
         render: (tag, record) => {
           const tags = get(record, 'tags')
           const tagName = get(tags, 'tag', "-")
-          console.log("tagName : "+ tagName)
           return tagName;
         },
       },
-
+      {
+        title: t('RESOURCES_OS_INFORMATION'),
+        dataIndex: 'os',
+        isHideable: true,
+        width: 'auto',
+        render: (os, record) => {
+          const tags = get(record, 'tags')
+          const osInfo = get(tags, 'os', "-")
+          return osInfo;
+        },
+      },
       {
         title: t('RESOURCES_FILE_NAME'),
         dataIndex: 'filename',
@@ -175,7 +195,8 @@ export default class ImageBuild extends React.Component {
 
           if(!!uploadInfo) {
             const fileSize = uploadInfo[0]['file-size'];
-            return fileSize
+          
+            return common.fnFormatBytes(fileSize.toString())
           }
           return '-'
         },
@@ -210,7 +231,7 @@ export default class ImageBuild extends React.Component {
   };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {
@@ -230,8 +251,8 @@ export default class ImageBuild extends React.Component {
         <Banner
           {...bannerProps}
           icon="image"
-          title={t('이미지 빌드')}
-          description={t('이미지 빌드 상세 설명')}
+          title={t('RESOURCES_VM_IMAGE_BUILD')}
+          description={t('RESOURCES_IMAGE_BUILD_DESC')}
         />
         <Table
           {...tableProps}

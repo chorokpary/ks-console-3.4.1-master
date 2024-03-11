@@ -68,6 +68,8 @@ export default {
         modal: ModifyModal,
         store,
         module,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -100,6 +102,8 @@ export default {
         }),
         resource: detail.name,
         store,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -134,13 +138,15 @@ export default {
             ? t.html('RESOURCES_DELETE_LOAD_BALANCER_TIP', { resource: names })
             : t.html('RESOURCES_DELETE_LOAD_BALANCER_TIP', { resource: names }),
         resource: names,
+        cluster,
+        namespace,
         store,
         ...props,
       })
     },
   },
   'loadBalancer.delete': {
-    on({ store, detail, success, ...props }) {
+    on({ store, detail, success, cluster, namespace, ...props }) {
       const modal = Modal.open({
         onOk: () => {
           store.delete(detail).then(() => {
@@ -152,6 +158,8 @@ export default {
         modal: DeleteModal,
         module: store.module,
         detail,
+        cluster,
+        namespace,
         store,
         ...props,
       })
@@ -173,22 +181,23 @@ export default {
     },
   },
   'loadBalancer.floatingIpPop': {
-    on({ store, success, namespace, ...props }) {
+    on({ store, success, cluster, namespace, ...props }) {
       const modal = Modal.open({
         title: t('RESOURCES_FLOATING_IP_SETTINGS'),
         modal: FloatingIpModal,
         store,
         success,
+        cluster,
         namespace,
         ...props,
       })
     },
   },
   'loadBalancer.floatingIpPop.deallocate': {
-    on({ store, detail, success, data, title, desc, ...props }) {
+    on({ store, detail, success, data, title, desc, cluster, namespace, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.update(data, { name: data.id }).then(() => {
+          store.update(data, cluster, namespace, { name: data.id }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_RELEASE_SUCCESSFULLY') })
             success && success()
@@ -197,6 +206,8 @@ export default {
         title: t('RESOURCES_DEALLOCATE_FLOATING_IP'),
         desc: t('RESOURCES_RELEAGE_DESC'),
         modal: ConfirmModal,
+        cluster,
+        namespace,
         store,
         ...props,
       })

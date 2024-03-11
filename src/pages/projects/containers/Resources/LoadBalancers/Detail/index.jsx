@@ -50,6 +50,7 @@ const LoadBalancerDetail = (props) => {
                     detail: toJS(store.detail),
                     store: store,
                     success: fetchData,
+                    ...props.match.params
                 })
         },
         {
@@ -63,12 +64,14 @@ const LoadBalancerDetail = (props) => {
                         type: 'LB_DETAIL',
                         store: store,
                         success: fetchData,
+                        ...props.match.params
                     })
                 } else {
                     props.rootStore.triggerAction('loadBalancer.floatingIpPop.deallocate', {
-                        data: { id: floatingId },
+                        data: { ...props.match.params, id: floatingId },
                         store: floatingstore,
                         success: fetchData,
+                        ...props.match.params
                     })
                 }
             },
@@ -82,6 +85,7 @@ const LoadBalancerDetail = (props) => {
                 props.rootStore.triggerAction('loadBalancer.yaml.view', {
                     yaml: store.yaml,
                     readOnly: true,
+                    ...props.match.params
                 })
         },
         {
@@ -98,6 +102,7 @@ const LoadBalancerDetail = (props) => {
                     store: store,
                     cluster: props.match.params.cluster,
                     success: () => routing.push(listUrl()),
+                    ...props.match.params
                 })
         },
     ]

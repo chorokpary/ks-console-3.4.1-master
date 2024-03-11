@@ -80,7 +80,7 @@ export default class LoadBalancerStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (lbs) => {
-            const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs/` + lbs.id);
+            const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/lbs/` + lbs.id);
             lbs.rules_count = (lbsDetail.lb?.rules).length;
             dataArray.push(lbs);
         })
@@ -199,6 +199,19 @@ export default class LoadBalancerStore extends Base {
     }
 
     @action
+    async fetchDetailLbs(params) {
+        this.isLoading = true
+        const result = await request.get(
+            `${this.getResourceUrl(params)}/${params.id}`
+        )
+        const detail = { ...params, ...this.mapper(result), kind: 'Lbs' }
+
+        this.detail = detail
+        this.isLoading = false
+        return detail
+    }
+
+    @action
     async fetchYaml(params) {
         this.isLoading = true
 
@@ -214,9 +227,9 @@ export default class LoadBalancerStore extends Base {
 
 
     @action
-    async update({ id, ...params }, data) {
+    async update({ ...params }, data) {
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ id }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.id }), data))
 
         return res
     }

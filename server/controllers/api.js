@@ -166,20 +166,22 @@ const handleHarborProxyCustom = async ctx => {
   const headers = ctx.request.headers
   const data = ctx.request.body
 
-  const [, protocol] = `${serverConfig.apiServer.harborUrl}`.match(/^(https?:\/\/)/)
   let path = ''
+  const harborUrl = data.originUrl ? data.originUrl : serverConfig.apiServer.harborUrl
 
   if (requestUrl === 'users') { // 사용자 유효성 체크
-    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/users/current`;
+    path = `${harborUrl}/api/v2.0/users/current`;
   } else if (requestUrl === 'public') { // private 이지만 url 입력 안한 경우
-    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/repositories`;
+    path = `${harborUrl}/api/v2.0/repositories`;
   } else if (requestUrl === 'private') { // 직접 url 입력한 경우
-    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/projects/${data.projectName}/repositories`;
+    path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories`;
   } else if (requestUrl === 'tags') { // tag list
-    path = `${serverConfig.apiServer.harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`;
+    path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`;
   } else if (requestUrl === 'build') { // 사용자 유효성 체크
     path = `${serverConfig.apiServer.imagebuildHarborUrl}/api/v2.0/users/current`;
   }
+
+  const [, protocol] = `${harborUrl}`.match(/^(https?:\/\/)/)
 
   try {
     const res = await send_harbor_request({

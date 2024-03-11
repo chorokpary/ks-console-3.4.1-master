@@ -293,7 +293,7 @@ client:
               }
             - {
               name: imagebuild,
-              title: RESOURCES_VM_IIMAGE_BUILD,
+              title: RESOURCES_VM_IMAGE_BUILD,
               skipAuth: true,
               showInDisable: true,
             }
@@ -358,6 +358,10 @@ client:
                 authKey: monitoring,
               }
             - {
+                name: 'clusterfault',
+                title: RESOURCES_CLUSTER_FAULT_TITLE,
+              }   
+            - {
                 name: monitor-resource,
                 title: APPLICATION_RESOURCE_PL,
                 icon: linechart,
@@ -394,7 +398,6 @@ client:
                 name: baremetal-carbon-indicator,
                 title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
               }
-            - { name: 'clusterfault', title: RESOURCES_CLUSTER_FAULT_TITLE }
 
             - { name: kubeeye-monitoring, title: 'KubeEye 모니터링' }
             # - {

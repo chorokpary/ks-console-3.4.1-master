@@ -65,6 +65,9 @@ export default {
         title: t('RESOURCES_EDIT_KEYPAIR'),
         modal: ModifyModal,
         store,
+        cluster,
+        workspace,
+        namespace,
         module,
         ...props,
       })

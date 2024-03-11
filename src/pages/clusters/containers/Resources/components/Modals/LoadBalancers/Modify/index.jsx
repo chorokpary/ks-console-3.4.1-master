@@ -19,9 +19,8 @@ const ModifyModal = (props) => {
     const [isMembers, setIsMembers] = useState(true);
 
     useEffect(() => {
-
         const getCreateData = async () => {
-            const listVm = await loadBalancerStore.fetchVmList();
+            const listVm = await loadBalancerStore.fetchVmList(props);
 
             setVmDataList(listVm.vms);
         };
@@ -61,7 +60,7 @@ const ModifyModal = (props) => {
                 data.id = id;
                 data.network = lb.network.id
                 data.description = data.description || ''
-                onOk({ lb: data })
+                onOk({ lb: data, ...props })
             }
 
         })

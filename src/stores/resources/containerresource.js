@@ -185,7 +185,6 @@ export default class ResourceStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
-
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
     )
@@ -273,7 +272,6 @@ export default class ResourceStore extends Base {
   @action
   async fetchListImage(params) {
     this.isLoading = true
-
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images`
     )

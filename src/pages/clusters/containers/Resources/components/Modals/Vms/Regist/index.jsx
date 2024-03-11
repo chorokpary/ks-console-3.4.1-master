@@ -72,17 +72,16 @@ const RegistModal = (props) => {
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
 
   useEffect(() => {
-
     const getVmCreateData = async () => {
-      const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk' });
-      const listImage = await vmStore.fetchVmListImage();
-      const listBootVolume = await vmStore.fetchVmListBootVolume();
-      const listNetwork = await vmStore.fetchVmListNetwork({ namespace: props.namespace });
-      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ namespace: props.namespace });
-      const listKeypair = await vmStore.fetchVmListKeypair({ namespace: props.namespace });
-      const listNode = await vmStore.fetchVmListNode();
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({ namespace: props.namespace });
-      const listStoregeClass = await vmStore.fetchVmListStoregeClass();
+      const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk', ...props });
+      const listImage = await vmStore.fetchVmListImage({ ...props });
+      const listBootVolume = await vmStore.fetchVmListBootVolume({ ...props });
+      const listNetwork = await vmStore.fetchVmListNetwork({ ...props });
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ ...props });
+      const listKeypair = await vmStore.fetchVmListKeypair({ ...props });
+      const listNode = await vmStore.fetchVmListNode({ ...props });
+      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({ ...props });
+      const listStoregeClass = await vmStore.fetchVmListStoregeClass({ ...props });
 
       setFlavorDataList(listFlavor.flavors);
       setImageDataList(listImage.images);
@@ -153,7 +152,8 @@ const RegistModal = (props) => {
   }
 
   const bootvolumeOptions = () => {
-    const opt = bootVolumeDataList.map((obj) => ({
+    const filterData = bootVolumeDataList.filter((item) => item.name.includes('bootdisk') == false)
+    const opt = filterData.map((obj) => ({
       label: t(obj.name),
       value: t(obj.id),
     }))
@@ -243,23 +243,23 @@ const RegistModal = (props) => {
       if (listPackageRoute.length == 1) {
         listPackageRoute.map((obj) => {
           if (!!data['scriptPackage_' + obj]) {
-            if(!!data['scriptVersion_' + obj]){
+            if (!!data['scriptVersion_' + obj]) {
               packageScript += `packages:\n  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
-            }else{
+            } else {
               packageScript += `packages:\n  - ${data['scriptPackage_' + obj]}\n`
-            }            
+            }
             makeScriptStep_3 = true;
           }
         })
       } else {
         packageScript += `packages:\n`
         listPackageRoute.map((obj) => {
-            if(!!data['scriptVersion_' + obj]){
-              packageScript += `  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
-            }else{
-              packageScript += `  - ${data['scriptPackage_' + obj]}\n`
-            }          
-            makeScriptStep_3 = true;
+          if (!!data['scriptVersion_' + obj]) {
+            packageScript += `  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+          } else {
+            packageScript += `  - ${data['scriptPackage_' + obj]}\n`
+          }
+          makeScriptStep_3 = true;
         })
       }
 

@@ -59,6 +59,7 @@ const LbPop = ({ title, onOk, store, match }) => {
   const handleOk = () => {
     onOk(
       {
+        ...match.params,
         id: fipDetail.id,
         instance_type: 'lb',
         instance_id: lbData.id,

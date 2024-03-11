@@ -125,7 +125,7 @@ export default {
     },
   },
   'volume.create.snapshot': {
-    async on({ store, detail, ...props }) {
+    async on({ store, detail, cluster, namespace, ...props }) {
       const provisioner = get(
         detail,
         "annotations['volume.beta.kubernetes.io/storage-provisioner']",
@@ -151,6 +151,8 @@ export default {
         modal: SnapshotModal,
         store,
         options,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -175,7 +177,7 @@ export default {
     },
   },
   'volume.expand': {
-    on({ store, ...props }) {
+    on({ store, cluster, namespace, ...props }) {
       const modal = Modal.open({
         onOk: async params => {
           await store.patch(store.detail, params)
@@ -184,6 +186,8 @@ export default {
         },
         modal: ExpandModal,
         store,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -195,8 +199,9 @@ export default {
       success,
       module,
       isFederated,
-      namespace,
       extendformTemplate,
+      cluster,
+      namespace,
       ...props
     }) {
       const kind = MODULE_KIND_MAP[module]
@@ -237,6 +242,8 @@ export default {
         ...props,
         formTemplate,
         isFederated,
+        cluster,
+        namespace,
       })
     },
   },
@@ -252,6 +259,8 @@ export default {
         store,
         modal: EditYamlModal,
         yaml: detail,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -268,12 +277,14 @@ export default {
         store,
         detail,
         modal: EditBasicInfoModal,
+        cluster,
+        namespace,
         ...props,
       })
     },
   },
   'snapshotClasses.create': {
-    on({ store, module, name, detail, cluster, success, ...props }) {
+    on({ store, module, name, detail, cluster, namespace, success, ...props }) {
       const kind = MODULE_KIND_MAP[module]
       const steps = [...SnapshotClassSteps]
       const formTemplate = {
@@ -297,6 +308,7 @@ export default {
         steps,
         modal: CreateModal,
         cluster,
+        namespace,
         ...props,
       })
     },

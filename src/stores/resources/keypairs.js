@@ -39,6 +39,7 @@ export default class KeypairStore extends Base {
 
   @action
   async create(data, params = {}) {
+    console.log(params)
     const url = this.getResourceUrl(params);
 
     const jsonData = {};
@@ -57,7 +58,6 @@ export default class KeypairStore extends Base {
 
   @action
   async update({ name, ...params }, data) {
-
     const jsonData = {};
     const keypairData = {};
 
