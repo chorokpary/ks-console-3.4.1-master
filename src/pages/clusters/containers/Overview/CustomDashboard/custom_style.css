@@ -1670,6 +1670,99 @@ html {
   font-size: 10px;
   margin: 0;
 }
+.content_box_wrap .value_box_wrap {
+  width: 482px;
+  height: 30px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+.content_box_wrap .value_box_wrap .overview {
+  position: fixed;
+  width: 482px;
+  height: 30px;
+  top: 0;
+  left: 0;
+}
+.content_box_wrap .value_box_wrap .value_box {
+  display: inline-flex;
+  align-items: flex-start;
+  padding: 1px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.content_box_wrap .value_box_wrap .number_wrap {
+  display: flex;
+  min-width: 35px;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 8px;
+  background-color: #d8e2ec;
+  border-radius: 18px;
+  font-family: 'Pretendard-Bold';
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 20px;
+}
+.content_box_wrap .value_box_wrap .div_value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 12px 4px 20px;
+  position: relative;
+  border-radius: 14px;
+}
+.content_box_wrap .value_box_wrap .txt_group {
+  position: relative;
+  height: 20px;
+}
+.content_box_wrap .value_box_wrap .text_title {
+  width: fit-content;
+  margin-left: 12px;
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.content_box_wrap .value_box_wrap .status_point {
+  background-color: #55bc8a;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 6px;
+  left: 0;
+  border-radius: 10px;
+}
+.content_box_wrap .value_box_wrap .status_point_error {
+  background-color: #ca2621;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 6px;
+  left: 0;
+  border-radius: 10px;
+}
+.content_box_wrap .value_box_wrap .status_point_unknown {
+  background-color: #f5a623;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 6px;
+  left: 0;
+  border-radius: 10px;
+}
+.content_box_wrap .value_box_wrap .status_point_off {
+  background-color: #abb4be;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 6px;
+  left: 0;
+  border-radius: 10px;
+}
 .content_box_wrap .grid_wrap.cluster {
   display: grid;
   grid-template-columns: 3fr 1fr !important;
@@ -1677,7 +1770,7 @@ html {
 }
 .content_box_wrap .grid_wrap.cluster .gridbox_wrap {
   width: auto;
-  height: 305px;
+  height: 315px;
   margin: 0;
 }
 .content_box_wrap .grid_wrap.cluster .gridbox_wrap .grid_info {
@@ -1823,99 +1916,6 @@ html {
 .content_box_wrap .boxtab input[type='radio']:checked + span {
   background-color: #fff;
   font-size: 12px;
-}
-.content_box_wrap .value_box_wrap {
-  width: 482px;
-  height: 30px;
-  margin: 0 auto;
-  margin-bottom: 10px;
-}
-.content_box_wrap .value_box_wrap .overview {
-  position: fixed;
-  width: 482px;
-  height: 30px;
-  top: 0;
-  left: 0;
-}
-.content_box_wrap .value_box_wrap .value_box {
-  display: inline-flex;
-  align-items: flex-start;
-  padding: 1px;
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-.content_box_wrap .value_box_wrap .number_wrap {
-  display: flex;
-  min-width: 35px;
-  align-items: center;
-  justify-content: center;
-  padding: 0px 8px;
-  background-color: #d8e2ec;
-  border-radius: 18px;
-  font-family: 'Pretendard-Bold';
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 20px;
-}
-.content_box_wrap .value_box_wrap .div_value {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 4px 12px 4px 20px;
-  position: relative;
-  border-radius: 14px;
-}
-.content_box_wrap .value_box_wrap .txt_group {
-  position: relative;
-  height: 20px;
-}
-.content_box_wrap .value_box_wrap .text_title {
-  width: fit-content;
-  margin-left: 12px;
-  font-family: 'Pretendard';
-  font-weight: 400;
-  font-size: 12px;
-  letter-spacing: 0;
-  line-height: 20px;
-  white-space: nowrap;
-}
-.content_box_wrap .value_box_wrap .status_point {
-  background-color: #55bc8a;
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  top: 6px;
-  left: 0;
-  border-radius: 10px;
-}
-.content_box_wrap .value_box_wrap .status_point_error {
-  background-color: #ca2621;
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  top: 6px;
-  left: 0;
-  border-radius: 10px;
-}
-.content_box_wrap .value_box_wrap .status_point_unknown {
-  background-color: #f5a623;
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  top: 6px;
-  left: 0;
-  border-radius: 10px;
-}
-.content_box_wrap .value_box_wrap .status_point_off {
-  background-color: #abb4be;
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  top: 6px;
-  left: 0;
-  border-radius: 10px;
 }
 .content_box_wrap .tree_wrap {
   display: flex;
@@ -2945,7 +2945,7 @@ html {
 }
 .content_box_wrap .sub_layer_pop {
   position: fixed;
-  right: -425px;
+  right: -480px;
   bottom: 0;
   width: 425px;
   height: 712px;

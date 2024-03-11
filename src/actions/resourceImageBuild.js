@@ -59,6 +59,7 @@ export default {
       devops,
       ...props
     }) {
+      console.log("detail :"+JSON.stringify(detail))
       const modal = Modal.open({
         onOk: () => {
           store
@@ -71,10 +72,10 @@ export default {
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
-        desc: t.html('RESOURCES_DELETE_NETWORK_TIP', {
-          resource: detail.name,
+        desc: t.html('RESOURCES_DELETE_IMAGE_BUILD_TIP', {
+          resource: detail.imagename,
         }),
-        resource: detail.name,
+        resource: detail.imagename,
         store,
         ...props,
       })
@@ -85,8 +86,8 @@ export default {
       const rowKeys = toJS(store.list.selectedRowKeys)
       let arr = new Array
       store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
-            arr.push(obj.name)
+        if (rowKeys.includes(obj.name)) {
+            arr.push(obj.imagename)
         }
       })
       const names = arr.join(', ')
@@ -107,8 +108,8 @@ export default {
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           rowKeys.length === 1
-            ? t.html('RESOURCES_DELETE_NETWORK_TIP', { resource: names })
-            : t.html('RESOURCES_DELETE_NETWORK_TIP', { resource: names }),
+            ? t.html('RESOURCES_DELETE_IMAGE_BUILD_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_IMAGE_BUILD_TIP', { resource: names }),
         resource: names,
         store,
         ...props,

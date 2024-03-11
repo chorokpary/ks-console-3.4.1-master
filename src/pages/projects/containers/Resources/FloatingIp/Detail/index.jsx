@@ -52,9 +52,10 @@ const FloatingIpDetail = (props) => {
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.deallocate', {
               store: store,
-              data: { id: detail.id },
+              data: { ...props.match.params, id: detail.id },
               type: "LB_POP",
               success: () => handleConnectSuccess(false),
+
             }),
         }
       ]

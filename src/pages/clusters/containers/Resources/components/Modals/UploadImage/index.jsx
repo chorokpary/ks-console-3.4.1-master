@@ -137,7 +137,6 @@ const UploadModal = (props) => {
 
         <Form.Item>     
           <>
-            {t('RESOURCES_IMAGE_FILE_UPLOAD')}<span className="form-item-required">*</span>   
             <Form.Group>
               <div>
                   <input type="file" 

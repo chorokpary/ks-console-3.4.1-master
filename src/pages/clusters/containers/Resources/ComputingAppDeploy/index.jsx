@@ -37,7 +37,7 @@ import AppDeployStore from 'stores/resources/appdeploy';
   store: new AppDeployStore(),
   module: 'appdeploy',
   authKey: 'appdeploy',
-  name: t('RESOURCES_KEYPAIR'),
+  name: t('RESOURCES_APP_DEPLOY_MANAGE'),
 })
 export default class ImageBuild extends React.Component {
   showAction(record) {
@@ -220,7 +220,7 @@ export default class ImageBuild extends React.Component {
   };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {

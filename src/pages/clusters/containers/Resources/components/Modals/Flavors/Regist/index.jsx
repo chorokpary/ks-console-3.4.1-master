@@ -432,13 +432,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
+                  className={`${regStep === 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -450,8 +449,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -463,13 +462,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
+                  className={`${regStep === 2
                       ? styles.current
                       : regStep > 2
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>

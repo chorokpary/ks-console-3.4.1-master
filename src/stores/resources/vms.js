@@ -60,7 +60,6 @@ export default class VmStore extends Base {
     }
 
     params.limit = params.limit || 10;
-
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)
@@ -108,10 +107,10 @@ export default class VmStore extends Base {
     this.dataList = data;
 
     // FloatingIp List 추출
-    await this.fetchFloatingList(params);
+    await this.fetchFloatingList({ cluster, namespace });
 
     // Network List 추출
-    await this.fetchVmListNetwork(params);
+    await this.fetchVmListNetwork({ cluster, namespace });
 
     // namespace(project) 있는 경우
     if (namespace) {

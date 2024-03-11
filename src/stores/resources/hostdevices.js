@@ -76,7 +76,7 @@ export default class HostDeviceStore extends Base {
 
         //ID값으로 이름 셋팅
         const dataArray = [];
-        const pciData = await this.fetchListPciDevices();
+        const pciData = await this.fetchListPciDevices({ cluster, namespace });
         data.map((device) => {
             pciData.pci_devices.map((pci) => {
                 if (device.vendor_id === pci.vendor_id) {

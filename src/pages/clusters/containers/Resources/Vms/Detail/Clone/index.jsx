@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { toJS } from 'mobx'
 
 import { Panel, Text, Indicator } from 'components/Base'
+import { Link } from 'react-router-dom'
 
 import styles from './index.scss'
 
@@ -26,6 +27,8 @@ import {
 } from '@kube-design/components'
 
 const Clone = (props) => {
+
+  const cluster = props.match?.params.cluster;
 
   const store = new VmStore();
 
@@ -118,12 +121,12 @@ const Clone = (props) => {
             <p>{t('RESOURCES_ID')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.alias}</div>
+            <div><Link to={`/clusters/${cluster}/vms/${obj.alias}/${obj.target_vm_id}`}>{obj.alias}</Link></div>
             <p>{t('RESOURCES_TARGET_VM_NAME')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
-            <p>{t('RESOURCES_STEP')}</p>
+            <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.arrow}>
             <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>

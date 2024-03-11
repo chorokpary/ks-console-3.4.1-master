@@ -7,10 +7,10 @@ import { get, isEmpty } from 'lodash'
 const Status = (props) => {
   const detail = get(props.detailStore.detail, 'floating_ip')
   if (detail.instance_type == 'vm') {
-    return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='id' id={detail.instance_id} />
+    return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='id'{...props.match.params} id={detail.instance_id} />
 
   } else if (detail.instance_type == 'lb') {
-    return <LbPanel type={t('RESOURCES_FLOATING_IP')} variables='id' id={detail.instance_id} />
+    return <LbPanel type={t('RESOURCES_FLOATING_IP')} variables='id' {...props.match.params} id={detail.instance_id} />
   } else {
     return []
   }

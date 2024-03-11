@@ -35,7 +35,7 @@ export default class ImageBuildStore extends Base {
 
   getResourceUrl = (params = {}) => `builder`
   getListUrl = (params = {}) => `builder/list`
-  getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.id}`
+  getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.name}`
 
   @action
   async fetchList({
@@ -67,17 +67,16 @@ export default class ImageBuildStore extends Base {
       this.getListUrl()
     )
 
-    const data = result.locations;
+    const data = (get(result, 'locations') || []);
 
-    // 초기 정렬 처리
-    data.sort((a, b) => {
-      return a.registrationDate < b.registrationDate
-        ? 1
-        : a.registrationDate > b.registrationDate
-        ? -1
-        : 0;
-    });
-
+    // 정렬
+    const promises = data.map(async (item) => {
+      const tags = get(item, 'tags')
+      const imagename = get(tags, 'image-name', "-")
+      item.imagename = imagename;
+    })
+    await Promise.all(promises);
+    
     // 초기 데이터 처리 
     this.dataList = data;
 
@@ -129,6 +128,7 @@ export default class ImageBuildStore extends Base {
     })
 
     //console.log(this.dataList)
+    // console.log(JSON.stringify(this.dataList))
 
     return this.dataList
   }
@@ -144,6 +144,8 @@ export default class ImageBuildStore extends Base {
     tagsData.cpuType = data.cpuType
     tagsData.tag = data.tag
     tagsData.os = data.os
+    tagsData.registUrl = data.registUrl
+    tagsData.description = data.description
 
     containerData.destination = data.registUrl
     containerData.id = data.user
@@ -156,8 +158,6 @@ export default class ImageBuildStore extends Base {
     console.log("jsonData : "+ JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
-
-    console.log("res : "+ JSON.stringify(res))
     return res
   }
 
@@ -167,9 +167,11 @@ export default class ImageBuildStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      this.getListUrl()
+      `${this.getResourceUrl(params)}/${params.id}`
     )
-    const detail = result;
+    set(result, "imagename", result['tags']['image-name'])
+
+    const detail = result
 
     this.detail = detail
     this.isLoading = false
@@ -184,9 +186,9 @@ export default class ImageBuildStore extends Base {
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(id =>
+          rowKeys.map(name =>
             request.delete(
-              `${this.getDetailUrl({ id, ...params })}`
+              `${this.getDetailUrl({ name, ...params })}`
             )
           )
         )
@@ -201,6 +203,7 @@ export default class ImageBuildStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
+    console.log("`${this.getDetailUrl(user)}` : "+ `${this.getDetailUrl(user)}`)
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }

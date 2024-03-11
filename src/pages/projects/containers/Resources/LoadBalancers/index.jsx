@@ -126,7 +126,7 @@ export default class LoadBalancers extends React.Component {
                 isHideable: true,
                 width: 'auto',
                 render: project => (
-                    <Link to={`/clusters/${cluster}/projects/${project}/overview`}>
+                    <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
                         {project}
                     </Link>
                 ),

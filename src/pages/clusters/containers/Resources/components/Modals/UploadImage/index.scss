@@ -25,7 +25,7 @@
 
 .content {
   position: relative;
-  margin-top: 12px;
+  margin-top: 0px;
   padding: 12px;
   border-radius: 4px;
   background-color: $lightest;
@@ -61,12 +61,12 @@
 
   .div_middle {
     position: relative;
-    width: 90%;
+    width: 95%;
   }
 
   .div_right {
     position: relative;
-    width: 5%;
+    width: 0%;
     margin-top: 18px;
   }
 }

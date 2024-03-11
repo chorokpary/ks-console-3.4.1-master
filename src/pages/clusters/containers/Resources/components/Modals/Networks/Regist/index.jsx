@@ -72,8 +72,8 @@ const RegistModal = (props) => {
         }
       });
       const host_routes = []
-      listHostRoute.map(el => {
-        if (data.Destination[el] && data.Nexthop[el]) {
+      listHostRoute?.map(el => {
+        if (data.Destination?.[el] && data.Nexthop?.[el]) {
           host_routes.push({ destination: data.Destination[el], nexthop: data.Nexthop[el] });
         }
       })

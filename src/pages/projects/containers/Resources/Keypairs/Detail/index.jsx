@@ -19,111 +19,112 @@ const store = new KeypairStore();
 
 const KeypairDetail = (props) => {
 
-    useEffect(() => {
-        fetchData();
-    }, [])
+  useEffect(() => {
+    fetchData();
+  }, [])
 
-    const fetchData = () => {
-        store.fetchDetail(props.match.params);
+  const fetchData = () => {
+    store.fetchDetail(props.match.params);
+  }
+
+  const { workspace, cluster, namespace } = props.match.params
+  const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/keypairs`
+
+  const routing = props.rootStore.routing;
+  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+
+  const getOperations = () => [
+    {
+      key: 'edit',
+      icon: 'pen',
+      text: t('EDIT_INFORMATION'),
+      action: 'edit',
+      show: showEdit,
+      onClick: () =>
+        props.rootStore.triggerAction('keypair.edit', {
+          type: 'KEYPAIR_DETAIL',
+          detail: toJS(store.detail),
+          store: store,
+          success: fetchData,
+          ...props.match.params
+        }),
+    },
+    {
+      key: 'viewYaml',
+      icon: 'eye',
+      text: t('VIEW_YAML'),
+      action: 'view',
+      onClick: () => {
+        props.rootStore.triggerAction('keypair.yaml.view', {
+          yaml: store.yaml,
+          readOnly: true,
+        })
+      },
+    },
+    {
+      key: 'delete',
+      icon: 'trash',
+      text: t('DELETE'),
+      action: 'delete',
+      type: 'danger',
+      show: showEdit,
+      onClick: () =>
+        props.rootStore.triggerAction('keypair.remove', {
+          type: 'KEYPAIR_DETAIL',
+          detail: toJS(store.detail),
+          store: store,
+          cluster: props.match.params.cluster,
+          success: () => routing.push(listUrl),
+        }),
+    },
+  ]
+
+  const getAttrs = () => {
+    const detail = toJS(store.detail)
+
+    if (isEmpty(detail)) {
+      return
     }
-    
-    const { workspace, cluster, namespace } = props.match.params
-    const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/keypairs`
-    
-    const routing = props.rootStore.routing;
-    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
-    const getOperations = () => [
+    return [
       {
-        key: 'edit',
-        icon: 'pen',
-        text: t('EDIT_INFORMATION'),
-        action: 'edit',
-        show: showEdit,
-        onClick: () =>
-            props.rootStore.triggerAction('keypair.edit', {
-            type: 'KEYPAIR_DETAIL',
-            detail: toJS(store.detail),
-            store: store,
-            success: fetchData,
-          }),
+        name: t('RESOURCES_CLUSTER'),
+        value: detail.cluster,
       },
       {
-        key: 'viewYaml',
-        icon: 'eye',
-        text: t('VIEW_YAML'),
-        action: 'view',
-        onClick: () => {
-            props.rootStore.triggerAction('keypair.yaml.view', {
-            yaml: store.yaml,
-            readOnly: true,
-          })
-        },
-      },
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('DELETE'),
-        action: 'delete',
-        type: 'danger',
-        show: showEdit,
-        onClick: () =>
-            props.rootStore.triggerAction('keypair.remove', {
-            type: 'KEYPAIR_DETAIL',
-            detail: toJS(store.detail),
-            store: store,
-            cluster: props.match.params.cluster,
-            success: () => routing.push(listUrl),
-          }),
+        name: t('RESOURCES_DESCRIPTION'),
+        value: detail.keypair.description,
       },
     ]
+  }
 
-    const getAttrs = () => {
-      const detail = toJS(store.detail)
-  
-      if (isEmpty(detail)) {
-        return
-      }
-  
-      return [
-        {
-          name: t('RESOURCES_CLUSTER'),
-          value: detail.cluster,
-        },
-        {
-          name: t('RESOURCES_DESCRIPTION'),
-          value: detail.keypair.description,
-        },
-      ]
-    }
+  if (store.isLoading) {
+    return <Loading className="ks-page-loading" />;
+  }
 
-    if (store.isLoading) {
-        return <Loading className="ks-page-loading" />;
-    }
+  const sideProps = {
+    icon: "key",
+    module: store.module,
+    name: get(store.detail, 'name'),
+    desc: get(store.detail.flavor, 'description', ''),
+    operations: getOperations(),
+    attrs: getAttrs(),
+    breadcrumbs: [
+      {
+        label: t('RESOURCES_KEYPAIR'),
+        url: listUrl,
+      },
+    ],
+  }
 
-    const sideProps = {
-        icon: "key",
-        module: store.module,
-        name: get(store.detail, 'name'),
-        desc: get(store.detail.flavor, 'description', ''),
-        operations: getOperations(),
-        attrs: getAttrs(),
-        breadcrumbs: [
-            {
-                label: t('RESOURCES_KEYPAIR'),
-                url: listUrl,
-            },
-        ],
-    }
-
-    return (
-        <>
-            <DetailPage
-                stores={{ detailStore: store }}
-                routes={routes}
-                {...sideProps} />
-        </>
-    )
+  return (
+    <>
+      <DetailPage
+        stores={{ detailStore: store }}
+        routes={routes}
+        {...sideProps} />
+    </>
+  )
 }
 
 export default inject('rootStore')(observer(KeypairDetail));

@@ -25,8 +25,11 @@ const RegistModal = (props) => {
   const [userPassword, setUserPassword] = useState('')
 
   const [harborValid, setHarborValid] = useState(false)
+  
+  const [userValid, setUserValid] = useState(false)
   const [userValidError, setUserValidError] = useState(false)
-  const [harborValidError, setHarborValidError] = useState(false)
+  const [userValidCheck, setuserValidCheck] = useState(false)
+  const [userValidCheckError, setUserValidCheckError] = useState(false)
 
   const cpuTypeOptions = [
   { label: t('ARM'), value: "ARM", },
@@ -44,13 +47,27 @@ const RegistModal = (props) => {
       data.password = userPassword;
 
       if(!!registryUrl && !!userName && !!userPassword){
+        console.log("정보 입력 완료")
         setHarborValid(false);        
       }else{
-        setHarborValid(true)
+        console.log("정보 입력 미완료")
+        setHarborValid(true);
         return false;
       }
 
-      console.log("data : "+ JSON.stringify(data))
+      if(!userValidCheck){
+        console.log("유효성 체크하지 않음!!")
+        setUserValidCheckError(true);
+        setUserValidError(false);
+        return false;
+      }
+
+      if(!userValid){
+        console.log("유효하지 않음!!")
+        return false;
+      }
+
+      // console.log("data : "+ JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -67,16 +84,29 @@ const RegistModal = (props) => {
       auth: userAuth
     }).then(res => {
         Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
-        setHarborValidError(false)
-        setUserValidError(false)
-        setHarborValid(false);   
+        console.log("SSSSSSSSSSSSSSSSS") 
+        setuserValidCheck(true);
+        setUserValidCheckError(false);
+        setUserValid(true);
+        setUserValidError(false);
       }).catch(err => {
+
+        console.log("err.status : "+ JSON.stringify(err.status))
+
         if(!!err.status){
-          setUserValidError(true)
-          setHarborValid(false);
+          //유효하지 않음
+          console.log("AAAAAAAAAAAAAAA")
+          setuserValidCheck(false);
+          setUserValidCheckError(false);
+          setUserValid(false);
+          setUserValidError(true);
         }else{
-          setUserValidError(false)
-          setHarborValid(false);
+          //유효함
+          console.log("BBBBBBBBBBBBBBB")
+          setuserValidCheck(true);
+          setUserValidCheckError(false);
+          setUserValid(true);
+          setUserValidError(false);
         }          
       })
   }
@@ -202,15 +232,19 @@ const RegistModal = (props) => {
                       </div>
                     </div>
 
+                    {/* //Harbor URL 정보를 입력해 주세요. */}
+                    {harborValid &&
+                      <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_HARBOR_VALID_TIP')}</div>
+                    }
+                    {/* //유효성을 체크해주세요.. */}
+                    {userValidCheckError &&
+                      <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_VALID_TIP')}</div>
+                    }
+                    {/* //유효하지 않은 사용자 입니다. */}
                     {userValidError &&
                       <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FAIL_VALID_TIP')}</div>
-                    }
-                    {harborValid &&
-                      <div className="form-item-error" style={{ color: '#ca2621' }}>{t('Harbor URL를 입력해 주세요.')}</div>
-                    }
-                    {harborValidError &&
-                      <div className="form-item-error">{t('RESOURCES_VALID_TIP')}</div>
-                    }
+                    }                  
+                    
 
                   </div>
               </div>           

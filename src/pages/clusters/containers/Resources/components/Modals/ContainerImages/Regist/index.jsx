@@ -23,7 +23,8 @@ const regexVersion = /^v(\d+\.\d+\.\d+)$/;
 
 const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
 const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE')
-const defaultRegistryUrl = 'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'
+// const defaultRegistryUrl = 'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'
+const defaultRegistryUrl = 'https://quay.io?namespace=edgestack'
 
 const publicTypeOptions = [
   { label: t('RESOURCES_PUBLIC'), value: 'public', },
@@ -535,7 +536,11 @@ const Step2 = (
     if (publicType == 'public') {
       // const response = await axios.get(`https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image`, {
       try {
-        const response = await axios.get(registryUrl, {
+        let originUrl = new URL(registryUrl);
+        const urlParams = originUrl.searchParams;
+        const namespace = urlParams.get('namespace')
+
+        const response = await axios.get(`${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`, {
           headers: {
             "X-Requested-With": "XMLHttpRequest",
           }
@@ -573,11 +578,14 @@ const Step2 = (
   // harbor list
   const getPriavteHarborRepositories = async () => {
     try {
-      const [, url] = harborUrl.split('api/v2.0/projects/')
-      const [projectName] = url.split("/")
+      let originUrl = new URL(registryUrl);
+      const urlParams = originUrl.searchParams;
+      const projectName = urlParams.get('projects')
+
       const response = await request.post(`customharbor/private`, {
         auth: harborAuth,
-        projectName
+        projectName,
+        originUrl: originUrl.origin
       })
       const list = response.map(obj => {
         const [projectName, ...name] = obj.name.split('/')
@@ -602,7 +610,10 @@ const Step2 = (
   // harbor list
   const getPublicHarborRepositories = async () => {
     try {
-      const response = await request.post(`customharbor/public`)
+      let originUrl = registryUrl ? new URL(registryUrl) : ''
+      const response = await request.post(`customharbor/public`, {
+        originUrl,
+      })
       const list = response.map(obj => {
         const [projectName, ...name] = obj.name.split("/")
         obj.name = name.join('/')
@@ -638,9 +649,10 @@ const Step2 = (
 
   // public image tag
   const getPulicImageTag = async (imageName) => {
-    const urlParams = new URLSearchParams(registryUrl)
+    let originUrl = new URL(registryUrl);
+    const urlParams = originUrl.searchParams;
     const namespace = urlParams.get('namespace')
-    const response = await axios.get(`https://quay.io/api/v1/repository/${namespace}/${imageName}`, {
+    const response = await axios.get(`${originUrl.origin}/api/v1/repository/${namespace}/${imageName}`, {
       headers: {
         "X-Requested-With": "XMLHttpRequest",
       }
@@ -657,10 +669,12 @@ const Step2 = (
 
   // private image tag
   const getPrivateImageTag = async (imageName, projectName) => {
+    let originUrl = registryUrl ? new URL(registryUrl) : ''
     const response = await request.post(`customharbor/tags`, {
       auth: harborAuth,
       repositoryName: imageName,
-      projectName
+      projectName,
+      originUrl: originUrl.origin
     })
     setLoading(false)
 
@@ -686,8 +700,10 @@ const Step2 = (
   const checkUserValid = async () => {
     let userAuth = Base64.encode(`${userName}:${userPassword}`)
 
+    let originUrl = new URL(registryUrl);
     await request.post(`customharbor/users`, {
-      auth: userAuth
+      auth: userAuth,
+      originUrl: originUrl.origin
     })
       .then(res => {
         Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
@@ -767,7 +783,7 @@ const Step2 = (
                         <div className={styles.formarea}>
                           <div className={classnames(styles.custom_input, styles.w_1)}>
                             <label>Registry URL</label>
-                            <input type="text" placeholder={publicType == 'private' ? 'http://{url}/api/v2.0/projects/{project_name}/repositories' : ''} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+                            <input type="text" placeholder={publicType == 'private' ? 'https://{url}?projects=${project_name}' : ''} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
                           </div>
                         </div>
                       </div>
