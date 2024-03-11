@@ -695,8 +695,10 @@ const DetailClusterList = props => {
                                 ) : obj.resourceType === 'ClusterRole' ? (
                                   <Icon name="cluster" size={40} />
                                 ) : obj.resourceType === 'Deployment' ? (
-                                  //   <Icon name="blue-green-deploymen" size={40} />
-                                  <Icon name="nodes" size={40} />
+                                  <Icon
+                                    name="blue-green-deployment"
+                                    size={40}
+                                  />
                                 ) : obj.resourceType === 'DaemonSet' ? (
                                   <Icon name="deamon-set" size={40} />
                                 ) : obj.resourceType === 'Role' ? (
