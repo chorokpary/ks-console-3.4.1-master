@@ -13,7 +13,7 @@ export default class ClusterInspectionStore extends Base {
   module = 'clusterInspection';
 
   getResourceUrl = (params = {}) =>
-    `apis/kubeeye.kubesphere.io/v1alpha1/clusterinsights/clusterinsight-sample`;
+    `apis/kubeeye.kubesphere.io/v1alpha1/clusterinsights/clusterinsight`;
 
   @action
   async fetchList({
@@ -53,7 +53,6 @@ export default class ClusterInspectionStore extends Base {
 
     // 초기 데이터 처리
     this.list.data = data;
-    // console.log('store data\n', data);
 
     // 검색 관련 처리
     // const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
@@ -118,8 +117,6 @@ export default class ClusterInspectionStore extends Base {
     //   isLoading: false,
     //   ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     // });
-
-    // console.log('store fetchList\n', data);
 
     return this.list.data;
   }
