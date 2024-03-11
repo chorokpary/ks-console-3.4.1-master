@@ -51,7 +51,7 @@ const VmPop = ({ title, onOk, store, match }) => {
     fnGetVmList();
 
     const fnGetFipList = async () => {
-      const fipData = await store.fipList()
+      const fipData = await store.fipList(match?.params)
       setFipList(fipData.floating_ips)
     };
     fnGetFipList();
@@ -104,11 +104,12 @@ const VmPop = ({ title, onOk, store, match }) => {
     const network = data.network[radioExternalIdx].split(" ")
 
     onOk({
+      ...match.params,
       id: fipDetail.id,
       instance_type: 'vm',
       instance_id: radioExternal,
       target_network: network[0],
-      target_ip: network[1]
+      target_ip: network[1],
     })
   }
 

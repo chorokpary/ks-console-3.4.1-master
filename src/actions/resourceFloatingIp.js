@@ -125,6 +125,8 @@ export default {
                 desc: t('RESOURCES_RELEAGE_DESC'),
                 module: store.module,
                 store,
+                cluster,
+                namespace,
                 ...props,
             })
         },

@@ -45,12 +45,12 @@ export default class FloatingIpStore extends Base {
         return res
     }
     @action
-    async update({ name, ...params }, data) {
+    async update({ ...params }) {
         const jsonData = {};
         jsonData.floating_ip = params;
 
         await this.submitting(
-            request.put(this.getDetailUrl({ name: data.name, ...params }), jsonData)
+            request.put(this.getDetailUrl({ ...params, name: params.id }), jsonData)
         )
     }
 
