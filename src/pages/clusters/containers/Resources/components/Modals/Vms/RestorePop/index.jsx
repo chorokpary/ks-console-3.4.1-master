@@ -21,12 +21,17 @@ const RestoreModal = (props) => {
 
     const success = props.success;
 
+    const params = {
+      cluster : props.cluster,
+      name : props.name
+    }
+
     form.current.validator(async () => {   
       
       const { data } = form.current.props;
       data.snapshotId = snapshotId;
 
-      vmStore.restoreCreate(data).then(() => {
+      vmStore.restoreCreate(data, params).then(() => {
         Notify.success({ content: t('RESOURCES_RESTORE_SUCCESSFUL') })
         success();
         closeModal();

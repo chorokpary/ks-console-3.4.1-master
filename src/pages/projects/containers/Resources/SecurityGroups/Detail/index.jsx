@@ -56,6 +56,7 @@ const SecurityGroupDetail = (props) => {
                     detail: toJS(store.detail),
                     store: store,
                     cluster: props.match.params.cluster,
+                    ...props.match.params,
                     success: () => routing.push(listUrl()),
                 })
         },

@@ -287,7 +287,7 @@ export default {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.snapshotDelete(id).then(() => {
+          store.snapshotDelete({ id, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -317,7 +317,7 @@ export default {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.restoreDelete(id).then(() => {
+          store.restoreDelete({ id, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -346,7 +346,7 @@ export default {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.cloneDelete(id).then(() => {
+          store.cloneDelete({ id, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
