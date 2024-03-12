@@ -7,6 +7,7 @@ import {
   LabelList,
   Cell,
   Tooltip as ChartTooltip,
+  ResponsiveContainer,
 } from 'recharts';
 // import { Tooltip } from '@kubed/components';
 import Banner from 'components/Cards/Banner';
@@ -67,39 +68,44 @@ export default class ClusterInspection extends React.Component {
                   <div className="box type_status">
                     <div className="cont_group">
                       <div className="cont1">
-                        <div className="chart_pie">
-                          <PieChart width={500} height={160}>
-                            <Pie
-                              data={chartOption}
-                              cx={300}
-                              cy={75}
-                              innerRadius={60}
-                              outerRadius={80}
-                              paddingAngle={1}
-                              dataKey="value"
-                            >
-                              {chartOption.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={entry.color}
+                        <div
+                          className="chart_pie"
+                          style={{ width: '100%', height: '200px' }}
+                        >
+                          <ResponsiveContainer>
+                            <PieChart>
+                              <Pie
+                                data={chartOption}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={80}
+                                paddingAngle={1}
+                                dataKey="value"
+                              >
+                                {chartOption.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.color}
+                                  />
+                                ))}
+                                <Label
+                                  value={data?.scoreInfo?.score}
+                                  position="center"
+                                  fontSize={50}
+                                  dy={-10}
                                 />
-                              ))}
-                              <Label
-                                value={data?.scoreInfo?.score}
-                                position="center"
-                                fontSize={50}
-                                dy={-10}
-                              />
-                              <Label
-                                value={`Health Score`}
-                                position="bottom"
-                                fontSize={13}
-                                dy={25}
-                                dx={70}
-                              />
-                            </Pie>
-                            <ChartTooltip />
-                          </PieChart>
+                                <Label
+                                  value={`Health Score`}
+                                  position="bottom"
+                                  fontSize={13}
+                                  dy={25}
+                                  dx={70}
+                                />
+                              </Pie>
+                              <ChartTooltip />
+                            </PieChart>
+                          </ResponsiveContainer>
                         </div>
                       </div>
                       <div className="cont2">
