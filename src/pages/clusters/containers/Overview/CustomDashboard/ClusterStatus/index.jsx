@@ -41,12 +41,13 @@ const ClusterStatus = ({ x, y, w, h }) => {
       let cluster = globals.currentCluster
       await componentStore.fetchList({ cluster })
       const { data } = componentStore.list;
+      const kubesphereData = data['kubesphere'].filter(arr => arr.name === 'ks-apiserver' || arr.name === 'ks-controller-manager')
       const componentData = data['kubernetes']
       // kubesphere
       // kubernetes
 
       if (cleanupTrigger) {
-        setComponentData(componentData)
+        setComponentData([...componentData, ...kubesphereData])
         setLoading(false)
       }
     };
@@ -115,10 +116,10 @@ const PodList = ({ label }) => {
   return (
     <>
       {podList.length > 0 &&
-        <>
-          <div className="box_pop">
-            <h6>Metric-Server</h6>
-            {podList.map((item, idx) => (
+        <div className="box_pop">
+          {podList.map((item, idx) => (
+            <>
+              {idx === 0 && <h6>{item.labels[Object.keys(item.labels)[0]]}</h6>}
               <div className="status_wrap" key={idx}>
                 <p className={`status 
                 ${item.podStatus.type.toLowerCase() === 'error' ? 'error' :
@@ -127,9 +128,9 @@ const PodList = ({ label }) => {
                   <span>{item.node}</span>
                 </p>
               </div>
-            ))}
-          </div>
-        </>
+            </>
+          ))}
+        </div>
       }
     </>
   )

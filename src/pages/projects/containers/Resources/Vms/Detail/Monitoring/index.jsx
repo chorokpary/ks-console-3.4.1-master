@@ -17,6 +17,8 @@ const index = (props) => {
   const store = props.detailStore;
   const customStore = new CustomStore();
 
+  const { cluster, namespace } = props.match.params;
+
   const [vmCpuData, setVmCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
   const [vmInboundData, setVmInboundData] = useState({});
@@ -72,6 +74,7 @@ const index = (props) => {
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmCpuMetricData = _.find(vmCpuData, (data) => {
@@ -89,6 +92,7 @@ const index = (props) => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
@@ -107,6 +111,7 @@ const index = (props) => {
       const vmInboundData = await customStore.fetchMetric({
         expr: `irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmInboundMetricData = _.find(vmInboundData, (data) => {
@@ -122,6 +127,7 @@ const index = (props) => {
       const vmOutboundData= await customStore.fetchMetric({
         expr: `irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*"}[5m])`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
@@ -136,6 +142,7 @@ const index = (props) => {
       const vmDiskData = await customStore.fetchMetric({
         expr: `(100 - ((sum by(pod) (node_filesystem_avail_bytes) * 100) / sum by(pod) (node_filesystem_size_bytes))) / 100`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmDiskMetricData = _.find(vmDiskData, (data) => {

@@ -131,7 +131,7 @@ export default class Routers extends React.Component {
         search: true,
         width: 'auto',
         render: project => (
-          <Link to={`/clusters/${cluster}/projects/${project}`}>
+          <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
             {showNameAndAlias(project, 'project')}
           </Link>
         ),

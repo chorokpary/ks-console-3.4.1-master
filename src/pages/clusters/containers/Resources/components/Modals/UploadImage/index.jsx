@@ -78,6 +78,7 @@ const UploadModal = (props) => {
       onSuccess: function () {
         setFileUploadCompleteFlag(true);
         console.log('Download %s from %s', upload.file.name, upload.url)
+        closeModal();
       },
       
       // 업로드 중 응답 콜백

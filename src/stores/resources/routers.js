@@ -173,8 +173,6 @@ export default class RouterStore extends Base {
 
     jsonData.router = routersData;
 
-    console.log("jsonData : " + JSON.stringify(jsonData))
-
     // id로 수정해야해서 치환
     params.name = id;
     await this.submitting(
@@ -264,9 +262,12 @@ export default class RouterStore extends Base {
 
   @action
   async networkList(params) {
+    
+    const cluster = params.store.detail.cluster;
+    const namespace = params.store.detail.namespace;
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({cluster, namespace})}/edgetron/resources/kubevirt/networks`
     )
     this.networkDataList = result.networks;
 
