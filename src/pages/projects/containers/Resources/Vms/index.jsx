@@ -233,7 +233,7 @@ export default class Vms extends React.Component {
 
   getColumns = () => {
     const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { workspace, cluster, namespace } = this.props.match.params;
     return [
       {
         title: t('NAME'),
@@ -242,7 +242,6 @@ export default class Vms extends React.Component {
         sortOrder: getSortOrder('name'),
         search: true,
         render: (name, record) => {
-          const { workspace, cluster, namespace } = this.props.match.params;
           const { state } = record;
 
           return (
@@ -275,7 +274,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: project => (
-          <Link to={`/clusters/${cluster}/projects/${project}`}>
+          <Link to={`/${workspace}/clusters/${cluster}/projects/${project}`}>
             {showNameAndAlias(project, 'project')}
           </Link>
         ),
@@ -289,7 +288,7 @@ export default class Vms extends React.Component {
         render: (image, record) => {
           const icon = `ico-os-${record.image_object?.distro_type}`;
           return image ? (
-            <Link to={`/clusters/${cluster}/images/${image}`}>
+            <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}>
               <i
                 style={{
                   backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
@@ -375,7 +374,7 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: node => {
           // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>;
-          const nodeLink = node == 'N/A' ? node : node;
+          const nodeLink = node === 'N/A' ? node : node
           return nodeLink;
         },
       },
@@ -390,12 +389,11 @@ export default class Vms extends React.Component {
           if (!!security_group_objects) {
             securityGroupText =
               security_group_objects.length > 1
-                ? `${
-                    security_group_objects[0].name
-                  } 외 ${security_group_objects.length - 1}개`
+                ? `${security_group_objects[0].name
+                } 외 ${security_group_objects.length - 1}개`
                 : security_group_objects.length == 1
-                ? security_group_objects[0].name
-                : '-';
+                  ? security_group_objects[0].name
+                  : '-';
           } else {
             securityGroupText = '';
           }

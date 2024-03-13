@@ -11,7 +11,7 @@ import styles from './index.scss'
 const Information = (props) => {
 
   const store = props.detailStore;
-  
+
   const { workspace, cluster, namespace } = props.match.params
 
   const [detailFlavor, setDetailFlavor] = useState(null);
@@ -35,7 +35,7 @@ const Information = (props) => {
 
   useEffect(() => {
 
-    const path = getPath({cluster, namespace})
+    const path = getPath({ cluster, namespace })
 
     const fnGetFlavor = async () => {
       setDetailFlavor(store.detail.vm?.flavor);
@@ -53,12 +53,12 @@ const Information = (props) => {
 
     const fnGetHostDevices = async () => {
       const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/host_devices`);
-      setHostDevicesList(response.data.host_devices);
+      setHostDevicesList(response.host_devices);
     };
 
     const fnGetMediatedDevices = async () => {
       const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/mediated_devices`);
-      setmMediatedDevicesList(response.data.mediated_devices);
+      setmMediatedDevicesList(response.mediated_devices);
     };
 
     const fnGetImage = async () => {
