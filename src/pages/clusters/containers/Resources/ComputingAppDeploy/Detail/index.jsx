@@ -51,7 +51,7 @@ const AppManageDetail = (props) => {
       {
         key: 'deploy',
         icon: 'blue-green-deployment',
-        text: t('RESOURCES_DEPLOY'),
+        text: t('RESOURCES_PLAYBOOK_DEPLOY'),
         action: 'view',
         onClick: () => {
             props.rootStore.triggerAction('computingappdeploy.deploy', {
@@ -65,7 +65,7 @@ const AppManageDetail = (props) => {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('DELETE'),
+        text: t('RESOURCES_DELETE_TEMPLATE'),
         action: 'delete',
         type: 'danger',
         show: showEdit,
