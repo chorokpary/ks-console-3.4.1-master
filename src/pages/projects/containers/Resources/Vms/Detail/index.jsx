@@ -67,6 +67,7 @@ const VmDetail = (props) => {
           detail: toJS(store.detail),
           store: store,
           success: fetchData,
+          ...props.match.params,
         })
       },
     },
@@ -90,10 +91,11 @@ const VmDetail = (props) => {
             type: 'VM_DETAIL',
             store: store,
             success: fetchData,
+            ...props.match.params
           })
         } else {
           props.rootStore.triggerAction('vm.floatingIpPop.deallocate', {
-            data: { id: floatingId },
+            data: { ...props.match.params, id: floatingId },
             store: floatingstore,
             success: fetchData,
           })
@@ -110,6 +112,7 @@ const VmDetail = (props) => {
           type: 'VM_DETAIL',
           store: store,
           success: fetchData,
+          ...props.match.params
         })
       },
     },
@@ -208,7 +211,7 @@ const VmDetail = (props) => {
           type: 'VM_DETAIL',
           detail: toJS(store.detail),
           store: store,
-          cluster: props.match.params.cluster,
+          ...props.match.params,
           success: () => routing.push(listUrl),
         }),
     },

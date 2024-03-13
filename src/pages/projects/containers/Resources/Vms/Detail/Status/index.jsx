@@ -58,7 +58,7 @@ const Status = (props) => {
 
     const fnGetNetwork = async () => {
 
-      const path = getPath({cluster, namespace})
+      const path = getPath({ cluster, namespace })
 
       setDetailNetwork([]);
 
@@ -386,7 +386,7 @@ const Status = (props) => {
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    {!!!obj.resource_name  ? (
+                    {!!!obj.resource_name ? (
                       <Icon name={`network-duotone`} size={40} />
                     ) : (
                       <i className="ico-type-sriov"></i>
@@ -423,36 +423,6 @@ const Status = (props) => {
             </div>
           </Panel>
         )}
-
-        {detailNetwork.length > 0 &&
-          <Panel title={"네트워크"}>
-            <div className={styles.wrapper}>
-              {detailNetwork.map((obj, index) => (
-                <div className={classnames(styles.itemNetwork)} key={index}>
-                  <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} />
-                  </div>
-                  <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
-                    <p>{t('RESOURCES_NAME')}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>{obj.type}</div>
-                    <p>{t('RESOURCES_TYPE_YOO')}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>{obj.cidr}</div>
-                    <p>CIDR</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>{obj.gateway_ip}</div>
-                    <p>{t('RESOURCES_GATEWAY')}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Panel>
-        }
 
         {/* 볼륨 */}
         {detailVolume.length > 0 &&
