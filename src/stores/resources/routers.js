@@ -254,17 +254,15 @@ export default class RouterStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-    console.log("user : " + JSON.stringify(user))
-    console.log(`${this.getDetailUrl(user)}`)
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 
   @action
   async networkList(params) {
-    
-    const cluster = params.store.detail.cluster;
-    const namespace = params.store.detail.namespace;
+
+    const cluster = params.cluster;
+    const namespace = params.namespace;
 
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({cluster, namespace})}/edgetron/resources/kubevirt/networks`
