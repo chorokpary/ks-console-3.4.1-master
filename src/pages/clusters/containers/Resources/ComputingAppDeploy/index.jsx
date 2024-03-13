@@ -50,7 +50,7 @@ export default class ImageBuild extends React.Component {
       {
         key: 'deploy',
         icon: 'blue-green-deployment',
-        text: t('RESOURCES_DEPLOY'),
+        text: t('RESOURCES_PLAYBOOK_DEPLOY'),
         action: 'edit',
         show: this.showAction,
         onClick: item =>
@@ -63,7 +63,7 @@ export default class ImageBuild extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('RESOURCES_DELETE'),
+        text: t('RESOURCES_DELETE_TEMPLATE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
@@ -98,7 +98,7 @@ export default class ImageBuild extends React.Component {
         {
           key: 'delete',
           type: 'danger',
-          text: t('RESOURCES_DELETE'),
+          text: t('RESOURCES_DELETE_TEMPLATE'),
           action: 'delete',
           onClick: () =>
             trigger('computingappdeploy.remove.batch', {

@@ -151,7 +151,7 @@ export default class VolumeStore extends Base {
     jsonData.action = actionData;
 
     await this.submitting(
-      request.put(`${this.getDetailUrl({ id: data.id, ...params })}/action`, jsonData)
+      request.put(`${this.getDetailUrl({ ...params, id: data.id, })}/action`, jsonData)
     )
   }
 

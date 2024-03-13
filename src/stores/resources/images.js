@@ -101,9 +101,10 @@ export default class ImageStore extends Base {
       })
       .filter(row => exceptionArray.includes(row.searchKeywordType) === false);
 
+    this.searchList = this.dataList;
     if (searchArray.length > 0) {
       searchArray.map(search => {
-        const resultList = this.dataList.filter(row => {
+        const resultList = this.searchList.filter(row => {
 
           return row[search.searchKeywordType]
             ?.toLowerCase()

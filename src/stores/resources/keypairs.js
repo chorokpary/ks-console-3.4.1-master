@@ -16,30 +16,32 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
-import { observable, action } from 'mobx'
-import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
+import { get, set, uniq, isArray, intersection } from 'lodash';
+import { observable, action } from 'mobx';
+import { Notify } from '@kube-design/components';
+import { LIST_DEFAULT_ORDER } from 'utils/constants';
+import ObjectMapper from 'utils/object.mapper';
+import cookie from 'utils/cookie';
 
-
-import Base from '../basemm3' // mm3 관련 추가 파일
-import List from '../base.list'
+import Base from '../basemm3'; // mm3 관련 추가 파일
+import List from '../base.list';
 
 export default class KeypairStore extends Base {
+  records = new List();
 
-  records = new List()
+  module = 'keypairs';
 
-  module = 'keypairs'
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/keypairs`;
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/keypairs`
-  getListUrl = this.getResourceUrl
-  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
+  getListUrl = this.getResourceUrl;
+
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`;
 
   @action
   async create(data, params = {}) {
-    console.log(params)
     const url = this.getResourceUrl(params);
 
     const jsonData = {};
@@ -52,8 +54,8 @@ export default class KeypairStore extends Base {
 
     jsonData.keypair = keypairData;
 
-    const res = await request.post(url, jsonData)
-    return res
+    const res = await request.post(url, jsonData);
+    return res;
   }
 
   @action
@@ -68,67 +70,63 @@ export default class KeypairStore extends Base {
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    )
+    );
   }
-
 
   @action
   async fetchDetail(params) {
-    this.isLoading = true
+    this.isLoading = true;
 
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.id}`
-    )
-    const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' }
+    );
+    const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' };
 
-    // Yaml 파일 관련 
+    // Yaml 파일 관련
     await this.fetchYaml(params);
 
-    this.detail = detail
-    this.isLoading = false
-    return detail
+    this.detail = detail;
+    this.isLoading = false;
+    return detail;
   }
 
   @action
   async fetchYaml(params) {
-    this.isLoading = true
+    this.isLoading = true;
 
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.id}/manifest`
-    )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' }
+    );
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' };
 
-    this.yaml = yamlData.manifest
-    this.isLoading = false
-    return yamlData
+    this.yaml = yamlData.manifest;
+    this.isLoading = false;
+    return yamlData;
   }
 
   @action
   async batchDelete({ rowKeys, ...params }) {
     if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
     } else {
       await this.submitting(
         Promise.all(
           rowKeys.map(id =>
-            request.delete(
-              `${this.getDetailUrl({ id, ...params })}`
-            )
+            request.delete(`${this.getDetailUrl({ id, ...params })}`)
           )
         )
-      )
+      );
     }
-    this.list.selectedRowKeys = []
+    this.list.selectedRowKeys = [];
   }
 
   @action
   delete(user) {
     if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-      return
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+      return;
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    return this.submitting(request.delete(`${this.getDetailUrl(user)}`));
   }
-
 }

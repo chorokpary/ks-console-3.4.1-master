@@ -46,6 +46,7 @@ export default class ImageBuild extends React.Component {
 
   get itemActions() {
     const { getData, trigger } = this.props;
+
     return [
       {
         key: 'delete',

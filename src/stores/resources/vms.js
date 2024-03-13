@@ -130,9 +130,10 @@ export default class VmStore extends Base {
       })
       .filter(row => exceptionArray.includes(row.searchKeywordType) === false);
 
+    this.searchList = this.dataList;
     if (searchArray.length > 0) {
       searchArray.map(search => {
-        const resultList = this.dataList.filter(row => {
+        const resultList = this.searchList.filter(row => {
           if (
             search.searchKeywordType === 'project' &&
             search.searchKeywordText !== ''
@@ -703,7 +704,7 @@ export default class VmStore extends Base {
   }
 
   @action
-  snapshotDelete({id, ...props}) {
+  snapshotDelete({ id, ...props }) {
     // let cluster = globals.currentCluster
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(props)}/edgetron/resources/kubevirt/vms/snapshots/${id}`;
     return this.submitting(request.delete(url));
@@ -742,7 +743,7 @@ export default class VmStore extends Base {
   }
 
   @action
-  restoreDelete({id, ...props}) {
+  restoreDelete({ id, ...props }) {
     // let cluster = globals.currentCluster
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(props)}/edgetron/resources/kubevirt/vms/restores/${id}`;
     return this.submitting(request.delete(url));
@@ -781,7 +782,7 @@ export default class VmStore extends Base {
   }
 
   @action
-  cloneDelete({id, ...props}) {
+  cloneDelete({ id, ...props }) {
     // let cluster = globals.currentCluster
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(props)}/edgetron/resources/kubevirt/vms/clones/${id}`;
     return this.submitting(request.delete(url));

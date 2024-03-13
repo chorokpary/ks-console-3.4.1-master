@@ -14,15 +14,17 @@ import { PATTERN_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
 
+  console.log("props.isSubmitting  : " + props.isSubmitting)
+
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
   const [cpuType, setCpuType] = useState('ARM')
 
-  const [registryUrl, setRegistryUrl] = useState('')
-  const [userName, setUserName] = useState('')
-  const [userPassword, setUserPassword] = useState('')
+  const [registryUrl, setRegistryUrl] = useState('ntels.harbor.core/arm-cmp/test-image:latest')
+  const [userName, setUserName] = useState('admin')
+  const [userPassword, setUserPassword] = useState('gozldqkdwl2')
 
   const [harborValid, setHarborValid] = useState(false)
   
@@ -125,6 +127,24 @@ const RegistModal = (props) => {
     callback()
   }
 
+  const fnGetModalFooter = () => {
+
+    let elements = "";
+    elements =
+      <>
+      
+          <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+          {props.isSubmitting ?
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
+            :
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
+          }
+
+      </>
+
+    return elements;
+  }
+
   return (
     <>
       <Modal
@@ -133,10 +153,12 @@ const RegistModal = (props) => {
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
+        bodyClassName={styles.body}
         visible={modelView}
+        hideFooter
       >
         <Form data={formData} ref={form}>
-
+          
           <Form.Item
             label={t('RESOURCES_NAME')}
             rules={[
@@ -265,6 +287,10 @@ const RegistModal = (props) => {
             />
           </Form.Item>
 
+          <div className={styles['modal-footer']}>
+            {fnGetModalFooter()}
+          </div>
+          
         </Form>
       </Modal>
 

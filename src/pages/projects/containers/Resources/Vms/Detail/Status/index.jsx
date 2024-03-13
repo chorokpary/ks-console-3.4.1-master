@@ -35,6 +35,7 @@ const Status = (props) => {
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
   const intiParams = { "times": 50, "step": "10m" }
+  const [networkType, setNetworkType] = useState('network');
 
   const getPath = ({ cluster, namespace } = {}) => {
     let path = ''
@@ -57,7 +58,7 @@ const Status = (props) => {
 
     const fnGetNetwork = async () => {
 
-      const path = getPath({cluster, namespace})
+      const path = getPath({ cluster, namespace })
 
       setDetailNetwork([]);
 
@@ -379,20 +380,34 @@ const Status = (props) => {
         }
 
         {/* 네트워크 */}
-        {detailNetwork.length > 0 &&
-          <Panel title={"네트워크"}>
+        {detailNetwork.length > 0 && (
+          <Panel title={'네트워크'}>
             <div className={styles.wrapper}>
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} />
+                    {!!!obj.resource_name ? (
+                      <Icon name={`network-duotone`} size={40} />
+                    ) : (
+                      <i className="ico-type-sriov"></i>
+                    )}
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+                    <div>
+                      {!!!obj.resource_name ? (
+                        <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}>
+                          {obj.name}
+                        </Link>
+                      ) : (
+                        <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/sriovs/${obj.name}`}>
+                          {obj.name}
+                        </Link>
+                      )}
+                    </div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.type}</div>
+                    <div>{obj.type.toUpperCase()}</div>
                     <p>{t('RESOURCES_TYPE_YOO')}</p>
                   </div>
                   <div className={styles.title}>
@@ -407,7 +422,7 @@ const Status = (props) => {
               ))}
             </div>
           </Panel>
-        }
+        )}
 
         {/* 볼륨 */}
         {detailVolume.length > 0 &&
