@@ -105,9 +105,10 @@ export default class LoadBalancerStore extends Base {
             return searchData
         }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
 
+        this.searchList = this.dataList;
         if (searchArray.length > 0) {
             searchArray.map((search) => {
-                let resultList = this.dataList.filter((row) => {
+                let resultList = this.searchList.filter((row) => {
                     if (search.searchKeywordType === 'project') {
                         return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
                     }
