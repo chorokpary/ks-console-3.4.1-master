@@ -54,7 +54,20 @@ const ImageBuildDetail = (props) => {
 
     const getAttrs = () => {
       const detail = toJS(store.detail)
-  
+      const uploadInfo = get(detail, ['upload-info-list', 'upload-info'])
+
+      let fileStatus = "-";
+      let fileName = "-";
+      let fileSize = 0;
+      let fileConvertSize = "-";
+
+      if(!!uploadInfo) {
+         fileStatus = uploadInfo[0]['upload-file-info']['Status'];
+         fileName = uploadInfo[0]['upload-file-info']['file-info']['ID'];
+         fileSize = uploadInfo[0]['file-size'];          
+         fileConvertSize = common.fnFormatBytes(fileSize.toString());
+      }
+
       if (isEmpty(detail)) {
         return
       }
@@ -78,23 +91,23 @@ const ImageBuildDetail = (props) => {
         },
         {
           name: t('RESOURCES_FILE_NAME'),
-          value: detail.cluster,
+          value: fileName,
         },
         {
           name: t('RESOURCES_SIZE'),
-          value: detail.cluster,
+          value: fileConvertSize,
         },
         {
           name: t('Registry URL'),
-          value: detail.cluster,
+          value: detail.tags.registUrl,
         },
         {
           name: t('RESOURCES_STATE'),
-          value: detail.cluster,
+          value: fileStatus,
         },
         {
           name: t('RESOURCES_DESCRIPTION'),
-          value: detail.cluster,
+          value: detail.tags.description,
         },
       ]
     }

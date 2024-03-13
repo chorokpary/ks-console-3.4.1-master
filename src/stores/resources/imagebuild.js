@@ -22,7 +22,7 @@ import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
-
+import axios from 'axios'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -128,7 +128,7 @@ export default class ImageBuildStore extends Base {
     })
 
     //console.log(this.dataList)
-    // console.log(JSON.stringify(this.dataList))
+    console.log(JSON.stringify(this.dataList))
 
     return this.dataList
   }
@@ -144,7 +144,7 @@ export default class ImageBuildStore extends Base {
     tagsData.cpuType = data.cpuType
     tagsData.tag = data.tag
     tagsData.os = data.os
-    tagsData.registUrl = data.registUrl
+    // tagsData.registUrl = data.registUrl
     tagsData.description = data.description
 
     containerData.destination = data.registUrl
@@ -155,9 +155,21 @@ export default class ImageBuildStore extends Base {
     jsonData['tags'] = tagsData
     jsonData['container-registry'] = containerData
 
+    console.log("url : "+ url)
     console.log("jsonData : "+ JSON.stringify(jsonData))
 
-    const res = await request.post(url, jsonData)
+    // let res = ''
+    // fetch(url, {
+    //   method: 'POST',
+    //   headers: {"Content-Type": "application/json"},
+    //   body: JSON.stringify(jsonData)
+    // }).then((res) => {
+    //   res = res;
+    //   console.log('new blog added');
+    // })
+
+    const res = await this.submitting(request.post(url, jsonData));
+    console.log("res : "+ JSON.stringify(res))
     return res
   }
 

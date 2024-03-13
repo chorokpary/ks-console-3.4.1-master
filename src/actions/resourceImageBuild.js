@@ -142,6 +142,7 @@ export default {
       const modal = Modal.open({
         onOk: async data => {
           Modal.close(modal)
+          success && success()
         },
         detail,
         store,

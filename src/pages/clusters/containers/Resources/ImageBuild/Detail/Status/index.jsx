@@ -81,11 +81,7 @@ const Status = (props) => {
                   extra={
                     <Icon
                       className={styles.status}
-                      name={'error'}
-                      color={{
-                        primary: '#fff',
-                        secondary: '#ca2621',
-                      }}
+                      name={'substract'}
                     />
                   }
                 /> 

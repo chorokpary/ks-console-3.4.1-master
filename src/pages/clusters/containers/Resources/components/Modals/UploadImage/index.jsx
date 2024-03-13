@@ -16,6 +16,8 @@ const UploadModal = (props) => {
 
   const image_uuid = props.detail.name;
 
+  const onOk = props.onOk;
+
   console.log("image_uuid : "+ image_uuid)
 
   const [modelView, setModalView] = useState(true);
@@ -64,6 +66,7 @@ const UploadModal = (props) => {
         filetype: file.type,
         fileid: file.name,
       },
+      chunkSize: 100,
       // Callback for errors which cannot be fixed using retries
       onError: function (error) {
         console.log('Failed because: ' + error)
@@ -78,7 +81,8 @@ const UploadModal = (props) => {
       onSuccess: function () {
         setFileUploadCompleteFlag(true);
         console.log('Download %s from %s', upload.file.name, upload.url)
-        closeModal();
+        // closeModal();
+        onOk({});
       },
       
       // 업로드 중 응답 콜백
@@ -95,6 +99,7 @@ const UploadModal = (props) => {
 
   const startOrResumeUpload = (upload) => {
     upload.findPreviousUploads().then(function (previousUploads) {
+      console.log("previousUploads : "+ previousUploads)
         // Found previous uploads so we select the first one.
         if (previousUploads.length) {
             upload.resumeFromPreviousUpload(previousUploads[0])
