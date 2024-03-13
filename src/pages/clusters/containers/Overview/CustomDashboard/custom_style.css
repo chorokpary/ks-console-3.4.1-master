@@ -2998,13 +2998,22 @@ html {
   width: 100%;
   border-bottom: 1px solid #ccd3db;
 }
-.content_box_wrap .sub_layer_pop .disc {
+.content_box_wrap .sub_layer_pop > .desc {
   display: flex;
   flex-grow: 1;
+  flex-direction: column;
   overflow-y: auto;
   padding: 15px;
   border-radius: 3px;
   background: #eff4f9;
+}
+.content_box_wrap .sub_layer_pop > .desc > h2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+}
+.content_box_wrap .sub_layer_pop > .desc > p {
+  margin-bottom: 20px;
 }
 
 /* Topology 개발 적용후 custom 요소 */
