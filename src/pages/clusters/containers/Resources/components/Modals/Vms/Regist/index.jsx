@@ -152,7 +152,7 @@ const RegistModal = (props) => {
   }
 
   const bootvolumeOptions = () => {
-    const filterData = bootVolumeDataList.filter((item) => item.name.includes('bootdisk') == false)
+    const filterData = bootVolumeDataList.filter((item) => (!item.name.includes('boot-dv') && !item.name.includes('boot-volume') && !item.name.includes('bootdisk')))
     const opt = filterData.map((obj) => ({
       label: t(obj.name),
       value: t(obj.id),
