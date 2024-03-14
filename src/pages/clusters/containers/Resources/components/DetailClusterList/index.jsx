@@ -1088,7 +1088,7 @@ const DetailClusterList = props => {
                       key={`extra-item-${indexNum}`}
                       onClick={e => {
                         if (foundData) {
-                          setShowPopup(foundData, indexNum);
+                          setShowPopup(foundData);
                           setMessage(foundData.name);
                           setDescribe(foundData.describe);
                           setLevel(foundData.level);
