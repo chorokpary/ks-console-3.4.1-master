@@ -2949,7 +2949,7 @@ html {
   width: 425px;
   height: 712px;
   padding: 20px;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
@@ -3006,6 +3006,7 @@ html {
   padding: 15px;
   border-radius: 3px;
   background: #eff4f9;
+  width: 100%;
 }
 .content_box_wrap .sub_layer_pop > .desc > h2 {
   font-size: 14px;

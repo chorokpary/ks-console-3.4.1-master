@@ -33,6 +33,7 @@ export default class ImageBuildStore extends Base {
 
   module = 'imagebuild'
 
+  postResourceUrl = (params = {}) => `builder/`
   getResourceUrl = (params = {}) => `builder`
   getListUrl = (params = {}) => `builder/list`
   getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.name}`
@@ -128,14 +129,14 @@ export default class ImageBuildStore extends Base {
     })
 
     //console.log(this.dataList)
-    console.log(JSON.stringify(this.dataList))
+    // console.log(JSON.stringify(this.dataList))
 
     return this.dataList
   }
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
+    const url = this.postResourceUrl(params);
 
     const jsonData = {};
     const tagsData = {};
@@ -144,7 +145,7 @@ export default class ImageBuildStore extends Base {
     tagsData.cpuType = data.cpuType
     tagsData.tag = data.tag
     tagsData.os = data.os
-    // tagsData.registUrl = data.registUrl
+    tagsData.registUrl = data.registUrl
     tagsData.description = data.description
 
     containerData.destination = data.registUrl

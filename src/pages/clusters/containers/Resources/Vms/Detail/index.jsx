@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx';
@@ -227,7 +227,6 @@ const VmDetail = props => {
 
   const getAttrs = () => {
     const detail = toJS(store.detail);
-
     if (isEmpty(detail)) {
       return;
     }
@@ -250,17 +249,17 @@ const VmDetail = props => {
         value:
           detail.vm.networks.length > 0
             ? detail.vm.networks &&
-              detail.vm.networks.map(network => {
-                if (network.name != 'k8s-pod-network') {
-                  return <p key={network.name}>{network.ip}</p>;
-                }
-                if (
-                  detail.vm.networks.length == 1 &&
-                  network.name == 'k8s-pod-network'
-                ) {
-                  return <p key={network.name}>-</p>;
-                }
-              })
+            detail.vm.networks.map(network => {
+              if (network.name != 'k8s-pod-network') {
+                return <p key={network.name}>{network.ip}</p>;
+              }
+              if (
+                detail.vm.networks.length == 1 &&
+                network.name == 'k8s-pod-network'
+              ) {
+                return <p key={network.name}>-</p>;
+              }
+            })
             : '-',
       },
       {
@@ -280,9 +279,9 @@ const VmDetail = props => {
         value:
           detail.vm.security_groups.length > 0
             ? detail.vm.security_groups &&
-              detail.vm.security_groups.map(security => (
-                <p key={security.id}>{security.name}</p>
-              ))
+            detail.vm.security_groups.map(security => (
+              <p key={security.id}>{security.name}</p>
+            ))
             : '-',
       },
       {

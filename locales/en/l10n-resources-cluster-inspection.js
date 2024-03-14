@@ -1,20 +1,3 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
 module.exports = {
   CLUSTER_INSPECTION_MORNITORING: '클러스터 인스펙션 모니터링',
   CLUSTER_INSPECTION_DESC: '클러스터의 상태를 모니터링 합니다.',
@@ -150,12 +133,32 @@ module.exports = {
   CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD:
     'Please update the security certificate in time',
 
-  //   CLUSTER_INSPECTION_DESC_:
-  //   CLUSTER_INSPECTION_SUGGEST_:
+  CLUSTER_INSPECTION_DESC_CANDELETERESOURCES: 'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_CANDELETERESOURCES: 'Contact your administrator',
 
-  //   CLUSTER_INSPECTION_DESC_:
-  //   CLUSTER_INSPECTION_SUGGEST_:
+  CLUSTER_INSPECTION_DESC_KUBELETHASDISKPRESSURE: 'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_KUBELETHASDISKPRESSURE:
+    'Contact your administrator',
 
-  //   CLUSTER_INSPECTION_DESC_:
-  //   CLUSTER_INSPECTION_SUGGEST_:
+  CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTMEMORY:
+    'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTMEMORY:
+    'Contact your administrator',
+
+  CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTPID:
+    'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTPID:
+    'Contact your administrator',
+
+  CLUSTER_INSPECTION_DESC_NOPRIORITYCLASSNAME: 'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASSNAME: 'Contact your administrator',
+
+  CLUSTER_INSPECTION_DESC_ERROR: 'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_ERROR: 'Contact your administrator',
+
+  CLUSTER_INSPECTION_DESC_ERRIMPORTFAILED: 'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_ERRIMPORTFAILED: 'Contact your administrator',
+
+  CLUSTER_INSPECTION_DESC_BACKOFF: 'Contact your administrator',
+  CLUSTER_INSPECTION_SUGGEST_BACKOFF: 'Contact your administrator',
 };
