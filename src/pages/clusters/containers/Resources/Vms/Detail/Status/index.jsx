@@ -59,6 +59,10 @@ const Status = props => {
       });
 
       if (filterData.length > 0) {
+        // external만 존재할 경우 fip 할당 숨김처리
+        if (!filterData.some(obj => !obj.external)) {
+          document.querySelector('[data-test=detail-floatingIp]').parentElement.remove()
+        }
         const promises = filterData.filter(async network => {
           if (network.name != 'k8s-pod-network') {
             const networkDetail = await request.get(
@@ -394,7 +398,7 @@ const Status = props => {
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    {!!!obj.resource_name  ? (
+                    {!!!obj.resource_name ? (
                       <Icon name={`network-duotone`} size={40} />
                     ) : (
                       <i className="ico-type-sriov"></i>
