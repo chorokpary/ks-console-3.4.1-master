@@ -1,87 +1,95 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Modal } from 'components/Base'
-import { Form, Input, Select, Icon, Tooltip, TextArea, Dropdown } from '@kube-design/components'
-import { Column, Columns } from '@kube-design/components/lib/components/Layout'
-import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
-import DistroTypeStore from 'stores/resources/distrotype'
-import styles from './index.scss'
-import TypeSelect from '../../../TypeSelect'
-import CardSelect from '../../../CardSelect'
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Form,
+  Input,
+  Select,
+  Icon,
+  Tooltip,
+  TextArea,
+  Dropdown,
+} from '@kube-design/components';
+import { Column, Columns } from '@kube-design/components/lib/components/Layout';
+import {
+  RadioButton,
+  RadioGroup,
+} from '@kube-design/components/lib/components/Radio';
+import { Modal } from 'components/Base';
+import DistroTypeStore from 'stores/resources/distrotype';
+import styles from './index.scss';
+import TypeSelect from '../../../TypeSelect';
+import CardSelect from '../../../CardSelect';
 
 export default function ResourceImageModal({ title, store, onOk, detail }) {
-
   const form = useRef();
   const [formData, setFormData] = useState({});
   const distroTypeStore = new DistroTypeStore();
 
   const [modelView, setModalView] = useState(true);
 
-  const [realTime, setRealTime] = useState(detail.is_realtime)
-  const [osType, setOsType] = useState(detail.os_type)
-  const [distroTypeData, setDistroTypeData] = useState([])
-  const [distroTypeList, setDistroTypeList] = useState([])
-  const [distroType, setDistroType] = useState(detail.distro_type)
+  const [realTime, setRealTime] = useState(detail.is_realtime);
+  const [osType, setOsType] = useState(detail.os_type);
+  const [distroTypeData, setDistroTypeData] = useState([]);
+  const [distroTypeList, setDistroTypeList] = useState([]);
+  const [distroType, setDistroType] = useState(detail.distro_type);
 
   useEffect(() => {
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList();
-      setDistroTypeData(dist)
-      setDistroTypeList(dist.filter(obj => obj.name != 'windows'))
+      setDistroTypeData(dist);
+      setDistroTypeList(dist.filter(obj => obj.name != 'windows'));
     };
     getDistroTypeList();
-  }, [])
+  }, []);
 
   const realTimeOptions = [
-    { label: t('RESOURCES_NOT_USE'), value: false, },
-    { label: t('RESOURCES_USE'), value: true, }
-  ]
+    { label: t('RESOURCES_NOT_USE'), value: false },
+    { label: t('RESOURCES_USE'), value: true },
+  ];
   const archTypeOptions = [
-    { label: 'x86_64', value: 'x86_64', },
-    { label: 'aarch64', value: 'aarch64', },
-  ]
+    { label: 'x86_64', value: 'x86_64' },
+    { label: 'aarch64', value: 'aarch64' },
+  ];
   const bootTypeOptions = [
-    { label: 'legacy', value: 'legacy', },
-    { label: 'uefi', value: 'uefi', }
-  ]
+    { label: 'legacy', value: 'legacy' },
+    { label: 'uefi', value: 'uefi' },
+  ];
   const osTypeOptions = [
-    { label: 'Linux', value: 'linux', icon: 'ico-linux', },
-    { label: 'Windows', value: 'windows', icon: 'ico-windows', },
-    { label: 'etc', value: '', icon: 'ico-plus', }
-
-  ]
+    { label: 'Linux', value: 'linux', icon: 'ico-linux' },
+    { label: 'Windows', value: 'windows', icon: 'ico-windows' },
+    // { label: 'etc', value: '', icon: 'ico-plus', }
+  ];
   const distroTypeOptions = () => {
-    const opt = distroTypeList.map((obj) => ({
+    const opt = distroTypeList.map(obj => ({
       label: t(obj.name),
       description: t(obj.vendor),
       icon: `ico-os-${obj.name}`,
       value: t(obj.name),
-    }))
-    return opt
-  }
+    }));
+    return opt;
+  };
 
   const handleOk = () => {
-
     form.current.validator(() => {
       const { data } = form.current.props;
       data.distro_type = distroType;
-      onOk({ ...data })
-    })
-  }
+      onOk({ ...data });
+    });
+  };
 
   const closeModal = () => {
     setModalView(false);
-  }
+  };
 
-  const handleOsType = (value) => {
-    setOsType(value)
+  const handleOsType = value => {
+    setOsType(value);
     if (value == 'windows') {
-      setDistroType('windows')
-      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'))
+      setDistroType('windows');
+      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'));
     } else {
-      setDistroType('ubuntu')
-      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'))
+      setDistroType('ubuntu');
+      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'));
     }
-  }
+  };
 
   return (
     <>
@@ -98,25 +106,29 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
         <Form data={formData} ref={form}>
           <Form.Item
             label={t('RESOURCES_NAME')}
-            rules={[{ required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },]}
+            rules={[
+              { required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },
+            ]}
           >
-            <Input name="name" maxLength={253}
+            <Input
+              name="name"
+              maxLength={253}
               defaultValue={detail.name}
               style={{ maxWidth: 'none' }}
-              readOnly />
+              readOnly
+            />
           </Form.Item>
 
           <Form.Item>
-
             <Columns>
               <Column>
                 <Form.Item
                   label={t('RESOURCES_IMAGE')}
-                  rules={[{ required: true, }]}
+                  rules={[{ required: true }]}
                 >
                   <CardSelect
                     className={styles.customUl}
-                    onChange={(e) => handleOsType(e)}
+                    onChange={e => handleOsType(e)}
                     name="os_type"
                     options={osTypeOptions}
                     defaultValue={osType}
@@ -126,14 +138,15 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
               <Column>
                 <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
                   <TypeSelect
-                    onChange={(e) => setDistroType(e)}
+                    onChange={e => setDistroType(e)}
                     defaultValue={distroType}
                     options={distroTypeOptions()}
                   />
                 </Form.Item>
                 <Form.Item>
                   <Input
-                    defaultValue={osType[0].toUpperCase() + osType.slice(1, osType.length) + ' > ' + distroType}
+                    defaultValue={`${osType[0].toUpperCase() +
+                      osType.slice(1, osType.length)} > ${distroType}`}
                     readOnly
                     style={{ maxWidth: 'none' }}
                   />
@@ -147,18 +160,20 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
               <Column>
                 <Form.Item
                   label={t('RESOURCES_CPU_TYPE')}
-                  rules={[{ required: true, },]}
+                  rules={[{ required: true }]}
                 >
                   <Select
                     name="arch_type"
                     defaultValue={detail.arch_type}
-                    options={archTypeOptions} />
+                    options={archTypeOptions}
+                  />
                 </Form.Item>
               </Column>
               <Column>
                 <Form.Item
                   label={t('RESOURCES_BOOT_TYPE')}
-                  rules={[{ required: true, },]}>
+                  rules={[{ required: true }]}
+                >
                   <Select
                     name="boot_type"
                     defaultValue={detail.boot_type}
@@ -171,7 +186,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
 
           <Form.Item
             label={t('RESOURCES_REAL_TIME')}
-            rules={[{ required: true, },]}
+            rules={[{ required: true }]}
           >
             <RadioGroup
               name="is_realtime"
@@ -189,7 +204,12 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
 
           <Form.Item
             label={t('RESOURCES_DESCRIPTION')}
-            rules={[{ required: true, message: t('RESOURCES_DESCRIPTION_EMPTY_DESC')}]}
+            rules={[
+              {
+                required: true,
+                message: t('RESOURCES_DESCRIPTION_EMPTY_DESC'),
+              },
+            ]}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
@@ -200,10 +220,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             />
           </Form.Item>
         </Form>
-
-      </Modal >
+      </Modal>
     </>
-
-  )
-
+  );
 }
