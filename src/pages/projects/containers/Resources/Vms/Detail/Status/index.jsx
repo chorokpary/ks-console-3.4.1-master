@@ -35,22 +35,70 @@ const Status = (props) => {
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
   const intiParams = { "times": 50, "step": "10m" }
+  const [networkType, setNetworkType] = useState('network');
+
+  const getPath = ({ cluster, namespace } = {}) => {
+    let path = ''
+    if (cluster) {
+      path += `klusters/${cluster}`
+    }
+    if (namespace) {
+      path += `/namespaces/${namespace}`
+    }
+    return path
+  }
 
   useEffect(() => {
+
+    if (!store.detail.vm) return;
 
     const fnGetFlavor = async () => {
       setDetailFlavor(store.detail.vm?.flavor);
     };
 
     const fnGetNetwork = async () => {
+
+      const path = getPath({ cluster, namespace })
+
       setDetailNetwork([]);
-      const promises = (store.detail.vm.networks).map(async (network) => {
-        if (network.name != "k8s-pod-network") {
-          const networkDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` + network.name);
-          setDetailNetwork(detailNetwork => [...detailNetwork, networkDetail.data.network])
-        }
-      })
-      await Promise.all(promises);
+
+      const networkData = store.networksList;
+      const networkNameArray = store.detail.vm?.networks.map(item => item.name);
+      const filterData = networkData.filter(item => {
+        return networkNameArray.includes(item.id);
+      });
+
+      const sriovNetworkData = store.sriov_networks;
+      const sriovFilterData = sriovNetworkData.filter(item => {
+        return networkNameArray.includes(item.name);
+      });
+
+      if (filterData.length > 0) {
+        const promises = filterData.filter(async network => {
+          if (network.name != 'k8s-pod-network') {
+            const networkDetail = await request.get(
+              `kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/networks/${network.id}`
+            );
+            setDetailNetwork(value => [...value, networkDetail.network]);
+            setNetworkType('network');
+          }
+        });
+        await Promise.all(promises);
+      }
+
+      if (sriovFilterData.length > 0) {
+        const promises = sriovFilterData.filter(async network => {
+          if (network.name != 'k8s-pod-network') {
+            const networkDetail = await request.get(
+              `kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
+            );
+            setDetailNetwork(value => [...value, networkDetail.network]);
+            setNetworkType('sriovnetwork');
+          }
+        });
+        await Promise.all(promises);
+      }
+
     };
 
     const fnGetSecurityGroup = async () => {
@@ -121,6 +169,7 @@ const Status = (props) => {
       const vmCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmCpuMetricData = _.find(vmCpuData, (data) => {
@@ -138,6 +187,7 @@ const Status = (props) => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
+        cluster, namespace
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
@@ -330,20 +380,34 @@ const Status = (props) => {
         }
 
         {/* 네트워크 */}
-        {detailNetwork.length > 0 &&
-          <Panel title={"네트워크"}>
+        {detailNetwork.length > 0 && (
+          <Panel title={'네트워크'}>
             <div className={styles.wrapper}>
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    <Icon name="network-duotone" size={40} />
+                    {!!!obj.resource_name ? (
+                      <Icon name={`network-duotone`} size={40} />
+                    ) : (
+                      <i className="ico-type-sriov"></i>
+                    )}
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
-                    <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+                    <div>
+                      {!!!obj.resource_name ? (
+                        <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}>
+                          {obj.name}
+                        </Link>
+                      ) : (
+                        <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/sriovs/${obj.name}`}>
+                          {obj.name}
+                        </Link>
+                      )}
+                    </div>
                     <p>{t('RESOURCES_NAME')}</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.type}</div>
+                    <div>{obj.type.toUpperCase()}</div>
                     <p>{t('RESOURCES_TYPE_YOO')}</p>
                   </div>
                   <div className={styles.title}>
@@ -358,7 +422,7 @@ const Status = (props) => {
               ))}
             </div>
           </Panel>
-        }
+        )}
 
         {/* 볼륨 */}
         {detailVolume.length > 0 &&

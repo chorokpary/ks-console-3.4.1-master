@@ -76,7 +76,7 @@ function getVmData(data) {
   var lastData = config.data[config.data.length - 1];
   if (lastData) {
     lastData.UNIT = config.unit
-    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
+    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
   }
 
   return lastData
@@ -91,7 +91,7 @@ function getKaasData(data) {
   var lastData = config.data[config.data.length - 1];
   if (lastData) {
     lastData.UNIT = config.unit
-    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'traffic'))
+    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
   }
 
   return lastData
@@ -137,7 +137,7 @@ function getVmResult(data) {
     {
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
-      unitType: 'traffic',
+      unitType: 'bandwidth',
       legend: ['OUT', 'IN'],
       data: [
         data.vmOutboundData[0],
@@ -154,7 +154,7 @@ function getKaasResult(data) {
     {
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
-      unitType: 'traffic',
+      unitType: 'bandwidth',
       legend: ['OUT', 'IN'],
       data: [
         data.vmOutboundData[0],

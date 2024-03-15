@@ -1,37 +1,37 @@
-
-import React, { useEffect } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
+import React, { useEffect } from 'react';
 
 import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx'
-import { get, isEmpty } from 'lodash'
+import { toJS } from 'mobx';
+import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
-import { getLocalTime } from 'utils'
+import DetailPage from 'clusters/containers/Base/Detail';
+import { Card } from 'components/Base';
+import { getLocalTime } from 'utils';
 
-import * as common from 'utils/resources'
-import routes from './routes'
+import * as common from 'utils/resources';
+import routes from './routes';
 
-import KeypairStore from 'stores/resources/keypairs'
+import KeypairStore from 'stores/resources/keypairs';
 
 const store = new KeypairStore();
 
-const KeypairDetail = (props) => {
-
+const KeypairDetail = props => {
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);
-  }
+  };
 
-  const { workspace, cluster, namespace } = props.match.params
-  const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/keypairs`
+  const { workspace, cluster, namespace } = props.match.params;
+  const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/keypairs`;
 
   const routing = props.rootStore.routing;
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  const showEdit = !globals.config.presetClusterRoles.includes(
+    props.match.params.name
+  );
 
   const getOperations = () => [
     {
@@ -46,7 +46,7 @@ const KeypairDetail = (props) => {
           detail: toJS(store.detail),
           store: store,
           success: fetchData,
-          ...props.match.params
+          ...props.match.params,
         }),
     },
     {
@@ -58,7 +58,7 @@ const KeypairDetail = (props) => {
         props.rootStore.triggerAction('keypair.yaml.view', {
           yaml: store.yaml,
           readOnly: true,
-        })
+        });
       },
     },
     {
@@ -75,15 +75,16 @@ const KeypairDetail = (props) => {
           store: store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
+          ...props.match.params,
         }),
     },
-  ]
+  ];
 
   const getAttrs = () => {
-    const detail = toJS(store.detail)
+    const detail = toJS(store.detail);
 
     if (isEmpty(detail)) {
-      return
+      return;
     }
 
     return [
@@ -95,15 +96,15 @@ const KeypairDetail = (props) => {
         name: t('RESOURCES_DESCRIPTION'),
         value: detail.keypair.description,
       },
-    ]
-  }
+    ];
+  };
 
   if (store.isLoading) {
     return <Loading className="ks-page-loading" />;
   }
 
   const sideProps = {
-    icon: "key",
+    icon: 'key',
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
@@ -115,17 +116,17 @@ const KeypairDetail = (props) => {
         url: listUrl,
       },
     ],
-  }
+  };
 
   return (
     <>
       <DetailPage
         stores={{ detailStore: store }}
         routes={routes}
-        {...sideProps} />
+        {...sideProps}
+      />
     </>
-  )
-}
+  );
+};
 
 export default inject('rootStore')(observer(KeypairDetail));
-

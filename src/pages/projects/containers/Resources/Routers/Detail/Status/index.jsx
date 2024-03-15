@@ -16,17 +16,32 @@ const Status = (props) => {
   const [externalNetwork, setExternalNetwork] = useState(null);
   const [internalNetwork, setInternalNetwork] = useState([]);
 
+  const {cluster, namespace} = props.match.params;
+
+  const getPath = ({ cluster, namespace } = {}) => {
+    let path = ''
+    if (cluster) {
+      path += `klusters/${cluster}`
+    }
+    if (namespace) {
+      path += `/namespaces/${namespace}`
+    }
+    return path
+  }
+
   useEffect(() => {
 
     const fnGetExternalNetwork = async () => {
-      const externalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
+      const path = getPath({cluster, namespace})
+      const externalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
       setExternalNetwork(externalData?.network);
     };
 
     const fnGetInternalNetwork = async () => {
+      const path = getPath({cluster, namespace})
       setInternalNetwork([]);
       const promises = (store.detail.router?.internal).map(async (item) => {
-        const internalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` + item.id);
+        const internalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/networks/` + item.id);
         setInternalNetwork(internalNetwork => [...internalNetwork, internalData?.network])
       })
       await Promise.all(promises);

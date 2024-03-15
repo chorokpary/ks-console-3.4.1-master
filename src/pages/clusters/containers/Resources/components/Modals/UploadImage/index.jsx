@@ -13,10 +13,12 @@ import { Form, Input, Select, Button, Icon  } from '@kube-design/components'
 
 
 const UploadModal = (props) => {
+  
+  const job_uuid = props.detail.name;
 
-  const image_uuid = props.detail.name;
+  const onOk = props.onOk;
 
-  console.log("image_uuid : "+ image_uuid)
+  console.log("job_uuid : "+ job_uuid)
 
   const [modelView, setModalView] = useState(true);
 
@@ -46,6 +48,15 @@ const UploadModal = (props) => {
 
   const onFileChange = async (e) => {
 
+    const uploadInfo = get(props.detail, ['upload-info-list', 'upload-info'])
+    
+    let uplaod_id = "";
+    if(!!uploadInfo) {
+      uplaod_id = uploadInfo[0]['upload-file-info']['file-info']['ID'];
+    }
+
+    console.log("uplaod_id : "+ !!uplaod_id)
+
     var file = e.target.files[0];
 
     setFileName(file.name);
@@ -53,9 +64,16 @@ const UploadModal = (props) => {
     var upload = new tus.Upload(file, {
       // Endpoint is the upload creation URL from your tus server
       // endpoint: 'https://tusd.tusdemo.net/files/',
-      // endpoint: `http://localhost:1080/files/${image_uuid}`,
+      // endpoint: `http://localhost:1080/files/${job_uuid}`,
       // endpoint: 'http://192.168.61.164:8080/files',
-      endpoint: `http://192.168.16.80:31001/files/${image_uuid}`,      
+      
+      endpoint: !!uplaod_id ? null : `/files/${job_uuid}`,      
+      uploadUrl: !!uplaod_id ? `/files/${job_uuid}/${uplaod_id}` : null,
+
+      // endpoint: !!uplaod_id ? '' : `http://192.168.16.80:31001/files/${job_uuid}`,   
+      // uploadUrl: !!uplaod_id ? `http://192.168.16.80:31001/files/${job_uuid}/${uplaod_id}` : '',
+      
+      
       // Retry delays will enable tus-js-client to automatically retry on errors
       retryDelays: [0, 3000, 5000, 10000, 20000],
       // Attach additional meta data about the file for the server
@@ -78,13 +96,16 @@ const UploadModal = (props) => {
       onSuccess: function () {
         setFileUploadCompleteFlag(true);
         console.log('Download %s from %s', upload.file.name, upload.url)
+        closeModal();
+        onOk({});
       },
       
       // 업로드 중 응답 콜백
       onAfterResponse: (req, res) => {
         console.log("upload : "+ JSON.stringify(upload))
+        // console.log(res)
         response = res.getBody();
-        console.log("response : "+ response)
+        // console.log("response : "+ response)
       }
     })
 
@@ -94,6 +115,7 @@ const UploadModal = (props) => {
 
   const startOrResumeUpload = (upload) => {
     upload.findPreviousUploads().then(function (previousUploads) {
+      console.log("previousUploads : "+ previousUploads)
         // Found previous uploads so we select the first one.
         if (previousUploads.length) {
             upload.resumeFromPreviousUpload(previousUploads[0])
@@ -159,12 +181,12 @@ const UploadModal = (props) => {
                     </Button>
                   {/* } */}
                   {/* {(fileUploadingFlag && file && !fileUploadCompleteFlag) && */}
-                    <Button
+                    {/* <Button
                     type="control"
                     onClick={() => fnAbort()}
                     >
                       {t('일시중지')}
-                    </Button>
+                    </Button> */}
                   {/* }         */}
                 </div>
                 <div className={ fileUploadStartFlag ? '' : styles.hide }>    

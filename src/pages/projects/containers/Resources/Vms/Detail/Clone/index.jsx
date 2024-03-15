@@ -55,7 +55,7 @@ const Clone = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const filterData = await store.cloneList(props.match.params.id);
+    const filterData = await store.cloneList(props.match.params);
     const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
     const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
@@ -141,6 +141,7 @@ const Clone = (props) => {
       id : id,
       store: store,
       success: fnGetData,
+      ...props.match.params
     })
   }
 

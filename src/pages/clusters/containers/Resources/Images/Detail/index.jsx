@@ -1,43 +1,43 @@
-
-import React, { useEffect, useState } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
-import ImageStore from 'stores/resources/images'
-import { getIndexRoute } from 'utils/router.config'
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx'
-import { get, isEmpty } from 'lodash'
+import { toJS } from 'mobx';
+import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
-import { getLocalTime } from 'utils'
+import { getIndexRoute } from 'utils/router.config';
+import ImageStore from 'stores/resources/images';
+import DetailPage from 'clusters/containers/Base/Detail';
+import { Card } from 'components/Base';
+import { getLocalTime } from 'utils';
 
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
+import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
 
 const store = new ImageStore();
 
-const ImageDetail = (props) => {
-
-  const [refreshTimer, setRefreshTimer] = useState(0)
+const ImageDetail = props => {
+  const [refreshTimer, setRefreshTimer] = useState(0);
 
   useEffect(() => {
     setTimeout(() => {
       fetchData();
       setRefreshTimer(refreshTimer + 1);
     }, 4000);
-  }, [refreshTimer])
+  }, [refreshTimer]);
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);
-  }
+  };
 
-  const { cluster } = props.match.params
-  const listUrl = `/clusters/${cluster}/images`
+  const { cluster } = props.match.params;
+  const listUrl = `/clusters/${cluster}/images`;
 
   const { routing } = props.rootStore;
 
-  const PATH = `${listUrl}/${props.match.params.name}`
+  const PATH = `${listUrl}/${props.match.params.name}`;
 
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  const showEdit = !globals.config.presetClusterRoles.includes(
+    props.match.params.name
+  );
 
   const getOperations = () => [
     {
@@ -52,7 +52,7 @@ const ImageDetail = (props) => {
           detail: toJS(store.detail.image),
           store: store,
           success: fetchData,
-        })
+        }),
     },
     {
       key: 'viewYaml',
@@ -63,7 +63,7 @@ const ImageDetail = (props) => {
         props.rootStore.triggerAction('images.yaml.view', {
           yaml: store.yaml,
           readOnly: true,
-        })
+        }),
     },
     {
       key: 'delete',
@@ -80,16 +80,16 @@ const ImageDetail = (props) => {
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
           okText: '삭제',
-          cancelText: '취소'
-        })
+          cancelText: '취소',
+        }),
     },
-  ]
+  ];
 
   const getAttrs = () => {
-    const detail = toJS(store.detail)
+    const detail = toJS(store.detail);
 
     if (isEmpty(detail)) {
-      return
+      return;
     }
 
     return [
@@ -107,7 +107,9 @@ const ImageDetail = (props) => {
       },
       {
         name: t('RESOURCES_REAL_TIME'),
-        value: detail.image.is_realtime ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+        value: detail.image.is_realtime
+          ? t('RESOURCES_USE')
+          : t('RESOURCES_NOT_USE'),
       },
       {
         name: t('RESOURCES_STEP'),
@@ -127,17 +129,19 @@ const ImageDetail = (props) => {
       },
       {
         name: t('RESOURCES_CREATE_DAY'),
-        value: getLocalTime(detail.image.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        value: getLocalTime(detail.image.timestamp).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
       },
-    ]
-  }
+    ];
+  };
 
   if (store.isLoading && !store.detail.name) {
     return <Loading className="ks-page-loading" />;
   }
 
   const sideProps = {
-    icon: "snapshot",
+    icon: 'snapshot',
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.image, 'description', ''),
@@ -149,7 +153,7 @@ const ImageDetail = (props) => {
         url: listUrl,
       },
     ],
-  }
+  };
 
   return (
     <>
@@ -161,21 +165,26 @@ const ImageDetail = (props) => {
             title: t('RESOURCES_STATE'),
             component: Status,
             exact: true,
-            name: props.match.params.name
+            name: props.match.params.name,
           },
           getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
-        {...sideProps} />
+        {...sideProps}
+      />
     </>
-  )
-}
+  );
+};
 
 export default inject('rootStore')(observer(ImageDetail));
 
 const Status = ({ route }) => {
-  const imageName = route.name
+  const imageName = route.name;
 
   return (
-    <DetailVmList type={t('RESOURCES_VM_IMAGE')} variables='image' name={imageName} />
-  )
-}
+    <DetailVmList
+      type={t('RESOURCES_VM_IMAGE')}
+      variables="image"
+      name={imageName}
+    />
+  );
+};

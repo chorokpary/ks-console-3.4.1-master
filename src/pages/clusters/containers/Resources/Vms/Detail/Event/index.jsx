@@ -22,8 +22,7 @@ const Event = (props) => {
   useEffect(() => {
     const getVmEventList = async () => {
 
-      const parms = {"cluster": store.detail.cluster,"name": store.detail.name,"id": store.detail.id}
-      const response = await vmStore.fetchVmEventList(parms);
+      const response = await vmStore.fetchVmEventList(props.match.params);
       setEventList(response.events)
       setIsLoading(false);
 

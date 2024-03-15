@@ -55,7 +55,7 @@ const Snapshot = (props) => {
   }, [])
 
   const fnGetRestoreData = async () => {
-    const restoreList = await store.restoreList(props.match.params.id);
+    const restoreList = await store.restoreList(props.match.params);
     setRestoreDataList(restoreList);
     setIsLoading(false);
   }
@@ -66,7 +66,7 @@ const Snapshot = (props) => {
     setIsSearchFlag(false);
     const page = get(params, "page", 1);
 
-    const filterData = await store.snapshotList(props.match.params.id);
+    const filterData = await store.snapshotList(props.match.params);
     const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
 
     const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
@@ -219,6 +219,7 @@ const Snapshot = (props) => {
       success: () => {
         fnGetRestoreData();
       },
+      ...props.match.params
     })
   }
 
@@ -236,6 +237,7 @@ const Snapshot = (props) => {
         success: () => {
           fnGetRestoreData();
         },
+        ...props.match.params
       })
     }   
   }

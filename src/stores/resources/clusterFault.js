@@ -83,9 +83,10 @@ export default class ClusterFaultStore extends Base {
             return searchData
         }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
 
+        this.searchList = this.dataList;
         if (searchArray.length > 0) {
             searchArray.map((search) => {
-                let resultList = this.dataList.filter((row) => {
+                let resultList = this.searchList.filter((row) => {
                     if (search.searchKeywordType === 'project') {
                         let [projectName, _] = get(row, 'spec.name').split('/')
                         return projectName?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
@@ -180,9 +181,10 @@ export default class ClusterFaultStore extends Base {
             return searchData
         }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
 
+        this.searchList = this.dataList;
         if (searchArray.length > 0) {
             searchArray.map((search) => {
-                let resultList = this.dataList.filter((row) => {
+                let resultList = this.searchList.filter((row) => {
                     return get(row, search.searchKeywordType)?.toLowerCase().includes(search.searchKeywordText?.toLowerCase());
                 });
                 this.searchList = resultList;

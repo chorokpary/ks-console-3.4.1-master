@@ -12,6 +12,8 @@ const Information = (props) => {
 
   const store = props.detailStore;
 
+  const { workspace, cluster, namespace } = props.match.params
+
   const [detailFlavor, setDetailFlavor] = useState(null);
   const [detailVolume, setDetailVolume] = useState([]);
   const [detailNetwork, setDetailNetwork] = useState([]);
@@ -20,7 +22,20 @@ const Information = (props) => {
   const [hostDevicesList, setHostDevicesList] = useState([]);
   const [mediatedDevicesList, setmMediatedDevicesList] = useState([]);
 
+  const getPath = ({ cluster, namespace } = {}) => {
+    let path = ''
+    if (cluster) {
+      path += `klusters/${cluster}`
+    }
+    if (namespace) {
+      path += `/namespaces/${namespace}`
+    }
+    return path
+  }
+
   useEffect(() => {
+
+    const path = getPath({ cluster, namespace })
 
     const fnGetFlavor = async () => {
       setDetailFlavor(store.detail.vm?.flavor);
@@ -37,13 +52,13 @@ const Information = (props) => {
     }
 
     const fnGetHostDevices = async () => {
-      const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/host_devices`);
-      setHostDevicesList(response.data.host_devices);
+      const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/host_devices`);
+      setHostDevicesList(response.host_devices);
     };
 
     const fnGetMediatedDevices = async () => {
-      const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/mediated_devices`);
-      setmMediatedDevicesList(response.data.mediated_devices);
+      const response = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/mediated_devices`);
+      setmMediatedDevicesList(response.mediated_devices);
     };
 
     const fnGetImage = async () => {
