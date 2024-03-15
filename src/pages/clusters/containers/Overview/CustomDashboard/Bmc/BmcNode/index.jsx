@@ -146,7 +146,7 @@ const BmcNode = ({ x, y, w, h,
   }
 
   const getState = (metricData, data) => {
-    const state = getMetricValue(metricData, data)
+    const state = getMetricValue(metricData, data, 'redfish')
     const stateText = (state == 1 || state == 3) ? "on" : (state == 2 || state == 4) ? "off" : "unknown"
     return stateText
   }
@@ -177,7 +177,7 @@ const BmcNode = ({ x, y, w, h,
       var off = 0;
       var unknown = 0;
       nodeList.map(obj => {
-        const state = getMetricValue(metricState, obj)
+        const state = getMetricValue(metricState, obj, 'redfish')
         if (state == 1 || state == 3) {
           on++
         } else if (state == 2 || state == 4) {

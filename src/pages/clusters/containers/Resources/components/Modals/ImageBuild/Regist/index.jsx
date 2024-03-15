@@ -14,15 +14,17 @@ import { PATTERN_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
 
+  console.log("props.isSubmitting  : " + props.isSubmitting)
+
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
   const [cpuType, setCpuType] = useState('ARM')
 
-  const [registryUrl, setRegistryUrl] = useState('')
-  const [userName, setUserName] = useState('')
-  const [userPassword, setUserPassword] = useState('')
+  const [registryUrl, setRegistryUrl] = useState('ntels.harbor.core/arm-cmp/test-image:latest')
+  const [userName, setUserName] = useState('admin')
+  const [userPassword, setUserPassword] = useState('gozldqkdwl2')
 
   const [harborValid, setHarborValid] = useState(false)
   
@@ -125,6 +127,24 @@ const RegistModal = (props) => {
     callback()
   }
 
+  const fnGetModalFooter = () => {
+
+    let elements = "";
+    elements =
+      <>
+      
+          <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+          {props.isSubmitting ?
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
+            :
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
+          }
+
+      </>
+
+    return elements;
+  }
+
   return (
     <>
       <Modal
@@ -133,137 +153,145 @@ const RegistModal = (props) => {
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
+        bodyClassName={styles.body}
         visible={modelView}
+        hideFooter
       >
         <Form data={formData} ref={form}>
-
+          
+        <div className={styles.cont_boxwrap}>
           <Form.Item
-            label={t('RESOURCES_NAME')}
-            rules={[
-              { required: true, message: t('NAME_EMPTY_DESC') },
-              {
-                pattern: PATTERN_NAME,
-                message: t('INVALID_NAME_DESC'),
-              },
-            ]}
-            desc={t('NAME_DESC')}
-          >
-            <Input
-              name="name"
-              autoFocus={true}
-              maxLength={63}
-              style={{ maxWidth: 'none' }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label={t('RESOURCES_CPU_TYPE')}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <RadioGroup
-              name="cpuType"
-              wrapClassName="radio"
-              defaultValue={cpuType}
-              onChange={value => setCpuType(value)}
+              label={t('RESOURCES_NAME')}
+              rules={[
+                { required: true, message: t('NAME_EMPTY_DESC') },
+                {
+                  pattern: PATTERN_NAME,
+                  message: t('INVALID_NAME_DESC'),
+                },
+              ]}
+              desc={t('NAME_DESC')}
             >
-              {cpuTypeOptions.map(option => (
-                <RadioButton key={option.value} value={option.value}>
-                  {option.label}
-                </RadioButton>
-              ))}
-            </RadioGroup>
-          </Form.Item>
+              <Input
+                name="name"
+                autoFocus={true}
+                maxLength={63}
+                style={{ maxWidth: 'none' }}
+              />
+            </Form.Item>
 
-          <Form.Item
-            label={t('태그')}
-            rules={[{ required: true, validator: tagValidator }]}
-            desc={t('RESOURCES_TAG_DESC')}
-          >
-            <Input
-              name="tag"
-              maxLength={63}
-              style={{ maxWidth: 'none' }}
-            />
-          </Form.Item>
+            <Form.Item
+              label={t('RESOURCES_CPU_TYPE')}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <RadioGroup
+                name="cpuType"
+                wrapClassName="radio"
+                defaultValue={cpuType}
+                onChange={value => setCpuType(value)}
+              >
+                {cpuTypeOptions.map(option => (
+                  <RadioButton key={option.value} value={option.value}>
+                    {option.label}
+                  </RadioButton>
+                ))}
+              </RadioGroup>
+            </Form.Item>
 
-          <Form.Item
-            label={t('OS 정보')}
-            rules={[{ required: true, validator: osValidator }]}
-            desc={t('RESOURCES_OS_DESC')}
-          >
-            <Input
-              name="os"
-              maxLength={63}
-              style={{ maxWidth: 'none' }}
-            />
-          </Form.Item>
+            <Form.Item
+              label={t('태그')}
+              rules={[{ required: true, validator: tagValidator }]}
+              desc={t('RESOURCES_TAG_DESC')}
+            >
+              <Input
+                name="tag"
+                maxLength={63}
+                style={{ maxWidth: 'none' }}
+              />
+            </Form.Item>
 
-          <Form.Item>     
-          <>
-            Harbor URL<span className="form-item-required">*</span>
-            <div className={styles.content_box_wrap}>
-              <div className={styles.cont_box_section}>
-                  <div className={styles.cont_box_wrap}>
+            <Form.Item
+              label={t('OS 정보')}
+              rules={[{ required: true, validator: osValidator }]}
+              desc={t('RESOURCES_OS_DESC')}
+            >
+              <Input
+                name="os"
+                maxLength={63}
+                style={{ maxWidth: 'none' }}
+              />
+            </Form.Item>
 
-                    <div className={styles.regi_group_area}>
-                      <div className={styles.formarea}>
-                        <div className={classnames(styles.custom_input, styles.w_1)}>
-                          <label>Registry URL</label>
-                          <input type="text" placeholder={'http://{url}/api/v2.0/projects/{project_name}/repositories'} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+            <Form.Item>     
+            <>
+              Harbor URL<span className="form-item-required">*</span>
+              <div className={styles.content_box_wrap}>
+                <div className={styles.cont_box_section}>
+                    <div className={styles.cont_box_wrap}>
+
+                      <div className={styles.regi_group_area}>
+                        <div className={styles.formarea}>
+                          <div className={classnames(styles.custom_input, styles.w_1)}>
+                            <label>Registry URL</label>
+                            <input type="text" placeholder={'http://{url}/api/v2.0/projects/{project_name}/repositories'} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className={styles.regi_group_area}>
-                      <div className={styles.formarea}>
-                        <div className={styles.custom_input}>
-                          <label>{t('RESOURCES_USER_NAME')}</label>
-                          <input type="text" name="username" defaultValue={userName} onChange={(e) => setUserName(e.target.value)} />
+                      <div className={styles.regi_group_area}>
+                        <div className={styles.formarea}>
+                          <div className={styles.custom_input}>
+                            <label>{t('RESOURCES_USER_NAME')}</label>
+                            <input type="text" name="username" defaultValue={userName} onChange={(e) => setUserName(e.target.value)} />
+                          </div>
+                          <div className={styles.custom_input}>
+                            <label>{t('RESOURCES_PASSWORD')}</label>
+                            <input type="password" name="password" defaultValue={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
+                          </div>
+                          <button type="button" className={classnames(styles.btn, styles.btn_control)} onClick={() => checkUserValid()}>{t('RESOURCES_VALID')}</button>
                         </div>
-                        <div className={styles.custom_input}>
-                          <label>{t('RESOURCES_PASSWORD')}</label>
-                          <input type="password" name="password" defaultValue={userPassword} onChange={(e) => setUserPassword(e.target.value)} />
-                        </div>
-                        <button type="button" className={classnames(styles.btn, styles.btn_control)} onClick={() => checkUserValid()}>{t('RESOURCES_VALID')}</button>
                       </div>
+
+                      {/* //Harbor URL 정보를 입력해 주세요. */}
+                      {harborValid &&
+                        <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_HARBOR_VALID_TIP')}</div>
+                      }
+                      {/* //유효성을 체크해주세요.. */}
+                      {userValidCheckError &&
+                        <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_VALID_TIP')}</div>
+                      }
+                      {/* //유효하지 않은 사용자 입니다. */}
+                      {userValidError &&
+                        <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FAIL_VALID_TIP')}</div>
+                      }                  
+                      
+
                     </div>
+                </div>           
+              </div>      
+            </>
+            </Form.Item>      
+    
+            <Form.Item
+              className={styles.textarea}
+              label={t('RESOURCES_DESCRIPTION')}
+              desc={t('DESCRIPTION_DESC')}
+            >
+              <TextArea
+                name="description"
+                maxLength={256}
+                rows="1"
+                defaultValue=""
+              />
+            </Form.Item>
+           </div>    
 
-                    {/* //Harbor URL 정보를 입력해 주세요. */}
-                    {harborValid &&
-                      <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_HARBOR_VALID_TIP')}</div>
-                    }
-                    {/* //유효성을 체크해주세요.. */}
-                    {userValidCheckError &&
-                      <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_VALID_TIP')}</div>
-                    }
-                    {/* //유효하지 않은 사용자 입니다. */}
-                    {userValidError &&
-                      <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FAIL_VALID_TIP')}</div>
-                    }                  
-                    
-
-                  </div>
-              </div>           
-            </div>      
-          </>
-          </Form.Item>      
-  
-          <Form.Item
-            className={styles.textarea}
-            label={t('RESOURCES_DESCRIPTION')}
-            desc={t('DESCRIPTION_DESC')}
-          >
-            <TextArea
-              name="description"
-              maxLength={256}
-              rows="1"
-              defaultValue=""
-            />
-          </Form.Item>
+          <div className={styles['modal-footer']}>
+            {fnGetModalFooter()}
+          </div>     
 
         </Form>
       </Modal>

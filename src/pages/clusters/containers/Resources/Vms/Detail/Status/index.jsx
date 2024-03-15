@@ -394,7 +394,7 @@ const Status = props => {
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    {networkType === 'network' ? (
+                    {!!!obj.resource_name ? (
                       <Icon name={`network-duotone`} size={40} />
                     ) : (
                       <i className="ico-type-sriov"></i>
@@ -402,7 +402,7 @@ const Status = props => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {networkType === 'network' ? (
+                      {!!!obj.resource_name ? (
                         <Link
                           to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}
                         >

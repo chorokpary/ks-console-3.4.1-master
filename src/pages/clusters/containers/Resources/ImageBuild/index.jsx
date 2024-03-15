@@ -44,8 +44,22 @@ export default class ImageBuild extends React.Component {
     return globals.user.username !== record.name;
   }
 
+  showActionUpload(record) {
+    const uploadInfo = get(record, ['upload-info-list', 'upload-info'], [])
+
+    let showFlag = false;
+    if(!!uploadInfo){        
+      const status = uploadInfo[0]['upload-file-info']['Status'];
+      const statusText = !!status ? status : "-";
+      showFlag = !(statusText.toLowerCase()).includes('completed');
+    }
+
+    return showFlag;
+  }
+
   get itemActions() {
     const { getData, trigger } = this.props;
+
     return [
       {
         key: 'delete',
@@ -65,13 +79,14 @@ export default class ImageBuild extends React.Component {
         icon: 'upload',
         text: t('RESOURCES_IMAGE_FILE_UPLOAD'),
         action: 'edit',
-        show: this.showAction,
+        show: item => this.showActionUpload(item),
         onClick: item =>
           trigger('imagebuild.image.upload', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
+              detail: item,
+              success: getData,
+              ...this.props.match.params,
+          }
+        ),               
       },
     ];
   }
@@ -179,8 +194,10 @@ export default class ImageBuild extends React.Component {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
           if(!!uploadInfo) {
-            const name = uploadInfo[0]['upload-file-info']['file-info']['ID'];
-            return name
+            const fileName = uploadInfo[0]['upload-file-info']['file-info']['ID'];
+            const fileNameText = !!fileName ? fileName : "-";
+
+            return fileNameText
           }
           return '-'
         },
@@ -194,9 +211,10 @@ export default class ImageBuild extends React.Component {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
           if(!!uploadInfo) {
-            const fileSize = uploadInfo[0]['file-size'];
-          
-            return common.fnFormatBytes(fileSize.toString())
+            const fileSize = uploadInfo[0]['upload-file-info']['file-info']['Size'];
+            const fileSizeText = fileSize ? common.fnFormatBytes(fileSize.toString()) : "-";
+
+            return fileSizeText
           }
           return '-'
         },
@@ -211,7 +229,9 @@ export default class ImageBuild extends React.Component {
 
           if(!!uploadInfo) {
             const status = uploadInfo[0]['upload-file-info']['Status'];
-            return status
+            const statusText = !!status ? status : "-";
+
+            return statusText
           }
           return '-'
         },
@@ -237,7 +257,7 @@ export default class ImageBuild extends React.Component {
   get columnSearch() {
     return [
       {
-        dataIndex: 'name',
+        dataIndex: 'imagename',
         title: t('RESOURCES_NAME'),
         search: true,
       },

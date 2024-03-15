@@ -30,7 +30,11 @@ const VolumeModal = (props) => {
   useEffect(() => {
     const getVolumeDataList = async () => {
 
-      const volumeData = await volumeStore.fetchList();
+      const volumeData = await volumeStore.fetchList({
+        cluster: props.cluster,
+        namespace: props.namespace,
+      });
+
       //볼륨 리스트 중 해당 가상머신과 연결이 되어 있건, 아무것도 연결이 안되어 있는 볼륨 리스트.
       const volumeListData = volumeData.filter((obj) => {
         return ((obj.used_by_vmi == vmName || !!!obj.used_by_vmi) && obj.name != `${vmName}-boot-dv`)
@@ -66,7 +70,7 @@ const VolumeModal = (props) => {
     data.id = id;
     data.actionType = checked ? "A" : "D";
 
-    volumeStore.actionState({ data, ...props }).then(() => {
+    volumeStore.actionState({ data, cluster: props.cluster, namespace: props.namespace }).then(() => {
       Notify.success({ content: t('RESOURCES_PROCESSED') })
       props.onOk();
     }).catch((error) => {

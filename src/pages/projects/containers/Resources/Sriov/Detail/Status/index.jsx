@@ -67,7 +67,7 @@ const Status = props => {
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
           variables="networks"
-          id={props.match.params.id}
+          id={props.match.params.name}
           {...props.match.params}
         />
       </div>

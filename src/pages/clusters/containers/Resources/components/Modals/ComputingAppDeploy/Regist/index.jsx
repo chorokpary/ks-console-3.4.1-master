@@ -1,7 +1,7 @@
 import { get, find } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
-import { Form, Input, Select, TextArea, Button, Loading, Column, Columns, Icon, Notify } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Tooltip, Icon } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
 import classnames from 'classnames'
@@ -262,6 +262,19 @@ const RegistModal = (props) => {
   };
   // File Upload End ############################################
 
+  const fileInformation = () => {
+    const renderModeTip = (
+      <div>
+        <div>deploy.yml : {t('RESOURCES_PLAYBOOK_SCRIPT_TIP')}</div>
+        <div>requirements.txt : {t('RESOURCES_PLAYBOOK_PACKAGE_TIP')}</div>
+      </div>
+    );
+    return (
+        <Tooltip content={renderModeTip} className={styles.tooltip}>
+          <Icon name="question" size={16} ></Icon>
+        </Tooltip>
+    );
+  };
 
   return (
     <>
@@ -308,6 +321,7 @@ const RegistModal = (props) => {
           <Form.Item>     
           <>
             {t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD')}<span className="form-item-required">*</span>
+            {fileInformation()}
             <div style={{ color: '#79879c' }}>({t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC')})</div>  
             <Form.Group>
               <div>
