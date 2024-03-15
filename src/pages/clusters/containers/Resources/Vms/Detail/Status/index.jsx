@@ -59,10 +59,6 @@ const Status = props => {
       });
 
       if (filterData.length > 0) {
-        // external만 존재할 경우 fip 할당 숨김처리
-        if (!filterData.some(obj => !obj.external)) {
-          document.querySelector('[data-test=detail-floatingIp]').parentElement.remove()
-        }
         const promises = filterData.filter(async network => {
           if (network.name != 'k8s-pod-network') {
             const networkDetail = await request.get(

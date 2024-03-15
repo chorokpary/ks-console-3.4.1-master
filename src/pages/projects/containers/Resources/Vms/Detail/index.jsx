@@ -44,6 +44,12 @@ const VmDetail = (props) => {
   const floatingId = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.id)[0]
   const floatingIp = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.floating_ip)[0]
 
+  // external만 존재할 경우 fip 할당 숨김처리
+  const networkData = store.networksList || [];
+  const networkNameArray = store.detail.vm?.networks.map(item => item.name);
+  const filterData = networkData?.filter(item => networkNameArray?.includes(item.id));
+  const disableFip = !!(filterData.some(obj => !obj.external))
+
   const fnOpenVncPopup = () => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://" + location.hostname + ":30020";
@@ -84,7 +90,9 @@ const VmDetail = (props) => {
       key: 'floatingIp',
       icon: 'intranet-routers',
       text: floatingIp == undefined ? t('RESOURCES_ALLOCATE_FIP') : t('RESOURCES_DEALLOCATE_FIP'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
+      disabled: !disableFip,
       onClick: () => {
         if (floatingIp == undefined) {
           props.rootStore.triggerAction('vm.floatingIpPop', {
@@ -106,7 +114,8 @@ const VmDetail = (props) => {
       key: 'volume',
       icon: 'storage',
       text: t('RESOURCES_VOLUME_MANAGEMENT'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       onClick: () => {
         props.rootStore.triggerAction('vm.volumePop', {
           type: 'VM_DETAIL',
@@ -145,7 +154,8 @@ const VmDetail = (props) => {
       key: 'migrate',
       icon: 'radio',
       text: t('RESOURCES_MIGRATION'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       disabled: get(store.detail.vm, 'migratable') ? false : true,
       onClick: () => {
 
@@ -167,7 +177,8 @@ const VmDetail = (props) => {
       key: 'snapshot',
       icon: 'resourceIcon:snapshot',
       text: t('RESOURCES_SNAPSHOT'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
         const data = {};
@@ -185,7 +196,8 @@ const VmDetail = (props) => {
       key: 'clone',
       icon: 'resourceIcon:clone',
       text: t('RESOURCES_CLONE'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
         const data = {};

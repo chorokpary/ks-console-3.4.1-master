@@ -39,6 +39,12 @@ const VmDetail = props => {
 
   const showFlavor = !!(store.detail.vm?.image);
 
+  // external만 존재할 경우 fip 할당 숨김처리
+  const networkData = store.networksList || [];
+  const networkNameArray = store.detail.vm?.networks.map(item => item.name);
+  const filterData = networkData?.filter(item => networkNameArray?.includes(item.id));
+  const disableFip = !!(filterData.some(obj => !obj.external))
+
   const vmName = props.match.params.name;
   const vmId = props.match.params.id;
   const floatingData = toJS(store.floatingList);
@@ -119,6 +125,7 @@ const VmDetail = props => {
     {
       key: 'floatingIp',
       icon: 'intranet-routers',
+      disabled: !disableFip,
       text:
         floatingIp == undefined
           ? t('RESOURCES_ALLOCATE_FIP')
