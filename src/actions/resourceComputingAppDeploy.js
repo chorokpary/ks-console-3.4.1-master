@@ -152,12 +152,12 @@ export default {
         onOk: () => {
           store.deploy({ detail, ...props }).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DEPLOYED_SUCCESSFULLY') })
+            Notify.success({ content: t('RESOURCES_EXCUTION_SUCCESSFULLY') })
             success && success()
           })
         },
-        title: !!title ? title : t('RESOURCES_DEPLOY_DESC'),
-        desc: !!desc ? desc : detail.name + t('RESOURCES_EUL') +" "+ t('RESOURCES_DEPLOY_DESC'),
+        title: !!title ? title : t('RESOURCES_EXCUTION_DESC'),
+        desc: !!desc ? desc : detail.name + t('RESOURCES_EUL') +" "+ t('RESOURCES_EXCUTION_DESC'),
         modal: DeployModal,
         module: store.module,
         detail,

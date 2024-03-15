@@ -595,4 +595,14 @@ module.exports = {
   RESOURCES_SELECT_MDT_CREATE: 'Mediated Device Type 생성',
   RESOURCES_SELECT_MDT_CREATE_DESC: 'Mediated Device Type을 생성합니다.',
   RESOURCES_SELECT_MDT_CREATE_SUCCESS: 'Mediated Device Type가 생성되었습니다.',
+  RESOURCES_PLAYBOOK_DEPLOY: 'Playbook 실행',
+  RESOURCES_PLAYBOOK_SCRIPT_TIP: 'playbook 실행을 위한 스크립트',
+  RESOURCES_PLAYBOOK_PACKAGE_TIP: 'playbook에 필요한 패키지 목록',
+  RESOURCES_DELETE_TEMPLATE: '템플릿 삭제',
+  RESOURCES_EXCUTION_DESC: '실행 하시겠습니까?',
+  RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
+  RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
+  RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
+
+  
 };

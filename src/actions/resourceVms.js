@@ -22,6 +22,8 @@ import { Modal } from 'components/Base'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/Vms/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/Vms/Modify'
+import ModifySecurityGroupModal from 'clusters/containers/Resources/components/Modals/Vms/ModifySecurityGroup'
+import ModifyFlavorModal from 'clusters/containers/Resources/components/Modals/Vms/ModifyFlavor'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
@@ -73,6 +75,46 @@ export default {
         },
         title: t('RESOURCES_EDIT_VM'),
         modal: ModifyModal,
+        store,
+        module,
+        ...props,
+      })
+    },
+  },
+  'vm.edit.securitygroup': {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .updateSecurity({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        title: t('RESOURCES_VM_SECURITYGROUP_EDIT'),
+        modal: ModifySecurityGroupModal,
+        store,
+        module,
+        ...props,
+      })
+    },
+  },
+  'vm.edit.flavor': {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .updateFlavor({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        title: t('RESOURCES_VM_FLAVOR_EDIT'),
+        modal: ModifyFlavorModal,
         store,
         module,
         ...props,
@@ -287,7 +329,7 @@ export default {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.snapshotDelete(id).then(() => {
+          store.snapshotDelete({ id, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -317,7 +359,7 @@ export default {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.restoreDelete(id).then(() => {
+          store.restoreDelete({ id, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -346,7 +388,7 @@ export default {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store.cloneDelete(id).then(() => {
+          store.cloneDelete({ id, ...props }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()

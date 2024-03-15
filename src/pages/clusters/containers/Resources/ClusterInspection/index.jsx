@@ -4,9 +4,9 @@ import {
   PieChart,
   Pie,
   Label,
-  LabelList,
   Cell,
   Tooltip as ChartTooltip,
+  ResponsiveContainer,
 } from 'recharts';
 // import { Tooltip } from '@kubed/components';
 import Banner from 'components/Cards/Banner';
@@ -38,17 +38,17 @@ export default class ClusterInspection extends React.Component {
     const clusterInfo = data?.clusterInfo;
     const chartOption = [
       {
-        name: 'passing',
+        name: t('CLUSTER_INSPECTION_PASS'),
         value: data?.scoreInfo?.passing || 0,
         color: '#55BC8A',
       },
       {
-        name: 'warning',
+        name: t('CLUSTER_INSPECTION_WARNING'),
         value: data?.scoreInfo?.warning || 0,
         color: '#F5A623',
       },
       {
-        name: 'dangerous',
+        name: t('CLUSTER_INSPECTION_DANGER'),
         value: data?.scoreInfo?.dangerous || 0,
         color: '#CA2621',
       },
@@ -61,51 +61,58 @@ export default class ClusterInspection extends React.Component {
             <div className="gridbox_wrap">
               <div className="grid_item">
                 <div className="grid_title">
-                  <label>클러스터 상태</label>
+                  <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>
                 </div>
                 <div className="grid_info style_status">
                   <div className="box type_status">
                     <div className="cont_group">
                       <div className="cont1">
-                        <div className="chart_pie">
-                          <PieChart width={500} height={160}>
-                            <Pie
-                              data={chartOption}
-                              cx={300}
-                              cy={75}
-                              innerRadius={60}
-                              outerRadius={80}
-                              paddingAngle={1}
-                              dataKey="value"
-                            >
-                              {chartOption.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={entry.color}
+                        <div
+                          className="chart_pie"
+                          style={{ width: '100%', height: '200px' }}
+                        >
+                          <ResponsiveContainer>
+                            <PieChart>
+                              <Pie
+                                data={chartOption}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={80}
+                                paddingAngle={1}
+                                dataKey="value"
+                              >
+                                {chartOption.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.color}
+                                  />
+                                ))}
+                                <Label
+                                  value={data?.scoreInfo?.score}
+                                  position="center"
+                                  fontSize={50}
+                                  dy={-10}
                                 />
-                              ))}
-                              <Label
-                                value={data?.scoreInfo?.score}
-                                position="center"
-                                fontSize={50}
-                                dy={-10}
-                              />
-                              <Label
-                                value={`Health Score`}
-                                position="bottom"
-                                fontSize={13}
-                                dy={25}
-                                dx={70}
-                              />
-                            </Pie>
-                            <ChartTooltip />
-                          </PieChart>
+                                <Label
+                                  value={`Health Score`}
+                                  position="bottom"
+                                  fontSize={13}
+                                  dy={25}
+                                  dx={70}
+                                />
+                              </Pie>
+                              <ChartTooltip />
+                            </PieChart>
+                          </ResponsiveContainer>
                         </div>
                       </div>
                       <div className="cont2">
                         <div className="status_wrap">
                           <p className="status title">
-                            <span>전체 점검 항목</span>
+                            <span>
+                              {t('CLUSTER_INSPECTION_CHECK_ALL_LIST')}
+                            </span>
                           </p>
                           <div className="value">
                             {data?.scoreInfo?.total || 0}
@@ -113,7 +120,7 @@ export default class ClusterInspection extends React.Component {
                         </div>
                         <div className="status_wrap">
                           <p className="status pass">
-                            <span>Pass</span>
+                            <span>{t('CLUSTER_INSPECTION_PASS')}</span>
                           </p>
                           <div className="value">
                             {data?.scoreInfo?.passing || 0}
@@ -121,7 +128,7 @@ export default class ClusterInspection extends React.Component {
                         </div>
                         <div className="status_wrap">
                           <p className="status warning">
-                            <span>Warning</span>
+                            <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
                           </p>
                           <div className="value">
                             {data?.scoreInfo?.warning || 0}
@@ -129,7 +136,7 @@ export default class ClusterInspection extends React.Component {
                         </div>
                         <div className="status_wrap">
                           <p className="status danger">
-                            <span>Danger</span>
+                            <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
                           </p>
                           <div className="value">
                             {data?.scoreInfo?.dangerous || 0}
@@ -145,21 +152,25 @@ export default class ClusterInspection extends React.Component {
             <div className="gridbox_wrap">
               <div className="grid_item">
                 <div className="grid_title">
-                  <label>클러스터 정보</label>
+                  <label>{t('CLUSTER_INSPECTION_CLUSTER_INFO')}</label>
                 </div>
                 <div className="grid_info style_list">
                   <ul className="list_01">
                     <li className="li_type_01">
                       <div className="lft">
                         <i className="ico-type24-container"></i>
-                        <h6 className="list_title">쿠버네티스 버전</h6>
+                        <h6 className="list_title">
+                          {t('CLUSTER_INSPECTION_K8S_VERSION')}
+                        </h6>
                       </div>
                       <div className="value">{clusterInfo?.version || 0}</div>
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
                         <i className="ico-type24-clusternode"></i>
-                        <h6 className="list_title">클러스터 노드</h6>
+                        <h6 className="list_title">
+                          {t('CLUSTER_INSPECTION_NODE')}
+                        </h6>
                       </div>
                       <div className="value">
                         {clusterInfo?.nodesCount || 0}
@@ -168,7 +179,9 @@ export default class ClusterInspection extends React.Component {
                     <li className="li_type_01">
                       <div className="lft">
                         <i className="ico-type24-clusternode"></i>
-                        <h6 className="list_title">네임스페이스 개수</h6>
+                        <h6 className="list_title">
+                          {t('CLUSTER_INSPECTION_NAMESPACE_CNT')}
+                        </h6>
                       </div>
                       <div className="value">
                         {clusterInfo?.namespacesCount || 0}
@@ -177,7 +190,9 @@ export default class ClusterInspection extends React.Component {
                     <li className="li_type_01">
                       <div className="lft">
                         <i className="ico-type24-clusternode"></i>
-                        <h6 className="list_title">워크로드 개수</h6>
+                        <h6 className="list_title">
+                          {t('CLUSTER_INSPECTION_WORKLOAD_CNT')}
+                        </h6>
                       </div>
                       <div className="value">
                         {clusterInfo?.workloadsCount || 0}
@@ -202,8 +217,8 @@ export default class ClusterInspection extends React.Component {
         <Banner
           icon="apps"
           {...bannerProps}
-          title={`클러스터 인스펙션 모니터링`}
-          description={`클러스터의 상태를 모니터링 합니다.`}
+          title={t('CLUSTER_INSPECTION_MORNITORING')}
+          description={t('CLUSTER_INSPECTION_DESC')}
         />
         {this.renderChart()}
 

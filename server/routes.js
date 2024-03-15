@@ -77,7 +77,10 @@ router
   .post('/customharbor/(.*)', parseBody, handleHarborProxyCustom)
   .get('/blank_md', renderMarkdown)
 
+  .use(proxy('/files', webImageBuildProxy))
+  .use(proxy('/files/(.*)', webImageBuildProxy))
   .use(proxy('/builder/(.*)', webImageBuildProxy))
+  
   .use(proxy('/app-manager/(.*)', webAppDeployProxy))
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
   // .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))  

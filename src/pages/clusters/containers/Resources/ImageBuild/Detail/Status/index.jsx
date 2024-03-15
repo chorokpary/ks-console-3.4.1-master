@@ -11,6 +11,8 @@ import styles from './index.scss'
 
 const Status = (props) => {
 
+  console.log(JSON.stringify(props.detailStore.detail))
+
   const renderPodStatus = () => {
     
       const phase = 'Running'
@@ -81,11 +83,7 @@ const Status = (props) => {
                   extra={
                     <Icon
                       className={styles.status}
-                      name={'error'}
-                      color={{
-                        primary: '#fff',
-                        secondary: '#ca2621',
-                      }}
+                      name={'substract'}
                     />
                   }
                 /> 

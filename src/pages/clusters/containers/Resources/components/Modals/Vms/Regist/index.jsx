@@ -152,7 +152,7 @@ const RegistModal = (props) => {
   }
 
   const bootvolumeOptions = () => {
-    const filterData = bootVolumeDataList.filter((item) => item.name.includes('bootdisk') == false)
+    const filterData = bootVolumeDataList.filter((item) => (!item.name.includes('boot-dv') && !item.name.includes('boot-volume') && !item.name.includes('bootdisk')))
     const opt = filterData.map((obj) => ({
       label: t(obj.name),
       value: t(obj.id),
@@ -1278,9 +1278,18 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                       <div className={styles.list}>
+                        <label>{t('스크립트')}</label>
+                        <div className={styles.multiline}>
+                          <div>{isPassword && t('RESOURCES_CHANGE_PASSWORD')}</div>
+                          <div>{isPackage && t('RESOURCES_WRITE_FILE')}</div>
+                          <div>{isFileWrite && t('RESOURCES_INSTALL_PACKAGE')}</div>
+                          <div>{isUserScript && t('RESOURCES_CUSTOM')}</div>
+                        </div>
+                      </div>
+                      {/* <div className={styles.list}>
                         <label>{t('RESOURCES_USER_NAME')}</label>
                         <div>{globals.user.username}</div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 
