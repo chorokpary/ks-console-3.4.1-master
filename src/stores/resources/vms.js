@@ -261,8 +261,6 @@ export default class VmStore extends Base {
 
   @action
   async update({ id, ...params }, data) {
-    const scurityGroups = data.scurityGroups;
-
     const jsonData = {};
     const vmData = {};
 
@@ -276,6 +274,11 @@ export default class VmStore extends Base {
     await this.submitting(
       request.put(this.getDetailUrl({ id, ...params }), jsonData)
     );
+  }
+
+  @action
+  async updateSecurity({ id, ...params }, data) {
+    const scurityGroups = data.scurityGroups;
 
     const jsonDataSecurity = {};
     const vmDataSecurity = {};
@@ -289,6 +292,24 @@ export default class VmStore extends Base {
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms/${id}/security_groups`,
         jsonDataSecurity
+      )
+    );
+  }
+
+  @action
+  async updateFlavor({ id, ...params }, data) {
+    const jsonData = {};
+    const flavorData = {};
+
+    flavorData.id = id;
+    flavorData.flavor = data.flavor;
+
+    jsonData.vm = flavorData;
+
+    await this.submitting(
+      request.put(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms/${id}/flavor`,
+        jsonData
       )
     );
   }

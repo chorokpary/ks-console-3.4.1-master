@@ -37,6 +37,8 @@ const VmDetail = props => {
     props.match.params.name
   );
 
+  const showFlavor = !!(store.detail.vm?.image);
+
   const vmName = props.match.params.name;
   const vmId = props.match.params.id;
   const floatingData = toJS(store.floatingList);
@@ -73,6 +75,33 @@ const VmDetail = props => {
         props.rootStore.triggerAction('vm.edit', {
           type: 'VM_DETAIL',
           detail: toJS(store.detail),
+          store: store,
+          success: fetchData,
+        });
+      },
+    },
+    {
+      key: 'securitygroup',
+      icon: 'shield',
+      text: t('RESOURCES_VM_SECURITYGROUP_EDIT'),
+      action: 'view',
+      onClick: () => {
+        props.rootStore.triggerAction('vm.edit.securitygroup', {
+          type: 'VM_DETAIL',
+          store: store,
+          success: fetchData,
+        });
+      },
+    },
+    {
+      key: 'flavor',
+      icon: 'apps',
+      text: t('RESOURCES_VM_FLAVOR_EDIT'),
+      action: 'view',
+      show: showFlavor,
+      onClick: () => {
+        props.rootStore.triggerAction('vm.edit.flavor', {
+          type: 'VM_DETAIL',
           store: store,
           success: fetchData,
         });

@@ -601,6 +601,8 @@ module.exports = {
   RESOURCES_DELETE_TEMPLATE: '템플릿 삭제',
   RESOURCES_EXCUTION_DESC: '실행 하시겠습니까?',
   RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
+  RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
+  RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
 
   
 };
