@@ -44,6 +44,19 @@ export default class ImageBuild extends React.Component {
     return globals.user.username !== record.name;
   }
 
+  showActionUpload(record) {
+    const uploadInfo = get(record, ['upload-info-list', 'upload-info'], [])
+
+    let showFlag = false;
+    if(!!uploadInfo){        
+      const status = uploadInfo[0]['upload-file-info']['Status'];
+      const statusText = !!status ? status : "-";
+      showFlag = !(statusText.toLowerCase()).includes('completed');
+    }
+
+    return showFlag;
+  }
+
   get itemActions() {
     const { getData, trigger } = this.props;
 
@@ -66,13 +79,14 @@ export default class ImageBuild extends React.Component {
         icon: 'upload',
         text: t('RESOURCES_IMAGE_FILE_UPLOAD'),
         action: 'edit',
-        show: this.showAction,
+        show: item => this.showActionUpload(item),
         onClick: item =>
           trigger('imagebuild.image.upload', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
+              detail: item,
+              success: getData,
+              ...this.props.match.params,
+          }
+        ),               
       },
     ];
   }

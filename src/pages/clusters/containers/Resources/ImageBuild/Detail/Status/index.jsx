@@ -11,6 +11,8 @@ import styles from './index.scss'
 
 const Status = (props) => {
 
+  console.log(JSON.stringify(props.detailStore.detail))
+
   const renderPodStatus = () => {
     
       const phase = 'Running'

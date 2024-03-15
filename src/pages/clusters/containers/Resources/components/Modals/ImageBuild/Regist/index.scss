@@ -15,6 +15,12 @@ $size-ssmall: 11px;
   }
 }
 
+.body {
+    padding: 0;
+    overflow: hidden;
+    max-height: none;
+  }
+
 .divwrap {
   display: flex;
   position: relative;
@@ -1239,6 +1245,8 @@ $size-ssmall: 11px;
   width: 100%;
   padding: 12px 20px;
 }
+
+
 /* button */
 button {
 	cursor: pointer;
@@ -1284,3 +1292,161 @@ button {
     color: #fff;
   }
 }
+
+
+/* boxwrap */
+.cont_boxwrap {
+	flex: 1;
+	position: relative;
+	padding: 20px;
+	z-index: 10;
+	overflow: hidden;
+	overflow-y: auto;
+	.boxwrap {
+	  position: relative;
+	  width: 100%;
+	  flex-direction: column;
+	  align-items: flex-start;
+	  display: flex;
+	  gap: 12px;
+	  > .box_style {
+	    position: relative;
+	    width: 100%;
+	    height: fit-content;
+	    overflow: auto;
+	    display: flex;
+	    align-items: flex-start;
+	    flex-direction: column;
+	    gap: 12px;
+	    overflow: hidden;
+	    border-radius: 4px;
+	    padding: 12px 16px;
+	    background: #fff;
+	    border: 1px solid #CCD3DB;
+	    box-shadow: $box-shadow;
+	    label {
+	      font-size: 12px;
+	      font-weight: 400;
+	      color: #36435C;
+	    }
+	    .boxtitle {
+	      align-self: stretch;
+	      justify-content: space-between;
+	      align-items: center;
+	      display: flex;
+	      position: relative;
+	    }
+	    .titlename {
+	      align-items: center;
+	      display: flex;
+	      position: relative;
+	      width: fit-content;
+	      font-size: 12px;
+	      font-weight: 600;
+	      color: #242E42;
+	      .basic {
+	        background: url('/assets/resources/images/icons/ico-modal-process-basic.svg') no-repeat;
+	        width: 40px;
+	        height: 40px;
+	      }
+	      .network {
+	        background: url('/assets/resources/images/icons/ico-modal-process-network.svg') no-repeat;
+	        width: 40px;
+	        height: 40px;
+	      }
+	      .detail {
+	        background: url('/assets/resources/images/icons/ico-modal-process-detail.svg') no-repeat;
+	        width: 40px;
+	        height: 40px;
+	      }
+	    }
+	    .greybgbox {
+	    	display: flex;
+	    	align-items: flex-start;
+	    	align-self: stretch;
+	    	background: #F9FBFD;
+	    	border-radius: 4px;
+	    	border: 1px solid #eff4f9;
+	    	overflow: hidden;
+	    	position: relative;
+	    	padding: 12px;
+	      .list {
+	        display: flex;
+	        flex-direction: column;
+	        align-items: baseline;
+	        position: relative;
+	        width: fit-content;
+          word-break: break-all;
+	        label {
+	          align-items: flex-start;
+	          display: flex;
+	          padding: 8px 0px;
+	          position: relative;
+	          width: 72px;
+	          font-size: 12px;
+	          font-weight: 400;
+	          color: #5F708A;
+	        }
+	        div {
+	          font-size: 12px;
+	          color: #242E42;
+	          width: 212px;
+	          padding-right: 10px;
+	          &.bold {
+	            font-weight: 600;
+	          }
+	        }
+          p {
+	          width: 212px;
+	          padding-right: 10px;
+	          &.bold {
+	            font-weight: 600;
+	          }
+	        }
+	        & > label + div {
+	        	font-weight: 600;
+	        } 
+	        .multiline {
+	          padding: 0;
+	          font-weight: 600;
+	          align-items: flex-start;
+	          display: flex;
+	          flex-direction: column;
+	          position: relative;
+	          width: fit-content;
+	          p {
+	            margin-top: 4px;
+	            line-height: 16px;
+	            .flag {
+	            	width: 100px;
+	            	height: 15px;
+	            	color: #79879c;
+	            	display: inline-block;
+	            	background: #eff4f9;
+	            	border: 1px solid #ccd3db;
+	            	margin: 0 6px 2px 0;
+	            	border-radius: 2px;
+	            	font-size: 11px;
+	            	line-height: 15px;
+	            	> em {
+	            		display: inline-block;
+	            		background: #36435c;
+	            		color: #fff;
+	            		width: 45px;
+	            		margin-right: 3px;
+	            		text-align: left;
+	            		padding-left: 6px;
+	            		font-style: normal;
+
+
+	            	}
+	            }
+	          }
+	        }
+	      }
+	    }
+	  }
+	}
+}
+
+

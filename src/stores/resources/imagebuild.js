@@ -129,7 +129,7 @@ export default class ImageBuildStore extends Base {
     })
 
     //console.log(this.dataList)
-    // console.log(JSON.stringify(this.dataList))
+    // console.log("this.dataList : " + JSON.stringify(this.dataList))
 
     return this.dataList
   }
