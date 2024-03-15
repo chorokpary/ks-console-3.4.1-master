@@ -84,7 +84,8 @@ const VmDetail = (props) => {
       key: 'floatingIp',
       icon: 'intranet-routers',
       text: floatingIp == undefined ? t('RESOURCES_ALLOCATE_FIP') : t('RESOURCES_DEALLOCATE_FIP'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       onClick: () => {
         if (floatingIp == undefined) {
           props.rootStore.triggerAction('vm.floatingIpPop', {
@@ -106,7 +107,8 @@ const VmDetail = (props) => {
       key: 'volume',
       icon: 'storage',
       text: t('RESOURCES_VOLUME_MANAGEMENT'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       onClick: () => {
         props.rootStore.triggerAction('vm.volumePop', {
           type: 'VM_DETAIL',
@@ -145,7 +147,8 @@ const VmDetail = (props) => {
       key: 'migrate',
       icon: 'radio',
       text: t('RESOURCES_MIGRATION'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       disabled: get(store.detail.vm, 'migratable') ? false : true,
       onClick: () => {
 
@@ -167,7 +170,8 @@ const VmDetail = (props) => {
       key: 'snapshot',
       icon: 'resourceIcon:snapshot',
       text: t('RESOURCES_SNAPSHOT'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
         const data = {};
@@ -185,7 +189,8 @@ const VmDetail = (props) => {
       key: 'clone',
       icon: 'resourceIcon:clone',
       text: t('RESOURCES_CLONE'),
-      action: 'view',
+      action: 'edit',
+      show: showEdit,
       disabled: get(store.detail.vm, 'snapshotable') ? false : true,
       onClick: () => {
         const data = {};
