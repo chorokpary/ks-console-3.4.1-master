@@ -44,6 +44,12 @@ const VmDetail = (props) => {
   const floatingId = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.id)[0]
   const floatingIp = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.floating_ip)[0]
 
+  // external만 존재할 경우 fip 할당 숨김처리
+  const networkData = store.networksList || [];
+  const networkNameArray = store.detail.vm?.networks.map(item => item.name);
+  const filterData = networkData?.filter(item => networkNameArray?.includes(item.id));
+  const disableFip = !!(filterData.some(obj => !obj.external))
+
   const fnOpenVncPopup = () => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://" + location.hostname + ":30020";
@@ -86,6 +92,7 @@ const VmDetail = (props) => {
       text: floatingIp == undefined ? t('RESOURCES_ALLOCATE_FIP') : t('RESOURCES_DEALLOCATE_FIP'),
       action: 'edit',
       show: showEdit,
+      disabled: !disableFip,
       onClick: () => {
         if (floatingIp == undefined) {
           props.rootStore.triggerAction('vm.floatingIpPop', {
