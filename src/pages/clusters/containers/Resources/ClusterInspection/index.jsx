@@ -9,6 +9,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 // import { Tooltip } from '@kubed/components';
+
+import { Icon } from '@kube-design/components';
 import Banner from 'components/Cards/Banner';
 import { Panel, Text } from 'components/Base';
 import DetailClusterList from 'pages/clusters/containers/Resources/components/DetailClusterList';
@@ -190,9 +192,9 @@ export default class ClusterInspection extends React.Component {
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
-                        <i className="ico-type24-clusternode"></i>
+                        <Icon name="project" size={40} />
                         <h6 className="list_title">
-                          {t('CLUSTER_INSPECTION_NAMESPACE_CNT')}
+                          {t('CLUSTER_INSPECTION_PROJECT_CNT')}
                         </h6>
                       </div>
                       <div className="value">
@@ -201,7 +203,7 @@ export default class ClusterInspection extends React.Component {
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
-                        <i className="ico-type24-clusternode"></i>
+                        <Icon name="backup" size={40} />
                         <h6 className="list_title">
                           {t('CLUSTER_INSPECTION_WORKLOAD_CNT')}
                         </h6>

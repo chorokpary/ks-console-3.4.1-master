@@ -565,8 +565,8 @@ const DetailClusterList = props => {
       setButtonWarning(false);
       setExpandItem('');
       setIsExpandFlag(!isExpandFlag);
-    } else if (value === 'namespace') {
-      setTabValue('namespace');
+    } else if (value === 'project') {
+      setTabValue('project');
       setButtonDanger(false);
       setButtonPass(false);
       setButtonWarning(false);
@@ -585,8 +585,8 @@ const DetailClusterList = props => {
           label: t('CLUSTER_INSPECTION_CLUSTER'),
         },
         {
-          value: `namespace`,
-          label: t('CLUSTER_INSPECTION_NAMESPACE'),
+          value: `project`,
+          label: t('CLUSTER_INSPECTION_PROJECT'),
         },
       ],
     };
@@ -674,7 +674,7 @@ const DetailClusterList = props => {
       return content;
     }
 
-    if (tabValue === 'namespace') {
+    if (tabValue === 'project') {
       const content = namespace
         ?.sort((a, b) => {
           return a.namespace > b.namespace ? 1 : -1;
@@ -868,15 +868,15 @@ const DetailClusterList = props => {
                                     </div>
                                     <p className="dot_value">
                                       <label>
-                                        {t('CLUSTER_INSPECTION_PASS')}
+                                        {t('CLUSTER_INSPECTION_PASS')}{' '}
                                         {counts.ignore || 0}
                                       </label>
                                       <label>
-                                        {t('CLUSTER_INSPECTION_WARNING')}
+                                        {t('CLUSTER_INSPECTION_WARNING')}{' '}
                                         {counts.warning || 0}
                                       </label>
                                       <label>
-                                        {t('CLUSTER_INSPECTION_DANGER')}
+                                        {t('CLUSTER_INSPECTION_DANGER')}{' '}
                                         {counts.danger || 0}
                                       </label>
                                       <span className="data"></span>
