@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { Modal, TypeSelect, List, Panel } from 'components/Base'
 import { PropertiesInput, NumberInput } from 'components/Inputs'
-import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants'
+import { PATTERN_USER_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants'
 import { Form, Input, Select, Button } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
@@ -334,8 +334,8 @@ const RegistModal = (props) => {
                       rules={[
                         { required: true, message: t('NAME_EMPTY_DESC') },
                         {
-                          pattern: PATTERN_NAME,
-                          message: t('INVALID_NAME_DESC'),
+                          pattern: PATTERN_USER_NAME,
+                          message: t('RESOURCES_INVALID_NAME_DESC'),
                         },
                       ]}
                       desc={t('NAME_DESC')}

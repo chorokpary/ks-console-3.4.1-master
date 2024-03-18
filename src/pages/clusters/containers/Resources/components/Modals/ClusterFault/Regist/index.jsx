@@ -9,7 +9,7 @@ import TypeSelect from '../../../TypeSelect'
 import classnames from 'classnames'
 import styles from './index.scss'
 
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+import { PATTERN_USER_NAME } from 'utils/constants'
 const defaultBaseUrl = 'http://local-ai.local-ai.svc.cluster.local:80/v1';
 
 const RegistModal = (props) => {
@@ -48,18 +48,6 @@ const RegistModal = (props) => {
     }
   ]
 
-
-  const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
-    }
-    callback()
-  }
-
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -87,9 +75,10 @@ const RegistModal = (props) => {
           <Form.Item
             label={t('RESOURCES_NAME')}
             rules={[
+              { required: true, message: t('NAME_EMPTY_DESC') },
               {
-                required: true,
-                validator: nameValidator
+                pattern: PATTERN_USER_NAME,
+                message: t('RESOURCES_INVALID_NAME_DESC'),
               },
             ]}
             desc={t('NAME_DESC')}

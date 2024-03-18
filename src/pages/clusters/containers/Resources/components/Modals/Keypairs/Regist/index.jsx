@@ -5,12 +5,9 @@ import { Form, Input, Select, TextArea, Button, Loading, Column, Columns } from 
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { ProjectSelect } from 'components/Inputs'
-
-import { PATTERN_NAME } from 'utils/constants'
-
 import classnames from 'classnames'
 
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
 
@@ -19,7 +16,7 @@ const RegistModal = (props) => {
   const [formData, setFormData] = useState({});
 
   const [privateKeyDownFlag, setPrivateKeyDownFlag] = useState(false);
-  
+
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -113,29 +110,18 @@ const RegistModal = (props) => {
     element.click();
   }
 
-  const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_KEYPAIR_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
-    }
-    callback()
-  }
-
   const fnGetModalFooter = () => {
 
     let elements = "";
     elements =
       <>
-      
-          <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
-          {!privateKeyDownFlag ?
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>{t('RESOURCES_CONFIRM')}</Button>
-            :
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
-          }
+
+        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+        {!privateKeyDownFlag ?
+          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>{t('RESOURCES_CONFIRM')}</Button>
+          :
+          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
+        }
 
       </>
 
@@ -156,102 +142,102 @@ const RegistModal = (props) => {
         hideFooter
       >
         <Form data={formData} ref={form}>
-        <div className={styles.cont_boxwrap}>
+          <div className={styles.cont_boxwrap}>
 
-          <div className={styles.divwrap}>
-            <div className={styles.div_left}>
-              <Columns>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_NAME')}
-                    rules={[
-                      { required: true, message: t('NAME_EMPTY_DESC') },
-                      {
-                        pattern: PATTERN_NAME,
-                        message: t('INVALID_NAME_DESC'),
-                      },
-                    ]}
-                    desc={t('NAME_DESC')}
-                  >
-                    <Input
-                      name="name"
-                      autoFocus={true}
-                      maxLength={63}
-                      style={{ maxWidth: 'none' }}
-                    />
-                  </Form.Item>
-                </Column>
-                {!props.namespace && (
+            <div className={styles.divwrap}>
+              <div className={styles.div_left}>
+                <Columns>
                   <Column>
                     <Form.Item
-                      label={t('PROJECT')}
-                      desc={t('SELECT_PROJECT_DESC')}
+                      label={t('RESOURCES_NAME')}
                       rules={[
-                        { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                        { required: true, message: t('NAME_EMPTY_DESC') },
+                        {
+                          pattern: PATTERN_USER_NAME,
+                          message: t('RESOURCES_INVALID_NAME_DESC'),
+                        },
                       ]}
+                      desc={t('NAME_DESC')}
                     >
-                      <ProjectSelect
-                        name="namespace"
-                        defaultValue={projectName}
-                        cluster={props.cluster}
-                        onChange={(e) => setProjectName(e)}
+                      <Input
+                        name="name"
+                        autoFocus={true}
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}
                       />
                     </Form.Item>
                   </Column>
-                )}
-              </Columns>
+                  {!props.namespace && (
+                    <Column>
+                      <Form.Item
+                        label={t('PROJECT')}
+                        desc={t('SELECT_PROJECT_DESC')}
+                        rules={[
+                          { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                        ]}
+                      >
+                        <ProjectSelect
+                          name="namespace"
+                          defaultValue={projectName}
+                          cluster={props.cluster}
+                          onChange={(e) => setProjectName(e)}
+                        />
+                      </Form.Item>
+                    </Column>
+                  )}
+                </Columns>
+              </div>
+              <div className={styles.div_right}>
+                <Form.Item>
+                  <div>
+                    {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button>}
+                    {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button>}
+                    {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button>}
+                  </div>
+                </Form.Item>
+              </div>
             </div>
-            <div className={styles.div_right}>
-              <Form.Item>
-                <div>
-                  {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button>}
-                  {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button>}
-                  {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button>}
-                </div>
-              </Form.Item>
-            </div>
-          </div>
 
-          <Form.Item
-            className={styles.textarea}
-            label={t('RESOURCES_PUBLIC_KEY')}
-            rules={[{ required: true, message: t('RESOURCES_PUBLIC_KEY_EMPTY_DESC') }]}
-          >
-            {loadingBar ?
-              <Loading spinning={loadingBar}>
-                <TextArea
+            <Form.Item
+              className={styles.textarea}
+              label={t('RESOURCES_PUBLIC_KEY')}
+              rules={[{ required: true, message: t('RESOURCES_PUBLIC_KEY_EMPTY_DESC') }]}
+            >
+              {loadingBar ?
+                <Loading spinning={loadingBar}>
+                  <TextArea
+                    name="publicKey"
+                    rows="8"
+                    defaultValue={publicKey}
+                    readOnly
+                  />
+                </Loading>
+                : <TextArea
                   name="publicKey"
                   rows="8"
                   defaultValue={publicKey}
-                  readOnly
                 />
-              </Loading>
-              : <TextArea
-                name="publicKey"
-                rows="8"
-                defaultValue={publicKey}
+              }
+            </Form.Item>
+            <Form.Item
+              className={styles.textarea}
+              label={t('RESOURCES_DESCRIPTION')}
+              desc={t('DESCRIPTION_DESC')}
+            >
+              <TextArea
+                name="description"
+                maxLength={256}
+                rows="1"
+                defaultValue=""
               />
-            }
-          </Form.Item>
-          <Form.Item
-            className={styles.textarea}
-            label={t('RESOURCES_DESCRIPTION')}
-            desc={t('DESCRIPTION_DESC')}
-          >
-            <TextArea
-              name="description"
-              maxLength={256}
-              rows="1"
-              defaultValue=""
-            />
-          </Form.Item>
+            </Form.Item>
 
-        </div>
+          </div>
 
-        {/* Footer */}
-        <div className={styles['modal-footer']}>
+          {/* Footer */}
+          <div className={styles['modal-footer']}>
             {fnGetModalFooter()}
-        </div>
+          </div>
 
         </Form>
       </Modal>

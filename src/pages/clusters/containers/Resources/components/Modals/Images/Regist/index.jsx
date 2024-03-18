@@ -26,10 +26,9 @@ import CardSelect from '../../../CardSelect';
 import DistroTypeStore from 'stores/resources/distrotype';
 import { UnitSlider, NumberInput } from 'components/Inputs';
 import { Modal, List } from 'components/Base';
-import { PATTERN_NAME } from 'utils/constants';
+import { PATTERN_USER_NAME } from 'utils/constants';
 
 const defaultImageSize = '12GB';
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC');
 const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE');
@@ -181,24 +180,13 @@ export default function ResourceImageModal({ title, store, onOk }) {
   const stepMoveCheck = step => {
     const { data } = form.current.props;
     if (step == 1) {
-      if (data.name == undefined || !regexName.test(data.name) || sizeEmpty) {
+      if (data.name == undefined || !PATTERN_USER_NAME.test(data.name) || sizeEmpty) {
         handleOk();
       } else {
         setRegStep(2);
         setSubmitButtonFlag(false);
       }
     }
-  };
-
-  const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') });
-    }
-    if (!regexName.test(value)) {
-      return callback({ message: t('RESOURCES_NAME_CHECK_DESC') });
-    }
-
-    callback();
   };
 
   const fnGetModalFooter = () => {
@@ -296,10 +284,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
               <div className={styles.status}>
                 <div
                   className={`${regStep == 1
-                      ? styles.current
-                      : regStep > 1
-                        ? styles.done
-                        : styles.todo
+                    ? styles.current
+                    : regStep > 1
+                      ? styles.done
+                      : styles.todo
                     }`}
                 ></div>
               </div>
@@ -326,10 +314,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
               <div className={styles.status}>
                 <div
                   className={`${regStep == 2
-                      ? styles.current
-                      : regStep > 2
-                        ? styles.done
-                        : styles.todo
+                    ? styles.current
+                    : regStep > 2
+                      ? styles.done
+                      : styles.todo
                     }`}
                 ></div>
               </div>
@@ -354,8 +342,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 rules={[
                   { required: true, message: t('NAME_EMPTY_DESC') },
                   {
-                    pattern: PATTERN_NAME,
-                    message: t('INVALID_NAME_DESC'),
+                    pattern: PATTERN_USER_NAME,
+                    message: t('RESOURCES_INVALID_NAME_DESC'),
                   },
                 ]}
                 desc={t('NAME_DESC')}
@@ -892,8 +880,8 @@ const Step2 = ({
             {/* <label>소스</label> */}
             <div
               className={`${styles.cont_box_wrap} ${sourceEmpty || harborValidError || userValidError
-                  ? styles.formErrorStyle
-                  : ''
+                ? styles.formErrorStyle
+                : ''
                 }`}
             >
               <div className={styles.cont_box_section}>

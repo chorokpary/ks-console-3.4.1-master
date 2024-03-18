@@ -15,7 +15,7 @@ import { Modal, TypeSelect } from 'components/Base';
 import * as common from 'utils/resources';
 import { ProjectSelect } from 'components/Inputs';
 
-import { PATTERN_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 import styles from './index.scss';
 
@@ -259,8 +259,8 @@ const RegistModal = props => {
                       rules={[
                         { required: true, message: t('NAME_EMPTY_DESC') },
                         {
-                          pattern: PATTERN_NAME,
-                          message: t('INVALID_NAME_DESC'),
+                          pattern: PATTERN_USER_NAME,
+                          message: t('RESOURCES_INVALID_NAME_DESC'),
                         },
                       ]}
                       desc={t('NAME_DESC')}

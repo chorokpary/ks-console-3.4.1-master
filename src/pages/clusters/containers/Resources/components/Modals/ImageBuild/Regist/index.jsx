@@ -9,7 +9,7 @@ import classnames from 'classnames'
 import styles from './index.scss'
 import * as common from "utils/resources"
 
-import { PATTERN_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 
 const RegistModal = (props) => {
@@ -27,16 +27,16 @@ const RegistModal = (props) => {
   const [userPassword, setUserPassword] = useState('gozldqkdwl2')
 
   const [harborValid, setHarborValid] = useState(false)
-  
+
   const [userValid, setUserValid] = useState(false)
   const [userValidError, setUserValidError] = useState(false)
   const [userValidCheck, setuserValidCheck] = useState(false)
   const [userValidCheckError, setUserValidCheckError] = useState(false)
 
   const cpuTypeOptions = [
-  { label: t('ARM'), value: "ARM", },
-  { label: t('x86'), value: "x86", }
-]
+    { label: t('ARM'), value: "ARM", },
+    { label: t('x86'), value: "x86", }
+  ]
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -48,23 +48,23 @@ const RegistModal = (props) => {
       data.user = userName;
       data.password = userPassword;
 
-      if(!!registryUrl && !!userName && !!userPassword){
+      if (!!registryUrl && !!userName && !!userPassword) {
         console.log("정보 입력 완료")
-        setHarborValid(false);        
-      }else{
+        setHarborValid(false);
+      } else {
         console.log("정보 입력 미완료")
         setHarborValid(true);
         return false;
       }
 
-      if(!userValidCheck){
+      if (!userValidCheck) {
         console.log("유효성 체크하지 않음!!")
         setUserValidCheckError(true);
         setUserValidError(false);
         return false;
       }
 
-      if(!userValid){
+      if (!userValid) {
         console.log("유효하지 않음!!")
         return false;
       }
@@ -85,42 +85,42 @@ const RegistModal = (props) => {
     await request.post(`customharbor/build`, {
       auth: userAuth
     }).then(res => {
-        Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
+      Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
+      setuserValidCheck(true);
+      setUserValidCheckError(false);
+      setUserValid(true);
+      setUserValidError(false);
+    }).catch(err => {
+
+      console.log("err.status : " + JSON.stringify(err.status))
+
+      if (!!err.status) {
+        //유효하지 않음
+        setuserValidCheck(false);
+        setUserValidCheckError(false);
+        setUserValid(false);
+        setUserValidError(true);
+      } else {
+        //유효함
         setuserValidCheck(true);
         setUserValidCheckError(false);
         setUserValid(true);
         setUserValidError(false);
-      }).catch(err => {
-
-        console.log("err.status : "+ JSON.stringify(err.status))
-
-        if(!!err.status){
-          //유효하지 않음
-          setuserValidCheck(false);
-          setUserValidCheckError(false);
-          setUserValid(false);
-          setUserValidError(true);
-        }else{
-          //유효함
-          setuserValidCheck(true);
-          setUserValidCheckError(false);
-          setUserValid(true);
-          setUserValidError(false);
-        }          
-      })
+      }
+    })
   }
 
   const tagValidator = (rule, value, callback) => {
     if (value == undefined) {
       return callback({ message: t('RESOURCES_TAG_EMPTY_DESC') })
-    } 
+    }
     callback()
   }
 
   const osValidator = (rule, value, callback) => {
     if (value == undefined) {
       return callback({ message: t('RESOURCES_OS_INFORMATION_EMPTY_DESC') })
-    } 
+    }
     callback()
   }
 
@@ -129,13 +129,13 @@ const RegistModal = (props) => {
     let elements = "";
     elements =
       <>
-      
-          <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
-          {props.isSubmitting ?
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
-            :
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
-          }
+
+        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+        {props.isSubmitting ?
+          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
+          :
+          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
+        }
 
       </>
 
@@ -155,15 +155,15 @@ const RegistModal = (props) => {
         hideFooter
       >
         <Form data={formData} ref={form}>
-          
-        <div className={styles.cont_boxwrap}>
-          <Form.Item
+
+          <div className={styles.cont_boxwrap}>
+            <Form.Item
               label={t('RESOURCES_NAME')}
               rules={[
                 { required: true, message: t('NAME_EMPTY_DESC') },
                 {
-                  pattern: PATTERN_NAME,
-                  message: t('INVALID_NAME_DESC'),
+                  pattern: PATTERN_USER_NAME,
+                  message: t('RESOURCES_INVALID_NAME_DESC'),
                 },
               ]}
               desc={t('NAME_DESC')}
@@ -222,11 +222,11 @@ const RegistModal = (props) => {
               />
             </Form.Item>
 
-            <Form.Item>     
-            <>
-              Harbor URL<span className="form-item-required">*</span>
-              <div className={styles.content_box_wrap}>
-                <div className={styles.cont_box_section}>
+            <Form.Item>
+              <>
+                Harbor URL<span className="form-item-required">*</span>
+                <div className={styles.content_box_wrap}>
+                  <div className={styles.cont_box_section}>
                     <div className={styles.cont_box_wrap}>
 
                       <div className={styles.regi_group_area}>
@@ -263,15 +263,15 @@ const RegistModal = (props) => {
                       {/* //유효하지 않은 사용자 입니다. */}
                       {userValidError &&
                         <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FAIL_VALID_TIP')}</div>
-                      }                  
-                      
+                      }
+
 
                     </div>
-                </div>           
-              </div>      
-            </>
-            </Form.Item>      
-    
+                  </div>
+                </div>
+              </>
+            </Form.Item>
+
             <Form.Item
               className={styles.textarea}
               label={t('RESOURCES_DESCRIPTION')}
@@ -284,11 +284,11 @@ const RegistModal = (props) => {
                 defaultValue=""
               />
             </Form.Item>
-           </div>    
+          </div>
 
           <div className={styles['modal-footer']}>
             {fnGetModalFooter()}
-          </div>     
+          </div>
 
         </Form>
       </Modal>

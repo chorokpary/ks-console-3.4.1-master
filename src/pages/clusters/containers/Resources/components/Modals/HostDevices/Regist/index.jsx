@@ -8,7 +8,7 @@ import HostDeviceStore from 'stores/resources/hostdevices'
 import classnames from 'classnames'
 import { COLORS_MAP } from 'utils/constants'
 
-const regexName = /^([a-z.]+)\/([a-z0-9]+)$/;
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
     const hostDeviceStore = new HostDeviceStore();
@@ -88,8 +88,8 @@ const RegistModal = (props) => {
     const handleDelete = (name) => {
         setCheckItems(checkItems.filter((el) => el !== name));
         setAddRowList(addRowList.filter((el) => el.device_name !== name));
-        console.log(addRowList.filter((el) => regexName.test(el.name)).length)
-        if (addRowList.length - 1 < 1 || addRowList.filter((el) => regexName.test(el.name)).length == addRowList.length - 1) {
+        console.log(addRowList.filter((el) => PATTERN_USER_NAME.test(el.name)).length)
+        if (addRowList.length - 1 < 1 || addRowList.filter((el) => PATTERN_USER_NAME.test(el.name)).length == addRowList.length - 1) {
             setIsCheckName(false)
         }
     };
@@ -112,7 +112,7 @@ const RegistModal = (props) => {
             values[i].description = e;
         } else {
             values[i].name = e;
-            if (regexName.test(e)) {
+            if (PATTERN_USER_NAME.test(e)) {
                 setIsCheckName(false)
             }
         }
@@ -135,7 +135,7 @@ const RegistModal = (props) => {
 
     const handleOk = () => {
         const onOk = props.onOk;
-        const filterCount = addRowList.filter((el) => regexName.test(el.name)).length;
+        const filterCount = addRowList.filter((el) => PATTERN_USER_NAME.test(el.name)).length;
 
         setIsCheck(true)
         const checkName = (filterCount == addRowList.length) && (filterCount > 0);

@@ -9,7 +9,7 @@ import { Modal } from 'components/Base'
 import classnames from 'classnames'
 import styles from './index.scss'
 
-import { PATTERN_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
 
@@ -125,23 +125,6 @@ const RegistModal = (props) => {
 
   // 체크 리스트 끝 ==================================================
 
-  // Validation 시작 ==================================================
-  const nameValidator = (rule, value, callback) => {
-
-    const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
-
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
-    }
-    callback()
-  }
-  // Validation 끝 ==================================================
-
-
   return (
     <>
       <Modal
@@ -161,8 +144,8 @@ const RegistModal = (props) => {
                 rules={[
                   { required: true, message: t('NAME_EMPTY_DESC') },
                   {
-                    pattern: PATTERN_NAME,
-                    message: t('INVALID_NAME_DESC'),
+                    pattern: PATTERN_USER_NAME,
+                    message: t('RESOURCES_INVALID_NAME_DESC'),
                   },
                 ]}
                 desc={t('NAME_DESC')}
