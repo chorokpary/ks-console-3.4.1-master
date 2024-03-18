@@ -19,12 +19,6 @@ const CpuPower = ({ x, y, w, h,
   nodeData
 }) => {
 
-  useEffect(() => {
-    setNodeList(nodeData)
-  }, [nodeData])
-
-
-
   const customStore = new CustomStore();
 
   const [loading, setLoading] = useState(false);
@@ -38,39 +32,33 @@ const CpuPower = ({ x, y, w, h,
   const [armPowerData, setArmPowerData] = useState([]);
 
   useEffect(() => {
-
-    let cleanupTrigger = true;
-    const getData = async () => {
-      setLoading(true)
-
-
-      let promql_node_list = ""
-      nodeList.map((obj) => {
-        const nodeName = get(obj, 'name')
-        promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
-      })
-
-      const metric_type = await customStore.fetchMetric({
-        expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
-      })
-
-      const metric_power_last = await customStore.fetchMetric({
-        expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
-      })
-
-      if (cleanupTrigger) {
-        setMetricType(metric_type)
-        setMetricPower(metric_power_last)
-        fetchData(get(stepData, 'h'))
-        setLoading(false)
-      }
+    if (nodeData.length > 0) {
+      getData()
     }
-    getData()
-    return () => {
-      cleanupTrigger = false
-      setLoading(false)
-    }
-  }, [])
+  }, [nodeData])
+
+  const getData = async () => {
+    setLoading(true)
+
+    let promql_node_list = ""
+    nodeData.map((obj) => {
+      const nodeName = get(obj, 'name')
+      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+    })
+
+    const metric_type = await customStore.fetchMetric({
+      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+    })
+
+    const metric_power_last = await customStore.fetchMetric({
+      expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
+    })
+
+    setMetricType(metric_type)
+    setMetricPower(metric_power_last)
+    fetchData(get(stepData, 'h'))
+    setLoading(false)
+  }
 
 
   const getMonitoringCfgs = () => {
@@ -115,7 +103,7 @@ const CpuPower = ({ x, y, w, h,
     }
 
     let promql_node_list = ""
-    nodeList.map((obj) => {
+    nodeData.map((obj) => {
       const nodeName = get(obj, 'name')
       promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
     })
@@ -205,7 +193,7 @@ const CpuPower = ({ x, y, w, h,
   const getPower = (nodeType) => {
 
     let cnt = 0;
-    nodeList.map((obj) => {
+    nodeData.map((obj) => {
       const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
       const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
       const type = get(type_data, 'metric.machine', '')
