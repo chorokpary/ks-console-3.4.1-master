@@ -61,9 +61,11 @@ const ImageBuildDetail = (props) => {
       let fileSize = 0;
       let fileConvertSize = "-";
 
-      if(!!uploadInfo) {
+      if(!!uploadInfo) {         
+         const MetaData = uploadInfo[0]['upload-file-info']['file-info']['MetaData'];
+         fileName = get(MetaData, 'filename', '-').split(".")[0]
+
          fileStatus = uploadInfo[0]['upload-file-info']['Status'];
-         fileName = uploadInfo[0]['upload-file-info']['file-info']['ID'];
          fileSize = uploadInfo[0]['file-size'];          
          fileConvertSize = common.fnFormatBytes(fileSize.toString());
       }

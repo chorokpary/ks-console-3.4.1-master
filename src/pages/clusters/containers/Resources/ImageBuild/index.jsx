@@ -44,10 +44,10 @@ export default class ImageBuild extends React.Component {
     return globals.user.username !== record.name;
   }
 
-  showActionUpload(record) {
-    const uploadInfo = get(record, ['upload-info-list', 'upload-info'], [])
+  showActionUpload(item) {
+    const uploadInfo = get(item, ['upload-info-list', 'upload-info'], [])
 
-    let showFlag = false;
+    let showFlag = true;
     if(!!uploadInfo){        
       const status = uploadInfo[0]['upload-file-info']['Status'];
       const statusText = !!status ? status : "-";
@@ -194,10 +194,10 @@ export default class ImageBuild extends React.Component {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
           if(!!uploadInfo) {
-            const fileName = uploadInfo[0]['upload-file-info']['file-info']['ID'];
-            const fileNameText = !!fileName ? fileName : "-";
+            const MetaData = uploadInfo[0]['upload-file-info']['file-info']['MetaData'];
+            const fileName = get(MetaData, 'filename', '-').split(".")[0]
 
-            return fileNameText
+            return fileName
           }
           return '-'
         },

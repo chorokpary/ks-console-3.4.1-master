@@ -86,7 +86,6 @@ const RegistModal = (props) => {
       auth: userAuth
     }).then(res => {
         Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
-        console.log("SSSSSSSSSSSSSSSSS") 
         setuserValidCheck(true);
         setUserValidCheckError(false);
         setUserValid(true);
@@ -97,14 +96,12 @@ const RegistModal = (props) => {
 
         if(!!err.status){
           //유효하지 않음
-          console.log("AAAAAAAAAAAAAAA")
           setuserValidCheck(false);
           setUserValidCheckError(false);
           setUserValid(false);
           setUserValidError(true);
         }else{
           //유효함
-          console.log("BBBBBBBBBBBBBBB")
           setuserValidCheck(true);
           setUserValidCheckError(false);
           setUserValid(true);

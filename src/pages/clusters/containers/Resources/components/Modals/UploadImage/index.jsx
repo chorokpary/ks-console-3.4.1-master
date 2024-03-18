@@ -89,8 +89,14 @@ const UploadModal = (props) => {
       // Callback for reporting upload progress
       onProgress: function (bytesUploaded, bytesTotal) {
         var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
+        var percentageNotDecimalPoint = ((bytesUploaded / bytesTotal) * 100).toFixed(0)
         console.log(bytesUploaded, bytesTotal, percentage + '%')
         fnProgress(bytesTotal, bytesUploaded, percentage);
+
+        // onSuccess가 호출되지 않아 처리 부분 추가....
+        if(percentageNotDecimalPoint == 100){
+          setTimeout(onOk({}), 1000);
+        }
       },
       // Callback for once the upload is completed
       onSuccess: function () {
@@ -139,7 +145,7 @@ const UploadModal = (props) => {
       progressText.current.textContent = percentage + " %";
       progressbar.current.style.transform = "translateX(" + percentage + "%)";
       loadedText.current.textContent = common.fnFormatBytes(totalLoaded.toString());
-    }
+    }    
   };
   // File Upload End ############################################
 
