@@ -12,10 +12,9 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
-
+import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants'
 import { PropertiesInput, NumberInput } from 'components/Inputs';
 import * as common from 'utils/resources';
-
 import SriovStore from 'stores/resources/sriovs';
 
 import styles from './index.scss';
@@ -201,16 +200,11 @@ const ModifyModal = props => {
     },
   };
 
-  // ip 정규식
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
-  // const regexIpzero = /(^(\d{1,3}\.){3}([0])$)/; // 끝자리 0 정규식
-  // 숫자 정규식
-  const regexNumber = /^[0-9]+$/;
   const isValidIpAddress = ip => {
-    return regexIp.test(ip);
+    return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
-    if (!regexNumber.test(num)) {
+    if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }
     const clsMaximumVal = 128;
@@ -220,6 +214,17 @@ const ModifyModal = props => {
     }
     return true;
   };
+
+  const cidrValidator = (rule, value, callback) => {
+    if (!value) {
+      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
+    } else {
+      if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
+        return callback({ message: t('RESOURCES_CIDR_VALID') })
+      }
+    }
+    callback()
+  }
 
   const onChaneCidr = e => {
     const { data } = form.current.props;
@@ -359,13 +364,12 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -377,8 +381,8 @@ const ModifyModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -473,7 +477,7 @@ const ModifyModal = props => {
                             rules={[
                               {
                                 required: true,
-                                message: t('RESOURCES_CIDR_EMPTY_DESC'),
+                                validator: cidrValidator,
                               },
                             ]}
                           >
@@ -495,6 +499,9 @@ const ModifyModal = props => {
                                     required: true,
                                     message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
                                   },
+                                  {
+                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
+                                  }
                                 ]}
                               >
                                 <Input
@@ -510,6 +517,9 @@ const ModifyModal = props => {
                                     required: true,
                                     message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
                                   },
+                                  {
+                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
+                                  }
                                 ]}
                               >
                                 <Input
@@ -527,7 +537,10 @@ const ModifyModal = props => {
                     <Form.Item>
                       <Columns>
                         <Column>
-                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}>
+                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}
+                            rules={[{
+                              pattern: PATTERN_IP, message: t('RESOURCES_GATEWAY_IP_POOL_VALID')
+                            }]}>
                             <Input
                               name="gateway_ip"
                               defaultValue={detail.gateway_ip}
@@ -588,7 +601,7 @@ const ModifyModal = props => {
                                   }
                                   checked={
                                     dataListVariables['bond'].length > 0 &&
-                                    stateVariables['bond'].length ===
+                                      stateVariables['bond'].length ===
                                       dataListVariables['bond'].length
                                       ? true
                                       : false
