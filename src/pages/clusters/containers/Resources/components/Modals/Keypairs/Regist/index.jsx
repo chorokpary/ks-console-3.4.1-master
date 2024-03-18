@@ -8,6 +8,8 @@ import { ProjectSelect } from 'components/Inputs'
 
 import { PATTERN_NAME } from 'utils/constants'
 
+import classnames from 'classnames'
+
 const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
@@ -16,6 +18,8 @@ const RegistModal = (props) => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
+  const [privateKeyDownFlag, setPrivateKeyDownFlag] = useState(false);
+  
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -78,7 +82,10 @@ const RegistModal = (props) => {
   }
 
   const privateKeyDownload = () => {
-    let fileName = 'Private_Key.txt';
+    const { data } = form.current.props;
+    const keypairName = data['name'];
+
+    let fileName = `${globals.user.username}-${keypairName}-rsa-key.txt`;
     let output = privateKey;
     const element = document.createElement('a');
     const file = new Blob([output], {
@@ -87,10 +94,15 @@ const RegistModal = (props) => {
     element.href = URL.createObjectURL(file);
     element.download = fileName;
     element.click();
+
+    setPrivateKeyDownFlag(true);
   }
 
   const publicKeyDownload = () => {
-    let fileName = 'Public_Key.pub';
+    const { data } = form.current.props;
+    const keypairName = data['name'];
+
+    let fileName = `${globals.user.username}-${keypairName}-rsa-key.pub`;
     let output = privateKey;
     const element = document.createElement('a');
     const file = new Blob([output], {
@@ -112,6 +124,25 @@ const RegistModal = (props) => {
     callback()
   }
 
+  const fnGetModalFooter = () => {
+
+    let elements = "";
+    elements =
+      <>
+      
+          <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+          {!privateKeyDownFlag ?
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>{t('RESOURCES_CONFIRM')}</Button>
+            :
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
+          }
+
+      </>
+
+    return elements;
+  }
+
+
   return (
     <>
       <Modal
@@ -121,8 +152,12 @@ const RegistModal = (props) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+        bodyClassName={styles.body}
+        hideFooter
       >
         <Form data={formData} ref={form}>
+        <div className={styles.cont_boxwrap}>
+
           <div className={styles.divwrap}>
             <div className={styles.div_left}>
               <Columns>
@@ -210,6 +245,13 @@ const RegistModal = (props) => {
               defaultValue=""
             />
           </Form.Item>
+
+        </div>
+
+        {/* Footer */}
+        <div className={styles['modal-footer']}>
+            {fnGetModalFooter()}
+        </div>
 
         </Form>
       </Modal>
