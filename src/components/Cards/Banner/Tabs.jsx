@@ -16,16 +16,16 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
+import React from 'react';
 
-import RadioGroup from './RadioGroup'
+import RadioGroup from './RadioGroup';
 
-import styles from './index.scss'
+import styles from './index.scss';
 
 export default function Tabs({ tabs }) {
   return (
     <div className={styles.tabsWrapper}>
       <RadioGroup {...tabs} />
     </div>
-  )
+  );
 }

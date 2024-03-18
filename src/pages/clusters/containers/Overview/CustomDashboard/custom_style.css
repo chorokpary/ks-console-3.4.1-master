@@ -1885,6 +1885,9 @@ html {
 .content_box_wrap .status_wrap .status.danger:before {
   background: #ca2621;
 }
+.content_box_wrap .status_wrap .status.ignore:before {
+  background: #86929d;
+}
 .content_box_wrap .boxtab {
   background: #d8dee5;
   border-radius: 2px;
@@ -2963,6 +2966,8 @@ html {
   display: flex;
   right: 0;
   transition: 0.3s ease;
+  /* top: -64px;
+  right: -6px; */
 }
 .content_box_wrap .sub_layer_pop .layer_pop_header {
   width: 100%;

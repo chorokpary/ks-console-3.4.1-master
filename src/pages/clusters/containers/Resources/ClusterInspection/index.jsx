@@ -21,7 +21,6 @@ import withList, { ListPage } from 'components/HOCs/withList';
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
 import * as common from 'utils/resources';
 
-const tabValue = '';
 @withList({
   store: new ClusterInspectionStore(),
   module: 'clusterInspection',
@@ -51,6 +50,11 @@ export default class ClusterInspection extends React.Component {
         name: t('CLUSTER_INSPECTION_DANGER'),
         value: data?.scoreInfo?.dangerous || 0,
         color: '#CA2621',
+      },
+      {
+        name: t('CLUSTER_INSPECTION_IGNORE'),
+        value: data?.scoreInfo?.ignore || 0,
+        color: '#86929d',
       },
     ];
 
@@ -142,6 +146,14 @@ export default class ClusterInspection extends React.Component {
                             {data?.scoreInfo?.dangerous || 0}
                           </div>
                         </div>
+                        <div className="status_wrap">
+                          <p className="status ignore">
+                            <span>{t('CLUSTER_INSPECTION_IGNORE')}</span>
+                          </p>
+                          <div className="value">
+                            {data?.scoreInfo?.ignore || 0}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -209,9 +221,8 @@ export default class ClusterInspection extends React.Component {
   }
 
   render() {
-    const { list, bannerProps } = this.props.store;
+    const { bannerProps } = this.props.store;
     const { data } = toJS(this.props.store.list);
-
     return (
       <>
         <Banner
@@ -222,7 +233,7 @@ export default class ClusterInspection extends React.Component {
         />
         {this.renderChart()}
 
-        <DetailClusterList {...data} tabValue={tabValue} />
+        <DetailClusterList data={data} />
       </>
     );
   }
