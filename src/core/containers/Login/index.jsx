@@ -16,9 +16,8 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component } from 'react'
-import { inject, observer } from 'mobx-react'
-import cookie from 'utils/cookie'
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 
 import {
   Alert,
@@ -26,33 +25,33 @@ import {
   Form,
   Input,
   InputPassword,
-} from '@kube-design/components'
+} from '@kube-design/components';
 
-import { get } from 'lodash'
+import { get } from 'lodash';
 
-import { Base64 } from 'js-base64'
-import styles from './index.scss'
-import '../../../scss/custom_theme.css'
-
+import { Base64 } from 'js-base64';
+import cookie from 'utils/cookie';
+import styles from './index.scss';
+import '../../../scss/custom_theme.css';
 
 function encrypt(salt, str) {
-  return mix(salt, Base64.encode(str))
+  return mix(salt, Base64.encode(str));
 }
 
 function mix(salt, str) {
   if (str.length > salt.length) {
-    salt += str.slice(0, str.length - salt.length)
+    salt += str.slice(0, str.length - salt.length);
   }
 
-  const ret = []
-  const prefix = []
+  const ret = [];
+  const prefix = [];
   for (let i = 0, len = salt.length; i < len; i++) {
-    const tomix = str.length > i ? str.charCodeAt(i) : 64
-    const sum = salt.charCodeAt(i) + tomix
-    prefix.push(sum % 2 === 0 ? '0' : '1')
-    ret.push(String.fromCharCode(Math.floor(sum / 2)))
+    const tomix = str.length > i ? str.charCodeAt(i) : 64;
+    const sum = salt.charCodeAt(i) + tomix;
+    prefix.push(sum % 2 === 0 ? '0' : '1');
+    ret.push(String.fromCharCode(Math.floor(sum / 2)));
   }
-  return `${Base64.encode(prefix.join(''))}@${ret.join('')}`
+  return `${Base64.encode(prefix.join(''))}@${ret.join('')}`;
 }
 
 @inject('rootStore')
@@ -62,25 +61,25 @@ export default class Login extends Component {
     formData: {},
     isSubmmiting: false,
     errorCount: 0,
-  }
+  };
 
   handleOAuthLogin = server => e => {
     const info = {
       name: server.title,
       type: server.type,
       endSessionURL: server.endSessionURL,
-    }
-    cookie('oAuthLoginInfo', JSON.stringify(info))
-    window.location.href = e.currentTarget.dataset.url
-  }
+    };
+    cookie('oAuthLoginInfo', JSON.stringify(info));
+    window.location.href = e.currentTarget.dataset.url;
+  };
 
   handleSubmit = data => {
-    const { username, password, ...rest } = data
-    this.setState({ isSubmmiting: true })
+    const { username, password, ...rest } = data;
+    this.setState({ isSubmmiting: true });
 
-    cookie('oAuthLoginInfo', '')
+    cookie('oAuthLoginInfo', '');
 
-    const encryptKey = get(globals, 'config.encryptKey', 'kubesphere')
+    const encryptKey = get(globals, 'config.encryptKey', 'kubesphere');
 
     this.props.rootStore
       .login({
@@ -89,25 +88,27 @@ export default class Login extends Component {
         ...rest,
       })
       .then(resp => {
-        this.setState({ isSubmmiting: false })
+        this.setState({ isSubmmiting: false });
         if (resp.status !== 200) {
           this.setState({
             errorMessage: resp.message,
             errorCount: resp.errorCount,
-          })
+          });
         }
-      })
-  }
+      });
+  };
 
   render() {
-    const { formData, isSubmmiting, errorMessage } = this.state
+    const { formData, isSubmmiting, errorMessage } = this.state;
     return (
       <div>
-        <div className="login_back"><img src="/assets/resources/images/img/img_login.svg" alt=""/></div>
+        <div className="login_back">
+          <img src="/assets/resources/images/img/img_login.svg" alt="" />
+        </div>
         <div className={styles.login}>
           <div className="top_logo">
             <a href="/" className={styles.logo}>
-              <img src="/assets/logo.png" alt="" />
+              <img src="/assets/logo.svg" alt="" />
             </a>
           </div>
           <div className={styles.divider}></div>
@@ -154,6 +155,6 @@ export default class Login extends Component {
           </Form>
         </div>
       </div>
-    )
+    );
   }
 }
