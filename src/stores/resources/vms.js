@@ -766,13 +766,14 @@ export default class VmStore extends Base {
   @action
   restoreDelete({ id, ...props }) {
     // let cluster = globals.currentCluster
+
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(props)}/edgetron/resources/kubevirt/vms/restores/${id}`;
     return this.submitting(request.delete(url));
   }
 
   @action
   async cloneCreate(data, params = {}) {
-    const url = `${this.getResourceUrl(params)}/clones`;
+    const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms/clones`;
 
     const jsonData = {};
     const cloneData = {};
