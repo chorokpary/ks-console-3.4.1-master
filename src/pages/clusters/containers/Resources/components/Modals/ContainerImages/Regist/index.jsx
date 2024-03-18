@@ -304,7 +304,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
+                    <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
                       <TypeSelect
                         // name="distro_type"
                         onChange={(e) => setDistroType(e)}
@@ -498,9 +498,8 @@ const Step2 = (
   useEffect(() => {
     setPropsImageTag(tag)
     if (registryUrl) {
-      const [, path] = registryUrl.split(/https?:\/\//)
-      const [url] = path.split('/')
-      setDockerUrl(url)
+      const originUrl = new URL(registryUrl);
+      setDockerUrl(originUrl.host)
     }
   }, [tag])
 

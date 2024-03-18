@@ -136,7 +136,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                 </Form.Item>
               </Column>
               <Column>
-                <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
+                <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
                   <TypeSelect
                     onChange={e => setDistroType(e)}
                     defaultValue={distroType}

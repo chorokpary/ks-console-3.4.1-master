@@ -295,13 +295,12 @@ export default function ResourceImageModal({ title, store, onOk }) {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
+                  className={`${regStep == 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -313,8 +312,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -326,13 +325,12 @@ export default function ResourceImageModal({ title, store, onOk }) {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 2
+                  className={`${regStep == 2
                       ? styles.current
                       : regStep > 2
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -391,7 +389,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
+                    <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
                       <TypeSelect
                         // name="distro_type"
                         onChange={e => setDistroType(e)}
@@ -496,9 +494,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${
-                        sizeEmpty ? styles.formErrorStyle : ''
-                      }`}
+                      className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''
+                        }`}
                     >
                       <div className={styles.cont_box_section}>
                         <div className={styles.cont_box_wrap}>
@@ -894,11 +891,10 @@ const Step2 = ({
           <div className={styles.content_box}>
             {/* <label>소스</label> */}
             <div
-              className={`${styles.cont_box_wrap} ${
-                sourceEmpty || harborValidError || userValidError
+              className={`${styles.cont_box_wrap} ${sourceEmpty || harborValidError || userValidError
                   ? styles.formErrorStyle
                   : ''
-              }`}
+                }`}
             >
               <div className={styles.cont_box_section}>
                 <div className={styles.cont_box_wrap}>
@@ -1030,9 +1026,8 @@ const Step2 = ({
                                 {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
                                 <i
                                   style={{
-                                    background: `url('/assets/resources/images/icons/ico-os-${
-                                      obj.name.split('-')[0]
-                                    }.svg') center no-repeat`,
+                                    background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]
+                                      }.svg') center no-repeat`,
                                     width: '30px',
                                     height: '30px',
                                     marginRight: '5px',
