@@ -200,9 +200,12 @@ const DetailKaasListFlavor = props => {
         <div className={styles.containers}>
           {machines.map((obj, idx) => (
             <Fragment key={idx}>
-              {obj.name.includes('control-plane')
-                ? `Master ${t('RESOURCES_NODE')}`
-                : idx < 2 && `Worker ${t('RESOURCES_NODE')}`}
+              {idx == 0 && !obj.name.includes('control-plane') ?
+                `Worker ${t('RESOURCES_NODE')}`
+                : idx == 0 && obj.name.includes('control-plane') ?
+                  `Master ${t('RESOURCES_NODE')}`
+                  : idx == 1 && machines[idx - 1].name.includes('control-plane') ?
+                    `Worker ${t('RESOURCES_NODE')}` : ''}
               <div className={classnames(styles.item)}>
                 <div className={styles.icon}>
                   <Icon name="nodes" size={40} />
