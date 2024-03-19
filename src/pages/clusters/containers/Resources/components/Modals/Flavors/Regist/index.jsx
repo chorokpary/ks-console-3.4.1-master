@@ -621,22 +621,7 @@ const RegistModal = props => {
                       padding: 20,
                     }}
                   >
-                    {/* <Form.Item
-                      rules={[
-                        {
-                          required: true,
-                          message: '1 이상 입력하세요.',
-                        },
-                        {
-                          pattern: regexNum,
-                          message: '1 이상 숫자만 입력해주세요.',
-                        },
-                      ]}
-                    >
-                      <Input type="hidden" name="rootDisk" value={rootDisk} />
-                    </Form.Item> */}
-                    {/* <Input type="hidden" name="rootDisk" value={rootDisk} /> */}
-
+                    <Input type="hidden" name="rootDisk" value={rootDisk} />
                     <Form.Item
                       rules={[
                         {
@@ -662,6 +647,7 @@ const RegistModal = props => {
                         }}
                         style={{ width: '10%' }}
                         defaultValue={rootDisk}
+                        name="rootDisk"
                         unit={'GiB'}
                         onChange={e => onChangeRootDisk(e)}
                         withInput
