@@ -478,10 +478,16 @@ const RegistModal = props => {
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('RESOURCES_RESOURCE_NAME')}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                    },
+                  ]}
                 >
                   <Select
                     name="resource_name"
-                    defaultValue={t('RESOURCES_SELECT')}
+                    placeholder={t('RESOURCES_SELECT')}
                     options={resourceNameOptions}
                   />
                 </Form.Item>
@@ -500,7 +506,7 @@ const RegistModal = props => {
                       >
                         <Select
                           name="type"
-                          defaultValue="VLAN"
+                          defaultValue="vlan"
                           options={networkTypeOptions}
                           onChange={e => handleNetworkType(e)}
                         />

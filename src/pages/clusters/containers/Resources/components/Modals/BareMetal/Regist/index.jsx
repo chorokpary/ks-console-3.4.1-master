@@ -6,14 +6,12 @@ import { Modal } from 'components/Base'
 import { Form, Input, Select, TextArea, Button, Checkbox, Tabs } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
-import { PATTERN_USER_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME, PATTERN_IP } from 'utils/constants'
 
 import styles from './index.scss'
 import NodeStore from 'stores/node'
 
 const RegistModal = (props) => {
-
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
 
   const nodeStore = new NodeStore()
 
@@ -80,7 +78,7 @@ const RegistModal = (props) => {
       return callback({ message: t('RESOURCES_IP_EMPTY_DESC') })
     }
 
-    if (!(regexIp.test(value))) {
+    if (!(PATTERN_IP.test(value))) {
       return callback({ message: t('INVALID_IP_DESC') })
     }
 
@@ -116,7 +114,7 @@ const RegistModal = (props) => {
 
     if (!value) {
     } else {
-      if (!(regexIp.test(value))) {
+      if (!(PATTERN_IP.test(value))) {
         return callback({ message: t('INVALID_IP_DESC') })
       }
     }
