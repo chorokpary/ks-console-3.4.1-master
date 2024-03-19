@@ -121,16 +121,14 @@ export default class ClusterStore extends Base {
     } else {
       const tenantParams = {
         ...params,
-        labelSelector: `${
-          params.labelSelector ? `${params.labelSelector},` : ''
-        }cluster.kubesphere.io/visibility!=public`,
+        labelSelector: `${params.labelSelector ? `${params.labelSelector},` : ''
+          }cluster.kubesphere.io/visibility!=public`,
       }
 
       const resourceParams = {
         ...params,
-        labelSelector: `${
-          params.labelSelector ? `${params.labelSelector},` : ''
-        }cluster.kubesphere.io/visibility=public`,
+        labelSelector: `${params.labelSelector ? `${params.labelSelector},` : ''
+          }cluster.kubesphere.io/visibility=public`,
       }
 
       const [tenantList, list] = await Promise.all([
@@ -267,8 +265,9 @@ export default class ClusterStore extends Base {
     this.projects.isLoading = true
 
     if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'createTime'
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'name'
     }
+    params.ascending = true
 
     if (params.limit === Infinity || params.limit === -1) {
       params.limit = -1
@@ -341,8 +340,7 @@ export default class ClusterStore extends Base {
   checkSpringCloudIfActive = async ({ cluster }) => {
     const multiCluster = get(globals, 'ksConfig.multicluster', false)
     const res = await request.get(
-      `/kapis${
-        multiCluster ? `/clusters/${cluster}` : ''
+      `/kapis${multiCluster ? `/clusters/${cluster}` : ''
       }/resources.kubesphere.io/v1alpha3/customresourcedefinitions?name=configurations.springcloud.kubesphere.io`,
       {},
       {},
