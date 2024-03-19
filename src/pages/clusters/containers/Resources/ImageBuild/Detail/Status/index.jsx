@@ -9,13 +9,26 @@ import { Panel, Text } from 'components/Base'
 
 import styles from './index.scss'
 
+//====================================
+// pod_status 상태
+//====================================
+// Pending : 생성 중
+// Running : 실행 중
+// Success : 컨테이너 실행 후 정상 종료
+// Failed : 컨테이너 실행 후 비정상 종료
+// Unknown: 알 수 없음
+//====================================
+
 const Status = (props) => {
 
-  console.log(JSON.stringify(props.detailStore.detail))
-
   const renderPodStatus = () => {
-    
-      const phase = 'Running'
+
+    const detailInfo = props.detailStore.detail;
+
+    const uploadInfo = get(detailInfo, ['upload-info-list', 'upload-info'], [])[0]
+    const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
+    const podStatus = get(detailInfo, 'pod-status', '')
+
       const status = 'success';
       const type = 'type'
 
@@ -26,7 +39,7 @@ const Status = (props) => {
               className={styles.info}
               icon="image"
               title={t('성공')}
-              description={t('이미지 빌드를 진해한 상태입니다.')}
+              description={t('이미지 빌드를 진행한 상태입니다.')}
               extra={
                 <Icon
                 className={styles.status}
@@ -40,23 +53,26 @@ const Status = (props) => {
             />
           </div>
           <div className={styles.content}>
-                <Text
-                  key={type}
-                  className={styles.condition}
-                  icon='image'
-                  title={t(`파일 업로드 상태`)}
-                  description={t( `파일을 업로드한 상태입니다.`)}
-                  extra={
-                    <Icon
-                      className={styles.status}
-                      name={status === 'success' ? 'success' : 'error'}
-                      color={{
-                        primary: '#fff',
-                        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
-                      }}
-                    />
-                  }
-                /> 
+            {fileStatus.toLowerCase() == 'completed' &&
+              <Text
+                key={type}
+                className={styles.condition}
+                icon='image'
+                title={t(`파일 업로드 상태`)}
+                description={t( `파일을 업로드한 상태입니다.`)}
+                extra={
+                  <Icon
+                    className={styles.status}
+                    name={status === 'success' ? 'success' : 'error'}
+                    color={{
+                      primary: '#fff',
+                      secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                    }}
+                  />
+                }
+              /> 
+            }
+            {(fileStatus.toLowerCase() == 'completed' && !!podStatus ) &&
                 <Text
                   key={type}
                   className={styles.condition}
@@ -74,7 +90,8 @@ const Status = (props) => {
                     />
                   }
                 /> 
-                <Text
+            }
+                {/* <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
@@ -85,8 +102,8 @@ const Status = (props) => {
                       className={styles.status}
                       name={'substract'}
                     />
-                  }
-                /> 
+                  } 
+                /> */}
           </div>
         </Panel>
       )

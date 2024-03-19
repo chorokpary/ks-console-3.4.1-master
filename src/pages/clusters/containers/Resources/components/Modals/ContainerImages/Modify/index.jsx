@@ -11,6 +11,8 @@ import styles from './index.scss'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
+const regexVersion = /^v(\d+\.\d+\.\d+)$/;
+
 export default function ResourceImageModal({ title, store, onOk, detail }) {
 
   const form = useRef();
@@ -38,7 +40,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
     { label: 'x86_64', value: 'x86_64', },
     { label: 'aarch64', value: 'aarch64', },
   ]
-  
+
   const bootTypeOptions = [
     { label: 'legacy', value: 'legacy', },
     { label: 'uefi', value: 'uefi', }
@@ -49,7 +51,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
     // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
-  
+
   const distroTypeOptions = () => {
     const opt = distroTypeList.map((obj) => ({
       label: t(obj.name),
@@ -85,9 +87,11 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
   }
 
   const versionValidator = (rule, value, callback) => {
-
-    if(value == undefined){
+    if (!!!value) {
       return callback({ message: t('RESOURCES_VERSION_EMPTY_DESC') })
+    }
+    if (!regexVersion.test(value)) {
+      return callback({ message: t('RESOURCES_VERSION_CHECK_DESC') })
     }
     callback()
   }
@@ -132,7 +136,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                 </Form.Item>
               </Column>
               <Column>
-                <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
+                <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
                   <TypeSelect
                     onChange={(e) => setDistroType(e)}
                     defaultValue={distroType}
@@ -179,12 +183,12 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
 
           <Form.Item
             label={t('RESOURCES_KUBERNETES_VERSION')}
-            rules={[{ required: true, validator: versionValidator }]}         
+            rules={[{ required: true, validator: versionValidator }]}
           >
             <Input name="kube_version" maxLength={253}
-              style={{ maxWidth: 'none' }}  
+              style={{ maxWidth: 'none' }}
               defaultValue={store.detail.image.kube_version}
-              />
+            />
           </Form.Item>
 
           <Form.Item

@@ -5,11 +5,8 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { ProjectSelect } from 'components/Inputs'
 
-import { PATTERN_NAME } from 'utils/constants'
-
+import { PATTERN_USER_NAME } from 'utils/constants'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
-
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
 
@@ -132,17 +129,6 @@ const RegistModal = (props) => {
   }
 
   // Validation 시작 ==================================================
-  const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
-    }
-    callback()
-  }
-
   const networkValidator = (rule, value, callback) => {
     if (value == t('RESOURCES_SELECT') || value == "select") {
       return callback({ message: t('RESOURCES_SELECT_NETWORK_NAME_TIP') })
@@ -345,8 +331,8 @@ const RegistModal = (props) => {
                 rules={[
                   { required: true, message: t('NAME_EMPTY_DESC') },
                   {
-                    pattern: PATTERN_NAME,
-                    message: t('INVALID_NAME_DESC'),
+                    pattern: PATTERN_USER_NAME,
+                    message: t('RESOURCES_INVALID_NAME_DESC'),
                   },
                 ]}
                 desc={t('NAME_DESC')}

@@ -12,13 +12,10 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
-
 import { PropertiesInput, NumberInput } from 'components/Inputs';
-
+import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants'
 import * as common from 'utils/resources';
-
 import SriovStore from 'stores/resources/sriovs';
-
 import styles from './index.scss';
 
 const RegistModal = props => {
@@ -125,7 +122,8 @@ const RegistModal = props => {
         data.ip_pool_start == undefined ||
         data.ip_pool_start == '' ||
         data.ip_pool_end == undefined ||
-        data.ip_pool_end == ''
+        data.ip_pool_end == '' ||
+        data.gateway_ip.length > 0
       ) {
         handleOk();
       } else {
@@ -211,16 +209,11 @@ const RegistModal = props => {
     }
   }, [listHostRoute])
 
-  // ip 정규식
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
-  // const regexIpzero = /(^(\d{1,3}\.){3}([0])$)/; // 끝자리 0 정규식
-  // 숫자 정규식
-  const regexNumber = /^[0-9]+$/;
   const isValidIpAddress = ip => {
-    return regexIp.test(ip);
+    return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
-    if (!regexNumber.test(num)) {
+    if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }
     const clsMaximumVal = 128;
@@ -230,6 +223,17 @@ const RegistModal = props => {
     }
     return true;
   };
+
+  const cidrValidator = (rule, value, callback) => {
+    if (!value) {
+      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
+    } else {
+      if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
+        return callback({ message: t('RESOURCES_CIDR_VALID') })
+      }
+    }
+    callback()
+  }
 
   const onChaneCidr = e => {
     const { data } = form.current.props;
@@ -355,7 +359,7 @@ const RegistModal = props => {
 
   const onChangeDns = (e, id) => {
     const a = document.getElementById(id)
-    if (e.length > 0 && !regexIp.test(e)) {
+    if (e.length > 0 && !PATTERN_IP.test(e)) {
       a.parentElement.parentElement.nextElementSibling.classList.remove('hide')
       a.parentElement.parentElement.classList.add("error-item");
     } else {
@@ -370,7 +374,7 @@ const RegistModal = props => {
 
     if (e.length > 0 || nexthop.length > 0) {
       if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])
-        || !regexIp.test(nexthop)
+        || !PATTERN_IP.test(nexthop)
       ) {
         a.classList.remove('hide')
       } else {
@@ -386,7 +390,7 @@ const RegistModal = props => {
 
     if (e.length > 0 || destination.length > 0) {
       if (destination.split("/").length != 2 || !isValidIpAddress(destination.split("/")[0]) || !fnCheckCidrClass(destination.split("/")[1])
-        || !regexIp.test(e)
+        || !PATTERN_IP.test(e)
       ) {
         a.classList.remove('hide')
       } else {
@@ -474,10 +478,16 @@ const RegistModal = props => {
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('RESOURCES_RESOURCE_NAME')}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                    },
+                  ]}
                 >
                   <Select
                     name="resource_name"
-                    defaultValue={t('RESOURCES_SELECT')}
+                    placeholder={t('RESOURCES_SELECT')}
                     options={resourceNameOptions}
                   />
                 </Form.Item>
@@ -496,7 +506,7 @@ const RegistModal = props => {
                       >
                         <Select
                           name="type"
-                          defaultValue="VLAN"
+                          defaultValue="vlan"
                           options={networkTypeOptions}
                           onChange={e => handleNetworkType(e)}
                         />
@@ -524,7 +534,7 @@ const RegistModal = props => {
                             rules={[
                               {
                                 required: true,
-                                message: t('RESOURCES_CIDR_EMPTY_DESC'),
+                                validator: cidrValidator,
                               },
                             ]}
                           >
@@ -545,6 +555,9 @@ const RegistModal = props => {
                                     required: true,
                                     message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
                                   },
+                                  {
+                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
+                                  }
                                 ]}
                               >
                                 <Input name="ip_pool_start" />
@@ -557,6 +570,9 @@ const RegistModal = props => {
                                     required: true,
                                     message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
                                   },
+                                  {
+                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
+                                  }
                                 ]}
                               >
                                 <Input
@@ -573,7 +589,11 @@ const RegistModal = props => {
                     <Form.Item>
                       <Columns>
                         <Column>
-                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}>
+                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}
+                            rules={[{
+                              pattern: PATTERN_IP, message: t('RESOURCES_GATEWAY_IP_POOL_VALID')
+                            }]}
+                          >
                             <Input name="gateway_ip" />
                           </Form.Item>
                         </Column>
@@ -688,18 +708,20 @@ const RegistModal = props => {
                   <Form.Group>
                     <Columns>
                       <Column>
-                        <Form.Item label={t('Primary')}>
-                          <Input name="dns.1"
-                            onChange={(e) => onChangeDns(e, 'dns.1')} />
+                        <Form.Item label={t('Primary')}
+                          rules={[{
+                            pattern: PATTERN_IP, message: t('RESOURCES_DNS_VALID')
+                          }]}>
+                          <Input name="dns.1" />
                         </Form.Item>
-                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                       <Column>
-                        <Form.Item label={t('Secondary')}>
-                          <Input name="dns.2"
-                            onChange={(e) => onChangeDns(e, 'dns.2')} />
+                        <Form.Item label={t('Secondary')}
+                          rules={[{
+                            pattern: PATTERN_IP, message: t('RESOURCES_DNS_VALID')
+                          }]}>
+                          <Input name="dns.2" />
                         </Form.Item>
-                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                     </Columns>
                   </Form.Group>

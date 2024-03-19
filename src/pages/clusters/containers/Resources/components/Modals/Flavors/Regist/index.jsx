@@ -20,9 +20,8 @@ import { Modal } from 'components/Base';
 import styles from './index.scss';
 import FlavorStore from 'stores/resources/flavors';
 
-import { PATTERN_NAME } from 'utils/constants';
+import { PATTERN_USER_NAME } from 'utils/constants';
 
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 const RegistModal = props => {
   const store = new FlavorStore();
 
@@ -305,25 +304,13 @@ const RegistModal = props => {
   const stepMoveCheck = step => {
     const { data } = form.current.props;
     if (step === 1) {
-      if (data.name === undefined || !regexName.test(data.name)) {
+      if (data.name === undefined || !PATTERN_USER_NAME.test(data.name)) {
         handleOk();
       } else {
         setRegStep(2);
         setSubmitButtonFlag(false);
       }
     }
-  };
-
-  //  Validation 시작 ==================================================
-  const nameValidator = (rule, value, callback) => {
-    if (value === undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') });
-    }
-    if (!regexName.test(value)) {
-      return callback({ message: t('RESOURCES_NAME_CHECK_DESC') });
-    }
-
-    callback();
   };
 
   const fnGetModalFooter = () => {
@@ -433,10 +420,10 @@ const RegistModal = props => {
               <div className={styles.status}>
                 <div
                   className={`${regStep === 1
-                      ? styles.current
-                      : regStep > 1
-                        ? styles.done
-                        : styles.todo
+                    ? styles.current
+                    : regStep > 1
+                      ? styles.done
+                      : styles.todo
                     }`}
                 ></div>
               </div>
@@ -463,10 +450,10 @@ const RegistModal = props => {
               <div className={styles.status}>
                 <div
                   className={`${regStep === 2
-                      ? styles.current
-                      : regStep > 2
-                        ? styles.done
-                        : styles.todo
+                    ? styles.current
+                    : regStep > 2
+                      ? styles.done
+                      : styles.todo
                     }`}
                 ></div>
               </div>
@@ -491,8 +478,8 @@ const RegistModal = props => {
                 rules={[
                   { required: true, message: t('NAME_EMPTY_DESC') },
                   {
-                    pattern: PATTERN_NAME,
-                    message: t('INVALID_NAME_DESC'),
+                    pattern: PATTERN_USER_NAME,
+                    message: t('RESOURCES_INVALID_NAME_DESC'),
                   },
                 ]}
                 desc={t('NAME_DESC')}

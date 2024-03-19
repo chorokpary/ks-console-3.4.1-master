@@ -28,7 +28,8 @@ import {
 
 const Clone = (props) => {
 
-  const cluster = props.match?.params.cluster;
+  const { cluster, namespace } = props.match?.params;
+  const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
 
   const store = new VmStore();
 
@@ -126,9 +127,11 @@ const Clone = (props) => {
             <div>{obj.phase}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
-          <div className={styles.arrow}>
-            <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
-          </div>
+          { vmsRole.includes('manage') && 
+            <div className={styles.arrow}>
+              <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button> 
+            </div>
+          }
         </div>
       </>
     )

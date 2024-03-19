@@ -26,6 +26,9 @@ import {
 
 const Snapshot = (props) => {
   
+  const { cluster, namespace } = props.match?.params;
+  const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
+
   const store = new VmStore();
   const vmState = props.detailStore.detail?.vm?.state;
 
@@ -147,10 +150,12 @@ const Snapshot = (props) => {
             <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
           </div>      */}
-          <div className={styles.button}>
-              <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
-              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{width: "92.69px"}}>Delete</Button></div>  
-          </div> 
+          { vmsRole.includes('manage') && 
+            <div className={styles.button}>
+                <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
+                <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{width: "92.69px"}}>Delete</Button></div>  
+            </div> 
+          }
           <div className={styles.arrow} onClick={() => handleExpand(obj.id)}>
             <Icon name="chevron-down" type={obj.id != expandItem ? '' : (obj.id == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
           </div>
@@ -191,9 +196,11 @@ const Snapshot = (props) => {
                   <div>{obj.complete ? t('RESOURCES_COMPLETE') : t('RESOURCES_NOT_COMPLETE')}</div>
                   <p>Complete</p>
                 </div>
-                <div className={styles.arrow}>
-                  <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>Delete</Button>
-                </div>
+                { vmsRole.includes('manage') && 
+                  <div className={styles.arrow}>
+                    <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>Delete</Button>
+                  </div>
+                }
               </div>  
               )}
 
