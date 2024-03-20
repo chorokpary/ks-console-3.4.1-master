@@ -12,11 +12,13 @@ import styles from './index.scss'
 //====================================
 // pod_status 상태
 //====================================
-// Pending : 생성 중
-// Running : 실행 중
-// Success : 컨테이너 실행 후 정상 종료
-// Failed : 컨테이너 실행 후 비정상 종료
-// Unknown: 알 수 없음
+// 생성 중 : PodCreating
+// 실행 중 : PodRunning
+// 삭제 중 : PodDeleting
+// 파일 업로드중 : FileUploading
+// 파일 업로드 완료 : FileUploadCompleted
+// 이미지 빌드&푸시 중 : ImageBuildPushing
+// 이미지 빌드&푸시 완료 : ImagePushCompleted
 //====================================
 
 const Status = (props) => {
@@ -29,6 +31,9 @@ const Status = (props) => {
     const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
     const podStatus = get(detailInfo, 'pod-status', '')
 
+    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuildPushing', 'ImagePushCompleted']
+    const fileBuildArrayState = ['ImageBuildPushing', 'ImagePushCompleted']
+
       const status = 'success';
       const type = 'type'
 
@@ -38,8 +43,8 @@ const Status = (props) => {
             <Text
               className={styles.info}
               icon="image"
-              title={t('성공')}
-              description={t('이미지 빌드를 진행한 상태입니다.')}
+              title={t('RESOURCES_SUCCESS')}
+              description={t('RESOURCES_IMAGE_BUILDING_DESC')}
               extra={
                 <Icon
                 className={styles.status}
@@ -58,8 +63,8 @@ const Status = (props) => {
                 key={type}
                 className={styles.condition}
                 icon='image'
-                title={t(`파일 업로드 상태`)}
-                description={t( `파일을 업로드한 상태입니다.`)}
+                title={t(`RESOURCES_ENVIRONMENT_CONFIGURATION`)}
+                description={t( `RESOURCES_FILE_UPLOADED_DESC`)}
                 extra={
                   <Icon
                     className={styles.status}
@@ -72,13 +77,13 @@ const Status = (props) => {
                 }
               /> 
             }
-            {(fileStatus.toLowerCase() == 'completed' && !!podStatus ) &&
+            {(fileStatus.toLowerCase() == 'completed' && fileUploadArrayState.includes(podStatus)) &&
                 <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
-                  title={t(`이미지 빌드 상태`)}
-                  description={t( `이미지에 생성한 빌드 상태입니다.`)}
+                  title={t(`RESOURCES_FILE_UPLOAD`)}
+                  description={podStatus == 'FileUploading' ? t(`RESOURCES_FILE_UPLOADING_DESC`) : t(`RESOURCES_FILE_UPLOAD_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
@@ -91,19 +96,25 @@ const Status = (props) => {
                   }
                 /> 
             }
-                {/* <Text
+            {(fileStatus.toLowerCase() == 'completed' && fileBuildArrayState.includes(podStatus)) &&
+                <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
-                  title={t(`Registry Push 상태`)}
-                  description={t( `Registry에 Push한 상태입니다.`)}
+                  title={t(`RESOURCES_IMAGE_BUILD_PUSH`)}
+                  description={podStatus == 'ImageBuildPushing' ? t(`RESOURCES_IMAGE_BUILD_PUSH_ING_DESC`) : t(`RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
-                      name={'substract'}
+                      name={status === 'success' ? 'success' : 'error'}
+                      color={{
+                        primary: '#fff',
+                        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                      }}
                     />
-                  } 
-                /> */}
+                  }
+                /> 
+            }
           </div>
         </Panel>
       )

@@ -610,6 +610,17 @@ module.exports = {
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
+  RESOURCES_SUCCESS: '성공',
+  RESOURCES_ENVIRONMENT_CONFIGURATION: '환경 구성',
+  RESOURCES_FILE_UPLOAD: '파일 업로드',
+  RESOURCES_FILE_UPLOADED_DESC: '파일을 업로드한 상태입니다.',
+  RESOURCES_FILE_UPLOADING_DESC: '파일 업로드중 상태입니다.',
+  RESOURCES_FILE_UPLOAD_COMPLETE_DESC: '파일 업로드 완료 상태입니다.',
+  RESOURCES_IMAGE_BUILDING_DESC: '이미지 빌드를 진행한 상태입니다.',
+  RESOURCES_IMAGE_BUILD_PUSH: '이미지 빌드/Push',
+  RESOURCES_IMAGE_BUILD_PUSH_ING_DESC: '이미지 빌드&푸시 중 상태입니다.',
+  RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
+
 
 
 };

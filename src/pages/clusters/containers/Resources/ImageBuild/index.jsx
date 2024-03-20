@@ -46,6 +46,11 @@ export default class ImageBuild extends React.Component {
 
   showActionUpload(item) {
     const uploadInfo = get(item, ['upload-info-list', 'upload-info'], [])
+    const popStatus = get(item, 'pod-status')
+
+    if(popStatus == 'PodDeleting'){
+      return false;
+    }
 
     let showFlag = true;
     if(!!uploadInfo){        
@@ -226,14 +231,14 @@ export default class ImageBuild extends React.Component {
         width: 'auto',
         render: (status, record) => {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+          let popStatus = get(record, 'pod-status')
+          // if(!!uploadInfo) {
+          //   const status = uploadInfo[0]['upload-file-info']['Status'];
+          //   const statusText = !!status ? status : "-";
 
-          if(!!uploadInfo) {
-            const status = uploadInfo[0]['upload-file-info']['Status'];
-            const statusText = !!status ? status : "-";
-
-            return statusText
-          }
-          return '-'
+          //   return statusText
+          // }
+          return popStatus;
         },
       },
       {
