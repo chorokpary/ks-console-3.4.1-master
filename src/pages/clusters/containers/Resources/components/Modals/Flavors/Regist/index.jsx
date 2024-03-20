@@ -527,143 +527,155 @@ const RegistModal = props => {
               <div style={{ padding: 10 }} />
               <Columns>
                 <Column>
-                  <Form.Item label={t('CPU')} rules={[{ required: true }]}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        // flexDirection: 'column',
-                      }}
-                    >
-                      <Button
-                        icon="substract"
-                        onClick={e => minusVcpus(e)}
-                      ></Button>
-                      &nbsp;&nbsp;
-                      <Form.Item
-                        style={{ maxWidth: '137px' }}
-                        rules={[
-                          {
-                            required: true,
-                            message: '1 이상 입력하세요',
-                          },
-                          {
-                            pattern: regexNum,
-                            message: '1 이상 숫자만 입력해주세요.',
-                          },
-                        ]}
-                      >
-                        <Input
-                          name="vcpus"
-                          defaultValue={vcpus}
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                      &nbsp;&nbsp;
-                      <Button icon="add" onClick={e => addVcpus(e)} />
-                    </div>
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <div>
-                    <Input type="hidden" name="byteFlag" value={byteFlag} />
-                    <Form.Item
-                      label={t('RESOURCES_MEMORY')}
-                      rules={[{ required: true }]}
-                    >
-                      <div className={styles.divwrap}>
-                        <div className={styles.div_left}>
-                          <Form.Item
-                            rules={[
-                              {
-                                required: true,
-                                message: '1 이상 입력하세요.',
-                              },
-                              {
-                                pattern: regexNum,
-                                message: '1 이상 숫자만 입력해주세요.',
-                              },
-                            ]}
-                          >
-                            <Input
-                              name="ram"
-                              defaultValue={ram}
-                              onChange={e => changeRam(e)}
-                            />
-                          </Form.Item>
-                        </div>
-                        <div className={styles.div_right}>
-                          <Tabs
-                            type="button"
-                            activeName={tab}
-                            onChange={newTab => {
-                              setTab(newTab);
-                              handleByte(newTab);
-                            }}
-                          >
-                            <TabPanel label="GiB" name="GiB" />
-                            <TabPanel label="MiB" name="MiB" />
-                          </Tabs>
-                        </div>
-                      </div>
-                    </Form.Item>
-                  </div>
-                </Column>
-              </Columns>
-              <Form.Item
-                label={t('RESOURCES_ROOT_DISK')}
-                rules={[{ required: true }]}
-              >
-                <Form.Group>
+                  <label className="form-item-label" for="name">
+                    {t('CPU')}
+                    <span className="form-item-required">*</span>
+                  </label>
+                  {/* <Form.Item
+                    label={t('CPU')}
+                    // rules={[{ required: true, message: '1 이상 입력하세요' }]}
+                  > */}
                   <div
                     style={{
-                      textAlign: 'right',
-                      padding: 20,
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
-                    <Input type="hidden" name="rootDisk" value={rootDisk} />
+                    <Button
+                      icon="substract"
+                      onClick={e => minusVcpus(e)}
+                    ></Button>
+                    &nbsp;&nbsp;
                     <Form.Item
+                      style={{ maxWidth: '137px' }}
                       rules={[
                         {
                           required: true,
-                          message: '1 이상 입력하세요.',
+                          message: '1 이상 입력하세요',
                         },
                         {
-                          pattern: regexRootDisk,
+                          pattern: regexNum,
                           message: '1 이상 숫자만 입력해주세요.',
                         },
                       ]}
                     >
-                      <Slider
-                        max={320}
-                        marks={{
-                          0: '0',
-                          10: '10',
-                          20: '20',
-                          40: '40',
-                          80: '80',
-                          160: '160',
-                          320: '320',
-                        }}
-                        style={{ width: '10%' }}
-                        defaultValue={rootDisk}
-                        name="rootDisk"
-                        unit={'GiB'}
-                        onChange={e => onChangeRootDisk(e)}
-                        withInput
+                      <Input
+                        name="vcpus"
+                        defaultValue={vcpus}
+                        style={{ width: '100%' }}
                       />
                     </Form.Item>
+                    &nbsp;&nbsp;
+                    <Button icon="add" onClick={e => addVcpus(e)} />
                   </div>
-                </Form.Group>
-              </Form.Item>
-              {/* <Form.Group label="Open Session Sticky" 
-			  desc="the maximum session sticky time is 10800s(3 hours)" checkable>
-       			<Form.Item label="Maximum session sticky time(s)">
-				<Input name="sessionTimeOut2" />
-				</Form.Item>
-			</Form.Group> */}
-
+                  {/* </Form.Item> */}
+                </Column>
+                <Column>
+                  <div>
+                    <Input type="hidden" name="byteFlag" value={byteFlag} />
+                    {/* <Form.Item
+                      label={t('RESOURCES_MEMORY')}
+                      //   rules={[
+                      //     {
+                      //       required: true,
+                      //       message: '1 이상 입력하세요',
+                      //     },
+                      //   ]}
+                    > */}
+                    <label className="form-item-label" for="name">
+                      {t('RESOURCES_MEMORY')}
+                      <span className="form-item-required">*</span>
+                    </label>
+                    <div className={styles.divwrap}>
+                      <div className={styles.div_left}>
+                        <Form.Item
+                          rules={[
+                            {
+                              required: true,
+                              message: '1 이상 입력하세요.',
+                            },
+                            {
+                              pattern: regexNum,
+                              message: '1 이상 숫자만 입력해주세요.',
+                            },
+                          ]}
+                        >
+                          <Input
+                            name="ram"
+                            defaultValue={ram}
+                            onChange={e => changeRam(e)}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className={styles.div_right}>
+                        <Tabs
+                          type="button"
+                          activeName={tab}
+                          onChange={newTab => {
+                            setTab(newTab);
+                            handleByte(newTab);
+                          }}
+                        >
+                          <TabPanel label="GiB" name="GiB" />
+                          <TabPanel label="MiB" name="MiB" />
+                        </Tabs>
+                      </div>
+                    </div>
+                    {/* </Form.Item> */}
+                  </div>
+                </Column>
+              </Columns>
+              {/* <Form.Item
+                label={t('RESOURCES_ROOT_DISK')}
+                // rules={[{ required: true, message: '1 이상 입력하세요.' }]}
+              > */}
+              <label className="form-item-label" for="name">
+                {t('RESOURCES_ROOT_DISK')}
+                <span className="form-item-required">*</span>
+              </label>
+              <Form.Group>
+                <div
+                  style={{
+                    textAlign: 'right',
+                    padding: 20,
+                  }}
+                >
+                  <Input type="hidden" name="rootDisk" value={rootDisk} />
+                  <Form.Item
+                    rules={[
+                      {
+                        required: true,
+                        message: '1 이상 입력하세요.',
+                      },
+                      {
+                        pattern: regexRootDisk,
+                        message: '1 이상 숫자만 입력해주세요.',
+                      },
+                    ]}
+                  >
+                    <Slider
+                      max={320}
+                      marks={{
+                        0: '0',
+                        10: '10',
+                        20: '20',
+                        40: '40',
+                        80: '80',
+                        160: '160',
+                        320: '320',
+                      }}
+                      style={{ width: '10%' }}
+                      defaultValue={rootDisk}
+                      name="rootDisk"
+                      unit={'GiB'}
+                      onChange={e => onChangeRootDisk(e)}
+                      withInput
+                    />
+                  </Form.Item>
+                </div>
+              </Form.Group>
               {/* </Form.Item> */}
+
               <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
@@ -684,7 +696,6 @@ const RegistModal = props => {
                             </div>
                           </h6>
                           {ephemeralDiskActive && (
-                            // <Form.Group>
                             <div className={`${styles.select_inner_content}`}>
                               <Slider
                                 max={40}
@@ -702,7 +713,6 @@ const RegistModal = props => {
                                 style={{ padding: '5px', marginLeft: '23px' }}
                               />
                             </div>
-                            // </Form.Group>
                           )}
                         </div>
                       </div>
@@ -710,6 +720,7 @@ const RegistModal = props => {
                   </div>
                 </div>
               </Form.Item>
+
               <Form.Item
                 className={styles.textarea}
                 label={t('RESOURCES_DESCRIPTION')}
@@ -729,7 +740,7 @@ const RegistModal = props => {
                 <Form.Group>
                   <CheckboxGroup options={extraSpecsFields}>
                     {extraSpecsFields?.map((v, i) => (
-                      <>
+                      <React.Fragment key={`extra-specs-${i}`}>
                         <Input
                           type="hidden"
                           name={`extraSpecs.${i}.key`}
@@ -746,11 +757,12 @@ const RegistModal = props => {
                             {v.key}
                           </Checkbox>
                         </Tooltip>
-                      </>
+                      </React.Fragment>
                     ))}
                   </CheckboxGroup>
                 </Form.Group>
               </Form.Item>
+
               <Form.Item label={t('GPU')}>
                 <Form.Group>
                   {formGpuFields?.map((v, i) => (
