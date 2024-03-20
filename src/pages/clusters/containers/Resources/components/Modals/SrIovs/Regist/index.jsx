@@ -27,15 +27,11 @@ const RegistModal = props => {
   const [modelView, setModalView] = useState(true);
   const [regStep, setRegStep] = useState(1);
 
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
-
   const [bondcheck, setBondCheck] = useState(false);
 
   const [sriovResourceDataList, setSriovResourceDataList] = useState([]);
   const [sriovBondDataList, setSriovBondDataList] = useState([]);
 
-  const [external, setExternal] = useState(false);
-  const [defaultRoute, setDefaultRoute] = useState(false);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
@@ -61,6 +57,7 @@ const RegistModal = props => {
 
       const listSriovBond = await sriovStore.fetchSriovBondList();
       setSriovBondDataList(listSriovBond.resources);
+      // setSriovBondDataList(["sriov-bond-slave1", "sriov-bond-slave2"]);
     };
 
     getSriovCreateData();
@@ -69,8 +66,6 @@ const RegistModal = props => {
   const handleOk = () => {
     const onOk = props.onOk;
     form.current.validator(() => {
-      setSubmitButtonFlag(true);
-
       let error = document.querySelectorAll('.form-item-error');
       for (let i of error) {
         if (!i.classList.contains('hide')) {
@@ -98,8 +93,7 @@ const RegistModal = props => {
       };
       data.dns = dns;
       data.host_routes = host_routes;
-      data.networks = [];
-
+      data.networks = bondCheckItems;
       // console.log(data)
       onOk({ ...data });
     });
@@ -114,17 +108,16 @@ const RegistModal = props => {
 
     if (step == 1) {
       if (
-        // data.resource_name == undefined ||
-        // data.resource_name == '선택' ||
-        // data.resource_name == '' ||
+        data.resource_name == undefined ||
+        data.resource_name == '' ||
         data.cidr == undefined ||
         data.cidr == '' ||
         data.ip_pool_start == undefined ||
         data.ip_pool_start == '' ||
         data.ip_pool_end == undefined ||
-        data.ip_pool_end == '' ||
-        data.gateway_ip.length > 0
+        data.ip_pool_end == ''
       ) {
+        console.log(data)
         handleOk();
       } else {
         setRegStep(2);
@@ -335,7 +328,7 @@ const RegistModal = props => {
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = [];
-      dataListVariables[type].forEach(el => nameArray.push(el.name));
+      dataListVariables[type].forEach(el => nameArray.push(el));
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
@@ -347,26 +340,6 @@ const RegistModal = props => {
   };
 
   // 체크 리스트 끝 ==================================================
-
-  // Validation 시작 ==================================================
-  const resourceNameValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == '') {
-      return callback({ message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP') });
-    }
-    callback();
-  };
-  // Validation 끝 ==================================================
-
-  const onChangeDns = (e, id) => {
-    const a = document.getElementById(id)
-    if (e.length > 0 && !PATTERN_IP.test(e)) {
-      a.parentElement.parentElement.nextElementSibling.classList.remove('hide')
-      a.parentElement.parentElement.classList.add("error-item");
-    } else {
-      a.parentElement.parentElement.nextElementSibling.classList.add('hide')
-      a.parentElement.parentElement.classList.remove("error-item");
-    }
-  }
 
   const onChangeDestination = (e, idx) => {
     const a = document.getElementById('hostRoute')
@@ -631,10 +604,11 @@ const RegistModal = props => {
                 {bondcheck && (
                   <Form.Item>
                     <div className={styles.wrapper}>
-                      <div>
-                        {t('RESOURCES_TOTAL')} {stateVariables['bond'].length}
-                        {t('RESOURCES_COUNT')}
-                      </div>
+                      {stateVariables['bond'].length > 0 &&
+                        <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                          <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "bond")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['bond'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                        </div>
+                      }
                       <div className={styles.table}>
                         <table>
                           <colgroup>
@@ -644,15 +618,12 @@ const RegistModal = props => {
                           <thead>
                             <tr>
                               <th>
-                                {/* <Checkbox name='select-all-bond' 
-                                          onChange={(checked) => handleAllCheck(checked, "bond")}
-                                          checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}/> */}
                                 <Checkbox
                                   name="select-all-bond"
                                   onChange={checked =>
                                     handleAllCheck(checked, 'bond')
                                   }
-                                  disabled
+                                  checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}
                                 />
                               </th>
                               <th>
@@ -661,34 +632,30 @@ const RegistModal = props => {
                             </tr>
                           </thead>
                           <tbody>
-                            {/* {sriovBondDataList.length == 0 &&
-                                    <tr>
-                                      <td colSpan="6" className="no-data">
-                                        <p>관련 데이터가 없습니다.</p>
-                                      </td>
-                                    </tr>
-                                  }
-                                  {sriovBondDataList?.filter((data) => {
-                                      return <tr key={data}>
-                                      <td>
-                                        <Checkbox name={`select-${data}`} checked={stateVariables['bond'].includes(data) ? true : false}
-                                        onChange={(checked) => handleSingleCheck(checked, data, "bond")} />
-                                      </td>
-                                      <td>{data}</td>
-                                    </tr>
-                                  })} */}
-                            <tr>
-                              <td colSpan="6" className="no-data">
-                                <p>{t('RESOURCES_DETAIL_NO_DATA')}</p>
-                              </td>
-                            </tr>
+                            {sriovBondDataList.length == 0 &&
+                              <tr>
+                                <td colSpan="2" className="no-data">
+                                  <p>관련 데이터가 없습니다.</p>
+                                </td>
+                              </tr>
+                            }
+                            {sriovBondDataList?.map((data, idx) => {
+                              return <tr key={idx}>
+                                <td>
+                                  <Checkbox name={`select-${idx}`} checked={stateVariables['bond'].includes(data) ? true : false}
+                                    onChange={(checked) => handleSingleCheck(checked, data, "bond")} />
+                                </td>
+                                <td>{data}</td>
+                              </tr>
+                            })}
                           </tbody>
                         </table>
                         <div className={styles.removeCheckWrapper}>
                           {bondCheckItems?.map(name => (
                             <span key={name}>
                               <Button
-                                onClick={() => handleDelete(name, 'internal')}
+                                icon="close"
+                                onClick={() => handleDelete(name, 'bond')}
                               >
                                 {name}
                               </Button>

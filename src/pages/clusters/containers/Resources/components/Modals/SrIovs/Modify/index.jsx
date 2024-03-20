@@ -28,48 +28,26 @@ const ModifyModal = props => {
   const [modelView, setModalView] = useState(true);
   const [regStep, setRegStep] = useState(1);
 
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
-
   const [bondcheck, setBondCheck] = useState(false);
-
   const [sriovBondDataList, setSriovBondDataList] = useState([]);
-
-  const [external, setExternal] = useState(false);
-  const [defaultRoute, setDefaultRoute] = useState(false);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
   );
-  const [externalBool, setExternalBool] = useState(false);
-
-  const networkTypeOptions = [
-    { label: 'VLAN', value: 'vlan' },
-    { label: 'FLAT', value: 'flat' },
-  ];
 
   useEffect(() => {
     const getSriovCreateData = async () => {
       const listSriovBond = await sriovStore.fetchSriovBondList();
       setSriovBondDataList(listSriovBond.resources);
+      // setSriovBondDataList(["sriov-bond-slave1", "sriov-bond-slave2"]);
     };
 
     getSriovCreateData();
-
-    if (
-      props.store.detail.network.type == 'flat' ||
-      props.store.detail.network.type == 'vlan'
-    ) {
-      setExternalBool(true);
-    } else {
-      setExternalBool(false);
-    }
   }, []);
 
   const handleOk = () => {
     const onOk = props.onOk;
     form.current.validator(() => {
-      setSubmitButtonFlag(true);
-
       const { data } = form.current.props;
 
       const dns = [];
@@ -93,11 +71,11 @@ const ModifyModal = props => {
       data.dns = dns;
       // data.host_routes = host_routes
       data.networks = [];
+      data.networks = bondCheckItems;
 
       if (data.segment_id == ' ') {
         delete data.segment_id;
       }
-
       // console.log("data : "+ JSON.stringify(data))
 
       onOk({ ...data });
@@ -272,34 +250,6 @@ const ModifyModal = props => {
     }
   };
 
-  const handleNetworkType = e => {
-    const { data } = form.current.props;
-    if (e == 'flat' || e == 'vlan') {
-      data.segment_id = ' ';
-      const a = document.getElementById('segment_id');
-      if (
-        a.nextElementSibling &&
-        a.nextElementSibling.classList.contains('form-item-error')
-      ) {
-        a.nextElementSibling.classList.add('hide');
-        a.parentElement.parentElement.classList.remove('error-item');
-      }
-      setExternalBool(true);
-    } else {
-      data.segment_id = '';
-      const a = document.getElementById('segment_id');
-      if (
-        a.nextElementSibling &&
-        a.nextElementSibling.classList.contains('form-item-error')
-      ) {
-        a.nextElementSibling.classList.remove('hide');
-        a.parentElement.parentElement.classList.add('error-item');
-      }
-      // document.getElementById('radio.0').click();
-      setExternalBool(false);
-    }
-  };
-
   // 체크 리스트 시작 ==================================================
   const [bondCheckItems, setBondCheckItems] = useState([]);
 
@@ -326,7 +276,7 @@ const ModifyModal = props => {
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = [];
-      dataListVariables[type].forEach(el => nameArray.push(el.name));
+      dataListVariables[type].forEach(el => nameArray.push(el));
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
@@ -447,11 +397,6 @@ const ModifyModal = props => {
                           defaultValue={detail.type.toUpperCase()}
                           disabled
                         />
-                        {/* <Select
-                            name="type"
-                            defaultValue={detail.type}
-                            options={networkTypeOptions}
-                            onChange={(e) => handleNetworkType(e)} /> */}
                       </Form.Item>
                     </Column>
                     <Column>
@@ -581,10 +526,11 @@ const ModifyModal = props => {
                 {bondcheck && (
                   <Form.Item>
                     <div className={styles.wrapper}>
-                      <div>
-                        {t('RESOURCES_TOTAL')} {stateVariables['bond'].length}
-                        {t('RESOURCES_COUNT')}
-                      </div>
+                      {stateVariables['bond'].length > 0 &&
+                        <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                          <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "bond")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['bond'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                        </div>
+                      }
                       <div className={styles.table}>
                         <table>
                           <colgroup>
@@ -616,17 +562,17 @@ const ModifyModal = props => {
                           <tbody>
                             {sriovBondDataList.length == 0 && (
                               <tr>
-                                <td colSpan="6" className="no-data">
+                                <td colSpan="2" className="no-data">
                                   <p>{t('RESOURCES_DETAIL_NO_DATA')}</p>
                                 </td>
                               </tr>
                             )}
-                            {sriovBondDataList?.filter(data => {
+                            {sriovBondDataList?.map((data, idx) => {
                               return (
-                                <tr key={data}>
+                                <tr key={idx}>
                                   <td>
                                     <Checkbox
-                                      name={`select-${data}`}
+                                      name={`select-${idx}`}
                                       checked={
                                         stateVariables['bond'].includes(data)
                                           ? true
@@ -647,7 +593,8 @@ const ModifyModal = props => {
                           {bondCheckItems?.map(name => (
                             <span key={name}>
                               <Button
-                                onClick={() => handleDelete(name, 'internal')}
+                                icon="close"
+                                onClick={() => handleDelete(name, 'bond')}
                               >
                                 {name}
                               </Button>
