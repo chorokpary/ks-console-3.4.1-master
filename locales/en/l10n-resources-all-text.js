@@ -606,6 +606,10 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
   RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
-  RESOURCES_INVALID_NAME_DESC: '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.'
+  RESOURCES_INVALID_NAME_DESC: '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
+  RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
+  RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
+  RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
+
 
 };

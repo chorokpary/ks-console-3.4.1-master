@@ -3,15 +3,17 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { get, omit } from 'lodash'
 import { Modal } from 'components/Base'
-import { Form, Input, Select, TextArea, Button, Checkbox, Tabs } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Checkbox, Tabs, InputPassword } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
-import { PATTERN_USER_NAME, PATTERN_IP } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 import styles from './index.scss'
 import NodeStore from 'stores/node'
 
 const RegistModal = (props) => {
+
+  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
 
   const nodeStore = new NodeStore()
 
@@ -29,6 +31,8 @@ const RegistModal = (props) => {
 
   const [clusterNodeDataList, setClusterNodeDataList] = useState([]);
 
+  const [bmcCheck, setBmcCheck] = useState(false);
+
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -36,6 +40,7 @@ const RegistModal = (props) => {
 
       const { data } = form.current.props;
       data.systemType = systemType;
+      data.bmcCheck = bmcCheck;
 
       console.log("data :" + JSON.stringify(data))
       onOk({ ...data })
@@ -78,7 +83,7 @@ const RegistModal = (props) => {
       return callback({ message: t('RESOURCES_IP_EMPTY_DESC') })
     }
 
-    if (!(PATTERN_IP.test(value))) {
+    if (!(regexIp.test(value))) {
       return callback({ message: t('INVALID_IP_DESC') })
     }
 
@@ -109,14 +114,14 @@ const RegistModal = (props) => {
     callback()
   }
 
-
   const bmcIpValidator = (rule, value, callback) => {
 
     if (!value) {
-    } else {
-      if (!(PATTERN_IP.test(value))) {
-        return callback({ message: t('INVALID_IP_DESC') })
-      }
+      return callback({ message: t('RESOURCES_IP_EMPTY_DESC') })
+    }
+
+    if (!(regexIp.test(value))) {
+      return callback({ message: t('INVALID_IP_DESC') })
     }
 
     callback()
@@ -125,16 +130,32 @@ const RegistModal = (props) => {
   const intervalValidator = (rule, value, callback) => {
 
     if (!value) {
-    } else {
-      if (value < 60) {
-        return callback({ message: t('RESOURCES_ENTER_60_MORE') })
-      }
+      return callback({ message: t('RESOURCES_INTERVAL_EMPTY_DESC') })
+    }
+
+    if (value < 60) {
+      return callback({ message: t('RESOURCES_ENTER_60_MORE') })
+    }
+    callback()
+  }
+
+  const bmcIdValidator = (rule, value, callback) => {
+
+    if (!value) {
+      return callback({ message: t('RESOURCES_ID_EMPTY_DESC') })
     }
 
     callback()
   }
 
+  const bmcPasswordValidator = (rule, value, callback) => {
 
+    if (!value) {
+      return callback({ message: t('RESOURCES_PASSWORD_EMPTY_DESC') })
+    }
+
+    callback()
+  }
 
   const clusteNodeNameValidator = (rule, value, callback) => {
     if (value == t('SELECT') || value == "") {
@@ -215,13 +236,9 @@ const RegistModal = (props) => {
                       />
                     </Form.Item>
                   </Column>
-                  <Column></Column>
-                </Columns>
-
-                <Columns>
                   <Column>
                     <Form.Item
-                      label={t('Scrape Interval')}
+                      label={t('Scrape Interval')+' (s)'}
                       rules={[{ required: true, validator: intervalNodeValidator }]}
                     >
                       <Input
@@ -238,7 +255,7 @@ const RegistModal = (props) => {
                     >
                       <Input
                         name="nodePort"
-                        placeholder={t('21000')}
+                        placeholder={t('9100')}
                         type="number"
                       />
                     </Form.Item>
@@ -249,50 +266,66 @@ const RegistModal = (props) => {
             </Form.Item>
           }
 
-          <Form.Group label={t('BMC')} onChange={(e) => setIsBmc(!isBmc)} checkable desc={t('RESOURCES_BMC_SYSTEM_TIP')}>
-            <div className={styles.item}>
-              <Columns>
-                <Column>
-                  <Form.Item
-                    rules={[{ required: false, validator: bmcIpValidator }]}
-                  >
-                    <Input
-                      name={`bmcIp`}
-                      placeholder={t('IP')}
-                    />
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item
-                    rules={[{ required: false, validator: intervalValidator }]}
-                  >
-                    <Input
-                      name={`bmcInterval`}
-                      placeholder={t('Interval')}
-                      type="number"
-                    />
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item>
-                    <Input
-                      name={`bmcId`}
-                      placeholder={t('ID')}
-                    />
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item>
-                    <Input
-                      name={`bmcPassword`}
-                      type="password"
-                      placeholder={t('Password')}
-                    />
-                  </Form.Item>
-                </Column>
-              </Columns>
-            </div>
+          <div className={styles.title}> 
+              <Checkbox name="bmc" onClick={() => {
+                setBmcCheck(!bmcCheck);
+              }}>{t('BMC')}
+              <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>*</span>
+              </Checkbox>
+          </div>
+          {bmcCheck && (<div className={styles.desc}>{t('RESOURCES_INTERVAL_60_OVER_DESC')}</div>)}
+          {bmcCheck && (
+          <Form.Group>                   
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('IP')}
+                      rules={[{ required: true, validator: bmcIpValidator }]}
+                    >
+                      <Input
+                        name={`bmcIp`}
+                        placeholder={t('IP')}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('Interval')+' (s)'}
+                      rules={[{ required: true, validator: intervalValidator }]}
+                    >
+                      <Input
+                        name={`bmcInterval`}
+                        placeholder={t('Interval')}
+                        type="number"
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('ID')}
+                      rules={[{ required: true, validator: bmcIdValidator }]}
+                    >
+                      <Input
+                        name={`bmcId`}
+                        placeholder={t('ID')}                        
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('Password')}
+                      rules={[{ required: true, validator: bmcPasswordValidator }]}
+                    >
+                      <InputPassword
+                        name={`bmcPassword`}
+                        type="password"
+                        placeholder={t('Password')}
+                      />
+                    </Form.Item>
+                  </Column>
+                </Columns>
           </Form.Group>
+           )}
 
 
         </Form>

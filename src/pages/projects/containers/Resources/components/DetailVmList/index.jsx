@@ -104,7 +104,6 @@ const DetailVmList = (props) => {
     const page = get(params, "page", 1);
 
     const vmList = await store.fetchList({ cluster, namespace });
-    console.log("vmList : "+ JSON.stringify(vmList))
     const vmFilterData = vmList?.filter((row) =>
       variablesFilter(row)
     )
