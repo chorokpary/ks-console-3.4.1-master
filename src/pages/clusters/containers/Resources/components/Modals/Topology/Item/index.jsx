@@ -177,6 +177,14 @@ const TopologyItem = (props) => {
       )
     })
 
+    if(networkBaritems.length < 5){
+      const addElement = <li className='network_bar'></li> 
+      const loopNum = 6 - networkBaritems.length;
+      for(var i=0;i<loopNum;i++){
+        networkBaritems.push(addElement)
+      }      
+    }
+
     return networkBaritems;
 
    }
