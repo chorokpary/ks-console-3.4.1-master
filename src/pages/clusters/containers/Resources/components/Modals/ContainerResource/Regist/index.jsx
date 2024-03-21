@@ -237,12 +237,14 @@ const RegistModal = (props) => {
       data.worker_number = workerFlavorNumber;
       data.worker_autoscale = isAutoScale;
       data.worker_scale_range = workerScaleRange;
-      data.cni = cniSelect;
+      if (cniSelect) {
+        data.cni = cniSelect;
+      }
       data.csi = csiSelect;
       data.features = ekgStack;
       data.expiration = expirationSelect;
       data.private_registry = tab === 'private';
-
+      // console.log(data)
       onOk({ ...data })
     })
   }

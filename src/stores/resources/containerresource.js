@@ -168,7 +168,7 @@ export default class ResourceStore extends Base {
     reqData.worker_number = data.worker_number;
     reqData.worker_autoscale = data.worker_autoscale;
     reqData.worker_scale_range = data.worker_scale_range;
-    reqData.cni = data.cni.toLowerCase();
+    if (reqData.cni) reqData.cni = data.cni.toLowerCase();
     reqData.csi = data.csi.toLowerCase();
     reqData.ui = "kubesphere";
     reqData.features = data.features;
