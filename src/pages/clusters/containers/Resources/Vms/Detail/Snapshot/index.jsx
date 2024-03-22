@@ -25,7 +25,7 @@ import {
 } from '@kube-design/components'
 
 const Snapshot = (props) => {
-  
+
   const store = new VmStore();
   const vmState = props.detailStore.detail?.vm?.state;
 
@@ -34,7 +34,7 @@ const Snapshot = (props) => {
   const [searchDataList, setSearchDataList] = useState([]);
 
   const [restoreDataList, setRestoreDataList] = useState([]);
-  
+
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -142,15 +142,15 @@ const Snapshot = (props) => {
           <div className={styles.text}>
             {(obj.snapshot_volumes).length > 0 ? (obj.snapshot_volumes).map((item) => <div>{item}</div>) : "-"}
             <p>{t('RESOURCES_SNAPSHOT_VOLUME')}</p>
-          </div>  
+          </div>
           {/* <div className={styles.text}>
             <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
           </div>      */}
           <div className={styles.button}>
-              <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
-              <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{width: "92.69px"}}>{t('RESOURCES_DELETE')}</Button></div>  
-          </div> 
+            <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
+            <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{ width: "92.69px" }}>{t('RESOURCES_DELETE')}</Button></div>
+          </div>
           <div className={styles.arrow} onClick={() => handleExpand(obj.id)}>
             <Icon name="chevron-down" type={obj.id != expandItem ? '' : (obj.id == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
           </div>
@@ -164,48 +164,49 @@ const Snapshot = (props) => {
     const restoreFilterList = restoreDataList.filter(item => item.snapshot_id == id);
     return (
       <div className={styles.itemExtra}>
-            <div className={styles.containers} >
+        <div className={styles.containers} >
 
-              {restoreFilterList.length == 0 && 
-                <div className={styles.emptyRestore}>{t('RESOURCES_NO_DATA_RESTORE_LOG')}</div>
-              }
+          {restoreFilterList.length == 0 &&
+            <div className={styles.emptyRestore}>{t('RESOURCES_NO_DATA_RESTORE_LOG')}</div>
+          }
 
-              {restoreFilterList.map(obj => 
-              <div className={classnames(styles.item)}>
-                <div className={styles.icon}>
-                  <i className="ico-type-restore"></i>
-                </div>
-                <div className={classnames(styles.title, styles.name)}>
-                  <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
-                  <p>{t('RESOURCES_REGIST_DATE')}</p>
-                </div>
-                <div className={styles.title}>
-                  <div>{obj.id}</div>
-                  <p>{t('RESOURCES_ID')}</p>
-                </div>
-                {/* <div className={styles.text}>
+          {restoreFilterList.map(obj =>
+            <div className={classnames(styles.item)}>
+              <div className={styles.icon}>
+                <i className="ico-type-restore"></i>
+              </div>
+              <div className={classnames(styles.title, styles.name)}>
+                <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
+                <p>{t('RESOURCES_REGIST_DATE')}</p>
+              </div>
+              <div className={styles.title}>
+                <div>{obj.id}</div>
+                <p>{t('RESOURCES_ID')}</p>
+              </div>
+              {/* <div className={styles.text}>
                   <div>{get(obj, "description", "-")}</div>
                   <p>Description</p>
                 </div>      */}
-                <div className={styles.complete}>
-                  <div>{obj.complete ? t('RESOURCES_COMPLETE') : t('RESOURCES_NOT_COMPLETE')}</div>
-                  <p>{t('RESOURCES_COMPLETE')}</p>
-                </div>
-                <div className={styles.arrow}>
-                  <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>{t('RESOURCES_DELETE')}</Button>
-                </div>
-              </div>  
-              )}
-
+              <div className={styles.complete}>
+                <div>{obj.complete ? t('RESOURCES_COMPLETE') : t('RESOURCES_NOT_COMPLETE')}</div>
+                <p>{t('RESOURCES_COMPLETE')}</p>
+              </div>
+              <div className={styles.arrow}>
+                <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>{t('RESOURCES_DELETE')}</Button>
+              </div>
             </div>
+          )}
+
+        </div>
       </div>
     )
   }
 
   const handleDeleteSnapshot = (id) => {
     props.rootStore.triggerAction('vm.snapshotDelete', {
+      ...props.match.params,
       type: 'VM_DETAIL',
-      id : id,
+      id: id,
       store: store,
       success: fnGetData,
     })
@@ -213,33 +214,33 @@ const Snapshot = (props) => {
 
   const handleDeleteRestore = (id) => {
     props.rootStore.triggerAction('vm.restoreDelete', {
+      ...props.match.params,
       type: 'VM_DETAIL',
-      id : id,
+      id: id,
       store: store,
       success: () => {
         fnGetRestoreData();
       },
-      ...props.match.params
     })
   }
 
   const handleRestore = (id) => {
-    if(vmState != "Stopped"){
+    if (vmState != "Stopped") {
       props.rootStore.triggerAction('vm.alertPop', {
         store: store,
         desc: t('RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP'),
         success: fnGetData,
       })
-    }else{
+    } else {
       props.rootStore.triggerAction('vm.restorePop', {
-        id : id,
+        ...props.match.params,
+        id: id,
         store: store,
         success: () => {
           fnGetRestoreData();
         },
-        ...props.match.params
       })
-    }   
+    }
   }
 
   const getPagination = () => {
@@ -310,27 +311,27 @@ const Snapshot = (props) => {
   }
 
   return (
-    <>  
+    <>
       {dataList.length > 0 &&
-          <Panel
-            className={classnames(styles.main)}
-          >
-            {renderHeader()}
-            {renderContent()}
-            {renderFooter()}
-          </Panel>
-        }
+        <Panel
+          className={classnames(styles.main)}
+        >
+          {renderHeader()}
+          {renderContent()}
+          {renderFooter()}
+        </Panel>
+      }
 
-        {dataList.length == 0 &&
-          <Panel >
-            <div className={styles.wrapper}>
-              {isLoading ?
-                <div className={styles.loading}><Loading /></div>
-                : <div className={styles.empty}>{t('RESOURCES_NO_DATA_SNAPSHOT_RESOURCE')}</div>
-              }
-            </div>
-          </Panel>
-        }   
+      {dataList.length == 0 &&
+        <Panel >
+          <div className={styles.wrapper}>
+            {isLoading ?
+              <div className={styles.loading}><Loading /></div>
+              : <div className={styles.empty}>{t('RESOURCES_NO_DATA_SNAPSHOT_RESOURCE')}</div>
+            }
+          </div>
+        </Panel>
+      }
     </>
   );
 };

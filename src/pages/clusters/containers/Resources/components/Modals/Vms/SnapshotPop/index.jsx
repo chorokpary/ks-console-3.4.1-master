@@ -18,18 +18,21 @@ const SnapshotModal = (props) => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  
+
   const handleOk = () => {
-
     const success = props.success;
+    const params = {
+      cluster: props.cluster,
+      namespace: props.namespace,
+    }
 
-    form.current.validator(async () => {   
-      
+    form.current.validator(async () => {
+
       const { data } = form.current.props;
       data.vmName = vmName;
       data.vmId = vmId;
-      
-      vmStore.snapshotCreate(data).then(() => {
+
+      vmStore.snapshotCreate(data, params).then(() => {
         Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();
         closeModal();
@@ -58,9 +61,9 @@ const SnapshotModal = (props) => {
             rules={[{ required: true, message: t('RESOURCES_SNAPSHOT_LOG_INFORMATION_EMPTY_DESC') }]}
           >
             <Input
-                name="description"
-                style={{ maxWidth: 'none' }}
-              />  
+              name="description"
+              style={{ maxWidth: 'none' }}
+            />
           </Form.Item>
         </Form>
       </Modal>
