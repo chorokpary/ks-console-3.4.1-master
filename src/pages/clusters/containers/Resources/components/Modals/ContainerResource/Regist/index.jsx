@@ -10,7 +10,7 @@ import * as common from "utils/resources"
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
-import { PATTERN_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 import classnames from 'classnames'
 import styles from './index.scss'
@@ -25,7 +25,6 @@ const CONFIG_DISK_MASTER = 160;
 const CONFIG_CPU_WORKER = 4;
 const CONFIG_RAM_WORKER = 8;
 const CONFIG_DISK_WORKER = 80;
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 
 const RegistModal = (props) => {
   const form = useRef();
@@ -141,7 +140,7 @@ const RegistModal = (props) => {
   useEffect(() => {
     if (selectImageName) {
       let selectOs = imageOptionList.find(obj => selectImageName === obj.name)
-      let selectOsDistro = get(selectOs, 'image_detail.os_distro')
+      let selectOsDistro = get(selectOs, 'os_distro')
       setSelectOsDistro(selectOsDistro)
     }
   }, [selectImageName])
@@ -181,12 +180,12 @@ const RegistModal = (props) => {
     const opt = imageOptionList.map((obj) => {
       // const exceptonArray = ['ubuntu', 'centos']
       // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
-      const distroType = (obj.image_detail.os_distro).split("-")[0]
+      const distroType = (obj.os_distro).split("-")[0]
       return {
         label: t(obj.name),
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
-        description: t(obj.image_detail.description),
+        description: t(obj.description),
         disabled: obj.phase !== 'Succeeded' ? true : false
       }
     })
@@ -238,12 +237,14 @@ const RegistModal = (props) => {
       data.worker_number = workerFlavorNumber;
       data.worker_autoscale = isAutoScale;
       data.worker_scale_range = workerScaleRange;
-      data.cni = cniSelect;
+      if (cniSelect) {
+        data.cni = cniSelect;
+      }
       data.csi = csiSelect;
       data.features = ekgStack;
       data.expiration = expirationSelect;
       data.private_registry = tab === 'private';
-
+      // console.log(data)
       onOk({ ...data })
     })
   }
@@ -267,7 +268,7 @@ const RegistModal = (props) => {
         setIsFirst(false)
       }
 
-      if (data.name == undefined || !regexName.test(data.name) || data.image == t('RESOURCES_SELECT') || data.masterFlavor == t('RESOURCES_SELECT') || data.workerFlavor == t('RESOURCES_SELECT')) {
+      if (data.name == undefined || !PATTERN_USER_NAME.test(data.name) || data.image == t('RESOURCES_SELECT') || data.masterFlavor == t('RESOURCES_SELECT') || data.workerFlavor == t('RESOURCES_SELECT')) {
         handleOk();
       } else {
         setRegStep(2);
@@ -393,16 +394,6 @@ const RegistModal = (props) => {
 
 
   // Validation 시작 ==================================================
-  const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
-    }
-    callback()
-  }
 
   const imageValidator = (rule, value, callback) => {
     if (value == t('RESOURCES_SELECT') || value == "select") {
@@ -555,10 +546,9 @@ const RegistModal = (props) => {
                   rules={[
                     { required: true, message: t('NAME_EMPTY_DESC') },
                     {
-                      pattern: PATTERN_NAME,
-                      message: t('INVALID_NAME_DESC'),
+                      pattern: PATTERN_USER_NAME,
+                      message: t('RESOURCES_INVALID_NAME_DESC'),
                     },
-                    { validator: nameValidator },
                   ]}
                   desc={t('NAME_DESC')}
                 >

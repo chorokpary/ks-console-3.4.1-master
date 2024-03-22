@@ -68,7 +68,7 @@ class ResourceUsage extends React.Component {
     super(props)
 
     this.state = {
-      resourceType: 'computing',
+      resourceType: this.computingResource ? 'computing' : 'application',
       range: 43200,
     }
 
@@ -123,10 +123,25 @@ class ResourceUsage extends React.Component {
     ]
   }
 
+  get applicationResource() {
+    const applicationServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'applications'], [])
+    const flag = applicationServieRole.length > 0 ? true : false;
+    return flag
+  }
+
+  get computingResource()  {
+    const computingWorkloadServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'vms'], [])
+    const computingSettingServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'networks'], [])
+    const computingResourceServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'flavors'], [])
+
+    const flag = (computingWorkloadServieRole.length > 0 || computingSettingServieRole.length > 0 || computingResourceServieRole.length > 0 ) ? true : false;
+    return flag;
+  }
+
   fetchData = params => {
     this.fetchMetrics()
     this.overviewStore.fetchResourceStatus(params)
-    this.computingStore.fetchComputingData(params)
+    this.computingResource && this.computingStore.fetchComputingData(params)
   }
 
   fetchMetrics = params => {
@@ -254,6 +269,11 @@ class ResourceUsage extends React.Component {
   }
 
   renderApplicationResource() {
+
+    if(!this.applicationResource){
+      return false;
+    }
+
     const { isLoading } = toJS(this.overviewStore.resource)
     const {
       data: metrics,
@@ -314,6 +334,10 @@ class ResourceUsage extends React.Component {
   }
 
   renderComputingResource() {
+
+    if(!this.computingResource){
+      return false;
+    }
     const { isLoading, resources } = this.computingStore
 
     return (
@@ -337,6 +361,7 @@ class ResourceUsage extends React.Component {
   }
 
   renderHeader() {
+
     return (
       <div className={styles.header}>
         <RadioGroup
@@ -345,12 +370,16 @@ class ResourceUsage extends React.Component {
           onChange={this.handleResouceTypeChange}
           size="small"
         >
-          <RadioButton value="computing">
-            {t('컴퓨팅 리소스')}
-          </RadioButton>
-          <RadioButton value="application">
-            {t('APPLICATION_RESOURCE_PL')}
-          </RadioButton>
+          { this.computingResource &&
+            <RadioButton value="computing">
+              {t('컴퓨팅 리소스')}
+            </RadioButton>
+          }
+          { this.applicationResource &&
+            <RadioButton value="application">
+              {t('APPLICATION_RESOURCE_PL')}
+            </RadioButton>
+          }
           <RadioButton value="physical">
             {t('PHYSICAL_RESOURCE_PL')}
           </RadioButton>         

@@ -9,13 +9,33 @@ import { Panel, Text } from 'components/Base'
 
 import styles from './index.scss'
 
+//====================================
+// pod_status 상태
+// ====================================
+// 1.생성 중 : PodCreating
+// 2.실행 중 : PodRunning
+// 3.삭제 중 : PodDeleting
+// 4.파일 업로드중 : FileUploading
+// 5.파일 업로드 완료 : FileUploadCompleted
+// 6.이미지 빌드&푸시 중 : ImageBuildPushing
+// 7.이미지 빌드&푸시 완료 : ImagePushCompleted
+// 8.이미지 빌드&푸시 실패 : ImagePushFailed
+// ====================================
+
+
 const Status = (props) => {
 
-  console.log(JSON.stringify(props.detailStore.detail))
-
   const renderPodStatus = () => {
-    
-      const phase = 'Running'
+
+    const detailInfo = props.detailStore.detail;
+
+    const uploadInfo = get(detailInfo, ['upload-info-list', 'upload-info'], [])[0]
+    const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
+    const podStatus = get(detailInfo, 'pod-status', '')
+
+    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuildPushing', 'ImagePushCompleted', 'ImagePushFailed']
+    const fileBuildArrayState = ['ImageBuildPushing', 'ImagePushCompleted', 'ImagePushFailed']
+
       const status = 'success';
       const type = 'type'
 
@@ -25,8 +45,8 @@ const Status = (props) => {
             <Text
               className={styles.info}
               icon="image"
-              title={t('성공')}
-              description={t('이미지 빌드를 진해한 상태입니다.')}
+              title={t('RESOURCES_SUCCESS')}
+              description={t('RESOURCES_IMAGE_BUILDING_DESC')}
               extra={
                 <Icon
                 className={styles.status}
@@ -40,53 +60,63 @@ const Status = (props) => {
             />
           </div>
           <div className={styles.content}>
+            {fileStatus.toLowerCase() == 'completed' &&
+              <Text
+                key={type}
+                className={styles.condition}
+                icon='image'
+                title={t(`RESOURCES_ENVIRONMENT_CONFIGURATION`)}
+                description={t( `RESOURCES_FILE_UPLOADED_DESC`)}
+                extra={
+                  <Icon
+                    className={styles.status}
+                    name={status === 'success' ? 'success' : 'error'}
+                    color={{
+                      primary: '#fff',
+                      secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                    }}
+                  />
+                }
+              /> 
+            }
+            {(fileStatus.toLowerCase() == 'completed' && fileUploadArrayState.includes(podStatus)) &&
                 <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
-                  title={t(`파일 업로드 상태`)}
-                  description={t( `파일을 업로드한 상태입니다.`)}
+                  title={t(`RESOURCES_FILE_UPLOAD`)}
+                  description={podStatus == 'FileUploading' ? t(`RESOURCES_FILE_UPLOADING_DESC`) : t(`RESOURCES_FILE_UPLOAD_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
-                      name={status === 'success' ? 'success' : 'error'}
+                      name={podStatus === 'ImagePushFailed' ? 'error' : 'success'}
                       color={{
                         primary: '#fff',
-                        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                        secondary: podStatus === 'ImagePushFailed' ? '#ca2621' : '#55bc8a',
                       }}
                     />
                   }
                 /> 
+            }
+            {(fileStatus.toLowerCase() == 'completed' && fileBuildArrayState.includes(podStatus)) &&
                 <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
-                  title={t(`이미지 빌드 상태`)}
-                  description={t( `이미지에 생성한 빌드 상태입니다.`)}
+                  title={t(`RESOURCES_IMAGE_BUILD_PUSH`)}
+                  description={podStatus == 'ImageBuildPushing' ? t(`RESOURCES_IMAGE_BUILD_PUSH_ING_DESC`) : t(`RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
-                      name={status === 'success' ? 'success' : 'error'}
+                      name={podStatus === 'success' ? 'success' : 'error'}
                       color={{
                         primary: '#fff',
-                        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                        secondary: podStatus === 'success' ? '#55bc8a' : '#ca2621',
                       }}
                     />
                   }
                 /> 
-                <Text
-                  key={type}
-                  className={styles.condition}
-                  icon='image'
-                  title={t(`Registry Push 상태`)}
-                  description={t( `Registry에 Push한 상태입니다.`)}
-                  extra={
-                    <Icon
-                      className={styles.status}
-                      name={'substract'}
-                    />
-                  }
-                /> 
+            }
           </div>
         </Panel>
       )

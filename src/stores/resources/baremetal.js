@@ -160,8 +160,6 @@ export default class BareMetalStore extends Base {
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
 
-    //console.log(this.dataList)
-
     return this.dataList
   }
 
@@ -178,10 +176,10 @@ export default class BareMetalStore extends Base {
     nodeData.scrapeInterval = !!data.nodeInterval ? data.nodeInterval + "s" : "";
     nodeData.port = Number(data.nodePort);
 
-    bmcData.address = data.bmcIp;
-    bmcData.scrapeInterval = !!data.bmcInterval ? data.bmcInterval + "s" : "";
-    bmcData.username = data.bmcId;
-    bmcData.password = data.bmcPassword;
+    bmcData.address = data.bmcCheck ? data.bmcIp : '';
+    bmcData.scrapeInterval = data.bmcCheck ? data.bmcInterval + "s" : '';
+    bmcData.username = data.bmcCheck ? data.bmcId : ''; 
+    bmcData.password = data.bmcCheck ? data.bmcPassword : '';
 
     jsonData.name = data.systemType == "C" ? data.cluserName : data.name;
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
@@ -204,16 +202,14 @@ export default class BareMetalStore extends Base {
     nodeData.scrapeInterval = data.nodeInterval + "s";
     nodeData.port = Number(data.nodePort);
 
-    bmcData.address = data.bmcIp;
-    bmcData.scrapeInterval = data.bmcInterval + "s";
-    bmcData.username = data.bmcId;
-    bmcData.password = data.bmcPassword;
-
+    bmcData.address = data.bmcCheck ? data.bmcIp : '';
+    bmcData.scrapeInterval = data.bmcCheck ? data.bmcInterval + "s" : '';
+    bmcData.username = data.bmcCheck ? data.bmcId : ''; 
+    bmcData.password = data.bmcCheck ? data.bmcPassword : '';
+    
     jsonData.name = data.name;
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
     jsonData.openBMC = bmcData;
-
-    console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.put(url, jsonData)
     return res

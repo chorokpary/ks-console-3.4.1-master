@@ -36,8 +36,8 @@ import ContainerImagesStore from 'stores/resources/containerimages'
 })
 export default class Images extends React.Component {
 
-   //auto refresh start  ##################################
-   constructor(props) {
+  //auto refresh start  ##################################
+  constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
   }
@@ -226,7 +226,7 @@ export default class Images extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (image, record) => {
-          const distro = (record.image_detail.os_distro).split("-")[0]
+          const distro = (record.os_distro).split("-")[0]
           const icon = "ico-os-" + distro;
           return (
             <i

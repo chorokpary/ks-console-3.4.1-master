@@ -44,7 +44,7 @@ const Status = (props) => {
 
         const fnGetLoadBalancerData = async () => {
             const loadBalancerList = await loadBalancerStore.fetchList();
-            const loadBalancerFilterList = loadBalancerList.filter(item => item.network == networkId);
+            const loadBalancerFilterList = loadBalancerList.filter(item => item.network.id == networkId);
 
             setLoadBalancerList(loadBalancerFilterList);
             setIsLoadingLoadBalancer(false)

@@ -34,7 +34,7 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-              success && success()
+              setTimeout(success && success(), 1000);
             })
         },
         title: t('이미지 빌드 생성'),

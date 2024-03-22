@@ -21,6 +21,8 @@ import styles from './index.scss';
 
 import FlavorStore from 'stores/resources/flavors';
 
+const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
+const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const ModifyModal = props => {
   const store = new FlavorStore();
   const form = useRef();
@@ -30,7 +32,7 @@ const ModifyModal = props => {
   const [rootDisk, setRootDisk] = useState(10);
   const [ephemeralDisk, setEphemeralDisk] = useState(10);
 
-  const [vcpus, setVcpus] = useState(0);
+  const [vcpus, setVcpus] = useState();
 
   const [hostDevices, setHostDevices] = useState();
   const [gpus, setGpus] = useState([]);
@@ -43,11 +45,19 @@ const ModifyModal = props => {
   const [regStep, setRegStep] = useState(1);
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
 
+  const [formGpuFields, setFormGpuFields] = useState();
+  const [formDeviceFields, setFormDeviceFields] = useState();
+  //   const [formGpuFields, setFormGpuFields] = useState([
+  //     { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
+  //   ]);
+
   let checkExtraSpecs = [];
   useEffect(() => {
-    setRootDisk(props.store.detail.flavor.root_disk);
-    setEphemeralDisk(props.store.detail.flavor.ephemeral_disk);
-    setVcpus(props.store.detail.flavor.vcpus);
+    if (!props) return;
+    setRootDisk(props?.store?.detail?.flavor?.root_disk);
+    setEphemeralDisk(props.store?.detail?.flavor?.ephemeral_disk);
+    setVcpus(props?.store?.detail?.flavor?.vcpus);
+    console.log('fdfs', props?.store?.detail?.flavor?.vcpus);
     setRam(
       props.store.detail.flavor.ram / 1024 < 1
         ? props.store.detail.flavor.ram
@@ -56,7 +66,9 @@ const ModifyModal = props => {
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
       obj => obj.value === 'True'
     );
-  }, []);
+    setFormGpuFields(props?.store?.detail?.flavor?.gpus);
+    setFormDeviceFields(props?.store?.detail?.flavor?.devices);
+  }, [props]);
 
   useEffect(() => {
     const useEffectFunction = async () => {
@@ -114,18 +126,6 @@ const ModifyModal = props => {
     useEffectFunction();
   }, []);
 
-  // slider
-  const handleRootDisk = {
-    onChangeSlider: e => {
-      setRootDisk(e);
-    },
-  };
-  const handleEphemeralDisk = {
-    onChangeSlider: e => {
-      setEphemeralDisk(e);
-    },
-  };
-
   // extrSpec check
   const handCheckExtrSpec = (i, e) => {
     const values = [...extraSpecsFields];
@@ -137,17 +137,17 @@ const ModifyModal = props => {
   const addVcpus = e => {
     e.preventDefault();
     setVcpus(vcpus + 1);
+    const { data } = form.current.props;
+    data.vcpus = vcpus + 1;
   };
   const minusVcpus = e => {
     e.preventDefault();
     if (vcpus > 0) {
       setVcpus(vcpus - 1);
+      const { data } = form.current.props;
+      data.vcpus = vcpus - 1;
     }
   };
-
-  const [formDeviceFields, setFormDeviceFields] = useState(
-    props.store.detail.flavor.devices
-  );
 
   // hostDevice handler
   const handleHostDevice = {
@@ -206,9 +206,6 @@ const ModifyModal = props => {
     },
   }; // end hostDevice
 
-  const [formGpuFields, setFormGpuFields] = useState(
-    props.store.detail.flavor.gpus
-  );
   // GPU handler
   const handleGpu = {
     handleAddFields: () => {
@@ -268,8 +265,8 @@ const ModifyModal = props => {
 
   // ram num check
   const changeRam = e => {
-    const { value } = e.target;
-    const onlyNumber = value.replace(/[^0-9]/g, '');
+    // const { value } = e.target;
+    const onlyNumber = e.replace(/[^0-9]/g, '');
     setRam(Number(onlyNumber));
   };
 
@@ -317,13 +314,32 @@ const ModifyModal = props => {
   const stepMoveCheck = step => {
     const { data } = form.current.props;
     if (step == 1) {
-      if (data.name == undefined) {
+      if (
+        data.vcpus === undefined ||
+        !regexNum.test(data.vcpus) ||
+        data.ram === undefined ||
+        !regexNum.test(data.ram) ||
+        data.rootDisk === undefined ||
+        !regexRootDisk.test(data.rootDisk)
+      ) {
         handleOk();
       } else {
         setRegStep(2);
         setSubmitButtonFlag(false);
       }
     }
+  };
+
+  const onChangeRootDisk = e => {
+    const { data } = form.current.props;
+    let diskVal = e;
+    if (typeof e === 'string') {
+      const removeText = 'GiB';
+      diskVal = diskVal.substring(0, diskVal.indexOf(removeText));
+      diskVal = diskVal.replace(/[^0-9]/g, '');
+    }
+    data.rootDisk = Number(diskVal);
+    setRootDisk(Number(diskVal));
   };
 
   const fnGetModalFooter = () => {
@@ -501,56 +517,122 @@ const ModifyModal = props => {
               <div style={{ padding: 10 }} />
               <Columns>
                 <Column>
-                  <Form.Item label={t('CPU')}>
-                    <div>
-                      <Button icon="substract" onClick={minusVcpus}></Button>
-                      &nbsp;&nbsp;
+                  <label className="form-item-label" for="name">
+                    {t('CPU')}
+                    <span className="form-item-required">*</span>
+                  </label>
+                  {/* <Form.Item label={t('CPU')} rules={[{ required: true }]}> */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      // flexDirection: 'column',
+                    }}
+                  >
+                    <Button icon="substract" onClick={e => minusVcpus(e)} />
+                    &nbsp;&nbsp;
+                    <Form.Item
+                      style={{ maxWidth: '137px' }}
+                      rules={[
+                        {
+                          required: true,
+                          message: '1 이상 입력하세요',
+                        },
+                        {
+                          pattern: regexNum,
+                          message: '1 이상 숫자만 입력해주세요.',
+                        },
+                      ]}
+                    >
                       <Input
                         name="vcpus"
-                        value={vcpus}
-                        style={{ width: '30%' }}
+                        defaultValue={vcpus}
+                        style={{ width: '100%' }}
                       />
-                      &nbsp;&nbsp;
-                      <Button icon="add" onClick={addVcpus} />
-                    </div>
-                  </Form.Item>
+                    </Form.Item>
+                    &nbsp;&nbsp;
+                    <Button icon="add" onClick={e => addVcpus(e)} />
+                  </div>
+                  {/* </Form.Item> */}
                 </Column>
                 <Column>
                   <div>
                     <Input type="hidden" name="byteFlag" value={byteFlag} />
-                    <Form.Item label={t('RESOURCES_MEMORY')}>
-                      <div className={styles.divwrap}>
-                        <div className={styles.div_left}>
-                          <Input name="ram" value={ram} onChange={changeRam} />
-                        </div>
-                        <div className={styles.div_right}>
-                          <Tabs
-                            type="button"
-                            activeName={tab}
-                            onChange={newTab => {
-                              setTab(newTab);
-                              handleByte(newTab);
-                            }}
-                          >
-                            <TabPanel label="GiB" name="GiB" />
-                            <TabPanel label="MiB" name="MiB" />
-                          </Tabs>
-                        </div>
+                    {/* <Form.Item
+                      label={t('RESOURCES_MEMORY')}
+                      rules={[{ required: true }]}
+                    > */}
+                    <label className="form-item-label" for="name">
+                      {t('RESOURCES_MEMORY')}
+                      <span className="form-item-required">*</span>
+                    </label>
+                    <div className={styles.divwrap}>
+                      <div className={styles.div_left}>
+                        <Form.Item
+                          rules={[
+                            {
+                              required: true,
+                              message: '1 이상 입력하세요.',
+                            },
+                            {
+                              pattern: regexNum,
+                              message: '1 이상 숫자만 입력해주세요.',
+                            },
+                          ]}
+                        >
+                          <Input
+                            name="ram"
+                            defaultValue={ram}
+                            onChange={e => changeRam(e)}
+                          />
+                        </Form.Item>
                       </div>
-                    </Form.Item>
+                      <div className={styles.div_right}>
+                        <Tabs
+                          type="button"
+                          activeName={tab}
+                          onChange={newTab => {
+                            setTab(newTab);
+                            handleByte(newTab);
+                          }}
+                        >
+                          <TabPanel label="GiB" name="GiB" />
+                          <TabPanel label="MiB" name="MiB" />
+                        </Tabs>
+                      </div>
+                    </div>
+                    {/* </Form.Item> */}
                   </div>
                 </Column>
               </Columns>
-
-              <Form.Item label={t('RESOURCES_ROOT_DISK')}>
-                <Form.Group>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: 20,
-                    }}
+              <label className="form-item-label" for="name">
+                {t('RESOURCES_ROOT_DISK')}
+                <span className="form-item-required">*</span>
+              </label>
+              {/* <Form.Item
+                label={t('RESOURCES_ROOT_DISK')}
+                rules={[{ required: true }]}
+              > */}
+              <Form.Group>
+                <div
+                  style={{
+                    textAlign: 'right',
+                    padding: 20,
+                  }}
+                >
+                  <Input type="hidden" name="rootDisk" value={rootDisk} />
+                  <Form.Item
+                    rules={[
+                      {
+                        required: true,
+                        message: '1 이상 입력하세요.',
+                      },
+                      {
+                        pattern: regexRootDisk,
+                        message: '1 이상 숫자만 입력해주세요.',
+                      },
+                    ]}
                   >
-                    <Input type="hidden" name="rootDisk" value={rootDisk} />
                     <Slider
                       max={320}
                       marks={{
@@ -563,14 +645,16 @@ const ModifyModal = props => {
                         320: '320',
                       }}
                       style={{ width: '10%' }}
-                      value={rootDisk}
+                      defaultValue={rootDisk}
+                      name="rootDisk"
                       unit={'GiB'}
-                      onChange={e => handleRootDisk.onChangeSlider(e)}
+                      onChange={e => onChangeRootDisk(e)}
                       withInput
                     />
-                  </div>
-                </Form.Group>
-              </Form.Item>
+                  </Form.Item>
+                </div>
+              </Form.Group>
+              {/* </Form.Item> */}
 
               <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
                 <Form.Group>
@@ -596,7 +680,7 @@ const ModifyModal = props => {
                       }}
                       value={ephemeralDisk}
                       unit={'GiB'}
-                      onChange={e => handleEphemeralDisk.onChangeSlider(e)}
+                      onChange={e => setEphemeralDisk(e)}
                       withInput
                     />
                   </div>

@@ -16,9 +16,9 @@ import { getLocalTime } from 'utils';
 import * as common from 'utils/resources';
 import { getAreaChartOps } from 'utils/monitoring';
 
-import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
-import 'pages/clusters/containers/Overview/CustomDashboard/custom_icon.css';
-import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
+// import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
+// import 'pages/clusters/containers/Overview/CustomDashboard/custom_icon.css';
+// import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
 
 const DetailClusterList = props => {
   const clusterInspection = new ClusterInspectionStore();
@@ -31,7 +31,7 @@ const DetailClusterList = props => {
   const [expandItem, setExpandItem] = useState();
   const [expandItemNamespace, setExpandItemNamespace] = useState();
   const [expandItemType, setExpandItemType] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  //   const [isLoading, setIsLoading] = useState(true);
 
   // button
   const [buttonPass, setButtonPass] = useState(false);
@@ -512,10 +512,11 @@ const DetailClusterList = props => {
       level: 'warning',
     },
   ];
-
+  const [lastScheduleTime, setLastScheduleTime] = useState();
   useEffect(() => {
     const fnGetData = async ({ ...params } = {}) => {
       const ciList = await clusterInspection.fetchList();
+
       setCiDataList(toJS(ciList.auditResults));
 
       const withNamespace = toJS(ciList.auditResults)?.filter(
@@ -531,6 +532,22 @@ const DetailClusterList = props => {
 
     fnGetData();
   }, []);
+
+  useEffect(() => {
+    const date = new Date(props?.data?.lastScheduleTime);
+    const formattedDate = `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    console.log('formattedDate\n', formattedDate);
+
+    const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(
+      date.getMinutes()
+    ).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+    console.log('formattedTime\n', formattedTime);
+
+    const setTime = `${formattedDate}, ${formattedTime}`;
+    setLastScheduleTime(setTime);
+  }, [props]);
 
   const handleExpand = (name, valueNamespace, valueType) => {
     console.log();
@@ -548,8 +565,8 @@ const DetailClusterList = props => {
       setButtonWarning(false);
       setExpandItem('');
       setIsExpandFlag(!isExpandFlag);
-    } else if (value === 'namespace') {
-      setTabValue('namespace');
+    } else if (value === 'project') {
+      setTabValue('project');
       setButtonDanger(false);
       setButtonPass(false);
       setButtonWarning(false);
@@ -568,8 +585,8 @@ const DetailClusterList = props => {
           label: t('CLUSTER_INSPECTION_CLUSTER'),
         },
         {
-          value: `namespace`,
-          label: t('CLUSTER_INSPECTION_NAMESPACE'),
+          value: `project`,
+          label: t('CLUSTER_INSPECTION_PROJECT'),
         },
       ],
     };
@@ -644,17 +661,6 @@ const DetailClusterList = props => {
                     ) : (
                       ''
                     )}
-                    {/* <i
-                      className="cluster"
-                      type={
-                        value?.resourceInfos?.name != expandItem
-                          ? 'dark'
-                          : value?.resourceInfos?.name == expandItem &&
-                            isExpandFlag == false
-                          ? 'dark'
-                          : 'light'
-                      }
-                    ></i> */}
                   </div>
 
                   {renderContentDetail(value)}
@@ -667,7 +673,8 @@ const DetailClusterList = props => {
         });
       return content;
     }
-    if (tabValue === 'namespace') {
+
+    if (tabValue === 'project') {
       const content = namespace
         ?.sort((a, b) => {
           return a.namespace > b.namespace ? 1 : -1;
@@ -684,14 +691,12 @@ const DetailClusterList = props => {
               >
                 <div
                   style={{
-                    // paddingLeft : "13px",
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     wordWrap: 'normal',
                     overflow: 'hidden',
                     fontSize: '12px',
                     lineHeight: 1.67,
-                    // fontFamily: 'Roboto', "PingFang SC", "Lantinghei SC", "Helvetica Neue", 'Helvetica', 'Arial', "Microsoft YaHei", 微软雅黑, STHeitiSC-Light, simsun, 宋体, "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", sans-serif,
                     fontStyle: 'normal',
                     fontStretch: 'normal',
                     letterSpacing: 'normal',
@@ -737,6 +742,7 @@ const DetailClusterList = props => {
                     const generateDotBars = () => {
                       const dotBars = [];
                       if (buttonPass) {
+                        // counts.ignore.forEach(item =>);
                         for (let i = 0; i < (counts.ignore || 0); i++) {
                           dotBars.push(
                             <div
@@ -859,19 +865,18 @@ const DetailClusterList = props => {
                                   <div className="dot_chart_wrap">
                                     <div className="dot_chart">
                                       {generateDotBars()}
-                                      <div className="dot_bar"></div>
                                     </div>
                                     <p className="dot_value">
                                       <label>
-                                        {t('CLUSTER_INSPECTION_PASS')}
+                                        {t('CLUSTER_INSPECTION_PASS')}{' '}
                                         {counts.ignore || 0}
                                       </label>
                                       <label>
-                                        {t('CLUSTER_INSPECTION_WARNING')}
+                                        {t('CLUSTER_INSPECTION_WARNING')}{' '}
                                         {counts.warning || 0}
                                       </label>
                                       <label>
-                                        {t('CLUSTER_INSPECTION_DANGER')}
+                                        {t('CLUSTER_INSPECTION_DANGER')}{' '}
                                         {counts.danger || 0}
                                       </label>
                                       <span className="data"></span>
@@ -997,10 +1002,7 @@ const DetailClusterList = props => {
           </div>
           <div className="content_box_wrap">
             <div className="dot_chart_wrap">
-              <div className="dot_chart">
-                {generateDotBars()}
-                <div className="dot_bar"></div>
-              </div>
+              <div className="dot_chart">{generateDotBars()}</div>
               <p className="dot_value">
                 <label>
                   {t('CLUSTER_INSPECTION_PASS')} {counts.ignore || 0}
@@ -1016,7 +1018,7 @@ const DetailClusterList = props => {
             </div>
           </div>
 
-          {renderMonitorings(obj.resourceInfos)}
+          {/* {renderMonitorings(obj.resourceInfos)} */}
 
           <div
             className={styles.arrow}
@@ -1050,7 +1052,65 @@ const DetailClusterList = props => {
     if (state === 'danger') {
       return 'error';
     }
+    // if (state === 'Stopped' || state === 'Paused') {
+    //   return 'stopped';
+    // }
     return 'error';
+  };
+
+  const [activePopupIndex, setActivePopupIndex] = useState(null);
+  const PopupComponent = () => {
+    return (
+      <>
+        <div className="content_box_wrap" style={{ border: 'none' }}>
+          <div
+            className={`sub_layer_pop ${showPopup ? 'show' : ''}`}
+            id="sub_layer_pop"
+            style={{ top: '-64px', right: '-6px' }}
+          >
+            <div className="layer_pop_header status_wrap">
+              <div className="tit">
+                {message}
+                <p
+                  className={`status ${
+                    level === 'ignore'
+                      ? 'pass'
+                      : level === 'warning'
+                      ? 'warning'
+                      : level === 'danger'
+                      ? 'danger'
+                      : ''
+                  }`}
+                >
+                  <span>{level}</span>
+                </p>
+              </div>
+              <button
+                type="button"
+                className="close"
+                onClick={e => closeDrawer(e)}
+              >
+                <i className="ico ico-close-small"></i>
+              </button>
+            </div>
+            <div className="msg">
+              <i className="ico ico-check"></i>
+              <label
+                className="label"
+                style={{ color: '#36435c' }}
+              >{`Discovered :`}</label>
+              <span>{`1 min ago`}</span>
+            </div>
+            <div className="desc">
+              <h2>{`DESCRIPTION`}</h2>
+              <p> {`${describe}`}</p>
+              <h2> {`SUGGEST`}</h2>
+              <p> {`${suggest}`}</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   };
 
   const renderExtraContent = (obj, index) => {
@@ -1153,7 +1213,6 @@ const DetailClusterList = props => {
                         <p>{t('CLUSTER_INSPECTION_STATUS')}</p>
                       </div>
                     </div>
-                    {/* <div name={`asd${indexNum}`}></div> */}
                     {foundData && (
                       <>
                         <div
@@ -1220,37 +1279,29 @@ const DetailClusterList = props => {
     );
   };
 
-  //   const getMonitoringCfgs = (cpuData, memoryData) => [
-  //     {
-  //       type: 'cpu',
-  //       title: 'CPU',
-  //       unitType: 'cpu',
-  //       legend: ['USED'],
-  //       data: cpuData,
-  //       bgColor: 'transparent',
-  //     },
-  //     {
-  //       type: 'memory',
-  //       title: 'MEMORY',
-  //       unitType: 'memory',
-  //       legend: ['USED'],
-  //       data: memoryData,
-  //       bgColor: 'transparent',
-  //     },
-  //   ];
-
   const renderMonitorings = vmId => {
-    const isExpand = false;
+    // const isExpand = false;
     const loading = false;
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
+
+    //  {eventList?.length == 0 &&
+    //         <div className={styles.wrapper}>
+    //             {isLoading ?
+    //               <div className={styles.loading}><Loading /></div>
+    //               : <div className={styles.empty}>{t('RESOURCES_NO_DATA_EVENT_LOG')}</div>
+    //             }
+    //           </div>
+    //       }
 
     // const ciData = _.find(clusterInspectionData, data => {
     //   if (data.metric.pod === vmId) return data;
     // });
 
     if (!ciDataList)
-      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>;
+      return (
+        <div className={styles.monitors}>{t('CLUSTER_INSPECTION_NO_DATA')}</div>
+      );
 
     // const ciArray = [];
     // ciArray.push(ciDataList);
@@ -1282,7 +1333,21 @@ const DetailClusterList = props => {
 
   return (
     <>
-      <Tabs tabs={tabs()} />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          backgroundColor: '#eff4f9',
+        }}
+      >
+        <div>
+          <Tabs tabs={tabs()} />
+        </div>
+        <div>
+          <div>{`최근 인스펙션 시간 : ${lastScheduleTime}`}</div>
+        </div>
+      </div>
       <div className="grid_item">
         <div className="grid_title">
           <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>

@@ -102,11 +102,10 @@ const ComputingTemplate = ({
       let used = 0;
       var kaasSet = new Set()
       kaasList.map(obj => {
-        kaasSet.add(obj.os_distro + '-' + obj.kube_version)
+        kaasSet.add(obj.kube_image)
       })
       kaasIamgeList.map(obj => {
-        let name = obj.image_detail.os_distro + '-' + obj.image_detail.kube_version;
-        kaasSet.has(name) ? used++ : ''
+        kaasSet.has(obj.name) ? used++ : ''
       })
       setKaas({ used, unused: kaasIamgeList.length - used })
     }

@@ -14,6 +14,21 @@ html {
   background-color: #e8f0f6 !important;
 }
 
+.button-primary {
+  border: 1px solid #3617ce;
+  background-color: #3617ce;
+}
+
+/* 파일찾기버튼 */
+input
+  .src-pages-clusters-containers-Resources-components-Modals-ComputingAppDeploy-Regist-index__file_input
+  + .button-primary {
+  border: 1px solid #ccd3db;
+  background-color: #eff4f9;
+  box-shadow: none;
+  color: #36435c;
+}
+
 .button-control {
   color: #ffffff;
   border: 1px solid #3617ce;
@@ -252,7 +267,8 @@ div.flatpickr-calendar
   background: #e3e9ef !important;
 }
 
-.src-components-Layout-Header-index__logo {
+.src-components-Layout-Header-index__header.src-core-layouts-Base-index__header
+  .src-components-Layout-Header-index__logo {
   height: auto !important;
 }
 
@@ -964,7 +980,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 }
 
 .src-core-containers-Login-index__logo > img {
-  height: 32px !important;
+  height: auto !important;
 }
 
 .src-core-containers-Login-index__divider {
@@ -1021,4 +1037,4 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   height: 120px;
   text-align: center;
   background: linear-gradient(90deg, #522fe0 6.51%, #3f78ff 98.9%);
-} /*# sourceMappingURL=custom_theme.css.map */
+}

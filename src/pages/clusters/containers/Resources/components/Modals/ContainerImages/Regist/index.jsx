@@ -15,10 +15,9 @@ import { Base64 } from 'js-base64'
 import { Loading } from '@kube-design/components'
 import { Notify } from '@kube-design/components'
 
-import { PATTERN_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
 const defaultImageSize = '12GB'
-const regexName = /^[a-z0-9]*[a-z0-9-]*[a-z0-9]$/;
 const regexVersion = /^v(\d+\.\d+\.\d+)$/;
 
 const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
@@ -181,7 +180,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     const { data } = form.current.props;
 
     if (step == 1) {
-      if (data.name == undefined || !regexName.test(data.name) || sizeEmpty
+      if (data.name == undefined || !PATTERN_USER_NAME.test(data.name) || sizeEmpty
         || !regexVersion.test(data.kube_version)) {
         handleOk();
       } else {
@@ -189,17 +188,6 @@ export default function ResourceImageModal({ title, store, onOk }) {
         setSubmitButtonFlag(false);
       }
     }
-  }
-
-  const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') })
-    } else {
-      if (!regexName.test(value)) {
-        return callback({ message: t('RESOURCES_NAME_CHECK_DESC') })
-      }
-    }
-    callback()
   }
 
   const fnGetModalFooter = () => {
@@ -276,8 +264,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 rules={[
                   { required: true, message: t('NAME_EMPTY_DESC') },
                   {
-                    pattern: PATTERN_NAME,
-                    message: t('INVALID_NAME_DESC'),
+                    pattern: PATTERN_USER_NAME,
+                    message: t('RESOURCES_INVALID_NAME_DESC'),
                   },
                 ]}
                 desc={t('NAME_DESC')}
@@ -304,7 +292,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('RESOURCES_DISTRIBUTION')}>
+                    <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
                       <TypeSelect
                         // name="distro_type"
                         onChange={(e) => setDistroType(e)}
@@ -498,9 +486,8 @@ const Step2 = (
   useEffect(() => {
     setPropsImageTag(tag)
     if (registryUrl) {
-      const [, path] = registryUrl.split(/https?:\/\//)
-      const [url] = path.split('/')
-      setDockerUrl(url)
+      const originUrl = new URL(registryUrl);
+      setDockerUrl(originUrl.host)
     }
   }, [tag])
 

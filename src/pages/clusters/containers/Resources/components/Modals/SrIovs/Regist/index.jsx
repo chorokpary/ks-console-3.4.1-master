@@ -12,13 +12,10 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
-
 import { PropertiesInput, NumberInput } from 'components/Inputs';
-
+import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants'
 import * as common from 'utils/resources';
-
 import SriovStore from 'stores/resources/sriovs';
-
 import styles from './index.scss';
 
 const RegistModal = props => {
@@ -30,15 +27,11 @@ const RegistModal = props => {
   const [modelView, setModalView] = useState(true);
   const [regStep, setRegStep] = useState(1);
 
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
-
   const [bondcheck, setBondCheck] = useState(false);
 
   const [sriovResourceDataList, setSriovResourceDataList] = useState([]);
   const [sriovBondDataList, setSriovBondDataList] = useState([]);
 
-  const [external, setExternal] = useState(false);
-  const [defaultRoute, setDefaultRoute] = useState(false);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
@@ -64,6 +57,7 @@ const RegistModal = props => {
 
       const listSriovBond = await sriovStore.fetchSriovBondList();
       setSriovBondDataList(listSriovBond.resources);
+      // setSriovBondDataList(["sriov-bond-slave1", "sriov-bond-slave2"]);
     };
 
     getSriovCreateData();
@@ -72,8 +66,6 @@ const RegistModal = props => {
   const handleOk = () => {
     const onOk = props.onOk;
     form.current.validator(() => {
-      setSubmitButtonFlag(true);
-
       let error = document.querySelectorAll('.form-item-error');
       for (let i of error) {
         if (!i.classList.contains('hide')) {
@@ -101,8 +93,7 @@ const RegistModal = props => {
       };
       data.dns = dns;
       data.host_routes = host_routes;
-      data.networks = [];
-
+      data.networks = bondCheckItems;
       // console.log(data)
       onOk({ ...data });
     });
@@ -117,9 +108,8 @@ const RegistModal = props => {
 
     if (step == 1) {
       if (
-        // data.resource_name == undefined ||
-        // data.resource_name == '선택' ||
-        // data.resource_name == '' ||
+        data.resource_name == undefined ||
+        data.resource_name == '' ||
         data.cidr == undefined ||
         data.cidr == '' ||
         data.ip_pool_start == undefined ||
@@ -127,6 +117,7 @@ const RegistModal = props => {
         data.ip_pool_end == undefined ||
         data.ip_pool_end == ''
       ) {
+        console.log(data)
         handleOk();
       } else {
         setRegStep(2);
@@ -211,16 +202,11 @@ const RegistModal = props => {
     }
   }, [listHostRoute])
 
-  // ip 정규식
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
-  // const regexIpzero = /(^(\d{1,3}\.){3}([0])$)/; // 끝자리 0 정규식
-  // 숫자 정규식
-  const regexNumber = /^[0-9]+$/;
   const isValidIpAddress = ip => {
-    return regexIp.test(ip);
+    return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
-    if (!regexNumber.test(num)) {
+    if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }
     const clsMaximumVal = 128;
@@ -230,6 +216,17 @@ const RegistModal = props => {
     }
     return true;
   };
+
+  const cidrValidator = (rule, value, callback) => {
+    if (!value) {
+      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
+    } else {
+      if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
+        return callback({ message: t('RESOURCES_CIDR_VALID') })
+      }
+    }
+    callback()
+  }
 
   const onChaneCidr = e => {
     const { data } = form.current.props;
@@ -331,7 +328,7 @@ const RegistModal = props => {
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = [];
-      dataListVariables[type].forEach(el => nameArray.push(el.name));
+      dataListVariables[type].forEach(el => nameArray.push(el));
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
@@ -344,33 +341,13 @@ const RegistModal = props => {
 
   // 체크 리스트 끝 ==================================================
 
-  // Validation 시작 ==================================================
-  const resourceNameValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == '') {
-      return callback({ message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP') });
-    }
-    callback();
-  };
-  // Validation 끝 ==================================================
-
-  const onChangeDns = (e, id) => {
-    const a = document.getElementById(id)
-    if (e.length > 0 && !regexIp.test(e)) {
-      a.parentElement.parentElement.nextElementSibling.classList.remove('hide')
-      a.parentElement.parentElement.classList.add("error-item");
-    } else {
-      a.parentElement.parentElement.nextElementSibling.classList.add('hide')
-      a.parentElement.parentElement.classList.remove("error-item");
-    }
-  }
-
   const onChangeDestination = (e, idx) => {
     const a = document.getElementById('hostRoute')
     const nexthop = document.getElementById(`Nexthop.${idx}`).value
 
     if (e.length > 0 || nexthop.length > 0) {
       if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])
-        || !regexIp.test(nexthop)
+        || !PATTERN_IP.test(nexthop)
       ) {
         a.classList.remove('hide')
       } else {
@@ -386,7 +363,7 @@ const RegistModal = props => {
 
     if (e.length > 0 || destination.length > 0) {
       if (destination.split("/").length != 2 || !isValidIpAddress(destination.split("/")[0]) || !fnCheckCidrClass(destination.split("/")[1])
-        || !regexIp.test(e)
+        || !PATTERN_IP.test(e)
       ) {
         a.classList.remove('hide')
       } else {
@@ -474,10 +451,16 @@ const RegistModal = props => {
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('RESOURCES_RESOURCE_NAME')}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                    },
+                  ]}
                 >
                   <Select
                     name="resource_name"
-                    defaultValue={t('RESOURCES_SELECT')}
+                    placeholder={t('RESOURCES_SELECT')}
                     options={resourceNameOptions}
                   />
                 </Form.Item>
@@ -496,7 +479,7 @@ const RegistModal = props => {
                       >
                         <Select
                           name="type"
-                          defaultValue="VLAN"
+                          defaultValue="vlan"
                           options={networkTypeOptions}
                           onChange={e => handleNetworkType(e)}
                         />
@@ -524,7 +507,7 @@ const RegistModal = props => {
                             rules={[
                               {
                                 required: true,
-                                message: t('RESOURCES_CIDR_EMPTY_DESC'),
+                                validator: cidrValidator,
                               },
                             ]}
                           >
@@ -545,6 +528,9 @@ const RegistModal = props => {
                                     required: true,
                                     message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
                                   },
+                                  {
+                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
+                                  }
                                 ]}
                               >
                                 <Input name="ip_pool_start" />
@@ -557,6 +543,9 @@ const RegistModal = props => {
                                     required: true,
                                     message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
                                   },
+                                  {
+                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
+                                  }
                                 ]}
                               >
                                 <Input
@@ -573,7 +562,11 @@ const RegistModal = props => {
                     <Form.Item>
                       <Columns>
                         <Column>
-                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}>
+                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}
+                            rules={[{
+                              pattern: PATTERN_IP, message: t('RESOURCES_GATEWAY_IP_POOL_VALID')
+                            }]}
+                          >
                             <Input name="gateway_ip" />
                           </Form.Item>
                         </Column>
@@ -611,10 +604,11 @@ const RegistModal = props => {
                 {bondcheck && (
                   <Form.Item>
                     <div className={styles.wrapper}>
-                      <div>
-                        {t('RESOURCES_TOTAL')} {stateVariables['bond'].length}
-                        {t('RESOURCES_COUNT')}
-                      </div>
+                      {stateVariables['bond'].length > 0 &&
+                        <div className={classnames(styles.table_title, styles.table_title_bg)}>
+                          <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "bond")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['bond'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                        </div>
+                      }
                       <div className={styles.table}>
                         <table>
                           <colgroup>
@@ -624,15 +618,12 @@ const RegistModal = props => {
                           <thead>
                             <tr>
                               <th>
-                                {/* <Checkbox name='select-all-bond' 
-                                          onChange={(checked) => handleAllCheck(checked, "bond")}
-                                          checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}/> */}
                                 <Checkbox
                                   name="select-all-bond"
                                   onChange={checked =>
                                     handleAllCheck(checked, 'bond')
                                   }
-                                  disabled
+                                  checked={dataListVariables['bond'].length > 0 && stateVariables['bond'].length === dataListVariables['bond'].length ? true : false}
                                 />
                               </th>
                               <th>
@@ -641,34 +632,30 @@ const RegistModal = props => {
                             </tr>
                           </thead>
                           <tbody>
-                            {/* {sriovBondDataList.length == 0 &&
-                                    <tr>
-                                      <td colSpan="6" className="no-data">
-                                        <p>관련 데이터가 없습니다.</p>
-                                      </td>
-                                    </tr>
-                                  }
-                                  {sriovBondDataList?.filter((data) => {
-                                      return <tr key={data}>
-                                      <td>
-                                        <Checkbox name={`select-${data}`} checked={stateVariables['bond'].includes(data) ? true : false}
-                                        onChange={(checked) => handleSingleCheck(checked, data, "bond")} />
-                                      </td>
-                                      <td>{data}</td>
-                                    </tr>
-                                  })} */}
-                            <tr>
-                              <td colSpan="6" className="no-data">
-                                <p>{t('RESOURCES_DETAIL_NO_DATA')}</p>
-                              </td>
-                            </tr>
+                            {sriovBondDataList.length == 0 &&
+                              <tr>
+                                <td colSpan="2" className="no-data">
+                                  <p>관련 데이터가 없습니다.</p>
+                                </td>
+                              </tr>
+                            }
+                            {sriovBondDataList?.map((data, idx) => {
+                              return <tr key={idx}>
+                                <td>
+                                  <Checkbox name={`select-${idx}`} checked={stateVariables['bond'].includes(data) ? true : false}
+                                    onChange={(checked) => handleSingleCheck(checked, data, "bond")} />
+                                </td>
+                                <td>{data}</td>
+                              </tr>
+                            })}
                           </tbody>
                         </table>
                         <div className={styles.removeCheckWrapper}>
                           {bondCheckItems?.map(name => (
                             <span key={name}>
                               <Button
-                                onClick={() => handleDelete(name, 'internal')}
+                                icon="close"
+                                onClick={() => handleDelete(name, 'bond')}
                               >
                                 {name}
                               </Button>
@@ -688,18 +675,20 @@ const RegistModal = props => {
                   <Form.Group>
                     <Columns>
                       <Column>
-                        <Form.Item label={t('Primary')}>
-                          <Input name="dns.1"
-                            onChange={(e) => onChangeDns(e, 'dns.1')} />
+                        <Form.Item label={t('Primary')}
+                          rules={[{
+                            pattern: PATTERN_IP, message: t('RESOURCES_DNS_VALID')
+                          }]}>
+                          <Input name="dns.1" />
                         </Form.Item>
-                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                       <Column>
-                        <Form.Item label={t('Secondary')}>
-                          <Input name="dns.2"
-                            onChange={(e) => onChangeDns(e, 'dns.2')} />
+                        <Form.Item label={t('Secondary')}
+                          rules={[{
+                            pattern: PATTERN_IP, message: t('RESOURCES_DNS_VALID')
+                          }]}>
+                          <Input name="dns.2" />
                         </Form.Item>
-                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                       </Column>
                     </Columns>
                   </Form.Group>

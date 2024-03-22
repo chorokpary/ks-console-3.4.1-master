@@ -78,10 +78,8 @@ client:
       url: https://kubesphere.io/docs
       api: https://kubesphere.io/docs/reference/api-docs/
     zh:
-      # url: https://kubesphere.com.cn/docs
-      # api: https://kubesphere.com.cn/docs/reference/api-docs/
-      url: https://kubesphere.io/zh/docs
-      api: https://kubesphere.io/zh/docs/reference/api-docs/
+      url: https://kubesphere.com.cn/docs
+      api: https://kubesphere.com.cn/docs/reference/api-docs/
 
   # current support lanaguages
   supportLangs:
@@ -271,7 +269,7 @@ client:
           children:
             - {
                 name: flavors,
-                title: 'Flavor',
+                title: RESOURCES_FLAVOR,
                 skipAuth: true,
                 showInDisable: true,
               }
@@ -360,22 +358,14 @@ client:
                 authKey: monitoring,
               }
             - {
+                name: 'clusterfault',
+                title: RESOURCES_CLUSTER_FAULT_TITLE,
+              }   
+            - {
                 name: monitor-resource,
                 title: APPLICATION_RESOURCE_PL,
                 icon: linechart,
                 authKey: monitoring,
-              }
-            - {
-                name: computingkaasmonitoring,
-                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
-              }
-            - {
-                name: baremetalmonitoring,
-                title: RESOURCES_BAREMETAL_MONITORING,
-              }
-            - {
-                name: baremetal-carbon-indicator,
-                title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
               }
             - {
                 name: custom-monitoring,
@@ -396,14 +386,25 @@ client:
                 clusterModule: alerting,
                 requiredClusterVersion: v3.1.0,
               }
-            - { 
-                name: kubeeye-monitoring, 
-                title: RESOURCES_CLUSTER_INSPECTOR, 
+            - {
+                name: 'computingkaasmonitoring',
+                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
               }
             - {
-                name: clusterfault,
-                title: RESOURCES_CLUSTER_FAULT_TITLE,
+                name: baremetalmonitoring,
+                title: RESOURCES_BAREMETAL_MONITORING,
               }
+            - {
+                name: baremetal-carbon-indicator,
+                title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
+              }
+            - { name: 'clusterfault', title: RESOURCES_CLUSTER_FAULT_TITLE }
+
+            - { name: kubeeye-monitoring, title: 'KubeEye 모니터링' }
+            # - {
+            #     name: fault-analysis,
+            #     title: "장애 분석",
+            #   }
 
   # access control page navigations
   accessNavs:
@@ -511,7 +512,7 @@ client:
             name: overview,
             title: OVERVIEW,
             icon: dashboard,
-            authKey: 'services',
+            authKey: 'services|vms|networks|keypairs',
           }
         - name: app-workloads
           title: APPLICATION_WORKLOAD_PL
@@ -536,89 +537,75 @@ client:
           title: RESOURCES_WORKLOAD
           icon: templet
           showInDisable: true
+          authKey: 'vms'
           children:
-            - { name: vms, title: RESOURCES_VM, skipAuth: true }
+            - { name: vms, title: RESOURCES_VM }
         - name: computing
           title: RESOURCES_SETTINGS
           icon: computing-setting
           showInDisable: true
+          authKey: 'networks'
           children:
             - name: networks
               title: RESOURCES_NETWORK
-              skipAuth: true
               showInDisable: true
               tabs:
-                - { name: networks, title: RESOURCES_NETWORK, skipAuth: true }
-                - { name: sriovs, title: SR-IOV, skipAuth: true }
+                - { name: networks, title: RESOURCES_NETWORK }
+                - { name: sriovs, title: SR-IOV }
             - {
                 name: securityGroups,
                 title: RESOURCES_SECURITY_GROUP,
-                skipAuth: true,
                 showInDisable: true,
               }
             - {
                 name: routers,
                 title: RESOURCES_VROUTER,
-                skipAuth: true,
                 showInDisable: true,
               }
             - {
                 name: floatingip,
                 title: RESOURCES_FLOATING_IP,
-                skipAuth: true,
                 showInDisable: true,
               }
             - {
                 name: loadBalancers,
                 title: RESOURCES_LOAD_BALANCER,
-                skipAuth: true,
                 showInDisable: true,
               }
-            # - {
-            #   name: sriovs,
-            #   title: "SR-IOV 네트워크",
-            #   skipAuth: true,
-            #   showInDisable: true,
-            # }
             - {
                 name: resourcesVolumes,
                 title: RESOURCES_VOLUME,
-                skipAuth: true,
                 showInDisable: true,
               }
             - {
                 name: hostDevices,
                 title: RESOURCES_HOST_DEVICE,
-                skipAuth: true,
                 showInDisable: true,
               }
             - {
                 name: mediatedDevices,
                 title: RESOURCES_MEDIATED_DEVICE,
-                skipAuth: true,
                 showInDisable: true,
               }
         - name: resources
           title: RESOURCES_RESOURCE_TEMPLATE
           icon: resource
           showInDisable: true
+          authKey: 'keypairs'
           children:
             - {
                 name: flavors,
-                title: 'Flavor',
-                skipAuth: true,
+                title: RESOURCES_FLAVOR,
                 showInDisable: true,
               }
             - {
                 name: keypairs,
                 title: RESOURCES_KEYPAIR,
-                skipAuth: true,
                 showInDisable: true,
               }
             - {
                 name: images,
                 title: RESOURCES_VM_IMAGE,
-                skipAuth: true,
                 showInDisable: true,
               }
         - name: storage

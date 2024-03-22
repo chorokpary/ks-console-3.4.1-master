@@ -28,7 +28,8 @@ import {
 
 const Clone = (props) => {
 
-  const cluster = props.match?.params.cluster;
+  const { cluster, namespace } = props.match?.params;
+  const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
 
   const store = new VmStore();
 
@@ -126,9 +127,11 @@ const Clone = (props) => {
             <div>{obj.phase}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
-          <div className={styles.arrow}>
-            <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
-          </div>
+          {vmsRole.includes('manage') &&
+            <div className={styles.arrow}>
+              <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
+            </div>
+          }
         </div>
       </>
     )
@@ -137,11 +140,11 @@ const Clone = (props) => {
   const handleDelete = (id) => {
     console.log("handleDelete!!");
     props.rootStore.triggerAction('vm.cloneDelete', {
+      ...props.match.params,
       type: 'VM_DETAIL',
-      id : id,
+      id: id,
       store: store,
       success: fnGetData,
-      ...props.match.params
     })
   }
 
@@ -213,27 +216,27 @@ const Clone = (props) => {
   }
 
   return (
-    <>  
+    <>
       {dataList.length > 0 &&
-          <Panel
-            className={classnames(styles.main)}
-          >
-            {renderHeader()}
-            {renderContent()}
-            {renderFooter()}
-          </Panel>
-        }
+        <Panel
+          className={classnames(styles.main)}
+        >
+          {renderHeader()}
+          {renderContent()}
+          {renderFooter()}
+        </Panel>
+      }
 
-        {dataList.length == 0 &&
-          <Panel >
-            <div className={styles.wrapper}>
-              {isLoading ?
-                <div className={styles.loading}><Loading /></div>
-                : <div className={styles.empty}> {t('RESOURCES_NO_DATA_CLONE_LOG')}</div>
-              }
-            </div>
-          </Panel>
-        }   
+      {dataList.length == 0 &&
+        <Panel >
+          <div className={styles.wrapper}>
+            {isLoading ?
+              <div className={styles.loading}><Loading /></div>
+              : <div className={styles.empty}> {t('RESOURCES_NO_DATA_CLONE_LOG')}</div>
+            }
+          </div>
+        </Panel>
+      }
     </>
   );
 };

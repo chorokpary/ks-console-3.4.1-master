@@ -179,6 +179,14 @@ export default class BareMetalDashboard extends React.Component {
     return globals.user.username !== record.name
   }
 
+  showEdit(record){
+    const address = get(record, ['openBMC', 'address'])
+    const username = get(record, ['openBMC', 'username'])
+    const password = get(record, ['openBMC', 'password'])
+    const showFlag = (!!address && !!username && !!password) ? true : false;
+    return showFlag;
+  }
+
   get itemActions() {
     const { getData, trigger } = this.props
     return [
@@ -186,8 +194,8 @@ export default class BareMetalDashboard extends React.Component {
         key: 'action1',
         icon: 'pen',
         text: t('Force-Off'),
-        action: 'delete',
-        show: record => this.showAction(record),
+        action: 'edit',
+        show: record => this.showEdit(record),
         onClick: item => {
           trigger('baremetal.action', {
             detail: item,
@@ -201,8 +209,8 @@ export default class BareMetalDashboard extends React.Component {
         key: 'action2',
         icon: 'pen',
         text: t('Graceful-Restart'),
-        action: 'delete',
-        show: this.showAction,
+        action: 'edit',
+        show: record => this.showEdit(record),
         onClick: item =>
           trigger('baremetal.action', {
             detail: item,
@@ -215,8 +223,8 @@ export default class BareMetalDashboard extends React.Component {
         key: 'action3',
         icon: 'pen',
         text: t('Graceful-Shutdown'),
-        action: 'delete',
-        show: this.showAction,
+        action: 'edit',
+        show: record => this.showEdit(record),
         onClick: item =>
           trigger('baremetal.action', {
             detail: item,
@@ -229,8 +237,8 @@ export default class BareMetalDashboard extends React.Component {
         key: 'action4',
         icon: 'pen',
         text: t('Turn On'),
-        action: 'delete',
-        show: this.showAction,
+        action: 'edit',
+        show: record => this.showEdit(record),
         onClick: item =>
           trigger('baremetal.action', {
             detail: item,
@@ -242,7 +250,7 @@ export default class BareMetalDashboard extends React.Component {
       {
         key: 'delete',
         icon: 'trash',
-        text: t('삭제'),
+        text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
         onClick: item =>
