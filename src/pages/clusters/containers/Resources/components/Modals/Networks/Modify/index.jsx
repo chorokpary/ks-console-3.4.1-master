@@ -127,7 +127,7 @@ const ModifyModal = (props) => {
     }
   }
   const nextHostRoute = useRef(1);
-  const [listHostRoute, setListHostRoute] = useState(Array.from({ length: detail.host_routes.length }, (v, i) => i));
+  const [listHostRoute, setListHostRoute] = useState(Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i));
 
   const handleHostRoute = {
 
