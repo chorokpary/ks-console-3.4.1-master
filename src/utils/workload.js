@@ -73,7 +73,6 @@ export const getHpaFormattedData = (formData = {}) => {
     : []
 
   const data = merge(formData, {
-    apiVersion: 'autoscaling/v2beta2',
     kind: 'HorizontalPodAutoscaler',
     metadata: {
       annotations: {
