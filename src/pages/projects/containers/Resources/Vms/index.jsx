@@ -414,7 +414,7 @@ export default class Vms extends React.Component {
           if (stateArray.includes(state)) {
 
             const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
-            if(vmsRole.includes('manage')){
+            if (vmsRole?.includes('manage')) {
               return (
                 <div>
                   <Dropdown
@@ -432,7 +432,7 @@ export default class Vms extends React.Component {
                 </div>
               );
             }
-           
+
           }
           return (
             <div className={styles.iconwrapper}>

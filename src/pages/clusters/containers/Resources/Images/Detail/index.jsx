@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
@@ -15,17 +15,31 @@ import DetailVmList from 'pages/clusters/containers/Resources/components/DetailV
 const store = new ImageStore();
 
 const ImageDetail = props => {
-  const [refreshTimer, setRefreshTimer] = useState(0);
+  const [activationTrigger, setActivationTrigger] = useReducer(activationTrigger => !activationTrigger, false);
+  const [detail, setDetail] = useState();
 
   useEffect(() => {
-    setTimeout(() => {
-      fetchData();
-      setRefreshTimer(refreshTimer + 1);
-    }, 4000);
-  }, [refreshTimer]);
+    fetchData();
+  }, [])
 
-  const fetchData = () => {
-    store.fetchDetail(props.match.params);
+  let timer = 0;
+  const activeCrListTimer = () => {
+    timer = setTimeout(() => {
+      fetchData()
+      setActivationTrigger()
+    }, 4000)
+  }
+
+  useEffect(() => {
+    activeCrListTimer()
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [activationTrigger])
+
+  const fetchData = async () => {
+    let detail = await store.fetchDetail(props.match.params);
+    setDetail(detail)
   };
 
   const { cluster } = props.match.params;
@@ -86,7 +100,7 @@ const ImageDetail = props => {
   ];
 
   const getAttrs = () => {
-    const detail = toJS(store.detail);
+    // const detail = toJS(store.detail);
 
     if (isEmpty(detail)) {
       return;
@@ -143,8 +157,7 @@ const ImageDetail = props => {
   const sideProps = {
     icon: 'snapshot',
     module: store.module,
-    name: get(store.detail, 'name'),
-    desc: get(store.detail.image, 'description', ''),
+    name: detail?.image.name,
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [

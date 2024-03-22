@@ -201,9 +201,6 @@ const RegistModal = (props) => {
 
   const handleVmInventory = {
     addColumn: () => {
-      // if (listVmInventory.length > (vmOptionList.length-1)) {
-      //   return false;
-      // }
       nextVm.current += 1
       setListVmInventory(listVmInventory => [...listVmInventory, nextVm.current]);
 
@@ -430,7 +427,7 @@ const RegistModal = (props) => {
                     </Button>
                   </div>
                   {vmValidError &&
-                    <div className="form-item-error" style={{ color: '#ca2621' }}>{t('애플리케이션이 배포될 가상머신을 입력해 주세요.')}</div>
+                    <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_APP_DEPLOY_VM_EMPTY_DESC')}</div>
                   }
                 </Form.Group>
               </>

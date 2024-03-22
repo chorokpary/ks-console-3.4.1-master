@@ -27,7 +27,7 @@ export default class ClusterFaultStore extends Base {
 
     module = 'clusterFault'
 
-    getResourceUrl = (params = {}) => `apis/core.k8sgpt.ai/v1alpha1`
+    getResourceUrl = (params = {}) => `apis/core.k8sgpt.ai/v1alpha1/namespaces/local-ai`
     getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.id}`
 
     /**

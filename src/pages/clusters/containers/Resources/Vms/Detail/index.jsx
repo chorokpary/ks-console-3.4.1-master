@@ -219,6 +219,7 @@ const VmDetail = props => {
         data.vmId = vmId;
 
         props.rootStore.triggerAction('vm.snapshotPop', {
+          ...props.match.params,
           data: data,
           store: store,
           success: fetchData,
@@ -237,6 +238,7 @@ const VmDetail = props => {
         data.vmId = vmId;
 
         props.rootStore.triggerAction('vm.clonePop', {
+          ...props.match.params,
           data: data,
           store: store,
           success: fetchData,

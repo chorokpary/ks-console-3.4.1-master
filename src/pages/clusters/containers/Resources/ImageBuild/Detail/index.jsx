@@ -55,6 +55,7 @@ const ImageBuildDetail = (props) => {
     const getAttrs = () => {
       const detail = toJS(store.detail)
       const uploadInfo = get(detail, ['upload-info-list', 'upload-info'])
+      const podStatus = get(detail, 'pod-status', '')
 
       let fileStatus = "-";
       let fileName = "-";
@@ -105,7 +106,7 @@ const ImageBuildDetail = (props) => {
         },
         {
           name: t('RESOURCES_STATE'),
-          value: fileStatus,
+          value: podStatus,
         },
         {
           name: t('RESOURCES_DESCRIPTION'),

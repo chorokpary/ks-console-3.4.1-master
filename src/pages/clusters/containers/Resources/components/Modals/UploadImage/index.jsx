@@ -208,7 +208,7 @@ const UploadModal = (props) => {
                           </div>                   
                           <div
                             style={{
-                              backgroundColor: "#55bc8a",
+                              backgroundColor: "#2275d7",
                               borderRadius: "4px",
                               boxShadow: "inset 0 0.5em 0.5em rgba(0,0,0,0.05)",
                               height: "20px",

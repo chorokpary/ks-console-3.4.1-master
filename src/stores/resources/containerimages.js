@@ -77,22 +77,8 @@ export default class ContainerImagesStore extends Base {
       ...this.mapper(item),
     }))
 
-    //Image Detail 정보 추가 
-    const imageArray = [];
-    const promises = data.map(async (image) => {
-      const imageDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/capk/images/` + image.name);
-      image.image_detail = imageDetail.image;
-      imageArray.push(image);
-    })
-    await Promise.all(promises);
-
-    // 초기 정렬 처리
-    imageArray.sort((a, b) => {
-      return a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0;
-    });
-
     // 초기 데이터 처리 
-    this.dataList = imageArray;
+    this.dataList = data;
 
     // 검색 관련 처리 
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
