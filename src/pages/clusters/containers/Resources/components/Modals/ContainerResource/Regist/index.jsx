@@ -140,7 +140,7 @@ const RegistModal = (props) => {
   useEffect(() => {
     if (selectImageName) {
       let selectOs = imageOptionList.find(obj => selectImageName === obj.name)
-      let selectOsDistro = get(selectOs, 'image_detail.os_distro')
+      let selectOsDistro = get(selectOs, 'os_distro')
       setSelectOsDistro(selectOsDistro)
     }
   }, [selectImageName])
@@ -180,12 +180,12 @@ const RegistModal = (props) => {
     const opt = imageOptionList.map((obj) => {
       // const exceptonArray = ['ubuntu', 'centos']
       // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
-      const distroType = (obj.image_detail.os_distro).split("-")[0]
+      const distroType = (obj.os_distro).split("-")[0]
       return {
         label: t(obj.name),
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
-        description: t(obj.image_detail.description),
+        description: t(obj.description),
         disabled: obj.phase !== 'Succeeded' ? true : false
       }
     })
