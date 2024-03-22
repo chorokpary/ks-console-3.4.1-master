@@ -36,15 +36,13 @@ const ModifyModal = (props) => {
       });
       data.dns = dns
 
-      // todo
-      // 호스트 라우트 입력 시, 서버 json 에러남.
-      // const host_routes = []
-      // data.Destination?.map((el, idx) => {
-      //   if (el != '') {
-      //     host_routes.push({ destination: el, nexthop: data.Nexthop[idx] })
-      //   }
-      // })
-      // data.host_routes = host_routes
+      const host_routes = []
+      listHostRoute?.map(el => {
+        if (data.Destination?.[el] && data.Nexthop?.[el]) {
+          host_routes.push({ destination: data.Destination[el], nexthop: data.Nexthop[el] });
+        }
+      })
+      data.host_routes = host_routes
 
       data.ip_pool = {
         start: data.ip_pool_start,
@@ -87,7 +85,7 @@ const ModifyModal = (props) => {
   }
 
 
-  const onChaneCidr = (e) => {
+  const onChangeCidr = (e) => {
     const { data } = form.current.props;
     if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])) {
       data.ip_pool_start = '';
@@ -128,9 +126,8 @@ const ModifyModal = (props) => {
       setCidrReducer()
     }
   }
-
   const nextHostRoute = useRef(1);
-  const [listHostRoute, setListHostRoute] = useState([1]);
+  const [listHostRoute, setListHostRoute] = useState(Array.from({ length: detail.host_routes.length }, (v, i) => i));
 
   const handleHostRoute = {
 
@@ -142,6 +139,45 @@ const ModifyModal = (props) => {
     delColumn: (id) => {
       setListHostRoute(listHostRoute.filter((el) => el !== id));
     },
+  }
+  useEffect(() => {
+    if (listHostRoute.length == 0) {
+      const a = document.getElementById('hostRoute')
+      a.classList.add('hide')
+    }
+  }, [listHostRoute])
+
+  const onChangeDestination = (e, idx) => {
+    const a = document.getElementById('hostRoute')
+    const nexthop = document.getElementById(`Nexthop.${idx}`).value
+
+    if (e.length > 0 || nexthop.length > 0) {
+      if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])
+        || !PATTERN_IP.test(nexthop)
+      ) {
+        a.classList.remove('hide')
+      } else {
+        a.classList.add('hide')
+      }
+    } else {
+      a.classList.add('hide')
+    }
+  }
+  const onChangeNexthop = (e, idx) => {
+    const a = document.getElementById('hostRoute')
+    const destination = document.getElementById(`Destination.${idx}`).value
+
+    if (e.length > 0 || destination.length > 0) {
+      if (destination.split("/").length != 2 || !isValidIpAddress(destination.split("/")[0]) || !fnCheckCidrClass(destination.split("/")[1])
+        || !PATTERN_IP.test(e)
+      ) {
+        a.classList.remove('hide')
+      } else {
+        a.classList.add('hide')
+      }
+    } else {
+      a.classList.add('hide')
+    }
   }
 
   return (
@@ -190,7 +226,7 @@ const ModifyModal = (props) => {
                 >
                   <Input name="cidr"
                     style={{ maxWidth: 'none' }}
-                    onChange={(e) => onChaneCidr(e)}
+                    onChange={(e) => onChangeCidr(e)}
                     defaultValue={detail.cidr}
                   />
                 </Form.Item>
@@ -281,12 +317,13 @@ const ModifyModal = (props) => {
                   >
                     <Input name="dns.1" defaultValue={detail.dns?.[1]} />
                   </Form.Item>
+                  <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
                 </Column>
               </Columns>
             </Form.Group>
           </Form.Item>
 
-          {/* <Form.Item label={t('호스트 라우트')}>
+          <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
             <Form.Group>
               {listHostRoute.map((obj, idx) => (
                 <div className={styles.item} key={obj}>
@@ -296,6 +333,8 @@ const ModifyModal = (props) => {
                         <Input
                           name={`Destination.${obj}`}
                           placeholder={t('Destination')}
+                          onChange={(e) => onChangeDestination(e, obj)}
+                          defaultValue={detail.host_routes?.[obj]?.destination}
                         />
                       </Form.Item>
                     </Column>
@@ -304,6 +343,8 @@ const ModifyModal = (props) => {
                         <Input
                           name={`Nexthop.${obj}`}
                           placeholder={t('Nexthop')}
+                          onChange={(e) => onChangeNexthop(e, obj)}
+                          defaultValue={detail.host_routes?.[obj]?.nexthop}
                         />
                       </Form.Item>
                     </Column>
@@ -326,11 +367,11 @@ const ModifyModal = (props) => {
               </div>
 
             </Form.Group>
-          </Form.Item> */}
+          </Form.Item>
+          <div className="form-item-error hide" id="hostRoute">{t.html('RESOURCES_HOSTROUTE_VALID', {})}</div>
 
           <Form.Item
             label={t('RESOURCES_DESCRIPTION')}
-            rules={[{ required: true, message: t('RESOURCES_DESCRIPTION_EMPTY_DESC') }]}
             desc={t('DESCRIPTION_DESC')}
           >
             <TextArea
