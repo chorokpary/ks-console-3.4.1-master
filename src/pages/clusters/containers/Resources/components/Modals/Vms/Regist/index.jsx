@@ -10,7 +10,7 @@ import * as common from "utils/resources"
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
-import { PATTERN_USER_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME, PATTERN_PACKAGE_NAME } from 'utils/constants'
 
 import classnames from 'classnames'
 import styles from './index.scss'
@@ -68,6 +68,14 @@ const RegistModal = (props) => {
   const [isFileWrite, setIsFileWrite] = useState(false);
   const [isUserScript, setIsUserScript] = useState(false);
 
+  const [isPasswordError, setIsPasswordError] = useState(false);
+  const [isPackageError, setIsPackageError] = useState(false);
+  const [isFileWriteError, setIsFileWriteError] = useState(false);
+  const [isUserScriptError, setIsUserScriptError] = useState(false);
+  const [isKeypiarPasswordError, setIsKeypiarPasswordError] = useState(false);
+
+  const [packageValidationError, setIsPackageValidationError] = useState(false);
+  
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
 
   useEffect(() => {
@@ -281,7 +289,6 @@ const RegistModal = (props) => {
 
   const stepMoveCheck = (step) => {
     const { data } = form.current.props;
-
     if (step == 1) {
 
       if (imageType == "I" && (data.name == undefined || !PATTERN_USER_NAME.test(data.name) || data.image == t('RESOURCES_SELECT') || data.flavor == t('RESOURCES_SELECT'))) {
@@ -301,6 +308,10 @@ const RegistModal = (props) => {
         }
       }
     }
+    if (step == 2) {
+      setRegStep(3);
+    }
+
     if (step == 3) {
       setVmName(data.name);
       setImageName(data.image);
@@ -315,10 +326,136 @@ const RegistModal = (props) => {
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
       setFlavorDisk(flavorData[0].root_disk)
 
+      const checkFlagPassword = checkScriptPassword();
+      const checkFlagFileWrite = checkScriptFilewrite();
+      const checkFlagPackage = checkScriptPackage();
+      const checkFlagUserScript = checkScriptUserScript();
+      
+      if((checkFlagPassword || checkFlagFileWrite || checkFlagPackage || checkFlagUserScript)){
+        return false;
+      }
+      
+      // keypair 와 passworkd 둘다 설정하지 않을때...
+      const checkFlagKeypairOrPassword = checkKeypairPassword();
+      if(checkFlagKeypairOrPassword){
+        return false;
+      }
+
+      setIsPasswordError(false);
+      setIsPackageError(false);
+      setIsFileWriteError(false);
+      setIsUserScriptError(false);
+      setIsKeypiarPasswordError(false);
+      setIsPackageValidationError(false);
+      
       setRegStep(4);
       setSubmitButtonFlag(false);
     }
   }
+
+  // 스크립트 Validation 시작===================
+  const checkScriptPassword = () => {
+    const { data } = form.current.props;
+
+    let flag = false;
+    if(isPassword) {
+      listPasswordRoute.map((obj) => {
+        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]){
+          flag = false;
+          setIsPasswordError(false);
+        }else{
+          flag = true;
+          setIsPasswordError(true);
+        }
+      })
+    }else{
+      setIsPasswordError(false);
+    }
+    return flag;
+  }
+
+  const checkScriptFilewrite = () => {
+    const { data } = form.current.props;
+
+    let flag = false;
+    if(isFileWrite) {
+      listPasswordRoute.map((obj) => {
+        if (!!data['scriptPath_' + obj]){
+          flag = false;
+          setIsFileWriteError(false);
+        }else{
+          flag = true;
+          setIsFileWriteError(true);
+        }
+      })
+    }else{
+      setIsFileWriteError(false);
+    }
+    return flag;
+  }
+
+  const checkScriptPackage = () => {
+    const { data } = form.current.props;
+
+    let flag = false;
+    if(isPackage) {
+      listPackageRoute.map((obj) => {
+        if (!!data['scriptPackage_' + obj] && !!data['scriptVersion_' + obj]){
+          if(PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])){
+            flag = false;
+            setIsPackageError(false);
+          }else{
+            flag = true;
+            setIsPackageError(false);
+            setIsPackageValidationError(true);
+          }
+          
+        }else{
+          flag = true;
+          setIsPackageError(true);
+        }
+      })
+    }else{
+      setIsPackageError(false);
+    }
+    return flag;
+  }
+
+  const checkScriptUserScript = () => {
+    const { data } = form.current.props;
+
+    let flag = false;
+    if(isUserScript) {
+      if (!!data['userScript'] ){
+        flag = false;
+        setIsUserScriptError(false);
+      }else{
+        flag = true;
+        setIsUserScriptError(true);
+      } 
+    }else{
+      setIsUserScriptError(false);
+    }
+    return flag;
+  }
+  // 스크립트 Validation 끝===================
+
+  const checkKeypairPassword = () => {
+    const { data } = form.current.props;
+
+    let flag = false;
+    if(!!data['keypair']){
+      flag = false;
+    }else{
+      isPassword ? flag = false : flag = true;
+    }
+
+    flag ? setIsKeypiarPasswordError(true) :  setIsKeypiarPasswordError(false);
+
+    return flag;
+  }
+
+
 
   const fnGetModalFooter = () => {
 
@@ -335,7 +472,7 @@ const RegistModal = (props) => {
           <>
             <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
             <Button onClick={() => { setRegStep(regStep - 1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
-            <Button type="control" onClick={() => { setRegStep(regStep + 1) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
+            <Button type="control" onClick={() => { stepMoveCheck(2)}} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {(regStep == 3) &&
@@ -900,17 +1037,21 @@ const RegistModal = (props) => {
               {/* 세부 설정 시작==========================================*/}
               <div className={`${regStep == 3 ? "" : "hide"}`}>
 
-                <Form.Item
-                  label={t('RESOURCES_KEYPAIR')}
-                >
+                <Form.Item  
+                    label={t('RESOURCES_KEYPAIR')}
+                  >
                   <Select
                     name="keypair"
                     placeholder={t('RESOURCES_SELECT')}
                     options={keypairOptions()}
                     clearable
-                  />
+                  />                  
                 </Form.Item>
 
+                <div className={styles.wrapperError}>
+                  <div className={`form-item-error ${!isKeypiarPasswordError ? "hide" : ""}`}>{t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}</div>
+                </div>              
+                
                 <Form.Item label={t('RESOURCES_SECURITY_GROUP')} >
                   <div className={styles.wrapper}>
                     {stateVariables['security'].length > 0 &&
@@ -1024,8 +1165,10 @@ const RegistModal = (props) => {
                         {t('RESOURCES_ADD')}
                       </Button>
                     </div>
+
+                    <div className={`form-item-error ${!isPasswordError ? "hide" : ""}`}>{t('RESOURCES_PASSWORD_EMPTY_DESC')}</div>
                   </Form.Group>
-                  <Form.Group label={t('RESOURCES_WRITE_FILE')} onChange={(e) => setIsPackage(!isPackage)} checkable >
+                  <Form.Group label={t('RESOURCES_WRITE_FILE')} onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
                     {listFileRoute.map((obj, idx) => (
                       <div className={styles.scriptitem} key={obj}>
                         <Columns>
@@ -1062,8 +1205,9 @@ const RegistModal = (props) => {
                         {t('RESOURCES_ADD')}
                       </Button>
                     </div>
+                    <div className={`form-item-error ${!isFileWriteError ? "hide" : ""}`}>{t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}</div>
                   </Form.Group>
-                  <Form.Group label={t('RESOURCES_INSTALL_PACKAGE')} onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
+                  <Form.Group label={t('RESOURCES_INSTALL_PACKAGE')} onChange={(e) => setIsPackage(!isPackage)} checkable >
                     {listPackageRoute.map((obj, idx) => (
                       <div className={styles.scriptitem} key={obj}>
                         <Columns>
@@ -1100,6 +1244,9 @@ const RegistModal = (props) => {
                         {t('RESOURCES_ADD')}
                       </Button>
                     </div>
+                    <div className={`form-item-error ${!isPackageError ? "hide" : ""}`}>{t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}</div>
+                    <div className={`form-item-error ${!packageValidationError ? "hide" : ""}`}>{t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}</div>
+                    
                   </Form.Group>
                   <Form.Group label={t('RESOURCES_CUSTOM')} onChange={(e) => setIsUserScript(!isUserScript)} checkable>
                     <Form.Item
@@ -1110,6 +1257,7 @@ const RegistModal = (props) => {
                         rows="5"
                       />
                     </Form.Item>
+                    <div className={`form-item-error ${!isUserScriptError ? "hide" : ""}`}>{t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}</div>
                   </Form.Group>
                 </Form.Group>
 

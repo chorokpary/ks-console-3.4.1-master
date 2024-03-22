@@ -620,6 +620,12 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH: '이미지 빌드/Push',
   RESOURCES_IMAGE_BUILD_PUSH_ING_DESC: '이미지 빌드&푸시 중 상태입니다.',
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
+  RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC: '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
+  RESOURCES_FILE_WIRTE_EMPTY_DESC: '파일 쓰기 정보를 입력해 주세요.',
+  RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
+  RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',
+  RESOURCES_INVALID_PACKAGE_SETTING_DESC: '패키지 이름(소스 및 바이너리 모두, 패키지 참조)은 소문자(a-z), 숫자(0-9), 더하기(+) 및 빼기(-) 기호, 마침표(.)로만 구성되어야 합니다. 길이는 2자 이상이어야 하며 영숫자 문자로 시작해야 합니다.',
+
 
 
 
