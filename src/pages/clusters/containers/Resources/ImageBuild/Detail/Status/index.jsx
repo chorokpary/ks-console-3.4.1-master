@@ -11,15 +11,17 @@ import styles from './index.scss'
 
 //====================================
 // pod_status 상태
-//====================================
-// 생성 중 : PodCreating
-// 실행 중 : PodRunning
-// 삭제 중 : PodDeleting
-// 파일 업로드중 : FileUploading
-// 파일 업로드 완료 : FileUploadCompleted
-// 이미지 빌드&푸시 중 : ImageBuildPushing
-// 이미지 빌드&푸시 완료 : ImagePushCompleted
-//====================================
+// ====================================
+// 1.생성 중 : PodCreating
+// 2.실행 중 : PodRunning
+// 3.삭제 중 : PodDeleting
+// 4.파일 업로드중 : FileUploading
+// 5.파일 업로드 완료 : FileUploadCompleted
+// 6.이미지 빌드&푸시 중 : ImageBuildPushing
+// 7.이미지 빌드&푸시 완료 : ImagePushCompleted
+// 8.이미지 빌드&푸시 실패 : ImagePushFailed
+// ====================================
+
 
 const Status = (props) => {
 
@@ -31,8 +33,8 @@ const Status = (props) => {
     const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
     const podStatus = get(detailInfo, 'pod-status', '')
 
-    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuildPushing', 'ImagePushCompleted']
-    const fileBuildArrayState = ['ImageBuildPushing', 'ImagePushCompleted']
+    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuildPushing', 'ImagePushCompleted', 'ImagePushFailed']
+    const fileBuildArrayState = ['ImageBuildPushing', 'ImagePushCompleted', 'ImagePushFailed']
 
       const status = 'success';
       const type = 'type'
@@ -87,10 +89,10 @@ const Status = (props) => {
                   extra={
                     <Icon
                       className={styles.status}
-                      name={status === 'success' ? 'success' : 'error'}
+                      name={podStatus === 'ImagePushFailed' ? 'error' : 'success'}
                       color={{
                         primary: '#fff',
-                        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                        secondary: podStatus === 'ImagePushFailed' ? '#ca2621' : '#55bc8a',
                       }}
                     />
                   }
@@ -106,10 +108,10 @@ const Status = (props) => {
                   extra={
                     <Icon
                       className={styles.status}
-                      name={status === 'success' ? 'success' : 'error'}
+                      name={podStatus === 'success' ? 'success' : 'error'}
                       color={{
                         primary: '#fff',
-                        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                        secondary: podStatus === 'success' ? '#55bc8a' : '#ca2621',
                       }}
                     />
                   }

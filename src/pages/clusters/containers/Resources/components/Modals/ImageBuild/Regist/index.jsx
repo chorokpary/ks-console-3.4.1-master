@@ -33,6 +33,9 @@ const RegistModal = (props) => {
   const [userValidCheck, setuserValidCheck] = useState(false)
   const [userValidCheckError, setUserValidCheckError] = useState(false)
 
+  const [userValidSuccess, setUserValidSuccess] = useState(false)
+  
+
   const cpuTypeOptions = [
     { label: t('ARM'), value: "ARM", },
     { label: t('x86'), value: "x86", }
@@ -100,12 +103,16 @@ const RegistModal = (props) => {
         setUserValidCheckError(false);
         setUserValid(false);
         setUserValidError(true);
+        
+        setUserValidSuccess(false);
       } else {
         //유효함
         setuserValidCheck(true);
         setUserValidCheckError(false);
         setUserValid(true);
         setUserValidError(false);
+
+        setUserValidSuccess(true);
       }
     })
   }
@@ -263,6 +270,10 @@ const RegistModal = (props) => {
                       {/* //유효하지 않은 사용자 입니다. */}
                       {userValidError &&
                         <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FAIL_VALID_TIP')}</div>
+                      }
+                      {/* //유효성 체크가 완료 되었습니다.*/}
+                      {userValidSuccess &&
+                        <div className="form-item-error" style={{ color: '#55bc8a' }}>{t('RESOURCES_SUCCESS_VALID_DESC')}</div>
                       }
 
 
