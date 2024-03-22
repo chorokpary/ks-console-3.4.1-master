@@ -20,41 +20,53 @@ const PowerUsageTop5 = ({ x, y, w, h,
 
   useEffect(() => {
     if (nodeData.length > 0) {
-      handleList('')
+      getData()
     }
-  }, [nodeData, metricPower])
+  }, [nodeData])
+
 
   useEffect(() => {
-
-    let cleanupTrigger = true;
-    const getData = async () => {
-      setLoading(true)
-      const metric_type = await customStore.fetchMetric({
-        expr: `max by(instance, machine) (node_uname_info)`,
-      })
-
-      const metric_power = await customStore.fetchMetric({
-        expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
-      })
-
-      if (cleanupTrigger) {
-        setMetricType(metric_type)
-        setMetricPower(metric_power)
-        setLoading(false)
-      }
-    };
-    getData();
-    return () => {
-      cleanupTrigger = false
-      setLoading(false)
+    if (nodeData.length > 0) {
+      handleList('')
     }
+  }, [metricPower])
 
+  // useEffect(() => {
 
-  }, [])
+  //   let cleanupTrigger = true;
+  const getData = async () => {
 
-  const getMetricValue = (metricData, data) => {
+    let promql_node_list = ""
+    nodeData.map((obj) => {
+      const nodeName = get(obj, 'name')
+      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+    })
+
+    setLoading(true)
+    const metric_type = await customStore.fetchMetric({
+      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+    })
+
+    const metric_power = await customStore.fetchMetric({
+      expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+    })
+
+    // if (cleanupTrigger) {
+    setMetricType(metric_type)
+    setMetricPower(metric_power)
+    setLoading(false)
+    //   }
+    // };
+    // getData();
+    // return () => {
+    //   cleanupTrigger = false
+    //   setLoading(false)
+  }
+  // }, [])
+
+  const getMetricValue = (data) => {
     const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
-    const metrics = metricData.find(item => get(item, 'metric.instance').split(":")[0] === instance)
+    const metrics = metricType.find(item => get(item, 'metric.instance').split(":")[0] === instance)
     const value = get(metrics, 'value[1]', '0');
     return value;
   }
@@ -70,13 +82,13 @@ const PowerUsageTop5 = ({ x, y, w, h,
 
   const handleList = (nodeType) => {
     var arr = nodeData
-
+    console.log(metricPower)
     if (nodeType == '') {
-      arr.map(obj => obj.power = getMetricValue(metricPower, obj))
+      arr.map(obj => obj.power = getMetricValue(obj))
     } else {
       arr = new Array()
       nodeData.map(obj => {
-        obj.power = getMetricValue(metricPower, obj)
+        obj.power = getMetricValue(obj)
         const type = getType(obj)
         if (type == nodeType) arr.push(obj)
       })
@@ -124,8 +136,8 @@ const PowerUsageTop5 = ({ x, y, w, h,
                           </h6>
                         </div>
                         <div className="info2">
-                          <h6>{Number(obj.power) * 0.001} kWh
-                            <span>{((Number(obj.power) * 0.001) / maxUsage * 100).toFixed(2)}%</span>
+                          <h6>{Number(obj.power) * 0.1} kWh
+                            <span>{((Number(obj.power) * 0.1) / maxUsage * 100).toFixed(2)}%</span>
                           </h6>
                           <div className="graph_wrap">
                             <div className="graph_bar">

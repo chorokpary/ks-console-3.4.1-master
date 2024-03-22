@@ -1,5 +1,5 @@
 import { toJS } from 'mobx'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 
 import { get, omit } from 'lodash'
 import { Modal } from 'components/Base'
@@ -10,11 +10,7 @@ import styles from './index.scss'
 
 const EditModal = (props) => {
 
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
-
   const detailInfo = toJS(props.store.list.data).find(item => get(item, 'name') == props.store.detail.name) 
-  
-  const dataList = props.store.dataList;
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -22,23 +18,18 @@ const EditModal = (props) => {
 
   const [bmcCheck, setBmcCheck] = useState(false);
 
-  useEffect(() => {
-     const bmcData = detailInfo.openBMC;
-     if(!!bmcData.address && !!bmcData.scrapeInterval && !!bmcData.username && !!bmcData.password){
-        setBmcCheck(true);
-     }
-  }, [])
-
   const handleOk = () => {
     const onOk  = props.onOk;
+
+    console.log("AAAAAAAAAA")
 
     form.current.validator(() => {
       const { data } = form.current.props;
       data.systemType = detailInfo.system_type;
       data.bmcCheck = bmcCheck;
 
-      // console.log("data :" + JSON.stringify(data))
-      onOk({ ...data })
+      console.log("data :" + JSON.stringify(data))
+      // onOk({ ...data })
     })
   }
 
@@ -179,7 +170,7 @@ const EditModal = (props) => {
                     </Column>             
                     <Column>
                       <Form.Item
-                        label={t('Scrape Interval')+' (s)'}
+                        label={t('Scrape Interval')}
                         rules={[{ required: true, validator: intervalNodeValidator }]}
                       >
                         <Input
@@ -210,7 +201,7 @@ const EditModal = (props) => {
           <div className={styles.title}> 
               <Checkbox name="bmc" onClick={() => {
                 setBmcCheck(!bmcCheck);
-              }} checked={bmcCheck}>{t('BMC')}
+              }}>{t('BMC')}
               <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>*</span>
               </Checkbox>
           </div>
@@ -232,7 +223,7 @@ const EditModal = (props) => {
                     </Column>
                     <Column>
                       <Form.Item
-                        label={t('Interval')+' (s)'}
+                        label={t('Interval')}
                         rules={[{ required: true, validator: intervalValidator }]}
                       >
                         <Input

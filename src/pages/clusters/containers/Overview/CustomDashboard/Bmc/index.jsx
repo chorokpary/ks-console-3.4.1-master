@@ -62,14 +62,14 @@ const Bmc = ({ bmc }) => {
           promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
         })
 
-        console.log("promql_node_list : "+ JSON.stringify(promql_node_list))
+        console.log("promql_node_list : " + JSON.stringify(promql_node_list))
 
         const getMetricType = await customStore.fetchMetric({
           expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
         })
 
         const getMetricData = await customStore.fetchMetric({
-          expr: `avg by(instance) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+          expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
         })
         if (cleanupTrigger) {
           setNodeData(data)
@@ -108,18 +108,19 @@ const Bmc = ({ bmc }) => {
         const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
 
         const type = get(type_data, 'metric.machine', '')
+        const x86Array = ['x86_64', 'amd']
 
         if (metricType.length > 0) {
-          type.includes('x86') ? total_x86_count += 1 : total_arm_count += 1;
+          x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
         }
 
         if (metricData.length > 0) {
 
           const power_data = metricData.find(item => (get(item, 'metric.target') === target))
-          const power = Number(get(power_data, 'value[1]', 0));
+          const power = Number(get(power_data, 'value[1]', 0)) / 1000;
 
           total_power += power;
-          if (type.includes('x86')) {
+          if (x86Array.includes(type.toLowerCase())) {
             total_x86_power += power
             used_x86_cnt += 1
           } else {
@@ -135,15 +136,10 @@ const Bmc = ({ bmc }) => {
       setArmServerCount(total_arm_count)
       setX86ServerCount(total_x86_count)
 
-      total_power *= 0.001
-      total_arm_power *= 0.001
-      total_x86_power *= 0.001
-
       // 전기 사용량
       setUseKwh(total_power)
       setArmKwh(total_arm_power)
       setX86Kwh(total_x86_power)
-
       // CO2 발생량
       setUseCo2(getCo2(total_power))
       setArmCo2(getCo2(total_arm_power))

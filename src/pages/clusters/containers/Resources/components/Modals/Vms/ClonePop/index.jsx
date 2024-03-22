@@ -10,6 +10,8 @@ import VmStore from 'stores/resources/vms'
 
 const CloneModal = (props) => {
 
+  const { cluster, namespace } = props.store.detail;
+
   const vmStore = new VmStore();
   const vmId = props.store.detail.id;
 
@@ -25,16 +27,16 @@ const CloneModal = (props) => {
 
     const success = props.success;
 
+    const params = { cluster, namespace }
+
     form.current.validator(async () => {   
       
       const { data } = form.current.props;
       data.source_vm_id = vmId;
-
-      console.log("data : "+ JSON.stringify(data))
       
       setButtonDisabled(true);
 
-      vmStore.cloneCreate(data).then(() => {
+      vmStore.cloneCreate(data, params).then(() => {
         Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();
         setButtonDisabled(false);

@@ -30,6 +30,7 @@ module.exports = {
   RESOURCES_BAREMETAL_RESOURCE: 'BareMetal 리소스',
   RESOURCES_BAREMETAL_NOT_FOUND_RESOURCE: 'BAREMETAL 리소스를 찾을 수 없음',
   RESOURCES_CIDR_EMPTY_DESC: 'CIDR을 입력해주세요.',
+  RESOURCES_CIDR_VALID: 'CIDR을 정확히 입력해주세요.',
   RESOURCES_CO2_EMISSIONS: 'CO2 발생량',
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
@@ -53,6 +54,7 @@ module.exports = {
   RESOURCES_IP_POOL_EMPTY_DESC: 'IP POOL을 입력해주세요.',
   RESOURCES_IP_POOL_INFORMATION: 'IP POOL 정보',
   RESOURCES_IP_POOL_INFORMATION_EMPTY_DESC: 'IP POOL 정보를 입력해주세요.',
+  RESOURCES_IP_POOL_VALID: 'IP POOL 정보를 정확히 입력해주세요.',
   RESOURCES_IP_EMPTY_DESC: 'IP을 입력해 주세요.',
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS 네트워크 트래픽',
   RESOURCES_KAAS_RESOURCE: 'KaaS 리소스',
@@ -125,6 +127,7 @@ module.exports = {
   RESOURCES_GATEWAY: '게이트웨이',
   RESOURCES_GATEWAY_IP: '게이트웨이 IP',
   RESOURCES_GATEWAY_IP_EMPTY_DESC: '게이트웨이 IP를 입력해주세요.',
+  RESOURCES_GATEWAY_IP_POOL_VALID: '게이트웨이 IP를 정확히 입력해주세요.',
   RESOURCES_PATH: '경로',
   RESOURCES_STATIC_IP: '고정 IP',
   RESOURCES_PUBLIC_KEY: '공개키',
@@ -603,6 +606,27 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
   RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
+  RESOURCES_INVALID_NAME_DESC: '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
+  RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
+  RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
+  RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
+  RESOURCES_SUCCESS: '성공',
+  RESOURCES_ENVIRONMENT_CONFIGURATION: '환경 구성',
+  RESOURCES_FILE_UPLOAD: '파일 업로드',
+  RESOURCES_FILE_UPLOADED_DESC: '파일을 업로드한 상태입니다.',
+  RESOURCES_FILE_UPLOADING_DESC: '파일 업로드중 상태입니다.',
+  RESOURCES_FILE_UPLOAD_COMPLETE_DESC: '파일 업로드 완료 상태입니다.',
+  RESOURCES_IMAGE_BUILDING_DESC: '이미지 빌드를 진행한 상태입니다.',
+  RESOURCES_IMAGE_BUILD_PUSH: '이미지 빌드/Push',
+  RESOURCES_IMAGE_BUILD_PUSH_ING_DESC: '이미지 빌드&푸시 중 상태입니다.',
+  RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
+  RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC: '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
+  RESOURCES_FILE_WIRTE_EMPTY_DESC: '파일 쓰기 정보를 입력해 주세요.',
+  RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
+  RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',
+  RESOURCES_INVALID_PACKAGE_SETTING_DESC: '패키지 이름(소스 및 바이너리 모두, 패키지 참조)은 소문자(a-z), 숫자(0-9), 더하기(+) 및 빼기(-) 기호, 마침표(.)로만 구성되어야 합니다. 길이는 2자 이상이어야 하며 영숫자 문자로 시작해야 합니다.',
 
-  
+
+
+
 };

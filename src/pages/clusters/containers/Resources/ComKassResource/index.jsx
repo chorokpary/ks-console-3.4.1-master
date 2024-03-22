@@ -4,7 +4,7 @@ import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import Banner from 'components/Cards/Banner'
 import { Card } from 'components/Base'
-import { getChartData, getAreaChartOps } from 'utils/monitoring'
+import { getChartData, getAreaChartOps, getZeroValues } from 'utils/monitoring'
 
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
@@ -288,113 +288,138 @@ const index = (props) => {
         refreshing={isRefreshing}
       >
 
-        <Card
-          title={t('RESOURCES_COMPUTING_RESOURCE_USAGE')}
-          empty={t('NO_MONITORING_DATA')}
-          isEmpty={(cpuDataCom.length == 0)}
-        >
-          <div className={styles.divwrap}>
-            {configs_com.map((item, index) => {
-              const config = getAreaChartOps(item)
-
-              if (isEmpty(config.data)) return null
-              if (item.type != "utilisation") return null
-              if (item.graphType != "m") return null
-              return (
-                <div key={config.title} className={index % 2 == 1 ? styles.div_right : styles.div_left}>
-                  <MediumArea width="100%" height={100} {...config} />
-                </div>
-              )
-            })}
-          </div>
-        </Card>
-
-        <Card
-          title={t('RESOURCES_KAAS_RESOURCE_USAGE')}
-          empty={t('NO_MONITORING_DATA')}
-          isEmpty={(cpuDataKaas.length == 0)}
-        >
-          <div className={styles.divwrap}>
-            {configs_kaas.map((item, index) => {
-              const config = getAreaChartOps(item)
-
-              if (isEmpty(config.data)) return null
-              if (item.type != "utilisation") return null
-              if (item.graphType != "m") return null
-              return (
-                <div key={config.title} className={index % 2 == 1 ? styles.div_right : styles.div_left}>
-                  <MediumArea width="100%" height={100} {...config} />
-                </div>
-              )
-            })}
-          </div>
-        </Card>
-
-        <Card
-          title={t('RESOURCES_COMPUTING_NETWORK_TRAFFIC')}
-          empty={t('NO_MONITORING_DATA')}
-          isEmpty={(!!!inboundDataCom && !!!outboundDataCom)}
-        >
+        <div className={styles.headtext}>
+          {t('RESOURCES_COMPUTING_RESOURCE_USAGE')}
+        </div>
+        <div className={styles.divwrap}>
           {configs_com.map((item, index) => {
-            const config = getAreaChartOps(item)
-
-            if (isEmpty(config.data)) return null
-            if (item.type != "bandwidth") return null
-            return <SimpleArea key={config.title} width="100%" {...config} />
-
+            // const config = getAreaChartOps(item)
+            const config = getAreaChartOps({
+              ...item,
+              data: isEmpty(item.data)
+                ? [{ values: getZeroValues() }]
+                : item.data,
+            })
+            if (item.type != "utilisation") return null
+            if (item.graphType != "m") return null
+            return (
+              <div key={config.title} className={`${index % 2 == 1 ? styles.div_right : styles.div_left} ${styles.item}`}>
+                <MediumArea width="100%" height={100} {...config} />
+              </div>
+            )
           })}
-        </Card>
+        </div>
 
-        <Card
-          title={t('RESOURCES_KAAS_NETWORK_TRAFFIC')}
-          empty={t('NO_MONITORING_DATA')}
-          isEmpty={(!!!inboundDataKaas && !!!outboundDataKaas)}
-        >
+        <div className={styles.headtext}>
+          {t('RESOURCES_KAAS_RESOURCE_USAGE')}
+        </div>
+        <div className={styles.divwrap}>
           {configs_kaas.map((item, index) => {
+            const config = getAreaChartOps({
+              ...item,
+              data: isEmpty(item.data)
+                ? [{ values: getZeroValues() }]
+                : item.data,
+            })
+
+            if (item.type != "utilisation") return null
+            if (item.graphType != "m") return null
+            return (
+              <div key={config.title} className={`${index % 2 == 1 ? styles.div_right : styles.div_left} ${styles.item}`}>
+                <MediumArea width="100%" height={100} {...config} />
+              </div>
+            )
+          })}
+        </div>
+
+        <div className={styles.headtext}>
+          {t('RESOURCES_COMPUTING_NETWORK_TRAFFIC')}
+        </div>
+        {(!!!inboundDataCom && !!!outboundDataCom) ?
+          <div className={styles.divwrap}>
+            <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+          </div>
+          :
+          configs_com.map((item, index) => {
             const config = getAreaChartOps(item)
 
             if (isEmpty(config.data)) return null
             if (item.type != "bandwidth") return null
-            return <SimpleArea key={config.title} width="100%" {...config} />
+            return (
+              <div className={styles.divwrap} key={config.title}>
+                <SimpleArea width="100%" {...config} />
+              </div>
+            )
+          })
+        }
 
-          })}
-        </Card>
 
-        <Card
-          title={t('RESOURCES_COMPUTING_DISK_USAGE')}
-          empty={t('NO_MONITORING_DATA')}
-          isEmpty={(diskDataCom.length == 0)}
-        >
-          {configs_com.map((item, index) => {
+        <div className={styles.headtext}>
+          {t('RESOURCES_KAAS_NETWORK_TRAFFIC')}
+        </div>
+        {(!!!inboundDataKaas && !!!outboundDataKaas) ?
+          <div className={styles.divwrap}>
+            <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+          </div>
+          :
+          configs_kaas.map((item, index) => {
+            const config = getAreaChartOps(item)
+
+            if (isEmpty(config.data)) return null
+            if (item.type != "bandwidth") return null
+            return (
+              <div className={styles.divwrap} key={config.title}>
+                <SimpleArea width="100%" {...config} />
+              </div>
+            )
+
+          })
+        }
+
+        <div className={styles.headtext}>
+          {t('RESOURCES_COMPUTING_DISK_USAGE')}
+        </div>
+        {(diskDataCom.length == 0) ?
+          <div className={styles.divwrap}>
+            <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+          </div>
+          :
+          configs_com.map((item, index) => {
             const config = getAreaChartOps(item)
 
             if (isEmpty(config.data)) return null
             if (item.type != "utilisation") return null
             if (item.dataType != "disk") return null
-            return <SimpleArea key={config.title} width="100%" {...config} />
+            return (
+              <div className={styles.divwrap} key={config.title}>
+                <SimpleArea width="100%" {...config} />
+              </div>
+            )
+          })
+        }
 
-          })}
-        </Card>
-
-        <Card
-          title={t('RESOURCES_KAAS_DISK_USAGE')}
-          empty={t('NO_MONITORING_DATA')}
-          isEmpty={(diskDataKass.length == 0)}
-        >
-          {configs_kaas.map((item, index) => {
+        <div className={styles.headtext}>
+          {t('RESOURCES_KAAS_DISK_USAGE')}
+        </div>
+        {(diskDataKass.length == 0) ?
+          <div className={styles.divwrap}>
+            <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+          </div>
+          :
+          configs_kaas.map((item, index) => {
             const config = getAreaChartOps(item)
 
             if (isEmpty(config.data)) return null
             if (item.type != "utilisation") return null
             if (item.dataType != "disk") return null
-            return <SimpleArea key={config.title} width="100%" {...config} />
-
-          })}
-        </Card>
-
+            return (
+              <div className={styles.divwrap} key={config.title}>
+                <SimpleArea width="100%" {...config} />
+              </div>
+            )
+          })
+        }
       </MonitoringController>
-
-
     </>
   );
 };

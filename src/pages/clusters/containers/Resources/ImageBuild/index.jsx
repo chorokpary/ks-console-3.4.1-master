@@ -40,14 +40,62 @@ import ImageBuildStore from 'stores/resources/imagebuild';
   rowKey: 'name',
 })
 export default class ImageBuild extends React.Component {
+
+    // auto refresh start  ##################################
+    constructor(props) {
+      super(props);
+      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+    }
+  
+    componentDidUpdate() {
+      if (this.refreshTimer === null && this.isRuning) {
+        this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+      }
+    }
+  
+    componentWillUnmount() {
+      clearInterval(this.refreshTimer);
+      this.unsubscribe && this.unsubscribe();
+    }
+  
+    refreshHandler = () => {
+      const { page, limit } = toJS(this.props.store.list);
+      if (this.isRuning) {
+        this.getData({ silent: true, page, limit });
+      } else {
+        clearInterval(this.refreshTimer);
+        this.refreshTimer = null;
+      }
+    };
+  
+    get isRuning() {
+      const { selectedRowKeys } = toJS(this.props.store.list);
+      const runingFlag = !(selectedRowKeys.length > 0);
+      return runingFlag;
+    }
+  
+    getData = params => {
+      this.props.store.fetchList({
+        ...this.props.match.params,
+        ...params,
+        ...this.props.query, // search param
+      });
+    };
+    // auto refresh end  ##################################
+
   showAction(record) {
     return globals.user.username !== record.name;
   }
 
-  showActionUpload(record) {
-    const uploadInfo = get(record, ['upload-info-list', 'upload-info'], [])
+  showActionUpload(item) {
+    const uploadInfo = get(item, ['upload-info-list', 'upload-info'], [])
+    const popStatus = get(item, 'pod-status')
 
-    let showFlag = false;
+    if(popStatus == 'PodDeleting'){
+      return false;
+    }
+
+    let showFlag = true;
     if(!!uploadInfo){        
       const status = uploadInfo[0]['upload-file-info']['Status'];
       const statusText = !!status ? status : "-";
@@ -158,8 +206,7 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (cputype, record) => {
-          const tags = get(record, 'tags')
-          const cpuType = get(tags, 'cpuType', "-")
+          const cpuType = get(record, ['tags','cpuType'], '-')
           return cpuType;
         },
       },
@@ -169,8 +216,7 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (tag, record) => {
-          const tags = get(record, 'tags')
-          const tagName = get(tags, 'tag', "-")
+          const tagName = get(record, ['tags','tag'], '-')
           return tagName;
         },
       },
@@ -180,8 +226,7 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (os, record) => {
-          const tags = get(record, 'tags')
-          const osInfo = get(tags, 'os', "-")
+          const osInfo = get(record, ['tags','os'], '-')
           return osInfo;
         },
       },
@@ -194,10 +239,10 @@ export default class ImageBuild extends React.Component {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
           if(!!uploadInfo) {
-            const fileName = uploadInfo[0]['upload-file-info']['file-info']['ID'];
-            const fileNameText = !!fileName ? fileName : "-";
+            const MetaData = uploadInfo[0]['upload-file-info']['file-info']['MetaData'];
+            const fileName = get(MetaData, 'filename', '-').split(".")[0]
 
-            return fileNameText
+            return fileName
           }
           return '-'
         },
@@ -226,14 +271,14 @@ export default class ImageBuild extends React.Component {
         width: 'auto',
         render: (status, record) => {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
+          let popStatus = get(record, 'pod-status')
+          // if(!!uploadInfo) {
+          //   const status = uploadInfo[0]['upload-file-info']['Status'];
+          //   const statusText = !!status ? status : "-";
 
-          if(!!uploadInfo) {
-            const status = uploadInfo[0]['upload-file-info']['Status'];
-            const statusText = !!status ? status : "-";
-
-            return statusText
-          }
-          return '-'
+          //   return statusText
+          // }
+          return popStatus;
         },
       },
       {

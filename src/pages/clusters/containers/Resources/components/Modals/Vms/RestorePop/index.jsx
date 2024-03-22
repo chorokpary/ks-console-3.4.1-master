@@ -22,12 +22,13 @@ const RestoreModal = (props) => {
     const success = props.success;
 
     const params = {
-      cluster : props.cluster,
-      name : props.name
+      cluster: props.cluster,
+      namespace: props.namespace,
+      name: props.name
     }
 
-    form.current.validator(async () => {   
-      
+    form.current.validator(async () => {
+
       const { data } = form.current.props;
       data.snapshotId = snapshotId;
 
@@ -60,9 +61,9 @@ const RestoreModal = (props) => {
             rules={[{ required: true, message: t('RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP') }]}
           >
             <Input
-                name="description"
-                style={{ maxWidth: 'none' }}
-              />  
+              name="description"
+              style={{ maxWidth: 'none' }}
+            />
           </Form.Item>
         </Form>
       </Modal>

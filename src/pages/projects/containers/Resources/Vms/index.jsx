@@ -412,22 +412,27 @@ export default class Vms extends React.Component {
           const stateArray = ['Stopped', 'Running', 'Paused'];
 
           if (stateArray.includes(state)) {
-            return (
-              <div>
-                <Dropdown
-                  content={
-                    <Menu>{this.fnGetActionColumn(state, record.id)}</Menu>
-                  }
-                >
-                  <div className={styles.iconwrapper}>
-                    <i
-                      className={styles[`ico-status-${state.toLowerCase()}`]}
-                    />
-                    <p>{state}</p>
-                  </div>
-                </Dropdown>
-              </div>
-            );
+
+            const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
+            if (vmsRole?.includes('manage')) {
+              return (
+                <div>
+                  <Dropdown
+                    content={
+                      <Menu>{this.fnGetActionColumn(state, record.id)}</Menu>
+                    }
+                  >
+                    <div className={styles.iconwrapper}>
+                      <i
+                        className={styles[`ico-status-${state.toLowerCase()}`]}
+                      />
+                      <p>{state}</p>
+                    </div>
+                  </Dropdown>
+                </div>
+              );
+            }
+
           }
           return (
             <div className={styles.iconwrapper}>
