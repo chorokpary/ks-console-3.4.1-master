@@ -229,7 +229,7 @@ const Status = (props) => {
       dataIndex: 'metadata.name',
     },
     {
-      title: t('RESOURCES_CLUSTER_FAULT_OPERATOR'),
+      title: t('RESOURCES_CLUSTER_FAULT_AI_ENGINE'),
       dataIndex: 'spec.ai.backend',
       render: (operator) => (
         operator === 'localai' ? 'Local AI' : 'Open AI'

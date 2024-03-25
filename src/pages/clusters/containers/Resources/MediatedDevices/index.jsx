@@ -28,8 +28,8 @@ import styles from './index.scss'
 
 @withList({
     store: new MediatedDeviceStore(),
-    module: 'mediated_devices',
-    authKey: 'mediated_devices',
+    module: 'mediatedDevices',
+    authKey: 'mediatedDevices',
     name: t('RESOURCES_MEDIATED_DEVICE'),
 })
 export default class MediatedDevice extends React.Component {

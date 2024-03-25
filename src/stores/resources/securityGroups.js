@@ -30,7 +30,7 @@ export default class SecurityGroupStore extends Base {
 
     records = new List()
 
-    module = 'security_groups'
+    module = 'securityGroups'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups`
     getListUrl = this.getResourceUrl
@@ -77,7 +77,7 @@ export default class SecurityGroupStore extends Base {
         const dataArray = [];
 
         const promises = data.map(async (security_group) => {
-            const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({cluster, namespace})}/edgetron/resources/kubevirt/security_groups/` + security_group.id);
+            const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/security_groups/` + security_group.id);
             security_group.egress_count = (securityDetail.security_group.rules).filter(el => el.direction == "egress").length;
             security_group.ingress_count = (securityDetail.security_group.rules).filter(el => el.direction == "ingress").length;
             dataArray.push(security_group);
@@ -104,16 +104,16 @@ export default class SecurityGroupStore extends Base {
 
         if (searchArray.length > 0) {
             searchArray.map((search) => {
-              let resultList = this.dataList.filter((row) => {
-                if (typeof row[search.searchKeywordType] === "boolean") {
-                  return (row[search.searchKeywordType] ? '사용' : '미사용').includes(search.searchKeywordText);
-                } else if (search.searchKeywordType === 'project') {
-                  return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                } else {
-                  return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                }
-              });
-              this.dataList = resultList;
+                let resultList = this.dataList.filter((row) => {
+                    if (typeof row[search.searchKeywordType] === "boolean") {
+                        return (row[search.searchKeywordType] ? '사용' : '미사용').includes(search.searchKeywordText);
+                    } else if (search.searchKeywordType === 'project') {
+                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+                    } else {
+                        return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+                    }
+                });
+                this.dataList = resultList;
             })
         }
 

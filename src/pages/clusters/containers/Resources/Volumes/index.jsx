@@ -38,8 +38,8 @@ import ResourceTable from 'clusters/components/ResourceTable';
 
 @withClusterList({
   store: new VolumeStore(),
-  module: 'resourcesvolumes',
-  authKey: 'resourcesvolumes',
+  module: 'resourcesVolumes',
+  authKey: 'resourcesVolumes',
   name: t('RESOURCES_VOLUME'),
   rowKey: 'id',
 })

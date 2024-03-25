@@ -49,14 +49,38 @@ const ModifyModal = (props) => {
       value: 'localai',
     }
   ]
-  const modelOptions = [
+  const localModelOptions = [
     {
       label: 'llama2',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_LLAMA2'),
       value: 'llama2',
     },
     {
       label: 'mixtral-8x7b',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_MIXTRAL'),
       value: 'mixtral-8x7b',
+    }
+  ]
+  const openModelOptions = [
+    {
+      label: 'gpt-3.5',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3'),
+      value: 'gpt-3.5',
+    },
+    {
+      label: 'gpt-3.5-turbo',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3TURBO'),
+      value: 'gpt-3.5-turbo',
+    },
+    {
+      label: 'gpt-4',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4'),
+      value: 'gpt-4',
+    },
+    {
+      label: 'gpt-4-turbo',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4TURBO'),
+      value: 'gpt-4-turbo',
     }
   ]
 
@@ -68,6 +92,12 @@ const ModifyModal = (props) => {
       data.originOperator = get(props.item, 'spec.ai.backend')
       onOk(data)
     })
+  }
+
+  const handleOperator = (e) => {
+    const { data } = form.current.props;
+    setOperator(e)
+    data.model = '';
   }
 
   return (
@@ -103,13 +133,13 @@ const ModifyModal = (props) => {
 
           {/* Operator 설정 */}
           <Form.Item
-            bel={t('RESOURCES_CLUSTER_FAULT_OPERATOR') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET')}
+            label={t('RESOURCES_CLUSTER_FAULT_AI_ENGINE') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET')}
             rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_MSG') },]}
           >
             <TypeSelect
               name="operator"
               defaultValue={get(props.item, 'spec.ai.backend')}
-              onChange={(e) => setOperator(e)}
+              onChange={(e) => handleOperator(e)}
               placeholder={{
                 label: t('RESOURCES_SELECT')
               }}
@@ -122,22 +152,21 @@ const ModifyModal = (props) => {
           <Form.Item
             label={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL')}
             // desc={t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC')}
-            rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG') },]}
+            rules={[{
+              required: true,
+              message: t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG')
+            },]}
           >
-            {/* <TextArea
-              style={{ maxWidth: 'none' }}
+            <TypeSelect
               name="model"
-              maxLength={63}
+              placeholder={{
+                label: t('RESOURCES_SELECT')
+              }}
               defaultValue={get(props.item, 'spec.ai.model')}
-            /> */}
-            <Select
-              style={{ maxWidth: 'none' }}
-              name="model"
-              defaultValue={get(props.item, 'spec.ai.model')}
-              options={modelOptions}
+              defaultDescription={t('RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC')}
+              options={operator === 'localai' ? localModelOptions : operator === 'openai' ? openModelOptions : []}
             />
           </Form.Item>
-
 
           {/* 세부 설정 */}
           <Form.Item

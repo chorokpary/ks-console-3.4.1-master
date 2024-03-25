@@ -31,7 +31,7 @@ export default class MediatedDeviceStore extends Base {
 
     records = new List()
 
-    module = 'mediated_devices'
+    module = 'mediatedDevices'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_devices`
     getListUrl = this.getResourceUrl

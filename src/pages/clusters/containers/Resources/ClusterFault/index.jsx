@@ -27,6 +27,7 @@ import styles from './index.scss'
 import { Icon } from '@kube-design/components'
 
 import ClusterFaultStore from 'stores/resources/clusterFault'
+import { namespace } from 'd3-selection'
 
 @withClusterList({
   store: new ClusterFaultStore(),
@@ -52,26 +53,33 @@ export default class ClusterFault extends React.Component {
     const { trigger, ...props } = this.props
     return [
       {
-        title: t('RESOURCES_CLUSTER_FAULT_NAMESPACE'),
-        dataIndex: 'metadata.namespace',
-        sorter: true,
+        title: t('RESOURCES_CLUSTER_FAULT_NAME'),
+        dataIndex: 'spec.name',
+        isHideable: true,
         search: true,
+        sorter: true,
+        width: 200,
+        render: (name, item) => {
+          const [namespace, ...rest] = name.split('/');
+          return rest.join('/');
+        },
+      },
+      {
+        title: t('RESOURCES_CLUSTER_FAULT_NAMESPACE'),
+        dataIndex: 'spec',
+        sorter: true,
         width: 170,
+        render: (spec, item) => {
+          const [namespace, ...rest] = spec.name.split('/');
+          return namespace;
+        },
       },
       {
         title: t('RESOURCES_CLUSTER_FAULT_KIND'),
         dataIndex: 'spec.kind',
         isHideable: true,
-        search: true,
         sorter: true,
         width: 170,
-      },
-      {
-        title: t('RESOURCES_CLUSTER_FAULT_NAME'),
-        dataIndex: 'spec.name',
-        isHideable: true,
-        sorter: true,
-        width: 200,
       },
       {
         title: t('RESOURCES_CLUSTER_FAULT_PROVIDER'),
@@ -89,7 +97,6 @@ export default class ClusterFault extends React.Component {
         dataIndex: 'solution',
         width: 60,
         render: (solution, item) => (
-
           <div className={styles.iconRight} onClick={() => trigger('clusterfault.detail', {
             detail: item,
             ...this.props.match.params,
@@ -119,7 +126,7 @@ export default class ClusterFault extends React.Component {
             <div className={styles.title}>
               <div className="h3">{t('RESOURCES_CLUSTER_FAULT_TITLE')}</div>
               <p className="text-second">
-                {t('RESOURCES_CLUSTER_FAULT_DETAIL')}
+                {/* {t('RESOURCES_CLUSTER_FAULT_DETAIL')} */}
               </p>
             </div>
             <div className={styles.divRight}>
