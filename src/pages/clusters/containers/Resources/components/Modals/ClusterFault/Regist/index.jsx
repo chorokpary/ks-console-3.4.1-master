@@ -151,7 +151,6 @@ const RegistModal = (props) => {
               }}
               defaultDescription={t('RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC')}
               options={operator === 'localai' ? localModelOptions : operator === 'openai' ? openModelOptions : []}
-              width={200}
             />
             {/* <Select
               style={{ maxWidth: 'none' }}

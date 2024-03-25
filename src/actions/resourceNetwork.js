@@ -58,7 +58,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id}, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -112,7 +112,7 @@ export default {
       let arr = new Array
       store.dataList.map(obj => {
         if (rowKeys.includes(obj.id)) {
-            arr.push(obj.name)
+          arr.push(obj.name)
         }
       })
       const names = arr.join(', ')
@@ -121,9 +121,13 @@ export default {
           store
             .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
             .then(() => {
+              console.log('asd')
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
+            }).catch((e) => {
+              Modal.close(modal)
+              success()
             })
         },
         modal: DeleteModal,
@@ -201,5 +205,5 @@ export default {
         ...props,
       })
     },
-  },  
+  },
 }
