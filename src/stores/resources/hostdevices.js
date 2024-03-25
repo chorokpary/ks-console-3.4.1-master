@@ -31,7 +31,7 @@ export default class HostDeviceStore extends Base {
 
     records = new List()
 
-    module = 'hostDevices'
+    module = 'host_devices'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/host_devices`
     getListUrl = this.getResourceUrl

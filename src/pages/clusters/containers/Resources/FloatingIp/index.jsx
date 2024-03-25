@@ -33,7 +33,7 @@ import FloatingIpStore from 'stores/resources/floatingip'
 
 @withClusterList({
     store: new FloatingIpStore(),
-    module: 'floatingip',
+    module: 'floating_ips',
     authKey: 'floatingip',
     name: t('RESOURCES_FLOATING_IP'),
 })

@@ -1,4 +1,5 @@
 /*
+
  * This file is part of KubeSphere Console.
  * Copyright (C) 2019 The KubeSphere Console Authors.
  *
@@ -26,7 +27,7 @@ export default class FloatingIpStore extends Base {
 
     records = new List()
 
-    module = 'floatingip'
+    module = 'floating_ips'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
     getListUrl = this.getResourceUrl

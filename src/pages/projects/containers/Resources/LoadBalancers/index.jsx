@@ -34,7 +34,7 @@ import ResourceTable from 'clusters/components/ResourceTable'
 
 @withList({
     store: new LoadBalancerStore(),
-    module: 'loadBalancers',
+    module: 'lbs',
     authKey: 'loadBalancers',
     name: t('RESOURCES_LOAD_BALANCER'),
     rowKey: 'id'
