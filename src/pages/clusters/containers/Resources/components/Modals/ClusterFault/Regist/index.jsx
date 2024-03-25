@@ -25,26 +25,50 @@ const RegistModal = (props) => {
 
   const operatorOptions = [
     {
-      label: 'Open AI',
+      label: 'OpenAI',
       description: t('RESOURCES_CLUSTER_FAULT_MODAL_OPENAI_DESC'),
       icon: `ico-type24-solution`,
       value: 'openai',
     },
     {
-      label: 'Local AI',
+      label: 'LocalAI',
       description: t('RESOURCES_CLUSTER_FAULT_MODAL_LOCALAI_DESC'),
       icon: `ico-type24-solution`,
       value: 'localai',
     }
   ]
-  const modelOptions = [
+  const localModelOptions = [
     {
       label: 'llama2',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_LLAMA2'),
       value: 'llama2',
     },
     {
       label: 'mixtral-8x7b',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_MIXTRAL'),
       value: 'mixtral-8x7b',
+    }
+  ]
+  const openModelOptions = [
+    {
+      label: 'gpt-3.5',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3'),
+      value: 'gpt-3.5',
+    },
+    {
+      label: 'gpt-3.5-turbo',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3TURBO'),
+      value: 'gpt-3.5-turbo',
+    },
+    {
+      label: 'gpt-4',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4'),
+      value: 'gpt-4',
+    },
+    {
+      label: 'gpt-4-turbo',
+      description: t('RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4TURBO'),
+      value: 'gpt-4-turbo',
     }
   ]
 
@@ -55,6 +79,12 @@ const RegistModal = (props) => {
       const { data } = form.current.props;
       onOk(data)
     })
+  }
+
+  const handleOperator = (e) => {
+    const { data } = form.current.props;
+    setOperator(e)
+    data.model = '';
   }
 
   return (
@@ -89,13 +119,13 @@ const RegistModal = (props) => {
 
           {/* Operator 설정 */}
           <Form.Item
-            label={t('RESOURCES_CLUSTER_FAULT_OPERATOR') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET')}
+            label={t('RESOURCES_CLUSTER_FAULT_AI_ENGINE') + ' ' + t('RESOURCES_CLUSTER_FAULT_SET')}
             rules={[{ required: true, message: t('RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_MSG') },]}
           >
             <TypeSelect
               name="operator"
               defaultValue={operator}
-              onChange={(e) => setOperator(e)}
+              onChange={(e) => handleOperator(e)}
               placeholder={{
                 label: t('RESOURCES_SELECT')
               }}
@@ -113,19 +143,23 @@ const RegistModal = (props) => {
               message: t('RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG')
             },]}
           >
-            {/* <TextArea
-              style={{ maxWidth: 'none' }}
+            <TypeSelect
               name="model"
-              maxLength={63}
-            /> */}
-            <Select
-              style={{ maxWidth: 'none' }}
-              name="model"
-              defaultValue="llama2"
-              options={modelOptions}
+              // onChange={(e) => setOperator(e)}
+              placeholder={{
+                label: t('RESOURCES_SELECT')
+              }}
+              defaultDescription={t('RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC')}
+              options={operator === 'localai' ? localModelOptions : operator === 'openai' ? openModelOptions : []}
+              width={200}
             />
+            {/* <Select
+              style={{ maxWidth: 'none' }}
+              name="model"
+              placeholder={t('RESOURCES_SELECT')}
+              options={operator === 'localai' ? localModelOptions : openModelOptions}
+            /> */}
           </Form.Item>
-
 
           {/* 세부 설정 */}
           {operator !== '' &&
