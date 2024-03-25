@@ -47,9 +47,6 @@ const ModifyModal = props => {
 
   const [formGpuFields, setFormGpuFields] = useState();
   const [formDeviceFields, setFormDeviceFields] = useState();
-  //   const [formGpuFields, setFormGpuFields] = useState([
-  //     { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-  //   ]);
 
   let checkExtraSpecs = [];
   useEffect(() => {
@@ -57,7 +54,7 @@ const ModifyModal = props => {
     setRootDisk(props?.store?.detail?.flavor?.root_disk);
     setEphemeralDisk(props.store?.detail?.flavor?.ephemeral_disk);
     setVcpus(props?.store?.detail?.flavor?.vcpus);
-    console.log('fdfs', props?.store?.detail?.flavor?.vcpus);
+
     setRam(
       props.store.detail.flavor.ram / 1024 < 1
         ? props.store.detail.flavor.ram
@@ -66,8 +63,24 @@ const ModifyModal = props => {
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
       obj => obj.value === 'True'
     );
-    setFormGpuFields(props?.store?.detail?.flavor?.gpus);
-    setFormDeviceFields(props?.store?.detail?.flavor?.devices);
+    // setFormGpuFields(props?.store?.detail?.flavor?.gpus);
+
+	if(props?.store?.detail?.flavor?.gpus.length > 0){
+		setFormGpuFields(props?.store?.detail?.flavor?.devices);
+	  } else if(props?.store?.detail?.flavor?.gpus.length === 0){
+		setFormGpuFields([
+			{ name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
+		]);
+	  }
+	
+    if(props?.store?.detail?.flavor?.devices.length > 0){
+      setFormDeviceFields(props?.store?.detail?.flavor?.devices);
+    } else if(props?.store?.detail?.flavor?.devices.length === 0){
+      setFormDeviceFields([
+        { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
+      ]);
+    }
+   
   }, [props]);
 
   useEffect(() => {
@@ -77,6 +90,7 @@ const ModifyModal = props => {
         props.match.params.cluster
       );
       const responseHostDevices = listHostDevices?.host_devices;
+
 
       const resHostDevices = [];
       responseHostDevices?.forEach(items => {
