@@ -36,7 +36,7 @@ const LoadBalancerDetail = (props) => {
     const floatingData = toJS(store.floatingIpsList)
     const floatingId = floatingData?.filter((row) => row.instance_id == lbId).map((el) => el.id)[0]
     const floatingIp = floatingData?.filter((row) => row.instance_id == lbId).map((el) => el.floating_ip)[0]
-
+    console.log(floatingIp)
     const getOperations = () => [
         {
             key: 'edit',
@@ -126,6 +126,11 @@ const LoadBalancerDetail = (props) => {
             {
                 name: t('VIP'),
                 value: detail.lb.virtual_ip,
+            },
+            {
+                name: t('FIP'),
+                value: floatingIp,
+                show: floatingIp !== undefined ? true : false
             },
             {
                 name: t('RESOURCES_POLICY'),
