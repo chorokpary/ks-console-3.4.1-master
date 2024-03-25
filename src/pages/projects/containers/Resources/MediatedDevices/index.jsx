@@ -28,7 +28,7 @@ import styles from './index.scss'
 
 @withList({
     store: new MediatedDeviceStore(),
-    module: 'mediatedDevices',
+    module: 'mediated_devices',
     authKey: 'mediatedDevices',
     name: t('RESOURCES_MEDIATED_DEVICE'),
 })

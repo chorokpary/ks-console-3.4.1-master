@@ -27,7 +27,7 @@ import styles from './index.scss'
 
 @withList({
     store: new HostDeviceStore(),
-    module: 'hostDevices',
+    module: 'host_devices',
     authKey: 'hostDevices',
     name: t('RESOURCES_HOST_DEVICE'),
 })

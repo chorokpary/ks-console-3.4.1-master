@@ -30,7 +30,7 @@ export default class SecurityGroupStore extends Base {
 
     records = new List()
 
-    module = 'securityGroups'
+    module = 'security_groups'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups`
     getListUrl = this.getResourceUrl
