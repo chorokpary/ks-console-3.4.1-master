@@ -275,4 +275,17 @@ export default class SriovStore extends Base {
     return response;
   }
 
+  @action
+  async fetchSriovVfs(params) {
+    this.isLoading = true
+
+    const url = `${this.getResourceUrl(params)}/${params.name}/number_of_vfs`;
+    const result = await request.get(url)
+
+    const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
+
+    this.isLoading = false
+    return response;
+  }
+
 }

@@ -36,10 +36,17 @@ const ModifyModal = props => {
     cidrReducer => !cidrReducer,
     false
   );
+  const [vfs, setVfs] = useState();
 
   useEffect(() => {
+    const getSriovVfs = async () => {
+      const numberOfVfs = await sriovStore.fetchSriovVfs({ ...props });
+      setVfs(numberOfVfs.number)
+    };
+    getSriovVfs()
+
     const getSriovCreateData = async () => {
-      const listSriovBond = await sriovStore.fetchSriovBondList();
+      const listSriovBond = await sriovStore.fetchSriovBondList({ ...props });
       setSriovBondDataList(listSriovBond.resources);
       // setSriovBondDataList(["sriov-bond-slave1", "sriov-bond-slave2"]);
     };
@@ -407,20 +414,33 @@ const ModifyModal = props => {
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
-                <Form.Item
-                  label={t('RESOURCES_RESOURCE_NAME')}
-                  rules={[{ required: true }]}
-                >
-                  <Input
-                    name="resource_name"
-                    autoFocus={true}
-                    maxLength={63}
-                    defaultValue={props.store.detail.name}
-                    disabled
-                    style={{ maxWidth: 'none' }}
-                  />
+                <Form.Item>
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_RESOURCE_NAME')}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name="resource_name"
+                          defaultValue={props.store.detail.name}
+                          disabled
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      {/* <Form.Item
+                        label={t('VF')}
+                      >
+                        <Input
+                          name="vfs"
+                          defaultValue={vfs}
+                          disabled
+                        />
+                      </Form.Item> */}
+                    </Column>
+                  </Columns>
                 </Form.Item>
-
                 <Form.Item>
                   <Columns>
                     <Column>
