@@ -30,7 +30,7 @@ export default class VolumeStore extends Base {
 
   records = new List()
 
-  module = 'volumes'
+  module = 'resourcesvolumes'
 
   getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/volumes`
   getListUrl = this.getResourceUrl
