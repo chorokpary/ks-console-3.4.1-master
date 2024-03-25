@@ -43,6 +43,7 @@ const KeypairDetail = props => {
         show: showEdit,
         onClick: () =>
           props.rootStore.triggerAction('sriov.edit', {
+            ...props.match.params,
             type: 'SRIOV_DETAIL',
             detail: toJS(store.detail),
             store,

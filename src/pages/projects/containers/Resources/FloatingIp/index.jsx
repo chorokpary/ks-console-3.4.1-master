@@ -32,8 +32,8 @@ import FloatingIpStore from 'stores/resources/floatingip'
 
 @withList({
   store: new FloatingIpStore(),
-  module: 'floating_ips',
-  authKey: 'floating_ips',
+  module: 'floatingip',
+  authKey: 'floatingip',
   name: t('RESOURCES_FLOATING_IP'),
 })
 export default class FloatingIp extends React.Component {

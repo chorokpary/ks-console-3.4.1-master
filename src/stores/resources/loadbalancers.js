@@ -33,7 +33,7 @@ export default class LoadBalancerStore extends Base {
     networkDataList = [];
     floatingIpsList = [];
 
-    module = 'lbs'
+    module = 'loadBalancers'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
     getListUrl = this.getResourceUrl

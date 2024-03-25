@@ -27,8 +27,8 @@ import styles from './index.scss'
 
 @withList({
     store: new HostDeviceStore(),
-    module: 'host_devices',
-    authKey: 'host_devices',
+    module: 'hostDevices',
+    authKey: 'hostDevices',
     name: t('RESOURCES_HOST_DEVICE'),
 })
 export default class HostDevices extends React.Component {
@@ -38,7 +38,7 @@ export default class HostDevices extends React.Component {
     }
 
     get itemActions() {
-        return [ ]
+        return []
     }
 
     get tableActions() {

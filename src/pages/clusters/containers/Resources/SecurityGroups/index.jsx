@@ -36,8 +36,8 @@ import * as common from 'utils/resources'
 
 @withClusterList({
     store: new SecurityGroupStore(),
-    module: 'security_groups',
-    authKey: 'security_groups',
+    module: 'securityGroups',
+    authKey: 'securityGroups',
     name: t('RESOURCES_SECURITY_GROUP'),
     rowKey: 'id'
 })
