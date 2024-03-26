@@ -124,7 +124,6 @@ export default class FlavorStore extends Base {
 
     const response = { ...params, ...this.mapper(result), kind: 'hostDevices' };
 
-    console.log('was ist das \n', response);
     const sortType = params?.ascending ? 'desc' : 'asc';
     if (params?.sortBy) {
       response.mediated_devices.sort((a, b) => {

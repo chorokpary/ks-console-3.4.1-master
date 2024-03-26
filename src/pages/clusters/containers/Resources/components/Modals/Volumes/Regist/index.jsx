@@ -15,7 +15,7 @@ import { Modal, TypeSelect } from 'components/Base';
 import * as common from 'utils/resources';
 import { ProjectSelect } from 'components/Inputs';
 
-import { PATTERN_USER_NAME } from 'utils/constants'
+import { PATTERN_USER_NAME } from 'utils/constants';
 
 import styles from './index.scss';
 
@@ -80,12 +80,19 @@ const RegistModal = props => {
     },
   ];
 
-  // slider
-  const handleRootDisk = {
-    onChangeSlider: e => {
-      setVolumeCapacity(e);
-    },
+  const onChangeVolumeCapacity = e => {
+    const { data } = form.current.props;
+    let volumeCapacity = e;
+    if (typeof e === 'string') {
+      const removeText = 'GiB';
+      volumeCapacity = volumeCapacity.substring(0, volumeCapacity.indexOf(removeText));
+      volumeCapacity = volumeCapacity.replace(/[^0-9]/g, '');
+    }
+    
+    data.capacity = Number(volumeCapacity);
+    setVolumeCapacity(Number(volumeCapacity));
   };
+
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -113,6 +120,7 @@ const RegistModal = props => {
       if (
         data.name == undefined ||
         data.name == '' ||
+		!PATTERN_USER_NAME.test(data.name) ||
         (!props.namespace && projectName == undefined)
       ) {
         handleOk();
@@ -338,11 +346,11 @@ const RegistModal = props => {
                       padding: 20,
                     }}
                   >
-                    <Input
+                    {/* <Input
                       type="hidden"
                       name="capacity"
                       value={volumeCapacity}
-                    />
+                    /> */}
                     <Slider
                       max={320}
                       marks={{
@@ -355,9 +363,9 @@ const RegistModal = props => {
                         320: '320',
                       }}
                       style={{ width: '10%' }}
-                      value={volumeCapacity}
+                      defaultValue={volumeCapacity}
                       unit={'GiB'}
-                      onChange={e => handleRootDisk.onChangeSlider(e)}
+                      onChange={e => onChangeVolumeCapacity(e)}
                       withInput
                     />
                   </div>

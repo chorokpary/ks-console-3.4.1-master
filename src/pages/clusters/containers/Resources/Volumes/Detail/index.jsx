@@ -82,12 +82,14 @@ const VolumeDetail = props => {
                 type: 'VOLUME_DETAIL',
                 store,
                 success: fetchData,
+                ...props.match.params
               });
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
                 data: { id, vmId: used_by_vmi, actionType: 'D' },
                 store,
                 success: fetchData,
+                ...props.match.params
               });
             }
           },

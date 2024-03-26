@@ -37,7 +37,7 @@ import * as common from 'utils/resources'
 @withList({
     store: new SecurityGroupStore(),
     module: 'security_groups',
-    authKey: 'security_groups',
+    authKey: 'securityGroups',
     name: t('RESOURCES_SECURITY_GROUP'),
     rowKey: 'id'
 })

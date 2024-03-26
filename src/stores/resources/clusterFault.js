@@ -375,7 +375,7 @@ export default class ClusterFaultStore extends Base {
             }
         }
         let res = await this.submitting(
-            request.post(`${this.getResourceUrl()}/k8sgpts`, params)
+            request.post(`${this.getResourceUrl()}/list-k8sgpts`, params)
         )
         return res
     }

@@ -51,11 +51,11 @@ export default {
     },
   },
   'sriov.edit': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, name : data.resource_name }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, name: data.resource_name }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -66,6 +66,8 @@ export default {
         modal: ModifyModal,
         store,
         module,
+        cluster,
+        namespace,
         ...props,
       })
     },

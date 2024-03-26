@@ -35,7 +35,7 @@ import ResourceTable from 'clusters/components/ResourceTable'
 @withList({
     store: new LoadBalancerStore(),
     module: 'lbs',
-    authKey: 'lbs',
+    authKey: 'loadBalancers',
     name: t('RESOURCES_LOAD_BALANCER'),
     rowKey: 'id'
 })
@@ -185,6 +185,7 @@ export default class LoadBalancers extends React.Component {
     render() {
 
         const { bannerProps, tableProps } = this.props
+        console.log(tableProps)
         return (
             <ListPage {...this.props}>
                 <Banner

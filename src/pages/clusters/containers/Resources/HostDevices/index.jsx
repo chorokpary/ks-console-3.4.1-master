@@ -28,7 +28,7 @@ import styles from './index.scss'
 @withList({
     store: new HostDeviceStore(),
     module: 'host_devices',
-    authKey: 'host_devices',
+    authKey: 'hostDevices',
     name: t('RESOURCES_HOST_DEVICE'),
 })
 export default class HostDevices extends React.Component {
