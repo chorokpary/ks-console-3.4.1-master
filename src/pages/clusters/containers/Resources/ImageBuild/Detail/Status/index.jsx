@@ -12,15 +12,21 @@ import styles from './index.scss'
 //====================================
 // pod_status 상태
 // ====================================
-// 1.생성 중 : PodCreating
-// 2.실행 중 : PodRunning
-// 3.삭제 중 : PodDeleting
-// 4.파일 업로드중 : FileUploading
-// 5.파일 업로드 완료 : FileUploadCompleted
-// 6.이미지 빌드&푸시 중 : ImageBuildPushing
-// 7.이미지 빌드&푸시 완료 : ImagePushCompleted
-// 8.이미지 빌드&푸시 실패 : ImagePushFailed
-// ====================================
+// 서버 구성
+// 실행중 = "Server Configuring"
+// 완료 = "Server Ready"
+// 실패 = "Server Configure Fail"
+// 파일 업로드
+// 실행중 = "File Uploading"
+// 완료 = "File Upload Completed"
+// 실패 = "File Upload Fail"
+// 이미지 빌드/푸시
+// 실행중 = "Image Build & Pushing"
+// 완료 = "Image Push Completed"
+// 실패 = "Image Push Failed"
+// 서버 구성
+// 삭제 = "Server Deleting"
+// // ====================================
 
 
 const Status = (props) => {
@@ -31,10 +37,15 @@ const Status = (props) => {
 
     const uploadInfo = get(detailInfo, ['upload-info-list', 'upload-info'], [])[0]
     const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
-    const podStatus = get(detailInfo, 'pod-status', '')
+    const podStatusData = get(detailInfo, 'pod-status', '')
+    const podStatus = podStatusData.replace(/\s/gi, "")
 
-    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuildPushing', 'ImagePushCompleted', 'ImagePushFailed']
-    const fileBuildArrayState = ['ImageBuildPushing', 'ImagePushCompleted', 'ImagePushFailed']
+    // text.replace(/\s/gi, "")
+
+    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuild&Pushing', 'ImagePushCompleted', 'ImagePushFailed']
+    const fileBuildArrayState = ['ImageBuild&Pushing', 'ImagePushCompleted', 'ImagePushFailed']
+
+    console.log("detailInfo : "+ JSON.stringify(detailInfo))
 
       const status = 'success';
       const type = 'type'
@@ -79,7 +90,7 @@ const Status = (props) => {
                 }
               /> 
             }
-            {(fileStatus.toLowerCase() == 'completed' && fileUploadArrayState.includes(podStatus)) &&
+            {(fileStatus.toLowerCase() == 'completed' && fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
                 <Text
                   key={type}
                   className={styles.condition}
@@ -104,14 +115,14 @@ const Status = (props) => {
                   className={styles.condition}
                   icon='image'
                   title={t(`RESOURCES_IMAGE_BUILD_PUSH`)}
-                  description={podStatus == 'ImageBuildPushing' ? t(`RESOURCES_IMAGE_BUILD_PUSH_ING_DESC`) : t(`RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC`)}
+                  description={podStatus == 'ImageBuild&Pushing' ? t(`RESOURCES_IMAGE_BUILD_PUSH_ING_DESC`) : t(`RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
-                      name={podStatus === 'success' ? 'success' : 'error'}
+                      name={podStatus === 'ImagePushFailed' ? 'error' : 'success'}
                       color={{
                         primary: '#fff',
-                        secondary: podStatus === 'success' ? '#55bc8a' : '#ca2621',
+                        secondary: podStatus === 'ImagePushFailed' ? '#ca2621' : '#55bc8a',
                       }}
                     />
                   }

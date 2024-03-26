@@ -174,7 +174,7 @@ const handleHarborProxyCustom = async ctx => {
   } else if (requestUrl === 'tags') { // tag list
     path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`;
   } else if (requestUrl === 'build') { // 사용자 유효성 체크
-    path = `${serverConfig.apiServer.imagebuildHarborUrl}/api/v2.0/users/current`;
+    path = `${harborUrl}/api/v2.0/users/current`;
   }
 
   const [, protocol] = `${harborUrl}`.match(/^(https?:\/\/)/)

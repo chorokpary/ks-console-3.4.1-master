@@ -14,17 +14,15 @@ import { PATTERN_USER_NAME } from 'utils/constants'
 
 const RegistModal = (props) => {
 
-  console.log("props.isSubmitting  : " + props.isSubmitting)
-
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
   const [cpuType, setCpuType] = useState('ARM')
 
-  const [registryUrl, setRegistryUrl] = useState('ntels.harbor.core/arm-cmp/test-image:latest')
-  const [userName, setUserName] = useState('admin')
-  const [userPassword, setUserPassword] = useState('gozldqkdwl2')
+  const [registryUrl, setRegistryUrl] = useState('')
+  const [userName, setUserName] = useState('')
+  const [userPassword, setUserPassword] = useState('')
 
   const [harborValid, setHarborValid] = useState(false)
 
@@ -85,8 +83,10 @@ const RegistModal = (props) => {
 
     let userAuth = Base64.encode(`${userName}:${userPassword}`)
 
+    const originUrl = new URL(registryUrl);
     await request.post(`customharbor/build`, {
-      auth: userAuth
+      auth: userAuth,
+      originUrl: originUrl.origin,
     }).then(res => {
       Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
       setuserValidCheck(true);

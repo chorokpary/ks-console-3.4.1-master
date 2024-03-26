@@ -92,7 +92,7 @@ const SecurityGroupDetail = (props) => {
         icon: "shield",
         module: store.module,
         name: get(store.detail, 'name'),
-        desc: get(store.detail.security_group, 'description', ''),
+        // desc: get(store.detail.security_group, 'description', ''),
         operations: getOperations(),
         attrs: getAttrs(),
         breadcrumbs: [

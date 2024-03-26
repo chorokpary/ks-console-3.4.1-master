@@ -35,8 +35,8 @@ import styles from './index.scss';
 import ResourceTable from 'clusters/components/ResourceTable';
 @withList({
   store: new VolumeStore(),
-  module: 'resourcesvolumes',
-  authKey: 'resourcesvolumes',
+  module: 'resourcesVolumes',
+  authKey: 'resourcesVolumes',
   name: t('RESOURCES_VOLUME'),
   rowKey: 'id',
 })
