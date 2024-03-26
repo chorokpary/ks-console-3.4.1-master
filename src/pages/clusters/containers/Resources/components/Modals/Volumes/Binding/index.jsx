@@ -52,10 +52,10 @@ const BindingModal = (props) => {
   useEffect(() => {
 
     const getVmCreateData = async () => {
-      const vmListData = await vmStore.fetchList(props);
+      const vmListData = await vmStore.fetchList({ cluster: props.cluster, namespace: props.namespace });
       setVmList(vmListData);
 
-      const volumeData = await volumeStore.fetchList(props);
+      const volumeData = await volumeStore.fetchList({ cluster: props.cluster, namespace: props.namespace });
       const attachedVmList = volumeData?.filter((row) => (row.used_by_vmi != "" && row.used_by_vmi != null)).map((el) => el.used_by_vmi)
 
       setAttachedVmList(attachedVmList);

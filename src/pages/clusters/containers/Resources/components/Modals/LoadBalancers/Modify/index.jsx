@@ -245,6 +245,68 @@ const ModifyModal = (props) => {
             </div>
           </Form.Item>
 
+          {/* {t('RESOURCES_POLICY')}<span className="form-item-required">*</span>
+          <Form.Item>
+            <div className={styles.wrapper}>
+              <div className={styles.table}>
+                <table>
+                  <colgroup>
+                    <col width="20%" />
+                    <col width="15%" />
+                    <col width="20%" />
+                    <col width="10%" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th><strong>{t('RESOURCES_TYPE_YOO')}</strong></th>
+                      <th><strong>{t('RESOURCES_PROTOCOL')}</strong></th>
+                      <th><strong>{t('RESOURCES_PORT_RANGE')}</strong></th>
+                      <th><strong></strong></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {formRulesFields.map((v, i) => (
+                      <tr key={i}>
+                        <td>
+                          <Select value={v.message ? v.message : v.ruleType} options={ruleTypeOptions} onChange={(e) => handleRules.handleSelectClick(i, 'ruleType', e)} />
+                        </td>
+                        <td>
+                          <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
+                        </td>
+                        <td>
+                          <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} >
+                            <Input type="text"
+                              onChange={(e) => handleRules.handleInputChange(i, 'portRangeMax', e)}
+                              value={v.portRangeMax}
+                              disabled={!v.isCustom} />
+                          </Tooltip>
+                        </td>
+                        <td>
+                          <Button
+                            type="flat"
+                            icon="trash"
+                            onClick={() => handleRules.handleRemoveFields(i)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className={`form-item-error ${isRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_SELECT_POLICY_TIP')}</div>
+                <div className={`form-item-error ${isDupRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_DUPLICATE_POLICY_TIP')}</div>
+              </div>
+              <div className="text-right">
+                <Button
+                  className={styles.add}
+                  onClick={handleRules.handleAddFields}
+                  disabled={btnDimm}
+                >
+                  {t('RESOURCES_ADD')}
+                </Button>
+              </div>
+            </div>
+          </Form.Item> */}
+
 
           <Form.Item
             className={styles.textarea}
