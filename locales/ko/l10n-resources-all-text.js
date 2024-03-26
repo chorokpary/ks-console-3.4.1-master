@@ -583,6 +583,7 @@ module.exports = {
   RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3TURBO: 'GPT-3.5-turbo는 GPT-3.5의 성능을 높이기 위해 추가적인 최적화나 향상이 적용된 버전으로 가정됩니다.',
   RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4: 'GPT-4는 GPT 시리즈의 다음 버전으로, 이전 모델보다 더 뛰어난 자연어 이해와 생성 능력을 갖추고 있을 것으로 예상됩니다.',
   RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4TURBO: 'GPT-4-turbo는 GPT-4의 성능을 높이기 위해 추가적인 최적화나 향상이 적용된 버전으로, 더 빠르고 정확한 결과를 제공할 것으로 예상됩니다.',
+  RESOURCES_CLUSTER_INSPECTOR: '클러스터 인스펙터',
   RESOURCES_CONFIRM: '확인',
   RESOURCES_APP_DEPLOY: '애플리케이션 배포',
   RESOURCES_ID: '아이디',
