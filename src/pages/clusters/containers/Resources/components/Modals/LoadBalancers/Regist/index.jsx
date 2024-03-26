@@ -124,6 +124,7 @@ const RegistModal = (props) => {
         data.members = members
         data.project = projectName
         data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)]
+        console.log(data)
         onOk({ lb: data })
       }
 
@@ -430,7 +431,7 @@ const RegistModal = (props) => {
           </Form.Item>
           <div style={{ padding: 10 }} />
 
-          {t('RESOURCES_POLICY')}<span className="form-item-required">*</span>
+          {t('RESOURCES_POLICY')}
           <Form.Item>
             <div className={styles.wrapper}>
               <div className={styles.table}>
@@ -459,7 +460,7 @@ const RegistModal = (props) => {
                           <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
                         </td>
                         <td>
-                          <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} >
+                          <Tooltip content={v.validPort?.isValid ? v.validPort.message : ''} placement="right" always={v.validPort?.isValid} >
                             <Input type="text"
                               onChange={(e) => handleRules.handleInputChange(i, 'portRangeMax', e)}
                               value={v.portRangeMax}
