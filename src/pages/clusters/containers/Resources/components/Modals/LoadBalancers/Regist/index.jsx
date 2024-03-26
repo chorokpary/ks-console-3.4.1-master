@@ -73,7 +73,6 @@ const RegistModal = (props) => {
     setNetworkList(networkList)
   }
 
-
   const networkOptions = () => {
     const opt = networkList.filter((el) => !el.external).map((obj) => ({
       label: t(obj.name),
@@ -81,10 +80,13 @@ const RegistModal = (props) => {
     }))
     return opt
   }
+
   const vmOptions = () => {
+
     const opt = vmDataList.filter((el) => el.networks.map(elN => elN.name).includes(networkName)).map((obj) => ({
       label: t(obj.name),
-      value: t(obj.name),
+      value: t(obj.id),
+      disabled: obj.state === 'Running' ? false : true
     }))
     return opt
   }
@@ -141,7 +143,7 @@ const RegistModal = (props) => {
   }
 
   const memberIpObj = {
-    vmName: t('RESOURCES_SELECT')
+    vmId: t('RESOURCES_SELECT')
     , memberIp: ''
     , message: ''
   }
@@ -165,15 +167,15 @@ const RegistModal = (props) => {
     handleSelectClick: (i, val) => {
       const values = [...formMemberIpFields];
 
-      const opt = vmDataList.filter((el) => el.name === val).map((obj) => {
+      const opt = vmDataList.filter((el) => el.id === val).map((obj) => {
         return obj.networks.filter((el) => el.name === networkName).map((network) => ({
           value: network.ip
         }))
       })
 
-      if (!values.map(obj => obj.vmName).includes(val) || values[i].vmName === val || val === "") {
+      if (!values.map(obj => obj.vmId).includes(val) || values[i].vmId === val || val === "") {
         values[i].message = ""
-        values[i].vmName = val;
+        values[i].vmId = val;
         values[i].memberIp = opt[0][0].value;
         setIsMembers(true);
       } else {
@@ -398,7 +400,7 @@ const RegistModal = (props) => {
                     {formMemberIpFields.map((v, i) => (
                       <tr key={i}>
                         <td>
-                          <Select value={v.message ? v.message : v.vmName} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
+                          <Select value={v.message ? v.message : v.vmId} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
                         </td>
                         <td>
                           <Input type="text" value={v.memberIp} disabled />
