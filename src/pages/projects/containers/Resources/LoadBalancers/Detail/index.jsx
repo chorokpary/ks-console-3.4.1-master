@@ -132,6 +132,11 @@ const LoadBalancerDetail = (props) => {
                 value: detail.lb.virtual_ip,
             },
             {
+                name: t('FIP'),
+                value: floatingIp,
+                show: floatingIp !== undefined ? true : false
+            },
+            {
                 name: t('RESOURCES_POLICY'),
                 //value: detail.lb.rules.length < 1 ? '-' : detail.lb.rules.map((rule) => (rule.protocol) + '\r\n')
                 value: detail.lb.rules.length > 1 ? detail.lb.rules[0]?.protocol + ' ' + t('RESOURCES_BESIDES') + ' ' + (detail.lb.rules.length - 1) + t('RESOURCES_COUNT') : detail.lb.rules[0]?.protocol,

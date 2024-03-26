@@ -215,7 +215,7 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
     if (step == 1) {
       if (data.name == undefined || data.name == ""
-        || data.segment_id == undefined || data.segment_id == ""
+        || (!externalBool && (data.segment_id == undefined || data.segment_id == ""))
         || data.cidr == undefined || data.cidr == ""
         || data.ip_pool_start == undefined || data.ip_pool_start == ""
         || data.ip_pool_end == undefined || data.ip_pool_end == ""
