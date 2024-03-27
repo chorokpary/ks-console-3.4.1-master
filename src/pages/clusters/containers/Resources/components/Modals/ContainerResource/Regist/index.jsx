@@ -891,7 +891,7 @@ const RegistModal = (props) => {
                   </Columns>
                 </Form.Group>
 
-                <Form.Item label={t('EKG Stack')}>
+                <Form.Item label={t('Petasus Kubernetes Stack')}>
                   <Form.Group>
                     <Form.Item>
                       <CardSelect
@@ -1083,7 +1083,7 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                       <div className={styles.list} style={{ width: '100%' }}>
-                        <label>EKG Stack</label>
+                        <label>Petasus Kubernetes Stack (PKS)</label>
                         <div className={styles.multiline}>
                           {ekgStack.map((obj, index) => (
                             <div key={index}>{obj}</div>
