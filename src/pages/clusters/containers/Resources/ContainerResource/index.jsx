@@ -35,288 +35,294 @@ import styles from './index.scss';
 import ResourceStore from 'stores/resources/containerresource';
 
 @withList({
-  store: new ResourceStore(),
-  module: 'clusters',
-  authKey: 'clusters',
-  name: 'KaaS',
+    store: new ResourceStore(),
+    module: 'clusters',
+    authKey: 'clusters',
+    name: 'KaaS',
 })
 export default class Resource extends React.Component {
-  // auto refresh start  ##################################
-  constructor(props) {
-    super(props);
-    this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
-  }
-
-  componentDidUpdate() {
-    if (this.refreshTimer === null && this.isRuning) {
-      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+    // auto refresh start  ##################################
+    constructor(props) {
+        super(props);
+        this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
     }
-  }
 
-  componentWillUnmount() {
-    clearInterval(this.refreshTimer);
-    this.unsubscribe && this.unsubscribe();
-  }
-
-  refreshHandler = () => {
-    if (this.isRuning) {
-      this.getData({ silent: true });
-    } else {
-      clearInterval(this.refreshTimer);
-      this.refreshTimer = null;
+    componentDidUpdate() {
+        if (this.refreshTimer === null && this.isRuning) {
+            this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+        }
     }
-  };
 
-  get isRuning() {
-    const { selectedRowKeys } = toJS(this.props.store.list);
-    const runingFlag = selectedRowKeys.length > 0 ? false : true;
-    return runingFlag;
-  }
+    componentWillUnmount() {
+        clearInterval(this.refreshTimer);
+        this.unsubscribe && this.unsubscribe();
+    }
 
-  getData = params => {
-    this.props.store.fetchList({
-      ...this.props.match.params,
-      ...params,
-      ...this.props.query, // search param
-    });
-  };
-  // auto refresh end  ##################################
-
-  handleFetch = (params, refresh) => {
-    this.routing.query(params, refresh);
-  };
-
-  get routing() {
-    return this.props.rootStore.routing;
-  }
-
-  showAction(record) {
-    return globals.user.username !== record.name;
-  }
-
-  get itemActions() {
-    const { getData, trigger } = this.props;
-    return [
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('REMOVE'),
-        action: 'delete',
-        show: this.showAction,
-        onClick: item =>
-          trigger('containerresource.remove', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
-      },
-    ];
-  }
-
-  get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
-    return {
-      ...tableProps.tableActions,
-      actions: [
-        {
-          key: 'regist',
-          type: 'control',
-          text: t('RESOURCES_CREATE'),
-          action: 'create',
-          onClick: () =>
-            trigger('containerresource.regist', {
-              ...this.props.match.params,
-              type: this.name,
-              success: getData,
-            }),
-        },
-      ],
-      selectActions: [
-        {
-          key: 'delete',
-          type: 'danger',
-          text: t('REMOVE'),
-          action: 'delete',
-          onClick: () =>
-            trigger('containerresource.remove.batch', {
-              success: getData,
-              ...this.props.match.params,
-            }),
-        },
-      ],
-      getCheckboxProps: record => ({
-        disabled: !this.showAction(record),
-        name: record.name,
-      }),
+    refreshHandler = () => {
+        if (this.isRuning) {
+            this.getData({ silent: true });
+        } else {
+            clearInterval(this.refreshTimer);
+            this.refreshTimer = null;
+        }
     };
-  }
 
-  getResourcesStatus() {
-    const RESOURCES_STATUS = [
-      { text: 'READY', value: 'Ready' },
-      { text: 'NOTREADY', value: 'Not-ready' },
-    ];
-
-    return RESOURCES_STATUS.map(status => ({
-      text: status.text,
-      value: status.value,
-    }));
-  }
-
-  getState(state, phase) {
-    if (phase != 'Provisioned' && phase != 'Running') {
-      return 'updating';
+    get isRuning() {
+        const { selectedRowKeys } = toJS(this.props.store.list);
+        const runingFlag = selectedRowKeys.length > 0 ? false : true;
+        return runingFlag;
     }
 
-    if (state) {
-      return 'running';
-    } else {
-      return 'inactive';
+    getData = params => {
+        this.props.store.fetchList({
+            ...this.props.match.params,
+            ...params,
+            ...this.props.query, // search param
+        });
+    };
+    // auto refresh end  ##################################
+
+    handleFetch = (params, refresh) => {
+        this.routing.query(params, refresh);
+    };
+
+    get routing() {
+        return this.props.rootStore.routing;
     }
-  }
 
-  getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
-    return [
-      {
-        title: t('NAME'),
-        dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
-        render: this.renderAvatar,
-        render: (name, record) => {
-          const { cluster } = this.props.match.params;
-          const { cluster_ready, phase } = record;
+    showAction(record) {
+        return globals.user.username !== record.name;
+    }
 
-          return (
-            <div className={styles.avatar}>
-              <div className={styles.icon}>
-                <Icon name="kubernetes" size={40} />
-                <Indicator
-                  className={styles.indicator}
-                  type={this.getState(cluster_ready, phase)}
-                  flicker
+    get itemActions() {
+        const { getData, trigger } = this.props;
+        return [
+            {
+                key: 'delete',
+                icon: 'trash',
+                text: t('REMOVE'),
+                action: 'delete',
+                show: this.showAction,
+                onClick: item =>
+                    trigger('containerresource.remove', {
+                        detail: item,
+                        success: getData,
+                        ...this.props.match.params,
+                    }),
+            },
+        ];
+    }
+
+    get tableActions() {
+        const { trigger, getData, routing, tableProps } = this.props;
+        return {
+            ...tableProps.tableActions,
+            actions: [
+                {
+                    key: 'regist',
+                    type: 'control',
+                    text: t('RESOURCES_CREATE'),
+                    action: 'create',
+                    onClick: () =>
+                        trigger('containerresource.regist', {
+                            ...this.props.match.params,
+                            type: this.name,
+                            success: getData,
+                        }),
+                },
+            ],
+            selectActions: [
+                {
+                    key: 'delete',
+                    type: 'danger',
+                    text: t('REMOVE'),
+                    action: 'delete',
+                    onClick: () =>
+                        trigger('containerresource.remove.batch', {
+                            success: getData,
+                            ...this.props.match.params,
+                        }),
+                },
+            ],
+            getCheckboxProps: record => ({
+                disabled: !this.showAction(record),
+                name: record.name,
+            }),
+        };
+    }
+
+    getResourcesStatus() {
+        const RESOURCES_STATUS = [
+            { text: 'Ready', value: 'Ready' },
+            { text: 'Not Ready', value: 'Not-ready' },
+        ];
+
+        return RESOURCES_STATUS.map(status => ({
+            text: status.text,
+            value: status.value,
+        }));
+    }
+
+    getState(state, phase) {
+        if (phase != 'Provisioned' && phase != 'Running') {
+            return 'updating';
+        }
+
+        if (state) {
+            return 'running';
+        } else {
+            return 'inactive';
+        }
+    }
+
+    getColumns = () => {
+        const { getSortOrder } = this.props;
+        const { cluster } = this.props.match.params;
+        return [
+            {
+                title: t('NAME'),
+                dataIndex: 'name',
+                sorter: true,
+                sortOrder: getSortOrder('name'),
+                search: true,
+                render: this.renderAvatar,
+                render: (name, record) => {
+                    const { cluster } = this.props.match.params;
+                    const { cluster_ready, phase } = record;
+
+                    return (
+                        <div className={styles.avatar}>
+                            <div className={styles.icon}>
+                                <Icon name="kubernetes" size={40} />
+                                <Indicator
+                                    className={styles.indicator}
+                                    type={this.getState(cluster_ready, phase)}
+                                    flicker
+                                />
+                            </div>
+                            <div>
+                                <Link
+                                    className={styles.title}
+                                    to={`/clusters/${cluster}/containerResource/${name}`}
+                                >
+                                    {name}
+                                </Link>
+                            </div>
+                        </div>
+                    );
+                },
+            },
+            {
+                title: t('RESOURCES_DEPLOY_STEP'),
+                dataIndex: 'phase',
+                isHideable: true,
+                width: 'auto',
+                render: phase => (
+                    <p className="tall">
+                        <span>{phase}</span>
+                    </p>
+                ),
+            },
+            {
+                title: t('RESOURCES_KUBERNETES_VERSION'),
+                dataIndex: 'kube_version',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('Master Node'),
+                dataIndex: 'cp_replicas',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('Worker Node'),
+                dataIndex: 'md_replicas',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('RESOURCES_STATE'),
+                dataIndex: 'cluster_ready',
+                isHideable: true,
+                filters: this.getResourcesStatus(),
+                search: true,
+                width: 'auto',
+                render: (state, record) => {
+                    return (
+                        <div className={styles.iconwrapper}>
+                            <i
+                                className={
+                                    styles[
+                                        `ico-status-${
+                                            state ? 'running' : 'stopping'
+                                        }`
+                                    ]
+                                }
+                            />
+                            <p>{state ? 'Ready' : 'Not-ready'}</p>
+                        </div>
+                    );
+                },
+            },
+            {
+                title: t('RESOURCES_REGIST_DATE'),
+                dataIndex: 'timestamp',
+                isHideable: true,
+                width: 150,
+                sorter: true,
+                sortOrder: getSortOrder('creation_timestamp'),
+                render: timestamp => (
+                    <p>
+                        {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
+                    </p>
+                ),
+            },
+        ];
+    };
+
+    get emptyProps() {
+        return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
+    }
+
+    get columnSearch() {
+        return [
+            {
+                dataIndex: 'name',
+                title: t('NAME'),
+                search: true,
+            },
+            {
+                dataIndex: 'cluster_ready',
+                title: t('RESOURCES_STATE'),
+                search: true,
+            },
+        ];
+    }
+
+    render() {
+        const { bannerProps, tableProps } = this.props;
+        // console.log({ ...this.props })
+        return (
+            <ListPage {...this.props}>
+                <Banner
+                    {...bannerProps}
+                    icon="kubernetes"
+                    tabs={this.tabs}
+                    title={t('RESOURCES_KAAS_RESOURCE')}
+                    description={t('RESOURCES_KAAS_DESC')}
                 />
-              </div>
-              <div>
-                <Link
-                  className={styles.title}
-                  to={`/clusters/${cluster}/containerResource/${name}`}
-                >
-                  {name}
-                </Link>
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        title: t('RESOURCES_DEPLOY_STEP'),
-        dataIndex: 'phase',
-        isHideable: true,
-        width: 'auto',
-        render: phase => (
-          <p className="tall">
-            <span>{phase}</span>
-          </p>
-        ),
-      },
-      {
-        title: t('RESOURCES_KUBERNETES_VERSION'),
-        dataIndex: 'kube_version',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('Master Node'),
-        dataIndex: 'cp_replicas',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('Worker Node'),
-        dataIndex: 'md_replicas',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
-        title: t('RESOURCES_STATE'),
-        dataIndex: 'cluster_ready',
-        isHideable: true,
-        filters: this.getResourcesStatus(),
-        search: true,
-        width: 'auto',
-        render: (state, record) => {
-          return (
-            <div className={styles.iconwrapper}>
-              <i
-                className={
-                  styles[`ico-status-${state ? 'running' : 'stopping'}`]
-                }
-              />
-              <p>{state ? 'Ready' : 'Not-ready'}</p>
-            </div>
-          );
-        },
-      },
-      {
-        title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'timestamp',
-        isHideable: true,
-        width: 150,
-        sorter: true,
-        sortOrder: getSortOrder('creation_timestamp'),
-        render: timestamp => (
-          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
-        ),
-      },
-    ];
-  };
-
-  get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
-  }
-
-  get columnSearch() {
-    return [
-      {
-        dataIndex: 'name',
-        title: t('NAME'),
-        search: true,
-      },
-      {
-        dataIndex: 'cluster_ready',
-        title: t('RESOURCES_STATE'),
-        search: true,
-      },
-    ];
-  }
-
-  render() {
-    const { bannerProps, tableProps } = this.props;
-    // console.log({ ...this.props })
-    return (
-      <ListPage {...this.props}>
-        <Banner
-          {...bannerProps}
-          icon="kubernetes"
-          tabs={this.tabs}
-          title={t('RESOURCES_KAAS_RESOURCE')}
-          description={t('RESOURCES_KAAS_DESC')}
-        />
-        <Table
-          {...tableProps}
-          emptyProps={this.emptyProps}
-          className={'table-2-6 table-4-3'}
-          itemActions={this.itemActions}
-          tableActions={this.tableActions}
-          columns={this.getColumns()}
-          columnSearch={this.columnSearch}
-          onFetch={this.handleFetch}
-        />
-      </ListPage>
-    );
-  }
+                <Table
+                    {...tableProps}
+                    emptyProps={this.emptyProps}
+                    className={'table-2-6 table-4-3'}
+                    itemActions={this.itemActions}
+                    tableActions={this.tableActions}
+                    columns={this.getColumns()}
+                    columnSearch={this.columnSearch}
+                    onFetch={this.handleFetch}
+                />
+            </ListPage>
+        );
+    }
 }

@@ -16,16 +16,17 @@ import styles from './index.scss'
 // 실행중 = "Server Configuring"
 // 완료 = "Server Ready"
 // 실패 = "Server Configure Fail"
+// 삭제 = "Server Deleting"
+
 // 파일 업로드
 // 실행중 = "File Uploading"
 // 완료 = "File Upload Completed"
 // 실패 = "File Upload Fail"
+
 // 이미지 빌드/푸시
 // 실행중 = "Image Build & Pushing"
 // 완료 = "Image Push Completed"
 // 실패 = "Image Push Failed"
-// 서버 구성
-// 삭제 = "Server Deleting"
 // // ====================================
 
 
@@ -42,10 +43,10 @@ const Status = (props) => {
 
     // text.replace(/\s/gi, "")
 
-    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'ImageBuild&Pushing', 'ImagePushCompleted', 'ImagePushFailed']
+    const fileServerArrayState = ['ServerConfiguring', 'ServerReady', 'ServerConfigureFail', 'ServerDeleting']
+    const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'FileUploadFail', 'ImageBuild&Pushing', 'ImagePushCompleted', 'ImagePushFailed']
     const fileBuildArrayState = ['ImageBuild&Pushing', 'ImagePushCompleted', 'ImagePushFailed']
 
-    console.log("detailInfo : "+ JSON.stringify(detailInfo))
 
       const status = 'success';
       const type = 'type'
@@ -71,55 +72,60 @@ const Status = (props) => {
             />
           </div>
           <div className={styles.content}>
-            {fileStatus.toLowerCase() == 'completed' &&
+            {(fileServerArrayState.includes(podStatus.replace(/\s/gi, ""))
+             || fileUploadArrayState.includes(podStatus.replace(/\s/gi, "")) 
+             || fileBuildArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
               <Text
                 key={type}
                 className={styles.condition}
                 icon='image'
                 title={t(`RESOURCES_ENVIRONMENT_CONFIGURATION`)}
-                description={t( `RESOURCES_FILE_UPLOADED_DESC`)}
+                description={podStatus == 'ServerConfigureFail' ? t(`RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC`) 
+                            : podStatus === 'ServerConfiguring' ? t(`RESOURCES_ENVIRONMENT_CONFIGURATION_ING_DESC`) : t(`RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC`)}
                 extra={
                   <Icon
                     className={styles.status}
-                    name={status === 'success' ? 'success' : 'error'}
+                    name={podStatus === 'ServerConfigureFail' ? 'error' : podStatus === 'ServerConfiguring' ? 'up-circle-duotone' : 'success' }
                     color={{
                       primary: '#fff',
-                      secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                      secondary: podStatus === 'ServerConfigureFail' ? '#ca2621' : '#55bc8a',
                     }}
                   />
                 }
               /> 
             }
-            {(fileStatus.toLowerCase() == 'completed' && fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
+            {(fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
                 <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
                   title={t(`RESOURCES_FILE_UPLOAD`)}
-                  description={podStatus == 'FileUploading' ? t(`RESOURCES_FILE_UPLOADING_DESC`) : t(`RESOURCES_FILE_UPLOAD_COMPLETE_DESC`)}
+                  description={podStatus == 'FileUploadFail' ? t(`RESOURCES_FILE_UPLOAD_FAIL_DESC`) 
+                               : podStatus === 'FileUploading' ? t(`RESOURCES_FILE_UPLOADING_DESC`) : t(`RESOURCES_FILE_UPLOAD_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
-                      name={podStatus === 'ImagePushFailed' ? 'error' : 'success'}
+                      name={podStatus === 'FileUploadFail' ? 'error' : podStatus === 'FileUploading' ? 'up-circle-duotone' : 'success' }
                       color={{
                         primary: '#fff',
-                        secondary: podStatus === 'ImagePushFailed' ? '#ca2621' : '#55bc8a',
+                        secondary: podStatus === 'FileUploadFail' ? '#ca2621' : '#55bc8a',
                       }}
                     />
                   }
                 /> 
             }
-            {(fileStatus.toLowerCase() == 'completed' && fileBuildArrayState.includes(podStatus)) &&
+            {(fileBuildArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
                 <Text
                   key={type}
                   className={styles.condition}
                   icon='image'
                   title={t(`RESOURCES_IMAGE_BUILD_PUSH`)}
-                  description={podStatus == 'ImageBuild&Pushing' ? t(`RESOURCES_IMAGE_BUILD_PUSH_ING_DESC`) : t(`RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC`)}
+                  description={podStatus == 'ImagePushFailed' ? t(`RESOURCES_FILE_UPLOAD_FAIL_DESC`) 
+                               : podStatus === 'ImageBuild&Pushing' ? t(`RESOURCES_IMAGE_BUILD_PUSH_ING_DESC`) : t(`RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC`)}
                   extra={
                     <Icon
                       className={styles.status}
-                      name={podStatus === 'ImagePushFailed' ? 'error' : 'success'}
+                      name={podStatus === 'ImagePushFailed' ? 'error' : podStatus === 'ImageBuild&Pushing' ? 'up-circle-duotone' : 'success' }
                       color={{
                         primary: '#fff',
                         secondary: podStatus === 'ImagePushFailed' ? '#ca2621' : '#55bc8a',
