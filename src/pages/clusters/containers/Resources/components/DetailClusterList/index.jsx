@@ -5,1412 +5,1705 @@ import { toJS } from 'mobx';
 import { Button, Icon, Loading, Tooltip } from '@kube-design/components';
 
 import Tabs from 'components/Cards/Banner/Tabs';
-import { TinyArea } from 'components/Charts';
 import { Panel, Text, Indicator } from 'components/Base';
 
 import styles from './index.scss';
 
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
 
-import { getLocalTime } from 'utils';
-import * as common from 'utils/resources';
-import { getAreaChartOps } from 'utils/monitoring';
-
-// import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
-// import 'pages/clusters/containers/Overview/CustomDashboard/custom_icon.css';
-// import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
-
 const DetailClusterList = props => {
-  const clusterInspection = new ClusterInspectionStore();
+    const clusterInspection = new ClusterInspectionStore();
 
-  const [ciDataList, setCiDataList] = useState();
-  const [namespace, setNamespace] = useState([]);
-  const [withoutNamespace, setWithoutNamespace] = useState([]);
+    const [ciDataList, setCiDataList] = useState();
+    const [namespace, setNamespace] = useState([]);
+    const [withoutNamespace, setWithoutNamespace] = useState([]);
 
-  const [isExpandFlag, setIsExpandFlag] = useState(false);
-  const [expandItem, setExpandItem] = useState();
-  const [expandItemNamespace, setExpandItemNamespace] = useState();
-  const [expandItemType, setExpandItemType] = useState();
-  //   const [isLoading, setIsLoading] = useState(true);
+    const [isExpandFlag, setIsExpandFlag] = useState(false);
+    const [expandItem, setExpandItem] = useState();
+    const [expandItemNamespace, setExpandItemNamespace] = useState();
+    const [expandItemType, setExpandItemType] = useState();
+    //   const [isLoading, setIsLoading] = useState(true);
 
-  // button
-  const [buttonPass, setButtonPass] = useState(false);
-  const [buttonWarning, setButtonWarning] = useState(false);
-  const [buttonDanger, setButtonDanger] = useState(false);
+    // button
+    const [buttonPass, setButtonPass] = useState(false);
+    const [buttonWarning, setButtonWarning] = useState(false);
+    const [buttonDanger, setButtonDanger] = useState(false);
 
-  const [tabValue, setTabValue] = useState('cluster');
+    const [tabValue, setTabValue] = useState('cluster');
 
-  const [showPopup, setShowPopup] = useState(false);
-  const [message, setMessage] = useState();
-  const [describe, setDescribe] = useState();
-  const [suggest, setSuggest] = useState();
-  const [level, setLevel] = useState();
-  // const setShowPopup = (foundData, idx) => {
-  // 	let asd = `<div> ${foundData.describe}</div>`
+    const [showPopup, setShowPopup] = useState(false);
+    const [message, setMessage] = useState();
+    const [describe, setDescribe] = useState();
+    const [suggest, setSuggest] = useState();
+    const [level, setLevel] = useState();
+    // const setShowPopup = (foundData, idx) => {
+    // 	let asd = `<div> ${foundData.describe}</div>`
 
-  // 	document.querySelector(`[name=asd${idx}]`).remove
-  // }
-  const kubeeyeData = [
-    {
-      name: 'PrivilegedAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_PRIVILEDGEDALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_PRIVILEDGEDALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'CanImpersonateUser',
-      describe: t('CLUSTER_INSPECTION_DESC_CANIMPERSONATEUSER'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANIMPERSONATEUSER'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'warning',
-    },
-    {
-      name: 'CanImpersonateUser',
-      describe: t('CLUSTER_INSPECTION_DESC_CANIMPERSONATEUSER'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANIMPERSONATEUSER'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'warning',
-    },
-    {
-      name: 'CanModifyWorkloads',
-      describe: t('CLUSTER_INSPECTION_DESC_CANMODIFYWORKLOADS'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/reference/access-authn-authz/rbac/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANMODIFYWORKLOADS'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'warning',
-    },
-    {
-      name: 'NoCPULimits',
-      describe: t('CLUSTER_INSPECTION_DESC_NOCPULIMITS'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOCPULIMITS'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoCPURequests',
-      describe: t('CLUSTER_INSPECTION_DESC_NOCPUREQUESTS'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_DESC_NOCPUREQUESTS'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'DangerousCapabilities',
-      describe: t('CLUSTER_INSPECTION_DESC_DANGEROUSCAPABILITIES'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_DANGEROUSCAPABILITIES'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'HostIPCAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTIPCALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTIPCALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostIPC: false',
-      level: 'danger',
-    },
-    {
-      name: 'DangerousCapabilities',
-      describe: t('CLUSTER_INSPECTION_DESC_DANGEROUSCAPABILITIES'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_DANGEROUSCAPABILITIES'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostIPC: false',
-      level: 'danger',
-    },
-    {
-      name: 'HostNetworkAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTNETWORKALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTNETWORKALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'HostPIDAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTPIDALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/zh-cn/docs/concepts/security/pod-security-policy/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTPIDALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'HostPortAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTPORTALLOWED'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/overview/#services',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTPORTALLOWED'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'ImagePullPolicyNotAlways',
-      describe: t('CLUSTER_INSPECTION_DESC_IMAGEPULLPOLICYNOTALWAYS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGEPULLPOLICYNOTALWAYS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'warning',
-    },
-    {
-      name: 'ImageTagIsLatest',
-      describe: t('CLUSTER_INSPECTION_DESC_IMAGETAGISLATEST'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGETAGISLATEST'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'warning',
-    },
-    {
-      name: 'ImageTagMiss',
-      describe: t('CLUSTER_INSPECTION_DESC_IMAGETAGMISS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/containers/images/#image-names',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGETAGMISS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'danger',
-    },
-    {
-      name: 'InsecureCapabilities',
-      describe: t('CLUSTER_INSPECTION_DESC_INSECURECAPABILITIES'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_INSECURECAPABILITIES'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoLivenessProbe',
-      describe: t('CLUSTER_INSPECTION_DESC_NOLIVENESSPROBE'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOLIVENESSPROBE'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    livenessProbe:\n      httpGet:\n        path: /healthz\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5\n',
-      level: 'warning',
-    },
-    {
-      name: 'NoMemoryLimits',
-      describe: t('CLUSTER_INSPECTION_DESC_NOMEMORYLIMITS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOMEMORYLIMITS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoMemoryRequests',
-      describe: t('CLUSTER_INSPECTION_DESC_'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoPriorityClass',
-      describe: t('CLUSTER_INSPECTION_DESC_NOPRIORITYCLASS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/workload-resources/priority-class-v1/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'ignore',
-    },
-    {
-      name: 'PrivilegedAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_PRIVILEGEDALLOWED'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_PRIVILEGEDALLOWED'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoReadinessProbe',
-      describe: t('CLUSTER_INSPECTION_DESC_NOREADINESSPROBE'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOREADINESSPROBE'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    readinessProbe:\n      httpGet:\n        path: /healthy\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5\n',
-      level: 'warning',
-    },
-    {
-      name: 'NotReadOnlyRootFilesystem',
-      describe: t('CLUSTER_INSPECTION_DESC_NOTREADONLYROOTFILESYSTEM'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/security/pod-security-policy/#volumes-and-file-systems',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOTREADONLYROOTFILESYSTEM'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n',
-      level: 'warning',
-    },
-    {
-      name: 'NotRunAsNonRoot',
-      describe: t('CLUSTER_INSPECTION_DESC_'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'CertificateExpiredPeriod',
-      describe: t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    // 데이터 없는것
-    {
-      name: 'CanDeleteResources',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_CANDELETERESOURCES'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANDELETERESOURCES'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'CanModifyWorkloads',
-      describe: t('CLUSTER_INSPECTION_DESC_CANMODIFYWORKLOADS'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANMODIFYWORKLOADS'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'KubeletHasDiskPressure',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASDISKPRESSURE'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASDISKPRESSURE'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'KubeletHasNoSufficientMemory',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTMEMORY'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTMEMORY'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'KubeletHasNoSufficientPID',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTPID'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTPID'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-
-    {
-      name: 'NoPriorityClassName',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_NOPRIORITYCLASSNAME'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASSNAME'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'Error',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_ERROR'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_ERROR'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'ErrImportFailed',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_ERRIMPORTFAILED'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_ERRIMPORTFAILED'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'BackOff',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_BACKOFF'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_BACKOFF'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-  ];
-  const [lastScheduleTime, setLastScheduleTime] = useState();
-  useEffect(() => {
-    const fnGetData = async ({ ...params } = {}) => {
-      const ciList = await clusterInspection.fetchList();
-
-      setCiDataList(toJS(ciList.auditResults));
-
-      const withNamespace = toJS(ciList.auditResults)?.filter(
-        item => item.namespace
-      );
-      const noNamespace = toJS(ciList.auditResults)?.filter(
-        item => !item.namespace
-      );
-
-      setNamespace(withNamespace);
-      setWithoutNamespace(noNamespace);
-    };
-
-    fnGetData();
-  }, []);
-
-  useEffect(() => {
-    const date = new Date(props?.data?.lastScheduleTime);
-    const formattedDate = `${date.getFullYear()}-${String(
-      date.getMonth() + 1
-    ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    console.log('formattedDate\n', formattedDate);
-
-    const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(
-      date.getMinutes()
-    ).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
-    console.log('formattedTime\n', formattedTime);
-
-    const setTime = `${formattedDate}, ${formattedTime}`;
-    setLastScheduleTime(setTime);
-  }, [props]);
-
-  const handleExpand = (name, valueNamespace, valueType) => {
-    console.log();
-    setExpandItem(name);
-    setIsExpandFlag(!isExpandFlag);
-    setExpandItemNamespace(valueNamespace);
-    setExpandItemType(valueType);
-  };
-
-  const handleTabChange = value => {
-    if (value === 'cluster') {
-      setTabValue('cluster');
-      setButtonDanger(false);
-      setButtonPass(false);
-      setButtonWarning(false);
-      setExpandItem('');
-      setIsExpandFlag(!isExpandFlag);
-    } else if (value === 'project') {
-      setTabValue('project');
-      setButtonDanger(false);
-      setButtonPass(false);
-      setButtonWarning(false);
-      setExpandItem('');
-      setIsExpandFlag(!isExpandFlag);
-    }
-  };
-
-  const tabs = () => {
-    return {
-      value: tabValue,
-      onChange: handleTabChange,
-      options: [
+    // 	document.querySelector(`[name=asd${idx}]`).remove
+    // }
+    const kubeeyeData = [
         {
-          value: `cluster`,
-          label: t('CLUSTER_INSPECTION_CLUSTER'),
+            name: 'PrivilegedAllowed',
+            describe: t('CLUSTER_INSPECTION_DESC_PRIVILEDGEDALLOWED'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_PRIVILEDGEDALLOWED'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
+            level: 'danger',
         },
         {
-          value: `project`,
-          label: t('CLUSTER_INSPECTION_PROJECT'),
+            name: 'CanImpersonateUser',
+            describe: t('CLUSTER_INSPECTION_DESC_CANIMPERSONATEUSER'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_CANIMPERSONATEUSER'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
+            level: 'warning',
         },
-      ],
+        {
+            name: 'CanImpersonateUser',
+            describe: t('CLUSTER_INSPECTION_DESC_CANIMPERSONATEUSER'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_CANIMPERSONATEUSER'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
+            level: 'warning',
+        },
+        {
+            name: 'CanModifyWorkloads',
+            describe: t('CLUSTER_INSPECTION_DESC_CANMODIFYWORKLOADS'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/reference/access-authn-authz/rbac/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_CANMODIFYWORKLOADS'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
+            level: 'warning',
+        },
+        {
+            name: 'NoCPULimits',
+            describe: t('CLUSTER_INSPECTION_DESC_NOCPULIMITS'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOCPULIMITS'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
+            level: 'danger',
+        },
+        {
+            name: 'NoCPURequests',
+            describe: t('CLUSTER_INSPECTION_DESC_NOCPUREQUESTS'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
+            },
+            suggest: t('CLUSTER_INSPECTION_DESC_NOCPUREQUESTS'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
+            level: 'danger',
+        },
+        {
+            name: 'DangerousCapabilities',
+            describe: t('CLUSTER_INSPECTION_DESC_DANGEROUSCAPABILITIES'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_DANGEROUSCAPABILITIES'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
+            level: 'danger',
+        },
+        {
+            name: 'HostIPCAllowed',
+            describe: t('CLUSTER_INSPECTION_DESC_HOSTIPCALLOWED'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTIPCALLOWED'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostIPC: false',
+            level: 'danger',
+        },
+        {
+            name: 'DangerousCapabilities',
+            describe: t('CLUSTER_INSPECTION_DESC_DANGEROUSCAPABILITIES'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_DANGEROUSCAPABILITIES'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostIPC: false',
+            level: 'danger',
+        },
+        {
+            name: 'HostNetworkAllowed',
+            describe: t('CLUSTER_INSPECTION_DESC_HOSTNETWORKALLOWED'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTNETWORKALLOWED'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
+            level: 'danger',
+        },
+        {
+            name: 'HostPIDAllowed',
+            describe: t('CLUSTER_INSPECTION_DESC_HOSTPIDALLOWED'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/zh-cn/docs/concepts/security/pod-security-policy/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTPIDALLOWED'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
+            level: 'danger',
+        },
+        {
+            name: 'HostPortAllowed',
+            describe: t('CLUSTER_INSPECTION_DESC_HOSTPORTALLOWED'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/configuration/overview/#services',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTPORTALLOWED'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
+            level: 'danger',
+        },
+        {
+            name: 'ImagePullPolicyNotAlways',
+            describe: t('CLUSTER_INSPECTION_DESC_IMAGEPULLPOLICYNOTALWAYS'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGEPULLPOLICYNOTALWAYS'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
+            level: 'warning',
+        },
+        {
+            name: 'ImageTagIsLatest',
+            describe: t('CLUSTER_INSPECTION_DESC_IMAGETAGISLATEST'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGETAGISLATEST'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
+            level: 'warning',
+        },
+        {
+            name: 'ImageTagMiss',
+            describe: t('CLUSTER_INSPECTION_DESC_IMAGETAGMISS'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/containers/images/#image-names',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGETAGMISS'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
+            level: 'danger',
+        },
+        {
+            name: 'InsecureCapabilities',
+            describe: t('CLUSTER_INSPECTION_DESC_INSECURECAPABILITIES'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_INSECURECAPABILITIES'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
+            level: 'danger',
+        },
+        {
+            name: 'NoLivenessProbe',
+            describe: t('CLUSTER_INSPECTION_DESC_NOLIVENESSPROBE'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOLIVENESSPROBE'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    livenessProbe:\n      httpGet:\n        path: /healthz\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5\n',
+            level: 'warning',
+        },
+        {
+            name: 'NoMemoryLimits',
+            describe: t('CLUSTER_INSPECTION_DESC_NOMEMORYLIMITS'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOMEMORYLIMITS'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
+            level: 'danger',
+        },
+        {
+            name: 'NoMemoryRequests',
+            describe: t('CLUSTER_INSPECTION_DESC_'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
+            level: 'danger',
+        },
+        {
+            name: 'NoPriorityClass',
+            describe: t('CLUSTER_INSPECTION_DESC_NOPRIORITYCLASS'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/workload-resources/priority-class-v1/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASS'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
+            level: 'ignore',
+        },
+        {
+            name: 'PrivilegedAllowed',
+            describe: t('CLUSTER_INSPECTION_DESC_PRIVILEGEDALLOWED'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_PRIVILEGEDALLOWED'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
+            level: 'danger',
+        },
+        {
+            name: 'NoReadinessProbe',
+            describe: t('CLUSTER_INSPECTION_DESC_NOREADINESSPROBE'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOREADINESSPROBE'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    readinessProbe:\n      httpGet:\n        path: /healthy\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5\n',
+            level: 'warning',
+        },
+        {
+            name: 'NotReadOnlyRootFilesystem',
+            describe: t('CLUSTER_INSPECTION_DESC_NOTREADONLYROOTFILESYSTEM'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/docs/concepts/security/pod-security-policy/#volumes-and-file-systems',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOTREADONLYROOTFILESYSTEM'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n',
+            level: 'warning',
+        },
+        {
+            name: 'NotRunAsNonRoot',
+            describe: t('CLUSTER_INSPECTION_DESC_'),
+
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_'),
+
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'CertificateExpiredPeriod',
+            describe: t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+            reference: {
+                'Kubernetes Documentation':
+                    'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            template:
+                '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        // 데이터 없는것
+        {
+            name: 'CanDeleteResources',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_CANDELETERESOURCES'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_CANDELETERESOURCES'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'CanModifyWorkloads',
+            describe: t('CLUSTER_INSPECTION_DESC_CANMODIFYWORKLOADS'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_CANMODIFYWORKLOADS'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'KubeletHasDiskPressure',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASDISKPRESSURE'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASDISKPRESSURE'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'KubeletHasNoSufficientMemory',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTMEMORY'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t(
+                'CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTMEMORY',
+            ),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'KubeletHasNoSufficientPID',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTPID'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTPID'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+
+        {
+            name: 'NoPriorityClassName',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_NOPRIORITYCLASSNAME'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASSNAME'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'Error',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_ERROR'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_ERROR'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'ErrImportFailed',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_ERRIMPORTFAILED'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_ERRIMPORTFAILED'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+        {
+            name: 'BackOff',
+            // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
+
+            describe: t('CLUSTER_INSPECTION_DESC_BACKOFF'),
+            //   reference: {
+            //     'Kubernetes Documentation':
+            //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
+            //   },
+            // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
+            suggest: t('CLUSTER_INSPECTION_SUGGEST_BACKOFF'),
+            //   template:
+            //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
+            level: 'warning',
+        },
+    ];
+    const [lastScheduleTime, setLastScheduleTime] = useState();
+    useEffect(() => {
+        const fnGetData = async ({ ...params } = {}) => {
+            const ciList = await clusterInspection.fetchList();
+
+            setCiDataList(toJS(ciList.auditResults));
+
+            const withNamespace = toJS(ciList.auditResults)?.filter(
+                item => item.namespace,
+            );
+            const noNamespace = toJS(ciList.auditResults)?.filter(
+                item => !item.namespace,
+            );
+
+            setNamespace(withNamespace);
+            setWithoutNamespace(noNamespace);
+        };
+
+        fnGetData();
+    }, []);
+
+    useEffect(() => {
+        const date = new Date(props?.data?.lastScheduleTime);
+        const formattedDate = `${date.getFullYear()}-${String(
+            date.getMonth() + 1,
+        ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        console.log('formattedDate\n', formattedDate);
+
+        const formattedTime = `${String(date.getHours()).padStart(
+            2,
+            '0',
+        )}:${String(date.getMinutes()).padStart(2, '0')}:${String(
+            date.getSeconds(),
+        ).padStart(2, '0')}`;
+        console.log('formattedTime\n', formattedTime);
+
+        const setTime = `${formattedDate}, ${formattedTime}`;
+        setLastScheduleTime(setTime);
+    }, [props]);
+
+    const handleExpand = (name, valueNamespace, valueType) => {
+        console.log();
+        setExpandItem(name);
+        setIsExpandFlag(!isExpandFlag);
+        setExpandItemNamespace(valueNamespace);
+        setExpandItemType(valueType);
     };
-  };
 
-  const closeDrawer = e => {
-    e.stopPropagation();
-    setShowPopup(false);
-  };
+    const handleTabChange = value => {
+        if (value === 'cluster') {
+            setTabValue('cluster');
+            setButtonDanger(false);
+            setButtonPass(false);
+            setButtonWarning(false);
+            setExpandItem('');
+            setIsExpandFlag(!isExpandFlag);
+        } else if (value === 'project') {
+            setTabValue('project');
+            setButtonDanger(false);
+            setButtonPass(false);
+            setButtonWarning(false);
+            setExpandItem('');
+            setIsExpandFlag(!isExpandFlag);
+        }
+    };
 
-  const renderContent = () => {
-    if (ciDataList?.length == 0) {
-      const content = (
-        <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
-      );
-      return content;
-    }
+    const tabs = () => {
+        return {
+            value: tabValue,
+            onChange: handleTabChange,
+            options: [
+                {
+                    value: `cluster`,
+                    label: t('CLUSTER_INSPECTION_CLUSTER'),
+                },
+                {
+                    value: `project`,
+                    label: t('CLUSTER_INSPECTION_PROJECT'),
+                },
+            ],
+        };
+    };
 
-    const withoutNamespaceResult = withoutNamespace
-      ?.map(ns => ns?.resultInfos.flat())
-      .flat()
-      .sort((a, b) => {
-        return a.resourceInfos.name > b.resourceInfos.name ? 1 : -1;
-      });
+    const closeDrawer = e => {
+        e.stopPropagation();
+        setShowPopup(false);
+    };
 
-    if (tabValue === 'cluster') {
-      const content = withoutNamespaceResult
-        ?.filter(rslt => {
-          const items = rslt?.resourceInfos?.items ?? [];
-          if (buttonPass) {
-            return items.some(itm => itm?.level === 'pass');
-          }
-          if (buttonWarning) {
-            return items.some(itm => itm?.level === 'warning');
-          }
-          if (buttonDanger) {
-            return items.some(itm => itm?.level === 'danger');
-          }
-          return true;
-        })
-        ?.map((value, idx) => {
-          return (
-            <div className={styles.wrapper} key={`cluster-${idx}`}>
-              <div
-                className={classnames(styles.expandItem, '', {
-                  [styles.expanded]:
-                    value?.resourceInfos?.name == expandItem
-                      ? isExpandFlag
-                      : false,
-                })}
-              >
-                <div className={styles.itemMain}>
-                  <div className={styles.icon}>
-                    {value.resourceType === 'Node' ? (
-                      <Icon name="nodes" size={40} />
-                    ) : value.resourceType === 'ClusterRole' ? (
-                      <Icon name="cluster" size={40} />
-                    ) : value.resourceType === 'Deployment' ? (
-                      <Icon name="nodes" size={40} />
-                    ) : value.resourceType === 'DaemonSet' ? (
-                      <Icon name="deamon-set" size={40} />
-                    ) : value.resourceType === 'Role' ? (
-                      <Icon name="role" size={40} />
-                    ) : value.resourceType === 'StatefulSet' ? (
-                      <Icon name="stateful-set" size={40} />
-                    ) : value.resourceType === 'Event' ? (
-                      <Icon name="event" size={40} />
-                    ) : value.resourceType === 'Job' ? (
-                      <Icon name="job" size={40} />
-                    ) : value.resourceType === 'CronJob' ? (
-                      <Icon name="cron-job" size={40} />
-                    ) : (
-                      ''
-                    )}
-                  </div>
-
-                  {renderContentDetail(value)}
+    const renderContent = () => {
+        if (ciDataList?.length == 0) {
+            const content = (
+                <div className={styles.nodata}>
+                    {t('RESOURCES_NOT_FOUND_RESOURCE')}
                 </div>
+            );
+            return content;
+        }
 
-                {renderExtraContent(value)}
-              </div>
-            </div>
-          );
-        });
-      return content;
-    }
+        const withoutNamespaceResult = withoutNamespace
+            ?.map(ns => ns?.resultInfos.flat())
+            .flat()
+            .sort((a, b) => {
+                return a.resourceInfos.name > b.resourceInfos.name ? 1 : -1;
+            });
 
-    if (tabValue === 'project') {
-      const content = namespace
-        ?.sort((a, b) => {
-          return a.namespace > b.namespace ? 1 : -1;
-        })
-        ?.map(value => {
-          return (
-            <>
-              <div
-                style={{
-                  padding: '4px',
-                  backgroundColor: '#f9fbfd',
-                  borderRadius: '4px',
-                }}
-              >
-                <div
-                  style={{
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    wordWrap: 'normal',
-                    overflow: 'hidden',
-                    fontSize: '12px',
-                    lineHeight: 1.67,
-                    fontStyle: 'normal',
-                    fontStretch: 'normal',
-                    letterSpacing: 'normal',
-                    fontWeight: 'bold',
-                    color: '#242e42',
-                  }}
-                >
-                  {value.namespace}
-                </div>
-
-                {value?.resultInfos
-                  .sort((a, b) => {
-                    if (a.resourceInfos.name > b.resourceInfos.name) {
-                      return 1;
-                    }
-                    if (a.resourceInfos.name < b.resourceInfos.name) {
-                      return -1;
-                    }
-                    return 0;
-                  })
-                  ?.filter(rslt => {
+        if (tabValue === 'cluster') {
+            const content = withoutNamespaceResult
+                ?.filter(rslt => {
                     const items = rslt?.resourceInfos?.items ?? [];
                     if (buttonPass) {
-                      return items.some(itm => itm?.level === 'ignore');
+                        return items.some(itm => itm?.level === 'pass');
                     }
                     if (buttonWarning) {
-                      return items.some(itm => itm?.level === 'warning');
+                        return items.some(itm => itm?.level === 'warning');
                     }
                     if (buttonDanger) {
-                      return items.some(itm => itm?.level === 'danger');
+                        return items.some(itm => itm?.level === 'danger');
                     }
                     return true;
-                  })
-                  ?.map((obj, idx) => {
-                    const counts = {};
-
-                    (obj.resourceInfos.items || []).forEach(item => {
-                      const itemLevel = item.level;
-                      counts[itemLevel] = (counts[itemLevel] || 0) + 1;
-                    });
-
-                    // Function to generate dot bars based on counts
-                    const generateDotBars = () => {
-                      const dotBars = [];
-                      if (buttonPass) {
-                        // counts.ignore.forEach(item =>);
-                        for (let i = 0; i < (counts.ignore || 0); i++) {
-                          dotBars.push(
-                            <div
-                              key={`ignore-${i}`}
-                              className="dot_bar status pass"
-                            ></div>
-                          );
-                        }
-                        return dotBars;
-                      }
-                      if (buttonWarning) {
-                        for (let i = 0; i < (counts.warning || 0); i++) {
-                          dotBars.push(
-                            <div
-                              key={`warning-${i}`}
-                              className="dot_bar status warning"
-                            ></div>
-                          );
-                        }
-                        return dotBars;
-                      }
-                      if (buttonDanger) {
-                        for (let i = 0; i < (counts.danger || 0); i++) {
-                          dotBars.push(
-                            <div
-                              key={`danger-${i}`}
-                              className="dot_bar status danger"
-                            ></div>
-                          );
-                        }
-                        return dotBars;
-                      }
-                      if (!(buttonDanger || buttonWarning || buttonPass)) {
-                        for (let i = 0; i < (counts.danger || 0); i++) {
-                          dotBars.push(
-                            <div
-                              key={`danger-${i}`}
-                              className="dot_bar status danger"
-                            ></div>
-                          );
-                        }
-
-                        for (let i = 0; i < (counts.warning || 0); i++) {
-                          dotBars.push(
-                            <div
-                              key={`warning-${i}`}
-                              className="dot_bar status warning"
-                            ></div>
-                          );
-                        }
-
-                        for (let i = 0; i < (counts.ignore || 0); i++) {
-                          dotBars.push(
-                            <div
-                              key={`ignore-${i}`}
-                              className="dot_bar status pass"
-                            ></div>
-                          );
-                        }
-
-                        return dotBars;
-                      }
-                    };
-
+                })
+                ?.map((value, idx) => {
                     return (
-                      <div>
-                        <div
-                          className={styles.wrapper}
-                          key={`namespace-${idx}`}
-                        >
-                          <div
-                            className={classnames(styles.expandItem, '', {
-                              [styles.expanded]:
-                                obj.resourceInfos.name === expandItem &&
-                                value.namespace === expandItemNamespace &&
-                                obj.resourceType === expandItemType
-                                  ? isExpandFlag
-                                  : false,
-                            })}
-                          >
-                            <div className={styles.itemMain}>
-                              <div className={styles.icon}>
-                                {obj.resourceType === 'Node' ? (
-                                  <Icon name="nodes" size={40} />
-                                ) : obj.resourceType === 'ClusterRole' ? (
-                                  <Icon name="cluster" size={40} />
-                                ) : obj.resourceType === 'Deployment' ? (
-                                  <Icon
-                                    name="blue-green-deployment"
-                                    size={40}
-                                  />
-                                ) : obj.resourceType === 'DaemonSet' ? (
-                                  <Icon name="deamon-set" size={40} />
-                                ) : obj.resourceType === 'Role' ? (
-                                  <Icon name="role" size={40} />
-                                ) : obj.resourceType === 'StatefulSet' ? (
-                                  <Icon name="stateful-set" size={40} />
-                                ) : obj.resourceType === 'Event' ? (
-                                  <Icon name="event" size={40} />
-                                ) : obj.resourceType === 'Job' ? (
-                                  <Icon name="job" size={40} />
-                                ) : obj.resourceType === 'CronJob' ? (
-                                  <Icon name="cron-job" size={40} />
-                                ) : (
-                                  ''
-                                )}
-                              </div>
-
-                              <div className={styles.content}>
-                                <div className={styles.text}>
-                                  <div>{obj?.resourceInfos?.name}</div>
-                                  <p>{t('CLUSTER_INSPECTION_NAME')}</p>
-                                </div>
-
-                                <div className={styles.text}>
-                                  <div>{obj?.resourceType}</div>
-                                  <p>{t('CLUSTER_INSPECTION_TYPE')}</p>
-                                </div>
-                                <div className="content_box_wrap">
-                                  <div className="dot_chart_wrap">
-                                    <div className="dot_chart">
-                                      {generateDotBars()}
+                        <div className={styles.wrapper} key={`cluster-${idx}`}>
+                            <div
+                                className={classnames(styles.expandItem, '', {
+                                    [styles.expanded]:
+                                        value?.resourceInfos?.name == expandItem
+                                            ? isExpandFlag
+                                            : false,
+                                })}
+                            >
+                                <div className={styles.itemMain}>
+                                    <div className={styles.icon}>
+                                        {value.resourceType === 'Node' ? (
+                                            <Icon name="nodes" size={40} />
+                                        ) : value.resourceType ===
+                                          'ClusterRole' ? (
+                                            <Icon name="cluster" size={40} />
+                                        ) : value.resourceType ===
+                                          'Deployment' ? (
+                                            <Icon name="nodes" size={40} />
+                                        ) : value.resourceType ===
+                                          'DaemonSet' ? (
+                                            <Icon name="deamon-set" size={40} />
+                                        ) : value.resourceType === 'Role' ? (
+                                            <Icon name="role" size={40} />
+                                        ) : value.resourceType ===
+                                          'StatefulSet' ? (
+                                            <Icon
+                                                name="stateful-set"
+                                                size={40}
+                                            />
+                                        ) : value.resourceType === 'Event' ? (
+                                            <Icon name="event" size={40} />
+                                        ) : value.resourceType === 'Job' ? (
+                                            <Icon name="job" size={40} />
+                                        ) : value.resourceType === 'CronJob' ? (
+                                            <Icon name="cron-job" size={40} />
+                                        ) : (
+                                            ''
+                                        )}
                                     </div>
-                                    <p className="dot_value">
-                                      <label>
-                                        {t('CLUSTER_INSPECTION_PASS')}{' '}
-                                        {counts.ignore || 0}
-                                      </label>
-                                      <label>
-                                        {t('CLUSTER_INSPECTION_WARNING')}{' '}
-                                        {counts.warning || 0}
-                                      </label>
-                                      <label>
-                                        {t('CLUSTER_INSPECTION_DANGER')}{' '}
-                                        {counts.danger || 0}
-                                      </label>
-                                      <span className="data"></span>
-                                    </p>
-                                  </div>
+
+                                    {renderContentDetail(value)}
                                 </div>
 
-                                {/* {renderMonitorings(obj.resourceInfos)} */}
-
-                                <div
-                                  className={styles.arrow}
-                                  onClick={() =>
-                                    handleExpand(
-                                      obj.resourceInfos.name,
-                                      value.namespace,
-                                      obj.resourceType
-                                    )
-                                  }
-                                >
-                                  <Icon
-                                    name="chevron-down"
-                                    type={
-                                      obj.resourceInfos.name !== expandItem ||
-                                      value.namespace !== expandItemNamespace ||
-                                      obj.resourceType !== expandItemType
-                                        ? ''
-                                        : obj.resourceInfos.name ===
-                                            expandItem &&
-                                          value.namespace ===
-                                            expandItemNamespace &&
-                                          obj.resourceType === expandItemType &&
-                                          isExpandFlag === false
-                                        ? ''
-                                        : 'light'
-                                    }
-                                    size={20}
-                                  />
-                                </div>
-                              </div>
+                                {renderExtraContent(value)}
                             </div>
-                            {renderExtraContent(obj)}
-                          </div>
                         </div>
-                      </div>
                     );
-                  })}
-              </div>
-            </>
-          );
+                });
+            return content;
+        }
+
+        if (tabValue === 'project') {
+            const content = namespace
+                ?.sort((a, b) => {
+                    return a.namespace > b.namespace ? 1 : -1;
+                })
+                ?.map(value => {
+                    return (
+                        <>
+                            <div
+                                style={{
+                                    padding: '4px',
+                                    backgroundColor: '#f9fbfd',
+                                    borderRadius: '4px',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        wordWrap: 'normal',
+                                        overflow: 'hidden',
+                                        fontSize: '12px',
+                                        lineHeight: 1.67,
+                                        fontStyle: 'normal',
+                                        fontStretch: 'normal',
+                                        letterSpacing: 'normal',
+                                        fontWeight: 'bold',
+                                        color: '#242e42',
+                                    }}
+                                >
+                                    {value.namespace}
+                                </div>
+
+                                {value?.resultInfos
+                                    .sort((a, b) => {
+                                        if (
+                                            a.resourceInfos.name >
+                                            b.resourceInfos.name
+                                        ) {
+                                            return 1;
+                                        }
+                                        if (
+                                            a.resourceInfos.name <
+                                            b.resourceInfos.name
+                                        ) {
+                                            return -1;
+                                        }
+                                        return 0;
+                                    })
+                                    ?.filter(rslt => {
+                                        const items =
+                                            rslt?.resourceInfos?.items ?? [];
+                                        if (buttonPass) {
+                                            return items.some(
+                                                itm => itm?.level === 'ignore',
+                                            );
+                                        }
+                                        if (buttonWarning) {
+                                            return items.some(
+                                                itm => itm?.level === 'warning',
+                                            );
+                                        }
+                                        if (buttonDanger) {
+                                            return items.some(
+                                                itm => itm?.level === 'danger',
+                                            );
+                                        }
+                                        return true;
+                                    })
+                                    ?.map((obj, idx) => {
+                                        const counts = {};
+
+                                        (obj.resourceInfos.items || []).forEach(
+                                            item => {
+                                                const itemLevel = item.level;
+                                                counts[itemLevel] =
+                                                    (counts[itemLevel] || 0) +
+                                                    1;
+                                            },
+                                        );
+
+                                        // Function to generate dot bars based on counts
+                                        const generateDotBars = () => {
+                                            const dotBars = [];
+                                            if (buttonPass) {
+                                                // counts.ignore.forEach(item =>);
+                                                for (
+                                                    let i = 0;
+                                                    i < (counts.ignore || 0);
+                                                    i++
+                                                ) {
+                                                    dotBars.push(
+                                                        <div
+                                                            key={`ignore-${i}`}
+                                                            className="dot_bar status pass"
+                                                        ></div>,
+                                                    );
+                                                }
+                                                return dotBars;
+                                            }
+                                            if (buttonWarning) {
+                                                for (
+                                                    let i = 0;
+                                                    i < (counts.warning || 0);
+                                                    i++
+                                                ) {
+                                                    dotBars.push(
+                                                        <div
+                                                            key={`warning-${i}`}
+                                                            className="dot_bar status warning"
+                                                        ></div>,
+                                                    );
+                                                }
+                                                return dotBars;
+                                            }
+                                            if (buttonDanger) {
+                                                for (
+                                                    let i = 0;
+                                                    i < (counts.danger || 0);
+                                                    i++
+                                                ) {
+                                                    dotBars.push(
+                                                        <div
+                                                            key={`danger-${i}`}
+                                                            className="dot_bar status danger"
+                                                        ></div>,
+                                                    );
+                                                }
+                                                return dotBars;
+                                            }
+                                            if (
+                                                !(
+                                                    buttonDanger ||
+                                                    buttonWarning ||
+                                                    buttonPass
+                                                )
+                                            ) {
+                                                for (
+                                                    let i = 0;
+                                                    i < (counts.danger || 0);
+                                                    i++
+                                                ) {
+                                                    dotBars.push(
+                                                        <div
+                                                            key={`danger-${i}`}
+                                                            className="dot_bar status danger"
+                                                        ></div>,
+                                                    );
+                                                }
+
+                                                for (
+                                                    let i = 0;
+                                                    i < (counts.warning || 0);
+                                                    i++
+                                                ) {
+                                                    dotBars.push(
+                                                        <div
+                                                            key={`warning-${i}`}
+                                                            className="dot_bar status warning"
+                                                        ></div>,
+                                                    );
+                                                }
+
+                                                for (
+                                                    let i = 0;
+                                                    i < (counts.ignore || 0);
+                                                    i++
+                                                ) {
+                                                    dotBars.push(
+                                                        <div
+                                                            key={`ignore-${i}`}
+                                                            className="dot_bar status pass"
+                                                        ></div>,
+                                                    );
+                                                }
+
+                                                return dotBars;
+                                            }
+                                        };
+
+                                        return (
+                                            <div>
+                                                <div
+                                                    className={styles.wrapper}
+                                                    key={`namespace-${idx}`}
+                                                >
+                                                    <div
+                                                        className={classnames(
+                                                            styles.expandItem,
+                                                            '',
+                                                            {
+                                                                [styles.expanded]:
+                                                                    obj
+                                                                        .resourceInfos
+                                                                        .name ===
+                                                                        expandItem &&
+                                                                    value.namespace ===
+                                                                        expandItemNamespace &&
+                                                                    obj.resourceType ===
+                                                                        expandItemType
+                                                                        ? isExpandFlag
+                                                                        : false,
+                                                            },
+                                                        )}
+                                                    >
+                                                        <div
+                                                            className={
+                                                                styles.itemMain
+                                                            }
+                                                        >
+                                                            <div
+                                                                className={
+                                                                    styles.icon
+                                                                }
+                                                            >
+                                                                {obj.resourceType ===
+                                                                'Node' ? (
+                                                                    <Icon
+                                                                        name="nodes"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'ClusterRole' ? (
+                                                                    <Icon
+                                                                        name="cluster"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'Deployment' ? (
+                                                                    <Icon
+                                                                        name="blue-green-deployment"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'DaemonSet' ? (
+                                                                    <Icon
+                                                                        name="deamon-set"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'Role' ? (
+                                                                    <Icon
+                                                                        name="role"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'StatefulSet' ? (
+                                                                    <Icon
+                                                                        name="stateful-set"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'Event' ? (
+                                                                    <Icon
+                                                                        name="event"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'Job' ? (
+                                                                    <Icon
+                                                                        name="job"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : obj.resourceType ===
+                                                                  'CronJob' ? (
+                                                                    <Icon
+                                                                        name="cron-job"
+                                                                        size={
+                                                                            40
+                                                                        }
+                                                                    />
+                                                                ) : (
+                                                                    ''
+                                                                )}
+                                                            </div>
+
+                                                            <div
+                                                                className={
+                                                                    styles.content
+                                                                }
+                                                            >
+                                                                <div
+                                                                    className={
+                                                                        styles.text
+                                                                    }
+                                                                >
+                                                                    <div>
+                                                                        {
+                                                                            obj
+                                                                                ?.resourceInfos
+                                                                                ?.name
+                                                                        }
+                                                                    </div>
+                                                                    <p>
+                                                                        {t(
+                                                                            'CLUSTER_INSPECTION_NAME',
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+
+                                                                <div
+                                                                    className={
+                                                                        styles.text
+                                                                    }
+                                                                >
+                                                                    <div>
+                                                                        {
+                                                                            obj?.resourceType
+                                                                        }
+                                                                    </div>
+                                                                    <p>
+                                                                        {t(
+                                                                            'CLUSTER_INSPECTION_TYPE',
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="content_box_wrap">
+                                                                    <div className="dot_chart_wrap">
+                                                                        <div className="dot_chart">
+                                                                            {generateDotBars()}
+                                                                        </div>
+                                                                        <p className="dot_value">
+                                                                            <label>
+                                                                                {t(
+                                                                                    'CLUSTER_INSPECTION_PASS',
+                                                                                )}{' '}
+                                                                                {counts.ignore ||
+                                                                                    0}
+                                                                            </label>
+                                                                            <label>
+                                                                                {t(
+                                                                                    'CLUSTER_INSPECTION_WARNING',
+                                                                                )}{' '}
+                                                                                {counts.warning ||
+                                                                                    0}
+                                                                            </label>
+                                                                            <label>
+                                                                                {t(
+                                                                                    'CLUSTER_INSPECTION_DANGER',
+                                                                                )}{' '}
+                                                                                {counts.danger ||
+                                                                                    0}
+                                                                            </label>
+                                                                            <span className="data"></span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* {renderMonitorings(obj.resourceInfos)} */}
+
+                                                                <div
+                                                                    className={
+                                                                        styles.arrow
+                                                                    }
+                                                                    onClick={() =>
+                                                                        handleExpand(
+                                                                            obj
+                                                                                .resourceInfos
+                                                                                .name,
+                                                                            value.namespace,
+                                                                            obj.resourceType,
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Icon
+                                                                        name="chevron-down"
+                                                                        type={
+                                                                            obj
+                                                                                .resourceInfos
+                                                                                .name !==
+                                                                                expandItem ||
+                                                                            value.namespace !==
+                                                                                expandItemNamespace ||
+                                                                            obj.resourceType !==
+                                                                                expandItemType
+                                                                                ? ''
+                                                                                : obj
+                                                                                      .resourceInfos
+                                                                                      .name ===
+                                                                                      expandItem &&
+                                                                                  value.namespace ===
+                                                                                      expandItemNamespace &&
+                                                                                  obj.resourceType ===
+                                                                                      expandItemType &&
+                                                                                  isExpandFlag ===
+                                                                                      false
+                                                                                ? ''
+                                                                                : 'light'
+                                                                        }
+                                                                        size={
+                                                                            20
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {renderExtraContent(
+                                                            obj,
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
+                        </>
+                    );
+                });
+            return content;
+        }
+    };
+    const renderContentDetail = obj => {
+        const counts = {};
+
+        (obj.resourceInfos.items || []).forEach(item => {
+            const itemLevel = item.level;
+            counts[itemLevel] = (counts[itemLevel] || 0) + 1;
         });
-      return content;
-    }
-  };
-  const renderContentDetail = obj => {
-    const counts = {};
 
-    (obj.resourceInfos.items || []).forEach(item => {
-      const itemLevel = item.level;
-      counts[itemLevel] = (counts[itemLevel] || 0) + 1;
-    });
+        const generateDotBars = () => {
+            const dotBars = [];
+            if (buttonPass) {
+                for (let i = 0; i < (counts.ignore || 0); i++) {
+                    dotBars.push(
+                        <div
+                            key={`ignore-${i}`}
+                            className="dot_bar status pass"
+                        ></div>,
+                    );
+                }
+                return dotBars;
+            }
+            if (buttonWarning) {
+                for (let i = 0; i < (counts.warning || 0); i++) {
+                    dotBars.push(
+                        <div
+                            key={`warning-${i}`}
+                            className="dot_bar status warning"
+                        ></div>,
+                    );
+                }
+                return dotBars;
+            }
+            if (buttonDanger) {
+                for (let i = 0; i < (counts.danger || 0); i++) {
+                    dotBars.push(
+                        <div
+                            key={`danger-${i}`}
+                            className="dot_bar status danger"
+                        ></div>,
+                    );
+                }
+                return dotBars;
+            }
 
-    const generateDotBars = () => {
-      const dotBars = [];
-      if (buttonPass) {
-        for (let i = 0; i < (counts.ignore || 0); i++) {
-          dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
-          );
-        }
-        return dotBars;
-      }
-      if (buttonWarning) {
-        for (let i = 0; i < (counts.warning || 0); i++) {
-          dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>
-          );
-        }
-        return dotBars;
-      }
-      if (buttonDanger) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
-          dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>
-          );
-        }
-        return dotBars;
-      }
+            if (!(buttonDanger || buttonWarning || buttonPass)) {
+                for (let i = 0; i < (counts.danger || 0); i++) {
+                    dotBars.push(
+                        <div
+                            key={`danger-${i}`}
+                            className="dot_bar status danger"
+                        ></div>,
+                    );
+                }
 
-      if (!(buttonDanger || buttonWarning || buttonPass)) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
-          dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>
-          );
-        }
+                for (let i = 0; i < (counts.warning || 0); i++) {
+                    dotBars.push(
+                        <div
+                            key={`warning-${i}`}
+                            className="dot_bar status warning"
+                        ></div>,
+                    );
+                }
 
-        for (let i = 0; i < (counts.warning || 0); i++) {
-          dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>
-          );
-        }
+                for (let i = 0; i < (counts.ignore || 0); i++) {
+                    dotBars.push(
+                        <div
+                            key={`ignore-${i}`}
+                            className="dot_bar status pass"
+                        ></div>,
+                    );
+                }
 
-        for (let i = 0; i < (counts.ignore || 0); i++) {
-          dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
-          );
-        }
+                return dotBars;
+            }
+        };
 
-        return dotBars;
-      }
+        return (
+            <>
+                <div className={styles.content}>
+                    <div className={styles.text}>
+                        <div>{obj.resourceInfos.name}</div>
+                        <p>{t('CLUSTER_INSPECTION_NAME')}</p>
+                    </div>
+
+                    <div className={styles.text}>
+                        <div>{obj.resourceType}</div>
+                        <p>{t('CLUSTER_INSPECTION_TYPE')}</p>
+                    </div>
+                    <div className="content_box_wrap">
+                        <div className="dot_chart_wrap">
+                            <div className="dot_chart">{generateDotBars()}</div>
+                            <p className="dot_value">
+                                <label>
+                                    {t('CLUSTER_INSPECTION_PASS')}{' '}
+                                    {counts.ignore || 0}
+                                </label>
+                                <label>
+                                    {t('CLUSTER_INSPECTION_WARNING')}{' '}
+                                    {counts.warning || 0}
+                                </label>
+                                <label>
+                                    {t('CLUSTER_INSPECTION_DANGER')}{' '}
+                                    {counts.danger || 0}
+                                </label>
+                                <span className="data"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* {renderMonitorings(obj.resourceInfos)} */}
+
+                    <div
+                        className={styles.arrow}
+                        onClick={() => handleExpand(obj.resourceInfos.name)}
+                    >
+                        <Icon
+                            name="chevron-down"
+                            type={
+                                obj.resourceInfos.name !== expandItem
+                                    ? ''
+                                    : obj.resourceInfos.name === expandItem &&
+                                      isExpandFlag === false
+                                    ? ''
+                                    : 'light'
+                            }
+                            size={20}
+                        />
+                    </div>
+                </div>
+            </>
+        );
+    };
+
+    const getState = state => {
+        if (state === 'ignore') {
+            return 'running';
+        }
+        if (state === 'warning') {
+            return 'warning';
+        }
+        if (state === 'danger') {
+            return 'error';
+        }
+        // if (state === 'Stopped' || state === 'Paused') {
+        //   return 'stopped';
+        // }
+        return 'error';
+    };
+
+    const [activePopupIndex, setActivePopupIndex] = useState(null);
+    const PopupComponent = () => {
+        return (
+            <>
+                <div className="content_box_wrap" style={{ border: 'none' }}>
+                    <div
+                        className={`sub_layer_pop ${showPopup ? 'show' : ''}`}
+                        id="sub_layer_pop"
+                        style={{ top: '-64px', right: '-6px' }}
+                    >
+                        <div className="layer_pop_header status_wrap">
+                            <div className="tit">
+                                {message}
+                                <p
+                                    className={`status ${
+                                        level === 'ignore'
+                                            ? 'pass'
+                                            : level === 'warning'
+                                            ? 'warning'
+                                            : level === 'danger'
+                                            ? 'danger'
+                                            : ''
+                                    }`}
+                                >
+                                    <span>{level}</span>
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                className="close"
+                                onClick={e => closeDrawer(e)}
+                            >
+                                <i className="ico ico-close-small"></i>
+                            </button>
+                        </div>
+                        <div className="msg">
+                            <i className="ico ico-check"></i>
+                            <label
+                                className="label"
+                                style={{ color: '#36435c' }}
+                            >{`Discovered :`}</label>
+                            <span>{`1 min ago`}</span>
+                        </div>
+                        <div className="desc">
+                            <h2>{`DESCRIPTION`}</h2>
+                            <p> {`${describe}`}</p>
+                            <h2> {`SUGGEST`}</h2>
+                            <p> {`${suggest}`}</p>
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
+    };
+
+    const renderExtraContent = (obj, index) => {
+        return (
+            <>
+                <div
+                    className={styles.itemExtra}
+                    key={`extra-content-${index}`}
+                >
+                    <div className={styles.containers}>
+                        {obj?.resourceInfos?.items
+                            ?.filter(item => {
+                                if (buttonPass) {
+                                    return item.level === 'ignore';
+                                }
+                                if (buttonWarning) {
+                                    return item.level === 'warning';
+                                }
+                                if (buttonDanger) {
+                                    return item.level === 'danger';
+                                }
+
+                                return true;
+                            })
+                            ?.sort((a, b) => {
+                                const levelOrder = {
+                                    danger: 1,
+                                    warning: 2,
+                                    ignore: 3,
+                                };
+                                return (
+                                    levelOrder[a.level] - levelOrder[b.level]
+                                );
+                            })
+                            ?.map((item, indexNum) => {
+                                const foundData = kubeeyeData.find(data => {
+                                    return data.name === item.message;
+                                });
+
+                                return (
+                                    <>
+                                        <div
+                                            className={classnames(styles.item)}
+                                            key={`extra-item-${indexNum}`}
+                                            onClick={e => {
+                                                if (foundData) {
+                                                    setShowPopup(foundData);
+                                                    setMessage(foundData.name);
+                                                    setDescribe(
+                                                        foundData.describe,
+                                                    );
+                                                    setLevel(foundData.level);
+                                                    setSuggest(
+                                                        foundData.suggest,
+                                                    );
+                                                }
+                                                if (!foundData) {
+                                                    setShowPopup(false);
+                                                }
+                                            }}
+                                        >
+                                            <div className={styles.icon}>
+                                                {obj.resourceType === 'Node' ? (
+                                                    <Icon
+                                                        name="nodes"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'ClusterRole' ? (
+                                                    <Icon
+                                                        name="cluster"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'Deployment' ? (
+                                                    <Icon
+                                                        name="blue-green-deployment"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'DaemonSet' ? (
+                                                    <Icon
+                                                        name="deamon-set"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'Role' ? (
+                                                    <Icon
+                                                        name="role"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'StatefulSet' ? (
+                                                    <Icon
+                                                        name="stateful-set"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'Event' ? (
+                                                    <Icon
+                                                        name="event"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'Job' ? (
+                                                    <Icon
+                                                        name="job"
+                                                        size={40}
+                                                    />
+                                                ) : obj.resourceType ===
+                                                  'CronJob' ? (
+                                                    <Icon
+                                                        name="cron-job"
+                                                        size={40}
+                                                    />
+                                                ) : (
+                                                    ''
+                                                )}
+                                            </div>
+
+                                            <div
+                                                className={classnames(
+                                                    styles.title,
+                                                    styles.name,
+                                                )}
+                                            >
+                                                <div>{item.message}</div>
+                                                <p>
+                                                    {t(
+                                                        'CLUSTER_INSPECTION_NAME',
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <div className={styles.title}>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        gap: '5px',
+                                                    }}
+                                                >
+                                                    <Indicator
+                                                        className={
+                                                            styles.indicator
+                                                        }
+                                                        type={getState(
+                                                            item.level,
+                                                        )}
+                                                    />
+                                                    <div>
+                                                        {item.level === 'ignore'
+                                                            ? 'pass'
+                                                            : item.level ===
+                                                              'warning'
+                                                            ? 'warning'
+                                                            : item.level ===
+                                                              'danger'
+                                                            ? 'danger'
+                                                            : ''}
+                                                    </div>
+                                                </div>
+                                                <p>
+                                                    {t(
+                                                        'CLUSTER_INSPECTION_STATUS',
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {foundData && (
+                                            <>
+                                                <div
+                                                    className="content_box_wrap"
+                                                    style={{ border: 'none' }}
+                                                >
+                                                    <div
+                                                        className={`sub_layer_pop ${
+                                                            showPopup
+                                                                ? 'show'
+                                                                : ''
+                                                        }`}
+                                                        id="sub_layer_pop"
+                                                        style={{
+                                                            top: '-64px',
+                                                            right: '-6px',
+                                                        }}
+                                                    >
+                                                        <div className="layer_pop_header status_wrap">
+                                                            <div className="tit">
+                                                                {message}
+                                                                <p
+                                                                    className={`status ${
+                                                                        level ===
+                                                                        'ignore'
+                                                                            ? 'pass'
+                                                                            : level ===
+                                                                              'warning'
+                                                                            ? 'warning'
+                                                                            : level ===
+                                                                              'danger'
+                                                                            ? 'danger'
+                                                                            : ''
+                                                                    }`}
+                                                                >
+                                                                    <span>
+                                                                        {level}
+                                                                    </span>
+                                                                </p>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                className="close"
+                                                                // onClick={() => setShowPopup(false)}
+                                                                onClick={e =>
+                                                                    closeDrawer(
+                                                                        e,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <i className="ico ico-close-small"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div className="msg">
+                                                            <i className="ico ico-check"></i>
+                                                            <label
+                                                                className="label"
+                                                                style={{
+                                                                    color:
+                                                                        '#36435c',
+                                                                }}
+                                                            >{`Discovered :`}</label>
+                                                            <span>{`1 min ago`}</span>
+                                                        </div>
+                                                        <div className="desc">
+                                                            <h2>{`DESCRIPTION`}</h2>
+                                                            <p>
+                                                                {' '}
+                                                                {`${describe}`}
+                                                            </p>
+                                                            <h2>
+                                                                {' '}
+                                                                {`SUGGEST`}
+                                                            </h2>
+                                                            <p>
+                                                                {' '}
+                                                                {`${suggest}`}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
+                                );
+                            })}
+                    </div>
+                </div>
+            </>
+        );
+    };
+
+    const renderMonitorings = vmId => {
+        // const isExpand = false;
+        const loading = false;
+
+        if (loading)
+            return <div className={styles.monitors}>{t('LOADING')}</div>;
+
+        //  {eventList?.length == 0 &&
+        //         <div className={styles.wrapper}>
+        //             {isLoading ?
+        //               <div className={styles.loading}><Loading /></div>
+        //               : <div className={styles.empty}>{t('RESOURCES_NO_DATA_EVENT_LOG')}</div>
+        //             }
+        //           </div>
+        //       }
+
+        // const ciData = _.find(clusterInspectionData, data => {
+        //   if (data.metric.pod === vmId) return data;
+        // });
+
+        if (!ciDataList)
+            return (
+                <div className={styles.monitors}>
+                    {t('CLUSTER_INSPECTION_NO_DATA')}
+                </div>
+            );
+
+        // const ciArray = [];
+        // ciArray.push(ciDataList);
+
+        // const configs = getMonitoringCfgs(ciArray);
+
+        // return (
+        //   <div className={styles.monitors}>
+        //     <div className={styles.charts}>
+        //       {configs.map(item => {
+        //         const config = getAreaChartOps(item);
+
+        //         return (
+        //           <div key={item.type}>
+        //             <TinyArea
+        //               key={item.type}
+        //               width="100%"
+        //               height={40}
+        //               {...config}
+        //               darkMode={isExpand}
+        //             />
+        //           </div>
+        //         );
+        //       })}
+        //     </div>
+        //   </div>
+        // );
     };
 
     return (
-      <>
-        <div className={styles.content}>
-          <div className={styles.text}>
-            <div>{obj.resourceInfos.name}</div>
-            <p>{t('CLUSTER_INSPECTION_NAME')}</p>
-          </div>
-
-          <div className={styles.text}>
-            <div>{obj.resourceType}</div>
-            <p>{t('CLUSTER_INSPECTION_TYPE')}</p>
-          </div>
-          <div className="content_box_wrap">
-            <div className="dot_chart_wrap">
-              <div className="dot_chart">{generateDotBars()}</div>
-              <p className="dot_value">
-                <label>
-                  {t('CLUSTER_INSPECTION_PASS')} {counts.ignore || 0}
-                </label>
-                <label>
-                  {t('CLUSTER_INSPECTION_WARNING')} {counts.warning || 0}
-                </label>
-                <label>
-                  {t('CLUSTER_INSPECTION_DANGER')} {counts.danger || 0}
-                </label>
-                <span className="data"></span>
-              </p>
+        <>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    backgroundColor: '#eff4f9',
+                }}
+            >
+                <div>
+                    <Tabs tabs={tabs()} />
+                </div>
+                <div>
+                    <div>{`최근 인스펙션 시간 : ${lastScheduleTime}`}</div>
+                </div>
             </div>
-          </div>
-
-          {/* {renderMonitorings(obj.resourceInfos)} */}
-
-          <div
-            className={styles.arrow}
-            onClick={() => handleExpand(obj.resourceInfos.name)}
-          >
-            <Icon
-              name="chevron-down"
-              type={
-                obj.resourceInfos.name !== expandItem
-                  ? ''
-                  : obj.resourceInfos.name === expandItem &&
-                    isExpandFlag === false
-                  ? ''
-                  : 'light'
-              }
-              size={20}
-            />
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  const getState = state => {
-    if (state === 'ignore') {
-      return 'running';
-    }
-    if (state === 'warning') {
-      return 'warning';
-    }
-    if (state === 'danger') {
-      return 'error';
-    }
-    // if (state === 'Stopped' || state === 'Paused') {
-    //   return 'stopped';
-    // }
-    return 'error';
-  };
-
-  const [activePopupIndex, setActivePopupIndex] = useState(null);
-  const PopupComponent = () => {
-    return (
-      <>
-        <div className="content_box_wrap" style={{ border: 'none' }}>
-          <div
-            className={`sub_layer_pop ${showPopup ? 'show' : ''}`}
-            id="sub_layer_pop"
-            style={{ top: '-64px', right: '-6px' }}
-          >
-            <div className="layer_pop_header status_wrap">
-              <div className="tit">
-                {message}
-                <p
-                  className={`status ${
-                    level === 'ignore'
-                      ? 'pass'
-                      : level === 'warning'
-                      ? 'warning'
-                      : level === 'danger'
-                      ? 'danger'
-                      : ''
-                  }`}
-                >
-                  <span>{level}</span>
-                </p>
-              </div>
-              <button
-                type="button"
-                className="close"
-                onClick={e => closeDrawer(e)}
-              >
-                <i className="ico ico-close-small"></i>
-              </button>
-            </div>
-            <div className="msg">
-              <i className="ico ico-check"></i>
-              <label
-                className="label"
-                style={{ color: '#36435c' }}
-              >{`Discovered :`}</label>
-              <span>{`1 min ago`}</span>
-            </div>
-            <div className="desc">
-              <h2>{`DESCRIPTION`}</h2>
-              <p> {`${describe}`}</p>
-              <h2> {`SUGGEST`}</h2>
-              <p> {`${suggest}`}</p>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  const renderExtraContent = (obj, index) => {
-    return (
-      <>
-        <div className={styles.itemExtra} key={`extra-content-${index}`}>
-          <div className={styles.containers}>
-            {obj?.resourceInfos?.items
-              ?.filter(item => {
-                if (buttonPass) {
-                  return item.level === 'ignore';
-                }
-                if (buttonWarning) {
-                  return item.level === 'warning';
-                }
-                if (buttonDanger) {
-                  return item.level === 'danger';
-                }
-
-                return true;
-              })
-              ?.sort((a, b) => {
-                const levelOrder = { danger: 1, warning: 2, ignore: 3 };
-                return levelOrder[a.level] - levelOrder[b.level];
-              })
-              ?.map((item, indexNum) => {
-                const foundData = kubeeyeData.find(data => {
-                  return data.name === item.message;
-                });
-
-                return (
-                  <>
-                    <div
-                      className={classnames(styles.item)}
-                      key={`extra-item-${indexNum}`}
-                      onClick={e => {
-                        if (foundData) {
-                          setShowPopup(foundData);
-                          setMessage(foundData.name);
-                          setDescribe(foundData.describe);
-                          setLevel(foundData.level);
-                          setSuggest(foundData.suggest);
-                        }
-                        if (!foundData) {
-                          setShowPopup(false);
-                        }
-                      }}
-                    >
-                      <div className={styles.icon}>
-                        {obj.resourceType === 'Node' ? (
-                          <Icon name="nodes" size={40} />
-                        ) : obj.resourceType === 'ClusterRole' ? (
-                          <Icon name="cluster" size={40} />
-                        ) : obj.resourceType === 'Deployment' ? (
-                          <Icon name="blue-green-deployment" size={40} />
-                        ) : obj.resourceType === 'DaemonSet' ? (
-                          <Icon name="deamon-set" size={40} />
-                        ) : obj.resourceType === 'Role' ? (
-                          <Icon name="role" size={40} />
-                        ) : obj.resourceType === 'StatefulSet' ? (
-                          <Icon name="stateful-set" size={40} />
-                        ) : obj.resourceType === 'Event' ? (
-                          <Icon name="event" size={40} />
-                        ) : obj.resourceType === 'Job' ? (
-                          <Icon name="job" size={40} />
-                        ) : obj.resourceType === 'CronJob' ? (
-                          <Icon name="cron-job" size={40} />
-                        ) : (
-                          ''
-                        )}
-                      </div>
-
-                      <div className={classnames(styles.title, styles.name)}>
-                        <div>{item.message}</div>
-                        <p>{t('CLUSTER_INSPECTION_NAME')}</p>
-                      </div>
-                      <div className={styles.title}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: '5px',
-                          }}
-                        >
-                          <Indicator
-                            className={styles.indicator}
-                            type={getState(item.level)}
-                          />
-                          <div>
-                            {item.level === 'ignore'
-                              ? 'pass'
-                              : item.level === 'warning'
-                              ? 'warning'
-                              : item.level === 'danger'
-                              ? 'danger'
-                              : ''}
-                          </div>
-                        </div>
-                        <p>{t('CLUSTER_INSPECTION_STATUS')}</p>
-                      </div>
-                    </div>
-                    {foundData && (
-                      <>
-                        <div
-                          className="content_box_wrap"
-                          style={{ border: 'none' }}
-                        >
-                          <div
-                            className={`sub_layer_pop ${
-                              showPopup ? 'show' : ''
-                            }`}
-                            id="sub_layer_pop"
-                            style={{ top: '-64px', right: '-6px' }}
-                          >
-                            <div className="layer_pop_header status_wrap">
-                              <div className="tit">
-                                {message}
-                                <p
-                                  className={`status ${
-                                    level === 'ignore'
-                                      ? 'pass'
-                                      : level === 'warning'
-                                      ? 'warning'
-                                      : level === 'danger'
-                                      ? 'danger'
-                                      : ''
-                                  }`}
-                                >
-                                  <span>{level}</span>
-                                </p>
-                              </div>
-                              <button
+            <div className="grid_item">
+                <div className="grid_title">
+                    <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>
+                    <div className="content_box_wrap">
+                        <div className="tab_toggle_wrap status_wrap">
+                            <button
+                                className={`${
+                                    !buttonPass
+                                        ? 'btn tab_toggle status pass'
+                                        : 'btn tab_toggle on status pass'
+                                }`}
                                 type="button"
-                                className="close"
-                                // onClick={() => setShowPopup(false)}
-                                onClick={e => closeDrawer(e)}
-                              >
-                                <i className="ico ico-close-small"></i>
-                              </button>
-                            </div>
-                            <div className="msg">
-                              <i className="ico ico-check"></i>
-                              <label
-                                className="label"
-                                style={{ color: '#36435c' }}
-                              >{`Discovered :`}</label>
-                              <span>{`1 min ago`}</span>
-                            </div>
-                            <div className="desc">
-                              <h2>{`DESCRIPTION`}</h2>
-                              <p> {`${describe}`}</p>
-                              <h2> {`SUGGEST`}</h2>
-                              <p> {`${suggest}`}</p>
-                            </div>
-                          </div>
+                                onClick={e => {
+                                    setButtonPass(!buttonPass);
+                                    setButtonWarning(false);
+                                    setButtonDanger(false);
+                                    setShowPopup(false);
+                                }}
+                                value="pass"
+                            >
+                                <span>{t('CLUSTER_INSPECTION_PASS')}</span>
+                            </button>
+                            <button
+                                className={`${
+                                    !buttonWarning
+                                        ? 'btn tab_toggle status warning'
+                                        : 'btn tab_toggle on status warning'
+                                }`}
+                                type="button"
+                                onClick={() => {
+                                    setButtonWarning(!buttonWarning);
+                                    setButtonPass(false);
+                                    setButtonDanger(false);
+                                    setShowPopup(false);
+                                }}
+                                value="warning"
+                            >
+                                <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
+                            </button>
+                            <button
+                                className={`${
+                                    !buttonDanger
+                                        ? 'btn tab_toggle status danger'
+                                        : 'btn tab_toggle on status danger'
+                                }`}
+                                type="button"
+                                onClick={() => {
+                                    setButtonDanger(!buttonDanger);
+                                    setButtonWarning(false);
+                                    setButtonPass(false);
+                                    setShowPopup(false);
+                                }}
+                                value="danger"
+                            >
+                                <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
+                            </button>
                         </div>
-                      </>
-                    )}
-                  </>
-                );
-              })}
-          </div>
-        </div>
-      </>
-    );
-  };
-
-  const renderMonitorings = vmId => {
-    // const isExpand = false;
-    const loading = false;
-
-    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
-
-    //  {eventList?.length == 0 &&
-    //         <div className={styles.wrapper}>
-    //             {isLoading ?
-    //               <div className={styles.loading}><Loading /></div>
-    //               : <div className={styles.empty}>{t('RESOURCES_NO_DATA_EVENT_LOG')}</div>
-    //             }
-    //           </div>
-    //       }
-
-    // const ciData = _.find(clusterInspectionData, data => {
-    //   if (data.metric.pod === vmId) return data;
-    // });
-
-    if (!ciDataList)
-      return (
-        <div className={styles.monitors}>{t('CLUSTER_INSPECTION_NO_DATA')}</div>
-      );
-
-    // const ciArray = [];
-    // ciArray.push(ciDataList);
-
-    // const configs = getMonitoringCfgs(ciArray);
-
-    // return (
-    //   <div className={styles.monitors}>
-    //     <div className={styles.charts}>
-    //       {configs.map(item => {
-    //         const config = getAreaChartOps(item);
-
-    //         return (
-    //           <div key={item.type}>
-    //             <TinyArea
-    //               key={item.type}
-    //               width="100%"
-    //               height={40}
-    //               {...config}
-    //               darkMode={isExpand}
-    //             />
-    //           </div>
-    //         );
-    //       })}
-    //     </div>
-    //   </div>
-    // );
-  };
-
-  return (
-    <>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backgroundColor: '#eff4f9',
-        }}
-      >
-        <div>
-          <Tabs tabs={tabs()} />
-        </div>
-        <div>
-          <div>{`최근 인스펙션 시간 : ${lastScheduleTime}`}</div>
-        </div>
-      </div>
-      <div className="grid_item">
-        <div className="grid_title">
-          <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>
-          <div className="content_box_wrap">
-            <div className="tab_toggle_wrap status_wrap">
-              <button
-                className={`${
-                  !buttonPass
-                    ? 'btn tab_toggle status pass'
-                    : 'btn tab_toggle on status pass'
-                }`}
-                type="button"
-                onClick={e => {
-                  setButtonPass(!buttonPass);
-                  setButtonWarning(false);
-                  setButtonDanger(false);
-                  setShowPopup(false);
-                }}
-                value="pass"
-              >
-                <span>{t('CLUSTER_INSPECTION_PASS')}</span>
-              </button>
-              <button
-                className={`${
-                  !buttonWarning
-                    ? 'btn tab_toggle status warning'
-                    : 'btn tab_toggle on status warning'
-                }`}
-                type="button"
-                onClick={() => {
-                  setButtonWarning(!buttonWarning);
-                  setButtonPass(false);
-                  setButtonDanger(false);
-                  setShowPopup(false);
-                }}
-                value="warning"
-              >
-                <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
-              </button>
-              <button
-                className={`${
-                  !buttonDanger
-                    ? 'btn tab_toggle status danger'
-                    : 'btn tab_toggle on status danger'
-                }`}
-                type="button"
-                onClick={() => {
-                  setButtonDanger(!buttonDanger);
-                  setButtonWarning(false);
-                  setButtonPass(false);
-                  setShowPopup(false);
-                }}
-                value="danger"
-              >
-                <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
-              </button>
+                    </div>
+                </div>
+                {renderContent()}
             </div>
-          </div>
-        </div>
-        {renderContent()}
-      </div>
-    </>
-  );
+        </>
+    );
 };
 
 export default DetailClusterList;
