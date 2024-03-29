@@ -11,18 +11,16 @@ import {
 // import { Tooltip } from '@kubed/components';
 
 import { Icon } from '@kube-design/components';
+
 import Banner from 'components/Cards/Banner';
-import { Panel, Text } from 'components/Base';
 import DetailClusterList from 'pages/clusters/containers/Resources/components/DetailClusterList';
 import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
 import 'pages/clusters/containers/Overview/CustomDashboard/custom_icon.css';
 import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
 
 import withList, { ListPage } from 'components/HOCs/withList';
-
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
 import * as common from 'utils/resources';
-
 @withList({
   store: new ClusterInspectionStore(),
   module: 'clusterInspection',
@@ -75,7 +73,10 @@ export default class ClusterInspection extends React.Component {
                       <div className="cont1">
                         <div
                           className="chart_pie"
-                          style={{ width: '100%', height: '200px' }}
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                          }}
                         >
                           <ResponsiveContainer>
                             <PieChart>
@@ -172,6 +173,7 @@ export default class ClusterInspection extends React.Component {
                   <ul className="list_01">
                     <li className="li_type_01">
                       <div className="lft">
+                        {/* <Icon name="kubernetes" size={40} /> */}
                         <i className="ico-type24-container"></i>
                         <h6 className="list_title">
                           {t('CLUSTER_INSPECTION_K8S_VERSION')}
@@ -181,6 +183,7 @@ export default class ClusterInspection extends React.Component {
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
+                        {/* <Icon name="nodes" size={40} /> */}
                         <i className="ico-type24-clusternode"></i>
                         <h6 className="list_title">
                           {t('CLUSTER_INSPECTION_NODE')}
@@ -192,7 +195,7 @@ export default class ClusterInspection extends React.Component {
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
-                        <Icon name="project" size={40} />
+                        <Icon name="project" size={25} />
                         <h6 className="list_title">
                           {t('CLUSTER_INSPECTION_PROJECT_CNT')}
                         </h6>
@@ -203,7 +206,7 @@ export default class ClusterInspection extends React.Component {
                     </li>
                     <li className="li_type_01">
                       <div className="lft">
-                        <Icon name="backup" size={40} />
+                        <Icon name="backup" size={25} />
                         <h6 className="list_title">
                           {t('CLUSTER_INSPECTION_WORKLOAD_CNT')}
                         </h6>

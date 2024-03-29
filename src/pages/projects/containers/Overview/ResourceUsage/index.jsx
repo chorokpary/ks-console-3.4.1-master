@@ -129,12 +129,15 @@ class ResourceUsage extends React.Component {
     return flag
   }
 
-  get computingResource()  {
+  get computingResource() {
+    if (get(globals.user.globalRules, 'clusters').includes('manage')) {
+      return true
+    }
     const computingWorkloadServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'vms'], [])
     const computingSettingServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'networks'], [])
     const computingResourceServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'flavors'], [])
 
-    const flag = (computingWorkloadServieRole.length > 0 || computingSettingServieRole.length > 0 || computingResourceServieRole.length > 0 ) ? true : false;
+    const flag = (computingWorkloadServieRole.length > 0 || computingSettingServieRole.length > 0 || computingResourceServieRole.length > 0) ? true : false;
     return flag;
   }
 
@@ -146,7 +149,7 @@ class ResourceUsage extends React.Component {
 
   fetchMetrics = params => {
     const { resourceType, range } = this.state
-    
+
     if (resourceType === 'application') {
       this.appResourceMonitorStore.fetchMetrics({
         ...this.props.match.params,
@@ -270,7 +273,7 @@ class ResourceUsage extends React.Component {
 
   renderApplicationResource() {
 
-    if(!this.applicationResource){
+    if (!this.applicationResource) {
       return false;
     }
 
@@ -335,7 +338,7 @@ class ResourceUsage extends React.Component {
 
   renderComputingResource() {
 
-    if(!this.computingResource){
+    if (!this.computingResource) {
       return false;
     }
     const { isLoading, resources } = this.computingStore
@@ -344,17 +347,17 @@ class ResourceUsage extends React.Component {
       <Loading spinning={isLoading}>
         <div className={styles.resources}>
           {resources?.map((item) => (
-               <ComputingResourceItem
-                {...this.props.match.params}
-                {...item}
-                name={item.name}
-                num={item.count}
-                routeName={item.routeName}
-                icon={item.icon}
-                dataList={item.dataList}
-                createField={item.createField}
-              />
-            ))}
+            <ComputingResourceItem
+              {...this.props.match.params}
+              {...item}
+              name={item.name}
+              num={item.count}
+              routeName={item.routeName}
+              icon={item.icon}
+              dataList={item.dataList}
+              createField={item.createField}
+            />
+          ))}
         </div>
       </Loading>
     )
@@ -370,19 +373,19 @@ class ResourceUsage extends React.Component {
           onChange={this.handleResouceTypeChange}
           size="small"
         >
-          { this.computingResource &&
+          {this.computingResource &&
             <RadioButton value="computing">
               {t('컴퓨팅 리소스')}
             </RadioButton>
           }
-          { this.applicationResource &&
+          {this.applicationResource &&
             <RadioButton value="application">
               {t('APPLICATION_RESOURCE_PL')}
             </RadioButton>
           }
           <RadioButton value="physical">
             {t('PHYSICAL_RESOURCE_PL')}
-          </RadioButton>         
+          </RadioButton>
         </RadioGroup>
         {this.state.resourceType != "computing" &&
           <Select
@@ -405,10 +408,10 @@ class ResourceUsage extends React.Component {
         {resourceType === 'application'
           ? this.renderApplicationResource()
           : resourceType === 'physical'
-          ? this.renderPhysicalResource()
-          : this.renderComputingResource()
+            ? this.renderPhysicalResource()
+            : this.renderComputingResource()
         }
-          
+
       </Panel>
     )
   }

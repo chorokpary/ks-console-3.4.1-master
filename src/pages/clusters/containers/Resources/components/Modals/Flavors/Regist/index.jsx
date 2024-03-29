@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-
 import {
   Form,
   Input,
@@ -15,12 +14,12 @@ import {
   Tooltip,
 } from '@kube-design/components';
 import classnames from 'classnames';
+
 import { UnitSlider, NumberInput } from 'components/Inputs';
 import { Modal } from 'components/Base';
-import styles from './index.scss';
 import FlavorStore from 'stores/resources/flavors';
-
 import { PATTERN_USER_NAME } from 'utils/constants';
+import styles from './index.scss';
 
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
@@ -52,33 +51,43 @@ const RegistModal = props => {
   useEffect(() => {
     const useEffectFunction = async () => {
       // hostDevices
+      // hostDevices 에서 GPU 사용하면 host device에서 사라지고 GPU 목록에만 나와야함
       const listHostDevices = await store.fetchFlavorHostDevices(props.cluster);
       const responseHostDevices = listHostDevices?.host_devices;
 
       const resHostDevices = [];
+      const resHostDevicesGpu = [];
       responseHostDevices?.forEach(items => {
-        resHostDevices.push({
-          label: items.name,
-          value: items.name,
-        });
+        if (items.is_gpu) {
+          resHostDevicesGpu.push({
+            label: items.name,
+            value: items.name,
+          });
+        } else {
+          resHostDevices.push({
+            label: items.name,
+            value: items.name,
+          });
+        }
       });
       setHostDevices(resHostDevices);
+      setGpus(resHostDevicesGpu);
 
       // setGpus
-      const mediatedDevices = await store.fetchFlavorMediatedDevices(
-        props.cluster
-      );
-      const responseMediatedDevices = mediatedDevices?.mediated_devices;
+      // const mediatedDevices = await store.fetchFlavorMediatedDevices(
+      //   props.cluster,
+      // );
+      // const responseMediatedDevices = mediatedDevices?.mediated_devices;
 
-      const resMediatedDevices = [];
-      responseMediatedDevices?.forEach(items => {
-        resMediatedDevices.push({
-          label: items.name,
-          value: items.name,
-        });
-      });
+      // const resMediatedDevices = [];
+      // responseMediatedDevices?.forEach(items => {
+      //   resMediatedDevices.push({
+      //     label: items.name,
+      //     value: items.name,
+      //   });
+      // });
 
-      setGpus(resMediatedDevices);
+      // setGpus(resMediatedDevices);
 
       // extraSpecs
       const extraSpecs = await store.fetchFlavorExtraSpecs(props.cluster);
@@ -287,7 +296,7 @@ const RegistModal = props => {
       if (`${ephemeralDisk}`.includes(removeText)) {
         const numEphemeralDisk = ephemeralDisk.substring(
           0,
-          ephemeralDisk.indexOf(removeText)
+          ephemeralDisk.indexOf(removeText),
         );
         const intEphemeralDisk = parseInt(numEphemeralDisk, 10);
 
@@ -297,15 +306,15 @@ const RegistModal = props => {
       }
 
       data.extra_specs = [...extraSpecsFields].filter(
-        obj => delete obj.description
+        obj => delete obj.description,
       );
       data.devices = [...formDeviceFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
       data.gpus = [...formGpuFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
       onOk({ flavor: data });
     });
@@ -445,7 +454,7 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep === 1 ? styles.current : ''}`
+                `${regStep === 1 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
@@ -476,7 +485,7 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep === 2 ? styles.current : ''}`
+                `${regStep === 2 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
@@ -509,7 +518,10 @@ const RegistModal = props => {
               <Form.Item
                 label={t('RESOURCES_NAME')}
                 rules={[
-                  { required: true, message: t('NAME_EMPTY_DESC') },
+                  {
+                    required: true,
+                    message: t('NAME_EMPTY_DESC'),
+                  },
                   {
                     pattern: PATTERN_USER_NAME,
                     message: t('RESOURCES_INVALID_NAME_DESC'),
@@ -710,7 +722,10 @@ const RegistModal = props => {
                                 unit={'GiB'}
                                 onChange={e => setEphemeralDisk(e)}
                                 withInput
-                                style={{ padding: '5px', marginLeft: '23px' }}
+                                style={{
+                                  padding: '5px',
+                                  marginLeft: '23px',
+                                }}
                               />
                             </div>
                           )}
@@ -779,7 +794,11 @@ const RegistModal = props => {
                         </Column>
                         <Column>
                           <Form.Item>
-                            <div style={{ marginLeft: '45%' }}>
+                            <div
+                              style={{
+                                marginLeft: '45%',
+                              }}
+                            >
                               <Button
                                 icon="substract"
                                 onClick={() =>
@@ -790,7 +809,9 @@ const RegistModal = props => {
                               <Input
                                 name={`gpus.${i}.quantity`}
                                 value={v.quantity}
-                                style={{ width: '30%' }}
+                                style={{
+                                  width: '30%',
+                                }}
                               />
                               &nbsp;&nbsp;
                               <Button
@@ -838,7 +859,11 @@ const RegistModal = props => {
                         </Column>
                         <Column>
                           <Form.Item>
-                            <div style={{ marginLeft: '45%' }}>
+                            <div
+                              style={{
+                                marginLeft: '45%',
+                              }}
+                            >
                               <Button
                                 icon="substract"
                                 onClick={() =>
@@ -849,7 +874,9 @@ const RegistModal = props => {
                               <Input
                                 name={`hostDevices.${i}.quantity`}
                                 value={v.quantity}
-                                style={{ width: '30%' }}
+                                style={{
+                                  width: '30%',
+                                }}
                               />
                               &nbsp;&nbsp;
                               <Button

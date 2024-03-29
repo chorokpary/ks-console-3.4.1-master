@@ -14,7 +14,7 @@ const RegistModal = (props) => {
 
   const regexPort = /[^0123456789-]/g;
   const ruleTypeOptions = [
-    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: "0" },
+    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: "1" },
     { value: "ALL", label: "ALL", protocol: "TCP", port: "0-65535" },
     { value: "FTP", label: "FTP", protocol: "TCP", port: "20" },
     { value: "SSH", label: "SSH", protocol: "TCP", port: "22" },
@@ -210,7 +210,7 @@ const RegistModal = (props) => {
     ruleType: t('RESOURCES_SPECIFY_USER')
     , protocol: 'TCP'
     , portRangeMin: '0'
-    , portRangeMax: '0'
+    , portRangeMax: '1'
     , isCustom: true
     , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
     , message: ''
@@ -240,7 +240,7 @@ const RegistModal = (props) => {
       const values = [...formRulesFields];
       const val = e.currentTarget.value;
 
-      if (regexPort.test(val) || (val < 0 || val > 65535)) {
+      if (regexPort.test(val) || (val < 1 || val > 65535)) {
         values[i].validPort.isValid = true;
       } else {
         values[i].validPort.isValid = false;
@@ -432,6 +432,7 @@ const RegistModal = (props) => {
           <div style={{ padding: 10 }} />
 
           {t('RESOURCES_POLICY')}
+          <span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
               <div className={styles.table}>

@@ -37,6 +37,10 @@ const RegistModal = (props) => {
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
 
+  const [networkList, setNetworkList] = useState([]);
+  const [securityGroupList, setSecurityGroupList] = useState([]);
+  const [keypairList, setKeypairList] = useState([]);
+
   const [selectImageName, setSelectImageName] = useState();
   const [selectBootId, setSelectBootId] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
@@ -75,13 +79,20 @@ const RegistModal = (props) => {
   const [isKeypiarPasswordError, setIsKeypiarPasswordError] = useState(false);
 
   const [packageValidationError, setIsPackageValidationError] = useState(false);
-  
+
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
 
   useEffect(() => {
+    const getVmImage = async () => {
+      const listImage = await vmStore.fetchVmListImage({ ...props });
+      setImageDataList(listImage.images);
+      setImageOptionList(listImage.images.filter(obj => obj.os_type != 'windows'));
+    }
+    getVmImage()
+
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk', ...props });
-      const listImage = await vmStore.fetchVmListImage({ ...props });
+
       const listBootVolume = await vmStore.fetchVmListBootVolume({ ...props });
       const listNetwork = await vmStore.fetchVmListNetwork({ ...props });
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ ...props });
@@ -91,8 +102,7 @@ const RegistModal = (props) => {
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({ ...props });
 
       setFlavorDataList(listFlavor.flavors);
-      setImageDataList(listImage.images);
-      setImageOptionList(listImage.images.filter(obj => obj.os_type != 'windows'));
+
       setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
       setSriovNetworkDataList(listSriovNetwork.networks);
@@ -101,10 +111,19 @@ const RegistModal = (props) => {
       setSecurityGroupDataList(listSecurityGroup);
       setStoregeClassDataList(listStoregeClass.user_sces)
     };
-
     getVmCreateData();
 
   }, [])
+
+  const projectFilteredData = (projectName) => {
+    const networkList = networkDataList.filter(obj => obj.project === projectName)
+    setNetworkList(networkList)
+    const securityGroupList = securityGroupDataList.filter(obj => obj.project === projectName).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    setSecurityGroupList(securityGroupList)
+    const keypairList = keypairDataList.filter(obj => obj.project === projectName)
+    setKeypairList(keypairList)
+  }
+
 
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
@@ -168,7 +187,7 @@ const RegistModal = (props) => {
   }
 
   const keypairOptions = () => {
-    const opt = keypairDataList.map((obj) => ({
+    const opt = keypairList.map((obj) => ({
       label: t(obj.name),
       value: t(obj.id),
     }))
@@ -303,6 +322,7 @@ const RegistModal = (props) => {
         if (flavorSize >= imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
+          projectFilteredData(projectName)
         } else {
           setFlavorSizeCheck(false);
         }
@@ -318,7 +338,7 @@ const RegistModal = (props) => {
       setBootVolumeName(data.bootvolume);
       setFlavorName(data.flavor);
       setDescription(data.description)
-      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairDataList, { 'id': data.keypair }), 'name'));
+      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairList, { 'id': data.keypair }), 'name'));
       setNodeName(data.node == t('RESOURCES_SELECT') ? "" : data.node);
 
       const flavorData = flavorDataList.filter(obj => obj.name == data.flavor)
@@ -330,14 +350,14 @@ const RegistModal = (props) => {
       const checkFlagFileWrite = checkScriptFilewrite();
       const checkFlagPackage = checkScriptPackage();
       const checkFlagUserScript = checkScriptUserScript();
-      
-      if((checkFlagPassword || checkFlagFileWrite || checkFlagPackage || checkFlagUserScript)){
+
+      if ((checkFlagPassword || checkFlagFileWrite || checkFlagPackage || checkFlagUserScript)) {
         return false;
       }
-      
+
       // keypair 와 passworkd 둘다 설정하지 않을때...
       const checkFlagKeypairOrPassword = checkKeypairPassword();
-      if(checkFlagKeypairOrPassword){
+      if (checkFlagKeypairOrPassword) {
         return false;
       }
 
@@ -347,7 +367,7 @@ const RegistModal = (props) => {
       setIsUserScriptError(false);
       setIsKeypiarPasswordError(false);
       setIsPackageValidationError(false);
-      
+
       setRegStep(4);
       setSubmitButtonFlag(false);
     }
@@ -358,17 +378,17 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     let flag = false;
-    if(isPassword) {
+    if (isPassword) {
       listPasswordRoute.map((obj) => {
-        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]){
+        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
           flag = false;
           setIsPasswordError(false);
-        }else{
+        } else {
           flag = true;
           setIsPasswordError(true);
         }
       })
-    }else{
+    } else {
       setIsPasswordError(false);
     }
     return flag;
@@ -378,17 +398,17 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     let flag = false;
-    if(isFileWrite) {
+    if (isFileWrite) {
       listPasswordRoute.map((obj) => {
-        if (!!data['scriptPath_' + obj]){
+        if (!!data['scriptPath_' + obj]) {
           flag = false;
           setIsFileWriteError(false);
-        }else{
+        } else {
           flag = true;
           setIsFileWriteError(true);
         }
       })
-    }else{
+    } else {
       setIsFileWriteError(false);
     }
     return flag;
@@ -398,24 +418,24 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     let flag = false;
-    if(isPackage) {
+    if (isPackage) {
       listPackageRoute.map((obj) => {
-        if (!!data['scriptPackage_' + obj] && !!data['scriptVersion_' + obj]){
-          if(PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])){
+        if (!!data['scriptPackage_' + obj] && !!data['scriptVersion_' + obj]) {
+          if (PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])) {
             flag = false;
             setIsPackageError(false);
-          }else{
+          } else {
             flag = true;
             setIsPackageError(false);
             setIsPackageValidationError(true);
           }
-          
-        }else{
+
+        } else {
           flag = true;
           setIsPackageError(true);
         }
       })
-    }else{
+    } else {
       setIsPackageError(false);
     }
     return flag;
@@ -425,15 +445,15 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     let flag = false;
-    if(isUserScript) {
-      if (!!data['userScript'] ){
+    if (isUserScript) {
+      if (!!data['userScript']) {
         flag = false;
         setIsUserScriptError(false);
-      }else{
+      } else {
         flag = true;
         setIsUserScriptError(true);
-      } 
-    }else{
+      }
+    } else {
       setIsUserScriptError(false);
     }
     return flag;
@@ -444,13 +464,13 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
 
     let flag = false;
-    if(!!data['keypair']){
+    if (!!data['keypair']) {
       flag = false;
-    }else{
+    } else {
       isPassword ? flag = false : flag = true;
     }
 
-    flag ? setIsKeypiarPasswordError(true) :  setIsKeypiarPasswordError(false);
+    flag ? setIsKeypiarPasswordError(true) : setIsKeypiarPasswordError(false);
 
     return flag;
   }
@@ -472,7 +492,7 @@ const RegistModal = (props) => {
           <>
             <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
             <Button onClick={() => { setRegStep(regStep - 1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
-            <Button type="control" onClick={() => { stepMoveCheck(2)}} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
+            <Button type="control" onClick={() => { stepMoveCheck(2) }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_NEXT')}</Button>
           </>
         }
         {(regStep == 3) &&
@@ -517,9 +537,9 @@ const RegistModal = (props) => {
   const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([]);
 
   const dataListVariables = {
-    network: networkDataList,
+    network: networkList,
     sriov: sriovNetworkDataList,
-    security: securityGroupDataList,
+    security: securityGroupList,
   };
 
   const stateVariables = {
@@ -653,6 +673,47 @@ const RegistModal = (props) => {
 
   const [tab, setTab] = useState("I");
   const { TabPanel } = Tabs;
+
+  const renderIds = () => {
+    const list = document.querySelectorAll('[name^="scriptId"]')
+    let values = [];
+    for (let el of list) {
+      values.push(el.value)
+    }
+    return (
+      <>
+        {t('RESOURCES_CHANGE_PASSWORD')} - {values.join(', ')}
+      </>
+    )
+  }
+
+  const renderFiles = () => {
+    const list = document.querySelectorAll('[name^="scriptPath"]')
+    let values = [];
+    for (let el of list) {
+      values.push(el.value)
+    }
+    return (
+      <>
+        {t('RESOURCES_WRITE_FILE')} - {values.join(', ')}
+      </>
+    )
+  }
+
+  const renderPackages = () => {
+    const list = document.querySelectorAll('[name^="scriptPackage"]')
+    const list2 = document.querySelectorAll('[name^="scriptVersion"]')
+    let values = [];
+    for (let i = 0; i < list.length; i++) {
+      values.push(`${list[i].value}:${list2[i].value}`)
+    }
+    return (
+      <>
+        {t('RESOURCES_INSTALL_PACKAGE')} - {values.join(', ')}
+      </>
+    )
+  }
+
 
   return (
     <>
@@ -939,14 +1000,14 @@ const RegistModal = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!networkDataList?.length &&
+                          {!networkList?.length &&
                             <tr>
                               <td colSpan="6" className="no-data">
                                 <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
-                          {networkDataList?.map((data, key) => (
+                          {networkList?.map((data, key) => (
                             <tr key={data.id}>
                               <td>
                                 <Checkbox name={`select-${data.id}`} checked={stateVariables['network'].includes(data.id) ? true : false}
@@ -963,7 +1024,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {networkCheckItems?.map((id) => {
-                          const name = networkDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                          const name = networkList?.filter((data) => data.id == id).map(item => item.name)[0]
                           return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "network")}>{name}</Button></span>
                         }
                         )}
@@ -1037,21 +1098,21 @@ const RegistModal = (props) => {
               {/* 세부 설정 시작==========================================*/}
               <div className={`${regStep == 3 ? "" : "hide"}`}>
 
-                <Form.Item  
-                    label={t('RESOURCES_KEYPAIR')}
-                  >
+                <Form.Item
+                  label={t('RESOURCES_KEYPAIR')}
+                >
                   <Select
                     name="keypair"
                     placeholder={t('RESOURCES_SELECT')}
                     options={keypairOptions()}
                     clearable
-                  />                  
+                  />
                 </Form.Item>
 
                 <div className={styles.wrapperError}>
                   <div className={`form-item-error ${!isKeypiarPasswordError ? "hide" : ""}`}>{t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}</div>
-                </div>              
-                
+                </div>
+
                 <Form.Item label={t('RESOURCES_SECURITY_GROUP')} >
                   <div className={styles.wrapper}>
                     {stateVariables['security'].length > 0 &&
@@ -1082,14 +1143,14 @@ const RegistModal = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!securityGroupDataList?.length &&
+                          {!securityGroupList?.length &&
                             <tr>
                               <td colSpan="5" className="no-data">
                                 <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
-                          {securityGroupDataList?.map((data, key) => (
+                          {securityGroupList?.map((data, key) => (
                             <tr key={data.id}>
                               <td>
                                 <Checkbox name={`select-${data.id}`} checked={stateVariables['security'].includes(data.id) ? true : false}
@@ -1105,7 +1166,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {securityGroupCheckItems?.map((id) => {
-                          const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                          const name = securityGroupList?.filter((data) => data.id == id).map(item => item.name)[0]
                           return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
                         }
                         )}
@@ -1246,7 +1307,7 @@ const RegistModal = (props) => {
                     </div>
                     <div className={`form-item-error ${!isPackageError ? "hide" : ""}`}>{t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}</div>
                     <div className={`form-item-error ${!packageValidationError ? "hide" : ""}`}>{t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}</div>
-                    
+
                   </Form.Group>
                   <Form.Group label={t('RESOURCES_CUSTOM')} onChange={(e) => setIsUserScript(!isUserScript)} checkable>
                     <Form.Item
@@ -1343,7 +1404,7 @@ const RegistModal = (props) => {
                       <Button icon="pen" onClick={() => { setRegStep(2) }}></Button>
                     </div>
                     <label>{t('RESOURCES_NETWORK')}</label>
-                    {networkDataList.filter(x => networkCheckItems.includes(x.id)).map((obj, index) => (
+                    {networkList.filter(x => networkCheckItems.includes(x.id)).map((obj, index) => (
                       <div className={styles.greybgbox} key={index}>
                         <div className={styles.list}>
                           <label>{t('RESOURCES_NAME')}</label>
@@ -1403,7 +1464,7 @@ const RegistModal = (props) => {
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div className={styles.multiline}>
                           {securityGroupCheckItems.map((id) => (
-                            <div key={id}>{get(find(securityGroupDataList, { 'id': id }), 'name')}</div>
+                            <div key={id}>{get(find(securityGroupList, { 'id': id }), 'name')}</div>
                           ))}
                         </div>
                       </div>
@@ -1416,10 +1477,10 @@ const RegistModal = (props) => {
                       <div className={styles.list}>
                         <label>{t('스크립트')}</label>
                         <div className={styles.multiline}>
-                          <div>{isPassword && t('RESOURCES_CHANGE_PASSWORD')}</div>
-                          <div>{isPackage && t('RESOURCES_WRITE_FILE')}</div>
-                          <div>{isFileWrite && t('RESOURCES_INSTALL_PACKAGE')}</div>
-                          <div>{isUserScript && t('RESOURCES_CUSTOM')}</div>
+                          <div>{isPassword && renderIds()}</div>
+                          <div>{isFileWrite && renderFiles()}</div>
+                          <div>{isPackage && renderPackages()}</div>
+                          <div>{isUserScript && (t('RESOURCES_CUSTOM') + ' - Y')}</div>
                         </div>
                       </div>
                       {/* <div className={styles.list}>
