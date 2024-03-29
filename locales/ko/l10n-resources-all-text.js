@@ -282,6 +282,7 @@ module.exports = {
   RESOURCES_EDIT_SUCCESSFUL: '수정 되었습니다.',
   RESOURCES_SNAPSHOT: '스냅샷',
   RESOURCES_CREATE_SNAPSHOT: '스냅샷 생성',
+  RESOURCES_CREATE_SNAPSHOT_TIP: '스냅샷을 생성하시겠습니까?',
   RESOURCES_SNAPSHOT_LOG_INFORMATION_EMPTY_DESC: '스냅샷 실헹 이력에 기재할 정보를 입력해주세요.',
   RESOURCES_SCALING: '스케일링',
   RESOURCES_SCRIPT: '스크립트',
@@ -639,6 +640,6 @@ module.exports = {
   RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC: '서버 구성 실패 상태입니다. ',
   RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
-  
+
 
 };

@@ -126,7 +126,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
     const getVmList = async () => {
       const vmList = await vmStore.vmList()
       let vmNames = '';
-      vmList.map(obj => vmNames = vmNames + obj.name + "|")
+      vmList.map(obj => vmNames = vmNames + obj.id + "|")
 
       if (cleanupTrigger) {
         setVmList(vmNames)
