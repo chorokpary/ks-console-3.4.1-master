@@ -180,14 +180,14 @@ const CustomDashboardEdit = (props) => {
       document.getElementById('dashboardName').focus();
     } else {
       var arr = JSON.parse(localStorage.getItem("dashboardArr"))
-      var duplicateName = arr.find(el => el.name == dashboardName)
+      var duplicateName = arr.find(el => el.name == dashboardName.trim())
       grid = GridStack.init();
 
       if (isNew && duplicateName) {
         Notify.error({ content: t('RESOURCES_DUPLICATE_NAME') })
         document.getElementById('dashboardName').style.borderColor = 'red';
         document.getElementById('dashboardName').focus()
-      } else if (!isNew && activeDashboard.name != dashboardName && duplicateName) {
+      } else if (!isNew && activeDashboard.name != dashboardName.trim() && duplicateName) {
         Notify.error({ content: t('RESOURCES_DUPLICATE_NAME') })
         document.getElementById('dashboardName').style.borderColor = 'red';
         document.getElementById('dashboardName').focus()
