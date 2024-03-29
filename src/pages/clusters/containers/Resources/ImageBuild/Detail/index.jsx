@@ -57,6 +57,8 @@ const ImageBuildDetail = (props) => {
       const uploadInfo = get(detail, ['upload-info-list', 'upload-info'])
       const podStatus = get(detail, 'pod-status', '')
 
+      console.log("global : "+ JSON.stringify(globals))
+
       let fileStatus = "-";
       let fileName = "-";
       let fileSize = 0;
@@ -67,8 +69,9 @@ const ImageBuildDetail = (props) => {
          fileName = get(MetaData, 'filename', '-').split(".")[0]
 
          fileStatus = uploadInfo[0]['upload-file-info']['Status'];
-         fileSize = uploadInfo[0]['file-size'];          
-         fileConvertSize = common.fnFormatBytes(fileSize.toString());
+         fileSize = uploadInfo[0]['upload-file-info']['file-info']['Size'];
+         fileConvertSize = fileSize ? common.fnFormatBytes(fileSize.toString()) : "-";
+
       }
 
       if (isEmpty(detail)) {
@@ -78,7 +81,7 @@ const ImageBuildDetail = (props) => {
       return [
         {
           name: t('RESOURCES_CLUSTER'),
-          value: detail.cluster,
+          value: cluster,
         },
         {
           name: t('RESOURCES_CPU_TYPE'),

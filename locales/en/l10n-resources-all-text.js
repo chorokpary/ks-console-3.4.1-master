@@ -282,6 +282,7 @@ module.exports = {
   RESOURCES_EDIT_SUCCESSFUL: '수정 되었습니다.',
   RESOURCES_SNAPSHOT: '스냅샷',
   RESOURCES_CREATE_SNAPSHOT: '스냅샷 생성',
+  RESOURCES_CREATE_SNAPSHOT_TIP: '스냅샷을 생성하시겠습니까?',
   RESOURCES_SNAPSHOT_LOG_INFORMATION_EMPTY_DESC: '스냅샷 실헹 이력에 기재할 정보를 입력해주세요.',
   RESOURCES_SCALING: '스케일링',
   RESOURCES_SCRIPT: '스크립트',
@@ -430,7 +431,7 @@ module.exports = {
   RESOURCES_INSTALL_PACKAGE: '패키지 설치',
   RESOURCES_PUBLIC: '퍼블릭',
   RESOURCES_PORT_RANGE: '포트 범위',
-  RESOURCES_PORT_RANGE_DESC: '포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다.',
+  RESOURCES_PORT_RANGE_DESC: '포트 범위는 숫자이거나 1~65535 숫자 범위이어야 합니다.',
   RESOURCES_PRIVATE: '프라이빗',
   RESOURCES_PROTOCOL: '프로토콜',
   RESOURCES_FLOATING_IP: '플로팅 IP',
@@ -619,7 +620,7 @@ module.exports = {
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
   RESOURCES_SUCCESS: '성공',
-  RESOURCES_ENVIRONMENT_CONFIGURATION: '환경 구성',
+  RESOURCES_ENVIRONMENT_CONFIGURATION: '서버 구성',
   RESOURCES_FILE_UPLOAD: '파일 업로드',
   RESOURCES_FILE_UPLOADED_DESC: '파일을 업로드한 상태입니다.',
   RESOURCES_FILE_UPLOADING_DESC: '파일 업로드중 상태입니다.',
@@ -633,6 +634,11 @@ module.exports = {
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
   RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',
   RESOURCES_INVALID_PACKAGE_SETTING_DESC: '패키지 이름(소스 및 바이너리 모두, 패키지 참조)은 소문자(a-z), 숫자(0-9), 더하기(+) 및 빼기(-) 기호, 마침표(.)로만 구성되어야 합니다. 길이는 2자 이상이어야 하며 영숫자 문자로 시작해야 합니다.',
+  RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC: '서버 구성을 완료한 상태 입니다. ',
+  RESOURCES_ENVIRONMENT_CONFIGURATION_ING_DESC: '서버 구성중 상태입니다. ',
+  RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC: '서버 구성 실패 상태입니다. ',
+  RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
+  RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
 
 
 
