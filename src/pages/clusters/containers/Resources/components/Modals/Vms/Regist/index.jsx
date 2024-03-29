@@ -37,6 +37,10 @@ const RegistModal = (props) => {
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
 
+  const [networkList, setNetworkList] = useState([]);
+  const [securityGroupList, setSecurityGroupList] = useState([]);
+  const [keypairList, setKeypairList] = useState([]);
+
   const [selectImageName, setSelectImageName] = useState();
   const [selectBootId, setSelectBootId] = useState();
   const [selectFlavorName, setSelectFlavorName] = useState();
@@ -111,6 +115,16 @@ const RegistModal = (props) => {
 
   }, [])
 
+  const projectFilteredData = (projectName) => {
+    const networkList = networkDataList.filter(obj => obj.project === projectName)
+    setNetworkList(networkList)
+    const securityGroupList = securityGroupDataList.filter(obj => obj.project === projectName).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    setSecurityGroupList(securityGroupList)
+    const keypairList = keypairDataList.filter(obj => obj.project === projectName)
+    setKeypairList(keypairList)
+  }
+
+
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux', },
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
@@ -173,7 +187,7 @@ const RegistModal = (props) => {
   }
 
   const keypairOptions = () => {
-    const opt = keypairDataList.map((obj) => ({
+    const opt = keypairList.map((obj) => ({
       label: t(obj.name),
       value: t(obj.id),
     }))
@@ -308,6 +322,7 @@ const RegistModal = (props) => {
         if (flavorSize >= imageSize) {
           setRegStep(2);
           setFlavorSizeCheck(true);
+          projectFilteredData(projectName)
         } else {
           setFlavorSizeCheck(false);
         }
@@ -323,7 +338,7 @@ const RegistModal = (props) => {
       setBootVolumeName(data.bootvolume);
       setFlavorName(data.flavor);
       setDescription(data.description)
-      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairDataList, { 'id': data.keypair }), 'name'));
+      setKeypairName(data.keypair == t('RESOURCES_SELECT') ? "" : get(find(keypairList, { 'id': data.keypair }), 'name'));
       setNodeName(data.node == t('RESOURCES_SELECT') ? "" : data.node);
 
       const flavorData = flavorDataList.filter(obj => obj.name == data.flavor)
@@ -522,9 +537,9 @@ const RegistModal = (props) => {
   const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([]);
 
   const dataListVariables = {
-    network: networkDataList,
+    network: networkList,
     sriov: sriovNetworkDataList,
-    security: securityGroupDataList,
+    security: securityGroupList,
   };
 
   const stateVariables = {
@@ -985,14 +1000,14 @@ const RegistModal = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!networkDataList?.length &&
+                          {!networkList?.length &&
                             <tr>
                               <td colSpan="6" className="no-data">
                                 <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
-                          {networkDataList?.map((data, key) => (
+                          {networkList?.map((data, key) => (
                             <tr key={data.id}>
                               <td>
                                 <Checkbox name={`select-${data.id}`} checked={stateVariables['network'].includes(data.id) ? true : false}
@@ -1009,7 +1024,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {networkCheckItems?.map((id) => {
-                          const name = networkDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                          const name = networkList?.filter((data) => data.id == id).map(item => item.name)[0]
                           return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "network")}>{name}</Button></span>
                         }
                         )}
@@ -1128,14 +1143,14 @@ const RegistModal = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!securityGroupDataList?.length &&
+                          {!securityGroupList?.length &&
                             <tr>
                               <td colSpan="5" className="no-data">
                                 <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
                               </td>
                             </tr>
                           }
-                          {securityGroupDataList?.map((data, key) => (
+                          {securityGroupList?.map((data, key) => (
                             <tr key={data.id}>
                               <td>
                                 <Checkbox name={`select-${data.id}`} checked={stateVariables['security'].includes(data.id) ? true : false}
@@ -1151,7 +1166,7 @@ const RegistModal = (props) => {
                       </table>
                       <div className={styles.removeCheckWrapper}>
                         {securityGroupCheckItems?.map((id) => {
-                          const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                          const name = securityGroupList?.filter((data) => data.id == id).map(item => item.name)[0]
                           return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
                         }
                         )}
@@ -1389,7 +1404,7 @@ const RegistModal = (props) => {
                       <Button icon="pen" onClick={() => { setRegStep(2) }}></Button>
                     </div>
                     <label>{t('RESOURCES_NETWORK')}</label>
-                    {networkDataList.filter(x => networkCheckItems.includes(x.id)).map((obj, index) => (
+                    {networkList.filter(x => networkCheckItems.includes(x.id)).map((obj, index) => (
                       <div className={styles.greybgbox} key={index}>
                         <div className={styles.list}>
                           <label>{t('RESOURCES_NAME')}</label>
@@ -1449,7 +1464,7 @@ const RegistModal = (props) => {
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div className={styles.multiline}>
                           {securityGroupCheckItems.map((id) => (
-                            <div key={id}>{get(find(securityGroupDataList, { 'id': id }), 'name')}</div>
+                            <div key={id}>{get(find(securityGroupList, { 'id': id }), 'name')}</div>
                           ))}
                         </div>
                       </div>
