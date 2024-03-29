@@ -124,6 +124,9 @@ class ResourceUsage extends React.Component {
   }
 
   get applicationResource() {
+    if (get(globals.user.globalRules, 'clusters').includes('manage')) {
+      return true
+    }
     const applicationServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'applications'], [])
     const flag = applicationServieRole.length > 0 ? true : false;
     return flag
