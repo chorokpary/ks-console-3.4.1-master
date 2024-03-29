@@ -364,6 +364,18 @@ client:
                 authKey: monitoring,
               }
             - {
+                name: computingkaasmonitoring,
+                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
+              }
+            - {
+                name: baremetalmonitoring,
+                title: RESOURCES_BAREMETAL_MONITORING,
+              }
+            - {
+                name: baremetal-carbon-indicator,
+                title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
+              }
+            - {
                 name: custom-monitoring,
                 title: CUSTOM_MONITORING,
                 requiredClusterVersion: v3.1.0,
@@ -383,24 +395,13 @@ client:
                 requiredClusterVersion: v3.1.0,
               }
             - {
-                name: 'computingkaasmonitoring',
-                title: RESOURCES_COMPUTING_KAAS_RESOURCE,
+                name: kubeeye-monitoring,
+                title: RESOURCES_CLUSTER_INSPECTOR,
               }
             - {
-                name: baremetalmonitoring,
-                title: RESOURCES_BAREMETAL_MONITORING,
+                name: clusterfault,
+                title: RESOURCES_CLUSTER_FAULT_TITLE,
               }
-            - {
-                name: baremetal-carbon-indicator,
-                title: RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS,
-              }
-            - { name: 'clusterfault', title: RESOURCES_CLUSTER_FAULT_TITLE }
-
-            - { name: kubeeye-monitoring, title: 'KubeEye 모니터링' }
-            # - {
-            #     name: fault-analysis,
-            #     title: "장애 분석",
-            #   }
 
   # access control page navigations
   accessNavs:

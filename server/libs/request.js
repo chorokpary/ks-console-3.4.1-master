@@ -112,7 +112,7 @@ const send_harbor_request = ({ path, params }) => {
         const contentType = response.headers.get('content-type')
 
         if (contentType && contentType.includes('json')) {
-          return response.json().then(res => {
+          response.json().then(res => {
             if (res.errors) {
               const errorMsg = res.errors[0]
                 ? res.errors[0].message
@@ -124,7 +124,6 @@ const send_harbor_request = ({ path, params }) => {
                 resolve({ repository: [], project: [], chart: [] })
               }
             }
-
             if (
               response.ok &&
               response.status >= 200 &&
@@ -140,13 +139,13 @@ const send_harbor_request = ({ path, params }) => {
               statusText: response.statusText,
             })
           })
+        } else {
+          reject({
+            code: 400,
+            statusText: response.statusText,
+            message: 'bad request',
+          })
         }
-
-        reject({
-          code: 400,
-          statusText: response.statusText,
-          message: 'bad request',
-        })
       })
       .catch(err => {
         reject(err)
