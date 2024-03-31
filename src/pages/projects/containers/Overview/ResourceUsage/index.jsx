@@ -124,7 +124,7 @@ class ResourceUsage extends React.Component {
   }
 
   get applicationResource() {
-    if (get(globals.user.globalRules, 'clusters').includes('manage')) {
+    if (get(globals.user.globalRules, 'clusters')?.includes('manage')) {
       return true
     }
     const applicationServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'applications'], [])
@@ -133,7 +133,7 @@ class ResourceUsage extends React.Component {
   }
 
   get computingResource() {
-    if (get(globals.user.globalRules, 'clusters').includes('manage')) {
+    if (get(globals.user.globalRules, 'clusters')?.includes('manage')) {
       return true
     }
     const computingWorkloadServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'vms'], [])
