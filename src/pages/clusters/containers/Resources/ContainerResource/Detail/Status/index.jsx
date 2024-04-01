@@ -49,7 +49,6 @@ const Status = (props) => {
           return prev
         }
       }, 0)
-      //todo 여기가 이상한듯
     }
   ]
   const names = [t('RESOURCES_MASTER_COUNT'), t('RESOURCES_WORKER_COUNT')]
