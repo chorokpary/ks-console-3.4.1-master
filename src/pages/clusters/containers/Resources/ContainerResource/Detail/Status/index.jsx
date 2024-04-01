@@ -33,14 +33,23 @@ const Status = (props) => {
     {
       nums: masterNode?.length,
       unavailableNums: masterNode?.reduce((prev, obj) => {
-        if (obj.ready_status === true) return ++prev
+        if (obj.ready_status === true) {
+          return ++prev
+        } else {
+          return prev
+        }
       }, 0)
     },
     {
       nums: workerNode?.length,
       unavailableNums: workerNode?.reduce((prev, obj) => {
-        if (obj.ready_status === true) return ++prev
+        if (obj.ready_status === true) {
+          return ++prev
+        } else {
+          return prev
+        }
       }, 0)
+      //todo 여기가 이상한듯
     }
   ]
   const names = [t('RESOURCES_MASTER_COUNT'), t('RESOURCES_WORKER_COUNT')]
@@ -286,6 +295,7 @@ const Status = (props) => {
         onFetchData={store.fetchData}
         enableScale={enableScaleReplica()}
         countRange={[1, 10]}
+        cluster={props.match.params.cluster}
       />
 
       <Panel title={"Master Node"}>

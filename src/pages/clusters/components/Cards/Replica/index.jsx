@@ -41,40 +41,39 @@ export default class HPACard extends React.Component {
   static defaultProps = {
     module: 'deployments',
     enableScale: true,
-    onScale() {},
+    onScale() { },
   }
 
   fnGetStatus = (idx) => {
     const { module, detail, names, text, enableScale, countRange } = this.props
     let status = {}
-
     switch (module) {
-        default:
-        case 'deployments': {
+      default:
+      case 'deployments': {
         status = {
-            current: detail.state[idx].unavailableNums || 0,
-            desire: detail.state[idx].nums || 0,
-            countRange: countRange,
+          current: detail.state[idx].unavailableNums || 0,
+          desire: detail.state[idx].nums || 0,
+          countRange: countRange,
         }
         break
-        }
-        case 'statefulsets': {
+      }
+      case 'statefulsets': {
         status = {
-            current: get(detail.state[idx], 'status.currentReplicas', detail.state[idx].readyNums),
-            desire: detail.state[idx].nums || 0,
+          current: get(detail.state[idx], 'status.currentReplicas', detail.state[idx].readyNums),
+          desire: detail.state[idx].nums || 0,
         }
         break
-        }
-        case 'daemonsets': {
+      }
+      case 'daemonsets': {
         status = {
-            current: get(detail.state[idx], 'status.numberReady', 0),
-            desire: get(detail.state[idx], 'status.desiredNumberScheduled', 0),
+          current: get(detail.state[idx], 'status.numberReady', 0),
+          desire: get(detail.state[idx], 'status.desiredNumberScheduled', 0),
         }
         break
-        }
+      }
     }
 
-    status.onScale = enableScale ? (idx>0 ? this.handleReplicaChange: null) : null //master´Â scale¼öÁ¤ ºÒ°¡
+    status.onScale = enableScale ? (idx > 0 ? this.handleReplicaChange : null) : null //masterï¿½ï¿½ scaleï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½
     status.name = names[idx]
     status.text = text
 
@@ -91,21 +90,21 @@ export default class HPACard extends React.Component {
   putScale = async (newReplicas) => {
     if (newReplicas) {
       const replicas = { "replicas": newReplicas }
-      const response = await axios.put(`/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
+      // const response = await axios.put(`/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
+      const response = await request.put(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${this.props.cluster}/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
       if (response.status === 200) {
-          setTimeout(async () => { await this.props.onFetchData() }, 500)
+        setTimeout(async () => { await this.props.onFetchData() }, 500)
       }
     }
   }
 
-    render() {
-    
+  render() {
     const { className } = this.props
 
     return (
       <Panel className={classnames(styles.replica, className)}>
         <div className={styles.replicaCount}>
-           {this.props.names.map((obj, idx) => (<div key={idx} style={{ marginRight : 30}}><ReplicaStatus {...this.fnGetStatus(idx)}/></div>))}
+          {this.props.names.map((obj, idx) => (<div key={idx} style={{ marginRight: 30 }}><ReplicaStatus {...this.fnGetStatus(idx)} /></div>))}
         </div>
       </Panel>
     )

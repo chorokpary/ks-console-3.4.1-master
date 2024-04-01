@@ -72,6 +72,15 @@ const VmDetail = props => {
 
   const getOperations = () => [
     {
+      key: 'vnc',
+      icon: 'vpn',
+      text: t('RESOURCES_ACCESS_VNC'),
+      action: 'view',
+      onClick: () => {
+        fnOpenVncPopup();
+      },
+    },
+    {
       key: 'edit',
       icon: 'pen',
       text: t('EDIT_INFORMATION'),
@@ -111,15 +120,6 @@ const VmDetail = props => {
           store: store,
           success: fetchData,
         });
-      },
-    },
-    {
-      key: 'vnc',
-      icon: 'vpn',
-      text: t('RESOURCES_ACCESS_VNC'),
-      action: 'view',
-      onClick: () => {
-        fnOpenVncPopup();
       },
     },
     {

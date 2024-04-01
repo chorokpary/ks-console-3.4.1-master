@@ -121,7 +121,6 @@ export default {
           store
             .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
             .then(() => {
-              console.log('asd')
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
