@@ -200,6 +200,7 @@ const Information = (props) => {
                             <h5><span className="bg_04">NIC</span>{network.interface}</h5>
                             <div className="group">
                               <div className="info_2"><span>IP</span><p>{network.ip}</p></div>
+			      <div className="info_2"><span>MAC</span><p>{network.mac}</p></div>
                             </div>
                           </div>
                         </div>
