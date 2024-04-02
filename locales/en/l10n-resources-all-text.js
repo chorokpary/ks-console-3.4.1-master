@@ -31,6 +31,7 @@ module.exports = {
   RESOURCES_BAREMETAL_NOT_FOUND_RESOURCE: 'BAREMETAL 리소스를 찾을 수 없음',
   RESOURCES_CIDR_EMPTY_DESC: 'CIDR을 입력해주세요.',
   RESOURCES_CIDR_VALID: 'CIDR을 정확히 입력해주세요.',
+  RESOURCES_CIDR_VF_VALID: 'CIDR 개수는 VF 개수보다 작거나 같도록 입력해 주세요.',
   RESOURCES_CO2_EMISSIONS: 'CO2 발생량',
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
@@ -639,6 +640,6 @@ module.exports = {
   RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC: '서버 구성 실패 상태입니다. ',
   RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
-  RESOURCES_FAIL: '실패', 
+  RESOURCES_FAIL: '실패',
 
 };

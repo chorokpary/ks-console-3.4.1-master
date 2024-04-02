@@ -37,6 +37,7 @@ const RegistModal = props => {
     false
   );
   const [externalBool, setExternalBool] = useState(false);
+  const [vfs, setVfs] = useState('');
 
   const resourceNameOptions = sriovResourceDataList.map(name => {
     return {
@@ -54,6 +55,7 @@ const RegistModal = props => {
     const getSriovCreateData = async () => {
       const listSriovResource = await sriovStore.fetchSriovResourceList();
       setSriovResourceDataList(listSriovResource.resources);
+      // setSriovResourceDataList(['fastnet']);
 
       const listSriovBond = await sriovStore.fetchSriovBondList();
       setSriovBondDataList(listSriovBond.resources);
@@ -62,6 +64,11 @@ const RegistModal = props => {
 
     getSriovCreateData();
   }, []);
+
+  const getVfs = async (name) => {
+    const numberOfVfs = await sriovStore.fetchSriovVfs({ ...props, name });
+    setVfs(numberOfVfs.number)
+  };
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -112,12 +119,14 @@ const RegistModal = props => {
         data.resource_name == '' ||
         data.cidr == undefined ||
         data.cidr == '' ||
+        data.cidr.split("/")[1] > data.vfs ||
         data.ip_pool_start == undefined ||
+        !isValidIpAddress(data.ip_pool_start) ||
         data.ip_pool_start == '' ||
         data.ip_pool_end == undefined ||
+        !isValidIpAddress(data.ip_pool_end) ||
         data.ip_pool_end == ''
       ) {
-        console.log(data)
         handleOk();
       } else {
         setRegStep(2);
@@ -206,8 +215,12 @@ const RegistModal = props => {
     return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
+    const { data } = form.current.props;
     if (!PATTERN_IP_MASK.test(num)) {
       return false;
+    }
+    if (num > data.vfs) {
+      return false
     }
     const clsMaximumVal = 128;
     const classVal = parseInt(num);
@@ -218,9 +231,13 @@ const RegistModal = props => {
   };
 
   const cidrValidator = (rule, value, callback) => {
+    const { data } = form.current.props;
     if (!value) {
       return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
     } else {
+      if (value.split("/")[1] > data.vfs) {
+        return callback({ message: t('RESOURCES_CIDR_VF_VALID') })
+      }
       if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
         return callback({ message: t('RESOURCES_CIDR_VALID') })
       }
@@ -237,7 +254,6 @@ const RegistModal = props => {
     ) {
       data.ip_pool_start = '';
       data.ip_pool_end = '';
-      data.gateway_ip = '';
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
@@ -256,7 +272,6 @@ const RegistModal = props => {
       const cidrData = common.fnCalculateCidr(e);
       data.ip_pool_start = cidrData.startIp;
       data.ip_pool_end = cidrData.endIp;
-      data.gateway_ip = cidrData.gatewayIp;
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
@@ -449,20 +464,38 @@ const RegistModal = props => {
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
-                <Form.Item
-                  label={t('RESOURCES_RESOURCE_NAME')}
-                  rules={[
-                    {
-                      required: true,
-                      message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
-                    },
-                  ]}
-                >
-                  <Select
-                    name="resource_name"
-                    placeholder={t('RESOURCES_SELECT')}
-                    options={resourceNameOptions}
-                  />
+                <Form.Item>
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_RESOURCE_NAME')}
+                        rules={[
+                          {
+                            required: true,
+                            message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                          },
+                        ]}
+                      >
+                        <Select
+                          name="resource_name"
+                          placeholder={t('RESOURCES_SELECT')}
+                          options={resourceNameOptions}
+                          onChange={(e) => getVfs(e)}
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      <Form.Item
+                        label={t('VF')}
+                      >
+                        <Input
+                          name="vfs"
+                          defaultValue={vfs}
+                          disabled
+                        />
+                      </Form.Item>
+                    </Column>
+                  </Columns>
                 </Form.Item>
 
                 <Form.Item>
