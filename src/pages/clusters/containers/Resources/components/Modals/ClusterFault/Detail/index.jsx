@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
-
+import MarkdownIt from 'markdown-it'
 import { ProjectSelect } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Tooltip, Column, Columns, Radio, Checkbox } from '@kube-design/components'
 
@@ -11,6 +11,7 @@ import styles from './index.scss'
 
 
 const DetailModal = (props) => {
+  const md = new MarkdownIt({ html: true })
   const detail = props.detail;
   const [modelView, setModalView] = useState(true);
 
@@ -103,8 +104,10 @@ const DetailModal = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td style={{ textAlign: 'unset', whiteSpace: 'pre-wrap' }}>
-                        {detail.spec.details}
+                      <td style={{ textAlign: 'unset', paddingLeft: '20px' }}>
+                        <span dangerouslySetInnerHTML={{
+                          __html: md.render(detail.spec.details)
+                        }} />
                       </td>
                     </tr>
                   </tbody>
