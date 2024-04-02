@@ -375,77 +375,73 @@ const RegistModal = (props) => {
 
   // 스크립트 Validation 시작===================
   const checkScriptPassword = () => {
-    const { data } = form.current.props;
-
-    let flag = false;
     if (isPassword) {
-      listPasswordRoute.map((obj) => {
-        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
-          flag = false;
-          setIsPasswordError(false);
-        } else {
-          flag = true;
-          setIsPasswordError(true);
-        }
-      })
-    } else {
-      setIsPasswordError(false);
+      const { data } = form.current.props;
+      try {
+        listPasswordRoute.map((obj) => {
+          if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
+          } else {
+            setIsPasswordError(true);
+            throw true;
+          }
+        })
+      } catch (e) {
+        return e;
+      }
     }
-    return flag;
+    setIsPasswordError(false);
+    return false;
   }
 
   const checkScriptFilewrite = () => {
-    const { data } = form.current.props;
-
-    let flag = false;
     if (isFileWrite) {
-      listPasswordRoute.map((obj) => {
-        if (!!data['scriptPath_' + obj]) {
-          flag = false;
-          setIsFileWriteError(false);
-        } else {
-          flag = true;
-          setIsFileWriteError(true);
-        }
-      })
-    } else {
-      setIsFileWriteError(false);
+      const { data } = form.current.props;
+      try {
+        listFileRoute.map((obj) => {
+          if (!!data['scriptPath_' + obj]) {
+          } else {
+            setIsFileWriteError(true);
+            throw true;
+          }
+        })
+      } catch (e) {
+        return e;
+      }
     }
-    return flag;
+    setIsFileWriteError(false);
+    return false;
   }
 
   const checkScriptPackage = () => {
-    const { data } = form.current.props;
-
-    let flag = false;
     if (isPackage) {
-      listPackageRoute.map((obj) => {
-        if (!!data['scriptPackage_' + obj] && !!data['scriptVersion_' + obj]) {
-          if (PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])) {
-            flag = false;
+      const { data } = form.current.props;
+      try {
+        listPackageRoute.map((obj) => {
+          if (!!data['scriptPackage_' + obj] && !!data['scriptVersion_' + obj]) {
             setIsPackageError(false);
+            if (PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])) {
+            } else {
+              setIsPackageValidationError(true);
+              throw true;
+            }
           } else {
-            flag = true;
-            setIsPackageError(false);
-            setIsPackageValidationError(true);
+            setIsPackageError(true);
+            throw true;
           }
-
-        } else {
-          flag = true;
-          setIsPackageError(true);
-        }
-      })
-    } else {
-      setIsPackageError(false);
+        })
+      } catch (e) {
+        return e;
+      }
     }
-    return flag;
+    setIsPackageError(false);
+    setIsPackageValidationError(false);
+    return false;
   }
 
   const checkScriptUserScript = () => {
-    const { data } = form.current.props;
-
     let flag = false;
     if (isUserScript) {
+      const { data } = form.current.props;
       if (!!data['userScript']) {
         flag = false;
         setIsUserScriptError(false);
@@ -608,6 +604,10 @@ const RegistModal = (props) => {
   const nextPasswordRoute = useRef(1);
   const [listPasswordRoute, setlistPasswordRoute] = useState([1]);
 
+  useEffect(() => {
+    checkScriptPassword()
+  }, [listPasswordRoute])
+
   const handlePasswordRoute = {
 
     addColumn: () => {
@@ -617,7 +617,6 @@ const RegistModal = (props) => {
       }
       nextPasswordRoute.current += 1
       setlistPasswordRoute(listPasswordRoute => [...listPasswordRoute, nextPasswordRoute.current]);
-
     },
     delColumn: (id) => {
       setlistPasswordRoute(listPasswordRoute.filter((el) => el !== id));
@@ -626,6 +625,10 @@ const RegistModal = (props) => {
 
   const nextFileRoute = useRef(1);
   const [listFileRoute, setlistFileRoute] = useState([1]);
+
+  useEffect(() => {
+    checkScriptFilewrite()
+  }, [listFileRoute])
 
   const handleFileRoute = {
 
@@ -636,7 +639,6 @@ const RegistModal = (props) => {
       }
       nextFileRoute.current += 1
       setlistFileRoute(listFileRoute => [...listFileRoute, nextFileRoute.current]);
-
     },
     delColumn: (id) => {
       setlistFileRoute(listFileRoute.filter((el) => el !== id));
@@ -645,6 +647,10 @@ const RegistModal = (props) => {
 
   const nextPackageRoute = useRef(1);
   const [listPackageRoute, setlistPackageRoute] = useState([1]);
+
+  useEffect(() => {
+    checkScriptPackage()
+  }, [listPackageRoute])
 
   const handlePackageRoute = {
 
@@ -655,7 +661,6 @@ const RegistModal = (props) => {
       }
       nextPackageRoute.current += 1
       setlistPackageRoute(listPackageRoute => [...listPackageRoute, nextPackageRoute.current]);
-
     },
     delColumn: (id) => {
       setlistPackageRoute(listPackageRoute.filter((el) => el !== id));
@@ -1198,6 +1203,7 @@ const RegistModal = (props) => {
                                 placeholder={t('ID')}
                                 defaultValue={obj == 1 ? selectImageDistroType : ""}
                                 disabled={obj == 1 ? true : false}
+                                onChange={() => checkScriptPassword()}
                               />
                             </Form.Item>
                           </Column>
@@ -1206,6 +1212,7 @@ const RegistModal = (props) => {
                               <InputPassword
                                 name={`scriptPassword_${obj}`}
                                 placeholder={t('Password')}
+                                onChange={() => checkScriptPassword()}
                               />
                             </Form.Item>
                           </Column>
@@ -1238,6 +1245,7 @@ const RegistModal = (props) => {
                               <Input
                                 name={`scriptPath_${obj}`}
                                 placeholder={t('PATH')}
+                                onChange={() => checkScriptFilewrite()}
                               />
                             </Form.Item>
                           </Column>
@@ -1277,6 +1285,7 @@ const RegistModal = (props) => {
                               <Input
                                 name={`scriptPackage_${obj}`}
                                 placeholder={t('Package')}
+                                onChange={() => checkScriptPackage()}
                               />
                             </Form.Item>
                           </Column>
@@ -1285,6 +1294,7 @@ const RegistModal = (props) => {
                               <Input
                                 name={`scriptVersion_${obj}`}
                                 placeholder={t('Ver')}
+                                onChange={() => checkScriptPackage()}
                               />
                             </Form.Item>
                           </Column>
