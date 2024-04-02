@@ -314,19 +314,30 @@ export default {
       })
     },
   },
+  // 'vm.snapshotPop': {
+  //   on({ store, success, data, ...props }) {
+  //     const modal = Modal.open({
+  //       onOk: () => {
+  //         store.snapshotCreate({ data, ...props }).then(() => {
+  //           Modal.close(modal)
+  //           Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+  //           success && success()
+  //         })
+  //       },
+  //       title: t('RESOURCES_CREATE_SNAPSHOT'),
+  //       desc: t('RESOURCES_CREATE_SNAPSHOT_TIP'),
+  //       modal: ConfirmModal,
+  //       store,
+  //       success,
+  //       ...props,
+  //     })
+  //   },
+  // },
   'vm.snapshotPop': {
-    on({ store, success, data, ...props }) {
+    on({ store, success, ...props }) {
       const modal = Modal.open({
-        onOk: () => {
-          store.snapshotCreate({ data, ...props }).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
-            success && success()
-          })
-        },
         title: t('RESOURCES_CREATE_SNAPSHOT'),
-        desc: t('RESOURCES_CREATE_SNAPSHOT_TIP'),
-        modal: ConfirmModal,
+        modal: SnapshotModal,
         store,
         success,
         ...props,
