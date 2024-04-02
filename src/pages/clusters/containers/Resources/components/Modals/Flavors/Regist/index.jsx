@@ -543,10 +543,6 @@ const RegistModal = props => {
                     {t('CPU')}
                     <span className="form-item-required">*</span>
                   </label>
-                  {/* <Form.Item
-                    label={t('CPU')}
-                    // rules={[{ required: true, message: '1 이상 입력하세요' }]}
-                  > */}
                   <div
                     style={{
                       display: 'flex',
@@ -575,6 +571,7 @@ const RegistModal = props => {
                         name="vcpus"
                         defaultValue={vcpus}
                         style={{ width: '100%' }}
+                        onChange={e => setVcpus(e)}
                       />
                     </Form.Item>
                     &nbsp;&nbsp;
@@ -585,15 +582,6 @@ const RegistModal = props => {
                 <Column>
                   <div>
                     <Input type="hidden" name="byteFlag" value={byteFlag} />
-                    {/* <Form.Item
-                      label={t('RESOURCES_MEMORY')}
-                      //   rules={[
-                      //     {
-                      //       required: true,
-                      //       message: '1 이상 입력하세요',
-                      //     },
-                      //   ]}
-                    > */}
                     <label className="form-item-label" for="name">
                       {t('RESOURCES_MEMORY')}
                       <span className="form-item-required">*</span>
