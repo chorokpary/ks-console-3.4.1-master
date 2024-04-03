@@ -108,10 +108,22 @@ const RegistModal = props => {
   }, []);
 
   // extrSpec check
-  const handCheckExtrSpec = (i, e) => {
-    const values = [...extraSpecsFields];
-    values[i].value = e;
-    setExtraSpecsFields(values);
+  // const handCheckExtrSpec = (i, e) => {
+  //   const values = [...extraSpecsFields];
+  //   values[i].value = e;
+
+  //   setExtraSpecsFields(values);
+  // };
+
+  const handCheckExtrSpec = (i, isChecked) => {
+    const updatedExtraSpecs = extraSpecsFields.map((item, index) => {
+      if (index === i) {
+        return { ...item, value: isChecked };
+      }
+      return item;
+    });
+
+    setExtraSpecsFields(updatedExtraSpecs);
   };
 
   //  cpu count
@@ -305,9 +317,10 @@ const RegistModal = props => {
         data.ephemeral_disk = parseInt(ephemeralDisk, 10);
       }
 
-      data.extra_specs = [...extraSpecsFields].filter(
-        obj => delete obj.description,
-      );
+      data.extra_specs = [...extraSpecsFields]
+        .filter(obj => obj.value === true)
+        .map(({ key, value }) => ({ key, value }));
+
       data.devices = [...formDeviceFields].filter(
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
