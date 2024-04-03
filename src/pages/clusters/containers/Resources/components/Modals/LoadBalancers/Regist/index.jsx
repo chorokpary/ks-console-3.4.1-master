@@ -124,7 +124,7 @@ const RegistModal = (props) => {
         data.members = members
         data.project = projectName
         data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)]
-        console.log(data)
+        // console.log(data)
         onOk({ lb: data })
       }
 

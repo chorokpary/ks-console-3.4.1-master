@@ -21,9 +21,14 @@ const floatingstore = new FloatingIpStore();
 const volumeStore = new VolumeStore();
 
 const VmDetail = props => {
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [props.match.params.id]);
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);
