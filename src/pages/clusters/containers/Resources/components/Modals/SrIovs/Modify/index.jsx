@@ -106,8 +106,10 @@ const ModifyModal = props => {
         data.cidr == undefined ||
         data.cidr == '' ||
         data.ip_pool_start == undefined ||
+        !isValidIpAddress(data.ip_pool_start) ||
         data.ip_pool_start == '' ||
         data.ip_pool_end == undefined ||
+        !isValidIpAddress(data.ip_pool_end) ||
         data.ip_pool_end == ''
       ) {
         handleOk();
@@ -231,8 +233,12 @@ const ModifyModal = props => {
     return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
+    const { data } = form.current.props;
     if (!PATTERN_IP_MASK.test(num)) {
       return false;
+    }
+    if (num > data.vfs) {
+      return false
     }
     const clsMaximumVal = 128;
     const classVal = parseInt(num);
@@ -243,9 +249,13 @@ const ModifyModal = props => {
   };
 
   const cidrValidator = (rule, value, callback) => {
+    const { data } = form.current.props;
     if (!value) {
       return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
     } else {
+      if (value.split("/")[1] > data.vfs) {
+        return callback({ message: t('RESOURCES_CIDR_VF_VALID') })
+      }
       if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
         return callback({ message: t('RESOURCES_CIDR_VALID') })
       }
@@ -262,7 +272,6 @@ const ModifyModal = props => {
     ) {
       data.ip_pool_start = '';
       data.ip_pool_end = '';
-      data.gateway_ip = '';
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
@@ -281,7 +290,6 @@ const ModifyModal = props => {
       const cidrData = common.fnCalculateCidr(e);
       data.ip_pool_start = cidrData.startIp;
       data.ip_pool_end = cidrData.endIp;
-      data.gateway_ip = cidrData.gatewayIp;
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
@@ -429,7 +437,7 @@ const ModifyModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-                      {/* <Form.Item
+                      <Form.Item
                         label={t('VF')}
                       >
                         <Input
@@ -437,7 +445,7 @@ const ModifyModal = props => {
                           defaultValue={vfs}
                           disabled
                         />
-                      </Form.Item> */}
+                      </Form.Item>
                     </Column>
                   </Columns>
                 </Form.Item>

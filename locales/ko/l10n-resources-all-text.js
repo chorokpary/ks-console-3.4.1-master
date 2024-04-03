@@ -31,6 +31,7 @@ module.exports = {
   RESOURCES_BAREMETAL_NOT_FOUND_RESOURCE: 'BAREMETAL 리소스를 찾을 수 없음',
   RESOURCES_CIDR_EMPTY_DESC: 'CIDR을 입력해주세요.',
   RESOURCES_CIDR_VALID: 'CIDR을 정확히 입력해주세요.',
+  RESOURCES_CIDR_VF_VALID: 'CIDR 개수는 VF 개수보다 작거나 같도록 입력해 주세요.',
   RESOURCES_CO2_EMISSIONS: 'CO2 발생량',
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
@@ -549,6 +550,7 @@ module.exports = {
   RESOURCES_BAREMETAL_MONITORING: '베어메탈 모니터링',
   RESOURCES_BAREMETAL_MONITORING_DESC: '베어메탈 모니터링은 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다',
   RESOURCES_CLUSTER_FAULT_TITLE: '클러스터 문제 진단',
+  RESOURCES_CLUSTER_FAULT_DETAIL: '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 웅요 이슈들을 자동으로 ㅌ마지하고 이를 해결하기 위한 솔루션을 제시합니다.',
   RESOURCES_CLUSTER_FAULT_SET: '설정',
   RESOURCES_CLUSTER_FAULT_DESC: '문제 진단 Provider를 설정합니다.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: '네임스페이스',
@@ -641,6 +643,6 @@ module.exports = {
   RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC: '서버 구성 실패 상태입니다. ',
   RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
-  RESOURCES_FAIL: '실패', 
+  RESOURCES_FAIL: '실패',
 
 };

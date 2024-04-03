@@ -1,16 +1,14 @@
-import { get, omit, pick } from 'lodash'
-import React, { useState, useRef, useEffect } from 'react'
+import { get, omit, pick } from 'lodash';
+import React, { useState, useRef, useEffect } from 'react';
 import { observer, inject } from 'mobx-react';
+import { Form, Notify, Select, Radio } from '@kube-design/components';
 
-import { Form, Notify, Select, Radio } from '@kube-design/components'
-import { Modal } from 'components/Base'
-import styles from './index.scss'
-
-import VmStore from 'stores/resources/vms'
+import { Modal } from 'components/Base';
+import styles from './index.scss';
+import VmStore from 'stores/resources/vms';
 import VolumeStore from 'stores/resources/volumes';
 
-const BindingModal = (props) => {
-
+const BindingModal = props => {
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
@@ -20,7 +18,7 @@ const BindingModal = (props) => {
 
   const [vmList, setVmList] = useState([]);
   const [vmId, setVmId] = useState();
-  const [radioPersist, setRadioPersist] = useState("T");
+  const [radioPersist, setRadioPersist] = useState('T');
 
   const [volumeList, setVolumeList] = useState([]);
   const [attachedVmList, setAttachedVmList] = useState([]);
@@ -29,66 +27,79 @@ const BindingModal = (props) => {
     const success = props.success;
 
     form.current.validator(() => {
+      const data = {};
 
-      const data = {}
-
-      data.vmId = vmId
-      data.persist = radioPersist == "T" ? true : false
-      data.actionType = "A"
-      data.id = props.store.detail.id
+      data.vmId = vmId;
+      data.persist = radioPersist == 'T' ? true : false;
+      data.actionType = 'A';
+      data.id = props.store.detail.id;
 
       volumeStore.actionState({ data, ...props }).then(() => {
-        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
+        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') });
         success();
         closeModal();
-      })
-    })
-  }
+      });
+    });
+  };
 
   const closeModal = () => {
     setModalView(false);
-  }
+  };
 
   useEffect(() => {
-
     const getVmCreateData = async () => {
-      const vmListData = await vmStore.fetchList({ cluster: props.cluster, namespace: props.namespace });
-      setVmList(vmListData);
+      const vmListData = await vmStore.fetchList({
+        cluster: props.cluster,
+        namespace: props.namespace,
+      });
+      //   setVmList(vmListData);
 
-      const volumeData = await volumeStore.fetchList({ cluster: props.cluster, namespace: props.namespace });
-      const attachedVmList = volumeData?.filter((row) => (row.used_by_vmi != "" && row.used_by_vmi != null)).map((el) => el.used_by_vmi)
+      const volumeData = await volumeStore.fetchList({
+        cluster: props.cluster,
+        namespace: props.namespace,
+      });
 
+      const findVolumeData = volumeData?.find(was => {
+        return was.name == props.name;
+      });
+
+      const filterVm = vmListData?.filter(vm => {
+        return vm.project == findVolumeData.project;
+      });
+      setVmList(filterVm);
+
+      const attachedVmList = volumeData
+        ?.filter(row => row.used_by_vmi != '' && row.used_by_vmi != null)
+        .map(el => el.used_by_vmi);
       setAttachedVmList(attachedVmList);
     };
 
     getVmCreateData();
+  }, []);
 
-  }, [])
-
-  const handleSelect = (id) => {
+  const handleSelect = id => {
     setVmId(id);
-  }
+  };
 
   const vmOptions = () => {
-    const opt = vmList.map((obj) => {
+    const opt = vmList.map(obj => {
       return {
         label: obj.name,
         value: t(obj.id),
-      }
-    })
-    return opt
-  }
+      };
+    });
+    return opt;
+  };
 
   // Validation 시작 ==================================================
   const vmValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == "select") {
-      return callback({ message: t('RESOURCES_SELECT_VM_TIP') })
+    if (value == t('RESOURCES_SELECT') || value == 'select') {
+      return callback({ message: t('RESOURCES_SELECT_VM_TIP') });
     }
-    callback()
-  }
+    callback();
+  };
 
   // Validation 끝 ==================================================
-
 
   return (
     <>
@@ -109,22 +120,38 @@ const BindingModal = (props) => {
               name="vmSelect"
               defaultValue={t('RESOURCES_SELECT')}
               options={vmOptions()}
-              onChange={(value) => handleSelect(value)}
+              onChange={value => handleSelect(value)}
             />
           </Form.Item>
 
           <Form.Item label={t('Persist')}>
             <div className={styles.wrapper}>
-              <Radio name="snatType" value="T" checked={radioPersist === "T"} onChange={(e) => { setRadioPersist("T"); }}>{t('RESOURCES_USE')}</Radio>
-              <Radio name="snatType" value="F" checked={radioPersist === "F"} onChange={(e) => { setRadioPersist("F"); }}>{t('RESOURCES_NOT_USE')}</Radio>
+              <Radio
+                name="snatType"
+                value="T"
+                checked={radioPersist === 'T'}
+                onChange={e => {
+                  setRadioPersist('T');
+                }}
+              >
+                {t('RESOURCES_USE')}
+              </Radio>
+              <Radio
+                name="snatType"
+                value="F"
+                checked={radioPersist === 'F'}
+                onChange={e => {
+                  setRadioPersist('F');
+                }}
+              >
+                {t('RESOURCES_NOT_USE')}
+              </Radio>
             </div>
           </Form.Item>
         </Form>
       </Modal>
-
     </>
   );
 };
 
-export default BindingModal
-
+export default BindingModal;

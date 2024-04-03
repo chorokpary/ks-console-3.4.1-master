@@ -694,14 +694,30 @@ export default class VmStore extends Base {
     return result.vms;
   }
 
+  // @action
+  // async snapshotCreate(data) {
+  //   const url = `${this.getResourceUrl({ cluster: data.cluster, namespace: data.namespace })}/snapshots`;
+
+  //   const jsonData = {};
+  //   jsonData.snapshot = {
+  //     vm_id: data.id
+  //   }
+
+  //   const res = await request.post(url, jsonData);
+  //   return res;
+  // }
+
   @action
-  async snapshotCreate(data) {
+  async snapshotCreate(data, params = {}) {
     const url = `${this.getResourceUrl({ cluster: data.cluster, namespace: data.namespace })}/snapshots`;
 
     const jsonData = {};
-    jsonData.snapshot = {
-      vm_id: data.id
-    }
+    const snapshotData = {};
+
+    snapshotData.vm_id = data.vmId;
+    snapshotData.description = data.description;
+
+    jsonData.snapshot = snapshotData;
 
     const res = await request.post(url, jsonData);
     return res;
