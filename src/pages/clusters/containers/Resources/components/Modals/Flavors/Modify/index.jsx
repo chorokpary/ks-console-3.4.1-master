@@ -306,8 +306,16 @@ const ModifyModal = props => {
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
 
-      data.root_disk = Number(rootDisk.substring(0, rootDisk.indexOf(removeText)));
-      data.ephemeral_disk = Number(ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText)));
+      if (typeof rootDisk !== 'number') {
+        data.root_disk = Number(rootDisk.substring(0, rootDisk.indexOf(removeText)));
+      } else {
+        data.root_disk = rootDisk;
+      }
+      if (typeof ephemeralDisk !== 'number') {
+        data.ephemeral_disk = Number(ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText)));
+      } else {
+        data.ephemeral_disk = ephemeralDisk;
+      }
 
       data.extra_specs = [...extraSpecsFields]
         .filter(obj => obj.value === true)
