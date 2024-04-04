@@ -52,6 +52,7 @@ const RegistModal = props => {
     const useEffectFunction = async () => {
       // hostDevices
       // hostDevices 에서 GPU 사용하면 host device에서 사라지고 GPU 목록에만 나와야함
+      // setGpus
       const listHostDevices = await store.fetchFlavorHostDevices(props.cluster);
       const responseHostDevices = listHostDevices?.host_devices;
 
@@ -73,22 +74,6 @@ const RegistModal = props => {
       setHostDevices(resHostDevices);
       setGpus(resHostDevicesGpu);
 
-      // setGpus
-      // const mediatedDevices = await store.fetchFlavorMediatedDevices(
-      //   props.cluster,
-      // );
-      // const responseMediatedDevices = mediatedDevices?.mediated_devices;
-
-      // const resMediatedDevices = [];
-      // responseMediatedDevices?.forEach(items => {
-      //   resMediatedDevices.push({
-      //     label: items.name,
-      //     value: items.name,
-      //   });
-      // });
-
-      // setGpus(resMediatedDevices);
-
       // extraSpecs
       const extraSpecs = await store.fetchFlavorExtraSpecs(props.cluster);
       const responseExtraSpecs = extraSpecs?.extra_specs;
@@ -106,14 +91,6 @@ const RegistModal = props => {
     };
     useEffectFunction();
   }, []);
-
-  // extrSpec check
-  // const handCheckExtrSpec = (i, e) => {
-  //   const values = [...extraSpecsFields];
-  //   values[i].value = e;
-
-  //   setExtraSpecsFields(values);
-  // };
 
   const handCheckExtrSpec = (i, isChecked) => {
     const updatedExtraSpecs = extraSpecsFields.map((item, index) => {

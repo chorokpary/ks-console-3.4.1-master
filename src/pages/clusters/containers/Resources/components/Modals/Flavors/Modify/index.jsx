@@ -1,6 +1,5 @@
 import { get } from 'lodash';
 import React, { useState, useEffect, useRef } from 'react';
-
 import {
   Form,
   Input,
@@ -16,9 +15,9 @@ import {
   Tooltip,
 } from '@kube-design/components';
 import classnames from 'classnames';
+
 import { Modal } from 'components/Base';
 import styles from './index.scss';
-
 import FlavorStore from 'stores/resources/flavors';
 
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
@@ -30,7 +29,7 @@ const ModifyModal = props => {
   const [formData, setFormData] = useState({});
 
   const [rootDisk, setRootDisk] = useState(10);
-  const [ephemeralDisk, setEphemeralDisk] = useState(10);
+  const [ephemeralDisk, setEphemeralDisk] = useState(0);
 
   const [vcpus, setVcpus] = useState();
 
@@ -39,7 +38,7 @@ const ModifyModal = props => {
   const [extraSpecsFields, setExtraSpecsFields] = useState([]);
   const [ram, setRam] = useState(0);
   const [byteFlag, setByteFlag] = useState(
-    !(props.store.detail.flavor.ram / 1024 < 1)
+    !(props.store.detail.flavor.ram / 1024 < 1),
   );
 
   const [regStep, setRegStep] = useState(1);
@@ -58,67 +57,59 @@ const ModifyModal = props => {
     setRam(
       props.store.detail.flavor.ram / 1024 < 1
         ? props.store.detail.flavor.ram
-        : props.store.detail.flavor.ram / 1024
+        : props.store.detail.flavor.ram / 1024,
     );
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
-      obj => obj.value === 'True'
+      obj => obj.value === 'True',
     );
-    // setFormGpuFields(props?.store?.detail?.flavor?.gpus);
 
-	if(props?.store?.detail?.flavor?.gpus.length > 0){
-		setFormGpuFields(props?.store?.detail?.flavor?.devices);
-	  } else if(props?.store?.detail?.flavor?.gpus.length === 0){
-		setFormGpuFields([
-			{ name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-		]);
-	  }
-	
-    if(props?.store?.detail?.flavor?.devices.length > 0){
+    if (props?.store?.detail?.flavor?.gpus.length > 0) {
+      setFormGpuFields(props?.store?.detail?.flavor?.gpus);
+    } else if (props?.store?.detail?.flavor?.gpus.length === 0) {
+      setFormGpuFields([
+        { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
+      ]);
+    }
+
+    if (props?.store?.detail?.flavor?.devices.length > 0) {
       setFormDeviceFields(props?.store?.detail?.flavor?.devices);
-    } else if(props?.store?.detail?.flavor?.devices.length === 0){
+    } else if (props?.store?.detail?.flavor?.devices.length === 0) {
       setFormDeviceFields([
         { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
       ]);
     }
-   
   }, [props]);
 
   useEffect(() => {
     const useEffectFunction = async () => {
       // hostDevices
+      // setGpus
       const listHostDevices = await store.fetchFlavorHostDevices(
-        props.match.params.cluster
+        props.match.params.cluster,
       );
       const responseHostDevices = listHostDevices?.host_devices;
 
-
       const resHostDevices = [];
+      const resHostDevicesGpu = [];
       responseHostDevices?.forEach(items => {
-        resHostDevices.push({
-          label: items.name,
-          value: items.name,
-        });
+        if (items.is_gpu) {
+          resHostDevicesGpu.push({
+            label: items.name,
+            value: items.name,
+          });
+        } else {
+          resHostDevices.push({
+            label: items.name,
+            value: items.name,
+          });
+        }
       });
       setHostDevices(resHostDevices);
-
-      // setGpus
-      const mediatedDevices = await store.fetchFlavorMediatedDevices(
-        props.match.params.cluster
-      );
-      const responseMediatedDevices = mediatedDevices?.mediated_devices;
-
-      const resMediatedDevices = [];
-      responseMediatedDevices?.forEach(items => {
-        resMediatedDevices.push({
-          label: items.name,
-          value: items.name,
-        });
-      });
-      setGpus(resMediatedDevices);
+      setGpus(resHostDevicesGpu);
 
       // extraSpecs
       const extraSpecs = await store.fetchFlavorExtraSpecs(
-        props.match.params.cluster
+        props.match.params.cluster,
       );
       const responseExtraSpecs = extraSpecs?.extra_specs;
       const resExtraSpecs = [];
@@ -140,11 +131,14 @@ const ModifyModal = props => {
     useEffectFunction();
   }, []);
 
-  // extrSpec check
-  const handCheckExtrSpec = (i, e) => {
-    const values = [...extraSpecsFields];
-    values[i].value = e;
-    setExtraSpecsFields(values);
+  const handCheckExtrSpec = (i, isChecked) => {
+    const updatedExtraSpecs = extraSpecsFields.map((item, index) => {
+      if (index === i) {
+        return { ...item, value: isChecked };
+      }
+      return item;
+    });
+    setExtraSpecsFields(updatedExtraSpecs);
   };
 
   // cpu count
@@ -300,6 +294,7 @@ const ModifyModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk;
+    const removeText = 'GiB';
 
     form.current.validator(() => {
       setSubmitButtonFlag(true);
@@ -308,18 +303,40 @@ const ModifyModal = props => {
 
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
-      data.root_disk = rootDisk;
-      data.ephemeral_disk = ephemeralDisk;
-      data.extra_specs = [...extraSpecsFields].filter(
-        obj => delete obj.description
-      );
+      // data.root_disk = rootDisk;
+      // data.ephemeral_disk = ephemeralDisk;
+
+      if (`${rootDisk}`.includes(removeText)) {
+        const numRookDisk = rootDisk.substring(0, rootDisk.indexOf(removeText));
+        const intRookDisk = parseInt(numRookDisk, 10);
+        data.root_disk = intRookDisk;
+      } else {
+        data.root_disk = parseInt(rootDisk, 10);
+      }
+
+      if (`${ephemeralDisk}`.includes(removeText)) {
+        const numEphemeralDisk = ephemeralDisk.substring(
+          0,
+          ephemeralDisk.indexOf(removeText),
+        );
+        const intEphemeralDisk = parseInt(numEphemeralDisk, 10);
+
+        data.ephemeral_disk = intEphemeralDisk;
+      } else {
+        data.ephemeral_disk = parseInt(ephemeralDisk, 10);
+      }
+
+      data.extra_specs = [...extraSpecsFields]
+        .filter(obj => obj.value === true)
+        .map(({ key, value }) => ({ key, value }));
+
       data.devices = [...formDeviceFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
       data.gpus = [...formGpuFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
       onOk({ flavor: data });
     });
@@ -451,7 +468,7 @@ const ModifyModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep == 1 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
@@ -482,7 +499,7 @@ const ModifyModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep == 2 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
@@ -678,11 +695,6 @@ const ModifyModal = props => {
                       padding: 20,
                     }}
                   >
-                    <Input
-                      type="hidden"
-                      name="ephemeralDisk"
-                      value={ephemeralDisk}
-                    />
                     <Slider
                       max={40}
                       marks={{
