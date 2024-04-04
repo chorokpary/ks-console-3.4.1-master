@@ -15,11 +15,12 @@ import {
 } from '@kube-design/components';
 import classnames from 'classnames';
 
-import { UnitSlider, NumberInput } from 'components/Inputs';
+import { UnitSlider } from 'components/Inputs';
 import { Modal } from 'components/Base';
 import FlavorStore from 'stores/resources/flavors';
 import { PATTERN_USER_NAME } from 'utils/constants';
 import styles from './index.scss';
+import { range } from 'lodash';
 
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
@@ -30,8 +31,8 @@ const RegistModal = props => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  const [rootDisk, setRootDisk] = useState(10);
-  const [ephemeralDisk, setEphemeralDisk] = useState(0);
+  const [rootDisk, setRootDisk] = useState('10GiB');
+  const [ephemeralDisk, setEphemeralDisk] = useState('0GiB');
   const [ephemeralDiskActive, setEphemeralDiskActive] = useState(false);
 
   const [vcpus, setVcpus] = useState(1);
@@ -274,25 +275,8 @@ const RegistModal = props => {
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
 
-      if (`${rootDisk}`.includes(removeText)) {
-        const numRookDisk = rootDisk.substring(0, rootDisk.indexOf(removeText));
-        const intRookDisk = parseInt(numRookDisk, 10);
-        data.root_disk = intRookDisk;
-      } else {
-        data.root_disk = parseInt(rootDisk, 10);
-      }
-
-      if (`${ephemeralDisk}`.includes(removeText)) {
-        const numEphemeralDisk = ephemeralDisk.substring(
-          0,
-          ephemeralDisk.indexOf(removeText),
-        );
-        const intEphemeralDisk = parseInt(numEphemeralDisk, 10);
-
-        data.ephemeral_disk = intEphemeralDisk;
-      } else {
-        data.ephemeral_disk = parseInt(ephemeralDisk, 10);
-      }
+      data.root_disk = Number(rootDisk.substring(0, rootDisk.indexOf(removeText)));
+      data.ephemeral_disk = Number(ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText)));
 
       data.extra_specs = [...extraSpecsFields]
         .filter(obj => obj.value === true)
@@ -306,6 +290,7 @@ const RegistModal = props => {
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
+      // console.log(data)
       onOk({ flavor: data });
     });
   };
@@ -320,8 +305,8 @@ const RegistModal = props => {
         !regexNum.test(data.vcpus) ||
         data.ram === undefined ||
         !regexNum.test(data.ram) ||
-        data.rootDisk === undefined ||
-        !regexRootDisk.test(data.rootDisk)
+        data.root_disk === undefined ||
+        !regexRootDisk.test(data.root_disk)
       ) {
         handleOk();
       } else {
@@ -329,18 +314,6 @@ const RegistModal = props => {
         setSubmitButtonFlag(false);
       }
     }
-  };
-
-  const onChangeRootDisk = e => {
-    const { data } = form.current.props;
-    let diskVal = e;
-    if (typeof e === 'string') {
-      const removeText = 'GiB';
-      diskVal = diskVal.substring(0, diskVal.indexOf(removeText));
-      diskVal = diskVal.replace(/[^0-9]/g, '');
-    }
-    data.rootDisk = Number(diskVal);
-    setRootDisk(Number(diskVal));
   };
 
   const fnGetModalFooter = () => {
@@ -424,6 +397,15 @@ const RegistModal = props => {
     }
   };
 
+  const getMarks = (max) => {
+    const count = 5;
+    return range(count).reduce((marks, index) => {
+      const value = (max * index) / (count - 1);
+      const mark = value === 0 ? '0' : `${Math.floor(value)}GiB`;
+      return { ...marks, [value]: mark };
+    }, {});
+  };
+
   return (
     <>
       <Modal
@@ -449,13 +431,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep === 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -467,8 +448,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -480,13 +461,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
-                      ? styles.current
-                      : regStep > 2
+                  className={`${regStep === 2
+                    ? styles.current
+                    : regStep > 2
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -529,14 +509,10 @@ const RegistModal = props => {
               <div style={{ padding: 10 }} />
               <Columns>
                 <Column>
-                  <label className="form-item-label" for="name">
+                  <label className="form-item-label" htmlFor="name">
                     {t('CPU')}
                     <span className="form-item-required">*</span>
                   </label>
-                  {/* <Form.Item
-                    label={t('CPU')}
-                    // rules={[{ required: true, message: '1 이상 입력하세요' }]}
-                  > */}
                   <div
                     style={{
                       display: 'flex',
@@ -570,21 +546,11 @@ const RegistModal = props => {
                     &nbsp;&nbsp;
                     <Button icon="add" onClick={e => addVcpus(e)} />
                   </div>
-                  {/* </Form.Item> */}
                 </Column>
                 <Column>
                   <div>
                     <Input type="hidden" name="byteFlag" value={byteFlag} />
-                    {/* <Form.Item
-                      label={t('RESOURCES_MEMORY')}
-                      //   rules={[
-                      //     {
-                      //       required: true,
-                      //       message: '1 이상 입력하세요',
-                      //     },
-                      //   ]}
-                    > */}
-                    <label className="form-item-label" for="name">
+                    <label className="form-item-label" htmlFor="name">
                       {t('RESOURCES_MEMORY')}
                       <span className="form-item-required">*</span>
                     </label>
@@ -623,60 +589,37 @@ const RegistModal = props => {
                         </Tabs>
                       </div>
                     </div>
-                    {/* </Form.Item> */}
                   </div>
                 </Column>
               </Columns>
-              {/* <Form.Item
-                label={t('RESOURCES_ROOT_DISK')}
-                // rules={[{ required: true, message: '1 이상 입력하세요.' }]}
-              > */}
-              <label className="form-item-label" for="name">
+              <label className="form-item-label" htmlFor="name">
                 {t('RESOURCES_ROOT_DISK')}
                 <span className="form-item-required">*</span>
               </label>
               <Form.Group>
-                <div
-                  style={{
-                    textAlign: 'right',
-                    padding: 20,
-                  }}
-                >
-                  <Input type="hidden" name="rootDisk" value={rootDisk} />
-                  <Form.Item
-                    rules={[
-                      {
-                        required: true,
-                        message: '1 이상 입력하세요.',
-                      },
-                      {
-                        pattern: regexRootDisk,
-                        message: '1 이상 숫자만 입력해주세요.',
-                      },
-                    ]}
-                  >
-                    <Slider
-                      max={320}
-                      marks={{
-                        0: '0',
-                        10: '10',
-                        20: '20',
-                        40: '40',
-                        80: '80',
-                        160: '160',
-                        320: '320',
-                      }}
-                      style={{ width: '10%' }}
-                      defaultValue={rootDisk}
-                      name="rootDisk"
-                      unit={'GiB'}
-                      onChange={e => onChangeRootDisk(e)}
-                      withInput
-                    />
-                  </Form.Item>
-                </div>
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                    },
+                    {
+                      pattern: regexRootDisk,
+                      message: t('RESOURCES_ROOT_DISK_VALID'),
+                    },
+                  ]}>
+                  <UnitSlider
+                    name="root_disk"
+                    max={320}
+                    min={0}
+                    marks={getMarks(320)}
+                    defaultValue={rootDisk}
+                    unit={'GiB'}
+                    withInput
+                    onChange={e => setRootDisk(e)}
+                    style={{ padding: '5px', width: '10%' }}
+                  />
+                </Form.Item>
               </Form.Group>
-              {/* </Form.Item> */}
 
               <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
                 <div className={styles.content_box_wrap}>
@@ -699,23 +642,15 @@ const RegistModal = props => {
                           </h6>
                           {ephemeralDiskActive && (
                             <div className={`${styles.select_inner_content}`}>
-                              <Slider
+                              <UnitSlider
                                 max={40}
-                                marks={{
-                                  0: '0',
-                                  10: '10',
-                                  20: '20',
-                                  30: '30',
-                                  40: '40',
-                                }}
-                                value={ephemeralDisk}
+                                min={0}
+                                marks={getMarks(40)}
+                                defaultValue={ephemeralDisk}
                                 unit={'GiB'}
-                                onChange={e => setEphemeralDisk(e)}
                                 withInput
-                                style={{
-                                  padding: '5px',
-                                  marginLeft: '23px',
-                                }}
+                                onChange={e => setEphemeralDisk(e)}
+                                style={{ padding: '5px', marginLeft: '10px' }}
                               />
                             </div>
                           )}
