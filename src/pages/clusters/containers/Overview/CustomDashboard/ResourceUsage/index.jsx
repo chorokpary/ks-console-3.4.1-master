@@ -6,6 +6,7 @@ import { SimpleArea } from 'components/Charts'
 import VmStore from 'stores/resources/vms'
 import PodStore from 'stores/monitoring/pod'
 import CustomStore from 'stores/monitoring/custom/monitor'
+import ResourceStore from 'stores/resources/containerresource'
 import { getContentOptions, getData } from './handleTab'
 
 const MetricTypes = {
@@ -29,6 +30,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
   const podStore = new PodStore();
   const customStore = new CustomStore();
   const vmStore = new VmStore();
+  const resourceStore = new ResourceStore();
 
   const [tabData, setTabData] = useState();
   const [tabActive, setTabActive] = useState('cpu');
