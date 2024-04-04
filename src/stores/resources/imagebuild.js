@@ -142,13 +142,14 @@ export default class ImageBuildStore extends Base {
     const tagsData = {};
     const containerData = {};
 
+    const registUrl = (data.registUrl).replace('https://','')
     tagsData.cpuType = data.cpuType
     tagsData.tag = data.tag
     tagsData.os = data.os
-    tagsData.registUrl = data.registUrl
+    tagsData.registUrl = registUrl
     tagsData.description = data.description
 
-    containerData.destination = data.registUrl
+    containerData.destination = registUrl
     containerData.id = data.user
     containerData.password = data.password
 
@@ -156,21 +157,11 @@ export default class ImageBuildStore extends Base {
     jsonData['tags'] = tagsData
     jsonData['container-registry'] = containerData
 
-    console.log("url : "+ url)
-    console.log("jsonData : "+ JSON.stringify(jsonData))
-
-    // let res = ''
-    // fetch(url, {
-    //   method: 'POST',
-    //   headers: {"Content-Type": "application/json"},
-    //   body: JSON.stringify(jsonData)
-    // }).then((res) => {
-    //   res = res;
-    //   console.log('new blog added');
-    // })
+    // console.log("url : "+ url)
+    // console.log("jsonData : "+ JSON.stringify(jsonData))
 
     const res = await this.submitting(request.post(url, jsonData));
-    console.log("res : "+ JSON.stringify(res))
+    // console.log("res : "+ JSON.stringify(res))
     return res
   }
 
