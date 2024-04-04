@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, range } from 'lodash';
 import React, { useState, useRef, useEffect } from 'react';
 
 import {
@@ -13,13 +13,15 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
 import * as common from 'utils/resources';
-import { ProjectSelect } from 'components/Inputs';
+import { ProjectSelect, UnitSlider } from 'components/Inputs';
 
 import { PATTERN_USER_NAME } from 'utils/constants';
 
 import styles from './index.scss';
 
 import VolumeStore from 'stores/resources/volumes';
+
+const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 
 const RegistModal = props => {
   const volumeStore = new VolumeStore();
@@ -80,22 +82,9 @@ const RegistModal = props => {
     },
   ];
 
-  const onChangeVolumeCapacity = e => {
-    const { data } = form.current.props;
-    let volumeCapacity = e;
-    if (typeof e === 'string') {
-      const removeText = 'GiB';
-      volumeCapacity = volumeCapacity.substring(0, volumeCapacity.indexOf(removeText));
-      volumeCapacity = volumeCapacity.replace(/[^0-9]/g, '');
-    }
-    
-    data.capacity = Number(volumeCapacity);
-    setVolumeCapacity(Number(volumeCapacity));
-  };
-
-
   const handleOk = () => {
     const onOk = props.onOk;
+    const removeText = 'GiB';
 
     form.current.validator(() => {
       const { data } = form.current.props;
@@ -103,8 +92,9 @@ const RegistModal = props => {
       const accesModeArray = [];
       accesModeArray.push(data.access_mode);
       data.access_modes = accesModeArray;
-      data.capacity = volumeCapacity;
       data.project = projectName;
+
+      data.capacity = Number(volumeCapacity.substring(0, volumeCapacity.indexOf(removeText)));
 
       onOk({ ...data });
     });
@@ -120,7 +110,7 @@ const RegistModal = props => {
       if (
         data.name == undefined ||
         data.name == '' ||
-		!PATTERN_USER_NAME.test(data.name) ||
+        !PATTERN_USER_NAME.test(data.name) ||
         (!props.namespace && projectName == undefined)
       ) {
         handleOk();
@@ -184,6 +174,16 @@ const RegistModal = props => {
 
     return elements;
   };
+
+  const getMarks = (max) => {
+    const count = 5;
+    return range(count).reduce((marks, index) => {
+      const value = (max * index) / (count - 1);
+      const mark = value === 0 ? '0' : `${Math.floor(value)}GiB`;
+      return { ...marks, [value]: mark };
+    }, {});
+  };
+
 
   return (
     <>
@@ -339,36 +339,26 @@ const RegistModal = props => {
                   />
                 </Form.Item>
 
-                <Form.Item label={t('RESOURCES_ROOT_DISK')}>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: 20,
-                    }}
-                  >
-                    {/* <Input
-                      type="hidden"
-                      name="capacity"
-                      value={volumeCapacity}
-                    /> */}
-                    <Slider
-                      max={320}
-                      marks={{
-                        0: '0',
-                        10: '10',
-                        20: '20',
-                        40: '40',
-                        80: '80',
-                        160: '160',
-                        320: '320',
-                      }}
-                      style={{ width: '10%' }}
-                      defaultValue={volumeCapacity}
-                      unit={'GiB'}
-                      onChange={e => onChangeVolumeCapacity(e)}
-                      withInput
-                    />
-                  </div>
+                <Form.Item label={t('RESOURCES_ROOT_DISK')}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                    {
+                      pattern: regexRootDisk,
+                      message: t('RESOURCES_ROOT_DISK_VALID'),
+                    },
+                  ]}>
+                  <UnitSlider
+                    max={320}
+                    min={0}
+                    marks={getMarks(320)}
+                    defaultValue={volumeCapacity}
+                    unit={'GiB'}
+                    withInput
+                    onChange={e => setVolumeCapacity(e)}
+                    style={{ padding: '5px', marginLeft: '10px' }}
+                  />
                 </Form.Item>
 
                 <Form.Item label={t('RESOURCES_INPUT_SOURCE')}>

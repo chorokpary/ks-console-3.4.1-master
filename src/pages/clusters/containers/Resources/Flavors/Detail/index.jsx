@@ -146,7 +146,7 @@ const FlavorDetail = props => {
     icon: 'apps',
     module: store.module,
     name: get(store.detail, 'name'),
-    desc: get(store.detail.flavor, 'description', ''),
+    // desc: get(store.detail.flavor, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
