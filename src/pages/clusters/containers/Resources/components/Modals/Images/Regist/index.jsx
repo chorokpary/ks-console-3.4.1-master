@@ -594,12 +594,14 @@ const Step2 = ({
   useEffect(() => {
     document.querySelector('#chk-1').checked = false;
     resetAll();
+
     if (publicType == 'public') {
       setRegistryUrlActive(false);
       setRegistryUrl(defaultRegistryUrl);
     } else {
       setRegistryUrlActive(true);
       document.querySelector('#chk-1').checked = true;
+      document.querySelector('input[name=regUrl]').value = ''
       setRegistryUrl('');
     }
   }, [publicType]);
@@ -916,6 +918,7 @@ const Step2 = ({
                           >
                             <label>Registry URL</label>
                             <input
+                              name='regUrl'
                               type="text"
                               placeholder={
                                 publicType == 'private'
