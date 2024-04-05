@@ -1,6 +1,5 @@
-import { get } from 'lodash';
+import { get, range } from 'lodash';
 import React, { useState, useEffect, useRef } from 'react';
-
 import {
   Form,
   Input,
@@ -16,8 +15,10 @@ import {
   Tooltip,
 } from '@kube-design/components';
 import classnames from 'classnames';
+
 import { Modal } from 'components/Base';
 import styles from './index.scss';
+import { UnitSlider } from 'components/Inputs';
 
 import FlavorStore from 'stores/resources/flavors';
 
@@ -30,7 +31,7 @@ const ModifyModal = props => {
   const [formData, setFormData] = useState({});
 
   const [rootDisk, setRootDisk] = useState(10);
-  const [ephemeralDisk, setEphemeralDisk] = useState(10);
+  const [ephemeralDisk, setEphemeralDisk] = useState(0);
 
   const [vcpus, setVcpus] = useState();
 
@@ -39,7 +40,7 @@ const ModifyModal = props => {
   const [extraSpecsFields, setExtraSpecsFields] = useState([]);
   const [ram, setRam] = useState(0);
   const [byteFlag, setByteFlag] = useState(
-    !(props.store.detail.flavor.ram / 1024 < 1)
+    !(props.store.detail.flavor.ram / 1024 < 1),
   );
 
   const [regStep, setRegStep] = useState(1);
@@ -58,67 +59,59 @@ const ModifyModal = props => {
     setRam(
       props.store.detail.flavor.ram / 1024 < 1
         ? props.store.detail.flavor.ram
-        : props.store.detail.flavor.ram / 1024
+        : props.store.detail.flavor.ram / 1024,
     );
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
-      obj => obj.value === 'True'
+      obj => obj.value === 'True',
     );
-    // setFormGpuFields(props?.store?.detail?.flavor?.gpus);
 
-	if(props?.store?.detail?.flavor?.gpus.length > 0){
-		setFormGpuFields(props?.store?.detail?.flavor?.devices);
-	  } else if(props?.store?.detail?.flavor?.gpus.length === 0){
-		setFormGpuFields([
-			{ name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
-		]);
-	  }
-	
-    if(props?.store?.detail?.flavor?.devices.length > 0){
+    if (props?.store?.detail?.flavor?.gpus.length > 0) {
+      setFormGpuFields(props?.store?.detail?.flavor?.gpus);
+    } else if (props?.store?.detail?.flavor?.gpus.length === 0) {
+      setFormGpuFields([
+        { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
+      ]);
+    }
+
+    if (props?.store?.detail?.flavor?.devices.length > 0) {
       setFormDeviceFields(props?.store?.detail?.flavor?.devices);
-    } else if(props?.store?.detail?.flavor?.devices.length === 0){
+    } else if (props?.store?.detail?.flavor?.devices.length === 0) {
       setFormDeviceFields([
         { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
       ]);
     }
-   
   }, [props]);
 
   useEffect(() => {
     const useEffectFunction = async () => {
       // hostDevices
+      // setGpus
       const listHostDevices = await store.fetchFlavorHostDevices(
-        props.match.params.cluster
+        props.match.params.cluster,
       );
       const responseHostDevices = listHostDevices?.host_devices;
 
-
       const resHostDevices = [];
+      const resHostDevicesGpu = [];
       responseHostDevices?.forEach(items => {
-        resHostDevices.push({
-          label: items.name,
-          value: items.name,
-        });
+        if (items.is_gpu) {
+          resHostDevicesGpu.push({
+            label: items.name,
+            value: items.name,
+          });
+        } else {
+          resHostDevices.push({
+            label: items.name,
+            value: items.name,
+          });
+        }
       });
       setHostDevices(resHostDevices);
-
-      // setGpus
-      const mediatedDevices = await store.fetchFlavorMediatedDevices(
-        props.match.params.cluster
-      );
-      const responseMediatedDevices = mediatedDevices?.mediated_devices;
-
-      const resMediatedDevices = [];
-      responseMediatedDevices?.forEach(items => {
-        resMediatedDevices.push({
-          label: items.name,
-          value: items.name,
-        });
-      });
-      setGpus(resMediatedDevices);
+      setGpus(resHostDevicesGpu);
 
       // extraSpecs
       const extraSpecs = await store.fetchFlavorExtraSpecs(
-        props.match.params.cluster
+        props.match.params.cluster,
       );
       const responseExtraSpecs = extraSpecs?.extra_specs;
       const resExtraSpecs = [];
@@ -140,11 +133,14 @@ const ModifyModal = props => {
     useEffectFunction();
   }, []);
 
-  // extrSpec check
-  const handCheckExtrSpec = (i, e) => {
-    const values = [...extraSpecsFields];
-    values[i].value = e;
-    setExtraSpecsFields(values);
+  const handCheckExtrSpec = (i, isChecked) => {
+    const updatedExtraSpecs = extraSpecsFields.map((item, index) => {
+      if (index === i) {
+        return { ...item, value: isChecked };
+      }
+      return item;
+    });
+    setExtraSpecsFields(updatedExtraSpecs);
   };
 
   // cpu count
@@ -300,6 +296,7 @@ const ModifyModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk;
+    const removeText = 'GiB';
 
     form.current.validator(() => {
       setSubmitButtonFlag(true);
@@ -308,18 +305,29 @@ const ModifyModal = props => {
 
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
-      data.root_disk = rootDisk;
-      data.ephemeral_disk = ephemeralDisk;
-      data.extra_specs = [...extraSpecsFields].filter(
-        obj => delete obj.description
-      );
+
+      if (typeof rootDisk !== 'number') {
+        data.root_disk = Number(rootDisk.substring(0, rootDisk.indexOf(removeText)));
+      } else {
+        data.root_disk = rootDisk;
+      }
+      if (typeof ephemeralDisk !== 'number') {
+        data.ephemeral_disk = Number(ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText)));
+      } else {
+        data.ephemeral_disk = ephemeralDisk;
+      }
+
+      data.extra_specs = [...extraSpecsFields]
+        .filter(obj => obj.value === true)
+        .map(({ key, value }) => ({ key, value }));
+
       data.devices = [...formDeviceFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
       data.gpus = [...formGpuFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
       );
       onOk({ flavor: data });
     });
@@ -333,8 +341,8 @@ const ModifyModal = props => {
         !regexNum.test(data.vcpus) ||
         data.ram === undefined ||
         !regexNum.test(data.ram) ||
-        data.rootDisk === undefined ||
-        !regexRootDisk.test(data.rootDisk)
+        data.root_disk === undefined ||
+        !regexRootDisk.test(data.root_disk)
       ) {
         handleOk();
       } else {
@@ -342,18 +350,6 @@ const ModifyModal = props => {
         setSubmitButtonFlag(false);
       }
     }
-  };
-
-  const onChangeRootDisk = e => {
-    const { data } = form.current.props;
-    let diskVal = e;
-    if (typeof e === 'string') {
-      const removeText = 'GiB';
-      diskVal = diskVal.substring(0, diskVal.indexOf(removeText));
-      diskVal = diskVal.replace(/[^0-9]/g, '');
-    }
-    data.rootDisk = Number(diskVal);
-    setRootDisk(Number(diskVal));
   };
 
   const fnGetModalFooter = () => {
@@ -431,6 +427,15 @@ const ModifyModal = props => {
   const [tab, setTab] = useState('GiB');
   const { TabPanel } = Tabs;
 
+  const getMarks = (max) => {
+    const count = 5;
+    return range(count).reduce((marks, index) => {
+      const value = (max * index) / (count - 1);
+      const mark = value === 0 ? '0' : `${Math.floor(value)}GiB`;
+      return { ...marks, [value]: mark };
+    }, {});
+  };
+
   return (
     <>
       <Modal
@@ -451,18 +456,17 @@ const ModifyModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep == 1 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -474,26 +478,25 @@ const ModifyModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep == 2 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 2
-                      ? styles.current
-                      : regStep > 2
+                  className={`${regStep == 2
+                    ? styles.current
+                    : regStep > 2
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -531,11 +534,10 @@ const ModifyModal = props => {
               <div style={{ padding: 10 }} />
               <Columns>
                 <Column>
-                  <label className="form-item-label" for="name">
+                  <label className="form-item-label" htmlFor="name">
                     {t('CPU')}
                     <span className="form-item-required">*</span>
                   </label>
-                  {/* <Form.Item label={t('CPU')} rules={[{ required: true }]}> */}
                   <div
                     style={{
                       display: 'flex',
@@ -572,11 +574,7 @@ const ModifyModal = props => {
                 <Column>
                   <div>
                     <Input type="hidden" name="byteFlag" value={byteFlag} />
-                    {/* <Form.Item
-                      label={t('RESOURCES_MEMORY')}
-                      rules={[{ required: true }]}
-                    > */}
-                    <label className="form-item-label" for="name">
+                    <label className="form-item-label" htmlFor="name">
                       {t('RESOURCES_MEMORY')}
                       <span className="form-item-required">*</span>
                     </label>
@@ -615,89 +613,51 @@ const ModifyModal = props => {
                         </Tabs>
                       </div>
                     </div>
-                    {/* </Form.Item> */}
                   </div>
                 </Column>
               </Columns>
-              <label className="form-item-label" for="name">
+              <label className="form-item-label" htmlFor="name">
                 {t('RESOURCES_ROOT_DISK')}
                 <span className="form-item-required">*</span>
               </label>
-              {/* <Form.Item
-                label={t('RESOURCES_ROOT_DISK')}
-                rules={[{ required: true }]}
-              > */}
               <Form.Group>
-                <div
-                  style={{
-                    textAlign: 'right',
-                    padding: 20,
-                  }}
-                >
-                  <Input type="hidden" name="rootDisk" value={rootDisk} />
-                  <Form.Item
-                    rules={[
-                      {
-                        required: true,
-                        message: '1 이상 입력하세요.',
-                      },
-                      {
-                        pattern: regexRootDisk,
-                        message: '1 이상 숫자만 입력해주세요.',
-                      },
-                    ]}
-                  >
-                    <Slider
-                      max={320}
-                      marks={{
-                        0: '0',
-                        10: '10',
-                        20: '20',
-                        40: '40',
-                        80: '80',
-                        160: '160',
-                        320: '320',
-                      }}
-                      style={{ width: '10%' }}
-                      defaultValue={rootDisk}
-                      name="rootDisk"
-                      unit={'GiB'}
-                      onChange={e => onChangeRootDisk(e)}
-                      withInput
-                    />
-                  </Form.Item>
-                </div>
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                    },
+                    {
+                      pattern: regexRootDisk,
+                      message: t('RESOURCES_ROOT_DISK_VALID'),
+                    },
+                  ]}>
+                  <UnitSlider
+                    name="root_disk"
+                    max={320}
+                    min={0}
+                    marks={getMarks(320)}
+                    defaultValue={rootDisk}
+                    unit={'GiB'}
+                    withInput
+                    onChange={e => setRootDisk(e)}
+                    style={{ padding: '5px', width: '10%' }}
+                  />
+                </Form.Item>
               </Form.Group>
-              {/* </Form.Item> */}
 
               <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
                 <Form.Group>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      padding: 20,
-                    }}
-                  >
-                    <Input
-                      type="hidden"
-                      name="ephemeralDisk"
-                      value={ephemeralDisk}
-                    />
-                    <Slider
-                      max={40}
-                      marks={{
-                        0: '0',
-                        10: '10',
-                        20: '20',
-                        30: '30',
-                        40: '40',
-                      }}
-                      value={ephemeralDisk}
-                      unit={'GiB'}
-                      onChange={e => setEphemeralDisk(e)}
-                      withInput
-                    />
-                  </div>
+                  <UnitSlider
+                    name="ephemeral_disk"
+                    max={40}
+                    min={0}
+                    marks={getMarks(40)}
+                    defaultValue={ephemeralDisk}
+                    unit={'GiB'}
+                    withInput
+                    onChange={e => setEphemeralDisk(e)}
+                    style={{ padding: '5px', width: '10%' }}
+                  />
                 </Form.Group>
               </Form.Item>
 

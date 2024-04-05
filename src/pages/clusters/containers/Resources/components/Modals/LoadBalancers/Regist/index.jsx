@@ -124,7 +124,7 @@ const RegistModal = (props) => {
         data.members = members
         data.project = projectName
         data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)]
-        console.log(data)
+        // console.log(data)
         onOk({ lb: data })
       }
 
@@ -254,7 +254,6 @@ const RegistModal = (props) => {
     handleSelectClick: (i, field, val) => {
       let values = [...formRulesFields];
 
-
       if (field === "protocol") {
         values[i].protocol = val;
       } else {
@@ -269,7 +268,6 @@ const RegistModal = (props) => {
           } else {
             setBtnDimm(false);
           }
-
         } else {
           values[i].message = t('RESOURCES_ALREADY_SELECTED_TYPE');
           setTimeout(() => { handleRules.deleteMessage(i) }, 1000);
@@ -464,8 +462,8 @@ const RegistModal = (props) => {
                           <Tooltip content={v.validPort?.isValid ? v.validPort.message : ''} placement="right" always={v.validPort?.isValid} >
                             <Input type="text"
                               onChange={(e) => handleRules.handleInputChange(i, 'portRangeMax', e)}
-                              value={v.portRangeMax}
-                              disabled={!v.isCustom} />
+                              value={v.protocol === 'ICMP' ? '' : v.portRangeMax}
+                              disabled={!v.isCustom || v.protocol === 'ICMP'} />
                           </Tooltip>
                         </td>
                         <td>

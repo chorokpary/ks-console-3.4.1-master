@@ -270,15 +270,16 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (status, record) => {
-          const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
-          let popStatus = get(record, 'pod-status')
-          // if(!!uploadInfo) {
-          //   const status = uploadInfo[0]['upload-file-info']['Status'];
-          //   const statusText = !!status ? status : "-";
 
-          //   return statusText
-          // }
-          return popStatus;
+          const stepRunningArray = ['ServerConfiguring', 'FileUploading', 'ImageBuild&Pushing', 'ServerDeleting', 'ServerReady', 'FileUploadCompleted']
+          const stepFailedArray = ['ServerConfigureFail', 'FileUploadFail', 'ImagePushFailed']
+
+          const podStatus = get(record, 'pod-status')
+
+          const podStatusText = stepFailedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_FAIL') 
+                    : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') : t('RESOURCES_SUCCESS')
+
+          return podStatusText;
         },
       },
       {

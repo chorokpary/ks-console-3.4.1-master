@@ -18,14 +18,13 @@
 
 import React from 'react';
 import { toJS } from 'mobx';
+
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
-
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
-
 import RoleStore from 'stores/role';
 import FlavorStore from 'stores/resources/flavors';
 import * as common from 'utils/resources';
@@ -146,7 +145,20 @@ export default class Flavors extends React.Component {
         dataIndex: 'gpus',
         isHideable: true,
         width: 'auto',
-        render: gpus => <p>{gpus.length} 개</p>,
+        render: gpus => {
+          let quantities = [];
+          if (gpus && gpus.length > 0) {
+            gpus.forEach(gpu => {
+              quantities.push(gpu.quantity);
+            });
+          }
+
+          if (quantities.length === 0) {
+            quantities = [0];
+          }
+
+          return <p>{quantities} 개</p>;
+        },
       },
       {
         title: t('RESOURCES_REGIST_DATE'),

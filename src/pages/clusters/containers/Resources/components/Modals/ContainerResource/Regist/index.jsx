@@ -83,7 +83,7 @@ const RegistModal = props => {
   const [isElb, setIsElb] = useState(false);
 
   const [isAutoScale, setIsAutoScale] = useState(false);
-  const [autoScale, setAutoScale] = useState([1, 4]);
+  const [autoScale, setAutoScale] = useState([1, 3]);
   const [isFirst, setIsFirst] = useState(true);
 
   const [osType, setOsType] = useState('linux');
@@ -124,6 +124,7 @@ const RegistModal = props => {
           resCsi.push({
             label: response.csis[i].name,
             value: response.csis[i].name,
+            description: response.csis[i].description,
           });
         }
         setCsis(resCsi);
@@ -174,8 +175,7 @@ const RegistModal = props => {
   useEffect(() => {
     if (selectImageName) {
       let selectOs = imageOptionList.find(obj => selectImageName === obj.name);
-      let selectOsDistro = get(selectOs, 'os_distro');
-      setSelectOsDistro(selectOsDistro);
+      setSelectOsDistro(selectOs?.os_distro);
     }
   }, [selectImageName]);
 
@@ -191,6 +191,7 @@ const RegistModal = props => {
             resCni.push({
               label: response.cnis[i].name,
               value: response.cnis[i].name,
+              description: response.cnis[i].description,
             });
           }
           setCnis(resCni);
@@ -202,9 +203,9 @@ const RegistModal = props => {
   useEffect(() => {
     if (cnis.length > 0) {
       setCniSelect(cnis[0].value);
-      document.querySelector(
-        'input[name="cni"]',
-      ).parentElement.previousElementSibling.innerText = cnis[0].value;
+      // document.querySelector(
+      //   'input[name="cni"]',
+      // ).parentElement.previousElementSibling.innerText = cnis[0].value;
     }
   }, [cnis]);
 
@@ -591,13 +592,15 @@ const RegistModal = props => {
   };
 
   const handlerAutoScale = e => {
-    console.log('e\n ', e);
     if (Array.isArray(e)) {
+      console.log('Array.isArray(e)\n', Array.isArray(e));
+      console.log('(e)\n', e);
       const scale = [e[0], e[1] < 1 ? 1 : e[1]];
       setAutoScale(scale);
     } else {
       const maxNum = e > 10 ? 10 : e < 1 ? 1 : e;
-      setAutoScale([0, maxNum]);
+      console.log('maxNum\n', maxNum);
+      setAutoScale([1, maxNum]);
     }
   };
 
@@ -1187,8 +1190,8 @@ const RegistModal = props => {
                   <Form.Item label={t('RESOURCES_SCALING')}>
                     <Slider
                       max={10}
+                      min={1}
                       marks={{
-                        0: '0',
                         1: '1',
                         2: '2',
                         3: '3',
@@ -1201,7 +1204,6 @@ const RegistModal = props => {
                         10: '10',
                       }}
                       step={1}
-                      Max={10}
                       value={autoScale}
                       onChange={e => handlerAutoScale(e)}
                       range
@@ -1210,7 +1212,7 @@ const RegistModal = props => {
                   </Form.Item>
                 </Form.Group>
 
-                <Form.Group label="Plug-in" checkable keepDataWhenUnCheck>
+                {/* <Form.Group label="Plug-in" checkable keepDataWhenUnCheck>
                   <Columns>
                     <Column>
                       <Form.Item label={'CNI  (Container Network Interface)'}>
@@ -1235,6 +1237,35 @@ const RegistModal = props => {
                       </div>
                     </Column>
                   </Columns>
+                </Form.Group> */}
+
+                <Form.Group label="Plug-in" checkable keepDataWhenUnCheck>
+                  <Form.Item label={'CNI  (Container Network Interface)'}>
+                    <TypeSelect
+                      name="cni"
+                      defaultValue={cniSelect}
+                      onChange={e => setCniSelect(e)}
+                      placeholder={{ label: t('RESOURCES_SELECT') }}
+                      defaultDescription="CNI를 선택해 주세요."
+                      // {t(
+                      //   'RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC',
+                      // )}
+                      options={cnis}
+                    />
+                  </Form.Item>
+                  <Form.Item label={'CSI  (Container Storage Interface)'}>
+                    <TypeSelect
+                      name="csi"
+                      defaultValue={csiSelect}
+                      onChange={e => setCsiSelect(e)}
+                      placeholder={{ label: t('RESOURCES_SELECT') }}
+                      defaultDescription="CSI 선택해 주세요."
+                      // defaultDescription={t(
+                      //   'RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC',
+                      // )}
+                      options={csis}
+                    />
+                  </Form.Item>
                 </Form.Group>
 
                 <Form.Item label={t('Petasus Kubernetes Stack')}>

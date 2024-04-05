@@ -304,7 +304,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_454: '네트워크는 라우터와 관련이 없습니다',
   RESOURCES_MMS_ERROR_DESC_455: 'CIDR은 기존 네트워크와 겹칩니다',
   RESOURCES_MMS_ERROR_DESC_456: '동일한 라우터에 복제 된 CIDR이있는 네트워크를 첨부 할 수 없습니다.',
-  RESOURCES_MMS_ERROR_DESC_457: '게이트웨이 IP는 CIDR 범위가 아닙니다',
+  RESOURCES_MMS_ERROR_DESC_457: '게이트웨이 IP가 CIDR 범위가 아닙니다',
   RESOURCES_MMS_ERROR_DESC_458: '시작 IP는 CIDR 범위가 아닙니다',
   RESOURCES_MMS_ERROR_DESC_459: '엔드 IP는 CIDR 범위가 아닙니다',
   RESOURCES_MMS_ERROR_DESC_460: '플랫 네트워크의 세그먼트 ID를 지정해서는 안됩니다',
@@ -317,7 +317,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_467: '선택된 인터페이스는 SR-IOV 본딩 능력이 아닙니다',
   RESOURCES_MMS_ERROR_DESC_468: '주어진 SRIOV 장치 유형은 지원되지 않습니다',
   RESOURCES_MMS_ERROR_DESC_469: 'SR-IOV IP 주소가 충분하지 않습니다',
-  RESOURCES_MMS_ERROR_DESC_470: '이미 할당 된 일부 IP 주소는 새로운 IP 범위에 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_470: '이미 할당 된 일부 IP 주소가 새로운 IP 범위에 없습니다.',
   RESOURCES_MMS_ERROR_DESC_471: 'VFS는 모든 SR-IOV IP 주소를 수용하기에 충분하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_472: '상점에서 복제 된 Sriov 네트워크 이름이 발견되었습니다.',
   RESOURCES_MMS_ERROR_DESC_473: '상점에서 복제 된 Sriov 정책 이름이 발견되었습니다.',
@@ -464,5 +464,5 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_9057: '주어진 라이센스 키는 유효하지 않습니다',
   RESOURCES_MMS_ERROR_DESC_9061: '여러 기본 라이센스가 설치되어 있습니다',
   RESOURCES_MMS_ERROR_DESC_9062: '기본 라이센스가 설치되지 않았습니다',
-  
+
 };
