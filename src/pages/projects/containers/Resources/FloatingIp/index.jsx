@@ -59,15 +59,16 @@ export default class FloatingIp extends React.Component {
 
     return [
       {
-        title: t('RESOURCES_NAME'),
-        dataIndex: 'network',
-        sorter: true,
-        render: (name, floatingip) => (
+        title: t('RESOURCES_FLOATING_IP'),
+        dataIndex: 'floating_ip',
+        isHideable: true,
+        width: 'auto',
+        render: (floating_ip, item) => (
           <Avatar
             icon="intranet-routers"
             iconSize={40}
             to={`/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip/${name}/${floatingip.id}`}
-            title={floatingip.network_alias}
+            title={floating_ip}
           />
         ),
       },
@@ -96,20 +97,23 @@ export default class FloatingIp extends React.Component {
       },
       {
         title: t('RESOURCES_RESOURCE_NAME'),
-        dataIndex: 'instance_id',
+        dataIndex: 'instance_name',
         isHideable: true,
         width: 'auto',
-        render: (instance_id) => (
+        render: (instance_name) => (
           <Avatar
-            title={instance_id}
+            title={instance_name}
           />
         ),
       },
       {
-        title: t('RESOURCES_FLOATING_IP'),
-        dataIndex: 'floating_ip',
-        isHideable: true,
-        width: 'auto',
+        title: t('네트워크 이름'),
+        dataIndex: 'network',
+        render: (name, floatingip) => (
+          <Avatar
+            title={floatingip.network_alias}
+          />
+        ),
       },
       {
         title: t('RESOURCES_STATIC_IP'),

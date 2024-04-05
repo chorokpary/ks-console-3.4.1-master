@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
-
+import MarkdownIt from 'markdown-it'
 import { ProjectSelect } from 'components/Inputs'
 import { Form, Input, Select, TextArea, Button, Tooltip, Column, Columns, Radio, Checkbox } from '@kube-design/components'
 
@@ -11,6 +11,7 @@ import styles from './index.scss'
 
 
 const DetailModal = (props) => {
+  const md = new MarkdownIt({ html: true })
   const detail = props.detail;
   const [modelView, setModalView] = useState(true);
 
@@ -52,9 +53,9 @@ const DetailModal = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{detail.metadata.namespace}</td>
+                      <td>{detail.spec.name.split('/')[0]}</td>
                       <td>{detail.spec.kind}</td>
-                      <td>{detail.spec.name}</td>
+                      <td>{detail.spec.name.split('/')[1]}</td>
                       <td>{detail.metadata.labels["k8sgpts.k8sgpt.ai/name"]}</td>
                     </tr>
                   </tbody>
@@ -90,7 +91,7 @@ const DetailModal = (props) => {
 
           {/* 솔루션 */}
           <Form.Item>
-            <div className={styles.wrapper}>
+            <div className={styles.wrapper} style={{ height: '500px' }}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -103,8 +104,10 @@ const DetailModal = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td style={{ textAlign: 'unset', whiteSpace: 'pre-wrap' }}>
-                        {detail.spec.details}
+                      <td style={{ textAlign: 'unset', paddingLeft: '20px', height: '450px' }}>
+                        <span dangerouslySetInnerHTML={{
+                          __html: md.render(detail.spec.details)
+                        }} />
                       </td>
                     </tr>
                   </tbody>

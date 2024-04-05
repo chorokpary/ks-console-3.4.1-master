@@ -167,6 +167,11 @@ export default class LoadBalancerStore extends Base {
                     ruleData.port_range_max = obj.portRangeMax;
                 }
 
+                if (obj.protocol === 'ICMP') {
+                    delete ruleData.port_range_min;
+                    delete ruleData.port_range_max;
+                }
+
                 jsonData.lb_rule = ruleData;
 
                 await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));

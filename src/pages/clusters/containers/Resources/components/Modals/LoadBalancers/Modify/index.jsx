@@ -475,8 +475,8 @@ const ModifyModal = (props) => {
                           <Tooltip content={v.validPort?.isValid ? v.validPort.message : ''} placement="right" always={v.validPort?.isValid} >
                             <Input type="text"
                               onChange={(e) => handleRules.handleInputChange(i, 'portRangeMax', e)}
-                              value={v.portRangeMin && v.portRangeMin !== v.portRangeMax ? `${v.portRangeMin}-${v.portRangeMax}` : v.portRangeMax}
-                              disabled={!v.isCustom} />
+                              value={v.protocol === 'ICMP' ? '' : v.portRangeMin && v.portRangeMin !== v.portRangeMax ? `${v.portRangeMin}-${v.portRangeMax}` : v.portRangeMax}
+                              disabled={!v.isCustom || v.protocol === 'ICMP'} />
                           </Tooltip>
                         </td>
                         <td>

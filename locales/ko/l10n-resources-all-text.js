@@ -31,6 +31,7 @@ module.exports = {
   RESOURCES_BAREMETAL_NOT_FOUND_RESOURCE: 'BAREMETAL 리소스를 찾을 수 없음',
   RESOURCES_CIDR_EMPTY_DESC: 'CIDR을 입력해주세요.',
   RESOURCES_CIDR_VALID: 'CIDR을 정확히 입력해주세요.',
+  RESOURCES_CIDR_VF_VALID: 'CIDR 개수는 VF 개수보다 작거나 같도록 입력해 주세요.',
   RESOURCES_CO2_EMISSIONS: 'CO2 발생량',
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
@@ -186,6 +187,7 @@ module.exports = {
   RESOURCES_LOAD_BALANCER_DESC: '로드 밸런서의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_LOAD_BALANCER: '로드 밸런서',
   RESOURCES_ROOT_DISK: '루트 디스크',
+  RESOURCES_ROOT_DISK_VALID: '루트 디스크를 1 이상 입력해주세요.',
   RESOURCES_RESOURCE_CHANGE_AMOUNT: '리소스 변화량',
   RESOURCES_RESOURCE_USAGE_TOP: '리소스 사용량 Top 5',
   RESOURCES_RESOURCE_NAME: '리소스 이름',
@@ -322,8 +324,10 @@ module.exports = {
   RESOURCES_ALREADY_SELECTED_DEVICE: '이미 선택한 디바이스 입니다.',
   RESOURCES_IMAGE: '이미지',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: '이미지 레지스트리 URL을 설정합니다.',
+  RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC: '(* 퍼블릭 레지스트리의 경우 Quay만 지원합니다.)',
+  RESOURCES_IMAGE_REGIST_URL_SETTINGS_PRIVATE: '(* 프라이빗 레지스트리의 경우 Harbor만 지원합니다.)',
   RESOURCES_SPECIFY_IMAGE_SIZE: '이미지 사이즈 지정',
-  RESOURCES_CANNOT_IMAGE_SIZE_SET_ZERO: '이미지 사이즈를 0 으로 설정할 수 없습니다.',
+  RESOURCES_CANNOT_IMAGE_SIZE_SET_ZERO: '이미지 사이즈는 11 이상으로 설정해주세요.',
   RESOURCES_IMAGE_SIZE_TIP: '이미지 사이즈를 설정합니다.',
   RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC: '이미지 사이즈보다 큰 사이즈를 선택해 주세요.',
   RESOURCES_DELETE_IMAGE: '이미지 삭제',
@@ -549,6 +553,7 @@ module.exports = {
   RESOURCES_BAREMETAL_MONITORING: '베어메탈 모니터링',
   RESOURCES_BAREMETAL_MONITORING_DESC: '베어메탈 모니터링은 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다',
   RESOURCES_CLUSTER_FAULT_TITLE: '클러스터 문제 진단',
+  RESOURCES_CLUSTER_FAULT_DETAIL: '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 웅요 이슈들을 자동으로 ㅌ마지하고 이를 해결하기 위한 솔루션을 제시합니다.',
   RESOURCES_CLUSTER_FAULT_SET: '설정',
   RESOURCES_CLUSTER_FAULT_DESC: '문제 진단 Provider를 설정합니다.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: '네임스페이스',
@@ -641,6 +646,6 @@ module.exports = {
   RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC: '서버 구성 실패 상태입니다. ',
   RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
-
+  RESOURCES_FAIL: '실패',
 
 };

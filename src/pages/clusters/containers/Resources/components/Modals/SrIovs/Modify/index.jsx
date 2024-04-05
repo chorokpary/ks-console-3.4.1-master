@@ -37,6 +37,8 @@ const ModifyModal = props => {
     false
   );
   const [vfs, setVfs] = useState();
+  const [availableRange, setAvailableRange] = useState(0);
+
 
   useEffect(() => {
     const getSriovVfs = async () => {
@@ -86,7 +88,7 @@ const ModifyModal = props => {
       if (data.segment_id == ' ') {
         delete data.segment_id;
       }
-      // console.log("data : "+ JSON.stringify(data))
+      // console.log("data : " + JSON.stringify(data))
 
       onOk({ ...data });
     });
@@ -106,16 +108,43 @@ const ModifyModal = props => {
         data.cidr == undefined ||
         data.cidr == '' ||
         data.ip_pool_start == undefined ||
+        !isValidIpAddress(data.ip_pool_start) ||
         data.ip_pool_start == '' ||
         data.ip_pool_end == undefined ||
+        !isValidIpAddress(data.ip_pool_end) ||
         data.ip_pool_end == ''
       ) {
         handleOk();
       } else {
-        setRegStep(2);
+        if (availableRange <= data.vfs) {
+          setRegStep(2);
+        }
       }
     }
   };
+
+  const calculateRange = () => {
+    const { data } = form.current.props;
+    const startIPArray = data.ip_pool_start?.split('.').map(Number);
+    const endIPArray = data.ip_pool_end?.split('.').map(Number);
+
+    const startIPNum =
+      (startIPArray[0] << 24) +
+      (startIPArray[1] << 16) +
+      (startIPArray[2] << 8) +
+      startIPArray[3];
+
+    const endIPNum =
+      (endIPArray[0] << 24) +
+      (endIPArray[1] << 16) +
+      (endIPArray[2] << 8) +
+      endIPArray[3];
+
+    // 가용 범위 계산
+    const available = endIPNum - startIPNum + 1;
+    setAvailableRange(available)
+    return available;
+  }
 
   const fnGetModalFooter = () => {
     let elements = '';
@@ -253,6 +282,19 @@ const ModifyModal = props => {
     callback()
   }
 
+  const ipValidator = (rule, value, callback) => {
+    const { data } = form.current.props;
+    if (!value) {
+      return callback({ message: t('RESOURCES_IP_POOL_EMPTY_DESC') })
+    } else {
+      if (!isValidIpAddress(value)) {
+        return callback({ message: t('RESOURCES_IP_POOL_VALID') })
+      }
+    }
+
+    callback()
+  }
+
   const onChaneCidr = e => {
     const { data } = form.current.props;
     if (
@@ -262,18 +304,20 @@ const ModifyModal = props => {
     ) {
       data.ip_pool_start = '';
       data.ip_pool_end = '';
-      data.gateway_ip = '';
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
       if (
-        a.nextElementSibling &&
-        a.nextElementSibling.classList.contains('form-item-error')
+        (a.nextElementSibling &&
+          a.nextElementSibling.classList.contains('form-item-error'))
+        ||
+        (b.nextElementSibling &&
+          b.nextElementSibling.classList.contains('form-item-error'))
       ) {
-        a.nextElementSibling.classList.remove('hide');
-        a.parentElement.parentElement.classList.add('error-item');
-        b.nextElementSibling.classList.remove('hide');
-        b.parentElement.parentElement.classList.add('error-item');
+        a.nextElementSibling?.classList.remove('hide');
+        a.parentElement.parentElement?.classList.add('error-item');
+        b.nextElementSibling?.classList.remove('hide');
+        b.parentElement.parentElement?.classList.add('error-item');
       }
 
       setCidrReducer();
@@ -281,21 +325,24 @@ const ModifyModal = props => {
       const cidrData = common.fnCalculateCidr(e);
       data.ip_pool_start = cidrData.startIp;
       data.ip_pool_end = cidrData.endIp;
-      data.gateway_ip = cidrData.gatewayIp;
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
       if (
-        a.nextElementSibling &&
-        a.nextElementSibling.classList.contains('form-item-error')
+        (a.nextElementSibling &&
+          a.nextElementSibling.classList.contains('form-item-error'))
+        ||
+        (b.nextElementSibling &&
+          b.nextElementSibling.classList.contains('form-item-error'))
       ) {
-        a.nextElementSibling.classList.add('hide');
-        a.parentElement.parentElement.classList.remove('error-item');
-        b.nextElementSibling.classList.add('hide');
-        b.parentElement.parentElement.classList.remove('error-item');
+        a.nextElementSibling?.classList.add('hide');
+        a.parentElement.parentElement?.classList.remove('error-item');
+        b.nextElementSibling?.classList.add('hide');
+        b.parentElement.parentElement?.classList.remove('error-item');
       }
 
       setCidrReducer();
+      calculateRange();
     }
   };
 
@@ -429,7 +476,7 @@ const ModifyModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-                      {/* <Form.Item
+                      <Form.Item
                         label={t('VF')}
                       >
                         <Input
@@ -437,7 +484,7 @@ const ModifyModal = props => {
                           defaultValue={vfs}
                           disabled
                         />
-                      </Form.Item> */}
+                      </Form.Item>
                     </Column>
                   </Columns>
                 </Form.Item>
@@ -474,7 +521,7 @@ const ModifyModal = props => {
                 </Form.Item>
 
                 <Form.Item label={t('RESOURCES_SUBNET')}>
-                  <Form.Group>
+                  <Form.Group style={{ marginBottom: '0px' }}>
                     <Form.Item>
                       <Columns>
                         <Column>
@@ -503,16 +550,14 @@ const ModifyModal = props => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
+                                    validator: ipValidator,
                                   },
-                                  {
-                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
-                                  }
                                 ]}
                               >
                                 <Input
                                   name="ip_pool_start"
                                   defaultValue={detail.ip_pool.start}
+                                  onChange={() => calculateRange()}
                                 />
                               </Form.Item>
                             </Column>
@@ -521,17 +566,15 @@ const ModifyModal = props => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
+                                    validator: ipValidator,
                                   },
-                                  {
-                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
-                                  }
                                 ]}
                               >
                                 <Input
                                   name="ip_pool_end"
                                   style={{ marginTop: '24px' }}
                                   defaultValue={detail.ip_pool.end}
+                                  onChange={() => calculateRange()}
                                 />
                               </Form.Item>
                             </Column>
@@ -558,6 +601,9 @@ const ModifyModal = props => {
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
+                {availableRange > vfs &&
+                  <div className="form-item-error" style={{ marginTop: '-10px', marginBottom: '10px' }}>{t('IP POOL 범위가 VF 개수를 넘어갑니다.')}</div>
+                }
 
                 <Form.Item
                   className={styles.textarea}
