@@ -419,12 +419,16 @@ const RegistModal = (props) => {
         listPackageRoute.map((obj) => {
           if (!!data['scriptPackage_' + obj] && !!data['scriptVersion_' + obj]) {
             setIsPackageError(false);
-            if (PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])) {
-            } else {
+            if (!PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])) {
               setIsPackageValidationError(true);
               throw true;
             }
           } else {
+            if (!PATTERN_PACKAGE_NAME.test(data['scriptPackage_' + obj])) {
+              setIsPackageValidationError(true);
+            } else {
+              setIsPackageValidationError(false);
+            }
             setIsPackageError(true);
             throw true;
           }

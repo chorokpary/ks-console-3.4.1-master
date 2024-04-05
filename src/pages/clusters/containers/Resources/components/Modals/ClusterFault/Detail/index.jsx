@@ -53,9 +53,9 @@ const DetailModal = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{detail.metadata.namespace}</td>
+                      <td>{detail.spec.name.split('/')[0]}</td>
                       <td>{detail.spec.kind}</td>
-                      <td>{detail.spec.name}</td>
+                      <td>{detail.spec.name.split('/')[1]}</td>
                       <td>{detail.metadata.labels["k8sgpts.k8sgpt.ai/name"]}</td>
                     </tr>
                   </tbody>
@@ -91,7 +91,7 @@ const DetailModal = (props) => {
 
           {/* 솔루션 */}
           <Form.Item>
-            <div className={styles.wrapper}>
+            <div className={styles.wrapper} style={{ height: '500px' }}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -104,7 +104,7 @@ const DetailModal = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td style={{ textAlign: 'unset', paddingLeft: '20px' }}>
+                      <td style={{ textAlign: 'unset', paddingLeft: '20px', height: '450px' }}>
                         <span dangerouslySetInnerHTML={{
                           __html: md.render(detail.spec.details)
                         }} />
