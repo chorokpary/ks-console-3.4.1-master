@@ -38,6 +38,7 @@ const RegistModal = props => {
   );
   const [externalBool, setExternalBool] = useState(false);
   const [vfs, setVfs] = useState('');
+  const [availableRange, setAvailableRange] = useState(0);
 
   const resourceNameOptions = sriovResourceDataList.map(name => {
     return {
@@ -129,10 +130,35 @@ const RegistModal = props => {
       ) {
         handleOk();
       } else {
-        setRegStep(2);
+        if (availableRange <= data.vfs) {
+          setRegStep(2);
+        }
       }
     }
   };
+
+  const calculateRange = () => {
+    const { data } = form.current.props;
+    const startIPArray = data.ip_pool_start?.split('.').map(Number);
+    const endIPArray = data.ip_pool_end?.split('.').map(Number);
+
+    const startIPNum =
+      (startIPArray[0] << 24) +
+      (startIPArray[1] << 16) +
+      (startIPArray[2] << 8) +
+      startIPArray[3];
+
+    const endIPNum =
+      (endIPArray[0] << 24) +
+      (endIPArray[1] << 16) +
+      (endIPArray[2] << 8) +
+      endIPArray[3];
+
+    // 가용 범위 계산
+    const available = endIPNum - startIPNum + 1;
+    setAvailableRange(available)
+    return available;
+  }
 
   const fnGetModalFooter = () => {
     let elements = '';
@@ -219,9 +245,6 @@ const RegistModal = props => {
     if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }
-    if (num > data.vfs) {
-      return false
-    }
     const clsMaximumVal = 128;
     const classVal = parseInt(num);
     if (classVal < 1 || classVal > clsMaximumVal) {
@@ -230,14 +253,24 @@ const RegistModal = props => {
     return true;
   };
 
+  const ipValidator = (rule, value, callback) => {
+    const { data } = form.current.props;
+    if (!value) {
+      return callback({ message: t('RESOURCES_IP_POOL_EMPTY_DESC') })
+    } else {
+      if (!isValidIpAddress(value)) {
+        return callback({ message: t('RESOURCES_IP_POOL_VALID') })
+      }
+    }
+
+    callback()
+  }
+
   const cidrValidator = (rule, value, callback) => {
     const { data } = form.current.props;
     if (!value) {
       return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
     } else {
-      if (value.split("/")[1] > data.vfs) {
-        return callback({ message: t('RESOURCES_CIDR_VF_VALID') })
-      }
       if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
         return callback({ message: t('RESOURCES_CIDR_VALID') })
       }
@@ -286,6 +319,7 @@ const RegistModal = props => {
       }
 
       setCidrReducer();
+      calculateRange();
     }
   };
 
@@ -559,14 +593,12 @@ const RegistModal = props => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
+                                    validator: ipValidator,
                                   },
-                                  {
-                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
-                                  }
                                 ]}
                               >
-                                <Input name="ip_pool_start" />
+                                <Input name="ip_pool_start"
+                                  onChange={() => calculateRange()} />
                               </Form.Item>
                             </Column>
                             <Column>
@@ -574,16 +606,14 @@ const RegistModal = props => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: t('RESOURCES_IP_POOL_EMPTY_DESC'),
+                                    validator: ipValidator,
                                   },
-                                  {
-                                    pattern: PATTERN_IP, message: t('RESOURCES_IP_POOL_VALID')
-                                  }
                                 ]}
                               >
                                 <Input
                                   name="ip_pool_end"
                                   style={{ marginTop: '24px' }}
+                                  onChange={() => calculateRange()}
                                 />
                               </Form.Item>
                             </Column>
@@ -608,6 +638,9 @@ const RegistModal = props => {
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
+                {availableRange > vfs &&
+                  <div className="form-item-error" style={{ marginTop: '-10px', marginBottom: '10px' }}>{t('IP POOL 범위가 VF 개수를 넘어갑니다.')}</div>
+                }
 
                 <Form.Item
                   className={styles.textarea}
