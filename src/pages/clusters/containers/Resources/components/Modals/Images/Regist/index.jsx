@@ -601,7 +601,8 @@ const Step2 = ({
     } else {
       setRegistryUrlActive(true);
       document.querySelector('#chk-1').checked = true;
-      document.querySelector('input[name=regUrl]').value = ''
+      let regUrlInput = document.querySelector('input[name=regUrl]')
+      if (regUrlInput) regUrlInput.value = '';
       setRegistryUrl('');
     }
   }, [publicType]);

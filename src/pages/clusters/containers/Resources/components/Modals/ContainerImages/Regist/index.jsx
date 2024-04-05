@@ -472,9 +472,15 @@ const Step2 = (
   useEffect(() => {
     document.querySelector('#chk-1').checked = false;
     resetAll()
+
     if (publicType == 'public') {
+      setRegistryUrlActive(false);
       setRegistryUrl(defaultRegistryUrl)
     } else {
+      setRegistryUrlActive(true);
+      document.querySelector('#chk-1').checked = true;
+      let regUrlInput = document.querySelector('input[name=regUrl]')
+      if (regUrlInput) regUrlInput.value = '';
       setRegistryUrl('')
     }
   }, [publicType])
@@ -493,7 +499,7 @@ const Step2 = (
 
   // public type 바뀔때마다 설정 초기화
   const resetAll = () => {
-    setRegistryUrlActive(false) // registry url 비활성
+    // setRegistryUrlActive(false) // registry url 비활성
     setTagList([])
     setImageName('')
     setTag('')
@@ -508,6 +514,7 @@ const Step2 = (
   const handleRegistryUrl = () => {
     if (registryUrlActive) {
       resetAll()
+      setRegistryUrlActive(false);
     } else {
       setRegistryUrlActive(true)
     }
@@ -770,7 +777,7 @@ const Step2 = (
                         <div className={styles.formarea}>
                           <div className={classnames(styles.custom_input, styles.w_1)}>
                             <label>Registry URL</label>
-                            <input type="text" placeholder={publicType == 'private' ? 'https://{url}?projects=${project_name}' : ''} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
+                            <input type="text" name='regUrl' placeholder={publicType == 'private' ? 'https://{url}?projects=${project_name}' : ''} defaultValue={registryUrl} onChange={(e) => setRegistryUrl(e.target.value)} />
                           </div>
                         </div>
                       </div>
