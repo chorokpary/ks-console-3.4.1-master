@@ -90,18 +90,20 @@ const RegistModal = (props) => {
 	  privateKeyToOpenSSH = forge.ssh.privateKeyToOpenSSH(priveteKey);
         } else if (crypto === "ECDSA") {
 	  let keyPair = sshpk.generatePrivateKey('ecdsa', { curve });
-	  publicKeyToOpenSSH = keyPair.toPublic();
+	  publicKeyToOpenSSH = keyPair.toPublic() + " ";
 	  privateKeyToOpenSSH = keyPair.toString('openssh');
 	} else if (crypto === "ED25519") {
           let keyPair = sshpk.generatePrivateKey('ed25519');
-          publicKeyToOpenSSH = keyPair.toPublic().toString('ssh');
+          publicKeyToOpenSSH = keyPair.toPublic().toString('ssh') + " ";
           privateKeyToOpenSSH = keyPair.toString('ssh');
         }
 
-        setPublicKey(publicKeyToOpenSSH)
+        let refinedPublicKey = publicKeyToOpenSSH + globals.user.username + "@" + "petasus"
+
+        setPublicKey(refinedPublicKey)
         setPrivateKey(privateKeyToOpenSSH)
 
-        data.publicKey = publicKeyToOpenSSH
+        data.publicKey = refinedPublicKey
 
         // 신규키생성 버튼 클릭 후, 지문 & 공개 키 자동입력
         setDownloadBtnVisible(true); // 다운로드버튼 활성화
@@ -202,7 +204,7 @@ const RegistModal = (props) => {
                     <Input
                       name="name"
                       autoFocus={true}
-                      maxLength={65}
+                      maxLength={63}
                       style={{ maxWidth: 'none' }}
                     />
                   </Form.Item>
@@ -238,7 +240,6 @@ const RegistModal = (props) => {
                     <Select
                       name="crypto"
                       defaultValue="RSA"
-	              maxLength={65}
                       options={cryptoOptions}
                       onChange={(value) => setCryptoType(value)} />
                   </Form.Item>
@@ -246,6 +247,7 @@ const RegistModal = (props) => {
 	        <Column>
                   <Form.Item
 	            label={t('RESOURCES_KEY_GENERATION')}
+	            desc={t('RESOURCES_STORE_PRIVATE_KEY_DESC')}
 	            rules={[{ required: false }]}
 	          >
                     <div>
