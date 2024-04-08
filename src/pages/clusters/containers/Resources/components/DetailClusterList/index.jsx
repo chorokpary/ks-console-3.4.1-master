@@ -506,7 +506,6 @@ const DetailClusterList = props => {
       const ciList = await clusterInspection.fetchList();
 
       setCiDataList(toJS(ciList.auditResults));
-
       const withNamespace = toJS(ciList.auditResults)?.filter(
         item => item.namespace,
       );
@@ -583,9 +582,13 @@ const DetailClusterList = props => {
   };
 
   const renderContent = () => {
-    if (ciDataList?.length == 0) {
+    if (!ciDataList) {
       const content = (
-        <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
+        <div className="grid_info style_status">
+          <div className="grid_text">
+            <span>데이터가 없습니다</span>
+          </div>
+        </div>
       );
       return content;
     }
@@ -1505,11 +1508,19 @@ const DetailClusterList = props => {
     //   if (data.metric.pod === vmId) return data;
     // });
 
-    if (!ciDataList)
+    if (!ciDataList) {
       return (
-        <div className={styles.monitors}>{t('CLUSTER_INSPECTION_NO_DATA')}</div>
+        <div className="grid_text">
+          <span>{t('RESOURCES_NOT_FOUND_RESOURCE')}</span>
+        </div>
       );
+    }
 
+    // const content = (
+    //   <div className="grid_text">
+    //     <span>{t('RESOURCES_NOT_FOUND_RESOURCE')}</span>
+    //   </div>
+    // );
     // const ciArray = [];
     // ciArray.push(ciDataList);
 

@@ -68,98 +68,105 @@ export default class ClusterInspection extends React.Component {
                   <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>
                 </div>
                 <div className="grid_info style_status">
-                  <div className="box type_status">
-                    <div className="cont_group">
-                      <div className="cont1">
-                        <div
-                          className="chart_pie"
-                          style={{
-                            width: '100%',
-                            height: '200px',
-                          }}
-                        >
-                          <ResponsiveContainer>
-                            <PieChart>
-                              <Pie
-                                data={chartOption}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
-                                paddingAngle={1}
-                                dataKey="value"
-                              >
-                                {chartOption.map((entry, index) => (
-                                  <Cell
-                                    key={`cell-${index}`}
-                                    fill={entry.color}
+                  {clusterInfo && (
+                    <div className="box type_status">
+                      <div className="cont_group">
+                        <div className="cont1">
+                          <div
+                            className="chart_pie"
+                            style={{
+                              width: '100%',
+                              height: '200px',
+                            }}
+                          >
+                            <ResponsiveContainer>
+                              <PieChart>
+                                <Pie
+                                  data={chartOption}
+                                  cx="50%"
+                                  cy="50%"
+                                  innerRadius={60}
+                                  outerRadius={80}
+                                  paddingAngle={1}
+                                  dataKey="value"
+                                >
+                                  {chartOption.map((entry, index) => (
+                                    <Cell
+                                      key={`cell-${index}`}
+                                      fill={entry.color}
+                                    />
+                                  ))}
+                                  <Label
+                                    value={data?.scoreInfo?.score}
+                                    position="center"
+                                    fontSize={50}
+                                    dy={-10}
                                   />
-                                ))}
-                                <Label
-                                  value={data?.scoreInfo?.score}
-                                  position="center"
-                                  fontSize={50}
-                                  dy={-10}
-                                />
-                                <Label
-                                  value={`Health Score`}
-                                  position="bottom"
-                                  fontSize={13}
-                                  dy={25}
-                                  dx={70}
-                                />
-                              </Pie>
-                              <ChartTooltip />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                      </div>
-                      <div className="cont2">
-                        <div className="status_wrap">
-                          <p className="status title">
-                            <span>
-                              {t('CLUSTER_INSPECTION_CHECK_ALL_LIST')}
-                            </span>
-                          </p>
-                          <div className="value">
-                            {data?.scoreInfo?.total || 0}
+                                  <Label
+                                    value={`Health Score`}
+                                    position="bottom"
+                                    fontSize={13}
+                                    dy={25}
+                                    dx={70}
+                                  />
+                                </Pie>
+                                <ChartTooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
                           </div>
                         </div>
-                        <div className="status_wrap">
-                          <p className="status pass">
-                            <span>{t('CLUSTER_INSPECTION_PASS')}</span>
-                          </p>
-                          <div className="value">
-                            {data?.scoreInfo?.passing || 0}
+                        <div className="cont2">
+                          <div className="status_wrap">
+                            <p className="status title">
+                              <span>
+                                {t('CLUSTER_INSPECTION_CHECK_ALL_LIST')}
+                              </span>
+                            </p>
+                            <div className="value">
+                              {data?.scoreInfo?.total || 0}
+                            </div>
                           </div>
-                        </div>
-                        <div className="status_wrap">
-                          <p className="status warning">
-                            <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
-                          </p>
-                          <div className="value">
-                            {data?.scoreInfo?.warning || 0}
+                          <div className="status_wrap">
+                            <p className="status pass">
+                              <span>{t('CLUSTER_INSPECTION_PASS')}</span>
+                            </p>
+                            <div className="value">
+                              {data?.scoreInfo?.passing || 0}
+                            </div>
                           </div>
-                        </div>
-                        <div className="status_wrap">
-                          <p className="status danger">
-                            <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
-                          </p>
-                          <div className="value">
-                            {data?.scoreInfo?.dangerous || 0}
+                          <div className="status_wrap">
+                            <p className="status warning">
+                              <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
+                            </p>
+                            <div className="value">
+                              {data?.scoreInfo?.warning || 0}
+                            </div>
                           </div>
-                        </div>
-                        <div className="status_wrap">
-                          <p className="status ignore">
-                            <span>{t('CLUSTER_INSPECTION_IGNORE')}</span>
-                          </p>
-                          <div className="value">
-                            {data?.scoreInfo?.ignore || 0}
+                          <div className="status_wrap">
+                            <p className="status danger">
+                              <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
+                            </p>
+                            <div className="value">
+                              {data?.scoreInfo?.dangerous || 0}
+                            </div>
+                          </div>
+                          <div className="status_wrap">
+                            <p className="status ignore">
+                              <span>{t('CLUSTER_INSPECTION_IGNORE')}</span>
+                            </p>
+                            <div className="value">
+                              {data?.scoreInfo?.ignore || 0}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+                  {!clusterInfo && (
+                    <div className="grid_text">
+                      <span>데이터가 없습니다</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -169,54 +176,59 @@ export default class ClusterInspection extends React.Component {
                 <div className="grid_title">
                   <label>{t('CLUSTER_INSPECTION_CLUSTER_INFO')}</label>
                 </div>
-                <div className="grid_info style_list">
-                  <ul className="list_01">
-                    <li className="li_type_01">
-                      <div className="lft">
-                        {/* <Icon name="kubernetes" size={40} /> */}
-                        <i className="ico-type24-container"></i>
-                        <h6 className="list_title">
-                          {t('CLUSTER_INSPECTION_K8S_VERSION')}
-                        </h6>
-                      </div>
-                      <div className="value">{clusterInfo?.version || 0}</div>
-                    </li>
-                    <li className="li_type_01">
-                      <div className="lft">
-                        {/* <Icon name="nodes" size={40} /> */}
-                        <i className="ico-type24-clusternode"></i>
-                        <h6 className="list_title">
-                          {t('CLUSTER_INSPECTION_NODE')}
-                        </h6>
-                      </div>
-                      <div className="value">
-                        {clusterInfo?.nodesCount || 0}
-                      </div>
-                    </li>
-                    <li className="li_type_01">
-                      <div className="lft">
-                        <Icon name="project" size={25} />
-                        <h6 className="list_title">
-                          {t('CLUSTER_INSPECTION_PROJECT_CNT')}
-                        </h6>
-                      </div>
-                      <div className="value">
-                        {clusterInfo?.namespacesCount || 0}
-                      </div>
-                    </li>
-                    <li className="li_type_01">
-                      <div className="lft">
-                        <Icon name="backup" size={25} />
-                        <h6 className="list_title">
-                          {t('CLUSTER_INSPECTION_WORKLOAD_CNT')}
-                        </h6>
-                      </div>
-                      <div className="value">
-                        {clusterInfo?.workloadsCount || 0}
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+                {clusterInfo && (
+                  <div className="grid_info style_list">
+                    <ul className="list_01">
+                      <li className="li_type_01">
+                        <div className="lft">
+                          <i className="ico-type24-container"></i>
+                          <h6 className="list_title">
+                            {t('CLUSTER_INSPECTION_K8S_VERSION')}
+                          </h6>
+                        </div>
+                        <div className="value">{clusterInfo?.version || 0}</div>
+                      </li>
+                      <li className="li_type_01">
+                        <div className="lft">
+                          <i className="ico-type24-clusternode"></i>
+                          <h6 className="list_title">
+                            {t('CLUSTER_INSPECTION_NODE')}
+                          </h6>
+                        </div>
+                        <div className="value">
+                          {clusterInfo?.nodesCount || 0}
+                        </div>
+                      </li>
+                      <li className="li_type_01">
+                        <div className="lft">
+                          <Icon name="project" size={25} />
+                          <h6 className="list_title">
+                            {t('CLUSTER_INSPECTION_PROJECT_CNT')}
+                          </h6>
+                        </div>
+                        <div className="value">
+                          {clusterInfo?.namespacesCount || 0}
+                        </div>
+                      </li>
+                      <li className="li_type_01">
+                        <div className="lft">
+                          <Icon name="backup" size={25} />
+                          <h6 className="list_title">
+                            {t('CLUSTER_INSPECTION_WORKLOAD_CNT')}
+                          </h6>
+                        </div>
+                        <div className="value">
+                          {clusterInfo?.workloadsCount || 0}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+                {!clusterInfo && (
+                  <div className="grid_text">
+                    <span>데이터가 없습니다</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
