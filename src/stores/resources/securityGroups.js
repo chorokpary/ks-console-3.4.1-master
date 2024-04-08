@@ -161,7 +161,7 @@ export default class SecurityGroupStore extends Base {
                 data.direction = obj.direction.toLowerCase();
                 data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
                 data.protocol = obj.protocol.toLowerCase();
-                if (obj.portRangeMax.indexOf("-") != -1) {
+                if (obj.ethernetType === "ALL") {
                     data.port_range_min = obj.portRangeMax.split("-")[0];
                     data.port_range_max = obj.portRangeMax.split("-")[1];
                 } else {
@@ -221,13 +221,6 @@ export default class SecurityGroupStore extends Base {
             await this.submitting(
                 Promise.all(
                     rowKeys.map(async (id) => {
-                        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + id);
-                        Promise.all(
-                            securityDetail.security_group.rules.map((rule) => {
-                                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
-                            })
-                        )
-
                         await request.delete(
                             `${this.getDetailUrl({ id, ...params })}`
                         )
@@ -246,13 +239,6 @@ export default class SecurityGroupStore extends Base {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
-
-        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(user)}/edgetron/resources/kubevirt/security_groups/` + user.id);
-        Promise.all(
-            securityDetail.security_group.rules.map((rule) => {
-                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(user)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
-            })
-        )
 
         return await this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }

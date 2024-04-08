@@ -436,6 +436,7 @@ module.exports = {
   RESOURCES_PUBLIC: '퍼블릭',
   RESOURCES_PORT_RANGE: '포트 범위',
   RESOURCES_PORT_RANGE_DESC: '포트 범위는 숫자이거나 1~65535 숫자 범위이어야 합니다.',
+  RESOURCES_SG_PORT_RANGE_DESC: '포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다.',
   RESOURCES_PRIVATE: '프라이빗',
   RESOURCES_PROTOCOL: '프로토콜',
   RESOURCES_FLOATING_IP: '플로팅 IP',
