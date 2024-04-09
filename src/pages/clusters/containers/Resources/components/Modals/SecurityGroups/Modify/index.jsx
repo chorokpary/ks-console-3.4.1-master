@@ -8,7 +8,7 @@ import { ProjectSelect, NumberInput } from 'components/Inputs'
 
 import { PATTERN_USER_NAME, PATTERN_IP, PATTERN_IP_MASK, PATTERN_PORT } from 'utils/constants'
 
-const RegistModal = (props) => {
+const ModifyModal = (props) => {
 
   const form = useRef();
   const [modelView, setModalView] = useState(true);
@@ -18,13 +18,16 @@ const RegistModal = (props) => {
   const [btnDimmOut, setBtnDimmOut] = useState(false);
   const [btnDimmIn, setBtnDimmIn] = useState(false);
 
-  const [inDupRules, setInDupRules] = useState(true);
-  const [outDupRules, setOutDupRules] = useState(true);
-
+  const [sgDetail, setSgDetail] = useState(props.detail.security_group);
+  const [inRulesIds, setInRulesIds] = useState(
+    props.detail.security_group.rules?.filter(obj => obj.direction === 'ingress')
+      .map(el => el.id) || []
+  );
+  const [outRulesIds, setOutRulesIds] = useState(
+    props.detail.security_group.rules?.filter(obj => obj.direction === 'egress')
+      .map(el => el.id) || []
+  );
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const regexRemoteIp = /[^0123456789.\/]/g;
-  const regexPort = /[^0123456789]/g;
 
   const ruleTypeOptions = [
     { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: 0 },
@@ -48,20 +51,31 @@ const RegistModal = (props) => {
   ];
 
   const protocolOptions = [
-    //{ value: "ALL", label: "ALL" },
     { value: "TCP", label: "TCP" },
     { value: "UDP", label: "UDP" },
     { value: "ICMP", label: "ICMP" },
     { value: "SCTP", label: "SCTP" },
   ];
 
-  const remoteIpPrefixOptions = [
-    { value: "ALL", label: "ALL" },
-    { value: "", label: t('RESOURCES_CONNTECT_DIRECT') },
-  ];
-
   const nextIngress = useRef(0);
-  const [formRulesIngressFields, setFormRulesIngressFields] = useState([]);
+  const [formRulesIngressFields, setFormRulesIngressFields] = useState(
+    props.detail.security_group.rules?.filter(obj => obj.direction === 'ingress')
+      .map(el => {
+        return {
+          ruleType: t('RESOURCES_SPECIFY_USER')
+          , direction: 'Ingress'
+          , ethernetType: el.ethernet_type ?? 'ALL'
+          , remoteIpPrefix: el.remote_ip_prefix
+          , protocol: el.protocol ? el.protocol.toUpperCase() : 'ALL'
+          , portRangeMin: 0
+          , portRangeMax: el.ethernet_type ? el.port_range_max : '0-65535'
+          , isCustom: false
+          , idx: nextIngress.current += 1
+          , originRuleId: el.id
+        }
+      }) || []
+  );
+
   //Rules handler
   const handleIngressRules = {
 
@@ -77,7 +91,6 @@ const RegistModal = (props) => {
         , portRangeMax: 0
         , isCustom: true
         , idx: nextIngress.current += 1
-        // , validPort: { isValid: false, message: t('RESOURCES_SG_PORT_RANGE_DESC') }
       }];
       setFormRulesIngressFields(values);
     },
@@ -133,7 +146,23 @@ const RegistModal = (props) => {
   }//end Rules
 
   const nextEngress = useRef(0);
-  const [formRulesEgressFields, setFormRulesEgressFields] = useState([]);
+  const [formRulesEgressFields, setFormRulesEgressFields] = useState(
+    props.detail.security_group.rules?.filter(obj => obj.direction === 'egress')
+      .map(el => {
+        return {
+          ruleType: t('RESOURCES_SPECIFY_USER')
+          , direction: 'Egress'
+          , ethernetType: el.ethernet_type ?? 'ALL'
+          , remoteIpPrefix: el.remote_ip_prefix
+          , protocol: el.protocol ? el.protocol.toUpperCase() : 'ALL'
+          , portRangeMin: 0
+          , portRangeMax: el.ethernet_type ? el.port_range_max : '0-65535'
+          , isCustom: false
+          , idx: nextEngress.current += 1
+          , originRuleId: el.id
+        }
+      }) || []
+  );
   //Rules handler
   const handleEgressRules = {
 
@@ -149,7 +178,6 @@ const RegistModal = (props) => {
         , portRangeMax: 0
         , isCustom: true
         , idx: nextEngress.current += 1
-        // , validPort: { isValid: false, message: t('RESOURCES_SG_PORT_RANGE_DESC') }
       }];
       setFormRulesEgressFields(values);
     },
@@ -226,39 +254,21 @@ const RegistModal = (props) => {
       portInput.nextElementSibling.classList.add('hide');
       portInput.parentElement.parentElement.classList.remove('error-item');
     }
-    // values[i].validPort.isValid = false;
 
     return values;
   }
   //----------------end 
-
-  // const ruleDuplicate = (rules) => {
-  //   const arr = cloneDeep(rules)
-  //   let cnt = 0;
-  //   arr.some(function (x) {
-  //     delete x.idx
-  //     arr.some(function (y) {
-  //       delete y.idx
-  //       if (JSON.stringify(x) === JSON.stringify(y)) {
-  //         cnt++
-  //       }
-  //     })
-  //   });
-  //   return cnt !== rules.length
-  // }
 
   const handleOk = () => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
 
-      const { data } = form.current.props;
-      const security_group_rules = [...formRulesIngressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)
-        , ...formRulesEgressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)];
       const sgData = {
-        name: data.name,
-        security_group_rules,
-        project: projectName
+        rules: [...formRulesIngressFields, ...formRulesEgressFields],
+        project: props.namespace,
+        security_group_id: sgDetail.id,
+        originRules: [...inRulesIds, ...outRulesIds]
       }
       setIsSubmitting(true)
       // console.log(sgData)
@@ -337,47 +347,19 @@ const RegistModal = (props) => {
         isSubmitting={isSubmitting}
       >
         <Form data={formData} ref={form}>
-
-          <Columns>
-            <Column>
-              <Form.Item
-                label={t('RESOURCES_NAME')}
-                rules={[
-                  { required: true, message: t('NAME_EMPTY_DESC') },
-                  {
-                    pattern: PATTERN_USER_NAME,
-                    message: t('RESOURCES_INVALID_NAME_DESC'),
-                  }
-                ]}
-                desc={t('NAME_DESC')}
-              >
-                <Input
-                  name="name"
-                  autoFocus={true}
-                  maxLength={63}
-                  style={{ maxWidth: 'none' }}
-                />
-              </Form.Item>
-            </Column>
-            {!props.namespace && (
-              <Column>
-                <Form.Item
-                  label={t('PROJECT')}
-                  desc={t('SELECT_PROJECT_DESC')}
-                  rules={[
-                    { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
-                  ]}
-                >
-                  <ProjectSelect
-                    name="namespace"
-                    defaultValue={projectName}
-                    cluster={props.cluster}
-                    onChange={(e) => setProjectName(e)}
-                  />
-                </Form.Item>
-              </Column>
-            )}
-          </Columns>
+          <Form.Item
+            label={t('RESOURCES_NAME')}
+            desc={t('NAME_DESC')}
+          >
+            <Input
+              name="name"
+              autoFocus={true}
+              maxLength={63}
+              style={{ maxWidth: 'none' }}
+              defaultValue={sgDetail.name}
+              disabled
+            />
+          </Form.Item>
 
           <Form.Item label={t('RESOURCES_SECURITY_RULE')}>
             <Form.Group>
@@ -409,7 +391,7 @@ const RegistModal = (props) => {
                           <tr key={i}>
                             {/* 정책 */}
                             <td>
-                              <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'ruleType', e, v.idx)} />
+                              <Select disabled={v.originRuleId} value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'ruleType', e, v.idx)} />
                             </td>
                             {/* 프로토콜 */}
                             <td>
@@ -452,7 +434,8 @@ const RegistModal = (props) => {
                                 <Input type="text"
                                   name={`ipIn_${v.idx}`}
                                   onChange={(e) => handleIngressRules.handleInputChange(i, 'remoteIpPrefix', e)}
-                                  defaultValue={v.remoteIpPrefix} />
+                                  defaultValue={v.remoteIpPrefix}
+                                  disabled={v.originRuleId} />
                               </Form.Item>
                             </td>
                             <td>
@@ -472,7 +455,7 @@ const RegistModal = (props) => {
                     <Button
                       className={styles.add}
                       onClick={handleIngressRules.handleAddFields}
-                      disabled={btnDimmIn}
+                      disabled={btnDimmIn || formRulesIngressFields.find(obj => obj.protocol === 'ALL')}
                     >
                       추가
                     </Button>
@@ -506,7 +489,7 @@ const RegistModal = (props) => {
                         {formRulesEgressFields.map((v, i) => (
                           <tr key={i}>
                             <td>
-                              <Select value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'ruleType', e, v.idx)} />
+                              <Select disabled={v.originRuleId} value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'ruleType', e, v.idx)} />
                             </td>
                             <td>
                               <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'protocol', e, v.idx)} disabled={!v.isCustom} />
@@ -545,7 +528,8 @@ const RegistModal = (props) => {
                                 <Input type="text"
                                   name={`ipOut_${v.idx}`}
                                   onChange={(e) => handleEgressRules.handleInputChange(i, 'remoteIpPrefix', e)}
-                                  defaultValue={v.remoteIpPrefix} />
+                                  defaultValue={v.remoteIpPrefix}
+                                  disabled={v.originRuleId} />
                               </Form.Item>
                             </td>
                             <td>
@@ -565,7 +549,7 @@ const RegistModal = (props) => {
                     <Button
                       className={styles.add}
                       onClick={handleEgressRules.handleAddFields}
-                      disabled={btnDimmOut}
+                      disabled={btnDimmOut || formRulesEgressFields.find(obj => obj.protocol === 'ALL')}
                     >
                       {t('RESOURCES_ADD')}
                     </Button>
@@ -575,21 +559,6 @@ const RegistModal = (props) => {
             </Form.Group>
           </Form.Item>
 
-          <div style={{ padding: 10 }} />
-
-          <Form.Item
-            className={styles.textarea}
-            label={t('RESOURCES_DESCRIPTION')}
-            desc={t('DESCRIPTION_DESC')}
-          >
-            <TextArea
-              name="description"
-              maxLength={256}
-              rows="1"
-              style={{ maxWidth: 'none' }}
-            />
-          </Form.Item>
-
         </Form>
       </Modal >
 
@@ -597,5 +566,5 @@ const RegistModal = (props) => {
   );
 };
 
-export default RegistModal
+export default ModifyModal
 

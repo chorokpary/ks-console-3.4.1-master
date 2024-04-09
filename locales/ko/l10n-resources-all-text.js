@@ -225,6 +225,7 @@ module.exports = {
   RESOURCES_SECURITY_GROUP_NAME: '보안그룹 이름',
   RESOURCES_SECURITY_GROUP: '보안그룹',
   RESOURCES_CREATE_SECURITY_GROUP: '보안그룹 생성',
+  RESOURCES_EDIT_SECURITY_GROUP: '보안그룹 수정',
   RESOURCES_DELETE_SECURITY_GROUP_TIP: '보안그룹 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_SECURITY_GROUP_TIP: '보안그룹을 선택해 주세요.',
   RESOURCES_SECURITY_GROUP_DESC: '보안그룹의 상태와 사용현황을 관리 할 수 있습니다.',

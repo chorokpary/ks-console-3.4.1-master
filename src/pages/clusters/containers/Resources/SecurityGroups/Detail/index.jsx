@@ -31,7 +31,23 @@ const SecurityGroupDetail = (props) => {
 
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
+    //todo 보안그룹 편집 추가
     const getOperations = () => [
+        {
+            key: 'edit',
+            icon: 'pen',
+            text: t('EDIT_INFORMATION'),
+            action: 'edit',
+            show: showEdit,
+            onClick: () =>
+                props.rootStore.triggerAction('securityGroup.edit', {
+                    type: 'SECURITYGROUP_DETAIL',
+                    detail: toJS(store.detail),
+                    store: store,
+                    success: fetchData,
+                    ...props.match.params
+                })
+        },
         {
             key: 'viewYaml',
             icon: 'eye',
