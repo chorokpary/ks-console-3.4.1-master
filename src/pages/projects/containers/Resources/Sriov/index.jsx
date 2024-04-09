@@ -18,20 +18,18 @@
 
 import React from 'react';
 import { toJS } from 'mobx';
+import classNames from 'classnames';
+import { Link } from 'react-router-dom';
+import { Icon } from '@kube-design/components';
+import classnames from 'classnames';
+
 import { Avatar, Status } from 'components/Base';
 import Tabs from 'components/Cards/Banner/Tabs';
 import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
-import classNames from 'classnames';
 import Indicator from 'components/Base/Indicator';
-
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
-import { Link } from 'react-router-dom';
-
-import { Icon } from '@kube-design/components';
-import classnames from 'classnames';
-
 import SriovStore from 'stores/resources/sriovs';
 import styles from './index.scss';
 
@@ -45,7 +43,7 @@ export default class ResourcesVolumes extends React.Component {
   handleTabChange = value => {
     const { cluster, workspace, namespace } = this.props.match.params;
     this.props.routing.push(
-      `/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`
+      `/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`,
     );
   };
 
@@ -151,7 +149,7 @@ export default class ResourcesVolumes extends React.Component {
   };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {
