@@ -27,6 +27,7 @@ import DistroTypeStore from 'stores/resources/distrotype';
 import { UnitSlider, NumberInput } from 'components/Inputs';
 import { Modal, List } from 'components/Base';
 import { PATTERN_USER_NAME } from 'utils/constants';
+import { InputPassword } from '@kube-design/components/lib/components/Input';
 
 const defaultImageSize = '12GB';
 
@@ -170,7 +171,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
   useEffect(() => {
     const val = Number(imageSize.substring(0, imageSize.length - 2));
 
-    if (val == 0) {
+    if (val < 11) {
       setSizeEmpty(true);
     } else {
       setSizeEmpty(false);
@@ -511,7 +512,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                                 unit={'GB'}
                                 withInput
                                 onChange={e => setImageSize(e)}
-                                style={{ padding: '5px' }}
+                                style={{ padding: '5px', marginLeft: '10px' }}
                               />
                             </div>
                           )}
@@ -593,9 +594,15 @@ const Step2 = ({
   useEffect(() => {
     document.querySelector('#chk-1').checked = false;
     resetAll();
+
     if (publicType == 'public') {
+      setRegistryUrlActive(false);
       setRegistryUrl(defaultRegistryUrl);
     } else {
+      setRegistryUrlActive(true);
+      document.querySelector('#chk-1').checked = true;
+      let regUrlInput = document.querySelector('input[name=regUrl]')
+      if (regUrlInput) regUrlInput.value = '';
       setRegistryUrl('');
     }
   }, [publicType]);
@@ -614,7 +621,7 @@ const Step2 = ({
 
   // public type 바뀔때마다 설정 초기화
   const resetAll = () => {
-    setRegistryUrlActive(false); // registry url 비활성
+    // setRegistryUrlActive(false); // registry url 비활성
     setTagList([]);
     setImageName('');
     setTag('');
@@ -626,9 +633,10 @@ const Step2 = ({
   };
 
   // registry url 활성/비활성
-  const handleRegistryUrl = () => {
+  const handleRegistryUrl = (e) => {
     if (registryUrlActive) {
       resetAll();
+      setRegistryUrlActive(false);
     } else {
       setRegistryUrlActive(true);
     }
@@ -888,15 +896,15 @@ const Step2 = ({
                 <div className={styles.cont_box_wrap}>
                   <h6 className={styles.label}>
                     <div className={styles.form_check}>
-                      <input type="checkbox" name="chk-1" id="chk-1" />
+                      <input type="checkbox" name="chk-1" id="chk-1" disabled={publicType === 'private'} />
                       <label
                         htmlFor="chk-1"
-                        onClick={() => handleRegistryUrl()}
+                        onClick={publicType === 'public' ? () => handleRegistryUrl() : (e) => e.preventDefault()}
                       ></label>
                     </div>
                     <div className={styles.title}>
                       <p>Registry URL</p>
-                      <span>{t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')}</span>
+                      <span>{t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')} {publicType === 'public' ? t('RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC') : t('RESOURCES_IMAGE_REGIST_URL_SETTINGS_PRIVATE')}</span>
                     </div>
                   </h6>
                   {registryUrlActive && (
@@ -911,6 +919,7 @@ const Step2 = ({
                           >
                             <label>Registry URL</label>
                             <input
+                              name='regUrl'
                               type="text"
                               placeholder={
                                 publicType == 'private'
@@ -937,12 +946,19 @@ const Step2 = ({
                             </div>
                             <div className={styles.custom_input}>
                               <label>{t('RESOURCES_PASSWORD')}</label>
-                              <input
+
+                              <InputPassword
+                                name={`password`}
+                                // type="password"
+                                defaultValue={userPassword}
+                                onChange={e => setUserPassword(e.target.value)}
+                              />
+                              {/* <input
                                 type="password"
                                 name="password"
                                 defaultValue={userPassword}
                                 onChange={e => setUserPassword(e.target.value)}
-                              />
+                              /> */}
                             </div>
                             <button
                               type="button"

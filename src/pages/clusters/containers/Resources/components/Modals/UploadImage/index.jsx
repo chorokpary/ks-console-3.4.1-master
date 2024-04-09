@@ -63,7 +63,7 @@ const UploadModal = (props) => {
 
     var upload = new tus.Upload(file, {
       // Endpoint is the upload creation URL from your tus server
-      // endpoint: 'https://tusd.tusdemo.net/files/',
+      //endpoint: 'https://tusd.tusdemo.net/files/',
       // endpoint: `http://localhost:1080/files/${job_uuid}`,
       // endpoint: 'http://192.168.61.164:8080/files',
       
@@ -94,9 +94,9 @@ const UploadModal = (props) => {
         fnProgress(bytesTotal, bytesUploaded, percentage);
 
         // onSuccess가 호출되지 않아 처리 부분 추가....
-        if(percentageNotDecimalPoint == 100){
-          setTimeout(onOk({}), 1000);
-        }
+        // if(percentageNotDecimalPoint == 100){
+        //   setTimeout(onOk({}), 1000);
+        // }
       },
       // Callback for once the upload is completed
       onSuccess: function () {

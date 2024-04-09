@@ -34,6 +34,7 @@
 
 .removeCheckWrapper {
   padding-top: 12px;
+
   button {
     margin-left: 5px;
     margin-bottom: 5px;
@@ -41,7 +42,7 @@
 }
 
 .divInRight {
-  display: flex; 
+  display: flex;
   justify-content: right;
 }
 
@@ -49,28 +50,32 @@
   width: 100%;
   max-height: 250px;
   overflow-y: auto;
-  
+
   table {
     width: 100%;
     text-align: left;
+
     thead {
-        th {
-            text-transform: uppercase;
-            border-bottom: 1px solid #F1F1F1;
-            padding: 10px;
-        }
+      th {
+        text-transform: uppercase;
+        border-bottom: 1px solid #F1F1F1;
+        padding: 10px;
+      }
     }
+
     tbody {
-        tr {
-            border-bottom: 1px solid #F1F1F1;
-            color: #75787b;
-            td {
-                padding: 10px;
-            }
-            th {
-                padding-left: 10px;
-            }
+      tr {
+        border-bottom: 1px solid #F1F1F1;
+        color: #75787b;
+
+        td {
+          padding: 10px;
         }
+
+        th {
+          padding-left: 10px;
+        }
+      }
     }
   }
 }
@@ -85,26 +90,38 @@
 /* common define */
 $box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
 $size-ssmall: 11px;
-i { flex-shrink: 0; }
+
+i {
+  flex-shrink: 0;
+}
 
 /* icon */
-i {display: flex; justify-content: center; align-items: center;}
-.ico_btn_edit {background:url('/assets/resources/images/icons/ico-etc-pen.svg') center no-repeat; width: 58px; height: 32px;}
+i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ico_btn_edit {
+  background: url('/assets/resources/images/icons/ico-etc-pen.svg') center no-repeat;
+  width: 58px;
+  height: 32px;
+}
 
 /* btn */
 .btn-delete {
-	width: 58px; 
-	height: 32px; 
-	margin: 0 auto; 
-	margin-right: 5px;
+  width: 58px;
+  height: 32px;
+  margin: 0 auto;
+  margin-right: 5px;
 }
 
 /********* modal popup custom **********/
 /* popup content */
 .pop_overflow_y {
-	min-height: 500px;
-	max-height: calc(100vh - 222px);
-	overflow-y: auto;
+  min-height: 500px;
+  max-height: calc(100vh - 222px);
+  overflow-y: auto;
 }
 
 .modal-content .btn {
@@ -127,18 +144,21 @@ i {display: flex; justify-content: center; align-items: center;}
   width: 100%;
   padding: 12px 20px;
 }
+
 /* button */
 button {
-	cursor: pointer;
+  cursor: pointer;
 }
+
 *.btn {
-	border-radius: 16px;
-	min-width: 90px;
-	height: 32px;
-	line-height: 20px;
-	font-size: 12px;
-	font-weight: 700;
-	padding: 5px 23px;
+  border-radius: 16px;
+  min-width: 90px;
+  height: 32px;
+  line-height: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 23px;
+
   &.btn-short {
     flex: 0 0 auto !important;
     min-width: inherit;
@@ -152,20 +172,24 @@ button {
     background: #eff4f9;
     color: #36435c;
     box-shadow: none;
+
     &:hover {
       background-color: #e3e9ef;
       border-color: #c1c9d1;
     }
   }
+
   &.btn-control {
     flex: 0 0 auto !important;
     background: #242e42;
     color: #fff;
     box-shadow: 0 4px 8px 0 rgba(35, 45, 65, 0.28);
+
     &:hover {
       box-shadow: none;
     }
   }
+
   &.btn-cancel {
     flex: 0 0 auto !important;
     background: #ca2621;
@@ -175,150 +199,169 @@ button {
 
 /* boxwrap */
 .cont_boxwrap {
-	flex: 1;
-	position: relative;
-	padding: 20px;
-	z-index: 10;
-	overflow: hidden;
-	overflow-y: auto;
-	.boxwrap {
-	  position: relative;
-	  width: 100%;
-	  flex-direction: column;
-	  align-items: flex-start;
-	  display: flex;
-	  gap: 12px;
-	  > .box_style {
-	    position: relative;
-	    width: 100%;
-	    height: fit-content;
-	    overflow: auto;
-	    display: flex;
-	    align-items: flex-start;
-	    flex-direction: column;
-	    gap: 12px;
-	    overflow: hidden;
-	    border-radius: 4px;
-	    padding: 12px 16px;
-	    background: #fff;
-	    border: 1px solid #CCD3DB;
-	    box-shadow: $box-shadow;
-	    label {
-	      font-size: 12px;
-	      font-weight: 400;
-	      color: #36435C;
-	    }
-	    .boxtitle {
-	      align-self: stretch;
-	      justify-content: space-between;
-	      align-items: center;
-	      display: flex;
-	      position: relative;
-	    }
-	    .titlename {
-	      align-items: center;
-	      display: flex;
-	      position: relative;
-	      width: fit-content;
-	      font-size: 12px;
-	      font-weight: 600;
-	      color: #242E42;
-	      .basic {
-	        background: url('/assets/resources/images/icons/ico-modal-process-basic.svg') no-repeat;
-	        width: 40px;
-	        height: 40px;
-	      }
-	      .network {
-	        background: url('/assets/resources/images/icons/ico-modal-process-network.svg') no-repeat;
-	        width: 40px;
-	        height: 40px;
-	      }
-	      .detail {
-	        background: url('/assets/resources/images/icons/ico-modal-process-detail.svg') no-repeat;
-	        width: 40px;
-	        height: 40px;
-	      }
-	    }
-	    .greybgbox {
-	    	display: flex;
-	    	align-items: flex-start;
-	    	align-self: stretch;
-	    	background: #F9FBFD;
-	    	border-radius: 4px;
-	    	border: 1px solid #eff4f9;
-	    	overflow: hidden;
-	    	position: relative;
-	    	padding: 12px;
-	      .list {
-	        display: flex;
-	        flex-direction: column;
-	        align-items: baseline;
-	        position: relative;
-	        width: fit-content;
-	        label {
-	          align-items: flex-start;
-	          display: flex;
-	          padding: 8px 0px;
-	          position: relative;
-	          width: 72px;
-	          font-size: 12px;
-	          font-weight: 400;
-	          color: #5F708A;
-	        }
-	        div {
-	          font-size: 12px;
-	          color: #242E42;
-	          width: 196px;
-	          padding-right: 36px;
-	          &.bold {
-	            font-weight: 600;
-	          }
-	        }
-	        & > label + div {
-	        	font-weight: 600;
-	        } 
-	        .multiline {
-	          padding: 0;
-	          font-weight: 600;
-	          align-items: flex-start;
-	          display: flex;
-	          flex-direction: column;
-	          position: relative;
-	          width: fit-content;
-	          p {
-	            margin-top: 4px;
-	            line-height: 16px;
-	            .flag {
-	            	width: 100px;
-	            	height: 15px;
-	            	color: #79879c;
-	            	display: inline-block;
-	            	background: #eff4f9;
-	            	border: 1px solid #ccd3db;
-	            	margin: 0 6px 2px 0;
-	            	border-radius: 2px;
-	            	font-size: 11px;
-	            	line-height: 15px;
-	            	> em {
-	            		display: inline-block;
-	            		background: #36435c;
-	            		color: #fff;
-	            		width: 45px;
-	            		margin-right: 3px;
-	            		text-align: left;
-	            		padding-left: 6px;
-	            		font-style: normal;
+  flex: 1;
+  position: relative;
+  padding: 20px;
+  z-index: 10;
+  overflow: hidden;
+  overflow-y: auto;
+
+  .boxwrap {
+    position: relative;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    display: flex;
+    gap: 12px;
+
+    >.box_style {
+      position: relative;
+      width: 100%;
+      height: fit-content;
+      overflow: auto;
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      border-radius: 4px;
+      padding: 12px 16px;
+      background: #fff;
+      border: 1px solid #CCD3DB;
+      box-shadow: $box-shadow;
+
+      label {
+        font-size: 12px;
+        font-weight: 400;
+        color: #36435C;
+      }
+
+      .boxtitle {
+        align-self: stretch;
+        justify-content: space-between;
+        align-items: center;
+        display: flex;
+        position: relative;
+      }
+
+      .titlename {
+        align-items: center;
+        display: flex;
+        position: relative;
+        width: fit-content;
+        font-size: 12px;
+        font-weight: 600;
+        color: #242E42;
+
+        .basic {
+          background: url('/assets/resources/images/icons/ico-modal-process-basic.svg') no-repeat;
+          width: 40px;
+          height: 40px;
+        }
+
+        .network {
+          background: url('/assets/resources/images/icons/ico-modal-process-network.svg') no-repeat;
+          width: 40px;
+          height: 40px;
+        }
+
+        .detail {
+          background: url('/assets/resources/images/icons/ico-modal-process-detail.svg') no-repeat;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .greybgbox {
+        display: flex;
+        align-items: flex-start;
+        align-self: stretch;
+        background: #F9FBFD;
+        border-radius: 4px;
+        border: 1px solid #eff4f9;
+        overflow: hidden;
+        position: relative;
+        padding: 12px;
+
+        .list {
+          display: flex;
+          flex-direction: column;
+          align-items: baseline;
+          position: relative;
+          width: fit-content;
+
+          label {
+            align-items: flex-start;
+            display: flex;
+            padding: 8px 0px;
+            position: relative;
+            width: 72px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #5F708A;
+          }
+
+          div {
+            font-size: 12px;
+            color: #242E42;
+            width: 196px;
+            padding-right: 36px;
+
+            &.bold {
+              font-weight: 600;
+            }
+          }
+
+          &>label+div {
+            font-weight: 600;
+          }
+
+          .multiline {
+            padding: 0;
+            font-weight: 600;
+            align-items: flex-start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: fit-content;
+
+            p {
+              margin-top: 4px;
+              line-height: 16px;
+
+              .flag {
+                width: 100px;
+                height: 15px;
+                color: #79879c;
+                display: inline-block;
+                background: #eff4f9;
+                border: 1px solid #ccd3db;
+                margin: 0 6px 2px 0;
+                border-radius: 2px;
+                font-size: 11px;
+                line-height: 15px;
+
+                >em {
+                  display: inline-block;
+                  background: #36435c;
+                  color: #fff;
+                  width: 45px;
+                  margin-right: 3px;
+                  text-align: left;
+                  padding-left: 6px;
+                  font-style: normal;
 
 
-	            	}
-	            }
-	          }
-	        }
-	      }
-	    }
-	  }
-	}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
+
 /* modal popup tab_process */
 .tab_process {
   align-items: flex-start;
@@ -328,6 +371,7 @@ button {
   padding: 0px 20px;
   position: relative;
   width: 960px;
+
   .process_item {
     align-items: flex-start;
     display: flex;
@@ -335,17 +379,20 @@ button {
     padding: 12px 15px;
     position: relative;
     width: 230px;
+
     &.view_screen {
       &:hover {
-      	background: #fff;
-      	cursor: pointer;
+        background: #fff;
+        cursor: pointer;
       }
     }
+
     &.current {
       background: #fff;
     }
 
   }
+
   .status {
     align-items: flex-start;
     display: flex;
@@ -354,6 +401,7 @@ button {
     top: 40px;
     width: fit-content;
     z-index: 1;
+
     .todo {
       border: 2px solid #CCD3DB;
       border-radius: 50%;
@@ -362,7 +410,17 @@ button {
       min-width: 12px;
       position: relative;
     }
+
     .current {
+      border: 2px solid #55BC8A;
+      // background: #55BC8A;
+      border-radius: 50%;
+      height: 12px;
+      min-width: 12px;
+      position: relative;
+    }
+
+    .done {
       border: 2px solid #55BC8A;
       background: #55BC8A;
       border-radius: 50%;
@@ -370,39 +428,36 @@ button {
       min-width: 12px;
       position: relative;
     }
-    .done {
-    	border: 2px solid #55BC8A;
-      background: #55BC8A;
-      border-radius: 50%;
-      height: 12px;
-      min-width: 12px;
-      position: relative;
-    }
   }
+
   .basic {
     height: 40px;
     min-width: 40px;
     position: relative;
     background: url('/assets/resources/images/icons/ico-modal-process-basic.svg') no-repeat;
   }
+
   .network {
     height: 40px;
     min-width: 40px;
     position: relative;
     background: url('/assets/resources/images/icons/ico-modal-process-network.svg') no-repeat;
   }
+
   .detail {
     height: 40px;
     min-width: 40px;
     position: relative;
     background: url('/assets/resources/images/icons/ico-modal-process-detail.svg') no-repeat;
   }
+
   .check {
     height: 40px;
     min-width: 40px;
     position: relative;
     background: url('/assets/resources/images/icons/ico-modal-process-check.svg') no-repeat;
   }
+
   .title {
     align-items: flex-start;
     display: flex;
@@ -410,6 +465,7 @@ button {
     position: relative;
     width: fit-content;
   }
+
   .step_name {
     letter-spacing: 0;
     line-height: 20px;
@@ -421,6 +477,7 @@ button {
     font-weight: 600;
     color: #242E42;
   }
+
   .situation {
     letter-spacing: 0;
     line-height: 20px;
@@ -432,6 +489,7 @@ button {
     color: #79879C;
   }
 }
+
 //tab_process
 
 
@@ -444,11 +502,11 @@ button {
   border: solid 1px $border-color;
 
   &+.item {
-      margin-top: 8px;
+    margin-top: 8px;
   }
 
   &>input {
-      max-width: none !important;
+    max-width: none !important;
   }
 }
 

@@ -28,233 +28,267 @@ import List from '../base.list'
 
 export default class SecurityGroupStore extends Base {
 
-    records = new List()
+  records = new List()
 
-    module = 'security_groups'
+  module = 'security_groups'
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups`
-    getListUrl = this.getResourceUrl
-    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
+  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups`
+  getListUrl = this.getResourceUrl
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
-    @action
-    async fetchList({
-        cluster,
-        workspace,
-        namespace,
-        more,
-        devops,
-        ...params
-    } = {}) {
-        this.list.isLoading = true
+  @action
+  async fetchList({
+    cluster,
+    workspace,
+    namespace,
+    more,
+    devops,
+    ...params
+  } = {}) {
+    this.list.isLoading = true
 
-        if (!params.sortBy && params.ascending === undefined) {
-            params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
-        }
+    if (!params.sortBy && params.ascending === undefined) {
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
+    }
 
-        if (params.limit === Infinity || params.limit === -1) {
-            params.limit = -1
-            params.page = 1
-        }
+    if (params.limit === Infinity || params.limit === -1) {
+      params.limit = -1
+      params.page = 1
+    }
 
-        params.limit = params.limit || 10
+    params.limit = params.limit || 10
 
-        const result = await request.get(
-            this.getResourceUrl({ cluster, workspace, namespace, devops }),
-            this.getFilterParams(params)
-        )
+    const result = await request.get(
+      this.getResourceUrl({ cluster, workspace, namespace, devops }),
+      this.getFilterParams(params)
+    )
 
-        // mm3 api 관련 
-        const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
-        const apiName = mm3Array.includes(this.module) ? this.module : "";
+    // mm3 api 관련 
+    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
+    const apiName = mm3Array.includes(this.module) ? this.module : "";
 
-        const data = (get(result, apiName) || []).map(item => ({
-            cluster,
-            namespace,
-            ...this.mapper(item),
-        }))
+    const data = (get(result, apiName) || []).map(item => ({
+      cluster,
+      namespace,
+      ...this.mapper(item),
+    }))
 
-        // security_group rull count 정보 추가
-        const dataArray = [];
+    // security_group rull count 정보 추가
+    const dataArray = [];
 
-        const promises = data.map(async (security_group) => {
-            const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/security_groups/` + security_group.id);
-            security_group.egress_count = (securityDetail.security_group.rules).filter(el => el.direction == "egress").length;
-            security_group.ingress_count = (securityDetail.security_group.rules).filter(el => el.direction == "ingress").length;
-            dataArray.push(security_group);
-        })
-        await Promise.all(promises);
+    const promises = data.map(async (security_group) => {
+      const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/security_groups/` + security_group.id);
+      security_group.egress_count = (securityDetail.security_group.rules).filter(el => el.direction == "egress").length;
+      security_group.ingress_count = (securityDetail.security_group.rules).filter(el => el.direction == "ingress").length;
+      dataArray.push(security_group);
+    })
+    await Promise.all(promises);
 
-        // 초기 데이터 처리 
-        this.dataList = dataArray;
+    // 초기 데이터 처리 
+    this.dataList = dataArray;
 
-        if (namespace) {
-            params.project = namespace;
-        }
+    if (namespace) {
+      params.project = namespace;
+    }
 
-        // 검색 관련 처리 
-        const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-        const searchArray = Object.keys(params).map((key) => {
-            let value = params[key];
-            let searchData = {
-                "searchKeywordType": key,
-                "searchKeywordText": value
-            }
-            return searchData
-        }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+    // 검색 관련 처리 
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
+    const searchArray = Object.keys(params).map((key) => {
+      let value = params[key];
+      let searchData = {
+        "searchKeywordType": key,
+        "searchKeywordText": value
+      }
+      return searchData
+    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
 
-        if (searchArray.length > 0) {
-            searchArray.map((search) => {
-                let resultList = this.dataList.filter((row) => {
-                    if (typeof row[search.searchKeywordType] === "boolean") {
-                        return (row[search.searchKeywordType] ? '사용' : '미사용').includes(search.searchKeywordText);
-                    } else if (search.searchKeywordType === 'project') {
-                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                    } else {
-                        return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                    }
-                });
-                this.dataList = resultList;
-            })
-        }
-
-        //정렬 처리
-        const sortType = !!params.ascending ? "asc" : "desc";
-        this.dataList.sort((a, b) => {
-            var x = a[params.sortBy];
-            var y = b[params.sortBy];
-            if (sortType == "desc") {
-                return x > y ? -1 : x < y ? 1 : 0;
-            } else if (sortType == "asc") {
-                return x < y ? -1 : x > y ? 1 : 0;
-            }
+    if (searchArray.length > 0) {
+      searchArray.map((search) => {
+        let resultList = this.dataList.filter((row) => {
+          if (typeof row[search.searchKeywordType] === "boolean") {
+            return (row[search.searchKeywordType] ? '사용' : '미사용').includes(search.searchKeywordText);
+          } else if (search.searchKeywordType === 'project') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+          } else {
+            return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+          }
         });
-
-        // mm3 데이터 page 별 Slice 처리 
-        const perPage = Number(params.limit) || 10;
-        const currentPage = Number(params.page) || 1;
-        const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-
-        this.list.update({
-            data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-            total: result.totalItems || result.total_count || this.dataList.length || 0,
-            ...params,
-            limit: Number(params.limit) || 10,
-            page: Number(params.page) || 1,
-            isLoading: false,
-            ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-        })
-
-        return data
+        this.dataList = resultList;
+      })
     }
 
+    //정렬 처리
+    const sortType = !!params.ascending ? "asc" : "desc";
+    this.dataList.sort((a, b) => {
+      var x = a[params.sortBy];
+      var y = b[params.sortBy];
+      if (sortType == "desc") {
+        return x > y ? -1 : x < y ? 1 : 0;
+      } else if (sortType == "asc") {
+        return x < y ? -1 : x > y ? 1 : 0;
+      }
+    });
 
-    @action
-    async create(data, params = {}) {
+    // mm3 데이터 page 별 Slice 처리 
+    const perPage = Number(params.limit) || 10;
+    const currentPage = Number(params.page) || 1;
+    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
 
-        let res = await this.submitting(request.post(this.getListUrl(params), data))
-        if (res.message === "OK") {
+    this.list.update({
+      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
+      total: result.totalItems || result.total_count || this.dataList.length || 0,
+      ...params,
+      limit: Number(params.limit) || 10,
+      page: Number(params.page) || 1,
+      isLoading: false,
+      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
+    })
 
-            const jsonData = {};
-            const promises = data.security_group.security_group_rules.map(async (obj) => {
-                const data = {};
-                data.security_group_id = res.id;
-                data.direction = obj.direction.toLowerCase();
-                data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
-                data.protocol = obj.protocol.toLowerCase();
-                if (obj.portRangeMax.indexOf("-") != -1) {
-                    data.port_range_min = obj.portRangeMax.split("-")[0];
-                    data.port_range_max = obj.portRangeMax.split("-")[1];
-                } else {
-                    data.port_range_min = obj.portRangeMax;
-                    data.port_range_max = obj.portRangeMax;
-                }
-                data.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
-
-                jsonData.security_group_rule = data;
-
-                await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
-            })
-            await Promise.all(promises);
-
-        }
-        return res
-    }
+    return data
+  }
 
 
-    @action
-    async fetchDetail(params) {
-        this.isLoading = true
+  @action
+  async create(data, params = {}) {
 
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}`
-        )
-        const detail = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
+    let res = await this.submitting(request.post(this.getListUrl(params), data))
+    if (res.message === "OK") {
 
-        // Yaml 파일 관련 
-        await this.fetchYaml(params);
-
-        this.detail = detail
-        this.isLoading = false
-        return detail
-    }
-
-    @action
-    async fetchYaml(params) {
-        this.isLoading = true
-
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}/manifest`
-        )
-        const yamlData = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
-
-        this.yaml = yamlData.manifest
-        this.isLoading = false
-        return yamlData
-    }
-
-
-    @action
-    async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      const jsonData = {};
+      const promises = data.security_group.security_group_rules.map(async (obj) => {
+        const data = {};
+        data.security_group_id = res.id;
+        data.direction = obj.direction.toLowerCase();
+        data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
+        data.protocol = obj.protocol.toLowerCase();
+        if (obj.ethernetType === "ALL") {
+          data.port_range_min = obj.portRangeMax.split("-")[0];
+          data.port_range_max = obj.portRangeMax.split("-")[1];
         } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(async (id) => {
-                        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups/` + id);
-                        Promise.all(
-                            securityDetail.security_group.rules.map((rule) => {
-                                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
-                            })
-                        )
-
-                        await request.delete(
-                            `${this.getDetailUrl({ id, ...params })}`
-                        )
-                    })
-                )
-            )
+          data.port_range_min = obj.portRangeMax;
+          data.port_range_max = obj.portRangeMax;
         }
-        this.list.selectedRowKeys = []
+        data.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
+
+        jsonData.security_group_rule = data;
+
+        await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
+      })
+      await Promise.all(promises);
+
     }
+    return res
+  }
 
-    @action
-    async delete(user) {
-        // id로 삭제해야해서 치환
-        user.name = user.id;
-        if (user.name === globals.user.username) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-            return
-        }
 
-        const securityDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(user)}/edgetron/resources/kubevirt/security_groups/` + user.id);
+  @action
+  async fetchDetail(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}`
+    )
+    const detail = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
+
+    // Yaml 파일 관련 
+    await this.fetchYaml(params);
+
+    this.detail = detail
+    this.isLoading = false
+    return detail
+  }
+
+  @action
+  async fetchYaml(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/manifest`
+    )
+    const yamlData = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
+
+    this.yaml = yamlData.manifest
+    this.isLoading = false
+    return yamlData
+  }
+
+
+  @action
+  async batchDelete({ rowKeys, ...params }) {
+    if (rowKeys.includes(globals.user.username)) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+    } else {
+      await this.submitting(
         Promise.all(
-            securityDetail.security_group.rules.map((rule) => {
-                request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(user)}/edgetron/resources/kubevirt/security_group_rules/` + rule.id);
-            })
+          rowKeys.map(async (id) => {
+            await request.delete(
+              `${this.getDetailUrl({ id, ...params })}`
+            )
+          })
         )
-
-        return await this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+      )
     }
+    this.list.selectedRowKeys = []
+  }
+
+  @action
+  async delete(user) {
+    // id로 삭제해야해서 치환
+    user.name = user.id;
+    if (user.name === globals.user.username) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      return
+    }
+
+    return await this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  }
+
+  @action
+  async update({ ...params }, data) {
+
+    let delOriginRule = data.security_group.originRules;
+    const rules = data.security_group.rules;
+
+    const jsonData = {};
+    const promises = rules.map(async (obj) => {
+      if (!obj.originRuleId) {
+        const jData = {};
+        jData.security_group_id = data.security_group.security_group_id;
+        jData.direction = obj.direction.toLowerCase();
+        jData.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
+        jData.protocol = obj.protocol.toLowerCase();
+        if (obj.ethernetType === "ALL") {
+          jData.port_range_min = obj.portRangeMax.split("-")[0];
+          jData.port_range_max = obj.portRangeMax.split("-")[1];
+        } else {
+          jData.port_range_min = obj.portRangeMax;
+          jData.port_range_max = obj.portRangeMax;
+        }
+        jData.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
+        jsonData.security_group_rule = jData;
+
+        await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
+      } else {
+        // 기존 rule 중 삭제건
+        let idx = delOriginRule.indexOf(obj.originRuleId)
+        if (idx > -1) delOriginRule.splice(idx, 1)
+      }
+    })
+    await Promise.all(promises);
+
+    if (delOriginRule.length > 0) {
+      // 기존 rule 중 삭제건 처리
+      await this.deleteSgRules({ ...params }, delOriginRule)
+    }
+  }
+
+
+  @action
+  async deleteSgRules({ ...params }, rules) {
+    const promises = rules.map(async (id) => {
+      await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/${id}`));
+    })
+    await Promise.all(promises);
+  }
 
 }

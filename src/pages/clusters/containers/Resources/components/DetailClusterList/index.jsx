@@ -1,24 +1,12 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import classnames from 'classnames';
 import { toJS } from 'mobx';
-
 import { Button, Icon, Loading, Tooltip } from '@kube-design/components';
 
 import Tabs from 'components/Cards/Banner/Tabs';
-import { TinyArea } from 'components/Charts';
 import { Panel, Text, Indicator } from 'components/Base';
-
 import styles from './index.scss';
-
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
-
-import { getLocalTime } from 'utils';
-import * as common from 'utils/resources';
-import { getAreaChartOps } from 'utils/monitoring';
-
-// import 'pages/clusters/containers/Overview/CustomDashboard/custom_style.css';
-// import 'pages/clusters/containers/Overview/CustomDashboard/custom_icon.css';
-// import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
 
 const DetailClusterList = props => {
   const clusterInspection = new ClusterInspectionStore();
@@ -284,13 +272,13 @@ const DetailClusterList = props => {
     },
     {
       name: 'NoMemoryRequests',
-      describe: t('CLUSTER_INSPECTION_DESC_'),
+      describe: t('CLUSTER_INSPECTION_DESC_NOMEMORYREQUESTS'),
 
       reference: {
         'Kubernetes Documentation':
           'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
       },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_'),
+      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOMEMORYREQUESTS'),
 
       template:
         '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
@@ -354,13 +342,13 @@ const DetailClusterList = props => {
     },
     {
       name: 'NotRunAsNonRoot',
-      describe: t('CLUSTER_INSPECTION_DESC_'),
+      describe: t('CLUSTER_INSPECTION_DESC_NOTRUNASNONROOT'),
 
       reference: {
         'Kubernetes Documentation':
           'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
       },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_'),
+      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOTRUNASNONROOT'),
 
       template:
         '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
@@ -464,7 +452,7 @@ const DetailClusterList = props => {
       suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASSNAME'),
       //   template:
       //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
+      level: 'ignore',
     },
     {
       name: 'Error',
@@ -518,12 +506,11 @@ const DetailClusterList = props => {
       const ciList = await clusterInspection.fetchList();
 
       setCiDataList(toJS(ciList.auditResults));
-
       const withNamespace = toJS(ciList.auditResults)?.filter(
-        item => item.namespace
+        item => item.namespace,
       );
       const noNamespace = toJS(ciList.auditResults)?.filter(
-        item => !item.namespace
+        item => !item.namespace,
       );
 
       setNamespace(withNamespace);
@@ -536,21 +523,18 @@ const DetailClusterList = props => {
   useEffect(() => {
     const date = new Date(props?.data?.lastScheduleTime);
     const formattedDate = `${date.getFullYear()}-${String(
-      date.getMonth() + 1
+      date.getMonth() + 1,
     ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    console.log('formattedDate\n', formattedDate);
 
     const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(
-      date.getMinutes()
+      date.getMinutes(),
     ).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
-    console.log('formattedTime\n', formattedTime);
 
     const setTime = `${formattedDate}, ${formattedTime}`;
     setLastScheduleTime(setTime);
   }, [props]);
 
   const handleExpand = (name, valueNamespace, valueType) => {
-    console.log();
     setExpandItem(name);
     setIsExpandFlag(!isExpandFlag);
     setExpandItemNamespace(valueNamespace);
@@ -598,9 +582,13 @@ const DetailClusterList = props => {
   };
 
   const renderContent = () => {
-    if (ciDataList?.length == 0) {
+    if (!ciDataList) {
       const content = (
-        <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
+        <div className="grid_info style_status">
+          <div className="grid_text">
+            <span>데이터가 없습니다</span>
+          </div>
+        </div>
       );
       return content;
     }
@@ -742,13 +730,12 @@ const DetailClusterList = props => {
                     const generateDotBars = () => {
                       const dotBars = [];
                       if (buttonPass) {
-                        // counts.ignore.forEach(item =>);
                         for (let i = 0; i < (counts.ignore || 0); i++) {
                           dotBars.push(
                             <div
                               key={`ignore-${i}`}
                               className="dot_bar status pass"
-                            ></div>
+                            ></div>,
                           );
                         }
                         return dotBars;
@@ -759,7 +746,7 @@ const DetailClusterList = props => {
                             <div
                               key={`warning-${i}`}
                               className="dot_bar status warning"
-                            ></div>
+                            ></div>,
                           );
                         }
                         return dotBars;
@@ -770,7 +757,7 @@ const DetailClusterList = props => {
                             <div
                               key={`danger-${i}`}
                               className="dot_bar status danger"
-                            ></div>
+                            ></div>,
                           );
                         }
                         return dotBars;
@@ -781,7 +768,7 @@ const DetailClusterList = props => {
                             <div
                               key={`danger-${i}`}
                               className="dot_bar status danger"
-                            ></div>
+                            ></div>,
                           );
                         }
 
@@ -790,7 +777,7 @@ const DetailClusterList = props => {
                             <div
                               key={`warning-${i}`}
                               className="dot_bar status warning"
-                            ></div>
+                            ></div>,
                           );
                         }
 
@@ -799,7 +786,7 @@ const DetailClusterList = props => {
                             <div
                               key={`ignore-${i}`}
                               className="dot_bar status pass"
-                            ></div>
+                            ></div>,
                           );
                         }
 
@@ -867,18 +854,40 @@ const DetailClusterList = props => {
                                       {generateDotBars()}
                                     </div>
                                     <p className="dot_value">
+                                      {/* {buttonPass &&
+                                        `${t(
+                                          'CLUSTER_INSPECTION_PASS',
+                                        )} ${counts.ignore || 0}`}
+                                      {buttonWarning &&
+                                        `${t(
+                                          'CLUSTER_INSPECTION_WARNING',
+                                        )} ${counts.warning || 0}`}
+                                      {buttonDanger &&
+                                        `${t(
+                                          'CLUSTER_INSPECTION_DANGER',
+                                        )} ${counts.danger || 0}`}
+
+                                      {!buttonPass &&
+                                        !buttonWarning &&
+                                        !buttonDanger && (
+                                          <> */}
                                       <label>
-                                        {t('CLUSTER_INSPECTION_PASS')}{' '}
-                                        {counts.ignore || 0}
+                                        {`${t(
+                                          'CLUSTER_INSPECTION_PASS',
+                                        )}  ${counts.ignore || 0}`}
                                       </label>
                                       <label>
-                                        {t('CLUSTER_INSPECTION_WARNING')}{' '}
-                                        {counts.warning || 0}
+                                        {`${t(
+                                          'CLUSTER_INSPECTION_WARNING',
+                                        )}  ${counts.warning || 0}`}
                                       </label>
                                       <label>
-                                        {t('CLUSTER_INSPECTION_DANGER')}{' '}
-                                        {counts.danger || 0}
+                                        {`${t(
+                                          'CLUSTER_INSPECTION_DANGER',
+                                        )}  ${counts.danger || 0}`}
                                       </label>
+                                      {/* </>
+                                        )} */}
                                       <span className="data"></span>
                                     </p>
                                   </div>
@@ -892,7 +901,7 @@ const DetailClusterList = props => {
                                     handleExpand(
                                       obj.resourceInfos.name,
                                       value.namespace,
-                                      obj.resourceType
+                                      obj.resourceType,
                                     )
                                   }
                                 >
@@ -930,6 +939,7 @@ const DetailClusterList = props => {
       return content;
     }
   };
+
   const renderContentDetail = obj => {
     const counts = {};
 
@@ -943,7 +953,7 @@ const DetailClusterList = props => {
       if (buttonPass) {
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
           );
         }
         return dotBars;
@@ -951,7 +961,7 @@ const DetailClusterList = props => {
       if (buttonWarning) {
         for (let i = 0; i < (counts.warning || 0); i++) {
           dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
           );
         }
         return dotBars;
@@ -959,7 +969,7 @@ const DetailClusterList = props => {
       if (buttonDanger) {
         for (let i = 0; i < (counts.danger || 0); i++) {
           dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
           );
         }
         return dotBars;
@@ -968,19 +978,193 @@ const DetailClusterList = props => {
       if (!(buttonDanger || buttonWarning || buttonPass)) {
         for (let i = 0; i < (counts.danger || 0); i++) {
           dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
           );
         }
 
         for (let i = 0; i < (counts.warning || 0); i++) {
           dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
           );
         }
 
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
+          );
+        }
+
+        return dotBars;
+      }
+    };
+
+    return (
+      <>
+        <div className={styles.content}>
+          <div className={styles.text}>
+            <div>{obj.resourceInfos.name}</div>
+            <p>{t('CLUSTER_INSPECTION_NAME')}</p>
+          </div>
+
+          <div className={styles.text}>
+            <div>{obj.resourceType}</div>
+            <p>{t('CLUSTER_INSPECTION_TYPE')}</p>
+          </div>
+          <div className="content_box_wrap">
+            <div className="dot_chart_wrap">
+              <div className="dot_chart">{generateDotBars()}</div>
+              <p className="dot_value">
+                {/* {buttonPass &&
+                  `${t('CLUSTER_INSPECTION_PASS')} ${counts.ignore || 0}`}
+                {buttonWarning &&
+                  `${t('CLUSTER_INSPECTION_WARNING')} ${counts.warning || 0}`}
+                {buttonDanger &&
+                  `${t('CLUSTER_INSPECTION_DANGER')} ${counts.danger || 0}`} */}
+
+                {/* {!buttonPass && !buttonWarning && !buttonDanger && (
+                  <> */}
+                <label>
+                  {`${t('CLUSTER_INSPECTION_PASS')}  ${counts.ignore || 0}`}
+                </label>
+                <label>
+                  {`${t('CLUSTER_INSPECTION_WARNING')}  ${counts.warning || 0}`}
+                </label>
+                <label>
+                  {`${t('CLUSTER_INSPECTION_DANGER')}  ${counts.danger || 0}`}
+                </label>
+                {/* </>
+                )} */}
+                <span className="data"></span>
+              </p>
+            </div>
+          </div>
+
+          {/* {renderMonitorings(obj.resourceInfos)} */}
+
+          <div
+            className={styles.arrow}
+            onClick={() => handleExpand(obj.resourceInfos.name)}
+          >
+            <Icon
+              name="chevron-down"
+              type={
+                obj.resourceInfos.name !== expandItem
+                  ? ''
+                  : obj.resourceInfos.name === expandItem &&
+                    isExpandFlag === false
+                  ? ''
+                  : 'light'
+              }
+              size={20}
+            />
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  /*
+    const renderContentDetail = obj => {
+    const counts = {};
+
+    (obj.resourceInfos.items || []).forEach(item => {
+      const itemLevel = item.level;
+      // console.log('item\n ', item.level);
+      counts[itemLevel] = (counts[itemLevel] || 0) + 1;
+    }); // (버튼에 따라 count 세기)
+
+    const countItems = () => {
+      if (buttonPass) {
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
+          );
+        }
+        return dotBars;
+      }
+      if (buttonWarning) {
+        for (let i = 0; i < (counts.warning || 0); i++) {
+          dotBars.push(
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
+          );
+        }
+        return dotBars;
+      }
+      if (buttonDanger) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
+          dotBars.push(
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
+          );
+        }
+        return dotBars;
+      }
+
+      if (!(buttonDanger || buttonWarning || buttonPass)) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
+          dotBars.push(
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
+          );
+        }
+
+        for (let i = 0; i < (counts.warning || 0); i++) {
+          dotBars.push(
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
+          );
+        }
+
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
+          );
+        }
+
+        return dotBars;
+      }
+    };
+
+    const generateDotBars = () => {
+      const dotBars = [];
+      if (buttonPass) {
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
+          );
+        }
+        return dotBars;
+      }
+      if (buttonWarning) {
+        for (let i = 0; i < (counts.warning || 0); i++) {
+          dotBars.push(
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
+          );
+        }
+        return dotBars;
+      }
+      if (buttonDanger) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
+          dotBars.push(
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
+          );
+        }
+        return dotBars;
+      }
+
+      if (!(buttonDanger || buttonWarning || buttonPass)) {
+        for (let i = 0; i < (counts.danger || 0); i++) {
+          dotBars.push(
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
+          );
+        }
+
+        for (let i = 0; i < (counts.warning || 0); i++) {
+          dotBars.push(
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
+          );
+        }
+
+        for (let i = 0; i < (counts.ignore || 0); i++) {
+          dotBars.push(
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
           );
         }
 
@@ -1018,7 +1202,7 @@ const DetailClusterList = props => {
             </div>
           </div>
 
-          {/* {renderMonitorings(obj.resourceInfos)} */}
+          {/* {renderMonitorings(obj.resourceInfos)}
 
           <div
             className={styles.arrow}
@@ -1041,6 +1225,7 @@ const DetailClusterList = props => {
       </>
     );
   };
+  */
 
   const getState = state => {
     if (state === 'ignore') {
@@ -1082,7 +1267,15 @@ const DetailClusterList = props => {
                       : ''
                   }`}
                 >
-                  <span>{level}</span>
+                  <span>
+                    {level === 'ignore'
+                      ? 'pass'
+                      : level === 'warning'
+                      ? 'warning'
+                      : level === 'danger'
+                      ? 'danger'
+                      : ''}
+                  </span>
                 </p>
               </div>
               <button
@@ -1133,7 +1326,11 @@ const DetailClusterList = props => {
                 return true;
               })
               ?.sort((a, b) => {
-                const levelOrder = { danger: 1, warning: 2, ignore: 3 };
+                const levelOrder = {
+                  danger: 1,
+                  warning: 2,
+                  ignore: 3,
+                };
                 return levelOrder[a.level] - levelOrder[b.level];
               })
               ?.map((item, indexNum) => {
@@ -1224,7 +1421,10 @@ const DetailClusterList = props => {
                               showPopup ? 'show' : ''
                             }`}
                             id="sub_layer_pop"
-                            style={{ top: '-64px', right: '-6px' }}
+                            style={{
+                              top: '-64px',
+                              right: '-6px',
+                            }}
                           >
                             <div className="layer_pop_header status_wrap">
                               <div className="tit">
@@ -1240,7 +1440,15 @@ const DetailClusterList = props => {
                                       : ''
                                   }`}
                                 >
-                                  <span>{level}</span>
+                                  <span>
+                                    {level === 'ignore'
+                                      ? 'pass'
+                                      : level === 'warning'
+                                      ? 'warning'
+                                      : level === 'danger'
+                                      ? 'danger'
+                                      : ''}
+                                  </span>
                                 </p>
                               </div>
                               <button
@@ -1256,9 +1464,11 @@ const DetailClusterList = props => {
                               <i className="ico ico-check"></i>
                               <label
                                 className="label"
-                                style={{ color: '#36435c' }}
-                              >{`Discovered :`}</label>
-                              <span>{`1 min ago`}</span>
+                                style={{
+                                  color: '#36435c',
+                                }}
+                              >{`Discovered `}</label>
+                              {/* <span>{`1 min ago`}</span> */}
                             </div>
                             <div className="desc">
                               <h2>{`DESCRIPTION`}</h2>
@@ -1298,11 +1508,19 @@ const DetailClusterList = props => {
     //   if (data.metric.pod === vmId) return data;
     // });
 
-    if (!ciDataList)
+    if (!ciDataList) {
       return (
-        <div className={styles.monitors}>{t('CLUSTER_INSPECTION_NO_DATA')}</div>
+        <div className="grid_text">
+          <span>{t('RESOURCES_NOT_FOUND_RESOURCE')}</span>
+        </div>
       );
+    }
 
+    // const content = (
+    //   <div className="grid_text">
+    //     <span>{t('RESOURCES_NOT_FOUND_RESOURCE')}</span>
+    //   </div>
+    // );
     // const ciArray = [];
     // ciArray.push(ciDataList);
 
@@ -1350,8 +1568,11 @@ const DetailClusterList = props => {
       </div>
       <div className="grid_item">
         <div className="grid_title">
-          <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>
-          <div className="content_box_wrap">
+          <label></label>
+          <div
+            className="content_box_wrap"
+            //   style={{ marginLeft: 'auto' }}
+          >
             <div className="tab_toggle_wrap status_wrap">
               <button
                 className={`${

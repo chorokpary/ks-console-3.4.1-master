@@ -14,7 +14,7 @@ const RegistModal = (props) => {
 
   const regexPort = /[^0123456789-]/g;
   const ruleTypeOptions = [
-    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: "0" },
+    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: "1" },
     { value: "ALL", label: "ALL", protocol: "TCP", port: "0-65535" },
     { value: "FTP", label: "FTP", protocol: "TCP", port: "20" },
     { value: "SSH", label: "SSH", protocol: "TCP", port: "22" },
@@ -124,7 +124,7 @@ const RegistModal = (props) => {
         data.members = members
         data.project = projectName
         data.lb_rule = [...rules.filter(el => delete el.validPort && delete el.isCustom)]
-        console.log(data)
+        // console.log(data)
         onOk({ lb: data })
       }
 
@@ -210,7 +210,7 @@ const RegistModal = (props) => {
     ruleType: t('RESOURCES_SPECIFY_USER')
     , protocol: 'TCP'
     , portRangeMin: '0'
-    , portRangeMax: '0'
+    , portRangeMax: '1'
     , isCustom: true
     , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
     , message: ''
@@ -240,7 +240,7 @@ const RegistModal = (props) => {
       const values = [...formRulesFields];
       const val = e.currentTarget.value;
 
-      if (regexPort.test(val) || (val < 0 || val > 65535)) {
+      if (regexPort.test(val) || (val < 1 || val > 65535)) {
         values[i].validPort.isValid = true;
       } else {
         values[i].validPort.isValid = false;
@@ -253,7 +253,6 @@ const RegistModal = (props) => {
 
     handleSelectClick: (i, field, val) => {
       let values = [...formRulesFields];
-
 
       if (field === "protocol") {
         values[i].protocol = val;
@@ -269,7 +268,6 @@ const RegistModal = (props) => {
           } else {
             setBtnDimm(false);
           }
-
         } else {
           values[i].message = t('RESOURCES_ALREADY_SELECTED_TYPE');
           setTimeout(() => { handleRules.deleteMessage(i) }, 1000);
@@ -432,6 +430,7 @@ const RegistModal = (props) => {
           <div style={{ padding: 10 }} />
 
           {t('RESOURCES_POLICY')}
+          <span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
               <div className={styles.table}>
@@ -463,8 +462,8 @@ const RegistModal = (props) => {
                           <Tooltip content={v.validPort?.isValid ? v.validPort.message : ''} placement="right" always={v.validPort?.isValid} >
                             <Input type="text"
                               onChange={(e) => handleRules.handleInputChange(i, 'portRangeMax', e)}
-                              value={v.portRangeMax}
-                              disabled={!v.isCustom} />
+                              value={v.protocol === 'ICMP' ? '' : v.portRangeMax}
+                              disabled={!v.isCustom || v.protocol === 'ICMP'} />
                           </Tooltip>
                         </td>
                         <td>

@@ -1,5 +1,5 @@
 import { get, isEmpty, find } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
@@ -26,7 +26,7 @@ const index = (props) => {
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
     let value = parseFloat(timeStr)
-  
+
     switch (unit) {
       default:
       case 's':
@@ -48,17 +48,17 @@ const index = (props) => {
     const interval = parseFloat(step) * times
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
-  
+
     return { start, end }
   }
 
   const fetchData = async (params) => {
 
     const paramsData = Object.assign(params, {
-      start : params.start,
-      end : params.end,
+      start: params.start,
+      end: params.end,
       step: getMinuteValue(params.step),
-      times : params.times ,
+      times: params.times,
     })
 
     if (!paramsData.start || !paramsData.end) {
@@ -75,9 +75,9 @@ const index = (props) => {
       })
 
       const vmCpuMetricData = _.find(vmCpuData, (data) => {
-        if (data.metric.pod === store.detail.id ) return data;
+        if (data.metric.pod === store.detail.id) return data;
       });
-  
+
       // 배열 처리 
       const vmCpuArray = [];
       vmCpuArray.push(vmCpuMetricData)
@@ -92,7 +92,7 @@ const index = (props) => {
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
-        if (data.metric.pod === store.detail.id ) return data;
+        if (data.metric.pod === store.detail.id) return data;
       });
 
       // 배열 처리 
@@ -110,22 +110,22 @@ const index = (props) => {
       })
 
       const vmInboundMetricData = _.find(vmInboundData, (data) => {
-        if (data.metric.pod === store.detail.id ) return data;
+        if (data.metric.pod === store.detail.id) return data;
       });
 
       setVmInboundData(vmInboundMetricData)
 
     };
-   
+
     // vm outbound data
     const getVmOutboundData = async () => {
-      const vmOutboundData= await customStore.fetchMetric({
+      const vmOutboundData = await customStore.fetchMetric({
         expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*"}[5m]))`,
         ...paramsData,
       })
 
       const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
-        if (data.metric.pod === store.detail.id ) return data;
+        if (data.metric.pod === store.detail.id) return data;
       });
 
       setVmOutboundData(vmOutboundMetricData)
@@ -134,24 +134,20 @@ const index = (props) => {
 
     const getVmDiskUsageData = async () => {
       const vmDiskData = await customStore.fetchMetric({
-        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`,
+        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes{pod=~${store.detail.id}})) / sum by(pod) (node_filesystem_size_bytes{pod=~${store.detail.id}})) * 100)) / 100`,
         ...paramsData,
       })
 
-      const vmDiskMetricData = _.find(vmDiskData, (data) => {
-        if (data.metric?.pod === store.detail.id ) return data;
-      });
-      
       // 배열 처리 
       const vmDiskArray = [];
-      vmDiskArray.push(vmDiskMetricData)
+      vmDiskArray.push(vmDiskData)
       setVmDiskData(vmDiskArray)
     };
-    
+
     getVmCpuUsageData();
     getVmMemoryUsageData();
     getVmInboundData();
-    getVmOutboundData();  
+    getVmOutboundData();
     getVmDiskUsageData();
 
   }
@@ -178,7 +174,7 @@ const index = (props) => {
         title: 'NETWORK_TRAFFIC',
         unitType: 'bandwidth',
         legend: ['OUT', 'IN'],
-        data: [vmOutboundData , vmInboundData],
+        data: [vmOutboundData, vmInboundData],
       },
       {
         type: 'utilisation',
@@ -194,19 +190,19 @@ const index = (props) => {
   const configs = getMonitoringCfgs()
 
   return (
-      <MonitoringController
-          title={t('RESOURCES_MONITORING')}
-          onFetch={fetchData}
-          loading={isLoading}
-          refreshing={isRefreshing}       
-        >
-          {configs.map(item => {
-            const config = getAreaChartOps(item)
-            if (isEmpty(config.data)) return null
-            return <SimpleArea key={config.title} width="100%" {...config} />
-          })}
-          
-        </MonitoringController>       
+    <MonitoringController
+      title={t('RESOURCES_MONITORING')}
+      onFetch={fetchData}
+      loading={isLoading}
+      refreshing={isRefreshing}
+    >
+      {configs.map(item => {
+        const config = getAreaChartOps(item)
+        if (isEmpty(config.data)) return null
+        return <SimpleArea key={config.title} width="100%" {...config} />
+      })}
+
+    </MonitoringController>
   );
 };
 

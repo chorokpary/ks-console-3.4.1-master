@@ -57,7 +57,12 @@ const ImageBuildDetail = (props) => {
       const uploadInfo = get(detail, ['upload-info-list', 'upload-info'])
       const podStatus = get(detail, 'pod-status', '')
 
-      console.log("global : "+ JSON.stringify(globals))
+      const stepRunningArray = ['ServerConfiguring', 'FileUploading', 'ImageBuild&Pushing', 'ServerDeleting', 'ServerReady', 'FileUploadCompleted']
+      const stepFailedArray = ['ServerConfigureFail', 'FileUploadFail', 'ImagePushFailed']
+
+      const podStatusText = stepFailedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_FAIL') 
+      : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') : t('RESOURCES_SUCCESS')
+
 
       let fileStatus = "-";
       let fileName = "-";
@@ -109,7 +114,7 @@ const ImageBuildDetail = (props) => {
         },
         {
           name: t('RESOURCES_STATE'),
-          value: podStatus,
+          value: podStatusText,
         },
         {
           name: t('RESOURCES_DESCRIPTION'),

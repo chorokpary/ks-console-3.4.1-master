@@ -21,9 +21,14 @@ const floatingstore = new FloatingIpStore();
 const volumeStore = new VolumeStore();
 
 const VmDetail = props => {
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [props.match.params.id]);
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);
@@ -87,6 +92,15 @@ const VmDetail = props => {
       },
     },
     {
+      key: 'vnc',
+      icon: 'vpn',
+      text: t('RESOURCES_ACCESS_VNC'),
+      action: 'view',
+      onClick: () => {
+        fnOpenVncPopup();
+      },
+    },
+    {
       key: 'securitygroup',
       icon: 'shield',
       text: t('RESOURCES_VM_SECURITYGROUP_EDIT'),
@@ -111,15 +125,6 @@ const VmDetail = props => {
           store: store,
           success: fetchData,
         });
-      },
-    },
-    {
-      key: 'vnc',
-      icon: 'vpn',
-      text: t('RESOURCES_ACCESS_VNC'),
-      action: 'view',
-      onClick: () => {
-        fnOpenVncPopup();
       },
     },
     {

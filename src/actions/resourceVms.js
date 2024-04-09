@@ -66,7 +66,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -86,7 +86,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .updateSecurity({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .updateSecurity({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -106,7 +106,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .updateFlavor({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .updateFlavor({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -158,7 +158,7 @@ export default {
       const rowKeys = toJS(store.list.selectedRowKeys)
       let arr = new Array
       store.dataList.map(obj => {
-        if(rowKeys.includes(obj.id)){
+        if (rowKeys.includes(obj.id)) {
           arr.push(obj.name)
         }
       })
@@ -314,6 +314,25 @@ export default {
       })
     },
   },
+  // 'vm.snapshotPop': {
+  //   on({ store, success, data, ...props }) {
+  //     const modal = Modal.open({
+  //       onOk: () => {
+  //         store.snapshotCreate({ data, ...props }).then(() => {
+  //           Modal.close(modal)
+  //           Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+  //           success && success()
+  //         })
+  //       },
+  //       title: t('RESOURCES_CREATE_SNAPSHOT'),
+  //       desc: t('RESOURCES_CREATE_SNAPSHOT_TIP'),
+  //       modal: ConfirmModal,
+  //       store,
+  //       success,
+  //       ...props,
+  //     })
+  //   },
+  // },
   'vm.snapshotPop': {
     on({ store, success, ...props }) {
       const modal = Modal.open({
@@ -324,7 +343,7 @@ export default {
         ...props,
       })
     },
-  },  
+  },
   'vm.snapshotDelete': {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
@@ -354,7 +373,7 @@ export default {
         ...props,
       })
     },
-  },  
+  },
   'vm.restoreDelete': {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({
@@ -383,7 +402,7 @@ export default {
         ...props,
       })
     },
-  },  
+  },
   'vm.cloneDelete': {
     on({ store, id, success, ...props }) {
       const modal = Modal.open({

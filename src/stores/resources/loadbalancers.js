@@ -167,6 +167,11 @@ export default class LoadBalancerStore extends Base {
                     ruleData.port_range_max = obj.portRangeMax;
                 }
 
+                if (obj.protocol === 'ICMP') {
+                    delete ruleData.port_range_min;
+                    delete ruleData.port_range_max;
+                }
+
                 jsonData.lb_rule = ruleData;
 
                 await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
@@ -231,8 +236,65 @@ export default class LoadBalancerStore extends Base {
     async update({ ...params }, data) {
 
         let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.id }), data))
+        if (res.message === "OK") {
+            const jsonData = {};
+            if (data.lb.setAll) {
+                // 기존 rule 전체 삭제
+                await this.deleteLbRules({ ...params }, data.lb.originRule)
+                const [port_range_min, port_range_max] = data.lb.lb_rule[0].portRangeMax.split("-")
+                jsonData.lb_rule = {
+                    port_range_min,
+                    port_range_max,
+                    lb_id: data.lb.id,
+                    protocol: 'all'
+                }
+                // all 추가
+                await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
+            } else {
+                let delOriginRule = data.lb.originRule
+                const promises = data.lb.lb_rule.map(async (obj) => {
+
+                    if (!obj.originRuleId) {
+                        const ruleData = {};
+                        ruleData.lb_id = params.id;
+                        ruleData.protocol = obj.protocol.toLowerCase();
+                        if (obj.portRangeMax.indexOf("-") != -1) {
+                            const [port_range_min, port_range_max] = obj.portRangeMax.split("-")
+                            ruleData.port_range_min = port_range_min
+                            ruleData.port_range_max = port_range_max
+                        } else {
+                            ruleData.port_range_min = obj.portRangeMax;
+                            ruleData.port_range_max = obj.portRangeMax;
+                        }
+
+                        jsonData.lb_rule = ruleData;
+
+                        await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
+                    } else {
+                        // 기존 rule 중 삭제건
+                        let idx = delOriginRule.indexOf(obj.originRuleId)
+                        if (idx > -1) delOriginRule.splice(idx, 1)
+                    }
+                })
+                await Promise.all(promises);
+
+                if (delOriginRule.length > 0) {
+                    // 기존 rule 중 삭제건 처리
+                    await this.deleteLbRules({ ...params }, delOriginRule)
+                }
+
+            }
+        }
 
         return res
+    }
+
+    @action
+    async deleteLbRules({ ...params }, rules) {
+        const promises = rules.map(async (id) => {
+            await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules/${id}`));
+        })
+        await Promise.all(promises);
     }
 
 
