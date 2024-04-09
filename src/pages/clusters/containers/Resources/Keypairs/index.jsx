@@ -19,15 +19,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { toJS } from 'mobx';
+
 import ResourceTable from 'clusters/components/ResourceTable';
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
-
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
-
 import KeypairStore from 'stores/resources/keypairs';
 
 @withClusterList({
@@ -151,7 +150,7 @@ export default class Keypairs extends React.Component {
   };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {

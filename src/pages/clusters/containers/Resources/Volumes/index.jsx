@@ -23,16 +23,14 @@ import { Link } from 'react-router-dom';
 import { toJS } from 'mobx';
 import classNames from 'classnames';
 import { Icon, Tooltip } from '@kube-design/components';
+
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 import Indicator from 'components/Base/Indicator';
-
 import { getLocalTime, map_accessModes } from 'utils';
-
 import VolumeStore from 'stores/resources/volumes';
-
 import styles from './index.scss';
 import ResourceTable from 'clusters/components/ResourceTable';
 
@@ -238,7 +236,7 @@ export default class ResourcesVolumes extends React.Component {
   };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA.') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {
