@@ -77,7 +77,7 @@ const ModifyModal = (props) => {
     if (!value) {
       return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
     } else {
-      if (!isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
+      if (value.split("/").length != 2 || !isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
         return callback({ message: t('RESOURCES_CIDR_VALID') })
       }
     }
