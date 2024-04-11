@@ -320,7 +320,7 @@ const ModifyModal = (props) => {
 
   // cidrclass valid
   const fnCheckCidrClass = num => {
-    if (parseInt(num) === 0) {
+    if (num.length === 1 && parseInt(num) === 0) {
       return true;
     }
     if (!PATTERN_IP_MASK.test(num)) {
