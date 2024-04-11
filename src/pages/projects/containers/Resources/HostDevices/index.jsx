@@ -98,6 +98,12 @@ export default class HostDevices extends React.Component {
                     isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')
                 )
             },
+            {
+                title: t('RESOURCES_HOST_DEVICE_ALLOCATABLE'),
+                dataIndex: 'allocatable',
+                isHideable: true,
+                width: 'auto',
+            },
         ]
     }
 
