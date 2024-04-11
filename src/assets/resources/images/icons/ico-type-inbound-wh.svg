@@ -4,6 +4,6 @@
 <rect x="21" y="5" width="4" height="3" fill="#36435C"/>
 <rect x="21" y="18" width="4" height="3" fill="#36435C"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M8.68472 5L17 14.7296L8.68472 24.8335L8.68472 19.2203L5.91309 19.2203L5.91309 10.2391L8.68472 10.2391L8.68472 5Z" fill="#F9FBFD"/>
-<rect x="4.68115" y="10.239" width="8.9812" height="1.84784" transform="rotate(90 4.68115 10.239)" fill="#F9FBFD"/>
-<rect x="1.84766" y="10.239" width="8.9812" height="1.84784" transform="rotate(90 1.84766 10.239)" fill="#F9FBFD"/>
+<rect x="4.68115" y="10.2391" width="8.9812" height="1.84784" transform="rotate(90 4.68115 10.2391)" fill="#F9FBFD"/>
+<rect x="1.84766" y="10.2391" width="8.9812" height="1.84784" transform="rotate(90 1.84766 10.2391)" fill="#F9FBFD"/>
 </svg>
