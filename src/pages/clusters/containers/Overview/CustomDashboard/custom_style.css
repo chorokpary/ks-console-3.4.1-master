@@ -8,6 +8,7 @@ html {
 }
 
 .content_box_wrap {
+  /* detail */
   /* cluster monitoring */
 }
 .content_box_wrap i {
@@ -99,7 +100,7 @@ html {
   align-items: center;
 }
 .content_box_wrap .ico_btn_edit {
-  background: url('/assets/resources/images/icons/ico-etc-pen.svg') center
+  background: url('../assets/resources/images/icons/ico-etc-pen.svg') center
     no-repeat;
   width: 58px;
   height: 32px;
@@ -234,14 +235,15 @@ html {
   display: block;
   content: '';
   background: transparent
-    url('/assets/resources/images/icons/ico-checkbox-off.svg') center no-repeat;
+    url('../assets/resources/images/icons/ico-checkbox-off.svg') center
+    no-repeat;
   width: 16px;
   height: 16px;
   margin-top: 2px;
 }
 .content_box_wrap .form_check input:checked + label:before {
   background: transparent
-    url('/assets/resources/images/icons/ico-checkbox-on.svg') center no-repeat;
+    url('../assets/resources/images/icons/ico-checkbox-on.svg') center no-repeat;
 }
 .content_box_wrap .form_check p {
   display: flex;
@@ -356,19 +358,19 @@ html {
   color: #242e42;
 }
 .content_box_wrap .cont_boxwrap .boxwrap > .box_style .titlename .basic {
-  background: url('/assets/resources/images/icons/ico-modal-process-basic.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-basic.svg')
     no-repeat;
   width: 40px;
   height: 40px;
 }
 .content_box_wrap .cont_boxwrap .boxwrap > .box_style .titlename .network {
-  background: url('/assets/resources/images/icons/ico-modal-process-network.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-network.svg')
     no-repeat;
   width: 40px;
   height: 40px;
 }
 .content_box_wrap .cont_boxwrap .boxwrap > .box_style .titlename .detail {
-  background: url('/assets/resources/images/icons/ico-modal-process-detail.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-detail.svg')
     no-repeat;
   width: 40px;
   height: 40px;
@@ -552,28 +554,28 @@ html {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url('/assets/resources/images/icons/ico-modal-process-basic.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-basic.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .network {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url('/assets/resources/images/icons/ico-modal-process-network.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-network.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .detail {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url('/assets/resources/images/icons/ico-modal-process-detail.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-detail.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .check {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url('/assets/resources/images/icons/ico-modal-process-check.svg')
+  background: url('../assets/resources/images/icons/ico-modal-process-check.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .title {
@@ -696,7 +698,7 @@ html {
 .content_box_wrap select {
   border: 1px solid #abb4be;
   border-radius: 4px;
-  background: #fff url('/assets/resources/images/icons/ico-arrow-down.svg')
+  background: #fff url('../assets/resources/images/icons/ico-arrow-down.svg')
     right 15px center no-repeat;
   width: 120px;
   height: 42px;
@@ -729,7 +731,7 @@ html {
   display: inline-block;
   top: calc(50% - 15px);
   right: 1px;
-  background: url('/assets/resources/images/icons/ico-select-arrow.svg') right
+  background: url('../assets/resources/images/icons/ico-select-arrow.svg') right
     8px center no-repeat;
 }
 .content_box_wrap .selected_item.image:before {
@@ -740,7 +742,7 @@ html {
   display: inline-block;
   top: calc(50% - 15px);
   right: 1px;
-  background: url('/assets/resources/images/icons/ico-cube.svg') right 8px
+  background: url('../assets/resources/images/icons/ico-cube.svg') right 8px
     center no-repeat;
 }
 .content_box_wrap .selected_item.active:before {
@@ -974,7 +976,7 @@ html {
   content: '';
   display: block;
   background: transparent
-    url('/assets/resources/images/icons/ico-radio-off.svg') center no-repeat;
+    url('../assets/resources/images/icons/ico-radio-off.svg') center no-repeat;
   width: 16px;
   height: 16px;
 }
@@ -985,11 +987,11 @@ html {
   color: #fff !important;
 }
 .content_box_wrap .form_radio input:checked + label .ico_etc_tag {
-  background: url('/assets/resources/images/icons/ico-etc-tag.svg') 0 -24px no-repeat;
+  background: url('../assets/resources/images/icons/ico-etc-tag.svg') 0 -24px no-repeat;
 }
 .content_box_wrap .form_radio input:checked + label:before {
-  background: transparent url('/assets/resources/images/icons/ico-radio-on.svg')
-    center no-repeat;
+  background: transparent
+    url('../assets/resources/images/icons/ico-radio-on.svg') center no-repeat;
 }
 .content_box_wrap .radio_list {
   width: 100%;
@@ -1044,6 +1046,12 @@ html {
   word-wrap: break-word;
   word-break: break-word;
   white-space: pre-wrap;
+}
+.content_box_wrap
+  .src-pages-clusters-containers-Resources-components-DetailVmList-index__expanded
+  .src-pages-clusters-containers-Resources-components-DetailVmList-index__itemMain
+  .ico-type40-vm {
+  background: url('../assets/resources/images/icons/ico-type40-wh.svg');
 }
 .content_box_wrap .regi_group_area {
   position: relative;
@@ -2078,12 +2086,12 @@ html {
 .content_box_wrap .tree_wrap .tree_box_wrap > li {
   padding-top: 20px;
   padding-left: 120px;
-  background: url('/assets/resources/images/img/img-treeline.svg') 45px 50%
+  background: url('../assets/resources/images/img/img-treeline.svg') 45px 50%
     no-repeat;
 }
 .content_box_wrap .tree_wrap .tree_box_wrap > li:last-child {
-  background: url('/assets/resources/images/img/img-treeline-last.svg') 45px 50%
-    no-repeat;
+  background: url('../assets/resources/images/img/img-treeline-last.svg') 45px
+    50% no-repeat;
 }
 .content_box_wrap .topology_wrap {
   display: flex;
@@ -2485,8 +2493,8 @@ html {
   left: 15px;
   width: 10px;
   height: 15px;
-  background: url('/assets/resources/images/img/img-treeline-last.svg') 0 bottom
-    no-repeat;
+  background: url('../assets/resources/images/img/img-topology-treeline-last.svg')
+    0 bottom no-repeat;
 }
 .content_box_wrap
   .topology_wrap
@@ -2540,7 +2548,7 @@ html {
   height: 16px;
   margin-left: 5px;
   border-radius: 16px;
-  background: url('/assets/resources/images/icons/ico-arrow-clamp-down-wh.svg')
+  background: url('../assets/resources/images/icons/ico-arrow-clamp-down-wh.svg')
     center no-repeat;
   transform: rotate(-90deg);
   background-color: #000;
@@ -2612,7 +2620,7 @@ html {
   left: 0;
   width: 31px;
   height: 34px;
-  background: url('/assets/resources/images/img/img-topologybonding.svg')
+  background: url('../assets/resources/images/img/img-topologybonding.svg')
     no-repeat;
 }
 .content_box_wrap
@@ -2639,7 +2647,7 @@ html {
   width: 31px;
   height: 34px;
   transform: rotate(180deg);
-  background: url('/assets/resources/images/img/img-topologybonding.svg')
+  background: url('../assets/resources/images/img/img-topologybonding.svg')
     no-repeat;
 }
 .content_box_wrap
@@ -2952,7 +2960,7 @@ html {
   width: 425px;
   height: 712px;
   padding: 20px;
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
@@ -2966,8 +2974,6 @@ html {
   display: flex;
   right: 0;
   transition: 0.3s ease;
-  /* top: -64px;
-  right: -6px; */
 }
 .content_box_wrap .sub_layer_pop .layer_pop_header {
   width: 100%;
@@ -3006,12 +3012,12 @@ html {
 .content_box_wrap .sub_layer_pop > .desc {
   display: flex;
   flex-grow: 1;
+  width: 100%;
   flex-direction: column;
   overflow-y: auto;
   padding: 15px;
   border-radius: 3px;
   background: #eff4f9;
-  width: 100%;
 }
 .content_box_wrap .sub_layer_pop > .desc > h2 {
   font-size: 14px;
