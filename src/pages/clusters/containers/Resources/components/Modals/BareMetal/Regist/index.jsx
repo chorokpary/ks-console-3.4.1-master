@@ -137,7 +137,7 @@ const RegistModal = props => {
       });
     }
 
-    if (value < 10) {
+    if (value < 60) {
       return callback({
         message: t('RESOURCES_ENTER_60_MORE'),
       });
@@ -185,7 +185,7 @@ const RegistModal = props => {
       });
     }
 
-    if (value < 10) {
+    if (value < 60) {
       return callback({
         message: t('RESOURCES_ENTER_60_MORE'),
       });
@@ -261,7 +261,7 @@ const RegistModal = props => {
 
     if (!value) {
       setNodeIntervalError(t('RESOURCES_INTERVAL_EMPTY_DESC'));
-    } else if (value < 10) {
+    } else if (value < 60) {
       setNodeIntervalError(t('RESOURCES_ENTER_60_MORE'));
     }
     setNodeInterval(value);
