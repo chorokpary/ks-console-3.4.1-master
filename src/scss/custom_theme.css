@@ -781,7 +781,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 .src-components-Layout-GlobalNav-index__nav {
   position: relative !important;
   width: 310px !important;
-  height: 160px !important;
+  height: 180px !important;
   padding: 30px !important;
   border-radius: 5px !important;
   text-align: left !important;
@@ -856,7 +856,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 .src-components-Layout-GlobalNav-index__nav
   .src-components-Layout-GlobalNav-index__title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
   color: #000;

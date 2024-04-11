@@ -3063,7 +3063,7 @@ html {
   cursor: move;
 }
 
-/* detail : 목록형 width 조절 */
+/* detail  목록형 width 조절 */
 .src-pages-clusters-containers-Resources-components-DetailVmList-index__item
   .src-pages-clusters-containers-Resources-components-DetailVmList-index__title {
   width: 16% !important;
@@ -3071,7 +3071,7 @@ html {
 
 .src-pages-clusters-containers-Resources-components-DetailVmList-index__item
   .src-pages-clusters-containers-Resources-components-DetailVmList-index__title.src-pages-clusters-containers-Resources-components-DetailVmList-index__name {
-  width: 26% !important;
+  width: 30% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemFlavor
@@ -3104,7 +3104,14 @@ html {
   width: 40% !important;
 }
 
-.src-pages-clusters-containers-Resources-Networks-Detail-Status-index__item
+.src-components-Base-Panel-index__wrapper[data-test='panel-라우터']
+  .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__item
   .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__title.src-pages-clusters-containers-Resources-Networks-Detail-Status-index__name {
   width: 38% !important;
+}
+
+.src-components-Base-Panel-index__wrapper[data-test='panel-로드-밸런서']
+  .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__item
+  .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__title.src-pages-clusters-containers-Resources-Networks-Detail-Status-index__name {
+  width: 29% !important;
 }
