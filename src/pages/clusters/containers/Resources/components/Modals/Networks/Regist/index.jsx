@@ -118,6 +118,9 @@ const RegistModal = (props) => {
     return PATTERN_IP.test(ip);
   }
   const fnCheckCidrClass = (num) => {
+    if (parseInt(num) > 30) {
+      return false;
+    }
     if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }
@@ -134,29 +137,37 @@ const RegistModal = (props) => {
     if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])) {
       data.ip_pool_start = '';
       data.ip_pool_end = '';
+      data.gateway_ip = '';
 
       const a = document.getElementById('ip_pool_start')
       const b = document.getElementById('ip_pool_end')
+      const c = document.getElementById('gateway_ip')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
         a.nextElementSibling.classList.remove('hide')
         a.parentElement.parentElement.classList.add("error-item");
         b.nextElementSibling.classList.remove('hide')
         b.parentElement.parentElement.classList.add("error-item");
+        c.nextElementSibling.classList.remove('hide')
+        c.parentElement.parentElement.classList.add("error-item");
       }
 
       setCidrReducer()
     } else {
-      const cidrData = common.fnCalculateCidr(e);
+      const cidrData = common.fnCalculateCidr(e, true);
       data.ip_pool_start = cidrData.startIp
       data.ip_pool_end = cidrData.endIp;
+      data.gateway_ip = cidrData.gatewayIp;
 
       const a = document.getElementById('ip_pool_start')
       const b = document.getElementById('ip_pool_end')
+      const c = document.getElementById('gateway_ip')
       if (a.nextElementSibling && a.nextElementSibling.classList.contains('form-item-error')) {
         a.nextElementSibling.classList.add('hide')
         a.parentElement.parentElement.classList.remove("error-item");
         b.nextElementSibling.classList.add('hide')
         b.parentElement.parentElement.classList.remove("error-item");
+        c.nextElementSibling.classList.add('hide')
+        c.parentElement.parentElement.classList.remove("error-item");
       }
 
       setCidrReducer()

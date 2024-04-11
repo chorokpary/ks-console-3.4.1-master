@@ -33,7 +33,7 @@ export function fnNewlineTransformOutput(descriptionData) {
 }
 
 export function fnSetBytes(size) {
-    const gibSize =  size / 1024;
+    const gibSize = size / 1024;
     return (0 < gibSize && gibSize < 1) ? gibSize.toFixed(1) : gibSize;
 }
 
@@ -42,7 +42,7 @@ export function fnNewlineTransformInput(descriptionData) {
 }
 
 // cidr 계산기
-export function fnCalculateCidr(cidr) {
+export function fnCalculateCidr(cidr, withGw) {
     const bit = cidr.split("/")[1];
     const octet = cidr.split("/")[0].split(".");
 
@@ -75,9 +75,11 @@ export function fnCalculateCidr(cidr) {
     ))
 
     const data = {
-        startIp: st.join('.'),
-        endIp: ed.join('.'),
+        startIp: withGw ? st[0] + "." + st[1] + "." + st[2] + "." + (st[3] + 2) : st.join('.'),
+        endIp: withGw ? ed[0] + "." + ed[1] + "." + ed[2] + "." + (ed[3] === 255 ? 254 : ed[3]) : ed.join('.'),
+        gatewayIp: withGw ? st[0] + "." + st[1] + "." + st[2] + "." + (st[3] + 1) : '',
     }
+
     return data;
 }
 
