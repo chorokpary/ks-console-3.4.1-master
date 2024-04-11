@@ -89,20 +89,22 @@ export default class ImageBuild extends React.Component {
 
   showActionUpload(item) {
     const uploadInfo = get(item, ['upload-info-list', 'upload-info'], [])
-    const popStatus = get(item, 'pod-status')
+    const podStatus = get(item, 'pod-status')
 
-    if(popStatus == 'PodDeleting'){
+    if(podStatus.replace(/\s/gi, "") == 'ServerReady'){
+      return true;
+    }else{
       return false;
     }
 
-    let showFlag = true;
-    if(!!uploadInfo){        
-      const status = uploadInfo[0]['upload-file-info']['Status'];
-      const statusText = !!status ? status : "-";
-      showFlag = !(statusText.toLowerCase()).includes('completed');
-    }
+    // let showFlag = true;
+    // if(!!uploadInfo){        
+    //   const status = uploadInfo[0]['upload-file-info']['Status'];
+    //   const statusText = !!status ? status : "-";
+    //   showFlag = !(statusText.toLowerCase()).includes('completed');
+    // }
 
-    return showFlag;
+    // return showFlag;
   }
 
   get itemActions() {
@@ -271,13 +273,16 @@ export default class ImageBuild extends React.Component {
         width: 'auto',
         render: (status, record) => {
 
-          const stepRunningArray = ['ServerConfiguring', 'FileUploading', 'ImageBuild&Pushing', 'ServerDeleting', 'ServerReady', 'FileUploadCompleted']
-          const stepFailedArray = ['ServerConfigureFail', 'FileUploadFail', 'ImagePushFailed']
+          const stepRunningArray = ['ServerReady', 'FileUploading', 'ImageBuild']
+          const stepSucceedArray = ['ImageBuildSucceed']
+          const stepFailedArray = ['Fail']
 
           const podStatus = get(record, 'pod-status')
 
           const podStatusText = stepFailedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_FAIL') 
-                    : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') : t('RESOURCES_SUCCESS')
+                    : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') 
+                    : stepSucceedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_COMPLETE') 
+                    : t('RESOURCES_PREPARING')
 
           return podStatusText;
         },
