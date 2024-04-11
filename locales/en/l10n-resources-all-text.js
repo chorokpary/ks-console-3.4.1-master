@@ -634,7 +634,7 @@ module.exports = {
   RESOURCES_FILE_UPLOADING_DESC: '파일 업로드중 상태입니다.',
   RESOURCES_FILE_UPLOAD_COMPLETE_DESC: '파일 업로드 완료 상태입니다.',
   RESOURCES_IMAGE_BUILDING_DESC: '이미지 빌드를 진행한 상태입니다.',
-  RESOURCES_IMAGE_BUILD_PUSH: '이미지 빌드/Push',
+  RESOURCES_IMAGE_BUILD_PUSH: '이미지 빌드/푸시',
   RESOURCES_IMAGE_BUILD_PUSH_ING_DESC: '이미지 빌드&푸시 중 상태입니다.',
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
   RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC: '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
@@ -648,5 +648,6 @@ module.exports = {
   RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
   RESOURCES_FAIL: '실패',
+  RESOURCES_PREPARING: '대기 중',
 
 };

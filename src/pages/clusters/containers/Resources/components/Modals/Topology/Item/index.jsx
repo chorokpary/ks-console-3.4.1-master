@@ -36,7 +36,7 @@ const TopologyItem = (props) => {
   useEffect(() => {
     var wrapHeight = document.querySelector('.network_element_wrap').offsetHeight;
     wrapHeight += 100;
-    document.querySelector('.topology_network').style.height =  wrapHeight + 'px'
+    document.querySelector('.topology_network').style.height = wrapHeight + 'px'
   })
 
   useEffect(() => {
@@ -60,38 +60,38 @@ const TopologyItem = (props) => {
   }, [])
 
   useEffect(() => {
-      const unionArray = [...networkList, ...sriovList];   
+    const unionArray = [...networkList, ...sriovList];
 
-      unionArray.map((obj, index) => {
-        const networkCheck = get(obj, "resource_name", "");
-        const networkType = networkCheck == "" ? "N" : "S";
-        obj.num = (index+1);
-        obj.network_type = networkType;
-      })
-      // console.log("unionArray : "+ JSON.stringify(unionArray))
-      setNetworkUnionList(unionArray);
-     
+    unionArray.map((obj, index) => {
+      const networkCheck = get(obj, "resource_name", "");
+      const networkType = networkCheck == "" ? "N" : "S";
+      obj.num = (index + 1);
+      obj.network_type = networkType;
+    })
+    // console.log("unionArray : "+ JSON.stringify(unionArray))
+    setNetworkUnionList(unionArray);
+
   }, [networkList, sriovList])
 
   useEffect(() => {
 
     const getNetworkElementsData = async () => {
 
-      Promise.all(          
+      Promise.all(
         networkUnionList.map(async (obj) => {
 
           // sriov 와 network 구분해서 처리 해야 함
-          const elementVmList = vmList.filter(item => obj.network_type == "N" ?_.find(item.networks, {'name':obj.id}) : _.find(item.networks, {'name':obj.name}))
+          const elementVmList = vmList.filter(item => obj.network_type == "N" ? _.find(item.networks, { 'name': obj.id }) : _.find(item.networks, { 'name': obj.name }))
           obj.elementVmList = elementVmList;
 
-          const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { id : obj.id}));
+          const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { id: obj.id }));
           obj.elementRouterList = elementRouterList;
 
           const elementLoadBalancerList = loadbalancerList.filter(item => item.network?.id == obj.id)
           obj.elementLoadBalancerList = elementLoadBalancerList;
         })
       )
-      setNetworkElementsList(networkUnionList);      
+      setNetworkElementsList(networkUnionList);
     }
 
     getNetworkElementsData();
@@ -110,12 +110,12 @@ const TopologyItem = (props) => {
       return "off"
     } else if (state === 'Unknown') {
       return "error"
-    }else{
+    } else {
       return "error"
     }
   }
 
-  const renderLeftMenu = () =>{
+  const renderLeftMenu = () => {
     return (
       <ul className="element_overview">
         <li>
@@ -150,20 +150,20 @@ const TopologyItem = (props) => {
     )
   }
 
-   const renderNetworkBarList = () => {
+  const renderNetworkBarList = () => {
 
     const networkBaritems = networkUnionList.map((obj) => {
 
       const num = obj.num;
-      const barNum = num < 10 ? "0"+num : num;
-      const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+      const barNum = num < 10 ? "0" + num : num;
+      const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
 
       const cidr = get(obj, "cidr", "-")
       const networkCheck = get(obj, "resource_name", "")
       const networkType = networkCheck == "" ? "N" : "S"
 
       const ternalCheck = get(obj, "external", false)
-      const ternalType = networkType == "S" ? "" : ternalCheck ? "EXternal" : "Internal"; 
+      const ternalType = networkType == "S" ? "" : ternalCheck ? "External" : "Internal";
       const networkIcon = networkType == "S" ? "sriov" : ternalCheck ? "externalnetwork" : "network";
 
       return (
@@ -177,133 +177,133 @@ const TopologyItem = (props) => {
       )
     })
 
-    if(networkBaritems.length < 5){
-      const addElement = <li className='network_bar'></li> 
+    if (networkBaritems.length < 5) {
+      const addElement = <li className='network_bar'></li>
       const loopNum = 6 - networkBaritems.length;
-      for(var i=0;i<loopNum;i++){
+      for (var i = 0; i < loopNum; i++) {
         networkBaritems.push(addElement)
-      }      
+      }
     }
 
     return networkBaritems;
 
-   }
+  }
 
-   const vmDuplicationElements = () => {
+  const vmDuplicationElements = () => {
 
     const vmArray = [];
     const duplicationArray = [];
 
-    Promise.all(    
-      networkElementsList.map((obj) => {    
+    Promise.all(
+      networkElementsList.map((obj) => {
 
         const num = obj.num;
-        const barNum = num < 10 ? "0"+num : num;
-        const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+        const barNum = num < 10 ? "0" + num : num;
+        const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
         const networkType = obj.network_type;
 
-          obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
+        obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
 
-            const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip)
+          const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip)
 
-            if(vmArray.includes(vm.name)){          
-              const duplicationJson = {
-                vm_name : vm.name,
-                num : num,                
-                bar_num : barNum,
-                color_num : colorNum,
-                ip : vmNetworkIp,
-                network_type : networkType
-              }
-              duplicationArray.push(duplicationJson)
-            }else{
-              vmArray.push(vm.name)
+          if (vmArray.includes(vm.name)) {
+            const duplicationJson = {
+              vm_name: vm.name,
+              num: num,
+              bar_num: barNum,
+              color_num: colorNum,
+              ip: vmNetworkIp,
+              network_type: networkType
             }
+            duplicationArray.push(duplicationJson)
+          } else {
+            vmArray.push(vm.name)
+          }
 
-          })
+        })
       })
     )
 
     return duplicationArray;
 
-   }
+  }
 
-   const routerDuplicationElements = () => {
+  const routerDuplicationElements = () => {
 
     const routerArray = [];
     const duplicationArray = [];
 
-    Promise.all(    
-      networkElementsList.map((obj) => {    
+    Promise.all(
+      networkElementsList.map((obj) => {
 
         const num = obj.num;
-        const barNum = num < 10 ? "0"+num : num;
-        const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+        const barNum = num < 10 ? "0" + num : num;
+        const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
 
-          obj.elementRouterList.length > 0 && obj.elementRouterList.map((router) => {
+        obj.elementRouterList.length > 0 && obj.elementRouterList.map((router) => {
 
-            const vrouterIp = router.vrouter_ip;
+          const vrouterIp = router.vrouter_ip;
 
-            if(routerArray.includes(router.name)){          
-              const duplicationJson = {
-                router_name : router.name,
-                num : num,                
-                bar_num : barNum,
-                color_num : colorNum,
-                ip : vrouterIp
-              }
-              duplicationArray.push(duplicationJson)
-            }else{
-              routerArray.push(router.name)
+          if (routerArray.includes(router.name)) {
+            const duplicationJson = {
+              router_name: router.name,
+              num: num,
+              bar_num: barNum,
+              color_num: colorNum,
+              ip: vrouterIp
             }
+            duplicationArray.push(duplicationJson)
+          } else {
+            routerArray.push(router.name)
+          }
 
-          })
+        })
       })
     )
 
     return duplicationArray;
 
-   }
+  }
 
-   const loadbalancerDuplicationElements = () => {
+  const loadbalancerDuplicationElements = () => {
 
     const loadbalancerArray = [];
     const duplicationArray = [];
 
-    Promise.all(    
-      networkElementsList.map((obj) => {    
+    Promise.all(
+      networkElementsList.map((obj) => {
 
         const num = obj.num;
-        const barNum = num < 10 ? "0"+num : num;
-        const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+        const barNum = num < 10 ? "0" + num : num;
+        const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
 
-          obj.elementLoadBalancerList.length > 0 && obj.elementLoadBalancerList.map((loadbalancer) => {
+        obj.elementLoadBalancerList.length > 0 && obj.elementLoadBalancerList.map((loadbalancer) => {
 
-            const virtual_ip = loadbalancer.virtual_ip;
+          const virtual_ip = loadbalancer.virtual_ip;
 
-            if(loadbalancerArray.includes(loadbalancer.name)){          
-              const duplicationJson = {
-                loadbalancer_name : loadbalancer.name,
-                num : num,                
-                bar_num : barNum,
-                color_num : colorNum,
-                ip : virtual_ip
-              }
-              duplicationArray.push(duplicationJson)
-            }else{
-              loadbalancerArray.push(loadbalancer.name)
+          if (loadbalancerArray.includes(loadbalancer.name)) {
+            const duplicationJson = {
+              loadbalancer_name: loadbalancer.name,
+              num: num,
+              bar_num: barNum,
+              color_num: colorNum,
+              ip: virtual_ip
             }
+            duplicationArray.push(duplicationJson)
+          } else {
+            loadbalancerArray.push(loadbalancer.name)
+          }
 
-          })
+        })
       })
     )
 
     return duplicationArray;
 
-   }
+  }
 
-  
-   const renderVmElements = () => {
+
+  const renderVmElements = () => {
 
     const duplicationVmList = vmDuplicationElements();
 
@@ -313,68 +313,68 @@ const TopologyItem = (props) => {
     const networkElementitems = networkElementsList.map((obj) => {
 
       const num = obj.num;
-      const barNum = num < 10 ? "0"+num : num;
-      const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+      const barNum = num < 10 ? "0" + num : num;
+      const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
 
-        return (
+      return (
 
-          // VM 연결
-          obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {  
+        // VM 연결
+        obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
 
-            const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip);
-            const vmNetworkName = (vm.networks).filter(network => network.name == obj.id).map(item => item.name);
-            
-            const sriovCheck = (sriovList).map(item => item.name).includes(vmNetworkName.toString());
-            const bondingLeft = !sriovCheck ? "" : "bonding";
+          const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip);
+          const vmNetworkName = (vm.networks).filter(network => network.name == obj.id).map(item => item.name);
 
-            const rightElementsArray = duplicationVmList.filter(item => item.vm_name == vm.name);        
+          const sriovCheck = (sriovList).map(item => item.name).includes(vmNetworkName.toString());
+          const bondingLeft = !sriovCheck ? "" : "bonding";
 
-            if(!vmArray.includes(vm.name)){
+          const rightElementsArray = duplicationVmList.filter(item => item.vm_name == vm.name);
 
-              vmArray.push(vm.name);
-              const floatingData = floatingList.filter(floating => floating.instance_name == vm.name)
+          if (!vmArray.includes(vm.name)) {
 
-              return (
-                <div className={`network_element leftBar`}>
-                  <div className="element left leftMargin" style={{"--marginleft": (num == 1 ? 0 : 370*(num-1))+"px"}}>
-                    <div className={`line ${bondingLeft} color_${colorNum}`}><span>{vmNetworkIp}</span></div>
-                  </div>
-                  <div className="element info">
-                    <h4>VM</h4>
-                    <p>
-                      <i className={`ico-type24-vm ${getState(vm.state)}`}></i>
-                      <span>{vm.name}<a href={`/clusters/default/vms/${vm.name}/${vm.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
-                    </p>
-                    {floatingData.length > 0 &&
-                      <div>
-                        <i className="ico-type24-floatingip"></i>
-                        <span>{get(floatingData[0], "floating_ip")}</span>
-                      </div>
-                   }
-                  </div>
-                  <div className="element right">
-                    {                      
-                      rightElementsArray.map((obj) => {
-                        const rightWidth = (370*(Number(obj.num)-Number(num)-1)+100);
-                        const bondingRight = obj.network_type == "N" ? "" : "bonding_r"
-                        return (
-                          <div className={`line rightWidth ${bondingRight} color_${obj.color_num}`} style={{"--rightwidth": (obj.num == 1 ? "100px" : rightWidth+"px")}}><span>{obj.ip[0]}</span></div>
-                        )
-                      })
-                    }
-                  </div>
+            vmArray.push(vm.name);
+            const floatingData = floatingList.filter(floating => floating.instance_name == vm.name)
+
+            return (
+              <div className={`network_element leftBar`}>
+                <div className="element left leftMargin" style={{ "--marginleft": (num == 1 ? 0 : 370 * (num - 1)) + "px" }}>
+                  <div className={`line ${bondingLeft} color_${colorNum}`}><span>{vmNetworkIp}</span></div>
                 </div>
-              )
-            }else{
-              duplicationVmArray.push(vm.name) ;
-            }
+                <div className="element info">
+                  <h4>VM</h4>
+                  <p>
+                    <i className={`ico-type24-vm ${getState(vm.state)}`}></i>
+                    <span>{vm.name}<a href={`/clusters/default/vms/${vm.name}/${vm.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                  </p>
+                  {floatingData.length > 0 &&
+                    <div>
+                      <i className="ico-type24-floatingip"></i>
+                      <span>{get(floatingData[0], "floating_ip")}</span>
+                    </div>
+                  }
+                </div>
+                <div className="element right">
+                  {
+                    rightElementsArray.map((obj) => {
+                      const rightWidth = (370 * (Number(obj.num) - Number(num) - 1) + 100);
+                      const bondingRight = obj.network_type == "N" ? "" : "bonding_r"
+                      return (
+                        <div className={`line rightWidth ${bondingRight} color_${obj.color_num}`} style={{ "--rightwidth": (obj.num == 1 ? "100px" : rightWidth + "px") }}><span>{obj.ip[0]}</span></div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+            )
+          } else {
+            duplicationVmArray.push(vm.name);
+          }
 
-          })         
-        )       
+        })
+      )
     })
 
     return networkElementitems;
-   
+
   }
 
   const renderRouterElements = () => {
@@ -388,24 +388,24 @@ const TopologyItem = (props) => {
     const networkElementitems = networkElementsList.map((obj) => {
 
       const num = obj.num;
-      const barNum = num < 10 ? "0"+num : num;
-      const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+      const barNum = num < 10 ? "0" + num : num;
+      const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
 
-        return (
+      return (
 
-          //Router 연결
-          obj.elementRouterList.length > 0 && obj.elementRouterList.map((router) => {  
+        //Router 연결
+        obj.elementRouterList.length > 0 && obj.elementRouterList.map((router) => {
 
-            const vrouterIp = router.vrouter_ip;
-            const rightElementsArray = duplicationRouterList.filter(item => item.router_name == router.name);
-                
-            if(!roterArray.includes(router.name)){
+          const vrouterIp = router.vrouter_ip;
+          const rightElementsArray = duplicationRouterList.filter(item => item.router_name == router.name);
 
-              roterArray.push(router.name)             
+          if (!roterArray.includes(router.name)) {
 
-              return (
-                <div className={`network_element leftBar`}>
-                <div className="element left leftMargin" style={{"--marginleft": (num == 1 ? 0 : 370*(num-1))+"px"}}>
+            roterArray.push(router.name)
+
+            return (
+              <div className={`network_element leftBar`}>
+                <div className="element left leftMargin" style={{ "--marginleft": (num == 1 ? 0 : 370 * (num - 1)) + "px" }}>
                   <div className={`line color_${colorNum}`}><span>{vrouterIp}</span></div>
                 </div>
                 <div className="element info">
@@ -416,32 +416,32 @@ const TopologyItem = (props) => {
                   </p>
                 </div>
                 <div className="element right">
-                    {
-                      rightElementsArray.map((obj) => {
-                        const rightWidth = (370*(Number(obj.num)-Number(num)-1)+100);
-                        return (
-                          <div className={`line rightWidth color_${obj.color_num}`} style={{"--rightwidth": (obj.num == 1 ? "100px" : rightWidth+"px")}}><span>{obj.ip}</span></div>
-                        )
-                      })
-                    }
+                  {
+                    rightElementsArray.map((obj) => {
+                      const rightWidth = (370 * (Number(obj.num) - Number(num) - 1) + 100);
+                      return (
+                        <div className={`line rightWidth color_${obj.color_num}`} style={{ "--rightwidth": (obj.num == 1 ? "100px" : rightWidth + "px") }}><span>{obj.ip}</span></div>
+                      )
+                    })
+                  }
                 </div>
               </div>
-              )
-            }else{
-              duplicationRoterArray.push(router.name) ;
-            }
+            )
+          } else {
+            duplicationRoterArray.push(router.name);
+          }
 
-          })
+        })
 
-        )       
+      )
     })
 
     return networkElementitems;
-   }
+  }
 
 
-   const renderLoadbalancerElements = () => {
-    
+  const renderLoadbalancerElements = () => {
+
     const duplicationLoadbalancerList = loadbalancerDuplicationElements();
 
     const loadbalancerArray = [];
@@ -450,24 +450,24 @@ const TopologyItem = (props) => {
     const networkElementitems = networkElementsList.map((obj) => {
 
       const num = obj.num;
-      const barNum = num < 10 ? "0"+num : num;
-      const colorNum = (num % 10) < 1 ? "10" : "0"+(num % 10);
+      const barNum = num < 10 ? "0" + num : num;
+      const colorNum = (num % 10) < 1 ? "10" : "0" + (num % 10);
 
-        return (
+      return (
 
-          //Router 연결
-          obj.elementLoadBalancerList.length > 0 && obj.elementLoadBalancerList.map((load) => {  
+        //Router 연결
+        obj.elementLoadBalancerList.length > 0 && obj.elementLoadBalancerList.map((load) => {
 
-            const virtualIp = load.virtual_ip;
-            const rightElementsArray = duplicationLoadbalancerList.filter(item => item.loadbalancer_name == load.name);
-                
-            if(!loadbalancerArray.includes(load.name)){
+          const virtualIp = load.virtual_ip;
+          const rightElementsArray = duplicationLoadbalancerList.filter(item => item.loadbalancer_name == load.name);
 
-              loadbalancerArray.push(load.name)             
+          if (!loadbalancerArray.includes(load.name)) {
 
-              return (
-                <div className={`network_element leftBar`}>
-                <div className="element left leftMargin" style={{"--marginleft": (num == 1 ? 0 : 370*(num-1))+"px"}}>
+            loadbalancerArray.push(load.name)
+
+            return (
+              <div className={`network_element leftBar`}>
+                <div className="element left leftMargin" style={{ "--marginleft": (num == 1 ? 0 : 370 * (num - 1)) + "px" }}>
                   <div className={`line color_${colorNum}`}><span>{virtualIp}</span></div>
                 </div>
                 <div className="element info">
@@ -478,45 +478,45 @@ const TopologyItem = (props) => {
                   </p>
                 </div>
                 <div className="element right">
-                    {
-                      rightElementsArray.map((obj) => {
-                        const rightWidth = (370*(Number(obj.num)-Number(num)-1)+100);
-                        return (
-                          <div className={`line rightWidth color_${obj.color_num}`} style={{"--rightwidth": (obj.num == 1 ? "100px" : rightWidth+"px")}}><span>{obj.ip}</span></div>
-                        )
-                      })
-                    }
+                  {
+                    rightElementsArray.map((obj) => {
+                      const rightWidth = (370 * (Number(obj.num) - Number(num) - 1) + 100);
+                      return (
+                        <div className={`line rightWidth color_${obj.color_num}`} style={{ "--rightwidth": (obj.num == 1 ? "100px" : rightWidth + "px") }}><span>{obj.ip}</span></div>
+                      )
+                    })
+                  }
                 </div>
               </div>
-              )
-            }else{
-              duplicationLoadbalancerArray.push(load.name) ;
-            }
+            )
+          } else {
+            duplicationLoadbalancerArray.push(load.name);
+          }
 
-          })
+        })
 
-        )       
+      )
     })
 
     return networkElementitems;
-   }
+  }
 
 
 
-   const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
+  const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
     <>
       <div className="zoomin_icon">
-          <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
-            <i className="ico-plus"></i>
-          </button>
-          <button id="zoomOut" className="btn_zoom_icon" onClick={() => zoomOut()}>
-            <i className="ico-minus"></i>
-          </button>
-          <button id="resetZoom" className="btn_zoom_icon" onClick={() => resetTransform()}>
-            <i className="ico-reset"></i>
-          </button>
-          <div id="result"></div>
-        </div>
+        <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
+          <i className="ico-plus"></i>
+        </button>
+        <button id="zoomOut" className="btn_zoom_icon" onClick={() => zoomOut()}>
+          <i className="ico-minus"></i>
+        </button>
+        <button id="resetZoom" className="btn_zoom_icon" onClick={() => resetTransform()}>
+          <i className="ico-reset"></i>
+        </button>
+        <div id="result"></div>
+      </div>
     </>
   );
 
@@ -528,46 +528,46 @@ const TopologyItem = (props) => {
       <div className="pop_content" id="box">
         <div className="topology_wrap">
 
-            <TransformWrapper
-              initialScale={1}
-              initialPositionX={10}
-              initialPositionY={10}
-              minScale={0.5}
-              maxScale={10}
-            >
-              {(utils) => (
-                <React.Fragment>
-                  <Controls {...utils} />
-                  <TransformComponent
+          <TransformWrapper
+            initialScale={1}
+            initialPositionX={10}
+            initialPositionY={10}
+            minScale={0.5}
+            maxScale={10}
+          >
+            {(utils) => (
+              <React.Fragment>
+                <Controls {...utils} />
+                <TransformComponent
                   onTransformChange={(transform) => console.log('Transform changed:', transform)}
-                  >
-                    <div id="box_zoom" className="topology_network_wrap">
-                      {/* 네트워크 List 시작*/}
-                      <ul className="topology_network">
-                        {renderNetworkBarList()}
-                      </ul>
-                      {/* 네트워크 List 끝*/}
+                >
+                  <div id="box_zoom" className="topology_network_wrap">
+                    {/* 네트워크 List 시작*/}
+                    <ul className="topology_network">
+                      {renderNetworkBarList()}
+                    </ul>
+                    {/* 네트워크 List 끝*/}
 
-                      {/* 네트워크 연결 요소 시작*/}
-                      <div className="network_element_wrap">  
-                        {renderVmElements()}
-                        {renderRouterElements()}
-                        {renderLoadbalancerElements()}
-                      </div>
-                      {/* 네트워크 연결 요소 끝*/} 
-                    </div>                     
-                  </TransformComponent>
-                </React.Fragment>
-              )}
-            </TransformWrapper>
+                    {/* 네트워크 연결 요소 시작*/}
+                    <div className="network_element_wrap">
+                      {renderVmElements()}
+                      {renderRouterElements()}
+                      {renderLoadbalancerElements()}
+                    </div>
+                    {/* 네트워크 연결 요소 끝*/}
+                  </div>
+                </TransformComponent>
+              </React.Fragment>
+            )}
+          </TransformWrapper>
 
         </div>
       </div>
 
       {/* left menu */}
       {renderLeftMenu()}
-      
-    </div>  
+
+    </div>
   )
 }
 

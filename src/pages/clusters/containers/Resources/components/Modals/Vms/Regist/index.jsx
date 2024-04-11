@@ -222,84 +222,91 @@ const RegistModal = (props) => {
       data.node = data.node == t('RESOURCES_SELECT') ? "" : data.node;
       data.storageClass = storageClass;
 
-      let makeScriptStep_1 = false;
-      let makeScriptStep_2 = false;
-      let makeScriptStep_3 = false;
-
-      let makeScript = "#cloud-config";
-
-      let userPasswordScript = "";
-      if (listPasswordRoute.length == 1) {
-        listPasswordRoute.map((obj) => {
-          if (!!data['scriptPassword_' + obj]) {
-            userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
-            makeScriptStep_1 = true;
-          }
-        })
-      } else {
-        userPasswordScript = "\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
-        listPasswordRoute.map((obj) => {
-          if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
-            userPasswordScript += "    " + data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
-            makeScriptStep_1 = true;
-          }
-        })
-        userPasswordScript += "  expire: False"
+      if (isScript) {
+        data.makeScript = getScript();
       }
 
-      let fileScript = "";
-      if (listFileRoute.length == 1) {
-        listFileRoute.map((obj) => {
-          if (!!data['scriptPath_' + obj]) {
-            fileScript += `\nwrite_files:\n  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
-            makeScriptStep_2 = true;
-          }
-        })
-      } else {
-        fileScript += `\nwrite_files:\n`
-        listFileRoute.map((obj) => {
-          if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
-            fileScript += `  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
-            makeScriptStep_2 = true;
-          }
-        })
-      }
-
-      let packageScript = "";
-      if (listPackageRoute.length == 1) {
-        listPackageRoute.map((obj) => {
-          if (!!data['scriptPackage_' + obj]) {
-            if (!!data['scriptVersion_' + obj]) {
-              packageScript += `packages:\n  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
-            } else {
-              packageScript += `packages:\n  - ${data['scriptPackage_' + obj]}\n`
-            }
-            makeScriptStep_3 = true;
-          }
-        })
-      } else {
-        packageScript += `packages:\n`
-        listPackageRoute.map((obj) => {
-          if (!!data['scriptVersion_' + obj]) {
-            packageScript += `  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
-          } else {
-            packageScript += `  - ${data['scriptPackage_' + obj]}\n`
-          }
-          makeScriptStep_3 = true;
-        })
-      }
-
-      if (!makeScriptStep_1) { userPasswordScript = ""; }
-      if (!makeScriptStep_2) { fileScript = ""; }
-      if (!makeScriptStep_3) { packageScript = ""; }
-
-      makeScript += userPasswordScript + fileScript + packageScript;
-      // makeScript += userPasswordScript;
-      //console.log(makeScript)
-
-      data.makeScript = makeScript;
       onOk({ ...data })
     })
+  }
+
+  const getScript = () => {
+    let makeScriptStep_1 = false;
+    let makeScriptStep_2 = false;
+    let makeScriptStep_3 = false;
+
+    let makeScript = "#cloud-config";
+
+    let userPasswordScript = "";
+    if (listPasswordRoute.length == 1) {
+      listPasswordRoute.map((obj) => {
+        if (!!data['scriptPassword_' + obj]) {
+          userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
+          makeScriptStep_1 = true;
+        }
+      })
+    } else {
+      userPasswordScript = "\nssh_pwauth: True\nusers:\n  - default\n  - name: user\n    gecos: user\n    sudo: ALL=(ALL) NOPASSWD:ALL\nchpasswd:\n  list: |\n"
+      listPasswordRoute.map((obj) => {
+        if (!!data['scriptId_' + obj] && !!data['scriptPassword_' + obj]) {
+          userPasswordScript += "    " + data['scriptId_' + obj] + ":" + data['scriptPassword_' + obj] + "\n"
+          makeScriptStep_1 = true;
+        }
+      })
+      userPasswordScript += "  expire: False"
+    }
+
+    let fileScript = "";
+    if (listFileRoute.length == 1) {
+      listFileRoute.map((obj) => {
+        if (!!data['scriptPath_' + obj]) {
+          fileScript += `\nwrite_files:\n  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
+          makeScriptStep_2 = true;
+        }
+      })
+    } else {
+      fileScript += `\nwrite_files:\n`
+      listFileRoute.map((obj) => {
+        if (!!data['scriptPath_' + obj] && !!data['scriptContent_' + obj]) {
+          fileScript += `  - path: ${data['scriptPath_' + obj]}\n    content: |\n      ${data['scriptContent_' + obj]}\n`
+          makeScriptStep_2 = true;
+        }
+      })
+    }
+
+    let packageScript = "";
+    if (listPackageRoute.length == 1) {
+      listPackageRoute.map((obj) => {
+        if (!!data['scriptPackage_' + obj]) {
+          if (!!data['scriptVersion_' + obj]) {
+            packageScript += `packages:\n  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+          } else {
+            packageScript += `packages:\n  - ${data['scriptPackage_' + obj]}\n`
+          }
+          makeScriptStep_3 = true;
+        }
+      })
+    } else {
+      packageScript += `packages:\n`
+      listPackageRoute.map((obj) => {
+        if (!!data['scriptVersion_' + obj]) {
+          packageScript += `  - [${data['scriptPackage_' + obj]}, ${data['scriptVersion_' + obj]}]\n`
+        } else {
+          packageScript += `  - ${data['scriptPackage_' + obj]}\n`
+        }
+        makeScriptStep_3 = true;
+      })
+    }
+
+    if (!makeScriptStep_1) { userPasswordScript = ""; }
+    if (!makeScriptStep_2) { fileScript = ""; }
+    if (!makeScriptStep_3) { packageScript = ""; }
+
+    makeScript += userPasswordScript + fileScript + packageScript;
+    // makeScript += userPasswordScript;
+    //console.log(makeScript)
+
+    return makeScript
   }
 
   const closeModal = () => {
@@ -346,13 +353,15 @@ const RegistModal = (props) => {
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
       setFlavorDisk(flavorData[0].root_disk)
 
-      const checkFlagPassword = checkScriptPassword();
-      const checkFlagFileWrite = checkScriptFilewrite();
-      const checkFlagPackage = checkScriptPackage();
-      const checkFlagUserScript = checkScriptUserScript();
+      if (isScript) {
+        const checkFlagPassword = checkScriptPassword();
+        const checkFlagFileWrite = checkScriptFilewrite();
+        const checkFlagPackage = checkScriptPackage();
+        const checkFlagUserScript = checkScriptUserScript();
 
-      if ((checkFlagPassword || checkFlagFileWrite || checkFlagPackage || checkFlagUserScript)) {
-        return false;
+        if ((checkFlagPassword || checkFlagFileWrite || checkFlagPackage || checkFlagUserScript)) {
+          return false;
+        }
       }
 
       // keypair 와 passworkd 둘다 설정하지 않을때...
@@ -1490,12 +1499,14 @@ const RegistModal = (props) => {
                       </div>
                       <div className={styles.list}>
                         <label>{t('스크립트')}</label>
-                        <div className={styles.multiline}>
-                          <div>{isPassword && renderIds()}</div>
-                          <div>{isFileWrite && renderFiles()}</div>
-                          <div>{isPackage && renderPackages()}</div>
-                          <div>{isUserScript && (t('RESOURCES_CUSTOM') + ' - Y')}</div>
-                        </div>
+                        {isScript &&
+                          <div className={styles.multiline}>
+                            <div>{isPassword && renderIds()}</div>
+                            <div>{isFileWrite && renderFiles()}</div>
+                            <div>{isPackage && renderPackages()}</div>
+                            <div>{isUserScript && (t('RESOURCES_CUSTOM') + ' - Y')}</div>
+                          </div>
+                        }
                       </div>
                       {/* <div className={styles.list}>
                         <label>{t('RESOURCES_USER_NAME')}</label>
