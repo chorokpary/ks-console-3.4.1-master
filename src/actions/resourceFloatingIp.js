@@ -163,7 +163,6 @@ export default {
             devops,
             ...props
         }) {
-            console.log(detail)
             const modal = Modal.open({
                 onOk: () => {
                     store
@@ -177,9 +176,9 @@ export default {
                 modal: DeleteModal,
                 title: t('RESOURCES_DELETE'),
                 desc: t.html('RESOURCES_DELETE_FLOATING_IP_TIP', {
-                    resource: detail.network_alias,
+                    resource: detail.floating_ip,
                 }),
-                resource: detail.network_alias,
+                resource: detail.floating_ip,
                 module: store.module,
                 detail,
                 store,
@@ -193,7 +192,7 @@ export default {
             let arr = new Array
             store.dataList.map(obj => {
                 if (rowKeys.includes(obj.id)) {
-                    arr.push(obj.network_alias)
+                    arr.push(obj.floating_ip)
                 }
             })
             const names = arr.join(', ')

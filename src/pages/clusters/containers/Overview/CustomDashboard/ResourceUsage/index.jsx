@@ -26,7 +26,7 @@ const MetricTypes = {
   pod_memory_usage: 'pod_memory_usage'
 }
 
-const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
+const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
   const podStore = new PodStore();
   const customStore = new CustomStore();
   const vmStore = new VmStore();
@@ -74,7 +74,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
       handlePodData(podData)
 
       // vm list
-      const vmList = await vmStore.vmList()
+      const vmList = await vmStore.vmList({ ...props })
       let promsql_pod_vm_list = '';
       let vm_list_length = 0;
       vmList.map(obj => {
@@ -83,7 +83,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h }) => {
       })
 
       // kaas list
-      const kaasList = await resourceStore.fetchList({ limit: 1000 })
+      const kaasList = await resourceStore.fetchList({ limit: 1000, ...props })
       let promsql_pod_kaas_list = ""
       let kaas_list_length = 0;
       kaasList.map((obj) => {

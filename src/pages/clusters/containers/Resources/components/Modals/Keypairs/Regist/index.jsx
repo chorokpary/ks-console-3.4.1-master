@@ -100,7 +100,7 @@ const RegistModal = (props) => {
     const keypairName = data['name'];
 
     let fileName = `${globals.user.username}-${keypairName}-rsa-key.pub`;
-    let output = privateKey;
+    let output = publicKey;
     const element = document.createElement('a');
     const file = new Blob([output], {
       type: 'text/plain',

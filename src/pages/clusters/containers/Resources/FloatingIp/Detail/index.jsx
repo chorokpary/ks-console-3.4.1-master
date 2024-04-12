@@ -129,8 +129,8 @@ const FloatingIpDetail = (props) => {
         value: get(store.detail, 'cluster'),
       },
       {
-        name: t('RESOURCES_FLOATING_IP'),
-        value: detail?.floating_ip,
+        name: t('RESOURCES_NETWORK_NAME'),
+        value: detail?.network_alias,
       },
       {
         name: t('RESOURCES_STATIC_IP'),
@@ -146,7 +146,7 @@ const FloatingIpDetail = (props) => {
   const sideProps = {
     icon: "intranet-routers",
     module: store.module,
-    name: detail?.network,
+    name: detail?.floating_ip,
     // desc: get(store.detail.network, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),

@@ -96,8 +96,8 @@ const RegistModal = props => {
         sortBy: 'root_disk',
         ...props,
       });
-      const listNetwork = await vmStore.fetchVmListNetwork(props);
-      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork(props);
+      const listNetwork = await vmStore.fetchVmListNetwork({ ...props, namespace: 'default' });
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ ...props, namespace: 'default' });
 
       const listImage = await resourceStore.fetchListImage(props);
       const listLoadBalancer = await resourceStore.fetchListLoadBalancer(props);
@@ -240,11 +240,11 @@ const RegistModal = props => {
       disabled:
         flag === 1
           ? obj.vcpus < CONFIG_CPU_MASTER ||
-            common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER ||
-            obj.root_disk < CONFIG_DISK_MASTER
+          common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER ||
+          obj.root_disk < CONFIG_DISK_MASTER
           : obj.vcpus < CONFIG_CPU_WORKER ||
-            common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER ||
-            obj.root_disk < CONFIG_DISK_WORKER,
+          common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER ||
+          obj.root_disk < CONFIG_DISK_WORKER,
     }));
     return opt;
   };
@@ -636,13 +636,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -654,8 +653,8 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -667,13 +666,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 2
-                      ? styles.current
-                      : regStep > 2
+                  className={`${regStep == 2
+                    ? styles.current
+                    : regStep > 2
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -685,8 +683,8 @@ const RegistModal = props => {
                   {regStep == 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -698,13 +696,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 3
-                      ? styles.current
-                      : regStep > 3
+                  className={`${regStep == 3
+                    ? styles.current
+                    : regStep > 3
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -716,8 +713,8 @@ const RegistModal = props => {
                   {regStep == 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -966,16 +963,16 @@ const RegistModal = props => {
                             <tbody>
                               {!networkDataList?.filter(el => el.external)
                                 .length && (
-                                <tr>
-                                  <td colSpan="6" className="no-data">
-                                    <p>
-                                      {t(
-                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
-                                      )}
-                                    </p>
-                                  </td>
-                                </tr>
-                              )}
+                                  <tr>
+                                    <td colSpan="6" className="no-data">
+                                      <p>
+                                        {t(
+                                          'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
+                                        )}
+                                      </p>
+                                    </td>
+                                  </tr>
+                                )}
                               {networkDataList
                                 ?.filter(el => el.external)
                                 .map((data, key) => (
@@ -1074,9 +1071,8 @@ const RegistModal = props => {
                       </div>
                     </Form.Item>
                     <div
-                      className={`form-item-error ${
-                        !networkName ? '' : 'hide'
-                      }`}
+                      className={`form-item-error ${!networkName ? '' : 'hide'
+                        }`}
                     >
                       {t('RESOURCES_SELECT_NETWORK_TIP')}
                     </div>
@@ -1137,16 +1133,16 @@ const RegistModal = props => {
                           <tbody>
                             {!networkDataList?.filter(el => el.external)
                               .length && (
-                              <tr>
-                                <td colSpan="6" className="no-data">
-                                  <p>
-                                    {t(
-                                      'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
-                                    )}
-                                  </p>
-                                </td>
-                              </tr>
-                            )}
+                                <tr>
+                                  <td colSpan="6" className="no-data">
+                                    <p>
+                                      {t(
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
+                                      )}
+                                    </p>
+                                  </td>
+                                </tr>
+                              )}
                             {networkDataList
                               ?.filter(el => el.external)
                               .map((data, key) => (
@@ -1427,12 +1423,11 @@ const RegistModal = props => {
                         </div>
                       ))}
                     <label
-                      className={`${
-                        networkDataList.filter(x => elbCheckItem === x.name)
-                          .length > 0
-                          ? ''
-                          : 'hide'
-                      }`}
+                      className={`${networkDataList.filter(x => elbCheckItem === x.name)
+                        .length > 0
+                        ? ''
+                        : 'hide'
+                        }`}
                     >
                       ELB
                     </label>

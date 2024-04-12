@@ -45,7 +45,9 @@ export default class ProjectSelect extends Component {
     return this.projectStore.fetchList({
       cluster,
       ...params,
-      limit: 1000
+      limit: 1000,
+      sortBy: 'name',
+      ascending: true
     })
   }
 

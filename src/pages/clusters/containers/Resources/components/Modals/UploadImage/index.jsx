@@ -63,17 +63,11 @@ const UploadModal = (props) => {
 
     var upload = new tus.Upload(file, {
       // Endpoint is the upload creation URL from your tus server
-      // endpoint: 'https://tusd.tusdemo.net/files/',
-      // endpoint: `http://localhost:1080/files/${job_uuid}`,
-      // endpoint: 'http://192.168.61.164:8080/files',
-      
+      //endpoint: 'https://tusd.tusdemo.net/files/',
+ 
       endpoint: !!uplaod_id ? null : `/files/${job_uuid}`,      
       uploadUrl: !!uplaod_id ? `/files/${job_uuid}/${uplaod_id}` : null,
 
-      // endpoint: !!uplaod_id ? '' : `http://192.168.16.80:31001/files/${job_uuid}`,   
-      // uploadUrl: !!uplaod_id ? `http://192.168.16.80:31001/files/${job_uuid}/${uplaod_id}` : '',
-      
-      
       // Retry delays will enable tus-js-client to automatically retry on errors
       retryDelays: [0, 3000, 5000, 10000, 20000],
       // Attach additional meta data about the file for the server
@@ -93,10 +87,6 @@ const UploadModal = (props) => {
         console.log(bytesUploaded, bytesTotal, percentage + '%')
         fnProgress(bytesTotal, bytesUploaded, percentage);
 
-        // onSuccess가 호출되지 않아 처리 부분 추가....
-        if(percentageNotDecimalPoint == 100){
-          setTimeout(onOk({}), 1000);
-        }
       },
       // Callback for once the upload is completed
       onSuccess: function () {
@@ -178,22 +168,9 @@ const UploadModal = (props) => {
                   <Button type="primary" onClick={() => handleButtonClick()} disabled={fileUploadCompleteFlag ? true : false} >
                     {t('파일 찾기')}
                   </Button>             
-                  {/* {(!fileUploadingFlag && file && !fileUploadCompleteFlag) && */}
-                    <Button
-                    type="control"
-                    onClick={() => startOrResumeUpload(uploader)}
-                    >
-                      {t('업로드')}
-                    </Button>
-                  {/* } */}
-                  {/* {(fileUploadingFlag && file && !fileUploadCompleteFlag) && */}
-                    {/* <Button
-                    type="control"
-                    onClick={() => fnAbort()}
-                    >
-                      {t('일시중지')}
-                    </Button> */}
-                  {/* }         */}
+                  <Button type="control" onClick={() => startOrResumeUpload(uploader)}>
+                    {t('업로드')}
+                  </Button>
                 </div>
                 <div className={ fileUploadStartFlag ? '' : styles.hide }>    
                   

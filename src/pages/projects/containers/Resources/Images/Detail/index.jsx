@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
@@ -15,17 +15,31 @@ import DetailVmList from 'pages/projects/containers/Resources/components/DetailV
 const store = new ImageStore();
 
 const ImageDetail = props => {
-  const [refreshTimer, setRefreshTimer] = useState(0);
+  const [activationTrigger, setActivationTrigger] = useReducer(activationTrigger => !activationTrigger, false);
+  const [detail, setDetail] = useState();
 
   useEffect(() => {
-    setTimeout(() => {
-      fetchData();
-      setRefreshTimer(refreshTimer + 1);
-    }, 4000);
-  }, [refreshTimer]);
+    fetchData();
+  }, [])
 
-  const fetchData = () => {
-    store.fetchDetail(props.match.params);
+  let timer = 0;
+  const activeCrListTimer = () => {
+    timer = setTimeout(() => {
+      fetchData()
+      setActivationTrigger()
+    }, 4000)
+  }
+
+  useEffect(() => {
+    activeCrListTimer()
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [activationTrigger])
+
+  const fetchData = async () => {
+    let detail = await store.fetchDetail(props.match.params);
+    setDetail(detail)
   };
 
   const { workspace, cluster, namespace } = props.match.params;
@@ -54,7 +68,7 @@ const ImageDetail = props => {
   ];
 
   const getAttrs = () => {
-    const detail = toJS(store.detail);
+    // const detail = toJS(store.detail);
 
     if (isEmpty(detail)) {
       return;
@@ -111,8 +125,8 @@ const ImageDetail = props => {
   const sideProps = {
     icon: 'snapshot',
     module: store.module,
-    name: get(store.detail, 'name'),
-    desc: get(store.detail.image, 'description', ''),
+    name: detail?.image.name,
+    // desc: get(store.detail.image, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
@@ -131,12 +145,13 @@ const ImageDetail = props => {
           {
             path: `${PATH}/status`,
             title: t('RESOURCES_STATE'),
-            // component: Status,
-            component: routeProps => (
-              <Status {...routeProps} imageDetailProps={props} />
-            ),
+            component: Status,
+            // component: routeProps => (
+            //   <Status {...routeProps} imageDetailProps={props} />
+            // ),
             exact: true,
             name: props.match.params.name,
+            params: props.match.params
           },
           getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
@@ -149,15 +164,14 @@ const ImageDetail = props => {
 export default inject('rootStore')(observer(ImageDetail));
 
 const Status = props => {
-  const { route, imageDetailProps } = props;
-  const imageName = route.name;
+  const imageName = props.route.name;
 
   return (
     <DetailVmList
       type={t('RESOURCES_VM_IMAGE')}
       variables="image"
       name={imageName}
-      {...imageDetailProps.match.params}
+      {...props.route.params}
     />
   );
 };

@@ -8,7 +8,7 @@ import { get } from 'lodash'
 const componentStore = new ComponentStore()
 const podStore = new PodStore()
 
-const ClusterStatus = ({ x, y, w, h }) => {
+const ClusterStatus = ({ x, y, w, h, ...props }) => {
 
   const [componentData, setComponentData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,8 +38,7 @@ const ClusterStatus = ({ x, y, w, h }) => {
 
     const getK8sStatusData = async () => {
       setLoading(true)
-      let cluster = globals.currentCluster
-      await componentStore.fetchList({ cluster })
+      await componentStore.fetchList({ ...props })
       const { data } = componentStore.list;
       const kubesphereData = data['kubesphere'].filter(arr => arr.name === 'ks-apiserver' || arr.name === 'ks-controller-manager')
       const componentData = data['kubernetes']
@@ -83,7 +82,7 @@ const ClusterStatus = ({ x, y, w, h }) => {
                       <p className={`${item.totalBackends - item.healthyBackends > 0 ? 'status_error' : 'status_inactive'}`}>
                         {item.totalBackends - item.healthyBackends}
                       </p>
-                      <PodList label={item.label}></PodList>
+                      <PodList label={item.label} {...props}></PodList>
                     </div>
                   </div>
                 ))}
@@ -101,13 +100,13 @@ const ClusterStatus = ({ x, y, w, h }) => {
 
 export default ClusterStatus
 
-const PodList = ({ label }) => {
+const PodList = ({ label, ...props }) => {
 
   const [podList, setPodList] = useState([])
 
   useEffect(() => {
     const getPodList = async () => {
-      const podList = await podStore.fetchList({ limit: 1000, labelSelector: joinSelector(label) })
+      const podList = await podStore.fetchList({ limit: 1000, labelSelector: joinSelector(label), ...props })
       setPodList(podList)
     };
     getPodList();
