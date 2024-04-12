@@ -33,27 +33,35 @@ export default class ClusterInspection extends React.Component {
   }
 
   renderChart() {
+    if (!this.props.store.list) return;
     const { data } = toJS(this.props.store.list);
+    console.log('sata', data);
     const clusterInfo = data?.clusterInfo;
+    const scoreInfo = data?.scoreInfo;
+    console.log('scoreInfo', typeof scoreInfo);
+    console.log('clusterInfo', typeof clusterInfo);
+
+    // const scoreInfo = {};
+
     const chartOption = [
       {
         name: t('CLUSTER_INSPECTION_PASS'),
-        value: data?.scoreInfo?.passing || 0,
+        value: scoreInfo?.passing || 0,
         color: '#55BC8A',
       },
       {
         name: t('CLUSTER_INSPECTION_WARNING'),
-        value: data?.scoreInfo?.warning || 0,
+        value: scoreInfo?.warning || 0,
         color: '#F5A623',
       },
       {
         name: t('CLUSTER_INSPECTION_DANGER'),
-        value: data?.scoreInfo?.dangerous || 0,
+        value: scoreInfo?.dangerous || 0,
         color: '#CA2621',
       },
       {
         name: t('CLUSTER_INSPECTION_IGNORE'),
-        value: data?.scoreInfo?.ignore || 0,
+        value: scoreInfo?.ignore || 0,
         color: '#86929d',
       },
     ];
@@ -68,9 +76,9 @@ export default class ClusterInspection extends React.Component {
                   <label>{t('CLUSTER_INSPECTION_CLUSTER_STATUS')}</label>
                 </div>
                 <div className="grid_info style_status">
-                  {clusterInfo && (
-                    <div className="box type_status">
-                      <div className="cont_group">
+                  <div className="box type_status">
+                    <div className="cont_group">
+                      {/* {(scoreInfo !== undefined || scoreInfo !== null) && (
                         <div className="cont1">
                           <div
                             className="chart_pie"
@@ -97,7 +105,7 @@ export default class ClusterInspection extends React.Component {
                                     />
                                   ))}
                                   <Label
-                                    value={data?.scoreInfo?.score}
+                                    value={scoreInfo?.score}
                                     position="center"
                                     fontSize={50}
                                     dy={-10}
@@ -115,58 +123,107 @@ export default class ClusterInspection extends React.Component {
                             </ResponsiveContainer>
                           </div>
                         </div>
-                        <div className="cont2">
-                          <div className="status_wrap">
-                            <p className="status title">
-                              <span>
-                                {t('CLUSTER_INSPECTION_CHECK_ALL_LIST')}
-                              </span>
-                            </p>
-                            <div className="value">
-                              {data?.scoreInfo?.total || 0}
-                            </div>
+                      )}
+
+                      {(scoreInfo === undefined || scoreInfo === null) && {
+                        if(Object.keys(scoreInfo).length === 0) {
+                          <div className="grid_text">
+                            <span>데이터가 없습니다</span>
                           </div>
-                          <div className="status_wrap">
-                            <p className="status pass">
-                              <span>{t('CLUSTER_INSPECTION_PASS')}</span>
-                            </p>
-                            <div className="value">
-                              {data?.scoreInfo?.passing || 0}
-                            </div>
+                        }
+                      }} */}
+
+                      {scoreInfo === undefined ||
+                      scoreInfo === null ||
+                      Object.keys(scoreInfo).length === 0 ? (
+                        <div className="grid_text">
+                          <span>데이터가 없습니다</span>
+                        </div>
+                      ) : (
+                        <div className="cont1">
+                          <div
+                            className="chart_pie"
+                            style={{
+                              width: '100%',
+                              height: '200px',
+                            }}
+                          >
+                            <ResponsiveContainer>
+                              <PieChart>
+                                <Pie
+                                  data={chartOption}
+                                  cx="50%"
+                                  cy="50%"
+                                  innerRadius={60}
+                                  outerRadius={80}
+                                  paddingAngle={1}
+                                  dataKey="value"
+                                >
+                                  {chartOption.map((entry, index) => (
+                                    <Cell
+                                      key={`cell-${index}`}
+                                      fill={entry.color}
+                                    />
+                                  ))}
+                                  <Label
+                                    value={scoreInfo?.score}
+                                    position="center"
+                                    fontSize={50}
+                                    dy={-10}
+                                  />
+                                  <Label
+                                    value={`Health Score`}
+                                    position="bottom"
+                                    fontSize={13}
+                                    dy={25}
+                                    dx={70}
+                                  />
+                                </Pie>
+                                <ChartTooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
                           </div>
-                          <div className="status_wrap">
-                            <p className="status warning">
-                              <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
-                            </p>
-                            <div className="value">
-                              {data?.scoreInfo?.warning || 0}
-                            </div>
+                        </div>
+                      )}
+
+                      <div className="cont2">
+                        <div className="status_wrap">
+                          <p className="status title">
+                            <span>
+                              {t('CLUSTER_INSPECTION_CHECK_ALL_LIST')}
+                            </span>
+                          </p>
+                          <div className="value">{scoreInfo?.total || 0}</div>
+                        </div>
+                        <div className="status_wrap">
+                          <p className="status pass">
+                            <span>{t('CLUSTER_INSPECTION_PASS')}</span>
+                          </p>
+                          <div className="value">{scoreInfo?.passing || 0}</div>
+                        </div>
+                        <div className="status_wrap">
+                          <p className="status warning">
+                            <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
+                          </p>
+                          <div className="value">{scoreInfo?.warning || 0}</div>
+                        </div>
+                        <div className="status_wrap">
+                          <p className="status danger">
+                            <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
+                          </p>
+                          <div className="value">
+                            {scoreInfo?.dangerous || 0}
                           </div>
-                          <div className="status_wrap">
-                            <p className="status danger">
-                              <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
-                            </p>
-                            <div className="value">
-                              {data?.scoreInfo?.dangerous || 0}
-                            </div>
-                          </div>
-                          <div className="status_wrap">
-                            <p className="status ignore">
-                              <span>{t('CLUSTER_INSPECTION_IGNORE')}</span>
-                            </p>
-                            <div className="value">
-                              {data?.scoreInfo?.ignore || 0}
-                            </div>
-                          </div>
+                        </div>
+                        <div className="status_wrap">
+                          <p className="status ignore">
+                            <span>{t('CLUSTER_INSPECTION_IGNORE')}</span>
+                          </p>
+                          <div className="value">{scoreInfo?.ignore || 0}</div>
                         </div>
                       </div>
                     </div>
-                  )}
-                  {!clusterInfo && (
-                    <div className="grid_text">
-                      <span>데이터가 없습니다</span>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
