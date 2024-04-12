@@ -129,6 +129,11 @@ const webMm3Proxy = {
 const webImageBuildProxy = {
   target: `${serverConfig.apiServer.imagebuildlUrl}`,
   changeOrigin: true,
+  events: {
+    proxyReq(proxyReq, req) {
+        proxyReq.setHeader('X-Forwarded-Host', req.headers.host)
+    },
+  },
 }
 
 const webAppDeployProxy = {
