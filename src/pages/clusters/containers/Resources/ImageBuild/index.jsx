@@ -192,11 +192,14 @@ export default class ImageBuild extends React.Component {
         render: (imagename, record) => {
           const name = record.name;
 
+          const podStatus = get(record, 'pod-status')
+          const podStatusText = podStatus.replace(/\s/gi, "")
+
            return (
             <Avatar
             icon="image"
             iconSize={40}
-            to={`/clusters/${cluster}/imagebuild/${imagename}/${name}`}
+            to={podStatusText != "ServerConfiguring" ? `/clusters/${cluster}/imagebuild/${imagename}/${name}` : ''}
             title={imagename}
            />
            )
