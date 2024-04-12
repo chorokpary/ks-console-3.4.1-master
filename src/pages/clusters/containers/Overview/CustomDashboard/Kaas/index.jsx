@@ -5,11 +5,11 @@ import KaasModel from 'stores/dashboard/kaas';
 import { fnSetK8s } from 'utils/dashboard'
 import cleanupTrigger from '../cleanupTrigger';
 
-const Kaas = ({ x, y, w, h }) => {
+const Kaas = ({ x, y, w, h, ...props }) => {
   const kaasStore = new KaasStore();
 
   const fetchData = async () => {
-    return await kaasStore.fetchList({ limit: 1000 })
+    return await kaasStore.fetchList({ limit: 1000, ...props })
   }
   const [list, error, loading] = cleanupTrigger(fetchData, [])
 

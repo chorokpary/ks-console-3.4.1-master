@@ -16,7 +16,7 @@ import KeypairStore from 'stores/resources/keypairs'
 import KaasStore from 'stores/resources/containerresource'
 import KaasImageStore from 'stores/resources/containerimages'
 
-const Computing = ({ computing }) => {
+const Computing = ({ computing, ...props }) => {
   const vmStore = new VmStore();
   const securityGroupStore = new SecurityGroupStore();
   const loadBalancerStore = new LoadBalancerStore();
@@ -60,22 +60,22 @@ const Computing = ({ computing }) => {
     const getData = async () => {
       setLoading(true)
 
-      const vmlist = await vmStore.vmList()
-      const networklist = await networkStore.fetchList({ limit: 1000 })
-      const routerlist = await routerStore.fetchList({ limit: 1000 })
-      const sriovlist = await sriovStore.fetchList({ limit: 1000 })
-      const fiplist = await floatingIpStore.fetchList({ limit: 1000 })
-      const sglist = await securityGroupStore.fetchList({ limit: 1000 })
-      const lblist = await loadBalancerStore.fetchList({ limit: 1000 })
+      const vmlist = await vmStore.vmList({ ...props })
+      const networklist = await networkStore.fetchList({ limit: 1000, ...props })
+      const routerlist = await routerStore.fetchList({ limit: 1000, ...props })
+      const sriovlist = await sriovStore.fetchList({ limit: 1000, ...props })
+      const fiplist = await floatingIpStore.fetchList({ limit: 1000, ...props })
+      const sglist = await securityGroupStore.fetchList({ limit: 1000, ...props })
+      const lblist = await loadBalancerStore.fetchList({ limit: 1000, ...props })
 
       // ---------------------------- template ------------------------------
-      const imagelist = await imageStore.fetchList({ limit: 1000 })
-      const flavorlist = await flavorStore.fetchList({ limit: 1000 })
-      const hdlist = await hostDeviceStore.fetchList({ limit: 1000 })
-      const mdlist = await mediatedDeviceStore.fetchList({ limit: 1000 })
-      const keypairlist = await keypairStore.fetchList({ limit: 1000 })
-      const kaaslist = await kaasStore.fetchList({ limit: 1000 })
-      const kaasimagelist = await kaasImageStore.fetchList({ limit: 1000 })
+      const imagelist = await imageStore.fetchList({ limit: 1000, ...props })
+      const flavorlist = await flavorStore.fetchList({ limit: 1000, ...props })
+      const hdlist = await hostDeviceStore.fetchList({ limit: 1000, ...props })
+      const mdlist = await mediatedDeviceStore.fetchList({ limit: 1000, ...props })
+      const keypairlist = await keypairStore.fetchList({ limit: 1000, ...props })
+      const kaaslist = await kaasStore.fetchList({ limit: 1000, ...props })
+      const kaasimagelist = await kaasImageStore.fetchList({ limit: 1000, ...props })
 
       if (cleanupTrigger) {
         setVmList(vmlist)
@@ -108,7 +108,7 @@ const Computing = ({ computing }) => {
   useEffect(() => {
     if (flavorList.length > 0) {
       flavorList.map(async obj => {
-        const detail = await flavorStore.fetchDetail({ name: obj.name })
+        const detail = await flavorStore.fetchDetail({ name: obj.name, ...props })
         setFlavorDetailList(list => [...list, detail])
       })
     }

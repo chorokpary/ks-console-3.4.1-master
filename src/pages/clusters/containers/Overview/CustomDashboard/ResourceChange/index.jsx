@@ -11,7 +11,7 @@ const MetricTypes = {
   pod_running_count: 'cluster_pod_running_count',
 }
 
-const ResourceChange = ({ monitorStore, x, y, w, h }) => {
+const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
   const vmStore = new VmStore();
   const kaasStore = new KaasStore();
 
@@ -51,8 +51,8 @@ const ResourceChange = ({ monitorStore, x, y, w, h }) => {
         times: 10,
       })
 
-      const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp' })
-      const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp' })
+      const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp', ...props })
+      const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp', ...props })
 
       if (cleanupTrigger) {
         setMetricData(metricData)

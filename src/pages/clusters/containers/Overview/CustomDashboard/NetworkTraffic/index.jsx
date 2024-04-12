@@ -16,7 +16,7 @@ const MetricTypes = {
   pod_net_bytes_received: 'pod_net_bytes_received'
 }
 
-const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
+const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
   const podStore = new PodStore();
   const customStore = new CustomStore();
   const vmStore = new VmStore();
@@ -61,7 +61,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h }) => {
       setPodData(podData)
 
       // vm list
-      const vmList = await vmStore.vmList()
+      const vmList = await vmStore.vmList({ ...props })
       let vmUuid = '';
       vmList.map(obj => vmUuid = vmUuid + obj.id + "|")
 
