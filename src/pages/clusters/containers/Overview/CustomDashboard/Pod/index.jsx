@@ -5,11 +5,11 @@ import PodModel from 'stores/dashboard/pods'
 import { fnSetPods } from 'utils/dashboard'
 import cleanupTrigger from '../cleanupTrigger'
 
-const Pod = ({ x, y, w, h }) => {
+const Pod = ({ x, y, w, h, ...props }) => {
   const podStore = new PodStore();
 
   const fetchData = async () => {
-    return await podStore.fetchList({ limit: 1000 })
+    return await podStore.fetchList({ limit: 1000, ...props })
   }
   const [list, error, loading] = cleanupTrigger(fetchData, [])
 

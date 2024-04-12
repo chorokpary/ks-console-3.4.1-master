@@ -16,6 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 module.exports = {
+  RESOURCES_MMS_ERROR_100: 'SYSTEM_ERROR',
   RESOURCES_MMS_ERROR_101: 'SECRET_NOT_FOUND',
   RESOURCES_MMS_ERROR_130: 'SECRET_NAME_DUPLICATED',
   RESOURCES_MMS_ERROR_240: 'VM_NOT_FOUND',
@@ -240,6 +241,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_9057: 'INVALID_LICENSE_KEY',
   RESOURCES_MMS_ERROR_9061: 'MULTIPLE_DEFAULT_LICENSES',
   RESOURCES_MMS_ERROR_9062: 'NO_DEFAULT_LICENSES',
+  RESOURCES_MMS_ERROR_DESC_100: 'Need to contact Admin',
   RESOURCES_MMS_ERROR_DESC_101: 'Secret not found',
   RESOURCES_MMS_ERROR_DESC_130: 'Secret already existed',
   RESOURCES_MMS_ERROR_DESC_240: 'VM not found',
@@ -464,5 +466,5 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_9057: 'The given license key is invalid',
   RESOURCES_MMS_ERROR_DESC_9061: 'There are multiple default licenses installed',
   RESOURCES_MMS_ERROR_DESC_9062: 'There are no default licenses installed',
-  
+
 };

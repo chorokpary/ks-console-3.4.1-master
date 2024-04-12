@@ -333,7 +333,7 @@ export default class VmStore extends Base {
     await this.fetchVolumeList(params);
 
     // SecurityGroup 관련
-    await this.fetchVmListSecurityGroup(params);
+    await this.fetchVmListSecurityGroup({ ...params, namespace: detail.vm.project });
 
     // Network
     await this.fetchVmListNetwork(params);

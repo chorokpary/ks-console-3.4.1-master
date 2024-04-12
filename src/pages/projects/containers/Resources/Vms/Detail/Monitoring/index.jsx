@@ -140,14 +140,18 @@ const index = (props) => {
 
     const getVmDiskUsageData = async () => {
       const vmDiskData = await customStore.fetchMetric({
-        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes{pod=~${store.detail.id}})) / sum by(pod) (node_filesystem_size_bytes{pod=~${store.detail.id}})) * 100)) / 100`,
+        expr: `(100 - ((sum by(pod) (node_filesystem_avail_bytes) * 100) / sum by(pod) (node_filesystem_size_bytes))) / 100`,
         ...paramsData,
         cluster, namespace
       })
 
+      const vmDiskMetricData = _.find(vmDiskData, (data) => {
+        if (data.metric?.pod === store.detail.id) return data;
+      });
+
       // 배열 처리 
       const vmDiskArray = [];
-      vmDiskArray.push(vmDiskData)
+      vmDiskArray.push(vmDiskMetricData)
       setVmDiskData(vmDiskArray)
     };
 

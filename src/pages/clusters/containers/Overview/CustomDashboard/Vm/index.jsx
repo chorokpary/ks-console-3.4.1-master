@@ -5,7 +5,8 @@ import VmModel from 'stores/dashboard/vms';
 import { fnSetVms } from 'utils/dashboard'
 import cleanupTrigger from '../cleanupTrigger';
 
-const Vm = ({ x, y, w, h }) => {
+const Vm = ({ x, y, w, h, ...props }) => {
+
   const vmStore = new VmStore();
 
   const fetchData = async () => {
@@ -13,7 +14,7 @@ const Vm = ({ x, y, w, h }) => {
   }
   const [list, error, loading] = cleanupTrigger(fetchData, [])
 
-  const vms = new VmModel();
+  const vms = new VmModel({ ...props });
   const [data, setData] = useState(vms);
 
   useEffect(() => {

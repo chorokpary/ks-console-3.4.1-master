@@ -1,51 +1,58 @@
-import { get, groupBy } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { toJS } from 'mobx'
-import { observer, inject } from 'mobx-react'
-import classnames from 'classnames'
+import { get, groupBy } from 'lodash';
+import React, { useState, useEffect } from 'react';
+import { toJS } from 'mobx';
+import { observer, inject } from 'mobx-react';
+import classnames from 'classnames';
+import { Icon, Button, Notify } from '@kube-design/components';
 
-import { Panel } from 'components/Base'
-import { Icon, Button, Notify } from '@kube-design/components'
+import { Panel } from 'components/Base';
+import styles from './index.scss';
 
-import styles from './index.scss'
-
-const Status = (props) => {
-
+const Status = props => {
   const store = props.detailStore;
 
   const [externalNetwork, setExternalNetwork] = useState(null);
   const [internalNetwork, setInternalNetwork] = useState([]);
 
   useEffect(() => {
-
     const fnGetExternalNetwork = async () => {
-      const externalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`);
+      const externalData = await request.get(
+        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`,
+      );
       setExternalNetwork(externalData?.network);
     };
 
     const fnGetInternalNetwork = async () => {
       setInternalNetwork([]);
-      const promises = (store.detail.router?.internal).map(async (item) => {
-        const internalData = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` + item.id);
-        setInternalNetwork(internalNetwork => [...internalNetwork, internalData?.network])
-      })
+      const promises = (store.detail.router?.internal).map(async item => {
+        const internalData = await request.get(
+          `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` +
+            item.id,
+        );
+        setInternalNetwork(internalNetwork => [
+          ...internalNetwork,
+          internalData?.network,
+        ]);
+      });
       await Promise.all(promises);
     };
 
     store.detail.router?.external && fnGetExternalNetwork();
     setInternalNetwork([]);
     store.detail.router?.internal && fnGetInternalNetwork();
-
-  }, [])
+  }, []);
 
   return (
     <>
-      {!!externalNetwork &&
+      {!!externalNetwork && (
         <Panel title={t('RESOURCES_EXTERNAL_NETWORK')}>
           <div className={styles.wrapper}>
-            <div className={styles.itemMainRemoveCursor} >
+            <div className={styles.itemMainRemoveCursor}>
               <div className={styles.icon}>
-                <Icon name="network-router" size={40} />
+                <i
+                  class="ico-type-externalnetwork"
+                  style={{ width: '40px', height: '40px' }}
+                ></i>
               </div>
               <div className={styles.content}>
                 <div className={styles.text}>
@@ -64,20 +71,18 @@ const Status = (props) => {
                   <div>{externalNetwork.gateway_ip}</div>
                   <p>{t('RESOURCES_GATEWAY')}</p>
                 </div>
-                <div className={styles.arrow}>
-                </div>
               </div>
             </div>
           </div>
         </Panel>
-      }
+      )}
 
-      {internalNetwork.length > 0 &&
+      {internalNetwork.length > 0 && (
         <Panel title={t('RESOURCES_INTERNAL_NETWORK')}>
           <div className={styles.wrapper}>
             {internalNetwork.map((obj, index) => (
               <div className={classnames(styles.expandItem)}>
-                <div className={styles.itemMainRemoveCursor} >
+                <div className={styles.itemMainRemoveCursor}>
                   <div className={styles.icon}>
                     <Icon name="network-duotone" size={40} type={'dark'} />
                   </div>
@@ -104,11 +109,9 @@ const Status = (props) => {
             ))}
           </div>
         </Panel>
-      }
-
+      )}
     </>
   );
 };
 
-export default inject('detailStore')(observer(Status))
-
+export default inject('detailStore')(observer(Status));
