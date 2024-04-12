@@ -5,11 +5,11 @@ import ClusterNodeModel from 'stores/dashboard/clusterNode';
 import { fnSetClusterNodes } from 'utils/dashboard'
 import cleanupTrigger from '../cleanupTrigger';
 
-const ClusterNode = ({ x, y, w, h }) => {
+const ClusterNode = ({ x, y, w, h, ...props }) => {
   const nodeStore = new NodeStore();
 
   const fetchData = async () => {
-    return await nodeStore.fetchList({ limit: 1000 })
+    return await nodeStore.fetchList({ limit: 1000, ...props })
   }
   const [list, error, loading] = cleanupTrigger(fetchData, [])
 

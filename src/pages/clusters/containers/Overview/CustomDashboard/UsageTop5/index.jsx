@@ -76,7 +76,7 @@ const storeParams = {
   sort_type: 'desc',
 }
 
-const UsageTop5 = ({ x, y, w, h }) => {
+const UsageTop5 = ({ x, y, w, h, ...props }) => {
   const nodeStore = new NodeStore({ ...storeParams })
   const podStore = new PodStore({ ...storeParams })
   const customStore = new CustomStore();
@@ -93,7 +93,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
 
   const getNodeData = async (params = {}) => {
     setLoading(true)
-    const nodeList = await nodeStore.fetchAll(params)
+    const nodeList = await nodeStore.fetchAll({ ...params, ...props })
 
     setList(nodeList)
     setLoading(false)
@@ -101,7 +101,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
 
   const getPodData = async (params = {}) => {
     setLoading(true)
-    const podList = await podStore.fetchAll(params)
+    const podList = await podStore.fetchAll({ ...params, ...props })
     setList(podList)
     setLoading(false)
   };
@@ -124,7 +124,7 @@ const UsageTop5 = ({ x, y, w, h }) => {
     let cleanupTrigger = true;
     // vm list
     const getVmList = async () => {
-      const vmList = await vmStore.vmList()
+      const vmList = await vmStore.vmList({ ...props })
       let vmNames = '';
       vmList.map(obj => vmNames = vmNames + obj.id + "|")
 

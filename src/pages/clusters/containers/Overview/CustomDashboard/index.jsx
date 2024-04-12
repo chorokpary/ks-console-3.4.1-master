@@ -172,6 +172,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.clusterNode.y}
                         w={activeDashboard.clusterNode.w}
                         h={activeDashboard.clusterNode.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -182,6 +183,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.pod.y}
                         w={activeDashboard.pod.w}
                         h={activeDashboard.pod.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -192,6 +194,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.vm.y}
                         w={activeDashboard.vm.w}
                         h={activeDashboard.vm.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -202,6 +205,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.kaas.y}
                         w={activeDashboard.kaas.w}
                         h={activeDashboard.kaas.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -212,6 +216,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.resourceUsage.y}
                         w={activeDashboard.resourceUsage.w}
                         h={activeDashboard.resourceUsage.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -222,6 +227,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.networkTraffic.y}
                         w={activeDashboard.networkTraffic.w}
                         h={activeDashboard.networkTraffic.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -232,6 +238,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.usageTop5.y}
                         w={activeDashboard.usageTop5.w}
                         h={activeDashboard.usageTop5.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -242,6 +249,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.recentResource.y}
                         w={activeDashboard.recentResource.w}
                         h={activeDashboard.recentResource.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -258,6 +266,7 @@ const CustomDashboard = (props) => {
                     {/* 컴퓨팅 */}
                     <Computing
                       computing={activeDashboard}
+                      {...props.match.params}
                     />
 
                     {/* 리소스 변화량 */}
@@ -267,6 +276,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.resourceChange.y}
                         w={activeDashboard.resourceChange.w}
                         h={activeDashboard.resourceChange.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -277,6 +287,7 @@ const CustomDashboard = (props) => {
                         y={activeDashboard.clusterStatus.y}
                         w={activeDashboard.clusterStatus.w}
                         h={activeDashboard.clusterStatus.h}
+                        {...props.match.params}
                       />
                     }
 
@@ -285,6 +296,7 @@ const CustomDashboard = (props) => {
                     탄소 발자국 - 전력 사용량, co2 발생량, 나무, 비용)*/}
                     <Bmc
                       bmc={activeDashboard}
+                      {...props.match.params}
                     />
 
                   </div>
