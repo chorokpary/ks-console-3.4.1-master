@@ -11,6 +11,12 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-clusternode-wh {
+  background: url('/assets/resources/images/icons/ico-type-clusternode-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-vm {
   background: url('/assets/resources/images/icons/ico-type-vm.svg') center
     no-repeat;
@@ -29,15 +35,33 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-pod-wh {
+  background: url('/assets/resources/images/icons/ico-type-pod-wh.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-flavor {
   background: url('/assets/resources/images/icons/ico-type-flavor.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
 }
+.ico-type-flavor-wh {
+  background: url('/assets/resources/images/icons/ico-type-flavor-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-security {
   background: url('/assets/resources/images/icons/ico-type-security.svg') center
     no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-security-wh {
+  background: url('/assets/resources/images/icons/ico-type-security-wh.svg')
+    center no-repeat;
   width: 30px;
   height: 30px;
 }
@@ -59,14 +83,32 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-network2-wh {
+  background: url('/assets/resources/images/icons/ico-type-network2-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-volume {
   background: url('/assets/resources/images/icons/ico-type-volume.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
 }
+.ico-type-volume-wh {
+  background: url('/assets/resources/images/icons/ico-type-volume-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-floatingip {
   background: url('/assets/resources/images/icons/ico-type-floatingip.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-floatingip-wh {
+  background: url('/assets/resources/images/icons/ico-type-floatingip-wh.svg')
     center no-repeat;
   width: 30px;
   height: 30px;
@@ -77,8 +119,20 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-router-wh {
+  background: url('/assets/resources/images/icons/ico-type-router-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-container {
   background: url('/assets/resources/images/icons/ico-type-container.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-container-wh {
+  background: url('/assets/resources/images/icons/ico-type-container-wh.svg')
     center no-repeat;
   width: 30px;
   height: 30px;
@@ -89,8 +143,20 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-loadbalancer-wh {
+  background: url('/assets/resources/images/icons/ico-type-loadbalancer-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-image {
   background: url('/assets/resources/images/icons/ico-type-image.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-image-wh {
+  background: url('/assets/resources/images/icons/ico-type-image-wh.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
@@ -101,15 +167,33 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-keypair-wh {
+  background: url('/assets/resources/images/icons/ico-type-keypair-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-inbound {
   background: url('/assets/resources/images/icons/ico-type-inbound.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
 }
+.ico-type-inbound-wh {
+  background: url('/assets/resources/images/icons/ico-type-inbound-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-outbound {
   background: url('/assets/resources/images/icons/ico-type-outbound.svg') center
     no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-outbound-wh {
+  background: url('/assets/resources/images/icons/ico-type-outbound-wh.svg')
+    center no-repeat;
   width: 30px;
   height: 30px;
 }
@@ -125,14 +209,32 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-cpu-wh {
+  background: url('/assets/resources/images/icons/ico-type-cpu-wh.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-memory {
   background: url('/assets/resources/images/icons/ico-type-memory.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
 }
+.ico-type-memory-wh {
+  background: url('/assets/resources/images/icons/ico-type-memory-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-disk {
   background: url('/assets/resources/images/icons/ico-type-disk.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-disk-wh {
+  background: url('/assets/resources/images/icons/ico-type-disk-wh.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
@@ -143,8 +245,20 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-x86-wh {
+  background: url('/assets/resources/images/icons/ico-type-x86-wh.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-arm {
   background: url('/assets/resources/images/icons/ico-type-arm.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-arm-wh {
+  background: url('/assets/resources/images/icons/ico-type-arm-wh.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
@@ -155,8 +269,20 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-power-wh {
+  background: url('/assets/resources/images/icons/ico-type-power-wh.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-networkdevice {
   background: url('/assets/resources/images/icons/ico-type-networkdevice.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-networkdevice-wh {
+  background: url('/assets/resources/images/icons/ico-type-networkdevice-wh.svg')
     center no-repeat;
   width: 30px;
   height: 30px;
@@ -179,14 +305,32 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-hostdevice-wh {
+  background: url('/assets/resources/images/icons/ico-type-hostdevice-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-hostgpu {
   background: url('/assets/resources/images/icons/ico-type-hostgpu.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
 }
+.ico-type-hostgpu-wh {
+  background: url('/assets/resources/images/icons/ico-type-hostgpu-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-mediateddevice {
   background: url('/assets/resources/images/icons/ico-type-mediateddevice.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-mediateddevice-wh {
+  background: url('/assets/resources/images/icons/ico-type-mediateddevice-wh.svg')
     center no-repeat;
   width: 30px;
   height: 30px;
@@ -197,8 +341,20 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-mediatedvgpu-wh {
+  background: url('/assets/resources/images/icons/ico-type-mediatedvgpu-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-networkdevice {
   background: url('/assets/resources/images/icons/ico-type-networkdevice.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-networkdevice-wh {
+  background: url('/assets/resources/images/icons/ico-type-networkdevice-wh.svg')
     center no-repeat;
   width: 30px;
   height: 30px;
@@ -251,9 +407,21 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-kaasimage-wh {
+  background: url('/assets/resources/images/icons/ico-type-kaasimage-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-snapshot {
   background: url('/assets/resources/images/icons/ico-type-snapshot.svg') center
     no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-snapshot-wh {
+  background: url('/assets/resources/images/icons/ico-type-snapshot-wh.svg')
+    center no-repeat;
   width: 30px;
   height: 30px;
 }
@@ -263,8 +431,20 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-restore-wh {
+  background: url('/assets/resources/images/icons/ico-type-restore-wh.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 .ico-type-clone {
   background: url('/assets/resources/images/icons/ico-type-clone.svg') center
+    no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-clone-wh {
+  background: url('/assets/resources/images/icons/ico-type-clone-wh.svg') center
     no-repeat;
   width: 30px;
   height: 30px;

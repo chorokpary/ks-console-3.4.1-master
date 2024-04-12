@@ -33,6 +33,7 @@ const RegistModal = props => {
   const [regStep, setRegStep] = useState(1);
 
   const [volumeCapacity, setVolumeCapacity] = useState(10);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
   const [projectName, setProjectName] = useState(
@@ -94,8 +95,13 @@ const RegistModal = props => {
       data.access_modes = accesModeArray;
       data.project = projectName;
 
-      data.capacity = Number(volumeCapacity.substring(0, volumeCapacity.indexOf(removeText)));
+      if (typeof volumeCapacity === 'number') {
+        data.capacity = volumeCapacity;
+      } else {
+        data.capacity = Number(volumeCapacity.substring(0, volumeCapacity.indexOf(removeText)));
+      }
 
+      setIsSubmitting(true)
       onOk({ ...data });
     });
   };
@@ -164,6 +170,8 @@ const RegistModal = props => {
                 handleOk();
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
+              loading={isSubmitting}
+              disabled={isSubmitting}
             >
               {t('RESOURCES_CREATE')}
             </Button>

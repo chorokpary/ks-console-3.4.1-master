@@ -57,12 +57,22 @@ const ImageBuildDetail = (props) => {
       const uploadInfo = get(detail, ['upload-info-list', 'upload-info'])
       const podStatus = get(detail, 'pod-status', '')
 
-      const stepRunningArray = ['ServerConfiguring', 'FileUploading', 'ImageBuild&Pushing', 'ServerDeleting', 'ServerReady', 'FileUploadCompleted']
-      const stepFailedArray = ['ServerConfigureFail', 'FileUploadFail', 'ImagePushFailed']
+      // Status (Kor)	  Status (Eng)	          Description
+      // 서버 준비 중	    Server Configuring	  업로드 위한 서버 준비 중
+      // 서버 준비 완료	  Server Ready	        업로드 위한 서버 준비 완료(파일 업로드 대기 중)
+      // 파일 업로드 중	  File Uploading	      파일 업로드 중
+      // 이미지 빌드 중	  Image Build	          이미지 빌드 및 이미지 저장소에 push 중
+      // 이미지 빌드 완료	Image Build Succeed	  이미비 빌드 후 저장소로 push 완료
+      // 실패	           Fail                 	과정 실패
+
+      const stepRunningArray = ['ServerReady', 'FileUploading', 'ImageBuild']
+      const stepSucceedArray = ['ImageBuildSucceed']
+      const stepFailedArray = ['Fail']
 
       const podStatusText = stepFailedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_FAIL') 
-      : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') : t('RESOURCES_SUCCESS')
-
+      : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') 
+      : stepSucceedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_COMPLETE') 
+      : t('RESOURCES_PREPARING')
 
       let fileStatus = "-";
       let fileName = "-";

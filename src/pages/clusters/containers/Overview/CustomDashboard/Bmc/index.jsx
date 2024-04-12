@@ -15,7 +15,7 @@ import CarbonTree from './CarbonTree';
 import CarbonCost from './CarbonCost'
 import BmcNode from './BmcNode'
 
-const Bmc = ({ bmc }) => {
+const Bmc = ({ bmc, ...props }) => {
 
   const bareMetalStore = new BareMetalStore();
   const customStore = new CustomStore();
@@ -54,7 +54,7 @@ const Bmc = ({ bmc }) => {
       setLoading(true)
 
       try {
-        const data = await bareMetalStore.fetchList()
+        const data = await bareMetalStore.fetchList({ ...props })
 
         let promql_node_list = ""
         data.map((obj) => {

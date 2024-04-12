@@ -4,16 +4,21 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
+import { ProjectSelect } from 'components/Inputs'
 
-const RegistModal = ({ title, onOk, store }) => {
+const RegistModal = ({ title, onOk, store, ...props }) => {
 
   const [modelView, setModalView] = useState(true);
 
+  const [networkOriginList, setNetworkOriginList] = useState([]);
   const [networkList, setNetworkList] = useState([]);
   const [routerList, setRouterList] = useState([]);
 
   const [networkDataList, setNetworkDataList] = useState([]);
   const [radioExternal, setRadioExternal] = useState("");
+
+  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const closeModal = () => {
     setModalView(false);
@@ -41,12 +46,15 @@ const RegistModal = ({ title, onOk, store }) => {
       const list = networkDataList.filter((obj) => (
         routerList.includes(obj.id)
       )) || [];
-      setNetworkList(list);
-      setRadioExternal(list[0]?.id)
+      setNetworkOriginList(list);
+
+      setNetworkList(list.filter(obj => obj.project === projectName));
+      setRadioExternal(list.filter(obj => obj.project === projectName)?.[0]?.id)
     }
   }, [networkDataList, routerList])
 
   const handleOk = () => {
+    setIsSubmitting(true)
     onOk({ floating_ip: { network: radioExternal } })
   }
 
@@ -59,6 +67,13 @@ const RegistModal = ({ title, onOk, store }) => {
     ));
     return arr;
   }
+
+  useEffect(() => {
+    const list = networkOriginList.filter(obj => obj.project === projectName)
+    setNetworkList(list);
+    setRadioExternal(list[0]?.id)
+  }, [projectName])
+
 
 
   return (
@@ -73,10 +88,25 @@ const RegistModal = ({ title, onOk, store }) => {
         okText={t('RESOURCES_CREATE')}
         cancelText={t('RESOURCES_CANCEL')}
         disableSubmit={networkList.length === 0 && true}
+        isSubmitting={isSubmitting}
       >
         <Form>
 
-          <Form.Item >
+          <Form.Item
+            label={t('PROJECT')}
+            desc={t('SELECT_PROJECT_DESC')}
+            rules={[
+              { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+            ]}
+          >
+            <ProjectSelect
+              name="metadata.namespace"
+              defaultValue={projectName}
+              cluster={props.cluster}
+              onChange={(e) => setProjectName(e)}
+            />
+          </Form.Item>
+          <Form.Item>
             <div className={styles.wrapper}>
               <div className={styles.table}>
                 <table>

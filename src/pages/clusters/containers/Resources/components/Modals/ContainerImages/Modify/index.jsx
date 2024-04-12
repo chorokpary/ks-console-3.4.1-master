@@ -24,7 +24,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
   const [osType, setOsType] = useState("linux")
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroTypeList, setDistroTypeList] = useState([])
-  const [distroType, setDistroType] = useState(store.detail.image.os_distro)
+  const [distroType, setDistroType] = useState(store.detail.image.os_distro.includes('-') ? store.detail.image.os_distro.split('-')[0] : store.detail.image.os_distro)
 
   useEffect(() => {
     const getDistroTypeList = async () => {

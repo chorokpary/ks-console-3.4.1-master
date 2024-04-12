@@ -13,7 +13,7 @@ const iconType = {
   'kaas': 'container',
 }
 
-const RecentResource = ({ x, y, w, h }) => {
+const RecentResource = ({ x, y, w, h, ...props }) => {
   const nodeStore = new NodeStore();
   const podStore = new PodStore();
   const vmStore = new VmStore();
@@ -32,16 +32,16 @@ const RecentResource = ({ x, y, w, h }) => {
       setLoading(true)
 
       // node data
-      const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime' })
+      const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime', ...props })
 
       // pod data
-      const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime' })
+      const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime', ...props })
 
       // vm data
-      const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp' })
+      const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp', ...props })
 
       // kaas data
-      const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp' })
+      const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp', ...props })
 
       if (cleanupTrigger) {
         handleDate(nodeList, 'createTime', 'node')

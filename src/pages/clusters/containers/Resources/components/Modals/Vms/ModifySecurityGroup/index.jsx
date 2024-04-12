@@ -103,7 +103,7 @@ const ModifySecurityGroupModal = (props) => {
           {t('RESOURCES_SECURITY_GROUP')}<span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
-              {stateVariables['security'].length > 0 &&
+              {securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.id)) && stateVariables['security'].length > 0 &&
                 <div className={classnames(styles.table_title, styles.table_title_bg)}>
                   <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['security'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                 </div>
@@ -153,14 +153,15 @@ const ModifySecurityGroupModal = (props) => {
                   </tbody>
                 </table>
                 <div className={styles.removeCheckWrapper}>
-                  {securityGroupCheckItems?.map((id) => {
-                    const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
-                    return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
-                  }
-                  )}
+                  {securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.id)) &&
+                    securityGroupCheckItems?.map((id) => {
+                      const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
+                      return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
+                    }
+                    )}
                 </div>
               </div>
-              <div className={`form-item-error ${securityGroupCheckItems.length > 0 ? "hide" : ""}`}>{t('RESOURCES_SELECT_SECURITY_GROUP_TIP')}</div>
+              <div className={`form-item-error ${securityGroupCheckItems.length > 0 && securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.id)) ? "hide" : ""}`}>{t('RESOURCES_SELECT_SECURITY_GROUP_TIP')}</div>
             </div>
           </Form.Item>
 
