@@ -43,12 +43,12 @@ const ComputingTemplate = ({
           mdSet.add(el.name)
         })
       })
-      hdList.map(obj => {
+      hdList?.map(obj => {
         hdSet.has(obj.name) ? hdUsed++ : ''
       })
       setHd({ used: hdUsed, unused: hdList.length - hdUsed })
 
-      mdList.map(obj => {
+      mdList?.map(obj => {
         mdSet.has(obj.resource_name) ? mdUsed++ : ''
       })
       setMd({ used: mdUsed, unused: mdList.length - mdUsed })
@@ -59,7 +59,7 @@ const ComputingTemplate = ({
     if (imageList.length > 0) {
       let used = 0;
       var imageSet = new Set()
-      vmList.map(obj => {
+      vmList?.map(obj => {
         imageSet.add(obj.image)
       })
       imageList.map(obj => {
@@ -73,7 +73,7 @@ const ComputingTemplate = ({
     if (keypairList.length > 0) {
       let used = 0;
       var keypairSet = new Set()
-      vmList.map(obj => {
+      vmList?.map(obj => {
         keypairSet.add(obj.keypair)
       })
       keypairList.map(obj => {
@@ -87,7 +87,7 @@ const ComputingTemplate = ({
     if (flavorList.length > 0) {
       let used = 0;
       var flavorSet = new Set()
-      vmList.map(obj => {
+      vmList?.map(obj => {
         flavorSet.add(obj.flavor)
       })
       flavorList.map(obj => {
@@ -98,17 +98,15 @@ const ComputingTemplate = ({
   }, [flavorList, vmList])
 
   useEffect(() => {
-    if (kaasList.length > 0) {
-      let used = 0;
-      var kaasSet = new Set()
-      kaasList.map(obj => {
-        kaasSet.add(obj.kube_image)
-      })
-      kaasIamgeList.map(obj => {
-        kaasSet.has(obj.name) ? used++ : ''
-      })
-      setKaas({ used, unused: kaasIamgeList.length - used })
-    }
+    let used = 0;
+    var kaasSet = new Set()
+    kaasList?.map(obj => {
+      kaasSet.add(obj.kube_image)
+    })
+    kaasIamgeList?.map(obj => {
+      kaasSet.has(obj.name) ? used++ : ''
+    })
+    setKaas({ used, unused: kaasIamgeList.length - used })
   }, [kaasList, kaasIamgeList])
 
   return (
