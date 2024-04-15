@@ -21,25 +21,23 @@ const RegistModal = (props) => {
   const [inDupRules, setInDupRules] = useState(true);
   const [outDupRules, setOutDupRules] = useState(true);
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
   const regexRemoteIp = /[^0123456789.\/]/g;
-  const regexPort = /[^0123456789]/g;
+  const regexPort = /^[0-9]*(-[0-9]*)?$/;
 
   const ruleTypeOptions = [
-    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: 0 },
-    { value: "ALL", label: "ALL", protocol: "TCP", port: "0-65535" },
-    { value: "FTP", label: "FTP", protocol: "TCP", port: 20 },
-    { value: "SSH", label: "SSH", protocol: "TCP", port: 22 },
-    { value: "TELNET", label: "TELNET", protocol: "TCP", port: 23 },
-    { value: "SMTP", label: "SMTP", protocol: "TCP", port: 25 },
-    { value: "DNS", label: "DNS", protocol: "TCP", port: 53 },
-    { value: t('RESOURCES_DHCP_SERVER'), label: t('RESOURCES_DHCP_SERVER'), protocol: "UDP", port: 67 },
-    { value: t('RESOURCES_DHCP_CLIENT'), label: t('RESOURCES_DHCP_CLIENT'), protocol: "UDP", port: 68 },
-    { value: "HTTP", label: "HTTP", protocol: "TCP", port: 80 },
-    { value: "POP3", label: "POP3", protocol: "TCP", port: 110 },
-    { value: "IMAP4", label: "IMAP4", protocol: "TCP", port: 143 },
-    { value: "HTTPS", label: "HTTPS", protocol: "TCP", port: 443 },
+    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", portMin: 0, portMax: 0 },
+    { value: "ALL", label: "ALL", protocol: "TCP", portMin: 0, portMax: 65535 },
+    { value: "FTP", label: "FTP", protocol: "TCP", portMin: 20, portMax: 20 },
+    { value: "SSH", label: "SSH", protocol: "TCP", portMin: 22, portMax: 22 },
+    { value: "TELNET", label: "TELNET", protocol: "TCP", portMin: 23, portMax: 23 },
+    { value: "SMTP", label: "SMTP", protocol: "TCP", portMin: 25, portMax: 25 },
+    { value: "DNS", label: "DNS", protocol: "TCP", portMin: 53, portMax: 53 },
+    { value: t('RESOURCES_DHCP_SERVER'), label: t('RESOURCES_DHCP_SERVER'), protocol: "UDP", portMin: 67, portMax: 67 },
+    { value: t('RESOURCES_DHCP_CLIENT'), label: t('RESOURCES_DHCP_CLIENT'), protocol: "UDP", portMin: 68, portMax: 68 },
+    { value: "HTTP", label: "HTTP", protocol: "TCP", portMin: 80, portMax: 80 },
+    { value: "POP3", label: "POP3", protocol: "TCP", portMin: 110, portMax: 110 },
+    { value: "IMAP4", label: "IMAP4", protocol: "TCP", portMin: 143, portMax: 143 },
+    { value: "HTTPS", label: "HTTPS", protocol: "TCP", portMin: 443, portMax: 443 },
   ];
 
   const ethernetTypeOptions = [
@@ -92,15 +90,24 @@ const RegistModal = (props) => {
       form.current.props.data[`portIn_${i}`] = 1
     },
 
-    handleInputChange: (i, field, e) => {
+    handleInputChange: (i, field, e, customIdx) => {
       const values = [...formRulesIngressFields];
       const val = e
 
       if (field.indexOf("remoteIpPrefix") != -1) {
         values[i].remoteIpPrefix = val;
       } else {
-
-        values[i].portRangeMax = val;
+        if (isValidPort(val)) {
+          if (val.indexOf('-') != -1) {
+            const [min, max] = val.split('-');
+            values[i].portRangeMin = `${Number(min)}`;
+            values[i].portRangeMax = `${Number(max)}`;
+            form.current.props.data[`portIn_${customIdx}`] = `${Number(min)}-${Number(max)}`;
+          } else {
+            values[i].portRangeMax = `${Number(val)}`;
+            form.current.props.data[`portIn_${customIdx}`] = `${Number(val)}`;
+          }
+        }
       }
 
       setFormRulesIngressFields(values);
@@ -164,14 +171,24 @@ const RegistModal = (props) => {
       form.current.props.data[`portOut_${i}`] = 1
     },
 
-    handleInputChange: (i, field, e) => {
+    handleInputChange: (i, field, e, customIdx) => {
       const values = [...formRulesEgressFields];
       const val = e;
 
       if (field.indexOf("remoteIpPrefix") != -1) {
         values[i].remoteIpPrefix = val;
       } else {
-        values[i].portRangeMax = val;
+        if (isValidPort(val)) {
+          if (val.indexOf('-') != -1) {
+            const [min, max] = val.split('-');
+            values[i].portRangeMin = `${Number(min)}`;
+            values[i].portRangeMax = `${Number(max)}`;
+            form.current.props.data[`portOut_${customIdx}`] = `${Number(min)}-${Number(max)}`;
+          } else {
+            values[i].portRangeMax = `${Number(val)}`;
+            form.current.props.data[`portOut_${customIdx}`] = `${Number(val)}`;
+          }
+        }
       }
 
       setFormRulesEgressFields(values);
@@ -208,15 +225,19 @@ const RegistModal = (props) => {
 
     const { data } = form.current.props;
     values[i].isCustom = (val === "CUSTOM") ? true : false;
+
+    values[i].portRangeMin = ruleTypeOptions.filter((obj) => obj.value === val)[0].portMin;
+    values[i].portRangeMax = ruleTypeOptions.filter((obj) => obj.value === val)[0].portMax;
+
     if (val === "ALL") {
       values[i].protocol = "ALL";
       values[i].ethernetType = "ALL";
+      data[`port${portType}_${customIdx}`] = '0-65535'
     } else {
       values[i].protocol = ruleTypeOptions.filter((obj) => obj.value === val)[0].protocol;
       values[i].ethernetType = "IPv4";
+      data[`port${portType}_${customIdx}`] = `${values[i].portRangeMax}`;
     }
-    values[i].portRangeMax = ruleTypeOptions.filter((obj) => obj.value === val)[0].port;
-    data[`port${portType}_${customIdx}`] = values[i].portRangeMax
 
     let portInput = document.querySelector(`input[name=port${portType}_${customIdx}]`)
     if (
@@ -226,7 +247,6 @@ const RegistModal = (props) => {
       portInput.nextElementSibling.classList.add('hide');
       portInput.parentElement.parentElement.classList.remove('error-item');
     }
-    // values[i].validPort.isValid = false;
 
     return values;
   }
@@ -249,21 +269,18 @@ const RegistModal = (props) => {
 
   const handleOk = () => {
     const onOk = props.onOk;
+    const { data } = form.current.props;
 
     form.current.validator(() => {
-
-      const { data } = form.current.props;
       const security_group_rules = [...formRulesIngressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)
         , ...formRulesEgressFields.filter(obj => delete obj.validPort && delete obj.isCustom && obj.remoteIpPrefix)];
       const sgData = {
         name: data.name,
         security_group_rules,
-        project: projectName
+        project: projectName,
       }
-      setIsSubmitting(true)
       // console.log(sgData)
       onOk({ security_group: sgData })
-
     })
   }
 
@@ -288,11 +305,8 @@ const RegistModal = (props) => {
     if (!value) {
       return callback({ message: t('ENTER_PORT_NUMBER') })
     } else {
-      if (value === '0-65535') {
-        return callback();
-      }
-      if (!isValidPort || !Number.isInteger(value)) {
-        return callback({ message: t('INVALID_PORT_DESC') })
+      if (!isValidPort(value) || !fnCheckPortRange(value)) {
+        return callback({ message: t('RESOURCES_SG_PORT_RANGE_DESC') })
       }
     }
     callback()
@@ -300,13 +314,27 @@ const RegistModal = (props) => {
 
   // port valid
   const isValidPort = port => {
-    return PATTERN_PORT.test(port);
+    return regexPort.test(port);
   };
 
   // ip valid
   const isValidIpAddress = ip => {
     return PATTERN_IP.test(ip);
   };
+
+  const fnCheckPortRange = port => {
+    if (port.indexOf('-') != -1) {
+      if (port.split('-')[1].length === 0 || (Number(port.split('-')[0]) > Number(port.split('-')[1])) || Number(port.split('-')[1]) > 65535) {
+        return false;
+      }
+    } else {
+      if (Number(port) === 0 || Number(port) > 65536) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   // cidrclass valid
   const fnCheckCidrClass = num => {
@@ -334,7 +362,7 @@ const RegistModal = (props) => {
         onCancel={closeModal}
         cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
-        isSubmitting={isSubmitting}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
 
@@ -426,11 +454,10 @@ const RegistModal = (props) => {
                                   },
                                 ]}
                               >
-                                <NumberInput
+                                <Input
+                                  type="text"
                                   name={`portIn_${v.idx}`}
-                                  min={0}
-                                  max={65535}
-                                  onChange={(e) => handleIngressRules.handleInputChange(i, 'portRangeMax', e)}
+                                  onChange={(e) => handleIngressRules.handleInputChange(i, 'portRangeMax', e, v.idx)}
                                   defaultValue={v.portRangeMax}
                                   disabled={!v.isCustom}
                                 />
@@ -521,11 +548,10 @@ const RegistModal = (props) => {
                                   },
                                 ]}
                               >
-                                <NumberInput
+                                <Input
+                                  type='text'
                                   name={`portOut_${v.idx}`}
-                                  min={0}
-                                  max={65535}
-                                  onChange={(e) => handleEgressRules.handleInputChange(i, 'portRangeMax', e)}
+                                  onChange={(e) => handleEgressRules.handleInputChange(i, 'portRangeMax', e, v.idx)}
                                   defaultValue={v.portRangeMax}
                                   disabled={!v.isCustom} />
                               </Form.Item>
