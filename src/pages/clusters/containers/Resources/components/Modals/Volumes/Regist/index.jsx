@@ -1,6 +1,5 @@
 import { get, range } from 'lodash';
 import React, { useState, useRef, useEffect } from 'react';
-
 import {
   Form,
   Input,
@@ -11,20 +10,20 @@ import {
 } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
+
 import { Modal, TypeSelect } from 'components/Base';
 import * as common from 'utils/resources';
 import { ProjectSelect, UnitSlider } from 'components/Inputs';
-
 import { PATTERN_USER_NAME } from 'utils/constants';
-
 import styles from './index.scss';
-
 import VolumeStore from 'stores/resources/volumes';
+import ImageStore from 'stores/resources/images';
 
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 
 const RegistModal = props => {
   const volumeStore = new VolumeStore();
+  const imageStore = new ImageStore();
 
   const form = useRef();
   const [formData, setFormData] = useState({});
@@ -37,20 +36,54 @@ const RegistModal = props => {
 
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
   const [projectName, setProjectName] = useState(
-    props.namespace ? props.namespace : 'default'
+    props.namespace ? props.namespace : 'default',
   );
+  const [images, setImages] = useState([]);
+  const [image, setImage] = useState();
+
+  const [importSource, setImportSource] = useState();
 
   useEffect(() => {
     const getStoregeClassData = async () => {
       const listStoregeClass = await volumeStore.fetchStoregeClass(props);
-      setStoregeClassDataList(listStoregeClass.user_sces);
+      setStoregeClassDataList(listStoregeClass.sces);
+    };
+    const getImageStore = async () => {
+      const listImageBuild = await imageStore.fetchList();
+      setImages(listImageBuild);
     };
 
+    setImportSource(importSourceOptions[0].value);
+
     getStoregeClassData();
+    getImageStore();
   }, []);
 
+  useEffect(() => {
+    const options = imageOptions();
+    if (options.length > 0) {
+      setImage(options[0].value);
+    }
+  }, [images]);
+
   const storageClassOptions = () => {
-    const opt = storegeClassDataList.map(obj => {
+    const opt = storegeClassDataList
+      .filter(obj => obj.is_default_class == true)
+      .map(obj => {
+        return {
+          label: t(obj.name),
+          value: t(obj.name),
+        };
+      });
+
+    return opt;
+  };
+
+  const imageOptions = () => {
+    if (images.length === 0) {
+      return [];
+    }
+    const opt = images.map(obj => {
       return {
         label: t(obj.name),
         value: t(obj.name),
@@ -68,7 +101,7 @@ const RegistModal = props => {
   const importSourceOptions = [
     { label: 'Empty', value: 'Empty' },
     { label: 'ImageVolume', value: 'ImageVolume' },
-    { label: 'DataVolume', value: 'DataVolume' },
+    // { label: 'DataVolume', value: 'DataVolume' },
   ];
 
   const volumeModeOptions = [
@@ -98,10 +131,13 @@ const RegistModal = props => {
       if (typeof volumeCapacity === 'number') {
         data.capacity = volumeCapacity;
       } else {
-        data.capacity = Number(volumeCapacity.substring(0, volumeCapacity.indexOf(removeText)));
+        data.capacity = Number(
+          volumeCapacity.substring(0, volumeCapacity.indexOf(removeText)),
+        );
       }
 
-      setIsSubmitting(true)
+      setIsSubmitting(true);
+
       onOk({ ...data });
     });
   };
@@ -183,7 +219,7 @@ const RegistModal = props => {
     return elements;
   };
 
-  const getMarks = (max) => {
+  const getMarks = max => {
     const count = 5;
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1);
@@ -191,7 +227,6 @@ const RegistModal = props => {
       return { ...marks, [value]: mark };
     }, {});
   };
-
 
   return (
     <>
@@ -211,17 +246,18 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep == 1 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep == 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -233,15 +269,15 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep == 2 ? styles.current : ''}`,
               )}
             >
               <div className={styles.status}>
@@ -347,7 +383,8 @@ const RegistModal = props => {
                   />
                 </Form.Item>
 
-                <Form.Item label={t('RESOURCES_ROOT_DISK')}
+                <Form.Item
+                  label={t('RESOURCES_ROOT_DISK')}
                   rules={[
                     {
                       required: true,
@@ -356,7 +393,8 @@ const RegistModal = props => {
                       pattern: regexRootDisk,
                       message: t('RESOURCES_ROOT_DISK_VALID'),
                     },
-                  ]}>
+                  ]}
+                >
                   <UnitSlider
                     max={320}
                     min={0}
@@ -372,11 +410,26 @@ const RegistModal = props => {
                 <Form.Item label={t('RESOURCES_INPUT_SOURCE')}>
                   <Select
                     name="import_source"
-                    defaultValue={'Empty'}
+                    defaultValue={importSource}
                     options={importSourceOptions}
+                    onChange={e => {
+                      setImportSource(e);
+                    }}
                     clearable
                   />
                 </Form.Item>
+
+                {importSource === 'ImageVolume' && (
+                  <Form.Item label={'가상머신 이미지'}>
+                    <Select
+                      name="import_endpoint"
+                      defaultValue={image}
+                      options={imageOptions()}
+                      onChange={e => setImage(e)}
+                      clearable
+                    />
+                  </Form.Item>
+                )}
 
                 <Form.Item>
                   <Columns>
@@ -390,8 +443,8 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                     </Column>
-                    <Column>
-                      {/* <Form.Item
+                    {/* <Column>
+                      <Form.Item
                           label={t('볼륨 바인드 모드')}
                         >
                           <Select
@@ -400,8 +453,8 @@ const RegistModal = props => {
                             options={bindingModeOptions}
                             clearable
                           />
-                        </Form.Item> */}
-                    </Column>
+                        </Form.Item>
+                    </Column> */}
                   </Columns>
                 </Form.Item>
               </div>
