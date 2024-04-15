@@ -91,7 +91,7 @@ const DetailModal = (props) => {
 
           {/* 솔루션 */}
           <Form.Item>
-            <div className={styles.wrapper} style={{ height: '500px' }}>
+            <div className={styles.wrapper} style={{ height: '342px' }}>
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -104,7 +104,7 @@ const DetailModal = (props) => {
                   </thead>
                   <tbody>
                     <tr>
-                      <td style={{ textAlign: 'unset', paddingLeft: '20px', height: '450px' }}>
+                      <td style={{ textAlign: 'unset', paddingLeft: '20px', height: '300px', verticalAlign: 'top' }}>
                         <span dangerouslySetInnerHTML={{
                           __html: md.render(detail.spec.details)
                         }} />
