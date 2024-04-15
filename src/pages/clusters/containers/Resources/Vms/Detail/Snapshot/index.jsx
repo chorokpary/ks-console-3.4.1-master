@@ -143,10 +143,10 @@ const Snapshot = (props) => {
             {(obj.snapshot_volumes).length > 0 ? (obj.snapshot_volumes).map((item) => <div>{item}</div>) : "-"}
             <p>{t('RESOURCES_SNAPSHOT_VOLUME')}</p>
           </div>
-          {/* <div className={styles.text}>
+          <div className={styles.text}>
             <div>{get(obj, "description", "-")}</div>
-            <p>Description</p>
-          </div>      */}
+            <p>{t('RESOURCES_DESCRIPTION')}</p>
+          </div>
           <div className={styles.button}>
             <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
             <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{ width: "92.69px" }}>{t('RESOURCES_DELETE')}</Button></div>
