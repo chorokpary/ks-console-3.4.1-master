@@ -72,7 +72,7 @@ export default class AppDeployStore extends Base {
     )
 
     const data = (get(result, 'templates') || []);
-   
+
     // const promises = data.map(async (app) => {
     //   const historyList = await axios.get("/app-manager/v1alpha1/taskhistories/" + app.name);
 
@@ -90,15 +90,15 @@ export default class AppDeployStore extends Base {
     // })
     // await Promise.all(promises);
 
-    console.log("data : "+ JSON.stringify(data))
+    // console.log("data : "+ JSON.stringify(data))
 
     // 초기 정렬 처리
     data.sort((a, b) => {
       return a.registrationDate < b.registrationDate
         ? 1
         : a.registrationDate > b.registrationDate
-        ? -1
-        : 0;
+          ? -1
+          : 0;
     });
 
     // 초기 데이터 처리 
@@ -213,8 +213,8 @@ export default class AppDeployStore extends Base {
       return a.id < b.id
         ? 1
         : a.id > b.id
-        ? -1
-        : 0;
+          ? -1
+          : 0;
     });
 
     this.isLoading = false;
@@ -237,8 +237,8 @@ export default class AppDeployStore extends Base {
       return a.id < b.id
         ? 1
         : a.id > b.id
-        ? -1
-        : 0;
+          ? -1
+          : 0;
     });
 
     this.isLoading = false;
@@ -250,14 +250,14 @@ export default class AppDeployStore extends Base {
 
     const jsonData = {};
     const template = {};
-    
+
     template.name = detail.name;
     template.version = detail.version;
 
     jsonData.action = "deploy";
     jsonData.template = template;
 
-    console.log("jsonData : "+ JSON.stringify(jsonData))
+    console.log("jsonData : " + JSON.stringify(jsonData))
 
     await this.submitting(
       request.post(
