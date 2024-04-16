@@ -42,9 +42,9 @@ const FloatingIpDetail = (props) => {
 
   const { routing } = props.rootStore;
 
-  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`
+  const PATH = `${listUrl}/${props.match.params.id}`
 
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  // const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
   const getOperations = () => {
     return (fipConnected ?
@@ -71,7 +71,7 @@ const FloatingIpDetail = (props) => {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           type: 'danger',
-          show: showEdit,
+          // show: showEdit,
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.delete', {
               type: 'FLOATINGIP_DETAIL',

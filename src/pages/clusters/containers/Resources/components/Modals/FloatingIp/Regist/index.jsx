@@ -27,14 +27,14 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList()
+      const routerData = await store.routerList({ ...props })
       setRouterList(getSliceData(routerData.routers));
     };
     fnGetRouterList();
 
     //Network List 추출
     const fnGetNetworkList = async () => {
-      const networkData = await store.networkList()
+      const networkData = await store.networkList({ ...props })
       setNetworkDataList(networkData.networks)
     };
 
