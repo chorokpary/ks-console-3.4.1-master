@@ -278,6 +278,7 @@ const RegistModal = (props) => {
         name: data.name,
         security_group_rules,
         project: projectName,
+        description: data.description
       }
       // console.log(sgData)
       onOk({ security_group: sgData })

@@ -78,21 +78,21 @@ export default class EmptyTable extends React.PureComponent {
           {_icon !== undefined && <Icon name={_icon} size={48} />}
           {_icon === undefined && name === '가상머신' && (
             <i
-              class="ico-type40-vm"
+              className="ico-type40-vm"
               size={48}
               style={{ position: 'relative', left: '6px', top: '3px' }}
             />
           )}
           {_icon === undefined && name === '호스트 디바이스' && (
             <i
-              class="ico-type40-hostdevice"
+              className="ico-type40-hostdevice"
               size={48}
               style={{ position: 'relative', left: '6px', top: '3px' }}
             />
           )}
           {_icon === undefined && name === 'Mediated 디바이스' && (
             <i
-              class="ico-type40-mediatedvgpu"
+              className="ico-type40-mediatedvgpu"
               size={48}
               style={{ position: 'relative', left: '6px', top: '3px' }}
             />

@@ -27,7 +27,7 @@ const Status = props => {
       const promises = (store.detail.router?.internal).map(async item => {
         const internalData = await request.get(
           `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` +
-            item.id,
+          item.id,
         );
         setInternalNetwork(internalNetwork => [
           ...internalNetwork,
@@ -50,7 +50,7 @@ const Status = props => {
             <div className={styles.itemMainRemoveCursor}>
               <div className={styles.icon}>
                 <i
-                  class="ico-type-externalnetwork"
+                  className="ico-type-externalnetwork"
                   style={{ width: '40px', height: '40px' }}
                 ></i>
               </div>
