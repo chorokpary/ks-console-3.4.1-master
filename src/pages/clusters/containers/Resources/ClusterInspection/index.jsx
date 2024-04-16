@@ -35,11 +35,8 @@ export default class ClusterInspection extends React.Component {
   renderChart() {
     if (!this.props.store.list) return;
     const { data } = toJS(this.props.store.list);
-    console.log('sata', data);
     const clusterInfo = data?.clusterInfo;
     const scoreInfo = data?.scoreInfo;
-    console.log('scoreInfo', typeof scoreInfo);
-    console.log('clusterInfo', typeof clusterInfo);
 
     // const scoreInfo = {};
 
