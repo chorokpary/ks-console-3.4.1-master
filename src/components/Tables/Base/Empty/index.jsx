@@ -1,21 +1,3 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -42,22 +24,12 @@ export default class EmptyTable extends React.PureComponent {
 
   render() {
     const { module, icon, title, name, desc, action, className } = this.props;
-    console.log('module', module);
-    console.log('title', title);
-    console.log('name', name);
-    console.log('action', action);
-    console.log('className', className);
 
     const _desc = !isUndefined(desc)
       ? desc
       : t.html(`${name.replace(/[-\s]/g, '_').toUpperCase()}_EMPTY_DESC`);
 
     let _icon = icon || ICON_TYPES[module];
-    // || 'appcenter';
-    // if (name === '가상머신') {
-    //   _icon = 'ico-type-vm';
-    //   // <i class="ico-type-vm"></i>
-    // }
     if (name === 'KaaS 리소스') {
       _icon = 'kubernetes';
     }
@@ -80,14 +52,6 @@ export default class EmptyTable extends React.PureComponent {
     if (name === '볼륨') {
       _icon = 'storage';
     }
-    // if (name === '호스트 디바이스') {
-    //   _icon = 'storage';
-    //   // <i class="ico-type-hostdevice"></i>
-    // }
-    // if (name === 'Mediated 디바이스') {
-    //   _icon = 'storage';
-    //   // <i class="ico-type-mediatedvgpu"></i>
-    // }
     if (name === '애플리케이션 배포 관리') {
       _icon = 'application';
     }
@@ -107,8 +71,6 @@ export default class EmptyTable extends React.PureComponent {
     if (name === '가상머신 이미지 빌드') {
       _icon = 'image';
     }
-    console.log('icon[module]', icon);
-    console.log('ICON_TYPES[module]', ICON_TYPES[module]);
 
     return (
       <div className={classnames(styles.wrapper, className)}>
