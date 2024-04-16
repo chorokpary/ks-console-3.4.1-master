@@ -10,7 +10,7 @@ const Vm = ({ x, y, w, h, ...props }) => {
   const vmStore = new VmStore();
 
   const fetchData = async () => {
-    return await vmStore.vmList()
+    return await vmStore.vmList({ ...props })
   }
   const [list, error, loading] = cleanupTrigger(fetchData, [])
 
