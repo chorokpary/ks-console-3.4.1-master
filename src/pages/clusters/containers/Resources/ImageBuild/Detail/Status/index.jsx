@@ -102,6 +102,22 @@ const Status = (props) => {
                 }
               /> 
             }
+
+           {(!fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
+                <Text
+                  key={type}
+                  className={styles.condition}
+                  icon='image'
+                  title={t(`RESOURCES_FILE_UPLOAD`)}
+                  description={t(`RESOURCES_FILE_UPLOAD_BEFORE_DESC`)}
+                  extra={
+                    <Icon
+                      className={styles.status}
+                      name={'substract'}
+                    />
+                  }
+                /> 
+            }
             {(fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
                 <Text
                   key={type}
@@ -118,6 +134,22 @@ const Status = (props) => {
                         primary: '#fff',
                         secondary: podStatus === 'FileUploadFail' ? '#ca2621' : '#55bc8a',
                       }}
+                    />
+                  }
+                /> 
+            }
+
+            {(!fileBuildArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
+                <Text
+                  key={type}
+                  className={styles.condition}
+                  icon='image'
+                  title={t(`RESOURCES_IMAGE_BUILD_PUSH`)}
+                  description={t(`RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC`)}
+                  extra={
+                    <Icon
+                      className={styles.status}
+                      name={'substract'}
                     />
                   }
                 /> 
