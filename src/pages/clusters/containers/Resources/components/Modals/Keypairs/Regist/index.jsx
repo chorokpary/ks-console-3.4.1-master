@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
-import { Form, Input, Select, TextArea, Button, Loading, Column, Columns } from '@kube-design/components'
+import { Form, Input, Select, Checkbox, TextArea, Button, Loading, Column, Columns } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { ProjectSelect } from 'components/Inputs'
@@ -37,6 +37,28 @@ const RegistModal = (props) => {
   const [privateKey, setPrivateKey] = useState("");
   const [publicKey, setPublicKey] = useState("");
   const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
+  const [cryptoType, setCryptoType] = useState("RSA"); // Default crypto type
+  const [isEditable, setIsEditable] = useState(false);
+
+  const cryptoOptions = [
+      { label: 'RSA', value: 'RSA', },
+      { label: 'ECDSA', value: 'ECDSA', },
+      { label: 'ED25519', value: 'ED25519', },
+  ]
+
+  const initKeypair = async () => {
+    setDownloadBtnVisible(false); // deactivate download button
+    setPrivateKeyDownFlag(false); // deactivate confirmation button
+    setPublicKey("");
+    setPrivateKey("");
+    const { data } = form.current.props;
+    data.publicKey = "";
+  };
+
+  const togglePublicKeyEditable = async () => {
+    setIsEditable(!isEditable);
+    setPrivateKeyDownFlag(!isEditable);
+  };
 
   const createKeypair = async () => {
     let valid = false;
@@ -49,17 +71,39 @@ const RegistModal = (props) => {
 
       setTimeout(() => {
         let forge = require('node-forge');
-        let keyPair = forge.pki.rsa.generateKeyPair(2048)
+        let sshpk = require('sshpk');
 
-        let priveteKey = keyPair.privateKey
-        let publicKey = keyPair.publicKey
+	// Specify the curve
+        const curve = 'nistp521'; // You can use 'nistp256', 'nistp384', or 'nistp521'
 
-        // const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey, globals.user.email);
-        const publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey);
-        const privateKeyToOpenSSH = forge.ssh.privateKeyToOpenSSH(priveteKey);
+	let publicKeyToOpenSSH;
+	let privateKeyToOpenSSH;
 
-        setPublicKey(publicKeyToOpenSSH)
+        const { data } = form.current.props;
+	const crypto = data['crypto'];
+
+	if (crypto === "RSA") {
+	  let keyPair = forge.pki.rsa.generateKeyPair(2048)
+          let priveteKey = keyPair.privateKey
+          let publicKey = keyPair.publicKey
+          publicKeyToOpenSSH = forge.ssh.publicKeyToOpenSSH(publicKey);
+	  privateKeyToOpenSSH = forge.ssh.privateKeyToOpenSSH(priveteKey);
+        } else if (crypto === "ECDSA") {
+	  let keyPair = sshpk.generatePrivateKey('ecdsa', { curve });
+	  publicKeyToOpenSSH = keyPair.toPublic() + " ";
+	  privateKeyToOpenSSH = keyPair.toString('openssh');
+	} else if (crypto === "ED25519") {
+          let keyPair = sshpk.generatePrivateKey('ed25519');
+          publicKeyToOpenSSH = keyPair.toPublic().toString('ssh') + " ";
+          privateKeyToOpenSSH = keyPair.toString('ssh');
+        }
+
+        let refinedPublicKey = publicKeyToOpenSSH + globals.user.username + "@" + "petasus"
+
+        setPublicKey(refinedPublicKey)
         setPrivateKey(privateKeyToOpenSSH)
+
+        data.publicKey = refinedPublicKey
 
         // 신규키생성 버튼 클릭 후, 지문 & 공개 키 자동입력
         setDownloadBtnVisible(true); // 다운로드버튼 활성화
@@ -82,7 +126,7 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
     const keypairName = data['name'];
 
-    let fileName = `${globals.user.username}-${keypairName}-rsa-key.txt`;
+    let fileName = `${globals.user.username}-${keypairName}-${cryptoType.toLowerCase()}-key.txt`;
     let output = privateKey;
     const element = document.createElement('a');
     const file = new Blob([output], {
@@ -99,7 +143,7 @@ const RegistModal = (props) => {
     const { data } = form.current.props;
     const keypairName = data['name'];
 
-    let fileName = `${globals.user.username}-${keypairName}-rsa-key.pub`;
+    let fileName = `${globals.user.username}-${keypairName}-${cryptoType.toLowerCase()}-key.pub`;
     let output = publicKey;
     const element = document.createElement('a');
     const file = new Blob([output], {
@@ -143,61 +187,88 @@ const RegistModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <div className={styles.cont_boxwrap}>
-
-            <div className={styles.divwrap}>
-              <div className={styles.div_left}>
-                <Columns>
-                  <Column>
+            <Form.Item>
+              <Columns>
+                <Column>
+	          <Form.Item
+                    label={t('RESOURCES_NAME')}
+                    rules={[
+                      { required: true, message: t('NAME_EMPTY_DESC') },
+                      {
+                        pattern: PATTERN_USER_NAME,
+                        message: t('RESOURCES_INVALID_NAME_DESC'),
+                      },
+                    ]}
+                    desc={t('NAME_DESC')}
+                  >
+                    <Input
+                      name="name"
+                      autoFocus={true}
+                      maxLength={63}
+                      style={{ maxWidth: 'none' }}
+                    />
+                  </Form.Item>
+	        </Column>
+              {!props.namespace && (
+		  <Column>
                     <Form.Item
-                      label={t('RESOURCES_NAME')}
-                      rules={[
-                        { required: true, message: t('NAME_EMPTY_DESC') },
-                        {
-                          pattern: PATTERN_USER_NAME,
-                          message: t('RESOURCES_INVALID_NAME_DESC'),
-                        },
-                      ]}
-                      desc={t('NAME_DESC')}
+                    label={t('PROJECT')}
+                    desc={t('SELECT_PROJECT_DESC')}
+                    rules={[
+                      { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+                    ]}
                     >
-                      <Input
-                        name="name"
-                        autoFocus={true}
-                        maxLength={63}
-                        style={{ maxWidth: 'none' }}
+                      <ProjectSelect
+                        name="namespace"
+                        defaultValue={projectName}
+                        cluster={props.cluster}
+                        onChange={(e) => setProjectName(e)}
                       />
                     </Form.Item>
-                  </Column>
-                  {!props.namespace && (
-                    <Column>
-                      <Form.Item
-                        label={t('PROJECT')}
-                        desc={t('SELECT_PROJECT_DESC')}
-                        rules={[
-                          { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
-                        ]}
-                      >
-                        <ProjectSelect
-                          name="namespace"
-                          defaultValue={projectName}
-                          cluster={props.cluster}
-                          onChange={(e) => setProjectName(e)}
-                        />
-                      </Form.Item>
-                    </Column>
-                  )}
-                </Columns>
-              </div>
-              <div className={styles.div_right}>
-                <Form.Item>
-                  <div>
-                    {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button>}
-                    {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button>}
-                    {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button>}
-                  </div>
-                </Form.Item>
-              </div>
-            </div>
-
+		  </Column>
+              )}
+              </Columns>
+	    </Form.Item>
+	    <Form.Item>
+	      <Columns>
+	        <Column>
+	          <Form.Item
+                    label={t('RESOURCES_CRYPTO_METHOD')}
+                    desc={t('RESOURCES_SELECT_CRYPTO_METHOD_DESC')}
+                    rules={[{ required: true, message: 'RESOURCES_CRYPTO_METHOD_NOT_SELECT_DESC' }]}
+                  >
+                    <Select
+                      name="crypto"
+                      defaultValue="RSA"
+                      options={cryptoOptions}
+                      onChange={(value) => setCryptoType(value)} />
+                  </Form.Item>
+	        </Column>
+	        <Column>
+                  <Form.Item
+	            label={t('RESOURCES_KEY_GENERATION')}
+	            desc={t('RESOURCES_STORE_PRIVATE_KEY_DESC')}
+	            rules={[{ required: false }]}
+	          >
+                    <div>
+                      {downloadBtnVisible ? "" : <Button onClick={() => createKeypair()}>{t('RESOURCES_CREATE')}</Button>}
+                      {!downloadBtnVisible ? "" : <Button onClick={() => publicKeyDownload()}>{t('RESOURCES_PUBLIC_KEY')}</Button>}
+                      {!downloadBtnVisible ? "" : <Button onClick={() => privateKeyDownload()}>{t('RESOURCES_PRIVATE_KEY')}</Button>}
+                      {!downloadBtnVisible ? "" : <Button onClick={() => initKeypair()}>{t('RESOURCES_KEY_INITIALIZE')}</Button>}
+                    </div>
+                  </Form.Item>
+	        </Column>
+	      </Columns>
+	    </Form.Item>
+	    <Form.Item>
+              <Checkbox
+                name="editable"
+                value="Y"
+                onClick={() => togglePublicKeyEditable()}
+              >
+                {t('RESOURCES_CUSTOMIZE_PUBLIC_KEY')}
+              </Checkbox>
+            </Form.Item>
             <Form.Item
               className={styles.textarea}
               label={t('RESOURCES_PUBLIC_KEY')}
@@ -208,14 +279,13 @@ const RegistModal = (props) => {
                   <TextArea
                     name="publicKey"
                     rows="8"
-                    defaultValue={publicKey}
-                    readOnly
+                    readOnly={!isEditable}
                   />
                 </Loading>
                 : <TextArea
                   name="publicKey"
                   rows="8"
-                  defaultValue={publicKey}
+		  readOnly={!isEditable}
                 />
               }
             </Form.Item>
