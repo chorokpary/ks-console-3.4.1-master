@@ -193,7 +193,7 @@ export default class Resource extends React.Component {
                     return (
                         <div className={styles.avatar}>
                             <div className={styles.icon}>
-                                <Icon name="kubernetes" size={40} />
+                                <Icon name="kubernetes" size={35} />
                                 <Indicator
                                     className={styles.indicator}
                                     type={this.getState(cluster_ready, phase)}
@@ -254,9 +254,8 @@ export default class Resource extends React.Component {
                             <i
                                 className={
                                     styles[
-                                        `ico-status-${
-                                            state ? 'running' : 'stopping'
-                                        }`
+                                    `ico-status-${state ? 'running' : 'stopping'
+                                    }`
                                     ]
                                 }
                             />
