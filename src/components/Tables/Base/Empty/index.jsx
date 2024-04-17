@@ -29,7 +29,7 @@ export default class EmptyTable extends React.PureComponent {
       ? desc
       : t.html(`${name.replace(/[-\s]/g, '_').toUpperCase()}_EMPTY_DESC`);
 
-    let _icon = icon || ICON_TYPES[module];
+    let _icon = icon || ICON_TYPES[module] || 'appcenter';
     if (name === 'KaaS 리소스') {
       _icon = 'kubernetes';
     }
@@ -71,32 +71,20 @@ export default class EmptyTable extends React.PureComponent {
     if (name === '가상머신 이미지 빌드') {
       _icon = 'image';
     }
+    if (name === '가상머신') {
+      _icon = 'ico-type40-vm';
+    }
+    if (name === '호스트 디바이스') {
+      _icon = 'ico-type40-hostdevice';
+    }
+    if (name === 'Mediated 디바이스') {
+      _icon = 'ico-type40-mediatedvgpu';
+    }
 
     return (
       <div className={classnames(styles.wrapper, className)}>
         <div className={styles.image}>
-          {_icon !== undefined && <Icon name={_icon} size={48} />}
-          {_icon === undefined && name === '가상머신' && (
-            <i
-              className="ico-type40-vm"
-              size={48}
-              style={{ position: 'relative', left: '6px', top: '3px' }}
-            />
-          )}
-          {_icon === undefined && name === '호스트 디바이스' && (
-            <i
-              className="ico-type40-hostdevice"
-              size={48}
-              style={{ position: 'relative', left: '6px', top: '3px' }}
-            />
-          )}
-          {_icon === undefined && name === 'Mediated 디바이스' && (
-            <i
-              className="ico-type40-mediatedvgpu"
-              size={48}
-              style={{ position: 'relative', left: '6px', top: '3px' }}
-            />
-          )}
+          {_icon !== undefined && <Icon name={_icon} size={48} className={_icon} />}
         </div>
         <div className={styles.title}>
           {title ||
