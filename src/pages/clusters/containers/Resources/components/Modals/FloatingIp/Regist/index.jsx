@@ -13,6 +13,8 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
   const [networkOriginList, setNetworkOriginList] = useState([]);
   const [networkList, setNetworkList] = useState([]);
   const [routerList, setRouterList] = useState([]);
+  const [availableIpList, setAvailableIpList] = useState([]);
+  const [selectedIp, setSelectedIp] = useState({});
 
   const [networkDataList, setNetworkDataList] = useState([]);
   const [radioExternal, setRadioExternal] = useState("");
@@ -32,12 +34,12 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
     };
     fnGetRouterList();
 
-    //Network List 추출
     const fnGetNetworkList = async () => {
+      const availableIpData = await store.allAvailableIps({ ...props })
       const networkData = await store.networkList({ ...props })
+      setAvailableIpList(availableIpData.all_ips)
       setNetworkDataList(networkData.networks)
     };
-
     fnGetNetworkList();
   }, [])
 
@@ -54,8 +56,13 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
   }, [networkDataList, routerList])
 
   const handleOk = () => {
-    setIsSubmitting(true)
-    onOk({ floating_ip: { network: radioExternal } })
+    setIsSubmitting(true);
+    const _ = require('lodash');
+    if (!_.isEmpty(selectedIp)) {
+      onOk({ floating_ip: selectedIp });
+    } else {
+      onOk({ floating_ip: { network: radioExternal } });
+    }
   }
 
   const getSliceData = (data) => {
@@ -74,7 +81,25 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
     setRadioExternal(list[0]?.id)
   }, [projectName])
 
+  const availableIpOptions = (netId) => {
+    const networkIps = availableIpList.find(obj => obj.network === netId)
+    const opt = networkIps.ips.map((ip) => {
+      return {
+        label: t(ip),
+        value: t(ip),
+      }
+    })
+    return opt
+  }
 
+  const handleIpSelectClick = (netId, val) => {
+    const record = {}
+    if (val != t('RESOURCES_AUTOMATIC') && val != undefined) {
+      record.network = netId;
+      record.floating_ip = val;
+    }
+    setSelectedIp(record)
+  }
 
   return (
     <>
@@ -123,7 +148,7 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
                       <th></th>
                       <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
                       <th><strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong></th>
-                      <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
+                      <th><strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong></th>
                       <th><strong>CIDR</strong></th>
                       <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                     </tr>
@@ -145,7 +170,12 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
                         </td>
                         <td>{data.name}</td>
                         <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
+			<td>
+			  <Select name={`${data.id}-ip`} placeholder={t('RESOURCES_AUTOMATIC')}
+			    options={availableIpOptions(data.id)}
+			    onChange={(e) => handleIpSelectClick(data.id, e)}
+			    clearable />
+			</td>
                         <td>{data.cidr}</td>
                         <td>{data.gateway_ip}</td>
                       </tr>
