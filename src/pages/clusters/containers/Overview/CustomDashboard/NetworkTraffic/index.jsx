@@ -47,6 +47,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
         times: 100,
         // step: '3600s', // 최근 7일
         // times: 160,
+        cluster: props.cluster
       })
       handleData('node', metricData);
       handleContenOption('node', metricData);
@@ -57,6 +58,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
         metrics: Object.values(MetricTypes),
         step: '5m',
         times: 100,
+        cluster: props.cluster
       })
       setPodData(podData)
 
@@ -71,6 +73,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])) )`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
 
       // vm outbound data
@@ -78,6 +81,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(avg by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${vmUuid}"}[5m])) * 100)`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
       setVmData({ ...vmData, ['vmInboundData']: vmInboundData, ['vmOutboundData']: vmOutboundData })
 
@@ -85,6 +89,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(avg by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
 
       // vm outbound data
@@ -92,6 +97,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(avg by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod!~"${vmUuid}"}[5m])))`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
       setKaasData({ ...kaasData, ['vmInboundData']: kaasInboundData, ['vmOutboundData']: kaasOutboundData })
 

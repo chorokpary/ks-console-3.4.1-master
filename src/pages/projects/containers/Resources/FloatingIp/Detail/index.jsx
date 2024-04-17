@@ -39,7 +39,7 @@ const FloatingIpDetail = (props) => {
   const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip`
   const routing = props.rootStore.routing;
 
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  // const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
   const getOperations = () => {
     return (fipConnected ?

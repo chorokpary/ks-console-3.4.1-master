@@ -658,5 +658,8 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH_FAIL_DESC: '이미지 빌드&푸시 실패 상태입니다.',
   RESOURCES_FAIL: '실패',
   RESOURCES_PREPARING: '대기 중',
+  RESOURCES_FILE_UPLOAD_BEFORE_DESC: '파일 업로드 전 상태입니다. ',
+  RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: '이미지 빌드&푸시 전 상태입니다.',
+
 
 };

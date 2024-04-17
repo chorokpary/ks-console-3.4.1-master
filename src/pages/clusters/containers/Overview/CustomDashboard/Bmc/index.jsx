@@ -62,14 +62,16 @@ const Bmc = ({ bmc, ...props }) => {
           promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
         })
 
-        console.log("promql_node_list : " + JSON.stringify(promql_node_list))
+        // console.log("promql_node_list : " + JSON.stringify(promql_node_list))
 
         const getMetricType = await customStore.fetchMetric({
           expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+          cluster: props.cluster
         })
 
         const getMetricData = await customStore.fetchMetric({
           expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+          cluster: props.cluster
         })
         if (cleanupTrigger) {
           setNodeData(data)
@@ -182,6 +184,7 @@ const Bmc = ({ bmc, ...props }) => {
           w={bmc.bmcNode.w}
           h={bmc.bmcNode.h}
           nodeData={nodeData}
+          cluster={props.cluster}
         />
       }
 
@@ -223,6 +226,7 @@ const Bmc = ({ bmc, ...props }) => {
           w={bmc.powerUsageTop5.w}
           h={bmc.powerUsageTop5.h}
           nodeData={nodeData}
+          cluster={props.cluster}
         />
       }
 
@@ -234,6 +238,7 @@ const Bmc = ({ bmc, ...props }) => {
           w={bmc.cpuPower.w}
           h={bmc.cpuPower.h}
           nodeData={nodeData}
+          cluster={props.cluster}
         />
       }
 

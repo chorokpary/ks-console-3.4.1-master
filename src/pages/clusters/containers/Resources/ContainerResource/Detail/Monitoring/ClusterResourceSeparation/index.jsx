@@ -72,6 +72,7 @@ const index = (props) => {
       const kaasCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${props.kaasName}.*"}[5m])) * 100)) / 100`,
         ...paramsData,
+        cluster: props.cluster
       })
 
       setKaasCpuData(kaasCpuData)
@@ -82,6 +83,7 @@ const index = (props) => {
       const kaasMemoryData = await customStore.fetchMetric({
         expr: `sum by (pod) (node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"})`,
         ...paramsData,
+        cluster: props.cluster
       })
 
       setKaasMemoryData(kaasMemoryData)
@@ -92,6 +94,7 @@ const index = (props) => {
       const kaasInboundData = await customStore.fetchMetric({
         expr: `sum by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasName}.*"}[5m]))`,
         ...paramsData,
+        cluster: props.cluster
       })
 
       setKaasInboundData(kaasInboundData);
@@ -102,6 +105,7 @@ const index = (props) => {
       const kaasOutboundData = await customStore.fetchMetric({
         expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasName}.*"}[5m]))`,
         ...paramsData,
+        cluster: props.cluster
       })
 
       setKaasOutboundData(kaasOutboundData);

@@ -206,6 +206,7 @@ const Status = (props) => {
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.match.params.cluster
       })
       resolve(cpuFetchData)
     })
@@ -219,6 +220,7 @@ const Status = (props) => {
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.match.params.cluster
       })
       resolve(memoryFetchData)
     })

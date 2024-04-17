@@ -41,19 +41,21 @@ const ModifyModal = (props) => {
 
       const { data } = form.current.props;
 
-      if (!file) {
-        setFilerValidError(true)
-        setFileExtError(false)
-        return false;
-      } else {
-        const ext = (file.name).split('.').pop().toLowerCase();
-        const isValidExt = ext == "zip" ? true : false;
-        if (isValidExt) {
-          setFilerValidError(false)
-        } else {
-          setFilerValidError(false)
-          setFileExtError(true)
+      if (!(props.store.detail.playbookName === fileName && !file)) {
+        if (!file) {
+          setFilerValidError(true)
+          setFileExtError(false)
           return false;
+        } else {
+          const ext = (file.name).split('.').pop().toLowerCase();
+          const isValidExt = ext == "zip" ? true : false;
+          if (isValidExt) {
+            setFilerValidError(false)
+          } else {
+            setFilerValidError(false)
+            setFileExtError(true)
+            return false;
+          }
         }
       }
 
@@ -100,10 +102,14 @@ const ModifyModal = (props) => {
 
       const formData = new FormData();
       formData.append("body", JSON.stringify(jsonData));
-      formData.append("playbook", file);
 
       setSubmitButtonFlag(true);
-      setFileUploadStartFlag(true);
+      if (!(props.store.detail.playbookName === fileName && !file)) {
+        formData.append("playbook", file);
+        setFileUploadStartFlag(true);
+      }
+
+
 
       // const url = props.cluster ? `/kapis/cmp.kubesphere.io/v1alpha1/klusters/${props.cluster}/app-manager/v1alpha1/templates`
       //                           : `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
@@ -119,10 +125,10 @@ const ModifyModal = (props) => {
             (progressEvent.loaded * 100) / progressEvent.total
           );
           fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
-          console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
+          // console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
         },
       }).then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         onOk({ ...data })
       }).catch((err) => {
         // console.error(err);
@@ -148,7 +154,7 @@ const ModifyModal = (props) => {
 
     const selectedVmArray = [];
     await listVmInventory.map((item) => {
-      !!data['vm_' + item] && selectedVmArray.push(data['vm_' + item])
+      !!data?.['vm_' + item] && selectedVmArray.push(data?.['vm_' + item])
       getVmIp(item);
     })
 
@@ -223,7 +229,7 @@ const ModifyModal = (props) => {
 
   // File Upload Start ############################################
   const fileInputRef = useRef(null);
-  const [fileName, setFileName] = useState();
+  const [fileName, setFileName] = useState(props.store.detail.playbookName);
 
   const [fileUploadStartFlag, setFileUploadStartFlag] = useState(false);
   const uploadingText = useRef();
