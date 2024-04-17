@@ -49,6 +49,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
         fillZero: true,
         step: '1d',
         times: 10,
+        cluster: props.cluster
       })
 
       const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp', ...props })

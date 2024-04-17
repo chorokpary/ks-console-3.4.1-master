@@ -29,18 +29,19 @@ const CloneModal = (props) => {
 
     const params = { cluster, namespace }
 
-    form.current.validator(async () => {   
-      
+    form.current.validator(async () => {
+
       const { data } = form.current.props;
       data.source_vm_id = vmId;
-      
-      setButtonDisabled(true);
 
+      setButtonDisabled(true);
       vmStore.cloneCreate(data, params).then(() => {
         Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
         success();
         setButtonDisabled(false);
         closeModal();
+      }).catch(e => {
+        setButtonDisabled(false);
       })
 
     })
@@ -69,26 +70,26 @@ const CloneModal = (props) => {
               rules={[{ required: true, message: t('RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP') }]}
             >
               <Input
-                  name="target_vm_name"
-                  autoFocus={true}
-                  style={{ maxWidth: 'none' }}
-                  defaultValue={defaultCloneName}
-                />  
+                name="target_vm_name"
+                autoFocus={true}
+                style={{ maxWidth: 'none' }}
+                defaultValue={defaultCloneName}
+              />
             </Form.Item>
             <Form.Item
               label={t('RESOURCES_DESCRIPTION')}
               rules={[{ required: true, message: t('RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP') }]}
             >
               <Input
-                  name="description"
-                  style={{ maxWidth: 'none' }}
-                />  
-            </Form.Item> 
+                name="description"
+                style={{ maxWidth: 'none' }}
+              />
+            </Form.Item>
           </Form>
         </div>
         <div className={styles.footer}>
-          <Button 
-            onClick={() => closeModal()} 
+          <Button
+            onClick={() => closeModal()}
             data-test="modal-cancel"
             disabled={buttonDisabled}
           >
@@ -98,11 +99,12 @@ const CloneModal = (props) => {
             type="control"
             onClick={() => handleOk()}
             data-test="modal-ok"
+            loading={buttonDisabled}
             disabled={buttonDisabled}
           >
             {t('OK')}
           </Button>
-        </div>        
+        </div>
 
       </Modal>
 

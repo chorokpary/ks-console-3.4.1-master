@@ -1,5 +1,5 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
@@ -29,8 +29,7 @@ const Status = (props) => {
 
   const textClipboard = () => {
     const keyText = showSecret ? originData : encodeKey;
-    navigator.clipboard.writeText(keyText);
-    Notify.success(t('RESOURCES_COPY_SUCCESSFUL'));
+    navigator.clipboard.writeText(keyText).then(e => Notify.success(t('RESOURCES_COPY_SUCCESSFUL')));
   }
 
   // 초기 데이터 처리
@@ -39,13 +38,13 @@ const Status = (props) => {
     setEncodeKey(createEncode64(get(store.detail.keypair, 'public_key', '')));
   }, [])
 
-  const renderOperations = () =>{
+  const renderOperations = () => {
     return (
       <div>
         <Button
           type="flat"
           icon={showSecret ? 'eye' : 'eye-closed'}
-          onClick={() => {setShowSecret(!showSecret)}}
+          onClick={() => { setShowSecret(!showSecret) }}
         />
         <Button onClick={() => textClipboard()}>{t('RESOURCES_COPY')}</Button>
       </div>
@@ -53,20 +52,20 @@ const Status = (props) => {
   }
 
   return (
-    <>  
-        <div>
-         <Card operations={renderOperations()}>
+    <>
+      <div>
+        <Card operations={renderOperations()}>
           <div className={styles.defaultWrapper}>
-              <ul>
-                  <li>
-                    <span>
-                      <pre>{convert()}</pre>
-                    </span>
-                  </li>
-              </ul>
-            </div>
-         </Card>
-      </div>         
+            <ul>
+              <li>
+                <span>
+                  <pre>{convert()}</pre>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </Card>
+      </div>
     </>
   );
 };

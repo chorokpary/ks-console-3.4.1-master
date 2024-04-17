@@ -6,7 +6,7 @@ import { get } from 'lodash'
 import { getValueByUnit } from 'utils/monitoring'
 
 const PowerUsageTop5 = ({ x, y, w, h,
-  nodeData
+  nodeData, cluster
 }) => {
   const customStore = new CustomStore()
 
@@ -45,10 +45,12 @@ const PowerUsageTop5 = ({ x, y, w, h,
     setLoading(true)
     const metric_type = await customStore.fetchMetric({
       expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+      cluster
     })
 
     const metric_power = await customStore.fetchMetric({
       expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      cluster
     })
 
     // if (cleanupTrigger) {
@@ -82,7 +84,7 @@ const PowerUsageTop5 = ({ x, y, w, h,
 
   const handleList = (nodeType) => {
     var arr = nodeData
-    console.log(metricPower)
+
     if (nodeType == '') {
       arr.map(obj => obj.power = getMetricValue(obj))
     } else {
