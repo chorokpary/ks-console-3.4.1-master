@@ -161,13 +161,9 @@ export default class SecurityGroupStore extends Base {
         data.direction = obj.direction.toLowerCase();
         data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
         data.protocol = obj.protocol.toLowerCase();
-        if (obj.ethernetType === "ALL") {
-          data.port_range_min = obj.portRangeMax.split("-")[0];
-          data.port_range_max = obj.portRangeMax.split("-")[1];
-        } else {
-          data.port_range_min = obj.portRangeMax;
-          data.port_range_max = obj.portRangeMax;
-        }
+        data.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
+        data.port_range_max = obj.portRangeMax;
+
         data.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
 
         jsonData.security_group_rule = data;
@@ -257,13 +253,8 @@ export default class SecurityGroupStore extends Base {
         jData.direction = obj.direction.toLowerCase();
         jData.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
         jData.protocol = obj.protocol.toLowerCase();
-        if (obj.ethernetType === "ALL") {
-          jData.port_range_min = obj.portRangeMax.split("-")[0];
-          jData.port_range_max = obj.portRangeMax.split("-")[1];
-        } else {
-          jData.port_range_min = obj.portRangeMax;
-          jData.port_range_max = obj.portRangeMax;
-        }
+        jData.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
+        jData.port_range_max = obj.portRangeMax;
         jData.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
         jsonData.security_group_rule = jData;
 

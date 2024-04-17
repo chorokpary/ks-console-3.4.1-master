@@ -367,4 +367,11 @@ export default class LoadBalancerStore extends Base {
         return response;
     }
 
+    @action
+    async routerList(params) {
+        const result = await request.get(
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
+        )
+        return result
+    }
 }

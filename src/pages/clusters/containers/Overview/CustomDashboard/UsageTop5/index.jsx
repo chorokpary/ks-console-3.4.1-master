@@ -150,6 +150,7 @@ const UsageTop5 = ({ x, y, w, h, ...props }) => {
       expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",${filtered}}[5m])) * 100)) / 100`,
       start: currentTime,
       end: currentTime,
+      cluster: props.cluster
     })
     handleDataList(cpuData)
   };
@@ -163,6 +164,7 @@ const UsageTop5 = ({ x, y, w, h, ...props }) => {
       expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",${filtered}}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",${filtered}}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",${filtered}}`,
       start: currentTime,
       end: currentTime,
+      cluster: props.cluster
     })
     handleDataList(memoryData)
   };

@@ -87,7 +87,7 @@ const ClusterResourceStatus = (props) => {
     // kaas memory data
     const getMemoryUsageData = () => {
         const currentTime = Math.floor(Date.now() / 1000);
-        return new Promise(async  (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const memoryFetchData = await customStore.fetchMetric({
                 expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
                 start: currentTime - 30000,
@@ -142,7 +142,7 @@ const ClusterResourceStatus = (props) => {
                     </Loading>
                     {/* // grid_item */}
                 </div>
-            </div >  
+            </div >
         </>
     )
 }
