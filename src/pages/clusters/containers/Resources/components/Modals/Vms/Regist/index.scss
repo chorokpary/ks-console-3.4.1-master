@@ -20,7 +20,6 @@
   }
 }
 
-
 .typeselectbox {
   width: 50%;
 }
@@ -81,6 +80,7 @@
   table {
     width: 100%;
     text-align: left;
+    border-collapse: unset;
 
     thead {
       th {
