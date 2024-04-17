@@ -231,6 +231,7 @@ const RegistModal = (props) => {
   }
 
   const getScript = () => {
+    const { data } = form.current.props;
     let makeScriptStep_1 = false;
     let makeScriptStep_2 = false;
     let makeScriptStep_3 = false;
