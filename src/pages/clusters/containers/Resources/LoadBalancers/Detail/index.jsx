@@ -64,12 +64,14 @@ const LoadBalancerDetail = (props) => {
                         type: 'LB_DETAIL',
                         store: store,
                         success: fetchData,
+                        ...props.match.params
                     })
                 } else {
                     props.rootStore.triggerAction('loadBalancer.floatingIpPop.deallocate', {
-                        data: { id: floatingId },
                         store: floatingstore,
                         success: fetchData,
+                        ...props.match.params,
+                        data: { id: floatingId }
                     })
                 }
             },

@@ -56,6 +56,7 @@ const FloatingIpDetail = (props) => {
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.deallocate', {
+              ...props.match.params,
               store: store,
               data: { id: detail.id },
               type: "LB_POP",
@@ -91,6 +92,7 @@ const FloatingIpDetail = (props) => {
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.vmPop', {
+              ...props.match.params,
               store: store,
               type: "VM_POP",
               success: () => handleConnectSuccess(true),
@@ -103,6 +105,7 @@ const FloatingIpDetail = (props) => {
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.lbPop', {
+              ...props.match.params,
               store: store,
               type: "LB_POP",
               success: () => handleConnectSuccess(true),
