@@ -113,7 +113,7 @@ export default {
             const modal = Modal.open({
                 onOk: () => {
                     store
-                        .update(data, { cluster, workspace, namespace, devops, name: data.id })
+                        .update({ cluster, workspace, namespace, devops, id: data.id })
                         .then(() => {
                             Modal.close(modal)
                             Notify.success({ content: t('RESOURCES_RELEASE_SUCCESSFULLY') })

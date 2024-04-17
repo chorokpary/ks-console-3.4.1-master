@@ -58,6 +58,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         times: 100,
         // step: '3600s', // 최근 7일
         // times: 160,
+        cluster: props.cluster
       })
 
       // first render
@@ -70,6 +71,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         metrics: Object.values(MetricTypes),
         step: '5m',
         times: 100,
+        cluster: props.cluster
       })
       handlePodData(podData)
 
@@ -100,6 +102,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_vm_list}"}[${step}])) * ${times})) / 100 / ${vm_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
 
       // vm memory data
@@ -107,6 +110,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${promsql_pod_vm_list}"}) / ${vm_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
       setVmData({ ...vmData, ['cpuData']: vmCpuData, ['memoryData']: vmMemoryData })
 
@@ -115,6 +119,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod!~"${promsql_pod_kaas_list}"}[${step}])) * ${times})) / 100 / ${kaas_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
 
       // kaas memory data
@@ -122,6 +127,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_list}"})/ ${kaas_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
+        cluster: props.cluster
       })
       setKaasData({ ...kaasData, ['cpuData']: kaasCpuData, ['memoryData']: kaasMemoryData })
 

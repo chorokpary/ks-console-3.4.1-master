@@ -6,7 +6,7 @@ import { get } from 'lodash'
 import { getValueByUnit } from 'utils/monitoring'
 
 const BmcNode = ({ x, y, w, h,
-  nodeData
+  nodeData, cluster
 }) => {
   const customStore = new CustomStore()
   const [loading, setLoading] = useState(false)
@@ -34,42 +34,52 @@ const BmcNode = ({ x, y, w, h,
       setLoading(true)
       const metric_type = await customStore.fetchMetric({
         expr: `group by(instance, machine) (node_uname_info)`,
+        cluster
       })
 
       const metric_cpu = await customStore.fetchMetric({
         expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[5m]))`,
+        cluster
       })
 
       const metric_core = await customStore.fetchMetric({
         expr: `count(node_cpu_seconds_total{mode="idle"}) without (cpu,mode)`,
+        cluster
       })
 
       const metric_memory_total = await customStore.fetchMetric({
         expr: `avg by(instance) (node_memory_MemTotal_bytes)`,
+        cluster
       })
 
       const metric_memory_free = await customStore.fetchMetric({
         expr: `avg by (instance) (node_memory_MemFree_bytes)`,
+        cluster
       })
 
       const metric_disk_total = await customStore.fetchMetric({
         expr: `sum by(instance) (node_filesystem_size_bytes)`,
+        cluster
       })
 
       const metric_disk_free = await customStore.fetchMetric({
         expr: `sum by(instance) (node_filesystem_avail_bytes)`,
+        cluster
       })
 
       const metric_power = await customStore.fetchMetric({
         expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+        cluster
       })
 
       const metric_temperature = await customStore.fetchMetric({
         expr: `avg by(target) (redfish_chassis_temperature_celsius)`,
+        cluster
       })
 
       const metric_state = await customStore.fetchMetric({
         expr: `group by(target) (redfish_system_power_state)`,
+        cluster
       })
 
       if (cleanupTrigger) {

@@ -29,7 +29,7 @@ const CustomDashboard = (props) => {
   const { cluster } = props.match.params
   const { routing } = props.rootStore;
 
-  const monitorStore = new ClusterMonitorStore({ cluster })
+  const monitorStore = new ClusterMonitorStore()
 
   const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
 

@@ -141,7 +141,7 @@ export default PATH => [
     component: FlavorDetail,
   },
   {
-    path: `${PATH}/floatingip/:name/:id`,
+    path: `${PATH}/floatingip/:id`,
     component: FloatingIpDetail,
   },
   {

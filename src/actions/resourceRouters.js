@@ -54,11 +54,11 @@ export default {
     },
   },
   'router.edit': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -69,6 +69,7 @@ export default {
         modal: ModifyModal,
         store,
         module,
+        cluster,
         ...props,
       })
     },
@@ -110,7 +111,7 @@ export default {
       const rowKeys = toJS(store.list.selectedRowKeys)
       let arr = new Array
       store.dataList.map(obj => {
-        if(rowKeys.includes(obj.id)){
+        if (rowKeys.includes(obj.id)) {
           arr.push(obj.name)
         }
       })
@@ -197,11 +198,11 @@ export default {
     },
   },
   'router.edit.project': {
-    on({  store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id : data.id }, data)
+            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -212,6 +213,7 @@ export default {
         modal: ModifyModalProject,
         store,
         module,
+        cluster, workspace, namespace,
         ...props,
       })
     },

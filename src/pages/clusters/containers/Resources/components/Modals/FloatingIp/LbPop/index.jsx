@@ -6,7 +6,8 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { toJS } from 'mobx'
 
-const LbPop = ({ title, onOk, store, match }) => {
+const LbPop = ({ title, onOk, store, ...props }) => {
+
   // LB list
   // FIP 상세의 network가
   // Router의 external 이면서
@@ -34,14 +35,14 @@ const LbPop = ({ title, onOk, store, match }) => {
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList(match?.params)
+      const routerData = await store.routerList({ cluster: props.cluster, namespace: props.namespace })
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetLbList = async () => {
-      const lbData = await store.lbList(match?.params)
-      setLbList(lbData)
+      const lbData = await store.lbList({ cluster: props.cluster, namespace: props.namespace })
+      setLbList(lbData.lbs)
     };
 
     fnGetLbList();
@@ -49,7 +50,11 @@ const LbPop = ({ title, onOk, store, match }) => {
 
   useEffect(() => {
     if (lbList.length > 0 && routerList.length > 0) {
+      console.log(lbList)
+      console.log(routerList)
+      console.log(fipDetail)
       const internalList = routerList.find((obj) => obj.external?.id == fipDetail.network)?.internal || [];
+
       const list = lbList.filter((obj) => internalList.find(it => it.id == obj.network.id))
       setList(list)
       if (list.length > 0) handleLbData(list[0])
@@ -59,7 +64,7 @@ const LbPop = ({ title, onOk, store, match }) => {
   const handleOk = () => {
     onOk(
       {
-        ...match?.params,
+        cluster: props.cluster, namespace: props.namespace,
         id: fipDetail.id,
         instance_type: 'lb',
         instance_id: lbData.id,

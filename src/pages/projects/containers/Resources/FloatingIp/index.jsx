@@ -47,9 +47,23 @@ export default class FloatingIp extends React.Component {
   }
 
   get tableActions() {
-    const { tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props
     return {
       ...tableProps.tableActions,
+      actions: [
+        {
+          key: 'regist',
+          type: 'control',
+          text: t('RESOURCES_CREATE'),
+          action: 'create',
+          onClick: () =>
+            trigger('floatingIp.regist', {
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
+        },
+      ],
     }
   }
 
@@ -67,7 +81,7 @@ export default class FloatingIp extends React.Component {
           <Avatar
             icon="intranet-routers"
             iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip/${name}/${floatingip.id}`}
+            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip/${item.id}`}
             title={floating_ip}
           />
         ),

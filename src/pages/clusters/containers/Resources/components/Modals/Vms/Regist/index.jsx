@@ -36,6 +36,8 @@ const RegistModal = (props) => {
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
   const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
+  const [availableIpList, setAvailableIpList] = useState([]);
+  const [selectedIpList, setSelectedIpList] = useState([]);
 
   const [networkList, setNetworkList] = useState([]);
   const [securityGroupList, setSecurityGroupList] = useState([]);
@@ -100,6 +102,7 @@ const RegistModal = (props) => {
       const listNode = await vmStore.fetchVmListNode({ ...props });
       const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({ ...props });
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({ ...props });
+      const listAvailableIps = await vmStore.fetchAllAvailableIps({ ...props });
 
       setFlavorDataList(listFlavor.flavors);
 
@@ -110,6 +113,7 @@ const RegistModal = (props) => {
       setNodeDataList(listNode.nodes.filter(obj => obj.node_role != 'master'));
       setSecurityGroupDataList(listSecurityGroup);
       setStoregeClassDataList(listStoregeClass.user_sces)
+      setAvailableIpList(listAvailableIps.all_ips);
     };
     getVmCreateData();
 
@@ -130,6 +134,28 @@ const RegistModal = (props) => {
     { label: 'Windows', value: 'windows', icon: 'ico-windows', },
     // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
+
+  const availableIpOptions = (netId) => {
+    const networkIps = availableIpList.find(obj => obj.network === netId)
+    const opt = networkIps.ips.map((ip) => {
+      return {
+        label: t(ip),
+        value: t(ip),
+      }
+    })
+    return opt
+  }
+
+  const handleIpSelectClick = (netId, val) => {
+    const record = {}
+    record.network_name = netId;
+    record.fixed_ip = val;
+    const existing = selectedIpList.filter(obj => obj.network_name !== netId);
+    if (val != t('RESOURCES_SELECT') && val != undefined) {
+      existing.push(record);
+    }
+    setSelectedIpList(existing);
+  }
 
   const storageClassOptions = () => {
     const opt = storegeClassDataList.map((obj) => {
@@ -213,6 +239,7 @@ const RegistModal = (props) => {
 
       data.project = projectName;
       data.network = networkCheckItems;
+      data.ips = selectedIpList;
       data.sriov = sriovCheckItems;
       data.securitygroup = securityGroupCheckItems;
       data.imageType = imageType;
@@ -231,6 +258,7 @@ const RegistModal = (props) => {
   }
 
   const getScript = () => {
+    const { data } = form.current.props;
     let makeScriptStep_1 = false;
     let makeScriptStep_2 = false;
     let makeScriptStep_3 = false;
@@ -1012,7 +1040,7 @@ const RegistModal = (props) => {
                             </th>
                             <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
                             <th><strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong></th>
-                            <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
+                            <th><strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong></th>
                             <th><strong>CIDR</strong></th>
                             <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
                           </tr>
@@ -1033,7 +1061,12 @@ const RegistModal = (props) => {
                               </td>
                               <td>{data.name}</td>
                               <td>{(data.type).toUpperCase()}</td>
-                              <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
+			      <td>
+			        <Select name={`${data.id}-ip`} placeholder={t('RESOURCES_AUTOMATIC')} 
+				  options={availableIpOptions(data.id)} 
+				  onChange={(e) => handleIpSelectClick(data.id, e)} 
+				  clearable />
+			      </td>
                               <td>{data.cidr}</td>
                               <td>{data.gateway_ip}</td>
                             </tr>

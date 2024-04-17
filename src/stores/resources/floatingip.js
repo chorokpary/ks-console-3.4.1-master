@@ -121,34 +121,7 @@ export default class FloatingIpStore extends Base {
         const result = await request.get(
             `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
         )
-        let dataList = result?.lbs || [];
-
-        if (params.namespace) {
-            params.project = params.namespace;
-        }
-
-        const searchArray = Object.keys(params).map((key) => {
-            let value = params[key];
-            let searchData = {
-                "searchKeywordType": key,
-                "searchKeywordText": value
-            }
-            return searchData
-        })
-
-        if (searchArray.length > 0) {
-            searchArray.map((search) => {
-                let resultList = result.lbs.filter((row) => {
-                    if (search.searchKeywordType === 'project') {
-                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                    }
-                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                });
-                dataList = resultList;
-            })
-        }
-
-        return dataList
+        return result
     }
     @action
     async vmList(params = {}) {
@@ -156,32 +129,6 @@ export default class FloatingIpStore extends Base {
             `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
         )
         let dataList = result?.vms || [];
-
-        if (params.namespace) {
-            params.project = params.namespace;
-        }
-
-        const searchArray = Object.keys(params).map((key) => {
-            let value = params[key];
-            let searchData = {
-                "searchKeywordType": key,
-                "searchKeywordText": value
-            }
-            return searchData
-        })
-
-        if (searchArray.length > 0) {
-            searchArray.map((search) => {
-                let resultList = result.vms.filter((row) => {
-                    if (search.searchKeywordType === 'project') {
-                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                    }
-                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                });
-                dataList = resultList;
-            })
-        }
-
         return dataList
     }
     @action

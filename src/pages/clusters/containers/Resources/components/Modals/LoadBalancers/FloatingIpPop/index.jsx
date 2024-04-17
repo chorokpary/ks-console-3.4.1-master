@@ -45,7 +45,7 @@ const FloatingIpModal = (props) => {
       data.target_network = networkName
       data.target_ip = vIp
 
-      floatingStore.update({ ...props, ...data }).then(() => {
+      floatingStore.update({ cluster: props.cluster, namespace: props.namespace, ...data }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
         closeModal();

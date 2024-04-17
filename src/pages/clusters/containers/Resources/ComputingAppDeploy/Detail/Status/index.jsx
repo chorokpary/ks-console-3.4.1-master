@@ -1,5 +1,5 @@
 import { get, groupBy } from 'lodash'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { getLocalTime } from 'utils'
@@ -21,12 +21,29 @@ const Status = (props) => {
 
   const statusType = ['success', 'running']
 
+  const [activationTrigger, setActivationTrigger] = useReducer(activationTrigger => !activationTrigger, false);
+
   useEffect(() => {
-       getHistoryList();
+    getHistoryList();
   }, [])
 
+  let timer = 0;
+  const activeCrListTimer = () => {
+    timer = setTimeout(() => {
+      getHistoryList()
+      setActivationTrigger()
+    }, 3000)
+  }
+
+  useEffect(() => {
+    activeCrListTimer()
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [activationTrigger])
+
   const getHistoryList = async () => {
-    const parms = {"cluster": store.detail.cluster,"name": store.detail.name}
+    const parms = { "cluster": store.detail.cluster, "name": store.detail.name }
     const response = await appDeployStore.fetchHistoryList(parms);
 
     setHistoryList(response)
@@ -34,80 +51,79 @@ const Status = (props) => {
   };
 
   useEffect(() => {
-    let timer = setInterval(()=>{ getHistoryList() }, 3000);
+    getHistoryList();
   }, [])
-
 
   const fnExplanation = (ex) => {
     return props.rootStore.triggerAction('computingappdeploy.detail', {
       type: 'APPDEPLOY_DETAIL',
-      explanation : ex,
+      explanation: ex,
     })
   }
 
 
   return (
-    <>  
-       <div className={styles.defaultWrapper}>
+    <>
+      <div className={styles.defaultWrapper}>
 
-          {historyList?.length == 0 &&
-            <div className={styles.wrapper}>
-                {isLoading ?
-                  <div className={styles.loading}><Loading /></div>
-                  : <div className={styles.empty}>{t('RESOURCES_NO_DATA_TASK_LOG')}</div>
-                }
-              </div>
-          }
+        {historyList?.length == 0 &&
+          <div className={styles.wrapper}>
+            {isLoading ?
+              <div className={styles.loading}><Loading /></div>
+              : <div className={styles.empty}>{t('RESOURCES_NO_DATA_TASK_LOG')}</div>
+            }
+          </div>
+        }
 
-          {historyList?.length > 0 &&
-            <div className={styles.table}>
-                <table>
-                  <colgroup>
-                      <col width="10%"/>
-                      <col width="10%"/>
-                      <col width="20%"/>
-                      <col width="25%"/>
-                      <col width="25%"/>
-                      <col width="10%"/>
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th><strong>{t('RESOURCES_TASK_ID')}</strong></th>
-                        <th><strong>{t('RESOURCES_VERSION')}</strong></th>
-                        <th><strong>{t('RESOURCES_STATE')}</strong></th>
-                        <th><strong>{t('RESOURCES_START_TIME')}</strong></th>
-                        <th><strong>{t('RESOURCES_END_TIME')}</strong></th>
-                        <th><strong>{t('RESOURCES_LOG')}</strong></th>
-                      </tr>
-                    </thead>
-                    <tbody>                     
-                        {historyList && historyList.map((obj, index) => (
-                          <tr key={index}>
-                            <td><p className={styles.taskId}>#{obj.id}</p></td>
-                            <td><p>{obj.templateVersion}</p></td>
-                            <td>
-                              <div className={styles.iconwrapper}>   
-                                  <Indicator
-                                    className={styles.indicator}
-                                    type={statusType.includes(obj.status) ? 'running' : obj.status === 'create' ? 'completed' : 'error'}
-                                    flicker
-                                  /> 
-                                  <p className={statusType.includes(obj.status) ? styles.success : obj.status === 'create' ? styles.done : styles.error}>{(obj.status)[0].toUpperCase()+ (obj.status).slice(1, (obj.status).length)}</p>
-                               </div>
-                            </td>
-                            <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
-                            <td><p>{obj.endTime == "" ? "-" : getLocalTime(obj.endTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
-                            <td>
-                                <Icon name="log" size={20} onClick={() => fnExplanation(obj.explanation)} style={{ cursor: 'pointer' }}/>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>      
-          }
+        {historyList?.length > 0 &&
+          <div className={styles.table}>
+            <table>
+              <colgroup>
+                <col width="10%" />
+                <col width="10%" />
+                <col width="20%" />
+                <col width="25%" />
+                <col width="25%" />
+                <col width="10%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th><strong>{t('RESOURCES_TASK_ID')}</strong></th>
+                  <th><strong>{t('RESOURCES_VERSION')}</strong></th>
+                  <th><strong>{t('RESOURCES_STATE')}</strong></th>
+                  <th><strong>{t('RESOURCES_START_TIME')}</strong></th>
+                  <th><strong>{t('RESOURCES_END_TIME')}</strong></th>
+                  <th><strong>{t('RESOURCES_LOG')}</strong></th>
+                </tr>
+              </thead>
+              <tbody>
+                {historyList && historyList.map((obj, index) => (
+                  <tr key={index}>
+                    <td><p className={styles.taskId}>#{obj.id}</p></td>
+                    <td><p>{obj.templateVersion}</p></td>
+                    <td>
+                      <div className={styles.iconwrapper}>
+                        <Indicator
+                          className={styles.indicator}
+                          type={statusType.includes(obj.status) ? 'running' : obj.status === 'create' ? 'completed' : 'error'}
+                          flicker
+                        />
+                        <p className={statusType.includes(obj.status) ? styles.success : obj.status === 'create' ? styles.done : styles.error}>{(obj.status)[0].toUpperCase() + (obj.status).slice(1, (obj.status).length)}</p>
+                      </div>
+                    </td>
+                    <td><p>{getLocalTime(obj.startTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
+                    <td><p>{obj.endTime == "" ? "-" : getLocalTime(obj.endTime).format('YYYY-MM-DD HH:mm:ss')}</p></td>
+                    <td>
+                      <Icon name="log" size={20} onClick={() => fnExplanation(obj.explanation)} style={{ cursor: 'pointer' }} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        }
 
-          </div>                 
+      </div>
     </>
   );
 };

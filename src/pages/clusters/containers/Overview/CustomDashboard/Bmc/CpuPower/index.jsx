@@ -16,7 +16,7 @@ const stepData = {
 }
 
 const CpuPower = ({ x, y, w, h,
-  nodeData
+  nodeData, cluster
 }) => {
 
   const customStore = new CustomStore();
@@ -48,10 +48,12 @@ const CpuPower = ({ x, y, w, h,
 
     const metric_type = await customStore.fetchMetric({
       expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+      cluster
     })
 
     const metric_power_last = await customStore.fetchMetric({
       expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
+      cluster
     })
 
     setMetricType(metric_type)
@@ -111,7 +113,8 @@ const CpuPower = ({ x, y, w, h,
 
     const metric_cpu = await customStore.fetchMetric({
       expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})))`,
-      ...paramsData
+      ...paramsData,
+      cluster
     })
 
     const x86CpuMetricData = _.find(metric_cpu, (data) => {
@@ -133,7 +136,8 @@ const CpuPower = ({ x, y, w, h,
 
     const metric_power = await customStore.fetchMetric({
       expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
-      ...paramsData
+      ...paramsData,
+      cluster
     })
 
     const x86PowerMetricData = _.find(metric_power, (data) => {

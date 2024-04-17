@@ -16,12 +16,12 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames'
-import isEqual from 'react-fast-compare'
-import { toJS } from 'mobx'
-import { get, isEmpty } from 'lodash'
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import isEqual from 'react-fast-compare';
+import { toJS } from 'mobx';
+import { get, isEmpty } from 'lodash';
 import {
   Icon,
   Table,
@@ -31,19 +31,19 @@ import {
   LevelRight,
   Button,
   InputSearch,
-} from '@kube-design/components'
-import { safeParseJSON } from 'utils'
-import CustomColumns from './CustomColumns'
-import FilterInput from './FilterInput'
-import Empty from './Empty'
-import Pagination from './Pagination'
+} from '@kube-design/components';
 
-import styles from './index.scss'
+import { safeParseJSON } from 'utils';
+import CustomColumns from './CustomColumns';
+import FilterInput from './FilterInput';
+import Empty from './Empty';
+import Pagination from './Pagination';
+import styles from './index.scss';
 
 const ORDER_MAP = {
   ascend: false,
   descend: true,
-}
+};
 
 export default class WorkloadTable extends React.Component {
   static propTypes = {
@@ -69,12 +69,12 @@ export default class WorkloadTable extends React.Component {
     alwaysUpdate: PropTypes.bool,
     emptyText: PropTypes.any,
     hideRefresh: PropTypes.bool,
-  }
+  };
 
   static defaultProps = {
     rowKey: 'name',
     selectedRowKeys: [],
-    onFetch() { },
+    onFetch() {},
     hideHeader: false,
     hideFooter: false,
     hideSearch: false,
@@ -83,23 +83,23 @@ export default class WorkloadTable extends React.Component {
     pagination: {},
     filters: {},
     hideRefresh: false,
-  }
+  };
 
   constructor(props) {
-    super(props)
+    super(props);
 
     const hideColumns = get(
       safeParseJSON(localStorage.getItem('hide-columns'), {}),
       props.tableId,
-      []
-    )
+      [],
+    );
 
-    this.state = { hideColumns }
+    this.state = { hideColumns };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (this.props.alwaysUpdate) {
-      return true
+      return true;
     }
 
     if (
@@ -110,31 +110,31 @@ export default class WorkloadTable extends React.Component {
       nextProps.isLoading !== this.props.isLoading ||
       !isEqual(nextProps.pagination, this.props.pagination)
     ) {
-      return true
+      return true;
     }
 
     if (nextState.hideColumns.length !== this.state.hideColumns.length) {
-      return true
+      return true;
     }
 
-    return false
+    return false;
   }
 
   get showEmpty() {
-    const { filters, pagination, isLoading } = this.props
+    const { filters, pagination, isLoading } = this.props;
 
     if ('showEmpty' in this.props) {
-      return this.props.showEmpty
+      return this.props.showEmpty;
     }
 
-    return !isLoading && isEmpty(filters) && pagination.total === 0
+    return !isLoading && isEmpty(filters) && pagination.total === 0;
   }
 
   get filteredColumns() {
-    const { hideColumns } = this.state
+    const { hideColumns } = this.state;
     return this.props.columns.filter(
-      clm => !hideColumns.includes(clm.key || clm.dataIndex)
-    )
+      clm => !hideColumns.includes(clm.key || clm.dataIndex),
+    );
   }
 
   handleChange = (filters, sorter) => {
@@ -142,21 +142,21 @@ export default class WorkloadTable extends React.Component {
       sortBy: sorter.field || '',
       ascending: !(ORDER_MAP[sorter.order] || false),
       ...filters,
-    })
-  }
+    });
+  };
 
   handlePagination = ({ page, limit }) => {
-    const { onFetch } = this.props
-    onFetch({ page, limit })
-  }
+    const { onFetch } = this.props;
+    onFetch({ page, limit });
+  };
 
   handleRefresh = () => {
-    const { pagination } = this.props
+    const { pagination } = this.props;
     this.props.onFetch({
       limit: pagination.limit,
       page: pagination.page,
-    })
-  }
+    });
+  };
 
   handleColumnsHide = columns => {
     this.setState(
@@ -167,43 +167,43 @@ export default class WorkloadTable extends React.Component {
         if (this.props.tableId) {
           const hideColumnsData = safeParseJSON(
             localStorage.getItem('hide-columns'),
-            {}
-          )
-          hideColumnsData[this.props.tableId] = this.state.hideColumns
-          localStorage.setItem('hide-columns', JSON.stringify(hideColumnsData))
+            {},
+          );
+          hideColumnsData[this.props.tableId] = this.state.hideColumns;
+          localStorage.setItem('hide-columns', JSON.stringify(hideColumnsData));
         }
-      }
-    )
-  }
+      },
+    );
+  };
 
   handleCancelSelect = () => {
-    this.props.onSelectRowKeys([])
-  }
+    this.props.onSelectRowKeys([]);
+  };
 
   handleFilterInput = filters => {
     if (!isEqual(filters, this.props.filters)) {
-      this.props.onFetch(filters, true)
+      this.props.onFetch(filters, true);
     }
-  }
+  };
 
   handleSearch = text => {
-    const { searchType } = this.props
-    this.props.onFetch({ [searchType]: text }, true)
-  }
+    const { searchType } = this.props;
+    this.props.onFetch({ [searchType]: text }, true);
+  };
 
   clearFilter = () => {
     // you must update the filter in props.onFetch
-    const { searchType } = this.props
+    const { searchType } = this.props;
 
     if (searchType) {
-      this.handleSearch()
+      this.handleSearch();
     }
 
-    this.handleFilterInput([])
-  }
+    this.handleFilterInput([]);
+  };
 
   renderSelectActions() {
-    const { onDelete, selectActions } = this.props
+    const { onDelete, selectActions } = this.props;
 
     if (selectActions) {
       return (
@@ -221,7 +221,7 @@ export default class WorkloadTable extends React.Component {
             </Button>
           ))}
         </div>
-      )
+      );
     }
 
     return (
@@ -237,7 +237,7 @@ export default class WorkloadTable extends React.Component {
           </Button>
         )}
       </div>
-    )
+    );
   }
 
   renderSelectedTitle = () => (
@@ -254,7 +254,7 @@ export default class WorkloadTable extends React.Component {
         </Button>
       </LevelRight>
     </Level>
-  )
+  );
 
   renderSearch() {
     const {
@@ -263,14 +263,14 @@ export default class WorkloadTable extends React.Component {
       filters,
       columns,
       columnSearch,
-    } = this.props
+    } = this.props;
 
     if (hideSearch) {
-      return null
+      return null;
     }
 
     if (searchType) {
-      const placeholder = this.props.placeholder || t('SEARCH_BY_NAME')
+      const placeholder = this.props.placeholder || t('SEARCH_BY_NAME');
 
       return (
         <InputSearch
@@ -279,7 +279,7 @@ export default class WorkloadTable extends React.Component {
           onSearch={this.handleSearch}
           placeholder={placeholder}
         />
-      )
+      );
     }
 
     return (
@@ -289,11 +289,11 @@ export default class WorkloadTable extends React.Component {
         filters={filters}
         onChange={this.handleFilterInput}
       />
-    )
+    );
   }
 
   renderActions() {
-    const { onCreate, createText, actions } = this.props
+    const { onCreate, createText, actions } = this.props;
 
     if (actions) {
       return actions.map(action => (
@@ -306,11 +306,11 @@ export default class WorkloadTable extends React.Component {
         >
           {action.text}
         </Button>
-      ))
+      ));
     }
 
     if (!onCreate) {
-      return null
+      return null;
     }
 
     return (
@@ -322,12 +322,12 @@ export default class WorkloadTable extends React.Component {
       >
         {t(createText || 'CREATE')}
       </Button>
-    )
+    );
   }
 
   renderNormalTitle() {
-    const { hideCustom, customFilter, columns, hideRefresh } = this.props
-    const { hideColumns } = this.state
+    const { hideCustom, customFilter, columns, hideRefresh } = this.props;
+    const { hideColumns } = this.state;
 
     return (
       <Level>
@@ -336,14 +336,14 @@ export default class WorkloadTable extends React.Component {
         <LevelRight>
           <div>
             {!hideRefresh && (
-                <Button
+              <Button
                 type="flat"
                 icon="refresh"
                 onClick={this.handleRefresh}
                 data-test="table-refresh"
               />
             )}
-            
+
             {!hideCustom && (
               <CustomColumns
                 className={styles.columnMenu}
@@ -357,16 +357,16 @@ export default class WorkloadTable extends React.Component {
           </div>
         </LevelRight>
       </Level>
-    )
+    );
   }
 
   renderTableTitle = () => {
     if (this.props.selectedRowKeys && this.props.selectedRowKeys.length > 0) {
-      return this.renderSelectedTitle()
+      return this.renderSelectedTitle();
     }
 
-    return this.renderNormalTitle()
-  }
+    return this.renderNormalTitle();
+  };
 
   renderEmptyText() {
     return (
@@ -396,11 +396,11 @@ export default class WorkloadTable extends React.Component {
           </p>
         </div>
       )
-    )
+    );
   }
 
   renderEmpty() {
-    const { module, name, emptyProps = {} } = this.props
+    const { module, name, emptyProps = {} } = this.props;
     return (
       <Empty
         action={this.renderActions()}
@@ -408,15 +408,15 @@ export default class WorkloadTable extends React.Component {
         module={module}
         {...emptyProps}
       />
-    )
+    );
   }
 
   renderTableFooter = () => {
     if (!this.props.pagination) {
-      return null
+      return null;
     }
 
-    const { total, page, limit } = this.props.pagination
+    const { total, page, limit } = this.props.pagination;
 
     return (
       <Pagination
@@ -425,8 +425,8 @@ export default class WorkloadTable extends React.Component {
         limit={limit}
         onChange={this.handlePagination}
       />
-    )
-  }
+    );
+  };
 
   render() {
     const {
@@ -441,20 +441,20 @@ export default class WorkloadTable extends React.Component {
       hideFooter,
       extraProps,
       getCheckboxProps,
-    } = this.props
+    } = this.props;
 
     if (this.showEmpty) {
-      return this.renderEmpty()
+      return this.renderEmpty();
     }
 
-    const props = {}
+    const props = {};
 
     if (!hideHeader) {
-      props.title = this.renderTableTitle()
+      props.title = this.renderTableTitle();
     }
 
     if (!hideFooter) {
-      props.footer = this.renderTableFooter()
+      props.footer = this.renderTableFooter();
     }
 
     if (onSelectRowKeys) {
@@ -462,12 +462,12 @@ export default class WorkloadTable extends React.Component {
         selectedRowKeys,
         getCheckboxProps,
         onSelect: (record, checked, rowKeys) => {
-          onSelectRowKeys(rowKeys)
+          onSelectRowKeys(rowKeys);
         },
         onSelectAll: (checked, rowKeys) => {
-          onSelectRowKeys(rowKeys)
+          onSelectRowKeys(rowKeys);
         },
-      }
+      };
     }
 
     return (
@@ -482,6 +482,6 @@ export default class WorkloadTable extends React.Component {
         {...props}
         {...extraProps}
       />
-    )
+    );
   }
 }

@@ -213,9 +213,14 @@ export default class VmStore extends Base {
 
     const networksArray = [];
     data.network.map(name => {
-      const networkName = {};
-      networkName.network_name = name;
-      networksArray.push(networkName);
+      const networkObj = {};
+      networkObj.network_name = name;
+      const fixedIpObj = data.ips.find(obj => obj.network_name === name);
+      if (fixedIpObj !== undefined) {
+	networksArray.push(fixedIpObj);
+      } else {
+        networksArray.push(networkObj);
+      }
     });
     resourceData.networks = networksArray;
 
@@ -532,6 +537,17 @@ export default class VmStore extends Base {
     }
 
     this.networksList = response.networks;
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async fetchAllAvailableIps(params) {
+    this.isLoading = true;
+
+    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks/available_ips`);
+    const response = { ...params, ...this.mapper(result), kind: 'all_ips' };
+
     this.isLoading = false;
     return response;
   }

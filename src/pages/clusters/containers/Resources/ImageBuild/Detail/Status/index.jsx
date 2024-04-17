@@ -13,7 +13,7 @@ import styles from './index.scss'
 // pod_status 상태
 // ====================================
 // Status (Kor)	   Status (Eng)	          Description
-// 서버 준비 중	    Server Configuring	   업로드 위한 서버 준비 중
+// 서버 준비 중	    Server Configuring	   업로드 위한 서버 준비 중 (대기 중)
 // 서버 준비 완료	  Server Ready	         업로드 위한 서버 준비 완료(파일 업로드 대기 중)
 // 파일 업로드 중	  File Uploading	       파일 업로드 중
 // 이미지 빌드 중	  Image Build	           이미지 빌드 및 이미지 저장소에 push 중
@@ -28,10 +28,12 @@ const Status = (props) => {
 
     const detailInfo = props.detailStore.detail;
 
-    const uploadInfo = get(detailInfo, ['upload-info-list', 'upload-info'], [])[0]
-    const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
+    // const uploadInfo = get(detailInfo, ['upload-info-list', 'upload-info'], [])[0]
+    // const fileStatus = get(uploadInfo, ['upload-file-info', 'Status'], '')
     const podStatusData = get(detailInfo, 'pod-status', '')
     const podStatus = podStatusData.replace(/\s/gi, "")
+
+    console.log("podStatus : "+ podStatus)
    
     const fileServerArrayState = ['ServerConfiguring', 'ServerReady', 'ServerConfigureFail', 'ServerDeleting']
     const fileUploadArrayState = ['FileUploading', 'FileUploadCompleted', 'FileUploadFail', 'ImageBuild', 'ImageBuildSucceed', 'ImagePushFailed']
@@ -50,7 +52,8 @@ const Status = (props) => {
       "FileUploadFail" : 'RESOURCES_FILE_UPLOAD_FAIL_DESC',
       "ImageBuild" : 'RESOURCES_IMAGE_BUILD_PUSH_ING_DESC',
       "ImageBuildSucceed" : 'RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC',
-      "ImagePushFailed" : 'RESOURCES_FILE_UPLOAD_FAIL_DESC'
+      "ImagePushFailed" : 'RESOURCES_FILE_UPLOAD_FAIL_DESC',
+      "Fail" : 'RESOURCES_FILE_UPLOAD_FAIL_DESC'
     }
 
       const status = 'success';
@@ -70,17 +73,17 @@ const Status = (props) => {
               extra={
                 <Icon
                 className={styles.status}
-                name={status === 'success' ? 'success' : 'error'}
+                name={podStatus === 'Fail' ? 'error' : 'success'}
                 color={{
                   primary: '#fff',
-                  secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+                  secondary: podStatus === 'Fail' ? '#ca2621' : '#55bc8a',
                 }}
               />
               }
             />
           </div>
           <div className={styles.content}>
-            {(fileServerArrayState.includes(podStatus.replace(/\s/gi, ""))
+            {/* {(fileServerArrayState.includes(podStatus.replace(/\s/gi, ""))
              || fileUploadArrayState.includes(podStatus.replace(/\s/gi, "")) 
              || fileBuildArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
               <Text
@@ -101,6 +104,39 @@ const Status = (props) => {
                   />
                 }
               /> 
+            } */}
+
+            <Text
+              key={type}
+              className={styles.condition}
+              icon='image'
+              title={t(`RESOURCES_ENVIRONMENT_CONFIGURATION`)}
+              description={t(`RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC`)}
+              extra={
+                <Icon
+                  className={styles.status}
+                  name={'success' }
+                  color={{
+                    primary: '#fff',
+                    secondary: '#55bc8a',
+                  }}
+                />
+              }
+            /> 
+           {(!fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
+                <Text
+                  key={type}
+                  className={styles.condition}
+                  icon='image'
+                  title={t(`RESOURCES_FILE_UPLOAD`)}
+                  description={t(`RESOURCES_FILE_UPLOAD_BEFORE_DESC`)}
+                  extra={
+                    <Icon
+                      className={styles.status}
+                      name={'substract'}
+                    />
+                  }
+                /> 
             }
             {(fileUploadArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
                 <Text
@@ -118,6 +154,22 @@ const Status = (props) => {
                         primary: '#fff',
                         secondary: podStatus === 'FileUploadFail' ? '#ca2621' : '#55bc8a',
                       }}
+                    />
+                  }
+                /> 
+            }
+
+            {(!fileBuildArrayState.includes(podStatus.replace(/\s/gi, ""))) &&
+                <Text
+                  key={type}
+                  className={styles.condition}
+                  icon='image'
+                  title={t(`RESOURCES_IMAGE_BUILD_PUSH`)}
+                  description={t(`RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC`)}
+                  extra={
+                    <Icon
+                      className={styles.status}
+                      name={'substract'}
                     />
                   }
                 /> 
