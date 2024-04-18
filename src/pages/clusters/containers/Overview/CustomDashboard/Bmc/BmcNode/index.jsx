@@ -120,12 +120,14 @@ const BmcNode = ({ x, y, w, h,
   }
 
   const getType = (data) => {
-    var iconText = "arm"
+    var iconText = "clusternode"
     const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
     const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
     const type = get(type_data, 'metric.machine', '')
     const x86Array = ['x86_64', 'amd']
-    iconText = x86Array.includes(type.toLowerCase()) ? "x86" : "arm"
+    const armArray = ['arm', 'aarch64']
+    if (x86Array.includes(type.toLowerCase())) iconText = "x86";
+    if (armArray.includes(type.toLowerCase())) iconText = "arm";
     return iconText
   }
 
@@ -172,9 +174,9 @@ const BmcNode = ({ x, y, w, h,
         const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
         const type = get(type_data, 'metric.machine', '')
         if (nodeType == 'x86') {
-          if (type.includes(nodeType)) arr.push(obj)
+          if (['x86_64', 'amd'].includes(type)) arr.push(obj)
         } else {
-          if (!type.includes('x86')) arr.push(obj)
+          if (['arm', 'aarch64'].includes(type)) arr.push(obj)
         }
       })
     }
@@ -182,22 +184,20 @@ const BmcNode = ({ x, y, w, h,
   }
 
   useEffect(() => {
-    if (nodeList.length > 0) {
-      var on = 0;
-      var off = 0;
-      var unknown = 0;
-      nodeList.map(obj => {
-        const state = getMetricValue(metricState, obj, 'redfish')
-        if (state == 1 || state == 3) {
-          on++
-        } else if (state == 2 || state == 4) {
-          off++
-        } else {
-          unknown++
-        }
-      })
-      setMetricStateObj({ on, off, unknown, total: on + off + unknown })
-    }
+    var on = 0;
+    var off = 0;
+    var unknown = 0;
+    nodeList.map(obj => {
+      const state = getMetricValue(metricState, obj, 'redfish')
+      if (state == 1 || state == 3) {
+        on++
+      } else if (state == 2 || state == 4) {
+        off++
+      } else {
+        unknown++
+      }
+    })
+    setMetricStateObj({ on, off, unknown, total: on + off + unknown })
   }, [nodeList, metricState])
 
   return (
@@ -251,7 +251,7 @@ const BmcNode = ({ x, y, w, h,
                       </div>
                       <div className="hexagon_wrap">
                         {nodeList.map((obj, idx) => (
-                          <div key={idx} className={`hexagon ${getState(metricState, obj)}`}><span>{getType(obj).toUpperCase()}</span></div>
+                          <div key={idx} className={`hexagon ${getState(metricState, obj)}`}><span>{getType(obj).toUpperCase() === 'CLUSTERNODE' ? 'etc' : getType(obj).toUpperCase()}</span></div>
                         ))}
                       </div>
                     </div>

@@ -118,11 +118,11 @@ const CpuPower = ({ x, y, w, h,
     })
 
     const x86CpuMetricData = _.find(metric_cpu, (data) => {
-      if (get(data, 'metric.machine').includes('x86')) return data;
+      if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
     });
 
     const armCpuMetricData = _.find(metric_cpu, (data) => {
-      if (get(data, 'metric.machine').includes('arm')) return data;
+      if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
     });
 
     const x86CpuArray = [];
@@ -141,11 +141,11 @@ const CpuPower = ({ x, y, w, h,
     })
 
     const x86PowerMetricData = _.find(metric_power, (data) => {
-      if (get(data, 'metric.machine').includes('x86')) return data;
+      if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
     });
 
     const armPowerMetricData = _.find(metric_power, (data) => {
-      if (get(data, 'metric.machine').includes('arm')) return data;
+      if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
     });
 
     const x86PowerArray = [];
@@ -201,25 +201,34 @@ const CpuPower = ({ x, y, w, h,
       const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
       const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
       const type = get(type_data, 'metric.machine', '')
+      const x86Array = ['x86_64', 'amd']
+      const armArray = ['arm', 'aarch64']
       if (nodeType == 'x86') {
-        if (type.includes(nodeType)) cnt++;
+        if (x86Array.includes(type.toLowerCase())) cnt++;
       } else {
-        if (!type.includes('x86')) cnt++;
+        if (armArray.includes(type.toLowerCase())) cnt++;
       }
     })
 
-    const metricLastData = _.find(metricPower, (data) => {
-      if (get(data, 'metric.machine').includes(nodeType)) return data;
-    });
+    let metricLastData;
+    if (nodeType == 'x86') {
+      metricLastData = _.find(metricPower, (data) => {
+        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
+      });
+    } else {
+      metricLastData = _.find(metricPower, (data) => {
+        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
+      });
+    }
 
     const lastData = get(metricLastData, 'value[1]', '0');
 
     const powerAvg = Math.round(lastData / cnt);
 
     const max_power = 200000; // 200kwh 기준
-    const powerPercent = ((powerAvg / max_power) * 100).toFixed(0)
+    const powerPercent = ((powerAvg / max_power) * 100)
 
-    return isNaN(powerPercent) ? 0 : powerPercent
+    return isNaN(powerPercent) || !isFinite(powerPercent) ? 0 : powerPercent.toFixed(2)
   }
 
   return (

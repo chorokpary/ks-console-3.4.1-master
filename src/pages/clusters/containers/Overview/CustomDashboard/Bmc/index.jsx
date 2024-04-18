@@ -111,9 +111,11 @@ const Bmc = ({ bmc, ...props }) => {
 
         const type = get(type_data, 'metric.machine', '')
         const x86Array = ['x86_64', 'amd']
+        const armArray = ['arm', 'aarch64']
 
         if (metricType.length > 0) {
-          x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
+          if (x86Array.includes(type.toLowerCase())) total_x86_count++;
+          if (armArray.includes(type.toLowerCase())) total_arm_count++;
         }
 
         if (metricData.length > 0) {
@@ -121,13 +123,15 @@ const Bmc = ({ bmc, ...props }) => {
           const power_data = metricData.find(item => (get(item, 'metric.target') === target))
           const power = Number(get(power_data, 'value[1]', 0)) / 1000;
 
-          total_power += power;
           if (x86Array.includes(type.toLowerCase())) {
             total_x86_power += power
             used_x86_cnt += 1
-          } else {
+            total_power += power;
+          }
+          if (armArray.includes(type.toLowerCase())) {
             total_arm_power += power;
             used_arm_cnt += 1
+            total_power += power;
           }
         }
       })
