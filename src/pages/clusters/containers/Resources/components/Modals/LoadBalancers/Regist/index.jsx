@@ -28,6 +28,7 @@ const RegistModal = props => {
       protocol: 'TCP',
       port: '1',
     },
+    { value: 'ALL', label: 'ALL', protocol: 'TCP', port: '0-65535' },
     { value: 'FTP', label: 'FTP', protocol: 'TCP', port: '20' },
     { value: 'SSH', label: 'SSH', protocol: 'TCP', port: '22' },
     { value: 'TELNET', label: 'TELNET', protocol: 'TCP', port: '23' },
@@ -52,6 +53,7 @@ const RegistModal = props => {
   ];
 
   const protocolOptions = [
+    { value: 'ALL', label: 'ALL' },
     { value: 'TCP', label: 'TCP' },
     { value: 'UDP', label: 'UDP' },
     { value: 'ICMP', label: 'ICMP' },
