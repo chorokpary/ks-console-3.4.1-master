@@ -24,19 +24,23 @@ module.exports = {
   RESOURCES_WEEKEND: '1주일',
   RESOURCES_ADD_UNTIL_FIVE: '5개까지 추가 가능합니다.',
   RESOURCES_EDIT_BAREMETGAL: '베어메탈 수정',
-  RESOURCES_DELETE_BAREMETAL_TIP: '베어메탈 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_BAREMETAL_TIP:
+    '베어메탈 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS: '베어메탈 탄소 지표 통계',
-  RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS_DESC: '베어메탈 탄소 지표 통계는 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다.',
+  RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS_DESC:
+    '베어메탈 탄소 지표 통계는 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다.',
   RESOURCES_BAREMETAL_RESOURCE: '베어메탈 리소스',
   RESOURCES_BAREMETAL_NOT_FOUND_RESOURCE: 'BAREMETAL 리소스를 찾을 수 없음',
   RESOURCES_CIDR_EMPTY_DESC: 'CIDR을 입력해주세요.',
   RESOURCES_CIDR_VALID: 'CIDR을 정확히 입력해주세요.',
-  RESOURCES_CIDR_VF_VALID: 'CIDR 개수는 VF 개수보다 작거나 같도록 입력해 주세요.',
+  RESOURCES_CIDR_VF_VALID:
+    'CIDR 개수는 VF 개수보다 작거나 같도록 입력해 주세요.',
   RESOURCES_CO2_EMISSIONS: 'CO2 발생량',
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
   RESOURCES_COMPARE_CPU_POWER_CONSUMPTION: 'CPU & 소비 전력량 비교',
-  RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE: 'CPU 소비 전력량 비교 (1대 평균)',
+  RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE:
+    'CPU 소비 전력량 비교 (1대 평균)',
   RESOURCES_CPU_TYPE: 'CPU 타입',
   RESOURCES_CUDA_SUPPORT_CHECK: 'CUDA 지원 여부',
   RESOURCES_DHCP_SERVER: 'DHCP서버',
@@ -45,7 +49,8 @@ module.exports = {
   RESOURCES_DEALLOCATE_FIP: 'FIP 해제',
   RESOURCES_CREATE_FLAVOR: 'Flavor 생성',
   RESOURCES_EDIT_FLAVOR: 'Flavor 수정',
-  RESOURCES_DELETE_FLAVOR_TIP: 'Flavor 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_FLAVOR_TIP:
+    'Flavor 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_FLAVOR_TIP: 'Flavor를 선택해 주세요.',
   RESOURCES_FLAVOR_DESC: 'Flavor의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_SELECT_FLOATING_IP_TIP: 'Floating IP를 선택해 주세요.',
@@ -63,23 +68,28 @@ module.exports = {
   RESOURCES_KAAS_RESOURCE_USAGE: 'KaaS 리소스 사용량',
   RESOURCES_CREATE_KAAS_RESOURCE: 'KaaS 리소스 생성',
   RESOURCES_EDIT_KAAS_RESOURCE: 'KaaS 리소스 수정',
-  RESOURCES_DELETE_KAAS_RESOURCE_TIP: 'KaaS 리소스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_KAAS_RESOURCE_TIP:
+    'KaaS 리소스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_KAAS_DESC: 'KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_IMAGE: 'KaaS 이미지',
   RESOURCES_CREATE_KAAS_IMAGE: 'KaaS 이미지 생성',
   RESOURCES_EDIT_KAAS_IMAGE: 'KaaS 이미지 수정',
-  RESOURCES_KAAS_IMAGE_DESC: 'KaaS 이미지의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_KAAS_IMAGE_DESC:
+    'KaaS 이미지의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_COMPONENT_STATE: 'KaaS 컴포넌트 상태',
   RESOURCES_CONNECTION_LB: 'LB 연결',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Master Flavor를 선택해 주세요.',
   RESOURCES_MASTER_COUNT: 'Master 개수',
-  RESOURCES_MASTER_COUNT_MAX_DESC: 'Master는 홀수 개이며 최대 개수는 5개 입니다.',
+  RESOURCES_MASTER_COUNT_MAX_DESC:
+    'Master는 홀수 개이며 최대 개수는 5개 입니다.',
   RESOURCES_MEDIATED_DEVICE: 'Mediated 디바이스',
   RESOURCES_CREATE_MEDIATED_DEVICE: 'Mediated 디바이스 생성',
   RESOURCES_EDIT_MEDIATED_DEVICE: 'Mediated 디바이스 수정',
   RESOURCES_MEDIATED_DEVICE_NAME: 'Mediated 디바이스 이름',
-  RESOURCES_DELETE_MEDIATED_DEVICE_TIP: 'Mediated 디바이스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_MEDIATED_DEVICE_DESC: 'Mediated 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DELETE_MEDIATED_DEVICE_TIP:
+    'Mediated 디바이스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_MEDIATED_DEVICE_DESC:
+    'Mediated 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_MTU_EMPTY_DESC: 'MTU를 입력해주세요.',
   RESOURCES_OS_TYPE: 'OS 타입',
   RESOURCES_SELECT_OS_TIP: 'OS를 선택해주세요.',
@@ -87,7 +97,8 @@ module.exports = {
   RESOURCES_SR_IOV_NETWORK: 'SR-IOV 네트워크',
   RESOURCES_CREATE_SR_IOV: 'SR-IOV 생성',
   RESOURCES_EDIT_SR_IOV: 'SR-IOV 수정',
-  RESOURCES_DELETE_SR_IOV_TIP: 'SR-IOV 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_SR_IOV_TIP:
+    'SR-IOV 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SR_IOV_DESC: 'SR-IOV의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_STOPED_PAUSE_DESC: 'Stopped 상태에서 Pause 할 수 없습니다.',
   RESOURCES_STOPED_RESTART_DESC: 'Stopped 상태에서 Restart 할 수 없습니다.',
@@ -104,22 +115,28 @@ module.exports = {
   RESOURCES_VROUTER_IP: '가상 라우터 IP',
   RESOURCES_CREATE_VROUTER: '가상 라우터 생성',
   RESOURCES_EDIT_VROUTER: '가상 라우터 수정',
-  RESOURCES_DELETE_VROUTER_TIP: '가상 라우터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_VROUTER_DESC: '가상 라우터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DELETE_VROUTER_TIP:
+    '가상 라우터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_VROUTER_DESC:
+    '가상 라우터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_VM_IP: '가상 머신 IP',
   RESOURCES_VM_NAME: '가상 머신 이름',
   RESOURCES_SELECT_VM_NAME_TIP: '가상 머신 이름을 선택해 주세요.',
   RESOURCES_VM: '가상머신',
-  RESOURCES_VM_MIGRATION_DESC: '가상머신 상태가 마이그레이션중으로 변경되고,완료되면 가상머신 상태가 표시됩니다',
+  RESOURCES_VM_MIGRATION_DESC:
+    '가상머신 상태가 마이그레이션중으로 변경되고,완료되면 가상머신 상태가 표시됩니다',
   RESOURCES_CHANGE_VM_STATE: '가상머신 상태를 변경하시겠습니까?',
   RESOURCES_CREATE_VM: '가상머신 생성',
   RESOURCES_EDIT_VM: '가상머신 수정',
-  RESOURCES_DELETE_VM_TIP: '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_VM_TIP:
+    '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_VM_IMAGE: '가상머신 이미지',
   RESOURCES_CREATE_VM_IMAGE: '가상머신 이미지 생성',
   RESOURCES_EDIT_VM_IMAGE: '가상머신 이미지 수정',
-  RESOURCES_DELETE_VM_IMAGE_TIP: '가상머신 이미지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_VM_IMAGE_DESC: '가상머신 이미지의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DELETE_VM_IMAGE_TIP:
+    '가상머신 이미지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_VM_IMAGE_DESC:
+    '가상머신 이미지의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_VM_DESC: '가상머신의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_SELECT_VM_TIP: '가상머신을 선택해 주세요.',
   RESOURCES_AVAILABLE_COUNT: '가용  개수',
@@ -162,10 +179,12 @@ module.exports = {
   RESOURCES_NETWORK_TYPE: '네트워크 타입',
   RESOURCES_NETWORK_TRAFFIC: '네트워크 트래픽',
   RESOURCES_NO_ROUTER_USE_NETWORK: '네트워크를 사용하는 라우터가 없습니다',
-  RESOURCES_NO_LOAD_BALANCER_NETWORK: '네트워크를 사용하는 로드밸런서가 없습니다.',
+  RESOURCES_NO_LOAD_BALANCER_NETWORK:
+    '네트워크를 사용하는 로드밸런서가 없습니다.',
   RESOURCES_SELECT_NETWORK_TIP: '네트워크를 선택해 주세요.',
   RESOURCES_NETWORK_DESC: '네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_DELETE_NETWORK_TIP: '네트워크의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_NETWORK_TIP:
+    '네트워크의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_YEAR: '년',
   RESOURCES_NODE: '노드',
   RESOURCES_NODE_STATE: '노드 상태',
@@ -175,8 +194,10 @@ module.exports = {
   RESOURCES_DASHBOARD: '대시보드',
   RESOURCES_DELETE_DASHBOARD: '대시보드 삭제',
   RESOURCES_DASHBOARD_NAME: '대시보드 이름',
-  RESOURCES_DASHBOARD_NAME_MAX_DESC: '대시보드 이름을 최대 15글자까지만 입력해주세요.',
-  RESOURCES_DASHBOARD_NAME_MIN_DESC: '대시보드 이름을 최소 1글자 이상 입력해주세요.',
+  RESOURCES_DASHBOARD_NAME_MAX_DESC:
+    '대시보드 이름을 최대 15글자까지만 입력해주세요.',
+  RESOURCES_DASHBOARD_NAME_MIN_DESC:
+    '대시보드 이름을 최소 1글자 이상 입력해주세요.',
   RESOURCES_EDIT_DASHBOARD: '대시보드 편집',
   RESOURCES_PLEASE_CREATE_DATA: '데이터를 생성해 주세요.',
   RESOURCES_NO_DATA: '데이터가 없습니다',
@@ -192,8 +213,10 @@ module.exports = {
   RESOURCES_ROUTER: '라우터',
   RESOURCES_CREATE_LOAD_BALANCER: '로드 밸런서 생성',
   RESOURCES_EDIT_LOAD_BALANCER: '로드 밸런서 수정',
-  RESOURCES_DELETE_LOAD_BALANCER_TIP: '로드 밸런서 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_LOAD_BALANCER_DESC: '로드 밸런서의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DELETE_LOAD_BALANCER_TIP:
+    '로드 밸런서 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_LOAD_BALANCER_DESC:
+    '로드 밸런서의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_LOAD_BALANCER: '로드 밸런서',
   RESOURCES_ROOT_DISK: '루트 디스크',
   RESOURCES_ROOT_DISK_VALID: '루트 디스크를 1 이상 입력해주세요.',
@@ -224,20 +247,24 @@ module.exports = {
   RESOURCES_DISTRIBUTION: '배포판',
   RESOURCES_VERSION: '버전',
   RESOURCES_VERSION_EMPTY_DESC: '버전을 입력해 주세요.',
-  RESOURCES_VERSION_CHECK_DESC: '잘못된 버전입니다. v1.25.1 형태로 입력해주세요.',
+  RESOURCES_VERSION_CHECK_DESC:
+    '잘못된 버전입니다. v1.25.1 형태로 입력해주세요.',
   RESOURCES_BAREMETAL: '베어메탈',
   RESOURCES_BAREMETAL_NODE: '베어메탈 노드',
   RESOURCES_BAREMETAL_NODE_CURRENT_SITUATION: '베어메탈 노드 현황',
   RESOURCES_BAREMETAL_SYSTEM_ADD: '베어메탈 시스템 추가',
-  RESOURCES_BAREMETAL_CURRENT_SITUATION_AND_POWER_USAGE: '베어메탈 현황 및 전력사용량',
+  RESOURCES_BAREMETAL_CURRENT_SITUATION_AND_POWER_USAGE:
+    '베어메탈 현황 및 전력사용량',
   RESOURCES_CHANGED_SUCCESSFULLY: '변경 되었습니다.',
   RESOURCES_SECURITY_GROUP_NAME: '보안그룹 이름',
   RESOURCES_SECURITY_GROUP: '보안그룹',
   RESOURCES_CREATE_SECURITY_GROUP: '보안그룹 생성',
   RESOURCES_EDIT_SECURITY_GROUP: '보안그룹 수정',
-  RESOURCES_DELETE_SECURITY_GROUP_TIP: '보안그룹 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_SECURITY_GROUP_TIP:
+    '보안그룹 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_SECURITY_GROUP_TIP: '보안그룹을 선택해 주세요.',
-  RESOURCES_SECURITY_GROUP_DESC: '보안그룹의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_SECURITY_GROUP_DESC:
+    '보안그룹의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_SECURITY_RULE: '보안정책',
   RESOURCES_COPY: '복사',
   RESOURCES_COPY_SUCCESSFUL: '복사 되었습니다.',
@@ -249,7 +276,8 @@ module.exports = {
   RESOURCES_CREATE_VOLUME: '볼륨 생성',
   RESOURCES_EDIT_VOLUME: '볼륨 수정',
   RESOURCES_VOLUME_LOCATION: '볼륨 위치',
-  RESOURCES_DELETE_VOLUME_TIP: '볼륨 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다',
+  RESOURCES_DELETE_VOLUME_TIP:
+    '볼륨 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다',
   RESOURCES_VOLUME_DESC: '볼륨의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_BOOT_TYPE: '부트 타입',
   RESOURCES_BOOT_VOLUME: '부트볼륨',
@@ -281,8 +309,10 @@ module.exports = {
   RESOURCES_SUBNET: '서브넷',
   RESOURCES_SELECT: '선택',
   RESOURCES_AUTOMATIC: '자동',
-  RESOURCES_DELETE_SELECT_FLOATING_IP_DESC: '선택한 플로팅 IP를 삭제하시겠습니까?',
-  RESOURCES_DELETE_MULTIPLE_SELECT_FLOATING_IP_DESC: '선택한 플로팅 IP를 일괄 삭제하시겠습니까?',
+  RESOURCES_DELETE_SELECT_FLOATING_IP_DESC:
+    '선택한 플로팅 IP를 삭제하시겠습니까?',
+  RESOURCES_DELETE_MULTIPLE_SELECT_FLOATING_IP_DESC:
+    '선택한 플로팅 IP를 일괄 삭제하시겠습니까?',
   RESOURCES_DESCRIPTION: '설명',
   RESOURCES_DESCRIPTION_EMPTY_DESC: '설명을 입력해주세요.',
   RESOURCES_COMPLETED_SETTINGS: '설정완료',
@@ -296,7 +326,8 @@ module.exports = {
   RESOURCES_SNAPSHOT: '스냅샷',
   RESOURCES_CREATE_SNAPSHOT: '스냅샷 생성',
   RESOURCES_CREATE_SNAPSHOT_TIP: '스냅샷을 생성하시겠습니까?',
-  RESOURCES_SNAPSHOT_LOG_INFORMATION_EMPTY_DESC: '스냅샷 실헹 이력에 기재할 정보를 입력해주세요.',
+  RESOURCES_SNAPSHOT_LOG_INFORMATION_EMPTY_DESC:
+    '스냅샷 실헹 이력에 기재할 정보를 입력해주세요.',
   RESOURCES_SCALING: '스케일링',
   RESOURCES_SCRIPT: '스크립트',
   RESOURCES_STOREGE_CLASS: '스토리지 클래스',
@@ -321,11 +352,13 @@ module.exports = {
   RESOURCES_VALID_TIP: '유효성을 체크해주세요.',
   RESOURCES_SUCCESS_VALID_DESC: '유효성 체크가 완료되었습니다.',
   RESOURCES_FAIL_VALID_TIP: '유효하지 않은 사용자입니다.',
+  RESOURCES_FAIL_VALID_INFO: '유효하지 않은 정보입니다.',
   RESOURCES_MIGRATING: '마이그레이션 중',
   RESOURCES_ETHERNET: '이더넷',
   RESOURCES_ETHERNET_TYPE: '이더넷 유형',
   RESOURCES_NAME: '이름',
-  RESOURCES_NAME_VALID_DESC: '이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다',
+  RESOURCES_NAME_VALID_DESC:
+    '이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다',
   RESOURCES_NAME_EMPTY_DESC: '이름을 입력해 주세요.',
   RESOURCES_SELECT_NAME_TIP: '이름을 선택해 주세요.',
   RESOURCES_NAME_CHECK_DESC: '이름을 확인해 주세요.',
@@ -335,14 +368,19 @@ module.exports = {
   RESOURCES_ALREADY_SELECTED_DEVICE: '이미 선택한 디바이스 입니다.',
   RESOURCES_IMAGE: '이미지',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: '이미지 레지스트리 URL을 설정합니다.',
-  RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC: '(* 퍼블릭 레지스트리의 경우 Quay만 지원합니다.)',
-  RESOURCES_IMAGE_REGIST_URL_SETTINGS_PRIVATE: '(* 프라이빗 레지스트리의 경우 Harbor만 지원합니다.)',
+  RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC:
+    '(* 퍼블릭 레지스트리의 경우 Quay만 지원합니다.)',
+  RESOURCES_IMAGE_REGIST_URL_SETTINGS_PRIVATE:
+    '(* 프라이빗 레지스트리의 경우 Harbor만 지원합니다.)',
   RESOURCES_SPECIFY_IMAGE_SIZE: '이미지 사이즈 지정',
-  RESOURCES_CANNOT_IMAGE_SIZE_SET_ZERO: '이미지 사이즈는 11 이상으로 설정해주세요.',
+  RESOURCES_CANNOT_IMAGE_SIZE_SET_ZERO:
+    '이미지 사이즈는 11 이상으로 설정해주세요.',
   RESOURCES_IMAGE_SIZE_TIP: '이미지 사이즈를 설정합니다.',
-  RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC: '이미지 사이즈보다 큰 사이즈를 선택해 주세요.',
+  RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC:
+    '이미지 사이즈보다 큰 사이즈를 선택해 주세요.',
   RESOURCES_DELETE_IMAGE: '이미지 삭제',
-  RESOURCES_DELETE_IMAGE_TIP: '이미지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_IMAGE_TIP:
+    '이미지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_DELETE_MULTIPLE_IMAGE: '이미지 일괄 삭제',
   RESOURCES_SELECT_IMAGE_TIP: '이미지를 선택해 주세요.',
   RESOURCES_SETTING_IMAGE_TIP: '이미지를 설정해주세요',
@@ -403,7 +441,8 @@ module.exports = {
   RESOURCES_ADD: '추가',
   RESOURCES_CANCEL: '취소',
   RESOURCES_CONTAINER_IMAGE: '컨테이너 이미지',
-  RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC: '컨테이너에 대한 이미지를 설정합니다.',
+  RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC:
+    '컨테이너에 대한 이미지를 설정합니다.',
   RESOURCES_COMPUTING_NETWORK_TRAFFIC: '컴퓨팅 네트워크 트래픽',
   RESOURCES_COMPUTING_NETWORK_CURRENT_SITUATION: '컴퓨팅 네트워크 현황',
   RESOURCES_COMPUTING_RESOURCE_USAGE: '컴퓨팅 리소스 사용량',
@@ -412,7 +451,8 @@ module.exports = {
   RESOURCES_COMPUTING_COMPONENT_CURRENT_SITUATION: '컴퓨팅 컴포넌트 현황',
   RESOURCES_COMPUTING_TEMPLATE_CURRENT_SITUATION: '컴퓨팅 템플릿 현황',
   RESOURCES_COMPUTING_KAAS_RESOURCE: '컴퓨팅/KaaS 리소스',
-  RESOURCES_COMPUTING_KAAS_RESOURCE_MONITORING_DESC: '컴퓨팅/KaaS 리소스 모니터링 데이터를 볼 수 있습니다.',
+  RESOURCES_COMPUTING_KAAS_RESOURCE_MONITORING_DESC:
+    '컴퓨팅/KaaS 리소스 모니터링 데이터를 볼 수 있습니다.',
   RESOURCES_CORE_COUNT: '코어 수',
   RESOURCES_KUBERNETES: '쿠버네티스',
   RESOURCES_KUBERNETES_VERSION: '쿠버네티스 버전',
@@ -422,13 +462,16 @@ module.exports = {
   RESOURCES_CLUSTER_NODE: '클러스터 노드',
   RESOURCES_CLUSTER_COMPONENT_STATE: '클러스터 컴포넌트 상태',
   RESOURCES_CLONE: '클론',
-  RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP: '클론 데이터로 생성할 신규 가상머신 이름을 입력해주세요.',
-  RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP: '클론 생성의 목적 등 이력에 기재할 정보를 입력해주세요.',
+  RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP:
+    '클론 데이터로 생성할 신규 가상머신 이름을 입력해주세요.',
+  RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP:
+    '클론 생성의 목적 등 이력에 기재할 정보를 입력해주세요.',
   RESOURCES_NO_DATA_CLONE_LOG: '클론 이력이 없습니다.',
   RESOURCES_CREATE_KEYPAIR: '키 페어 생성',
   RESOURCES_EDIT_KEYPAIR: '키 페어 수정',
   RESOURCES_KEYPAIR: '키페어',
-  RESOURCES_DELETE_KEYPAIR_TIP: '키페어 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_KEYPAIR_TIP:
+    '키페어 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_KEYPAIR_EMPTY_DESC: '키페어를 입력해 주세요.',
   RESOURCES_KEYPAIR_DESC: '키페어의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_TYPE: '타입',
@@ -437,7 +480,8 @@ module.exports = {
   RESOURCES_CARBON_INDICATOR: '탄소 지표',
   RESOURCES_CARBON_INDICATOR_STATISTICS: '탄소 지표 통계',
   RESOURCES_TOPOLOGY: '토폴로지',
-  RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC: '트래픽의 출발지 IP주소를 변경하는 NAT',
+  RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC:
+    '트래픽의 출발지 IP주소를 변경하는 NAT',
   RESOURCES_POWER: '파워',
   RESOURCES_WRITE_FILE: '파일 쓰기',
   RESOURCES_SELECT_MIN_ONE_PANEL: '패널을 최소 1개 이상 선택해주세요.',
@@ -446,8 +490,10 @@ module.exports = {
   RESOURCES_INSTALL_PACKAGE: '패키지 설치',
   RESOURCES_PUBLIC: '퍼블릭',
   RESOURCES_PORT_RANGE: '포트 범위',
-  RESOURCES_PORT_RANGE_DESC: '포트 범위는 숫자이거나 1~65535 숫자 범위이어야 합니다.',
-  RESOURCES_SG_PORT_RANGE_DESC: '포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다.',
+  RESOURCES_PORT_RANGE_DESC:
+    '포트 범위는 숫자이거나 1~65535 숫자 범위이어야 합니다.',
+  RESOURCES_SG_PORT_RANGE_DESC:
+    '포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다.',
   RESOURCES_PRIVATE: '프라이빗',
   RESOURCES_PROTOCOL: '프로토콜',
   RESOURCES_FLOATING_IP: '플로팅 IP',
@@ -455,10 +501,12 @@ module.exports = {
   RESOURCES_CREATE_FLOATING_IP: '플로팅 IP 생성',
   RESOURCES_FLOATING_IP_SETTINGS: '플로팅 IP 설정',
   RESOURCES_DELETE_MULTIPLE_FLOATING_IP: '플로팅 IP 일괄 삭제',
-  RESOURCES_DELETE_FLOATING_IP_TIP: '플로팅 IP 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다',
+  RESOURCES_DELETE_FLOATING_IP_TIP:
+    '플로팅 IP 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다',
   RESOURCES_DEALLOCATE_FLOATING_IP: '플로팅 IP 해제',
   RESOURCES_SELECT_FLOATING_IP_TIP: '플로팅 IP를 선택해 주세요.',
-  RESOURCES_FLOATING_IP_DESC: '플로팅 IP의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_FLOATING_IP_DESC:
+    '플로팅 IP의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_PIXEL_COUNT: '픽셀수',
   RESOURCES_NEED_TO_TREE: '필요 소나무',
   RESOURCES_ALLOCATION: '할당',
@@ -470,9 +518,11 @@ module.exports = {
   RESOURCES_HOST_DEVICE: '호스트 디바이스',
   RESOURCES_CREATE_HOST_DEVICE: '호스트 디바이스 생성',
   RESOURCES_EDIT_HOST_DEVICE: '호스트 디바이스 수정',
-  RESOURCES_DELETE_HOST_DEVICE_TIP: '호스트 디바이스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_HOST_DEVICE_TIP:
+    '호스트 디바이스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_HOST_DEVICE_TIP: '호스트 디바이스를 선택해 주세요.',
-  RESOURCES_HOST_DEVICE_DESC: '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_HOST_DEVICE_DESC:
+    '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_HOST_ROUTE: '호스트 라우트',
   RESOURCES_RESOURCE_USAGE: '리소스 사용량',
   RESOURCES_CPU_USAGE: 'CPU 사용량',
@@ -495,13 +545,16 @@ module.exports = {
   RESOURCES_NO_DATA_RESTORE_LOG: '복원 이력이 없습니다',
   RESOURCES_COMPLETE: '완료',
   RESOURCES_NOT_COMPLETE: '미완료',
-  RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP: '가상 머신이 종료되지 않았습니다. 확인 후 다시 진행해 주세요.',
+  RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP:
+    '가상 머신이 종료되지 않았습니다. 확인 후 다시 진행해 주세요.',
   RESOURCES_NO_DATA_SNAPSHOT_RESOURCE: '스냅샷 리소스가 없습니다.',
   RESOURCES_DESELECT: '선택해제',
-  RESOURCES_STATIC_IP_NETWORK_INTERFACE_TIP: '고정 IP ( IP/네트워크 이름/인터페이스 )',
+  RESOURCES_STATIC_IP_NETWORK_INTERFACE_TIP:
+    '고정 IP ( IP/네트워크 이름/인터페이스 )',
   RESOURCES_START: '시작',
   RESOURCES_RESTORE_SUCCESSFUL: '복원 되었습니다.',
-  RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP: '복원 사유 등 이력에 기재할 정보를 입력해주세요.',
+  RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP:
+    '복원 사유 등 이력에 기재할 정보를 입력해주세요.',
   RESOURCES_BMC_SYSTEM_TIP: 'BMC 시스템 등록 정보를 입력해주세요.',
   RESOURCES_CHANGE_NODE_STATE: '노드 상태를 변경하시겠습니까?',
   RESOURCES_NO_SYSTEM_ID: '시스템 ID가 없습니다.',
@@ -523,16 +576,23 @@ module.exports = {
   PERMISSION_COMPUTING_WORKLOAD_VIEW: '컴퓨팅 워크로드 보기',
   PERMISSION_COMPUTING_SETTING_MANAGE: '컴퓨팅 설정 관리',
   PERMISSION_COMPUTING_SETTING_VIEW: '컴퓨팅 설정 보기',
-  PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE: '컴퓨팅 리소스 템플릿 키페어 관리',
+  PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE:
+    '컴퓨팅 리소스 템플릿 키페어 관리',
   PERMISSION_RESOURCE_TEMPLATE_MANAGE: '컴퓨팅 리소스 템플릿 관리',
   PERMISSION_RESOURCE_TEMPLATE_VIEW: '컴퓨팅 리소스 템플릿 보기',
-  PERMISSION_COMPUTING_WORKLOAD_MANAGE_DESC: '프로젝트 컴퓨팅 워크로드를 관리합니다. ',
-  PERMISSION_COMPUTING_WORKLOAD_VIEW_DESC: '프로젝트 컴퓨팅 워크로드를 조회합니다.',
-  PERMISSION_COMPUTING_SETTING_MANAGE_DESC: '프로젝트 컴퓨팅 설정을 관리합니다.',
+  PERMISSION_COMPUTING_WORKLOAD_MANAGE_DESC:
+    '프로젝트 컴퓨팅 워크로드를 관리합니다. ',
+  PERMISSION_COMPUTING_WORKLOAD_VIEW_DESC:
+    '프로젝트 컴퓨팅 워크로드를 조회합니다.',
+  PERMISSION_COMPUTING_SETTING_MANAGE_DESC:
+    '프로젝트 컴퓨팅 설정을 관리합니다.',
   PERMISSION_COMPUTING_SETTING_VIEW_DESC: '프로젝트 컴퓨팅 설정을 조회합니다.',
-  PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE_DESC: '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
-  PERMISSION_RESOURCE_TEMPLATE_MANAGE_DESC: '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
-  PERMISSION_RESOURCE_TEMPLATE_VIEW_DESC: '프로젝트 컴퓨팅 리소스 템플릿을 조회합니다.',
+  PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE_DESC:
+    '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
+  PERMISSION_RESOURCE_TEMPLATE_MANAGE_DESC:
+    '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
+  PERMISSION_RESOURCE_TEMPLATE_VIEW_DESC:
+    '프로젝트 컴퓨팅 리소스 템플릿을 조회합니다.',
   RESOURCES_NETWORK_TRAFFIC_IN: '네트워크 트래픽 IN',
   RESOURCES_NETWORK_TRAFFIC_OUT: '네트워크 트래픽 OUT',
   RESOURCES_REPLICA_DESIRE: '모든 노드',
@@ -541,31 +601,39 @@ module.exports = {
   RESOURCES_ARM: 'ARM',
   RESOURCES_AMD64: 'AMD64',
   RESOURCES_ARM64: 'ARM64',
-  RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC: '부트볼륨 사이즈보다 큰 사이즈를 선택해 주세요.',
+  RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC:
+    '부트볼륨 사이즈보다 큰 사이즈를 선택해 주세요.',
   RESOURCES_APP_DEPLOY_MANAGE: '애플리케이션 배포 관리',
-  RESOURCES_APP_DEPLOY_MANAGE_DESC: '애플리케이션의 배포를 관리 할 수 있습니다.',
+  RESOURCES_APP_DEPLOY_MANAGE_DESC:
+    '애플리케이션의 배포를 관리 할 수 있습니다.',
   RESOURCES_PLAYBOOK: 'Playbook',
   RESOURCES_APP_DEPLOY_PLAYBOOK_ADD: 'Playbook 등록',
-  RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC: 'Playbook 과 애플리케이션을 함께 압축하여 등록합니다.',
-  RESOURCES_APP_DEPLOY_VM_ADD_DESC: '애플리케이션이 배포될 가상머신을 등록합니다.',
+  RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC:
+    'Playbook 과 애플리케이션을 함께 압축하여 등록합니다.',
+  RESOURCES_APP_DEPLOY_VM_ADD_DESC:
+    '애플리케이션이 배포될 가상머신을 등록합니다.',
   RESOURCES_TASK: '태스크',
   RESOURCES_TASK_ID: '태스크 ID',
   RESOURCES_NO_DATA_TASK_LOG: '태스크 이력이 없습니다.',
   RESOURCES_CREATE_TEMPLATE: '템플릿 생성',
   RESOURCES_EDIT_TEMPLATE: '템플릿 수정',
-  RESOURCES_APP_DEPLOY_VM_EMPTY_DESC: '애플리케이션이 배포될 가상머신을 입력해 주세요.',
+  RESOURCES_APP_DEPLOY_VM_EMPTY_DESC:
+    '애플리케이션이 배포될 가상머신을 입력해 주세요.',
   RESOURCES_FIND_FILE: '파일 찾기',
   RESOURCES_FILE_EMPTY_DESC: '파일을 업로드해 주세요.',
   RESOURCES_ONLY_UPLOAD_ZIP_FILE: 'ZIP 파일만 업로드해 주세요.',
-  RESOURCES_DELETE_APP_DEPLOY_TIP: '애플리케이션 배포 관리의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_APP_DEPLOY_TIP:
+    '애플리케이션 배포 관리의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_TASK_DEPLOY: '태스크 실행 ',
   RESOURCES_DEPLOY_DESC: '배포 하시겠습니까?',
   RESOURCES_DEPLOYED_SUCCESSFULLY: '배포 되었습니다.',
   RESOURCES_DEPLOY: '배포',
   RESOURCES_BAREMETAL_MONITORING: '베어메탈 모니터링',
-  RESOURCES_BAREMETAL_MONITORING_DESC: '베어메탈 모니터링은 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다',
+  RESOURCES_BAREMETAL_MONITORING_DESC:
+    '베어메탈 모니터링은 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다',
   RESOURCES_CLUSTER_FAULT_TITLE: '클러스터 문제 진단',
-  RESOURCES_CLUSTER_FAULT_DETAIL: '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 웅요 이슈들을 자동으로 ㅌ마지하고 이를 해결하기 위한 솔루션을 제시합니다.',
+  RESOURCES_CLUSTER_FAULT_DETAIL:
+    '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 웅요 이슈들을 자동으로 ㅌ마지하고 이를 해결하기 위한 솔루션을 제시합니다.',
   RESOURCES_CLUSTER_FAULT_SET: '설정',
   RESOURCES_CLUSTER_FAULT_DESC: '문제 진단 Provider를 설정합니다.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: '네임스페이스',
@@ -577,30 +645,41 @@ module.exports = {
   RESOURCES_CLUSTER_FAULT_ERROR: '에러 내용',
   RESOURCES_CLUSTER_FAULT_SOLUTION: '솔루션',
   RESOURCES_CLUSTER_FAULT_SOLUTION_DETAIL: '솔루션 조회',
-  RESOURCES_DELETE_CR_TIP: 'Provider 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_ACTIVATE_CR: 'Provider 이름 <strong>{resource}</strong> 을 사용 설정하시겠습니까? </p> 기존에 사용 설정된 Provider가 있는 경우, 해당 Provider는 비활성화 됩니다.',
+  RESOURCES_DELETE_CR_TIP:
+    'Provider 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_ACTIVATE_CR:
+    'Provider 이름 <strong>{resource}</strong> 을 사용 설정하시겠습니까? </p> 기존에 사용 설정된 Provider가 있는 경우, 해당 Provider는 비활성화 됩니다.',
   RESOURCES_CLUSTER_FAULT_DELETE: 'Provider 삭제',
-  RESOURCES_CLUSTER_FAULT_ACTIVE_CR_SUCCESS: 'Provider 사용 대상이 설정되었습니다.',
+  RESOURCES_CLUSTER_FAULT_ACTIVE_CR_SUCCESS:
+    'Provider 사용 대상이 설정되었습니다.',
   RESOURCES_CLUSTER_FAULT_ACTIVE_CR_TITLE: '사용 대상 설정',
   RESOURCES_CLUSTER_FAULT_CR_EDIT: '정보 편집',
   RESOURCES_CLUSTER_FAULT_DELETING_CR: '이전 Provider가 비활성화중입니다',
   RESOURCES_CLUSTER_FAULT_MODAL_OPENAI_DESC: 'OpenAI 엔진 기반으로 분석합니다.',
-  RESOURCES_CLUSTER_FAULT_MODAL_LOCALAI_DESC: 'LocalAI 엔진 기반으로 분석합니다.',
+  RESOURCES_CLUSTER_FAULT_MODAL_LOCALAI_DESC:
+    'LocalAI 엔진 기반으로 분석합니다.',
   RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_MSG: 'Operator를 선택해주세요.',
   RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC: '분석 엔진을 선택합니다.',
   RESOURCES_CLUSTER_FAULT_MODAL_MODEL: '파운데이션 모델',
-  RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC: '파운데이션 모델 입력 최대 길이는 63자입니다.',
+  RESOURCES_CLUSTER_FAULT_MODAL_MODEL_DSEC:
+    '파운데이션 모델 입력 최대 길이는 63자입니다.',
   RESOURCES_CLUSTER_FAULT_MODAL_MODEL_MSG: '파운데이션 모델을 입력해주세요.',
   RESOURCES_CLUSTER_FAULT_SECRETKEY: 'Secret Key',
   RESOURCES_CLUSTER_FAULT_SECRETKEY_MSG: 'Secret Key를 입력해주세요.',
   RESOURCES_CLUSTER_FAULT_BASEURL: 'Base URL',
   RESOURCES_CLUSTER_FAULT_BASEURL_MSG: 'Base URL을 입력해주세요.',
-  RESOURCES_CLUSTER_FAULT_LOCALMODEL_LLAMA2: 'Llama2는 언어 모델로, 자연어 이해와 생성을 위해 사용될 수 있으며, 특정한 성능 및 기능을 갖추고 있습니다.',
-  RESOURCES_CLUSTER_FAULT_LOCALMODEL_MIXTRAL: 'Mixtral-8x7b는 다른 모델보다 큰 규모와 다양한 학습 데이터를 활용하여 자연어 처리 작업을 수행하는 모델입니다.',
-  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3: 'GPT-3.5는 OpenAI에서 개발한 자연어 처리 모델로, 이전 버전인 GPT-3에 비해 성능과 문맥 이해 능력이 향상되었습니다.',
-  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3TURBO: 'GPT-3.5-turbo는 GPT-3.5의 성능을 높이기 위해 추가적인 최적화나 향상이 적용된 버전으로 가정됩니다.',
-  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4: 'GPT-4는 GPT 시리즈의 다음 버전으로, 이전 모델보다 더 뛰어난 자연어 이해와 생성 능력을 갖추고 있을 것으로 예상됩니다.',
-  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4TURBO: 'GPT-4-turbo는 GPT-4의 성능을 높이기 위해 추가적인 최적화나 향상이 적용된 버전으로, 더 빠르고 정확한 결과를 제공할 것으로 예상됩니다.',
+  RESOURCES_CLUSTER_FAULT_LOCALMODEL_LLAMA2:
+    'Llama2는 언어 모델로, 자연어 이해와 생성을 위해 사용될 수 있으며, 특정한 성능 및 기능을 갖추고 있습니다.',
+  RESOURCES_CLUSTER_FAULT_LOCALMODEL_MIXTRAL:
+    'Mixtral-8x7b는 다른 모델보다 큰 규모와 다양한 학습 데이터를 활용하여 자연어 처리 작업을 수행하는 모델입니다.',
+  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3:
+    'GPT-3.5는 OpenAI에서 개발한 자연어 처리 모델로, 이전 버전인 GPT-3에 비해 성능과 문맥 이해 능력이 향상되었습니다.',
+  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT3TURBO:
+    'GPT-3.5-turbo는 GPT-3.5의 성능을 높이기 위해 추가적인 최적화나 향상이 적용된 버전으로 가정됩니다.',
+  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4:
+    'GPT-4는 GPT 시리즈의 다음 버전으로, 이전 모델보다 더 뛰어난 자연어 이해와 생성 능력을 갖추고 있을 것으로 예상됩니다.',
+  RESOURCES_CLUSTER_FAULT_LOCALMODEL_GPT4TURBO:
+    'GPT-4-turbo는 GPT-4의 성능을 높이기 위해 추가적인 최적화나 향상이 적용된 버전으로, 더 빠르고 정확한 결과를 제공할 것으로 예상됩니다.',
   RESOURCES_CLUSTER_INSPECTOR: '클러스터 인스펙터',
   RESOURCES_CONFIRM: '확인',
   RESOURCES_APP_DEPLOY: '애플리케이션 배포',
@@ -615,12 +694,15 @@ module.exports = {
   RESOURCES_ENTER_60_MORE: '60 이상 입력해 주세요.',
   RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
   RESOURCES_DNS_VALID: 'DNS 정보를 정확히 입력해주세요.',
-  RESOURCES_HOSTROUTE_VALID: '호스트 라우트 정보를 정확히 입력해주세요.</p> Destination - ipv4network, nexthop - ipv4',
+  RESOURCES_HOSTROUTE_VALID:
+    '호스트 라우트 정보를 정확히 입력해주세요.</p> Destination - ipv4network, nexthop - ipv4',
   RESOURCES_LOG: '로그',
   RESOURCES_HARBOR_VALID_TIP: 'Harbor URL 정보를 입력해 주세요.',
   RESOURCES_IMAGE_BUILD: '이미지 빌드',
-  RESOURCES_IMAGE_BUILD_DESC: '이미지 빌드의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_DELETE_IMAGE_BUILD_TIP: '이미지 빌드의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_IMAGE_BUILD_DESC:
+    '이미지 빌드의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DELETE_IMAGE_BUILD_TIP:
+    '이미지 빌드의 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_NODE_TIP: '노드를 선택해 주세요.',
   RESOURCES_SELECT_MDT_TIP: 'Mediated Device Type을 선택하세요.',
   RESOURCES_SELECT_MDT_CREATE: 'Mediated Device Type 생성',
@@ -634,7 +716,8 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
   RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
-  RESOURCES_INVALID_NAME_DESC: '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
+  RESOURCES_INVALID_NAME_DESC:
+    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
@@ -648,12 +731,15 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH: '이미지 빌드/푸시',
   RESOURCES_IMAGE_BUILD_PUSH_ING_DESC: '이미지 빌드&푸시 중 상태입니다.',
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
-  RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC: '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
+  RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC:
+    '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
   RESOURCES_FILE_WIRTE_EMPTY_DESC: '파일 쓰기 정보를 입력해 주세요.',
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
   RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',
-  RESOURCES_INVALID_PACKAGE_SETTING_DESC: '패키지 이름(소스 및 바이너리 모두, 패키지 참조)은 소문자(a-z), 숫자(0-9), 더하기(+) 및 빼기(-) 기호, 마침표(.)로만 구성되어야 합니다. 길이는 2자 이상이어야 하며 영숫자 문자로 시작해야 합니다.',
-  RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC: '서버 구성을 완료한 상태 입니다. ',
+  RESOURCES_INVALID_PACKAGE_SETTING_DESC:
+    '패키지 이름(소스 및 바이너리 모두, 패키지 참조)은 소문자(a-z), 숫자(0-9), 더하기(+) 및 빼기(-) 기호, 마침표(.)로만 구성되어야 합니다. 길이는 2자 이상이어야 하며 영숫자 문자로 시작해야 합니다.',
+  RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC:
+    '서버 구성을 완료한 상태 입니다. ',
   RESOURCES_ENVIRONMENT_CONFIGURATION_ING_DESC: '서버 구성중 상태입니다. ',
   RESOURCES_ENVIRONMENT_CONFIGURATION_FAIL_DESC: '서버 구성 실패 상태입니다. ',
   RESOURCES_FILE_UPLOAD_FAIL_DESC: '파일 업로드 실패 상태입니다. ',
@@ -662,6 +748,4 @@ module.exports = {
   RESOURCES_PREPARING: '대기 중',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: '파일 업로드 전 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: '이미지 빌드&푸시 전 상태입니다.',
-
-
 };
