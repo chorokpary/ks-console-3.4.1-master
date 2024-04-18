@@ -29,8 +29,31 @@ const Status = (props) => {
 
   const textClipboard = () => {
     const keyText = showSecret ? originData : encodeKey;
-    navigator.clipboard.writeText(keyText).then(e => Notify.success(t('RESOURCES_COPY_SUCCESSFUL')));
+
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard.writeText(keyText).then(e => Notify.success(t('RESOURCES_COPY_SUCCESSFUL')));
+    } else {
+      unsecuredCopyToClipboard(keyText);
+      Notify.success(t('RESOURCES_COPY_SUCCESSFUL'))
+    }
   }
+
+  // navigator.clipboard.writeText 가 https 환경에서만 작동하여
+  // https 환경이 아닐경우 우회 복사 처리
+  // https://developer.mozilla.org/en-US/docs/Web/API/Clipboard
+  const unsecuredCopyToClipboard = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy')
+    } catch (err) {
+      console.error('Unable to copy to clipboard', err)
+    }
+    document.body.removeChild(textArea)
+  };
 
   // 초기 데이터 처리
   useEffect(() => {
