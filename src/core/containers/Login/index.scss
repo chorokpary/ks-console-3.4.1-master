@@ -1,92 +1,102 @@
 @import '~scss/variables';
 @import '~scss/mixins';
 
-.logo {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-}
+.loginContainer {
+  width: 460px;
 
-.logo img {
-  width: 254px;
-  height: 32px;
-}
-
-.login {
   position: relative;
-  width: 320px;
-  margin: 140px auto 40px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: $base-shadow;
-  box-sizing: border-box;
+  top: 76px;
+  margin: 0 auto;
 
-  :global {
-    .form-item-label {
-      @include TypographySymbolText;
-    }
+  .logo {
+    margin-bottom: 10px;
+    display: block;
+    text-align: center;
 
-    input.input {
-      height: 36px;
+    img {
+      width: 185px;
+      height: 48px;
     }
   }
-}
 
-.header {
-  position: relative;
-  font-weight: 600;
-  font-size: 12px;
-  color: $text-color;
-  line-height: 20px;
-  text-align: center;
-}
+  .login {
+    margin-top: 100px !important;
+    position: relative;
+    width: 320px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: $base-shadow;
+    box-sizing: border-box;
 
-.divider {
-  width: 100%;
-  height: 0;
-  margin-top: 12px;
-  margin-bottom: 20px;
-  opacity: 0.6;
-  border-bottom: 1px solid;
-  border-image-source: radial-gradient(circle at 50% 0, #abb4be, #ffffff 100%);
-  border-image-slice: 1;
-}
+    :global {
+      .form-item-label {
+        @include TypographySymbolText;
+      }
 
-.footer {
-  margin-top: 24px;
-  button[type='submit'] {
-    width: 100%;
-  }
-}
+      input.input {
+        height: 36px;
+      }
+    }
 
-.oauth {
-  padding: 6px;
-  border-radius: 2px;
-  background-color: #eff4f9;
-  color: #36435c;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 20px;
-  text-decoration: none;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+    .header {
+      position: relative;
+      font-weight: 600;
+      font-size: 12px;
+      color: $text-color;
+      line-height: 20px;
+      text-align: center;
+    }
 
-  &:hover {
-    background-color: #d8dee5;
-  }
+    .divider {
+      width: 100%;
+      height: 0;
+      margin-top: 12px;
+      margin-bottom: 20px;
+      opacity: 0.6;
+      border-bottom: 1px solid;
+      border-image-source: radial-gradient(circle at 50% 0,
+          #abb4be,
+          #ffffff 100%);
+      border-image-slice: 1;
+    }
 
-  &:active {
-    background-color: #d1d7df;
-  }
+    .footer {
+      margin-top: 24px;
 
-  & + .oauth {
-    margin-top: 8px;
-  }
+      button[type='submit'] {
+        width: 100%;
+      }
+    }
 
-  & + form {
-    padding-top: 20px;
+    .oauth {
+      padding: 6px;
+      border-radius: 2px;
+      background-color: #eff4f9;
+      color: #36435c;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 20px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        background-color: #d8dee5;
+      }
+
+      &:active {
+        background-color: #d1d7df;
+      }
+
+      &+.oauth {
+        margin-top: 8px;
+      }
+
+      &+form {
+        padding-top: 20px;
+      }
+    }
   }
 }
