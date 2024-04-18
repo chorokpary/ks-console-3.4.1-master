@@ -64,6 +64,19 @@ export default class FloatingIp extends React.Component {
             }),
         },
       ],
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('RESOURCES_DELETE'),
+          action: 'delete',
+          onClick: () =>
+            trigger('floatingIp.remove.batch', {
+              success: getData,
+              ...this.props.match.params,
+            }),
+        },
+      ],
     }
   }
 
