@@ -38,18 +38,18 @@ const ModifyFlavorModal = (props) => {
 
     form.current.validator(() => {
 
-        const { data } = form.current.props;
-        data.id = props.store.detail.vm.id;
+      const { data } = form.current.props;
+      data.id = props.store.detail.vm.id;
 
-        const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
-        const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi', '');
-         
-        if (flavorSize < imageSize) {
-          setFlavorSizeCheck(false);
-          return false;
-        } 
+      const flavorSize = flavorDataList.filter(item => item.name == selectFlavorName).map(item => item.root_disk);
+      const imageSize = imageDataList.filter(item => item.name == selectImageName).map(item => item.size)[0].replace('Gi', '');
 
-        onOk({ ...data })
+      if (flavorSize < imageSize) {
+        setFlavorSizeCheck(false);
+        return false;
+      }
+
+      onOk({ ...data })
     })
   }
 
@@ -58,6 +58,7 @@ const ModifyFlavorModal = (props) => {
   }
 
   useEffect(() => {
+    console.log(props)
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor({ sortBy: 'root_disk', ...props });
       const listImage = await vmStore.fetchVmListImage({ ...props });
@@ -94,7 +95,7 @@ const ModifyFlavorModal = (props) => {
     callback()
   }
   // Validation 끝 ==================================================
- 
+
 
   return (
     <>
@@ -110,21 +111,21 @@ const ModifyFlavorModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-              label={t('Flavor')}
-              rules={[{ required: true, validator: flavorValidator }]}
-            >
-              <TypeSelect
-                name="flavor"
-                defaultValue={selectFlavorName}
-                options={flavorOptions()}
-                onChange={(e) => setSelectFlavorName(e)}
-                placeholder={{
-                  label: t('RESOURCES_SELECT')
-                }}
-                defaultDescription={t('RESOURCES_SELECT_FLAVOR_TIP')}
-              />
-            </Form.Item>
-            <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>{t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')}</div>
+            label={t('Flavor')}
+            rules={[{ required: true, validator: flavorValidator }]}
+          >
+            <TypeSelect
+              name="flavor"
+              defaultValue={selectFlavorName}
+              options={flavorOptions()}
+              onChange={(e) => setSelectFlavorName(e)}
+              placeholder={{
+                label: t('RESOURCES_SELECT')
+              }}
+              defaultDescription={t('RESOURCES_SELECT_FLAVOR_TIP')}
+            />
+          </Form.Item>
+          <div className={`form-item-error ${flavorSizeCheck ? "hide" : ""}`}>{t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')}</div>
         </Form>
       </Modal>
 

@@ -57,13 +57,18 @@ const ModifyModal = (props) => {
 
     setRouterExternal([]);
     routerList?.map((router) => {
-      setRouterExternal(prev => [...prev, router.external])
+      if (router.external?.id !== detailExternal.id) {
+        setRouterExternal(prev => [...prev, router.external])
+      }
     });
 
+    const detailInternalIds = detailInternal.map(arr => arr.id)
     setRouterInternal([]);
     routerList?.map((router) => {
-      (router.internal).map((name) => {
-        setRouterInternal(prev => [...prev, name])
+      (router.internal).map((it) => {
+        if (!detailInternalIds.includes(it.id)) {
+          setRouterInternal(prev => [...prev, it.id])
+        }
       })
     });
 

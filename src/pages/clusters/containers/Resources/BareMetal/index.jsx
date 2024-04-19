@@ -179,7 +179,7 @@ export default class BareMetalDashboard extends React.Component {
     return globals.user.username !== record.name
   }
 
-  showEdit(record){
+  showEdit(record) {
     const address = get(record, ['openBMC', 'address'])
     const username = get(record, ['openBMC', 'username'])
     const password = get(record, ['openBMC', 'password'])
@@ -203,7 +203,7 @@ export default class BareMetalDashboard extends React.Component {
             success: getData,
             ...this.props.match.params,
           })
-        },         
+        },
       },
       {
         key: 'action2',
@@ -291,21 +291,21 @@ export default class BareMetalDashboard extends React.Component {
     const instance = record.system_type == "C" ? record.name : record.nodeExporter.ip;
     const target = record.openBMC?.address;
 
-    const metrics = type == "redfish" ? this.state[metricData].find(item => get(item, 'metric.target') === target) 
-                                      : record.system_type == "C" 
-                                      ? this.state[metricData].find(item => get(item, 'metric.instance') === instance) 
-                                      : this.state[metricData].find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
+    const metrics = type == "redfish" ? this.state[metricData].find(item => get(item, 'metric.target') === target)
+      : record.system_type == "C"
+        ? this.state[metricData].find(item => get(item, 'metric.instance') === instance)
+        : this.state[metricData].find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
     return metrics;
   }
 
-  getMetricValue = (metricData, record, type) => {    
+  getMetricValue = (metricData, record, type) => {
     const instance = record.system_type == "C" ? record.name : record.nodeExporter.ip;
     const target = record.openBMC?.address;
 
-    const metrics = type == "redfish" ? this.state[metricData].find(item => get(item, 'metric.target') === target) 
-                                      : record.system_type == "C" 
-                                      ? this.state[metricData].find(item => get(item, 'metric.instance') === instance) 
-                                      : this.state[metricData].find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
+    const metrics = type == "redfish" ? this.state[metricData].find(item => get(item, 'metric.target') === target)
+      : record.system_type == "C"
+        ? this.state[metricData].find(item => get(item, 'metric.instance') === instance)
+        : this.state[metricData].find(item => get(item, 'metric.instance', ':').split(":")[0] === instance);
     const value = get(metrics, 'value[1]', '0');
     return value;
   }
@@ -333,14 +333,14 @@ export default class BareMetalDashboard extends React.Component {
           const ip = record.system_type == "C" ? "" : record.nodeExporter.ip;
           return (
             <Avatar
-            icon="nodes"
-            iconSize={40}
-            to={`/clusters/${cluster}/baremetalmonitoring/${name}`}
-            title={name}
-            desc={ip}
-          />
+              icon="nodes"
+              iconSize={40}
+              to={`/clusters/${cluster}/baremetalmonitoring/${name}`}
+              title={name}
+              desc={ip}
+            />
           )
-        } 
+        }
       },
       {
         title: t('RESOURCES_STATE'),
@@ -374,7 +374,7 @@ export default class BareMetalDashboard extends React.Component {
           const metrics = this.getMetricData('metricTypeData', record)
           const machine = get(metrics, 'metric.machine', "NOT")
           const x86Array = ['x86_64', 'amd']
-          const typeText = x86Array.includes(machine.toLowerCase()) ? t('RESOURCES_AMD64') : machine == "NOT" ? "-" : t('RESOURCES_ARM64') 
+          const typeText = x86Array.includes(machine.toLowerCase()) ? t('RESOURCES_AMD64') : machine == "NOT" ? "-" : t('RESOURCES_ARM64')
           return (
             <Text title={`${typeText}`} />
           )
@@ -451,7 +451,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('RESOURCES_POWER')+'(Watt)',
+        title: t('RESOURCES_POWER') + '(Watt)',
         key: 'power',
         isHideable: true,
         render: record => {
@@ -462,7 +462,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('RESOURCES_TEMPERRATURE')+'(°C)',
+        title: t('RESOURCES_TEMPERRATURE') + '(°C)',
         key: 'temperature',
         isHideable: true,
         render: record => {
@@ -473,7 +473,7 @@ export default class BareMetalDashboard extends React.Component {
         }
       },
       {
-        title: t('RESOURCES_CARBON_EMISSIONS')+'(Kg)',
+        title: t('RESOURCES_CARBON_EMISSIONS') + '(Kg)',
         key: 'carbon',
         isHideable: true,
         render: record => {
@@ -619,15 +619,15 @@ export default class BareMetalDashboard extends React.Component {
 
       <ListPage {...this.props}>
 
-      <Banner
-        // icon="linechart"
-        icon={this.getBanner}
-        title={t('RESOURCES_BAREMETAL_MONITORING')}
-        description={t('RESOURCES_BAREMETAL_MONITORING_DESC')}
-      />
+        <Banner
+          // icon="linechart"
+          icon={this.getBanner}
+          title={t('RESOURCES_BAREMETAL_MONITORING')}
+          description={t('RESOURCES_BAREMETAL_MONITORING_DESC')}
+        />
 
         <div className="content_box_wrap">
-          {/* CPU 소비 전력량 비교 */}
+          {/* 탄소 지표 */}
           <Carbon {...this.props} />
 
           {/* CPU 소비 전력량 비교 */}

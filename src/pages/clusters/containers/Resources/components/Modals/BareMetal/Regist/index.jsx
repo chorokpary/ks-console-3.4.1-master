@@ -52,7 +52,7 @@ const RegistModal = props => {
       data.systemType = systemType;
       data.bmcCheck = bmcCheck;
 
-      console.log('data :' + JSON.stringify(data));
+      // console.log('data :' + JSON.stringify(data));
       onOk({ ...data });
     });
   };
@@ -97,6 +97,7 @@ const RegistModal = props => {
       setChkValidation(false);
     }
   }, [bmcCheck]);
+
   const nodeNameOptions = clusterNodeDataList.map(name => {
     return {
       label: name,
@@ -223,18 +224,20 @@ const RegistModal = props => {
     callback();
   };
 
-  const [userValid, setUserValid] = useState(false);
   const [userValidError, setUserValidError] = useState(false);
-  const [userValidCheck, setuserValidCheck] = useState(false);
-  const [userValidCheckError, setUserValidCheckError] = useState(false);
+  const [userValidBmcError, setUserValidBmcError] = useState(false);
+  const [userValidSuccess, setUserValidSuccess] = useState(false);
+  const [userValidBmcSuccess, setUserValidBmcSuccess] = useState(false);
 
+  /*
   // const [duplicate, setDuplicate] = useState();
   // useEffect(() => {
   //   const duplicate = dataList.filter(el => el.ip == nodeIp);
 
   //   setDuplicate(duplicate);
   // }, []);
-  const [nodeIpError, setNodeIpError] = useState();
+
+    const [nodeIpError, setNodeIpError] = useState();
   const [nodeIntervalError, setNodeIntervalError] = useState();
   const [nodePortError, setNodePortError] = useState();
   const [chkValidationError, setChkValidationError] = useState(true);
@@ -259,17 +262,80 @@ const RegistModal = props => {
       setNodeIpError();
     }
 
-    if (!value) {
+    if (!nodeInterval) {
       setNodeIntervalError(t('RESOURCES_INTERVAL_EMPTY_DESC'));
-    } else if (value < 60) {
+      isError = true;
+    } else if (nodeInterval < 60) {
       setNodeIntervalError(t('RESOURCES_ENTER_60_MORE'));
+      isError = true;
+    }else{
+    setNodeInterval();
     }
-    setNodeInterval(value);
+
+    if (!nodePort) {
+    setNodeIntervalError(t('RESOURCES_PORT_EMPTY_DESC'));
+    isError = true;
+    }else if (!(nodePort >= 1 && value <= 65535)) {
+    setNodePort(t('RESOURCES_ENTER_1_MORE_AS_65535'));
+    isError = true;
+    } else(
+    setNodePort();
+    );
+    
+
+  const [bmcIpError, setBmcIpError] = useState();
+  const [bmcIntervalError, setBmcIntervalError] = useState();
+    
+    if (!bmcUsername) {
+    setBmcUsernameError(t('RESOURCES_ID_EMPTY_DESC')); 
+    isError = true;
+    } else{
+    setBmcUsernameError();
+    }
+
+    if (!bmcPassword) {
+    setBmcPasswordError(t('RESOURCES_PASSWORD_EMPTY_DESC'))
+    isError = true;
+    }else{
+    setBmcPasswordError();
+    }
+
+    if (!bmcIp) {
+        setBmcIpError(t('RESOURCES_IP_EMPTY_DESC'))
+        isError = true;
+    } else{
+     setBmcIpError();
+    }
+
+    if (!regexIp.test(bmcInterval)) {
+        setBmcIntervalError(t('INVALID_IP_DESC'))
+        isError = true;
+    }
+    else{setBmcIntervalError()}
+  };
+
+  const intervalValidator = (rule, value, callback) => {
+    if (!value) {
+      return callback({
+        message: t('RESOURCES_INTERVAL_EMPTY_DESC'),
+      });
+    }
+
+    if (value < 60) {
+      return callback({
+        message: t('RESOURCES_ENTER_60_MORE'),
+      });
+    }
+    setBmcInterval(value);
+    callback();
+  };
 
     if (isError) return;
 
     onClickValChk();
   };
+  */
+
   const onClickValChk = () => {
     const params = {};
     params.ip = nodeIp;
@@ -279,37 +345,20 @@ const RegistModal = props => {
     axios
       .post(
         `/kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/validations/node-exporter`,
-        params,
+        params
       )
       .then(res => {
-        setChkValidation(false);
-
-        setuserValidCheck(true);
-        setUserValidCheckError(false);
-        setUserValid(true);
+        setChkValidation(false); // 저장버튼 활성화
+        //유효성 체크 validation 문구
         setUserValidError(false);
+        setUserValidSuccess(true);
       })
       .catch(error => {
         console.error('Regist error :  ', error);
-        console.error('Regist error response :  ', error.response);
-
-        if (error.status) {
-          //유효하지 않음
-          setuserValidCheck(false);
-          setUserValidCheckError(false);
-          setUserValid(false);
-          setUserValidError(true);
-
-          setUserValidSuccess(false);
-        } else {
-          //유효함
-          setuserValidCheck(true);
-          setUserValidCheckError(false);
-          setUserValid(true);
-          setUserValidError(false);
-
-          setUserValidSuccess(true);
-        }
+        setChkValidation(true); // 저장버튼 비활성화
+        //유효성 체크 validation 문구
+        setUserValidError(true);
+        setUserValidSuccess(false);
       });
   };
 
@@ -323,14 +372,23 @@ const RegistModal = props => {
     axios
       .post(
         `/kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/validations/openbmc`,
-        params,
+        params
       )
       .then(res => {
-        setChkValidation(false);
+        if (userValidError) {
+          setChkValidation(false);
+        } else {
+          setChkValidation(true);
+        }
+        setUserValidBmcError(false);
+        setUserValidBmcSuccess(true);
       })
       .catch(error => {
         console.error('Regist error :  ', error);
-        console.error('Regist error response :  ', error.response);
+
+        setChkValidation(true);
+        setUserValidBmcError(true);
+        setUserValidBmcSuccess(false);
       });
   };
   // Validation 끝 ==================================================
@@ -453,113 +511,80 @@ const RegistModal = props => {
                     </Form.Item>
                   </Column>
                 </Columns>
-                <button
-                  type="button"
-                  // onClick={validationCheck}
-                  onClick={onClickValChk}
+                <div
                   style={{
                     position: 'relative',
-                    left: '615px',
-                    flex: '0 0 auto !important',
-                    background: '#242e42',
-                    color: '#fff',
-                    boxShadow: '0 4px 8px 0 rgba(35, 45, 65, 0.28)',
-                    fontWeight: 'normal',
-                    borderRadius: '16px',
-                    minWidth: '60px',
-                    height: '32px',
-                    lineHeight: '20px',
-                    fontSize: '12px',
-                    padding: '5px 15px',
-                    cursor: 'pointer',
-                    outline: 'none',
-                    border: '0',
-                    transition: '.5s ease',
-                    fontFamily: 'Roboto Pretendard sans-serif',
-                    backfaceVisibility: 'hidden',
-                    resize: 'none',
-                    appearance: 'none',
-                    boxSizing: 'border-box',
+                    bottom: '10px',
                   }}
                 >
-                  {t('RESOURCES_VALID')}
-                </button>
+                  {/* 유효하지 않은 정보입니다. */}
+                  {userValidError && (
+                    <div
+                      className="form-item-error"
+                      style={{
+                        position: 'relative',
+                        top: '27px',
+                      }}
+                    >
+                      {t('RESOURCES_FAIL_VALID_INFO')}
+                    </div>
+                  )}
+                  {/* //유효성 체크가 완료 되었습니다.*/}
+                  {userValidSuccess && (
+                    <div
+                      className="form-item-error"
+                      style={{
+                        color: '#55bc8a',
+                        position: 'relative',
+                        top: '27px',
+                      }}
+                    >
+                      {t('RESOURCES_SUCCESS_VALID_DESC')}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={onClickValChk}
+                    style={{
+                      position: 'relative',
+                      left: '615px',
+                      flex: '0 0 auto !important',
+                      background: '#242e42',
+                      color: '#fff',
+                      boxShadow: '0 4px 8px 0 rgba(35, 45, 65, 0.28)',
+                      fontWeight: 'normal',
+                      borderRadius: '16px',
+                      minWidth: '60px',
+                      height: '32px',
+                      lineHeight: '20px',
+                      fontSize: '12px',
+                      padding: '5px 15px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      border: '0',
+                      transition: '.5s ease',
+                      fontFamily: 'Roboto Pretendard sans-serif',
+                      backfaceVisibility: 'hidden',
+                      resize: 'none',
+                      appearance: 'none',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    {t('RESOURCES_VALID')}
+                  </button>
+                </div>
               </Form.Group>
             </Form.Item>
-
-            // <Form.Item label={t('Node Exporter')}>
-            //   <div className={styles.content_box_wrap}>
-            //     <div className={styles.cont_box_section}>
-            //       <div className={styles.cont_box_wrap}>
-            //         <div className={styles.regi_group_area}>
-            //           <div className={styles.formarea}>
-            //             <div className={styles.custom_input}>
-            //               <label>{t('IP')}</label>
-            //               <input
-            //                 type="text"
-            //                 onChange={e => setNodeIp(e.target.value)}
-            //                 name="nodeIp"
-            //                 placeholder={t('192.168.XX.XX')}
-            //                 value={nodeIp}
-            //               />
-            //             </div>
-            //             {nodeIpError && (
-            //               <div
-            //                 className="form-item-error"
-            //                 style={{ color: '#ca2621' }}
-            //               >
-            //                 {t('RESOURCES_REGISTED_IP_EXISTS')}
-            //               </div>
-            //             )}
-            //             <div className={styles.custom_input}>
-            //               <label>{t('Scrape Interval') + ' (s)'}</label>
-            //               <input
-            //                 name="nodeInterval"
-            //                 placeholder={t('60')}
-            //                 type="number"
-            //                 value={nodeInterval}
-            //                 onChange={e => setNodeInterval(e.target.value)}
-            //               />
-            //             </div>
-            //             <div className={styles.custom_input}>
-            //               <label>{t('Port')}</label>
-            //               <input
-            //                 name="nodePort"
-            //                 placeholder={t('9100')}
-            //                 type="number"
-            //                 value={nodePort}
-            //                 onChange={e => setNodePort(e.target.value)}
-            //               />
-            //             </div>
-            //             <button
-            //               type="button"
-            //               className={classnames(styles.btn, styles.btn_control)}
-            //               onClick={validationCheck}
-            //             >
-            //               {t('RESOURCES_VALID')}
-            //             </button>
-            //           </div>
-            //         </div>
-            //         {/* //Harbor URL 정보를 입력해 주세요.  */}
-            //         {/* {nodeIp && duplicate && (*/}
-            //         <div
-            //           className="form-item-error"
-            //           style={{ color: '#ca2621' }}
-            //         >
-            //           {t('RESOURCES_REGISTED_IP_EXISTS')}
-            //         </div>
-            //         {/*})}*/}
-            //       </div>
-            //     </div>
-            //   </div>
-            // </Form.Item>
           )}
+
           <div className={styles.title}>
             <Checkbox
               name="bmc"
               onClick={() => {
                 setBmcCheck(!bmcCheck);
                 setChkValidation(true);
+                // setUserValidError(false);
+                // setUserValidSuccess(false);
               }}
             >
               {t('BMC')}
@@ -636,50 +661,70 @@ const RegistModal = props => {
                     />
                   </Form.Item>
                 </Column>
-                {/* <Column>
-                  <Button
-                    onClick={onClickBmcValChk}
-                    style={{
-                      position: 'relative',
-                      top: '12px',
-                      left: '20px',
-                    }}
-                  >
-                    {'check'}
-                  </Button>
-                </Column> */}
               </Columns>
 
-              <button
-                type="button"
-                onClick={onClickBmcValChk}
+              <div
                 style={{
                   position: 'relative',
-                  left: '615px',
-                  flex: '0 0 auto !important',
-                  background: '#242e42',
-                  color: '#fff',
-                  boxShadow: '0 4px 8px 0 rgba(35, 45, 65, 0.28)',
-                  fontWeight: 'normal',
-                  borderRadius: '16px',
-                  minWidth: '60px',
-                  height: '32px',
-                  lineHeight: '20px',
-                  fontSize: '12px',
-                  padding: '5px 15px',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  border: '0',
-                  transition: '.5s ease',
-                  fontFamily: 'Roboto Pretendard sans-serif',
-                  backfaceVisibility: 'hidden',
-                  resize: 'none',
-                  appearance: 'none',
-                  boxSizing: 'border-box',
+                  bottom: '10px',
                 }}
               >
-                {t('RESOURCES_VALID')}
-              </button>
+                {/* 유효하지 않은 정보입니다. */}
+                {userValidBmcError && (
+                  <div
+                    className="form-item-error"
+                    style={{
+                      position: 'relative',
+                      top: '27px',
+                    }}
+                  >
+                    {t('RESOURCES_FAIL_VALID_INFO')}
+                  </div>
+                )}
+                {/* 유효성 체크가 완료 되었습니다.*/}
+                {userValidBmcSuccess && (
+                  <div
+                    className="form-item-error"
+                    style={{
+                      color: '#55bc8a',
+                      position: 'relative',
+                      top: '27px',
+                    }}
+                  >
+                    {t('RESOURCES_SUCCESS_VALID_DESC')}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={onClickBmcValChk}
+                  style={{
+                    position: 'relative',
+                    left: '615px',
+                    flex: '0 0 auto !important',
+                    background: '#242e42',
+                    color: '#fff',
+                    boxShadow: '0 4px 8px 0 rgba(35, 45, 65, 0.28)',
+                    fontWeight: 'normal',
+                    borderRadius: '16px',
+                    minWidth: '60px',
+                    height: '32px',
+                    lineHeight: '20px',
+                    fontSize: '12px',
+                    padding: '5px 15px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    border: '0',
+                    transition: '.5s ease',
+                    fontFamily: 'Roboto Pretendard sans-serif',
+                    backfaceVisibility: 'hidden',
+                    resize: 'none',
+                    appearance: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  {t('RESOURCES_VALID')}
+                </button>
+              </div>
             </Form.Group>
           )}
         </Form>

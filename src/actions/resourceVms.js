@@ -66,7 +66,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
+            .update({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -77,6 +77,7 @@ export default {
         modal: ModifyModal,
         store,
         module,
+        cluster, namespace,
         ...props,
       })
     },
@@ -86,7 +87,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .updateSecurity({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
+            .updateSecurity({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -97,6 +98,7 @@ export default {
         modal: ModifySecurityGroupModal,
         store,
         module,
+        cluster, namespace,
         ...props,
       })
     },
@@ -106,7 +108,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .updateFlavor({ ...detail, ...cluster, workspace, namespace, devops, id: data.id }, data)
+            .updateFlavor({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -117,6 +119,7 @@ export default {
         modal: ModifyFlavorModal,
         store,
         module,
+        cluster, namespace,
         ...props,
       })
     },
@@ -149,6 +152,7 @@ export default {
         }),
         resource: detail.name,
         store,
+        cluster, namespace,
         ...props,
       })
     },

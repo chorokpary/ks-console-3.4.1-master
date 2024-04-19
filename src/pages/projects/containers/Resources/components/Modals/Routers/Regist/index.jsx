@@ -61,13 +61,13 @@ const RegistModal = (props) => {
 
     setRouterExternal([]);
     routerList?.map((router) => {
-      setRouterExternal(prev => [...prev, router.external])
+      setRouterExternal(prev => [...prev, router.external?.id])
     });
 
     setRouterInternal([]);
     routerList?.map((router) => {
-      (router.internal).map((name) => {
-        setRouterInternal(prev => [...prev, name])
+      (router.internal).map((it) => {
+        setRouterInternal(prev => [...prev, it.id])
       })
     });
 

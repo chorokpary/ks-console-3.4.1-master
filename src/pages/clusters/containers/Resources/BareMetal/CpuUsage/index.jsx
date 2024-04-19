@@ -18,7 +18,7 @@ const CpuUsage = (props) => {
   const [stepParams, setStepParams] = useState({ step: '6m', times: 10 })
 
   const [nodeList, setNodeList] = useState();
-  
+
   const [x86CpuData, setX86CpuData] = useState([]);
   const [armCpuData, setArmCpuData] = useState([]);
   const [x86PowerData, setX86PowerData] = useState([]);
@@ -77,7 +77,7 @@ const CpuUsage = (props) => {
 
     let instanceJoinText = ""
     await data.map(obj => {
-      const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip+":"+obj.nodeExporter.port;
+      const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip + ":" + obj.nodeExporter.port;
       instanceJoinText += instance + "|"
     })
 
@@ -95,6 +95,8 @@ const CpuUsage = (props) => {
     }
 
     const getTypeData = async () => {
+
+      const { data } = props.store.list;
 
       const metric_type = await customStore.fetchMetric({
         expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
@@ -114,16 +116,18 @@ const CpuUsage = (props) => {
 
         const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
         const type = get(type_data, 'metric.machine', '')
-        const x86Array = ['x86_64', 'amd']             
-        x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
+        const x86Array = ['x86_64', 'amd']
+        const armArray = ['arm', 'aarch64']
+        if (x86Array.includes(type.toLowerCase())) total_x86_count++;
+        if (armArray.includes(type.toLowerCase())) total_arm_count++;
       })
 
       const x86PowerMetricLastData = _.find(metric_power_last, (data) => {
-        if (get(data, 'metric.machine').includes('x86')) return data;
+        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
       });
 
       const armPowerMetricLastData = _.find(metric_power_last, (data) => {
-        if (get(data, 'metric.machine').includes('arm')) return data;
+        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
       });
 
       const x86PowerLastData = get(x86PowerMetricLastData, 'value[1]', '0');
@@ -134,20 +138,20 @@ const CpuUsage = (props) => {
 
       setX86PowerAvgData(x86PowerAvg);
       setArmPowerAvgData(armPowerAvg);
-
       const max_power = 200000;
-      let x86PowerPercent = ((x86PowerAvg / max_power) * 100).toFixed(0);
-      let armPowerPercent = ((armPowerAvg / max_power) * 100).toFixed(0);
 
-      x86PowerPercent = x86PowerPercent == "Infinity" ? 0 : x86PowerPercent;
-      armPowerPercent = armPowerPercent == "Infinity" ? 0 : x86PowerPercent;
+      let x86PowerPercent = ((x86PowerAvg / max_power) * 100)
+      let armPowerPercent = ((armPowerAvg / max_power) * 100)
+
+      x86PowerPercent = (isNaN(x86PowerPercent) || !isFinite(x86PowerPercent)) ? 0 : x86PowerPercent.toFixed(2);
+      armPowerPercent = (isNaN(armPowerPercent) || !isFinite(armPowerPercent)) ? 0 : armPowerPercent.toFixed(2);
 
       setX86PowerPercent(x86PowerPercent);
       setArmPowerPercent(armPowerPercent);
     };
 
     const getCpuUsageData = async () => {
-       
+
       const metric_cpu = await customStore.fetchMetric({
         expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})))`,
         // expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
@@ -156,11 +160,11 @@ const CpuUsage = (props) => {
       })
 
       const x86CpuMetricData = _.find(metric_cpu, (data) => {
-        if (get(data, 'metric.machine').includes('x86')) return data;
+        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
       });
 
       const armCpuMetricData = _.find(metric_cpu, (data) => {
-        if (get(data, 'metric.machine').includes('arm')) return data;
+        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
       });
 
       const x86CpuArray = [];
@@ -183,11 +187,11 @@ const CpuUsage = (props) => {
       })
 
       const x86PowerMetricData = _.find(metric_power, (data) => {
-        if (get(data, 'metric.machine').includes('x86')) return data;
+        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
       });
 
       const armPowerMetricData = _.find(metric_power, (data) => {
-        if (get(data, 'metric.machine').includes('arm')) return data;
+        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
       });
 
       const x86PowerArray = [];
@@ -315,13 +319,13 @@ const CpuUsage = (props) => {
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
-                        <p><i className="ico-type24-powericon"></i> <span className="em">{(isNaN(x86PowerPercent) || isFinite(x86PowerPercent)) ? 0 : x86PowerPercent}</span> <span className="unit">W</span></p>
+                        <p><i className="ico-type24-powericon"></i> <span className="em">{armPowerPercent}</span> <span className="unit">W</span></p>
                       </div>
                     </div>
                   </div>
                   <div className="graph_wrap">
                     <div className="graph_bar">
-                      <div className="bar animate-bar" style={{ width: `${(isNaN(x86PowerPercent) || isFinite(x86PowerPercent)) ? 0 : x86PowerPercent}%` }}></div>
+                      <div className="bar animate-bar" style={{ width: `${armPowerPercent}%` }}></div>
                     </div>
                   </div>
                 </div>
@@ -333,13 +337,13 @@ const CpuUsage = (props) => {
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
-                        <p><i className="ico-type24-powericon"></i> <span className="em">{(isNaN(armPowerPercent) || isFinite(armPowerPercent)) ? 0 : armPowerPercent}</span> <span className="unit">W</span></p>
+                        <p><i className="ico-type24-powericon"></i> <span className="em">{x86PowerPercent}</span> <span className="unit">W</span></p>
                       </div>
                     </div>
                   </div>
                   <div className="graph_wrap">
                     <div className="graph_bar">
-                      <div className="bar second animate-bar" style={{ width: `${(isNaN(armPowerPercent) || isFinite(armPowerPercent)) ? 0 : armPowerPercent}%` }}></div>
+                      <div className="bar second animate-bar" style={{ width: `${x86PowerPercent}%` }}></div>
                     </div>
                   </div>
                 </div>
