@@ -300,7 +300,7 @@ const RegistModal = (props) => {
     if (listPasswordRoute.length == 1) {
       listPasswordRoute.map((obj) => {
         if (!!data['scriptPassword_' + obj]) {
-          userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  list: |\n    ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}\n  expire: False`
+          userPasswordScript += `\nssh_pwauth: True\nusers:\n  - default\nchpasswd:\n  expire: False\n  list:\n    - ${data['scriptId_' + obj]}:${data['scriptPassword_' + obj]}`
           makeScriptStep_1 = true;
         }
       })
