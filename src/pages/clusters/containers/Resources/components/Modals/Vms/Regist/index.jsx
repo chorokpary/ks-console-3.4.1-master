@@ -710,8 +710,10 @@ const RegistModal = (props) => {
 
   const handleIamgeDistroType = (distro_type) => {
     setSelectImageDistroType(distro_type);
-    const { data } = form.current.props;
-    data['scriptId_1'] = distro_type
+    if (isPassword) {
+      const { data } = form.current.props;
+      data['scriptId_1'] = distro_type
+    }
   }
 
   // 스크립트 끝 ==================================================
@@ -759,7 +761,6 @@ const RegistModal = (props) => {
       </>
     )
   }
-
 
   return (
     <>
@@ -1061,12 +1062,12 @@ const RegistModal = (props) => {
                               </td>
                               <td>{data.name}</td>
                               <td>{(data.type).toUpperCase()}</td>
-			      <td>
-			        <Select name={`${data.id}-ip`} placeholder={t('RESOURCES_AUTOMATIC')} 
-				  options={availableIpOptions(data.id)} 
-				  onChange={(e) => handleIpSelectClick(data.id, e)} 
-				  clearable />
-			      </td>
+                              <td>
+                                <Select name={`${data.id}-ip`} placeholder={t('RESOURCES_AUTOMATIC')}
+                                  options={availableIpOptions(data.id)}
+                                  onChange={(e) => handleIpSelectClick(data.id, e)}
+                                  clearable />
+                              </td>
                               <td>{data.cidr}</td>
                               <td>{data.gateway_ip}</td>
                             </tr>
@@ -1237,145 +1238,159 @@ const RegistModal = (props) => {
                   />
                 </Form.Item>
 
-                <Form.Group label={t('RESOURCES_SCRIPT')} onChange={(e) => setIsScript(!isScript)} checkable>
-                  <Form.Group label={t('RESOURCES_CHANGE_PASSWORD')} onChange={(e) => setIsPassword(!isPassword)} checkable >
-                    {listPasswordRoute.map((obj, idx) => (
-                      <div className={styles.scriptitem} key={obj}>
-                        <Columns>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptId_${obj}`}
-                                placeholder={t('ID')}
-                                defaultValue={obj == 1 ? selectImageDistroType : ""}
-                                disabled={obj == 1 ? true : false}
-                                onChange={() => checkScriptPassword()}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item>
-                              <InputPassword
-                                name={`scriptPassword_${obj}`}
-                                placeholder={t('Password')}
-                                onChange={() => checkScriptPassword()}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                        <Button
-                          type="flat"
-                          icon="trash"
-                          className={styles.scriptdelete}
-                          onClick={() => (listPasswordRoute.length > 1 && obj > 1) && handlePasswordRoute.delColumn(obj)}
-                        />
-                      </div>
-                    ))}
-                    <div className="text-right">
-                      <Button
-                        className={styles.scriptadd}
-                        onClick={handlePasswordRoute.addColumn}
-                      >
-                        {t('RESOURCES_ADD')}
-                      </Button>
-                    </div>
+                <Form.Group label={t('RESOURCES_SCRIPT')} onChange={(e) => setIsScript(!isScript)} checkable >
 
-                    <div className={`form-item-error ${!isPasswordError ? "hide" : ""}`}>{t('RESOURCES_PASSWORD_EMPTY_DESC')}</div>
-                  </Form.Group>
-                  <Form.Group label={t('RESOURCES_WRITE_FILE')} onChange={(e) => setIsFileWrite(!isFileWrite)} checkable >
-                    {listFileRoute.map((obj, idx) => (
-                      <div className={styles.scriptitem} key={obj}>
-                        <Columns>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptPath_${obj}`}
-                                placeholder={t('PATH')}
-                                onChange={() => checkScriptFilewrite()}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptContent_${obj}`}
-                                placeholder={t('Content')}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                        <Button
-                          type="flat"
-                          icon="trash"
-                          className={styles.scriptdelete}
-                          onClick={() => listFileRoute.length > 1 && handleFileRoute.delColumn(obj)}
-                        />
-                      </div>
-                    ))}
-                    <div className="text-right">
-                      <Button
-                        className={styles.scriptadd}
-                        onClick={handleFileRoute.addColumn}
-                      >
-                        {t('RESOURCES_ADD')}
-                      </Button>
-                    </div>
-                    <div className={`form-item-error ${!isFileWriteError ? "hide" : ""}`}>{t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}</div>
-                  </Form.Group>
-                  <Form.Group label={t('RESOURCES_INSTALL_PACKAGE')} onChange={(e) => setIsPackage(!isPackage)} checkable >
-                    {listPackageRoute.map((obj, idx) => (
-                      <div className={styles.scriptitem} key={obj}>
-                        <Columns>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptPackage_${obj}`}
-                                placeholder={t('Package')}
-                                onChange={() => checkScriptPackage()}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item>
-                              <Input
-                                name={`scriptVersion_${obj}`}
-                                placeholder={t('Ver')}
-                                onChange={() => checkScriptPackage()}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                        <Button
-                          type="flat"
-                          icon="trash"
-                          className={styles.scriptdelete}
-                          onClick={() => listPackageRoute.length > 1 && handlePackageRoute.delColumn(obj)}
-                        />
-                      </div>
-                    ))}
-                    <div className="text-right">
-                      <Button
-                        className={styles.scriptadd}
-                        onClick={handlePackageRoute.addColumn}
-                      >
-                        {t('RESOURCES_ADD')}
-                      </Button>
-                    </div>
-                    <div className={`form-item-error ${!isPackageError ? "hide" : ""}`}>{t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}</div>
-                    <div className={`form-item-error ${!packageValidationError ? "hide" : ""}`}>{t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}</div>
+                  {!isUserScript &&
+                    <>
+                      <Form.Group label={t('RESOURCES_WRITE_FILE')} onChange={(e) => { setIsUserScript(false); setIsFileWrite(!isFileWrite); }} checkable >
+                        {listFileRoute.map((obj, idx) => (
+                          <div className={styles.scriptitem} key={obj}>
+                            <Columns>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptPath_${obj}`}
+                                    placeholder={t('PATH')}
+                                    onChange={() => checkScriptFilewrite()}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptContent_${obj}`}
+                                    placeholder={t('Content')}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() => listFileRoute.length > 1 && handleFileRoute.delColumn(obj)}
+                            />
+                          </div>
+                        ))}
+                        <div className="text-right">
+                          <Button
+                            className={styles.scriptadd}
+                            onClick={handleFileRoute.addColumn}
+                          >
+                            {t('RESOURCES_ADD')}
+                          </Button>
+                        </div>
+                        <div className={`form-item-error ${!isFileWriteError ? "hide" : ""}`}>{t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}</div>
+                      </Form.Group>
+                      <Form.Group label={t('RESOURCES_INSTALL_PACKAGE')} onChange={(e) => { setIsUserScript(false); setIsPackage(!isPackage); }} checkable >
+                        {listPackageRoute.map((obj, idx) => (
+                          <div className={styles.scriptitem} key={obj}>
+                            <Columns>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptPackage_${obj}`}
+                                    placeholder={t('Package')}
+                                    onChange={() => checkScriptPackage()}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptVersion_${obj}`}
+                                    placeholder={t('Ver')}
+                                    onChange={() => checkScriptPackage()}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() => listPackageRoute.length > 1 && handlePackageRoute.delColumn(obj)}
+                            />
+                          </div>
+                        ))}
+                        <div className="text-right">
+                          <Button
+                            className={styles.scriptadd}
+                            onClick={handlePackageRoute.addColumn}
+                          >
+                            {t('RESOURCES_ADD')}
+                          </Button>
+                        </div>
+                        <div className={`form-item-error ${!isPackageError ? "hide" : ""}`}>{t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}</div>
+                        <div className={`form-item-error ${!packageValidationError ? "hide" : ""}`}>{t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}</div>
 
-                  </Form.Group>
-                  <Form.Group label={t('RESOURCES_CUSTOM')} onChange={(e) => setIsUserScript(!isUserScript)} checkable>
-                    <Form.Item
-                      className={styles.textarea}
-                    >
-                      <TextArea
-                        name="userScript"
-                        rows="5"
-                      />
-                    </Form.Item>
-                    <div className={`form-item-error ${!isUserScriptError ? "hide" : ""}`}>{t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}</div>
-                  </Form.Group>
+                      </Form.Group>
+                      <Form.Group label={t('RESOURCES_CHANGE_PASSWORD')} onChange={(e) => { setIsUserScript(false); setIsPassword(!isPassword); }} checkable>
+                        {listPasswordRoute.map((obj, idx) => (
+                          <div className={styles.scriptitem} key={obj}>
+                            <Columns>
+                              <Column>
+                                <Form.Item>
+                                  <Input
+                                    name={`scriptId_${obj}`}
+                                    placeholder={t('ID')}
+                                    defaultValue={obj == 1 && isPassword ? selectImageDistroType : ""}
+                                    disabled={obj == 1 && isPassword ? true : false}
+                                    onChange={() => checkScriptPassword()}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item>
+                                  <InputPassword
+                                    name={`scriptPassword_${obj}`}
+                                    placeholder={t('Password')}
+                                    onChange={() => checkScriptPassword()}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() => (listPasswordRoute.length > 1 && obj > 1) && handlePasswordRoute.delColumn(obj)}
+                            />
+                          </div>
+                        ))}
+                        <div className="text-right">
+                          <Button
+                            className={styles.scriptadd}
+                            onClick={handlePasswordRoute.addColumn}
+                          >
+                            {t('RESOURCES_ADD')}
+                          </Button>
+                        </div>
+                        <div className={`form-item-error ${!isPasswordError ? "hide" : ""}`}>{t('RESOURCES_PASSWORD_EMPTY_DESC')}</div>
+                      </Form.Group>
+                    </>
+                  }
+                  {(!isPassword && !isPackage && !isFileWrite) &&
+                    <Form.Group label={t('RESOURCES_CUSTOM')} checkable
+                      onChange={(e) => {
+                        setIsPassword(false);
+                        setIsPackage(false);
+                        setIsFileWrite(false);
+                        setIsUserScript(!isUserScript);
+                      }} >
+                      <Form.Item
+                        className={styles.textarea}
+                      >
+                        <TextArea
+                          name="userScript"
+                          rows="5"
+                          placeholder={decodeURIComponent('%23%20User-defined%20cloud%20config%0A%23%20See%20/var/lib/cloud/instance/user-data.txt%0A%20%0Apackage_update%3A%20true%0Apackage_upgrade%3A%20true%0Aapt%3A%0A%20%20http_proxy%3A%20http%3A//local-http-proxy.mydomain%3A8080%0A%20%20https_proxy%3A%20https%3A//local-https-proxy.mydomain%3A8080%0A%20%20primary%3A%0A%20%20%20%20-%20arches%3A%20%5Bdefault%5D%0A%20%20%20%20%20%20search%3A%0A%20%20%20%20%20%20%20%20-%20http%3A//local-mirror.mydomain%0A%20%20%20%20%20%20%20%20-%20http%3A//archive.ubuntu.com%20')}
+
+                        />
+                      </Form.Item>
+                      <div className={`form-item-error ${!isUserScriptError ? "hide" : ""}`}>{t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}</div>
+                    </Form.Group>
+                  }
                 </Form.Group>
 
               </div>
@@ -1531,7 +1546,7 @@ const RegistModal = (props) => {
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>{t('스크립트')}</label>
+                        <label>{t('RESOURCES_SCRIPT')}</label>
                         {isScript &&
                           <div className={styles.multiline}>
                             <div>{isPassword && renderIds()}</div>
