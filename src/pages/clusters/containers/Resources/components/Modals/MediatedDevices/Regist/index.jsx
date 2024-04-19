@@ -27,6 +27,7 @@ const RegistModal = (props) => {
 
   const [mediatedDeviceTypeListData, setMediatedDeviceTypeListData] = useState([]);
   const [mediatedDeviceTypeList, setMediatedDeviceTypeList] = useState([]);
+  const [mediatedDeviceType, setMediatedDeviceType] = useState();
   const [pgpuDataList, setPgpuDataList] = useState([]);
   const [vgpuDataList, setVgpuDataList] = useState([]);
   const [selectedVgpu, setSelectedVgpu] = useState('');
@@ -94,6 +95,7 @@ const RegistModal = (props) => {
     try {
       await mediatedDevicesStore.createMediatedDeviceType(typeData, { ...props })
       Notify.success({ content: t('RESOURCES_SELECT_MDT_CREATE_SUCCESS') })
+      setMediatedDeviceType(typeData.mediated_device_type.vgpu)
     } catch (e) {
       console.log(e)
     } finally {
@@ -162,128 +164,39 @@ const RegistModal = (props) => {
       // disableSubmit={deviceDataList.length === 0 && true}
       >
         <Form data={formData} ref={form}>
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_NAME')}
-                  rules={[{ required: true, validator: nameValidator }]}
-                  desc={t('RESOURCES_NAME_VALID_DESC') + ' ex) nvidia.com/GRID-T4-1B'}
-                >
-                  <Input
-                    name="name"
-                    autoFocus={true}
-                    maxLength={63}
-                    style={{ maxWidth: 'none' }}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_NODE')}
-                  rules={[{ required: true, message: t('RESOURCES_SELECT_NODE_TIP') }]}>
-                  <Select
-                    name="node"
-                    placeholder={t('RESOURCES_SELECT')}
-                    options={nodeOptions()}
-                    clearable
-                    onChange={(e) => handleNode(e)}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
-
-          {/* <Form.Item>
-                  <div className={styles.wrapper}>
-                    <div className={styles.table}>
-                      <table>
-                        <colgroup>
-                          <col width="5%" />
-                          <col width="12%" />
-                          <col width="18%" />
-                          <col width="10%" />
-                          <col width="10%" />
-                          <col width="12%" />
-                          <col width="13%" />
-                          <col width="15%" />
-                        </colgroup>
-                        <thead>
-                          <tr>
-                            <th></th>
-                            <th><strong>{t('RESOURCES_DEVICE_ID')}</strong></th>
-                            <th><strong>{t('RESOURCES_DEVICE_NAME')}</strong></th>
-                            <th><strong>{t('RESOURCES_CLASS')}</strong></th>
-                            <th><strong>{t('RESOURCES_MAX_COUNT')}</strong></th>
-                            <th><strong>{t('RESOURCES_RESOLUTION')}</strong></th>
-                            <th><strong>{t('RESOURCES_CUDA_SUPPORT_CHECK')}</strong></th>
-                            <th><strong>{t('RESOURCES_PIXEL_COUNT')}</strong></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {isLoading ? <tr><td colSpan="8" className="no-data" style={{ textAlign: 'center' }}><Loading /></td></tr>
-                            :
-                            deviceDataList?.length < 1 ?
-                              <tr>
-                                <td colSpan="8" className="no-data">
-                                  <p>{t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}</p>
-                                </td>
-                              </tr>
-                              :
-                              deviceDataList?.map((data, key) => (
-                                <tr key={data.name}>
-                                  <td>
-                                    <Radio name={`select-${data.name}`}
-                                      checked={data.name === deviceCheckItem}
-                                      onChange={(e) => setDeviceCheckItem(data.name)} />
-                                  </td>
-                                  <td>{data.mdev_id}</td>
-                                  <td>{data.name}</td>
-                                  <td>{data.clazz}</td>
-                                  <td>{data.max_num}</td>
-                                  <td>{data.resolution}</td>
-                                  <td>{data.cuda ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>
-                                  <td>{data.pixels}</td>
-                                </tr>
-                              ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className={`form-item-error ${!deviceCheckItem && isCheck ? "" : "hide"}`}>{t('RESOURCES_SELECT_DEVICE_TIP')}</div>
-                  </div>
-                </Form.Item> */}
-
-          <Form.Item >
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('Mediated Device Type')}
-                  rules={[{ required: true, message: t('RESOURCES_SELECT_MDT_TIP') }]}
-                >
-                  <Select
-                    name='mediated_device_name'
-                    // style={{ maxWidth: '100%' }}
-                    placeholder={t('RESOURCES_SELECT')}
-                    options={mediatedDeviceTypeList}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                {t('RESOURCES_GPU_CHECK')}<span className="form-item-required">*</span>
-                <div style={{ padding: 4 }} />
-                <Form.Item>
-                  <Toggle defaultChecked showText onText="on" offText="off" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
-                </Form.Item>
-              </Column>
-            </Columns>
-
+          <Form.Item
+            label={t('RESOURCES_NAME')}
+            rules={[{ required: true, validator: nameValidator }]}
+            desc={t('RESOURCES_NAME_VALID_DESC') + ' ex) nvidia.com/GRID-T4-1B'}
+          >
+            <Input
+              name="name"
+              autoFocus={true}
+              maxLength={63}
+              style={{ maxWidth: 'none' }}
+            />
           </Form.Item>
           <Form.Item >
             <Form.Group
               label={t('RESOURCES_SELECT_MDT_CREATE')}
               desc={t('RESOURCES_SELECT_MDT_CREATE_DESC')}
-              keepDataWhenUnCheck
-              checkable>
+            >
+              <Columns>
+                <Column>
+                  <Form.Item
+                    label={t('RESOURCES_NODE')}
+                    rules={[{ required: true, message: t('RESOURCES_SELECT_NODE_TIP') }]}>
+                    <Select
+                      name="node"
+                      placeholder={t('RESOURCES_SELECT')}
+                      options={nodeOptions()}
+                      onChange={(e) => handleNode(e)}
+                    />
+                  </Form.Item>
+                </Column>
+                <Column>
+                </Column>
+              </Columns>
               <Columns>
                 <Column>
                   <Form.Item label={t('Physical GPU')}>
@@ -324,6 +237,32 @@ const RegistModal = (props) => {
               </div>
 
             </Form.Group>
+          </Form.Item>
+
+          <Form.Item >
+            <Columns>
+              <Column>
+                <Form.Item
+                  label={t('Mediated Device Type')}
+                  rules={[{ required: true, message: t('RESOURCES_SELECT_MDT_TIP') }]}
+                >
+                  <Select
+                    name='mediated_device_name'
+                    // style={{ maxWidth: '100%' }}
+                    placeholder={t('RESOURCES_SELECT')}
+                    options={mediatedDeviceTypeList}
+                    defaultValue={mediatedDeviceType}
+                  />
+                </Form.Item>
+              </Column>
+              <Column>
+                {t('RESOURCES_GPU_CHECK')}<span className="form-item-required">*</span>
+                <div style={{ padding: 4 }} />
+                <Form.Item>
+                  <Toggle defaultChecked showText onText="on" offText="off" value={isGpu} onChange={(e) => setIsGpu(!isGpu)} />
+                </Form.Item>
+              </Column>
+            </Columns>
           </Form.Item>
 
           <Form.Item
