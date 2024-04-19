@@ -288,7 +288,7 @@ module.exports = {
   RESOURCES_COST: '비용',
   RESOURCES_USE: '사용',
   RESOURCES_USER_NAME: '사용자 이름',
-  RESOURCES_CUSTOM: '사용자 정의',
+  RESOURCES_CUSTOM: '사용자 정의(고급)',
   RESOURCES_SPECIFY_USER: '사용자 지정',
   RESOURCES_NO_USE_KAAS_RESOURCE: '사용하는 KaaS 리소스가 없습니다.',
   RESOURCES_NO_USE_VM: '사용하는 가상머신이 없습니다.',
