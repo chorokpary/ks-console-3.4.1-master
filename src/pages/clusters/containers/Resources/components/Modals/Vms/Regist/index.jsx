@@ -1384,8 +1384,7 @@ const RegistModal = (props) => {
                         <TextArea
                           name="userScript"
                           rows="5"
-                          placeholder={decodeURIComponent('%23%20User-defined%20cloud%20config%0A%23%20See%20/var/lib/cloud/instance/user-data.txt%0A%20%0Apackage_update%3A%20true%0Apackage_upgrade%3A%20true%0Aapt%3A%0A%20%20http_proxy%3A%20http%3A//local-http-proxy.mydomain%3A8080%0A%20%20https_proxy%3A%20https%3A//local-https-proxy.mydomain%3A8080%0A%20%20primary%3A%0A%20%20%20%20-%20arches%3A%20%5Bdefault%5D%0A%20%20%20%20%20%20search%3A%0A%20%20%20%20%20%20%20%20-%20http%3A//local-mirror.mydomain%0A%20%20%20%20%20%20%20%20-%20http%3A//archive.ubuntu.com%20')}
-
+                          placeholder={decodeURIComponent('%23cloud-config%0A%20%0Assh_pwauth%3A%20true%0Ausers%3A%0A%20%20-%20default%0A%20%20-%20name%3A%20adminuser%0A%20%20%20%20sudo%3A%20ALL%3D%28ALL%29%20NOPASSWD%3AALL%0A%20%0Achpasswd%3A%0A%20%20expire%3A%20false%0A%20%20list%3A%0A%20%20%20%20-%20ubuntu%3Adefaultpassword%0A%20%20%20%20-%20adminuser%3AP0werfu1PW%0A%20%0Aruncmd%3A%0A%20%20-%20systemctl%20disable%20firewalld%0A%20%0Awrite_files%3A%0A%20%20-%20path%3A%20/home/ubuntu/simple-message.txt%0A%20%20%20%20content%3A%20%7C%0A%20%20%20%20%20%20cloud-init%20syntax%0A%20%20%20%20%20%20create%20a%20simple%20file')}
                         />
                       </Form.Item>
                       <div className={`form-item-error ${!isUserScriptError ? "hide" : ""}`}>{t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}</div>
