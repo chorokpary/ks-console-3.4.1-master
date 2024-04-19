@@ -21,6 +21,7 @@ import 'pages/clusters/containers/Overview/CustomDashboard/dashboard.css';
 import withList, { ListPage } from 'components/HOCs/withList';
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
 import * as common from 'utils/resources';
+
 @withList({
   store: new ClusterInspectionStore(),
   module: 'clusterInspection',
@@ -134,7 +135,7 @@ export default class ClusterInspection extends React.Component {
                       scoreInfo === null ||
                       Object.keys(scoreInfo).length === 0 ? (
                         <div className="grid_text">
-                          <span>데이터가 없습니다</span>
+                          <span>{t('CLUSTER_INSPECTION_NO_DATA')}</span>
                         </div>
                       ) : (
                         <div className="cont1">
@@ -280,7 +281,7 @@ export default class ClusterInspection extends React.Component {
                 )}
                 {!clusterInfo && (
                   <div className="grid_text">
-                    <span>데이터가 없습니다</span>
+                    <span>{t('CLUSTER_INSPECTION_NO_DATA')}</span>
                   </div>
                 )}
               </div>
