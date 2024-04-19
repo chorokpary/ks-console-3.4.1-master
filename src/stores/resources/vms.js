@@ -217,7 +217,7 @@ export default class VmStore extends Base {
       networkObj.network_name = name;
       const fixedIpObj = data.ips.find(obj => obj.network_name === name);
       if (fixedIpObj !== undefined) {
-	networksArray.push(fixedIpObj);
+        networksArray.push(fixedIpObj);
       } else {
         networksArray.push(networkObj);
       }
