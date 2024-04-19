@@ -190,7 +190,6 @@ const RegistModal = (props) => {
                       name="node"
                       placeholder={t('RESOURCES_SELECT')}
                       options={nodeOptions()}
-                      clearable
                       onChange={(e) => handleNode(e)}
                     />
                   </Form.Item>
