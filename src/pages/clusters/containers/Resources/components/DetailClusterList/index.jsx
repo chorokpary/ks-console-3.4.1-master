@@ -5,9 +5,10 @@ import { Button, Icon, Loading, Tooltip } from '@kube-design/components';
 
 import Tabs from 'components/Cards/Banner/Tabs';
 import { Panel, Text, Indicator } from 'components/Base';
-import styles from './index.scss';
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
 import KubeeyeDataStore from 'stores/resources/kubeeyedata';
+import styles from './index.scss';
+
 const DetailClusterList = props => {
   const clusterInspection = new ClusterInspectionStore();
   const kubeeyeDataStore = new KubeeyeDataStore();
@@ -128,7 +129,7 @@ const DetailClusterList = props => {
       const content = (
         <div className="grid_info style_status">
           <div className="grid_text">
-            <span>데이터가 없습니다</span>
+            <span>{t('CLUSTER_INSPECTION_NO_DATA')}</span>
           </div>
         </div>
       );
@@ -769,9 +770,9 @@ const DetailClusterList = props => {
                                 >{`Discovered `}</label>
                               </div>
                               <div className="desc">
-                                <h2>{`DESCRIPTION`}</h2>
+                                <h2>{t('CLUSTER_INSPECTION_DESCRIPTION')}</h2>
                                 <p> {`${describe}`}</p>
-                                <h2> {`SUGGEST`}</h2>
+                                <h2>{t('CLUSTER_INSPECTION_CLUSTER')}</h2>
                                 <p> {`${suggest}`}</p>
                               </div>
                             </div>
@@ -801,7 +802,9 @@ const DetailClusterList = props => {
           <Tabs tabs={tabs()} />
         </div>
         <div>
-          <div>{`최근 인스펙션 시간 : ${lastScheduleTime}`}</div>
+          <div>{`${t(
+            'CLUSTER_INSPECTION_LATEST_TIME'
+          )} : ${lastScheduleTime}`}</div>
         </div>
       </div>
       <div className="grid_item">
