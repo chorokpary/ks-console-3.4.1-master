@@ -389,11 +389,12 @@ const EditModal = props => {
                 setBmcCheck(!bmcCheck);
               }}
               checked={bmcCheck}
+              disabled
             >
               {t('BMC')}
-              <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>
+              {/* <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>
                 *
-              </span>
+              </span> */}
             </Checkbox>
           </div>
           {bmcCheck && (
