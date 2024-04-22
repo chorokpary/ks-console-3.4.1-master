@@ -375,7 +375,7 @@ const RegistModal = props => {
         params
       )
       .then(res => {
-        if (userValidError) {
+        if (!userValidError) {
           setChkValidation(false);
         } else {
           setChkValidation(true);
