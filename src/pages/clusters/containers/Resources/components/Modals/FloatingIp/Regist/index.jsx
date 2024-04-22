@@ -117,20 +117,22 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
       >
         <Form>
 
-          <Form.Item
-            label={t('PROJECT')}
-            desc={t('SELECT_PROJECT_DESC')}
-            rules={[
-              { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
-            ]}
-          >
-            <ProjectSelect
-              name="metadata.namespace"
-              defaultValue={projectName}
-              cluster={props.cluster}
-              onChange={(e) => setProjectName(e)}
-            />
-          </Form.Item>
+          {props.namespace ? '' :
+            <Form.Item
+              label={t('PROJECT')}
+              desc={t('SELECT_PROJECT_DESC')}
+              rules={[
+                { required: true, message: t('PROJECT_NOT_SELECT_DESC') },
+              ]}
+            >
+              <ProjectSelect
+                name="metadata.namespace"
+                defaultValue={projectName}
+                cluster={props.cluster}
+                onChange={(e) => setProjectName(e)}
+              />
+            </Form.Item>
+          }
           <Form.Item>
             <div className={styles.wrapper}>
               <div className={styles.table}>

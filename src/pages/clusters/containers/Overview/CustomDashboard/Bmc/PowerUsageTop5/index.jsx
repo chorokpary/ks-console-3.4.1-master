@@ -13,7 +13,6 @@ const PowerUsageTop5 = ({ x, y, w, h,
   const [loading, setLoading] = useState(false)
   const [nodeList, setNodeList] = useState([])
   const [metricType, setMetricType] = useState([])
-  const [metricPower, setMetricPower] = useState([])
 
   {/* 1대 평균 기준 200kwh  */ }
   const [maxUsage, setMaxUsage] = useState(200)
@@ -29,11 +28,8 @@ const PowerUsageTop5 = ({ x, y, w, h,
     if (nodeData.length > 0) {
       handleList('')
     }
-  }, [metricPower])
+  }, [metricType])
 
-  // useEffect(() => {
-
-  //   let cleanupTrigger = true;
   const getData = async () => {
 
     let promql_node_list = ""
@@ -48,47 +44,38 @@ const PowerUsageTop5 = ({ x, y, w, h,
       cluster
     })
 
-    const metric_power = await customStore.fetchMetric({
-      expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
-      cluster
-    })
-
-    // if (cleanupTrigger) {
     setMetricType(metric_type)
-    setMetricPower(metric_power)
     setLoading(false)
-    //   }
-    // };
-    // getData();
-    // return () => {
-    //   cleanupTrigger = false
-    //   setLoading(false)
   }
-  // }, [])
 
   const getMetricValue = (data) => {
-    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
+    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter?.ip)
     const metrics = metricType.find(item => get(item, 'metric.instance').split(":")[0] === instance)
     const value = get(metrics, 'value[1]', '0');
     return value;
   }
 
   const getType = (data) => {
-    var iconText = "arm"
-    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter.ip)
+    var iconText = "clusternode"
+    const instance = toJS(data.system_type == "C" ? data.name : data.nodeExporter?.ip)
     const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
     const type = get(type_data, 'metric.machine', '')
-    if (type.includes('x86')) iconText = 'x86'
+    const x86Array = ['x86_64', 'amd']
+    const armArray = ['arm', 'aarch64']
+    if (x86Array.includes(type.toLowerCase())) iconText = "x86";
+    if (armArray.includes(type.toLowerCase())) iconText = "arm";
     return iconText
   }
 
   const handleList = (nodeType) => {
-    var arr = nodeData
+    var arr = new Array()
 
     if (nodeType == '') {
-      arr.map(obj => obj.power = getMetricValue(obj))
+      nodeData.map(obj => {
+        obj.power = getMetricValue(obj)
+        arr.push(obj)
+      });
     } else {
-      arr = new Array()
       nodeData.map(obj => {
         obj.power = getMetricValue(obj)
         const type = getType(obj)
@@ -143,7 +130,7 @@ const PowerUsageTop5 = ({ x, y, w, h,
                           </h6>
                           <div className="graph_wrap">
                             <div className="graph_bar">
-                              <div className="bar animate-bar" style={{ width: (Number(obj.power) * 0.001) / maxUsage * 100 + "%" }}></div>
+                              <div className="bar animate-bar" style={{ width: (Number(obj.power) * 0.1) / maxUsage * 100 + "%" }}></div>
                             </div>
                           </div>
                         </div>

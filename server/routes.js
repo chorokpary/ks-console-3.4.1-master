@@ -46,6 +46,7 @@ const {
 
 const {
   handleLogin,
+  handleThirdLogin,
   handleLogout,
   handleOAuthLogin,
   handleLoginConfirm,
@@ -95,6 +96,7 @@ router
 
   // session
   .post('/login', parseBody, handleLogin)
+  .post('/oauth/login/:title', parseBody, handleThirdLogin)
   .get('/login', renderLogin)
   .post('/login/confirm', parseBody, handleLoginConfirm)
   .get('/login/confirm', renderLoginConfirm)

@@ -241,7 +241,9 @@ const RegistModal = props => {
     return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
-    const { data } = form.current.props;
+    if (parseInt(num) > 30) {
+      return false;
+    }
     if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }
@@ -254,7 +256,6 @@ const RegistModal = props => {
   };
 
   const ipValidator = (rule, value, callback) => {
-    const { data } = form.current.props;
     if (!value) {
       return callback({ message: t('RESOURCES_IP_POOL_EMPTY_DESC') })
     } else {

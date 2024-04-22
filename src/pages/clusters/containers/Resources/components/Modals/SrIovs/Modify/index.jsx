@@ -260,6 +260,9 @@ const ModifyModal = props => {
     return PATTERN_IP.test(ip);
   };
   const fnCheckCidrClass = num => {
+    if (parseInt(num) > 30) {
+      return false;
+    }
     if (!PATTERN_IP_MASK.test(num)) {
       return false;
     }

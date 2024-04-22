@@ -75,8 +75,8 @@ export function fnCalculateCidr(cidr, withGw) {
     ))
 
     const data = {
-        startIp: withGw ? st[0] + "." + st[1] + "." + st[2] + "." + (st[3] + 2) : st.join('.'),
-        endIp: withGw ? ed[0] + "." + ed[1] + "." + ed[2] + "." + (ed[3] === 255 ? 254 : ed[3]) : ed.join('.'),
+        startIp: st[0] + "." + st[1] + "." + st[2] + "." + (st[3] + 2),
+        endIp: ed[0] + "." + ed[1] + "." + ed[2] + "." + (ed[3] === 255 ? 254 : ed[3]),
         gatewayIp: withGw ? st[0] + "." + st[1] + "." + st[2] + "." + (st[3] + 1) : '',
     }
 

@@ -35,12 +35,12 @@ const Carbon = (props) => {
 
 
   useEffect(() => {
-    let timer = setTimeout(()=>{ fetchData() }, 2000);
-    return ()=>{ clearTimeout(timer) }
+    let timer = setTimeout(() => { fetchData() }, 2000);
+    return () => { clearTimeout(timer) }
   }, [])
 
   const fetchData = async () => {
-    
+
     const { data } = props.store.list;
 
     // node list
@@ -67,21 +67,29 @@ const Carbon = (props) => {
     let total_x86_count = 0;
     let total_arm_count = 0;
 
-    await data.map((obj) => {   
+    await data.map((obj) => {
       const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
       const target = obj.openBMC?.address;
 
       const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
-      const type = get(type_data, 'metric.machine','')
-      const x86Array = ['x86_64', 'amd']     
+      const type = get(type_data, 'metric.machine', '')
+      const x86Array = ['x86_64', 'amd']
+      const armArray = ['arm', 'aarch64']
 
-      x86Array.includes(type.toLowerCase()) ? total_x86_count += 1 : total_arm_count += 1;
+      if (x86Array.includes(type.toLowerCase())) total_x86_count++;
+      if (armArray.includes(type.toLowerCase())) total_arm_count++;
 
       const power_data = metric_power.find(item => (get(item, 'metric.target') === target))
       const power = Number(get(power_data, 'value[1]', 0)) / 1000;
 
-      total_power += power;
-      x86Array.includes(type.toLowerCase()) ? total_x86_power += power : total_arm_power += power;
+      if (x86Array.includes(type.toLowerCase())) {
+        total_x86_power += power;
+        total_power += power;
+      }
+      if (armArray.includes(type.toLowerCase())) {
+        total_arm_power += power;
+        total_power += power;
+      }
     })
 
     setServerTotalCount(total_arm_count + total_x86_count)
@@ -94,15 +102,15 @@ const Carbon = (props) => {
     setX86Kwh(total_x86_power > 1000 ? common.fnAddCommar(total_x86_power) : total_x86_power.toFixed(1))
 
     // CO2 발생량
-    setUseCo2((Math.round((total_power  * 0.4781) / 0.1)*0.1).toFixed(1))
-    setArmCo2((Math.round((total_arm_power  * 0.4781) / 0.1)*0.1).toFixed(1))
-    setX86Co2((Math.round((total_x86_power  * 0.4781) / 0.1)*0.1).toFixed(1))
+    setUseCo2((Math.round((total_power * 0.4781) / 0.1) * 0.1).toFixed(1))
+    setArmCo2((Math.round((total_arm_power * 0.4781) / 0.1) * 0.1).toFixed(1))
+    setX86Co2((Math.round((total_x86_power * 0.4781) / 0.1) * 0.1).toFixed(1))
 
     // 필요소나무
-    setUseTree((Math.round((total_power * 0.1157625)/0.1)*0.1).toFixed(1))
-    setArmTree((Math.round((total_arm_power * 0.1157625)/0.1)*0.1).toFixed(1))
-    setX86Tree((Math.round((total_x86_power * 0.1157625)/0.1)*0.1).toFixed(1))
-    
+    setUseTree((Math.round((total_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
+    setArmTree((Math.round((total_arm_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
+    setX86Tree((Math.round((total_x86_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
+
     // 금액
     const armPrice = Math.round(total_arm_power * 111.16);
     const x86Price = Math.round(total_x86_power * 111.16);
@@ -114,74 +122,74 @@ const Carbon = (props) => {
 
   }
 
-    return (
-        <>
-           <div className="gridbox_wrap">
-              <div className="grid_item">
-                <div className="grid_title">
-                    <label>{t('RESOURCES_CARBON_INDICATOR')} ({getLocalTime(Date.now()).format('YYYY.MM')})</label>
-                    {/* <!--<i className="ico-btn-trash"></i>--> */}
-                  </div>
-                <div className="grid_info style_list">
-                  {/* <!-- // select_wrap --> */}
-                  <ul className="list_02">
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-bmcnode"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">{serverTotalCount}<span>{t('RESOURCES_DAE')}</span></div>
-                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armServerCount}</dd></dl>
-                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86ServerCount}</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-power"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">{useKwh}<span>kWh</span></div>
-                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armKwh}</dd></dl>
-                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Kwh}</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-co2"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">{useCo2}<span>KG</span></div>
-                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armCo2}</dd></dl>
-                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Co2}</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-tree"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">{useTree}<span>{t('RESOURCES_TREE')}</span></div>
-                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armTree}</dd></dl>
-                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Tree}</dd></dl>
-                      </div>
-                    </li>
-                    <li className="li_type_02">
-                      <div className="lft">
-                        <i className="ico-type-money"></i>
-                      </div>
-                      <div className="rgt">
-                      <div className="value">{usePrice}<span>{t('RESOURCES_WON')}</span></div>
-                      <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armPrice}</dd></dl>
-                      <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Price}</dd></dl>
-                      </div>
-                    </li>
-                  </ul>
-
-                </div>
-              </div>
+  return (
+    <>
+      <div className="gridbox_wrap">
+        <div className="grid_item">
+          <div className="grid_title">
+            <label>{t('RESOURCES_CARBON_INDICATOR')} ({getLocalTime(Date.now()).format('YYYY.MM')})</label>
+            {/* <!--<i className="ico-btn-trash"></i>--> */}
           </div>
-        </>
-    )
+          <div className="grid_info style_list">
+            {/* <!-- // select_wrap --> */}
+            <ul className="list_02">
+              <li className="li_type_02">
+                <div className="lft">
+                  <i className="ico-type-bmcnode"></i>
+                </div>
+                <div className="rgt">
+                  <div className="value">{serverTotalCount}<span>{t('RESOURCES_DAE')}</span></div>
+                  <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armServerCount}</dd></dl>
+                  <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86ServerCount}</dd></dl>
+                </div>
+              </li>
+              <li className="li_type_02">
+                <div className="lft">
+                  <i className="ico-type-power"></i>
+                </div>
+                <div className="rgt">
+                  <div className="value">{useKwh}<span>kWh</span></div>
+                  <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armKwh}</dd></dl>
+                  <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Kwh}</dd></dl>
+                </div>
+              </li>
+              <li className="li_type_02">
+                <div className="lft">
+                  <i className="ico-type-co2"></i>
+                </div>
+                <div className="rgt">
+                  <div className="value">{useCo2}<span>KG</span></div>
+                  <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armCo2}</dd></dl>
+                  <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Co2}</dd></dl>
+                </div>
+              </li>
+              <li className="li_type_02">
+                <div className="lft">
+                  <i className="ico-type-tree"></i>
+                </div>
+                <div className="rgt">
+                  <div className="value">{useTree}<span>{t('RESOURCES_TREE')}</span></div>
+                  <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armTree}</dd></dl>
+                  <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Tree}</dd></dl>
+                </div>
+              </li>
+              <li className="li_type_02">
+                <div className="lft">
+                  <i className="ico-type-money"></i>
+                </div>
+                <div className="rgt">
+                  <div className="value">{usePrice}<span>{t('RESOURCES_WON')}</span></div>
+                  <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armPrice}</dd></dl>
+                  <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Price}</dd></dl>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </>
+  )
 }
 
 export default Carbon

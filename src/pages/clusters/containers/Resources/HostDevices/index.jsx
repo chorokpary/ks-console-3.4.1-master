@@ -16,169 +16,168 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
 
-import HostDeviceStore from 'stores/resources/hostdevices'
+import HostDeviceStore from 'stores/resources/hostdevices';
 
-import styles from './index.scss'
+import styles from './index.scss';
 
 @withList({
-    store: new HostDeviceStore(),
-    module: 'host_devices',
-    authKey: 'hostDevices',
-    name: t('RESOURCES_HOST_DEVICE'),
+  store: new HostDeviceStore(),
+  module: 'host_devices',
+  authKey: 'hostDevices',
+  name: t('RESOURCES_HOST_DEVICE'),
 })
 export default class HostDevices extends React.Component {
+  showAction(record) {
+    return globals.user.username !== record.name;
+  }
 
-    showAction(record) {
-        return globals.user.username !== record.name
-    }
+  get itemActions() {
+    const { getData, trigger } = this.props;
+    return [
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('RESOURCES_DELETE'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('hostDevice.remove', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
+    ];
+  }
 
-    get itemActions() {
-        const { getData, trigger } = this.props
-        return [
-            {
-                key: 'delete',
-                icon: 'trash',
-                text: t('RESOURCES_DELETE'),
-                action: 'delete',
-                show: this.showAction,
-                onClick: item =>
-                    trigger('hostDevice.remove', {
-                        detail: item,
-                        success: getData,
-                        ...this.props.match.params,
-                    }),
-            },
-        ]
-    }
-
-    get tableActions() {
-        const { trigger, getData, routing, tableProps } = this.props
-        return {
-            ...tableProps.tableActions,
-            actions: [
-                {
-                    key: 'regist',
-                    type: 'control',
-                    text: t('RESOURCES_CREATE'),
-                    action: 'create',
-                    onClick: () =>
-                        trigger('hostDevice.regist', {
-                            ...this.props.match.params,
-                            type: this.name,
-                            success: getData,
-                        }),
-                },
-            ],
-            selectActions: [
-                {
-                    key: 'delete',
-                    type: 'danger',
-                    text: t('RESOURCES_DELETE'),
-                    action: 'delete',
-                    onClick: () =>
-                        trigger('hostDevice.remove.batch', {
-                            success: getData,
-                            ...this.props.match.params,
-                        }),
-                },
-            ],
-            getCheckboxProps: record => ({
-                disabled: !this.showAction(record),
-                name: record.name,
+  get tableActions() {
+    const { trigger, getData, routing, tableProps } = this.props;
+    return {
+      ...tableProps.tableActions,
+      actions: [
+        {
+          key: 'regist',
+          type: 'control',
+          text: t('RESOURCES_CREATE'),
+          action: 'create',
+          onClick: () =>
+            trigger('hostDevice.regist', {
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
             }),
-        }
-    }
+        },
+      ],
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('RESOURCES_DELETE'),
+          action: 'delete',
+          onClick: () =>
+            trigger('hostDevice.remove.batch', {
+              success: getData,
+              ...this.props.match.params,
+            }),
+        },
+      ],
+      getCheckboxProps: record => ({
+        disabled: !this.showAction(record),
+        name: record.name,
+      }),
+    };
+  }
 
-    getColumns = () => {
-        const { getSortOrder } = this.props
-        const { cluster } = this.props.match.params
-        return [
-            {
-                title: t('RESOURCES_NAME'),
-                dataIndex: 'name',
-                sorter: true,
-                search: true,
-                render: name => {
-                    const { cluster } = this.props.match.params
+  getColumns = () => {
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
+    return [
+      {
+        title: t('RESOURCES_NAME'),
+        dataIndex: 'name',
+        sorter: true,
+        search: true,
+        render: name => {
+          const { cluster } = this.props.match.params;
 
-                    return (
-                        <div className={styles.avatar} >
-                            <div className={styles.icon}>
-                                <i className="ico-type-hostdevice"></i>
-                            </div>
-                            <div>
-                                <div className={styles.title}>{name}</div>
-                            </div>
-                        </div>
-                    )
-                },
-            },
-            {
-                title: t('RESOURCES_MANUFACTURING_COMPANY_NAME'),
-                dataIndex: 'vendor_name',
-                isHideable: true,
-                width: 'auto',
-            },
-            {
-                title: t('RESOURCES_PRODUCT_NAME'),
-                dataIndex: 'product_name',
-                isHideable: true,
-                width: 'auto',
-            },
-            {
-                title: t('RESOURCES_GPU_USE_CHECK'),
-                dataIndex: 'is_gpu',
-                isHideable: true,
-                width: 'auto',
-                render: isGpu => (
-                    isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')
-                )
-            },
-            {
-                title: t('RESOURCES_HOST_DEVICE_ALLOCATABLE'),
-                dataIndex: 'allocatable',
-                isHideable: true,
-                width: 'auto',
-            },
-        ]
-    }
+          return (
+            <div className={styles.avatar}>
+              <div className={styles.icon}>
+                <i className="ico-type-hostdevice"></i>
+              </div>
+              <div>
+                <div className={styles.title}>{name}</div>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        title: t('RESOURCES_MANUFACTURING_COMPANY_NAME'),
+        dataIndex: 'vendor_name',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_PRODUCT_NAME'),
+        dataIndex: 'product_name',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_GPU_USE_CHECK'),
+        dataIndex: 'is_gpu',
+        isHideable: true,
+        width: 'auto',
+        render: isGpu => (isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')),
+      },
+      {
+        title: t('RESOURCES_HOST_DEVICE_ALLOCATABLE'),
+        dataIndex: 'allocatable',
+        isHideable: true,
+        width: 'auto',
+      },
+    ];
+  };
 
-    get emptyProps() {
-        return { desc: t('RESOURCES_NO_DATA') }
-    }
+  get emptyProps() {
+    return { desc: t('RESOURCES_NO_DATA') };
+  }
 
-    getBanner = () => {
-        return <i className="ico-type-hostdevice"></i>
-    }
+  getBanner = () => {
+    return (
+      <i
+        className="ico-type-hostdevice"
+        style={{ width: '48px', height: '48px' }}
+      ></i>
+    );
+  };
 
-    render() {
-
-        const { bannerProps, tableProps } = this.props
-        return (
-            <ListPage {...this.props}>
-                <Banner
-                    icon={this.getBanner}
-                    {...bannerProps}
-                    tabs={this.tabs}
-                    title={t('RESOURCES_HOST_DEVICE')}
-                    description={t('RESOURCES_HOST_DEVICE_DESC')}
-                />
-                <Table
-                    {...tableProps}
-                    emptyProps={this.emptyProps}
-                    tableActions={this.tableActions}
-                    itemActions={this.itemActions}
-                    columns={this.getColumns()}
-                    columnSearch={this.columnSearch}
-                />
-            </ListPage>
-        )
-    }
+  render() {
+    const { bannerProps, tableProps } = this.props;
+    return (
+      <ListPage {...this.props}>
+        <Banner
+          icon={this.getBanner}
+          {...bannerProps}
+          tabs={this.tabs}
+          title={t('RESOURCES_HOST_DEVICE')}
+          description={t('RESOURCES_HOST_DEVICE_DESC')}
+        />
+        <Table
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          tableActions={this.tableActions}
+          itemActions={this.itemActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+    );
+  }
 }
-
-

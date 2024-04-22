@@ -164,6 +164,7 @@ const FloatingIpModal = (props) => {
     const opt = networkList.map((obj) => ({
       label: obj.network_ip + "/" + obj.name + "/" + obj.interface,
       value: t(obj.id),
+      disabled: obj.interface === null ? true : false
     }))
     return opt
   }

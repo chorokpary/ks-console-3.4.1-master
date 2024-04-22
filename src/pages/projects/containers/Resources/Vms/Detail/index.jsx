@@ -44,6 +44,8 @@ const VmDetail = (props) => {
   const floatingId = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.id)[0]
   const floatingIp = floatingData?.filter((row) => row.instance_id == vmId).map((el) => el.floating_ip)[0]
 
+  const showFlavor = !!(store.detail.vm?.image);
+
   // external만 존재할 경우 fip 할당 숨김처리
   const networkData = store.networksList || [];
   const networkNameArray = store.detail.vm?.networks.map(item => item.name);
@@ -84,6 +86,35 @@ const VmDetail = (props) => {
       action: 'view',
       onClick: () => {
         fnOpenVncPopup();
+      },
+    },
+    {
+      key: 'securitygroup',
+      icon: 'shield',
+      text: t('RESOURCES_VM_SECURITYGROUP_EDIT'),
+      action: 'view',
+      onClick: () => {
+        props.rootStore.triggerAction('vm.edit.securitygroup', {
+          type: 'VM_DETAIL',
+          store: store,
+          success: fetchData,
+          ...props.match.params
+        });
+      },
+    },
+    {
+      key: 'flavor',
+      icon: 'apps',
+      text: t('RESOURCES_VM_FLAVOR_EDIT'),
+      action: 'view',
+      show: showFlavor,
+      onClick: () => {
+        props.rootStore.triggerAction('vm.edit.flavor', {
+          type: 'VM_DETAIL',
+          store: store,
+          success: fetchData,
+          ...props.match.params
+        });
       },
     },
     {

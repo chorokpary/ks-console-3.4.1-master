@@ -100,7 +100,7 @@ const UploadModal = (props) => {
       onAfterResponse: (req, res) => {
         console.log("upload : "+ JSON.stringify(upload))
         // console.log(res)
-        response = res.getBody();
+        //response = res.getBody();
         // console.log("response : "+ response)
       }
     })

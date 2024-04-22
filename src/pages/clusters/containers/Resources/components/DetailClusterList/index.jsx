@@ -5,11 +5,13 @@ import { Button, Icon, Loading, Tooltip } from '@kube-design/components';
 
 import Tabs from 'components/Cards/Banner/Tabs';
 import { Panel, Text, Indicator } from 'components/Base';
-import styles from './index.scss';
 import ClusterInspectionStore from 'stores/resources/clusterInspection';
+import KubeeyeDataStore from 'stores/resources/kubeeyedata';
+import styles from './index.scss';
 
 const DetailClusterList = props => {
   const clusterInspection = new ClusterInspectionStore();
+  const kubeeyeDataStore = new KubeeyeDataStore();
 
   const [ciDataList, setCiDataList] = useState();
   const [namespace, setNamespace] = useState([]);
@@ -33,501 +35,42 @@ const DetailClusterList = props => {
   const [describe, setDescribe] = useState();
   const [suggest, setSuggest] = useState();
   const [level, setLevel] = useState();
-  // const setShowPopup = (foundData, idx) => {
-  // 	let asd = `<div> ${foundData.describe}</div>`
-
-  // 	document.querySelector(`[name=asd${idx}]`).remove
-  // }
-  const kubeeyeData = [
-    {
-      name: 'PrivilegedAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_PRIVILEDGEDALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_PRIVILEDGEDALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'CanImpersonateUser',
-      describe: t('CLUSTER_INSPECTION_DESC_CANIMPERSONATEUSER'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANIMPERSONATEUSER'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'warning',
-    },
-    {
-      name: 'CanImpersonateUser',
-      describe: t('CLUSTER_INSPECTION_DESC_CANIMPERSONATEUSER'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANIMPERSONATEUSER'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'warning',
-    },
-    {
-      name: 'CanModifyWorkloads',
-      describe: t('CLUSTER_INSPECTION_DESC_CANMODIFYWORKLOADS'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/reference/access-authn-authz/rbac/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANMODIFYWORKLOADS'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'warning',
-    },
-    {
-      name: 'NoCPULimits',
-      describe: t('CLUSTER_INSPECTION_DESC_NOCPULIMITS'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOCPULIMITS'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoCPURequests',
-      describe: t('CLUSTER_INSPECTION_DESC_NOCPUREQUESTS'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_DESC_NOCPUREQUESTS'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'DangerousCapabilities',
-      describe: t('CLUSTER_INSPECTION_DESC_DANGEROUSCAPABILITIES'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_DANGEROUSCAPABILITIES'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'HostIPCAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTIPCALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTIPCALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostIPC: false',
-      level: 'danger',
-    },
-    {
-      name: 'DangerousCapabilities',
-      describe: t('CLUSTER_INSPECTION_DESC_DANGEROUSCAPABILITIES'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_DANGEROUSCAPABILITIES'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostIPC: false',
-      level: 'danger',
-    },
-    {
-      name: 'HostNetworkAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTNETWORKALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/policy/pod-security-policy/#host-namespaces',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTNETWORKALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'HostPIDAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTPIDALLOWED'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/zh-cn/docs/concepts/security/pod-security-policy/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTPIDALLOWED'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'HostPortAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_HOSTPORTALLOWED'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/overview/#services',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_HOSTPORTALLOWED'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  hostPID: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'ImagePullPolicyNotAlways',
-      describe: t('CLUSTER_INSPECTION_DESC_IMAGEPULLPOLICYNOTALWAYS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGEPULLPOLICYNOTALWAYS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'warning',
-    },
-    {
-      name: 'ImageTagIsLatest',
-      describe: t('CLUSTER_INSPECTION_DESC_IMAGETAGISLATEST'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGETAGISLATEST'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'warning',
-    },
-    {
-      name: 'ImageTagMiss',
-      describe: t('CLUSTER_INSPECTION_DESC_IMAGETAGMISS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/containers/images/#image-names',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_IMAGETAGMISS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'danger',
-    },
-    {
-      name: 'InsecureCapabilities',
-      describe: t('CLUSTER_INSPECTION_DESC_INSECURECAPABILITIES'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/security-context/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_INSECURECAPABILITIES'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    imagePullPolicy: Always\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoLivenessProbe',
-      describe: t('CLUSTER_INSPECTION_DESC_NOLIVENESSPROBE'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOLIVENESSPROBE'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    livenessProbe:\n      httpGet:\n        path: /healthz\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5\n',
-      level: 'warning',
-    },
-    {
-      name: 'NoMemoryLimits',
-      describe: t('CLUSTER_INSPECTION_DESC_NOMEMORYLIMITS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOMEMORYLIMITS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoMemoryRequests',
-      describe: t('CLUSTER_INSPECTION_DESC_NOMEMORYREQUESTS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOMEMORYREQUESTS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoPriorityClass',
-      describe: t('CLUSTER_INSPECTION_DESC_NOPRIORITYCLASS'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/workload-resources/priority-class-v1/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASS'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    resources:\n      requests:\n        memory: "64Mi"\n        cpu: "250m"\n      limits:\n        memory: "64Mi"\n        cpu: "250m"\n',
-      level: 'ignore',
-    },
-    {
-      name: 'PrivilegedAllowed',
-      describe: t('CLUSTER_INSPECTION_DESC_PRIVILEGEDALLOWED'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/workloads/pods/#privileged-mode-for-containers',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_PRIVILEGEDALLOWED'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n',
-      level: 'danger',
-    },
-    {
-      name: 'NoReadinessProbe',
-      describe: t('CLUSTER_INSPECTION_DESC_NOREADINESSPROBE'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOREADINESSPROBE'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  containers:\n  - name: demo\n    image: demo\n    readinessProbe:\n      httpGet:\n        path: /healthy\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5\n',
-      level: 'warning',
-    },
-    {
-      name: 'NotReadOnlyRootFilesystem',
-      describe: t('CLUSTER_INSPECTION_DESC_NOTREADONLYROOTFILESYSTEM'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/docs/concepts/security/pod-security-policy/#volumes-and-file-systems',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOTREADONLYROOTFILESYSTEM'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n',
-      level: 'warning',
-    },
-    {
-      name: 'NotRunAsNonRoot',
-      describe: t('CLUSTER_INSPECTION_DESC_NOTRUNASNONROOT'),
-
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOTRUNASNONROOT'),
-
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'CertificateExpiredPeriod',
-      describe: t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-      reference: {
-        'Kubernetes Documentation':
-          'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      template:
-        '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    // 데이터 없는것
-    {
-      name: 'CanDeleteResources',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_CANDELETERESOURCES'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANDELETERESOURCES'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'CanModifyWorkloads',
-      describe: t('CLUSTER_INSPECTION_DESC_CANMODIFYWORKLOADS'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_CANMODIFYWORKLOADS'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'KubeletHasDiskPressure',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASDISKPRESSURE'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASDISKPRESSURE'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'KubeletHasNoSufficientMemory',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTMEMORY'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTMEMORY'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'KubeletHasNoSufficientPID',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_KUBELETHASNOSUFFICIENTPID'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_KUBELETHASNOSUFFICIENTPID'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-
-    {
-      name: 'NoPriorityClassName',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_NOPRIORITYCLASSNAME'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_NOPRIORITYCLASSNAME'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'ignore',
-    },
-    {
-      name: 'Error',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_ERROR'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_ERROR'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'ErrImportFailed',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_ERRIMPORTFAILED'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_ERRIMPORTFAILED'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-    {
-      name: 'BackOff',
-      // t('CLUSTER_INSPECTION_DESC_CERTIFICATEEXPIREDPERIOD'),
-
-      describe: t('CLUSTER_INSPECTION_DESC_BACKOFF'),
-      //   reference: {
-      //     'Kubernetes Documentation':
-      //       'https://kubernetes.io/blog/2016/08/security-best-practices-kubernetes-deployment/',
-      //   },
-      // t('CLUSTER_INSPECTION_SUGGEST_CERTIFICATEEXPIREDPERIOD'),
-      suggest: t('CLUSTER_INSPECTION_SUGGEST_BACKOFF'),
-      //   template:
-      //     '\napiVersion: v1\nkind: Pod\nmetadata:\n  name: demo\nspec:\n  readOnlyRootFilesystem: false\n  containers:\n  - name: demo\n    image: demo\n  securityContext:\n    allowPrivilegeEscalation: false\n    readOnlyRootFilesystem: true\n    runAsNonRoot: true\n',
-      level: 'warning',
-    },
-  ];
   const [lastScheduleTime, setLastScheduleTime] = useState();
+  const [kubeeyeData, setKubeeyeData] = useState();
+
   useEffect(() => {
     const fnGetData = async ({ ...params } = {}) => {
       const ciList = await clusterInspection.fetchList();
 
       setCiDataList(toJS(ciList.auditResults));
       const withNamespace = toJS(ciList.auditResults)?.filter(
-        item => item.namespace,
+        item => item.namespace
       );
       const noNamespace = toJS(ciList.auditResults)?.filter(
-        item => !item.namespace,
+        item => !item.namespace
       );
 
       setNamespace(withNamespace);
       setWithoutNamespace(noNamespace);
     };
 
+    const fnKubeeyeData = async ({ ...params } = {}) => {
+      const kubeeyeList = await kubeeyeDataStore.fetchList();
+      setKubeeyeData(toJS(kubeeyeList));
+    };
+
     fnGetData();
+    fnKubeeyeData();
   }, []);
 
   useEffect(() => {
     const date = new Date(props?.data?.lastScheduleTime);
     const formattedDate = `${date.getFullYear()}-${String(
-      date.getMonth() + 1,
+      date.getMonth() + 1
     ).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
     const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(
-      date.getMinutes(),
+      date.getMinutes()
     ).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
 
     const setTime = `${formattedDate}, ${formattedTime}`;
@@ -586,7 +129,7 @@ const DetailClusterList = props => {
       const content = (
         <div className="grid_info style_status">
           <div className="grid_text">
-            <span>데이터가 없습니다</span>
+            <span>{t('CLUSTER_INSPECTION_NO_DATA')}</span>
           </div>
         </div>
       );
@@ -735,7 +278,7 @@ const DetailClusterList = props => {
                             <div
                               key={`ignore-${i}`}
                               className="dot_bar status pass"
-                            ></div>,
+                            ></div>
                           );
                         }
                         return dotBars;
@@ -746,7 +289,7 @@ const DetailClusterList = props => {
                             <div
                               key={`warning-${i}`}
                               className="dot_bar status warning"
-                            ></div>,
+                            ></div>
                           );
                         }
                         return dotBars;
@@ -757,7 +300,7 @@ const DetailClusterList = props => {
                             <div
                               key={`danger-${i}`}
                               className="dot_bar status danger"
-                            ></div>,
+                            ></div>
                           );
                         }
                         return dotBars;
@@ -768,7 +311,7 @@ const DetailClusterList = props => {
                             <div
                               key={`danger-${i}`}
                               className="dot_bar status danger"
-                            ></div>,
+                            ></div>
                           );
                         }
 
@@ -777,7 +320,7 @@ const DetailClusterList = props => {
                             <div
                               key={`warning-${i}`}
                               className="dot_bar status warning"
-                            ></div>,
+                            ></div>
                           );
                         }
 
@@ -786,7 +329,7 @@ const DetailClusterList = props => {
                             <div
                               key={`ignore-${i}`}
                               className="dot_bar status pass"
-                            ></div>,
+                            ></div>
                           );
                         }
 
@@ -854,46 +397,25 @@ const DetailClusterList = props => {
                                       {generateDotBars()}
                                     </div>
                                     <p className="dot_value">
-                                      {/* {buttonPass &&
-                                        `${t(
-                                          'CLUSTER_INSPECTION_PASS',
-                                        )} ${counts.ignore || 0}`}
-                                      {buttonWarning &&
-                                        `${t(
-                                          'CLUSTER_INSPECTION_WARNING',
-                                        )} ${counts.warning || 0}`}
-                                      {buttonDanger &&
-                                        `${t(
-                                          'CLUSTER_INSPECTION_DANGER',
-                                        )} ${counts.danger || 0}`}
-
-                                      {!buttonPass &&
-                                        !buttonWarning &&
-                                        !buttonDanger && (
-                                          <> */}
                                       <label>
                                         {`${t(
-                                          'CLUSTER_INSPECTION_PASS',
+                                          'CLUSTER_INSPECTION_PASS'
                                         )}  ${counts.ignore || 0}`}
                                       </label>
                                       <label>
                                         {`${t(
-                                          'CLUSTER_INSPECTION_WARNING',
+                                          'CLUSTER_INSPECTION_WARNING'
                                         )}  ${counts.warning || 0}`}
                                       </label>
                                       <label>
                                         {`${t(
-                                          'CLUSTER_INSPECTION_DANGER',
+                                          'CLUSTER_INSPECTION_DANGER'
                                         )}  ${counts.danger || 0}`}
                                       </label>
-                                      {/* </>
-                                        )} */}
                                       <span className="data"></span>
                                     </p>
                                   </div>
                                 </div>
-
-                                {/* {renderMonitorings(obj.resourceInfos)} */}
 
                                 <div
                                   className={styles.arrow}
@@ -901,7 +423,7 @@ const DetailClusterList = props => {
                                     handleExpand(
                                       obj.resourceInfos.name,
                                       value.namespace,
-                                      obj.resourceType,
+                                      obj.resourceType
                                     )
                                   }
                                 >
@@ -953,7 +475,7 @@ const DetailClusterList = props => {
       if (buttonPass) {
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
           );
         }
         return dotBars;
@@ -961,7 +483,7 @@ const DetailClusterList = props => {
       if (buttonWarning) {
         for (let i = 0; i < (counts.warning || 0); i++) {
           dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>
           );
         }
         return dotBars;
@@ -969,7 +491,7 @@ const DetailClusterList = props => {
       if (buttonDanger) {
         for (let i = 0; i < (counts.danger || 0); i++) {
           dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>
           );
         }
         return dotBars;
@@ -978,19 +500,19 @@ const DetailClusterList = props => {
       if (!(buttonDanger || buttonWarning || buttonPass)) {
         for (let i = 0; i < (counts.danger || 0); i++) {
           dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
+            <div key={`danger-${i}`} className="dot_bar status danger"></div>
           );
         }
 
         for (let i = 0; i < (counts.warning || 0); i++) {
           dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
+            <div key={`warning-${i}`} className="dot_bar status warning"></div>
           );
         }
 
         for (let i = 0; i < (counts.ignore || 0); i++) {
           dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
+            <div key={`ignore-${i}`} className="dot_bar status pass"></div>
           );
         }
 
@@ -1014,15 +536,6 @@ const DetailClusterList = props => {
             <div className="dot_chart_wrap">
               <div className="dot_chart">{generateDotBars()}</div>
               <p className="dot_value">
-                {/* {buttonPass &&
-                  `${t('CLUSTER_INSPECTION_PASS')} ${counts.ignore || 0}`}
-                {buttonWarning &&
-                  `${t('CLUSTER_INSPECTION_WARNING')} ${counts.warning || 0}`}
-                {buttonDanger &&
-                  `${t('CLUSTER_INSPECTION_DANGER')} ${counts.danger || 0}`} */}
-
-                {/* {!buttonPass && !buttonWarning && !buttonDanger && (
-                  <> */}
                 <label>
                   {`${t('CLUSTER_INSPECTION_PASS')}  ${counts.ignore || 0}`}
                 </label>
@@ -1032,14 +545,10 @@ const DetailClusterList = props => {
                 <label>
                   {`${t('CLUSTER_INSPECTION_DANGER')}  ${counts.danger || 0}`}
                 </label>
-                {/* </>
-                )} */}
                 <span className="data"></span>
               </p>
             </div>
           </div>
-
-          {/* {renderMonitorings(obj.resourceInfos)} */}
 
           <div
             className={styles.arrow}
@@ -1062,170 +571,6 @@ const DetailClusterList = props => {
       </>
     );
   };
-
-  /*
-    const renderContentDetail = obj => {
-    const counts = {};
-
-    (obj.resourceInfos.items || []).forEach(item => {
-      const itemLevel = item.level;
-      // console.log('item\n ', item.level);
-      counts[itemLevel] = (counts[itemLevel] || 0) + 1;
-    }); // (버튼에 따라 count 세기)
-
-    const countItems = () => {
-      if (buttonPass) {
-        for (let i = 0; i < (counts.ignore || 0); i++) {
-          dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
-          );
-        }
-        return dotBars;
-      }
-      if (buttonWarning) {
-        for (let i = 0; i < (counts.warning || 0); i++) {
-          dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
-          );
-        }
-        return dotBars;
-      }
-      if (buttonDanger) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
-          dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
-          );
-        }
-        return dotBars;
-      }
-
-      if (!(buttonDanger || buttonWarning || buttonPass)) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
-          dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
-          );
-        }
-
-        for (let i = 0; i < (counts.warning || 0); i++) {
-          dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
-          );
-        }
-
-        for (let i = 0; i < (counts.ignore || 0); i++) {
-          dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
-          );
-        }
-
-        return dotBars;
-      }
-    };
-
-    const generateDotBars = () => {
-      const dotBars = [];
-      if (buttonPass) {
-        for (let i = 0; i < (counts.ignore || 0); i++) {
-          dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
-          );
-        }
-        return dotBars;
-      }
-      if (buttonWarning) {
-        for (let i = 0; i < (counts.warning || 0); i++) {
-          dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
-          );
-        }
-        return dotBars;
-      }
-      if (buttonDanger) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
-          dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
-          );
-        }
-        return dotBars;
-      }
-
-      if (!(buttonDanger || buttonWarning || buttonPass)) {
-        for (let i = 0; i < (counts.danger || 0); i++) {
-          dotBars.push(
-            <div key={`danger-${i}`} className="dot_bar status danger"></div>,
-          );
-        }
-
-        for (let i = 0; i < (counts.warning || 0); i++) {
-          dotBars.push(
-            <div key={`warning-${i}`} className="dot_bar status warning"></div>,
-          );
-        }
-
-        for (let i = 0; i < (counts.ignore || 0); i++) {
-          dotBars.push(
-            <div key={`ignore-${i}`} className="dot_bar status pass"></div>,
-          );
-        }
-
-        return dotBars;
-      }
-    };
-
-    return (
-      <>
-        <div className={styles.content}>
-          <div className={styles.text}>
-            <div>{obj.resourceInfos.name}</div>
-            <p>{t('CLUSTER_INSPECTION_NAME')}</p>
-          </div>
-
-          <div className={styles.text}>
-            <div>{obj.resourceType}</div>
-            <p>{t('CLUSTER_INSPECTION_TYPE')}</p>
-          </div>
-          <div className="content_box_wrap">
-            <div className="dot_chart_wrap">
-              <div className="dot_chart">{generateDotBars()}</div>
-              <p className="dot_value">
-                <label>
-                  {t('CLUSTER_INSPECTION_PASS')} {counts.ignore || 0}
-                </label>
-                <label>
-                  {t('CLUSTER_INSPECTION_WARNING')} {counts.warning || 0}
-                </label>
-                <label>
-                  {t('CLUSTER_INSPECTION_DANGER')} {counts.danger || 0}
-                </label>
-                <span className="data"></span>
-              </p>
-            </div>
-          </div>
-
-          {/* {renderMonitorings(obj.resourceInfos)}
-
-          <div
-            className={styles.arrow}
-            onClick={() => handleExpand(obj.resourceInfos.name)}
-          >
-            <Icon
-              name="chevron-down"
-              type={
-                obj.resourceInfos.name !== expandItem
-                  ? ''
-                  : obj.resourceInfos.name === expandItem &&
-                    isExpandFlag === false
-                  ? ''
-                  : 'light'
-              }
-              size={20}
-            />
-          </div>
-        </div>
-      </>
-    );
-  };
-  */
 
   const getState = state => {
     if (state === 'ignore') {
@@ -1237,73 +582,7 @@ const DetailClusterList = props => {
     if (state === 'danger') {
       return 'error';
     }
-    // if (state === 'Stopped' || state === 'Paused') {
-    //   return 'stopped';
-    // }
     return 'error';
-  };
-
-  const [activePopupIndex, setActivePopupIndex] = useState(null);
-  const PopupComponent = () => {
-    return (
-      <>
-        <div className="content_box_wrap" style={{ border: 'none' }}>
-          <div
-            className={`sub_layer_pop ${showPopup ? 'show' : ''}`}
-            id="sub_layer_pop"
-            style={{ top: '-64px', right: '-6px' }}
-          >
-            <div className="layer_pop_header status_wrap">
-              <div className="tit">
-                {message}
-                <p
-                  className={`status ${
-                    level === 'ignore'
-                      ? 'pass'
-                      : level === 'warning'
-                      ? 'warning'
-                      : level === 'danger'
-                      ? 'danger'
-                      : ''
-                  }`}
-                >
-                  <span>
-                    {level === 'ignore'
-                      ? 'pass'
-                      : level === 'warning'
-                      ? 'warning'
-                      : level === 'danger'
-                      ? 'danger'
-                      : ''}
-                  </span>
-                </p>
-              </div>
-              <button
-                type="button"
-                className="close"
-                onClick={e => closeDrawer(e)}
-              >
-                <i className="ico ico-close-small"></i>
-              </button>
-            </div>
-            <div className="msg">
-              <i className="ico ico-check"></i>
-              <label
-                className="label"
-                style={{ color: '#36435c' }}
-              >{`Discovered :`}</label>
-              <span>{`1 min ago`}</span>
-            </div>
-            <div className="desc">
-              <h2>{`DESCRIPTION`}</h2>
-              <p> {`${describe}`}</p>
-              <h2> {`SUGGEST`}</h2>
-              <p> {`${suggest}`}</p>
-            </div>
-          </div>
-        </div>
-      </>
-    );
   };
 
   const renderExtraContent = (obj, index) => {
@@ -1334,26 +613,45 @@ const DetailClusterList = props => {
                 return levelOrder[a.level] - levelOrder[b.level];
               })
               ?.map((item, indexNum) => {
+                // const foundData = kubeeyeData.find(data => {
+                //   return data.name === item.message;
+                // });
                 const foundData = kubeeyeData.find(data => {
                   return data.name === item.message;
-                });
-
+                }) || {
+                  name: 'No Data',
+                  describe: '',
+                  level: '',
+                  suggest: '',
+                };
                 return (
                   <>
                     <div
                       className={classnames(styles.item)}
                       key={`extra-item-${indexNum}`}
-                      onClick={e => {
+                      onClick={() => {
                         if (foundData) {
-                          setShowPopup(foundData);
+                          setShowPopup(true);
                           setMessage(foundData.name);
                           setDescribe(foundData.describe);
                           setLevel(foundData.level);
                           setSuggest(foundData.suggest);
-                        }
-                        if (!foundData) {
+                        } else {
                           setShowPopup(false);
                         }
+                        // if (
+                        //   foundData?.name !== undefined &&
+                        //   foundData?.name === item.message
+                        // ) {
+                        //   setShowPopup(true);
+                        //   setMessage(foundData.name);
+                        //   setDescribe(foundData.describe);
+                        //   setLevel(foundData.level);
+                        //   setSuggest(foundData.suggest);
+                        // }
+                        // if (foundData && foundData?.name === undefined) {
+                        //   setShowPopup(false);
+                        // }
                       }}
                     >
                       <div className={styles.icon}>
@@ -1410,76 +708,77 @@ const DetailClusterList = props => {
                         <p>{t('CLUSTER_INSPECTION_STATUS')}</p>
                       </div>
                     </div>
-                    {foundData && (
-                      <>
-                        <div
-                          className="content_box_wrap"
-                          style={{ border: 'none' }}
-                        >
+                    {showPopup &&
+                      foundData.name !== undefined &&
+                      foundData.name === item.message && (
+                        <>
                           <div
-                            className={`sub_layer_pop ${
-                              showPopup ? 'show' : ''
-                            }`}
-                            id="sub_layer_pop"
-                            style={{
-                              top: '-64px',
-                              right: '-6px',
-                            }}
+                            className="content_box_wrap"
+                            style={{ border: 'none' }}
                           >
-                            <div className="layer_pop_header status_wrap">
-                              <div className="tit">
-                                {message}
-                                <p
-                                  className={`status ${
-                                    level === 'ignore'
-                                      ? 'pass'
-                                      : level === 'warning'
-                                      ? 'warning'
-                                      : level === 'danger'
-                                      ? 'danger'
-                                      : ''
-                                  }`}
+                            <div
+                              className={`sub_layer_pop ${
+                                showPopup ? 'show' : ''
+                              }`}
+                              id="sub_layer_pop"
+                              style={{
+                                top: '-64px',
+                                right: '-6px',
+                              }}
+                            >
+                              <div className="layer_pop_header status_wrap">
+                                <div className="tit">
+                                  {message}
+                                  <p
+                                    className={`status ${
+                                      level === 'ignore'
+                                        ? 'pass'
+                                        : level === 'warning'
+                                        ? 'warning'
+                                        : level === 'danger'
+                                        ? 'danger'
+                                        : ''
+                                    }`}
+                                  >
+                                    <span>
+                                      {level === 'ignore'
+                                        ? 'pass'
+                                        : level === 'warning'
+                                        ? 'warning'
+                                        : level === 'danger'
+                                        ? 'danger'
+                                        : ''}
+                                    </span>
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="close"
+                                  onClick={() => setShowPopup(false)}
+                                  // onClick={e => closeDrawer(e)}
                                 >
-                                  <span>
-                                    {level === 'ignore'
-                                      ? 'pass'
-                                      : level === 'warning'
-                                      ? 'warning'
-                                      : level === 'danger'
-                                      ? 'danger'
-                                      : ''}
-                                  </span>
-                                </p>
+                                  <i className="ico ico-close-small"></i>
+                                </button>
                               </div>
-                              <button
-                                type="button"
-                                className="close"
-                                // onClick={() => setShowPopup(false)}
-                                onClick={e => closeDrawer(e)}
-                              >
-                                <i className="ico ico-close-small"></i>
-                              </button>
-                            </div>
-                            <div className="msg">
-                              <i className="ico ico-check"></i>
-                              <label
-                                className="label"
-                                style={{
-                                  color: '#36435c',
-                                }}
-                              >{`Discovered `}</label>
-                              {/* <span>{`1 min ago`}</span> */}
-                            </div>
-                            <div className="desc">
-                              <h2>{`DESCRIPTION`}</h2>
-                              <p> {`${describe}`}</p>
-                              <h2> {`SUGGEST`}</h2>
-                              <p> {`${suggest}`}</p>
+                              <div className="msg">
+                                <i className="ico ico-check"></i>
+                                <label
+                                  className="label"
+                                  style={{
+                                    color: '#36435c',
+                                  }}
+                                >{`Discovered `}</label>
+                              </div>
+                              <div className="desc">
+                                <h2>{t('CLUSTER_INSPECTION_DESCRIPTION')}</h2>
+                                <p> {`${describe}`}</p>
+                                <h2>{t('CLUSTER_INSPECTION_CLUSTER')}</h2>
+                                <p> {`${suggest}`}</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
                   </>
                 );
               })}
@@ -1487,66 +786,6 @@ const DetailClusterList = props => {
         </div>
       </>
     );
-  };
-
-  const renderMonitorings = vmId => {
-    // const isExpand = false;
-    const loading = false;
-
-    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
-
-    //  {eventList?.length == 0 &&
-    //         <div className={styles.wrapper}>
-    //             {isLoading ?
-    //               <div className={styles.loading}><Loading /></div>
-    //               : <div className={styles.empty}>{t('RESOURCES_NO_DATA_EVENT_LOG')}</div>
-    //             }
-    //           </div>
-    //       }
-
-    // const ciData = _.find(clusterInspectionData, data => {
-    //   if (data.metric.pod === vmId) return data;
-    // });
-
-    if (!ciDataList) {
-      return (
-        <div className="grid_text">
-          <span>{t('RESOURCES_NOT_FOUND_RESOURCE')}</span>
-        </div>
-      );
-    }
-
-    // const content = (
-    //   <div className="grid_text">
-    //     <span>{t('RESOURCES_NOT_FOUND_RESOURCE')}</span>
-    //   </div>
-    // );
-    // const ciArray = [];
-    // ciArray.push(ciDataList);
-
-    // const configs = getMonitoringCfgs(ciArray);
-
-    // return (
-    //   <div className={styles.monitors}>
-    //     <div className={styles.charts}>
-    //       {configs.map(item => {
-    //         const config = getAreaChartOps(item);
-
-    //         return (
-    //           <div key={item.type}>
-    //             <TinyArea
-    //               key={item.type}
-    //               width="100%"
-    //               height={40}
-    //               {...config}
-    //               darkMode={isExpand}
-    //             />
-    //           </div>
-    //         );
-    //       })}
-    //     </div>
-    //   </div>
-    // );
   };
 
   return (
@@ -1563,7 +802,9 @@ const DetailClusterList = props => {
           <Tabs tabs={tabs()} />
         </div>
         <div>
-          <div>{`최근 인스펙션 시간 : ${lastScheduleTime}`}</div>
+          <div>{`${t(
+            'CLUSTER_INSPECTION_LATEST_TIME'
+          )} : ${lastScheduleTime}`}</div>
         </div>
       </div>
       <div className="grid_item">
