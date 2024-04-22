@@ -78,6 +78,18 @@ const EditModal = props => {
     );
   }, []);
 
+  useEffect(() => {
+    const bmcData = detailInfo.openBMC;
+    if (
+      !!bmcData.address &&
+      !!bmcData.scrapeInterval &&
+      !!bmcData.username &&
+      !!bmcData.password
+    ) {
+      setBmcCheck(true);
+    }
+  }, []);
+
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -193,7 +205,12 @@ const EditModal = props => {
         params
       )
       .then(res => {
-        setChkValidation(false); // 저장버튼 활성화
+        if (bmcCheck) {
+          setChkValidation(true);
+        } else {
+          setChkValidation(false); // 저장버튼 활성화
+        }
+
         // 유효성 체크 validation 문구
         setUserValidError(false);
         setUserValidSuccess(true);
@@ -220,7 +237,7 @@ const EditModal = props => {
         params
       )
       .then(res => {
-        if (userValidError) {
+        if (!userValidError) {
           setChkValidation(false);
         } else {
           setChkValidation(true);
