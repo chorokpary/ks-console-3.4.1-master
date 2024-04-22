@@ -21,8 +21,8 @@ import classnames from 'classnames';
 
 import { Modal } from 'components/Base';
 import { PATTERN_USER_NAME } from 'utils/constants';
-import styles from './index.scss';
 import NodeStore from 'stores/node';
+import styles from './index.scss';
 
 const RegistModal = props => {
   const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
@@ -349,14 +349,14 @@ const RegistModal = props => {
       )
       .then(res => {
         setChkValidation(false); // 저장버튼 활성화
-        //유효성 체크 validation 문구
+        // 유효성 체크 validation 문구
         setUserValidError(false);
         setUserValidSuccess(true);
       })
       .catch(error => {
         console.error('Regist error :  ', error);
         setChkValidation(true); // 저장버튼 비활성화
-        //유효성 체크 validation 문구
+        // 유효성 체크 validation 문구
         setUserValidError(true);
         setUserValidSuccess(false);
       });
@@ -476,7 +476,7 @@ const RegistModal = props => {
                   </Column>
                   <Column>
                     <Form.Item
-                      label={t('Scrape Interval') + ' (s)'}
+                      label={`${t('Scrape Interval')} (s)`}
                       rules={[
                         {
                           required: true,
@@ -529,7 +529,7 @@ const RegistModal = props => {
                       {t('RESOURCES_FAIL_VALID_INFO')}
                     </div>
                   )}
-                  {/* //유효성 체크가 완료 되었습니다.*/}
+                  {/* //유효성 체크가 완료 되었습니다. */}
                   {userValidSuccess && (
                     <div
                       className="form-item-error"
@@ -588,9 +588,9 @@ const RegistModal = props => {
               }}
             >
               {t('BMC')}
-              <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>
+              {/* <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>
                 *
-              </span>
+              </span> */}
             </Checkbox>
           </div>
           {bmcCheck && (
@@ -616,7 +616,7 @@ const RegistModal = props => {
                 </Column>
                 <Column>
                   <Form.Item
-                    label={t('Interval') + ' (s)'}
+                    label={`${t('Interval')} (s)`}
                     rules={[
                       {
                         required: true,
@@ -681,7 +681,7 @@ const RegistModal = props => {
                     {t('RESOURCES_FAIL_VALID_INFO')}
                   </div>
                 )}
-                {/* 유효성 체크가 완료 되었습니다.*/}
+                {/* 유효성 체크가 완료 되었습니다. */}
                 {userValidBmcSuccess && (
                   <div
                     className="form-item-error"

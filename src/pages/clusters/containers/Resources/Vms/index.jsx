@@ -421,7 +421,36 @@ export default class Vms extends React.Component {
                     <i
                       className={styles[`ico-status-${state.toLowerCase()}`]}
                     />
-                    <p>{state}</p>
+                    <p>
+                      {/* {state === 'Stopped' && t('RESOURCES_STOP')}
+                      {state === 'Provisioning' && t('RESOURCES_PROVISIONING')}
+                      {state === 'Starting' && t('RESOURCES_STARTING')}
+                      {state === 'Running' && t('RESOURCES_RUNNING')}
+                      {state === 'Paused' && t('RESOURCES_PAUSED')}
+                      {state === 'Migrating' && t('RESOURCES_MIGRATING')}
+                      {state === 'Stopping' && t('RESOURCES_STOPPING')}
+                      {state === 'Terminating' && t('RESOURCES_TERMINATING')}
+                      {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
+                      {state === 'Stopped'
+                        ? t('RESOURCES_STOP')
+                        : state === 'Provisioning'
+                        ? t('RESOURCES_PROVISIONING')
+                        : state === 'Starting'
+                        ? t('RESOURCES_STARTING')
+                        : state === 'Running'
+                        ? t('RESOURCES_RUNNING')
+                        : state === 'Paused'
+                        ? t('RESOURCES_PAUSED')
+                        : state === 'Migrating'
+                        ? t('RESOURCES_MIGRATING')
+                        : state === 'Stopping'
+                        ? t('RESOURCES_STOPPING')
+                        : state === 'Terminating'
+                        ? t('RESOURCES_TERMINATING')
+                        : state === 'Unknown'
+                        ? t('RESOURCES_UNKNOWN')
+                        : ''}
+                    </p>
                   </div>
                 </Dropdown>
               </div>
