@@ -391,9 +391,9 @@ const EditModal = props => {
               checked={bmcCheck}
             >
               {t('BMC')}
-              {/* <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>
+              <span className={`form-item-required ${bmcCheck ? '' : 'hide'}`}>
                 *
-              </span> */}
+              </span>
             </Checkbox>
           </div>
           {bmcCheck && (
