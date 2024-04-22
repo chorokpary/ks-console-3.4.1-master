@@ -1,36 +1,55 @@
-import { get } from 'lodash'
-import React, { useState, useEffect, useRef } from 'react'
+import { get } from 'lodash';
+import React, { useState, useEffect, useRef } from 'react';
 
-import { Form, Input, Select, TextArea, Tooltip, Button } from '@kube-design/components'
-import { Modal } from 'components/Base'
-import styles from './index.scss'
+import {
+  Form,
+  Input,
+  Select,
+  TextArea,
+  Tooltip,
+  Button,
+} from '@kube-design/components';
+import { Modal } from 'components/Base';
+import styles from './index.scss';
 
-import LoadBalancerStore from 'stores/resources/loadbalancers'
+import LoadBalancerStore from 'stores/resources/loadbalancers';
 
-const ModifyModal = (props) => {
-
+const ModifyModal = props => {
   const regexPort = /[^0123456789-]/g;
   const ruleTypeOptions = [
-    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", port: "1" },
-    { value: "ALL", label: "ALL", protocol: "TCP", port: "0-65535" },
-    { value: "FTP", label: "FTP", protocol: "TCP", port: "20" },
-    { value: "SSH", label: "SSH", protocol: "TCP", port: "22" },
-    { value: "TELNET", label: "TELNET", protocol: "TCP", port: "23" },
-    { value: "SMTP", label: "SMTP", protocol: "TCP", port: "25" },
-    { value: "DNS", label: "DNS", protocol: "TCP", port: "53" },
-    { value: t('RESOURCES_DHCP_SERVER'), label: t('RESOURCES_DHCP_SERVER'), protocol: "UDP", port: "67" },
-    { value: t('RESOURCES_DHCP_CLIENT'), label: t('RESOURCES_DHCP_CLIENT'), protocol: "UDP", port: "68" },
-    { value: "HTTP", label: "HTTP", protocol: "TCP", port: "80" },
-    { value: "POP3", label: "POP3", protocol: "TCP", port: "110" },
-    { value: "IMAP4", label: "IMAP4", protocol: "TCP", port: "143" },
-    { value: "HTTPS", label: "HTTPS", protocol: "TCP", port: "443" },
+    {
+      value: 'CUSTOM',
+      label: t('RESOURCES_SPECIFY_USER'),
+      protocol: 'TCP',
+      port: '1',
+    },
+    { value: 'FTP', label: 'FTP', protocol: 'TCP', port: '20' },
+    { value: 'SSH', label: 'SSH', protocol: 'TCP', port: '22' },
+    { value: 'TELNET', label: 'TELNET', protocol: 'TCP', port: '23' },
+    { value: 'SMTP', label: 'SMTP', protocol: 'TCP', port: '25' },
+    { value: 'DNS', label: 'DNS', protocol: 'TCP', port: '53' },
+    {
+      value: t('RESOURCES_DHCP_SERVER'),
+      label: t('RESOURCES_DHCP_SERVER'),
+      protocol: 'UDP',
+      port: '67',
+    },
+    {
+      value: t('RESOURCES_DHCP_CLIENT'),
+      label: t('RESOURCES_DHCP_CLIENT'),
+      protocol: 'UDP',
+      port: '68',
+    },
+    { value: 'HTTP', label: 'HTTP', protocol: 'TCP', port: '80' },
+    { value: 'POP3', label: 'POP3', protocol: 'TCP', port: '110' },
+    { value: 'IMAP4', label: 'IMAP4', protocol: 'TCP', port: '143' },
+    { value: 'HTTPS', label: 'HTTPS', protocol: 'TCP', port: '443' },
   ];
 
   const protocolOptions = [
-    { value: "ALL", label: "ALL" },
-    { value: "TCP", label: "TCP" },
-    { value: "UDP", label: "UDP" },
-    { value: "ICMP", label: "ICMP" },
+    { value: 'TCP', label: 'TCP' },
+    { value: 'UDP', label: 'UDP' },
+    { value: 'ICMP', label: 'ICMP' },
   ];
 
   const loadBalancerStore = new LoadBalancerStore();
@@ -46,130 +65,156 @@ const ModifyModal = (props) => {
 
   const [btnDimm, setBtnDimm] = useState(false);
 
-  const [networkName, setNetworkName] = useState(props.store.detail?.lb?.network.id);
+  const [networkName, setNetworkName] = useState(
+    props.store.detail?.lb?.network.id
+  );
   const [networkList, setNetworkList] = useState([]);
 
   const [rules, setRules] = useState(props.store.detail?.lb?.rules);
   const [rulesIds, setRulesIds] = useState([]);
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const getCreateData = async () => {
       const listVm = await loadBalancerStore.fetchVmList(props);
       const listNetwork = await loadBalancerStore.fetchNetworkList(props);
 
-      const networkList = listNetwork.filter(obj => obj.project === props.store.detail?.lb.project) || []
-      setNetworkList(networkList)
+      const networkList =
+        listNetwork.filter(
+          obj => obj.project === props.store.detail?.lb.project
+        ) || [];
+      setNetworkList(networkList);
 
       setVmDataList(listVm.vms);
     };
 
     getCreateData();
 
-    const rulesIds = rules.map((obj) => obj.id)
-    setRulesIds(rulesIds)
+    const rulesIds = rules.map(obj => obj.id);
+    setRulesIds(rulesIds);
 
     if (rules.length === 1 && rules[0].protocol === 'all') {
-      setBtnDimm(true)
-      setFormRulesFields(rules.map((obj) => (
-        {
-          ruleType: 'ALL'
-          , protocol: obj.protocol.toUpperCase()
-          , portRangeMin: '0'
-          , portRangeMax: '65535'
-          , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
-          , message: ''
-          , originRuleId: obj.id
-        }
-      )))
+      setBtnDimm(true);
+      setFormRulesFields(
+        rules.map(obj => ({
+          ruleType: 'ALL',
+          protocol: obj.protocol.toUpperCase(),
+          portRangeMin: '0',
+          portRangeMax: '65535',
+          validPort: {
+            isValid: false,
+            message: t('RESOURCES_PORT_RANGE_DESC'),
+          },
+          message: '',
+          originRuleId: obj.id,
+        }))
+      );
     } else {
-      setFormRulesFields(rules.map((obj) => (
-        {
-          ruleType: t('RESOURCES_SPECIFY_USER')
-          , protocol: obj.protocol.toUpperCase()
-          , portRangeMin: obj.port_range_min + ''
-          , portRangeMax: obj.port_range_max + ''
-          , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
-          , message: ''
-          , originRuleId: obj.id
-        }
-      )))
+      setFormRulesFields(
+        rules.map(obj => ({
+          ruleType: t('RESOURCES_SPECIFY_USER'),
+          protocol: obj.protocol.toUpperCase(),
+          portRangeMin: obj.port_range_min + '',
+          portRangeMax: obj.port_range_max + '',
+          validPort: {
+            isValid: false,
+            message: t('RESOURCES_PORT_RANGE_DESC'),
+          },
+          message: '',
+          originRuleId: obj.id,
+        }))
+      );
     }
-
-  }, [])
+  }, []);
 
   const vmOptions = () => {
-    const opt = vmDataList.filter((el) => el.networks.map(elN => elN.name).includes(networkName)).map((obj) => ({
-      label: t(obj.name),
-      value: t(obj.id),
-      disabled: obj.state === 'Running' ? false : true
-    }))
-    return opt
-  }
+    const opt = vmDataList
+      .filter(el => el.networks.map(elN => elN.name).includes(networkName))
+      .map(obj => ({
+        label: t(obj.name),
+        value: t(obj.id),
+        disabled: obj.state === 'Running' ? false : true,
+      }));
+    return opt;
+  };
 
   const [formMemberIpFields, setFormMemberIpFields] = useState([]);
 
   useEffect(() => {
     const opt = props.store.detail?.lb.members.map(obj => ({
-      vmId: vmDataList.filter((el) => el.networks.map(elN => elN.ip).includes(obj))[0]?.id
-      , memberIp: obj
-    }))
-    setFormMemberIpFields(opt)
-  }, [vmDataList])
+      vmId: vmDataList.filter(el =>
+        el.networks.map(elN => elN.ip).includes(obj)
+      )[0]?.id,
+      memberIp: obj,
+    }));
+    setFormMemberIpFields(opt);
+  }, [vmDataList]);
 
   const handleOk = () => {
     const onOk = props.onOk;
-    const members = [...formMemberIpFields].filter(el => el.memberIp).map(obj => obj.memberIp);
+    const members = [...formMemberIpFields]
+      .filter(el => el.memberIp)
+      .map(obj => obj.memberIp);
     const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
     setIsMembers(members.length > 0);
     if (isDuplicate(rules)) {
-      setIsDupRules(false)
+      setIsDupRules(false);
     } else {
-      setIsDupRules(true)
-      setIsRules(rules.length > 0)
+      setIsDupRules(true);
+      setIsRules(rules.length > 0);
     }
 
     form.current.validator(() => {
-
-      if (members.length > 0 && rules.length > 0 && !isDuplicate(rules) && isRules) {
+      if (
+        members.length > 0 &&
+        rules.length > 0 &&
+        !isDuplicate(rules) &&
+        isRules
+      ) {
         const { data } = form.current.props;
-        const { id, lb } = props.store.detail
+        const { id, lb } = props.store.detail;
         data.members = members;
         data.id = id;
-        data.network = lb.network.id
-        data.description = data.description || ''
-        data.lb_rule = [...formRulesFields.filter(el => delete el.validPort && delete el.isCustom)]
-        data.originRule = rulesIds
-        if (formRulesFields.length === 1 && formRulesFields[0].protocol === 'ALL') {
-          data.setAll = true
+        data.network = lb.network.id;
+        data.description = data.description || '';
+        data.lb_rule = [
+          ...formRulesFields.filter(
+            el => delete el.validPort && delete el.isCustom
+          ),
+        ];
+        data.originRule = rulesIds;
+        if (
+          formRulesFields.length === 1 &&
+          formRulesFields[0].protocol === 'ALL'
+        ) {
+          data.setAll = true;
         }
 
-        setIsSubmitting(true)
-        onOk({ lb: data, ...props })
+        setIsSubmitting(true);
+        onOk({ lb: data, ...props });
       }
-    })
-  }
+    });
+  };
 
   const closeModal = () => {
     setModalView(false);
-  }
+  };
 
   const memberIpObj = {
-    vmId: t('RESOURCES_SELECT')
-    , memberIp: ''
-    , message: ''
-  }
+    vmId: t('RESOURCES_SELECT'),
+    memberIp: '',
+    message: '',
+  };
   //멤버 IP handler
   const handleMemberIp = {
-
     handleAddFields: () => {
       const values = [...formMemberIpFields, memberIpObj];
       setFormMemberIpFields(values);
     },
 
-    handleRemoveFields: (i) => {
+    handleRemoveFields: i => {
       const values = [...formMemberIpFields].filter((obj, idx) => idx !== i);
       setFormMemberIpFields(values);
       if (values.length < 1) {
@@ -180,28 +225,38 @@ const ModifyModal = (props) => {
     handleSelectClick: (i, val) => {
       const values = [...formMemberIpFields];
 
-      const opt = vmDataList.filter((el) => el.id === val).map((obj) => {
-        return obj.networks.filter((el) => el.name === networkName).map((network) => ({
-          value: network.ip
-        }))
-      })
+      const opt = vmDataList
+        .filter(el => el.id === val)
+        .map(obj => {
+          return obj.networks
+            .filter(el => el.name === networkName)
+            .map(network => ({
+              value: network.ip,
+            }));
+        });
 
-      if (!values.map(obj => obj.vmId).includes(val) || values[i].vmId === val || val === "") {
-        values[i].message = ""
+      if (
+        !values.map(obj => obj.vmId).includes(val) ||
+        values[i].vmId === val ||
+        val === ''
+      ) {
+        values[i].message = '';
         values[i].vmId = val;
         values[i].memberIp = opt[0][0].value;
         setIsMembers(true);
       } else {
         values[i].message = t('RESOURCES_ALREADY_SELECTED_VM_NAME');
-        setTimeout(() => { handleMemberIp.deleteMessage(i) }, 1000);
+        setTimeout(() => {
+          handleMemberIp.deleteMessage(i);
+        }, 1000);
       }
 
       setFormMemberIpFields(values);
     },
 
-    deleteMessage: (i) => {
+    deleteMessage: i => {
       const values = [...formMemberIpFields];
-      values[i].message = "";
+      values[i].message = '';
       setFormMemberIpFields(values);
     },
 
@@ -215,41 +270,40 @@ const ModifyModal = (props) => {
     handleIpClear: () => {
       setFormMemberIpFields([memberIpObj]);
     },
-
-  }//end 멤버 IP
+  }; //end 멤버 IP
 
   const networkOptions = () => {
-    const opt = networkList.filter((el) => !el.external).map((obj) => ({
-      label: t(obj.name),
-      value: t(obj.id),
-    }))
-    return opt
-  }
+    const opt = networkList
+      .filter(el => !el.external)
+      .map(obj => ({
+        label: t(obj.name),
+        value: t(obj.id),
+      }));
+    return opt;
+  };
   const networkValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == "select") {
-      return callback({ message: t('RESOURCES_SELECT_NETWORK_NAME_TIP') })
+    if (value == t('RESOURCES_SELECT') || value == 'select') {
+      return callback({ message: t('RESOURCES_SELECT_NETWORK_NAME_TIP') });
     }
-    callback()
-  }
+    callback();
+  };
 
   useEffect(() => {
     handleMemberIp.handleIpClear();
-  }, [networkName])
-
+  }, [networkName]);
 
   const rulsObj = {
-    ruleType: t('RESOURCES_SPECIFY_USER')
-    , protocol: 'TCP'
-    , portRangeMin: ''
-    , portRangeMax: '1'
-    , isCustom: true
-    , validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') }
-    , message: ''
-  }
+    ruleType: t('RESOURCES_SPECIFY_USER'),
+    protocol: 'TCP',
+    portRangeMin: '',
+    portRangeMax: '1',
+    isCustom: true,
+    validPort: { isValid: false, message: t('RESOURCES_PORT_RANGE_DESC') },
+    message: '',
+  };
   const [formRulesFields, setFormRulesFields] = useState([]);
   //Rules handler
   const handleRules = {
-
     handleAddFields: () => {
       const values = [...formRulesFields, rulsObj];
       setFormRulesFields(values);
@@ -258,7 +312,7 @@ const ModifyModal = (props) => {
       }
     },
 
-    handleRemoveFields: (i) => {
+    handleRemoveFields: i => {
       const values = [...formRulesFields].filter((obj, idx) => idx !== i);
       setFormRulesFields(values);
       if (values.length < 1) {
@@ -271,7 +325,7 @@ const ModifyModal = (props) => {
       const values = [...formRulesFields];
       const val = e.currentTarget.value;
 
-      if (regexPort.test(val) || (val < 1 || val > 65535)) {
+      if (regexPort.test(val) || val < 1 || val > 65535) {
         values[i].validPort.isValid = true;
       } else {
         values[i].validPort.isValid = false;
@@ -285,73 +339,81 @@ const ModifyModal = (props) => {
     handleSelectClick: (i, field, val) => {
       let values = [...formRulesFields];
 
-
-      if (field === "protocol") {
+      if (field === 'protocol') {
         values[i].protocol = val;
       } else {
-        if (!values.map(obj => obj.ruleType).includes(val) || values[i].ruleType === val || val === "" || val === "CUSTOM") {
-          values[i].message = ""
+        if (
+          !values.map(obj => obj.ruleType).includes(val) ||
+          values[i].ruleType === val ||
+          val === '' ||
+          val === 'CUSTOM'
+        ) {
+          values[i].message = '';
           values[i].ruleType = val;
           values = setRuleTypeHandler(i, val, values);
 
-          if (val === "ALL") {
+          if (val === 'ALL') {
             values = values.filter((obj, idx) => idx === i);
             setBtnDimm(true);
           } else {
             setBtnDimm(false);
           }
-
         } else {
           values[i].message = t('RESOURCES_ALREADY_SELECTED_TYPE');
-          setTimeout(() => { handleRules.deleteMessage(i) }, 1000);
+          setTimeout(() => {
+            handleRules.deleteMessage(i);
+          }, 1000);
         }
       }
 
       setFormRulesFields(values);
     },
 
-    deleteMessage: (i) => {
+    deleteMessage: i => {
       const values = [...formRulesFields];
-      values[i].message = "";
+      values[i].message = '';
       setFormRulesFields(values);
     },
-
-  }//end Rules
+  }; //end Rules
 
   //유형에 맞는 프로토콜, 포트범위 셋팅
   const setRuleTypeHandler = (i, val, values) => {
     values[i].portRangeMin = '';
-    values[i].isCustom = (val === "CUSTOM") ? true : false;
-    if (val === "ALL") {
-      values[i].protocol = "ALL";
+    values[i].isCustom = val === 'CUSTOM' ? true : false;
+    if (val === 'ALL') {
+      values[i].protocol = 'ALL';
     } else {
-      values[i].protocol = ruleTypeOptions.filter((obj) => obj.value === val)[0].protocol;
+      values[i].protocol = ruleTypeOptions.filter(
+        obj => obj.value === val
+      )[0].protocol;
     }
-    values[i].portRangeMax = ruleTypeOptions.filter((obj) => obj.value === val)[0].port;
+    values[i].portRangeMax = ruleTypeOptions.filter(
+      obj => obj.value === val
+    )[0].port;
     values[i].validPort.isValid = false;
     setIsRules(true);
 
     return values;
-  }
+  };
   //----------------end
 
   useEffect(() => {
     if (!isDuplicate(formRulesFields)) {
       setIsDupRules(true);
     }
-  }, [formRulesFields])
+  }, [formRulesFields]);
 
   const isDuplicate = arr => {
     let cnt = 0;
-    arr.some(function (x) {
-      formRulesFields.some(function (y) {
+    arr.some(function(x) {
+      formRulesFields.some(function(y) {
         if (x.portRangeMax === y.portRangeMax) {
-          cnt++
+          cnt++;
         }
-      })
+      });
     });
-    return cnt !== arr.length
-  }
+    return cnt !== arr.length;
+  };
 
   return (
     <>
@@ -366,10 +428,7 @@ const ModifyModal = (props) => {
         isSubmitting={isSubmitting}
       >
         <Form data={formData} ref={form}>
-
-          <Form.Item
-            label={t('RESOURCES_NAME')}
-          >
+          <Form.Item label={t('RESOURCES_NAME')}>
             <Input
               name="name"
               autoFocus={true}
@@ -381,16 +440,21 @@ const ModifyModal = (props) => {
           </Form.Item>
           <div style={{ padding: 10 }} />
 
-          <Form.Item label={t('RESOURCES_NETWORK_NAME')} rules={[{ required: true, validator: networkValidator }]}>
-            <Select name="network"
+          <Form.Item
+            label={t('RESOURCES_NETWORK_NAME')}
+            rules={[{ required: true, validator: networkValidator }]}
+          >
+            <Select
+              name="network"
               options={networkOptions()}
-              onChange={(e) => setNetworkName(e)}
+              onChange={e => setNetworkName(e)}
               defaultValue={props.store.detail?.lb.network.name}
             />
           </Form.Item>
           <div style={{ padding: 10 }} />
 
-          {t('RESOURCES_MEMBER_IP')}<span className="form-item-required">*</span>
+          {t('RESOURCES_MEMBER_IP')}
+          <span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
               <div className={styles.table}>
@@ -402,16 +466,28 @@ const ModifyModal = (props) => {
                   </colgroup>
                   <thead>
                     <tr>
-                      <th><strong>{t('RESOURCES_VM_NAME')}</strong></th>
-                      <th><strong>{t('RESOURCES_VM_IP')}</strong></th>
-                      <th><strong></strong></th>
+                      <th>
+                        <strong>{t('RESOURCES_VM_NAME')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_VM_IP')}</strong>
+                      </th>
+                      <th>
+                        <strong></strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {formMemberIpFields.map((v, i) => (
                       <tr key={i}>
                         <td>
-                          <Select value={v.message ? v.message : v.vmId} options={vmOptions()} onChange={(e) => handleMemberIp.handleSelectClick(i, e)} />
+                          <Select
+                            value={v.message ? v.message : v.vmId}
+                            options={vmOptions()}
+                            onChange={e =>
+                              handleMemberIp.handleSelectClick(i, e)
+                            }
+                          />
                         </td>
                         <td>
                           <Input type="text " value={v.memberIp} disabled />
@@ -427,7 +503,12 @@ const ModifyModal = (props) => {
                     ))}
                   </tbody>
                 </table>
-                <div className={`form-item-error ${isMembers ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_SELECT_VM_NAME_TIP')}</div>
+                <div
+                  className={`form-item-error ${isMembers ? 'hide' : ''}`}
+                  style={{ marginLeft: '10px' }}
+                >
+                  {t('RESOURCES_SELECT_VM_NAME_TIP')}
+                </div>
               </div>
               <div className="text-right">
                 <Button
@@ -455,43 +536,97 @@ const ModifyModal = (props) => {
                   </colgroup>
                   <thead>
                     <tr>
-                      <th><strong>{t('RESOURCES_TYPE_YOO')}</strong></th>
-                      <th><strong>{t('RESOURCES_PROTOCOL')}</strong></th>
-                      <th><strong>{t('RESOURCES_PORT_RANGE')}</strong></th>
-                      <th><strong></strong></th>
+                      <th>
+                        <strong>{t('RESOURCES_TYPE_YOO')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_PROTOCOL')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_PORT_RANGE')}</strong>
+                      </th>
+                      <th>
+                        <strong></strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {formRulesFields.map((v, i) => (
-                      <tr key={i}>
-                        <td>
-                          <Select value={v.message ? v.message : v.ruleType} options={ruleTypeOptions} onChange={(e) => handleRules.handleSelectClick(i, 'ruleType', e)}
-                            disabled={v.originRuleId ? true : false} />
-                        </td>
-                        <td>
-                          <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleRules.handleSelectClick(i, 'protocol', e)} disabled={!v.isCustom} />
-                        </td>
-                        <td>
-                          <Tooltip content={v.validPort?.isValid ? v.validPort.message : ''} placement="right" always={v.validPort?.isValid} >
-                            <Input type="text"
-                              onChange={(e) => handleRules.handleInputChange(i, 'portRangeMax', e)}
-                              value={v.protocol === 'ICMP' ? '' : v.portRangeMin && v.portRangeMin !== v.portRangeMax ? `${v.portRangeMin}-${v.portRangeMax}` : v.portRangeMax}
-                              disabled={!v.isCustom || v.protocol === 'ICMP'} />
-                          </Tooltip>
-                        </td>
-                        <td>
-                          <Button
-                            type="flat"
-                            icon="trash"
-                            onClick={() => handleRules.handleRemoveFields(i)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
+                    {formRulesFields.map((v, i) => {
+                      return (
+                        <tr key={i}>
+                          <td>
+                            <Select
+                              value={v.message ? v.message : v.ruleType}
+                              options={ruleTypeOptions}
+                              onChange={e =>
+                                handleRules.handleSelectClick(i, 'ruleType', e)
+                              }
+                              disabled={v.originRuleId ? true : false}
+                            />
+                          </td>
+                          <td>
+                            <Select
+                              value={v.protocol}
+                              options={protocolOptions}
+                              onChange={e =>
+                                handleRules.handleSelectClick(i, 'protocol', e)
+                              }
+                              disabled={!v.isCustom}
+                            />
+                          </td>
+                          <td>
+                            <Tooltip
+                              content={
+                                v.validPort?.isValid ? v.validPort.message : ''
+                              }
+                              placement="right"
+                              always={v.validPort?.isValid}
+                            >
+                              <Input
+                                type="text"
+                                onChange={e =>
+                                  handleRules.handleInputChange(
+                                    i,
+                                    'portRangeMax',
+                                    e
+                                  )
+                                }
+                                value={
+                                  v.protocol === 'ICMP'
+                                    ? ''
+                                    : v.portRangeMin &&
+                                      v.portRangeMin !== v.portRangeMax
+                                    ? `${v.portRangeMin}-${v.portRangeMax}`
+                                    : v.portRangeMax
+                                }
+                                disabled={!v.isCustom || v.protocol === 'ICMP'}
+                              />
+                            </Tooltip>
+                          </td>
+                          <td>
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              onClick={() => handleRules.handleRemoveFields(i)}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
-                <div className={`form-item-error ${isRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_SELECT_POLICY_TIP')}</div>
-                <div className={`form-item-error ${isDupRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_DUPLICATE_POLICY_TIP')}</div>
+                <div
+                  className={`form-item-error ${isRules ? 'hide' : ''}`}
+                  style={{ marginLeft: '10px' }}
+                >
+                  {t('RESOURCES_SELECT_POLICY_TIP')}
+                </div>
+                <div
+                  className={`form-item-error ${isDupRules ? 'hide' : ''}`}
+                  style={{ marginLeft: '10px' }}
+                >
+                  {t('RESOURCES_DUPLICATE_POLICY_TIP')}
+                </div>
               </div>
               <div className="text-right">
                 <Button
@@ -504,7 +639,6 @@ const ModifyModal = (props) => {
               </div>
             </div>
           </Form.Item>
-
 
           <Form.Item
             className={styles.textarea}
@@ -519,13 +653,10 @@ const ModifyModal = (props) => {
               style={{ maxWidth: 'none' }}
             />
           </Form.Item>
-
         </Form>
-      </Modal >
-
+      </Modal>
     </>
   );
 };
 
-export default ModifyModal
-
+export default ModifyModal;

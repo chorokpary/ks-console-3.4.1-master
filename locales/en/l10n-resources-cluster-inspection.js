@@ -1,6 +1,7 @@
 module.exports = {
   CLUSTER_INSPECTION_MORNITORING: '클러스터 인스펙터',
-  CLUSTER_INSPECTION_DESC: '클러스터 노드, 구성 요소 및 기타 구성이 모범 사례(Best Practice)를 준수하는지 여부를 확인합니다.',
+  CLUSTER_INSPECTION_DESC:
+    '클러스터 노드, 구성 요소 및 기타 구성이 모범 사례(Best Practice)를 준수하는지 여부를 확인합니다.',
   CLUSTER_INSPECTION_CLUSTER_STATUS: '클러스터 상태',
   CLUSTER_INSPECTION_CHECK_ALL_LIST: '전체 점검 항목',
   CLUSTER_INSPECTION_PASS: 'Pass',
@@ -17,7 +18,10 @@ module.exports = {
   CLUSTER_INSPECTION_NAME: '이름',
   CLUSTER_INSPECTION_TYPE: '타입',
   CLUSTER_INSPECTION_STATUS: '상태',
-  CLUSTER_INSPECTION_NO_DATA: '클러스터 인스펙터 모니터링 데이터가 없습니다.',
+  CLUSTER_INSPECTION_NO_DATA: '데이터가 없습니다.',
+  CLUSTER_INSPECTION_DESCRIPTION: 'DESCRIPTION',
+  CLUSTER_INSPECTION_SUGGEST: 'SUGGEST',
+  CLUSTER_INSPECTION_LATEST_TIME: '최근 인스펙션 시간',
 
   //   KUBEEYE DATA
   CLUSTER_INSPECTION_DESC_PRIVILEDGEDALLOWED:
