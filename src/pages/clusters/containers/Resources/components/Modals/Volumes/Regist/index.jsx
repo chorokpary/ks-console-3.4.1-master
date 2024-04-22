@@ -15,9 +15,9 @@ import { Modal, TypeSelect } from 'components/Base';
 import * as common from 'utils/resources';
 import { ProjectSelect, UnitSlider } from 'components/Inputs';
 import { PATTERN_USER_NAME } from 'utils/constants';
-import styles from './index.scss';
 import VolumeStore from 'stores/resources/volumes';
 import ImageStore from 'stores/resources/images';
+import styles from './index.scss';
 
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 
@@ -36,7 +36,7 @@ const RegistModal = props => {
 
   const [storegeClassDataList, setStoregeClassDataList] = useState([]);
   const [projectName, setProjectName] = useState(
-    props.namespace ? props.namespace : 'default',
+    props.namespace ? props.namespace : 'default'
   );
   const [images, setImages] = useState([]);
   const [image, setImage] = useState();
@@ -132,7 +132,7 @@ const RegistModal = props => {
         data.capacity = volumeCapacity;
       } else {
         data.capacity = Number(
-          volumeCapacity.substring(0, volumeCapacity.indexOf(removeText)),
+          volumeCapacity.substring(0, volumeCapacity.indexOf(removeText))
         );
       }
 
@@ -246,7 +246,7 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`,
+                `${regStep == 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
@@ -277,7 +277,7 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`,
+                `${regStep == 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
@@ -370,7 +370,6 @@ const RegistModal = props => {
                     name="storage_class"
                     defaultValue={'openebs-hostpath'}
                     options={storageClassOptions()}
-                    clearable
                   />
                 </Form.Item>
 
@@ -379,7 +378,6 @@ const RegistModal = props => {
                     name="access_mode"
                     defaultValue={'ReadWriteOnce'}
                     options={accessModeOptions}
-                    clearable
                   />
                 </Form.Item>
 
@@ -415,7 +413,6 @@ const RegistModal = props => {
                     onChange={e => {
                       setImportSource(e);
                     }}
-                    clearable
                   />
                 </Form.Item>
 
@@ -426,7 +423,6 @@ const RegistModal = props => {
                       defaultValue={image}
                       options={imageOptions()}
                       onChange={e => setImage(e)}
-                      clearable
                     />
                   </Form.Item>
                 )}
@@ -439,7 +435,6 @@ const RegistModal = props => {
                           name="volume_mode"
                           defaultValue={'Filesystem'}
                           options={volumeModeOptions}
-                          clearable
                         />
                       </Form.Item>
                     </Column>
