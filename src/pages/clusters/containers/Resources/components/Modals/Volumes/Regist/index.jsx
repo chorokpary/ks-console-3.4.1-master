@@ -49,7 +49,10 @@ const RegistModal = props => {
       setStoregeClassDataList(listStoregeClass.sces);
     };
     const getImageStore = async () => {
-      const listImageBuild = await imageStore.fetchList();
+      const listImageBuild = await imageStore.fetchList({
+        cluster: props.cluster,
+        namespace: props.namespace,
+      });
       setImages(listImageBuild);
     };
 
