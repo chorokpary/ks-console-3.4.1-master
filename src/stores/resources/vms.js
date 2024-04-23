@@ -234,9 +234,14 @@ export default class VmStore extends Base {
 
     const sriovNetworksArray = [];
     data.sriov.map(name => {
-      const sriovNetworkName = {};
-      sriovNetworkName.network_name = name;
-      sriovNetworksArray.push(sriovNetworkName);
+      const sriovNetworkObj = {};
+      sriovNetworkObj.network_name = name;
+      const fixedIpObj = data.sriovIps.find(obj => obj.network_name === name);
+      if (fixedIpObj !== undefined) {
+        sriovNetworksArray.push(fixedIpObj);
+      } else {
+	sriovNetworksArray.push(sriovNetworkObj);
+      }
     });
     resourceData.sriov_networks = sriovNetworksArray;
 
@@ -572,6 +577,17 @@ export default class VmStore extends Base {
       response.sriov_networks = dataList;
     }
     this.sriov_networks = response.networks;
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async fetchAllAvailableSriovIps(params) {
+    this.isLoading = true;
+
+    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_networks/available_ips`);
+    const response = { ...params, ...this.mapper(result), kind: 'all_ips' };
+
     this.isLoading = false;
     return response;
   }
