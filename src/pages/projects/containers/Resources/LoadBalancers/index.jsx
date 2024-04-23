@@ -185,7 +185,6 @@ export default class LoadBalancers extends React.Component {
     render() {
 
         const { bannerProps, tableProps } = this.props
-        console.log(tableProps)
         return (
             <ListPage {...this.props}>
                 <Banner

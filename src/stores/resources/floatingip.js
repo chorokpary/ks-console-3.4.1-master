@@ -141,9 +141,9 @@ export default class FloatingIpStore extends Base {
     }
     @action
     async allAvailableIps(params) {
-	const result = await request.get(
-	    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks/available_ips`
-	)
-	return result
+        const result = await request.get(
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks/available_ips`
+        )
+        return result
     }
 }
