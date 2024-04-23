@@ -417,7 +417,7 @@ const RegistModal = props => {
                 </Form.Item>
 
                 {importSource === 'ImageVolume' && (
-                  <Form.Item label={'가상머신 이미지'}>
+                  <Form.Item label={t('RESOURCES_VM_IMAGE')}>
                     <Select
                       name="import_endpoint"
                       defaultValue={image}

@@ -16,188 +16,178 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
-import ResourceTable from 'clusters/components/ResourceTable'
+import React from 'react';
+import { toJS } from 'mobx';
+import { Avatar, Status } from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
+import ResourceTable from 'clusters/components/ResourceTable';
 
-import { Link } from 'react-router-dom'
-import { getLocalTime, showNameAndAlias } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
+import { Link } from 'react-router-dom';
+import { getLocalTime, showNameAndAlias } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
 
-import RoleStore from 'stores/role'
-import FloatingIpStore from 'stores/resources/floatingip'
+import RoleStore from 'stores/role';
+import FloatingIpStore from 'stores/resources/floatingip';
 
 @withClusterList({
-    store: new FloatingIpStore(),
-    module: 'floating_ips',
-    authKey: 'floatingip',
-    name: t('RESOURCES_FLOATING_IP'),
+  store: new FloatingIpStore(),
+  module: 'floating_ips',
+  authKey: 'floatingip',
+  name: t('RESOURCES_FLOATING_IP'),
 })
 export default class FloatingIp extends React.Component {
+  showAction(record) {
+    return globals.user.username !== record.name;
+  }
 
-    showAction(record) {
-        return globals.user.username !== record.name
-    }
+  get itemActions() {
+    const { getData, trigger } = this.props;
+    return [
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('RESOURCES_DELETE'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('floatingIp.remove', {
+            detail: item,
+            success: getData,
+            ...this.props,
+          }),
+      },
+    ];
+  }
 
-    get itemActions() {
-        const { getData, trigger } = this.props
-        return [
-            {
-                key: 'delete',
-                icon: 'trash',
-                text: t('RESOURCES_DELETE'),
-                action: 'delete',
-                show: this.showAction,
-                onClick: item =>
-                    trigger('floatingIp.remove', {
-                        detail: item,
-                        success: getData,
-                        ...this.props
-                    }),
-            },
-        ]
-    }
-
-    get tableActions() {
-        const { trigger, getData, routing, tableProps } = this.props
-        return {
-            ...tableProps.tableActions,
-            actions: [
-                {
-                    key: 'regist',
-                    type: 'control',
-                    text: t('RESOURCES_CREATE'),
-                    action: 'create',
-                    onClick: () =>
-                        trigger('floatingIp.regist', {
-                            ...this.props.match.params,
-                            type: this.name,
-                            success: getData,
-                        }),
-                },
-            ],
-            selectActions: [
-                {
-                    key: 'delete',
-                    type: 'danger',
-                    text: t('RESOURCES_DELETE'),
-                    action: 'delete',
-                    onClick: () =>
-                        trigger('floatingIp.remove.batch', {
-                            success: getData,
-                            ...this.props.match.params,
-                        }),
-                },
-            ],
-            getCheckboxProps: record => ({
-                disabled: !this.showAction(record),
-                name: record.name,
+  get tableActions() {
+    const { trigger, getData, routing, tableProps } = this.props;
+    return {
+      ...tableProps.tableActions,
+      actions: [
+        {
+          key: 'regist',
+          type: 'control',
+          text: t('RESOURCES_CREATE'),
+          action: 'create',
+          onClick: () =>
+            trigger('floatingIp.regist', {
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
             }),
-        }
-    }
+        },
+      ],
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('RESOURCES_DELETE'),
+          action: 'delete',
+          onClick: () =>
+            trigger('floatingIp.remove.batch', {
+              success: getData,
+              ...this.props.match.params,
+            }),
+        },
+      ],
+      getCheckboxProps: record => ({
+        disabled: !this.showAction(record),
+        name: record.name,
+      }),
+    };
+  }
 
-    getColumns = () => {
-        const { getSortOrder } = this.props
-        const { cluster } = this.props.match.params
+  getColumns = () => {
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
 
-        return [
-            {
-                title: t('RESOURCES_FLOATING_IP'),
-                dataIndex: 'floating_ip',
-                isHideable: true,
-                width: 'auto',
-                render: (floating_ip, item) => (
-                    <Avatar
-                        icon="intranet-routers"
-                        iconSize={40}
-                        to={`/clusters/${cluster}/floatingip/${item.id}`}
-                        title={floating_ip}
-                    />
-                ),
-            },
-            {
-                title: t('PROJECT'),
-                dataIndex: 'project',
-                isHideable: true,
-                search: true,
-                width: 'auto',
-                render: project => (
-                    <Link to={`/clusters/${cluster}/projects/${project}`}>
-                        {showNameAndAlias(project, 'project')}
-                    </Link>
-                ),
-            },
-            {
-                title: t('RESOURCES_RESOURCE_TYPE'),
-                dataIndex: 'instance_type',
-                isHideable: true,
-                width: 'auto',
-                render: (instance_type) => (
-                    <Avatar
-                        title={instance_type?.toUpperCase()}
-                    />
-                ),
-            },
-            {
-                title: t('RESOURCES_RESOURCE_NAME'),
-                dataIndex: 'instance_name',
-                isHideable: true,
-                width: 'auto',
-                render: (instance_name) => (
-                    <Avatar
-                        title={instance_name}
-                    />
-                ),
-            },
-            {
-                title: t('네트워크 이름'),
-                dataIndex: 'network',
-                render: (name, floatingip) => (
-                    <Avatar
-                        title={floatingip.network_alias}
-                    />
-                ),
-            },
-            {
-                title: t('RESOURCES_STATIC_IP'),
-                dataIndex: 'target_ip',
-                isHideable: true,
-                width: 'auto',
-            },
-        ]
-    }
+    return [
+      {
+        title: t('RESOURCES_FLOATING_IP'),
+        dataIndex: 'floating_ip',
+        isHideable: true,
+        width: 'auto',
+        render: (floating_ip, item) => (
+          <Avatar
+            icon="intranet-routers"
+            iconSize={40}
+            to={`/clusters/${cluster}/floatingip/${item.id}`}
+            title={floating_ip}
+          />
+        ),
+      },
+      {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}`}>
+            {showNameAndAlias(project, 'project')}
+          </Link>
+        ),
+      },
+      {
+        title: t('RESOURCES_RESOURCE_TYPE'),
+        dataIndex: 'instance_type',
+        isHideable: true,
+        width: 'auto',
+        render: instance_type => (
+          <Avatar title={instance_type?.toUpperCase()} />
+        ),
+      },
+      {
+        title: t('RESOURCES_RESOURCE_NAME'),
+        dataIndex: 'instance_name',
+        isHideable: true,
+        width: 'auto',
+        render: instance_name => <Avatar title={instance_name} />,
+      },
+      {
+        title: t('RESOURCES_NETWORK_NAME'),
+        dataIndex: 'network',
+        render: (name, floatingip) => (
+          <Avatar title={floatingip.network_alias} />
+        ),
+      },
+      {
+        title: t('RESOURCES_STATIC_IP'),
+        dataIndex: 'target_ip',
+        isHideable: true,
+        width: 'auto',
+      },
+    ];
+  };
 
-    get emptyProps() {
-        return { desc: t('RESOURCES_NO_DATA') }
-    }
+  get emptyProps() {
+    return { desc: t('RESOURCES_NO_DATA') };
+  }
 
-    render() {
+  render() {
+    const { bannerProps, tableProps } = this.props;
+    tableProps.rowKey = 'id';
 
-        const { bannerProps, tableProps } = this.props
-        tableProps.rowKey = 'id'
-
-        return (
-            <ListPage {...this.props}>
-                <Banner
-                    icon="intranet-routers"
-                    {...bannerProps}
-                    tabs={this.tabs}
-                    title={t('RESOURCES_FLOATING_IP')}
-                    description={t('RESOURCES_FLOATING_IP_DESC')}
-                />
-                <ResourceTable
-                    {...tableProps}
-                    emptyProps={this.emptyProps}
-                    tableActions={this.tableActions}
-                    itemActions={this.itemActions}
-                    columns={this.getColumns()}
-                    searchType="network_alias"
-                />
-            </ListPage>
-        )
-    }
+    return (
+      <ListPage {...this.props}>
+        <Banner
+          icon="intranet-routers"
+          {...bannerProps}
+          tabs={this.tabs}
+          title={t('RESOURCES_FLOATING_IP')}
+          description={t('RESOURCES_FLOATING_IP_DESC')}
+        />
+        <ResourceTable
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          tableActions={this.tableActions}
+          itemActions={this.itemActions}
+          columns={this.getColumns()}
+          searchType="network_alias"
+        />
+      </ListPage>
+    );
+  }
 }

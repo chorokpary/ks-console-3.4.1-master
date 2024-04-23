@@ -19,12 +19,12 @@ import axios from 'axios';
 
 import { Modal } from 'components/Base';
 import * as common from 'utils/resources';
-import TypeSelect from '../../../TypeSelect';
-import CardSelect from '../../../CardSelect';
 import { PATTERN_USER_NAME } from 'utils/constants';
-import styles from './index.scss';
 import VmStore from 'stores/resources/vms';
 import ResourceStore from 'stores/resources/containerresource';
+import TypeSelect from '../../../TypeSelect';
+import CardSelect from '../../../CardSelect';
+import styles from './index.scss';
 
 const CONFIG_CPU_MASTER = 8;
 const CONFIG_RAM_MASTER = 16;
@@ -72,7 +72,7 @@ const RegistModal = props => {
   const [expirationSelect, setExpirationSelect] = useState('10');
   const [ekgStack, setEkgStack] = useState([]);
 
-  //options
+  // options
   const [cnis, setCnis] = useState([]);
   const [csis, setCsis] = useState([]);
   const [features, setFeatures] = useState([]);
@@ -96,8 +96,14 @@ const RegistModal = props => {
         sortBy: 'root_disk',
         ...props,
       });
-      const listNetwork = await vmStore.fetchVmListNetwork({ ...props, namespace: 'default' });
-      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({ ...props, namespace: 'default' });
+      const listNetwork = await vmStore.fetchVmListNetwork({
+        ...props,
+        namespace: 'default',
+      });
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
+        ...props,
+        namespace: 'default',
+      });
 
       const listImage = await resourceStore.fetchListImage(props);
       const listLoadBalancer = await resourceStore.fetchListLoadBalancer(props);
@@ -115,9 +121,9 @@ const RegistModal = props => {
 
   useEffect(() => {
     const csiData = request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/csis`,
+      `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/csis`
     );
-    let resCsi = [];
+    const resCsi = [];
     csiData.then(response => {
       if (response.csis) {
         for (let i = 0, n = response.csis.length; i < n; i += 1) {
@@ -132,9 +138,9 @@ const RegistModal = props => {
     });
 
     const featureData = request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/features`,
+      `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/features`
     );
-    let resFeature = [
+    const resFeature = [
       {
         label: t('RESOURCES_SELECT_ALL'),
         value: 'all',
@@ -147,8 +153,8 @@ const RegistModal = props => {
           resFeature.push({
             label: response.features[i].name,
             value: response.features[i].name,
-            //icon: response.data.features[i].name.toLowerCase(),
-            icon: 'ico-etc-' + response.features[i].name.toLowerCase(),
+            // icon: response.data.features[i].name.toLowerCase(),
+            icon: `ico-etc-${response.features[i].name.toLowerCase()}`,
           });
         }
         setFeatures(resFeature);
@@ -157,9 +163,9 @@ const RegistModal = props => {
 
     // hier
     const elbsData = request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/elbs`,
+      `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/elbs`
     );
-    let resElbs = [];
+    const resElbs = [];
     elbsData.then(response => {
       response?.elbs.forEach(items => {
         resElbs.push({
@@ -174,7 +180,9 @@ const RegistModal = props => {
 
   useEffect(() => {
     if (selectImageName) {
-      let selectOs = imageOptionList.find(obj => selectImageName === obj.name);
+      const selectOs = imageOptionList.find(
+        obj => selectImageName === obj.name
+      );
       setSelectOsDistro(selectOs?.os_distro);
     }
   }, [selectImageName]);
@@ -182,9 +190,9 @@ const RegistModal = props => {
   useEffect(() => {
     if (selectOsDistro) {
       const cniData = request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/cnis/${selectOsDistro}`,
+        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/cnis/${selectOsDistro}`
       );
-      let resCni = [];
+      const resCni = [];
       cniData.then(response => {
         if (response.cnis) {
           for (let i = 0, n = response.cnis.length; i < n; i += 1) {
@@ -224,7 +232,7 @@ const RegistModal = props => {
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
         description: t(obj.description),
-        disabled: obj.phase !== 'Succeeded' ? true : false,
+        disabled: obj.phase !== 'Succeeded',
       };
     });
     return opt;
@@ -234,32 +242,32 @@ const RegistModal = props => {
     const opt = flavorDataList.map(obj => ({
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
-        obj.ram,
+        obj.ram
       )} Gib / Disk ${obj.root_disk} Gib`,
       value: t(obj.name),
       disabled:
         flag === 1
           ? obj.vcpus < CONFIG_CPU_MASTER ||
-          common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER ||
-          obj.root_disk < CONFIG_DISK_MASTER
+            common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER ||
+            obj.root_disk < CONFIG_DISK_MASTER
           : obj.vcpus < CONFIG_CPU_WORKER ||
-          common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER ||
-          obj.root_disk < CONFIG_DISK_WORKER,
+            common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER ||
+            obj.root_disk < CONFIG_DISK_WORKER,
     }));
     return opt;
   };
 
   const expirationOption = [
-    { label: '1' + t('RESOURCES_YEAR'), value: 1 },
-    { label: '2' + t('RESOURCES_YEAR'), value: 2 },
-    { label: '3' + t('RESOURCES_YEAR'), value: 3 },
-    { label: '4' + t('RESOURCES_YEAR'), value: 4 },
-    { label: '5' + t('RESOURCES_YEAR'), value: 5 },
-    { label: '6' + t('RESOURCES_YEAR'), value: 6 },
-    { label: '7' + t('RESOURCES_YEAR'), value: 7 },
-    { label: '8' + t('RESOURCES_YEAR'), value: 8 },
-    { label: '9' + t('RESOURCES_YEAR'), value: 9 },
-    { label: '10' + t('RESOURCES_YEAR'), value: 10 },
+    { label: `1${t('RESOURCES_YEAR')}`, value: 1 },
+    { label: `2${t('RESOURCES_YEAR')}`, value: 2 },
+    { label: `3${t('RESOURCES_YEAR')}`, value: 3 },
+    { label: `4${t('RESOURCES_YEAR')}`, value: 4 },
+    { label: `5${t('RESOURCES_YEAR')}`, value: 5 },
+    { label: `6${t('RESOURCES_YEAR')}`, value: 6 },
+    { label: `7${t('RESOURCES_YEAR')}`, value: 7 },
+    { label: `8${t('RESOURCES_YEAR')}`, value: 8 },
+    { label: `9${t('RESOURCES_YEAR')}`, value: 9 },
+    { label: `10${t('RESOURCES_YEAR')}`, value: 10 },
   ];
 
   const handleOk = () => {
@@ -305,7 +313,7 @@ const RegistModal = props => {
         if (networkDataList.length > 0) {
           handleSingleCheck(
             networkDataList.filter(el => el.external)[0].id,
-            'network',
+            'network'
           );
           setNetworkName(networkDataList.filter(el => el.external)[0].id);
         }
@@ -330,9 +338,8 @@ const RegistModal = props => {
     if (step == 2) {
       if (!networkName) {
         return false;
-      } else {
-        setRegStep(3);
       }
+      setRegStep(3);
     }
 
     if (step == 3) {
@@ -341,14 +348,14 @@ const RegistModal = props => {
       setDescription(data.description);
 
       const masterFlavorData = flavorDataList.filter(
-        obj => obj.name == data.masterFlavor,
+        obj => obj.name == data.masterFlavor
       );
       setMasterFlavorCpu(masterFlavorData[0].vcpus);
       setMasterFlavorMemory(common.fnSetBytes(masterFlavorData[0].ram));
       setMasterFlavorDisk(masterFlavorData[0].root_disk);
 
       const workerFlavorData = flavorDataList.filter(
-        obj => obj.name == data.workerFlavor,
+        obj => obj.name == data.workerFlavor
       );
       setWorkerFlavorCpu(workerFlavorData[0].vcpus);
       setWorkerFlavorMemory(common.fnSetBytes(workerFlavorData[0].ram));
@@ -565,7 +572,7 @@ const RegistModal = props => {
     handleSingleCheck('', 'network');
   };
 
-  //cpu count
+  // cpu count
   const addMasterBtn = e => {
     e.preventDefault();
     if (masterFlavorNumber < 5) {
@@ -627,21 +634,22 @@ const RegistModal = props => {
         <Form data={formData} ref={form}>
           {/* Header */}
           <div className={styles.tab_process}>
-            {/* styles.view_screen  : 이전 링크 관련 class*/}
+            {/* styles.view_screen  : 이전 링크 관련 class */}
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`,
+                `${regStep == 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep == 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -653,25 +661,26 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`,
+                `${regStep == 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep == 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -683,25 +692,26 @@ const RegistModal = props => {
                   {regStep == 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 3 ? styles.current : ''}`,
+                `${regStep == 3 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 3
-                    ? styles.current
-                    : regStep > 3
+                  className={`${
+                    regStep == 3
+                      ? styles.current
+                      : regStep > 3
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -713,15 +723,15 @@ const RegistModal = props => {
                   {regStep == 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 4 ? styles.current : ''}`,
+                `${regStep == 4 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
@@ -746,7 +756,7 @@ const RegistModal = props => {
           {/* Content */}
           <div className={styles.pop_overflow_y}>
             <div className={styles.cont_boxwrap}>
-              {/* 기본설정 설정 시작==========================================*/}
+              {/* 기본설정 설정 시작========================================== */}
               <div className={`${regStep == 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('NAME')}
@@ -807,10 +817,11 @@ const RegistModal = props => {
                       {selectImageName && (
                         <Form.Item>
                           <div className={styles.wrapperImageView}>
-                            {osType[0].toUpperCase() +
-                              osType.slice(1, osType.length) +
-                              ' > ' +
-                              selectImageName}
+                            {`${osType[0].toUpperCase() +
+                              osType.slice(
+                                1,
+                                osType.length
+                              )} > ${selectImageName}`}
                           </div>
                         </Form.Item>
                       )}
@@ -833,7 +844,7 @@ const RegistModal = props => {
                           placeholder={{ label: t('RESOURCES_SELECT') }}
                           onChange={e => setMasterFlavorSelect(e)}
                           defaultDescription={t(
-                            'RESOURCES_SELECT_MASTER_FLAVOR_TIP',
+                            'RESOURCES_SELECT_MASTER_FLAVOR_TIP'
                           )}
                         />
                       </Form.Item>
@@ -871,7 +882,7 @@ const RegistModal = props => {
                           placeholder={{ label: t('RESOURCES_SELECT') }}
                           onChange={e => setWorkerFlavorSelect(e)}
                           defaultDescription={t(
-                            'RESOURCES_SELECT_WORKER_FLAVOR_TIP',
+                            'RESOURCES_SELECT_WORKER_FLAVOR_TIP'
                           )}
                         />
                       </Form.Item>
@@ -902,9 +913,9 @@ const RegistModal = props => {
                 </Form.Item>
                 <div style={{ padding: 25 }} />
               </div>
-              {/* 기본설정 설정 끝==========================================*/}
+              {/* 기본설정 설정 끝========================================== */}
 
-              {/* 네트워크 설정 시작==========================================*/}
+              {/* 네트워크 설정 시작========================================== */}
               <div className={`${regStep == 2 ? '' : 'hide'}`}>
                 {t('RESOURCES_NETWORK')}
                 <span className="form-item-required">*</span>
@@ -963,16 +974,16 @@ const RegistModal = props => {
                             <tbody>
                               {!networkDataList?.filter(el => el.external)
                                 .length && (
-                                  <tr>
-                                    <td colSpan="6" className="no-data">
-                                      <p>
-                                        {t(
-                                          'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
-                                        )}
-                                      </p>
-                                    </td>
-                                  </tr>
-                                )}
+                                <tr>
+                                  <td colSpan="6" className="no-data">
+                                    <p>
+                                      {t(
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                      )}
+                                    </p>
+                                  </td>
+                                </tr>
+                              )}
                               {networkDataList
                                 ?.filter(el => el.external)
                                 .map((data, key) => (
@@ -1042,7 +1053,7 @@ const RegistModal = props => {
                                   <td colSpan="5" className="no-data">
                                     <p>
                                       {t(
-                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
                                       )}
                                     </p>
                                   </td>
@@ -1071,8 +1082,9 @@ const RegistModal = props => {
                       </div>
                     </Form.Item>
                     <div
-                      className={`form-item-error ${!networkName ? '' : 'hide'
-                        }`}
+                      className={`form-item-error ${
+                        !networkName ? '' : 'hide'
+                      }`}
                     >
                       {t('RESOURCES_SELECT_NETWORK_TIP')}
                     </div>
@@ -1133,16 +1145,16 @@ const RegistModal = props => {
                           <tbody>
                             {!networkDataList?.filter(el => el.external)
                               .length && (
-                                <tr>
-                                  <td colSpan="6" className="no-data">
-                                    <p>
-                                      {t(
-                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION',
-                                      )}
-                                    </p>
-                                  </td>
-                                </tr>
-                              )}
+                              <tr>
+                                <td colSpan="6" className="no-data">
+                                  <p>
+                                    {t(
+                                      'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                    )}
+                                  </p>
+                                </td>
+                              </tr>
+                            )}
                             {networkDataList
                               ?.filter(el => el.external)
                               .map((data, key) => (
@@ -1174,9 +1186,9 @@ const RegistModal = props => {
                   </Form.Item>
                 </Form.Group>
               </div>
-              {/* 네트워크 설정 끝==========================================*/}
+              {/* 네트워크 설정 끝========================================== */}
 
-              {/* 세부 설정 시작==========================================*/}
+              {/* 세부 설정 시작========================================== */}
               <div className={`${regStep == 3 ? '' : 'hide'}`}>
                 <Form.Group
                   label={t('RESOURCES_AUTO_EXPAND')}
@@ -1236,26 +1248,26 @@ const RegistModal = props => {
                 </Form.Group> */}
 
                 <Form.Group label="Plug-in" checkable keepDataWhenUnCheck>
-                  <Form.Item label={'CNI  (Container Network Interface)'}>
+                  <Form.Item label={t('RESOURCES_CNI_DESC')}>
                     <TypeSelect
                       name="cni"
                       defaultValue={cniSelect}
                       onChange={e => setCniSelect(e)}
                       placeholder={{ label: t('RESOURCES_SELECT') }}
-                      defaultDescription="CNI를 선택해 주세요."
+                      defaultDescription={t('RESOURCES_SELECT_CNI')}
                       // {t(
                       //   'RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC',
                       // )}
                       options={cnis}
                     />
                   </Form.Item>
-                  <Form.Item label={'CSI  (Container Storage Interface)'}>
+                  <Form.Item label={t('RESOURCES_CSI_DESC')}>
                     <TypeSelect
                       name="csi"
                       defaultValue={csiSelect}
                       onChange={e => setCsiSelect(e)}
                       placeholder={{ label: t('RESOURCES_SELECT') }}
-                      defaultDescription="CSI 선택해 주세요."
+                      defaultDescription={t('RESOURCES_SELECT_CSI')}
                       // defaultDescription={t(
                       //   'RESOURCES_CLUSTER_FAULT_MODAL_OPERATOR_DESC',
                       // )}
@@ -1264,7 +1276,7 @@ const RegistModal = props => {
                   </Form.Item>
                 </Form.Group>
 
-                <Form.Item label={t('Petasus Kubernetes Stack')}>
+                <Form.Item label={t('RESOURCES_PETASUS_KUBERNETES_STACK')}>
                   <Form.Group>
                     <Form.Item>
                       <CardSelect
@@ -1298,9 +1310,9 @@ const RegistModal = props => {
                   />
                 </Form.Item>
               </div>
-              {/* 세부 설정 끝==========================================*/}
+              {/* 세부 설정 끝========================================== */}
 
-              {/* 입력 정보 확인 시작==========================================*/}
+              {/* 입력 정보 확인 시작========================================== */}
               <div className={`${regStep == 4 ? '' : 'hide'}`}>
                 <div className={styles.boxwrap}>
                   <div className={styles.box_style}>
@@ -1423,11 +1435,12 @@ const RegistModal = props => {
                         </div>
                       ))}
                     <label
-                      className={`${networkDataList.filter(x => elbCheckItem === x.name)
-                        .length > 0
-                        ? ''
-                        : 'hide'
-                        }`}
+                      className={`${
+                        networkDataList.filter(x => elbCheckItem === x.name)
+                          .length > 0
+                          ? ''
+                          : 'hide'
+                      }`}
                     >
                       ELB
                     </label>
@@ -1500,22 +1513,26 @@ const RegistModal = props => {
                               : t('RESOURCES_NOT_USE')}
                           </div>
                           <div className={`${isAutoScale ? '' : 'hide'}`}>
-                            Min : {autoScale[0]}
+                            {t('RESOURCES_MIN')} : {autoScale[0]}
                           </div>
                           <div className={`${isAutoScale ? '' : 'hide'}`}>
-                            Max : {autoScale[1]}
+                            {t('RESOURCES_MAX')} : {autoScale[1]}
                           </div>
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>Plug-in</label>
+                        <label>{t('RESOURCES_PLUG_IN')}</label>
                         <div className="multiline">
-                          <div>CNI: {cniSelect}</div>
-                          <div>CSI: {csiSelect}</div>
+                          <div>
+                            {t('RESOURCES_CNI')}: {cniSelect}
+                          </div>
+                          <div>
+                            {t('RESOURCES_CSI')}: {csiSelect}
+                          </div>
                         </div>
                       </div>
                       <div className={styles.list} style={{ width: '100%' }}>
-                        <label>Petasus Kubernetes Stack (PKS)</label>
+                        <label>{t('PETASUS_KUBERNETES_STACK_DESC')}</label>
                         <div className={styles.multiline}>
                           {ekgStack.map((obj, index) => (
                             <div key={index}>{obj}</div>
@@ -1544,7 +1561,7 @@ const RegistModal = props => {
                 </div>
               </div>
 
-              {/* 입력 정보 확인 끝==========================================*/}
+              {/* 입력 정보 확인 끝========================================== */}
             </div>
           </div>
 
