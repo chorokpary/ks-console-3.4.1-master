@@ -36,7 +36,12 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList();
       setDistroTypeData(dist);
-      setDistroTypeList(dist.filter(obj => obj.name != 'windows'));
+      if (detail.distro_type === 'windows') {
+        setDistroTypeList(dist.filter(obj => obj.name === 'windows'));
+      } else {
+        setDistroTypeList(dist.filter(obj => obj.name !== 'windows'));
+      }
+
     };
     getDistroTypeList();
   }, []);
