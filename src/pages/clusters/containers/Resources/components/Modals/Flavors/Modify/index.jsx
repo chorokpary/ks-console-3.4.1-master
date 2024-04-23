@@ -465,13 +465,12 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
+                  className={`${regStep == 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -483,8 +482,8 @@ const ModifyModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -496,13 +495,12 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 2
+                  className={`${regStep == 2
                       ? styles.current
                       : regStep > 2
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -640,9 +638,9 @@ const ModifyModal = props => {
                 >
                   <UnitSlider
                     name="root_disk"
-                    max={320}
+                    max={128}
                     min={0}
-                    marks={getMarks(320)}
+                    marks={getMarks(128)}
                     defaultValue={rootDisk}
                     unit={'GiB'}
                     withInput
