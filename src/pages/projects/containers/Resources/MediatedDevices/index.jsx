@@ -16,123 +16,121 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
 
-import MediatedDeviceStore from 'stores/resources/mediateddevices'
+import MediatedDeviceStore from 'stores/resources/mediateddevices';
 
-import styles from './index.scss'
-
+import styles from './index.scss';
 
 @withList({
-    store: new MediatedDeviceStore(),
-    module: 'mediated_devices',
-    authKey: 'mediatedDevices',
-    name: t('RESOURCES_MEDIATED_DEVICE'),
+  store: new MediatedDeviceStore(),
+  module: 'mediated_devices',
+  authKey: 'mediatedDevices',
+  name: t('RESOURCES_MEDIATED_DEVICE'),
 })
 export default class MediatedDevice extends React.Component {
+  showAction(record) {
+    return globals.user.username !== record.name;
+  }
 
-    showAction(record) {
-        return globals.user.username !== record.name
-    }
+  get itemActions() {
+    return [];
+  }
 
-    get itemActions() {
-        return []
-    }
+  get tableActions() {
+    const { trigger, getData, routing, tableProps } = this.props;
+    return {
+      ...tableProps.tableActions,
+      selectActions: [],
+      getCheckboxProps: record => ({
+        disabled: !this.showAction(record),
+        name: record.name,
+      }),
+    };
+  }
 
-    get tableActions() {
-        const { trigger, getData, routing, tableProps } = this.props
-        return {
-            ...tableProps.tableActions,
-            selectActions: [],
-            getCheckboxProps: record => ({
-                disabled: !this.showAction(record),
-                name: record.name,
-            }),
-        }
-    }
+  getColumns = () => {
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
+    return [
+      {
+        title: t('RESOURCES_NAME'),
+        dataIndex: 'resource_name',
+        sorter: true,
+        search: true,
+        render: name => {
+          const { cluster } = this.props.match.params;
 
-    getColumns = () => {
-        const { getSortOrder } = this.props
-        const { cluster } = this.props.match.params
-        return [
-            {
-                title: t('RESOURCES_NAME'),
-                dataIndex: 'resource_name',
-                sorter: true,
-                search: true,
-                render: name => {
-                    const { cluster } = this.props.match.params
+          return (
+            <div className={styles.avatar}>
+              <div className={styles.icon}>
+                <i className="ico-type-mediatedvgpu"></i>
+              </div>
+              <div>
+                <div className={styles.title}>{name}</div>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        title: t('RESOURCES_MEDIATED_DEVICE_NAME'),
+        dataIndex: 'mediated_device_name',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_GPU_CHECK'),
+        dataIndex: 'is_gpu',
+        isHideable: true,
+        width: 'auto',
+        render: isGpu => (isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')),
+      },
+      {
+        title: t('RESOURCES_AVAILABLE_COUNT'),
+        dataIndex: 'allocatable',
+        isHideable: true,
+        width: 'auto',
+      },
+    ];
+  };
 
-                    return (
-                        <div className={styles.avatar} >
-                            <div className={styles.icon}>
-                                <i className="ico-type-mediatedvgpu"></i>
-                            </div>
-                            <div>
-                                <div className={styles.title}>{name}</div>
-                            </div>
-                        </div>
-                    )
-                },
-            },
-            {
-                title: t('RESOURCES_MEDIATED_DEVICE_NAME'),
-                dataIndex: 'mediated_device_name',
-                isHideable: true,
-                width: 'auto',
-            },
-            {
-                title: t('RESOURCES_GPU_CHECK'),
-                dataIndex: 'is_gpu',
-                isHideable: true,
-                width: 'auto',
-                render: isGpu => (
-                    isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')
-                )
-            },
-            {
-                title: t('RESOURCES_AVAILABLE_COUNT'),
-                dataIndex: 'allocatable',
-                isHideable: true,
-                width: 'auto',
-            },
-        ]
-    }
+  get emptyProps() {
+    return { desc: t('RESOURCES_NO_DATA') };
+  }
 
-    get emptyProps() {
-        return { desc: t('RESOURCES_NO_DATA') }
-    }
+  getBanner = () => {
+    return (
+      <i
+        className="ico-type-mediatedvgpu"
+        style={{ width: '48px', height: '48px' }}
+      ></i>
+    );
+  };
 
-    getBanner = () => {
-        return <i className="ico-type-mediatedvgpu"></i>
-    }
-
-    render() {
-
-        const { bannerProps, tableProps } = this.props
-        return (
-            <ListPage {...this.props}>
-                <Banner
-                    icon={this.getBanner}
-                    {...bannerProps}
-                    tabs={this.tabs}
-                    title={t('RESOURCES_MEDIATED_DEVICE')}
-                    description={t('RESOURCES_MEDIATED_DEVICE_DESC')}
-                />
-                <Table
-                    {...tableProps}
-                    emptyProps={this.emptyProps}
-                    tableActions={this.tableActions}
-                    itemActions={this.itemActions}
-                    columns={this.getColumns()}
-                    columnSearch={this.columnSearch}
-                />
-            </ListPage>
-        )
-    }
+  render() {
+    const { bannerProps, tableProps } = this.props;
+    return (
+      <ListPage {...this.props}>
+        <Banner
+          icon={this.getBanner}
+          {...bannerProps}
+          tabs={this.tabs}
+          title={t('RESOURCES_MEDIATED_DEVICE')}
+          description={t('RESOURCES_MEDIATED_DEVICE_DESC')}
+        />
+        <Table
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          tableActions={this.tableActions}
+          itemActions={this.itemActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+    );
+  }
 }
-
-
