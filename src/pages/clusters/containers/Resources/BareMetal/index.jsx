@@ -146,7 +146,7 @@ export default class BareMetalDashboard extends React.Component {
     });
 
     const metric_power = await this.customStore.fetchMetric({
-      expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      expr: `sum by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
     });
 
     const metric_temperature = await this.customStore.fetchMetric({
@@ -289,13 +289,13 @@ export default class BareMetalDashboard extends React.Component {
     const metrics =
       type == 'redfish'
         ? this.state[metricData].find(
-            item => get(item, 'metric.target') === target
-          )
+          item => get(item, 'metric.target') === target
+        )
         : record.system_type == 'C'
-        ? this.state[metricData].find(
+          ? this.state[metricData].find(
             item => get(item, 'metric.instance') === instance
           )
-        : this.state[metricData].find(
+          : this.state[metricData].find(
             item => get(item, 'metric.instance', ':').split(':')[0] === instance
           );
     return metrics;
@@ -309,13 +309,13 @@ export default class BareMetalDashboard extends React.Component {
     const metrics =
       type == 'redfish'
         ? this.state[metricData].find(
-            item => get(item, 'metric.target') === target
-          )
+          item => get(item, 'metric.target') === target
+        )
         : record.system_type == 'C'
-        ? this.state[metricData].find(
+          ? this.state[metricData].find(
             item => get(item, 'metric.instance') === instance
           )
-        : this.state[metricData].find(
+          : this.state[metricData].find(
             item => get(item, 'metric.instance', ':').split(':')[0] === instance
           );
     const value = get(metrics, 'value[1]', '0');
@@ -368,8 +368,8 @@ export default class BareMetalDashboard extends React.Component {
             state == 1 || state == 3
               ? 'On'
               : state == 2 || state == 4
-              ? 'Off'
-              : 'Unknown';
+                ? 'Off'
+                : 'Unknown';
           return <Text title={`${statText}`} />;
         },
       },
@@ -398,8 +398,8 @@ export default class BareMetalDashboard extends React.Component {
           const typeText = x86Array.includes(machine.toLowerCase())
             ? t('RESOURCES_AMD64')
             : machine == 'NOT'
-            ? '-'
-            : t('RESOURCES_ARM64');
+              ? '-'
+              : t('RESOURCES_ARM64');
           return <Text title={`${typeText}`} />;
         },
       },

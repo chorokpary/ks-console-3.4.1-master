@@ -342,7 +342,7 @@ const RegistModal = (props) => {
     if (num.length === 1 && parseInt(num) === 0) {
       return true;
     }
-    if (!PATTERN_IP_MASK.test(num)) {
+    if (!PATTERN_IP_MASK.test(num) || num > 32) {
       return false;
     }
     const clsMaximumVal = 128;

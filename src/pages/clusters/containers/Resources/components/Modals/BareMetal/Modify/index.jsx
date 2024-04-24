@@ -268,8 +268,10 @@ const EditModal = props => {
       >
         <Form data={formData} ref={form}>
           <Form.Item
-            label={t('이름')}
-            rules={[{ required: true, message: t('이름을 입력해 주세요.') }]}
+            label={t('RESOURCES_NAME')}
+            rules={[
+              { required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },
+            ]}
             desc={t('NAME_DESC')}
           >
             <Input
@@ -449,7 +451,7 @@ const EditModal = props => {
                 </Column>
                 <Column>
                   <Form.Item
-                    label={t('ID')}
+                    label={t('RESOURCES_ID')}
                     rules={[{ required: true, validator: bmcIdValidator }]}
                   >
                     <Input
@@ -461,7 +463,7 @@ const EditModal = props => {
                 </Column>
                 <Column>
                   <Form.Item
-                    label={t('Password')}
+                    label={t('RESOURCES_PASSWORD')}
                     rules={[
                       { required: true, validator: bmcPasswordValidator },
                     ]}

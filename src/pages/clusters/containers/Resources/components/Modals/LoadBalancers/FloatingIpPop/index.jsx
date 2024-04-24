@@ -28,7 +28,7 @@ const FloatingIpModal = (props) => {
   const handleOk = () => {
 
     const success = props.success;
-
+    console.log('asd')
     form.current.validator(() => {
 
       if (floatingId == undefined) {
@@ -44,7 +44,7 @@ const FloatingIpModal = (props) => {
       data.instance_id = lbId
       data.target_network = networkName
       data.target_ip = vIp
-
+      console.log(data)
       floatingStore.update({ cluster: props.cluster, namespace: props.namespace, ...data }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success();
@@ -62,11 +62,30 @@ const FloatingIpModal = (props) => {
 
     const getCreateData = async () => {
 
+      const routerList = await props.store.routerList({ cluster: props.cluster, namespace: props.namespace });
+
+      /*
+      fip list
+      lb network id가
+      router list 의 internal 과 같은것.
+      해당 router들의 external이 fip의 network 인 것들?
+      floating.target_ip 가 없는것들만 (할당 안된것들)
+      */
+
+      let routerArr = [];
+      routerList?.routers.map(obj => {
+        obj.internal?.map(it => {
+          if (it.id === props.store.detail.lb.network.id) {
+            routerArr.push(obj.external.id)
+          }
+        })
+      })
+
       const floatingListData = props.store.floatingIpsList;
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가 
       let floatingIpArray = [];
       (floatingListData).map((floating) => {
-        if (!!!floating.target_ip) {
+        if (!!!floating.target_ip && routerArr.includes(floating.network)) {
           let jsonData = {};
           jsonData.id = floating.id;
           jsonData.floating_ip = floating.floating_ip

@@ -7,10 +7,10 @@ import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
-import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
-import routes from './routes'
+import { getIndexRoute } from 'utils/router.config'
+
+import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList'
+import LbPanel from './LbPanel'
 
 const store = new FloatingIpStore();
 
@@ -39,6 +39,8 @@ const FloatingIpDetail = (props) => {
   const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip`
   const routing = props.rootStore.routing;
 
+  const PATH = `${listUrl}/${props.match.params.id}`
+
   // const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
   const getOperations = () => {
@@ -51,8 +53,9 @@ const FloatingIpDetail = (props) => {
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.deallocate', {
+              ...props.match.params,
               store: store,
-              data: { ...props.match.params, id: detail.id },
+              data: { id: detail.id },
               type: "LB_POP",
               success: () => handleConnectSuccess(false),
 
@@ -68,10 +71,10 @@ const FloatingIpDetail = (props) => {
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.vmPop', {
+              ...props.match.params,
               store: store,
               type: "VM_POP",
               success: () => handleConnectSuccess(true),
-              ...props
             }),
         },
         {
@@ -81,10 +84,10 @@ const FloatingIpDetail = (props) => {
           action: 'view',
           onClick: () =>
             props.rootStore.triggerAction('floatingIp.lbPop', {
+              ...props.match.params,
               store: store,
               type: "LB_POP",
               success: () => handleConnectSuccess(true),
-              ...props
             }),
         },
       ]
@@ -98,11 +101,11 @@ const FloatingIpDetail = (props) => {
 
 
   const getAttrs = () => {
-    const detail = toJS(store.detail)
+    // const detail = toJS(store.detail)
 
-    if (isEmpty(detail)) {
-      return
-    }
+    // if (isEmpty(detail)) {
+    //   return
+    // }
 
     return [
       {
@@ -111,24 +114,24 @@ const FloatingIpDetail = (props) => {
       },
       {
         name: t('RESOURCES_NETWORK_NAME'),
-        value: get(store.detail.floating_ip, 'network_alias'),
+        value: detail?.network_alias,
       },
       {
         name: t('RESOURCES_STATIC_IP'),
-        value: get(store.detail.floating_ip, 'target_ip'),
+        value: detail?.target_ip,
       },
     ]
   }
 
-  if (store.isLoading) {
+  if (store.isLoading && !store.detail.name) {
     return <Loading className="ks-page-loading" />;
   }
 
   const sideProps = {
-    icon: "apps",
+    icon: "intranet-routers",
     module: store.module,
-    name: get(store.detail, 'floating_ip'),
-    // desc: get(store.detail.flavor, 'description', ''),
+    name: detail?.floating_ip,
+    desc: get(store.detail.flavor, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
@@ -143,7 +146,15 @@ const FloatingIpDetail = (props) => {
     <>
       <DetailPage
         stores={{ detailStore: store }}
-        routes={routes}
+        routes={[
+          {
+            path: `${PATH}/status`,
+            title: t('RESOURCES_STATE'),
+            component: Status,
+            exact: true,
+          },
+          getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
+        ]}
         {...sideProps} />
     </>
   )
@@ -151,3 +162,14 @@ const FloatingIpDetail = (props) => {
 
 export default inject('rootStore')(observer(FloatingIpDetail));
 
+const Status = (props) => {
+  const detail = get(store.detail, 'floating_ip')
+  if (detail.instance_type == 'vm') {
+    return <DetailVmList type={t('RESOURCES_FLOATING_IP')} variables='id'{...props.match.params} id={detail.instance_id} />
+
+  } else if (detail.instance_type == 'lb') {
+    return <LbPanel type={t('RESOURCES_FLOATING_IP')} variables='id' {...props.match.params} id={detail.instance_id} />
+  } else {
+    return []
+  }
+}
