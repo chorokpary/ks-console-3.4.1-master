@@ -28,7 +28,7 @@ const Status = props => {
     const networkId = props.match.params.id;
 
     const fnGetRouterData = async () => {
-      const routerList = await routerStore.fetchList();
+      const routerList = await routerStore.fetchList(props.match.params);
       const routerExternalList = await routerList.filter(
         item => item.external?.id === networkId,
       );
@@ -44,7 +44,7 @@ const Status = props => {
     };
 
     const fnGetLoadBalancerData = async () => {
-      const loadBalancerList = await loadBalancerStore.fetchList();
+      const loadBalancerList = await loadBalancerStore.fetchList(props.match.params);
       const loadBalancerFilterList = loadBalancerList.filter(
         item => item.network.id == networkId,
       );
@@ -64,6 +64,7 @@ const Status = props => {
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
           variables="networks"
+          {...props.match.params}
           id={props.match.params.id}
         />
 
@@ -118,8 +119,8 @@ const Status = props => {
                       <div>
                         {obj.internal.length > 0
                           ? store.detail.name +
-                            ` ${t('RESOURCES_BESIDES')} ${obj.internal.length -
-                              1}${t('RESOURCES_COUNT')}`
+                          ` ${t('RESOURCES_BESIDES')} ${obj.internal.length -
+                          1}${t('RESOURCES_COUNT')}`
                           : '-'}
                       </div>
                       <p>{t('RESOURCES_INTERNAL_NETWORK')}</p>

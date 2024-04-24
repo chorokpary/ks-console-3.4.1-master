@@ -19,8 +19,8 @@ import { UnitSlider } from 'components/Inputs';
 import { Modal } from 'components/Base';
 import FlavorStore from 'stores/resources/flavors';
 import { PATTERN_USER_NAME } from 'utils/constants';
-import styles from './index.scss';
 import { range } from 'lodash';
+import styles from './index.scss';
 
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
@@ -275,8 +275,12 @@ const RegistModal = props => {
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
 
-      data.root_disk = Number(rootDisk.substring(0, rootDisk.indexOf(removeText)));
-      data.ephemeral_disk = Number(ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText)));
+      data.root_disk = Number(
+        rootDisk.substring(0, rootDisk.indexOf(removeText))
+      );
+      data.ephemeral_disk = Number(
+        ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText))
+      );
 
       data.extra_specs = [...extraSpecsFields]
         .filter(obj => obj.value === true)
@@ -284,11 +288,11 @@ const RegistModal = props => {
 
       data.devices = [...formDeviceFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
       data.gpus = [...formGpuFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
       // console.log(data)
       onOk({ flavor: data });
@@ -397,7 +401,7 @@ const RegistModal = props => {
     }
   };
 
-  const getMarks = (max) => {
+  const getMarks = max => {
     const count = 5;
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1);
@@ -426,7 +430,7 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep === 1 ? styles.current : ''}`,
+                `${regStep === 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
@@ -456,7 +460,7 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep === 2 ? styles.current : ''}`,
+                `${regStep === 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
@@ -529,11 +533,11 @@ const RegistModal = props => {
                       rules={[
                         {
                           required: true,
-                          message: '1 이상 입력하세요',
+                          message: t('ROSOURCES_CPU_VALID'),
                         },
                         {
                           pattern: regexNum,
-                          message: '1 이상 숫자만 입력해주세요.',
+                          message: t('ROSOURCES_CPU_NUM_VALID'),
                         },
                       ]}
                     >
@@ -560,11 +564,11 @@ const RegistModal = props => {
                           rules={[
                             {
                               required: true,
-                              message: '1 이상 입력하세요.',
+                              message: t('ROSOURCES_CPU_VALID'),
                             },
                             {
                               pattern: regexNum,
-                              message: '1 이상 숫자만 입력해주세요.',
+                              message: t('ROSOURCES_CPU_NUM_VALID'),
                             },
                           ]}
                         >
@@ -606,12 +610,13 @@ const RegistModal = props => {
                       pattern: regexRootDisk,
                       message: t('RESOURCES_ROOT_DISK_VALID'),
                     },
-                  ]}>
+                  ]}
+                >
                   <UnitSlider
                     name="root_disk"
-                    max={320}
+                    max={128}
                     min={0}
-                    marks={getMarks(320)}
+                    marks={getMarks(128)}
                     defaultValue={rootDisk}
                     unit={'GiB'}
                     withInput
@@ -636,8 +641,8 @@ const RegistModal = props => {
                               ></label>
                             </div>
                             <div className={styles.title}>
-                              <p>{`임시디스크 지정`}</p>
-                              <span>{`임시디스크를 설정합니다.`}</span>
+                              <p>{t('RESOURCES_TEMPORARY_DISK')}</p>
+                              <span>{t('RESOURCES_TEMPORARY_DISK_DESC')}</span>
                             </div>
                           </h6>
                           {ephemeralDiskActive && (

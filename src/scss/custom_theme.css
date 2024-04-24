@@ -364,6 +364,10 @@ a:hover.src-core-containers-Base-Detail-index__navItem {
   top: 24px !important;
 }
 
+.src-pages-projects-containers-Resources-Vms-index__avatar .src-pages-projects-containers-Resources-Vms-index__icon .src-pages-projects-containers-Resources-Vms-index__indicator {
+  top: 24px !important;
+}
+
 .src-pages-clusters-containers-Resources-ContainerResource-index__avatar .src-pages-clusters-containers-Resources-ContainerResource-index__icon .src-pages-clusters-containers-Resources-ContainerResource-index__indicator {
   top: 24px !important;
 }

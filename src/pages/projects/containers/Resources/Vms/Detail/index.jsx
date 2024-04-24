@@ -173,6 +173,7 @@ const VmDetail = (props) => {
       icon: 'eye',
       text: t('RESOURCES_CONSOLE_LOG'),
       action: 'view',
+      disabled: get(store.detail.vm, 'state') === 'Stopped' ? true : false,
       onClick: async () => {
         const vmLog = await store.fetchVmLog(props.match.params);
         props.rootStore.triggerAction('vm.log.view', {

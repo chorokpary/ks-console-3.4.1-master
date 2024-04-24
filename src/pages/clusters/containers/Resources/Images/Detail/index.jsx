@@ -15,31 +15,34 @@ import DetailVmList from 'pages/clusters/containers/Resources/components/DetailV
 const store = new ImageStore();
 
 const ImageDetail = props => {
-  const [activationTrigger, setActivationTrigger] = useReducer(activationTrigger => !activationTrigger, false);
+  const [activationTrigger, setActivationTrigger] = useReducer(
+    activationTrigger => !activationTrigger,
+    false
+  );
   const [detail, setDetail] = useState();
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   let timer = 0;
   const activeCrListTimer = () => {
     timer = setTimeout(() => {
-      fetchData()
-      setActivationTrigger()
-    }, 4000)
-  }
+      fetchData();
+      setActivationTrigger();
+    }, 4000);
+  };
 
   useEffect(() => {
-    activeCrListTimer()
+    activeCrListTimer();
     return () => {
-      clearTimeout(timer)
-    }
-  }, [activationTrigger])
+      clearTimeout(timer);
+    };
+  }, [activationTrigger]);
 
   const fetchData = async () => {
-    let detail = await store.fetchDetail(props.match.params);
-    setDetail(detail)
+    const detail = await store.fetchDetail(props.match.params);
+    setDetail(detail);
   };
 
   const { cluster } = props.match.params;
@@ -64,7 +67,7 @@ const ImageDetail = props => {
         props.rootStore.triggerAction('images.edit', {
           type: 'IMAGE_DETAIL',
           detail: toJS(store.detail.image),
-          store: store,
+          store,
           success: fetchData,
         }),
     },
@@ -90,11 +93,11 @@ const ImageDetail = props => {
         props.rootStore.triggerAction('images.remove', {
           type: 'IMAGE_DETAIL',
           detail: toJS(store.detail),
-          store: store,
+          store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
-          okText: '삭제',
-          cancelText: '취소',
+          okText: t('RESOURCES_DELETE'),
+          cancelText: t('RESOURCES_CANCEL'),
         }),
     },
   ];
