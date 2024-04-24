@@ -465,12 +465,13 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 1
+                  className={`${
+                    regStep == 1
                       ? styles.current
                       : regStep > 1
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -482,8 +483,8 @@ const ModifyModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -495,12 +496,13 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 2
+                  className={`${
+                    regStep == 2
                       ? styles.current
                       : regStep > 2
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -568,6 +570,7 @@ const ModifyModal = props => {
                         name="vcpus"
                         defaultValue={vcpus}
                         style={{ width: '100%' }}
+                        onChange={e => setVcpus(e)}
                       />
                     </Form.Item>
                     &nbsp;&nbsp;
@@ -638,9 +641,9 @@ const ModifyModal = props => {
                 >
                   <UnitSlider
                     name="root_disk"
-                    max={128}
+                    max={2000}
                     min={0}
-                    marks={getMarks(128)}
+                    marks={getMarks(2000)}
                     defaultValue={rootDisk}
                     unit={'GiB'}
                     withInput
@@ -654,9 +657,9 @@ const ModifyModal = props => {
                 <Form.Group>
                   <UnitSlider
                     name="ephemeral_disk"
-                    max={40}
+                    max={2000}
                     min={0}
-                    marks={getMarks(40)}
+                    marks={getMarks(2000)}
                     defaultValue={ephemeralDisk}
                     unit={'GiB'}
                     withInput
