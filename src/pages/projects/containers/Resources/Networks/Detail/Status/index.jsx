@@ -15,6 +15,8 @@ const Status = (props) => {
   // console.log("props : "+ JSON.stringify(props))
   const store = props.detailStore;
   const cluster = props.detailStore?.detail.cluster;
+  const namespace = props.match.params.namespace;
+  const workspace = props.match.params.workspace;
 
   const routerStore = new RouterStore();
   const loadBalancerStore = new LoadBalancerStore();
@@ -83,7 +85,7 @@ const Status = (props) => {
                       <Icon name="router" size={40} />
                     </div>
                     <div className={classnames(styles.title, styles.name)}>
-                      <div><Link to={`/clusters/${cluster}/routers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+                      <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                       <p>{t('NAME')}</p>
                     </div>
                     <div className={styles.title}>
@@ -131,7 +133,7 @@ const Status = (props) => {
                       <Icon name="router" size={40} />
                     </div>
                     <div className={classnames(styles.title, styles.name)}>
-                      <div><Link to={`/clusters/${cluster}/loadBalancers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+                      <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
                       <p>{t('NAME')}</p>
                     </div>
                     <div className={styles.title}>

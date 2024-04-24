@@ -95,14 +95,14 @@ const VolumeModal = (props) => {
               <div className={styles.table}>
                 <table>
                   <colgroup>
-                    <col width="25%" />
-                    <col width="15%" />
-                    <col width="15%" />
                     <col width="20%" />
+                    <col width="13%" />
+                    <col width="13%" />
+                    <col width="18%" />
                     <col width="8%" />
                     <col width="8%" />
-                    <col width="17%" />
-                    <col width="15%" />
+                    <col width="10%" />
+                    <col width="10%" />
                   </colgroup>
                   <thead>
                     <tr>
@@ -113,7 +113,7 @@ const VolumeModal = (props) => {
                       <th><strong>{t('RESOURCES_CAPACITY')}</strong></th>
                       <th><strong>{t('RESOURCES_STATE')}</strong></th>
                       <th><strong>{t('RESOURCES_VOLUME_LOCATION')}</strong></th>
-                      <th><strong>Action</strong></th>
+                      <th><strong>{t('RESOURCES_VOLUME_BINDING')}</strong></th>
                     </tr>
                   </thead>
                   <tbody>

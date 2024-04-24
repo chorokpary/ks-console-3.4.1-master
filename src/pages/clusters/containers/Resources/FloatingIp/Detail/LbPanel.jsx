@@ -29,9 +29,11 @@ const LbPanel = (props) => {
             <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
-            {obj.members?.map((el, idx) =>
-              <div key={idx}>{el}</div>
-            )}
+            {obj.members?.length > 1 ?
+              <div>{`${obj.members?.[0]} 외 ${obj.members?.length - 1} 건`}</div>
+              :
+              <div>{obj.members?.[0]}</div>
+            }
             <p>{t('RESOURCES_NETWORK')}</p>
           </div>
           <div className={styles.text}>

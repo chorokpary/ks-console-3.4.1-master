@@ -17,10 +17,10 @@ import {
 import classnames from 'classnames';
 
 import { Modal } from 'components/Base';
-import styles from './index.scss';
 import { UnitSlider } from 'components/Inputs';
 
 import FlavorStore from 'stores/resources/flavors';
+import styles from './index.scss';
 
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
@@ -40,7 +40,7 @@ const ModifyModal = props => {
   const [extraSpecsFields, setExtraSpecsFields] = useState([]);
   const [ram, setRam] = useState(0);
   const [byteFlag, setByteFlag] = useState(
-    !(props.store.detail.flavor.ram / 1024 < 1),
+    !(props.store.detail.flavor.ram / 1024 < 1)
   );
 
   const [regStep, setRegStep] = useState(1);
@@ -59,10 +59,10 @@ const ModifyModal = props => {
     setRam(
       props.store.detail.flavor.ram / 1024 < 1
         ? props.store.detail.flavor.ram
-        : props.store.detail.flavor.ram / 1024,
+        : props.store.detail.flavor.ram / 1024
     );
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
-      obj => obj.value === 'True',
+      obj => obj.value === 'True'
     );
 
     if (props?.store?.detail?.flavor?.gpus.length > 0) {
@@ -87,7 +87,7 @@ const ModifyModal = props => {
       // hostDevices
       // setGpus
       const listHostDevices = await store.fetchFlavorHostDevices(
-        props.match.params.cluster,
+        props.match.params.cluster
       );
       const responseHostDevices = listHostDevices?.host_devices;
 
@@ -111,7 +111,7 @@ const ModifyModal = props => {
 
       // extraSpecs
       const extraSpecs = await store.fetchFlavorExtraSpecs(
-        props.match.params.cluster,
+        props.match.params.cluster
       );
       const responseExtraSpecs = extraSpecs?.extra_specs;
       const resExtraSpecs = [];
@@ -307,12 +307,16 @@ const ModifyModal = props => {
       data.ram = byteFlag ? ram * 1024 : ram;
 
       if (typeof rootDisk !== 'number') {
-        data.root_disk = Number(rootDisk.substring(0, rootDisk.indexOf(removeText)));
+        data.root_disk = Number(
+          rootDisk.substring(0, rootDisk.indexOf(removeText))
+        );
       } else {
         data.root_disk = rootDisk;
       }
       if (typeof ephemeralDisk !== 'number') {
-        data.ephemeral_disk = Number(ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText)));
+        data.ephemeral_disk = Number(
+          ephemeralDisk.substring(0, ephemeralDisk.indexOf(removeText))
+        );
       } else {
         data.ephemeral_disk = ephemeralDisk;
       }
@@ -323,11 +327,11 @@ const ModifyModal = props => {
 
       data.devices = [...formDeviceFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
       data.gpus = [...formGpuFields].filter(
         obj =>
-          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT'),
+          delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
       onOk({ flavor: data });
     });
@@ -427,7 +431,7 @@ const ModifyModal = props => {
   const [tab, setTab] = useState('GiB');
   const { TabPanel } = Tabs;
 
-  const getMarks = (max) => {
+  const getMarks = max => {
     const count = 5;
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1);
@@ -456,16 +460,16 @@ const ModifyModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`,
+                `${regStep == 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${regStep == 1
-                    ? styles.current
-                    : regStep > 1
-                      ? styles.done
-                      : styles.todo
+                      ? styles.current
+                      : regStep > 1
+                        ? styles.done
+                        : styles.todo
                     }`}
                 ></div>
               </div>
@@ -486,16 +490,16 @@ const ModifyModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`,
+                `${regStep == 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${regStep == 2
-                    ? styles.current
-                    : regStep > 2
-                      ? styles.done
-                      : styles.todo
+                      ? styles.current
+                      : regStep > 2
+                        ? styles.done
+                        : styles.todo
                     }`}
                 ></div>
               </div>
@@ -552,11 +556,11 @@ const ModifyModal = props => {
                       rules={[
                         {
                           required: true,
-                          message: '1 이상 입력하세요',
+                          message: t('ROSOURCES_CPU_VALID'),
                         },
                         {
                           pattern: regexNum,
-                          message: '1 이상 숫자만 입력해주세요.',
+                          message: t('ROSOURCES_CPU_NUM_VALID'),
                         },
                       ]}
                     >
@@ -584,11 +588,11 @@ const ModifyModal = props => {
                           rules={[
                             {
                               required: true,
-                              message: '1 이상 입력하세요.',
+                              message: t('ROSOURCES_CPU_VALID'),
                             },
                             {
                               pattern: regexNum,
-                              message: '1 이상 숫자만 입력해주세요.',
+                              message: t('ROSOURCES_CPU_NUM_VALID'),
                             },
                           ]}
                         >
@@ -630,12 +634,13 @@ const ModifyModal = props => {
                       pattern: regexRootDisk,
                       message: t('RESOURCES_ROOT_DISK_VALID'),
                     },
-                  ]}>
+                  ]}
+                >
                   <UnitSlider
                     name="root_disk"
-                    max={320}
+                    max={128}
                     min={0}
-                    marks={getMarks(320)}
+                    marks={getMarks(128)}
                     defaultValue={rootDisk}
                     unit={'GiB'}
                     withInput

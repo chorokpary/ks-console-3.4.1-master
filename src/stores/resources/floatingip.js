@@ -45,6 +45,8 @@ export default class FloatingIpStore extends Base {
         // this.afterChange(res, params)
         return res
     }
+
+
     @action
     async update({ ...params }) {
         const jsonData = {};
@@ -54,7 +56,6 @@ export default class FloatingIpStore extends Base {
             request.put(this.getDetailUrl({ ...params, name: params.id }), jsonData)
         )
     }
-
 
 
     @action
@@ -138,5 +139,11 @@ export default class FloatingIpStore extends Base {
         )
         return result
     }
-
+    @action
+    async allAvailableIps(params) {
+        const result = await request.get(
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks/available_ips`
+        )
+        return result
+    }
 }
