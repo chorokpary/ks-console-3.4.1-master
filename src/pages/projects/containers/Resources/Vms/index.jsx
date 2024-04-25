@@ -31,9 +31,8 @@ import ResourceTable from 'clusters/components/ResourceTable';
 import { getLocalTime, showNameAndAlias } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
 
-import styles from './index.scss';
-
 import VmStore from 'stores/resources/vms';
+import styles from './index.scss';
 
 @withList({
   store: new VmStore(),
@@ -72,7 +71,7 @@ export default class Vms extends React.Component {
 
   get isRuning() {
     const { selectedRowKeys } = toJS(this.props.store.list);
-    const runingFlag = selectedRowKeys.length > 0 ? false : true;
+    const runingFlag = !(selectedRowKeys.length > 0);
     return runingFlag;
   }
 
@@ -288,7 +287,9 @@ export default class Vms extends React.Component {
         render: (image, record) => {
           const icon = `ico-os-${record.image_object?.distro_type}`;
           return image ? (
-            <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}>
+            <Link
+              to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}
+            >
               <i
                 style={{
                   backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
@@ -374,7 +375,7 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: node => {
           // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>;
-          const nodeLink = node === 'N/A' ? node : node
+          const nodeLink = node === 'N/A' ? node : node;
           return nodeLink;
         },
       },
@@ -389,11 +390,12 @@ export default class Vms extends React.Component {
           if (!!security_group_objects) {
             securityGroupText =
               security_group_objects.length > 1
-                ? `${security_group_objects[0].name
-                } 외 ${security_group_objects.length - 1}개`
+                ? `${
+                    security_group_objects[0].name
+                  } 외 ${security_group_objects.length - 1}개`
                 : security_group_objects.length == 1
-                  ? security_group_objects[0].name
-                  : '-';
+                ? security_group_objects[0].name
+                : '-';
           } else {
             securityGroupText = '';
           }
@@ -412,8 +414,11 @@ export default class Vms extends React.Component {
           const stateArray = ['Stopped', 'Running', 'Paused'];
 
           if (stateArray.includes(state)) {
-
-            const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
+            const vmsRole = get(globals.user.projectRules, [
+              cluster,
+              namespace,
+              'vms',
+            ]);
             if (vmsRole?.includes('manage')) {
               return (
                 <div>
@@ -426,18 +431,75 @@ export default class Vms extends React.Component {
                       <i
                         className={styles[`ico-status-${state.toLowerCase()}`]}
                       />
-                      <p>{state}</p>
+                      <p>
+                        {/* {state === 'Stopped' && t('RESOURCES_STOP')}
+                      {state === 'Provisioning' && t('RESOURCES_PROVISIONING')}
+                      {state === 'Starting' && t('RESOURCES_STARTING')}
+                      {state === 'Running' && t('RESOURCES_RUNNING')}
+                      {state === 'Paused' && t('RESOURCES_PAUSED')}
+                      {state === 'Migrating' && t('RESOURCES_MIGRATING')}
+                      {state === 'Stopping' && t('RESOURCES_STOPPING')}
+                      {state === 'Terminating' && t('RESOURCES_TERMINATING')}
+                      {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
+                        {state === 'Stopped'
+                          ? t('RESOURCES_STOP')
+                          : state === 'Provisioning'
+                          ? t('RESOURCES_PROVISIONING')
+                          : state === 'Starting'
+                          ? t('RESOURCES_STARTING')
+                          : state === 'Running'
+                          ? t('RESOURCES_RUNNING')
+                          : state === 'Paused'
+                          ? t('RESOURCES_PAUSED')
+                          : state === 'Migrating'
+                          ? t('RESOURCES_MIGRATING')
+                          : state === 'Stopping'
+                          ? t('RESOURCES_STOPPING')
+                          : state === 'Terminating'
+                          ? t('RESOURCES_TERMINATING')
+                          : state === 'Unknown'
+                          ? t('RESOURCES_UNKNOWN')
+                          : ''}
+                      </p>
                     </div>
                   </Dropdown>
                 </div>
               );
             }
-
           }
           return (
             <div className={styles.iconwrapper}>
               <i className={styles[`ico-status-${state.toLowerCase()}`]} />
-              <p>{state}</p>
+              <p>
+                {/* {state === 'Stopped' && t('RESOURCES_STOP')}
+                      {state === 'Provisioning' && t('RESOURCES_PROVISIONING')}
+                      {state === 'Starting' && t('RESOURCES_STARTING')}
+                      {state === 'Running' && t('RESOURCES_RUNNING')}
+                      {state === 'Paused' && t('RESOURCES_PAUSED')}
+                      {state === 'Migrating' && t('RESOURCES_MIGRATING')}
+                      {state === 'Stopping' && t('RESOURCES_STOPPING')}
+                      {state === 'Terminating' && t('RESOURCES_TERMINATING')}
+                      {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
+                {state === 'Stopped'
+                  ? t('RESOURCES_STOP')
+                  : state === 'Provisioning'
+                  ? t('RESOURCES_PROVISIONING')
+                  : state === 'Starting'
+                  ? t('RESOURCES_STARTING')
+                  : state === 'Running'
+                  ? t('RESOURCES_RUNNING')
+                  : state === 'Paused'
+                  ? t('RESOURCES_PAUSED')
+                  : state === 'Migrating'
+                  ? t('RESOURCES_MIGRATING')
+                  : state === 'Stopping'
+                  ? t('RESOURCES_STOPPING')
+                  : state === 'Terminating'
+                  ? t('RESOURCES_TERMINATING')
+                  : state === 'Unknown'
+                  ? t('RESOURCES_UNKNOWN')
+                  : ''}
+              </p>
             </div>
           );
         },
@@ -476,7 +538,7 @@ export default class Vms extends React.Component {
     data.actionType = action;
 
     trigger('vm.actionState', {
-      data: data,
+      data,
       success: getData,
       ...this.props.match.params,
     });
