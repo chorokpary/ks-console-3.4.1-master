@@ -15,13 +15,12 @@
 //   border-radius: $border-radius;
 // }
 
-
 .item {
   display: flex;
   align-items: center;
   height: 64px;
   padding: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   line-height: 20px;
   background-color: $white;
   border-radius: 4px;
@@ -62,7 +61,8 @@
 
     &.name {
       padding-right: 20px;
-      width: 25%;
+      // width: 25%;
+      width: 38% !important;
     }
   }
 
@@ -73,7 +73,63 @@
   }
 }
 
+.itemLoadBalancer {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 12px;
+  margin-bottom: 0;
+  line-height: 20px;
+  background-color: $white;
+  border-radius: 4px;
+  border: 1px solid $border-color;
 
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .icon {
+    position: relative;
+    width: 40px;
+    margin-right: 12px;
+
+    .indicator {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+
+  .title {
+    min-width: 120px;
+    width: 25%;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
+    }
+
+    &.name {
+      padding-right: 20px;
+      // width: 25%;
+      width: 29% !important;
+    }
+  }
+
+  :global {
+    .tag {
+      height: 20px;
+    }
+  }
+}
 
 .expandItem {
   position: relative;
@@ -124,7 +180,6 @@
     transform: translate3d(0, 100%, 0);
   }
 }
-
 
 .itemMain {
   display: flex;
@@ -261,7 +316,6 @@
   }
 }
 
-
 .itemExtra {
   display: none;
   position: absolute;
@@ -287,47 +341,46 @@
 }
 
 .loading {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
 }
 
 .empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 56px;
 }
 
 .cluster {
-    width: 260px;
-    margin-right: 12px;
+  width: 260px;
+  margin-right: 12px;
 }
 
-
 .table table {
-    width: 100%;
-    text-align: left;
+  width: 100%;
+  text-align: left;
 
-    thead {
-        th {
-            text-transform: uppercase;
-            padding: 10px;
-        }
+  thead {
+    th {
+      text-transform: uppercase;
+      padding: 10px;
     }
+  }
 
-    tbody {
-        tr {
-            border-bottom: 1px solid #F1F1F1;
-            color: #75787b;
+  tbody {
+    tr {
+      border-bottom: 1px solid #f1f1f1;
+      color: #75787b;
 
-            td {
-                padding: 10px;
-            }
+      td {
+        padding: 10px;
+      }
 
-            th {
-                padding-left: 10px;
-            }
-        }
+      th {
+        padding-left: 10px;
+      }
     }
+  }
 }
