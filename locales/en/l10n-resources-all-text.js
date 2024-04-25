@@ -240,6 +240,7 @@ module.exports = {
   RESOURCES_NO_MONITORING_DATA: '모니터링 데이터가 없습니다.',
   RESOURCES_SELECT_ALL: '모두 선택',
   RESOURCES_ALLOCATED_ALL_RESOURCES: '모든 자원이 할당 되었습니다.',
+  RESOURCES_FIP_NO_NETWORK: '플로팅 IP를 생성할 네트워크 자원이 없습니다.',
   RESOURCES_PREVIEW: '미리보기',
   RESOURCES_NOT_USE: '미사용',
   RESOURCES_NOT_SET: '미설정',
