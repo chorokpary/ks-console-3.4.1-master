@@ -91,6 +91,7 @@ module.exports = {
   RESOURCES_MEDIATED_DEVICE_DESC:
     'Mediated 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_MTU_EMPTY_DESC: 'MTU를 입력해주세요.',
+  RESOURCES_MTU_VALID: '1~9000 범위에서 입력해주세요.',
   RESOURCES_OS_TYPE: 'OS 타입',
   RESOURCES_SELECT_OS_TIP: 'OS를 선택해주세요.',
   RESOURCES_SNAT_OPTION: 'SNAT 옵션',
@@ -322,6 +323,7 @@ module.exports = {
   RESOURCES_COMPLETED_SETTINGS: '설정완료',
   RESOURCES_SEGMENT_ID: '세그먼트 ID',
   RESOURCES_SEGMENT_ID_EMPTY_DESC: '세그먼트 ID를 입력해주세요',
+  RESOURCES_SEGMENT_ID_VALID: '0~16777215 범위에서 입력해주세요.',
   RESOURCES_DETAIL_SETTINGS: '세부 설정',
   RESOURCES_PINE_TREE: '소나무',
   RESOURCES_SOURCE: '소스',
