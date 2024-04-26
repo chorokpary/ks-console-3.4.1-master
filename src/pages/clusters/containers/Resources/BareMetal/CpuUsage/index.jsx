@@ -17,14 +17,10 @@ const CpuUsage = (props) => {
 
   const [stepParams, setStepParams] = useState({ step: '6m', times: 10 })
 
-  const [nodeList, setNodeList] = useState();
-
   const [x86CpuData, setX86CpuData] = useState([]);
   const [armCpuData, setArmCpuData] = useState([]);
   const [x86PowerData, setX86PowerData] = useState([]);
   const [armPowerData, setArmPowerData] = useState([]);
-  const [x86PowerAvgData, setX86PowerAvgData] = useState(0);
-  const [armPowerAvgData, setArmPowerAvgData] = useState(0);
   const [x86PowerPercent, setX86PowerPercent] = useState(0);
   const [armPowerPercent, setArmPowerPercent] = useState(0);
 
@@ -57,29 +53,34 @@ const CpuUsage = (props) => {
     return { start, end }
   }
 
+  /**
+   * data 내 values들의 각 시간에 따른 총합 
+   * @param {*} data 
+   * @returns 
+   */
+  const sumValuesByTime = (data) => {
+    const sumByTime = {};
+    data.forEach(item => {
+      item?.values?.forEach(([time, value]) => {
+        if (!sumByTime[time]) {
+          sumByTime[time] = 0;
+        }
+        sumByTime[time] += parseInt(value);
+      });
+    });
+
+    let values = []
+    for (const [key, value] of Object.entries(sumByTime)) {
+      values.push([key, value])
+    }
+    return { values }
+  };
 
   useEffect(() => {
     fetchData(stepParams);
   }, [stepParams])
 
   const fetchData = async (params) => {
-
-    const { data } = props.store.list;
-
-    // node list
-    const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
-
-    let promql_node_list = ""
-    nodeList.map((obj) => {
-      const nodeName = get(obj, 'name')
-      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
-    })
-
-    let instanceJoinText = ""
-    await data.map(obj => {
-      const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip + ":" + obj.nodeExporter.port;
-      instanceJoinText += instance + "|"
-    })
 
     const paramsData = Object.assign(params, {
       start: params.start,
@@ -94,120 +95,116 @@ const CpuUsage = (props) => {
       paramsData.end = timeRange.end
     }
 
-    const getTypeData = async () => {
+    // node list
+    const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
 
-      const { data } = props.store.list;
+    let promql_node_list = []
+    nodeList.map((obj) => {
+      promql_node_list.push(get(obj, 'name'))
+    })
 
-      const metric_type = await customStore.fetchMetric({
-        expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
-      })
+    const metric_type = await customStore.fetchMetric({
+      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list.join('|')}"})`,
+      ...props.match.params
+    });
 
-      const metric_power_last = await customStore.fetchMetric({
-        expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
-        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
-        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
-      })
+    const metric_power = await customStore.fetchMetric({
+      expr: `sum by (target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      ...props.match.params,
+      ...paramsData
+    })
 
-      let total_x86_count = 0;
-      let total_arm_count = 0;
+    /**
+     * 베어메탈 node list 를 순회하며
+     * metric type data 에서 x86과 arm 을 구분하여 해당 openBMC address 를 저장
+     * 해당 openBMC address으로 metric power data 에서 metric.target과 비교하여
+     * 실제 x86, arm 데이터를 구분함./
+     */
+    let promql_x86_names = []
+    let promql_arm_names = []
+    let promql_x86_node_list = []
+    let promql_arm_node_list = []
+    const x86Array = ['x86_64', 'amd'];
+    const armArray = ['arm', 'aarch64'];
+    nodeList.map(async obj => {
+      const metrics =
+        obj.system_type === 'C' ?
+          metric_type.find(item => get(item, 'metric.instance') === obj.name)
+          : metric_type.find(item => get(item, 'metric.instance', ':').split(':')[0] === obj.nodeExporter.ip)
 
-      await data.map((obj) => {
-        const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
+      const machine = get(metrics, 'metric.machine', '');
+      if (x86Array.includes(machine.toLowerCase())) {
+        promql_x86_node_list.push(get(obj, 'openBMC.address'))
+        promql_x86_names.push(get(obj, 'name'));
+      }
+      if (armArray.includes(machine.toLowerCase())) {
+        promql_arm_node_list.push(get(obj, 'openBMC.address'))
+        promql_arm_names.push(get(obj, 'name'));
+      }
+    })
 
-        const type_data = metric_type.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
-        const type = get(type_data, 'metric.machine', '')
-        const x86Array = ['x86_64', 'amd']
-        const armArray = ['arm', 'aarch64']
-        if (x86Array.includes(type.toLowerCase())) total_x86_count++;
-        if (armArray.includes(type.toLowerCase())) total_arm_count++;
-      })
+    // promql_arm_names.push('cmp-meh')
+    // promql_arm_node_list.push('10.24.3.17')
+    // ------ metric power 전체 중, metric.target이 x86, arm에 해당하는지 구분
+    let x86_data = [];
+    let arm_data = [];
+    metric_power.map(obj => {
+      if (promql_x86_node_list.includes(get(obj, 'metric.target'))) {
+        x86_data.push(obj)
+      }
+      if (promql_arm_node_list.includes(get(obj, 'metric.target'))) {
+        arm_data.push(obj)
+      }
+    })
 
-      const x86PowerMetricLastData = _.find(metric_power_last, (data) => {
-        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
-      });
+    // -------------------- CPU 소비 전력량 비교 right data (power) ---------------------
+    const x86Power = sumValuesByTime(x86_data)
+    const armPower = sumValuesByTime(arm_data)
 
-      const armPowerMetricLastData = _.find(metric_power_last, (data) => {
-        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
-      });
-
-      const x86PowerLastData = get(x86PowerMetricLastData, 'value[1]', '0');
-      const armPowerLastData = get(armPowerMetricLastData, 'value[1]', '0');
-
-      const x86PowerAvg = Math.round(x86PowerLastData / total_x86_count);
-      const armPowerAvg = Math.round(armPowerLastData / total_arm_count);
-
-      setX86PowerAvgData(x86PowerAvg);
-      setArmPowerAvgData(armPowerAvg);
-      const max_power = 200000;
-
-      let x86PowerPercent = ((x86PowerAvg / max_power) * 100)
-      let armPowerPercent = ((armPowerAvg / max_power) * 100)
-
-      x86PowerPercent = (isNaN(x86PowerPercent) || !isFinite(x86PowerPercent)) ? 0 : x86PowerPercent.toFixed(2);
-      armPowerPercent = (isNaN(armPowerPercent) || !isFinite(armPowerPercent)) ? 0 : armPowerPercent.toFixed(2);
-
-      setX86PowerPercent(x86PowerPercent);
-      setArmPowerPercent(armPowerPercent);
-    };
-
-    const getCpuUsageData = async () => {
-
-      const metric_cpu = await customStore.fetchMetric({
-        expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})))`,
-        // expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info)))`,
-        // expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"})))`,
-        ...paramsData
-      })
-
-      const x86CpuMetricData = _.find(metric_cpu, (data) => {
-        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
-      });
-
-      const armCpuMetricData = _.find(metric_cpu, (data) => {
-        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
-      });
-
-      const x86CpuArray = [];
-      const armCpuArray = [];
-
-      x86CpuArray.push(x86CpuMetricData)
-      armCpuArray.push(armCpuMetricData)
-
-      setX86CpuData(x86CpuArray)
-      setArmCpuData(armCpuArray)
-    };
-
-    const getPowerUsageData = async () => {
-
-      const metric_power = await customStore.fetchMetric({
-        expr: `sum by (machine) (redfish_chassis_power_powersupply_last_power_output_watts) * on (target) group_left(machine) (max by(target, machine) (label_replace(node_uname_info{nodename=~"${promql_node_list}"}, "target", "$1", "instance", "(.+):.+")))`,
-        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
-        // expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{instance=~"${instanceJoinText.slice(0, -1)}"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
-        ...paramsData
-      })
-
-      const x86PowerMetricData = _.find(metric_power, (data) => {
-        if (['x86_64', 'amd'].includes(get(data, 'metric.machine'))) return data;
-      });
-
-      const armPowerMetricData = _.find(metric_power, (data) => {
-        if (['arm', 'aarch64'].includes(get(data, 'metric.machine'))) return data;
-      });
-
-      const x86PowerArray = [];
-      const armPowerArray = [];
-
-      x86PowerArray.push(x86PowerMetricData)
-      armPowerArray.push(armPowerMetricData)
-
-      setX86PowerData(x86PowerArray)
-      setArmPowerData(armPowerArray)
-    };
+    setX86PowerData([x86Power])
+    setArmPowerData([armPower])
+    // ------------------------------------------------------------------------------
 
 
-    getTypeData();
-    getCpuUsageData();
-    getPowerUsageData();
+    // -------------------- CPU 소비 전력량 비교 left data ---------------------
+    const x86PowerLastData = get(x86Power, `values[${x86Power.values.length - 1}][1]`, '0');
+    const armPowerLastData = get(armPower, `values[${armPower.values.length - 1}][1]`, '0');
+
+    const x86PowerAvg = Math.round(x86PowerLastData / x86_data.length);
+    const armPowerAvg = Math.round(armPowerLastData / arm_data.length);
+
+    const max_power = 200000;
+
+    let x86PowerPercent = ((x86PowerAvg / max_power) * 100)
+    let armPowerPercent = ((armPowerAvg / max_power) * 100)
+
+    x86PowerPercent = (isNaN(x86PowerPercent) || !isFinite(x86PowerPercent)) ? 0 : x86PowerPercent.toFixed(2);
+    armPowerPercent = (isNaN(armPowerPercent) || !isFinite(armPowerPercent)) ? 0 : armPowerPercent.toFixed(2);
+
+    setX86PowerPercent(x86PowerPercent);
+    setArmPowerPercent(armPowerPercent);
+    // ----------------------------------------------------------------------
+
+
+    // -------------------- CPU 소비 전력량 비교 right data (usage) ---------------------
+    const metric_cpu_x86 = await customStore.fetchMetric({
+      expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_x86_names.join('|')}"})))`,
+      ...props.match.params,
+      ...paramsData
+    })
+    const metric_cpu_arm = await customStore.fetchMetric({
+      expr: `sum by (machine) (rate(node_cpu_seconds_total{mode!="idle"}[5m]) * on (instance) group_left(machine) (max by(instance, machine) (node_uname_info{nodename=~"${promql_arm_names.join('|')}"})))`,
+      ...props.match.params,
+      ...paramsData
+    })
+
+    const x86CpuArray = [metric_cpu_x86?.[0]];
+    const armCpuArray = [metric_cpu_arm?.[0]];
+
+    setX86CpuData(x86CpuArray)
+    setArmCpuData(armCpuArray)
+    // ------------------------------------------------------------------------------
+
   }
 
   const getMonitoringCfgs = () => {
@@ -274,8 +271,8 @@ const CpuUsage = (props) => {
     const stepData = {
       h: { step: '6m', times: 10 },
       d: { step: '60m', times: 24 },
-      w: { step: '60m', times: 168 },
-      m: { step: '1h', times: 697 },
+      w: { step: '5h', times: 33.6 },
+      m: { step: '10h', times: 72 },
     }
     setStepParams(get(stepData, step))
   }
@@ -315,7 +312,7 @@ const CpuUsage = (props) => {
                   <div className="chart_group">
                     <div className="title">
                       <i className="ico-type24-arm"></i>
-                      <h5>{t('RESOURCES_ARM')}</h5>
+                      <h5>{t('RESOURCES_ARM')} ({t('RESOURCES_ONE_TO_AVERAGE')})</h5>
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">
@@ -333,7 +330,7 @@ const CpuUsage = (props) => {
                   <div className="chart_group">
                     <div className="title">
                       <i className="ico-type24-x86"></i>
-                      <h5>{t('RESOURCES_X86')}</h5>
+                      <h5>{t('RESOURCES_X86')} ({t('RESOURCES_ONE_TO_AVERAGE')})</h5>
                     </div>
                     <div className="data">
                       <div className="number_wrap data-r">

@@ -191,7 +191,9 @@ const RegistModal = (props) => {
   }
 
   useEffect(() => {
-    fnSelectedVmOption();
+    if (vmSelect.length > 0) {
+      fnSelectedVmOption();
+    }
   }, [vmSelect]);
   // 가상머신 selectbox disabled 처리 End ############################################
 

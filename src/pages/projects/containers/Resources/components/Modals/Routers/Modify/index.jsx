@@ -57,7 +57,7 @@ const ModifyModal = (props) => {
 
     setRouterExternal([]);
     routerList?.map((router) => {
-      if (router.external?.id !== detailExternal.id) {
+      if (router.external?.id !== detailExternal?.id) {
         setRouterExternal(prev => [...prev, router.external?.id])
       }
     });
@@ -86,7 +86,7 @@ const ModifyModal = (props) => {
       handleSingleCheck(true, item.id, "internal")
     })
 
-    detailExternal && setRadioExternal(detailExternal.id);
+    detailExternal && setRadioExternal(detailExternal?.id);
 
   }, [])
 
@@ -274,19 +274,6 @@ const ModifyModal = (props) => {
                     }
                     {externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).map((data) => {
                       return <tr key={data.id}>
-                        <td>
-                          <Radio name="external" value={data.id} checked={radioExternal === data.id}
-                            onChange={(e) => { setRadioExternal(data.id); }} />
-                        </td>
-                        <td>{data.name}</td>
-                        <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
-                        <td>{data.cidr}</td>
-                        <td>{data.gateway_ip}</td>
-                      </tr>
-                    })}
-                    {externalNetworkList?.filter((data) => data.id == detailExternal).map((data) => {
-                      return <tr key={data.name}>
                         <td>
                           <Radio name="external" value={data.id} checked={radioExternal === data.id}
                             onChange={(e) => { setRadioExternal(data.id); }} />
