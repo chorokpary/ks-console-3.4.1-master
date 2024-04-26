@@ -20,62 +20,62 @@ export const WORKLOAD_STATUS = [
   { text: 'RUNNING', value: 'running' },
   { text: 'UPDATING', value: 'updating' },
   { text: 'STOPPED', value: 'stopped' },
-]
+];
 
 export const POD_STATUS = [
   { text: 'RUNNING', value: 'running' },
   { text: 'WAITING', value: 'waiting' },
   { text: 'TERMINATED', value: 'terminated' },
-]
+];
 
 export const PODS_STATUS = [
   { text: 'WAITING', value: 'Waiting' },
   { text: 'RUNNING', value: 'Running' },
   { text: 'COMPLETED', value: 'Completed' },
   { text: 'ERROR', value: 'Error' },
-]
+];
 
 export const JOB_STATUS = [
   { text: 'FAILED', value: 'failed' },
   { text: 'COMPLETED', value: 'completed' },
   { text: 'RUNNING', value: 'running' },
-]
+];
 
 export const S2IJOBS_STATUS = [
   { text: 'FAILED', value: 'Failed' },
   { text: 'SUCCESSFUL', value: 'successful' },
   { text: 'RUNNING', value: 'Running' },
-]
+];
 
 export const S2I_STATUS_DESC = {
   Failed: 'IMAGE_BUILDING_FAILED',
   Running: 'BUILDING_IMAGE',
   Successful: 'IMAGE_BUILDING_SUCCESSFUL',
-}
+};
 
 export const CRONJOB_STATUS = [
   { text: 'CRONJOB_PAUSED', value: 'paused' },
   { text: 'CRONJOB_RUNNING', value: 'running' },
-]
+];
 
 export const VOLUME_STATUS = [
   { text: 'VOLUME_STATUS_BOUND', value: 'bound' },
   { text: 'VOLUME_STATUS_LOST', value: 'lost' },
   { text: 'VOLUME_STATUS_PENDING', value: 'pending' },
-]
+];
 
 export const PV_STATUS = [
   { text: 'PV_STATUS_AVAILABLE', value: 'available' },
   { text: 'PV_STATUS_BOUND', value: 'bound' },
   { text: 'PV_STATUS_RELEASED', value: 'released' },
   { text: 'PV_STATUS_FAILED', value: 'failed' },
-]
+];
 
 export const NODE_STATUS = [
   { text: 'NODE_STATUS_UNSCHEDULABLE', value: 'unschedulable' },
   { text: 'NODE_STATUS_RUNNING', value: 'running' },
   { text: 'NODE_STATUS_WARNING', value: 'warning' },
-]
+];
 
 export const CD_WEATHER_STATUS = [
   { text: 'HEALTHY', value: 'Healthy' },
@@ -84,13 +84,13 @@ export const CD_WEATHER_STATUS = [
   { text: 'SUSPENDED', value: 'Suspended' },
   { text: 'UNKNOWN', value: 'Unknown' },
   { text: 'MISSING', value: 'Missing' },
-]
+];
 
 export const CD_SYNC_STATUS = [
   { text: 'SYNCED', value: 'Synced' },
   { text: 'OUTOFSYNC', value: 'OutOfSync' },
   { text: 'UNKNOWN', value: 'Unknown' },
-]
+];
 
 export const FLUXCD_APP_TYPES = [
   {
@@ -105,42 +105,42 @@ export const FLUXCD_APP_TYPES = [
     description: 'Kustomize or pure kubernetes manifests',
     icon: 'kubernetes',
   },
-]
+];
 
 export const PRUNE_PROPAGATION_POLICY_OPTIONS = [
   { label: 'foreground', value: 'foreground' },
   { label: 'background', value: 'background' },
   { label: 'orphan', value: 'orphan' },
-]
+];
 
 export const ACCESS_MODES = {
   ReadWriteOnce: 'RWO',
   ReadOnlyMany: 'ROX',
   ReadWriteMany: 'RWX',
-}
+};
 
 export const SERVICE_TYPES = {
   VirtualIP: 'VIRTUAL_IP',
   Headless: 'HEADLESS',
   ExternalName: 'EXTERNALNAME',
   Unknown: 'UNKNOWN',
-}
+};
 
 export const SERVICE_TYPES_VALUE = {
   VIRTUAL_IP: 'virtualIP',
   HEADLESS: 'headlessSelector',
-}
+};
 
 export const VOLUME_SNAPSHOT_STATUS = [
   { text: 'VOLUME_SNAPSHOT_STATUS_CREATING', value: 'creating' },
   { text: 'VOLUME_SNAPSHOT_STATUS_READY', value: 'ready' },
   { text: 'VOLUME_SNAPSHOT_STATUS_DELETING', value: 'deleting' },
-]
+];
 
 export const VOLUME_SNAPSHOT_CLASS_STATUS = [
   { text: 'READY', value: 'true' },
   { text: 'UNREADY', value: 'false' },
-]
+];
 
 export const PARMMETER_TYPES = [
   {
@@ -158,7 +158,7 @@ export const PARMMETER_TYPES = [
     value: 'kustomize',
     description: 'KUSTOMIZE_PARAMETER_DESC',
   },
-]
+];
 
 export const INGRESS_ANNOTATIONS = [
   'nginx.ingress.kubernetes.io/app-root',
@@ -249,7 +249,7 @@ export const INGRESS_ANNOTATIONS = [
   'nginx.ingress.kubernetes.io/enable-owasp-core-rules',
   'nginx.ingress.kubernetes.io/modsecurity-transaction-id',
   'nginx.ingress.kubernetes.io/modsecurity-snippet',
-]
+];
 
 export const ICON_TYPES = {
   deployments: 'backup',
@@ -315,7 +315,7 @@ export const ICON_TYPES = {
   cds: 'rocket',
   codeRepos: 'code',
   allowlists: 'allowlist',
-}
+};
 
 export const MODULE_KIND_MAP = {
   deployments: 'Deployment',
@@ -350,7 +350,7 @@ export const MODULE_KIND_MAP = {
   groups: 'Group',
   volumes: 'Volumes',
   hpas: 'HPA',
-}
+};
 
 export const QUOTAS_MAP = {
   'limits.cpu': {
@@ -413,7 +413,7 @@ export const QUOTAS_MAP = {
     name: 'count/configmaps',
     placeholder: 'eg: 100',
   },
-}
+};
 
 export const WORKSPACE_QUOTAS_MAP = {
   'limits.cpu': {
@@ -432,7 +432,7 @@ export const WORKSPACE_QUOTAS_MAP = {
     name: 'requests.memory',
     placeholder: 'eg: 100Gi',
   },
-}
+};
 
 export const REPO_TYPES = [
   { name: 'GitHub', value: 'github', icon: 'github' },
@@ -440,7 +440,7 @@ export const REPO_TYPES = [
   { name: 'Bitbucket', value: 'bitbucket_server', icon: 'bitbucket' },
   { name: 'Git', value: 'git', icon: 'git' },
   { name: 'SVN', value: 'svn', icon: 'svn' },
-]
+];
 
 export const REPO_KEY_MAP = {
   git: 'git_source',
@@ -449,7 +449,7 @@ export const REPO_KEY_MAP = {
   github: 'github_source',
   bitbucket_server: 'bitbucket_server_source',
   gitlab: 'gitlab_source',
-}
+};
 
 export const PIPELINE_PARAMS_TYPES = {
   string: 'PARAMS_STRING',
@@ -457,14 +457,14 @@ export const PIPELINE_PARAMS_TYPES = {
   boolean: 'PARAMS_BOOLEAN',
   choice: 'PARAMS_CHOICE',
   password: 'PARAMS_PASSWORD',
-}
+};
 
 export const PIPELINE_ACTION_TYPES = {
   discover_branches: 'Discover Branches',
   discover_tags: 'Discover Tag Branches',
   discover_pr_from_origin: 'Discover PR from Origin',
   discover_pr_from_forks: 'Discover PR from Forks',
-}
+};
 
 export const TIMETRIGGERINTERVALS = [
   { label: '1 minute', value: '60000' },
@@ -485,14 +485,14 @@ export const TIMETRIGGERINTERVALS = [
   { label: '1 week', value: '604800000' },
   { label: '2 weeks', value: '1209600000' },
   { label: '4 weeks', value: '2419200000' },
-]
+];
 
 export const SECRET_TYPES = {
   Opaque: 'DEFAULT',
   'kubernetes.io/tls': 'TLS_INFORMATION',
   'kubernetes.io/dockerconfigjson': 'IMAGE_REGISTRY_INFORMATION',
   'kubernetes.io/basic-auth': 'USERNAME_AND_PASSWORD',
-}
+};
 
 export const STRATEGIES = {
   deployments: [
@@ -523,7 +523,7 @@ export const STRATEGIES = {
       description: 'ROLLINGUPDATE_DESC',
     },
   ],
-}
+};
 
 export const SYNC_STRATEGY = [
   {
@@ -536,7 +536,7 @@ export const SYNC_STRATEGY = [
     value: 'manual',
     description: 'MANUAL_SYNC_DESC',
   },
-]
+];
 
 export const PROTOCOLS = [
   { label: 'GRPC', value: 'GRPC' },
@@ -548,18 +548,18 @@ export const PROTOCOLS = [
   { label: 'TCP', value: 'TCP' },
   { label: 'TLS', value: 'TLS' },
   { label: 'UDP', value: 'UDP' },
-]
+];
 
 export const STRATEGIES_PREFIX = {
   deployments: 'spec.strategy',
   statefulsets: 'spec.updateStrategy',
   daemonsets: 'spec.updateStrategy',
-}
+};
 
 export const LANG_MAP = {
   zh: 'zh-CN',
   en: 'en',
-}
+};
 
 export const GRAY_RELEASE_CATEGORIES = [
   {
@@ -580,34 +580,36 @@ export const GRAY_RELEASE_CATEGORIES = [
     title: 'TRAFFIC_MIRRORING',
     desc: 'TRAFFIC_MIRRORING_DESC',
   },
-]
+];
 
-export const PATTERN_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/
-export const PATTERN_USER_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
-export const PATTERN_PACKAGE_NAME = /^[a-z0-9][a-z0-9+.-]{1,}$/ 
-export const PATTERN_ALIAS_NAME = /^(?!-)([a-zA-Z0-9\u4e00-\u9fa5-]+)(?<!-)$/
-export const PATTERN_IMAGE_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?((\.|\/)[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(:([a-z0-9])*)?$/
-export const PATTERN_SERVICE_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
-export const PATTERN_SERVICE_VERSION = /^[a-z0-9]*$/
-export const PATTERN_LABEL = /(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?/
-export const PATTERN_TAG = /^[A-Za-z0-9]([-A-Za-z0-9_.]*[A-Za-z0-9])?$/
-export const PATTERN_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,64}$/
-export const PATTERN_IMAGE = /^\S+$/
-export const PATTERN_PORT_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
-export const PATTERN_COMPONENT_VERSION = /^[a-z0-9]+$/
-export const PATTERN_PIPELINE_NAME = /[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/
-export const PATTERN_HOST = /^(?=^.{3,255}$)[*a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
+export const PATTERN_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
+export const PATTERN_USER_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
+export const PATTERN_PACKAGE_NAME = /^[a-z0-9][a-z0-9+.-]{1,}$/;
+export const PATTERN_ALIAS_NAME = /^(?!-)([a-zA-Z0-9\u4e00-\u9fa5-]+)(?<!-)$/;
+export const PATTERN_IMAGE_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?((\.|\/)[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(:([a-z0-9])*)?$/;
+export const PATTERN_SERVICE_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/;
+export const PATTERN_SERVICE_VERSION = /^[a-z0-9]*$/;
+export const PATTERN_LABEL = /(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?/;
+export const PATTERN_TAG = /^[A-Za-z0-9]([-A-Za-z0-9_.]*[A-Za-z0-9])?$/;
+export const PATTERN_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,64}$/;
+export const PATTERN_IMAGE = /^\S+$/;
+export const PATTERN_PORT_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/;
+export const PATTERN_COMPONENT_VERSION = /^[a-z0-9]+$/;
+export const PATTERN_PIPELINE_NAME = /[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/;
+export const PATTERN_HOST = /^(?=^.{3,255}$)[*a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
 
-export const PATTERN_URL = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)\/?$/
-export const PATTERN_EMAIL = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
-export const PATTERN_IP = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
-export const PATTERN_IP_MASK = /^[1-9][0-9]*$/
-export const PATTERN_PORT = /^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/
-export const PATTERN_IMAGE_TAG = /^(.*?)([0-9a-zA-Z/]*)(:[-.\w]*[0-9a-zA-Z])*$/
-export const PATTERN_APPTEMPLATE_VERSION = /[a-zA-Z0-9](\.?-?[a-zA-Z0-9])+(\s?\[?[a-zA-Z0-9]+\.?-?\]?)*/
-export const PATTERN_UTC_TIME = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]+Z/
-export const PATTERN_ENV_NAME = /^[-._a-zA-Z][-._a-zA-Z0-9]*$/
-export const CRON_EXP = /^(@(annually|yearly|monthly|weekly|daily|hourly|midnight))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})$/
+export const PATTERN_URL = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)\/?$/;
+export const PATTERN_EMAIL = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+export const PATTERN_IP = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
+export const PATTERN_IP_MASK = /^[1-9][0-9]*$/;
+export const PATTERN_PORT = /^([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/;
+export const PATTERN_IMAGE_TAG = /^(.*?)([0-9a-zA-Z/]*)(:[-.\w]*[0-9a-zA-Z])*$/;
+export const PATTERN_APPTEMPLATE_VERSION = /[a-zA-Z0-9](\.?-?[a-zA-Z0-9])+(\s?\[?[a-zA-Z0-9]+\.?-?\]?)*/;
+export const PATTERN_UTC_TIME = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]+Z/;
+export const PATTERN_ENV_NAME = /^[-._a-zA-Z][-._a-zA-Z0-9]*$/;
+export const CRON_EXP = /^(@(annually|yearly|monthly|weekly|daily|hourly|midnight))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})$/;
+export const PATTERN_SEGMENT_ID = /^(1677721[0-5]|167772[0-1]\d{2}|16777[0-1]\d{3}|1677[0-6]\d{4}|167[0-6]\d{5}|16[0-6]\d{6}|1[0-5]\d{7}|\d{1,7})$/;
+export const PATTERN_MTU = /^([1-8]\d{0,3}|9000)$/;
 
 export const PIPELINE_TASKS = {
   All: [
@@ -640,7 +642,7 @@ export const PIPELINE_TASKS = {
     'script',
   ],
   Review: ['input', 'withSonarQubeEnv', 'waitForQualityGate'],
-}
+};
 
 export const PIPELINE_CONDITIONS = [
   'branch',
@@ -649,13 +651,13 @@ export const PIPELINE_CONDITIONS = [
   'not',
   'allOf',
   'anyOf',
-]
+];
 
 export const KIND_GROUP_MAP = {
   Deployment: 'apps',
   StatefulSet: 'apps',
   Service: '',
-}
+};
 
 export const GRAY_RELEASE_CANARY_CONTENT = [
   {
@@ -667,13 +669,13 @@ export const GRAY_RELEASE_CANARY_CONTENT = [
   { label: 'macOS', icon: 'macos', value: '( Mac OS X ([\\d.])+)' },
   { label: 'Android', icon: 'android', value: '(Android)' },
   { label: 'iOS', icon: 'ios', value: '(OS [\\d.]+)' },
-]
+];
 
 export const S2IPULLPOLICY_MAP = {
   Always: 'always',
   IfNotPresent: 'if-not-present',
   Never: 'never',
-}
+};
 
 export const TRACING_COLORS_HEX = [
   '#17B8BE',
@@ -696,7 +698,7 @@ export const TRACING_COLORS_HEX = [
   '#125C77',
   '#4DC19C',
   '#776E57',
-]
+];
 
 export const TIME_MICROSECOND_MAP = {
   '1h': 3600000,
@@ -706,7 +708,7 @@ export const TIME_MICROSECOND_MAP = {
   '12h': 43200000,
   '24h': 86400000,
   '2d': 172800000,
-}
+};
 
 export const COLORS_MAP = {
   white: '#fff',
@@ -734,9 +736,9 @@ export const COLORS_MAP = {
   lightestBlue: '#c7deef',
   lightestRed: '#fae7e5',
   lightestYellow: '#ffe1be',
-}
+};
 
-export const ALERT_GROUP_MAX_LIMIT = 40
+export const ALERT_GROUP_MAX_LIMIT = 40;
 
 export const MILLISECOND_IN_TIME_UNIT = {
   s: 1000,
@@ -744,7 +746,7 @@ export const MILLISECOND_IN_TIME_UNIT = {
   h: 3600000,
   d: 86400000,
   w: 604800000,
-}
+};
 
 export const PROVISIONERS = [
   {
@@ -931,12 +933,12 @@ export const PROVISIONERS = [
       },
     ],
   },
-]
+];
 
-export const S2I_SUPPORTED_TYPES = ['java', 'nodejs', 'python']
-export const B2I_SUPPORTED_TYPES = ['jar', 'war', 'binary']
+export const S2I_SUPPORTED_TYPES = ['java', 'nodejs', 'python'];
+export const B2I_SUPPORTED_TYPES = ['jar', 'war', 'binary'];
 
-export const MAX_SIZE_UPLOAD = 2 * 1024 * 1024
+export const MAX_SIZE_UPLOAD = 2 * 1024 * 1024;
 
 export const SCHEME_OPTIONS = [
   {
@@ -947,15 +949,15 @@ export const SCHEME_OPTIONS = [
     label: 'https://',
     value: 'https://',
   },
-]
+];
 
-export const SCHEME_REG = /^(http(s)?:\/\/)?(.*)/
+export const SCHEME_REG = /^(http(s)?:\/\/)?(.*)/;
 
 export const LIST_DEFAULT_ORDER = {
   deployments: 'updateTime',
   jobs: 'updateTime',
   pods: 'startTime',
-}
+};
 
 export const API_VERSIONS = {
   deployments: 'apis/apps/v1',
@@ -1005,12 +1007,12 @@ export const API_VERSIONS = {
   gateways: 'kapis/gateway.kubesphere.io/v1alpha1',
   cds: 'kapis/gitops.kubesphere.io/v1alpha1',
   codeRepos: 'kapis/devops.kubesphere.io/v1alpha3',
-}
+};
 
 export const MONITOR_GRAPH_COLORS = [
   {
     get nameI18nKey() {
-      return t('DEFAULT_COLORS')
+      return t('DEFAULT_COLORS');
     },
     colors: [
       '#60acfc',
@@ -1024,7 +1026,7 @@ export const MONITOR_GRAPH_COLORS = [
   },
   {
     get nameI18nKey() {
-      return t('COOL_COLORS')
+      return t('COOL_COLORS');
     },
     colors: [
       '#678ed7',
@@ -1038,7 +1040,7 @@ export const MONITOR_GRAPH_COLORS = [
   },
   {
     get nameI18nKey() {
-      return t('WARM_COLORS')
+      return t('WARM_COLORS');
     },
     colors: [
       '#717adf',
@@ -1050,7 +1052,7 @@ export const MONITOR_GRAPH_COLORS = [
       '#ffe88e',
     ],
   },
-]
+];
 
 export const COMPONENT_ICON_MAP = {
   kubernetes: 'kubernetes',
@@ -1066,7 +1068,7 @@ export const COMPONENT_ICON_MAP = {
   notification: 'mail',
   servicemesh: 'istio',
   metrics_server: 'monitor',
-}
+};
 
 export const CLUSTER_PROVIDER_ICON = {
   'Aliyun ACK': 'aliyun',
@@ -1078,7 +1080,7 @@ export const CLUSTER_PROVIDER_ICON = {
   'QingCloud Kubernetes Engine': 'qingcloud',
   'Tencent Kubernetes Engine': 'kubernetes',
   kubesphere: 'kubernetes',
-}
+};
 
 export const CLUSTER_PROVIDERS = [
   {
@@ -1121,7 +1123,7 @@ export const CLUSTER_PROVIDERS = [
     value: 'Tencent Kubernetes Engine',
     icon: 'kubernetes',
   },
-]
+];
 
 export const CLUSTER_PRESET_GROUPS = [
   {
@@ -1140,21 +1142,21 @@ export const CLUSTER_PRESET_GROUPS = [
     label: 'demo',
     value: 'demo',
   },
-]
+];
 
 export const CLUSTER_GROUP_TAG_TYPE = {
   production: 'warning',
   development: 'default',
   testing: 'info',
   demo: 'primary',
-}
+};
 
 export const ROLE_QUERY_KEY = {
   globalroles: 'globalrole',
   workspaceroles: 'workspacerole',
   clusterroles: 'clusterrole',
   roles: 'role',
-}
+};
 
 export const DEFAULT_CLUSTER = {
   apiVersion: 'cluster.kubesphere.io/v1alpha1',
@@ -1168,28 +1170,28 @@ export const DEFAULT_CLUSTER = {
     },
     name: globals?.config?.defaultClusterName || 'default',
   },
-}
+};
 
 export const CREDENTIAL_KEY = {
   username_password: 'basic-auth',
   ssh: 'ssh-auth',
   secret_text: 'secret-text',
   kubeconfig: 'kubeconfig',
-}
+};
 
 export const CREDENTIAL_TYPE_LIST = [
   'credential.devops.kubesphere.io/basic-auth',
   'credential.devops.kubesphere.io/ssh-auth',
   'credential.devops.kubesphere.io/secret-text',
   'credential.devops.kubesphere.io/kubeconfig',
-]
+];
 
 export const CREDENTIAL_DISPLAY_KEY = {
   'basic-auth': 'username_password',
   'ssh-auth': 'ssh',
   'secret-text': 'secret_text',
   kubeconfig: 'kubeconfig',
-}
+};
 
 export const FED_ACTIVE_STATUS = {
   FederatedApplication: 'Running',
@@ -1198,7 +1200,7 @@ export const FED_ACTIVE_STATUS = {
   FederatedStatfulSet: 'Running',
   FederatedVolume: 'Running',
   FederatedIngress: 'Running',
-}
+};
 
 export const APP_LABEL_MODULES = [
   'applications',
@@ -1208,12 +1210,12 @@ export const APP_LABEL_MODULES = [
   'jobs',
   'cronjobs',
   'services',
-]
+];
 
 export const NODE_ROLE_TAG_TYPE = {
   master: 'secondary',
   worker: 'default',
-}
+};
 
 export const OMIT_TOTAL_REPLICAS = kind => [
   `${kind}.spec.template.totalReplicas`,
@@ -1221,6 +1223,6 @@ export const OMIT_TOTAL_REPLICAS = kind => [
   `${kind}.totalReplicas`,
   `${kind}.Deployment.totalReplicas`,
   `${kind}.workload.totalReplicas`,
-]
+];
 
-export const PAGESIZE_OPTION = [10, 20, 50, 100]
+export const PAGESIZE_OPTION = [10, 20, 50, 100];
