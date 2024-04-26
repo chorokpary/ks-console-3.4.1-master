@@ -33,7 +33,7 @@ const CarbonCo2 = ({ x, y, w, h,
         <div className="grid-stack-item-content">
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_CARBON_FOOTPRINT')} - {t('RESOURCES_CO2_EMISSIONS')}</label>
+              <label>{t('RESOURCES_CARBON_FOOTPRINT')} - {t('RESOURCES_CO2_EMISSIONS')} ({t('RESOURCES_ONE_TO_AVERAGE')})</label>
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_chart_2">
