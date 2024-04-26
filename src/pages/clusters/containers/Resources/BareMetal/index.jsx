@@ -111,46 +111,57 @@ export default class BareMetalDashboard extends React.Component {
   getInitMetricData = async () => {
     const metric_state = await this.customStore.fetchMetric({
       expr: `group by(target) (redfish_system_power_state)`,
+      ...this.props.match.params,
     });
 
     const metric_model = await this.customStore.fetchMetric({
       expr: `group by(target, model) (redfish_chassis_model_info)`,
+      ...this.props.match.params,
     });
 
     const metric_type = await this.customStore.fetchMetric({
       expr: `group by(instance, machine) (node_uname_info)`,
+      ...this.props.match.params,
     });
 
     const metric_core = await this.customStore.fetchMetric({
       expr: `count(node_cpu_seconds_total{mode="idle"}) without (cpu,mode)`,
+      ...this.props.match.params,
     });
 
     const metric_cpu = await this.customStore.fetchMetric({
       expr: `sum by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[5m]))`,
+      ...this.props.match.params,
     });
 
     const metric_memory_total = await this.customStore.fetchMetric({
       expr: `avg by(instance) (node_memory_MemTotal_bytes)`,
+      ...this.props.match.params,
     });
 
     const metric_memory_free = await this.customStore.fetchMetric({
       expr: `avg by (instance) (node_memory_MemFree_bytes)`,
+      ...this.props.match.params,
     });
 
     const metric_disk_total = await this.customStore.fetchMetric({
       expr: `sum by(instance) (node_filesystem_size_bytes)`,
+      ...this.props.match.params,
     });
 
     const metric_disk_free = await this.customStore.fetchMetric({
       expr: `sum by(instance) (node_filesystem_avail_bytes)`,
+      ...this.props.match.params,
     });
 
     const metric_power = await this.customStore.fetchMetric({
       expr: `sum by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      ...this.props.match.params,
     });
 
     const metric_temperature = await this.customStore.fetchMetric({
       expr: `avg by(target) (redfish_chassis_temperature_celsius)`,
+      ...this.props.match.params,
     });
 
     this.setState({
@@ -395,11 +406,11 @@ export default class BareMetalDashboard extends React.Component {
           const metrics = this.getMetricData('metricTypeData', record);
           const machine = get(metrics, 'metric.machine', 'NOT');
           const x86Array = ['x86_64', 'amd'];
-          const typeText = x86Array.includes(machine.toLowerCase())
-            ? t('RESOURCES_AMD64')
-            : machine == 'NOT'
-              ? '-'
-              : t('RESOURCES_ARM64');
+          const armArray = ['arm', 'aarch64'];
+          const typeText =
+            x86Array.includes(machine.toLowerCase()) ? t('RESOURCES_AMD64')
+              : armArray.includes(machine.toLowerCase()) ? t('RESOURCES_ARM64')
+                : '-';
           return <Text title={`${typeText}`} />;
         },
       },

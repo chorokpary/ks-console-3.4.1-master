@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 
+import * as common from 'utils/resources'
 import BareMetalStore from 'stores/resources/baremetal'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { get } from 'lodash'
@@ -48,30 +49,44 @@ const Bmc = ({ bmc, ...props }) => {
   const [usedArmCnt, setUsedArmCnt] = useState(0)
   const [usedX86Cnt, setUsedX86Cnt] = useState(0)
 
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+
+    return { start, end }
+  }
+
   useEffect(() => {
     let cleanupTrigger = true;
     const getData = async () => {
       setLoading(true)
 
       try {
+        const timeRange = getTimeRange(paramsData)
+        const paramsData = {
+          step: (10 * 3600) + 's',
+          times: 72,
+          start: timeRange.start,
+          end: timeRange.end
+        }
+
         const data = await bareMetalStore.fetchList({ ...props })
 
-        let promql_node_list = ""
+        let promql_node_list = []
         data.map((obj) => {
-          const nodeName = get(obj, 'name')
-          promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+          promql_node_list.push(get(obj, 'name'))
         })
 
-        // console.log("promql_node_list : " + JSON.stringify(promql_node_list))
-
         const getMetricType = await customStore.fetchMetric({
-          expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+          expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list.join('|')}"})`,
           cluster: props.cluster
         })
 
         const getMetricData = await customStore.fetchMetric({
           expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
-          cluster: props.cluster
+          cluster: props.cluster,
+          ...paramsData
         })
         if (cleanupTrigger) {
           setNodeData(data)
@@ -94,47 +109,43 @@ const Bmc = ({ bmc, ...props }) => {
 
   useEffect(() => {
     if (nodeData.length > 0) {
-      let total_x86_count = 0;
-      let total_arm_count = 0;
 
       let total_power = 0;
       let total_x86_power = 0;
       let total_arm_power = 0;
 
+      let total_x86_count = 0;
+      let total_arm_count = 0;
+
       let used_x86_cnt = 0;
       let used_arm_cnt = 0;
-      nodeData.map(obj => {
-        const instance = toJS(obj.system_type == "C" ? obj.name : obj.nodeExporter.ip)
-        const target = toJS(obj.openBMC?.address);
+      nodeData.map((obj) => {
+        const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
+        const target = obj.openBMC?.address;
 
         const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
-
         const type = get(type_data, 'metric.machine', '')
         const x86Array = ['x86_64', 'amd']
         const armArray = ['arm', 'aarch64']
 
-        if (metricType.length > 0) {
-          if (x86Array.includes(type.toLowerCase())) total_x86_count++;
-          if (armArray.includes(type.toLowerCase())) total_arm_count++;
+        if (x86Array.includes(type.toLowerCase())) total_x86_count++;
+        if (armArray.includes(type.toLowerCase())) total_arm_count++;
+
+        const power_data = metricData.find(item => (get(item, 'metric.target') === target))
+        const power = Number(get(power_data, 'values[0][1]', 0)) / 1000;
+
+        if (x86Array.includes(type.toLowerCase())) {
+          total_x86_power += power;
+          used_x86_cnt += 1
+          total_power += power;
         }
-
-        if (metricData.length > 0) {
-
-          const power_data = metricData.find(item => (get(item, 'metric.target') === target))
-          const power = Number(get(power_data, 'value[1]', 0)) / 1000;
-
-          if (x86Array.includes(type.toLowerCase())) {
-            total_x86_power += power
-            used_x86_cnt += 1
-            total_power += power;
-          }
-          if (armArray.includes(type.toLowerCase())) {
-            total_arm_power += power;
-            used_arm_cnt += 1
-            total_power += power;
-          }
+        if (armArray.includes(type.toLowerCase())) {
+          total_arm_power += power;
+          used_arm_cnt += 1
+          total_power += power;
         }
       })
+
       setUsedX86Cnt(used_x86_cnt)
       setUsedArmCnt(used_arm_cnt)
 
@@ -167,15 +178,15 @@ const Bmc = ({ bmc, ...props }) => {
   }, [nodeData, metricType, metricData])
 
   const getCo2 = (num) => {
-    return (Math.round((num * 0.4781) / 0.1) * 0.1).toFixed(1)
+    return (num * 0.4781).toFixed(1)
   }
 
   const getTree = (num) => {
-    return (Math.round((num * 0.1157625) / 0.1) * 0.1).toFixed(1)
+    return (num * 0.1157625).toFixed(1)
   }
 
   const getCost = (num) => {
-    return (num * 111.16).toFixed(0)
+    return Math.round(num * 111.16)
   }
 
   return (

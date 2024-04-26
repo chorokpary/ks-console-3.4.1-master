@@ -39,6 +39,14 @@ const Carbon = (props) => {
     return () => { clearTimeout(timer) }
   }, [])
 
+  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
+
+    return { start, end }
+  }
+
   const fetchData = async () => {
 
     const { data } = props.store.list;
@@ -46,18 +54,28 @@ const Carbon = (props) => {
     // node list
     const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
 
-    let promql_node_list = ""
+    const timeRange = getTimeRange(paramsData)
+    const paramsData = {
+      step: (10 * 3600) + 's',
+      times: 72,
+      start: timeRange.start,
+      end: timeRange.end
+    }
+
+    let promql_node_list = []
     nodeList.map((obj) => {
-      const nodeName = get(obj, 'name')
-      promql_node_list += promql_node_list != "" ? ("|" + nodeName) : nodeName;
+      promql_node_list.push(get(obj, 'name'))
     })
 
     const metric_type = await customStore.fetchMetric({
-      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list}"})`,
+      expr: `group by(instance, machine) (node_uname_info{nodename=~"${promql_node_list.join('|')}"})`,
+      ...props.match.params
     })
 
     const metric_power = await customStore.fetchMetric({
       expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      ...props.match.params,
+      ...paramsData
     })
 
     let total_power = 0;
@@ -80,7 +98,7 @@ const Carbon = (props) => {
       if (armArray.includes(type.toLowerCase())) total_arm_count++;
 
       const power_data = metric_power.find(item => (get(item, 'metric.target') === target))
-      const power = Number(get(power_data, 'value[1]', 0)) / 1000;
+      const power = Number(get(power_data, 'values[0][1]', 0)) / 1000;
 
       if (x86Array.includes(type.toLowerCase())) {
         total_x86_power += power;
@@ -102,14 +120,14 @@ const Carbon = (props) => {
     setX86Kwh(total_x86_power > 1000 ? common.fnAddCommar(total_x86_power) : total_x86_power.toFixed(1))
 
     // CO2 발생량
-    setUseCo2((Math.round((total_power * 0.4781) / 0.1) * 0.1).toFixed(1))
-    setArmCo2((Math.round((total_arm_power * 0.4781) / 0.1) * 0.1).toFixed(1))
-    setX86Co2((Math.round((total_x86_power * 0.4781) / 0.1) * 0.1).toFixed(1))
+    setUseCo2((total_power * 0.4781).toFixed(1))
+    setArmCo2((total_arm_power * 0.4781).toFixed(1))
+    setX86Co2((total_x86_power * 0.4781).toFixed(1))
 
     // 필요소나무
-    setUseTree((Math.round((total_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
-    setArmTree((Math.round((total_arm_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
-    setX86Tree((Math.round((total_x86_power * 0.1157625) / 0.1) * 0.1).toFixed(1))
+    setUseTree((total_power * 0.1157625).toFixed(1))
+    setArmTree((total_arm_power * 0.1157625).toFixed(1))
+    setX86Tree((total_x86_power * 0.1157625).toFixed(1))
 
     // 금액
     const armPrice = Math.round(total_arm_power * 111.16);
@@ -127,7 +145,7 @@ const Carbon = (props) => {
       <div className="gridbox_wrap">
         <div className="grid_item">
           <div className="grid_title">
-            <label>{t('RESOURCES_CARBON_INDICATOR')} ({getLocalTime(Date.now()).format('YYYY.MM')})</label>
+            <label>{t('RESOURCES_CARBON_INDICATOR')} ({t('RESOURCES_CARBON_INDICATOR_MONTH')})</label>
             {/* <!--<i className="ico-btn-trash"></i>--> */}
           </div>
           <div className="grid_info style_list">

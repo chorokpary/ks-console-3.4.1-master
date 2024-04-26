@@ -296,7 +296,7 @@ module.exports = {
     '주어진 Cloud-Init 스크립트가 유효하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_285:
     'VM 루트 디스크 크기는 VM 이미지 크기보다 커야합니다.',
-  RESOURCES_MMS_ERROR_DESC_286: 'VM 프로비저닝에는 풍미가 제공되지 않습니다',
+  RESOURCES_MMS_ERROR_DESC_286: 'VM 프로비저닝에는 Flavor가 제공되지 않습니다',
   RESOURCES_MMS_ERROR_DESC_287: '선택한 노드는 아키텍처 호환이 아닙니다',
   RESOURCES_MMS_ERROR_DESC_288:
     '클러스터 노드 중 어느 것도 주어진 아키텍처를 지원하지 않습니다',
@@ -305,7 +305,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_291:
     '주어진 VM 이미지는 VM 프로비저닝을위한 준비가되어 있지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_292:
-    'VM 풍미를 업데이트하지 못하면 새로운 루트 디스크 크기가 원래보다 커야합니다.',
+    'VM Flavor를 업데이트하지 못하면 새로운 루트 디스크 크기가 원래보다 커야합니다.',
   RESOURCES_MMS_ERROR_DESC_293: '선택된 VM 동작은 지원되지 않습니다',
   RESOURCES_MMS_ERROR_DESC_340: '노드를 찾을 수 없습니다',
   RESOURCES_MMS_ERROR_DESC_341: '기능은 발견되지 않습니다',
