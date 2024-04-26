@@ -169,7 +169,7 @@ function handleResponse(response, reject, request = {}) {
         return data
       }
 
-      const error = formatError(response, data)
+      const error = formatError(response, data.detail ? data.detail : data)
 
       if (typeof reject === 'function') {
         return reject(error, response)

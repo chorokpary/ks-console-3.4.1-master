@@ -72,11 +72,11 @@ export default class BaseStore {
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
-  getWatchListUrl = (params = {}) =>
-    `${this.apiVersion}/watch${this.getPath(params)}/${this.module}`
+  // getWatchListUrl = (params = {}) =>
+  //   `${this.apiVersion}/watch${this.getPath(params)}/${this.module}`
 
-  getWatchUrl = (params = {}) =>
-    `${this.getWatchListUrl(params)}/${params.name}`
+  // getWatchUrl = (params = {}) =>
+  //   `${this.getWatchListUrl(params)}/${params.name}`
 
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/${this.module

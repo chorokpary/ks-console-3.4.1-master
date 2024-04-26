@@ -435,12 +435,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -452,8 +453,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -465,12 +466,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -545,6 +547,7 @@ const RegistModal = props => {
                         name="vcpus"
                         defaultValue={vcpus}
                         style={{ width: '100%' }}
+                        onChange={e => setVcpus(e)}
                       />
                     </Form.Item>
                     &nbsp;&nbsp;
@@ -614,9 +617,9 @@ const RegistModal = props => {
                 >
                   <UnitSlider
                     name="root_disk"
-                    max={128}
+                    max={2000}
                     min={0}
-                    marks={getMarks(128)}
+                    marks={getMarks(2000)}
                     defaultValue={rootDisk}
                     unit={'GiB'}
                     withInput
@@ -648,9 +651,9 @@ const RegistModal = props => {
                           {ephemeralDiskActive && (
                             <div className={`${styles.select_inner_content}`}>
                               <UnitSlider
-                                max={40}
+                                max={2000}
                                 min={0}
-                                marks={getMarks(40)}
+                                marks={getMarks(2000)}
                                 defaultValue={ephemeralDisk}
                                 unit={'GiB'}
                                 withInput
