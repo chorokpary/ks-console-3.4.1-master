@@ -176,7 +176,6 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
                     {!networkList?.length && (
                       <tr>
                         <td colSpan="6" className="no-data">
-                          {/* <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p> */}
                           <p>{t('RESOURCES_FIP_NO_NETWORK')}</p>
                         </td>
                       </tr>
