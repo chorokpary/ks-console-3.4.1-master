@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Form,
   Input,
-  TextArea,
   Select,
   Checkbox,
   Toggle,
@@ -17,11 +16,7 @@ import { PATTERN_USER_NAME, COLORS_MAP } from 'utils/constants';
 
 import styles from './index.scss';
 
-const regexName = /^[a-z][a-z0-9-]*\.[a-z]*\/[a-z0-9]+$/;
-
-//                 /^[a-zA-Z0-9]+[.][a-zA-Z0-9]+/[a-zA-Z0-9]+$/
-
-// /^([a-z0-9]+[.][a-z]+)\/([a-zA-Z0-9\-]+[a-zA-Z])$/;
+const regexName = /^[a-z][a-z0-9-]*\.[a-z]{2,}\/[a-z0-9]+$/;
 
 const RegistModal = props => {
   const hostDeviceStore = new HostDeviceStore();
@@ -57,12 +52,27 @@ const RegistModal = props => {
   }, []);
 
   // 체크 리스트 시작 ==================================================
-
+  const nextIndex = useRef(0);
   const handleSingleCheck = (checked, obj, index) => {
+    console.log();
     if (checked) {
       setCheckItems(prev => [...prev, obj.device_name]);
-      setAddRowList(prev => [
-        ...prev,
+      // setAddRowList(prev => [
+      //   ...prev,
+      //   {
+      //     name: '',
+      //     vendor_id: obj.vendor_id,
+      //     vendor_name: obj.vendor_name,
+      //     device_id: obj.device_id,
+      //     device_name: obj.device_name,
+      //     isExternal: dataList[index].isExternal,
+      //     isGpu: dataList[index].isGpu,
+      //     description: '',
+      //     idx: nextIndex.current += 1,
+      //   },
+      // ]);
+      setAddRowList([
+        ...addRowList,
         {
           name: '',
           vendor_id: obj.vendor_id,
@@ -72,8 +82,10 @@ const RegistModal = props => {
           isExternal: dataList[index].isExternal,
           isGpu: dataList[index].isGpu,
           description: '',
+          idx: (nextIndex.current += 1),
         },
       ]);
+      console.log('single Check');
     } else {
       setCheckItems(checkItems.filter(el => el !== obj.device_name));
       setAddRowList(
@@ -88,23 +100,29 @@ const RegistModal = props => {
       const idArray = [];
       dataList.forEach(el => idArray.push(el.device_name));
       setCheckItems(idArray);
-      setAddRowList(
-        dataList.map(data => ({
-          name: '',
-          vendor_id: data.vendor_id,
-          vendor_name: data.vendor_name,
-          device_id: data.device_id,
-          device_name: data.device_name,
-          isExternal: data.isExternal,
-          isGpu: data.isGpu,
-          description: '',
-        }))
-      );
+
+      // setAddRowList(
+      //   dataList.map(data => {
+      //     return {
+      //       name: '',
+      //       vendor_id: data.vendor_id,
+      //       vendor_name: data.vendor_name,
+      //       device_id: data.device_id,
+      //       device_name: data.device_name,
+      //       isExternal: data.isExternal,
+      //       isGpu: data.isGpu,
+      //       description: '',
+      //     };
+      //   })
+      // );
     } else {
       setCheckItems([]);
       setAddRowList([]);
     }
   };
+  useEffect(() => {
+    console.log('addRowList\n', addRowList);
+  }, [addRowList]);
 
   const handleDelete = name => {
     setCheckItems(checkItems.filter(el => el !== name));
@@ -130,18 +148,19 @@ const RegistModal = props => {
     setDataList(valuesData);
   };
 
-  const handleInput = (e, i, type) => {
+  const handleInput = (value, i, type) => {
     const valuesAddRowList = [...addRowList];
 
     if (type.indexOf('description') != -1) {
-      valuesAddRowList[i].description = e;
+      valuesAddRowList[i].description = value;
     } else {
-      valuesAddRowList[i].name = e;
-      if (PATTERN_USER_NAME.test(e)) {
+      valuesAddRowList[i].name = value;
+      if (PATTERN_USER_NAME.test(value)) {
         setIsCheckName(false);
       }
     }
-    setAddRowList(valuesAddRowList);
+
+    // setAddRowList(valuesAddRowList);
   };
 
   // 체크 리스트 끝 ==================================================
@@ -386,7 +405,7 @@ const RegistModal = props => {
                       <thead></thead>
                       <tbody>
                         {addRowList?.map((v, i) => (
-                          <tr key={i}>
+                          <tr key={`${v.name}-${i}`}>
                             <td>
                               <Button
                                 icon="substract"
@@ -409,11 +428,13 @@ const RegistModal = props => {
                                 ]}
                               >
                                 <Input
-                                  name={`name`}
+                                  name={`name-${v.idx}`}
                                   type="text"
                                   value={v.name}
                                   placeholder={t('RESOURCES_NAME')}
-                                  onChange={e => handleInput(e, i, 'name')}
+                                  onChange={e => {
+                                    handleInput(e, i, `name`);
+                                  }}
                                 />
                               </Form.Item>
                             </td>
@@ -451,9 +472,9 @@ const RegistModal = props => {
                                   placeholder={t('RESOURCES_DESCRIPTION')}
                                   id="description"
                                   name={`description`}
-                                  onChange={e =>
-                                    handleInput(e, i, 'description')
-                                  }
+                                  onChange={e => {
+                                    handleInput(e, i, 'description');
+                                  }}
                                 />
                               </Form.Item>
                             </td>

@@ -39,8 +39,7 @@ module.exports = {
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
   RESOURCES_COMPARE_CPU_POWER_CONSUMPTION: 'CPU & 소비 전력량 비교',
-  RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE:
-    'CPU 소비 전력량 비교',
+  RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE: 'CPU 소비 전력량 비교',
   RESOURCES_CPU_TYPE: 'CPU 타입',
   RESOURCES_CUDA_SUPPORT_CHECK: 'CUDA 지원 여부',
   RESOURCES_DHCP_SERVER: 'DHCP서버',
@@ -364,7 +363,7 @@ module.exports = {
   RESOURCES_ETHERNET_TYPE: '이더넷 유형',
   RESOURCES_NAME: '이름',
   RESOURCES_NAME_VALID_DESC:
-    '이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다',
+    '이름은 (소문자 or 숫자.최상위도메인)/(소문자 or 숫자) 형식으로 입력 가능합니다',
   RESOURCES_NAME_EMPTY_DESC: '이름을 입력해 주세요.',
   RESOURCES_SELECT_NAME_TIP: '이름을 선택해 주세요.',
   RESOURCES_NAME_CHECK_DESC: '이름을 확인해 주세요.',
