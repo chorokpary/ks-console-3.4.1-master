@@ -258,7 +258,7 @@ const RegistModal = props => {
         data.name == '' ||
         (!externalBool &&
           (data.segment_id == undefined || data.segment_id == '')) ||
-        !PATTERN_SEGMENT_ID.test(data.segment_id) ||
+        (data.type !== 'FLAT' && !PATTERN_SEGMENT_ID.test(data.segment_id)) ||
         !PATTERN_MTU.test(data.mtu) ||
         data.cidr == undefined ||
         data.cidr == '' ||
@@ -367,6 +367,25 @@ const RegistModal = props => {
     } else {
       a.classList.add('hide');
     }
+  };
+
+  const segmentIdValidator = (rule, value, callback) => {
+    const { data } = form.current.props;
+    if (data.type !== 'FLAT') {
+      if (!value) {
+        return callback({
+          message: t('RESOURCES_SEGMENT_ID_EMPTY_DESC'),
+        });
+      }
+
+      if (!PATTERN_SEGMENT_ID.test(value)) {
+        return callback({
+          message: t('RESOURCES_SEGMENT_ID_VALID'),
+        });
+      }
+      // callback();
+    }
+    callback();
   };
 
   return (
@@ -514,11 +533,7 @@ const RegistModal = props => {
                         rules={[
                           {
                             required: true,
-                            message: t('RESOURCES_SEGMENT_ID_EMPTY_DESC'),
-                          },
-                          {
-                            pattern: PATTERN_SEGMENT_ID,
-                            message: t('RESOURCES_SEGMENT_ID_VALID'),
+                            validator: segmentIdValidator,
                           },
                         ]}
                       >
