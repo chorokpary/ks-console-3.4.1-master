@@ -34,6 +34,7 @@ const RegistModal = props => {
   const [rootDisk, setRootDisk] = useState('10GiB');
   const [ephemeralDisk, setEphemeralDisk] = useState('0GiB');
   const [ephemeralDiskActive, setEphemeralDiskActive] = useState(false);
+  const [sizeEmpty, setSizeEmpty] = useState(false);
 
   const [vcpus, setVcpus] = useState(1);
 
@@ -395,11 +396,22 @@ const RegistModal = props => {
   const handleEphemeralDiskActive = () => {
     if (ephemeralDiskActive) {
       setEphemeralDiskActive(false);
-      setEphemeralDisk(0);
+      setEphemeralDisk('0GiB');
+      setSizeEmpty(false);
     } else {
       setEphemeralDiskActive(true);
     }
   };
+
+  useEffect(() => {
+    const val = Number(ephemeralDisk.substring(0, ephemeralDisk.length - 2));
+
+    if (val === 0) {
+      setSizeEmpty(true);
+    } else {
+      setSizeEmpty(false);
+    }
+  }, [ephemeralDisk]);
 
   const getMarks = max => {
     const count = 5;
@@ -632,7 +644,12 @@ const RegistModal = props => {
               <Form.Item label={t('RESOURCES_TEMPORARY_DISK')}>
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
-                    <div className={styles.cont_box_wrap}>
+                    {/* <div className={styles.cont_box_wrap}> */}
+                    <div
+                      className={`${styles.cont_box_wrap} ${
+                        sizeEmpty ? styles.formErrorStyle : ''
+                      }`}
+                    >
                       <div className={styles.cont_box_section}>
                         <div className={styles.cont_box_wrap}>
                           <h6 className={styles.label}>
