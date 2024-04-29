@@ -42,12 +42,23 @@ const RegistModal = props => {
   const [image, setImage] = useState();
 
   const [importSource, setImportSource] = useState();
+  const [storageClassOptions, setStorageClassOptions] = useState([]);
+  const [storageClass, setStorageClass] = useState();
 
   useEffect(() => {
     const getStoregeClassData = async () => {
       const listStoregeClass = await volumeStore.fetchStoregeClass(props);
-      setStoregeClassDataList(listStoregeClass.sces);
+      const opt = listStoregeClass.sces
+        .filter(obj => obj.is_vm_default_class === true)
+        .map(obj => {
+          return {
+            label: t(obj.name),
+            value: t(obj.name),
+          };
+        });
+      setStorageClassOptions(opt);
     };
+
     const getImageStore = async () => {
       const listImageBuild = await imageStore.fetchList({
         cluster: props.cluster,
@@ -69,19 +80,6 @@ const RegistModal = props => {
     }
   }, [images]);
 
-  const storageClassOptions = () => {
-    const opt = storegeClassDataList
-      .filter(obj => obj.is_default_class == true)
-      .map(obj => {
-        return {
-          label: t(obj.name),
-          value: t(obj.name),
-        };
-      });
-
-    return opt;
-  };
-
   const imageOptions = () => {
     if (images.length === 0) {
       return [];
@@ -94,6 +92,12 @@ const RegistModal = props => {
     });
     return opt;
   };
+
+  useEffect(() => {
+    if (storageClassOptions.length > 0) {
+      setStorageClass(storageClassOptions[0].value);
+    }
+  }, [storageClassOptions]);
 
   const accessModeOptions = [
     { label: 'RWO (Read Write Once)', value: 'ReadWriteOnce' },
@@ -371,8 +375,11 @@ const RegistModal = props => {
                 <Form.Item label={t('RESOURCES_STOREGE_CLASS')}>
                   <Select
                     name="storage_class"
-                    defaultValue={'openebs-hostpath'}
-                    options={storageClassOptions()}
+                    defaultValue={storageClass}
+                    options={storageClassOptions}
+                    onChange={e => {
+                      setStorageClass(e);
+                    }}
                   />
                 </Form.Item>
 
