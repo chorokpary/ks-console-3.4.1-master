@@ -423,7 +423,9 @@ const RegistModal = props => {
                                   },
                                   {
                                     pattern: regexName,
-                                    message: t('RESOURCES_INVALID_NAME_DESC'),
+                                    message: t(
+                                      'RESOURCES_INVALID_NAME_HOSTDEVICES_DESC'
+                                    ),
                                   },
                                 ]}
                               >
