@@ -65,7 +65,10 @@ const Status = props => {
             <div className={styles.itemMainRemoveCursor}>
               <div className={styles.icon}>
                 {/* <Icon name="network-router" size={40} /> */}
-                <i class="ico-type-externalnetwork"></i>
+                <i
+                  class="ico-type-externalnetwork"
+                  style={{ width: '40px', height: '40px' }}
+                ></i>
               </div>
               <div className={styles.content}>
                 <div className={styles.text}>
