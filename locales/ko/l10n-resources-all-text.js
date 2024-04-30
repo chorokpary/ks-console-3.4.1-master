@@ -39,8 +39,7 @@ module.exports = {
   RESOURCES_CONSOLE_LOG: 'Console 로그',
   RESOURCES_CONSOLE_LOG_VIEW: 'Console 로그 보기',
   RESOURCES_COMPARE_CPU_POWER_CONSUMPTION: 'CPU & 소비 전력량 비교',
-  RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE:
-    'CPU 소비 전력량 비교',
+  RESOURCES_CPU_POWER_CONSUMPTION_ONE_TO_AVERAGE: 'CPU 소비 전력량 비교',
   RESOURCES_CPU_TYPE: 'CPU 타입',
   RESOURCES_CUDA_SUPPORT_CHECK: 'CUDA 지원 여부',
   RESOURCES_DHCP_SERVER: 'DHCP서버',
@@ -364,7 +363,7 @@ module.exports = {
   RESOURCES_ETHERNET_TYPE: '이더넷 유형',
   RESOURCES_NAME: '이름',
   RESOURCES_NAME_VALID_DESC:
-    '이름은 (소문자)/(필수)(소문자 or 숫자) 형식으로 입력 가능합니다',
+    '이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 숫자) 형식으로 입력 가능합니다.',
   RESOURCES_NAME_EMPTY_DESC: '이름을 입력해 주세요.',
   RESOURCES_SELECT_NAME_TIP: '이름을 선택해 주세요.',
   RESOURCES_NAME_CHECK_DESC: '이름을 확인해 주세요.',
@@ -737,6 +736,8 @@ module.exports = {
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
   RESOURCES_INVALID_NAME_DESC:
     '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
+  RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
+    '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
