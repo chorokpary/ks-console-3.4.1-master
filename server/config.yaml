@@ -33,7 +33,7 @@ server:
     mm3Url: http://edgetron-service.edgestack.svc.cluster.local:8080
     cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
     harborUrl: http://registry-harbor-portal.harbor.svc.cluster.local:80
-    imagebuildlUrl: http://cmp-imageuploader.cmp.svc.cluster.local:31001
+    imagebuildlUrl: http://cmp-imageuploader.cmp.svc.cluster.local:8080
 
     # url: http://192.168.16.80:30881
     # wsUrl: ws://192.168.16.80:30881
