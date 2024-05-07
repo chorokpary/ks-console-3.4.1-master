@@ -31,8 +31,8 @@ import Table from 'components/Tables/List';
 import Indicator from 'components/Base/Indicator';
 import { getLocalTime, map_accessModes } from 'utils';
 import VolumeStore from 'stores/resources/volumes';
-import styles from './index.scss';
 import ResourceTable from 'clusters/components/ResourceTable';
+import styles from './index.scss';
 
 @withClusterList({
   store: new VolumeStore(),
@@ -163,6 +163,15 @@ export default class ResourcesVolumes extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: (project, data) => {
+          return (
+            <Link
+              to={`/clusters/${cluster}/storageclasses/${data.storage_class}/volumes`}
+            >
+              {data.storage_class}
+            </Link>
+          );
+        },
       },
       {
         title: t('RESOURCES_CAPACITY'),

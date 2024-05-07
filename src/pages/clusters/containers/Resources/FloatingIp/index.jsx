@@ -135,23 +135,36 @@ export default class FloatingIp extends React.Component {
         dataIndex: 'instance_type',
         isHideable: true,
         width: 'auto',
-        render: instance_type => (
-          <Avatar title={instance_type?.toUpperCase()} />
-        ),
+        render: instance_type => <p>{instance_type?.toUpperCase()}</p>,
       },
       {
         title: t('RESOURCES_RESOURCE_NAME'),
         dataIndex: 'instance_name',
         isHideable: true,
         width: 'auto',
-        render: instance_name => <Avatar title={instance_name} />,
+        render: (instance_name, item) => {
+          return (
+            <Link
+              to={`/clusters/${cluster}/vms/${item?.instance_name}/${item?.instance_id}`}
+            >
+              {item?.instance_name}
+            </Link>
+          );
+        },
       },
       {
         title: t('RESOURCES_NETWORK_NAME'),
         dataIndex: 'network',
-        render: (name, floatingip) => (
-          <Avatar title={floatingip.network_alias} />
-        ),
+        width: 'auto',
+        render: (floating_ip, item) => {
+          return (
+            <Link
+              to={`/clusters/${cluster}/networks/${item?.network_alias}/${item?.network}`}
+            >
+              {item?.network_alias}
+            </Link>
+          );
+        },
       },
       {
         title: t('RESOURCES_STATIC_IP'),

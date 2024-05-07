@@ -21,34 +21,33 @@ const FloatingIpDetail = props => {
 
   useEffect(() => {
     fetchData();
+    console.log('props', props);
+    console.log(detail);
   }, []);
 
   const fetchData = async () => {
-    await store.fetchDetail(props.match.params);
-    const detail = toJS(store.detail);
-    setDetail(detail.floating_ip);
+    const test = await store.fetchDetail(props.match.params);
+    const storeDetail = toJS(store.detail);
+    setDetail(storeDetail.floating_ip);
 
-    if (detail.floating_ip?.target_ip) {
+    if (storeDetail.floating_ip?.target_ip) {
       setFipConnected(true);
     } else {
       setFipConnected(false);
     }
+    console.log('test0', test);
   };
 
   const { cluster } = props.match.params;
   const listUrl = `/clusters/${cluster}/floatingip`;
 
   const { routing } = props.rootStore;
-
+  const PATH_DETAIL = '/clusters/:cluster/floatingip/:name/:id';
   const PATH = `${listUrl}/${props.match.params.id}`;
 
   // const showEdit = !globals.config.presetClusterRoles.includes(
   //   props.match.params.name
   // );
-  useEffect(() => {
-    console.log('dfdsfsdfsfds', props.match.params.name);
-    console.log('dfdsfsdfsfds', props.match.params.id);
-  }, [props]);
 
   const getOperations = () => {
     return fipConnected
@@ -123,11 +122,6 @@ const FloatingIpDetail = props => {
   };
 
   const getAttrs = () => {
-    // const detail = toJS(store.detail)
-
-    // if (isEmpty(detail)) {
-    //     return
-    // }
     return [
       {
         name: t('RESOURCES_CLUSTER'),
@@ -163,18 +157,53 @@ const FloatingIpDetail = props => {
     ],
   };
 
+  const Status = () => {
+    console.log('detailFip/......asdasd..\n');
+
+    const detailFip = get(store.detail, 'floating_ip');
+    console.log('detailFip/........\n', detailFip);
+    if (detailFip.instance_type === 'vm') {
+      return (
+        <>
+          <DetailVmList
+            type={t('RESOURCES_FLOATING_IP')}
+            variables="id"
+            id={detailFip.instance_id}
+          />
+        </>
+      );
+    }
+    if (detailFip.instance_type === 'lb') {
+      return (
+        <>
+          <LbPanel
+            type={t('RESOURCES_FLOATING_IP')}
+            variables="id"
+            id={detailFip.instance_id}
+          />
+        </>
+      );
+    }
+    return [];
+  };
+
   return (
     <>
       <DetailPage
         stores={{ detailStore: store }}
         routes={[
           {
-            path: `${PATH}/status`,
+            path: `${PATH_DETAIL}/status`,
             title: t('RESOURCES_STATE'),
             component: Status,
             exact: true,
           },
-          getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
+          getIndexRoute({
+            path: `${PATH_DETAIL}`,
+            to: `${PATH_DETAIL}/status`,
+            exact: true,
+          }),
+          // const PATH = `/clusters/${cluster}/floatingip/${props.match.params.id}`;
         ]}
         {...sideProps}
       />
@@ -183,26 +212,3 @@ const FloatingIpDetail = props => {
 };
 
 export default inject('rootStore')(observer(FloatingIpDetail));
-
-const Status = props => {
-  const detail = get(store.detail, 'floating_ip');
-  if (detail.instance_type == 'vm') {
-    return (
-      <DetailVmList
-        type={t('RESOURCES_FLOATING_IP')}
-        variables="id"
-        id={detail.instance_id}
-      />
-    );
-  }
-  if (detail.instance_type == 'lb') {
-    return (
-      <LbPanel
-        type={t('RESOURCES_FLOATING_IP')}
-        variables="id"
-        id={detail.instance_id}
-      />
-    );
-  }
-  return [];
-};
