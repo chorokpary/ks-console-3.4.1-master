@@ -811,6 +811,13 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 .table table > tbody > tr.table-row-selected > td:last-child {
   border-right: 1px solid #5680ec !important;
 }
+.table table > tbody > tr.table-row-selected > td {
+  border-bottom: 1px solid #5680ec !important;
+}
+
+.table table > tbody > tr.table-row-selected + tr.table-row-selected > td {
+  border-top: 0 !important;
+}
 
 /* 앱스토어 header 로고, 앱 상세 탭, 뒤로가기, 앱 세부정보 text */
 .src-components-Layout-Header-index__inAppsPage
