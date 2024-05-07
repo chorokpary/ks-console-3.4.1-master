@@ -55,7 +55,6 @@ server:
     # imagebuildlUrl: http://10.24.3.34:31001
     # imagebuildHarborUrl: https://192.168.61.145
 
-
   mm3UserInfo:
     userName: 'edgetron'
     passWord: 'password'
