@@ -5,11 +5,14 @@ import { observer, inject } from 'mobx-react';
 import classnames from 'classnames';
 import { Icon, Button, Notify } from '@kube-design/components';
 
+import { Link } from 'react-router-dom';
+
 import { Panel } from 'components/Base';
 import styles from './index.scss';
 
 const Status = props => {
   const store = props.detailStore;
+  const cluster = props.match.params.cluster;
 
   const [externalNetwork, setExternalNetwork] = useState(null);
   const [internalNetwork, setInternalNetwork] = useState([]);
@@ -17,7 +20,7 @@ const Status = props => {
   useEffect(() => {
     const fnGetExternalNetwork = async () => {
       const externalData = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`,
+        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`
       );
       setExternalNetwork(externalData?.network);
     };
@@ -26,8 +29,7 @@ const Status = props => {
       setInternalNetwork([]);
       const promises = (store.detail.router?.internal).map(async item => {
         const internalData = await request.get(
-          `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/` +
-          item.id,
+          `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${item.id}`
         );
         setInternalNetwork(internalNetwork => [
           ...internalNetwork,
@@ -56,7 +58,13 @@ const Status = props => {
               </div>
               <div className={styles.content}>
                 <div className={styles.text}>
-                  <div>{externalNetwork.name}</div>
+                  <div>
+                    <Link
+                      to={`/clusters/${cluster}/networks/${externalNetwork.name}/${externalNetwork.id}`}
+                    >
+                      {externalNetwork.name}
+                    </Link>
+                  </div>
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
@@ -88,7 +96,14 @@ const Status = props => {
                   </div>
                   <div className={styles.content} key={index}>
                     <div className={styles.text}>
-                      <div>{obj.name}</div>
+                      {/* <div>{obj.name}</div> */}
+                      <div>
+                        <Link
+                          to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}
+                        >
+                          {obj.name}
+                        </Link>
+                      </div>
                       <p>{t('RESOURCES_NAME')}</p>
                     </div>
                     <div className={styles.text}>

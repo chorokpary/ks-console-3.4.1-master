@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import { Panel } from 'components/Base';
 import { Icon, Button, Notify } from '@kube-design/components';
 
+import { Link } from 'react-router-dom';
 import styles from './index.scss';
 
 const Status = props => {
@@ -15,7 +16,7 @@ const Status = props => {
   const [externalNetwork, setExternalNetwork] = useState(null);
   const [internalNetwork, setInternalNetwork] = useState([]);
 
-  const { cluster, namespace } = props.match.params;
+  const { cluster, namespace, workspace } = props.match.params;
 
   const getPath = ({ cluster, namespace } = {}) => {
     let path = '';
@@ -55,8 +56,12 @@ const Status = props => {
     store.detail.router?.external && fnGetExternalNetwork();
     setInternalNetwork([]);
     store.detail.router?.internal && fnGetInternalNetwork();
+    console.log('store', props.match.params);
   }, []);
 
+  useEffect(() => {
+    console.log('externalNetwork\n', externalNetwork);
+  }, [externalNetwork]);
   return (
     <>
       {!!externalNetwork && (
@@ -64,7 +69,6 @@ const Status = props => {
           <div className={styles.wrapper}>
             <div className={styles.itemMainRemoveCursor}>
               <div className={styles.icon}>
-                {/* <Icon name="network-router" size={40} /> */}
                 <i
                   class="ico-type-externalnetwork"
                   style={{ width: '40px', height: '40px' }}
@@ -72,7 +76,13 @@ const Status = props => {
               </div>
               <div className={styles.content}>
                 <div className={styles.text}>
-                  <div>{externalNetwork.name}</div>
+                  <div>
+                    <Link
+                      to={`/${workspace}/clusters/${cluster}/projects/${externalNetwork?.project}/networks/${externalNetwork?.name}/${externalNetwork?.id}`}
+                    >
+                      {externalNetwork?.name}
+                    </Link>
+                  </div>
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
@@ -104,7 +114,14 @@ const Status = props => {
                   </div>
                   <div className={styles.content} key={index}>
                     <div className={styles.text}>
-                      <div>{obj.name}</div>
+                      {/* <div>{obj.name}</div> */}
+                      <div>
+                        <Link
+                          to={`/${workspace}/clusters/${cluster}/projects/${obj?.project}/networks/${obj?.name}/${obj?.id}`}
+                        >
+                          {obj?.name}
+                        </Link>
+                      </div>
                       <p>{t('RESOURCES_NAME')}</p>
                     </div>
                     <div className={styles.text}>
