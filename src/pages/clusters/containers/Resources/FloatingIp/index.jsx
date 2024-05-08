@@ -147,7 +147,7 @@ export default class FloatingIp extends React.Component {
             <Link
               to={`/clusters/${cluster}/vms/${item?.instance_name}/${item?.instance_id}`}
             >
-              {item?.instance_name}
+              {instance_name}
             </Link>
           );
         },
