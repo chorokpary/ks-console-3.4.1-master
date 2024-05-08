@@ -177,7 +177,7 @@ export default inject('rootStore')(observer(FloatingIpDetail));
 const Status = () => {
   const detailFip = get(store.detail, 'floating_ip');
 
-  if (detailFip?.instance_type === 'vm' || !detailFip?.instance_type) {
+  if (detailFip?.instance_type === 'vm') {
     return (
       <>
         <DetailVmList
