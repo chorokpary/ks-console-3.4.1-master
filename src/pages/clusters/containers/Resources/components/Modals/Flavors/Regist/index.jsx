@@ -55,6 +55,11 @@ const RegistModal = props => {
       // hostDevices
       // hostDevices 에서 GPU 사용하면 host device에서 사라지고 GPU 목록에만 나와야함
       // setGpus
+      const listMediatedDevices = await store.fetchFlavorMediatedDevices(
+        props.cluster
+      );
+      const responseMediatedDevices = listMediatedDevices?.mediated_devices;
+
       const listHostDevices = await store.fetchFlavorHostDevices(props.cluster);
       const responseHostDevices = listHostDevices?.host_devices;
 
@@ -70,6 +75,15 @@ const RegistModal = props => {
           resHostDevices.push({
             label: items.name,
             value: items.name,
+          });
+        }
+      });
+
+      responseMediatedDevices?.forEach(items => {
+        if (items.is_gpu) {
+          resHostDevicesGpu.push({
+            label: items.resource_name,
+            value: items.resource_name,
           });
         }
       });
@@ -295,7 +309,6 @@ const RegistModal = props => {
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
-      // console.log(data)
       onOk({ flavor: data });
     });
   };
