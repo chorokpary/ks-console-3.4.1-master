@@ -57,9 +57,12 @@ const RegistModal = props => {
       // setGpus
       const listHostDevices = await store.fetchFlavorHostDevices(props.cluster);
       const responseHostDevices = listHostDevices?.host_devices;
+      const listMediatedDevices = await store.fetchFlavorMediatedDevices(props.cluster);
+      const responseMediatedDevices = listMediatedDevices?.mediated_devices;
 
       const resHostDevices = [];
       const resHostDevicesGpu = [];
+      const resMediatedDevicesGpu = [];
       responseHostDevices?.forEach(items => {
         if (items.is_gpu) {
           resHostDevicesGpu.push({
@@ -74,7 +77,17 @@ const RegistModal = props => {
         }
       });
       setHostDevices(resHostDevices);
-      setGpus(resHostDevicesGpu);
+
+      responseMediatedDevices?.forEach(items => {
+        if (items.is_gpu) {
+          resMediatedDevicesGpu.push({
+            label: items.resource_name,
+            value: items.resource_name,
+          });
+	}
+      });
+      const mergedGpu = [...resHostDevicesGpu, ...resMediatedDevicesGpu];
+      setGpus(mergedGpu);
 
       // extraSpecs
       const extraSpecs = await store.fetchFlavorExtraSpecs(props.cluster);
