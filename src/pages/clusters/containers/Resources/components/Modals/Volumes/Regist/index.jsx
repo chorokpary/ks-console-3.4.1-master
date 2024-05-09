@@ -108,6 +108,7 @@ const RegistModal = props => {
   const importSourceOptions = [
     { label: 'Empty', value: 'Empty' },
     { label: 'ImageVolume', value: 'ImageVolume' },
+    { label: 'UploadImage', value: 'UploadImage' },
     // { label: 'DataVolume', value: 'DataVolume' },
   ];
 
