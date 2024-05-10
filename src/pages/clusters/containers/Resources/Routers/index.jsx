@@ -16,36 +16,34 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
-import ResourceTable from 'clusters/components/ResourceTable'
+import React from 'react';
+import { toJS } from 'mobx';
+import { Avatar, Status } from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
+import ResourceTable from 'clusters/components/ResourceTable';
 
-import { Link } from 'react-router-dom'
-import { getLocalTime, showNameAndAlias } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
+import { Link } from 'react-router-dom';
+import { getLocalTime, showNameAndAlias } from 'utils';
+import { ICON_TYPES } from 'utils/constants';
 
-import RouterStore from 'stores/resources/routers'
+import RouterStore from 'stores/resources/routers';
 
 @withClusterList({
   store: new RouterStore(),
   module: 'routers',
   authKey: 'routers',
   name: t('RESOURCES_VROUTER'),
-  rowKey: 'id'
+  rowKey: 'id',
 })
 export default class Routers extends React.Component {
- 
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -60,25 +58,25 @@ export default class Routers extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
         {
           key: 'regist',
           type: 'control',
-          text:  t('RESOURCES_CREATE'),
+          text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
             trigger('router.regist', {
-            ...this.props.match.params,
-            type: this.name,
-            success: getData,
-          }),
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
         },
       ],
       selectActions: [
@@ -98,13 +96,12 @@ export default class Routers extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
-
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { cluster } = this.props.match.params;
     return [
       {
         title: t('NAME'),
@@ -120,9 +117,8 @@ export default class Routers extends React.Component {
               to={`/clusters/${cluster}/routers/${name}/${record.id}`}
               title={name}
             />
-          )
-        }
-        
+          );
+        },
       },
       {
         title: t('PROJECT'),
@@ -159,9 +155,7 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: internal => (
-          internal.map((item) => (<p>{item.name}</p>))
-        ),
+        render: internal => internal.map(item => <p>{item.name}</p>),
       },
       {
         title: t('RESOURCES_EXTERNAL_NETWORK'),
@@ -169,9 +163,15 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: external => (
-          <p>{external?.name}</p>
-        ),
+        render: external => {
+          return (
+            <Link
+              to={`/clusters/${cluster}/networks/${external?.name}/${external?.id}`}
+            >
+              {external?.name}
+            </Link>
+          );
+        },
       },
       {
         title: t('RESOURCES_REGIST_DATE'),
@@ -181,16 +181,14 @@ export default class Routers extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('timestamp'),
         render: timestamp => (
-          <p>
-            {getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-          </p>
+          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
   get columnSearch() {
@@ -204,35 +202,31 @@ export default class Routers extends React.Component {
         dataIndex: 'enable_snat',
         title: t('RESOURCES_SNAT_OPTION'),
         search: true,
-      }
-    ]
+      },
+    ];
   }
 
-
   render() {
-    
-    const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
+    const { bannerProps, tableProps } = this.props;
     return (
       <ListPage {...this.props}>
-      <Banner
-        {...bannerProps}
-        icon="router"
-        tabs={this.tabs}
-        title={t('RESOURCES_VROUTER')}
-        description={t('RESOURCES_VROUTER_DESC')}
-      />
-      <ResourceTable
-        {...tableProps}
-        emptyProps={this.emptyProps}
-        className={'table-2-6 table-4-3'}
-        itemActions={this.itemActions}
-        tableActions={this.tableActions}
-        columns={this.getColumns()}
-        columnSearch={this.columnSearch}
-      />
-    </ListPage>
-     
-    )
+        <Banner
+          {...bannerProps}
+          icon="router"
+          tabs={this.tabs}
+          title={t('RESOURCES_VROUTER')}
+          description={t('RESOURCES_VROUTER_DESC')}
+        />
+        <ResourceTable
+          {...tableProps}
+          emptyProps={this.emptyProps}
+          className={'table-2-6 table-4-3'}
+          itemActions={this.itemActions}
+          tableActions={this.tableActions}
+          columns={this.getColumns()}
+          columnSearch={this.columnSearch}
+        />
+      </ListPage>
+    );
   }
 }

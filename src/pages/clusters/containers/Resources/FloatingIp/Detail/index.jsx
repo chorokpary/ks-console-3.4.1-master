@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getIndexRoute } from 'utils/router.config';
 import DetailPage from 'clusters/containers/Base/Detail';
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
@@ -25,10 +24,11 @@ const FloatingIpDetail = props => {
 
   const fetchData = async () => {
     await store.fetchDetail(props.match.params);
-    const detail = toJS(store.detail);
-    setDetail(detail.floating_ip);
+    const storeDetail = toJS(store.detail);
 
-    if (detail.floating_ip?.target_ip) {
+    setDetail(storeDetail.floating_ip);
+
+    if (storeDetail.floating_ip?.target_ip) {
       setFipConnected(true);
     } else {
       setFipConnected(false);
@@ -39,16 +39,11 @@ const FloatingIpDetail = props => {
   const listUrl = `/clusters/${cluster}/floatingip`;
 
   const { routing } = props.rootStore;
-
   const PATH = `${listUrl}/${props.match.params.id}`;
 
   // const showEdit = !globals.config.presetClusterRoles.includes(
   //   props.match.params.name
   // );
-  useEffect(() => {
-    console.log('dfdsfsdfsfds', props.match.params.name);
-    console.log('dfdsfsdfsfds', props.match.params.id);
-  }, [props]);
 
   const getOperations = () => {
     return fipConnected
@@ -123,11 +118,6 @@ const FloatingIpDetail = props => {
   };
 
   const getAttrs = () => {
-    // const detail = toJS(store.detail)
-
-    // if (isEmpty(detail)) {
-    //     return
-    // }
     return [
       {
         name: t('RESOURCES_CLUSTER'),
@@ -144,7 +134,7 @@ const FloatingIpDetail = props => {
     ];
   };
 
-  if (store.isLoading && !store.detail.name) {
+  if (store.isLoading && !store.detail?.name) {
     return <Loading className="ks-page-loading" />;
   }
 
@@ -184,23 +174,26 @@ const FloatingIpDetail = props => {
 
 export default inject('rootStore')(observer(FloatingIpDetail));
 
-const Status = props => {
-  const detail = get(store.detail, 'floating_ip');
-  if (detail.instance_type == 'vm') {
+const Status = () => {
+  const detailFip = get(store.detail, 'floating_ip');
+
+  if (detailFip?.instance_type === 'vm') {
     return (
-      <DetailVmList
-        type={t('RESOURCES_FLOATING_IP')}
-        variables="id"
-        id={detail.instance_id}
-      />
+      <>
+        <DetailVmList
+          type={t('RESOURCES_FLOATING_IP')}
+          variables="id"
+          id={detailFip.instance_id}
+        />
+      </>
     );
   }
-  if (detail.instance_type == 'lb') {
+  if (detailFip?.instance_type === 'lb') {
     return (
       <LbPanel
         type={t('RESOURCES_FLOATING_IP')}
         variables="id"
-        id={detail.instance_id}
+        id={detailFip.instance_id}
       />
     );
   }

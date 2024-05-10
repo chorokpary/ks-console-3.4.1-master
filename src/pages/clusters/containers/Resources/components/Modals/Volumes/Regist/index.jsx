@@ -49,11 +49,12 @@ const RegistModal = props => {
     const getStoregeClassData = async () => {
       const listStoregeClass = await volumeStore.fetchStoregeClass(props);
       const opt = listStoregeClass.sces
-        .filter(obj => obj.is_vm_default_class === true)
+        // .filter(obj => obj.is_vm_default_class === true)
         .map(obj => {
           return {
             label: t(obj.name),
             value: t(obj.name),
+            is_vm_default_class: obj.is_vm_default_class,
           };
         });
       setStorageClassOptions(opt);
@@ -94,8 +95,12 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
+    console.log('storageClassOptions', storageClassOptions);
     if (storageClassOptions.length > 0) {
-      setStorageClass(storageClassOptions[0].value);
+      const opt = storageClassOptions.filter(
+        obj => obj.is_vm_default_class === true
+      );
+      setStorageClass(opt[0].value);
     }
   }, [storageClassOptions]);
 

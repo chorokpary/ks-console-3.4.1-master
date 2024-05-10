@@ -41,9 +41,9 @@ const FloatingIpModal = props => {
       const floatingStore = new FloatingIpStore();
 
       const data = {};
-      (data.name = floatingId),
-        (data.id = floatingId),
-        (data.instance_type = 'vm');
+      data.name = floatingId;
+      data.id = floatingId;
+      data.instance_type = 'vm';
       data.instance_id = vmId;
       data.target_network = networkId;
       data.target_ip = networkIp;
@@ -132,18 +132,10 @@ const FloatingIpModal = props => {
     getVmCreateData();
   }, []);
 
-  const handleSelect = id => {
-    networkList.map(obj => {
-      if (obj.id == id) {
-        setNetworkId(obj.id);
-        setNetworkIp(obj.network_ip);
-      }
-    });
-
-    // 셀렉트 선택 시 셋팅 변경
+  useEffect(() => {
     if (floatingJsonData.length > 0) {
       floatingJsonData.map(data => {
-        if (data.internal == id) {
+        if (data.internal === networkId) {
           setFloatingList(data.floating_data);
           if (data.floating_data.length > 0) {
             setFloatingId(data.floating_data[0].id);
@@ -154,7 +146,15 @@ const FloatingIpModal = props => {
         }
       });
     }
-  };
+  }, [networkId, networkIp]);
+
+  useEffect(() => {
+    floatingList.map(obj => {
+      if (obj.floating_ip === floatingIp) {
+        setFloatingId(obj.id);
+      }
+    });
+  }, [floatingIp]);
 
   const networkOptions = () => {
     const opt = networkList.map(obj => ({
@@ -169,6 +169,7 @@ const FloatingIpModal = props => {
     const opt = floatingList.map(obj => ({
       label: t(obj.floating_ip),
       value: t(obj.floating_ip),
+      id: obj.id,
     }));
     return opt;
   };
@@ -208,7 +209,14 @@ const FloatingIpModal = props => {
               name="network"
               defaultValue={networkIp}
               options={networkOptions()}
-              onChange={value => handleSelect(value)}
+              onChange={value => {
+                networkList.map(obj => {
+                  if (obj.id === value) {
+                    setNetworkId(obj.id);
+                    setNetworkIp(obj.network_ip);
+                  }
+                });
+              }}
             />
           </Form.Item>
 

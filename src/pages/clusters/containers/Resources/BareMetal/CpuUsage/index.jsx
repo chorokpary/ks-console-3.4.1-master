@@ -8,7 +8,9 @@ import { getLocalTime } from 'utils'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import BareMetalStore from 'stores/resources/baremetal'
 
-import { CustomChart } from 'components/Charts'
+import { CustomChart, SimpleArea } from 'components/Charts'
+
+import styles from './index.scss'
 
 const CpuUsage = (props) => {
 
@@ -23,6 +25,11 @@ const CpuUsage = (props) => {
   const [armPowerData, setArmPowerData] = useState([]);
   const [x86PowerPercent, setX86PowerPercent] = useState(0);
   const [armPowerPercent, setArmPowerPercent] = useState(0);
+
+  const [x86CpuDataJson, setX86CpuDataJson] = useState({});
+  const [armCpuDataJson, setArmCpuDataJson] = useState({});
+  const [x86PowerDataJson, setX86PowerDataJson] = useState({});
+  const [armPowerDataJson, setArmPowerDataJson] = useState({});
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -161,6 +168,9 @@ const CpuUsage = (props) => {
     const x86Power = sumValuesByTime(x86_data)
     const armPower = sumValuesByTime(arm_data)
 
+    setX86PowerDataJson(x86Power)
+    setArmPowerDataJson(armPower)
+
     setX86PowerData([x86Power])
     setArmPowerData([armPower])
     // ------------------------------------------------------------------------------
@@ -201,70 +211,35 @@ const CpuUsage = (props) => {
     const x86CpuArray = [metric_cpu_x86?.[0]];
     const armCpuArray = [metric_cpu_arm?.[0]];
 
+    setX86CpuDataJson(x86CpuArray[0])
+    setArmCpuDataJson(armCpuArray[0])
+
     setX86CpuData(x86CpuArray)
     setArmCpuData(armCpuArray)
     // ------------------------------------------------------------------------------
 
   }
 
-  const getMonitoringCfgs = () => {
+  const getMonitoringCfgsPower = () => {
     return [
       {
         type: 'utilisation',
-        title: 'CPU_USAGE_X86',
-        legend: ['CPU_USAGE_X86'],
-        data: x86CpuData,
-      },
-      {
-        type: 'utilisation',
-        title: 'CPU_USAGE_ARM',
-        legend: ['CPU_USAGE_ARM'],
-        data: armCpuData,
-      },
-      {
-        type: 'utilisation',
-        title: 'POWER_X86',
-        legend: ['POWER_X86'],
-        data: x86PowerData,
-      },
-      {
-        type: 'utilisation',
-        title: 'POWER_ARM',
-        legend: ['POWER_ARM'],
-        data: armPowerData,
+        title: t('RESOURCES_POWER_USAGE')+ ' (W)',
+        legend: ['ARM', 'x86'],
+        data: [armPowerDataJson, x86PowerDataJson],
       },
     ]
   }
 
-  const getComposedData = () => {
-
-    const configs = getMonitoringCfgs()
-
-    const x86CpuConfigData = getAreaChartOps(configs.find(item => item.title === 'CPU_USAGE_X86'))
-    const armCpuConfigData = getAreaChartOps(configs.find(item => item.title === 'CPU_USAGE_ARM'))
-    const x86PowerConfigData = getAreaChartOps(configs.find(item => item.title === 'POWER_X86'))
-    const armPowerConfigData = getAreaChartOps(configs.find(item => item.title === 'POWER_ARM'))
-
-    // 기준이되는 데이터 생성
-    let standardArray = [];
-    standardArray = x86CpuConfigData.data.length > 0 ? x86CpuConfigData.data : armCpuConfigData.data;
-    if (standardArray.length < 1) {
-      standardArray = x86PowerConfigData.data.length > 0 ? x86PowerConfigData.data : armPowerConfigData.data;
-    }
-
-    const ComposedData = [];
-    standardArray.map((obj) => {
-      const data = {
-        time: obj.time,
-        x86_usage: get(_.find(x86CpuConfigData.data, { 'time': obj.time }), 'CPU_USAGE_X86', 0),
-        arm_usage: get(_.find(armCpuConfigData.data, { 'time': obj.time }), 'CPU_USAGE_ARM', 0),
-        x86_power: get(_.find(x86PowerConfigData.data, { 'time': obj.time }), 'POWER_X86', 0),
-        arm_power: get(_.find(armPowerConfigData.data, { 'time': obj.time }), 'POWER_ARM', 0),
-      }
-      ComposedData.push(data)
-    })
-    // console.log("ComposedData : "+ JSON.stringify(ComposedData))
-    return ComposedData;
+  const getMonitoringCfgsCpu = () => {
+    return [
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_CPU_USAGE') + ' (%)',
+        legend: ['ARM', 'x86'],
+        data: [armCpuDataJson, x86CpuDataJson],
+      },
+    ]
   }
 
   const onClickTab = (step) => {
@@ -276,6 +251,9 @@ const CpuUsage = (props) => {
     }
     setStepParams(get(stepData, step))
   }
+
+  const configs_cpu = getMonitoringCfgsCpu()
+  const configs_power = getMonitoringCfgsPower()
 
   return (
     <>
@@ -307,46 +285,43 @@ const CpuUsage = (props) => {
           </div>
           <div className="grid_info style_chart_2">
             <div className="box type_chart">
-              <div className="cont1">
-                <div className="chart_tab no-tab">
-                  <div className="chart_group">
-                    <div className="title">
-                      <i className="ico-type24-arm"></i>
-                      <h5>{t('RESOURCES_ARM')} ({t('RESOURCES_ONE_TO_AVERAGE')})</h5>
-                    </div>
-                    <div className="data">
-                      <div className="number_wrap data-r">
-                        <p><i className="ico-type24-powericon"></i> <span className="em">{armPowerPercent}</span> <span className="unit">W</span></p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="graph_wrap">
-                    <div className="graph_bar">
-                      <div className="bar animate-bar" style={{ width: `${armPowerPercent}%` }}></div>
-                    </div>
-                  </div>
+              <div className={styles.divwrap}>
+                <div className={styles.div_left}>
+                  {(!!!x86CpuDataJson && !!!armCpuDataJson) ?
+                        <div className={styles.divwrap}>
+                          <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+                        </div>
+                        :
+                        configs_power.map((item, index) => {
+                          const config = getAreaChartOps(item)
+
+                          if (isEmpty(config.data)) return null
+                          return (
+                            <div className={styles.divwrap} key={config.title}>
+                              <SimpleArea width="100%" {...config} />
+                            </div>
+                          )
+                        })
+                      }
                 </div>
-                <div className="chart_tab no-tab">
-                  <div className="chart_group">
-                    <div className="title">
-                      <i className="ico-type24-x86"></i>
-                      <h5>{t('RESOURCES_X86')} ({t('RESOURCES_ONE_TO_AVERAGE')})</h5>
-                    </div>
-                    <div className="data">
-                      <div className="number_wrap data-r">
-                        <p><i className="ico-type24-powericon"></i> <span className="em">{x86PowerPercent}</span> <span className="unit">W</span></p>
+                <div className={styles.div_right}>
+                    {(!!!x86CpuDataJson && !!!armCpuDataJson) ?
+                      <div className={styles.divwrap}>
+                        <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="graph_wrap">
-                    <div className="graph_bar">
-                      <div className="bar second animate-bar" style={{ width: `${x86PowerPercent}%` }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="cont2 baremetalChart">
-                <CustomChart data={getComposedData()} />
+                      :
+                      configs_cpu.map((item, index) => {
+                        const config = getAreaChartOps(item)
+
+                        if (isEmpty(config.data)) return null
+                        return (
+                          <div className={styles.divwrap} key={config.title}>
+                            <SimpleArea width="100%" {...config} />
+                          </div>
+                        )
+                      })
+                    }
+                </div>                
               </div>
             </div>
           </div>
