@@ -39,8 +39,9 @@ const Carbon = (props) => {
     return () => { clearTimeout(timer) }
   }, [])
 
-  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
-    const interval = parseFloat(step) * times
+  // 1개월 기간
+  const getTimeRange = ({ step = '3600s', times = 24, days=30 } = {}) => {
+    const interval = parseFloat(step) * times * days
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
 
@@ -55,9 +56,10 @@ const Carbon = (props) => {
     const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
 
     const timeRange = getTimeRange(paramsData)
+    // 1시간 간격 
     const paramsData = {
-      step: (10 * 3600) + 's',
-      times: 72,
+      step: (1 * 3600) + 's',
+      //times: 72,
       start: timeRange.start,
       end: timeRange.end
     }
@@ -85,7 +87,7 @@ const Carbon = (props) => {
     let total_x86_count = 0;
     let total_arm_count = 0;
 
-    await data.map((obj) => {
+    await data.map(async (obj) => {
       const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
       const target = obj.openBMC?.address;
 
@@ -100,14 +102,31 @@ const Carbon = (props) => {
       const power_data = metric_power.find(item => (get(item, 'metric.target') === target))
       const power = Number(get(power_data, 'values[0][1]', 0)) / 1000;
 
+      let instance_total_power = 0;
+      let values_count = 1;
+      if(power > 0 ){
+        const values = power_data.values;
+        values_count = power_data.values.length;
+        await values.map((item) => {
+          instance_total_power += Number(item[1])
+        })
+      }
+
+      const power_wh = Number(instance_total_power) / 1000;
+      // console.log("power_data : "+ JSON.stringify(power_data?.values))
+      // console.log("instance_total_power "+target+ ": "+ instance_total_power)
+      // console.log("values_count "+target+ ": "+ values_count)
+      // console.log("type : "+ type)
+      // console.log("power_wh : "+ power_wh)
       if (x86Array.includes(type.toLowerCase())) {
-        total_x86_power += power;
-        total_power += power;
+        total_x86_power += power_wh;
+        total_power += power_wh;
       }
       if (armArray.includes(type.toLowerCase())) {
-        total_arm_power += power;
-        total_power += power;
+        total_arm_power += power_wh;
+        total_power += power_wh;
       }
+
     })
 
     setServerTotalCount(total_arm_count + total_x86_count)
@@ -166,7 +185,7 @@ const Carbon = (props) => {
                   <i className="ico-type-power"></i>
                 </div>
                 <div className="rgt">
-                  <div className="value">{useKwh}<span>kWh</span></div>
+                  <div className="value">{Number(armKwh)+Number(x86Kwh)}<span>kWh</span></div>
                   <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armKwh}</dd></dl>
                   <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Kwh}</dd></dl>
                 </div>

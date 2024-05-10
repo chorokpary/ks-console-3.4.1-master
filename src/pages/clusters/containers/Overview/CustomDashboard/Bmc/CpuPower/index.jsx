@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import { toJS } from 'mobx'
-import { get, remove } from 'lodash'
+import { cloneDeep, get, isEmpty, omit, find, remove } from 'lodash'
 import { getAreaChartOps } from 'utils/monitoring'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { getMinuteValue, getTimeRange } from 'stores/monitoring/base'
-import { CustomChart } from 'components/Charts'
+import { CustomChart, SimpleArea } from 'components/Charts'
+
+import styles from './index.scss'
 
 const stepData = {
   h: { step: '6m', times: 10 },
@@ -31,6 +33,11 @@ const CpuPower = ({ x, y, w, h,
   const [armPowerData, setArmPowerData] = useState([]);
   const [x86PowerPercent, setX86PowerPercent] = useState(0);
   const [armPowerPercent, setArmPowerPercent] = useState(0);
+
+  const [x86CpuDataJson, setX86CpuDataJson] = useState({});
+  const [armCpuDataJson, setArmCpuDataJson] = useState({});
+  const [x86PowerDataJson, setX86PowerDataJson] = useState({});
+  const [armPowerDataJson, setArmPowerDataJson] = useState({});
 
   useEffect(() => {
     if (nodeData.length > 0) {
@@ -90,6 +97,28 @@ const CpuPower = ({ x, y, w, h,
         title: 'POWER_ARM',
         legend: ['POWER_ARM'],
         data: armPowerData,
+      },
+    ]
+  }
+
+  const getMonitoringCfgsPower = () => {
+    return [
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_POWER_USAGE')+ ' (W)',
+        legend: ['ARM', 'x86'],
+        data: [armPowerDataJson, x86PowerDataJson],
+      },
+    ]
+  }
+
+  const getMonitoringCfgsCpu = () => {
+    return [
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_CPU_USAGE') + ' (%)',
+        legend: ['ARM', 'x86'],
+        data: [armCpuDataJson, x86CpuDataJson],
       },
     ]
   }
@@ -169,6 +198,9 @@ const CpuPower = ({ x, y, w, h,
     const x86Power = sumValuesByTime(x86_data)
     const armPower = sumValuesByTime(arm_data)
 
+    setX86PowerDataJson(x86Power)
+    setArmPowerDataJson(armPower)
+
     setX86PowerData([x86Power])
     setArmPowerData([armPower])
     // ------------------------------------------------------------------------------
@@ -208,6 +240,9 @@ const CpuPower = ({ x, y, w, h,
 
     const x86CpuArray = [metric_cpu_x86?.[0]];
     const armCpuArray = [metric_cpu_arm?.[0]];
+
+    setX86CpuDataJson(x86CpuArray[0])
+    setArmCpuDataJson(armCpuArray[0])
 
     setX86CpuData(x86CpuArray)
     setArmCpuData(armCpuArray)
@@ -250,6 +285,9 @@ const CpuPower = ({ x, y, w, h,
     setStepParams(get(stepData, step))
   }
 
+  const configs_cpu = getMonitoringCfgsCpu()
+  const configs_power = getMonitoringCfgsPower()
+
   return (
     <>
       <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
@@ -281,48 +319,43 @@ const CpuPower = ({ x, y, w, h,
             </div>
             <div className="grid_info style_chart_2">
               <div className="box type_chart">
-                <div className="cont1">
-                  <div className="chart_tab no-tab">
-                    <div className="chart_group">
-                      <div className="title">
-                        <i className="ico-type24-arm"></i>
-                        <h5>{t('RESOURCES_ARM')} ({t('RESOURCES_ONE_TO_AVERAGE')})</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><i className="ico-type24-powericon"></i> <span className="em">{armPowerPercent}</span> <span className="unit">W</span></p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="graph_wrap">
-                      <div className="graph_bar">
-                        <div className="bar animate-bar" style={{ width: `${armPowerPercent}%` }}></div>
-                      </div>
-                    </div>
+                <div className={styles.divwrap}>
+                  <div className={styles.div_left}>
+                    {(!!!x86CpuDataJson && !!!armCpuDataJson) ?
+                          <div className={styles.divwrap}>
+                            <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+                          </div>
+                          :
+                          configs_power.map((item, index) => {
+                            const config = getAreaChartOps(item)
+
+                            if (isEmpty(config.data)) return null
+                            return (
+                              <div className={styles.divwrap} key={config.title}>
+                                <SimpleArea width="100%" {...config} />
+                              </div>
+                            )
+                          })
+                        }
                   </div>
-                  <div className="chart_tab no-tab">
-                    <div className="chart_group">
-                      <div className="title">
-                        <i className="ico-type24-x86"></i>
-                        <h5>{t('RESOURCES_X86')} ({t('RESOURCES_ONE_TO_AVERAGE')})</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p><i className="ico-type24-powericon"></i> <span className="em">{x86PowerPercent}</span> <span className="unit">W</span></p>
+                  <div className={styles.div_right}>
+                      {(!!!x86CpuDataJson && !!!armCpuDataJson) ?
+                        <div className={styles.divwrap}>
+                          <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="graph_wrap">
-                      <div className="graph_bar">
-                        <div className="bar second animate-bar" style={{ width: `${x86PowerPercent}%` }}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="cont2">
-                  <Loading spinning={loading}>
-                    <CustomChart data={getComposedData()} />
-                  </Loading>
+                        :
+                        configs_cpu.map((item, index) => {
+                          const config = getAreaChartOps(item)
+
+                          if (isEmpty(config.data)) return null
+                          return (
+                            <div className={styles.divwrap} key={config.title}>
+                              <SimpleArea width="100%" {...config} />
+                            </div>
+                          )
+                        })
+                      }
+                  </div>                
                 </div>
               </div>
             </div>
