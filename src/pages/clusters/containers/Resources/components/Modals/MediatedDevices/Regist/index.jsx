@@ -6,9 +6,7 @@ import {
   Input,
   Select,
   TextArea,
-  Radio,
   Toggle,
-  Loading,
   Button,
   Notify,
 } from '@kube-design/components';
@@ -324,7 +322,7 @@ const RegistModal = props => {
                     onText="on"
                     offText="off"
                     value={isGpu}
-                    onChange={e => setIsGpu(!isGpu)}
+                    onChange={() => setIsGpu(!isGpu)}
                   />
                 </Form.Item>
               </Column>
