@@ -279,7 +279,7 @@ const DetailVmList = props => {
             </div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id)}
+          {renderMonitorings(obj.id, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon
               name="chevron-down"
@@ -406,8 +406,8 @@ const DetailVmList = props => {
     );
   };
 
-  const renderMonitorings = vmId => {
-    const isExpand = false;
+  const renderMonitorings = (vmId, isExpand) => {
+    // const isExpand = false;
     const loading = false;
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;

@@ -1,43 +1,41 @@
-
-import React, { useEffect } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
-import NetworkStore from 'stores/resources/networks'
+import React, { useEffect } from 'react';
+import DetailPage from 'clusters/containers/Base/Detail';
+import NetworkStore from 'stores/resources/networks';
 import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx'
-import { get, isEmpty } from 'lodash'
+import { toJS } from 'mobx';
+import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
-import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
+import { Card } from 'components/Base';
+import { getLocalTime } from 'utils';
+import * as common from 'utils/resources';
 
+import { getIndexRoute } from 'utils/router.config';
+import Status from 'clusters/containers/Resources/Networks/Detail/Status';
 
-import { getIndexRoute } from 'utils/router.config'
-import Status from 'clusters/containers/Resources/Networks/Detail/Status'
-
-const PATH_DETAIL = '/clusters/:cluster/networks/:name/:id'
-
+const PATH_DETAIL = '/clusters/:cluster/networks/:name/:id';
 
 const store = new NetworkStore();
 
-const NetworkDetail = (props) => {
-
+const NetworkDetail = props => {
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   const fetchData = () => {
     store.fetchDetail(props.match.params);
-  }
+  };
 
-  const { cluster } = props.match.params
-  const listUrl = `/clusters/${cluster}/networks`
+  const { cluster } = props.match.params;
+  const listUrl = `/clusters/${cluster}/networks`;
 
   const { routing } = props.rootStore;
 
-  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`
+  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`;
 
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  const showEdit = !globals.config.presetClusterRoles.includes(
+    props.match.params.name
+  );
 
   const getOperations = () => [
     {
@@ -50,9 +48,9 @@ const NetworkDetail = (props) => {
         props.rootStore.triggerAction('networks.edit', {
           type: 'NETWORK_DETAIL',
           detail: toJS(store.detail.network),
-          store: store,
+          store,
           success: fetchData,
-        })
+        }),
     },
     {
       key: 'viewYaml',
@@ -63,7 +61,7 @@ const NetworkDetail = (props) => {
         props.rootStore.triggerAction('networks.yaml.view', {
           yaml: store.yaml,
           readOnly: true,
-        })
+        }),
     },
     {
       key: 'delete',
@@ -76,20 +74,20 @@ const NetworkDetail = (props) => {
         props.rootStore.triggerAction('networks.remove', {
           type: 'NETWORK_DETAIL',
           detail: toJS(store.detail),
-          store: store,
+          store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
           okText: t('RESOURCES_DELETE'),
           cancelText: t('RESOURCES_CANCEL'),
-        })
+        }),
     },
-  ]
+  ];
 
   const getAttrs = () => {
-    const detail = toJS(store.detail)
+    const detail = toJS(store.detail);
 
     if (isEmpty(detail)) {
-      return
+      return;
     }
 
     return [
@@ -119,24 +117,28 @@ const NetworkDetail = (props) => {
       },
       {
         name: t('RESOURCES_DEFAULT_ROUTE'),
-        value: detail.network.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+        value: detail.network.default_route
+          ? t('RESOURCES_USE')
+          : t('RESOURCES_NOT_USE'),
       },
       {
         name: t('External'),
-        value: detail.network.external ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+        value: detail.network.external
+          ? t('RESOURCES_USE')
+          : t('RESOURCES_NOT_USE'),
       },
       {
         name: t('RESOURCES_IP_POOL_INFORMATION'),
-        value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
+        value: `${detail.network.ip_pool.start}\n${detail.network.ip_pool.end}`,
       },
       {
         name: t('DNS'),
-        value: detail.network.dns.map(el => el + '\n'),
+        value: detail.network.dns.map(el => `${el}\n`),
       },
       {
         name: t('RESOURCES_HOST_ROUTE'),
-        value: detail.network.host_routes.map(obj =>
-          'Destination: ' + obj.destination + '\n Nexthop:' + obj.nexthop + '\n'
+        value: detail.network.host_routes.map(
+          obj => `Destination: ${obj.destination}\n Nexthop:${obj.nexthop}\n`
         ),
       },
       {
@@ -145,17 +147,19 @@ const NetworkDetail = (props) => {
       },
       {
         name: t('RESOURCES_REGIST_DATE'),
-        value: getLocalTime(detail.network.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        value: getLocalTime(detail.network.timestamp).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
       },
-    ]
-  }
+    ];
+  };
 
   if (store.isLoading && !store.detail.name) {
     return <Loading className="ks-page-loading" />;
   }
 
   const sideProps = {
-    icon: "network-duotone",
+    icon: 'network-duotone',
     module: store.module,
     name: get(store.detail, 'name'),
     // desc: get(store.detail.network, 'description', ''),
@@ -167,7 +171,7 @@ const NetworkDetail = (props) => {
         url: listUrl,
       },
     ],
-  }
+  };
 
   return (
     <>
@@ -180,12 +184,16 @@ const NetworkDetail = (props) => {
             component: Status,
             exact: true,
           },
-          getIndexRoute({ path: `${PATH_DETAIL}`, to: `${PATH_DETAIL}/status`, exact: true }),
+          getIndexRoute({
+            path: `${PATH_DETAIL}`,
+            to: `${PATH_DETAIL}/status`,
+            exact: true,
+          }),
         ]}
-        {...sideProps} />
+        {...sideProps}
+      />
     </>
-  )
-}
+  );
+};
 
 export default inject('rootStore')(observer(NetworkDetail));
-

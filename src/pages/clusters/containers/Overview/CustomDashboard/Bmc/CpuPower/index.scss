@@ -1,0 +1,65 @@
+@charset "utf-8";
+
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.title {
+  padding: 10px;
+  font-weight: 700;
+}
+
+.wrapper {
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px $light-color03;
+}
+
+.item {
+  flex: 1;
+  // margin: 0 6px;
+  padding: 6px;
+  border-radius: 4px;
+  background-color: $card-bg-color;
+}
+
+.divwrap {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  position: relative;
+  height: 220px;
+  width: 100%;
+
+  .div_left {
+    margin-right: 0px;
+    position: relative;
+    width: 50%;
+    padding: 5px;
+  }
+
+  .div_right {
+    margin-left: 0px;
+    position: relative;
+    width: 50%;
+    padding: 5px;
+  }
+}
+
+.empty {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  color: $light-color08;
+  font-size: $size-medium;
+  font-weight: 600;
+  line-height: 1.5;
+  background-color: $th-bg-color;
+  border-radius: 4px;
+}
+
+.headtext {
+  font-weight: bold;
+}

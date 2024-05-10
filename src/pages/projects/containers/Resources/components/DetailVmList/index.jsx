@@ -267,7 +267,7 @@ const DetailVmList = (props) => {
             <div>{obj.node != "N/A" ? obj.node : "-"}</div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id)}
+          {renderMonitorings(obj.id, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
           </div>
@@ -340,9 +340,9 @@ const DetailVmList = (props) => {
     )
   }
 
-  const renderMonitorings = (vmId) => {
+  const renderMonitorings = (vmId, isExpand) => {
 
-    const isExpand = false;
+    // const isExpand = false;
     const loading = false;
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>

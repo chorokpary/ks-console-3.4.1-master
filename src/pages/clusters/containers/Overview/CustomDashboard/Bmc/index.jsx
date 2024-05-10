@@ -49,8 +49,9 @@ const Bmc = ({ bmc, ...props }) => {
   const [usedArmCnt, setUsedArmCnt] = useState(0)
   const [usedX86Cnt, setUsedX86Cnt] = useState(0)
 
-  const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
-    const interval = parseFloat(step) * times
+  // 1개월 기간
+  const getTimeRange = ({ step = '3600s', times = 24, days=30 } = {}) => {
+    const interval = parseFloat(step) * times * days
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
 
@@ -65,8 +66,8 @@ const Bmc = ({ bmc, ...props }) => {
       try {
         const timeRange = getTimeRange(paramsData)
         const paramsData = {
-          step: (10 * 3600) + 's',
-          times: 72,
+          step: (1 * 3600) + 's',
+          //times: 72,
           start: timeRange.start,
           end: timeRange.end
         }
@@ -88,6 +89,8 @@ const Bmc = ({ bmc, ...props }) => {
           cluster: props.cluster,
           ...paramsData
         })
+   
+
         if (cleanupTrigger) {
           setNodeData(data)
           setMetricType(getMetricType)
@@ -108,72 +111,90 @@ const Bmc = ({ bmc, ...props }) => {
   }, [])
 
   useEffect(() => {
-    if (nodeData.length > 0) {
 
-      let total_power = 0;
-      let total_x86_power = 0;
-      let total_arm_power = 0;
+    const fetchData = async () => {
 
-      let total_x86_count = 0;
-      let total_arm_count = 0;
+      if (nodeData.length > 0) {
 
-      let used_x86_cnt = 0;
-      let used_arm_cnt = 0;
-      nodeData.map((obj) => {
-        const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
-        const target = obj.openBMC?.address;
+        let total_power = 0;
+        let total_x86_power = 0;
+        let total_arm_power = 0;
 
-        const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
-        const type = get(type_data, 'metric.machine', '')
-        const x86Array = ['x86_64', 'amd']
-        const armArray = ['arm', 'aarch64']
+        let total_x86_count = 0;
+        let total_arm_count = 0;
 
-        if (x86Array.includes(type.toLowerCase())) total_x86_count++;
-        if (armArray.includes(type.toLowerCase())) total_arm_count++;
+        let used_x86_cnt = 0;
+        let used_arm_cnt = 0;
 
-        const power_data = metricData.find(item => (get(item, 'metric.target') === target))
-        const power = Number(get(power_data, 'values[0][1]', 0)) / 1000;
+        await nodeData.map(async (obj) => {
+          const instance = obj.system_type == "C" ? obj.name : obj.nodeExporter.ip;
+          const target = obj.openBMC?.address;
 
-        if (x86Array.includes(type.toLowerCase())) {
-          total_x86_power += power;
-          used_x86_cnt += 1
-          total_power += power;
-        }
-        if (armArray.includes(type.toLowerCase())) {
-          total_arm_power += power;
-          used_arm_cnt += 1
-          total_power += power;
-        }
-      })
+          const type_data = metricType.find(item => (get(item, 'metric.instance').split(":")[0] === instance))
+          const type = get(type_data, 'metric.machine', '')
+          const x86Array = ['x86_64', 'amd']
+          const armArray = ['arm', 'aarch64']
 
-      setUsedX86Cnt(used_x86_cnt)
-      setUsedArmCnt(used_arm_cnt)
+          if (x86Array.includes(type.toLowerCase())) total_x86_count++;
+          if (armArray.includes(type.toLowerCase())) total_arm_count++;
 
-      setServerTotalCount(total_arm_count + total_x86_count)
-      setArmServerCount(total_arm_count)
-      setX86ServerCount(total_x86_count)
+          const power_data = metricData.find(item => (get(item, 'metric.target') === target))
+          const power = Number(get(power_data, 'values[0][1]', 0)) / 1000;
 
-      // 전기 사용량
-      setUseKwh(total_power)
-      setArmKwh(total_arm_power)
-      setX86Kwh(total_x86_power)
-      // CO2 발생량
-      setUseCo2(getCo2(total_power))
-      setArmCo2(getCo2(total_arm_power))
-      setX86Co2(getCo2(total_x86_power))
+          let instance_total_power = 0;
+          let values_count = 1;
+          if(power > 0 ){
+            const values = power_data.values;
+            values_count = power_data.values.length;
+            await values.map((item) => {
+              instance_total_power += Number(item[1])
+            })
+          }
+          const power_wh = Number(instance_total_power) / 1000;
 
-      // 필요소나무
-      setUseTree(getTree(total_power))
-      setArmTree(getTree(total_arm_power))
-      setX86Tree(getTree(total_x86_power))
+          if (x86Array.includes(type.toLowerCase())) {
+            total_x86_power += power_wh;
+            used_x86_cnt += 1
+            total_power += power_wh;
+          }
+          if (armArray.includes(type.toLowerCase())) {
+            total_arm_power += power_wh;
+            used_arm_cnt += 1
+            total_power += power_wh;
+          }
+        })
 
-      const armPrice = getCost(total_arm_power)
-      const x86Price = getCost(total_x86_power)
+        setUsedX86Cnt(used_x86_cnt)
+        setUsedArmCnt(used_arm_cnt)
 
-      setUsePrice(Number(armPrice) + Number(x86Price))
-      setArmPrice(armPrice)
-      setX86Price(x86Price)
-    }
+        setServerTotalCount(total_arm_count + total_x86_count)
+        setArmServerCount(total_arm_count)
+        setX86ServerCount(total_x86_count)
+
+        // 전기 사용량
+        setUseKwh(total_power)
+        setArmKwh(total_arm_power)
+        setX86Kwh(total_x86_power)
+        // CO2 발생량
+        setUseCo2(getCo2(total_power))
+        setArmCo2(getCo2(total_arm_power))
+        setX86Co2(getCo2(total_x86_power))
+
+        // 필요소나무
+        setUseTree(getTree(total_power))
+        setArmTree(getTree(total_arm_power))
+        setX86Tree(getTree(total_x86_power))
+
+        const armPrice = getCost(total_arm_power)
+        const x86Price = getCost(total_x86_power)
+
+        setUsePrice(Number(armPrice) + Number(x86Price))
+        setArmPrice(armPrice)
+        setX86Price(x86Price)
+      }
+
+  };
+  fetchData();
 
   }, [nodeData, metricType, metricData])
 

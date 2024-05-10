@@ -16,19 +16,19 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import React from 'react';
+import { toJS } from 'mobx';
+import { Avatar, Status } from 'components/Base';
+import Banner from 'components/Cards/Banner';
+import withList, { ListPage } from 'components/HOCs/withList';
+import Table from 'components/Tables/List';
 
-import { Link } from 'react-router-dom'
-import { ICON_TYPES } from 'utils/constants'
-import { getLocalTime, showNameAndAlias } from 'utils'
+import { Link } from 'react-router-dom';
+import { ICON_TYPES } from 'utils/constants';
+import { getLocalTime, showNameAndAlias } from 'utils';
 
-import RoleStore from 'stores/role'
-import FloatingIpStore from 'stores/resources/floatingip'
+import RoleStore from 'stores/role';
+import FloatingIpStore from 'stores/resources/floatingip';
 
 @withList({
   store: new FloatingIpStore(),
@@ -37,17 +37,16 @@ import FloatingIpStore from 'stores/resources/floatingip'
   name: t('RESOURCES_FLOATING_IP'),
 })
 export default class FloatingIp extends React.Component {
-
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    return []
+    return [];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
     return {
       ...tableProps.tableActions,
       actions: [
@@ -77,12 +76,12 @@ export default class FloatingIp extends React.Component {
             }),
         },
       ],
-    }
+    };
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props
-    const { workspace, cluster, namespace } = this.props.match.params
+    const { getSortOrder } = this.props;
+    const { workspace, cluster, namespace } = this.props.match.params;
 
     return [
       {
@@ -106,7 +105,9 @@ export default class FloatingIp extends React.Component {
         search: true,
         width: 'auto',
         render: project => (
-          <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
+          <Link
+            to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}
+          >
             {showNameAndAlias(project, 'project')}
           </Link>
         ),
@@ -116,31 +117,35 @@ export default class FloatingIp extends React.Component {
         dataIndex: 'instance_type',
         isHideable: true,
         width: 'auto',
-        render: (instance_type) => (
-          <Avatar
-            title={instance_type?.toUpperCase()}
-          />
-        ),
+        render: instance_type => <p>{instance_type?.toUpperCase()}</p>,
       },
       {
         title: t('RESOURCES_RESOURCE_NAME'),
         dataIndex: 'instance_name',
         isHideable: true,
         width: 'auto',
-        render: (instance_name) => (
-          <Avatar
-            title={instance_name}
-          />
-        ),
+        render: (instance_name, item) => {
+          return (
+            <Link
+              to={`/${workspace}/clusters/${cluster}/projects/${item?.project}/vms/${item?.instance_name}/${item?.instance_id}`}
+            >
+              {item?.instance_name}
+            </Link>
+          );
+        },
       },
       {
-        title: t('네트워크 이름'),
+        title: t('RESOURCES_NETWORK_NAME'),
         dataIndex: 'network',
-        render: (name, floatingip) => (
-          <Avatar
-            title={floatingip.network_alias}
-          />
-        ),
+        render: (floating_ip, item) => {
+          return (
+            <Link
+              to={`/${workspace}/clusters/${cluster}/projects/${item?.project}/networks/${item?.network_alias}/${item?.network}`}
+            >
+              {item?.network_alias}
+            </Link>
+          );
+        },
       },
       {
         title: t('RESOURCES_STATIC_IP'),
@@ -148,17 +153,16 @@ export default class FloatingIp extends React.Component {
         isHideable: true,
         width: 'auto',
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') }
+    return { desc: t('RESOURCES_NO_DATA') };
   }
 
   render() {
-
-    const { bannerProps, tableProps } = this.props
-    tableProps.rowKey = 'id'
+    const { bannerProps, tableProps } = this.props;
+    tableProps.rowKey = 'id';
 
     return (
       <ListPage {...this.props}>
@@ -175,9 +179,9 @@ export default class FloatingIp extends React.Component {
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
-          searchType='network_alias'
+          searchType="network_alias"
         />
       </ListPage>
-    )
+    );
   }
 }
