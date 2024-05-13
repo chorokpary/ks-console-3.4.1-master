@@ -18,16 +18,23 @@ import * as common from 'utils/resources'
 
 import styles from './index.scss'
 
+import ResourceStore from 'stores/resources/containerresource';
+const storeResource = new ResourceStore();
+
 const step = '5m'
 const times = 100
 
 const Status = (props) => {
   const store = props.detailStore;
-  const machines = props.detailStore.machines;
+  const machines_props = props.detailStore.machines;
   const customStore = new CustomStore();
 
+  const [machines,  setMachines] = useState([]);
   const [masterNode, setMasterNode] = useState(machines?.filter(obj => obj.name.includes('-control-plane-')))
   const [workerNode, setWorkerNode] = useState(machines?.filter(obj => !obj.name.includes('-control-plane-')))
+
+  const [detailData, setDetailData] = useState()
+  const [loading, setLoading] = useState(false)
 
   const state = [
     {
@@ -53,6 +60,26 @@ const Status = (props) => {
   ]
   const names = [t('RESOURCES_MASTER_COUNT'), t('RESOURCES_WORKER_COUNT')]
   const text = { title: t('RESOURCES_ADJUST_WORKER'), content: t('RESOURCES_CHANGE_WORKER_COUNT') }
+
+  useEffect(() => {
+
+    const getDetailData = async () => {
+      const detailData = await storeResource.fetchDetail(props.match.params)
+      setDetailData(detailData._originData);
+      //setLoading(true)
+    }
+
+    const getMachinesData = async () => {
+      const response = await storeResource.fetchDetailFlavor(props.match.params)
+      setMachines(response._originData.machines);
+
+      setMasterNode(response._originData.machines?.filter(obj => obj.name.includes('-control-plane-')))
+      setWorkerNode(response._originData.machines?.filter(obj => !obj.name.includes('-control-plane-')))
+    }
+
+    getDetailData();   
+    getMachinesData();
+  }, [machines]);
 
   const enabledActions = () => {
     return globals.app.getActions({
@@ -289,7 +316,7 @@ const Status = (props) => {
     <>
       <ReplicaCard
         module={module()}
-        detail={{ ...store.detail, state }}
+        detail={{...detailData, state }}
         names={names}
         text={text}
         onScale={handleScale()}
