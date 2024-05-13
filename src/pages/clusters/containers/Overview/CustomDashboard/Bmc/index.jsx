@@ -85,7 +85,7 @@ const Bmc = ({ bmc, ...props }) => {
         })
 
         const getMetricData = await customStore.fetchMetric({
-          expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+          expr: `sum by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
           cluster: props.cluster,
           ...paramsData
         })

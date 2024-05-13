@@ -75,7 +75,7 @@ const Carbon = (props) => {
     })
 
     const metric_power = await customStore.fetchMetric({
-      expr: `avg by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
+      expr: `sum by(target) (redfish_chassis_power_powersupply_last_power_output_watts)`,
       ...props.match.params,
       ...paramsData
     })
