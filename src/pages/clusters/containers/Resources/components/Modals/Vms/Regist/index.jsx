@@ -904,11 +904,11 @@ const RegistModal = props => {
         nextPasswordRoute.current,
       ]);
     },
+
     delColumn: id => {
       setlistPasswordRoute(listPasswordRoute.filter(el => el !== id));
     },
   };
-  console.log('setlistPasswordRoute......', listPasswordRoute);
 
   const nextFileRoute = useRef(1);
   const [listFileRoute, setlistFileRoute] = useState([1]);
@@ -1209,7 +1209,6 @@ const RegistModal = props => {
                       setTab(newTab);
                       setImageType(newTab);
                       setStorageClass('');
-                      console.log('newTab', newTab);
                     }}
                   >
                     <TabPanel label={t('RESOURCES_IMAGE')} name="I" />
@@ -1803,52 +1802,50 @@ const RegistModal = props => {
                         }}
                         checkable
                       >
-                        {listPasswordRoute.map((obj, idx) => (
-                          <div className={styles.scriptitem} key={obj}>
-                            <Columns>
-                              <Column>
-                                <Form.Item>
-                                  <Input
-                                    name={`scriptId_${obj}`}
-                                    placeholder={t('ID')}
-                                    defaultValue={
-                                      obj == 1 && isPassword
-                                        ? selectImageDistroType
-                                        : ''
-                                    }
-                                    disabled={
-                                      !(
-                                        obj === 1 &&
-                                        isPassword &&
-                                        imageType === 'B'
-                                      )
-                                    }
-                                    onChange={() => checkScriptPassword()}
-                                  />
-                                </Form.Item>
-                              </Column>
-                              <Column>
-                                <Form.Item>
-                                  <InputPassword
-                                    name={`scriptPassword_${obj}`}
-                                    placeholder={t('Password')}
-                                    onChange={() => checkScriptPassword()}
-                                  />
-                                </Form.Item>
-                              </Column>
-                            </Columns>
-                            <Button
-                              type="flat"
-                              icon="trash"
-                              className={styles.scriptdelete}
-                              onClick={() =>
-                                listPasswordRoute.length > 1 &&
-                                obj > 1 &&
-                                handlePasswordRoute.delColumn(obj)
-                              }
-                            />
-                          </div>
-                        ))}
+                        {listPasswordRoute.map((obj, idx) => {
+                          return (
+                            <div className={styles.scriptitem} key={obj}>
+                              <Columns>
+                                <Column>
+                                  <Form.Item>
+                                    <Input
+                                      name={`scriptId_${obj}`}
+                                      placeholder={t('ID')}
+                                      defaultValue={
+                                        obj === 1 ? selectImageDistroType : ''
+                                      }
+                                      disabled={
+                                        obj >= 1 && imageType === 'B'
+                                          ? false
+                                          : !!(obj === 1 && imageType === 'I')
+                                      }
+                                      onChange={() => checkScriptPassword()}
+                                    />
+                                  </Form.Item>
+                                </Column>
+                                <Column>
+                                  <Form.Item>
+                                    <InputPassword
+                                      name={`scriptPassword_${obj}`}
+                                      placeholder={t('Password')}
+                                      onChange={() => checkScriptPassword()}
+                                    />
+                                  </Form.Item>
+                                </Column>
+                              </Columns>
+                              <Button
+                                type="flat"
+                                icon="trash"
+                                className={styles.scriptdelete}
+                                onClick={() =>
+                                  listPasswordRoute.length > 1 &&
+                                  obj > 1 &&
+                                  handlePasswordRoute.delColumn(obj)
+                                }
+                              />
+                            </div>
+                          );
+                        })}
 
                         <div className="text-right">
                           <Button
