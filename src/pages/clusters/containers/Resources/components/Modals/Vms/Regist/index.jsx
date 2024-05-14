@@ -1789,20 +1789,21 @@ const RegistModal = props => {
 
                 <Form.Group
                   label={t('RESOURCES_SCRIPT')}
-                  onChange={e => setIsScript(!isScript)}
+                  onChange={() => {
+                    setIsScript(!isScript);
+                  }}
                   checkable
                 >
                   {!isUserScript && (
                     <>
                       <Form.Group
                         label={t('RESOURCES_CHANGE_PASSWORD')}
-                        onChange={e => {
-                          setIsUserScript(false);
+                        onChange={() => {
                           setIsPassword(!isPassword);
                         }}
                         checkable
                       >
-                        {listPasswordRoute.map((obj, idx) => {
+                        {listPasswordRoute.map(obj => {
                           return (
                             <div className={styles.scriptitem} key={obj}>
                               <Columns>
@@ -1811,7 +1812,7 @@ const RegistModal = props => {
                                     <Input
                                       name={`scriptId_${obj}`}
                                       placeholder={t('ID')}
-                                      defaultValue={
+                                      value={
                                         obj === 1 ? selectImageDistroType : ''
                                       }
                                       disabled={
@@ -1863,15 +1864,15 @@ const RegistModal = props => {
                           {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                         </div>
                       </Form.Group>
+
                       <Form.Group
                         label={t('RESOURCES_WRITE_FILE')}
                         onChange={e => {
-                          setIsUserScript(false);
                           setIsFileWrite(!isFileWrite);
                         }}
                         checkable
                       >
-                        {listFileRoute.map((obj, idx) => (
+                        {listFileRoute.map(obj => (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
                               <Column>
@@ -1919,15 +1920,15 @@ const RegistModal = props => {
                           {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                         </div>
                       </Form.Group>
+
                       <Form.Group
                         label={t('RESOURCES_INSTALL_PACKAGE')}
-                        onChange={e => {
-                          setIsUserScript(false);
+                        onChange={() => {
                           setIsPackage(!isPackage);
                         }}
                         checkable
                       >
-                        {listPackageRoute.map((obj, idx) => (
+                        {listPackageRoute.map(obj => (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
                               <Column>
@@ -1985,34 +1986,34 @@ const RegistModal = props => {
                       </Form.Group>
                     </>
                   )}
+
                   {!isPassword && !isPackage && !isFileWrite && (
-                    <Form.Group
-                      label={t('RESOURCES_CUSTOM')}
-                      checkable
-                      onChange={e => {
-                        setIsPassword(false);
-                        setIsPackage(false);
-                        setIsFileWrite(false);
-                        setIsUserScript(!isUserScript);
-                      }}
-                    >
-                      <Form.Item className={styles.textarea}>
-                        <TextArea
-                          name="userScript"
-                          rows="5"
-                          placeholder={decodeURIComponent(
-                            '%23cloud-config%0A%20%0Assh_pwauth%3A%20true%0Ausers%3A%0A%20%20-%20default%0A%20%20-%20name%3A%20adminuser%0A%20%20%20%20sudo%3A%20ALL%3D%28ALL%29%20NOPASSWD%3AALL%0A%20%0Achpasswd%3A%0A%20%20expire%3A%20false%0A%20%20list%3A%0A%20%20%20%20-%20ubuntu%3Adefaultpassword%0A%20%20%20%20-%20adminuser%3AP0werfu1PW%0A%20%0Aruncmd%3A%0A%20%20-%20systemctl%20disable%20firewalld%0A%20%0Awrite_files%3A%0A%20%20-%20path%3A%20/home/ubuntu/simple-message.txt%0A%20%20%20%20content%3A%20%7C%0A%20%20%20%20%20%20cloud-init%20syntax%0A%20%20%20%20%20%20create%20a%20simple%20file'
-                          )}
-                        />
-                      </Form.Item>
-                      <div
-                        className={`form-item-error ${
-                          !isUserScriptError ? 'hide' : ''
-                        }`}
+                    <>
+                      <Form.Group
+                        label={t('RESOURCES_CUSTOM')}
+                        checkable
+                        onChange={() => {
+                          setIsUserScript(!isUserScript);
+                        }}
                       >
-                        {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
-                      </div>
-                    </Form.Group>
+                        <Form.Item className={styles.textarea}>
+                          <TextArea
+                            name="userScript"
+                            rows="5"
+                            placeholder={decodeURIComponent(
+                              '%23cloud-config%0A%20%0Assh_pwauth%3A%20true%0Ausers%3A%0A%20%20-%20default%0A%20%20-%20name%3A%20adminuser%0A%20%20%20%20sudo%3A%20ALL%3D%28ALL%29%20NOPASSWD%3AALL%0A%20%0Achpasswd%3A%0A%20%20expire%3A%20false%0A%20%20list%3A%0A%20%20%20%20-%20ubuntu%3Adefaultpassword%0A%20%20%20%20-%20adminuser%3AP0werfu1PW%0A%20%0Aruncmd%3A%0A%20%20-%20systemctl%20disable%20firewalld%0A%20%0Awrite_files%3A%0A%20%20-%20path%3A%20/home/ubuntu/simple-message.txt%0A%20%20%20%20content%3A%20%7C%0A%20%20%20%20%20%20cloud-init%20syntax%0A%20%20%20%20%20%20create%20a%20simple%20file'
+                            )}
+                          />
+                        </Form.Item>
+                        <div
+                          className={`form-item-error ${
+                            !isUserScriptError ? 'hide' : ''
+                          }`}
+                        >
+                          {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
+                        </div>
+                      </Form.Group>
+                    </>
                   )}
                 </Form.Group>
               </div>
