@@ -733,7 +733,7 @@ module.exports = {
   RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
   RESOURCES_INVALID_NAME_DESC:
-    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-) 및 마침표(.) 만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
+    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
     '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
 
