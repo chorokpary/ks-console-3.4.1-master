@@ -33,19 +33,32 @@ const Carbon = (props) => {
   const [armPrice, setArmPrice] = useState(0)
   const [x86Price, setX86Price] = useState(0)
 
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   useEffect(() => {
     let timer = setTimeout(() => { fetchData() }, 2000);
     return () => { clearTimeout(timer) }
   }, [])
 
-  // 1개월 기간
-  const getTimeRange = ({ step = '3600s', times = 24, days=30 } = {}) => {
+  // 7일 기간
+  const getTimeRange = ({ step = '3600s', times = 24, days=7 } = {}) => {
     const interval = parseFloat(step) * times * days
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
 
-    return { start, end }
+    const start_year = (new Date(start*1000)).getFullYear();
+    const start_month = (new Date(start*1000)).getMonth() + 1;
+    const start_date = (new Date(start*1000)).getDate();
+
+    const end_year = (new Date(end*1000)).getFullYear();
+    const end_month = (new Date(end*1000)).getMonth() + 1;
+    const end_date = (new Date(end*1000)).getDate();
+  
+    const startDate = `${start_year}-${start_month >= 10 ? start_month : '0' + start_month}-${start_date >= 10 ? start_date : '0' + start_date}`
+    const endDate = `${end_year}-${end_month >= 10 ? end_month : '0' + end_month}-${end_date >= 10 ? end_date : '0' + end_date}`
+
+    return { start, end, startDate, endDate }
   }
 
   const fetchData = async () => {
@@ -56,6 +69,10 @@ const Carbon = (props) => {
     const nodeList = await bareMetalStore.fetchList({ limit: 1000 })
 
     const timeRange = getTimeRange(paramsData)
+
+    setStartDate(timeRange.startDate)
+    setEndDate(timeRange.endDate)
+
     // 1시간 간격 
     const paramsData = {
       step: (1 * 3600) + 's',
@@ -164,7 +181,7 @@ const Carbon = (props) => {
       <div className="gridbox_wrap">
         <div className="grid_item">
           <div className="grid_title">
-            <label>{t('RESOURCES_CARBON_INDICATOR')} ({t('RESOURCES_CARBON_INDICATOR_MONTH')})</label>
+            <label>{t('RESOURCES_CARBON_INDICATOR')} {!!startDate && `(${startDate} ~ ${endDate})`}</label>
             {/* <!--<i className="ico-btn-trash"></i>--> */}
           </div>
           <div className="grid_info style_list">

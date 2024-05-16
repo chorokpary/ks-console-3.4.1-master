@@ -23,7 +23,7 @@
   background-color: $card-bg-color;
 }
 
-.divwrap {
+.divwrap { 
   padding-top: 5px;
   padding-bottom: 5px;
   display: flex;
@@ -32,6 +32,9 @@
   width: 100%;
 
   .div_left {
+    div {
+      padding: 1px 3px !important;
+    }
     margin-right: 0px;
     position: relative;
     width: 50%;
@@ -39,6 +42,9 @@
   }
 
   .div_right {
+    div {
+      padding: 1px 3px !important;
+    }
     margin-left: 0px;
     position: relative;
     width: 50%;

@@ -49,13 +49,27 @@ const Bmc = ({ bmc, ...props }) => {
   const [usedArmCnt, setUsedArmCnt] = useState(0)
   const [usedX86Cnt, setUsedX86Cnt] = useState(0)
 
-  // 1개월 기간
-  const getTimeRange = ({ step = '3600s', times = 24, days=30 } = {}) => {
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+
+  // 7일 기간
+  const getTimeRange = ({ step = '3600s', times = 24, days=7 } = {}) => {
     const interval = parseFloat(step) * times * days
     const end = Math.floor(Date.now() / 1000)
     const start = Math.floor(end - interval)
 
-    return { start, end }
+    const start_year = (new Date(start*1000)).getFullYear();
+    const start_month = (new Date(start*1000)).getMonth() + 1;
+    const start_date = (new Date(start*1000)).getDate();
+
+    const end_year = (new Date(end*1000)).getFullYear();
+    const end_month = (new Date(end*1000)).getMonth() + 1;
+    const end_date = (new Date(end*1000)).getDate();
+  
+    const startDate = `${start_year}-${start_month >= 10 ? start_month : '0' + start_month}-${start_date >= 10 ? start_date : '0' + start_date}`
+    const endDate = `${end_year}-${end_month >= 10 ? end_month : '0' + end_month}-${end_date >= 10 ? end_date : '0' + end_date}`
+
+    return { start, end, startDate, endDate }
   }
 
   useEffect(() => {
@@ -95,6 +109,9 @@ const Bmc = ({ bmc, ...props }) => {
           setNodeData(data)
           setMetricType(getMetricType)
           setMetricData(getMetricData)
+
+          setStartDate(timeRange.startDate)
+          setEndDate(timeRange.endDate)
 
           setLoading(false)
         }
@@ -252,6 +269,9 @@ const Bmc = ({ bmc, ...props }) => {
           usePrice={usePrice}
           armPrice={armPrice}
           x86Price={x86Price}
+
+          startDate= {startDate}
+          endDate= {endDate}
         />
       }
       {/* 전력 사용량 TOP 5 */}
