@@ -275,10 +275,6 @@ const CpuUsage = (props) => {
                   <input type="radio" name="cpupower" id="cpupower_name3" value="name5" onClick={() => onClickTab('w')} />
                   <span>{t('RESOURCES_LAST_TIME_WEEKEND')}</span>
                 </label>
-                <label htmlFor="cpupower_name4">
-                  <input type="radio" name="cpupower" id="cpupower_name4" value="name6" onClick={() => onClickTab('m')} />
-                  <span>{t('RESOURCES_LAST_TIME_MONTH')}</span>
-                </label>
               </div>
               {/* <!--<i className="ico-btn-trash"></i>--> */}
             </div>
@@ -297,7 +293,7 @@ const CpuUsage = (props) => {
 
                           if (isEmpty(config.data)) return null
                           return (
-                            <div className={styles.divwrap} key={config.title}>
+                            <div key={config.title}>
                               <SimpleArea width="100%" {...config} />
                             </div>
                           )
@@ -315,7 +311,7 @@ const CpuUsage = (props) => {
 
                         if (isEmpty(config.data)) return null
                         return (
-                          <div className={styles.divwrap} key={config.title}>
+                          <div key={config.title}>
                             <SimpleArea width="100%" {...config} />
                           </div>
                         )

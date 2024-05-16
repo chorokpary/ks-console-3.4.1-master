@@ -36,6 +36,8 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
   const [kaasData, setKaasData] = useState([]);
   const [kaasLoading, setKaasLoading] = useState(true);
 
+  const [podData, setPodData] = useState({});
+
   useEffect(() => {
 
     let cleanupTrigger = true;
@@ -55,10 +57,24 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
       const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp', ...props })
       const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp', ...props })
 
+      const podData = [
+        {
+          type: 'pod',
+          title: 'POD',
+          legend: ['Run'],
+          unit: '',
+          metricType: MetricTypes.pod_running_count,
+          data: [
+            get(metricData, `${MetricTypes.pod_running_count}.data.result[0]`, {}),
+          ],
+        },
+      ]
+
       if (cleanupTrigger) {
         setMetricData(metricData)
         handleDate(vmData, 'creation_timestamp', 'vm')
         handleDate(kaasData, 'timestamp', 'kaas')
+        handleDatePod(podData)
         setLoading(false)
       }
     };
@@ -70,25 +86,16 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
 
   }, [])
 
-  useEffect(() => {
-    const result = [
-      {
-        type: 'pod',
-        title: 'POD',
-        legend: ['Run'],
-        unit: '',
-        metricType: MetricTypes.pod_running_count,
-        data: [
-          get(metricData, `${MetricTypes.pod_running_count}.data.result[0]`, {}),
-        ],
-      },
-    ]
-    setPodContent(result?.[0])
-
-    const config = getAreaChartOps(result?.[0])
+  const handleDatePod = (list) => {
+    const config = getAreaChartOps(list?.[0])
     const lastData = config.data[config.data.length - 1];
     setPodCnt(lastData)
-  }, [metricData])
+    
+    const data = get(getAreaChartOps(list?.[0]),"data")
+    const podDataJson = {};
+    podDataJson.data = data;
+    setPodData(podDataJson)   
+  }
 
 
   // recent week
@@ -152,17 +159,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
                       <div className="number_wrap">
                         <p><span className="em">{podCnt?.Run}</span></p>
                       </div>
-                      {/* <div className="cont2">
-                    <div className="status_wrap">
-                      <div className="value">1</div>
-                      <p><span>Created</span></p>
-                    </div>
-                    <div className="status_wrap">
-                      <div className="value">0</div>
-                      <p><span>Deleted</span></p>
-                    </div>
-                  </div> */}
-                      <TinyArea {...getAreaChartOps(podContent)} bgColor="transparent" width={350} />
+                      <TinyArea {...podData} bgColor="transparent" width={350} />
                     </div>
                   </div>
                 </div>

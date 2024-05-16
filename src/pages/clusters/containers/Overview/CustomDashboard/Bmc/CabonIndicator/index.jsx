@@ -25,6 +25,9 @@ const CabonIndicator = ({ x, y, w, h,
   usePrice,
   armPrice,
   x86Price,
+
+  startDate,
+  endDate,
 }) => {
 
   return (
@@ -34,7 +37,7 @@ const CabonIndicator = ({ x, y, w, h,
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_CARBON_INDICATOR')} ({t('RESOURCES_CARBON_INDICATOR_MONTH')})</label>
+              <label>{t('RESOURCES_CARBON_INDICATOR')} {!!startDate && `(${startDate} ~ ${endDate})`}</label>
               {/*<i className="ico-btn-trash"></i>*/}
             </div>
             <div className="grid_info style_list">

@@ -1485,48 +1485,13 @@ export const cpuPowerPanel = ({ x, y, w, h }) => {
             <div class="spin-container">
               <div class="grid_info style_chart_2">
                 <div class="box type_chart">
-                  <div class="cont1">
-                    <div class="chart_tab no-tab">
-                      <div class="chart_group">
-                        <div class="title">
-                          <i class="ico-type24-arm"></i>
-                          <h5>ARM</h5>
-                        </div>
-                        <div class="data">
-                          <div class="number_wrap data-r">
-                            <p><i class="ico-type24-powericon"></i> <span class="em">141</span> <span
-                              class="unit">W</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="graph_wrap">
-                        <div class="graph_bar">
-                          <div class="bar animate-bar" style="width: 30%" ></div>
-                        </div>
-                      </div>
+                  <div class="divwrap">
+                    <div class="divwrap div_left">
+                      <div class="power_chart_01"></div>
                     </div>
-                    <div class="chart_tab no-tab">
-                      <div class="chart_group">
-                        <div class="title">
-                          <i class="ico-type24-x86"></i>
-                          <h5>x86</h5>
-                        </div>
-                        <div class="data">
-                          <div class="number_wrap data-r">
-                            <p><i class="ico-type24-powericon"></i> <span class="em">160</span> <span
-                              class="unit">W</span></p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="graph_wrap">
-                        <div class="graph_bar">
-                          <div class="bar second animate-bar" style="width: 40%" ></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="cont2">
-                    <div class="chart_04"></div>
+                    <div class="divwrap div_right">
+                      <div class="power_chart_02"></div>
+                    </div>                
                   </div>
                 </div>
               </div>

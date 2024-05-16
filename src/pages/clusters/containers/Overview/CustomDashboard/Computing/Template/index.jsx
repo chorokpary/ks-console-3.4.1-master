@@ -74,7 +74,7 @@ const ComputingTemplate = ({
       let used = 0;
       var keypairSet = new Set()
       vmList?.map(obj => {
-        keypairSet.add(obj.keypair)
+        keypairSet.add(obj.keypair_object?.name)
       })
       keypairList.map(obj => {
         keypairSet.has(obj.name) ? used++ : ''

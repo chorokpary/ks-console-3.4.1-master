@@ -265,7 +265,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
                           :
                           <div className="data">
                             <div className="number_wrap rgt">
-                              <p><span className="em">{data._used}</span><span className="unit">{t(data._unit)}</span></p>
+                              <p><span className="em">{isNaN(data._used) ? 0 : data._used}</span><span className="unit">{t(data._unit)}</span></p>
                             </div>
                           </div>
                         }
