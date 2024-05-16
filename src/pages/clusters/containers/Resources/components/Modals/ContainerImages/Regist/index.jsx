@@ -5,7 +5,7 @@ import { get, omit, range } from 'lodash'
 import { Form, Input, Select, Button, TextArea, Dropdown } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio'
-import DistroTypeStore from 'stores/resources/distrotype'
+import ClusterDistroTypeStore from 'stores/resources/clusterdistrotype'
 import styles from './index.scss'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
@@ -50,14 +50,14 @@ export default function ResourceImageModal({ title, store, onOk }) {
 
   const form = useRef();
   const [formData, setFormData] = useState({});
-  const distroTypeStore = new DistroTypeStore();
+  const distroTypeStore = new ClusterDistroTypeStore();
 
   const [modelView, setModalView] = useState(true);
 
   const [osType, setOsType] = useState('linux')
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroTypeList, setDistroTypeList] = useState([])
-  const [distroType, setDistroType] = useState('ubuntu')
+  const [distroType, setDistroType] = useState('ubuntu-2004')
 
   const [imageSize, setImageSize] = useState(defaultImageSize)
   const [imageSizeActive, setImageSizeActive] = useState(false)
@@ -99,7 +99,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     const opt = distroTypeList.map((obj) => ({
       label: t(obj.name),
       description: t(obj.vendor),
-      icon: `ico-os-${obj.name}`,
+      icon: `ico-os-${obj.name.split('-')[0]}`,
       value: t(obj.name),
     }))
     return opt
@@ -151,7 +151,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
       setDistroType('windows')
       setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'))
     } else {
-      setDistroType('ubuntu')
+      setDistroType('ubuntu-2004')
       setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'))
     }
   }
