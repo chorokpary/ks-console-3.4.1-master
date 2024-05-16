@@ -23,11 +23,11 @@ jobs:
       - run:
           name: Login to the gitlab
           command: |
-            docker login registry.gitlab.com -u sonaproject -p glpat-wXbmq9RX3HcHbqh3WCz7
+            docker login registry.gitlab.com -u sonaproject -p glpat-ttCToh1dkmWMNU3fFV5s
       - run:
           name: Build multiarch docker image and push
           command: |
-            if [ "${CIRCLE_BRANCH}" == "3.4.0" ]; then
+            if [ "${CIRCLE_BRANCH}" == "3.4.1" ]; then
               ./hack/docker_build_multiarch.sh
             fi
 
