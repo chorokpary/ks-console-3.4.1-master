@@ -205,9 +205,16 @@ export default function ResourceImageModal({ title, store, onOk }) {
             <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
             <Button onClick={() => { setRegStep(1) }} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_PREVIOUS')}</Button>
             {submitButtonFlag ?
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} 
+                loading={store.isSubmitting}
+                disabled={store.isSubmitting}
+              >{t('RESOURCES_CREATE')}</Button>
               :
-              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}>{t('RESOURCES_CREATE')}</Button>
+              <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}
+                loading={store.isSubmitting}
+                disabled={store.isSubmitting}
+              >{t('RESOURCES_CREATE')}
+              </Button>
             }
           </>
         }

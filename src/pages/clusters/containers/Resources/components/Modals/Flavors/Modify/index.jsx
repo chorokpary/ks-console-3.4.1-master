@@ -401,8 +401,8 @@ const ModifyModal = props => {
                   handleOk();
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
-                disabled
-                loading={true}
+                loading={props.store.isSubmitting}
+                disabled={props.store.isSubmitting}
               >
                 {t('RESOURCES_EDIT')}
               </Button>
@@ -412,6 +412,8 @@ const ModifyModal = props => {
                   handleOk();
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
+                loading={props.store.isSubmitting}
+                disabled={props.store.isSubmitting}
               >
                 {t('RESOURCES_EDIT')}
               </Button>

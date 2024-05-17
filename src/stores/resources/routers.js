@@ -155,7 +155,7 @@ export default class RouterStore extends Base {
 
     jsonData.router = routersData;
 
-    const res = await request.post(url, jsonData)
+    const res = await this.submitting(request.post(url, jsonData))
     return res
   }
 

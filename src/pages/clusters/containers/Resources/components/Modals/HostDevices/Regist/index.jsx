@@ -222,6 +222,7 @@ const RegistModal = props => {
         cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
         disableSubmit={dataList.length === 0 && true}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           {t('RESOURCES_HOST_DEVICE')}

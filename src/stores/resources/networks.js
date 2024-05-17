@@ -44,7 +44,7 @@ export default class NetworkStore extends Base {
                 request.post(this.getResourceUrl(params), data)
             )
         } else {
-            res = this.submitting(request.post(this.getListUrl(params), data))
+            res = await this.submitting(request.post(this.getListUrl(params), data))
         }
         // this.afterChange(res, params)
         return res
@@ -53,7 +53,7 @@ export default class NetworkStore extends Base {
     async update({ id, ...params }, data) {
         const jsonData = {};
         jsonData.network = data;
-
+        
         await this.submitting(
             request.put(this.getDetailUrl({ id, ...params }), jsonData)
         )

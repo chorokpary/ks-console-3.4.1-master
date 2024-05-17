@@ -107,6 +107,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
         onCancel={closeModal}
         cancelText={t('RESOURCES_CANCEL')}
         visible={modelView}
+        isSubmitting={store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item

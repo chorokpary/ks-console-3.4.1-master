@@ -160,7 +160,7 @@ export default class ImageStore extends Base {
         request.post(this.getResourceUrl(params), data)
       )
     } else {
-      res = this.submitting(request.post(this.getListUrl(params), data))
+      res = await this.submitting(request.post(this.getListUrl(params), data))
     }
     // this.afterChange(res, params)
     return res

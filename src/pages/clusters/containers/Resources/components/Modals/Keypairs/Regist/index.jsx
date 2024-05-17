@@ -164,7 +164,12 @@ const RegistModal = (props) => {
         {!privateKeyDownFlag ?
           <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled>{t('RESOURCES_CONFIRM')}</Button>
           :
-          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
+          <Button onClick={() => { handleOk() }} 
+            className={classnames(styles['btn'], styles['btn-control'])} 
+            loading={props.store.isSubmitting}
+            disabled={props.store.isSubmitting}
+          >{t('RESOURCES_CONFIRM')}
+          </Button>
         }
 
       </>

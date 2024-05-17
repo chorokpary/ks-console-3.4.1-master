@@ -320,6 +320,8 @@ const RegistModal = props => {
                 handleOk();
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
+              loading={props.store.isSubmitting}
+              disabled={props.store.isSubmitting}
             >
               {t('RESOURCES_CREATE')}
             </Button>

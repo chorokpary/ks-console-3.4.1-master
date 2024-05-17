@@ -157,7 +157,7 @@ export default class SriovStore extends Base {
     jsonData.network = networkData;
 
     // console.log("jsonData : "+ JSON.stringify(jsonData))
-    const res = await request.post(url, jsonData)
+    const res = await this.submitting(request.post(url, jsonData))
     return res
   }
 

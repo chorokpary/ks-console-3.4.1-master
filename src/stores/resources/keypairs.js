@@ -42,7 +42,14 @@ export default class KeypairStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
+
+    const getResourceUrlTmp = (params = {}) =>
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/keypairs22`;
+
+    //const url = this.getResourceUrl(params);
+    const url = getResourceUrlTmp(params);
 
     const jsonData = {};
     const keypairData = {};
@@ -54,7 +61,7 @@ export default class KeypairStore extends Base {
 
     jsonData.keypair = keypairData;
 
-    const res = await request.post(url, jsonData);
+    const res = await this.submitting(request.post(url, jsonData));
     return res;
   }
 

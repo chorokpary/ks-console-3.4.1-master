@@ -175,6 +175,7 @@ const RegistModal = props => {
     }
   };
 
+
   const fnGetModalFooter = () => {
     let elements = '';
     elements = (
@@ -219,8 +220,8 @@ const RegistModal = props => {
                 handleOk();
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
-              loading={isSubmitting}
-              disabled={isSubmitting}
+              loading={props.store.isSubmitting}
+              disabled={props.store.isSubmitting}
             >
               {t('RESOURCES_CREATE')}
             </Button>

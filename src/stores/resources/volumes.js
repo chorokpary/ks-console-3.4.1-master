@@ -60,7 +60,7 @@ export default class VolumeStore extends Base {
     jsonData.volume = volumeData;
 
     // console.log("jsonData : "+ JSON.stringify(jsonData))
-    const res = await request.post(url, jsonData);
+    const res = await this.submitting(request.post(url, jsonData));
     return res;
   }
 
