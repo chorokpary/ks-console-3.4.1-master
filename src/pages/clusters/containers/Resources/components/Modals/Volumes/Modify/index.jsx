@@ -39,6 +39,7 @@ const ModifyModal = props => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item label={t('RESOURCES_NAME')}>

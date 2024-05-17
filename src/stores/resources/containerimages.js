@@ -141,7 +141,7 @@ export default class ContainerImagesStore extends Base {
     const url = this.getResourceUrl(params);
 
     console.log("data : " + JSON.stringify(data))
-    const res = await request.post(url, data)
+    const res = await this.submitting(request.post(url, data))
     return res
   }
 

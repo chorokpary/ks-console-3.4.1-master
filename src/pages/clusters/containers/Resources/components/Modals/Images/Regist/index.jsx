@@ -235,8 +235,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   handleOk();
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
-                disabled
-                loading={true}
+                loading={store.isSubmitting}
+                disabled={store.isSubmitting}
               >
                 {t('RESOURCES_CREATE')}
               </Button>
@@ -246,6 +246,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   handleOk();
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
+                loading={store.isSubmitting}
+                disabled={store.isSubmitting}
               >
                 {t('RESOURCES_CREATE')}
               </Button>
@@ -258,6 +260,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     return elements;
   };
 
+  console.log("store.isSubmitting : "+ store.isSubmitting)
   return (
     <>
       <Modal

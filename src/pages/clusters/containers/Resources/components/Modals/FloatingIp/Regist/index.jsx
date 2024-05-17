@@ -16,6 +16,7 @@ import { ProjectSelect } from 'components/Inputs';
 import styles from './index.scss';
 
 const RegistModal = ({ title, onOk, store, ...props }) => {
+
   const [modelView, setModalView] = useState(true);
 
   const [networkOriginList, setNetworkOriginList] = useState([]);
@@ -119,7 +120,7 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
         okText={t('RESOURCES_CREATE')}
         cancelText={t('RESOURCES_CANCEL')}
         disableSubmit={networkList.length === 0 && true}
-        isSubmitting={isSubmitting}
+        isSubmitting={store.isSubmitting}
       >
         <Form>
           {props.namespace ? (

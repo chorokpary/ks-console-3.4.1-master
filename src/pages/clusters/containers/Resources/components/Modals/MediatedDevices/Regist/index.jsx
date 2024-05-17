@@ -210,6 +210,7 @@ const RegistModal = props => {
         onCancel={closeModal}
         visible={modelView}
         // disableSubmit={deviceDataList.length === 0 && true}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item
