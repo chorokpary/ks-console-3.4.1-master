@@ -26,13 +26,14 @@ server:
 
   # backend service gateway server
   apiServer:
-    # clientID: kubesphere
-    # clientSecret: kubesphere
-    # url: http://ks-apiserver
-    # wsUrl: ws://ks-apiserver
-    # mm3Url: http://edgetron-service.edgestack.svc.cluster.local:8080
-    # cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
-    # harborUrl: http://registry-harbor-portal.harbor.svc.cluster.local:80
+    clientID: kubesphere
+    clientSecret: kubesphere
+    url: http://ks-apiserver
+    wsUrl: ws://ks-apiserver
+    mm3Url: http://edgetron-service.edgestack.svc.cluster.local:8080
+    cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
+    harborUrl: http://registry-harbor-portal.harbor.svc.cluster.local:80
+    imagebuildlUrl: http://cmp-imageuploader.cmp.svc.cluster.local:8080
 
     # url: http://192.168.16.80:30881
     # wsUrl: ws://192.168.16.80:30881
@@ -43,16 +44,16 @@ server:
     # baremetalUrl: http://192.168.16.86:30011
     # imagebuildlUrl: http://192.168.16.80:31001
     # imagebuildHarborUrl: https://192.168.61.145
-
-    url: http://10.24.3.34:30881
-    wsUrl: ws://10.24.3.34:30881
-    mm3Url: http://10.24.3.34:32080
-    cmpUrl: http://10.24.3.34:31000
-    harborUrl: https://10.24.3.34:32443
-    appdeployUrl: http://10.24.3.34:30010
-    baremetalUrl: http://10.24.3.34:30011
-    imagebuildlUrl: http://10.24.3.34:31001
-    imagebuildHarborUrl: https://192.168.61.145
+ 
+    # url: http://10.24.3.34:30881
+    # wsUrl: ws://10.24.3.34:30881
+    # mm3Url: http://10.24.3.34:32080
+    # cmpUrl: http://10.24.3.34:31000
+    # harborUrl: https://10.24.3.34:32443
+    # appdeployUrl: http://10.24.3.34:30010
+    # baremetalUrl: http://10.24.3.34:30011
+    # imagebuildlUrl: http://10.24.3.34:31001
+    # imagebuildHarborUrl: https://192.168.61.145
 
 
   mm3UserInfo:
