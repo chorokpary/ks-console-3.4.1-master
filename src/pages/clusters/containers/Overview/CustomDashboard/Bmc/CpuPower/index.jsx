@@ -310,10 +310,6 @@ const CpuPower = ({ x, y, w, h,
                     <input type="radio" name="cpupower" id="cpupower_name3" value="name5" onClick={() => onClickTab('w')} />
                     <span>{t('RESOURCES_LAST_TIME_WEEKEND')}</span>
                   </label>
-                  <label htmlFor="cpupower_name4">
-                    <input type="radio" name="cpupower" id="cpupower_name4" value="name6" onClick={() => onClickTab('m')} />
-                    <span>{t('RESOURCES_LAST_TIME_MONTH')}</span>
-                  </label>
                 </div>
               </div>
             </div>

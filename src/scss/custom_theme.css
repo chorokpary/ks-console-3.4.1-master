@@ -14,40 +14,7 @@ html {
   background-color: #e8f0f6 !important;
 }
 
-.button-primary {
-  border: 1px solid #3617ce;
-  background-color: #3617ce;
-  box-shadow: 0 8px 16px 0 rgba(35, 45, 65, 0.28);
-}
-
-/* 파일찾기버튼 */
-input
-  .src-pages-clusters-containers-Resources-components-Modals-ComputingAppDeploy-Regist-index__file_input
-  + .button-primary {
-  border: 1px solid #ccd3db;
-  background-color: #eff4f9;
-  box-shadow: none;
-  color: #36435c;
-}
-
-.button-control {
-  color: #ffffff;
-  border: 1px solid #3617ce;
-  background-color: #3617ce;
-}
-
-a:hover {
-  color: #3617ce !important;
-}
-
-[class*="-index__expanded"] a:hover {
-  color: #ffffff !important;
-}
-
-[class*="__itemExtra"] a:hover {
-  color: #3617ce !important;
-}
-
+/* scroll */
 *::-webkit-scrollbar {
   width: 6px;
 }
@@ -93,7 +60,179 @@ a:hover {
   width: 6px;
 }
 
-/* 인풋/셀렉트/텍스트에리어 테마색 적용 */
+.text-primary {
+  color: #3617ce !important;
+}
+
+.custom-icon:hover svg {
+  color: #2b2edc !important;
+  fill: #96a6e2 !important;
+}
+
+/* 버튼 */
+.button-primary {
+  border: 1px solid #3617ce !important;
+  background-color: #3617ce !important;
+  box-shadow: 0 8px 16px 0 rgba(35, 45, 65, 0.28);
+}
+
+.button-control {
+  color: #ffffff;
+  border: 1px solid #3617ce;
+  background-color: #3617ce;
+}
+
+.button-control {
+  color: #ffffff;
+  border: 1px solid #3744b9 !important;
+  background-color: #3744b9 !important;
+}
+
+/* 모달 닫기 버튼 */
+.src-components-Base-Modal-index__header
+  .src-components-Base-Modal-index__close {
+  background-color: #404e68 !important;
+  width: 30px;
+  height: 30px;
+  display: flex !important;
+}
+
+/* 셀렉트 hover background 색삭제 */
+.icon-clickable:hover {
+  background-color: transparent !important;
+}
+
+/* 마우스 드래그시 텍스트 선택 색상 */
+::-moz-selection,
+::selection {
+  background: #79879c !important;
+}
+
+/* link hover */
+a:hover {
+  color: #3617ce !important;
+}
+
+.item-name:hover strong {
+  color: #3617ce !important;
+}
+
+[class*="-index__expanded"] a:hover {
+  color: #ffffff !important;
+}
+
+[class*="__itemExtra"] a:hover {
+  color: #3617ce !important;
+}
+
+.table table a:hover {
+  color: #3617ce !important;
+}
+
+.tabs-container .tabs > ul > li.is-active,
+.tabs-container .tabs > ul > li:active,
+.tabs-container .tabs > ul > li:hover {
+  color: #3617ce !important;
+}
+
+.src-components-Layout-Nav-index__subNav
+  > ul
+  > li.src-components-Layout-Nav-index__open
+  > a,
+.src-components-Layout-Nav-index__subNav
+  > ul
+  > li.src-components-Layout-Nav-index__select
+  > a {
+  color: #3617ce !important;
+}
+
+.src-components-Layout-Nav-index__subNav
+  > ul
+  > li.src-components-Layout-Nav-index__open
+  > a
+  .kubed-icon,
+.src-components-Layout-Nav-index__subNav
+  > ul
+  > li.src-components-Layout-Nav-index__select
+  > a
+  .kubed-icon {
+  color: #2b2edc !important;
+  fill: #96a6e2 !important;
+}
+
+.src-components-Layout-Nav-index__subNav
+  > ul
+  > li.src-components-Layout-Nav-index__childSelect
+  .src-components-Layout-Nav-index__title {
+  color: #3617ce !important;
+}
+
+.src-components-Layout-Nav-index__subNav
+  > ul
+  > li.src-components-Layout-Nav-index__childSelect
+  .src-components-Layout-Nav-index__title
+  .kubed-icon {
+  color: #2b2edc !important;
+  fill: #96a6e2 !important;
+}
+
+.src-components-Layout-Nav-index__innerNav
+  > li.src-components-Layout-Nav-index__select
+  > a,
+.src-components-Layout-Nav-index__innerNav > li:active > a,
+.src-components-Layout-Nav-index__innerNav > li:hover > a {
+  color: #3617ce !important;
+}
+
+.src-components-Base-Text-index__clickable:hover
+  .src-components-Base-Text-index__text
+  > div {
+  color: #3617ce !important;
+}
+
+.src-components-Base-Text-index__clickable:hover
+  .src-components-Base-Text-index__icon
+  .kubed-icon {
+  color: #2b2edc !important;
+  fill: #96a6e2 !important;
+}
+
+.src-components-Cards-App-index__wrapper
+  .src-components-Cards-App-index__title
+  p
+  > strong,
+.src-pages-console-containers-Dashboard-index__wrapper
+  .src-components-Base-Text-index__wrapper
+  > div:hover
+  *,
+.src-pages-console-containers-Dashboard-index__wrapper
+  .src-components-Base-Text-index__clickable:hover
+  svg,
+.src-pages-console-containers-Dashboard-index__wrapper
+  .src-components-Base-Text-index__clickable:hover,
+.src-pages-console-containers-Dashboard-Admin-PlatformStatus-index__resource:hover
+  > div
+  *,
+.src-pages-console-containers-Dashboard-Admin-History-index__text:hover > *,
+.src-pages-console-containers-Dashboard-Admin-History-index__histories
+  a:hover
+  > *,
+.src-pages-console-containers-Dashboard-Admin-History-index__histories
+  > a:hover
+  > div
+  *,
+.src-pages-console-containers-Dashboard-Admin-History-index__histories
+  a:hover
+  svg,
+.icon .src-components-Base-Text-index__icon,
+.src-pages-console-containers-Dashboard-Admin-History-index__histories
+  a:hover
+  .src-components-Base-Text-index__text {
+  color: #2b2edc !important;
+  fill: #96a6e2 !important;
+}
+
+/* 인풋/셀렉트/텍스트에리어/radio/checkbox 테마색 적용 */
 .select-control:focus,
 .select.is-open .select-control,
 .textarea:focus,
@@ -113,30 +252,57 @@ input.input:focus {
   box-shadow: none !important;
 }
 
-/* 셀렉트 hover background 색삭제 */
-.icon-clickable:hover {
-  background-color: transparent !important;
+.form-item-desc a {
+  color: #3617ce !important;
 }
 
-/* 마우스 드래그시 텍스트 선택 색상 */
-::selection {
-  background: #79879c !important;
+.textarea:not([readonly]):not([disabled]):focus {
+  border-color: #3617ce !important;
 }
 
-/* 버튼 색상 */
-.button-control {
-  color: #ffffff;
-  border: 1px solid #3744b9 !important;
-  background-color: #3744b9 !important;
+label.checkbox.indeterminate:before,
+label.checkbox.indeterminate:hover:before {
+  border-color: transparent;
+  background-color: #3617ce !important;
 }
 
-/* 모달 닫기 버튼 */
-.src-components-Base-Modal-index__header
-  .src-components-Base-Modal-index__close {
-  background-color: #404e68 !important;
-  width: 30px;
-  height: 30px;
-  display: flex !important;
+label.checkbox:not(.disabled):active.checked:before,
+label.checkbox:not(.disabled):active.indeterminate:before {
+  border-color: transparent;
+  background-color: #3617ce !important;
+}
+
+label.radio.checked:before,
+label.radio.checked:hover:before {
+  border: none;
+  background-color: #3617ce !important;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 41, 27, 0.04);
+  box-shadow: 0 1px 2px 0 rgba(0, 41, 27, 0.04);
+}
+
+label.radio:hover:not(.disabled):active.checked:before {
+  border-color: transparent;
+  background-color: #3617ce !important;
+}
+
+/* check, radio */
+label.radio.checked:before,
+label.radio.checked:hover:before,
+label.checkbox.indeterminate:before,
+label.checkbox.indeterminate:hover:before,
+label.checkbox.checked:before,
+label.checkbox.checked:hover:before {
+  background-color: #5680ec !important;
+}
+
+/* 파일찾기버튼 */
+input
+  .src-pages-clusters-containers-Resources-components-Modals-ComputingAppDeploy-Regist-index__file_input
+  + .button-primary {
+  border: 1px solid #ccd3db;
+  background-color: #eff4f9;
+  box-shadow: none;
+  color: #36435c;
 }
 
 /* 탭라디오 목록 스타일 색상 */
@@ -178,16 +344,6 @@ input.input:focus {
   background-color: #4726e9 !important;
 }
 
-/* check, radio */
-label.radio.checked:before,
-label.radio.checked:hover:before,
-label.checkbox.indeterminate:before,
-label.checkbox.indeterminate:hover:before,
-label.checkbox.checked:before,
-label.checkbox.checked:hover:before {
-  background-color: #5680ec !important;
-}
-
 /* slider */
 .slider-track,
 .slider-handler::after {
@@ -200,6 +356,65 @@ label.checkbox.checked:hover:before {
 }
 
 /* 캘린더 */
+.datepicker-input.is-hover.is-active {
+  border-color: #3617ce !important;
+}
+
+div.flatpickr-calendar .flatpickr-time .numInputWrapper .numInput {
+  caret-color: #3617ce;
+}
+
+div.flatpickr-calendar
+  .flatpickr-innerContainer
+  .flatpickr-days
+  .dayContainer
+  .flatpickr-day.startRange.selected,
+div.flatpickr-calendar
+  .flatpickr-innerContainer
+  .flatpickr-days
+  .dayContainer
+  .flatpickr-day.startRange
+  .selected:hover {
+  border-color: #3617ce !important;
+  color: #fff;
+  background-color: #3617ce !important;
+}
+
+div.flatpickr-calendar
+  .flatpickr-innerContainer
+  .flatpickr-days
+  .dayContainer
+  .flatpickr-day.selected {
+  border-color: #3617ce !important;
+  color: #fff;
+  background-color: #3617ce !important;
+}
+
+div.flatpickr-calendar
+  .flatpickr-innerContainer
+  .flatpickr-days
+  .dayContainer
+  .flatpickr-day.selected:hover {
+  border-color: #3617ce !important;
+  background-color: #3617ce !important;
+}
+
+div.flatpickr-calendar
+  .flatpickr-months
+  .flatpickr-month
+  .flatpickr-dropdown
+  .dropdown-month-menu
+  span.is-active,
+div.flatpickr-calendar
+  .flatpickr-months
+  .flatpickr-month
+  .flatpickr-dropdown
+  .dropdown-year-menu
+  span.is-active {
+  color: #3617ce !important;
+  font-weight: 500;
+}
+
 div.flatpickr-calendar
   .flatpickr-innerContainer
   .flatpickr-days
@@ -237,9 +452,13 @@ div.flatpickr-calendar
   color: #3617ce !important;
 }
 
+div.flatpickr-calendar .flatpickr-time .numInputWrapper .numInput {
+  caret-color: #3617ce;
+}
+
 /* icon-coloured */
 .kubed-icon-coloured {
-  color: #3617ce !important;
+  color: #FFFFFF !important;
   fill: #3617ce !important;
 }
 
@@ -536,6 +755,96 @@ td > div[class$="-index__avatar"] {
   box-shadow: none !important;
 }
 
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__completed,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__disabled,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__draining,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__inactive,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__minor,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__paused,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__pending,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__stopped,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__suspended,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__terminated,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__unknown {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__critical,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__deleted,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__deleting,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__error,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__failed,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__lost,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__rejected,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__unschedulable {
+  background-color: transparent !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__building,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__deleting,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__firing,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__in-review,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__major,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__notrunning,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__released,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__syncing,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__terminating,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__unfinished,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__updating,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__upgrading,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__waiting,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__warning {
+  background-color: transparent !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__active,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__available,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__bound,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__healthy,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__jobrunning,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__normal,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__ok,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__passed,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__published,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__ready,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__running,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__succeeded,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__success,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__successful,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__working {
+  background-color: transparent !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__creating,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__draft,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__pending-review,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__to-be-reviewed {
+  background-color: transparent !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__completed,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__disabled,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__draining,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__inactive,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__minor,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__paused,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__pending,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__stopped,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__suspended,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__terminated,
+.src-components-Base-Indicator-index__icon.src-components-Base-Indicator-index__unknown {
+  background-color: none !important;
+}
+
 /* indicator 위치*/
 .src-components-Clusters-ClusterTitle-index__icon
   .src-components-Clusters-ClusterTitle-index__indicator {
@@ -703,43 +1012,20 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   background-color: #425de7 !important;
 }
 
-/* 앱스토어, 워크벤치, 접근제어 : 아이콘, 텍스트 컬러변경 */
-.src-components-Cards-App-index__wrapper
-  .src-components-Cards-App-index__title
-  p
-  > strong,
-.src-pages-console-containers-Dashboard-index__wrapper
-  .src-components-Base-Text-index__wrapper
-  > div:hover
-  *,
-.src-pages-console-containers-Dashboard-index__wrapper
-  .src-components-Base-Text-index__clickable:hover
-  svg,
-.src-pages-console-containers-Dashboard-index__wrapper
-  .src-components-Base-Text-index__clickable:hover,
-.src-pages-console-containers-Dashboard-Admin-PlatformStatus-index__resource:hover
-  > div
-  *,
-.src-pages-console-containers-Dashboard-Admin-History-index__text:hover > *,
-.src-pages-console-containers-Dashboard-Admin-History-index__histories
-  a:hover
-  > *,
-.src-pages-console-containers-Dashboard-Admin-History-index__histories
-  > a:hover
-  > div
-  *,
-.src-pages-console-containers-Dashboard-Admin-History-index__histories
-  a:hover
-  svg,
-.icon .src-components-Base-Text-index__icon,
-.src-pages-console-containers-Dashboard-Admin-History-index__histories
-  a:hover
-  .src-components-Base-Text-index__text {
-  color: #2b2edc !important;
-  fill: #96a6e2 !important;
+/* 앱스토어, 워크벤치, 접근제어, 기타화면 : 아이콘, 텍스트 컬러변경 */
+.src-components-Base-Text-index__clickable:hover
+  .src-components-Base-Text-index__text
+  > div {
+  color: #3617ce !important;
 }
 
-/* hover 폰트컬러 : 접근제어, 워크벤치 및 기타 부수적 화면들 */
+.src-components-Base-Text-index__clickable:hover
+  .src-components-Base-Text-index__icon
+  .kubed-icon {
+  color: #3617ce !important;
+  fill: #3744b9 !important;
+}
+
 .src-pages-workspaces-components-Modals-WorkspaceSelect-Card-index__wrapper:hover
   a,
 .src-components-Base-Text-index__clickable:hover
@@ -802,6 +1088,7 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
   border: 1px solid #3617ce !important;
 }
 
+/* 목록 선택시 row 테두리 색상 변경 */
 .table table > tbody > tr.table-row-selected > * {
   border-color: #5680ec !important;
 }
@@ -814,23 +1101,36 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 .table table > tbody > tr.table-row-selected > td {
   border-bottom: 1px solid #5680ec !important;
 }
+
 .table table > tbody > tr.table-row-selected + tr.table-row-selected > td {
-    border-top: 0 !important;
-    border-bottom: 0 !important;
-}
-.table table > tbody > tr.table-row-selected + tr > td {
-    border-top: 1px solid #5680ec !important;
+  border-top: 0 !important;
 }
 
-.table table > tbody > tr:first-child.table-row-selected > td{
-    border-bottom: 0 !important;
+.table table > tbody > tr.table-row-selected + tr.table-row-selected > td {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
 }
-.table table > tbody > tr:last-child.table-row-selected > td{
-    border-bottom: 1px solid #5680ec !important;
+
+.table table > tbody > tr.table-row-selected + tr > td {
+  border-top: 1px solid #5680ec !important;
 }
-.table table > tbody > tr.table-row-selected + tr:last-child.table-row-selected > td {
-    border-top: 0 !important;
-    border-bottom: 1px solid #5680ec !important;
+
+.table table > tbody > tr:first-child.table-row-selected > td {
+  border-bottom: 0 !important;
+}
+
+.table table > tbody > tr:last-child.table-row-selected > td {
+  border-bottom: 1px solid #5680ec !important;
+}
+
+.table
+  table
+  > tbody
+  > tr.table-row-selected
+  + tr:last-child.table-row-selected
+  > td {
+  border-top: 0 !important;
+  border-bottom: 1px solid #5680ec !important;
 }
 
 /* 앱스토어 header 로고, 앱 상세 탭, 뒤로가기, 앱 세부정보 text */

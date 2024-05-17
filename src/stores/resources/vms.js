@@ -741,7 +741,8 @@ export default class VmStore extends Base {
 
   @action
   async snapshotCreate(data, params = {}) {
-    const url = `${this.getResourceUrl({ cluster: data.cluster, namespace: data.namespace })}/snapshots`;
+
+    const url = `${this.getResourceUrl({ cluster: params.cluster, namespace: params.namespace })}/snapshots`;
 
     const jsonData = {};
     const snapshotData = {};

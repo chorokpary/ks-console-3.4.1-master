@@ -6,6 +6,8 @@ import queryString from 'query-string';
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 import { Notify } from '@kube-design/components'
 
+import './edit.css'
+
 import { makePanels } from 'stores/dashboard/panels';
 const CustomDashboardEdit = (props) => {
 
