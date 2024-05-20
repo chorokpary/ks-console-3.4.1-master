@@ -3,7 +3,7 @@
 set -ex
 set -o pipefail
 
-TAG=${TAG:-v3.4.1-infra}
+TAG=${TAG:-v3.4.1-infra-master}
 REPO=${REPO:-registry.gitlab.com/sonaproject}
 PUSH=${PUSH:-}
 
