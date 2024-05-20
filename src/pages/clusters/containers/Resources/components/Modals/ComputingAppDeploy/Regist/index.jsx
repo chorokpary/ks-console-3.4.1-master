@@ -1,7 +1,7 @@
 import { get, find } from 'lodash'
 import React, { useState, useRef, useEffect } from 'react'
 
-import { Form, Input, Select, TextArea, Button, Tooltip, Icon } from '@kube-design/components'
+import { Form, Input, Select, TextArea, Button, Tooltip, Icon, Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
 import classnames from 'classnames'
@@ -123,9 +123,14 @@ const RegistModal = (props) => {
       }).then((res) => {
         console.log(res.data);
         onOk({ ...data })
+        setSubmitButtonFlag(false);
+        setFileUploadStartFlag(false);
       }).catch((err) => {
         // console.error(err);
         console.log(err);
+        Notify.error({ title: err.reason, content: t(err.message), duration: 3000 })
+        setSubmitButtonFlag(false);
+        setFileUploadStartFlag(false);
       });
 
     })

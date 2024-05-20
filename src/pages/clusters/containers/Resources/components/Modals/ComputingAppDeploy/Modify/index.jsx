@@ -109,8 +109,6 @@ const ModifyModal = (props) => {
         setFileUploadStartFlag(true);
       }
 
-
-
       // const url = props.cluster ? `/kapis/cmp.kubesphere.io/v1alpha1/klusters/${props.cluster}/app-manager/v1alpha1/templates`
       //                           : `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
 
@@ -130,9 +128,12 @@ const ModifyModal = (props) => {
       }).then((res) => {
         // console.log(res.data);
         onOk({ ...data })
+        setSubmitButtonFlag(false);
       }).catch((err) => {
         // console.error(err);
         console.log(err);
+        Notify.error({ title: err.reason, content: t(err.message), duration: 3000 })
+        setSubmitButtonFlag(false);
       });
 
     })
@@ -449,9 +450,14 @@ const ModifyModal = (props) => {
         <div className={styles['modal-footer']}>
           <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
           {submitButtonFlag ?
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CONFIRM')}</Button>
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} 
+            disabled loading={true}>
+            {t('RESOURCES_CONFIRM')}
+            </Button>
             :
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CONFIRM')}</Button>
+            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}
+             >{t('RESOURCES_CONFIRM')}
+             </Button>
           }
         </div>
       </Modal>

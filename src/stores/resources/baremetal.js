@@ -185,7 +185,7 @@ export default class BareMetalStore extends Base {
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
     jsonData.openBMC = bmcData;
 
-    const res = await request.post(url, jsonData)
+    const res = await this.submitting(request.post(url, jsonData))
     return res
   }
 
@@ -211,7 +211,7 @@ export default class BareMetalStore extends Base {
     data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
     jsonData.openBMC = bmcData;
 
-    const res = await request.put(url, jsonData)
+    const res = await this.submitting(request.put(url, jsonData))
     return res
   }
 
