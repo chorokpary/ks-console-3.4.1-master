@@ -35,6 +35,7 @@ const ModifyModal = (props) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
 

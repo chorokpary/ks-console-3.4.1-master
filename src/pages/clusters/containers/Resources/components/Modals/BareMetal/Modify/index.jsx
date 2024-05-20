@@ -265,6 +265,7 @@ const EditModal = props => {
         onCancel={closeModal}
         visible={modelView}
         disableSubmit={chkValidation}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item

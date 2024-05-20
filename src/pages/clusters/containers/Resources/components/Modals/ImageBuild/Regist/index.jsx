@@ -139,9 +139,15 @@ const RegistModal = (props) => {
 
         <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
         {props.isSubmitting ?
-          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} disabled loading={true}>{t('RESOURCES_CREATE')}</Button>
+          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} 
+            loading={props.store.isSubmitting}
+            disabled={props.store.isSubmitting}
+          >{t('RESOURCES_CREATE')}
+          </Button>
           :
-          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} >{t('RESOURCES_CREATE')}</Button>
+          <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} 
+          >{t('RESOURCES_CREATE')}
+          </Button>
         }
 
       </>

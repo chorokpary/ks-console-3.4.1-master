@@ -96,6 +96,9 @@ const RegistModal = props => {
     if (systemType == 'C' && !bmcCheck) {
       setChkValidation(false);
     }
+    if (systemType == 'B' && !bmcCheck && userValidSuccess) {
+      setChkValidation(false);
+    }
   }, [bmcCheck]);
 
   const nodeNameOptions = clusterNodeDataList.map(name => {
@@ -391,7 +394,7 @@ const RegistModal = props => {
         setUserValidBmcSuccess(false);
       });
   };
-  // Validation 끝 ==================================================
+  // Validation 끝 ==================================================+
 
   return (
     <>
@@ -403,6 +406,7 @@ const RegistModal = props => {
         onCancel={closeModal}
         visible={modelView}
         disableSubmit={chkValidation}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item>

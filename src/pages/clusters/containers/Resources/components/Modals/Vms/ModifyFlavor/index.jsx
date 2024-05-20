@@ -96,7 +96,6 @@ const ModifyFlavorModal = (props) => {
   }
   // Validation 끝 ==================================================
 
-
   return (
     <>
       <Modal
@@ -108,6 +107,7 @@ const ModifyFlavorModal = (props) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item
