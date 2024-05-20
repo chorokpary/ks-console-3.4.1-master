@@ -31,6 +31,9 @@ const BareMetalCarbonIndicator = () => {
   const fetchData = async (params) => {
     setLoading(true)
 
+    const x86Array = ['x86_64', 'amd'];
+    const armArray = ['arm', 'aarch64'];
+
     const paramsData = {
       ...getTimeRange({
         ...params,
@@ -48,11 +51,13 @@ const BareMetalCarbonIndicator = () => {
     })
 
     const x86PowerMetricData = _.find(metric_power, (data) => {
-      if (get(data, 'metric.machine').includes('x86')) return data;
+      const machine = get(data, 'metric.machine', 'NOT');      
+      if (x86Array.includes(machine.toLowerCase())) return data; 
     });
 
     const armPowerMetricData = _.find(metric_power, (data) => {
-      if (get(data, 'metric.machine').includes('arm')) return data;
+      const machine = get(data, 'metric.machine', 'NOT');
+      if (armArray.includes(machine.toLowerCase())) return data;
     });
 
     const x86PowerArray = [x86PowerMetricData];
