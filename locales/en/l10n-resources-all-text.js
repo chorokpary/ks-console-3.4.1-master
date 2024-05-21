@@ -178,6 +178,7 @@ module.exports = {
   RESOURCES_NETWORK_NAME: '네트워크 이름',
   RESOURCES_NETWORK_TYPE: '네트워크 타입',
   RESOURCES_NETWORK_TRAFFIC: '네트워크 트래픽',
+  RESOURCES_PHYSNET: '물리 네트워크',
   RESOURCES_NO_ROUTER_USE_NETWORK: '네트워크를 사용하는 라우터가 없습니다',
   RESOURCES_NO_LOAD_BALANCER_NETWORK:
     '네트워크를 사용하는 로드밸런서가 없습니다.',
