@@ -202,7 +202,7 @@ const Carbon = (props) => {
                   <i className="ico-type-power"></i>
                 </div>
                 <div className="rgt">
-                  <div className="value">{Number(armKwh)+Number(x86Kwh)}<span>kWh</span></div>
+                  <div className="value">{(Number(armKwh)+Number(x86Kwh)).toFixed(1)}<span>kWh</span></div>
                   <dl><dt>{t('RESOURCES_ARM')}</dt><dd>{armKwh}</dd></dl>
                   <dl><dt>{t('RESOURCES_X86')}</dt><dd>{x86Kwh}</dd></dl>
                 </div>

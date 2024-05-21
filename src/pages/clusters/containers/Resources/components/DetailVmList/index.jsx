@@ -302,7 +302,6 @@ const DetailVmList = props => {
     const networkList = obj.networks.filter(
       network => network.name != 'k8s-pod-network'
     );
-    console.log('networkList', networkList);
 
     return (
       <div className={styles.itemExtra}>
