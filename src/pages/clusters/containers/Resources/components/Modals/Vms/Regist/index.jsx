@@ -544,7 +544,7 @@ const RegistModal = props => {
           .filter(item => item.name == selectFlavorName)
           .map(item => item.root_disk);
 
-        if (flavorSize >= imageSize) {
+        if (Number(flavorSize) >= Number(imageSize)) {
           setRegStep(2);
           setFlavorSizeCheck(true);
           projectFilteredData(projectName);
@@ -1365,7 +1365,7 @@ const RegistModal = props => {
                         flavorSizeCheck ? 'hide' : ''
                       }`}
                     >
-                      {imageType == 'i'
+                      {imageType == 'I'
                         ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
                         : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}
                     </div>
