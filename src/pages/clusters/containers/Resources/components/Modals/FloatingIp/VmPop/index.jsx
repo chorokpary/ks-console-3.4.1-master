@@ -6,7 +6,7 @@ import { Modal } from 'components/Base'
 import styles from './index.scss'
 import { toJS } from 'mobx'
 
-const VmPop = ({ title, onOk, store, match }) => {
+const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => {
   // VM list
   // FIP 상세의 network가
   // Router의 external 이면서
@@ -36,22 +36,24 @@ const VmPop = ({ title, onOk, store, match }) => {
     setModalView(false);
   }
 
+  const params = {cluster, workspace, namespace}   
+
   useEffect(() => {
 
     const fnGetRouterList = async () => {
-      const routerData = await store.routerList(match?.params)
+      const routerData = await store.routerList(params)
       setRouterList(routerData.routers);
     };
     fnGetRouterList();
 
     const fnGetVmList = async () => {
-      const vmData = await store.vmList(match?.params)
+      const vmData = await store.vmList(params)
       setVmDataList(vmData)
     };
     fnGetVmList();
 
     const fnGetFipList = async () => {
-      const fipData = await store.fipList(match?.params)
+      const fipData = await store.fipList(params)
       setFipList(fipData.floating_ips)
     };
     fnGetFipList();
@@ -104,7 +106,9 @@ const VmPop = ({ title, onOk, store, match }) => {
     const network = data.network[radioExternalIdx].split(" ")
 
     onOk({
-      ...match?.params,
+      cluster : params.cluster,
+      namespace : params.namespace,
+      workspace : params.workspace,
       id: fipDetail.id,
       instance_type: 'vm',
       instance_id: radioExternal,

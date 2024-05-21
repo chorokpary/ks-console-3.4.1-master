@@ -359,6 +359,7 @@ class ResourceUsage extends React.Component {
               icon={item.icon}
               dataList={item.dataList}
               createField={item.createField}
+              key={item.num}
             />
           ))}
         </div>
