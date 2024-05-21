@@ -32,7 +32,7 @@ const BareMetalCarbonIndicator = () => {
     setLoading(true)
 
     const x86Array = ['x86_64', 'amd'];
-    const armArray = ['arm', 'aarch64'];
+    const armArray = ['aarch64', 'arm'];
 
     const paramsData = {
       ...getTimeRange({
@@ -45,17 +45,22 @@ const BareMetalCarbonIndicator = () => {
     let width = document.querySelector('.src-components-Cards-Monitoring-Controller-index__operations') ? document.querySelector('.src-components-Cards-Monitoring-Controller-index__operations').clientWidth : 340
     setCheckboxWidth((width + 10) + 'px')
 
-    const metric_power = await customStore.fetchMetric({
-      expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info, "instanceurl", "$1", "instance", "(.+):.+")))`,
+    const metric_power_x86 = await customStore.fetchMetric({
+      expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{machine=~"x86_64|amd"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
       ...paramsData
     })
 
-    const x86PowerMetricData = _.find(metric_power, (data) => {
+    const metric_power_arm = await customStore.fetchMetric({
+      expr: `sum by (machine) (label_replace(redfish_chassis_power_powersupply_last_power_output_watts, "instanceurl", "$1", "instance", "(.+):.+")) * on (instanceurl) group_left(machine) (max by(instanceurl, machine) (label_replace(node_uname_info{machine=~"aarch64|arm"}, "instanceurl", "$1", "instance", "(.+):.+")))`,
+      ...paramsData
+    })
+
+    const x86PowerMetricData = _.find(metric_power_x86, (data) => {
       const machine = get(data, 'metric.machine', 'NOT');      
       if (x86Array.includes(machine.toLowerCase())) return data; 
     });
 
-    const armPowerMetricData = _.find(metric_power, (data) => {
+    const armPowerMetricData = _.find(metric_power_arm, (data) => {
       const machine = get(data, 'metric.machine', 'NOT');
       if (armArray.includes(machine.toLowerCase())) return data;
     });
