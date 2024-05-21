@@ -7,7 +7,6 @@ import {
   Select,
   TextArea,
   Toggle,
-  Button,
   Notify,
 } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
@@ -15,7 +14,6 @@ import { Modal } from 'components/Base';
 
 import MediatedDevicesStore from 'stores/resources/mediateddevices';
 
-import classnames from 'classnames';
 import styles from './index.scss';
 
 const regexName = /^([a-z0-9]+[.][a-z]+)\/([a-zA-Z0-9\-]+[a-zA-Z])$/;
@@ -28,7 +26,8 @@ const RegistModal = props => {
   const [formData, setFormData] = useState({});
 
   const [isGpu, setIsGpu] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [node, setNode] = useState([]);
+
   const [nodeDataList, setNodeDataList] = useState([]);
 
   const [mediatedDeviceTypeListData, setMediatedDeviceTypeListData] = useState(
@@ -38,17 +37,27 @@ const RegistModal = props => {
   const [mediatedDeviceType, setMediatedDeviceType] = useState();
   const [pgpuDataList, setPgpuDataList] = useState([]);
   const [vgpuDataList, setVgpuDataList] = useState([]);
-  const [selectedVgpu, setSelectedVgpu] = useState('');
+  const [vgpuCheckItems, setVgpuCheckItems] = useState([]);
+
   const [selectedPgpu, setSelectedPgpu] = useState('');
 
-  useEffect(() => {
-    const getData = async () => {
-      const listNode = await mediatedDevicesStore.fetchNodeList({ ...props });
+  const [reFetch, setReFetch] = useState(false);
 
-      setNodeDataList(listNode.filter(obj => obj.node_role != 'master'));
-    };
+  const getData = async () => {
+    const listNode = await mediatedDevicesStore.fetchNodeList({ ...props });
+
+    setNodeDataList(listNode.filter(obj => obj.node_role !== 'master'));
+  };
+
+  useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (selectedPgpu) {
+      getVgpuList(selectedPgpu);
+    }
+  }, [selectedPgpu]);
 
   const nodeOptions = () => {
     const opt = nodeDataList.map(obj => ({
@@ -61,7 +70,6 @@ const RegistModal = props => {
   const handleNode = value => {
     getPgpuList(value);
     getMediatedDeviceType(value);
-    setSelectedVgpu('');
   };
 
   const getPgpuList = async value => {
@@ -78,17 +86,20 @@ const RegistModal = props => {
   };
 
   const getMediatedDeviceType = async value => {
-    const listType = await mediatedDevicesStore.fetchMediatedDeviceType({
+    // type get
+    const mdListType = await mediatedDevicesStore.fetchMediatedDeviceType({
       node: value,
       ...props,
     });
-    setMediatedDeviceTypeListData([...listType.map(obj => obj.vgpu)]);
+    setMediatedDeviceTypeListData([...mdListType.map(obj => obj.vgpu)]);
 
+    // pgpu
     const listPgpu = await mediatedDevicesStore.fetchPgpuList({
       node: value,
       ...props,
     });
 
+    // pgpu랑 vgpu랑 매핑
     const listVgpuPromises = listPgpu.map(async pgpu => {
       const listVgpu = await mediatedDevicesStore.fetchVgpuList({
         model_num: pgpu.model_num,
@@ -99,78 +110,101 @@ const RegistModal = props => {
     const listVgpuResults = await Promise.all(listVgpuPromises);
 
     const opt = [];
-    listType.forEach(type => {
+    const existsTypeArray = [];
+    mdListType.forEach(type => {
       const result = listVgpuResults
         .flat()
         .find(vgpuResult => vgpuResult.mdev_id === type.vgpu);
 
       if (result) {
-        opt.push({ label: result.name, value: result.name });
+        opt.push({
+          label: result.name,
+          value: result.name,
+        });
+        existsTypeArray.push(result.name);
       }
     });
 
-    // const opt = listType.map(obj => ({
-    //   label: t(obj.vgpu),
-    //   value: t(obj.vgpu),
-    // }));
-
     setMediatedDeviceType(opt[0].label);
     setMediatedDeviceTypeList(opt);
+    setVgpuCheckItems(existsTypeArray);
   };
 
   const getVgpuList = async value => {
-    setSelectedVgpu('');
     const listVgpu = await mediatedDevicesStore.fetchVgpuList({
       model_num: value,
       ...props,
     });
 
     const opt = listVgpu.map(obj => ({
-      label: `${obj.name} / ${obj.mdev_id} / (${obj.resolution}) / [${obj.max_num}]`,
+      name: obj.name,
+      mdevId: obj.mdev_id,
+      resolution: obj.resolution,
+      max_num: obj.max_num,
       value: t(obj.mdev_id),
       disabled: !!mediatedDeviceTypeListData.includes(obj.mdev_id),
     }));
 
     setVgpuDataList(opt);
-  };
 
-  const postMediatedDeviceType = async typeData => {
-    const { data } = form.current.props;
-
-    setIsLoading(true);
-    try {
-      await mediatedDevicesStore.createMediatedDeviceType(typeData, {
-        ...props,
+    const existsTypeArray = [];
+    opt.map(obj => {
+      return mediatedDeviceTypeList.filter(mdType => {
+        if (obj.name === mdType.value) {
+          return existsTypeArray.push(obj.name);
+        }
       });
-      Notify.success({ content: t('RESOURCES_SELECT_MDT_CREATE_SUCCESS') });
-      setMediatedDeviceType(typeData.mediated_device_type.mdType);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
+    });
 
-    getMediatedDeviceType(data.node);
+    setVgpuCheckItems(existsTypeArray);
   };
 
-  useEffect(() => {
-    if (selectedPgpu) {
-      getVgpuList(selectedPgpu);
-    }
-  }, [mediatedDeviceTypeListData]);
-
-  const createType = () => {
+  const handleTypeToggle = async (checked, name, id) => {
     const { data } = form.current.props;
-    const typeData = {
-      mediated_device_type: {
-        node: data.node,
-        vgpu: selectedVgpu,
-        mdType: mediatedDeviceType,
-      },
-    };
-    postMediatedDeviceType(typeData);
-  };
 
+    if (checked) {
+      setVgpuCheckItems(prev => [...prev, name]);
+      // 생성
+      const typeData = {
+        mediated_device_type: {
+          node: data.node,
+          vgpu: id,
+          mdType: name,
+        },
+      };
+      try {
+        await mediatedDevicesStore.createMediatedDeviceType(typeData, {
+          ...props,
+        });
+        Notify.success({
+          content: t('RESOURCES_SELECT_MDT_CREATE_SUCCESS'),
+        });
+        await getMediatedDeviceType(data.node);
+      } catch (e) {
+        console.log(e);
+        setReFetch(!reFetch);
+      }
+    } else {
+      setVgpuCheckItems(vgpuCheckItems.filter(el => el !== name));
+      // 삭제
+      const typeData = {
+        node: data.node,
+        vgpu: id,
+        mdType: name,
+      };
+      try {
+        await mediatedDevicesStore.deleteMediatedDeviceType(typeData, {
+          ...props,
+        });
+        Notify.success({
+          content: t('RESOURCES_SELECT_MDT_DELETE_SUCCESS'),
+        });
+        await getMediatedDeviceType(data.node);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -186,11 +220,15 @@ const RegistModal = props => {
 
   // Validation 시작 ==================================================
   const nameValidator = (rule, value, callback) => {
-    if (value == undefined) {
-      return callback({ message: t('RESOURCES_NAME_EMPTY_DESC') });
+    if (value === undefined) {
+      return callback({
+        message: t('RESOURCES_NAME_EMPTY_DESC'),
+      });
     }
     if (!regexName.test(value)) {
-      return callback({ message: t('RESOURCES_NAME_CHECK_DESC') });
+      return callback({
+        message: t('RESOURCES_NAME_CHECK_DESC'),
+      });
     }
 
     callback();
@@ -215,7 +253,12 @@ const RegistModal = props => {
         <Form data={formData} ref={form}>
           <Form.Item
             label={t('RESOURCES_NAME')}
-            rules={[{ required: true, validator: nameValidator }]}
+            rules={[
+              {
+                required: true,
+                validator: nameValidator,
+              },
+            ]}
             desc={`${t('RESOURCES_NAME_VALID_DESC')} ex) nvidia.com/GRID-T4-1B`}
           >
             <Input
@@ -245,13 +288,13 @@ const RegistModal = props => {
                       name="node"
                       placeholder={t('RESOURCES_SELECT')}
                       options={nodeOptions()}
-                      onChange={e => handleNode(e)}
+                      onChange={e => {
+                        handleNode(e);
+                        setNode(e);
+                      }}
                     />
                   </Form.Item>
                 </Column>
-                <Column></Column>
-              </Columns>
-              <Columns>
                 <Column>
                   <Form.Item label={t('Physical GPU')}>
                     <Select
@@ -267,30 +310,79 @@ const RegistModal = props => {
                     />
                   </Form.Item>
                 </Column>
-                <Column>
-                  <Form.Item label={t('Virtual GPU')}>
-                    <Select
-                      // style={{ maxWidth: '100%' }}
-                      placeholder={t('RESOURCES_SELECT')}
-                      options={vgpuDataList}
-                      value={selectedVgpu}
-                      onChange={e => {
-                        return setSelectedVgpu(e);
-                      }}
-                    />
-                  </Form.Item>
-                </Column>
               </Columns>
-              <div className="text-right">
-                <Button
-                  onClick={() => createType()}
-                  className={classnames(styles['btn'], styles['btn-control'])}
-                  disabled={!selectedVgpu}
-                  loading={isLoading}
-                >
-                  {t('생성')}
-                </Button>
-              </div>
+              <Form.Item label={t('')}>
+                <div className={styles.wrapper}>
+                  <div className={styles.table}>
+                    <table>
+                      <colgroup>
+                        <col width="33%" />
+                        <col width="13%" />
+                        <col width="28%" />
+                        <col width="16%" />
+                        <col width="10%" />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th>
+                            <strong>{t('RESOURCES_NAME')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('MDEV')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOLUTION')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('MAX NUM')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('TYPE 생성')}</strong>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {!vgpuDataList?.length && (
+                          // /edgetron/resources/kubevirt/gpus/vgpus/${params.model_num}` 여기서 가져오는데 이름을 어떻게 해야할지 모르겠음
+                          <tr>
+                            <td
+                              colSpan="5"
+                              className="no-data"
+                              style={{
+                                textAlign: 'center',
+                              }}
+                            >
+                              <p>
+                                {t(
+                                  'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                )}
+                              </p>
+                            </td>
+                          </tr>
+                        )}
+                        {vgpuDataList?.map(data => (
+                          <tr key={data.name}>
+                            <td>{data.name}</td>
+                            <td>{data.mdevId}</td>
+                            <td>{data.resolution}</td>
+                            <td>{data.max_num}</td>
+                            <td>
+                              <Toggle
+                                checked={!!vgpuCheckItems.includes(data.name)}
+                                onChange={e => {
+                                  handleTypeToggle(e, data.name, data.mdevId);
+                                }}
+                                onText={t('ON')}
+                                offText={t('OFF')}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </Form.Item>
             </Form.Group>
           </Form.Item>
 
@@ -300,7 +392,10 @@ const RegistModal = props => {
                 <Form.Item
                   label={t('Mediated Device Type')}
                   rules={[
-                    { required: true, message: t('RESOURCES_SELECT_MDT_TIP') },
+                    {
+                      required: true,
+                      message: t('RESOURCES_SELECT_MDT_TIP'),
+                    },
                   ]}
                 >
                   <Select
