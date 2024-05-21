@@ -16,284 +16,401 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
-import { observable, action } from 'mobx'
-import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
+import { get, set, uniq, isArray, intersection } from 'lodash';
+import { observable, action } from 'mobx';
+import { Notify } from '@kube-design/components';
+import { LIST_DEFAULT_ORDER } from 'utils/constants';
+import ObjectMapper from 'utils/object.mapper';
+import cookie from 'utils/cookie';
 
-
-import Base from '../basemm3' // mm3 관련 추가 파일
-import List from '../base.list'
+import Base from '../basemm3'; // mm3 관련 추가 파일
+import List from '../base.list';
 
 export default class MediatedDeviceStore extends Base {
+  records = new List();
 
-    records = new List()
+  module = 'mediated_devices';
 
-    module = 'mediated_devices'
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/mediated_devices`;
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_devices`
-    getListUrl = this.getResourceUrl
+  getListUrl = this.getResourceUrl;
 
+  @action
+  async fetchList({
+    cluster,
+    workspace,
+    namespace,
+    more,
+    devops,
+    ...params
+  } = {}) {
+    this.list.isLoading = true;
 
-    @action
-    async fetchList({
+    if (!params.sortBy && params.ascending === undefined) {
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp';
+    }
+
+    if (params.limit === Infinity || params.limit === -1) {
+      params.limit = -1;
+      params.page = 1;
+    }
+
+    params.limit = params.limit || 10;
+
+    const result = await request.get(
+      this.getResourceUrl({
         cluster,
         workspace,
         namespace,
-        more,
         devops,
-        ...params
-    } = {}) {
-        this.list.isLoading = true
+      }),
+      this.getFilterParams(params)
+    );
 
-        if (!params.sortBy && params.ascending === undefined) {
-            params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
-        }
+    // mm3 api 관련
+    const mm3Array = [
+      'vms',
+      'images',
+      'flavors',
+      'networks',
+      'routers',
+      'floating_ips',
+      'lbs',
+      'security_groups',
+      'keypairs',
+      'host_devices',
+      'pci_devices',
+      'volumes',
+      'clusters',
+      'workspaces',
+      'licenses',
+      'distro_types',
+      'mediated_devices',
+    ];
+    const apiName = mm3Array.includes(this.module) ? this.module : '';
 
-        if (params.limit === Infinity || params.limit === -1) {
-            params.limit = -1
-            params.page = 1
-        }
+    const data = (get(result, apiName) || []).map(item => ({
+      cluster,
+      namespace,
+      ...this.mapper(item),
+    }));
 
-        params.limit = params.limit || 10
+    // ID값으로 이름 셋팅
+    const dataArray = [];
+    data.map(device => {
+      device.name = device.resource_name;
+      dataArray.push(device);
+    });
 
-        const result = await request.get(
-            this.getResourceUrl({ cluster, workspace, namespace, devops }),
-            this.getFilterParams(params)
-        )
+    // 초기 데이터 처리
+    this.dataList = dataArray;
 
-        // mm3 api 관련 
-        const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'mediated_devices']
-        const apiName = mm3Array.includes(this.module) ? this.module : "";
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
+    const searchArray = Object.keys(params)
+      .map(key => {
+        const value = params[key];
+        const searchData = {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        };
+        return searchData;
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false);
 
-        const data = (get(result, apiName) || []).map(item => ({
-            cluster,
-            namespace,
-            ...this.mapper(item),
-        }))
-
-        //ID값으로 이름 셋팅
-        const dataArray = [];
-        data.map((device) => {
-            device.name = device.resource_name
-            dataArray.push(device);
-        })
-
-        // 초기 데이터 처리 
-        this.dataList = dataArray;
-
-        // 검색 관련 처리 
-        const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-        const searchArray = Object.keys(params).map((key) => {
-            let value = params[key];
-            let searchData = {
-                "searchKeywordType": key,
-                "searchKeywordText": value
-            }
-            return searchData
-        }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
-
-        this.searchList = this.dataList;
-        if (searchArray.length > 0) {
-            searchArray.map((search) => {
-                let resultList = this.searchList.filter((row) => {
-                    if (search.searchKeywordType === 'project') {
-                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                    }
-                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                });
-                this.searchList = resultList;
-            })
-            this.dataList = this.searchList;
-        }
-
-        //정렬 처리
-        const sortType = !!params.ascending ? "asc" : "desc";
-        this.dataList.sort((a, b) => {
-            var x = a[params.sortBy];
-            var y = b[params.sortBy];
-            if (sortType == "desc") {
-                return x > y ? -1 : x < y ? 1 : 0;
-            } else if (sortType == "asc") {
-                return x < y ? -1 : x > y ? 1 : 0;
-            }
+    this.searchList = this.dataList;
+    if (searchArray.length > 0) {
+      searchArray.map(search => {
+        const resultList = this.searchList.filter(row => {
+          if (search.searchKeywordType === 'project') {
+            return (
+              row[search.searchKeywordType]?.toLowerCase() ===
+              search.searchKeywordText.toLowerCase()
+            );
+          }
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase());
         });
-
-        // mm3 데이터 page 별 Slice 처리 
-        const perPage = Number(params.limit) || 10;
-        const currentPage = Number(params.page) || 1;
-        const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-
-        this.list.update({
-            data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-            total: result.totalItems || result.total_count || this.dataList.length || 0,
-            ...params,
-            limit: Number(params.limit) || 10,
-            page: Number(params.page) || 1,
-            isLoading: false,
-            ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-        })
-
-        return data
+        this.searchList = resultList;
+      });
+      this.dataList = this.searchList;
     }
 
-    @action
-    async create(data, params = {}) {
+    // 정렬 처리
+    const sortType = params.ascending ? 'asc' : 'desc';
+    this.dataList.sort((a, b) => {
+      const x = a[params.sortBy];
+      const y = b[params.sortBy];
+      if (sortType == 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0;
+      }
+      if (sortType == 'asc') {
+        return x < y ? -1 : x > y ? 1 : 0;
+      }
+    });
 
-        let res = await this.submitting(request.post(this.getListUrl(params), data))
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10;
+    const currentPage = Number(params.page) || 1;
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    );
 
-        return res
-    }
+    this.list.update({
+      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
+      total:
+        result.totalItems || result.total_count || this.dataList.length || 0,
+      ...params,
+      limit: Number(params.limit) || 10,
+      page: Number(params.page) || 1,
+      isLoading: false,
+      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
+    });
 
+    return data;
+  }
 
-    @action
-    async fetchDetail(params) {
-        this.isLoading = true
+  @action
+  async create(data, params = {}) {
+    const res = await this.submitting(
+      request.post(this.getListUrl(params), data)
+    );
 
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+    return res;
+  }
+
+  @action
+  async fetchDetail(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.name}`
+    );
+    const detail = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'MediatedDevices',
+    };
+
+    // Yaml 파일 관련
+    await this.fetchYaml(params);
+
+    this.detail = detail;
+    this.isLoading = false;
+    return detail;
+  }
+
+  @action
+  async fetchYaml(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.name}/manifest`
+    );
+    const yamlData = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'MediatedDevices',
+    };
+
+    this.yaml = yamlData.manifest;
+    this.isLoading = false;
+    return yamlData;
+  }
+
+  @action
+  async update({ name, ...params }, data) {
+    const res = await this.submitting(
+      request.put(this.getDetailUrl({ name: data.mediatedDevice.name }), data)
+    );
+
+    return res;
+  }
+
+  @action
+  async batchDelete({ rowKeys, ...params }) {
+    if (rowKeys.includes(globals.user.username)) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+    } else {
+      await this.submitting(
+        Promise.all(
+          rowKeys.map(username => {
+            const replaceName = username.replace('/', '%5C');
+            request.delete(
+              `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+                params
+              )}/edgetron/resources/kubevirt/mediated_devices/${replaceName}`
+            );
+          })
         )
-        const detail = { ...params, ...this.mapper(result), kind: 'MediatedDevices' }
-
-        // Yaml 파일 관련 
-        await this.fetchYaml(params);
-
-        this.detail = detail
-        this.isLoading = false
-        return detail
+      );
     }
+    this.list.selectedRowKeys = [];
+  }
 
-    @action
-    async fetchYaml(params) {
-        this.isLoading = true
-
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
-        )
-        const yamlData = { ...params, ...this.mapper(result), kind: 'MediatedDevices' }
-
-        this.yaml = yamlData.manifest
-        this.isLoading = false
-        return yamlData
+  @action
+  delete(user) {
+    const cluster = globals.currentCluster;
+    if (user.name === globals.user.username) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+      return;
     }
+    user.name = user.name.replace('/', '%5C');
+    return this.submitting(
+      request.delete(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+          cluster,
+        })}/edgetron/resources/kubevirt/mediated_devices/${user.name}`
+      )
+    );
+  }
 
+  @action
+  async fetchDeviceList(params) {
+    this.isLoading = true;
 
-    @action
-    async update({ name, ...params }, data) {
+    const dataArray = [];
+    const resultNodes = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/nodes`
+    );
+    const responseNodes = {
+      ...params,
+      ...this.mapper(resultNodes),
+      kind: 'nodes',
+    };
+    responseNodes.nodes.map(async obj => {
+      const resultPgpus = await request.get(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          params
+        )}/edgetron/resources/kubevirt/gpus/pgpus/${obj.name}`
+      );
+      const responsePgpus = {
+        ...params,
+        ...this.mapper(resultPgpus),
+        kind: 'pgpu_models',
+      };
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ name: data.mediatedDevice.name }), data))
+      responsePgpus.pgpu_models.map(async obj => {
+        const resultVgpus = await request.get(
+          `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+            params
+          )}/edgetron/resources/kubevirt/gpus/vgpus/${obj.model_num}`
+        );
+        const responseVgpus = {
+          ...params,
+          ...this.mapper(resultVgpus),
+          kind: 'vgpu_profiles',
+        };
 
-        return res
-    }
+        responseVgpus.vgpu_profiles.map(obj => dataArray.push(obj));
+      });
+    });
 
+    this.vgpuProfiles = dataArray;
 
-    @action
-    async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-        } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(username => {
-                        const replaceName = username.replace("/", "%5C");
-                        request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_devices/` + replaceName)
-                    })
-                )
-            )
-        }
-        this.list.selectedRowKeys = []
-    }
+    this.isLoading = false;
+    return dataArray;
+  }
 
-    @action
-    delete(user) {
-        let cluster = globals.currentCluster
-        if (user.name === globals.user.username) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-            return
-        }
-        user.name = user.name.replace("/", "%5C");
-        return this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/mediated_devices/` + user.name))
-    }
+  @action
+  async fetchNodeList(params) {
+    this.isLoading = true;
 
-    @action
-    async fetchDeviceList(params) {
-        this.isLoading = true
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/nodes`
+    );
+    const response = result.nodes;
 
-        const dataArray = [];
-        const resultNodes = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/nodes`)
-        const responseNodes = { ...params, ...this.mapper(resultNodes), kind: 'nodes' }
-        responseNodes.nodes.map(async obj => {
-            const resultPgpus = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/pgpus/${obj.name}`)
-            const responsePgpus = { ...params, ...this.mapper(resultPgpus), kind: 'pgpu_models' }
+    this.isLoading = false;
+    return response;
+  }
 
-            responsePgpus.pgpu_models.map(async obj => {
-                const resultVgpus = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/vgpus/${obj.model_num}`)
-                const responseVgpus = { ...params, ...this.mapper(resultVgpus), kind: 'vgpu_profiles' }
+  @action
+  async fetchPgpuList(params) {
+    this.isLoading = true;
 
-                responseVgpus.vgpu_profiles.map(obj => dataArray.push(obj))
-            })
-        })
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/gpus/pgpus/${params.node}`
+    );
+    const response = result.pgpu_models;
 
-        this.vgpuProfiles = dataArray
+    this.isLoading = false;
+    return response;
+  }
 
-        this.isLoading = false
-        return dataArray;
-    }
+  @action
+  async fetchVgpuList(params) {
+    this.isLoading = true;
 
-    @action
-    async fetchNodeList(params) {
-        this.isLoading = true;
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/gpus/vgpus/${params.model_num}`
+    );
+    const response = result.vgpu_profiles;
 
-        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/nodes`);
-        const response = result.nodes
+    this.isLoading = false;
+    return response;
+  }
 
-        this.isLoading = false;
-        return response;
-    }
+  @action
+  async createMediatedDeviceType(data, params = {}) {
+    this.isLoading = true;
 
-    @action
-    async fetchPgpuList(params) {
-        this.isLoading = true;
+    const res = await this.submitting(
+      request.post(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          params
+        )}/edgetron/resources/kubevirt/mediated_device_types`,
+        data
+      )
+    );
 
-        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/pgpus/${params.node}`);
-        const response = result.pgpu_models;
+    this.isLoading = false;
+    return res;
+  }
 
-        this.isLoading = false;
-        return response;
-    }
+  @action
+  async fetchMediatedDeviceType(params) {
+    this.isLoading = true;
 
-    @action
-    async fetchVgpuList(params) {
-        this.isLoading = true;
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/mediated_device_types/${params.node}`
+    );
+    const response = result.mediated_device_types;
 
-        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpus/vgpus/${params.model_num}`);
-        const response = result.vgpu_profiles;
+    this.isLoading = false;
+    return response;
+  }
 
-        this.isLoading = false;
-        return response;
-    }
+  @action
+  async deleteMediatedDeviceType(params) {
+    this.isLoading = true;
 
-    @action
-    async createMediatedDeviceType(data, params = {}) {
-        this.isLoading = true;
+    const res = await this.submitting(
+      request.delete(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          params
+        )}/edgetron/resources/kubevirt/mediated_device_types/${params.node}/${
+          params.vgpu
+        }`
+      )
+    );
 
-        let res = await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_device_types`, data));
-
-        this.isLoading = false;
-        return res
-    }
-
-    @action
-    async fetchMediatedDeviceType(params) {
-        this.isLoading = true;
-
-        const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/mediated_device_types/${params.node}`);
-        const response = result.mediated_device_types;
-
-        this.isLoading = false;
-        return response;
-    }
-
+    this.isLoading = false;
+    return res;
+  }
 }
