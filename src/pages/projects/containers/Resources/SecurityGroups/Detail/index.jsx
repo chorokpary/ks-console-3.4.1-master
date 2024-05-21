@@ -109,6 +109,7 @@ const SecurityGroupDetail = (props) => {
             <DetailPage
                 stores={{ detailStore: store }}
                 routes={routes}
+                authKey="securityGroups"
                 {...sideProps} />
         </>
     )

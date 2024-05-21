@@ -194,6 +194,7 @@ const VolumeDetail = (props) => {
       <DetailPage
         stores={{ detailStore: store }}
         routes={routes}
+        authKey="resourcesVolumes"
         {...sideProps} />
     </>
   )
