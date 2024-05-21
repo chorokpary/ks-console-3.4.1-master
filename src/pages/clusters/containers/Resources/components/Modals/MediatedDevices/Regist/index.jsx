@@ -26,7 +26,6 @@ const RegistModal = props => {
   const [formData, setFormData] = useState({});
 
   const [isGpu, setIsGpu] = useState(true);
-  const [node, setNode] = useState([]);
 
   const [nodeDataList, setNodeDataList] = useState([]);
 
@@ -290,7 +289,6 @@ const RegistModal = props => {
                       options={nodeOptions()}
                       onChange={e => {
                         handleNode(e);
-                        setNode(e);
                       }}
                     />
                   </Form.Item>
