@@ -203,7 +203,7 @@ const ModifyModal = props => {
     return elements;
   };
 
-  const nextHostRoute = useRef(1);
+  const nextHostRoute = useRef(detail?.host_routes.length == 0 ? 1 : detail?.host_routes.length-1);
   const [listHostRoute, setListHostRoute] = useState(Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i));
 
   const handleHostRoute = {
