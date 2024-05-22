@@ -84,6 +84,7 @@ const CloneModal = props => {
                   message: t('RESOURCES_INVALID_NAME_DESC'),
                 },
               ]}
+              desc={t('NAME_DESC')}
             >
               <Input
                 name="target_vm_name"
@@ -101,6 +102,7 @@ const CloneModal = props => {
                   message: t('RESOURCES_CLONE_DATA_LOG_INFORMATION_TIP'),
                 },
               ]}
+              desc={t('DESCRIPTION_DESC')}
             >
               <Input
                 name="description"
