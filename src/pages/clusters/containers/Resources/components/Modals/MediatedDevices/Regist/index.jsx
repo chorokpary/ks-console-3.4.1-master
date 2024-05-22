@@ -341,7 +341,6 @@ const RegistModal = props => {
                       </thead>
                       <tbody>
                         {!vgpuDataList?.length && (
-                          // /edgetron/resources/kubevirt/gpus/vgpus/${params.model_num}` 여기서 가져오는데 이름을 어떻게 해야할지 모르겠음
                           <tr>
                             <td
                               colSpan="5"

@@ -111,12 +111,6 @@ const RegistModal = props => {
       setImageOptionList(
         listImage.images.filter(obj => obj.os_type !== 'windows')
       );
-
-      // const imgList = listImage.images.filter(obj => obj.os_type !== 'windows');
-      // if (imgList.length > 0) {
-      //   const defaultImage = imgList[0];
-      //   initialScriptId1.current = defaultImage.distro_type;
-      // }
     };
     getVmImage();
 
@@ -472,7 +466,6 @@ const RegistModal = props => {
 
     makeScript += userPasswordScript + fileScript + packageScript;
     // makeScript += userPasswordScript;
-    // console.log(makeScript)
 
     return makeScript;
   };
@@ -970,7 +963,6 @@ const RegistModal = props => {
 
   const handleIamgeDistroType = distro_type => {
     setSelectImageDistroType(distro_type);
-    console.log('distro_type\n', distro_type);
 
     if (isPassword) {
       const { data } = form.current.props;
@@ -1266,17 +1258,10 @@ const RegistModal = props => {
                             options={imageOptions()}
                             onChange={e => {
                               setSelectImageName(e);
-
-                              // const distro_type = imageOptionList
-                              //   .filter(item => item.name === e)
-                              //   .map(item => item.distro_type)[0];
-                              const distro_type = imageOptionList.find(
-                                item => item.name === e
-                              ).distro_type;
-                              // console.log('distro_type\n', distro_type);
+                              const distro_type = imageOptionList
+                                .filter(item => item.name === e)
+                                .map(item => item.distro_type)[0];
                               handleIamgeDistroType(distro_type);
-
-                              // initialScriptId1.current = distro_type;
                             }}
                             defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
                           />
