@@ -416,7 +416,6 @@ const RegistModal = props => {
         });
       }
     }
-
     if (osType == "windows") {
       userPasswordScript += `\n`;
       userPasswordScript += `users:\n`;
@@ -1826,86 +1825,24 @@ const RegistModal = props => {
                   }}
                   checkable
                 >
-<<<<<<< HEAD
-                  {!isUserScript && (
-                    <>
-                      <Form.Group
-                        label={t('RESOURCES_CHANGE_PASSWORD')}
-                        onChange={() => {
-                          setIsPassword(!isPassword);
-                        }}
-                        checkable
-                      >
-                        {listPasswordRoute.map(obj => {
-                          return (
-                            <div className={styles.scriptitem} key={obj}>
-                              <Columns>
-                                <Column>
-                                  <Form.Item>
-                                    <Input
-                                      name={`scriptId_${obj}`}
-                                      placeholder={t('ID')}
-                                      defaultValue={
-                                        obj === 1 ? selectImageDistroType : ''
-                                      }
-                                      disabled={
-                                        obj >= 1 && imageType === 'B'
-                                          ? false
-                                          : !!(obj === 1 && imageType === 'I')
-                                      }
-                                      onChange={() => checkScriptPassword()}
-                                    />
-                                  </Form.Item>
-                                </Column>
-                                <Column>
-                                  <Form.Item>
-                                    <InputPassword
-                                      name={`scriptPassword_${obj}`}
-                                      placeholder={t('PASSWORD')}
-                                      onChange={() => checkScriptPassword()}
-                                    />
-                                  </Form.Item>
-                                </Column>
-                              </Columns>
-                              <Button
-                                type="flat"
-                                icon="trash"
-                                className={styles.scriptdelete}
-                                onClick={() =>
-                                  listPasswordRoute.length > 1 &&
-                                  obj > 1 &&
-                                  handlePasswordRoute.delColumn(obj)
-                                }
-                              />
-                            </div>
-                          );
-                        })}
-
-                        <div className="text-right">
-                          <Button
-                            className={styles.scriptadd}
-                            onClick={handlePasswordRoute.addColumn}
-                          >
-                            {t('RESOURCES_ADD')}
-                          </Button>
-                        </div>
-                        <div
-                          className={`form-item-error ${
-                            !isPasswordError ? 'hide' : ''
-                          }`}
-                        >
-                          {t('RESOURCES_PASSWORD_EMPTY_DESC')}
-                        </div>
-                      </Form.Group>
-
-                      <Form.Group
-                        label={t('RESOURCES_WRITE_FILE')}
-                        onChange={e => {
-                          setIsFileWrite(!isFileWrite);
-                        }}
-                        checkable
-                      >
-                        {listFileRoute.map(obj => (
+                  <div
+                    className={isUserScript ? 'disabled' : ''}
+                    onClick={e => {
+                      if (isUserScript) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    <Form.Group
+                      label={t('RESOURCES_CHANGE_PASSWORD')}
+                      onChange={e => {
+                        setIsPassword(!isPassword);
+                      }}
+                      checkable
+                      className={'disabled'}
+                    >
+                      {listPasswordRoute.map((obj, index) => {
+                        return (
                           <div className={styles.scriptitem} key={obj}>
                             <Columns>
                               <Column>
