@@ -341,6 +341,7 @@ const RegistModal = props => {
     let makeScript = '#cloud-config';
 
     /*
+    ==> linux distro
     #cloud-config
     ssh_pwauth: true
     users:
@@ -356,47 +357,76 @@ const RegistModal = props => {
         - ubuntu:1234
         - newuser:test#@@!
         - seconduser:Passw0rd!TWO!
+
+    ==> windows distro
+    #cloud-config
+    users:
+      - name: newuser
+        gecos: 'newuser'
+        primary_group: Administrators
+        groups: Administrators
+        passwd: test#@@!
+        inactive: False
     */
     let userPasswordScript = '';
-    if (listPasswordRoute.length == 1) {
-      listPasswordRoute.map(obj => {
-        if (data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `\nssh_pwauth: true\n`;
-          userPasswordScript += `users:\n`;
-          userPasswordScript += `  - default\n`;
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
-          userPasswordScript += `\n`;
-          userPasswordScript += `chpasswd:\n`;
-          userPasswordScript += `  expire: false\n`;
-          userPasswordScript += `  list:\n`;
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-            data[`scriptPassword_${obj}`]
-          }\n`;
+    if (osType == "linux") {
+      if (listPasswordRoute.length == 1) {
+        listPasswordRoute.map(obj => {
+          if (data[`scriptPassword_${obj}`]) {
+            userPasswordScript += `\nssh_pwauth: true\n`;
+            userPasswordScript += `users:\n`;
+            userPasswordScript += `  - default\n`;
+            userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
+            userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
+            userPasswordScript += `\n`;
+            userPasswordScript += `chpasswd:\n`;
+            userPasswordScript += `  expire: false\n`;
+            userPasswordScript += `  list:\n`;
+            userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
+              data[`scriptPassword_${obj}`]
+            }\n`;
 
-          makeScriptStep_1 = true;
-        }
-      });
-    } else {
-      userPasswordScript += `\nssh_pwauth: true\n`;
+            makeScriptStep_1 = true;
+          }
+        });
+      } else {
+        userPasswordScript += `\nssh_pwauth: true\n`;
+        userPasswordScript += `users:\n`;
+        userPasswordScript += `  - default\n`;
+        listPasswordRoute.map(obj => {
+          if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
+            userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
+            userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
+            makeScriptStep_1 = true;
+          }
+        });
+        userPasswordScript += `\n`;
+        userPasswordScript += `chpasswd:\n`;
+        userPasswordScript += `  expire: false\n`;
+        userPasswordScript += `  list:\n`;
+        listPasswordRoute.map(obj => {
+          if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
+            userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
+              data[`scriptPassword_${obj}`]
+            }\n`;
+          }
+        });
+      }
+    }
+
+    if (osType == "windows") {
+      userPasswordScript += `\n`;
       userPasswordScript += `users:\n`;
-      userPasswordScript += `  - default\n`;
+
       listPasswordRoute.map(obj => {
         if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
           userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
+          userPasswordScript += `    gecos: ${data[`scriptId_${obj}`]}\n`;
+          userPasswordScript += `    primary_group: Administrators\n`;
+          userPasswordScript += `    groups: Administrators\n`;
+          userPasswordScript += `    passwd: ${data[`scriptPassword_${obj}`]}\n`;
+          userPasswordScript += `    inactive: false\n`;
           makeScriptStep_1 = true;
-        }
-      });
-      userPasswordScript += `\n`;
-      userPasswordScript += `chpasswd:\n`;
-      userPasswordScript += `  expire: false\n`;
-      userPasswordScript += `  list:\n`;
-      listPasswordRoute.map(obj => {
-        if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-            data[`scriptPassword_${obj}`]
-          }\n`;
         }
       });
     }
@@ -462,7 +492,6 @@ const RegistModal = props => {
     }
 
     makeScript += userPasswordScript + fileScript + packageScript;
-    // makeScript += userPasswordScript;
     // console.log(makeScript)
 
     return makeScript;
@@ -1812,7 +1841,7 @@ const RegistModal = props => {
                                     <Input
                                       name={`scriptId_${obj}`}
                                       placeholder={t('ID')}
-                                      value={
+                                      defaultValue={
                                         obj === 1 ? selectImageDistroType : ''
                                       }
                                       disabled={
@@ -1828,7 +1857,7 @@ const RegistModal = props => {
                                   <Form.Item>
                                     <InputPassword
                                       name={`scriptPassword_${obj}`}
-                                      placeholder={t('Password')}
+                                      placeholder={t('PASSWORD')}
                                       onChange={() => checkScriptPassword()}
                                     />
                                   </Form.Item>
