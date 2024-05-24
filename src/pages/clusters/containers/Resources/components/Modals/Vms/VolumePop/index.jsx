@@ -35,9 +35,8 @@ const VolumeModal = props => {
       // 볼륨 리스트 중 해당 가상머신과 연결이 되어 있건, 아무것도 연결이 안되어 있는 볼륨 리스트.
       const volumeListData = volumeData.filter(obj => {
         return (
-          obj.used_by_vmi === vmId ||
-          !obj.used_by_vmi ||
-          obj.name === `${vmName}-boot-dv`
+          (obj.used_by_vmi === vmId || !obj.used_by_vmi) &&
+          obj.name !== `${vmName}-boot-dv`
         );
       });
 
