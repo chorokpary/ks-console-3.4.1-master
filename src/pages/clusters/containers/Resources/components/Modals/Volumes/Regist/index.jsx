@@ -116,6 +116,7 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList();
       setDistroTypeData(dist);
@@ -135,7 +136,6 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
-    console.log('storageClassOptions', storageClassOptions);
     if (storageClassOptions.length > 0) {
       const opt = storageClassOptions.filter(
         obj => obj.is_vm_default_class === true
@@ -256,9 +256,6 @@ const RegistModal = props => {
       setDistroTypeList([]);
     }
   };
-
-  
-
 
   const fnGetModalFooter = () => {
     let elements = '';
