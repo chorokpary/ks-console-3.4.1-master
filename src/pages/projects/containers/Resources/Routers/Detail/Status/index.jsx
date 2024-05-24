@@ -56,12 +56,8 @@ const Status = props => {
     store.detail.router?.external && fnGetExternalNetwork();
     setInternalNetwork([]);
     store.detail.router?.internal && fnGetInternalNetwork();
-    console.log('store', props.match.params);
   }, []);
 
-  useEffect(() => {
-    console.log('externalNetwork\n', externalNetwork);
-  }, [externalNetwork]);
   return (
     <>
       {!!externalNetwork && (

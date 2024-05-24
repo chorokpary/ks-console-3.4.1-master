@@ -85,7 +85,6 @@ const RegistModal = props => {
           idx: (nextIndex.current += 1),
         },
       ]);
-      console.log('single Check');
     } else {
       setCheckItems(checkItems.filter(el => el !== obj.device_name));
       setAddRowList(
@@ -120,9 +119,6 @@ const RegistModal = props => {
       setAddRowList([]);
     }
   };
-  useEffect(() => {
-    console.log('addRowList\n', addRowList);
-  }, [addRowList]);
 
   const handleDelete = name => {
     setCheckItems(checkItems.filter(el => el !== name));

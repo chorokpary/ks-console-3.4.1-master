@@ -95,7 +95,6 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
-    console.log('storageClassOptions', storageClassOptions);
     if (storageClassOptions.length > 0) {
       const opt = storageClassOptions.filter(
         obj => obj.is_vm_default_class === true
@@ -174,7 +173,6 @@ const RegistModal = props => {
       }
     }
   };
-
 
   const fnGetModalFooter = () => {
     let elements = '';
