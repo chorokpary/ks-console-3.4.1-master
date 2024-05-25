@@ -11,7 +11,7 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 
-import { Modal, TypeSelect } from 'components/Base';
+import { Modal } from 'components/Base';
 import * as common from 'utils/resources';
 import { ProjectSelect, UnitSlider } from 'components/Inputs';
 import { PATTERN_USER_NAME } from 'utils/constants';
@@ -19,11 +19,17 @@ import VolumeStore from 'stores/resources/volumes';
 import ImageStore from 'stores/resources/images';
 import styles from './index.scss';
 
+import TypeSelect from '../../../TypeSelect';
+import CardSelect from '../../../CardSelect';
+
+import DistroTypeStore from 'stores/resources/distrotype';
+
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 
 const RegistModal = props => {
   const volumeStore = new VolumeStore();
   const imageStore = new ImageStore();
+  const distroTypeStore = new DistroTypeStore();
 
   const form = useRef();
   const [formData, setFormData] = useState({});
@@ -45,6 +51,11 @@ const RegistModal = props => {
   const [storageClassOptions, setStorageClassOptions] = useState([]);
   const [storageClass, setStorageClass] = useState();
 
+  const [osType, setOsType] = useState('linux');
+  const [distroTypeData, setDistroTypeData] = useState([]);
+  const [distroTypeList, setDistroTypeList] = useState([]);
+  const [distroType, setDistroType] = useState('ubuntu');
+  
   useEffect(() => {
     const getStoregeClassData = async () => {
       const listStoregeClass = await volumeStore.fetchStoregeClass(props);
@@ -95,6 +106,25 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
+    const getDistroTypeList = async () => {
+      const dist = await distroTypeStore.fetchList();
+      setDistroTypeData(dist);
+      setDistroTypeList(dist.filter(obj => obj.name != 'windows'));
+    };
+    getDistroTypeList();
+  }, []);
+
+  const distroTypeOptions = () => {
+    const opt = distroTypeList.map(obj => ({
+      label: t(obj.name),
+      description: t(obj.vendor),
+      icon: `ico-os-${obj.name}`,
+      value: t(obj.name),
+    }));
+    return opt;
+  };
+
+  useEffect(() => {
     console.log('storageClassOptions', storageClassOptions);
     if (storageClassOptions.length > 0) {
       const opt = storageClassOptions.filter(
@@ -106,8 +136,8 @@ const RegistModal = props => {
 
   const accessModeOptions = [
     { label: 'RWO (Read Write Once)', value: 'ReadWriteOnce' },
-    { label: 'ROM (Read Only Many)', value: 'ReadOnlyMany' },
-    { label: 'RWM (Read Write Many)', value: 'ReadWriteMany' },
+    { label: 'ROX (Read Only Many)',  value: 'ReadOnlyMany' },
+    { label: 'RWX (Read Write Many)', value: 'ReadWriteMany' },
   ];
 
   const importSourceOptions = [
@@ -115,6 +145,28 @@ const RegistModal = props => {
     { label: 'ImageVolume', value: 'ImageVolume' },
     { label: 'UploadImage', value: 'UploadImage' },
     // { label: 'DataVolume', value: 'DataVolume' },
+  ];
+
+  const archTypeOptions = [
+    { label: 'x86_64', value: 'x86_64' },
+    { label: 'aarch64', value: 'aarch64' },
+  ];
+
+  const bootTypeOptions = [
+    { label: 'legacy', value: 'legacy' },
+    { label: 'uefi', value: 'uefi' },
+  ];
+
+  const osTypeOptions = [
+    { label: 'Linux', value: 'linux', icon: 'ico-linux' },
+    { label: 'Windows', value: 'windows', icon: 'ico-windows' },
+    //   { label: 'etc', value: '', icon: 'ico-plus' },
+  ];
+
+  const busTypeOptions = [
+    { label: 'virtio', value: 'virtio' },
+    { label: 'sata', value: 'sata' },
+    { label: 'scsi', value: 'scsi' },
   ];
 
   const volumeModeOptions = [
@@ -140,6 +192,8 @@ const RegistModal = props => {
       accesModeArray.push(data.access_mode);
       data.access_modes = accesModeArray;
       data.project = projectName;
+
+      data.os_distro = distroType;
 
       if (typeof volumeCapacity === 'number') {
         data.capacity = volumeCapacity;
@@ -173,7 +227,26 @@ const RegistModal = props => {
         setRegStep(2);
       }
     }
+    if (step == 2) {
+      setRegStep(3);
+    }
   };
+
+  const handleOsType = value => {
+    setOsType(value);
+    if (value == 'windows') {
+      setDistroType('windows');
+      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'));
+    } else if (value == 'linux') {
+      setDistroType('ubuntu');
+      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'));
+    } else {
+      setDistroType('');
+      setDistroTypeList([]);
+    }
+  };
+
+  
 
 
   const fnGetModalFooter = () => {
@@ -210,6 +283,33 @@ const RegistModal = props => {
             <Button
               onClick={() => {
                 setRegStep(1);
+              }}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_PREVIOUS')}
+            </Button>
+	    <Button
+              type="control"
+              onClick={() => {
+                stepMoveCheck(2);
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+            >
+              {t('RESOURCES_NEXT')}
+            </Button>
+          </>
+        )}
+	{regStep == 3 && (
+          <>
+            <Button
+              onClick={() => closeModal()}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_CANCEL')}
+            </Button>
+            <Button
+              onClick={() => {
+                setRegStep(2);
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -302,10 +402,34 @@ const RegistModal = props => {
               <span className={styles.check}></span>
               <div className={styles.title}>
                 <div className={styles.step_name}>
-                  {t('RESOURCES_DETAIL_SETTINGS')}
+                  {t('RESOURCES_IMPORT_SOURCE_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
                   {regStep == 2
+                    ? t('RESOURCES_CURRENT')
+                    : t('RESOURCES_NOT_SET')}
+                </div>
+              </div>
+            </div>
+
+	    <div
+              className={classnames(
+                styles.process_item,
+                `${regStep == 3 ? styles.current : ''}`
+              )}
+            >
+              <div className={styles.status}>
+                <div
+                  className={`${regStep == 3 ? styles.current : styles.todo}`}
+                ></div>
+              </div>
+              <span className={styles.check}></span>
+              <div className={styles.title}>
+                <div className={styles.step_name}>
+                  {t('RESOURCES_DETAIL_SETTINGS')}
+                </div>
+                <div className={styles.situation}>
+                  {regStep == 3
                     ? t('RESOURCES_CURRENT')
                     : t('RESOURCES_NOT_SET')}
                 </div>
@@ -376,9 +500,128 @@ const RegistModal = props => {
                 </Form.Item>
               </div>
               {/* 기본설정 설정 끝========================================== */}
-
+              {/* 입력소스 설정 시작======================================== */}
+	      <div className={`${regStep == 2 ? '' : 'hide'}`}>
+	        <Form.Item label={t('RESOURCES_INPUT_SOURCE')}>
+                  <Select
+                    name="import_source"
+                    defaultValue={importSource}
+                    options={importSourceOptions}
+                    onChange={e => {
+                      setImportSource(e);
+                    }}
+                  />
+                </Form.Item>
+	        {importSource === 'ImageVolume' && (
+                  <Form.Item label={t('RESOURCES_VM_IMAGE')}>
+                    <Select
+                      name="import_endpoint"
+                      defaultValue={image}
+                      options={imageOptions()}
+                      onChange={e => setImage(e)}
+                    />
+                  </Form.Item>
+                )}
+	        {importSource === 'UploadImage' && (
+		  <Form.Item><Columns><Column>
+		  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_IMAGE')}
+                          rules={[
+                            {
+                              required: true,
+                              message: t('RESOURCES_SELECT_IMAGE_TIP'),
+                            },
+                          ]}
+                        >
+                          <CardSelect
+                            className={`${styles.customUl} customCard`}
+                            onChange={e => handleOsType(e)}
+                            name="os_type"
+                            options={osTypeOptions}
+                            defaultValue={osType}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
+                          <TypeSelect
+                            onChange={e => setDistroType(e)}
+                            defaultValue={distroType}
+                            options={distroTypeOptions()}
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Input
+                            defaultValue={`${osType[0].toUpperCase() +
+                              osType.slice(1, osType.length)} > ${distroType}`}
+                            readOnly
+                            style={{ maxWidth: 'none' }}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+		  </Form.Item>
+		  <Form.Item>
+		    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_CPU_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="cpu_arch"
+                            defaultValue="x86_64"
+                            options={archTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+		      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_BOOT_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="boot_type"
+                            defaultValue="legacy"
+                            options={bootTypeOptions}
+                          />
+                        </Form.Item>
+		      </Column>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_BUS_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="bus_type"
+                            defaultValue="virtio"
+                            options={busTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+		    </Columns>
+                  </Form.Item>
+		  </Column></Columns></Form.Item>
+		)}
+	      </div>
+	      {/* 입력소스 설정 끝======================================== */}
               {/* 세부설정 시작========================================== */}
-              <div className={`${regStep == 2 ? '' : 'hide'}`}>
+              <div className={`${regStep == 3 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_STOREGE_CLASS')}>
                   <Select
                     name="storage_class"
@@ -421,28 +664,6 @@ const RegistModal = props => {
                     style={{ padding: '5px', marginLeft: '10px' }}
                   />
                 </Form.Item>
-
-                <Form.Item label={t('RESOURCES_INPUT_SOURCE')}>
-                  <Select
-                    name="import_source"
-                    defaultValue={importSource}
-                    options={importSourceOptions}
-                    onChange={e => {
-                      setImportSource(e);
-                    }}
-                  />
-                </Form.Item>
-
-                {importSource === 'ImageVolume' && (
-                  <Form.Item label={t('RESOURCES_VM_IMAGE')}>
-                    <Select
-                      name="import_endpoint"
-                      defaultValue={image}
-                      options={imageOptions()}
-                      onChange={e => setImage(e)}
-                    />
-                  </Form.Item>
-                )}
 
                 <Form.Item>
                   <Columns>
