@@ -519,7 +519,7 @@ export default class VmStore extends Base {
     this.isLoading = true;
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/volumes/available`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/boot_volumes/available`
     );
     const response = { ...params, ...this.mapper(result), kind: 'volumes' };
 
