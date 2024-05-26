@@ -171,10 +171,6 @@ const VolumeDetail = props => {
         value: detail.volume.boot_type,
       },
       {
-        name: t('RESOURCES_BUS_TYPE'),
-        value: detail.volume.bus_type,
-      },
-      {
         name: t('RESOURCES_DESCRIPTION'),
         value: detail.volume.description,
       },
