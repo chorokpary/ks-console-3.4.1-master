@@ -56,6 +56,8 @@ const RegistModal = props => {
   const [distroTypeList, setDistroTypeList] = useState([]);
   const [distroType, setDistroType] = useState('ubuntu');
   
+  const [imageInfoActive, setImageInfoActive] = useState(false);
+
   useEffect(() => {
     const getStoregeClassData = async () => {
       const listStoregeClass = await volumeStore.fetchStoregeClass(props);
@@ -84,6 +86,14 @@ const RegistModal = props => {
     getStoregeClassData();
     getImageStore();
   }, []);
+
+  const handleImageInfoActive = () => {
+    if (imageInfoActive) {
+      setImageInfoActive(false);
+    } else {
+      setImageInfoActive(true);
+    }
+  }
 
   useEffect(() => {
     const options = imageOptions();
@@ -163,12 +173,6 @@ const RegistModal = props => {
     //   { label: 'etc', value: '', icon: 'ico-plus' },
   ];
 
-  const busTypeOptions = [
-    { label: 'virtio', value: 'virtio' },
-    { label: 'sata', value: 'sata' },
-    { label: 'scsi', value: 'scsi' },
-  ];
-
   const volumeModeOptions = [
     { label: 'Filesystem', value: 'Filesystem' },
     { label: 'Block', value: 'Block' },
@@ -193,7 +197,14 @@ const RegistModal = props => {
       data.access_modes = accesModeArray;
       data.project = projectName;
 
-      data.os_distro = distroType;
+      if (imageInfoActive) {
+	data.os_distro = distroType;
+      } else {
+	data.cpu_arch = "";
+        data.os_type = "";
+        data.os_distro = "";
+        data.boot_type = "";
+      }
 
       if (typeof volumeCapacity === 'number') {
         data.capacity = volumeCapacity;
@@ -523,7 +534,31 @@ const RegistModal = props => {
                   </Form.Item>
                 )}
 	        {importSource === 'UploadImage' && (
-		  <Form.Item><Columns><Column>
+		  <Form.Item
+                    label={t('RESOURCES_IMAGE_INFO')}
+                    rules={[
+                      {
+                        required: false,
+                      },
+                    ]}
+                  >
+		  <div className={styles.cont_box_section}>
+                    <div className={styles.cont_box_wrap}>
+                      <h6 className={styles.label}>
+                        <div className={styles.form_check}>
+                          <input type="checkbox" name="chk-0" id="chk-0" />
+                          <label
+                            htmlFor="chk-0"
+                            onClick={() => handleImageInfoActive()}
+                          ></label>
+                        </div>
+                        <div className={styles.title}>
+                          <p>{t('RESOURCES_SPECIFY_IMAGE_INFO')}</p>
+                          <span>{t('RESOURCES_SPECIFY_IMAGE_INFO_TIP')}</span>
+                        </div>
+                      </h6>
+		      {imageInfoActive && (
+	          <div className={`${styles.select_inner_content}`}>
 		  <Form.Item>
                     <Columns>
                       <Column>
@@ -598,25 +633,13 @@ const RegistModal = props => {
                           />
                         </Form.Item>
 		      </Column>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_BUS_TYPE')}
-                          rules={[
-                            {
-                              required: true,
-                            },
-                          ]}
-                        >
-                          <Select
-                            name="bus_type"
-                            defaultValue="virtio"
-                            options={busTypeOptions}
-                          />
-                        </Form.Item>
-                      </Column>
 		    </Columns>
                   </Form.Item>
-		  </Column></Columns></Form.Item>
+		  </div>
+	                )}
+		  </div>
+		</div>
+		</Form.Item>
 		)}
 	      </div>
 	      {/* 입력소스 설정 끝======================================== */}

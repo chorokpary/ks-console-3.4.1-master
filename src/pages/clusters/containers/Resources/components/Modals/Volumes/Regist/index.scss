@@ -198,6 +198,134 @@ button {
 }
 
 /* boxwrap */
+.select_inner_content {
+        width: 100%;
+
+        >label {
+            position: relative;
+            display: inline-block;
+            height: 20px;
+            line-height: 20px;
+            color: #36435c;
+            font-size: 12px;
+            margin-bottom: 4px;
+
+            button {
+                vertical-align: sub;
+            }
+        }
+
+        span.desc {
+            color: #79879c;
+            font-weight: normal;
+            display: block;
+            margin: 4px 0;
+        }
+
+        input {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: solid 1px #abb4be;
+        }
+}
+.cont_box_section {
+  width: 100%;
+
+  .cont_box_wrap {
+        align-items: flex-start;
+        align-self: stretch;
+        border: 1px solid;
+        border-color: #CCD3DB;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+        position: relative;
+        margin-bottom: 12px;
+  }
+
+  .label {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #36435C;
+      line-height: 1.67;
+
+      .title {
+          display: flex;
+          flex-direction: column;
+
+          span {
+              color: #79879c;
+              font-weight: normal;
+          }
+      }
+      .form_check {
+        position: relative;
+
+        input {
+            position: absolute;
+            top: 0;
+            left: 0;
+	    width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        label {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0 8px;
+            line-height: 20px;
+            color: #36435c;
+            font-size: 12px;
+            cursor: pointer;
+
+            &:before {
+                display: block;
+                content: '';
+                background: transparent url("/assets/resources/images/icons/ico-checkbox-off.svg") center no-repeat;
+                width: 16px;
+                height: 16px;
+                margin-top: 2px;
+            }
+        }
+
+	input:checked+label:before {
+            background: transparent url("/assets/resources/images/icons/ico-checkbox-on.svg") center no-repeat;
+        }
+
+        p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-left: 24px;
+
+            em {
+                color: #79879c;
+                font-size: 12px;
+                font-style: normal;
+            }
+
+            >span {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 0 4px;
+            }
+        }
+
+        &.h-32 {
+            height: 32px;
+        }
+      }
+   }
+}
 .cont_boxwrap {
   flex: 1;
   position: relative;

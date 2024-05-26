@@ -62,7 +62,6 @@ export default class VolumeStore extends Base {
       volumeData.os_type = data.os_type;
       volumeData.os_distro = data.os_distro;
       volumeData.boot_type = data.boot_type;
-      volumeData.bus_type = data.bus_type;
     }
 
     jsonData.volume = volumeData;
