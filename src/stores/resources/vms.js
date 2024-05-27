@@ -531,7 +531,7 @@ export default class VmStore extends Base {
   async fetchVmListNetwork(params) {
     this.isLoading = true;
 
-    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`);
+    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vm_networks`);
     const response = { ...params, ...this.mapper(result), kind: 'networks' };
 
     if (params?.namespace) {
