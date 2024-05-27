@@ -129,10 +129,22 @@ a:hover {
 }
 
 .tabs-container .tabs > ul > li.is-active,
+.tabs-container .tabs > ul > li:active,
+.tabs-container .tabs > ul > li:hover {
+  color: #3617ce !important;
+}
+
+.tabs-container .tabs > ul > li.is-active,
 .tabs-container .tabs > ul > li:active {
   color: #ffffff !important;
 }
-.tabs-container .tabs > ul > li:hover {
+
+.tabs-container .tabs > ul > li:active:hover {
+  color: #ffffff !important;
+}
+
+.tabs-container .tabs.tabs-button > ul > li:active {
+  background-color: transparent !important;
   color: #3617ce !important;
 }
 
