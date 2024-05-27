@@ -1535,6 +1535,7 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleIpSelectClick(data.id, e)
                                   }
+				  disabled={!networkCheckItems.includes(data.id)}
                                   clearable
                                 />
                               </td>
@@ -1669,6 +1670,7 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleSriovIpSelectClick(data.name, e)
                                   }
+				  disabled={!sriovCheckItems.includes(data.name)}
                                   clearable
                                 />
                               </td>
