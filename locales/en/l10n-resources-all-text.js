@@ -291,6 +291,8 @@ module.exports = {
   RESOURCES_VOLUME_DESC: '볼륨의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_BOOT_TYPE: '부트 타입',
   RESOURCES_BUS_TYPE: 'BUS 타입',
+  RESOURCES_BUS: 'BUS',
+  RESOURCES_SELECT_BUS_TIP: 'BUS 유형을 선택해 주세요.',
   RESOURCES_BOOT_VOLUME: '부트볼륨',
   RESOURCES_SELECT_BOOT_VOLUME_TIP: '부트볼륨을 선택해 주세요.',
   RESOURCES_ISOLATE: '분리',
