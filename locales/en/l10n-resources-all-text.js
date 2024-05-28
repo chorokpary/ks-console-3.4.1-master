@@ -295,6 +295,7 @@ module.exports = {
   RESOURCES_SELECT_BUS_TIP: 'BUS 유형을 선택해 주세요.',
   RESOURCES_BOOT_VOLUME: '부트볼륨',
   RESOURCES_SELECT_BOOT_VOLUME_TIP: '부트볼륨을 선택해 주세요.',
+  RESOURCES_HOTPLUG_FLAG: '핫플러그 여부',
   RESOURCES_ISOLATE: '분리',
   RESOURCES_ISOLATE_SUCCESSFUL: '분리 되었습니다.',
   RESOURCES_ISOLATE_TIP: '분리 하시겠습니까?',

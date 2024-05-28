@@ -116,7 +116,6 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList();
       setDistroTypeData(dist);

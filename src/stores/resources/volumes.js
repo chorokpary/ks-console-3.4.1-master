@@ -87,6 +87,20 @@ export default class VolumeStore extends Base {
   }
 
   @action
+  async fetchAvailableList(params)  {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/available`,
+    );
+    const availableList = { ...params, ...this.mapper(result), kind: 'Volumes' };
+
+    this.availabeList = availableList;
+    this.isLoading = false;
+    return availableList;
+  }
+
+  @action
   async fetchDetail(params) {
     this.isLoading = true;
 
@@ -150,11 +164,14 @@ export default class VolumeStore extends Base {
 
     actionData.vm_id = data.vmId;
     if (data.actionType == 'A') {
-      actionData.persist = data.persist;
+      actionData.persist = true;
       actionData.action = 'attach';
     } else {
       actionData.action = 'detach';
     }
+
+    actionData.hotplug = data.hotplug;
+    actionData.bus = data.bus;
 
     jsonData.action = actionData;
 
