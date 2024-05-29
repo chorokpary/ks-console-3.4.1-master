@@ -14,6 +14,7 @@ const VolumeModal = props => {
   const volumeStore = new VolumeStore();
 
   const [volumeList, setVolumeList] = useState([]);
+  const [hotplugList, setHotplugList] = useState([]);
   const [selectedBusList, setSelectedBusList] = useState([]);
   const [volumeCheckItems, setVolumeCheckItems] = useState([]);
   const [hotplugCheckItems, setHotplugCheckItems] = useState([]);
@@ -71,7 +72,8 @@ const VolumeModal = props => {
       const volumeListData = volumeData.filter(obj => {
         return (
           (obj.used_by_vmi === vmId || !obj.used_by_vmi) &&
-          obj.id !== `${vmId}-boot-dv` && obj.phase == "Succeeded" && obj.boot_volume === false
+          obj.id !== `${vmId}-boot-dv` && obj.phase == "Succeeded" && 
+	  obj.boot_volume === false
         );
       });
 
@@ -84,6 +86,7 @@ const VolumeModal = props => {
 
       setVolumeCheckItems(connectedVolumeArray);
       setVolumeList(volumeListData);
+      console.log(volumeListData);
     };
 
     getVolumeDataList();
@@ -146,8 +149,7 @@ const VolumeModal = props => {
                     <col width="13%" />
                     <col width="18%" />
                     <col width="8%" />
-                    <col width="8%" />
-                    <col width="10%" />
+                    <col width="18%" />
                     <col width="10%" />
                   </colgroup>
                   <thead>
@@ -166,9 +168,6 @@ const VolumeModal = props => {
                       </th>
                       <th>
                         <strong>{t('RESOURCES_CAPACITY')}</strong>
-                      </th>
-                      <th>
-                        <strong>{t('RESOURCES_STATE')}</strong>
                       </th>
                       <th>
                         <strong>{t('RESOURCES_VOLUME_LOCATION')}</strong>
@@ -199,9 +198,7 @@ const VolumeModal = props => {
 			  <Checkbox
 			    name={`select-${data.id}`}
 			    checked={
-		              !!stateVariables['hotplug'].includes(
-				data.id
-		              )
+		              !!stateVariables['hotplug'].includes(data.id) || data.hotplug === true
 		            }
 			    onChange={checked =>
 			      handleSingleCheck(
@@ -221,13 +218,25 @@ const VolumeModal = props => {
 			    onChange={e =>
 			      handleBusSelectClick(data.id, e)
 			    }
+			    defaultValue={
+				    (() => {
+				      if (!!(data.bus)) {
+				        return data.bus;
+				      } else {
+					if (hotplugCheckItems.includes(data.id)) {
+				          return "scsi";
+					} else {
+					  return "virtio";
+					}
+				      }
+				    })()
+			    }
 			    disabled={hotplugCheckItems.includes(data.id) || volumeCheckItems.includes(data.id)}
 			    clearable
 			  />
 			</td>
                         <td>{data.storage_class}</td>
                         <td>{data.capacity}</td>
-                        <td>{data.phase}</td>
                         <td>{data.selected_node}</td>
                         <td>
                           {(data.selected_node == props.store.detail.vm.node ||

@@ -549,8 +549,8 @@ const RegistModal = props => {
                           ></label>
                         </div>
                         <div className={styles.title}>
-                          <p>{t('RESOURCES_SPECIFY_IMAGE_INFO')}</p>
-                          <span>{t('RESOURCES_SPECIFY_IMAGE_INFO_TIP')}</span>
+                          <p>{t('RESOURCES_SPECIFY_BOOT_VOLUME')}</p>
+                          <span>{t('RESOURCES_SPECIFY_BOOT_VOLUME_TIP')}</span>
                         </div>
                       </h6>
 		      {imageInfoActive && (
