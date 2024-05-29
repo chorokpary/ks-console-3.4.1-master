@@ -67,7 +67,11 @@ const BindingModal = props => {
       const vol_node = props.store.detail.volume.selected_node;
 
       const filterVm = vmListData?.filter(vm => {
-        return vm.project == findVolumeData.project && vm.node == vol_node;
+	if (!!vol_node) {
+	  return vm.project == findVolumeData.project && vm.node == vol_node;
+	} else {
+	  return vm.project == findVolumeData.project;
+	}
       });
 
       setVmList(filterVm);
