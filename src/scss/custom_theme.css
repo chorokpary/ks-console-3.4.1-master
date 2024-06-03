@@ -1244,16 +1244,19 @@ li.src-pages-clusters-containers-Resources-components-CardSelect-index__selected
 
 .login_back {
   position: absolute;
-  bottom: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   text-align: center;
-  background: url(/assets/resources/images/img/img_login.svg);
+  background: #537CDA url(/assets/resources/images/img/img_login.svg);
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
   background-attachment: fixed;
+  background-position-x: -1px;
 }
+
 .login_back img {
   display: none;
 }
