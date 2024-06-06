@@ -62,6 +62,15 @@ module.exports = {
   RESOURCES_IP_POOL_INFORMATION_EMPTY_DESC: 'IP POOL 정보를 입력해주세요.',
   RESOURCES_IP_POOL_VALID: 'IP POOL 정보를 정확히 입력해주세요.',
   RESOURCES_IP_EMPTY_DESC: 'IP를 입력해 주세요.',
+
+  RESOURCES_GPU_NODE: 'GPU 노드',
+  RESOURCES_GPU_NODE_DESC: 'GPU 노드는 Petasus Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
+  RESOURCES_GPU_MODEL: 'GPU 모델명',
+  RESOURCES_GPU_RAM: 'GPU RAM',
+  RESOURCES_GPU_DRIVER_VERSION: '드라이버 버전',
+  RESOURCES_GPU_CUDA_VERSION: 'CUDA 버전',
+  RESOURCES_GPU_COUNT: 'GPU 개수',
+
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS 네트워크 트래픽',
   RESOURCES_KAAS_RESOURCE: 'KaaS 리소스',
   RESOURCES_KAAS_RESOURCE_USAGE: 'KaaS 리소스 사용량',

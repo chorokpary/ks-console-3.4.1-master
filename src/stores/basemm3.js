@@ -140,7 +140,7 @@ export default class BaseStore {
     )
 
     // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes']
+    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes', 'gpunodes']
     const apiName = mm3Array.includes(this.module) ? this.module : "";
 
     const data = (get(result, apiName.replace('resources', '')) || []).map(item => ({
@@ -154,7 +154,7 @@ export default class BaseStore {
     this.dataList = data;
 
     // namespace(project) 있는 경우 
-    const projectExceptionArray = ['images', 'flavors', 'host_devices']
+    const projectExceptionArray = ['images', 'flavors', 'host_devices', 'gpunodes']
     if (namespace) {
       projectExceptionArray.includes(this.module) ? "" : params.project = namespace;
     }

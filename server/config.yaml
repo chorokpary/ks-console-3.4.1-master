@@ -149,6 +149,10 @@ client:
                 multiCluster: true,
               }
             - { name: nodes, title: CLUSTER_NODE_PL }
+            - {
+                name: gpunodes,
+                title: RESOURCES_GPU_NODE
+              }
             - { name: members, title: CLUSTER_MEMBER_PL }
             - { name: roles, title: CLUSTER_ROLE_PL }
             - {
