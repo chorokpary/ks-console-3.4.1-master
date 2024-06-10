@@ -129,6 +129,14 @@ const GpuNodeDetail = props => {
                 name: t('RESOURCES_GPU_MPS'),
                 value: capable.mps ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT'),
             },
+	    {
+                name: t('RESOURCES_GPU_MIG_CONFIG'),
+                value: gpunode.mig_config,
+            },
+	    {
+                name: t('RESOURCES_GPU_MIG_CONFIG_STATE'),
+                value: gpunode.mig_config_state,
+            },
         ];
     };
 

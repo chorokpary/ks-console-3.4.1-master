@@ -74,6 +74,8 @@ module.exports = {
   RESOURCES_GPU_COUNT: 'GPU 개수',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
+  RESOURCES_GPU_MIG_CONFIG: 'MIG 설정',
+  RESOURCES_GPU_MIG_CONFIG_STATE: 'MIG 설정 상태',
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU 구성요소 배포 현황',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: '컨테이너 툴킷',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC: '컨테이너 툴킷은 컨테이너 런타임 라이브러리와 GPU 가속 컨테이너를 자동으로 구성하는 유틸리티를 포함하고 있습니다.',
