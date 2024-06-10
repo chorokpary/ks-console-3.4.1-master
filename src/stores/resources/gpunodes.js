@@ -48,7 +48,39 @@ export default class GpuNodeStore extends Base {
     const detail = { ...params, ...this.mapper(result), kind: 'GpuNodes' };
 
     this.detail = detail;
+
+    // fetch GPU devices
+    await this.fetchGpuDeviceList(params);
+
     this.isLoading = false;
     return detail;
+  }
+
+  @action
+  async fetchGpuDeviceList(params) {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpu/devices/${params.name}`
+    );
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'devices',
+    };
+    this.gpuDeviceList = response.devices;
+    return response;
+  }
+
+  @action
+  async fetchMigConfigs(params) {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpu/mig_configs/${params.name}`
+    );
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'mig_configs',
+    };
+    this.migConfigList = response.mig_configs;
+    return response;
   }
 }

@@ -21,6 +21,7 @@ import { observer, inject } from 'mobx-react'
 
 import { Panel } from 'components/Base'
 import DeploymentCard from './DeploymentCard'
+import DetailGpuDeviceList from 'pages/clusters/containers/Resources/components/DetailGpuDeviceList';
 
 import styles from './index.scss'
 
@@ -31,10 +32,6 @@ export default class Status extends React.Component {
     super(props)
 
     this.store = props.detailStore
-  }
-
-  get cluster() {
-    return this.props.match.params.cluster
   }
 
   renderDeployments() {
@@ -58,15 +55,26 @@ export default class Status extends React.Component {
         </div>
       </Panel>
     )
-  }
+  };
+  renderGpuDevices() {
+    const cluster = this.props.match.params.cluster
+    if (this.store.detail.gpunode.count > 0) {
+      return (
+        <DetailGpuDeviceList
+          gpuDeviceData={this.store.gpuDeviceList}
+          cluster={cluster}
+        />
+      )
+    }
+  };
 
   render() {
     return (
       <div className={styles.main}>
         {this.renderDeployments()}
+	{this.renderGpuDevices()}
       </div>
     )
   }
 }
 
-// export default inject('detailStore')(observer(Status))
