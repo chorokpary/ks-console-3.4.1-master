@@ -52,6 +52,7 @@ const GpuNodeDetail = props => {
             onClick: () => {
                 props.rootStore.triggerAction('gpu.configMig', {
 		    store: store,
+		    cluster: props.match.params.cluster,
                     success: fetchData,
                 });
             },

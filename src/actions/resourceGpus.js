@@ -17,15 +17,21 @@
  */
 
 import { Modal } from 'components/Base'
+import { Notify } from '@kube-design/components'
 
 import ModifyModal from 'clusters/containers/Resources/components/Modals/GpuNodes/Modify'
 
 export default {
     'gpu.configMig': {
-        on({ store, success, ...props }) {
+        on({ store, cluster, success, ...props }) {
             const modal = Modal.open({
-                onOk: () => {
-                    success && success()
+                onOk: data => {
+		    store.applyMigConfig(data, { cluster })
+		    .then(() => {
+		      Modal.close(modal)
+                      Notify.success({ content: t('RESOURCES_APPLY_SUCCESS_DESC') })
+                      success && success()
+		    })
                 },
                 title: t('RESOURCES_GPU_MIG_CONFIG'),
                 modal: ModifyModal,

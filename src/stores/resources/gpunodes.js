@@ -36,6 +36,11 @@ export default class GpuNodeStore extends Base {
       params
     )}/edgetron/resources/kubevirt/gpunodes`;
 
+  getGpuNodeUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/gpu/node`;
+
   getListUrl = this.getResourceUrl;
 
   @action
@@ -85,5 +90,13 @@ export default class GpuNodeStore extends Base {
     };
     this.migConfigList = response.mig_configs;
     return response;
+  }
+
+  @action
+  async applyMigConfig(data, params) {
+    const url = `${this.getGpuNodeUrl(params)}/${data.node}`
+    await this.submitting(
+      request.put(url, data)
+    )
   }
 }

@@ -42,6 +42,11 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
   useEffect(() => {
     const fnGetMigConfigList = async () => {
         setMigConfigList(store.migConfigList)
+        const firstConfig = store.migConfigList?.[0]?.name
+        const _ = require('lodash');
+        if (!_.isEmpty(firstConfig)) {
+	  setRadioConfig(firstConfig)
+	}
     };
     fnGetMigConfigList();
   }, []);
@@ -49,7 +54,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
   const handleOk = () => {
     setIsSubmitting(true);
     const _ = require('lodash');
-    onOk({ migConfig: radioConfig });
+    onOk({ migconfig: { "config_name": radioConfig }, node: get(store.detail.gpunode, 'name') });
   };
 
   return (
@@ -61,7 +66,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
-        okText={t('RESOURCES_CREATE')}
+        okText={t('RESOURCES_APPLY')}
         cancelText={t('RESOURCES_CANCEL')}
         disableSubmit={migConfigList.length === 0 && true}
         isSubmitting={store.isSubmitting}
@@ -109,6 +114,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                           <Radio
                             name="config"
                             value={data.name}
+			    checked={radioConfig === data.name}
                             onChange={e => {
                               setRadioConfig(data.name);
                             }}
