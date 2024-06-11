@@ -52,6 +52,9 @@ export default class GpuNodeStore extends Base {
     // fetch GPU devices
     await this.fetchGpuDeviceList(params);
 
+    // fetch MIG configs
+    await this.fetchMigConfigs({ ...params, model: detail.gpunode.model });
+
     this.isLoading = false;
     return detail;
   }
@@ -73,7 +76,7 @@ export default class GpuNodeStore extends Base {
   @action
   async fetchMigConfigs(params) {
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpu/mig_configs/${params.name}`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpu/mig_configs/${params.model}`
     );
     const response = {
       ...params,

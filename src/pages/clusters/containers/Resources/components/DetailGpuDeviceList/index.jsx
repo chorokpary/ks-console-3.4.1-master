@@ -34,10 +34,10 @@ const DetailGpuDeviceList = (props) => {
                         <p>{t('RESOURCES_GPU_RAM')}</p>
                     </div>
                     <div className={styles.text}>
-                        <div>{obj.mig ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</div>
+                        <div>{obj.mig ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</div>
                         <p>{t('RESOURCES_GPU_MIG')}</p>
                     </div>
-                    {obj.mig ? <div className={styles.text} style={{ width: '5%' }} /> :
+                    {!obj.mig ? <div className={styles.text} style={{ width: '5%' }} /> :
                         <div className={styles.arrow} onClick={() => handleExpand(obj.index)}>
                             <Icon name="chevron-down" type={obj.index != expandItem ? '' : (obj.index == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
                         </div>

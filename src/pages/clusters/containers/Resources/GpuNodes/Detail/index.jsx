@@ -44,8 +44,19 @@ const GpuNodeDetail = props => {
     const routing = props.rootStore.routing;
 
     const getOperations = () => [
-
-    ];
+        {
+            key: 'configMig',
+            icon: 'gpu',
+            text: t('RESOURCES_GPU_MIG_CONFIG'),
+            action: 'view',
+            onClick: () => {
+                props.rootStore.triggerAction('gpu.configMig', {
+		    store: store,
+                    success: fetchData,
+                });
+            },
+        },
+    ]
 
     const getAttrs = () => {
         const detail = toJS(store.detail);
