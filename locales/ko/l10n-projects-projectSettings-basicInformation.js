@@ -31,7 +31,7 @@ module.exports = {
   WORKSPACE_REMAINING_QUOTAS: '워크스페이스 잔여 할당량',
   // Manage > Edit Default Container Quotas
   GPU_TYPE_SCAP: 'GPU 유형',
-  GPU_LIMIT_SCAP: 'CPU 제한',
+  GPU_LIMIT_SCAP: 'GPU 제한',
   REQUEST_EXCEED_WORKSPACE: '리소스 요청(request) 및 제한(limit)은 워크스페이스 리소스 제한(limit)을 초과할 수 없습니다.',
   REQUEST_EXCEED_LIMIT: '리소스 요청은 리소스 제한보다 클 수 없습니다.',
   REQUEST_EXCEED_AVAILABLE_QUOTA: '자원 부족',
@@ -50,8 +50,10 @@ module.exports = {
   EDIT_DEFAULT_CONTAINER_QUOTAS: '기본 컨테이너 할당량 편집',
   LIMITS_CPU: 'CPU 제한',
   LIMITS_MEMORY: '메모리 제한',
+  LIMITS_STORAGE: '스토리지 제한',
   REQUESTS_CPU: 'CPU 요청',
   REQUESTS_MEMORY: '메모리 요청',
+  REQUESTS_STORAGE: '스토리지 요청',
   // Project Quotas
   PROJECT_QUOTA_PL: '프로젝트 할당량',
   RESOURCE_TYPE_SCAP: '자원 유형',

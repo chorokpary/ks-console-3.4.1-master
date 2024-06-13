@@ -30,4 +30,6 @@ module.exports = {
   CPU_LIMIT: 'CPU Limit',
   MEMORY_REQUEST: 'Memory Request',
   MEMORY_LIMIT: 'Memory Limit',
+  STORAGE_REQUEST: 'Storage Request',
+  STORAGE_LIMIT: 'Storage Limit'
 }

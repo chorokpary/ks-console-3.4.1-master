@@ -53,6 +53,8 @@ module.exports = {
   MEMORY_LIMIT_SCAP: 'Memory limit',
   CPU_REQUEST_SCAP: 'CPU request',
   CPU_LIMIT_SCAP: 'CPU limit',
+  STORAGE_REQUEST_SCAP: 'Storage Request',
+  STORAGE_LIMIT_SCAP: 'Storage Limit',
   // Running Status > Allocated Resources
   ALLOCATED_RESOURCES: 'Zugewiesene Ressourcen',
   // Running Status > Health Status

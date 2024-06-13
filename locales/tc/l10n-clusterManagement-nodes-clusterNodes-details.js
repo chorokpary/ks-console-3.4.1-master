@@ -53,6 +53,8 @@ module.exports = {
   MEMORY_LIMIT_SCAP: '記憶體限制',
   CPU_REQUEST_SCAP: 'CPU 預留',
   CPU_LIMIT_SCAP: 'CPU 限制',
+  STORAGE_REQUEST_SCAP: '儲存預留',
+  STORAGE_LIMIT_SCAP: '儲存限制',
   // Running Status > Allocated Resources
   ALLOCATED_RESOURCES: '已分配資源',
   // Running Status > Health Status

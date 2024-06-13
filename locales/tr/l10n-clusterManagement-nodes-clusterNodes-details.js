@@ -53,6 +53,8 @@ module.exports = {
   MEMORY_LIMIT_SCAP: 'Bellek sınırı',
   CPU_REQUEST_SCAP: 'CPU isteği',
   CPU_LIMIT_SCAP: 'CPU Sınırlayıcı',
+  STORAGE_REQUEST_SCAP: 'Storage isteği',
+  STORAGE_LIMIT_SCAP: 'Storage sınırı',
   // Running Status > Allocated Resources
   ALLOCATED_RESOURCES: 'Ayrılan Kaynaklar',
   // Running Status > Health Status

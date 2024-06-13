@@ -57,6 +57,7 @@ export default class ResourceLimit extends React.Component {
     onError() {},
     cpuProps: {},
     memoryProps: {},
+    storageProps: {},
     supportGpuSelect: false,
   }
 
@@ -68,6 +69,7 @@ export default class ResourceLimit extends React.Component {
       defaultValue: props.defaultValue,
       cpuError: '',
       memoryError: '',
+      storageError: '',
       workspaceLimitCheck: {},
     }
   }
@@ -123,11 +125,14 @@ export default class ResourceLimit extends React.Component {
   static getValue(props) {
     const cpuUnit = get(props, 'cpuProps.unit', 'Core')
     const memoryUnit = get(props, 'memoryProps.unit', 'Mi')
+    const storageUnit = get(props, 'storageProps.unit', 'Mi')
 
     const requestCpu = ResourceLimit.getDefaultRequestValue(props, 'cpu')
     const requestMeo = ResourceLimit.getDefaultRequestValue(props, 'memory')
+    const requestSto = ResourceLimit.getDefaultRequestValue(props, 'storage')
     const limitCpu = ResourceLimit.getDefaultLimitValue(props, 'cpu')
     const limitMeo = ResourceLimit.getDefaultLimitValue(props, 'memory')
+    const limitSto = ResourceLimit.getDefaultLimitValue(props, 'storage')
 
     const cpuRequests = ResourceLimit.allowInputDot(
       requestCpu,
@@ -142,11 +147,25 @@ export default class ResourceLimit extends React.Component {
       true
     )
 
+    const storageRequests = ResourceLimit.allowInputDot(
+      requestSto,
+      storageUnit,
+      memoryFormat,
+      true
+    )
+
     const cpuLimits = ResourceLimit.allowInputDot(limitCpu, cpuUnit, cpuFormat)
 
     const memoryLimits = ResourceLimit.allowInputDot(
       limitMeo,
       memoryUnit,
+      memoryFormat,
+      true
+    )
+
+    const storageLimits = ResourceLimit.allowInputDot(
+      limitSto,
+      storageUnit,
       memoryFormat,
       true
     )
@@ -175,10 +194,12 @@ export default class ResourceLimit extends React.Component {
       requests: {
         cpu: cpuRequests,
         memory: memoryRequests,
+	storage: storageRequests,
       },
       limits: {
         cpu: cpuLimits,
         memory: memoryLimits,
+	storage: storageLimits,
       },
       workspaceRequests: {
         cpu: isNaN(workspaceCpuRequests) ? 'Not Limited' : workspaceCpuRequests,
@@ -281,6 +302,10 @@ export default class ResourceLimit extends React.Component {
     return this.props.memoryProps.unit || 'Mi'
   }
 
+  get storageUnit() {
+    return this.props.storageProps.unit || 'Mi'
+  }
+
   get gpuOption() {
     return globals.config.supportGpuType.reduce(
       (prev, value) => [
@@ -309,6 +334,7 @@ export default class ResourceLimit extends React.Component {
   checkError = state => {
     let cpuError = ''
     let memoryError = ''
+    let storageError = ''
     const { requests, limits } = state
 
     if (
@@ -327,7 +353,15 @@ export default class ResourceLimit extends React.Component {
       memoryError = 'RequestExceed'
     }
 
-    return { cpuError, memoryError }
+    if (
+      limits.storage &&
+      !String(limits.storage).endsWith('.') &&
+      Number(requests.storage) > Number(limits.storage)
+    ) {
+      storageError = 'RequestExceed'
+    }
+
+    return { cpuError, memoryError, storageError }
   }
 
   checkAndTrigger = () => {
@@ -389,16 +423,18 @@ export default class ResourceLimit extends React.Component {
       limits,
       cpuError,
       memoryError,
+      storageError,
       workspaceLimitCheck: wsL,
       gpu,
     } = this.state
     const memoryUnit = this.memoryUnit
+    const storageUnit = this.storageUnit
     const cpuUnit = this.cpuUnit === 'Core' ? '' : this.cpuUnit
 
     const errorList = this.getWorkspaceCheckError()
     errorList.length > 0
       ? onError(cpuError || memoryError || wsL[errorList[0]])
-      : onError(cpuError || memoryError)
+      : onError(cpuError || memoryError || storageError)
 
     const result = {}
 
@@ -414,15 +450,32 @@ export default class ResourceLimit extends React.Component {
       set(result, 'requests.memory', `${requests.memory}${memoryUnit}`)
     }
 
+    if (
+      requests.storage !== '' &&
+      requests.storage >= 0 &&
+      requests.storage < Infinity
+    ) {
+      set(result, 'requests.storage', `${requests.storage}${storageUnit}`)
+    }
+
     if (limits.cpu !== '' && limits.cpu >= 0 && limits.cpu < Infinity) {
       set(result, 'limits.cpu', `${limits.cpu}${cpuUnit}`)
     }
+
     if (
       limits.memory !== '' &&
       limits.memory >= 0 &&
       limits.memory < Infinity
     ) {
       set(result, 'limits.memory', `${limits.memory}${memoryUnit}`)
+    }
+
+    if (
+      limits.storage !== '' &&
+      limits.storage >= 0 &&
+      limits.storage < Infinity
+    ) {
+      set(result, 'limits.storage', `${limits.storage}${storageUnit}`)
     }
 
     // pass gpu input config into limits and requests field
@@ -458,6 +511,16 @@ export default class ResourceLimit extends React.Component {
       ({ requests, limits }) => ({
         requests: { ...requests, memory: value[0] === 0 ? '' : value[0] },
         limits: { ...limits, memory: value[1] === 0 ? '' : value[1] },
+      }),
+      this.checkAndTrigger
+    )
+  }
+
+  handleStorageChange = value => {
+    this.setState(
+      ({ requests, limits }) => ({
+        requests: { ...requests, storage: value[0] === 0 ? '' : value[0] },
+        limits: { ...limits, storage: value[1] === 0 ? '' : value[1] },
       }),
       this.checkAndTrigger
     )
@@ -540,6 +603,7 @@ export default class ResourceLimit extends React.Component {
   renderQuotasTip() {
     const { workspaceLimitProps: pWL, supportGpuSelect } = this.props
     const { workspaceLimits: wsL, workspaceRequests: wsR } = this.state
+    const storageUnit = this.storageUnit
     const memoryUnit = this.memoryUnit
     const cpuUnit = this.cpuUnit
 
@@ -623,7 +687,7 @@ export default class ResourceLimit extends React.Component {
   }
 
   render() {
-    const { cpuError, memoryError, workspaceLimitCheck: limit } = this.state
+    const { cpuError, memoryError, storageError, workspaceLimitCheck: limit } = this.state
     const { supportGpuSelect } = this.props
     const outWorkSpaceLimit = this.getWorkspaceCheckError()
 
@@ -705,11 +769,52 @@ export default class ResourceLimit extends React.Component {
                 </div>
               </div>
             </Column>
-            {supportGpuSelect && this.renderGpuSelect()}
           </Columns>
         </div>
+	<div className={styles.inputWrapper}>
+	  <Columns className="is-gapless">
+	    <Column>
+              <div className={styles.inputGroup}>
+                <Icon name="storage" size={48} />
+                <div
+                  className={classnames(styles.input, {
+                    [styles.error]: storageError || limit.requestStorageError,
+                  })}
+                >
+                  <span className={styles.label}>{t('STORAGE_REQUEST')}</span>
+                  <div className={styles.inputBox}>
+                    <Input
+                      name="requests.storage"
+                      value={this.getRequest(this.state.requests.storage)}
+                      onChange={this.handleInputChange}
+                      placeholder={t('NO_REQUEST')}
+                    />
+                    <span className={styles.unit}>{this.storageUnit}</span>
+                  </div>
+                </div>
+                <div
+                  className={classnames(styles.input, {
+                    [styles.error]: storageError || limit.limitStorageError,
+                  })}
+                >
+                  <span className={styles.label}>{t('STORAGE_LIMIT')}</span>
+                  <div className={styles.inputBox}>
+                    <Input
+                      name="limits.storage"
+                      value={this.getLimit(this.state.limits.storage)}
+                      onChange={this.handleInputChange}
+                      placeholder={t('NO_LIMIT')}
+                    />
+                    <span className={styles.unit}>{this.storageUnit}</span>
+                  </div>
+                </div>
+              </div>
+            </Column>
+	    {supportGpuSelect && this.renderGpuSelect()}
+	  </Columns>
+	</div>
         {this.ifRenderTip && this.renderQuotasTip()}
-        {(cpuError || memoryError) && (
+        {(cpuError || memoryError || storageError) && (
           <Alert
             type="error"
             className="margin-t12"

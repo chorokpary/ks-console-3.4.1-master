@@ -50,8 +50,10 @@ module.exports = {
   EDIT_DEFAULT_CONTAINER_QUOTAS: 'Varsayılan Kapsayıcı Kotalarını Düzenle',
   LIMITS_CPU: 'CPU Sınırı',
   LIMITS_MEMORY: 'Bellek Sınırı',
+  LIMITS_STORAGE: 'Storage Limit',
   REQUESTS_CPU: 'CPU Talebi',
   REQUESTS_MEMORY: 'CPU Sınırı',
+  REQUESTS_STORAGE: 'Storage Request',
   // Project Quotas
   PROJECT_QUOTA_PL: 'Proje Kotası',
   RESOURCE_TYPE_SCAP: 'Kaynak Türü',

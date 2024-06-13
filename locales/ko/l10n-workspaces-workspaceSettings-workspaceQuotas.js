@@ -28,5 +28,7 @@ module.exports = {
   CPU_REQUEST: 'CPU 요청',
   CPU_LIMIT: 'CPU 제한',
   MEMORY_REQUEST: '메모리 요청',
-  MEMORY_LIMIT: '메모리 제한'
+  MEMORY_LIMIT: '메모리 제한',
+  STORAGE_REQUEST: '스토리지 요청',
+  STORAGE_LIMIT: '스토리지 제한'
 };
