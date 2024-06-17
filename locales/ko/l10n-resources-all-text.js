@@ -162,6 +162,7 @@ module.exports = {
   RESOURCES_RULE_COUNT: '규칙수',
   RESOURCES_TREE: '그루',
   RESOURCES_DEFAULT_PATH: '기본 경로',
+  RESOURCES_CIDR: 'CIDR',
   RESOURCES_IP_ASSIGNMENT: 'IP 할당',
   RESOURCES_DEFAULT_SETTINGS: '기본 설정',
   RESOURCES_ETC: '기타',
@@ -311,6 +312,8 @@ module.exports = {
   RESOURCES_CREATE_DAY: '생성일',
   RESOURCES_SERVER_MODEL_NAME: '서버 모델명',
   RESOURCES_SUBNET: '서브넷',
+  RESOURCES_SUBNET_EXTERNAL: 'External',
+  RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: '선택',
   RESOURCES_AUTOMATIC: '자동',
   RESOURCES_DELETE_SELECT_FLOATING_IP_DESC:
@@ -711,7 +714,10 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Port를 입력해 주세요.',
   RESOURCES_ENTER_60_MORE: '60 이상 입력해 주세요.',
   RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
+  RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'DNS 정보를 정확히 입력해주세요.',
+  RESOURCES_DNS_PRIMARY: 'Primary',
+  RESOURCES_DNS_SECONDARY: 'Secondary',
   RESOURCES_HOSTROUTE_VALID:
     '호스트 라우트 정보를 정확히 입력해주세요.</p> Destination - ipv4network, nexthop - ipv4',
   RESOURCES_LOG: '로그',

@@ -73,7 +73,7 @@ const Status = props => {
                 </div>
                 <div className={styles.text}>
                   <div>{externalNetwork.cidr}</div>
-                  <p>CIDR</p>
+                  <p>{t('RESOURCES_CIDR')}</p>
                 </div>
                 <div className={styles.text}>
                   <div>{externalNetwork.gateway_ip}</div>
@@ -112,7 +112,7 @@ const Status = props => {
                     </div>
                     <div className={styles.text}>
                       <div>{obj.cidr}</div>
-                      <p>CIDR</p>
+                      <p>{t('RESOURCES_CIDR')}</p>
                     </div>
                     <div className={styles.text}>
                       <div>{obj.gateway_ip}</div>

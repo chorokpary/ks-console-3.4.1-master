@@ -1,28 +1,40 @@
-import { get } from 'lodash'
-import React, { useState, useRef, useEffect } from 'react'
+import { get } from 'lodash';
+import React, { useState, useRef, useEffect } from 'react';
 
-import { Form, Input, Select, TextArea, Button, Loading, Radio, Checkbox } from '@kube-design/components'
-import { Modal } from 'components/Base'
+import {
+  Form,
+  Input,
+  Select,
+  TextArea,
+  Button,
+  Loading,
+  Radio,
+  Checkbox,
+} from '@kube-design/components';
+import { Modal } from 'components/Base';
 
-import classnames from 'classnames'
-import styles from './index.scss'
+import classnames from 'classnames';
+import styles from './index.scss';
 
-const ModifyModal = (props) => {
-
+const ModifyModal = props => {
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
   const [networkDataList, setNetworkDataList] = useState([]);
 
-  const internalNetworkList = networkDataList?.filter((row) => row.external == false) || [];
-  const externalNetworkList = networkDataList?.filter((row) => row.external == true) || [];
+  const internalNetworkList =
+    networkDataList?.filter(row => row.external == false) || [];
+  const externalNetworkList =
+    networkDataList?.filter(row => row.external == true) || [];
 
   const [routerInternal, setRouterInternal] = useState([]);
   const [routerExternal, setRouterExternal] = useState([]);
 
-  const [radioSnatType, setRadioSnatType] = useState(props.store.detail.router.enable_snat ? "T" : "F");
-  const [radioExternal, setRadioExternal] = useState("");
+  const [radioSnatType, setRadioSnatType] = useState(
+    props.store.detail.router.enable_snat ? 'T' : 'F'
+  );
+  const [radioExternal, setRadioExternal] = useState('');
 
   const detailInternal = props.store.detail.router.internal;
   const detailExternal = props.store.detail.router.external;
@@ -37,65 +49,68 @@ const ModifyModal = (props) => {
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
       data.external = radioExternal;
-      console.log("data : " + JSON.stringify(data))
-      onOk({ ...data })
-    })
-  }
+      console.log(`data : ${JSON.stringify(data)}`);
+      onOk({ ...data });
+    });
+  };
 
   const closeModal = () => {
     setModalView(false);
-  }
+  };
 
   const externalRadioDeselect = () => {
-    setRadioExternal("");
-    setRadioSnatType("F")
-  }
+    setRadioExternal('');
+    setRadioSnatType('F');
+  };
 
   useEffect(() => {
-
     const routerList = props.store.dataList;
 
     setRouterExternal([]);
-    routerList?.map((router) => {
+    routerList?.map(router => {
       if (router.external?.id !== detailExternal?.id) {
-        setRouterExternal(prev => [...prev, router.external?.id])
+        setRouterExternal(prev => [...prev, router.external?.id]);
       }
     });
 
-    const detailInternalIds = detailInternal.map(arr => arr.id)
+    const detailInternalIds = detailInternal.map(arr => arr.id);
 
     setRouterInternal([]);
-    routerList?.map((router) => {
-      (router.internal).map((it) => {
+    routerList?.map(router => {
+      router.internal.map(it => {
         if (!detailInternalIds.includes(it.id)) {
-          setRouterInternal(prev => [...prev, it.id])
+          setRouterInternal(prev => [...prev, it.id]);
         }
-      })
+      });
     });
 
-    //Network List 추출
+    // Network List 추출
     const fnGetNetworkList = async () => {
-      const networkData = await props.store.networkList({ ...props })
-      const networkList = networkData.filter(obj => obj.project === props.store.detail.router.project) || []
-      setNetworkDataList(networkList)
+      const networkData = await props.store.networkList({ ...props });
+      const networkList =
+        networkData.filter(
+          obj => obj.project === props.store.detail.router.project
+        ) || [];
+      setNetworkDataList(networkList);
     };
 
     fnGetNetworkList();
 
-    // 초기 선택 
-    detailInternal.map((item) => {
-      handleSingleCheck(true, item.id, "internal")
-    })
+    // 초기 선택
+    detailInternal.map(item => {
+      handleSingleCheck(true, item.id, 'internal');
+    });
 
     detailExternal && setRadioExternal(detailExternal?.id);
-
-  }, [])
+  }, []);
 
   // 체크 리스트 시작 ==================================================
   const [internalCheckItems, setInternalCheckItems] = useState([]);
 
   const dataListVariables = {
-    internal: internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))),
+    internal: internalNetworkList?.filter(
+      data => !routerInternal.includes(data.id)
+    ),
   };
 
   const stateVariables = {
@@ -110,7 +125,7 @@ const ModifyModal = (props) => {
     if (checked) {
       setVariables[type](prev => [...prev, name]);
     } else {
-      setVariables[type](stateVariables[type].filter((el) => el !== name));
+      setVariables[type](stateVariables[type].filter(el => el !== name));
     }
   };
 
@@ -118,19 +133,19 @@ const ModifyModal = (props) => {
     if (checked) {
       const nameArray = [];
 
-      dataListVariables[type].forEach((el) => nameArray.push(el.id));
-      detailInternal.map((item) => {
-        nameArray.includes(item.id) ? "" : nameArray.push(item.id);
-      })
+      dataListVariables[type].forEach(el => nameArray.push(el.id));
+      detailInternal.map(item => {
+        nameArray.includes(item.id) ? '' : nameArray.push(item.id);
+      });
 
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
     }
-  }
+  };
 
   const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter((el) => el !== name));
+    setVariables[type](stateVariables[type].filter(el => el !== name));
   };
 
   // 체크 리스트 끝 ==================================================
@@ -147,10 +162,7 @@ const ModifyModal = (props) => {
         isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
-
-          <Form.Item
-            label={t('RESOURCES_NAME')}
-          >
+          <Form.Item label={t('RESOURCES_NAME')}>
             <Input
               name="routerName"
               autoFocus={true}
@@ -161,13 +173,25 @@ const ModifyModal = (props) => {
             />
           </Form.Item>
 
-          <Form.Item label={t('RESOURCES_INTERNAL_NETWORK')} >
+          <Form.Item label={t('RESOURCES_INTERNAL_NETWORK')}>
             <div className={styles.wrapper}>
-              {stateVariables['internal'].length > 0 &&
-                <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                  <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "internal")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['internal'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+              {stateVariables['internal'].length > 0 && (
+                <div
+                  className={classnames(
+                    styles.table_title,
+                    styles.table_title_bg
+                  )}
+                >
+                  <Button
+                    className={styles.table_title_button}
+                    onClick={() => handleAllCheck(false, 'internal')}
+                  >
+                    {t('RESOURCES_ALL_DESELECT')}
+                  </Button>{' '}
+                  {stateVariables['internal'].length}
+                  {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                 </div>
-              }
+              )}
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -181,71 +205,155 @@ const ModifyModal = (props) => {
                   <thead>
                     <tr>
                       <th>
-                        <Checkbox name='select-all-internal'
-                          onChange={(checked) => handleAllCheck(checked, "internal")}
-                          checked={(dataListVariables['internal'].length + detailInternal.length) > 0 && stateVariables['internal'].length === (dataListVariables['internal'].length + detailInternal.length) ? true : false} />
+                        <Checkbox
+                          name="select-all-internal"
+                          onChange={checked =>
+                            handleAllCheck(checked, 'internal')
+                          }
+                          checked={
+                            !!(
+                              dataListVariables['internal'].length +
+                                detailInternal.length >
+                                0 &&
+                              stateVariables['internal'].length ===
+                                dataListVariables['internal'].length +
+                                  detailInternal.length
+                            )
+                          }
+                        />
                       </th>
-                      <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
-                      <th><strong>{t('RESOURCES_TYPE_YOO')}</strong></th>
-                      <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
-                      <th><strong>CIDR</strong></th>
-                      <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
+                      <th>
+                        <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_TYPE_YOO')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_DEFAULT_PATH')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_CIDR')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_GATEWAY')}</strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {!internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).length &&
+                    {!internalNetworkList?.filter(
+                      data => !routerInternal.includes(data.id)
+                    ).length && (
                       <tr>
                         <td colSpan="6" className="no-data">
                           <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                         </td>
                       </tr>
-                    }
-                    {internalNetworkList?.filter((data) => (!routerInternal.includes(data.id))).map((data, key) => {
-                      return <tr key={data.id}>
-                        <td>
-                          <Checkbox name={`select-${data.id}`} checked={stateVariables['internal'].includes(data.id) ? true : false}
-                            onChange={(checked) => handleSingleCheck(checked, data.id, "internal")} />
-                        </td>
-                        <td>{data.name}</td>
-                        <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
-                        <td>{data.cidr}</td>
-                        <td>{data.gateway_ip}</td>
-                      </tr>
-                    })}
-                    {internalNetworkList?.filter((data) => (detailInternal.includes(data.id))).map((data, key) => {
-                      return <tr key={data.id}>
-                        <td>
-                          <Checkbox name={`select-${data.id}`} checked={stateVariables['internal'].includes(data.id) ? true : false}
-                            onChange={(checked) => handleSingleCheck(checked, data.id, "internal")} />
-                        </td>
-                        <td>{data.name}</td>
-                        <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
-                        <td>{data.cidr}</td>
-                        <td>{data.gateway_ip}</td>
-                      </tr>
-                    })}
+                    )}
+                    {internalNetworkList
+                      ?.filter(data => !routerInternal.includes(data.id))
+                      .map((data, key) => {
+                        return (
+                          <tr key={data.id}>
+                            <td>
+                              <Checkbox
+                                name={`select-${data.id}`}
+                                checked={
+                                  !!stateVariables['internal'].includes(data.id)
+                                }
+                                onChange={checked =>
+                                  handleSingleCheck(
+                                    checked,
+                                    data.id,
+                                    'internal'
+                                  )
+                                }
+                              />
+                            </td>
+                            <td>{data.name}</td>
+                            <td>{data.type.toUpperCase()}</td>
+                            <td>
+                              {data.default_route
+                                ? t('RESOURCES_USE')
+                                : t('RESOURCES_NOT_USE')}
+                            </td>
+                            <td>{data.cidr}</td>
+                            <td>{data.gateway_ip}</td>
+                          </tr>
+                        );
+                      })}
+                    {internalNetworkList
+                      ?.filter(data => detailInternal.includes(data.id))
+                      .map((data, key) => {
+                        return (
+                          <tr key={data.id}>
+                            <td>
+                              <Checkbox
+                                name={`select-${data.id}`}
+                                checked={
+                                  !!stateVariables['internal'].includes(data.id)
+                                }
+                                onChange={checked =>
+                                  handleSingleCheck(
+                                    checked,
+                                    data.id,
+                                    'internal'
+                                  )
+                                }
+                              />
+                            </td>
+                            <td>{data.name}</td>
+                            <td>{data.type.toUpperCase()}</td>
+                            <td>
+                              {data.default_route
+                                ? t('RESOURCES_USE')
+                                : t('RESOURCES_NOT_USE')}
+                            </td>
+                            <td>{data.cidr}</td>
+                            <td>{data.gateway_ip}</td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
                 <div className={styles.removeCheckWrapper}>
-                  {internalCheckItems?.map((id) => {
-                    const name = internalNetworkList?.filter((data) => data.id == id).map(item => item.name)[0]
-                    return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "internal")}>{name}</Button> </span>
-                  }
-                  )}
+                  {internalCheckItems?.map(id => {
+                    const name = internalNetworkList
+                      ?.filter(data => data.id == id)
+                      .map(item => item.name)[0];
+                    return (
+                      <span key={id}>
+                        <Button
+                          icon="close"
+                          onClick={() => handleDelete(id, 'internal')}
+                        >
+                          {name}
+                        </Button>{' '}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           </Form.Item>
 
-          <Form.Item label={t('RESOURCES_EXTERNAL_NETWORK')} >
+          <Form.Item label={t('RESOURCES_EXTERNAL_NETWORK')}>
             <div className={styles.wrapper}>
-              {!!radioExternal &&
-                <div className={classnames(styles.table_title, styles.table_title_bg, styles.divInRight)}>
-                  <Button className={styles.table_title_button} onClick={() => externalRadioDeselect()}>{t('RESOURCES_DESELECT')}</Button>
+              {!!radioExternal && (
+                <div
+                  className={classnames(
+                    styles.table_title,
+                    styles.table_title_bg,
+                    styles.divInRight
+                  )}
+                >
+                  <Button
+                    className={styles.table_title_button}
+                    onClick={() => externalRadioDeselect()}
+                  >
+                    {t('RESOURCES_DESELECT')}
+                  </Button>
                 </div>
-              }
+              )}
               <div className={styles.table}>
                 <table>
                   <colgroup>
@@ -259,44 +367,92 @@ const ModifyModal = (props) => {
                   <thead>
                     <tr>
                       <th></th>
-                      <th><strong>{t('RESOURCES_NETWORK_NAME')}</strong></th>
-                      <th><strong>{t('RESOURCES_TYPE_YOO')}</strong></th>
-                      <th><strong>{t('RESOURCES_DEFAULT_PATH')}</strong></th>
-                      <th><strong>CIDR</strong></th>
-                      <th><strong>{t('RESOURCES_GATEWAY')}</strong></th>
+                      <th>
+                        <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_TYPE_YOO')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_DEFAULT_PATH')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_CIDR')}</strong>
+                      </th>
+                      <th>
+                        <strong>{t('RESOURCES_GATEWAY')}</strong>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {!externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).length &&
+                    {!externalNetworkList?.filter(
+                      data => !routerExternal.includes(data.id)
+                    ).length && (
                       <tr>
                         <td colSpan="6" className="no-data">
                           <p>{t('RESOURCES_ALLOCATED_ALL_RESOURCES')}</p>
                         </td>
                       </tr>
-                    }
-                    {externalNetworkList?.filter((data) => (!routerExternal.includes(data.id))).map((data) => {
-                      return <tr key={data.id}>
-                        <td>
-                          <Radio name="external" value={data.id} checked={radioExternal === data.id}
-                            onChange={(e) => { setRadioExternal(data.id); }} />
-                        </td>
-                        <td>{data.name}</td>
-                        <td>{(data.type).toUpperCase()}</td>
-                        <td>{data.default_route ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
-                        <td>{data.cidr}</td>
-                        <td>{data.gateway_ip}</td>
-                      </tr>
-                    })}
+                    )}
+                    {externalNetworkList
+                      ?.filter(data => !routerExternal.includes(data.id))
+                      .map(data => {
+                        return (
+                          <tr key={data.id}>
+                            <td>
+                              <Radio
+                                name="external"
+                                value={data.id}
+                                checked={radioExternal === data.id}
+                                onChange={e => {
+                                  setRadioExternal(data.id);
+                                }}
+                              />
+                            </td>
+                            <td>{data.name}</td>
+                            <td>{data.type.toUpperCase()}</td>
+                            <td>
+                              {data.default_route
+                                ? t('RESOURCES_USE')
+                                : t('RESOURCES_NOT_USE')}
+                            </td>
+                            <td>{data.cidr}</td>
+                            <td>{data.gateway_ip}</td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
             </div>
           </Form.Item>
 
-          <Form.Item label={t('RESOURCES_SNAT_OPTION')} desc={t('RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC')}>
+          <Form.Item
+            label={t('RESOURCES_SNAT_OPTION')}
+            desc={t('RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC')}
+          >
             <div className={styles.wrapper}>
-              <Radio name="snatType" value="T" checked={radioSnatType === "T"} onChange={(e) => { setRadioSnatType("T"); }} disabled={!!radioExternal ? false : true}>{t('RESOURCES_USE')}</Radio>
-              <Radio name="snatType" value="F" checked={radioSnatType === "F"} onChange={(e) => { setRadioSnatType("F"); }} >{t('RESOURCES_NOT_USE')}</Radio>
+              <Radio
+                name="snatType"
+                value="T"
+                checked={radioSnatType === 'T'}
+                onChange={e => {
+                  setRadioSnatType('T');
+                }}
+                disabled={!radioExternal}
+              >
+                {t('RESOURCES_USE')}
+              </Radio>
+              <Radio
+                name="snatType"
+                value="F"
+                checked={radioSnatType === 'F'}
+                onChange={e => {
+                  setRadioSnatType('F');
+                }}
+              >
+                {t('RESOURCES_NOT_USE')}
+              </Radio>
             </div>
           </Form.Item>
 
@@ -312,13 +468,10 @@ const ModifyModal = (props) => {
               defaultValue={props.store.detail.router.description}
             />
           </Form.Item>
-
         </Form>
       </Modal>
-
     </>
   );
 };
 
-export default ModifyModal
-
+export default ModifyModal;

@@ -602,13 +602,10 @@ const RegistModal = props => {
 
   const handlerAutoScale = e => {
     if (Array.isArray(e)) {
-      console.log('Array.isArray(e)\n', Array.isArray(e));
-      console.log('(e)\n', e);
       const scale = [e[0], e[1] < 1 ? 1 : e[1]];
       setAutoScale(scale);
     } else {
       const maxNum = e > 10 ? 10 : e < 1 ? 1 : e;
-      console.log('maxNum\n', maxNum);
       setAutoScale([1, maxNum]);
     }
   };
@@ -966,7 +963,7 @@ const RegistModal = props => {
                                   <strong>{t('RESOURCES_DEFAULT_PATH')}</strong>
                                 </th>
                                 <th>
-                                  <strong>CIDR</strong>
+                                  <strong>{t('RESOURCES_CIDR')}</strong>
                                 </th>
                                 <th>
                                   <strong>{t('RESOURCES_GATEWAY')}</strong>
@@ -1042,7 +1039,7 @@ const RegistModal = props => {
                                   </strong>
                                 </th>
                                 <th>
-                                  <strong>CIDR</strong>
+                                  <strong>{t('RESOURCES_CIDR')}</strong>
                                 </th>
                                 <th>
                                   <strong>{t('RESOURCES_GATEWAY')}</strong>
@@ -1137,7 +1134,7 @@ const RegistModal = props => {
                                 <strong>{t('RESOURCES_DEFAULT_PATH')}</strong>
                               </th>
                               <th>
-                                <strong>CIDR</strong>
+                                <strong>{t('RESOURCES_CIDR')}</strong>
                               </th>
                               <th>
                                 <strong>{t('RESOURCES_GATEWAY')}</strong>
@@ -1404,7 +1401,7 @@ const RegistModal = props => {
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>CIDR</label>
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
@@ -1429,7 +1426,7 @@ const RegistModal = props => {
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>CIDR</label>
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
@@ -1475,7 +1472,7 @@ const RegistModal = props => {
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>CIDR</label>
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
