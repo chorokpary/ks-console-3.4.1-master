@@ -346,7 +346,7 @@ const getVolumeTemplate = ({ namespace }) => ({
 })
 
 const getSnapshotClassTemplate = () => ({
-  apiVersion: 'snapshot.storage.k8s.io/v1beta1',
+  apiVersion: 'snapshot.storage.k8s.io/v1',
   deletionPolicy: 'Delete',
   driver: '',
   kind: 'VolumeSnapshotClass',
@@ -570,7 +570,7 @@ const getWorkspaceTemplate = () => ({
 })
 
 const getVolumeSnapshotTemplate = () => ({
-  apiVersion: 'snapshot.storage.k8s.io/v1alpha1',
+  apiVersion: 'snapshot.storage.k8s.io/v1',
   kind: 'VolumeSnapshot',
   metadata: {
     name: '',
