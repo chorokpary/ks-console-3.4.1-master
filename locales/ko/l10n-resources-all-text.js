@@ -72,6 +72,7 @@ module.exports = {
   RESOURCES_GPU_DRIVER_VERSION: '드라이버 버전',
   RESOURCES_GPU_CUDA_VERSION: 'CUDA 버전',
   RESOURCES_GPU_COUNT: 'GPU 개수',
+  RESOURCES_GPU_WORKLOAD_TYPE: '워크로드',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU 인덱스',
@@ -105,6 +106,13 @@ module.exports = {
   RESOURCES_GPU_DEPLOY_OPERATOR_VALIDATOR_DESC: 'GPU 오퍼레이터를 구성하는 여러 컴포넌트들이 정상적으로 설치되었는지 여부를 검증해주는 역할을 수행합니다.',
   RESOURCES_GPU_DEPLOY_MIG_MANAGER: 'MIG 관리자',
   RESOURCES_GPU_DEPLOY_MIG_MANAGER_DESC: '물리 GPU를 다양한 Multi-Instance GPU(MIG) 구성으로 쉽고 직관적으로 분할할 수 있도록 도와주는 구성 요소입니다.',
+
+  RESOURCES_GPU_DEPLOY_SANDBOX_DEVICE_PLUGIN: '샌드박스 디바이스 플러그인',
+  RESOURCES_GPU_DEPLOY_SANDBOX_DEVICE_PLUGIN_DESC: '가상머신과 같은 샌드박스 유형의 워크로드에 Passthrough 된 GPU 자원을 찾아서 Advertise하는 역할을 합니다.',
+  RESOURCES_GPU_DEPLOY_CC_MANAGER: '컨피덴셜 컴퓨팅 관리자',
+  RESOURCES_GPU_DEPLOY_CC_MANAGER_DESC: 'GPU 오퍼레이터의 구성요소로 GPU에서 컨피덴셜 컴퓨팅 (Confidential Computing) 모드를 관리하는 역할을 합니다.',
+  RESOURCES_GPU_DEPLOY_VFIO_MANAGER: 'VFIO 관리자',
+  RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC: 'VFIO-PCI 커널모듈 혹은 드라이버를 로드하여 해당 노드 내 모든 GPU 디바이스에 바인드 해주는 역할을 합니다. ',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS 네트워크 트래픽',
   RESOURCES_KAAS_RESOURCE: 'KaaS 리소스',

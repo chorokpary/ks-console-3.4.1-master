@@ -42,6 +42,9 @@ export default class Status extends React.Component {
     const device_plugin = { name: "device_plugin", flag: deploy.device_plugin }
     const operator_validator = { name: "operator_validator", flag: deploy.operator_validator }
     const mig_manager = { name: "mig_manager", flag: deploy.mig_manager }
+    const sandbox_device_plugin = { name: "sandbox_device_plugin", flag: deploy.sandbox_device_plugin }
+    const cc_manager = { name: "cc_manager", flag: deploy.cc_manager }
+    const vfio_manager = { name: "vfio_manager", flag: deploy.vfio_manager }
 
     return (
       <Panel title={t('RESOURCES_GPU_DEPLOY_STATUS')}>
@@ -52,6 +55,9 @@ export default class Status extends React.Component {
 	  <DeploymentCard key="device_plugin" data={device_plugin} />
 	  <DeploymentCard key="operator_validator" data={operator_validator} />
 	  <DeploymentCard key="mig_manager" data={mig_manager} />
+	  <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
+	  <DeploymentCard key="cc_manager" data={cc_manager} />
+	  <DeploymentCard key="vfio_manager" data={vfio_manager} />
         </div>
       </Panel>
     )

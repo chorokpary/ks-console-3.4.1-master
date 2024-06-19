@@ -133,6 +133,10 @@ const GpuNodeDetail = props => {
                 name: t('RESOURCES_GPU_COUNT'),
                 value: gpunode.count,
             },
+	    {
+                name: t('RESOURCES_GPU_WORKLOAD_TYPE'),
+                value: gpunode.workload_type,
+            },
             {
                 name: t('RESOURCES_GPU_MIG'),
                 value: capable.mig ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT'),
