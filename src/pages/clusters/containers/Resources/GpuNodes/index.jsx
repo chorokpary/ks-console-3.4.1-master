@@ -110,8 +110,8 @@ export default class GpuNodes extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('RESOURCES_GPU_RAM'),
-                dataIndex: 'memory_gib',
+                title: t('RESOURCES_GPU_WORKLOAD_TYPE'),
+                dataIndex: 'workload_type',
                 isHideable: true,
                 width: 'auto',
             },

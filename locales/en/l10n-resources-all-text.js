@@ -803,7 +803,7 @@ module.exports = {
   RESOURCES_INVALID_NAME_DESC:
     '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
-    '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
+    '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 대문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
 
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
