@@ -1374,11 +1374,14 @@ body {
 .grid_item .grid_title {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
+  height: 30px;
   cursor: move;
 }
 .grid_item .grid_title > label {
   font-weight: 700;
+  display: inline-block;
+  display: flex;
+  padding: 2px;
 }
 .grid_item .grid_title .view-result {
   margin-right: auto;
@@ -1393,13 +1396,12 @@ body {
 }
 .grid_item .grid_title .right {
   display: inline-flex;
-  align-items: flex-end;
   gap: 5px;
 }
 .grid_item .grid_info {
   display: flex;
   justify-content: center;
-  height: 100%;
+  height: calc(100% - 10px);
 }
 .grid_item .grid_info.style_status {
   height: calc(100% - 22px);
@@ -2443,7 +2445,7 @@ body.dashboard {
   height: 100% !important;
 }
 .dashboard .spin-nested-loading .spin-container .grid_info:not(.box_long) {
-  height: 100% !important;
+  height: calc(100% - 10px) !important;
 }
 
 .baremetalChart .src-components-Charts-Custom-Tooltip-index__tooltip,
@@ -2569,6 +2571,8 @@ body.dashboard {
     margin-left: 20px;
   }
 }
+
+
 
 .baremetalChart .src-components-Charts-Custom-Tooltip-index__tooltip,
 .dashboard .src-components-Charts-Custom-Tooltip-index__tooltip {
