@@ -49,6 +49,7 @@ const RegistModal = props => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
+      console.log(JSON.stringify(data))
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
       data.external = radioExternal;
@@ -451,7 +452,6 @@ const RegistModal = props => {
               name="description"
               maxLength={256}
               rows="1"
-              defaultValue={''}
             />
           </Form.Item>
         </Form>

@@ -21,7 +21,7 @@ const Status = (props) => {
                     {store.detail.security_group?.rules.filter((rule) => rule.direction === "ingress").length > 0 &&
                         < Panel title={t('RESOURCES_INBOUND')}>
                             {store.detail.security_group?.rules.filter((rule) => rule.direction === "ingress").map((rule, index) => (
-                                <div className={styles.wrapper}>
+                                <div className={styles.wrapper} key={index}>
                                     <div className={classnames(styles.item)}>
                                         <div className={styles.icon}>
                                             <Icon name="shield" size={40} />
@@ -51,7 +51,7 @@ const Status = (props) => {
                     {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").length > 0 &&
                         <Panel title={t('RESOURCES_OUTBOUND')}>
                             {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").map((rule, index) => (
-                                <div className={styles.wrapper}>
+                                <div className={styles.wrapper} key={index}>
                                     <div className={classnames(styles.item)}>
                                         <div className={styles.icon}>
                                             <Icon name="apps" size={40} />

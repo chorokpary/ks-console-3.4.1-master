@@ -117,9 +117,9 @@ const PodList = ({ label, ...props }) => {
       {podList.length > 0 &&
         <div className="box_pop">
           {podList.map((item, idx) => (
-            <>
+            <div key={idx}>
               {idx === 0 && <h6>{item.labels[Object.keys(item.labels)[0]]}</h6>}
-              <div className="status_wrap" key={idx}>
+              <div className="status_wrap">
                 <p className={`status 
                 ${item.podStatus.type.toLowerCase() === 'error' ? 'error' :
                     item.podStatus.type.toLowerCase() === 'running' ? 'active' : 'inactive'}`
@@ -127,7 +127,7 @@ const PodList = ({ label, ...props }) => {
                   <span>{item.node}</span>
                 </p>
               </div>
-            </>
+            </div>
           ))}
         </div>
       }
