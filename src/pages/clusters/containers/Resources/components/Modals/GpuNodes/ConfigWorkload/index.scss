@@ -1,0 +1,79 @@
+@import "~scss/variables";
+@import "~scss/mixins";
+
+
+.body {
+  padding: 30px;
+  min-height: 320px;
+}
+
+.textarea {
+  :global .textarea {
+    max-width: 100%;
+  }
+}
+
+.wrapper {
+  padding: 12px;
+  height: 400px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px $light-color03;
+}
+
+
+.removeCheckWrapper {
+  padding-top: 12px;
+  button {
+    margin-left: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+.table_title {
+  position: relative;
+  padding: 10px 20px;
+  background-color: #f9fbfd;
+  box-shadow: 0 1px 0 0 #eff4f9;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px; 
+  color: #eff4f9;
+}
+
+.table_title_bg {
+  background-color: #242e42; 
+}
+
+.table_title_button {
+  margin-right: 20px ;
+}
+
+.table {
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  
+  table {
+    width: 100%;
+    text-align: left;
+    thead {
+        th {
+            text-transform: uppercase;
+            border-bottom: 1px solid #F1F1F1;
+            padding: 10px;
+        }
+    }
+    tbody {
+        tr {
+            border-bottom: 1px solid #F1F1F1;
+            color: #75787b;
+            td {
+                padding: 10px;
+            }
+            th {
+                padding-left: 10px;
+            }
+        }
+    }
+  }
+}

@@ -19,10 +19,11 @@
 import { Modal } from 'components/Base'
 import { Notify } from '@kube-design/components'
 
-import ModifyModal from 'clusters/containers/Resources/components/Modals/GpuNodes/Modify'
+import ApplyMigModal from 'clusters/containers/Resources/components/Modals/GpuNodes/ApplyMig'
+import ConfigWorkloadModal from 'clusters/containers/Resources/components/Modals/GpuNodes/ConfigWorkload'
 
 export default {
-    'gpu.configMig': {
+    'gpu.applyMig': {
         on({ store, cluster, success, ...props }) {
             const modal = Modal.open({
                 onOk: data => {
@@ -34,7 +35,25 @@ export default {
 		    })
                 },
                 title: t('RESOURCES_GPU_MIG_CONFIG'),
-                modal: ModifyModal,
+                modal: ApplyMigModal,
+                store,
+                ...props,
+            })
+        },
+    },
+    'gpu.configWorkload': {
+        on({ store, cluster, success, ...props }) {
+            const modal = Modal.open({
+                onOk: data => {
+                    store.configWorkloadType(data, { cluster })
+                    .then(() => {
+                      Modal.close(modal)
+                      Notify.success({ content: t('RESOURCES_CONFIG_SUCCESS_DESC') })
+                      success && success()
+                    })
+                },
+                title: t('RESOURCES_GPU_WORKLOAD_CONFIG'),
+                modal: ConfigWorkloadModal,
                 store,
                 ...props,
             })

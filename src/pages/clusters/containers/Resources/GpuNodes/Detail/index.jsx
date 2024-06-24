@@ -45,12 +45,25 @@ const GpuNodeDetail = props => {
 
     const getOperations = () => [
         {
-            key: 'configMig',
+            key: 'configWorkload',
+            icon: 'gpu',
+            text: t('RESOURCES_GPU_WORKLOAD_CONFIG'),
+            action: 'view',
+            onClick: () => {
+                props.rootStore.triggerAction('gpu.configWorkload', {
+                    store: store,
+                    cluster: props.match.params.cluster,
+                    success: fetchData,
+                });
+            },
+        },
+        {
+            key: 'applyMig',
             icon: 'gpu',
             text: t('RESOURCES_GPU_MIG_CONFIG'),
             action: 'view',
             onClick: () => {
-                props.rootStore.triggerAction('gpu.configMig', {
+                props.rootStore.triggerAction('gpu.applyMig', {
 		    store: store,
 		    cluster: props.match.params.cluster,
                     success: fetchData,

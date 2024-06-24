@@ -99,4 +99,12 @@ export default class GpuNodeStore extends Base {
       request.put(url, data)
     )
   }
+
+  @action
+  async configWorkloadType(data, params) {
+    const url = `${this.getGpuNodeUrl(params)}/workload/${data.node}`
+    await this.submitting(
+      request.put(url, data)
+    )
+  }
 }
