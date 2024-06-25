@@ -151,6 +151,8 @@ module.exports = {
   RESOURCES_KAAS_COMPONENT_STATE: 'KaaS 컴포넌트 상태',
   RESOURCES_CONNECTION_LB: 'LB 연결',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Master Flavor를 선택해 주세요.',
+  RESOURCES_SELECT_MASTER_ARCH_TIP: 'Master 아키텍쳐를 선택해 주세요.',
+  RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: '쿠버네티스 버전을 선택해 주세요.',
   RESOURCES_MASTER_COUNT: 'Master 개수',
   RESOURCES_MASTER_COUNT_MAX_DESC:
     'Master는 홀수 개이며 최대 개수는 5개 입니다.',

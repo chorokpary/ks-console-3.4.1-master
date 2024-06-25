@@ -153,6 +153,8 @@ module.exports = {
   RESOURCES_KAAS_COMPONENT_STATE: 'KaaS Component State',
   RESOURCES_CONNECTION_LB: 'LB Connection',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Please select the Master Flavor.',
+  RESOURCES_SELECT_MASTER_ARCH_TIP: 'Please select the Master Architecture.',
+  RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: 'Please select Kubernetes version.',
   RESOURCES_MASTER_COUNT: 'Number of Masters',
   RESOURCES_MASTER_COUNT_MAX_DESC:
     'Masters must be an odd number and the maximum number is 5.',
