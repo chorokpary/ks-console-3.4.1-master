@@ -600,7 +600,7 @@ const RegistModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('External')}
+                            label={t('RESOURCES_SUBNET_EXTERNAL')}
                             rules={[{ required: true }]}
                           >
                             <RadioGroup
@@ -635,7 +635,7 @@ const RegistModal = props => {
                         </Column>
                         <Column>
                           <Form.Item
-                            label={t('MTU')}
+                            label={t('RESOURCES_MTU')}
                             rules={[
                               {
                                 required: true,
@@ -663,7 +663,7 @@ const RegistModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('CIDR')}
+                            label={t('RESOURCES_CIDR')}
                             rules={[
                               {
                                 required: true,
@@ -771,12 +771,12 @@ const RegistModal = props => {
 
               {/* 세부 설정 시작========================================== */}
               <div className={`${regStep == 2 ? '' : 'hide'}`}>
-                <Form.Item label={t('DNS')}>
+                <Form.Item label={t('RESOURCES_DNS')}>
                   <Form.Group>
                     <Columns>
                       <Column>
                         <Form.Item
-                          label={t('Primary')}
+                          label={t('RESOURCES_DNS_PRIMARY')}
                           rules={[
                             {
                               pattern: PATTERN_IP,
@@ -789,7 +789,7 @@ const RegistModal = props => {
                       </Column>
                       <Column>
                         <Form.Item
-                          label={t('Secondary')}
+                          label={t('RESOURCES_DNS_SECONDARY')}
                           rules={[
                             {
                               pattern: PATTERN_IP,

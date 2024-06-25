@@ -155,8 +155,12 @@ const ModifyModal = props => {
       setCidrReducer();
     }
   };
-  const nextHostRoute = useRef(detail?.host_routes.length == 0 ? 1 : detail?.host_routes.length-1);
-  const [listHostRoute, setListHostRoute] = useState(Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i));
+  const nextHostRoute = useRef(
+    detail?.host_routes.length == 0 ? 1 : detail?.host_routes.length - 1
+  );
+  const [listHostRoute, setListHostRoute] = useState(
+    Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i)
+  );
 
   const handleHostRoute = {
     addColumn: () => {
@@ -246,7 +250,7 @@ const ModifyModal = props => {
             />
           </Form.Item>
           <Form.Item
-            label={t('MTU')}
+            label={t('RESOURCES_MTU')}
             rules={[
               { required: true, message: t('RESOURCES_MTU_EMPTY_DESC') },
               {
@@ -268,7 +272,7 @@ const ModifyModal = props => {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('CIDR')}
+                  label={t('RESOURCES_CIDR')}
                   rules={[
                     {
                       required: true,
@@ -372,12 +376,12 @@ const ModifyModal = props => {
             </Columns>
           </Form.Item>
 
-          <Form.Item label={t('DNS')}>
+          <Form.Item label={t('RESOURCES_DNS')}>
             <Form.Group>
               <Columns>
                 <Column>
                   <Form.Item
-                    label={t('Primary')}
+                    label={t('RESOURCES_DNS_PRIMARY')}
                     rules={[
                       {
                         pattern: PATTERN_IP,
@@ -390,7 +394,7 @@ const ModifyModal = props => {
                 </Column>
                 <Column>
                   <Form.Item
-                    label={t('Secondary')}
+                    label={t('RESOURCES_DNS_SECONDARY')}
                     rules={[
                       {
                         pattern: PATTERN_IP,

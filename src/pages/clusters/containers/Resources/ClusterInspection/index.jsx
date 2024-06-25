@@ -76,61 +76,6 @@ export default class ClusterInspection extends React.Component {
                 <div className="grid_info style_status">
                   <div className="box type_status">
                     <div className="cont_group">
-                      {/* {(scoreInfo !== undefined || scoreInfo !== null) && (
-                        <div className="cont1">
-                          <div
-                            className="chart_pie"
-                            style={{
-                              width: '100%',
-                              height: '200px',
-                            }}
-                          >
-                            <ResponsiveContainer>
-                              <PieChart>
-                                <Pie
-                                  data={chartOption}
-                                  cx="50%"
-                                  cy="50%"
-                                  innerRadius={60}
-                                  outerRadius={80}
-                                  paddingAngle={1}
-                                  dataKey="value"
-                                >
-                                  {chartOption.map((entry, index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={entry.color}
-                                    />
-                                  ))}
-                                  <Label
-                                    value={scoreInfo?.score}
-                                    position="center"
-                                    fontSize={50}
-                                    dy={-10}
-                                  />
-                                  <Label
-                                    value={`Health Score`}
-                                    position="bottom"
-                                    fontSize={13}
-                                    dy={25}
-                                    dx={70}
-                                  />
-                                </Pie>
-                                <ChartTooltip />
-                              </PieChart>
-                            </ResponsiveContainer>
-                          </div>
-                        </div>
-                      )}
-
-                      {(scoreInfo === undefined || scoreInfo === null) && {
-                        if(Object.keys(scoreInfo).length === 0) {
-                          <div className="grid_text">
-                            <span>데이터가 없습니다</span>
-                          </div>
-                        }
-                      }} */}
-
                       {scoreInfo === undefined ||
                       scoreInfo === null ||
                       Object.keys(scoreInfo).length === 0 ? (

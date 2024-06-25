@@ -61,7 +61,6 @@ const RegistModal = props => {
 
   const [selectImageName, setSelectImageName] = useState();
   const [selectBootId, setSelectBootId] = useState();
-  const [busType, setBusType] = useState('virtio');
   const [selectFlavorName, setSelectFlavorName] = useState();
   const [selectImageDistroType, setSelectImageDistroType] = useState();
 
@@ -221,7 +220,7 @@ const RegistModal = props => {
     const existing = selectedSriovIpList.filter(
       obj => obj.network_name !== netName
     );
-    if (val != t('RESOURCES_SELECT') && val != undefined) {
+    if (val !== t('RESOURCES_SELECT') && val !== undefined) {
       existing.push(record);
     }
     setSelectedSriovIpList(existing);
@@ -254,9 +253,9 @@ const RegistModal = props => {
     let size;
     const regex = /[^0-9]/g;
     let selectedRootDisk = 0;
-    if (imageType == 'I') {
+    if (imageType === 'I') {
       selectedRootDisk = imageDataList.find(
-        item => item.name == selectImageName
+        item => item.name === selectImageName
       );
       size = selectedRootDisk?.size.replace(regex, '') || 0;
     } else {
@@ -291,12 +290,6 @@ const RegistModal = props => {
     return opt;
   };
 
-  const busTypeOptions = [
-    { label: 'VirtIO', value: 'virtio' },
-    { label: 'SATA', value: 'sata' },
-    { label: 'SCSi', value: 'scsi' },
-  ];
-
   const keypairOptions = () => {
     const opt = keypairList.map(obj => ({
       label: t(obj.name),
@@ -327,12 +320,11 @@ const RegistModal = props => {
       data.sriovIps = selectedSriovIpList;
       data.securitygroup = securityGroupCheckItems;
       data.imageType = imageType;
-      data.busType = busType
 
       data.bootvolume =
-        data?.bootvolume == t('RESOURCES_SELECT') ? '' : data?.bootvolume;
-      data.keypair = data.keypair == t('RESOURCES_SELECT') ? '' : data.keypair;
-      data.node = data.node == t('RESOURCES_SELECT') ? '' : data.node;
+        data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume;
+      data.keypair = data.keypair === t('RESOURCES_SELECT') ? '' : data.keypair;
+      data.node = data.node === t('RESOURCES_SELECT') ? '' : data.node;
       data.storageClass = storageClass;
 
       if (isScript) {
@@ -352,7 +344,6 @@ const RegistModal = props => {
     let makeScript = '#cloud-config';
 
     /*
-    ==> linux distro
     #cloud-config
     ssh_pwauth: true
     users:
@@ -368,81 +359,53 @@ const RegistModal = props => {
         - ubuntu:1234
         - newuser:test#@@!
         - seconduser:Passw0rd!TWO!
-
-    ==> windows distro
-    #cloud-config
-    users:
-      - name: newuser
-        gecos: 'newuser'
-        primary_group: Administrators
-        groups: Administrators
-        passwd: test#@@!
-        inactive: False
     */
     let userPasswordScript = '';
-    if (osType == "linux") {
-      if (listPasswordRoute.length == 1) {
-        listPasswordRoute.map(obj => {
-          if (data[`scriptPassword_${obj}`]) {
-            userPasswordScript += `\nssh_pwauth: true\n`;
-            userPasswordScript += `users:\n`;
-            userPasswordScript += `  - default\n`;
-            userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-            userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
-            userPasswordScript += `\n`;
-            userPasswordScript += `chpasswd:\n`;
-            userPasswordScript += `  expire: false\n`;
-            userPasswordScript += `  list:\n`;
-            userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-              data[`scriptPassword_${obj}`]
-            }\n`;
+    if (listPasswordRoute.length === 1) {
+      listPasswordRoute.map(obj => {
+        if (data[`scriptPassword_${obj}`]) {
+          userPasswordScript += `\nssh_pwauth: true\n`;
+          userPasswordScript += `users:\n`;
+          userPasswordScript += `  - default\n`;
+          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
+          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
+          userPasswordScript += `\n`;
+          userPasswordScript += `chpasswd:\n`;
+          userPasswordScript += `  expire: false\n`;
+          userPasswordScript += `  list:\n`;
+          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
+            data[`scriptPassword_${obj}`]
+          }\n`;
 
-            makeScriptStep_1 = true;
-          }
-        });
-      } else {
-        userPasswordScript += `\nssh_pwauth: true\n`;
-        userPasswordScript += `users:\n`;
-        userPasswordScript += `  - default\n`;
-        listPasswordRoute.map(obj => {
-          if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-            userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-            userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
-            makeScriptStep_1 = true;
-          }
-        });
-        userPasswordScript += `\n`;
-        userPasswordScript += `chpasswd:\n`;
-        userPasswordScript += `  expire: false\n`;
-        userPasswordScript += `  list:\n`;
-        listPasswordRoute.map(obj => {
-          if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-            userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-              data[`scriptPassword_${obj}`]
-            }\n`;
-          }
-        });
-      }
-    }
-    if (osType == "windows") {
-      userPasswordScript += `\n`;
+          makeScriptStep_1 = true;
+        }
+      });
+    } else {
+      userPasswordScript += `\nssh_pwauth: true\n`;
       userPasswordScript += `users:\n`;
-
+      userPasswordScript += `  - default\n`;
       listPasswordRoute.map(obj => {
         if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
           userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-          userPasswordScript += `    gecos: ${data[`scriptId_${obj}`]}\n`;
-          userPasswordScript += `    primary_group: Administrators\n`;
-          userPasswordScript += `    groups: Administrators\n`;
-          userPasswordScript += `    passwd: ${data[`scriptPassword_${obj}`]}\n`;
-          userPasswordScript += `    inactive: false\n`;
+          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
           makeScriptStep_1 = true;
+        }
+      });
+      userPasswordScript += `\n`;
+      userPasswordScript += `chpasswd:\n`;
+      userPasswordScript += `  expire: false\n`;
+      userPasswordScript += `  list:\n`;
+      listPasswordRoute.map(obj => {
+        if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
+          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
+            data[`scriptPassword_${obj}`]
+          }\n`;
         }
       });
     }
 
     let fileScript = '';
-    if (listFileRoute.length == 1) {
+    if (listFileRoute.length === 1) {
       listFileRoute.map(obj => {
         if (data[`scriptPath_${obj}`]) {
           fileScript += `\nwrite_files:\n  - path: ${
@@ -464,7 +427,7 @@ const RegistModal = props => {
     }
 
     let packageScript = '';
-    if (listPackageRoute.length == 1) {
+    if (listPackageRoute.length === 1) {
       listPackageRoute.map(obj => {
         if (data[`scriptPackage_${obj}`]) {
           if (data[`scriptVersion_${obj}`]) {
@@ -502,6 +465,7 @@ const RegistModal = props => {
     }
 
     makeScript += userPasswordScript + fileScript + packageScript;
+    // makeScript += userPasswordScript;
 
     return makeScript;
   };
@@ -512,36 +476,36 @@ const RegistModal = props => {
 
   const stepMoveCheck = step => {
     const { data } = form.current.props;
-    if (step == 1) {
+    if (step === 1) {
       if (
-        imageType == 'I' &&
-        (data.name == undefined ||
+        imageType === 'I' &&
+        (data.name === undefined ||
           !PATTERN_USER_NAME.test(data.name) ||
-          data.image == t('RESOURCES_SELECT') ||
-          data.flavor == t('RESOURCES_SELECT'))
+          data.image === t('RESOURCES_SELECT') ||
+          data.flavor === t('RESOURCES_SELECT'))
       ) {
         handleOk();
       } else if (
-        imageType == 'B' &&
-        (data.name == undefined ||
+        imageType === 'B' &&
+        (data.name === undefined ||
           !PATTERN_USER_NAME.test(data.name) ||
-          data.bootvolume == t('RESOURCES_SELECT') ||
-          data.flavor == t('RESOURCES_SELECT'))
+          data.bootvolume === t('RESOURCES_SELECT') ||
+          data.flavor === t('RESOURCES_SELECT'))
       ) {
         handleOk();
       } else {
         const imageSize =
-          imageType == 'I'
+          imageType === 'I'
             ? imageDataList
-                .filter(item => item.name == selectImageName)
+                .filter(item => item.name === selectImageName)
                 .map(item => item.size)[0]
                 .replace('Gi', '')
             : bootVolumeDataList
-                .filter(item => item.id == selectBootId)
+                .filter(item => item.id === selectBootId)
                 .map(item => item.capacity)[0]
                 .replace('Gi', '');
         const flavorSize = flavorDataList
-          .filter(item => item.name == selectFlavorName)
+          .filter(item => item.name === selectFlavorName)
           .map(item => item.root_disk);
 
         if (Number(flavorSize) >= Number(imageSize)) {
@@ -553,24 +517,24 @@ const RegistModal = props => {
         }
       }
     }
-    if (step == 2) {
+    if (step === 2) {
       setRegStep(3);
     }
 
-    if (step == 3) {
+    if (step === 3) {
       setVmName(data.name);
       setImageName(data.image);
       setBootVolumeName(data.bootvolume);
       setFlavorName(data.flavor);
       setDescription(data.description);
       setKeypairName(
-        data.keypair == t('RESOURCES_SELECT')
+        data.keypair === t('RESOURCES_SELECT')
           ? ''
           : get(find(keypairList, { id: data.keypair }), 'name')
       );
-      setNodeName(data.node == t('RESOURCES_SELECT') ? '' : data.node);
+      setNodeName(data.node === t('RESOURCES_SELECT') ? '' : data.node);
 
-      const flavorData = flavorDataList.filter(obj => obj.name == data.flavor);
+      const flavorData = flavorDataList.filter(obj => obj.name === data.flavor);
       setFlavorCpu(flavorData[0].vcpus);
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram));
       setFlavorDisk(flavorData[0].root_disk);
@@ -718,7 +682,7 @@ const RegistModal = props => {
     let elements = '';
     elements = (
       <>
-        {regStep == 1 && (
+        {regStep === 1 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -737,7 +701,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-        {regStep == 2 && (
+        {regStep === 2 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -764,7 +728,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-        {regStep == 3 && (
+        {regStep === 3 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -791,7 +755,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-        {regStep == 4 && (
+        {regStep === 4 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -840,10 +804,14 @@ const RegistModal = props => {
   const handleOsType = value => {
     setOsType(value);
     setSelectImageName('');
-    if (value == 'windows') {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type == 'windows'));
-    } else if (value == 'linux') {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type != 'windows'));
+    if (value === 'windows') {
+      setImageOptionList(
+        imageDataList.filter(obj => obj.os_type === 'windows')
+      );
+    } else if (value === 'linux') {
+      setImageOptionList(
+        imageDataList.filter(obj => obj.os_type !== 'windows')
+      );
     } else {
       setImageOptionList([]);
     }
@@ -884,7 +852,7 @@ const RegistModal = props => {
     if (checked) {
       const nameArray = [];
       dataListVariables[type].forEach(el =>
-        type == 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
+        type === 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
       );
       setVariables[type](nameArray);
     } else {
@@ -901,28 +869,21 @@ const RegistModal = props => {
   // Validation 시작 ==================================================
 
   const imageValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
       return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') });
     }
     callback();
   };
 
   const bootVolumeValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
       return callback({ message: t('RESOURCES_SELECT_BOOT_VOLUME_TIP') });
     }
     callback();
   };
 
-  const busTypeValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') });
-    }
-    callback();
-  };
-
   const flavorValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
       return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') });
     }
     callback();
@@ -1076,13 +1037,13 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep === 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${
-                    regStep == 1
+                    regStep === 1
                       ? styles.current
                       : regStep > 1
                       ? styles.done
@@ -1096,7 +1057,7 @@ const RegistModal = props => {
                   {t('RESOURCES_DEFAULT_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 1
+                  {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
                     ? t('RESOURCES_COMPLETED_SETTINGS')
@@ -1107,13 +1068,13 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep === 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${
-                    regStep == 2
+                    regStep === 2
                       ? styles.current
                       : regStep > 2
                       ? styles.done
@@ -1127,7 +1088,7 @@ const RegistModal = props => {
                   {t('RESOURCES_NETWORK_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 2
+                  {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
                     ? t('RESOURCES_COMPLETED_SETTINGS')
@@ -1138,13 +1099,13 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 3 ? styles.current : ''}`
+                `${regStep === 3 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${
-                    regStep == 3
+                    regStep === 3
                       ? styles.current
                       : regStep > 3
                       ? styles.done
@@ -1158,7 +1119,7 @@ const RegistModal = props => {
                   {t('RESOURCES_DETAIL_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 3
+                  {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
                     ? t('RESOURCES_COMPLETED_SETTINGS')
@@ -1169,12 +1130,12 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 4 ? styles.current : ''}`
+                `${regStep === 4 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 4 ? styles.current : styles.todo}`}
+                  className={`${regStep === 4 ? styles.current : styles.todo}`}
                 ></div>
               </div>
               <span className={styles.check}></span>
@@ -1183,7 +1144,7 @@ const RegistModal = props => {
                   {t('RESOURCES_CHECK_INPUT_INFORMATION')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 4
+                  {regStep === 4
                     ? t('RESOURCES_CURRENT')
                     : t('RESOURCES_NOT_SET')}
                 </div>
@@ -1195,7 +1156,7 @@ const RegistModal = props => {
           <div className={styles.pop_overflow_y}>
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
-              <div className={`${regStep == 1 ? '' : 'hide'}`}>
+              <div className={`${regStep === 1 ? '' : 'hide'}`}>
                 <Columns>
                   <Column>
                     <Form.Item
@@ -1263,7 +1224,7 @@ const RegistModal = props => {
                   </Tabs>
                 </Form.Item>
 
-                {imageType == 'I' && (
+                {imageType === 'I' && (
                   <Form.Item>
                     <Columns>
                       <Column>
@@ -1325,43 +1286,25 @@ const RegistModal = props => {
                   </Form.Item>
                 )}
 
-                {imageType == 'B' && (
-		  <Columns>
-		    <Column>
-                      <Form.Item
-                        label={t('RESOURCES_BOOT_VOLUME')}
-                        rules={[{ required: true, validator: bootVolumeValidator }]}
-                      >
-                        <Select
-                          name="bootvolume"
-                          defaultValue={t('RESOURCES_SELECT')}
-                          options={bootvolumeOptions()}
-                          // clearable
-                          onChange={e => {
-                            setSelectBootId(e);
-                          }}
-                        />
-                      </Form.Item>
-		    </Column>
-		    <Column>
-		      <Form.Item
-                        label={t('RESOURCES_BUS')}
-                        rules={[{ required: true, validator: busTypeValidator }]}
-                      >
-                        <Select
-                          name="busType"
-                          defaultValue={t('RESOURCES_SELECT')}
-                          options={busTypeOptions}
-                          // clearable
-                          onChange={e => setBusType(e)}
-                        />
-                      </Form.Item>
-		    </Column>
-		  </Columns>
+                {imageType === 'B' && (
+                  <Form.Item
+                    label={t('RESOURCES_BOOT_VOLUME')}
+                    rules={[{ required: true, validator: bootVolumeValidator }]}
+                  >
+                    <Select
+                      name="bootvolume"
+                      defaultValue={t('RESOURCES_SELECT')}
+                      options={bootvolumeOptions()}
+                      // clearable
+                      onChange={e => {
+                        setSelectBootId(e);
+                      }}
+                    />
+                  </Form.Item>
                 )}
                 <Columns>
                   <Column>
-                    {imageType == 'B' && <div style={{ padding: 8 }} />}
+                    {imageType === 'B' && <div style={{ padding: 8 }} />}
                     <Form.Item
                       label={t('Flavor')}
                       rules={[{ required: true, validator: flavorValidator }]}
@@ -1382,7 +1325,7 @@ const RegistModal = props => {
                         flavorSizeCheck ? 'hide' : ''
                       }`}
                     >
-                      {imageType == 'I'
+                      {imageType === 'I'
                         ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
                         : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}
                     </div>
@@ -1390,7 +1333,7 @@ const RegistModal = props => {
 
                   <Column>
                     <div style={{ padding: 12 }} />
-                    {imageType == 'I' && (
+                    {imageType === 'I' && (
                       <Form.Group
                         label={t('RESOURCES_STOREGE_CLASS')}
                         onChange={e => {
@@ -1430,7 +1373,7 @@ const RegistModal = props => {
               {/* 기본설정 설정 끝========================================== */}
 
               {/* 네트워크 설정 시작========================================== */}
-              <div className={`${regStep == 2 ? '' : 'hide'}`}>
+              <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_NETWORK')}>
                   <div className={styles.wrapper}>
                     {stateVariables['network'].length > 0 && (
@@ -1535,7 +1478,6 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleIpSelectClick(data.id, e)
                                   }
-				  disabled={!networkCheckItems.includes(data.id)}
                                   clearable
                                 />
                               </td>
@@ -1548,7 +1490,7 @@ const RegistModal = props => {
                       <div className={styles.removeCheckWrapper}>
                         {networkCheckItems?.map(id => {
                           const name = networkList
-                            ?.filter(data => data.id == id)
+                            ?.filter(data => data.id === id)
                             .map(item => item.name)[0];
                           return (
                             <span key={id}>
@@ -1670,7 +1612,6 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleSriovIpSelectClick(data.name, e)
                                   }
-				  disabled={!sriovCheckItems.includes(data.name)}
                                   clearable
                                 />
                               </td>
@@ -1699,7 +1640,7 @@ const RegistModal = props => {
               {/* 네트워크 설정 끝========================================== */}
 
               {/* 세부 설정 시작========================================== */}
-              <div className={`${regStep == 3 ? '' : 'hide'}`}>
+              <div className={`${regStep === 3 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_KEYPAIR')}>
                   <Select
                     name="keypair"
@@ -1826,7 +1767,7 @@ const RegistModal = props => {
                       <div className={styles.removeCheckWrapper}>
                         {securityGroupCheckItems?.map(id => {
                           const name = securityGroupList
-                            ?.filter(data => data.id == id)
+                            ?.filter(data => data.id === id)
                             .map(item => item.name)[0];
                           return (
                             <span key={id}>
@@ -1903,7 +1844,7 @@ const RegistModal = props => {
                                 <Form.Item>
                                   <InputPassword
                                     name={`scriptPassword_${obj}`}
-                                    placeholder={t('PASSWORD')}
+                                    placeholder={t('Password')}
                                     onChange={e => checkScriptPassword()}
                                   />
                                 </Form.Item>
@@ -2100,7 +2041,7 @@ const RegistModal = props => {
               {/* 세부 설정 끝========================================== */}
 
               {/* 입력 정보 확인 시작========================================== */}
-              <div className={`${regStep == 4 ? '' : 'hide'}`}>
+              <div className={`${regStep === 4 ? '' : 'hide'}`}>
                 <div className={styles.boxwrap}>
                   <div className={styles.box_style}>
                     <div className={styles.boxtitle}>
@@ -2128,13 +2069,13 @@ const RegistModal = props => {
                       )}
                       <div className={styles.list}>
                         <label>{`${
-                          imageType == 'I'
+                          imageType === 'I'
                             ? t('RESOURCES_IMAGE')
                             : t('RESOURCES_BOOT_VOLUME')
                         }`}</label>
                         <div className={styles.multiline}>
                           <div className={styles.bold}>{`${
-                            imageType == 'I' ? imageName : bootVolumeName
+                            imageType === 'I' ? imageName : bootVolumeName
                           }`}</div>
                         </div>
                       </div>
@@ -2150,7 +2091,7 @@ const RegistModal = props => {
                       </div>
                     </div>
 
-                    {imageType == 'I' && (
+                    {imageType === 'I' && (
                       <div className={styles.greybgbox}>
                         <div className={styles.list}>
                           <label>{t('RESOURCES_OS_TYPE')}</label>
@@ -2172,7 +2113,7 @@ const RegistModal = props => {
                         </div>
                       </div>
                     )}
-                    {imageType == 'B' && description && (
+                    {imageType === 'B' && description && (
                       <div className={styles.list}>
                         <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
