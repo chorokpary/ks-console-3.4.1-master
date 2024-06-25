@@ -166,7 +166,7 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
                         <strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong>
                       </th>
                       <th>
-                        <strong>CIDR</strong>
+                        <strong>{t('RESOURCES_CIDR')}</strong>
                       </th>
                       <th>
                         <strong>{t('RESOURCES_GATEWAY')}</strong>

@@ -104,11 +104,11 @@ const NetworkDetail = props => {
         value: detail.network.segment_id,
       },
       {
-        name: t('MTU'),
+        name: t('RESOURCES_MTU'),
         value: detail.network.mtu,
       },
       {
-        name: t('CIDR'),
+        name: t('RESOURCES_CIDR'),
         value: detail.network.cidr,
       },
       {
@@ -136,7 +136,7 @@ const NetworkDetail = props => {
         value: `${detail.network.ip_pool.start}\n${detail.network.ip_pool.end}`,
       },
       {
-        name: t('DNS'),
+        name: t('RESOURCES_DNS'),
         value: detail.network.dns.map(el => `${el}\n`),
       },
       {

@@ -46,7 +46,7 @@ export default class KeypairStore extends Base {
     const getResourceUrlTmp = (params = {}) =>
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/keypairs22`;
+      )}/edgetron/resources/kubevirt/keypairs`;
 
     //const url = this.getResourceUrl(params);
     const url = getResourceUrlTmp(params);
