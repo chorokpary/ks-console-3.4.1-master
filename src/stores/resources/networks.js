@@ -32,11 +32,15 @@ export default class NetworkStore extends Base {
     getListUrl = this.getResourceUrl
     getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
+    getPhysnetUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/physnets`
+
     @action
     async create(data, params = {}) {
         if (data.network.type == "FLAT") {
             delete data.network.segment_id
-        }
+        } else {
+	    delete data.network.physnet_name
+	}
 
         let res
         if (params.workspace) {
@@ -49,6 +53,7 @@ export default class NetworkStore extends Base {
         // this.afterChange(res, params)
         return res
     }
+
     @action
     async update({ id, ...params }, data) {
         const jsonData = {};
@@ -59,7 +64,18 @@ export default class NetworkStore extends Base {
         )
     }
 
+    @action
+    async fetchPhysnets(params) {
+	this.isLoading = true
 
+        const result = await request.get(
+	    `${this.getPhysnetUrl(params)}`
+	)
+	const physnets = { ...params, ...this.mapper(result), kind: 'Physnets' }
+	this.physnets = physnets
+        this.isLoading = false
+        return physnets
+    }
 
     @action
     async fetchDetail(params) {

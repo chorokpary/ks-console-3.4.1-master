@@ -28,5 +28,7 @@ module.exports = {
   CPU_REQUEST: 'CPU Talebi',
   CPU_LIMIT: 'CPU Sınırı',
   MEMORY_REQUEST: 'Bellek Talebi',
-  MEMORY_LIMIT: 'Bellek Sınırı'
+  MEMORY_LIMIT: 'Bellek Sınırı',
+  STORAGE_REQUEST: 'Storage Talebi',
+  STORAGE_LIMIT: 'Storage Sınırı'
 };

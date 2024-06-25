@@ -16,6 +16,7 @@ import { ProjectSelect } from 'components/Inputs';
 import styles from './index.scss';
 
 const RegistModal = ({ title, onOk, store, ...props }) => {
+
   const [modelView, setModalView] = useState(true);
 
   const [networkOriginList, setNetworkOriginList] = useState([]);

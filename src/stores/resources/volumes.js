@@ -57,6 +57,13 @@ export default class VolumeStore extends Base {
     volumeData.project = data.project;
     volumeData.description = data.description ? data.description : '';
 
+    if (data.import_source === 'UploadImage') {
+      volumeData.cpu_arch = data.cpu_arch;
+      volumeData.os_type = data.os_type;
+      volumeData.os_distro = data.os_distro;
+      volumeData.boot_type = data.boot_type;
+    }
+
     jsonData.volume = volumeData;
 
     // console.log("jsonData : "+ JSON.stringify(jsonData))
@@ -77,6 +84,20 @@ export default class VolumeStore extends Base {
     await this.submitting(
       request.put(this.getDetailUrl({ id, ...params }), jsonData),
     );
+  }
+
+  @action
+  async fetchAvailableList(params)  {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/available`,
+    );
+    const availableList = { ...params, ...this.mapper(result), kind: 'Volumes' };
+
+    this.availabeList = availableList;
+    this.isLoading = false;
+    return availableList;
   }
 
   @action
@@ -143,11 +164,14 @@ export default class VolumeStore extends Base {
 
     actionData.vm_id = data.vmId;
     if (data.actionType == 'A') {
-      actionData.persist = data.persist;
+      actionData.persist = true;
       actionData.action = 'attach';
     } else {
       actionData.action = 'detach';
     }
+
+    actionData.hotplug = data.hotplug;
+    actionData.bus = data.bus;
 
     jsonData.action = actionData;
 

@@ -189,24 +189,13 @@ export default class ResourcesVolumes extends React.Component {
         render: used_by_vmi =>
           !!used_by_vmi ? t('MOUNTED') : t('NOT_MOUNTED'),
       },
-      // {
-      //   title: t('상태'),
-      //   dataIndex: 'phase',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      //   render: (phase, record) => {
-      //     const type = !!phase == true ? phase : "Bound"
-      //     const flicker = true;
-
-      //       return (
-      //         <div className={styles.iconwrapper}>
-      //           <Indicator className={styles.indicator} type={type} flicker={flicker} />
-      //           <p>{type}</p>
-      //         </div>
-      //       )
-      //   },
-      // },
+      {
+         title: t('RESOURCES_PHASE'),
+         dataIndex: 'phase',
+         isHideable: true,
+         search: true,
+         width: 'auto',
+      },
       {
         title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',

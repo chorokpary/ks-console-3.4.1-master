@@ -62,6 +62,8 @@ export default class Quotas extends React.Component {
     supportGpu.forEach(type =>
       omitArr.push(`limits.${type}`, `requests.${type}`)
     )
+    // omit storage
+    omitArr.push(`limits.storage`, `requests.storage`)
     return omitArr
   }
 

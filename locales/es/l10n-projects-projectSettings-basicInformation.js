@@ -50,8 +50,10 @@ module.exports = {
   EDIT_DEFAULT_CONTAINER_QUOTAS: 'Edit Default Container Quotas',
   LIMITS_CPU: 'limit.cpu',
   LIMITS_MEMORY: 'limits.memoria',
+  LIMITS_STORAGE: 'Storage Limit',
   REQUESTS_CPU: 'CPU Request',
   REQUESTS_MEMORY: 'limit.cpu',
+  REQUESTS_STORAGE: 'Storage Request',
   // Project Quotas
   PROJECT_QUOTA_PL: 'Project Quotas',
   RESOURCE_TYPE_SCAP: 'Tipo de recurso',

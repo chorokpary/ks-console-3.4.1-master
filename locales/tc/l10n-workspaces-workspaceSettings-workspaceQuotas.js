@@ -28,5 +28,7 @@ module.exports = {
   CPU_REQUEST: 'CPU 預留',
   CPU_LIMIT: 'CPU 限制',
   MEMORY_REQUEST: '記憶體預留',
-  MEMORY_LIMIT: '記憶體限制'
+  MEMORY_LIMIT: '記憶體限制',
+  STORAGE_REQUEST: '儲存預留',
+  STORAGE_LIMIT: '儲存限制'
 };

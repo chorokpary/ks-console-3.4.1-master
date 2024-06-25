@@ -18,7 +18,8 @@ const BindingModal = props => {
 
   const [vmList, setVmList] = useState([]);
   const [vmId, setVmId] = useState();
-  const [radioPersist, setRadioPersist] = useState('T');
+  const [radioHotplug, setRadioHotplug] = useState('T');
+  const [bus, setBus] = useState();
 
   const [volumeList, setVolumeList] = useState([]);
   const [attachedVmList, setAttachedVmList] = useState([]);
@@ -30,9 +31,10 @@ const BindingModal = props => {
       const data = {};
 
       data.vmId = vmId;
-      data.persist = radioPersist == 'T' ? true : false;
+      data.hotplug = radioHotplug == 'T' ? true : false;
       data.actionType = 'A';
       data.id = props.store.detail.id;
+      data.bus = bus;
 
       volumeStore.actionState({ data, ...props }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') });
@@ -52,7 +54,6 @@ const BindingModal = props => {
         cluster: props.cluster,
         namespace: props.namespace,
       });
-      //   setVmList(vmListData);
 
       const volumeData = await volumeStore.fetchList({
         cluster: props.cluster,
@@ -63,9 +64,16 @@ const BindingModal = props => {
         return was.name == props.name;
       });
 
+      const vol_node = props.store.detail.volume.selected_node;
+
       const filterVm = vmListData?.filter(vm => {
-        return vm.project == findVolumeData.project;
+	if (!!vol_node) {
+	  return vm.project == findVolumeData.project && vm.node == vol_node;
+	} else {
+	  return vm.project == findVolumeData.project;
+	}
       });
+
       setVmList(filterVm);
 
       const attachedVmList = volumeData
@@ -91,10 +99,23 @@ const BindingModal = props => {
     return opt;
   };
 
+  const busTypeOptions = [
+    { label: 'VirtIO', value: 'virtio' },
+    { label: 'SATA', value: 'sata' },
+    { label: 'SCSi', value: 'scsi' },
+  ];
+
   // Validation 시작 ==================================================
   const vmValidator = (rule, value, callback) => {
     if (value == t('RESOURCES_SELECT') || value == 'select') {
       return callback({ message: t('RESOURCES_SELECT_VM_TIP') });
+    }
+    callback();
+  };
+
+  const busTypeValidator = (rule, value, callback) => {
+    if (value == t('RESOURCES_SELECT') || value == 'select') {
+      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') });
     }
     callback();
   };
@@ -124,14 +145,16 @@ const BindingModal = props => {
             />
           </Form.Item>
 
-          <Form.Item label={t('Persist')}>
+          <Form.Item 
+	    label={t('RESOURCES_HOTPLUG_FLAG')}
+	  >
             <div className={styles.wrapper}>
               <Radio
                 name="snatType"
                 value="T"
-                checked={radioPersist === 'T'}
+                checked={radioHotplug === 'T'}
                 onChange={e => {
-                  setRadioPersist('T');
+                  setRadioHotplug('T');
                 }}
               >
                 {t('RESOURCES_USE')}
@@ -139,15 +162,28 @@ const BindingModal = props => {
               <Radio
                 name="snatType"
                 value="F"
-                checked={radioPersist === 'F'}
+                checked={radioHotplug === 'F'}
                 onChange={e => {
-                  setRadioPersist('F');
+                  setRadioHotplug('F');
                 }}
               >
                 {t('RESOURCES_NOT_USE')}
               </Radio>
             </div>
           </Form.Item>
+          <Form.Item 
+	    label={t('RESOURCES_BUS_TYPE')}
+	    rules={[{ required: true, validator: busTypeValidator }]}
+	  >
+	    <Select
+              name="bus"
+              placeholder={t('RESOURCES_SELECT')}
+              options={busTypeOptions}
+              defaultValue="virtio"
+	      onChange={e => setBus(e)}
+	      disabled={radioHotplug === 'T'}
+            />
+	  </Form.Item>
         </Form>
       </Modal>
     </>

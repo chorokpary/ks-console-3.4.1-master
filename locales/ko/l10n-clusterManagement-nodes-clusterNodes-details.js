@@ -53,6 +53,8 @@ module.exports = {
   MEMORY_LIMIT_SCAP: '메모리 제한',
   CPU_REQUEST_SCAP: 'CPU 요청',
   CPU_LIMIT_SCAP: 'CPU 제한',
+  STORAGE_REQUEST_SCAP: '스토리지 요청',
+  STORAGE_LIMIT_SCAP: '스토리지 제한',
   // Running Status > Allocated Resources
   ALLOCATED_RESOURCES: '할당된 리소스',
   // Running Status > Health Status

@@ -78,6 +78,8 @@ import HostDevices from '../containers/Resources/HostDevices';
 import MediatedDevices from '../containers/Resources/MediatedDevices';
 import LoadBalancers from '../containers/Resources/LoadBalancers';
 
+import GpuNodes from '../containers/Resources/GpuNodes';
+
 import BareMetal from '../containers/Resources/BareMetal';
 import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator';
 import ComKassResource from '../containers/Resources/ComKassResource';
@@ -364,6 +366,11 @@ export default [
           {
             path: `${PATH}/loadbalancers`,
             component: LoadBalancers,
+            exact: true,
+          },
+	  {
+            path: `${PATH}/gpunodes`,
+            component: GpuNodes,
             exact: true,
           },
           {

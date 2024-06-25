@@ -68,9 +68,11 @@ const index = (props) => {
     }
 
     const getVmCpuUsageData = async () => {
+      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
-        // expr: `(1 - avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance))`,
+	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })
@@ -87,8 +89,11 @@ const index = (props) => {
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
+      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+      const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+
       const vmMemoryData = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+	expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })
@@ -106,8 +111,11 @@ const index = (props) => {
 
     // vm inbound data
     const getVmInboundData = async () => {
+      const inboundLinuxDataExpr = `sum by (pod) (irate(node_network_receive_bytes_total{namespace="default",service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const inboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_received_total{namespace="default",service="launcher-node-exporter"}[5m]))`
+
       const vmInboundData = await customStore.fetchMetric({
-        expr: `sum by (pod) (irate(node_network_receive_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*"}[5m]))`,
+	expr: store.detail.vm.os_type == "linux" ? inboundLinuxDataExpr : inboundWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })
@@ -122,8 +130,11 @@ const index = (props) => {
 
     // vm outbound data
     const getVmOutboundData = async () => {
+      const outboundLinuxDataExpr = `sum by (pod) (irate(node_network_transmit_bytes_total{namespace="default",service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const outboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_sent_total{namespace="default",service="launcher-node-exporter"}[5m]))`
+
       const vmOutboundData = await customStore.fetchMetric({
-        expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*"}[5m]))`,
+	expr: store.detail.vm.os_type == "linux" ? outboundLinuxDataExpr : outboundWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })
@@ -137,8 +148,11 @@ const index = (props) => {
     };
 
     const getVmDiskUsageData = async () => {
+      const diskLinuxDataExpr = `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`
+      const diskWindowsDataExpr = `(100 - (((sum by(pod) (windows_logical_disk_free_bytes)) / sum by(pod) (windows_logical_disk_size_bytes)) * 100)) / 100`
+
       const vmDiskData = await customStore.fetchMetric({
-        expr: `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`,
+	expr: store.detail.vm.os_type == "linux" ? diskLinuxDataExpr : diskWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })

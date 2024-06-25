@@ -128,6 +128,10 @@ const NetworkDetail = props => {
           : t('RESOURCES_NOT_USE'),
       },
       {
+        name: t('RESOURCES_PHYSNET'),
+        value: detail.network.physnet_name,
+      },
+      {
         name: t('RESOURCES_IP_POOL_INFORMATION'),
         value: `${detail.network.ip_pool.start}\n${detail.network.ip_pool.end}`,
       },

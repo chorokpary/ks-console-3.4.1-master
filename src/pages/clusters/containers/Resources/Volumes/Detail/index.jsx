@@ -27,6 +27,7 @@ const VolumeDetail = props => {
   );
   const id = props.match.params.id;
   const used_by_vmi = store.detail.volume?.used_by_vmi;
+  const boot_volume = store.detail.volume?.boot_volume;
 
   useEffect(() => {
     fetchData();
@@ -65,35 +66,40 @@ const VolumeDetail = props => {
     if (
       !volumeName.includes('boot-dv') &&
       !volumeName.includes('boot-volume') &&
-      !volumeName.includes('bootdisk')
+      !volumeName.includes('bootdisk') &&
+      !(boot_volume === true && used_by_vmi)
     ) {
+      if (boot_volume === false) {
+        operations.push(
+          {
+            key: 'volume',
+            icon: 'storage',
+            text:
+              !used_by_vmi
+                ? t('RESOURCES_BINDING')
+                : t('RESOURCES_ISOLATE'),
+            action: 'view',
+            onClick: () => {
+              if (!used_by_vmi) {
+                props.rootStore.triggerAction('resourcesvolume.bindingPop', {
+                  type: 'VOLUME_DETAIL',
+                  store,
+                  success: fetchData,
+                  ...props.match.params
+                });
+              } else {
+                props.rootStore.triggerAction('resourcesvolume.detach', {
+                  data: { id, vmId: used_by_vmi, actionType: 'D' },
+                  store,
+                  success: fetchData,
+                  ...props.match.params
+                });
+              }
+            },
+          }
+	);
+      }
       operations.push(
-        {
-          key: 'volume',
-          icon: 'storage',
-          text:
-            !used_by_vmi
-              ? t('RESOURCES_BINDING')
-              : t('RESOURCES_ISOLATE'),
-          action: 'view',
-          onClick: () => {
-            if (!used_by_vmi) {
-              props.rootStore.triggerAction('resourcesvolume.bindingPop', {
-                type: 'VOLUME_DETAIL',
-                store,
-                success: fetchData,
-                ...props.match.params
-              });
-            } else {
-              props.rootStore.triggerAction('resourcesvolume.detach', {
-                data: { id, vmId: used_by_vmi, actionType: 'D' },
-                store,
-                success: fetchData,
-                ...props.match.params
-              });
-            }
-          },
-        },
         {
           key: 'delete',
           icon: 'trash',
@@ -153,6 +159,33 @@ const VolumeDetail = props => {
       {
         name: t('RESOURCES_VOLUME_MODE'),
         value: detail.volume.volume_mode,
+      },
+      {
+        name: t('RESOURCES_VOLUME_TYPE'),
+        value: 
+	  detail.volume.boot_volume === true
+	    ? t('RESOURCES_BOOT_VOLUME')
+	    : t('RESOURCES_NORMAL_VOLUME'),
+      },
+      {
+        name: t('RESOURCES_CPU_TYPE'),
+        value: detail.volume.cpu_arch,
+      },
+      {
+        name: t('RESOURCES_OS_TYPE'),
+        value: detail.volume.os_type,
+      },
+      {
+        name: t('RESOURCES_OS_DISTRO'),
+        value: detail.volume.os_distro,
+      },
+      {
+        name: t('RESOURCES_BOOT_TYPE'),
+        value: detail.volume.boot_type,
+      },
+      {
+        name: t('RESOURCES_PHASE'),
+        value: detail.volume.phase,
       },
       {
         name: t('RESOURCES_DESCRIPTION'),

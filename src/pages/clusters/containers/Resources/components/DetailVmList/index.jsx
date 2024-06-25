@@ -50,6 +50,9 @@ const DetailVmList = props => {
   const [vmCpuData, setVmCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
+  const [vmWinCpuData, setVmWinCpuData] = useState([]);
+  const [vmWinMemoryData, setVmWinMemoryData] = useState([]);
+
   const perPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState();
@@ -162,6 +165,15 @@ const DetailVmList = props => {
       setVmCpuData(vmCpuData);
     };
 
+    const getVmWinCpuUsageData = async () => {
+      const vmCpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+	...paramsData,
+        cluster,
+      });
+      setVmWinCpuData(vmCpuData);
+    };
+
     // vm memory data
     const getVmMemoryUsageData = async () => {
       const vmMemoryData = await customStore.fetchMetric({
@@ -173,8 +185,20 @@ const DetailVmList = props => {
       setVmMemoryData(vmMemoryData);
     };
 
+    const getVmWinMemoryUsageData = async () => {
+      const vmMemoryData = await customStore.fetchMetric({
+        expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
+	...paramsData,
+        cluster,
+      });
+
+      setVmWinMemoryData(vmMemoryData);
+    };
+
     getVmCpuUsageData();
     getVmMemoryUsageData();
+    getVmWinCpuUsageData();
+    getVmWinMemoryUsageData();
   };
 
   const getMonitoringCfgs = (cpuData, memoryData) => [
@@ -279,7 +303,7 @@ const DetailVmList = props => {
             </div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id, isExpandFlag)}
+          {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon
               name="chevron-down"
@@ -405,17 +429,17 @@ const DetailVmList = props => {
     );
   };
 
-  const renderMonitorings = (vmId, isExpand) => {
+  const renderMonitorings = (vmId, osType, isExpand) => {
     // const isExpand = false;
     const loading = false;
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
 
-    const vmCpuMetricData = _.find(vmCpuData, data => {
+    const vmCpuMetricData = _.find(osType == "linux" ? vmCpuData : vmWinCpuData, data => {
       if (data.metric.pod === vmId) return data;
     });
 
-    const vmMemoryMetricData = _.find(vmMemoryData, data => {
+    const vmMemoryMetricData = _.find(osType == "linux" ? vmMemoryData : vmWinMemoryData, data => {
       if (data.metric.pod === vmId) return data;
     });
 

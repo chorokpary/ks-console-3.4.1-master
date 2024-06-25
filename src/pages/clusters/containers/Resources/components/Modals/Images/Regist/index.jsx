@@ -260,6 +260,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     return elements;
   };
 
+  console.log("store.isSubmitting : "+ store.isSubmitting)
   return (
     <>
       <Modal

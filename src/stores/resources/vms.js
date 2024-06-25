@@ -205,6 +205,8 @@ export default class VmStore extends Base {
     // 값 전달 시 invalid_boot_volume 오류 발생
     resourceData.boot_dv = data.imageType == 'I' ? '' : data.bootvolume;
 
+    resourceData.bus_type = data.busType;
+
     const securityGroupsArray = [];
     data.securitygroup.map(name => {
       securityGroupsArray.push(name);
@@ -519,7 +521,7 @@ export default class VmStore extends Base {
     this.isLoading = true;
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/volumes/available`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/boot_volumes/available`
     );
     const response = { ...params, ...this.mapper(result), kind: 'volumes' };
 
@@ -531,7 +533,7 @@ export default class VmStore extends Base {
   async fetchVmListNetwork(params) {
     this.isLoading = true;
 
-    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`);
+    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vm_networks`);
     const response = { ...params, ...this.mapper(result), kind: 'networks' };
 
     if (params?.namespace) {

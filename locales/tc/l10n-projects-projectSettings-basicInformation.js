@@ -50,8 +50,10 @@ module.exports = {
   EDIT_DEFAULT_CONTAINER_QUOTAS: 'Edit Default Container Quotas',
   LIMITS_CPU: 'CPU 限額',
   LIMITS_MEMORY: '記憶體限額',
+  LIMITS_STORAGE: '儲存限額',
   REQUESTS_CPU: 'CPU 預留',
-  REQUESTS_MEMORY: 'CPU 限額',
+  REQUESTS_MEMORY: '記憶體預留',
+  REQUESTS_STORAGE: '儲存預留',
   // Project Quotas
   PROJECT_QUOTA_PL: 'Project Quotas',
   RESOURCE_TYPE_SCAP: '資源類型',

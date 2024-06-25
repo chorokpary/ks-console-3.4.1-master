@@ -17,10 +17,12 @@ import {
 import * as common from 'utils/resources';
 
 import classnames from 'classnames';
+import NetworkStore from 'stores/resources/networks';
 import styles from './index.scss';
 
 const RegistModal = props => {
   const form = useRef();
+  const networkStore = new NetworkStore();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
   const [external, setExternal] = useState(false);
@@ -61,6 +63,23 @@ const RegistModal = props => {
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
   ];
+  const [physnetOptions, setPhysnetOptions] = useState([]);
+  const [physnet, setPhysnet] = useState();
+
+  useEffect(() => {
+    const getPhysnetsData = async () => {
+      const listPhysnet = await networkStore.fetchPhysnets(props);
+      const opt = listPhysnet.physnets
+	  .map(physnet => {
+	     return {
+	       label: t(physnet),
+               value: t(physnet),
+	     };
+	  });
+      setPhysnetOptions(opt);
+    };
+    getPhysnetsData();
+  }, []);
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -226,6 +245,7 @@ const RegistModal = props => {
       // || e == 'VLAN'
     ) {
       data.segment_id = ' ';
+      data.physnet_name = '';
       const a = document.getElementById('segment_id');
       if (
         a.nextElementSibling &&
@@ -237,6 +257,7 @@ const RegistModal = props => {
       setExternalBool(true);
     } else {
       data.segment_id = '';
+      data.physnet_name = ' ';
       const a = document.getElementById('segment_id');
       if (
         a.nextElementSibling &&
@@ -245,6 +266,7 @@ const RegistModal = props => {
         a.nextElementSibling.classList.remove('hide');
         a.parentElement.parentElement.classList.add('error-item');
       }
+
       document.getElementById('radio.0').click();
       setExternalBool(false);
     }
@@ -530,21 +552,44 @@ const RegistModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-                      <Form.Item
-                        label={t('RESOURCES_SEGMENT_ID')}
-                        rules={[
-                          {
-                            required: true,
-                            validator: segmentIdValidator,
-                          },
-                        ]}
-                      >
-                        <NumberInput
-                          name="segment_id"
-                          disabled={externalBool}
-                          style={{ maxWidth: 'none' }}
-                        />
-                      </Form.Item>
+	              <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_SEGMENT_ID')}
+                            rules={[
+                              {
+                                required: true,
+                                validator: segmentIdValidator,
+                              },
+                            ]}
+                          >
+                            <NumberInput
+                              name="segment_id"
+                              disabled={externalBool}
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
+	                </Column>
+	                <Column>
+                          <Form.Item
+                            label={t('RESOURCES_PHYSNET')}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+	                    <Select
+                              name="physnet_name"
+                              options={physnetOptions}
+	                      disabled={!externalBool}
+	                      onChange={e => {
+                                setPhysnet(e);
+                              }}
+                            />
+                          </Form.Item>
+                        </Column>
+	              </Columns>
                     </Column>
                   </Columns>
                 </Form.Item>

@@ -16,7 +16,7 @@ import { PATTERN_USER_NAME, COLORS_MAP } from 'utils/constants';
 
 import styles from './index.scss';
 
-const regexName = /^[a-z][a-z0-9-]*\.[a-z]{2,}\/[a-z0-9]+$/;
+const regexName = /^[a-z][a-z0-9-]*\.[a-z]{2,}\/[a-zA-Z0-9_]+$/;
 
 const RegistModal = props => {
   const hostDeviceStore = new HostDeviceStore();
@@ -26,6 +26,7 @@ const RegistModal = props => {
   const [formData, setFormData] = useState({});
 
   const [dataList, setDataList] = useState([]);
+  const [origDataList, setOrigDataList] = useState([]);
   const [keyword, setKeyword] = useState(2);
   const [isCheck, setIsCheck] = useState(false);
   const [isCheckName, setIsCheckName] = useState(false);
@@ -41,8 +42,20 @@ const RegistModal = props => {
         vendor_name: data.vendor_name,
         device_id: data.device_id,
         device_name: data.device_name,
-        isExternal: false,
-        isGpu: false,
+        is_external: data.external,
+        is_gpu: data.gpu,
+	refined_device_name: data.refined_device_name,
+      }))
+    );
+    setOrigDataList(
+      listPciDevice.pci_devices.map(data => ({
+        vendor_id: data.vendor_id,
+        vendor_name: data.vendor_name,
+        device_id: data.device_id,
+        device_name: data.device_name,
+        is_external: data.external,
+        is_gpu: data.gpu,
+	refined_device_name: data.refined_device_name,
       }))
     );
   };
@@ -54,7 +67,6 @@ const RegistModal = props => {
   // 체크 리스트 시작 ==================================================
   const nextIndex = useRef(0);
   const handleSingleCheck = (checked, obj, index) => {
-    console.log();
     if (checked) {
       setCheckItems(prev => [...prev, obj.device_name]);
       // setAddRowList(prev => [
@@ -74,13 +86,14 @@ const RegistModal = props => {
       setAddRowList([
         ...addRowList,
         {
-          name: '',
-          vendor_id: obj.vendor_id,
+          name: dataList[index].refined_device_name,
+          refined_device_name: dataList[index].refined_device_name,
+	  vendor_id: obj.vendor_id,
           vendor_name: obj.vendor_name,
           device_id: obj.device_id,
           device_name: obj.device_name,
-          isExternal: dataList[index].isExternal,
-          isGpu: dataList[index].isGpu,
+          is_external: dataList[index].is_external,
+          is_gpu: dataList[index].is_gpu,
           description: '',
           idx: (nextIndex.current += 1),
         },
@@ -132,15 +145,15 @@ const RegistModal = props => {
     }
   };
 
-  const hendleExternal = (e, i) => {
+  const handleExternal = (e, i) => {
     const valuesData = [...dataList];
-    valuesData[i].isExternal = e;
+    valuesData[i].is_external = e;
     setDataList(valuesData);
   };
 
-  const hendleGpu = (e, i) => {
+  const handleGpu = (e, i) => {
     const valuesData = [...dataList];
-    valuesData[i].isGpu = e;
+    valuesData[i].is_gpu = e;
     setDataList(valuesData);
   };
 
@@ -271,11 +284,11 @@ const RegistModal = props => {
                     <colgroup>
                       <col width="5%" />
                       <col width="10%" />
-                      <col width="20%" />
-                      <col width="10%" />
                       <col width="25%" />
-                      <col width="15%" />
-                      <col width="15%" />
+                      <col width="10%" />
+                      <col width="30%" />
+                      <col width="10%" />
+                      <col width="10%" />
                     </colgroup>
                     <thead>
                       <tr>
@@ -314,7 +327,7 @@ const RegistModal = props => {
                       </tr>
                     </thead>
                     <tbody>
-                      {!dataList?.length && (
+                      {!origDataList?.length && (
                         <tr>
                           <td
                             colSpan="7"
@@ -329,7 +342,7 @@ const RegistModal = props => {
                           </td>
                         </tr>
                       )}
-                      {dataList?.map((data, key) => (
+                      {origDataList?.map((data, key) => (
                         <tr key={data.name}>
                           <td>
                             <Checkbox
@@ -349,26 +362,46 @@ const RegistModal = props => {
                               textAlign: 'left',
                             }}
                           >
-                            <Toggle
-                              checked={data.isExternal}
-                              showText
-                              onText="on"
-                              offText="off"
-                              onChange={e => hendleExternal(e, key)}
-                            />
+			  {data.is_external ? (
+		              <Toggle
+                                checked="true"
+                                showText
+                                onText="on"
+                                offText="off"
+                                disabled="true"
+                              />
+			    ) : (
+                              <Toggle
+                                checked={dataList[key].is_external}
+                                showText
+                                onText="on"
+                                offText="off"
+                                onChange={e => handleExternal(e, key)}
+                              />
+			    )}
                           </td>
                           <td
                             style={{
                               textAlign: 'left',
                             }}
                           >
-                            <Toggle
-                              checked={data.isGpu}
-                              showText
-                              onText="on"
-                              offText="off"
-                              onChange={e => hendleGpu(e, key)}
-                            />
+			  {data.is_gpu ? (
+			      <Toggle
+                                checked="true"
+                                showText
+                                onText="on"
+                                offText="off"
+				disabled="true"
+                              />
+			    ) : (
+                              <Toggle
+                                checked={dataList[key].is_gpu}
+                                showText
+                                onText="on"
+                                offText="off"
+                                onChange={e => handleGpu(e, key)}
+                              />
+			    )}
                           </td>
                         </tr>
                       ))}
@@ -390,14 +423,13 @@ const RegistModal = props => {
                     <table>
                       <colgroup>
                         <col width="5%" />
-                        <col width="20%" />
-                        <col width="7%" />
+                        <col width="25%" />
+                        <col width="5%" />
+                        <col width="17%" />
+                        <col width="5%" />
+                        <col width="23%" />
                         <col width="10%" />
-                        <col width="7%" />
-                        <col width="13%" />
-                        <col width="9%" />
-                        <col width="7%" />
-                        <col width="24%" />
+                        <col width="10%" />
                       </colgroup>
                       <thead></thead>
                       <tbody>
@@ -426,15 +458,25 @@ const RegistModal = props => {
                                   },
                                 ]}
                               >
-                                <Input
-                                  name={`name-${v.idx}`}
-                                  type="text"
-                                  value={v.name}
-                                  placeholder={t('RESOURCES_NAME')}
-                                  onChange={e => {
-                                    handleInput(e, i, `name`);
-                                  }}
-                                />
+			        {v.refined_device_name != "" ? (
+			          <Input
+                                    name={`name-${v.idx}`}
+                                    type="text"
+                                    defaultValue={v.refined_device_name}
+                                    placeholder={v.refined_device_name}
+				    readOnly
+                                  />
+				) : (
+				  <Input
+                                    name={`name-${v.idx}`}
+                                    type="text"
+                                    value=""
+                                    placeholder={t('RESOURCES_NAME')}
+                                    onChange={e => {
+                                      handleInput(e, i, `name`);
+                                    }}
+                                  />
+				)}
                               </Form.Item>
                             </td>
                             <td>{v.vendor_id}</td>
@@ -442,7 +484,7 @@ const RegistModal = props => {
                             <td>{v.device_id}</td>
                             <td>{v.device_name}</td>
                             <td>
-                              {v.isExternal ? (
+                              {v.is_external ? (
                                 <div className={styles.divwrap}>
                                   <Indicator
                                     type="running"
@@ -462,21 +504,7 @@ const RegistModal = props => {
                                 </div>
                               )}
                             </td>
-                            <td>{v.isGpu ? 'GPU' : '-'}</td>
-                            <td>
-                              <Form.Item>
-                                <Input
-                                  type="text"
-                                  value={v.description}
-                                  placeholder={t('RESOURCES_DESCRIPTION')}
-                                  id="description"
-                                  name={`description`}
-                                  onChange={e => {
-                                    handleInput(e, i, 'description');
-                                  }}
-                                />
-                              </Form.Item>
-                            </td>
+                            <td>{v.is_gpu ? 'GPU' : 'Non-GPU'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -493,7 +521,7 @@ const RegistModal = props => {
                 </div>
               )}
             </div>
-            {`${t('RESOURCES_NAME_VALID_DESC')} ex) nvidia.com/t1`}
+            {`${t('RESOURCES_INVALID_NAME_HOSTDEVICES_DESC')} ex) nvidia.com/TU104GL_TESLA_T4`}
           </div>
           {/* </Form.Item> */}
         </Form>

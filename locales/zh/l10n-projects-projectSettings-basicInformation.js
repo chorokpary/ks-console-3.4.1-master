@@ -50,8 +50,10 @@ module.exports = {
   EDIT_DEFAULT_CONTAINER_QUOTAS: '编辑默认容器配额',
   LIMITS_CPU: 'CPU 上限',
   LIMITS_MEMORY: '内存上限',
+  LIMITS_STORAGE: '存储上限',
   REQUESTS_CPU: 'CPU 预留',
   REQUESTS_MEMORY: '内存预留',
+  REQUESTS_STORAGE: '存储预留',
   // Project Quotas
   PROJECT_QUOTA_PL: '项目配额',
   RESOURCE_TYPE_SCAP: '资源类型',

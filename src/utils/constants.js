@@ -287,8 +287,10 @@ export const ICON_TYPES = {
   containers: 'container',
   'limits.cpu': 'cpu',
   'limits.memory': 'memory',
+  'limits.storage': 'storage',
   'requests.cpu': 'cpu',
   'requests.memory': 'memory',
+  'requests.storage': 'storage',
   configmaps: 'hammer',
   serviceaccounts: 'client',
   secrets: 'key',
@@ -430,6 +432,14 @@ export const WORKSPACE_QUOTAS_MAP = {
   },
   'requests.memory': {
     name: 'requests.memory',
+    placeholder: 'eg: 100Gi',
+  },
+  'limits.storage': {
+    name: 'limits.storage',
+    placeholder: 'eg: 100Gi',
+  },
+  'requests.storage': {
+    name: 'requests.storage',
     placeholder: 'eg: 100Gi',
   },
 };

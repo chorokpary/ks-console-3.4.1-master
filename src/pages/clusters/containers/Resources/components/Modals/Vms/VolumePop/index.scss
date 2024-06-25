@@ -9,12 +9,13 @@
 
 .table {
   width: 100%;
-  max-height: 250px;
+  max-height: 500px;
   overflow-y: auto;
   
   table {
     width: 100%;
     text-align: left;
+    border-collapse: unset;
     thead {
         th {
             text-transform: uppercase;
