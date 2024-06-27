@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { observer, inject } from 'mobx-react'
+import React, { useEffect, useState } from 'react'
+import { inject, observer } from 'mobx-react'
 import classnames from 'classnames'
 
 import { isEmpty } from 'lodash'
 import { Indicator, Panel, Text } from 'components/Base'
-import ReplicaCard from 'clusters/components/Cards/Replica'
 
 import {
   Button,
@@ -31,56 +30,13 @@ const step = '5m'
 const times = 100
 
 const Status = props => {
-  const store = props.detailStore
   const customStore = new CustomStore()
 
   const [machines, setMachines] = useState([])
   const [nodepools, setNodepools] = useState([])
-  const [masterNode, setMasterNode] = useState(
-    machines?.filter(obj => obj.controlplane)
-  )
-  const [workerNode, setWorkerNode] = useState(
-    machines?.filter(obj => !obj.controlplane)
-  )
-
-  const [detailData, setDetailData] = useState()
-
-  const state = [
-    {
-      nums: masterNode?.length,
-      unavailableNums: masterNode?.reduce((prev, obj) => {
-        if (obj.ready_status === true) {
-          return ++prev
-        }
-        return prev
-      }, 0),
-    },
-    {
-      nums: workerNode?.length,
-      unavailableNums: workerNode?.reduce((prev, obj) => {
-        if (obj.ready_status === true) {
-          return ++prev
-        }
-        return prev
-      }, 0),
-    },
-  ]
-  const names = [t('RESOURCES_MASTER_COUNT')]
-  const text = {
-    title: t('RESOURCES_ADJUST_WORKER'),
-    content: t('RESOURCES_CHANGE_WORKER_COUNT'),
-  }
 
   useEffect(() => {
     let isSubscribed = true
-
-    const getDetailData = async () => {
-      if (isSubscribed) {
-        // eslint-disable-next-line no-shadow
-        const detailData = await storeResource.fetchDetail(props.match.params)
-        setDetailData(detailData._originData)
-      }
-    }
 
     const getMachinesData = async () => {
       if (isSubscribed) {
@@ -88,12 +44,6 @@ const Status = props => {
           props.match.params
         )
         setMachines(response._originData.machines)
-        setMasterNode(
-          response._originData.machines?.filter(obj => obj.controlplane)
-        )
-        setWorkerNode(
-          response._originData.machines?.filter(obj => !obj.controlplane)
-        )
       }
     }
 
@@ -102,11 +52,10 @@ const Status = props => {
         const response = await storeResource.fetchListNodePools(
           props.match.params
         )
-        setNodepools(response._originData.nodepools)
+        setNodepools(response)
       }
     }
 
-    getDetailData()
     getMachinesData()
     getNodepoolList()
 
@@ -114,27 +63,6 @@ const Status = props => {
       isSubscribed = false
     }
   }, [props.match.params])
-
-  const enabledActions = () => {
-    return globals.app.getActions({
-      module: module(),
-      ...props.match.params,
-      project: props.match.params.namespace,
-    })
-  }
-
-  const module = () => {
-    return store.module
-  }
-
-  const handleScale = () => {
-    const { cluster, namespace, name } = store.detail
-    store.scale = { cluster, namespace, name }
-  }
-
-  const enableScaleReplica = () => {
-    return enabledActions().includes('edit')
-  }
 
   // node script----------------------------------
   const [isExpandFlag, setIsExpandFlag] = useState(false)
@@ -222,6 +150,48 @@ const Status = props => {
   const handleExpand = name => {
     setExpandItem(name)
     setIsExpandFlag(!isExpandFlag)
+  }
+
+  //  Search
+  const [searchValue, setSearchValue] = useState()
+
+  useEffect(() => {
+    fnGetData()
+  }, [])
+
+  const fnGetData = async ({ ...params } = {}) => {
+    setIsLoading(true)
+
+    const nodepoolList = await storeResource.fetchListNodePools(
+      props.match.params
+    )
+
+    const filteredNodepools =
+      params.name !== '' && params.name !== undefined
+        ? getSearchData(nodepoolList, params.name)
+        : nodepoolList
+
+    setNodepools(filteredNodepools)
+
+    setIsLoading(false)
+  }
+
+  const getSearchData = (data, searchText) => {
+    return data.filter(row => {
+      return row['name']?.toLowerCase().includes(searchText.toLowerCase())
+    })
+  }
+
+  const handleSearch = value => {
+    setSearchValue(value)
+    fnGetData({
+      name: value,
+    })
+  }
+
+  const handleRefresh = () => {
+    const params = searchValue ? { name: searchValue } : {}
+    fnGetData(params)
   }
 
   // monitoring script----------------------------------------------
@@ -366,18 +336,6 @@ const Status = props => {
 
   return (
     <>
-      <ReplicaCard
-        module={module()}
-        detail={{ ...detailData, state }}
-        names={names}
-        text={text}
-        onScale={handleScale}
-        onFetchData={store.fetchData}
-        enableScale={enableScaleReplica()}
-        countRange={[1, 10]}
-        cluster={props.match.params.cluster}
-      />
-
       <Panel title={'Master Node'}>
         <div className={styles.wrapper}>
           {!!machines &&
@@ -485,19 +443,16 @@ const Status = props => {
               <InputSearch
                 className={styles.search}
                 name="search"
-                placeholder={t('SEARCH')}
+                placeholder={t('SEARCH_BY_NAME')}
+                onSearch={handleSearch}
                 style={{ width: '100%' }}
               />
             </LevelItem>
             <LevelRight>
               <div className={styles.actions}>
-                <Button type="flat" icon="refresh" onClick={'test'} />
+                <Button type="flat" icon="refresh" onClick={handleRefresh} />
               </div>
-              <Button
-                type="control"
-                onClick={'nothing'}
-                data-test="table-create"
-              >
+              <Button type="control" data-test="table-create">
                 {t('RESOURCES_CREATE')}
               </Button>
             </LevelRight>
@@ -564,11 +519,7 @@ const Status = props => {
                       <p>Updated</p>
                     </div>
                     <div className={styles.text} style={{ width: '8%' }}>
-                      <Button
-                        type="default"
-                        onClick={'nothing'}
-                        data-test="table-create"
-                      >
+                      <Button type="default" data-test="table-create">
                         {t('VIEW_DETAILS')}
                       </Button>
                     </div>

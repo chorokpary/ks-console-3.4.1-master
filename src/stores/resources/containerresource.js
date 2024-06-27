@@ -436,6 +436,6 @@ export default class ResourceStore extends Base {
     this.nodepools = response._originData.nodepools
 
     this.isLoading = false
-    return response
+    return this.nodepools
   }
 }
