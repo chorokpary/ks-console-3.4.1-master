@@ -409,4 +409,33 @@ export default class ResourceStore extends Base {
     this.isLoading = false
     return this.machines
   }
+
+  @action
+  async fetchListNodePools(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/capk/clusters/${params.name}/nodepools`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'nodepools' }
+    const dataArray = []
+    const promises = response._originData.nodepools.map(async nodepool => {
+      const flavorData = await request.get(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          params
+        )}/edgetron/resources/kubevirt/flavors/${nodepool.flavor}`
+      )
+      nodepool.flavor_detail = flavorData.flavor
+      dataArray.push(nodepool)
+    })
+    await Promise.all(promises)
+    response._originData.lbs = dataArray
+
+    this.nodepools = response._originData.nodepools
+
+    this.isLoading = false
+    return response
+  }
 }

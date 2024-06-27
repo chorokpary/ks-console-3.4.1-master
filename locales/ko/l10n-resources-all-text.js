@@ -52,10 +52,8 @@ module.exports = {
     'Flavor 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_FLAVOR_TIP: 'Flavor를 선택해 주세요.',
   RESOURCES_FLAVOR_DESC: 'Flavor의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_SELECT_FLOATING_IP_TIP: 'Floating IP를 선택해 주세요.',
   RESOURCES_GPU_USE_CHECK: 'GPU 사용 여부',
   RESOURCES_GPU_CHECK: 'GPU 여부',
-  RESOURCES_HOST_DEVICE: 'Host 디바이스',
   RESOURCES_HOST_DEVICE_ALLOCATABLE: 'Host 디바이스 갯수',
   RESOURCES_IP_POOL_EMPTY_DESC: 'IP POOL을 입력해주세요.',
   RESOURCES_IP_POOL_INFORMATION: 'IP POOL 정보',
@@ -73,7 +71,6 @@ module.exports = {
   RESOURCES_GPU_DRIVER_VERSION: '드라이버 버전',
   RESOURCES_GPU_CUDA_VERSION: 'CUDA 버전',
   RESOURCES_GPU_COUNT: 'GPU 개수',
-  RESOURCES_GPU_WORKLOAD_TYPE: '워크로드',
   RESOURCES_GPU_WORKLOAD_CONFIG: '워크로드 설정',
   RESOURCES_GPU_WORKLOAD_CONTAINER: '컨테이너 할당',
   RESOURCES_GPU_WORKLOAD_CONTAINER_DESC:
@@ -142,6 +139,7 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'KaaS 리소스 수정',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'KaaS 리소스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_CREATE_NODEPOOL: '노드풀 생성',
   RESOURCES_KAAS_DESC: 'KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_IMAGE: 'KaaS 이미지',
   RESOURCES_CREATE_KAAS_IMAGE: 'KaaS 이미지 생성',
@@ -320,7 +318,6 @@ module.exports = {
   RESOURCES_ALLOCATED_ALL_RESOURCES: '모든 자원이 할당 되었습니다.',
   RESOURCES_FIP_NO_NETWORK: '플로팅 IP를 생성할 네트워크 자원이 없습니다.',
   RESOURCES_PREVIEW: '미리보기',
-  RESOURCES_NOT_USE: '미사용',
   RESOURCES_NOT_SET: '미설정',
   RESOURCES_NOT_SUPPORT: '미지원',
   RESOURCES_BINDING: '바인딩',
@@ -465,6 +462,7 @@ module.exports = {
   RESOURCES_ALREADY_SELECTED_VM_NAME: '이미 선택한 가상 머신 이름 입니다.',
   RESOURCES_ALREADY_SELECTED_DEVICE: '이미 선택한 디바이스 입니다.',
   RESOURCES_IMAGE: '이미지',
+  RESOURCES_MASTER_IMAGE: '마스터 이미지',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: '이미지 레지스트리 URL을 설정합니다.',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC:
     '(* 퍼블릭 레지스트리의 경우 Quay만 지원합니다.)',
@@ -655,7 +653,6 @@ module.exports = {
   RESOURCES_END_TIME: '종료 시간',
   RESOURCES_MESSAGE: '메시지',
   RESOURCES_NO_DATA_RESTORE_LOG: '복원 이력이 없습니다',
-  RESOURCES_COMPLETE: '완료',
   RESOURCES_NOT_COMPLETE: '미완료',
   RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP:
     '가상 머신이 종료되지 않았습니다. 확인 후 다시 진행해 주세요.',

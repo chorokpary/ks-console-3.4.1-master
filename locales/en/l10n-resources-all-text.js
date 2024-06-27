@@ -468,6 +468,7 @@ module.exports = {
     'The virtual machine name is already selected.',
   RESOURCES_ALREADY_SELECTED_DEVICE: 'The device is already selected.',
   RESOURCES_IMAGE: 'Image',
+  RESOURCES_MASTER_IMAGE: 'Master Image',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: 'Set the image registry URL.',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC:
     '(* Only Quay is supported for public registries.)',
