@@ -574,6 +574,7 @@ module.exports = {
   RESOURCES_CORE_COUNT: 'Core Count',
   RESOURCES_KUBERNETES: 'Kubernetes',
   RESOURCES_KUBERNETES_VERSION: 'Kubernetes Version',
+  RESOURCES_DRIVER_TYPE: 'Driver Type',
   RESOURCES_KUBERNETES_SERVER_IP: 'Kubernetes Server IP',
   RESOURCES_CLASS: 'Class',
   RESOURCES_CLUSTER: 'Cluster',
