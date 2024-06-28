@@ -3,7 +3,8 @@ import { inject, observer } from 'mobx-react'
 import classnames from 'classnames'
 
 import { isEmpty } from 'lodash'
-import { Indicator, Panel, Text } from 'components/Base'
+import { Indicator, Panel, Text, Modal } from 'components/Base'
+import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolRegist'
 
 import {
   Button,
@@ -12,6 +13,7 @@ import {
   Level,
   LevelItem,
   LevelRight,
+  Notify,
 } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 import { getAreaChartOps } from 'utils/monitoring'
@@ -40,19 +42,19 @@ const Status = props => {
 
     const getMachinesData = async () => {
       if (isSubscribed) {
-        const response = await storeResource.fetchDetailFlavor(
-          props.match.params
-        )
-        setMachines(response._originData.machines)
+        await storeResource
+          .fetchDetailFlavor(props.match.params)
+          .then(response =>
+            isSubscribed ? setMachines(response._originData.machines) : null
+          )
       }
     }
 
     const getNodepoolList = async () => {
       if (isSubscribed) {
-        const response = await storeResource.fetchListNodePools(
-          props.match.params
-        )
-        setNodepools(response)
+        await storeResource
+          .fetchListNodePools(props.match.params)
+          .then(response => (isSubscribed ? setNodepools(response) : null))
       }
     }
 
@@ -160,8 +162,6 @@ const Status = props => {
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
-    setIsLoading(true)
-
     const nodepoolList = await storeResource.fetchListNodePools(
       props.match.params
     )
@@ -172,8 +172,6 @@ const Status = props => {
         : nodepoolList
 
     setNodepools(filteredNodepools)
-
-    setIsLoading(false)
   }
 
   const getSearchData = (data, searchText) => {
@@ -192,6 +190,22 @@ const Status = props => {
   const handleRefresh = () => {
     const params = searchValue ? { name: searchValue } : {}
     fnGetData(params)
+  }
+
+  // nodepool create
+  const handleNodepoolCreate = () => {
+    const modal = Modal.open({
+      onOk: data => {
+        storeResource.createNodePool(data, props.match.params).then(() => {
+          Modal.close(modal)
+          Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+        })
+      },
+      modal: NodePoolRegistModal,
+      module: storeResource.module,
+      storeResource,
+      ...props,
+    })
   }
 
   // monitoring script----------------------------------------------
@@ -452,7 +466,7 @@ const Status = props => {
               <div className={styles.actions}>
                 <Button type="flat" icon="refresh" onClick={handleRefresh} />
               </div>
-              <Button type="control" data-test="table-create">
+              <Button type="control" onClick={handleNodepoolCreate}>
                 {t('RESOURCES_CREATE')}
               </Button>
             </LevelRight>

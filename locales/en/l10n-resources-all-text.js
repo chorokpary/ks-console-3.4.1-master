@@ -145,6 +145,7 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'Edit KaaS Resource',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'Enter the KaaS resource name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
+  RESOURCES_CREATE_NODEPOOL: 'Create NodePool',
   RESOURCES_KAAS_DESC: 'Manage the status and usage of KaaS resources.',
   RESOURCES_KAAS_IMAGE: 'KaaS Image',
   RESOURCES_CREATE_KAAS_IMAGE: 'Create KaaS Image',
@@ -154,6 +155,7 @@ module.exports = {
   RESOURCES_CONNECTION_LB: 'LB Connection',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Please select the Master Flavor.',
   RESOURCES_SELECT_MASTER_ARCH_TIP: 'Please select the Master Architecture.',
+  RESOURCES_SELECT_NODEPOOL_ARCH_TIP: 'Please select the NodePool Architecture.',
   RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: 'Please select Kubernetes version.',
   RESOURCES_MASTER_COUNT: 'Number of Masters',
   RESOURCES_MASTER_COUNT_MAX_DESC:

@@ -438,4 +438,26 @@ export default class ResourceStore extends Base {
     this.isLoading = false
     return this.nodepools
   }
+
+  @action
+  async createNodePool(data, params = {}) {
+    const jsonData = {}
+    const reqData = {}
+
+    reqData.name = data.name
+    reqData.kube_image = data.kube_image
+    reqData.description = data.description
+    reqData.flavor = data.flavor
+    reqData.nodepool_replicas = data.nodepool_replicas
+    reqData.autoscale = data.autoscale
+    reqData.scale_range = data.scale_range
+    jsonData.nodepool = reqData
+
+    return await request.post(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/capk/clusters/${params.name}/nodepools`,
+      jsonData
+    )
+  }
 }

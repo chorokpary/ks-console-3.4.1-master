@@ -150,6 +150,7 @@ module.exports = {
   RESOURCES_CONNECTION_LB: 'LB 연결',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Master Flavor를 선택해 주세요.',
   RESOURCES_SELECT_MASTER_ARCH_TIP: 'Master 아키텍쳐를 선택해 주세요.',
+  RESOURCES_SELECT_NODEPOOL_ARCH_TIP: '노드풀 아키텍쳐를 선택해 주세요.',
   RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: '쿠버네티스 버전을 선택해 주세요.',
   RESOURCES_MASTER_COUNT: 'Master 개수',
   RESOURCES_MASTER_COUNT_MAX_DESC:
@@ -179,7 +180,7 @@ module.exports = {
   RESOURCES_SELECT_TARGET_IP_TIP: 'Target IP를 선택해 주세요.',
   RESOURCES_CONNECTION_VM: 'VM 연결',
   RESOURCES_ACCESS_VNC: 'VNC 접속',
-  RESOURCES_SELECT_WORKER_FLAVOR_TIP: 'Worker Flavor를 선택해 주세요.',
+  RESOURCES_SELECT_WORKER_FLAVOR_TIP: 'Nodepool Flavor를 선택해 주세요.',
   RESOURCES_WORKER_COUNT: 'Worker 개수',
   RESOURCES_ADJUST_WORKER: 'Worker 개수 조정',
   RESOURCES_CHANGE_WORKER_COUNT: 'Worker 개수를 변경하시겠습니까?',
