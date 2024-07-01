@@ -63,29 +63,29 @@ export default class Login extends Component {
     errorCount: 0,
     showKS: true,
     currentServer: {},
-  }
+  };
 
   handleOAuthLogin = server => e => {
     const info = {
       name: server.title,
       type: server.type,
       endSessionURL: server.endSessionURL,
-    }
-    cookie('oAuthLoginInfo', JSON.stringify(info))
+    };
+    cookie('oAuthLoginInfo', JSON.stringify(info));
     if (server.type === 'LDAPIdentityProvider') {
       this.setState({
         showKS: false,
         currentServer: server,
-      })
+      });
     } else {
-      window.location.href = e.currentTarget.dataset.url
+      window.location.href = e.currentTarget.dataset.url;
     }
-  }
+  };
 
   handleSubmit = data => {
-    const { username, password, ...rest } = data
-    const { showKS, currentServer } = this.state
-    this.setState({ isSubmmiting: true })
+    const { username, password, ...rest } = data;
+    const { showKS, currentServer } = this.state;
+    this.setState({ isSubmmiting: true });
 
     cookie('oAuthLoginInfo', '');
 
@@ -99,14 +99,14 @@ export default class Login extends Component {
           title: currentServer.title,
         })
         .then(resp => {
-          this.setState({ isSubmmiting: false })
+          this.setState({ isSubmmiting: false });
           if (resp.status !== 200) {
             this.setState({
               errorMessage: resp.message,
               errorCount: resp.errorCount,
-            })
+            });
           }
-        })
+        });
     } else {
       this.props.rootStore
         .login({
@@ -115,16 +115,16 @@ export default class Login extends Component {
           ...rest,
         })
         .then(resp => {
-          this.setState({ isSubmmiting: false })
+          this.setState({ isSubmmiting: false });
           if (resp.status !== 200) {
             this.setState({
               errorMessage: resp.message,
               errorCount: resp.errorCount,
-            })
+            });
           }
-        })
+        });
     }
-  }
+  };
 
   handleBack = () => {
     this.setState({
@@ -132,8 +132,8 @@ export default class Login extends Component {
       currentServer: {},
       errorMessage: '',
       errorCount: 0,
-    })
-  }
+    });
+  };
 
   render() {
     const {
@@ -142,13 +142,11 @@ export default class Login extends Component {
       errorMessage,
       showKS,
       currentServer,
-    } = this.state
+    } = this.state;
 
     return (
       <>
-        <div className="login_back">
-          <img src="/assets/resources/images/img/img_login.svg" alt="" />
-        </div>
+        <div className="login_back"></div>
         <div className={styles.loginContainer}>
           {/* <a href="/" className={styles.logo}></a> */}
           <div className={styles.login}>
