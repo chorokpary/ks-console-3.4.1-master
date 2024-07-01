@@ -144,6 +144,70 @@ const Status = props => {
               />
             </div>
           </div>
+          {!!machines &&
+            machines
+              .filter(machine => {
+                return (
+                  machine.cluster === props.match.params.name &&
+                  !machine.controlplane &&
+                  machine.name.indexOf(`${machine.cluster}-${obj.name}`) === 0
+                )
+              })
+              .map((detail, index) => (
+                <div className={classnames(styles.expandItem)} key={index}>
+                  <div className={styles.itemMain}>
+                    <div className={styles.icon}>
+                      <Icon name="nodes" size={40} type={'light'} />
+                      <Indicator
+                        className={styles.indicator}
+                        type={getState(detail?.ready_status, detail?.phase)}
+                        flicker
+                      />
+                    </div>
+                    <div className={styles.content}>
+                      <div className={styles.text} style={{ width: '25%' }}>
+                        <div>{detail.name}</div>
+                        <p>
+                          {getLocalTime(detail.timestamp).format(
+                            'YYYY-MM-DD HH:mm:ss'
+                          )}
+                        </p>
+                      </div>
+                      <div className={styles.text} style={{ width: '15%' }}>
+                        <div>{detail.phase}</div>
+                        <p>{detail?.ready_status ? 'Ready' : 'Not-ready'}</p>
+                      </div>
+                      <div className={styles.text}>
+                        {detail?.networks?.filter(
+                          network => network.name !== 'k8s-pod-network'
+                        ).length > 0 ? (
+                          <div>
+                            {detail.networks
+                              .filter(
+                                network => network.name !== 'k8s-pod-network'
+                              )
+                              .map(network => (
+                                <div key={network.name}>
+                                  {network.ip}({network.name})
+                                </div>
+                              ))}
+                          </div>
+                        ) : (
+                          <div>-</div>
+                        )}
+                        <p>IP({t('RESOURCES_NETWORK')})</p>
+                      </div>
+                      {renderMonitorings(
+                        detail.name,
+                        isExpandFlag,
+                        detail.networks.find(
+                          network => network.name === 'k8s-pod-network'
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
       </div>
     )
@@ -354,8 +418,11 @@ const Status = props => {
         <div className={styles.wrapper}>
           {!!machines &&
             machines
-              .filter(obj => {
-                return obj.controlplane
+              .filter(machine => {
+                return (
+                  machine.cluster === props.match.params.name &&
+                  machine.controlplane
+                )
               })
               .map((detail, index) => (
                 <div
