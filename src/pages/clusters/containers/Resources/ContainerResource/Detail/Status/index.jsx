@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { isEmpty } from 'lodash'
 import { Indicator, Panel, Text, Modal } from 'components/Base'
 import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolRegist'
+import NodePoolModifyModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolModify'
 
 import {
   Button,
@@ -268,6 +269,23 @@ const Status = props => {
       modal: NodePoolRegistModal,
       module: storeResource.module,
       storeResource,
+      ...props,
+    })
+  }
+
+  // nodepool edit
+  const handleNodepoolEdit = nodepool => {
+    const modal = Modal.open({
+      onOk: data => {
+        storeResource.updateNodePool(data, props.match.params).then(() => {
+          Modal.close(modal)
+          Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+        })
+      },
+      modal: NodePoolModifyModal,
+      module: storeResource.module,
+      storeResource,
+      nodepool,
       ...props,
     })
   }
@@ -600,8 +618,12 @@ const Status = props => {
                       <p>Updated</p>
                     </div>
                     <div className={styles.text} style={{ width: '8%' }}>
-                      <Button type="default" data-test="table-create">
-                        {t('VIEW_DETAILS')}
+                      <Button
+                        type="default"
+                        data-test="detail-edit"
+                        onClick={() => handleNodepoolEdit(detail)}
+                      >
+                        {t('EDIT_INFORMATION')}
                       </Button>
                     </div>
                     <div

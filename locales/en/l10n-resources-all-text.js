@@ -146,6 +146,7 @@ module.exports = {
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'Enter the KaaS resource name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
   RESOURCES_CREATE_NODEPOOL: 'Create NodePool',
+  RESOURCES_EDIT_NODEPOOL: 'Edit NodePool',
   RESOURCES_KAAS_DESC: 'Manage the status and usage of KaaS resources.',
   RESOURCES_KAAS_IMAGE: 'KaaS Image',
   RESOURCES_CREATE_KAAS_IMAGE: 'Create KaaS Image',
