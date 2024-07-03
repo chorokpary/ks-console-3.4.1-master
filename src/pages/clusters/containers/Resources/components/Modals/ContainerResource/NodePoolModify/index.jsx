@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import { Modal } from 'components/Base'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import ResourceStore from 'stores/resources/containerresource'
+import DeleteModal from 'components/Modals/Delete'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
@@ -58,7 +59,6 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
   }
 
   const handleOk = () => {
-    const onOk = props.onOk
     form.current.validator(() => {
       const { data } = form.current.props
       const scaleRange = {}
@@ -69,7 +69,25 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
       if (!isAutoScale) {
         data.replicas = nodepoolReplicas
       }
-      onOk({ ...data })
+      props.onEdit({ ...data })
+    })
+  }
+
+  const handleDelete = () => {
+    const modal = Modal.open({
+      onOk: () => {
+        props.onDelete()
+        Modal.close(modal)
+      },
+      modal: DeleteModal,
+      title: t('RESOURCES_DELETE'),
+      desc: t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
+        resource: nodepool.name,
+      }),
+      resource: nodepool.name,
+      module: resourceStore.module,
+      resourceStore,
+      ...props,
     })
   }
 
@@ -91,10 +109,22 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
             handleOk()
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
+          type={'control'}
           loading={props.isSubmitting}
           disabled={props.isSubmitting}
         >
-          {t('RESOURCES_CREATE')}
+          {t('RESOURCES_EDIT')}
+        </Button>
+        <Button
+          onClick={() => {
+            handleDelete()
+          }}
+          className={classnames(styles['btn'], styles['btn-danger'])}
+          type={'danger'}
+          loading={props.isSubmitting}
+          disabled={props.isSubmitting}
+        >
+          {t('RESOURCES_DELETE')}
         </Button>
       </>
     )

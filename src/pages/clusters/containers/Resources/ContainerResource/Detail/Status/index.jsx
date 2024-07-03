@@ -264,6 +264,7 @@ const Status = props => {
         storeResource.createNodePool(data, props.match.params).then(() => {
           Modal.close(modal)
           Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+          handleRefresh()
         })
       },
       modal: NodePoolRegistModal,
@@ -276,11 +277,21 @@ const Status = props => {
   // nodepool edit
   const handleNodepoolEdit = nodepool => {
     const modal = Modal.open({
-      onOk: data => {
+      onEdit: data => {
         storeResource.updateNodePool(data, props.match.params).then(() => {
           Modal.close(modal)
           Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+          handleRefresh()
         })
+      },
+      onDelete: () => {
+        storeResource
+          .deleteNodePool(nodepool.name, props.match.params)
+          .then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            handleRefresh()
+          })
       },
       modal: NodePoolModifyModal,
       module: storeResource.module,

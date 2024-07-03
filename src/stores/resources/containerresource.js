@@ -482,4 +482,13 @@ export default class ResourceStore extends Base {
       jsonData
     )
   }
+
+  @action
+  async deleteNodePool(name, params = {}) {
+    return await request.delete(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/capk/clusters/${params.name}/nodepools/${name}`
+    )
+  }
 }

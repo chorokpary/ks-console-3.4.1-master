@@ -174,15 +174,6 @@ export default {
       })
     },
   },
-  'containerresource.nodepool.regist': {
-    on() {},
-  },
-  'containerresource.nodepool.edit': {
-    on() {},
-  },
-  'containerresource.nodepool.delete': {
-    on() {},
-  },
   'containerresource.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
