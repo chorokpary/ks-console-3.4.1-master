@@ -1,129 +1,193 @@
-import { cloneDeep, get } from 'lodash'
-import React, { useState, useEffect, useRef } from 'react'
+import { cloneDeep, get } from 'lodash';
+import React, { useState, useEffect, useRef } from 'react';
 
-import { Form, Input, Select, TextArea, Button, Columns, Column, Tooltip } from '@kube-design/components'
-import { Modal } from 'components/Base'
-import styles from './index.scss'
-import { ProjectSelect, NumberInput } from 'components/Inputs'
+import {
+  Form,
+  Input,
+  Select,
+  TextArea,
+  Button,
+  Columns,
+  Column,
+  Tooltip,
+} from '@kube-design/components';
+import { Modal } from 'components/Base';
+import { ProjectSelect, NumberInput } from 'components/Inputs';
 
-import { PATTERN_USER_NAME, PATTERN_IP, PATTERN_IP_MASK, PATTERN_PORT } from 'utils/constants'
+import {
+  PATTERN_USER_NAME,
+  PATTERN_IP,
+  PATTERN_IP_MASK,
+  PATTERN_PORT,
+} from 'utils/constants';
+import styles from './index.scss';
 
-const ModifyModal = (props) => {
-
+const ModifyModal = props => {
   const form = useRef();
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  const [projectName, setProjectName] = useState(props.namespace ? props.namespace : 'default');
+  const [projectName, setProjectName] = useState(
+    props.namespace ? props.namespace : 'default'
+  );
   const [btnDimmOut, setBtnDimmOut] = useState(false);
   const [btnDimmIn, setBtnDimmIn] = useState(false);
 
   const [sgDetail, setSgDetail] = useState(props.detail.security_group);
   const [inRulesIds, setInRulesIds] = useState(
-    props.detail.security_group.rules?.filter(obj => obj.direction === 'ingress')
+    props.detail.security_group.rules
+      ?.filter(obj => obj.direction === 'ingress')
       .map(el => el.id) || []
   );
   const [outRulesIds, setOutRulesIds] = useState(
-    props.detail.security_group.rules?.filter(obj => obj.direction === 'egress')
+    props.detail.security_group.rules
+      ?.filter(obj => obj.direction === 'egress')
       .map(el => el.id) || []
   );
 
   const regexPort = /^[0-9]*(-[0-9]*)?$/;
 
   const ruleTypeOptions = [
-    { value: "CUSTOM", label: t('RESOURCES_SPECIFY_USER'), protocol: "TCP", portMin: 0, portMax: 0 },
-    { value: "ALL", label: "ALL", protocol: "TCP", portMin: 0, portMax: 65535 },
-    { value: "FTP", label: "FTP", protocol: "TCP", portMin: 20, portMax: 20 },
-    { value: "SSH", label: "SSH", protocol: "TCP", portMin: 22, portMax: 22 },
-    { value: "TELNET", label: "TELNET", protocol: "TCP", portMin: 23, portMax: 23 },
-    { value: "SMTP", label: "SMTP", protocol: "TCP", portMin: 25, portMax: 25 },
-    { value: "DNS", label: "DNS", protocol: "TCP", portMin: 53, portMax: 53 },
-    { value: t('RESOURCES_DHCP_SERVER'), label: t('RESOURCES_DHCP_SERVER'), protocol: "UDP", portMin: 67, portMax: 67 },
-    { value: t('RESOURCES_DHCP_CLIENT'), label: t('RESOURCES_DHCP_CLIENT'), protocol: "UDP", portMin: 68, portMax: 68 },
-    { value: "HTTP", label: "HTTP", protocol: "TCP", portMin: 80, portMax: 80 },
-    { value: "POP3", label: "POP3", protocol: "TCP", portMin: 110, portMax: 110 },
-    { value: "IMAP4", label: "IMAP4", protocol: "TCP", portMin: 143, portMax: 143 },
-    { value: "HTTPS", label: "HTTPS", protocol: "TCP", portMin: 443, portMax: 443 },
+    {
+      value: 'CUSTOM',
+      label: t('RESOURCES_SPECIFY_USER'),
+      protocol: 'TCP',
+      portMin: 0,
+      portMax: 0,
+    },
+    { value: 'ALL', label: 'ALL', protocol: 'TCP', portMin: 0, portMax: 65535 },
+    { value: 'FTP', label: 'FTP', protocol: 'TCP', portMin: 20, portMax: 20 },
+    { value: 'SSH', label: 'SSH', protocol: 'TCP', portMin: 22, portMax: 22 },
+    {
+      value: 'TELNET',
+      label: 'TELNET',
+      protocol: 'TCP',
+      portMin: 23,
+      portMax: 23,
+    },
+    { value: 'SMTP', label: 'SMTP', protocol: 'TCP', portMin: 25, portMax: 25 },
+    { value: 'DNS', label: 'DNS', protocol: 'TCP', portMin: 53, portMax: 53 },
+    {
+      value: t('RESOURCES_DHCP_SERVER'),
+      label: t('RESOURCES_DHCP_SERVER'),
+      protocol: 'UDP',
+      portMin: 67,
+      portMax: 67,
+    },
+    {
+      value: t('RESOURCES_DHCP_CLIENT'),
+      label: t('RESOURCES_DHCP_CLIENT'),
+      protocol: 'UDP',
+      portMin: 68,
+      portMax: 68,
+    },
+    { value: 'HTTP', label: 'HTTP', protocol: 'TCP', portMin: 80, portMax: 80 },
+    {
+      value: 'POP3',
+      label: 'POP3',
+      protocol: 'TCP',
+      portMin: 110,
+      portMax: 110,
+    },
+    {
+      value: 'IMAP4',
+      label: 'IMAP4',
+      protocol: 'TCP',
+      portMin: 143,
+      portMax: 143,
+    },
+    {
+      value: 'HTTPS',
+      label: 'HTTPS',
+      protocol: 'TCP',
+      portMin: 443,
+      portMax: 443,
+    },
   ];
 
   const ethernetTypeOptions = [
-    { value: "ALL", label: "ALL" },
-    { value: "IPv4", label: "IPv4" },
+    { value: 'ALL', label: 'ALL' },
+    { value: 'IPv4', label: 'IPv4' },
   ];
 
   const protocolOptions = [
-    { value: "TCP", label: "TCP" },
-    { value: "UDP", label: "UDP" },
-    { value: "ICMP", label: "ICMP" },
-    { value: "SCTP", label: "SCTP" },
+    { value: 'TCP', label: 'TCP' },
+    { value: 'UDP', label: 'UDP' },
+    { value: 'ICMP', label: 'ICMP' },
+    { value: 'SCTP', label: 'SCTP' },
   ];
 
   const nextIngress = useRef(0);
   const [formRulesIngressFields, setFormRulesIngressFields] = useState(
-    props.detail.security_group.rules?.filter(obj => obj.direction === 'ingress')
+    props.detail.security_group.rules
+      ?.filter(obj => obj.direction === 'ingress')
       .map(el => {
         return {
-          ruleType: t('RESOURCES_SPECIFY_USER')
-          , direction: 'Ingress'
-          , ethernetType: el.ethernet_type ?? 'ALL'
-          , remoteIpPrefix: el.remote_ip_prefix
-          , protocol: el.protocol ? el.protocol.toUpperCase() : 'ALL'
-          , portRangeMin: el.ethernet_type && el.port_range_min ? `${el.port_range_min}` : '0'
-          , portRangeMax: el.ethernet_type ? `${el.port_range_max}` : '65535'
-          , isCustom: false
-          , idx: nextIngress.current += 1
-          , originRuleId: el.id
-        }
+          ruleType: t('RESOURCES_SPECIFY_USER'),
+          direction: 'Ingress',
+          ethernetType: el.ethernet_type ?? 'ALL',
+          remoteIpPrefix: el.remote_ip_prefix,
+          protocol: el.protocol ? el.protocol.toUpperCase() : 'ALL',
+          portRangeMin:
+            el.ethernet_type && el.port_range_min
+              ? `${el.port_range_min}`
+              : '0',
+          portRangeMax: el.ethernet_type ? `${el.port_range_max}` : '65535',
+          isCustom: false,
+          idx: (nextIngress.current += 1),
+          originRuleId: el.id,
+        };
       }) || []
   );
 
-  //Rules handler
+  // Rules handler
   const handleIngressRules = {
-
     handleAddFields: () => {
-      const values = [...formRulesIngressFields,
-      {
-        ruleType: t('RESOURCES_SPECIFY_USER')
-        , direction: 'Ingress'
-        , ethernetType: 'IPv4'
-        , remoteIpPrefix: '0.0.0.0/0'
-        , protocol: 'TCP'
-        , portRangeMin: 0
-        , portRangeMax: 0
-        , isCustom: true
-        , idx: nextIngress.current += 1
-      }];
+      const values = [
+        ...formRulesIngressFields,
+        {
+          ruleType: t('RESOURCES_SPECIFY_USER'),
+          direction: 'Ingress',
+          ethernetType: 'IPv4',
+          remoteIpPrefix: '0.0.0.0/0',
+          protocol: 'TCP',
+          portRangeMin: 0,
+          portRangeMax: 0,
+          isCustom: true,
+          idx: (nextIngress.current += 1),
+        },
+      ];
       setFormRulesIngressFields(values);
     },
 
-    handleRemoveFields: (i) => {
-      const values = [...formRulesIngressFields].filter((obj) => obj.idx !== i);
+    handleRemoveFields: i => {
+      const values = [...formRulesIngressFields].filter(obj => obj.idx !== i);
       setFormRulesIngressFields(values);
       if (values.length < 1) {
         setBtnDimmIn(false);
       }
-      form.current.props.data[`ipIn_${i}`] = '0.0.0.0/0'
-      form.current.props.data[`portIn_${i}`] = '1'
+      form.current.props.data[`ipIn_${i}`] = '0.0.0.0/0';
+      form.current.props.data[`portIn_${i}`] = '1';
     },
 
     handleInputChange: (i, field, e, customIdx) => {
       const values = [...formRulesIngressFields];
-      const val = e
+      const val = e;
 
-      if (field.indexOf("remoteIpPrefix") != -1) {
+      if (field.indexOf('remoteIpPrefix') != -1) {
         values[i].remoteIpPrefix = val;
-      } else {
-        if (isValidPort(val)) {
-          if (val.indexOf('-') != -1) {
-            const [min, max] = val.split('-');
-            values[i].portRangeMin = `${Number(min)}`;
-            values[i].portRangeMax = `${Number(max)}`;
-            form.current.props.data[`portIn_${customIdx}`] = `${Number(min)}-${Number(max)}`;
-          } else {
-            values[i].portRangeMin = null;
-            values[i].portRangeMax = `${Number(val)}`;
-            form.current.props.data[`portIn_${customIdx}`] = `${Number(val)}`;
-          }
+      } else if (isValidPort(val)) {
+        if (val.indexOf('-') != -1) {
+          const [min, max] = val.split('-');
+          values[i].portRangeMin = `${Number(min)}`;
+          values[i].portRangeMax = `${Number(max)}`;
+          form.current.props.data[`portIn_${customIdx}`] = `${Number(
+            min
+          )}-${Number(max)}`;
+        } else {
+          values[i].portRangeMin = null;
+          values[i].portRangeMax = `${Number(val)}`;
+          form.current.props.data[`portIn_${customIdx}`] = `${Number(val)}`;
         }
       }
 
@@ -133,18 +197,18 @@ const ModifyModal = (props) => {
     handleSelectClick: (i, field, val, customIdx) => {
       let values = [...formRulesIngressFields];
 
-      if (field === "ethernetType") {
+      if (field === 'ethernetType') {
         values[i].ethernetType = val;
-      } else if (field === "protocol") {
+      } else if (field === 'protocol') {
         values[i].protocol = val;
-      } else if (field === "remoteIpPrefix") {
+      } else if (field === 'remoteIpPrefix') {
         values[i].remoteIpPrefix = val;
       } else {
         values[i].ruleType = val;
         values = setRuleTypeHandler(i, val, values, 'In', customIdx);
       }
 
-      if (val === "ALL") {
+      if (val === 'ALL') {
         values = values.filter((obj, idx) => idx === i);
         setBtnDimmIn(true);
       } else {
@@ -153,74 +217,78 @@ const ModifyModal = (props) => {
 
       setFormRulesIngressFields(values);
     },
-
-  }//end Rules
+  }; // end Rules
 
   const nextEngress = useRef(0);
   const [formRulesEgressFields, setFormRulesEgressFields] = useState(
-    props.detail.security_group.rules?.filter(obj => obj.direction === 'egress')
+    props.detail.security_group.rules
+      ?.filter(obj => obj.direction === 'egress')
       .map(el => {
         return {
-          ruleType: t('RESOURCES_SPECIFY_USER')
-          , direction: 'Egress'
-          , ethernetType: el.ethernet_type ?? 'ALL'
-          , remoteIpPrefix: el.remote_ip_prefix
-          , protocol: el.protocol ? el.protocol.toUpperCase() : 'ALL'
-          , portRangeMin: el.ethernet_type && el.port_range_min ? `${el.port_range_min}` : '0'
-          , portRangeMax: el.ethernet_type ? `${el.port_range_max}` : '65535'
-          , isCustom: false
-          , idx: nextEngress.current += 1
-          , originRuleId: el.id
-        }
+          ruleType: t('RESOURCES_SPECIFY_USER'),
+          direction: 'Egress',
+          ethernetType: el.ethernet_type ?? 'ALL',
+          remoteIpPrefix: el.remote_ip_prefix,
+          protocol: el.protocol ? el.protocol.toUpperCase() : 'ALL',
+          portRangeMin:
+            el.ethernet_type && el.port_range_min
+              ? `${el.port_range_min}`
+              : '0',
+          portRangeMax: el.ethernet_type ? `${el.port_range_max}` : '65535',
+          isCustom: false,
+          idx: (nextEngress.current += 1),
+          originRuleId: el.id,
+        };
       }) || []
   );
-  //Rules handler
+  // Rules handler
   const handleEgressRules = {
-
     handleAddFields: () => {
-      const values = [...formRulesEgressFields,
-      {
-        ruleType: t('RESOURCES_SPECIFY_USER')
-        , direction: 'Egress'
-        , ethernetType: 'IPv4'
-        , remoteIpPrefix: '0.0.0.0/0'
-        , protocol: 'TCP'
-        , portRangeMin: 0
-        , portRangeMax: 0
-        , isCustom: true
-        , idx: nextEngress.current += 1
-      }];
+      const values = [
+        ...formRulesEgressFields,
+        {
+          ruleType: t('RESOURCES_SPECIFY_USER'),
+          direction: 'Egress',
+          ethernetType: 'IPv4',
+          remoteIpPrefix: '0.0.0.0/0',
+          protocol: 'TCP',
+          portRangeMin: 0,
+          portRangeMax: 0,
+          isCustom: true,
+          idx: (nextEngress.current += 1),
+        },
+      ];
       setFormRulesEgressFields(values);
     },
 
-    handleRemoveFields: (i) => {
-      const values = [...formRulesEgressFields].filter((obj) => obj.idx !== i);
+    handleRemoveFields: i => {
+      const values = [...formRulesEgressFields].filter(obj => obj.idx !== i);
       setFormRulesEgressFields(values);
       if (values.length < 1) {
         setBtnDimmOut(false);
       }
-      form.current.props.data[`ipOut_${i}`] = '0.0.0.0/0'
-      form.current.props.data[`portOut_${i}`] = '1'
+      form.current.props.data[`ipOut_${i}`] = '0.0.0.0/0';
+      form.current.props.data[`portOut_${i}`] = '1';
     },
 
     handleInputChange: (i, field, e, customIdx) => {
       const values = [...formRulesEgressFields];
       const val = e;
 
-      if (field.indexOf("remoteIpPrefix") != -1) {
+      if (field.indexOf('remoteIpPrefix') != -1) {
         values[i].remoteIpPrefix = val;
-      } else {
-        if (isValidPort(val)) {
-          if (val.indexOf('-') != -1) {
-            const [min, max] = val.split('-');
-            values[i].portRangeMin = `${Number(min)}`;
-            values[i].portRangeMax = `${Number(max)}`;
-            form.current.props.data[`portOut_${customIdx}`] = `${Number(min)}-${Number(max)}`;
-          } else {
-            values[i].portRangeMin = null;
-            values[i].portRangeMax = `${Number(val)}`;
-            form.current.props.data[`portOut_${customIdx}`] = `${Number(val)}`;
-          }
+      } else if (isValidPort(val)) {
+        if (val.indexOf('-') != -1) {
+          const [min, max] = val.split('-');
+          values[i].portRangeMin = `${Number(min)}`;
+          values[i].portRangeMax = `${Number(max)}`;
+          form.current.props.data[`portOut_${customIdx}`] = `${Number(
+            min
+          )}-${Number(max)}`;
+        } else {
+          values[i].portRangeMin = null;
+          values[i].portRangeMax = `${Number(val)}`;
+          form.current.props.data[`portOut_${customIdx}`] = `${Number(val)}`;
         }
       }
 
@@ -230,17 +298,17 @@ const ModifyModal = (props) => {
     handleSelectClick: (i, field, val, customIdx) => {
       let values = [...formRulesEgressFields];
 
-      if (field === "ethernetType") {
+      if (field === 'ethernetType') {
         values[i].ethernetType = val;
-      } else if (field === "protocol") {
+      } else if (field === 'protocol') {
         values[i].protocol = val;
-      } else if (field === "remoteIpPrefix") {
+      } else if (field === 'remoteIpPrefix') {
         values[i].remoteIpPrefix = val;
       } else {
         values[i].ruleType = val;
         values = setRuleTypeHandler(i, val, values, 'Out', customIdx);
 
-        if (val === "ALL") {
+        if (val === 'ALL') {
           values = values.filter((obj, idx) => idx === i);
           setBtnDimmOut(true);
         } else {
@@ -250,29 +318,35 @@ const ModifyModal = (props) => {
 
       setFormRulesEgressFields(values);
     },
+  }; // end Rules
 
-  }//end Rules
-
-  //유형에 맞는 프로토콜, 포트범위 셋팅
+  // 유형에 맞는 프로토콜, 포트범위 셋팅
   const setRuleTypeHandler = (i, val, values, portType, customIdx) => {
-
     const { data } = form.current.props;
-    values[i].isCustom = (val === "CUSTOM") ? true : false;
+    values[i].isCustom = val === 'CUSTOM';
 
-    values[i].portRangeMin = ruleTypeOptions.filter((obj) => obj.value === val)[0].portMin;
-    values[i].portRangeMax = ruleTypeOptions.filter((obj) => obj.value === val)[0].portMax;
+    values[i].portRangeMin = ruleTypeOptions.filter(
+      obj => obj.value === val
+    )[0].portMin;
+    values[i].portRangeMax = ruleTypeOptions.filter(
+      obj => obj.value === val
+    )[0].portMax;
 
-    if (val === "ALL") {
-      values[i].protocol = "ALL";
-      values[i].ethernetType = "ALL";
-      data[`port${portType}_${customIdx}`] = '0-65535'
+    if (val === 'ALL') {
+      values[i].protocol = 'ALL';
+      values[i].ethernetType = 'ALL';
+      data[`port${portType}_${customIdx}`] = '0-65535';
     } else {
-      values[i].protocol = ruleTypeOptions.filter((obj) => obj.value === val)[0].protocol;
-      values[i].ethernetType = "IPv4";
+      values[i].protocol = ruleTypeOptions.filter(
+        obj => obj.value === val
+      )[0].protocol;
+      values[i].ethernetType = 'IPv4';
       data[`port${portType}_${customIdx}`] = `${values[i].portRangeMax}`;
     }
 
-    let portInput = document.querySelector(`input[name=port${portType}_${customIdx}]`)
+    const portInput = document.querySelector(
+      `input[name=port${portType}_${customIdx}]`
+    );
     if (
       portInput.nextElementSibling &&
       portInput.nextElementSibling.classList.contains('form-item-error')
@@ -282,8 +356,8 @@ const ModifyModal = (props) => {
     }
 
     return values;
-  }
-  //----------------end 
+  };
+  // ----------------end
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -293,40 +367,44 @@ const ModifyModal = (props) => {
         rules: [...formRulesIngressFields, ...formRulesEgressFields],
         project: props.namespace,
         security_group_id: sgDetail.id,
-        originRules: [...inRulesIds, ...outRulesIds]
-      }
+        originRules: [...inRulesIds, ...outRulesIds],
+      };
       // console.log(sgData)
-      onOk({ security_group: sgData })
-    })
-  }
+      onOk({ security_group: sgData });
+    });
+  };
 
   const closeModal = () => {
     setModalView(false);
-  }
+  };
 
   // cidr Validator
   const cidrValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
-    } else {
-      if (value.split("/").length != 2 || !isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
-        return callback({ message: t('RESOURCES_CIDR_VALID') })
-      }
+      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') });
     }
-    callback()
-  }
+    if (
+      value.split('/').length != 2 ||
+      !isValidIpAddress(value.split('/')[0]) ||
+      !fnCheckCidrClass(value.split('/')[1])
+    ) {
+      return callback({ message: t('RESOURCES_CIDR_VALID') });
+    }
+
+    callback();
+  };
 
   // port Validator
   const portValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('ENTER_PORT_NUMBER') })
-    } else {
-      if (!isValidPort(value) || !fnCheckPortRange(value)) {
-        return callback({ message: t('RESOURCES_SG_PORT_RANGE_DESC') })
-      }
+      return callback({ message: t('ENTER_PORT_NUMBER') });
     }
-    callback()
-  }
+    if (!isValidPort(value) || !fnCheckPortRange(value)) {
+      return callback({ message: t('RESOURCES_SG_PORT_RANGE_DESC') });
+    }
+
+    callback();
+  };
 
   // port valid
   const isValidPort = port => {
@@ -340,17 +418,19 @@ const ModifyModal = (props) => {
 
   const fnCheckPortRange = port => {
     if (port.indexOf('-') != -1) {
-      if (port.split('-')[1].length === 0 || (Number(port.split('-')[0]) > Number(port.split('-')[1])) || Number(port.split('-')[1]) > 65535) {
+      if (
+        port.split('-')[1].length === 0 ||
+        Number(port.split('-')[0]) > Number(port.split('-')[1]) ||
+        Number(port.split('-')[1]) > 65535
+      ) {
         return false;
       }
-    } else {
-      if (Number(port) === 0 || Number(port) > 65536) {
-        return false;
-      }
+    } else if (Number(port) === 0 || Number(port) > 65536) {
+      return false;
     }
 
     return true;
-  }
+  };
 
   // cidrclass valid
   const fnCheckCidrClass = num => {
@@ -381,10 +461,7 @@ const ModifyModal = (props) => {
         isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
-          <Form.Item
-            label={t('RESOURCES_NAME')}
-            desc={t('NAME_DESC')}
-          >
+          <Form.Item label={t('RESOURCES_NAME')} desc={t('NAME_DESC')}>
             <Input
               name="name"
               autoFocus={true}
@@ -411,12 +488,24 @@ const ModifyModal = (props) => {
                       </colgroup>
                       <thead>
                         <tr>
-                          <th><strong>{t('RESOURCES_POLICY')}</strong></th>
-                          <th><strong>{t('RESOURCES_PROTOCOL')}</strong></th>
-                          <th><strong>{t('RESOURCES_PORT_RANGE')}</strong></th>
-                          <th><strong>{t('RESOURCES_ETHERNET_TYPE')}</strong></th>
-                          <th><strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong></th>
-                          <th><strong></strong></th>
+                          <th>
+                            <strong>{t('RESOURCES_POLICY')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_PROTOCOL')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_PORT_RANGE')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_ETHERNET_TYPE')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong>
+                          </th>
+                          <th>
+                            <strong></strong>
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -425,11 +514,35 @@ const ModifyModal = (props) => {
                           <tr key={i}>
                             {/* 정책 */}
                             <td>
-                              <Select disabled={v.originRuleId} value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'ruleType', e, v.idx)} />
+                              <Select
+                                disabled={v.originRuleId}
+                                value={v.ruleType}
+                                options={ruleTypeOptions}
+                                onChange={e =>
+                                  handleIngressRules.handleSelectClick(
+                                    i,
+                                    'ruleType',
+                                    e,
+                                    v.idx
+                                  )
+                                }
+                              />
                             </td>
                             {/* 프로토콜 */}
                             <td>
-                              <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleIngressRules.handleSelectClick(i, 'protocol', e, v.idx)} disabled={!v.isCustom} />
+                              <Select
+                                value={v.protocol}
+                                options={protocolOptions}
+                                onChange={e =>
+                                  handleIngressRules.handleSelectClick(
+                                    i,
+                                    'protocol',
+                                    e,
+                                    v.idx
+                                  )
+                                }
+                                disabled={!v.isCustom}
+                              />
                             </td>
                             {/* 포트 범위 */}
                             <td>
@@ -443,17 +556,34 @@ const ModifyModal = (props) => {
                                 ]}
                               >
                                 <Input
-                                  type='text'
+                                  type="text"
                                   name={`portIn_${v.idx}`}
-                                  onChange={(e) => handleIngressRules.handleInputChange(i, 'portRangeMax', e, v.idx)}
-                                  defaultValue={v.ethernetType === 'ALL' ? '0-65535' : v.portRangeMin === v.portRangeMax ? v.portRangeMax : v.portRangeMin + '-' + v.portRangeMax}
+                                  onChange={e =>
+                                    handleIngressRules.handleInputChange(
+                                      i,
+                                      'portRangeMax',
+                                      e,
+                                      v.idx
+                                    )
+                                  }
+                                  defaultValue={
+                                    v.ethernetType === 'ALL'
+                                      ? '0-65535'
+                                      : v.portRangeMin === v.portRangeMax
+                                      ? v.portRangeMax
+                                      : `${v.portRangeMin}-${v.portRangeMax}`
+                                  }
                                   disabled={!v.isCustom}
                                 />
                               </Form.Item>
                               {/* </Tooltip> */}
                             </td>
                             <td>
-                              <Select value={v.ethernetType} options={ethernetTypeOptions} disabled={true} />
+                              <Select
+                                value={v.ethernetType}
+                                options={ethernetTypeOptions}
+                                disabled={true}
+                              />
                             </td>
                             {/* IP 범위 */}
                             <td>
@@ -464,18 +594,28 @@ const ModifyModal = (props) => {
                                   },
                                 ]}
                               >
-                                <Input type="text"
+                                <Input
+                                  type="text"
                                   name={`ipIn_${v.idx}`}
-                                  onChange={(e) => handleIngressRules.handleInputChange(i, 'remoteIpPrefix', e)}
+                                  onChange={e =>
+                                    handleIngressRules.handleInputChange(
+                                      i,
+                                      'remoteIpPrefix',
+                                      e
+                                    )
+                                  }
                                   defaultValue={v.remoteIpPrefix}
-                                  disabled={v.originRuleId} />
+                                  disabled={v.originRuleId}
+                                />
                               </Form.Item>
                             </td>
                             <td>
                               <Button
                                 type="flat"
                                 icon="trash"
-                                onClick={() => handleIngressRules.handleRemoveFields(v.idx)}
+                                onClick={() =>
+                                  handleIngressRules.handleRemoveFields(v.idx)
+                                }
                               />
                             </td>
                           </tr>
@@ -488,9 +628,14 @@ const ModifyModal = (props) => {
                     <Button
                       className={styles.add}
                       onClick={handleIngressRules.handleAddFields}
-                      disabled={btnDimmIn || formRulesIngressFields.find(obj => obj.protocol === 'ALL')}
+                      disabled={
+                        btnDimmIn ||
+                        formRulesIngressFields.find(
+                          obj => obj.protocol === 'ALL'
+                        )
+                      }
                     >
-                      추가
+                      {t('RESOURCES_ADD')}
                     </Button>
                   </div>
                 </div>
@@ -510,22 +655,58 @@ const ModifyModal = (props) => {
                       </colgroup>
                       <thead>
                         <tr>
-                          <th><strong>{t('RESOURCES_POLICY')}</strong></th>
-                          <th><strong>{t('RESOURCES_PROTOCOL')}</strong></th>
-                          <th><strong>{t('RESOURCES_PORT_RANGE')}</strong></th>
-                          <th><strong>{t('RESOURCES_ETHERNET_TYPE')}</strong></th>
-                          <th><strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong></th>
-                          <th><strong></strong></th>
+                          <th>
+                            <strong>{t('RESOURCES_POLICY')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_PROTOCOL')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_PORT_RANGE')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_ETHERNET_TYPE')}</strong>
+                          </th>
+                          <th>
+                            <strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong>
+                          </th>
+                          <th>
+                            <strong></strong>
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {formRulesEgressFields.map((v, i) => (
                           <tr key={i}>
                             <td>
-                              <Select disabled={v.originRuleId} value={v.ruleType} options={ruleTypeOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'ruleType', e, v.idx)} />
+                              <Select
+                                disabled={v.originRuleId}
+                                value={v.ruleType}
+                                options={ruleTypeOptions}
+                                onChange={e =>
+                                  handleEgressRules.handleSelectClick(
+                                    i,
+                                    'ruleType',
+                                    e,
+                                    v.idx
+                                  )
+                                }
+                              />
                             </td>
                             <td>
-                              <Select value={v.protocol} options={protocolOptions} onChange={(e) => handleEgressRules.handleSelectClick(i, 'protocol', e, v.idx)} disabled={!v.isCustom} />
+                              <Select
+                                value={v.protocol}
+                                options={protocolOptions}
+                                onChange={e =>
+                                  handleEgressRules.handleSelectClick(
+                                    i,
+                                    'protocol',
+                                    e,
+                                    v.idx
+                                  )
+                                }
+                                disabled={!v.isCustom}
+                              />
                             </td>
                             <td>
                               {/* <Tooltip content={v.validPort.isValid ? v.validPort.message : ''} placement="right" always={v.validPort.isValid} > */}
@@ -538,16 +719,34 @@ const ModifyModal = (props) => {
                                 ]}
                               >
                                 <Input
-                                  type='text'
+                                  type="text"
                                   name={`portOut_${v.idx}`}
-                                  onChange={(e) => handleEgressRules.handleInputChange(i, 'portRangeMax', e, v.idx)}
-                                  defaultValue={v.ethernetType === 'ALL' ? '0-65535' : v.portRangeMin === v.portRangeMax ? v.portRangeMax : v.portRangeMin + '-' + v.portRangeMax}
-                                  disabled={!v.isCustom} />
+                                  onChange={e =>
+                                    handleEgressRules.handleInputChange(
+                                      i,
+                                      'portRangeMax',
+                                      e,
+                                      v.idx
+                                    )
+                                  }
+                                  defaultValue={
+                                    v.ethernetType === 'ALL'
+                                      ? '0-65535'
+                                      : v.portRangeMin === v.portRangeMax
+                                      ? v.portRangeMax
+                                      : `${v.portRangeMin}-${v.portRangeMax}`
+                                  }
+                                  disabled={!v.isCustom}
+                                />
                               </Form.Item>
                               {/* </Tooltip> */}
                             </td>
                             <td>
-                              <Select value={v.ethernetType} options={ethernetTypeOptions} disabled={true} />
+                              <Select
+                                value={v.ethernetType}
+                                options={ethernetTypeOptions}
+                                disabled={true}
+                              />
                             </td>
                             <td>
                               <Form.Item
@@ -557,18 +756,28 @@ const ModifyModal = (props) => {
                                   },
                                 ]}
                               >
-                                <Input type="text"
+                                <Input
+                                  type="text"
                                   name={`ipOut_${v.idx}`}
-                                  onChange={(e) => handleEgressRules.handleInputChange(i, 'remoteIpPrefix', e)}
+                                  onChange={e =>
+                                    handleEgressRules.handleInputChange(
+                                      i,
+                                      'remoteIpPrefix',
+                                      e
+                                    )
+                                  }
                                   defaultValue={v.remoteIpPrefix}
-                                  disabled={v.originRuleId} />
+                                  disabled={v.originRuleId}
+                                />
                               </Form.Item>
                             </td>
                             <td>
                               <Button
                                 type="flat"
                                 icon="trash"
-                                onClick={() => handleEgressRules.handleRemoveFields(v.idx)}
+                                onClick={() =>
+                                  handleEgressRules.handleRemoveFields(v.idx)
+                                }
                               />
                             </td>
                           </tr>
@@ -581,7 +790,12 @@ const ModifyModal = (props) => {
                     <Button
                       className={styles.add}
                       onClick={handleEgressRules.handleAddFields}
-                      disabled={btnDimmOut || formRulesEgressFields.find(obj => obj.protocol === 'ALL')}
+                      disabled={
+                        btnDimmOut ||
+                        formRulesEgressFields.find(
+                          obj => obj.protocol === 'ALL'
+                        )
+                      }
                     >
                       {t('RESOURCES_ADD')}
                     </Button>
@@ -590,13 +804,10 @@ const ModifyModal = (props) => {
               </Form.Item>
             </Form.Group>
           </Form.Item>
-
         </Form>
-      </Modal >
-
+      </Modal>
     </>
   );
 };
 
-export default ModifyModal
-
+export default ModifyModal;
