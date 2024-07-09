@@ -957,10 +957,6 @@ input.input:not([readonly]):not([disabled]):focus {
   border-color: #3617ce !important;
 }
 
-.notify-wrapper .notify .notice-success {
-  border-color: #3617ce !important;
-}
-
 .notify-wrapper .notify .notice-success .notify-icon {
   background-color: #55bc8a;
 }
