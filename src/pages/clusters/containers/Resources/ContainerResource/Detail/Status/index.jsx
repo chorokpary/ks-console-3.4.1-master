@@ -38,34 +38,7 @@ const Status = props => {
   const [machines, setMachines] = useState([])
   const [nodepools, setNodepools] = useState([])
 
-  useEffect(() => {
-    let isSubscribed = true
-
-    const getMachinesData = async () => {
-      if (isSubscribed) {
-        await storeResource
-          .fetchDetailFlavor(props.match.params)
-          .then(response =>
-            isSubscribed ? setMachines(response._originData.machines) : null
-          )
-      }
-    }
-
-    const getNodepoolList = async () => {
-      if (isSubscribed) {
-        await storeResource
-          .fetchListNodePools(props.match.params)
-          .then(response => (isSubscribed ? setNodepools(response) : null))
-      }
-    }
-
-    getMachinesData()
-    getNodepoolList()
-
-    return () => {
-      isSubscribed = false
-    }
-  }, [props.match.params])
+  let isMounted = false
 
   // node script----------------------------------
   const [isExpandFlag, setIsExpandFlag] = useState(false)
@@ -223,7 +196,11 @@ const Status = props => {
   const [searchValue, setSearchValue] = useState()
 
   useEffect(() => {
+    isMounted = true
     fnGetData()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
@@ -236,7 +213,14 @@ const Status = props => {
         ? getSearchData(nodepoolList, params.name)
         : nodepoolList
 
-    setNodepools(filteredNodepools)
+    if (isMounted) {
+      setNodepools(filteredNodepools)
+    }
+
+    const response = await storeResource.fetchDetailFlavor(props.match.params)
+    if (isMounted) {
+      setMachines(response._originData.machines)
+    }
   }
 
   const getSearchData = (data, searchText) => {
@@ -246,15 +230,23 @@ const Status = props => {
   }
 
   const handleSearch = value => {
+    isMounted = true
     setSearchValue(value)
     fnGetData({
       name: value,
     })
+    return () => {
+      isMounted = false
+    }
   }
 
   const handleRefresh = () => {
+    isMounted = true
     const params = searchValue ? { name: searchValue } : {}
     fnGetData(params)
+    return () => {
+      isMounted = false
+    }
   }
 
   // nodepool create
