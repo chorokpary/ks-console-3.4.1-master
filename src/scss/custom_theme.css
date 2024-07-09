@@ -14,6 +14,23 @@ html {
   background-color: #e8f0f6 !important;
 }
 
+/* login */
+.login-body {
+  background: url(/assets/resources/images/img/img_login.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+.src-core-containers-Login-index__login .top_logo {
+  margin-bottom: 10px !important;
+}
+
+.src-core-containers-Login-index__footer button[type=submit]:hover {
+  border: 0 !important;
+}
+
 /* scroll */
 *::-webkit-scrollbar {
   width: 6px;
@@ -103,11 +120,11 @@ html {
 
 /* 마우스 드래그시 텍스트 선택 색상 */
 ::-moz-selection {
-  background: #79879c !important;
+  background: #6371e8 !important;
 }
 
 ::selection {
-  background: #79879c !important;
+  background: #6371e8 !important;
 }
 
 /* link hover */
@@ -154,6 +171,16 @@ a:hover {
 .tabs-container .tabs.tabs-button > ul > li:active {
   background-color: transparent !important;
   color: #3617ce !important;
+}
+
+.tabs-container.tabs-new .tabs.tabs-default > ul > li.is-active,
+.tabs-container.tabs-new .tabs.tabs-default > ul > li:active {
+  color: #3617ce !important;
+}
+
+.tabs-container.tabs-new .tab-content .tabs.tabs-button > ul > li.is-active,
+.tabs-container.tabs-new .tab-content .tabs.tabs-button > ul > li:active {
+  color: #ffffff !important;
 }
 
 .src-components-Layout-Nav-index__subNav > ul > li.src-components-Layout-Nav-index__open > a, .src-components-Layout-Nav-index__subNav > ul > li.src-components-Layout-Nav-index__select > a {
