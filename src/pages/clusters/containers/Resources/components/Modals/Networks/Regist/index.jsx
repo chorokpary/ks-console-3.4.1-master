@@ -69,13 +69,12 @@ const RegistModal = props => {
   useEffect(() => {
     const getPhysnetsData = async () => {
       const listPhysnet = await networkStore.fetchPhysnets(props);
-      const opt = listPhysnet.physnets
-	  .map(physnet => {
-	     return {
-	       label: t(physnet),
-               value: t(physnet),
-	     };
-	  });
+      const opt = listPhysnet.physnets.map(physnet => {
+        return {
+          label: t(physnet),
+          value: t(physnet),
+        };
+      });
       setPhysnetOptions(opt);
     };
     getPhysnetsData();
@@ -552,7 +551,7 @@ const RegistModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-	              <Columns>
+                      <Columns>
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_SEGMENT_ID')}
@@ -569,8 +568,8 @@ const RegistModal = props => {
                               style={{ maxWidth: 'none' }}
                             />
                           </Form.Item>
-	                </Column>
-	                <Column>
+                        </Column>
+                        <Column>
                           <Form.Item
                             label={t('RESOURCES_PHYSNET')}
                             rules={[
@@ -579,17 +578,17 @@ const RegistModal = props => {
                               },
                             ]}
                           >
-	                    <Select
+                            <Select
                               name="physnet_name"
                               options={physnetOptions}
-	                      disabled={!externalBool}
-	                      onChange={e => {
+                              disabled={!externalBool}
+                              onChange={e => {
                                 setPhysnet(e);
                               }}
                             />
                           </Form.Item>
                         </Column>
-	              </Columns>
+                      </Columns>
                     </Column>
                   </Columns>
                 </Form.Item>
