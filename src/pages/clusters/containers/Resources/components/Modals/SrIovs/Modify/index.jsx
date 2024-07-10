@@ -12,7 +12,7 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
-import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants'
+import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
 import { PropertiesInput, NumberInput } from 'components/Inputs';
 import * as common from 'utils/resources';
 import SriovStore from 'stores/resources/sriovs';
@@ -39,13 +39,12 @@ const ModifyModal = props => {
   const [vfs, setVfs] = useState();
   const [availableRange, setAvailableRange] = useState(0);
 
-
   useEffect(() => {
     const getSriovVfs = async () => {
       const numberOfVfs = await sriovStore.fetchSriovVfs({ ...props });
-      setVfs(numberOfVfs.number)
+      setVfs(numberOfVfs.number);
     };
-    getSriovVfs()
+    getSriovVfs();
 
     const getSriovCreateData = async () => {
       const listSriovBond = await sriovStore.fetchSriovBondList({ ...props });
@@ -72,15 +71,18 @@ const ModifyModal = props => {
       const host_routes = [];
       listHostRoute?.map(el => {
         if (data.Destination?.[el] && data.Nexthop?.[el]) {
-          host_routes.push({ destination: data.Destination[el], nexthop: data.Nexthop[el] });
+          host_routes.push({
+            destination: data.Destination[el],
+            nexthop: data.Nexthop[el],
+          });
         }
-      })
+      });
       data.ip_pool = {
         start: data.ip_pool_start,
         end: data.ip_pool_end,
       };
       data.dns = dns;
-      data.host_routes = host_routes
+      data.host_routes = host_routes;
 
       data.networks = [];
       data.networks = bondCheckItems;
@@ -115,10 +117,8 @@ const ModifyModal = props => {
         data.ip_pool_end == ''
       ) {
         handleOk();
-      } else {
-        if (availableRange <= data.vfs) {
-          setRegStep(2);
-        }
+      } else if (availableRange <= data.vfs) {
+        setRegStep(2);
       }
     }
   };
@@ -142,9 +142,9 @@ const ModifyModal = props => {
 
     // 가용 범위 계산
     const available = endIPNum - startIPNum + 1;
-    setAvailableRange(available)
+    setAvailableRange(available);
     return available;
-  }
+  };
 
   const fnGetModalFooter = () => {
     let elements = '';
@@ -203,8 +203,12 @@ const ModifyModal = props => {
     return elements;
   };
 
-  const nextHostRoute = useRef(detail?.host_routes.length == 0 ? 1 : detail?.host_routes.length-1);
-  const [listHostRoute, setListHostRoute] = useState(Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i));
+  const nextHostRoute = useRef(
+    detail?.host_routes.length == 0 ? 1 : detail?.host_routes.length - 1
+  );
+  const [listHostRoute, setListHostRoute] = useState(
+    Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i)
+  );
 
   const handleHostRoute = {
     addColumn: () => {
@@ -220,43 +224,49 @@ const ModifyModal = props => {
   };
   useEffect(() => {
     if (listHostRoute.length == 0) {
-      const a = document.getElementById('hostRoute')
-      a.classList.add('hide')
+      const a = document.getElementById('hostRoute');
+      a.classList.add('hide');
     }
-  }, [listHostRoute])
+  }, [listHostRoute]);
 
   const onChangeDestination = (e, idx) => {
-    const a = document.getElementById('hostRoute')
-    const nexthop = document.getElementById(`Nexthop.${idx}`).value
+    const a = document.getElementById('hostRoute');
+    const nexthop = document.getElementById(`Nexthop.${idx}`).value;
 
     if (e.length > 0 || nexthop.length > 0) {
-      if (e.split("/").length != 2 || !isValidIpAddress(e.split("/")[0]) || !fnCheckCidrClass(e.split("/")[1])
-        || !PATTERN_IP.test(nexthop)
+      if (
+        e.split('/').length != 2 ||
+        !isValidIpAddress(e.split('/')[0]) ||
+        !fnCheckCidrClass(e.split('/')[1]) ||
+        !PATTERN_IP.test(nexthop)
       ) {
-        a.classList.remove('hide')
+        a.classList.remove('hide');
       } else {
-        a.classList.add('hide')
+        a.classList.add('hide');
       }
     } else {
-      a.classList.add('hide')
+      a.classList.add('hide');
     }
-  }
+  };
   const onChangeNexthop = (e, idx) => {
-    const a = document.getElementById('hostRoute')
-    const destination = document.getElementById(`Destination.${idx}`).value
+    const a = document.getElementById('hostRoute');
+    const destination = document.getElementById(`Destination.${idx}`).value;
 
     if (e.length > 0 || destination.length > 0) {
-      if (destination.split("/").length != 2 || !isValidIpAddress(destination.split("/")[0]) || !fnCheckCidrClass(destination.split("/")[1])
-        || !PATTERN_IP.test(e)
+      if (
+        destination.split('/').length != 2 ||
+        !isValidIpAddress(destination.split('/')[0]) ||
+        !fnCheckCidrClass(destination.split('/')[1]) ||
+        !PATTERN_IP.test(e)
       ) {
-        a.classList.remove('hide')
+        a.classList.remove('hide');
       } else {
-        a.classList.add('hide')
+        a.classList.add('hide');
       }
     } else {
-      a.classList.add('hide')
+      a.classList.add('hide');
     }
-  }
+  };
 
   const isValidIpAddress = ip => {
     return PATTERN_IP.test(ip);
@@ -278,27 +288,30 @@ const ModifyModal = props => {
 
   const cidrValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
-    } else {
-      if (value.split("/").length != 2 || !isValidIpAddress(value.split("/")[0]) || !fnCheckCidrClass(value.split("/")[1])) {
-        return callback({ message: t('RESOURCES_CIDR_VALID') })
-      }
+      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') });
     }
-    callback()
-  }
+    if (
+      value.split('/').length != 2 ||
+      !isValidIpAddress(value.split('/')[0]) ||
+      !fnCheckCidrClass(value.split('/')[1])
+    ) {
+      return callback({ message: t('RESOURCES_CIDR_VALID') });
+    }
+
+    callback();
+  };
 
   const ipValidator = (rule, value, callback) => {
     const { data } = form.current.props;
     if (!value) {
-      return callback({ message: t('RESOURCES_IP_POOL_EMPTY_DESC') })
-    } else {
-      if (!isValidIpAddress(value)) {
-        return callback({ message: t('RESOURCES_IP_POOL_VALID') })
-      }
+      return callback({ message: t('RESOURCES_IP_POOL_EMPTY_DESC') });
+    }
+    if (!isValidIpAddress(value)) {
+      return callback({ message: t('RESOURCES_IP_POOL_VALID') });
     }
 
-    callback()
-  }
+    callback();
+  };
 
   const onChaneCidr = e => {
     const { data } = form.current.props;
@@ -314,8 +327,7 @@ const ModifyModal = props => {
       const b = document.getElementById('ip_pool_end');
       if (
         (a.nextElementSibling &&
-          a.nextElementSibling.classList.contains('form-item-error'))
-        ||
+          a.nextElementSibling.classList.contains('form-item-error')) ||
         (b.nextElementSibling &&
           b.nextElementSibling.classList.contains('form-item-error'))
       ) {
@@ -335,8 +347,7 @@ const ModifyModal = props => {
       const b = document.getElementById('ip_pool_end');
       if (
         (a.nextElementSibling &&
-          a.nextElementSibling.classList.contains('form-item-error'))
-        ||
+          a.nextElementSibling.classList.contains('form-item-error')) ||
         (b.nextElementSibling &&
           b.nextElementSibling.classList.contains('form-item-error'))
       ) {
@@ -390,7 +401,6 @@ const ModifyModal = props => {
 
   // 체크 리스트 끝 ==================================================
 
-
   return (
     <>
       <Modal
@@ -414,12 +424,13 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep == 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -431,8 +442,8 @@ const ModifyModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -481,14 +492,8 @@ const ModifyModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-                      <Form.Item
-                        label={t('VF')}
-                      >
-                        <Input
-                          name="vfs"
-                          defaultValue={vfs}
-                          disabled
-                        />
+                      <Form.Item label={t('VF')}>
+                        <Input name="vfs" defaultValue={vfs} disabled />
                       </Form.Item>
                     </Column>
                   </Columns>
@@ -591,10 +596,15 @@ const ModifyModal = props => {
                     <Form.Item>
                       <Columns>
                         <Column>
-                          <Form.Item label={t('RESOURCES_GATEWAY_IP')}
-                            rules={[{
-                              pattern: PATTERN_IP, message: t('RESOURCES_GATEWAY_IP_POOL_VALID')
-                            }]}>
+                          <Form.Item
+                            label={t('RESOURCES_GATEWAY_IP')}
+                            rules={[
+                              {
+                                pattern: PATTERN_IP,
+                                message: t('RESOURCES_GATEWAY_IP_POOL_VALID'),
+                              },
+                            ]}
+                          >
                             <Input
                               name="gateway_ip"
                               defaultValue={detail.gateway_ip}
@@ -606,9 +616,14 @@ const ModifyModal = props => {
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
-                {availableRange > vfs &&
-                  <div className="form-item-error" style={{ marginTop: '-10px', marginBottom: '10px' }}>{t('IP POOL 범위가 VF 개수를 넘어갑니다.')}</div>
-                }
+                {availableRange > vfs && (
+                  <div
+                    className="form-item-error"
+                    style={{ marginTop: '-10px', marginBottom: '10px' }}
+                  >
+                    {t('IP POOL 범위가 VF 개수를 넘어갑니다.')}
+                  </div>
+                )}
 
                 <Form.Item
                   className={styles.textarea}
@@ -638,11 +653,23 @@ const ModifyModal = props => {
                 {bondcheck && (
                   <Form.Item>
                     <div className={styles.wrapper}>
-                      {stateVariables['bond'].length > 0 &&
-                        <div className={classnames(styles.table_title, styles.table_title_bg)}>
-                          <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "bond")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['bond'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                      {stateVariables['bond'].length > 0 && (
+                        <div
+                          className={classnames(
+                            styles.table_title,
+                            styles.table_title_bg
+                          )}
+                        >
+                          <Button
+                            className={styles.table_title_button}
+                            onClick={() => handleAllCheck(false, 'bond')}
+                          >
+                            {t('RESOURCES_ALL_DESELECT')}
+                          </Button>{' '}
+                          {stateVariables['bond'].length}
+                          {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                         </div>
-                      }
+                      )}
                       <div className={styles.table}>
                         <table>
                           <colgroup>
@@ -658,11 +685,11 @@ const ModifyModal = props => {
                                     handleAllCheck(checked, 'bond')
                                   }
                                   checked={
-                                    dataListVariables['bond'].length > 0 &&
+                                    !!(
+                                      dataListVariables['bond'].length > 0 &&
                                       stateVariables['bond'].length ===
-                                      dataListVariables['bond'].length
-                                      ? true
-                                      : false
+                                        dataListVariables['bond'].length
+                                    )
                                   }
                                 />
                               </th>
@@ -686,9 +713,7 @@ const ModifyModal = props => {
                                     <Checkbox
                                       name={`select-${idx}`}
                                       checked={
-                                        stateVariables['bond'].includes(data)
-                                          ? true
-                                          : false
+                                        !!stateVariables['bond'].includes(data)
                                       }
                                       onChange={checked =>
                                         handleSingleCheck(checked, data, 'bond')
@@ -726,10 +751,15 @@ const ModifyModal = props => {
                   <Form.Group>
                     <Columns>
                       <Column>
-                        <Form.Item label={t('Primary')}
-                          rules={[{
-                            pattern: PATTERN_IP, message: t('RESOURCES_DNS_VALID')
-                          }]}>
+                        <Form.Item
+                          label={t('Primary')}
+                          rules={[
+                            {
+                              pattern: PATTERN_IP,
+                              message: t('RESOURCES_DNS_VALID'),
+                            },
+                          ]}
+                        >
                           <Input
                             name="dns_primary"
                             defaultValue={detail.dns?.[0]}
@@ -737,16 +767,23 @@ const ModifyModal = props => {
                         </Form.Item>
                       </Column>
                       <Column>
-                        <Form.Item label={t('Secondary')}
-                          rules={[{
-                            pattern: PATTERN_IP, message: t('RESOURCES_DNS_VALID')
-                          }]}>
+                        <Form.Item
+                          label={t('Secondary')}
+                          rules={[
+                            {
+                              pattern: PATTERN_IP,
+                              message: t('RESOURCES_DNS_VALID'),
+                            },
+                          ]}
+                        >
                           <Input
                             name="dns_secondary"
                             defaultValue={detail.dns?.[1]}
                           />
                         </Form.Item>
-                        <div className="form-item-error hide">{t('RESOURCES_DNS_VALID')}</div>
+                        <div className="form-item-error hide">
+                          {t('RESOURCES_DNS_VALID')}
+                        </div>
                       </Column>
                     </Columns>
                   </Form.Group>
@@ -765,8 +802,10 @@ const ModifyModal = props => {
                               <Input
                                 name={`Destination.${obj}`}
                                 placeholder={t('Destination')}
-                                defaultValue={detail.host_routes?.[obj]?.destination}
-                                onChange={(e) => onChangeDestination(e, obj)}
+                                defaultValue={
+                                  detail.host_routes?.[obj]?.destination
+                                }
+                                onChange={e => onChangeDestination(e, obj)}
                               />
                             </Form.Item>
                           </Column>
@@ -775,8 +814,10 @@ const ModifyModal = props => {
                               <Input
                                 name={`Nexthop.${obj}`}
                                 placeholder={t('Nexthop')}
-                                defaultValue={detail.host_routes?.[obj]?.nexthop}
-                                onChange={(e) => onChangeNexthop(e, obj)}
+                                defaultValue={
+                                  detail.host_routes?.[obj]?.nexthop
+                                }
+                                onChange={e => onChangeNexthop(e, obj)}
                               />
                             </Form.Item>
                           </Column>
@@ -794,12 +835,14 @@ const ModifyModal = props => {
                         className={styles.add}
                         onClick={handleHostRoute.addColumn}
                       >
-                        추가
+                        {t('RESOURCES_ADD')}
                       </Button>
                     </div>
                   </Form.Group>
                 </Form.Item>
-                <div className="form-item-error hide" id="hostRoute">{t.html('RESOURCES_HOSTROUTE_VALID', {})}</div>
+                <div className="form-item-error hide" id="hostRoute">
+                  {t.html('RESOURCES_HOSTROUTE_VALID', {})}
+                </div>
               </div>
               {/* 세부 설정 끝========================================== */}
             </div>

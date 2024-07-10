@@ -16,7 +16,7 @@ const UploadModal = props => {
 
   const onOk = props.onOk;
 
-  console.log(`job_uuid : ${job_uuid}`);
+  // console.log(`job_uuid : ${job_uuid}`);
 
   const [modelView, setModalView] = useState(true);
 
@@ -52,13 +52,13 @@ const UploadModal = props => {
       uplaod_id = uploadInfo[0]['upload-file-info']['file-info']['ID'];
     }
 
-    console.log(`uplaod_id : ${!!uplaod_id}`);
+    // console.log(`uplaod_id : ${!!uplaod_id}`);
 
     const file = e.target.files[0];
 
     setFileName(file.name);
 
-    var upload = new tus.Upload(file, {
+    const upload = new tus.Upload(file, {
       // Endpoint is the upload creation URL from your tus server
       // endpoint: 'https://tusd.tusdemo.net/files/',
 
@@ -75,7 +75,7 @@ const UploadModal = props => {
       },
       // Callback for errors which cannot be fixed using retries
       onError(error) {
-        console.log(`Failed because: ${error}`);
+        // console.log(`Failed because: ${error}`);
       },
       // Callback for reporting upload progress
       onProgress(bytesUploaded, bytesTotal) {
@@ -84,20 +84,20 @@ const UploadModal = props => {
           (bytesUploaded / bytesTotal) *
           100
         ).toFixed(0);
-        console.log(bytesUploaded, bytesTotal, `${percentage}%`);
+        // console.log(bytesUploaded, bytesTotal, `${percentage}%`);
         fnProgress(bytesTotal, bytesUploaded, percentage);
       },
       // Callback for once the upload is completed
       onSuccess() {
         setFileUploadCompleteFlag(true);
-        console.log('Download %s from %s', upload.file.name, upload.url);
+        // console.log('Download %s from %s', upload.file.name, upload.url);
         closeModal();
         onOk({});
       },
 
       // 업로드 중 응답 콜백
       onAfterResponse: (req, res) => {
-        console.log(`upload : ${JSON.stringify(upload)}`);
+        // console.log(`upload : ${JSON.stringify(upload)}`);
         // console.log(res)
         // response = res.getBody();
         // console.log("response : "+ response)
@@ -110,7 +110,7 @@ const UploadModal = props => {
 
   const startOrResumeUpload = upload => {
     upload.findPreviousUploads().then(function(previousUploads) {
-      console.log(`previousUploads : ${previousUploads}`);
+      // console.log(`previousUploads : ${previousUploads}`);
       // Found previous uploads so we select the first one.
       if (previousUploads.length) {
         upload.resumeFromPreviousUpload(previousUploads[0]);
@@ -124,7 +124,7 @@ const UploadModal = props => {
   };
 
   const fnAbort = async () => {
-    console.log('fnAbort~~~~~~~~~!!!!');
+    // console.log('fnAbort~~~~~~~~~!!!!');
     uploader.abort();
     // setFileUploadingFlag(false);
   };

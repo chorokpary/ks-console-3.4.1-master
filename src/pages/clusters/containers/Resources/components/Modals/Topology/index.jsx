@@ -1,26 +1,24 @@
-import { get } from 'lodash'
-import React, { useState, useRef, useEffect } from 'react'
+import { get } from 'lodash';
+import React, { useState, useRef, useEffect } from 'react';
 import { observer, inject } from 'mobx-react';
 
-import { Modal } from 'components/Base'
-import TopologyItem from './Item'
+import { Modal } from 'components/Base';
+import classnames from 'classnames';
+import TopologyItem from './Item';
 
-import classnames from 'classnames'
-import styles from './index.scss'
+import styles from './index.scss';
 
-const TopologyModal = (props) => {
-
+const TopologyModal = props => {
   const [modelView, setModalView] = useState(true);
 
   const closeModal = () => {
     setModalView(false);
-  }
-
+  };
 
   return (
     <>
-       <Modal
-        title={t('전체 네트워크 토폴리지')}
+      <Modal
+        title={t('RESOURCES_ALL_NETWORK_TOPOLOGY')}
         bodyClassName={classnames({
           [styles.readOnly]: true,
         })}
@@ -30,11 +28,10 @@ const TopologyModal = (props) => {
         hideFooter={true}
         fullScreen
       >
-        <TopologyItem closeModal={() => closeModal()}/>
+        <TopologyItem closeModal={() => closeModal()} />
       </Modal>
     </>
   );
 };
 
-export default TopologyModal
-
+export default TopologyModal;

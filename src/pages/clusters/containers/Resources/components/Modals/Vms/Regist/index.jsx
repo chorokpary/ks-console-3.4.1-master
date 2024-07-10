@@ -1306,7 +1306,7 @@ const RegistModal = props => {
                   <Column>
                     {imageType === 'B' && <div style={{ padding: 8 }} />}
                     <Form.Item
-                      label={t('Flavor')}
+                      label={t('RESOURCES_FLAVOR')}
                       rules={[{ required: true, validator: flavorValidator }]}
                     >
                       <TypeSelect
@@ -1430,7 +1430,7 @@ const RegistModal = props => {
                               <strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong>
                             </th>
                             <th>
-                              <strong>CIDR</strong>
+                              <strong>{t('RESOURCES_CIDR')}</strong>
                             </th>
                             <th>
                               <strong>{t('RESOURCES_GATEWAY')}</strong>
@@ -1564,7 +1564,7 @@ const RegistModal = props => {
                               <strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong>
                             </th>
                             <th>
-                              <strong>CIDR</strong>
+                              <strong>{t('RESOURCES_CIDR')}</strong>
                             </th>
                             <th>
                               <strong>{t('RESOURCES_GATEWAY')}</strong>
@@ -1674,7 +1674,7 @@ const RegistModal = props => {
                           onClick={() => handleAllCheck(false, 'security')}
                         >
                           {t('RESOURCES_ALL_DESELECT')}
-                        </Button>{' '}
+                        </Button>
                         {stateVariables['security'].length}
                         {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                       </div>
@@ -2063,7 +2063,7 @@ const RegistModal = props => {
                       </div>
                       {projectName && (
                         <div className={styles.list}>
-                          <label>{t('프로젝트')}</label>
+                          <label>{t('RESOURCES_PROJECT')}</label>
                           <div className={styles.bold}>{projectName}</div>
                         </div>
                       )}
@@ -2080,7 +2080,7 @@ const RegistModal = props => {
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>Flavor</label>
+                        <label>t('RESOURCES_FLAVOR')</label>
                         <div className={styles.multiline}>
                           <div className={styles.bold}>{flavorName}</div>
                           <p>
@@ -2150,7 +2150,7 @@ const RegistModal = props => {
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>CIDR</label>
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
@@ -2173,7 +2173,7 @@ const RegistModal = props => {
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>CIDR</label>
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
