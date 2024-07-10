@@ -372,7 +372,6 @@ const RegistModal = props => {
                     {externalNetworkList
                       ?.filter(data => !routerExternal.includes(data.id))
                       .map(data => {
-                        console.log('data', data);
                         return (
                           <tr key={data.name}>
                             <td>

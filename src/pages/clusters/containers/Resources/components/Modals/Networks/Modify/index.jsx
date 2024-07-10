@@ -451,7 +451,7 @@ const ModifyModal = props => {
                   className={styles.add}
                   onClick={handleHostRoute.addColumn}
                 >
-                  추가
+                  {t('RESOURCES_ADD')}
                 </Button>
               </div>
             </Form.Group>

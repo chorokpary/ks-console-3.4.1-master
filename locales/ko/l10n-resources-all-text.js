@@ -64,9 +64,10 @@ module.exports = {
   RESOURCES_IP_POOL_VALID: 'IP POOL 정보를 정확히 입력해주세요.',
 
   RESOURCES_GPU_NODE: 'GPU 노드',
-  RESOURCES_GPU_NODE_DESC: 'GPU 노드는 Petasus Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
+  RESOURCES_GPU_NODE_DESC:
+    'GPU 노드는 Petasus Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
   RESOURCES_MACHINE: '머신 모델명',
-  RESOURCES_GPU_FAMILY: "GPU 아키텍처",
+  RESOURCES_GPU_FAMILY: 'GPU 아키텍처',
   RESOURCES_GPU_MODEL: 'GPU 모델명',
   RESOURCES_GPU_RAM: 'GPU 메모리',
   RESOURCES_GPU_DRIVER_VERSION: '드라이버 버전',
@@ -75,11 +76,14 @@ module.exports = {
   RESOURCES_GPU_WORKLOAD_TYPE: '워크로드',
   RESOURCES_GPU_WORKLOAD_CONFIG: '워크로드 설정',
   RESOURCES_GPU_WORKLOAD_CONTAINER: '컨테이너 할당',
-  RESOURCES_GPU_WORKLOAD_CONTAINER_DESC: '단일 GPU 카드에 컨테이너 워크로드를 생성 및 할당하는 방식입니다.',
+  RESOURCES_GPU_WORKLOAD_CONTAINER_DESC:
+    '단일 GPU 카드에 컨테이너 워크로드를 생성 및 할당하는 방식입니다.',
   RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH: '가상머신 패스스루 할당',
-  RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC: '단일 GPU 카드에 VM 워크로드를 생성 및 할당하는 방식입니다.',
+  RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC:
+    '단일 GPU 카드에 VM 워크로드를 생성 및 할당하는 방식입니다.',
   RESOURCES_GPU_WORKLOAD_TYPE: 'GPU 워크로드 유형',
-  RESOURCES_GPU_SELECT_WORKLOAD_TYPE_TIP: 'GPU 자원을 할당할 사용자 워크로드를 선택해주세요.',
+  RESOURCES_GPU_SELECT_WORKLOAD_TYPE_TIP:
+    'GPU 자원을 할당할 사용자 워크로드를 선택해주세요.',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU 인덱스',
@@ -103,24 +107,33 @@ module.exports = {
   RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: '가용한 MIG 설정을 찾을 수 없습니다.',
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU 구성요소 배포 현황',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: '컨테이너 툴킷',
-  RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC: '컨테이너 툴킷은 컨테이너 런타임 라이브러리와 GPU 가속 컨테이너를 자동으로 구성하는 유틸리티를 포함하고 있습니다.',
+  RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC:
+    '컨테이너 툴킷은 컨테이너 런타임 라이브러리와 GPU 가속 컨테이너를 자동으로 구성하는 유틸리티를 포함하고 있습니다.',
   RESOURCES_GPU_DEPLOY_DCGM: 'DCGM',
-  RESOURCES_GPU_DEPLOY_DCGM_DESC: 'Data Center GPU Manager(DCGM)는 클러스터 환경에서 GPU를 자동으로 설정, 관리 및 모니터링하기 위한 도구 모음입니다.',
+  RESOURCES_GPU_DEPLOY_DCGM_DESC:
+    'Data Center GPU Manager(DCGM)는 클러스터 환경에서 GPU를 자동으로 설정, 관리 및 모니터링하기 위한 도구 모음입니다.',
   RESOURCES_GPU_DEPLOY_DCGM_EXPORTER: 'DCGM 엑스포터',
-  RESOURCES_GPU_DEPLOY_DCGM_EXPORTER_DESC: 'DGCM 엑스포터는 DCGM을 이용하여 프로메테우스(Prometheus)에서 가용한 GPU 메트릭을 수집 및 노출해주는 역할을 합니다.',
+  RESOURCES_GPU_DEPLOY_DCGM_EXPORTER_DESC:
+    'DGCM 엑스포터는 DCGM을 이용하여 프로메테우스(Prometheus)에서 가용한 GPU 메트릭을 수집 및 노출해주는 역할을 합니다.',
   RESOURCES_GPU_DEPLOY_DEVICE_PLUGIN: '디바이스 플러그인',
-  RESOURCES_GPU_DEPLOY_DEVICE_PLUGIN_DESC: '각 노드에 장착된 GPU의 상태를 클러스터에 레포팅하고 GPU를 컨테이너에 장착하여 구동시키는 등 역할을 수행합니다.',
+  RESOURCES_GPU_DEPLOY_DEVICE_PLUGIN_DESC:
+    '각 노드에 장착된 GPU의 상태를 클러스터에 레포팅하고 GPU를 컨테이너에 장착하여 구동시키는 등 역할을 수행합니다.',
   RESOURCES_GPU_DEPLOY_OPERATOR_VALIDATOR: '오퍼레이터 Validator',
-  RESOURCES_GPU_DEPLOY_OPERATOR_VALIDATOR_DESC: 'GPU 오퍼레이터를 구성하는 여러 컴포넌트들이 정상적으로 설치되었는지 여부를 검증해주는 역할을 수행합니다.',
+  RESOURCES_GPU_DEPLOY_OPERATOR_VALIDATOR_DESC:
+    'GPU 오퍼레이터를 구성하는 여러 컴포넌트들이 정상적으로 설치되었는지 여부를 검증해주는 역할을 수행합니다.',
   RESOURCES_GPU_DEPLOY_MIG_MANAGER: 'MIG 관리자',
-  RESOURCES_GPU_DEPLOY_MIG_MANAGER_DESC: '물리 GPU를 다양한 Multi-Instance GPU(MIG) 구성으로 쉽고 직관적으로 분할할 수 있도록 도와주는 구성 요소입니다.',
+  RESOURCES_GPU_DEPLOY_MIG_MANAGER_DESC:
+    '물리 GPU를 다양한 Multi-Instance GPU(MIG) 구성으로 쉽고 직관적으로 분할할 수 있도록 도와주는 구성 요소입니다.',
 
   RESOURCES_GPU_DEPLOY_SANDBOX_DEVICE_PLUGIN: '샌드박스 디바이스 플러그인',
-  RESOURCES_GPU_DEPLOY_SANDBOX_DEVICE_PLUGIN_DESC: '가상머신과 같은 샌드박스 유형의 워크로드에 Passthrough 된 GPU 자원을 찾아서 Advertise하는 역할을 합니다.',
+  RESOURCES_GPU_DEPLOY_SANDBOX_DEVICE_PLUGIN_DESC:
+    '가상머신과 같은 샌드박스 유형의 워크로드에 Passthrough 된 GPU 자원을 찾아서 Advertise하는 역할을 합니다.',
   RESOURCES_GPU_DEPLOY_CC_MANAGER: '컨피덴셜 컴퓨팅 관리자',
-  RESOURCES_GPU_DEPLOY_CC_MANAGER_DESC: 'GPU 오퍼레이터의 구성요소로 GPU에서 컨피덴셜 컴퓨팅 (Confidential Computing) 모드를 관리하는 역할을 합니다.',
+  RESOURCES_GPU_DEPLOY_CC_MANAGER_DESC:
+    'GPU 오퍼레이터의 구성요소로 GPU에서 컨피덴셜 컴퓨팅 (Confidential Computing) 모드를 관리하는 역할을 합니다.',
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER: 'VFIO 관리자',
-  RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC: 'VFIO-PCI 커널모듈 혹은 드라이버를 로드하여 해당 노드 내 모든 GPU 디바이스에 바인드 해주는 역할을 합니다. ',
+  RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC:
+    'VFIO-PCI 커널모듈 혹은 드라이버를 로드하여 해당 노드 내 모든 GPU 디바이스에 바인드 해주는 역할을 합니다. ',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS 네트워크 트래픽',
   RESOURCES_KAAS_RESOURCE: 'KaaS 리소스',
@@ -337,7 +350,8 @@ module.exports = {
   RESOURCES_RUNNING_RESTORE: '복원 실행',
   RESOURCES_IMPORT_SOURCE_SETTINGS: '입력 소스 설정',
   RESOURCES_SPECIFY_BOOT_VOLUME: '부트볼륨으로 지정',
-  RESOURCES_SPECIFY_BOOT_VOLUME_TIP: '부트볼륨으로 지정하고 CPU, OS, 부트 유형 관련 정보를 입력합니다.',
+  RESOURCES_SPECIFY_BOOT_VOLUME_TIP:
+    '부트볼륨으로 지정하고 CPU, OS, 부트 유형 관련 정보를 입력합니다.',
   RESOURCES_IMAGE_INFO: '이미지 정보',
   RESOURCES_VOLUME: '볼륨',
   RESOURCES_VOLUME_MANAGEMENT: '볼륨 관리',
@@ -591,6 +605,7 @@ module.exports = {
     '포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다.',
   RESOURCES_PRIVATE: '프라이빗',
   RESOURCES_PROTOCOL: '프로토콜',
+  RESOURCES_PROJECT: '프로젝트',
   RESOURCES_FLOATING_IP: '플로팅 IP',
   RESOURCES_DELETE_FLOATING_IP: '플로팅 IP 삭제',
   RESOURCES_CREATE_FLOATING_IP: '플로팅 IP 생성',

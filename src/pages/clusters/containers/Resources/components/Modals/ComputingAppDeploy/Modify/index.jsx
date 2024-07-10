@@ -1,21 +1,31 @@
-import { get, find } from 'lodash'
-import React, { useState, useRef, useEffect } from 'react'
+import { get, find } from 'lodash';
+import React, { useState, useRef, useEffect } from 'react';
 
-import { Form, Input, Select, TextArea, Button, Loading, Column, Columns, Icon, Notify } from '@kube-design/components'
-import { Modal } from 'components/Base'
+import {
+  Form,
+  Input,
+  Select,
+  TextArea,
+  Button,
+  Loading,
+  Column,
+  Columns,
+  Icon,
+  Notify,
+} from '@kube-design/components';
+import { Modal } from 'components/Base';
 
-import classnames from 'classnames'
-import styles from './index.scss'
-import * as common from "utils/resources"
-import axios from 'axios'
-import moment from 'moment-mini'
+import classnames from 'classnames';
+import * as common from 'utils/resources';
+import axios from 'axios';
+import moment from 'moment-mini';
 
-import VmStore from 'stores/resources/vms'
+import VmStore from 'stores/resources/vms';
 
-import { PATTERN_USER_NAME, PATTERN_IP } from 'utils/constants'
+import { PATTERN_USER_NAME, PATTERN_IP } from 'utils/constants';
+import styles from './index.scss';
 
-const ModifyModal = (props) => {
-
+const ModifyModal = props => {
   const vmStore = new VmStore();
 
   const form = useRef();
@@ -38,40 +48,45 @@ const ModifyModal = (props) => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
-
       const { data } = form.current.props;
 
       if (!(props.store.detail.playbookName === fileName && !file)) {
         if (!file) {
-          setFilerValidError(true)
-          setFileExtError(false)
+          setFilerValidError(true);
+          setFileExtError(false);
           return false;
+        }
+        const ext = file.name
+          .split('.')
+          .pop()
+          .toLowerCase();
+        const isValidExt = ext == 'zip';
+        if (isValidExt) {
+          setFilerValidError(false);
         } else {
-          const ext = (file.name).split('.').pop().toLowerCase();
-          const isValidExt = ext == "zip" ? true : false;
-          if (isValidExt) {
-            setFilerValidError(false)
-          } else {
-            setFilerValidError(false)
-            setFileExtError(true)
-            return false;
-          }
+          setFilerValidError(false);
+          setFileExtError(true);
+          return false;
         }
       }
 
       const vmErrorArray = [];
-      listVmInventory.map((obj) => {
-        if (!!data['vm_' + obj] && !!data['ip_' + obj] && !!data['user_' + obj] && !!data['private_key_' + obj]) {
-          const isValidIpAddress = PATTERN_IP.test(data['ip_' + obj]) ? false : true;
+      listVmInventory.map(obj => {
+        if (
+          !!data[`vm_${obj}`] &&
+          !!data[`ip_${obj}`] &&
+          !!data[`user_${obj}`] &&
+          !!data[`private_key_${obj}`]
+        ) {
+          const isValidIpAddress = !PATTERN_IP.test(data[`ip_${obj}`]);
           setVmValidError(isValidIpAddress);
-          vmErrorArray.push(isValidIpAddress)
-          return false;
-        } else {
-          vmErrorArray.push(true)
-          setVmValidError(true)
+          vmErrorArray.push(isValidIpAddress);
           return false;
         }
-      })
+        vmErrorArray.push(true);
+        setVmValidError(true);
+        return false;
+      });
 
       if (vmErrorArray.includes(true)) {
         return false;
@@ -88,122 +103,143 @@ const ModifyModal = (props) => {
       jsonData.registrationDate = props.store.detail.registrationDate;
       jsonData.modificationDate = timestamp;
 
-      listVmInventory.map((item) => {
+      listVmInventory.map(item => {
         const vmData = {
-          name: data['vm_' + item],
-          host: data['ip_' + item],
-          user: data['user_' + item],
-          privateKey: data['private_key_' + item]
-        }
-        vmDataArray.push(vmData)
-      })
+          name: data[`vm_${item}`],
+          host: data[`ip_${item}`],
+          user: data[`user_${item}`],
+          privateKey: data[`private_key_${item}`],
+        };
+        vmDataArray.push(vmData);
+      });
 
-      jsonData.vm = vmDataArray
+      jsonData.vm = vmDataArray;
 
       const formData = new FormData();
-      formData.append("body", JSON.stringify(jsonData));
+      formData.append('body', JSON.stringify(jsonData));
 
       setSubmitButtonFlag(true);
       if (!(props.store.detail.playbookName === fileName && !file)) {
-        formData.append("playbook", file);
+        formData.append('playbook', file);
         setFileUploadStartFlag(true);
       }
 
       // const url = props.cluster ? `/kapis/cmp.kubesphere.io/v1alpha1/klusters/${props.cluster}/app-manager/v1alpha1/templates`
       //                           : `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
 
-      const url = `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`
+      const url = `/kapis/cmp.kubesphere.io/v1alpha1/app-manager/v1alpha1/templates`;
 
-      axios.put(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          fnProgress(progressEvent.total, progressEvent.loaded, percentCompleted);
-          // console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
-        },
-      }).then((res) => {
-        // console.log(res.data);
-        onOk({ ...data })
-        setSubmitButtonFlag(false);
-      }).catch((err) => {
-        // console.error(err);
-        console.log(err);
-        Notify.error({ title: err.reason, content: t(err.message), duration: 3000 })
-        setSubmitButtonFlag(false);
-      });
-
-    })
-  }
+      axios
+        .put(url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: progressEvent => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            fnProgress(
+              progressEvent.total,
+              progressEvent.loaded,
+              percentCompleted
+            );
+            // console.log(progressEvent.total, progressEvent.loaded, percentCompleted + '%')
+          },
+        })
+        .then(res => {
+          // console.log(res.data);
+          onOk({ ...data });
+          setSubmitButtonFlag(false);
+        })
+        .catch(err => {
+          // console.error(err);
+          console.log(err);
+          Notify.error({
+            title: err.reason,
+            content: t(err.message),
+            duration: 3000,
+          });
+          setSubmitButtonFlag(false);
+        });
+    });
+  };
 
   const closeModal = () => {
     setModalView(false);
-  }
+  };
 
   const versionValidator = (rule, value, callback) => {
-    if (!!!value) {
-      return callback({ message: t('RESOURCES_VERSION_EMPTY_DESC') })
+    if (!value) {
+      return callback({ message: t('RESOURCES_VERSION_EMPTY_DESC') });
     }
-    callback()
-  }
+    callback();
+  };
 
   const fnSelectedVmOption = async () => {
     const { data } = form?.current?.props;
 
     const selectedVmArray = [];
-    await listVmInventory.map((item) => {
-      !!data?.['vm_' + item] && selectedVmArray.push(data?.['vm_' + item])
+    await listVmInventory.map(item => {
+      !!data?.[`vm_${item}`] && selectedVmArray.push(data?.[`vm_${item}`]);
       getVmIp(item);
-    })
+    });
 
-    const checkVmDisabled = await vmOptionList.map((item) => ({
+    const checkVmDisabled = await vmOptionList.map(item => ({
       ...item,
-      disabled: selectedVmArray.includes(item.value) ? true : false
+      disabled: !!selectedVmArray.includes(item.value),
     }));
 
     setVmOptionList(checkVmDisabled);
-  }
+  };
 
-  const getVmIp = (num) => {
+  const getVmIp = num => {
     const { data } = form.current.props;
-    const vmName = data['vm_' + num];
-    const vmIp = get(get(find(vmList, { name: vmName }), 'networks', []).find(item => item.name == 'k8s-pod-network'), 'ip', '')
-    !!!data['ip_' + num] ? data['ip_' + num] = vmIp : "";
-  }
+    const vmName = data[`vm_${num}`];
+    const vmIp = get(
+      get(find(vmList, { name: vmName }), 'networks', []).find(
+        item => item.name == 'k8s-pod-network'
+      ),
+      'ip',
+      ''
+    );
+    !data[`ip_${num}`] ? (data[`ip_${num}`] = vmIp) : '';
+  };
 
   useEffect(() => {
     const getVmData = async () => {
       const listVms = await vmStore.fetchList();
 
-      const cloneNotList = listVms.filter(item => !(item.name).includes("-clone"))
+      const cloneNotList = listVms.filter(
+        item => !item.name.includes('-clone')
+      );
 
-      const opt = cloneNotList.map((obj) => ({
+      const opt = cloneNotList.map(obj => ({
         label: t(obj.name),
         value: t(obj.name),
         disabled: false,
-      }))
+      }));
       setVmList(cloneNotList);
-      setVmOptionList(opt)
+      setVmOptionList(opt);
     };
 
     const getVmInventoryData = async () => {
-      (props.store.detail.vm).map((item, index) => {
-        setListVmInventory(listVmInventory => [...listVmInventory, Number(index + 1)]);
-      })
+      props.store.detail.vm.map((item, index) => {
+        setListVmInventory(listVmInventory => [
+          ...listVmInventory,
+          Number(index + 1),
+        ]);
+      });
     };
 
     getVmData();
     getVmInventoryData();
-  }, [])
+  }, []);
 
   // 가상머신 selectbox disabled 처리 Start ############################################
   const [vmSelect, setVmSelect] = useState([]);
-  const fnChangeSelect = (val) => {
-    setVmSelect(val)
-  }
+  const fnChangeSelect = val => {
+    setVmSelect(val);
+  };
 
   useEffect(() => {
     if (vmSelect.length > 0) {
@@ -219,16 +255,18 @@ const ModifyModal = (props) => {
   const handleVmInventory = {
     addColumn: () => {
       listVmInventory.length == 1 && fnSelectedVmOption();
-      nextVm.current += 1
-      setListVmInventory(listVmInventory => [...listVmInventory, nextVm.current]);
+      nextVm.current += 1;
+      setListVmInventory(listVmInventory => [
+        ...listVmInventory,
+        nextVm.current,
+      ]);
     },
-    delColumn: async (id) => {
-      fnChangeSelect(listVmInventory.filter((el) => el !== id));
-      setListVmInventory(listVmInventory.filter((el) => el !== id));
+    delColumn: async id => {
+      fnChangeSelect(listVmInventory.filter(el => el !== id));
+      setListVmInventory(listVmInventory.filter(el => el !== id));
     },
-  }
+  };
   // 가상머신 Add, Delete End ############################################
-
 
   // File Upload Start ############################################
   const fileInputRef = useRef(null);
@@ -244,28 +282,27 @@ const ModifyModal = (props) => {
     fileInputRef.current.click();
   };
 
-  const onFileChange = async (e) => {
-    var file = e.target.files[0];
+  const onFileChange = async e => {
+    const file = e.target.files[0];
     setFileName(file.name);
     setFile(file);
-  }
+  };
 
   const fnProgress = (totalLoaded, fileSize, percentage) => {
     if (!!progressText.current === true) {
-      progressText.current.textContent = percentage + " %";
-      progressbar.current.style.transform = "translateX(" + percentage + "%)";
-      loadedText.current.textContent =
-        " ( " +
-        fileSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-        " / " +
-        totalLoaded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-        " Bytes ) ";
+      progressText.current.textContent = `${percentage} %`;
+      progressbar.current.style.transform = `translateX(${percentage}%)`;
+      loadedText.current.textContent = ` ( ${fileSize
+        .toString()
+        .replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ','
+        )} / ${totalLoaded
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Bytes ) `;
     }
   };
   // File Upload End ############################################
-
-
-
 
   return (
     <>
@@ -281,7 +318,6 @@ const ModifyModal = (props) => {
       >
         <Form data={formData} ref={form}>
           <div className={styles.cont_boxwrap}>
-
             <Form.Item
               label={t('RESOURCES_NAME')}
               rules={[
@@ -307,81 +343,105 @@ const ModifyModal = (props) => {
               label={t('RESOURCES_VERSION')}
               rules={[{ required: true, validator: versionValidator }]}
             >
-              <Input name="version" maxLength={253}
-                style={{ maxWidth: 'none' }} placeholder="v1"
+              <Input
+                name="version"
+                maxLength={253}
+                style={{ maxWidth: 'none' }}
+                placeholder="v1"
                 defaultValue={props.store.detail.version}
               />
             </Form.Item>
 
             <Form.Item>
               <>
-                {t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD')}<span className="form-item-required">*</span>
-                <div style={{ color: '#79879c' }}>({t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC')})</div>
+                {t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD')}
+                <span className="form-item-required">*</span>
+                <div style={{ color: '#79879c' }}>
+                  ({t('RESOURCES_APP_DEPLOY_PLAYBOOK_ADD_DESC')})
+                </div>
                 <Form.Group>
                   <div>
-                    <input type="file"
+                    <input
+                      type="file"
                       onChange={onFileChange}
                       style={{ display: 'none' }}
                       ref={el => {
-                        fileInputRef.current = el
+                        fileInputRef.current = el;
                       }}
                       accept=".zip"
                     />
-                    <Input name="fileName" className={styles.file_input} value={fileName ? fileName : ''} readOnly />
-                    <Button type="primary" onClick={() => handleButtonClick()} >
+                    <Input
+                      name="fileName"
+                      className={styles.file_input}
+                      value={fileName || ''}
+                      readOnly
+                    />
+                    <Button type="primary" onClick={() => handleButtonClick()}>
                       {t('RESOURCES_FIND_FILE')}
                     </Button>
                   </div>
 
                   <div className={fileUploadStartFlag ? '' : styles.hide}>
-                    <div style={{ margin: "10px 0 10px 0" }}>
-                      * <span ref={uploadingText}>Uploading</span> :{" "}
+                    <div style={{ margin: '10px 0 10px 0' }}>
+                      * <span ref={uploadingText}>Uploading</span> :{' '}
                       <span ref={progressText}></span>
                       <span ref={loadedText}></span>
                       <div
                         style={{
-                          backgroundColor: "#2275d7",
-                          borderRadius: "4px",
-                          boxShadow: "inset 0 0.5em 0.5em rgba(0,0,0,0.05)",
-                          height: "10px",
-                          margin: "2rem 0 2rem 0",
-                          overflow: "hidden",
-                          position: "relative",
-                          transform: "translateZ(0)",
-                          width: "100%",
+                          backgroundColor: '#2275d7',
+                          borderRadius: '4px',
+                          boxShadow: 'inset 0 0.5em 0.5em rgba(0,0,0,0.05)',
+                          height: '10px',
+                          margin: '2rem 0 2rem 0',
+                          overflow: 'hidden',
+                          position: 'relative',
+                          transform: 'translateZ(0)',
+                          width: '100%',
                         }}
                       >
                         <div
                           ref={progressbar}
                           style={{
-                            backgroundColor: "#828e94",
-                            borderRadius: "4px",
+                            backgroundColor: '#828e94',
+                            borderRadius: '4px',
                             boxShadow:
-                              "inset 0 0.5em 0.5em rgba(94, 49, 49, 0.05)",
-                            height: "10px",
-                            transform: "translateX(0%)",
+                              'inset 0 0.5em 0.5em rgba(94, 49, 49, 0.05)',
+                            height: '10px',
+                            transform: 'translateX(0%)',
                           }}
                         ></div>
                       </div>
                     </div>
                   </div>
 
-                  {fileValidError &&
-                    <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_FILE_EMPTY_DESC')}</div>
-                  }
-                  {fileExtError &&
-                    <div className="form-item-error" style={{ color: '#ca2621' }}>{t('RESOURCES_ONLY_UPLOAD_ZIP_FILE')}</div>
-                  }
+                  {fileValidError && (
+                    <div
+                      className="form-item-error"
+                      style={{ color: '#ca2621' }}
+                    >
+                      {t('RESOURCES_FILE_EMPTY_DESC')}
+                    </div>
+                  )}
+                  {fileExtError && (
+                    <div
+                      className="form-item-error"
+                      style={{ color: '#ca2621' }}
+                    >
+                      {t('RESOURCES_ONLY_UPLOAD_ZIP_FILE')}
+                    </div>
+                  )}
                 </Form.Group>
               </>
             </Form.Item>
 
             <Form.Item>
               <>
-                {t('RESOURCES_VM')}<span className="form-item-required">*</span>
-                <div style={{ color: '#79879c' }}>({t('RESOURCES_APP_DEPLOY_VM_ADD_DESC')})</div>
+                {t('RESOURCES_VM')}
+                <span className="form-item-required">*</span>
+                <div style={{ color: '#79879c' }}>
+                  ({t('RESOURCES_APP_DEPLOY_VM_ADD_DESC')})
+                </div>
                 <Form.Group>
-
                   {listVmInventory.map((obj, idx) => (
                     <div className={styles.scriptitem} key={obj}>
                       <Form.Item>
@@ -419,7 +479,9 @@ const ModifyModal = (props) => {
                             rows="1"
                             cols="70"
                             placeholder={t('Private Key')}
-                            defaultValue={props.store.detail.vm[obj - 1]?.privateKey}
+                            defaultValue={
+                              props.store.detail.vm[obj - 1]?.privateKey
+                            }
                           />
                         </Form.Item>
                       </div>
@@ -427,7 +489,10 @@ const ModifyModal = (props) => {
                         type="flat"
                         icon="trash"
                         className={styles.scriptdelete}
-                        onClick={() => listVmInventory.length > 1 && handleVmInventory.delColumn(obj)}
+                        onClick={() =>
+                          listVmInventory.length > 1 &&
+                          handleVmInventory.delColumn(obj)
+                        }
                       />
                     </div>
                   ))}
@@ -439,32 +504,51 @@ const ModifyModal = (props) => {
                       {t('RESOURCES_ADD')}
                     </Button>
                   </div>
-                  {vmValidError &&
-                    <div className="form-item-error" style={{ color: '#ca2621' }}>{t('애플리케이션이 배포될 가상머신을 입력해 주세요.')}</div>
-                  }
+                  {vmValidError && (
+                    <div
+                      className="form-item-error"
+                      style={{ color: '#ca2621' }}
+                    >
+                      {t('RESOURCES_APP_DEPLOY_VM_EMPTY_DESC')}
+                    </div>
+                  )}
                 </Form.Group>
               </>
             </Form.Item>
           </div>
         </Form>
         <div className={styles['modal-footer']}>
-          <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
-          {submitButtonFlag ?
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])} 
-            disabled loading={true}>
-            {t('RESOURCES_CONFIRM')}
+          <Button
+            onClick={() => closeModal()}
+            className={classnames(styles['btn'], styles['btn-default'])}
+          >
+            {t('RESOURCES_CANCEL')}
+          </Button>
+          {submitButtonFlag ? (
+            <Button
+              onClick={() => {
+                handleOk();
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+              disabled
+              loading={true}
+            >
+              {t('RESOURCES_CONFIRM')}
             </Button>
-            :
-            <Button onClick={() => { handleOk() }} className={classnames(styles['btn'], styles['btn-control'])}
-             >{t('RESOURCES_CONFIRM')}
-             </Button>
-          }
+          ) : (
+            <Button
+              onClick={() => {
+                handleOk();
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+            >
+              {t('RESOURCES_CONFIRM')}
+            </Button>
+          )}
         </div>
       </Modal>
-
     </>
   );
 };
 
-export default ModifyModal
-
+export default ModifyModal;
