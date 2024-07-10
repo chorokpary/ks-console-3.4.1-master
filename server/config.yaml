@@ -88,6 +88,9 @@ client:
     - label: '한국어'
       value: 'ko'
       recommend: true
+    - label: 'English'
+      value: 'en'
+      recommend: true
   defaultLang: 'ko'
   showAllLangs: true
 

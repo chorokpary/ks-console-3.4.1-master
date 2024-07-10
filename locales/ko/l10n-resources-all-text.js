@@ -305,7 +305,7 @@ module.exports = {
   RESOURCES_RESOURCE_TYPE: '리소스 타입',
   RESOURCES_RESOURCE_CURRENT_SITUATION_USAGE: '리소스 현황 및 사용량',
   RESOURCES_NOT_FOUND_RESOURCE: '리소스를 찾을 수 없습니다.',
-  RESOURCES_RESOURCE_TEMPLATE: '컴퓨팅 리소스 템플릿',
+  RESOURCES_RESOURCE_TEMPLATE: '컴퓨팅 템플릿',
   RESOURCES_REAL_TIME: '리얼 타임',
   RESOURCES_MIGRATION: '마이그레이션',
   RESOURCES_MIGRATION_TIP: '마이그레이션을 진행 하시겠습니까?',
@@ -681,15 +681,15 @@ module.exports = {
   RESOURCES_KAAS_DISK_USAGE: 'KaaS 디스크 사용량',
   PERMIGROUP_COMPUTING_WORKLOADS: '컴퓨팅 워크로드',
   PERMIGROUP_COMPUTING_SETTINGS: '컴퓨팅 설정',
-  PERMIGROUP_RESOURCE_TEMPLATE: '컴퓨팅 리소스 템플릿',
+  PERMIGROUP_RESOURCE_TEMPLATE: '컴퓨팅 템플릿',
   PERMISSION_COMPUTING_WORKLOAD_MANAGE: '컴퓨팅 워크로드 관리',
   PERMISSION_COMPUTING_WORKLOAD_VIEW: '컴퓨팅 워크로드 보기',
   PERMISSION_COMPUTING_SETTING_MANAGE: '컴퓨팅 설정 관리',
   PERMISSION_COMPUTING_SETTING_VIEW: '컴퓨팅 설정 보기',
   PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE:
-    '컴퓨팅 리소스 템플릿 키페어 관리',
-  PERMISSION_RESOURCE_TEMPLATE_MANAGE: '컴퓨팅 리소스 템플릿 관리',
-  PERMISSION_RESOURCE_TEMPLATE_VIEW: '컴퓨팅 리소스 템플릿 보기',
+    '컴퓨팅 템플릿 키페어 관리',
+  PERMISSION_RESOURCE_TEMPLATE_MANAGE: '컴퓨팅 템플릿 관리',
+  PERMISSION_RESOURCE_TEMPLATE_VIEW: '컴퓨팅 템플릿 보기',
   PERMISSION_COMPUTING_WORKLOAD_MANAGE_DESC:
     '프로젝트 컴퓨팅 워크로드를 관리합니다. ',
   PERMISSION_COMPUTING_WORKLOAD_VIEW_DESC:
@@ -698,11 +698,11 @@ module.exports = {
     '프로젝트 컴퓨팅 설정을 관리합니다.',
   PERMISSION_COMPUTING_SETTING_VIEW_DESC: '프로젝트 컴퓨팅 설정을 조회합니다.',
   PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE_DESC:
-    '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
+    '프로젝트 컴퓨팅 템플릿을 관리합니다.',
   PERMISSION_RESOURCE_TEMPLATE_MANAGE_DESC:
-    '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
+    '프로젝트 컴퓨팅 템플릿을 관리합니다.',
   PERMISSION_RESOURCE_TEMPLATE_VIEW_DESC:
-    '프로젝트 컴퓨팅 리소스 템플릿을 조회합니다.',
+    '프로젝트 컴퓨팅 템플릿을 조회합니다.',
   RESOURCES_NETWORK_TRAFFIC_IN: '네트워크 트래픽 IN',
   RESOURCES_NETWORK_TRAFFIC_OUT: '네트워크 트래픽 OUT',
   RESOURCES_REPLICA_DESIRE: '모든 노드',
