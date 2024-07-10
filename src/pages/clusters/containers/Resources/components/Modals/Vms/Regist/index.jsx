@@ -2080,7 +2080,7 @@ const RegistModal = props => {
                         </div>
                       </div>
                       <div className={styles.list}>
-                        <label>t('RESOURCES_FLAVOR')</label>
+                        <label>{t('RESOURCES_FLAVOR')}</label>
                         <div className={styles.multiline}>
                           <div className={styles.bold}>{flavorName}</div>
                           <p>
