@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { inject, observer } from 'mobx-react'
 import classnames from 'classnames'
 
@@ -67,6 +67,7 @@ const Status = props => {
     return (
       <div className={styles.itemExtra}>
         <div className={styles.containers}>
+          Flavor
           <div className={classnames(styles.item)}>
             <div className={styles.icon}>
               <Icon name="apps" size={40} />
@@ -128,59 +129,62 @@ const Status = props => {
                 )
               })
               .map((detail, index) => (
-                <div className={classnames(styles.expandItem)} key={index}>
-                  <div className={styles.itemMain}>
-                    <div className={styles.icon}>
-                      <Icon name="nodes" size={40} type={'light'} />
-                      <Indicator
-                        className={styles.indicator}
-                        type={getState(detail?.ready_status, detail?.phase)}
-                        flicker
-                      />
-                    </div>
-                    <div className={styles.content}>
-                      <div className={styles.text} style={{ width: '25%' }}>
-                        <div>{detail.name}</div>
-                        <p>
-                          {getLocalTime(detail.timestamp).format(
-                            'YYYY-MM-DD HH:mm:ss'
+                <Fragment key={index}>
+                  {index === 0 && `Nodes`}
+                  <div className={classnames(styles.expandItem)} key={index}>
+                    <div className={styles.itemMain}>
+                      <div className={styles.icon}>
+                        <Icon name="nodes" size={40} type={'light'} />
+                        <Indicator
+                          className={styles.indicator}
+                          type={getState(detail?.ready_status, detail?.phase)}
+                          flicker
+                        />
+                      </div>
+                      <div className={styles.content}>
+                        <div className={styles.text} style={{ width: '25%' }}>
+                          <div>{detail.name}</div>
+                          <p>
+                            {getLocalTime(detail.timestamp).format(
+                              'YYYY-MM-DD HH:mm:ss'
+                            )}
+                          </p>
+                        </div>
+                        <div className={styles.text} style={{ width: '15%' }}>
+                          <div>{detail.phase}</div>
+                          <p>{detail?.ready_status ? 'Ready' : 'Not-ready'}</p>
+                        </div>
+                        <div className={styles.text}>
+                          {detail?.networks?.filter(
+                            network => network.name !== 'k8s-pod-network'
+                          ).length > 0 ? (
+                            <div>
+                              {detail.networks
+                                .filter(
+                                  network => network.name !== 'k8s-pod-network'
+                                )
+                                .map(network => (
+                                  <div key={network.name}>
+                                    {network.ip}({network.name})
+                                  </div>
+                                ))}
+                            </div>
+                          ) : (
+                            <div>-</div>
                           )}
-                        </p>
-                      </div>
-                      <div className={styles.text} style={{ width: '15%' }}>
-                        <div>{detail.phase}</div>
-                        <p>{detail?.ready_status ? 'Ready' : 'Not-ready'}</p>
-                      </div>
-                      <div className={styles.text}>
-                        {detail?.networks?.filter(
-                          network => network.name !== 'k8s-pod-network'
-                        ).length > 0 ? (
-                          <div>
-                            {detail.networks
-                              .filter(
-                                network => network.name !== 'k8s-pod-network'
-                              )
-                              .map(network => (
-                                <div key={network.name}>
-                                  {network.ip}({network.name})
-                                </div>
-                              ))}
-                          </div>
-                        ) : (
-                          <div>-</div>
+                          <p>IP({t('RESOURCES_NETWORK')})</p>
+                        </div>
+                        {renderMonitorings(
+                          detail.name,
+                          isExpandFlag,
+                          detail.networks.find(
+                            network => network.name === 'k8s-pod-network'
+                          )
                         )}
-                        <p>IP({t('RESOURCES_NETWORK')})</p>
                       </div>
-                      {renderMonitorings(
-                        detail.name,
-                        isExpandFlag,
-                        detail.networks.find(
-                          network => network.name === 'k8s-pod-network'
-                        )
-                      )}
                     </div>
                   </div>
-                </div>
+                </Fragment>
               ))}
         </div>
       </div>
