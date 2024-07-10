@@ -157,7 +157,7 @@ const DetailVmList = props => {
 
     const getVmCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       });
@@ -167,7 +167,7 @@ const DetailVmList = props => {
 
     const getVmWinCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
 	...paramsData,
         cluster,
       });
@@ -276,7 +276,7 @@ const DetailVmList = props => {
                   name="terminal"
                   size={16}
                   clickable
-                  onClick={() => handleOpenVnc(obj.id)}
+                  onClick={() => handleOpenVnc(obj.id, obj.project)}
                 />
               </Tooltip>
             </div>
@@ -571,11 +571,11 @@ const DetailVmList = props => {
     return 'error';
   };
 
-  const handleOpenVnc = vmId => {
+  const handleOpenVnc = (vmId, project) => {
     // 실제 URL 로 변경 요망
     const apiUrl = `http://${location.hostname}:30020`;
     let param =
-      'path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/';
+      `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`;
     param = `${param + vmId}/vnc`;
 
     const popupName = vmId.replaceAll('-', '');

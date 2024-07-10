@@ -155,8 +155,8 @@ const Status = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
-      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
 
       const vmCpuData = await customStore.fetchMetric({
 	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,

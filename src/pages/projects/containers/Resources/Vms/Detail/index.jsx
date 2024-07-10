@@ -49,6 +49,8 @@ const VmDetail = props => {
 
   const showFlavor = !!store.detail.vm?.image;
 
+  const project = get(store.detail.vm, 'project', 'default')
+
   // external만 존재할 경우 fip 할당 숨김처리
   const networkData = store.networksList || [];
   const networkNameArray = store.detail.vm?.networks.map(item => item.name);
@@ -58,11 +60,10 @@ const VmDetail = props => {
   const disableFip = !!filterData.some(obj => !obj.external);
 
   const fnOpenVncPopup = () => {
-    // 실제 URL 로 변경 요망
-    const apiUrl = `http://${location.hostname}:30020`;
-    let param =
-      'path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/';
-    param = `${param + vmId}/vnc`;
+    //실제 URL 로 변경 요망
+    var apiUrl = "http://" + location.hostname + ":30020";
+    var param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`;
+    param = param + vmId + "/vnc";
 
     const popupName = vmId.replaceAll('-', '');
     window.open(
