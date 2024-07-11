@@ -74,6 +74,7 @@ const RegistModal = props => {
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
   );
+  const [isNetworkSelect, setIsNetworkSelect] = useState(true);
 
   useEffect(() => {
     const getCreateData = async () => {
@@ -101,17 +102,8 @@ const RegistModal = props => {
     initNetworkList();
   }, [networkDataList]); // setNetworkDataList(listNetwork); 처음 값이 셋팅될때
 
-  // 프로젝트 변경되면 네트워크 이름이 없어져야 하는데 처음 선택했던 id 값이 저장되어있음
-  /*
-  프로젝트 : default
-  네트워크 : 선택 > 네트워크 이름 선택
-
-  다른 프로젝트 선택하면 처음 선택했던 네트워크 id 값이 남아있어 '선택' 이 아닌 id 값이 나오는 상황입니다.  
-  
-  현재 networkList.length가 0보다 작을때 '선택'이 나오도록 설정해 놓았습니다. 
-  */
   useEffect(() => {
-    setNetworkName();
+    setNetworkName(t('RESOURCES_SELECT'));
     initNetworkList();
   }, [projectName]);
 
@@ -162,6 +154,8 @@ const RegistModal = props => {
     const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
     setIsMembers(members.length > 0);
+    setIsNetworkSelect((networkName != t('RESOURCES_SELECT') && networkName != 'select'))
+    
     if (isDuplicate(rules)) {
       setIsDupRules(false);
     } else {
@@ -434,25 +428,21 @@ const RegistModal = props => {
             label={t('RESOURCES_NETWORK_NAME')}
             rules={[{ required: true, validator: networkValidator }]}
           >
-            {networkList.length > 0 ? (
+            <> 
               <Select
                 name="network"
                 options={networkList}
                 onChange={e => {
                   setNetworkName(e);
+                  setIsNetworkSelect(true);
                 }}
                 value={networkName}
                 placeholder={t('RESOURCES_SELECT')}
               />
-            ) : (
-              <Select
-                name="network2"
-                options={[]}
-                defaultValue={t('RESOURCES_SELECT')}
-                value={t('RESOURCES_SELECT')}
-                placeholder={t('RESOURCES_SELECT')}
-              />
-            )}
+              <div className={`form-item-error ${isNetworkSelect ? 'hide' : ''}`}>
+                {t('RESOURCES_SELECT_NETWORK_NAME_TIP')}
+              </div>
+            </>
           </Form.Item>
           <div style={{ padding: 10 }} />
 
