@@ -108,7 +108,7 @@ const RegistModal = props => {
 
   다른 프로젝트 선택하면 처음 선택했던 네트워크 id 값이 남아있어 '선택' 이 아닌 id 값이 나오는 상황입니다.  
   
-  현재 networkList.length '선택'이 나오도록 
+  현재 networkList.length가 0보다 작을때 '선택'이 나오도록 설정해 놓았습니다. 
   */
   useEffect(() => {
     setNetworkName();
