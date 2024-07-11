@@ -3,13 +3,13 @@ import { Modal } from 'components/Base'
 import { UnitSlider } from 'components/Inputs'
 import { range } from 'lodash'
 import {
+  Button,
   Form,
   Input,
-  Select,
-  Button,
-  TextArea,
   Loading,
   Notify,
+  Select,
+  TextArea,
 } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import {
@@ -22,6 +22,7 @@ import axios from 'axios'
 import { Base64 } from 'js-base64'
 
 import { PATTERN_USER_NAME } from 'utils/constants'
+import GpuNodeStore from 'stores/resources/gpunodes'
 import CardSelect from '../../../CardSelect'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
@@ -54,16 +55,20 @@ const osTypeOptions = [
   // { label: 'etc', value: '', icon: 'ico-plus', }
 ]
 
-export default function ResourceImageModal({ title, onOk }) {
+const ResourceImageModal = props => {
+  const { title, onOk } = props
   const form = useRef()
   const [formData] = useState({})
   const distroTypeStore = new ClusterDistroTypeStore()
+  const gpuNodeStore = new GpuNodeStore()
 
   const [modelView, setModalView] = useState(true)
 
   const [osType, setOsType] = useState('linux')
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroTypeList, setDistroTypeList] = useState([])
+  const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
+  const [acceleratorType, setAcceleratorType] = useState('None')
   const [distroType, setDistroType] = useState('ubuntu-2004')
 
   const [imageSize, setImageSize] = useState(defaultImageSize)
@@ -88,7 +93,14 @@ export default function ResourceImageModal({ title, onOk }) {
       setDistroTypeData(dist)
       setDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
     }
+
+    const getAcceleratorTypeList = async () => {
+      const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
+      setAcceleratorTypeList(accelList)
+    }
+
     getDistroTypeList()
+    getAcceleratorTypeList()
   }, [])
 
   const handleImageSizeActive = () => {
@@ -102,13 +114,19 @@ export default function ResourceImageModal({ title, onOk }) {
   }
 
   const distroTypeOptions = () => {
-    const opt = distroTypeList.map(obj => ({
+    return distroTypeList.map(obj => ({
       label: t(obj.name),
       description: t(obj.vendor),
       icon: `ico-os-${obj.name.split('-')[0]}`,
       value: t(obj.name),
     }))
-    return opt
+  }
+
+  const accelTypeOptions = () => {
+    return acceleratorTypeList.map(obj => ({
+      label: t(obj),
+      value: t(obj),
+    }))
   }
 
   const handleOk = () => {
@@ -458,13 +476,14 @@ export default function ResourceImageModal({ title, onOk }) {
                 </Column>
                 <Column>
                   <Form.Item
-                    label={t('RESOURCES_DRIVER_TYPE')}
+                    label={t('RESOURCES_ACCELERATOR_TYPE')}
                     rules={[{ required: false }]}
                   >
-                    <Input
-                      name="driver"
-                      maxLength={253}
-                      style={{ maxWidth: 'none' }}
+                    <Select
+                      name="accelerator_type"
+                      defaultValue={acceleratorType}
+                      options={accelTypeOptions()}
+                      onChange={e => setAcceleratorType(e)}
                     />
                   </Form.Item>
                 </Column>
@@ -760,7 +779,7 @@ const Step2 = ({
     setImageName(imageName)
     imageName = encodeURIComponent(imageName)
     if (publicType === 'public') {
-      getPulicImageTag(imageName)
+      getPublicImageTag(imageName)
     } else {
       getPrivateImageTag(imageName, projectName)
     }
@@ -768,7 +787,7 @@ const Step2 = ({
 
   // public image tag
   // eslint-disable-next-line no-shadow
-  const getPulicImageTag = async imageName => {
+  const getPublicImageTag = async imageName => {
     const originUrl = new URL(registryUrl)
     const urlParams = originUrl.searchParams
     const namespace = urlParams.get('namespace')
@@ -1114,3 +1133,5 @@ const Step2 = ({
     </div>
   )
 }
+
+export default ResourceImageModal

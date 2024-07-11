@@ -156,7 +156,8 @@ module.exports = {
   RESOURCES_CONNECTION_LB: 'LB Connection',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Please select the Master Flavor.',
   RESOURCES_SELECT_MASTER_ARCH_TIP: 'Please select the Master Architecture.',
-  RESOURCES_SELECT_NODEPOOL_ARCH_TIP: 'Please select the NodePool Architecture.',
+  RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
+    'Please select the NodePool Architecture.',
   RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: 'Please select Kubernetes version.',
   RESOURCES_MASTER_COUNT: 'Number of Masters',
   RESOURCES_MASTER_COUNT_MAX_DESC:
@@ -575,7 +576,7 @@ module.exports = {
   RESOURCES_CORE_COUNT: 'Core Count',
   RESOURCES_KUBERNETES: 'Kubernetes',
   RESOURCES_KUBERNETES_VERSION: 'Kubernetes Version',
-  RESOURCES_DRIVER_TYPE: 'Driver Type',
+  RESOURCES_ACCELERATOR_TYPE: 'Accelerator Type',
   RESOURCES_KUBERNETES_SERVER_IP: 'Kubernetes Server IP',
   RESOURCES_CLASS: 'Class',
   RESOURCES_CLUSTER: 'Cluster',
@@ -876,4 +877,4 @@ module.exports = {
   RESOURCES_PREPARING: 'Preparing',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: 'Before file upload.',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: 'Before image build & push.',
-};
+}
