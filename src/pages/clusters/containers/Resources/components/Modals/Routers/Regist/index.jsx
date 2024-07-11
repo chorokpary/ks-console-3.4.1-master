@@ -190,6 +190,7 @@ const RegistModal = props => {
                     onChange={e => {
                       setProjectName(e);
                       setInternalCheckItems([]);
+                      setRadioExternal('');
                     }}
                   />
                 </Form.Item>
