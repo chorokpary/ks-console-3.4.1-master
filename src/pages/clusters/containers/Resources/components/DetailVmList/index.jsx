@@ -168,7 +168,7 @@ const DetailVmList = props => {
     const getVmWinCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
-	...paramsData,
+        ...paramsData,
         cluster,
       });
       setVmWinCpuData(vmCpuData);
@@ -188,7 +188,7 @@ const DetailVmList = props => {
     const getVmWinMemoryUsageData = async () => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
-	...paramsData,
+        ...paramsData,
         cluster,
       });
 
@@ -288,7 +288,27 @@ const DetailVmList = props => {
             </p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
+            <div>
+              {obj.state === 'Stopped'
+                ? t('RESOURCES_STOP')
+                : obj.state === 'Provisioning'
+                ? t('RESOURCES_PROVISIONING')
+                : obj.state === 'Starting'
+                ? t('RESOURCES_STARTING')
+                : obj.state === 'Running'
+                ? t('RESOURCES_RUNNING')
+                : obj.state === 'Paused'
+                ? t('RESOURCES_PAUSED')
+                : obj.state === 'Migrating'
+                ? t('RESOURCES_MIGRATING')
+                : obj.state === 'Stopping'
+                ? t('RESOURCES_STOPPING')
+                : obj.state === 'Terminating'
+                ? t('RESOURCES_TERMINATING')
+                : obj.state === 'Unknown'
+                ? t('RESOURCES_UNKNOWN')
+                : ''}
+            </div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
@@ -435,13 +455,19 @@ const DetailVmList = props => {
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
 
-    const vmCpuMetricData = _.find(osType == "linux" ? vmCpuData : vmWinCpuData, data => {
-      if (data.metric.pod === vmId) return data;
-    });
+    const vmCpuMetricData = _.find(
+      osType == 'linux' ? vmCpuData : vmWinCpuData,
+      data => {
+        if (data.metric.pod === vmId) return data;
+      }
+    );
 
-    const vmMemoryMetricData = _.find(osType == "linux" ? vmMemoryData : vmWinMemoryData, data => {
-      if (data.metric.pod === vmId) return data;
-    });
+    const vmMemoryMetricData = _.find(
+      osType == 'linux' ? vmMemoryData : vmWinMemoryData,
+      data => {
+        if (data.metric.pod === vmId) return data;
+      }
+    );
 
     if (!vmCpuMetricData && !vmMemoryMetricData)
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>;
