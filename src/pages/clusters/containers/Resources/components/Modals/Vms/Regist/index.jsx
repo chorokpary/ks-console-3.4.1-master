@@ -1194,7 +1194,12 @@ const RegistModal = props => {
                           name="metadata.namespace"
                           defaultValue={projectName}
                           cluster={props.cluster}
-                          onChange={e => setProjectName(e)}
+                          onChange={e => {
+                            setProjectName(e);
+                            setNetworkCheckItems([]);
+                            setSriovCheckItems([]);
+                            setSecurityGroupCheckItems([]);
+                          }}
                         />
                       </Form.Item>
                     </Column>
@@ -1366,7 +1371,7 @@ const RegistModal = props => {
                     name="description"
                     maxLength={256}
                     rows="1"
-                    defaultValue=""
+                    value=""
                   />
                 </Form.Item>
               </div>
@@ -1388,7 +1393,7 @@ const RegistModal = props => {
                           onClick={() => handleAllCheck(false, 'network')}
                         >
                           {t('RESOURCES_ALL_DESELECT')}
-                        </Button>{' '}
+                        </Button>
                         {stateVariables['network'].length}
                         {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                       </div>
@@ -1487,6 +1492,7 @@ const RegistModal = props => {
                           ))}
                         </tbody>
                       </table>
+
                       <div className={styles.removeCheckWrapper}>
                         {networkCheckItems?.map(id => {
                           const name = networkList
