@@ -344,14 +344,15 @@ const TopologyItem = props => {
       const num = obj.num;
       const barNum = num < 10 ? `0${num}` : num;
       const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
-
       return (
         // VM 연결
         obj.elementVmList.length > 0 &&
         obj.elementVmList.map(vm => {
+
           const vmNetworkIp = vm.networks
-            .filter(network => network.name == obj.id)
+            .filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.id)
             .map(item => item.ip);
+
           const vmNetworkName = vm.networks
             .filter(network => network.name == obj.id)
             .map(item => item.name);
@@ -359,6 +360,7 @@ const TopologyItem = props => {
           const sriovCheck = sriovList
             .map(item => item.name)
             .includes(vmNetworkName.toString());
+
           const bondingLeft = !sriovCheck ? '' : 'bonding';
 
           const rightElementsArray = duplicationVmList.filter(
