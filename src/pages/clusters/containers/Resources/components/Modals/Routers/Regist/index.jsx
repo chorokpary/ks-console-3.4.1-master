@@ -49,7 +49,6 @@ const RegistModal = props => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
-      console.log(JSON.stringify(data))
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
       data.external = radioExternal;
@@ -188,7 +187,11 @@ const RegistModal = props => {
                     name="namespace"
                     defaultValue={projectName}
                     cluster={props.cluster}
-                    onChange={e => setProjectName(e)}
+                    onChange={e => {
+                      setProjectName(e);
+                      setInternalCheckItems([]);
+                      setRadioExternal('');
+                    }}
                   />
                 </Form.Item>
               </Column>
@@ -314,7 +317,7 @@ const RegistModal = props => {
                           onClick={() => handleDelete(id, 'internal')}
                         >
                           {name}
-                        </Button>{' '}
+                        </Button>
                       </span>
                     );
                   })}
@@ -448,11 +451,7 @@ const RegistModal = props => {
             label={t('RESOURCES_DESCRIPTION')}
             desc={t('DESCRIPTION_DESC')}
           >
-            <TextArea
-              name="description"
-              maxLength={256}
-              rows="1"
-            />
+            <TextArea name="description" maxLength={256} rows="1" />
           </Form.Item>
         </Form>
       </Modal>

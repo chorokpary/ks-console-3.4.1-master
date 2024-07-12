@@ -1,17 +1,17 @@
-import { get, groupBy, isEmpty } from 'lodash';
-import React, { useState, useEffect } from 'react';
-import { observer, inject } from 'mobx-react';
-import classnames from 'classnames';
+import { get, groupBy, isEmpty } from 'lodash'
+import React, { useState, useEffect } from 'react'
+import { observer, inject } from 'mobx-react'
+import classnames from 'classnames'
 
-import { Panel, Text, Indicator } from 'components/Base';
-import { TinyArea } from 'components/Charts';
-import { Link } from 'react-router-dom';
+import { Panel, Text, Indicator } from 'components/Base'
+import { TinyArea } from 'components/Charts'
+import { Link } from 'react-router-dom'
 
-import VmStore from 'stores/resources/vms';
-import CustomStore from 'stores/monitoring/custom/monitor';
-import { getLocalTime } from 'utils';
-import * as common from 'utils/resources';
-import { getAreaChartOps } from 'utils/monitoring';
+import VmStore from 'stores/resources/vms'
+import CustomStore from 'stores/monitoring/custom/monitor'
+import { getLocalTime } from 'utils'
+import * as common from 'utils/resources'
+import { getAreaChartOps } from 'utils/monitoring'
 
 import {
   Button,
@@ -23,8 +23,8 @@ import {
   Loading,
   Pagination,
   Tooltip,
-} from '@kube-design/components';
-import styles from './index.scss';
+} from '@kube-design/components'
+import styles from './index.scss'
 
 const DetailVmList = props => {
   // props = {
@@ -33,126 +33,126 @@ const DetailVmList = props => {
   //   name : 'ubuntu' // 예시대로 vm 데이터 내의 image 이름이 ubuntu 인 것,
   // }
 
-  const store = new VmStore();
-  const customStore = new CustomStore();
+  const store = new VmStore()
+  const customStore = new CustomStore()
 
-  const cluster = props.detailStore?.detail.cluster;
+  const cluster = props.detailStore?.detail.cluster
 
-  const [vmDataList, setVmDataList] = useState([]);
-  const [vmSliceDataList, setVmSliceDataList] = useState([]);
-  const [vmSearchDataList, setVmSearchDataList] = useState([]);
+  const [vmDataList, setVmDataList] = useState([])
+  const [vmSliceDataList, setVmSliceDataList] = useState([])
+  const [vmSearchDataList, setVmSearchDataList] = useState([])
 
-  const [isExpandFlag, setIsExpandFlag] = useState(false);
-  const [expandItem, setExpandItem] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSearchFlag, setIsSearchFlag] = useState(false);
+  const [isExpandFlag, setIsExpandFlag] = useState(false)
+  const [expandItem, setExpandItem] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSearchFlag, setIsSearchFlag] = useState(false)
 
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
+  const [vmCpuData, setVmCpuData] = useState([])
+  const [vmMemoryData, setVmMemoryData] = useState([])
 
-  const [vmWinCpuData, setVmWinCpuData] = useState([]);
-  const [vmWinMemoryData, setVmWinMemoryData] = useState([]);
+  const [vmWinCpuData, setVmWinCpuData] = useState([])
+  const [vmWinMemoryData, setVmWinMemoryData] = useState([])
 
-  const perPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState();
+  const perPage = 6
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchValue, setSearchValue] = useState()
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
-    const unit = timeStr.slice(-1);
-    let value = parseFloat(timeStr);
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
 
     switch (unit) {
       default:
       case 's':
-        break;
+        break
       case 'm':
-        value *= 60;
-        break;
+        value *= 60
+        break
       case 'h':
-        value *= 60 * 60;
-        break;
+        value *= 60 * 60
+        break
       case 'd':
-        value = value * 24 * 60 * 60;
-        break;
+        value = value * 24 * 60 * 60
+        break
     }
-    return hasUnit ? `${value}s` : value;
-  };
+    return hasUnit ? `${value}s` : value
+  }
 
   const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
-    const interval = parseFloat(step) * times;
-    const end = Math.floor(Date.now() / 1000);
-    const start = Math.floor(end - interval);
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
 
-    return { start, end };
-  };
+    return { start, end }
+  }
 
   const handleExpand = name => {
-    setExpandItem(name);
-    setIsExpandFlag(!isExpandFlag);
-  };
+    setExpandItem(name)
+    setIsExpandFlag(!isExpandFlag)
+  }
 
   useEffect(() => {
-    fnGetData();
-    fetchData();
-  }, []);
+    fnGetData()
+    fetchData()
+  }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
-    setIsLoading(true);
-    setIsSearchFlag(false);
-    const page = get(params, 'page', 1);
+    setIsLoading(true)
+    setIsSearchFlag(false)
+    const page = get(params, 'page', 1)
 
-    const vmList = await store.fetchList({ cluster });
-    const vmFilterData = vmList?.filter(row => variablesFilter(row));
+    const vmList = await store.fetchList({ cluster })
+    const vmFilterData = vmList?.filter(row => variablesFilter(row))
     const vmSearchData =
       params.name != '' && params.name != undefined
         ? getSearchData(vmFilterData, params.name)
-        : [];
+        : []
 
     const vmSliceData =
       vmSearchData.length > 0
         ? getSliceData(vmSearchData, page)
         : params.name != '' && params.name != undefined
         ? getSliceData(vmSearchData, page)
-        : getSliceData(vmFilterData, page);
+        : getSliceData(vmFilterData, page)
 
-    setCurrentPage(page);
-    setVmDataList(vmFilterData);
-    setVmSliceDataList(vmSliceData);
-    setVmSearchDataList(vmSearchData);
+    setCurrentPage(page)
+    setVmDataList(vmFilterData)
+    setVmSliceDataList(vmSliceData)
+    setVmSearchDataList(vmSearchData)
 
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   const variablesFilter = row => {
     if (props.variables === 'security_group_objects') {
-      return _.find(row[props.variables], { id: props.id });
+      return _.find(row[props.variables], { id: props.id })
     }
     if (props.variables === 'networks') {
-      return _.find(row[props.variables], { name: props.id });
+      return _.find(row[props.variables], { name: props.id })
     }
     if (props.variables === 'flavor_object') {
-      return row[props.variables].name === props.name;
+      return row[props.variables].name === props.name
     }
     if (props.variables == 'id') {
-      return row[props.variables] === props.id;
+      return row[props.variables] === props.id
     }
-    return row[props.variables] === props.name;
-  };
+    return row[props.variables] === props.name
+  }
 
   const fetchData = async () => {
-    const params = { times: 50, step: '10m' };
+    const params = { times: 50, step: '10m' }
 
     const paramsData = Object.assign(params, {
       start: params.start,
       end: params.end,
       step: getMinuteValue(params.step),
       times: params.times,
-    });
+    })
 
     if (!paramsData.start || !paramsData.end) {
-      const timeRange = getTimeRange(paramsData);
-      paramsData.start = timeRange.start;
-      paramsData.end = timeRange.end;
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
     }
 
     const getVmCpuUsageData = async () => {
@@ -160,19 +160,19 @@ const DetailVmList = props => {
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
-      });
+      })
 
-      setVmCpuData(vmCpuData);
-    };
+      setVmCpuData(vmCpuData)
+    }
 
     const getVmWinCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
-	...paramsData,
+        ...paramsData,
         cluster,
-      });
-      setVmWinCpuData(vmCpuData);
-    };
+      })
+      setVmWinCpuData(vmCpuData)
+    }
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
@@ -180,26 +180,26 @@ const DetailVmList = props => {
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
         cluster,
-      });
+      })
 
-      setVmMemoryData(vmMemoryData);
-    };
+      setVmMemoryData(vmMemoryData)
+    }
 
     const getVmWinMemoryUsageData = async () => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
-	...paramsData,
+        ...paramsData,
         cluster,
-      });
+      })
 
-      setVmWinMemoryData(vmMemoryData);
-    };
+      setVmWinMemoryData(vmMemoryData)
+    }
 
-    getVmCpuUsageData();
-    getVmMemoryUsageData();
-    getVmWinCpuUsageData();
-    getVmWinMemoryUsageData();
-  };
+    getVmCpuUsageData()
+    getVmMemoryUsageData()
+    getVmWinCpuUsageData()
+    getVmWinMemoryUsageData()
+  }
 
   const getMonitoringCfgs = (cpuData, memoryData) => [
     {
@@ -218,14 +218,14 @@ const DetailVmList = props => {
       data: memoryData,
       bgColor: 'transparent',
     },
-  ];
+  ]
 
   const renderContent = () => {
     if (vmSliceDataList.length == 0) {
       const content = (
         <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
-      );
-      return content;
+      )
+      return content
     }
 
     const content = vmSliceDataList.map((obj, index) => {
@@ -251,15 +251,15 @@ const DetailVmList = props => {
             {renderExtraContent(obj)}
           </div>
         </div>
-      );
-    });
+      )
+    })
 
     return (
       <Loading spinning={isLoading}>
         <>{content}</>
       </Loading>
-    );
-  };
+    )
+  }
 
   const renderContentDetail = obj => {
     return (
@@ -288,7 +288,27 @@ const DetailVmList = props => {
             </p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
+            <div>
+              {obj.state === 'Stopped'
+                ? t('RESOURCES_STOP')
+                : obj.state === 'Provisioning'
+                ? t('RESOURCES_PROVISIONING')
+                : obj.state === 'Starting'
+                ? t('RESOURCES_STARTING')
+                : obj.state === 'Running'
+                ? t('RESOURCES_RUNNING')
+                : obj.state === 'Paused'
+                ? t('RESOURCES_PAUSED')
+                : obj.state === 'Migrating'
+                ? t('RESOURCES_MIGRATING')
+                : obj.state === 'Stopping'
+                ? t('RESOURCES_STOPPING')
+                : obj.state === 'Terminating'
+                ? t('RESOURCES_TERMINATING')
+                : obj.state === 'Unknown'
+                ? t('RESOURCES_UNKNOWN')
+                : ''}
+            </div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
@@ -319,13 +339,13 @@ const DetailVmList = props => {
           </div>
         </div>
       </>
-    );
-  };
+    )
+  }
 
   const renderExtraContent = obj => {
     const networkList = obj.networks.filter(
       network => network.name != 'k8s-pod-network'
-    );
+    )
 
     return (
       <div className={styles.itemExtra}>
@@ -426,39 +446,45 @@ const DetailVmList = props => {
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderMonitorings = (vmId, osType, isExpand) => {
     // const isExpand = false;
-    const loading = false;
+    const loading = false
 
-    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
+    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    const vmCpuMetricData = _.find(osType == "linux" ? vmCpuData : vmWinCpuData, data => {
-      if (data.metric.pod === vmId) return data;
-    });
+    const vmCpuMetricData = _.find(
+      osType == 'linux' ? vmCpuData : vmWinCpuData,
+      data => {
+        if (data.metric.pod === vmId) return data
+      }
+    )
 
-    const vmMemoryMetricData = _.find(osType == "linux" ? vmMemoryData : vmWinMemoryData, data => {
-      if (data.metric.pod === vmId) return data;
-    });
+    const vmMemoryMetricData = _.find(
+      osType == 'linux' ? vmMemoryData : vmWinMemoryData,
+      data => {
+        if (data.metric.pod === vmId) return data
+      }
+    )
 
     if (!vmCpuMetricData && !vmMemoryMetricData)
-      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>;
+      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
-    const vmCpuArray = [];
-    vmCpuArray.push(vmCpuMetricData);
+    const vmCpuArray = []
+    vmCpuArray.push(vmCpuMetricData)
 
-    const vmMemoryArray = [];
-    vmMemoryArray.push(vmMemoryMetricData);
+    const vmMemoryArray = []
+    vmMemoryArray.push(vmMemoryMetricData)
 
-    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray);
+    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray)
 
     return (
       <div className={styles.monitors}>
         <div className={styles.charts}>
           {configs.map(item => {
-            const config = getAreaChartOps(item);
+            const config = getAreaChartOps(item)
 
             return (
               <div key={item.type}>
@@ -470,54 +496,54 @@ const DetailVmList = props => {
                   darkMode={isExpand}
                 />
               </div>
-            );
+            )
           })}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
-    const pagination = { page: currentPage, limit: perPage, total };
-    return pagination;
-  };
+    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length
+    const pagination = { page: currentPage, limit: perPage, total }
+    return pagination
+  }
 
   const getSearchData = (data, searchText) => {
-    setIsSearchFlag(true);
+    setIsSearchFlag(true)
     const resultList = data.filter(row => {
-      return row['name']?.toLowerCase().includes(searchText.toLowerCase());
-    });
-    return resultList;
-  };
+      return row['name']?.toLowerCase().includes(searchText.toLowerCase())
+    })
+    return resultList
+  }
 
   const getSliceData = (data, page) => {
-    const currentPage = page;
+    const currentPage = page
     const sliceData = data.slice(
       (currentPage - 1) * perPage,
       currentPage * perPage
-    );
-    return sliceData;
-  };
+    )
+    return sliceData
+  }
 
   const handleSearch = value => {
-    setSearchValue(value);
+    setSearchValue(value)
     fnGetData({
       name: value,
-    });
-  };
+    })
+  }
 
   const handleRefresh = () => {
     const params = searchValue
       ? { name: searchValue, page: currentPage }
-      : { page: currentPage };
-    fnGetData(params);
-  };
+      : { page: currentPage }
+    fnGetData(params)
+  }
 
   const handlePage = page => {
-    const params = page ? { page } : {};
-    fnGetData(params);
-  };
+    const params = page ? { page } : {}
+    fnGetData(params)
+  }
 
   const renderHeader = () => {
     return (
@@ -532,12 +558,12 @@ const DetailVmList = props => {
           <Button type="flat" icon="refresh" onClick={handleRefresh} />
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const renderFooter = () => {
-    const pagination = getPagination();
-    const { total } = pagination;
+    const pagination = getPagination()
+    const { total } = pagination
 
     return (
       <Level className={styles.footer}>
@@ -546,8 +572,8 @@ const DetailVmList = props => {
           <Pagination {...pagination} onChange={handlePage} />
         </LevelRight>
       </Level>
-    );
-  };
+    )
+  }
 
   const getState = state => {
     if (
@@ -557,34 +583,33 @@ const DetailVmList = props => {
       state === 'Terminating' ||
       state === 'Migrating'
     ) {
-      return 'waiting';
+      return 'waiting'
     }
     if (state === 'Running') {
-      return 'running';
+      return 'running'
     }
     if (state === 'Stopped' || state === 'Paused') {
-      return 'stopped';
+      return 'stopped'
     }
     if (state === 'Unknown') {
-      return 'error';
+      return 'error'
     }
-    return 'error';
-  };
+    return 'error'
+  }
 
   const handleOpenVnc = (vmId, project) => {
     // 실제 URL 로 변경 요망
-    const apiUrl = `http://${location.hostname}:30020`;
-    let param =
-      `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`;
-    param = `${param + vmId}/vnc`;
+    const apiUrl = `http://${location.hostname}:30020`
+    let param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`
+    param = `${param + vmId}/vnc`
 
-    const popupName = vmId.replaceAll('-', '');
+    const popupName = vmId.replaceAll('-', '')
     window.open(
       `${apiUrl}/vnc_lite.html?${param}`,
       popupName,
       'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840'
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -620,7 +645,7 @@ const DetailVmList = props => {
         </Panel>
       )}
     </>
-  );
-};
+  )
+}
 
-export default inject('detailStore')(DetailVmList);
+export default inject('detailStore')(DetailVmList)
