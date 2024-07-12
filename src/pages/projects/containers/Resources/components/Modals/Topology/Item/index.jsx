@@ -324,7 +324,7 @@ const TopologyItem = (props) => {
         // VM 연결
         obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
 
-          const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip);
+          const vmNetworkIp = (vm.networks).filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.id).map(item => item.ip);
           const vmNetworkName = (vm.networks).filter(network => network.name == obj.id).map(item => item.name);
 
           const sriovCheck = (sriovList).map(item => item.name).includes(vmNetworkName.toString());

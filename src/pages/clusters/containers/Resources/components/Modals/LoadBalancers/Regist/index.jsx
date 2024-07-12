@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Form,
@@ -11,11 +11,11 @@ import {
   Columns,
 } from '@kube-design/components';
 import { Modal } from 'components/Base';
-import styles from './index.scss';
 import { ProjectSelect } from 'components/Inputs';
 
 import { PATTERN_USER_NAME } from 'utils/constants';
 import LoadBalancerStore from 'stores/resources/loadbalancers';
+import styles from './index.scss';
 
 const RegistModal = props => {
   const loadBalancerStore = new LoadBalancerStore();
@@ -61,7 +61,7 @@ const RegistModal = props => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  const [networkName, setNetworkName] = useState('');
+  const [networkName, setNetworkName] = useState();
 
   const [btnDimm, setBtnDimm] = useState(false);
 
@@ -74,6 +74,7 @@ const RegistModal = props => {
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
   );
+  const [isNetworkSelect, setIsNetworkSelect] = useState(true);
 
   useEffect(() => {
     const getCreateData = async () => {
@@ -88,23 +89,38 @@ const RegistModal = props => {
   }, []);
 
   useEffect(() => {
-    getNetworkFilterList(projectName);
-  }, [networkDataList]);
+    handleMemberIp.handleIpClear();
+  }, [networkName]);
 
-  const getNetworkFilterList = projectName => {
-    const networkList =
-      networkDataList.filter(obj => obj.project === projectName) || [];
-    setNetworkList(networkList);
-  };
+  useEffect(() => {
+    if (!isDuplicate(formRulesFields)) {
+      setIsDupRules(true);
+    }
+  }, [formRulesFields]);
 
-  const networkOptions = () => {
-    const opt = networkList
-      .filter(el => !el.external)
-      .map(obj => ({
-        label: t(obj.name),
-        value: t(obj.id),
-      }));
-    return opt;
+  useEffect(() => {
+    initNetworkList();
+  }, [networkDataList]); // setNetworkDataList(listNetwork); 처음 값이 셋팅될때
+
+  useEffect(() => {
+    setNetworkName(t('RESOURCES_SELECT'));
+    initNetworkList();
+  }, [projectName]);
+
+  const initNetworkList = () => {
+    const filteredNetworkList = networkDataList.filter(
+      network => network.project === projectName
+    );
+    setNetworkList(
+      filteredNetworkList
+        .filter(el => !el.external)
+        .map(obj => {
+          return {
+            label: t(obj.name),
+            value: t(obj.id),
+          };
+        })
+    );
   };
 
   const vmOptions = () => {
@@ -113,7 +129,7 @@ const RegistModal = props => {
       .map(obj => ({
         label: t(obj.name),
         value: t(obj.id),
-        disabled: obj.state === 'Running' ? false : true,
+        disabled: obj.state !== 'Running',
       }));
     return opt;
   };
@@ -138,6 +154,8 @@ const RegistModal = props => {
     const rules = [...formRulesFields].filter(el => el.portRangeMax);
 
     setIsMembers(members.length > 0);
+    setIsNetworkSelect((networkName != t('RESOURCES_SELECT') && networkName != 'select'))
+    
     if (isDuplicate(rules)) {
       setIsDupRules(false);
     } else {
@@ -183,7 +201,7 @@ const RegistModal = props => {
     message: '',
   };
   const [formMemberIpFields, setFormMemberIpFields] = useState([memberIpObj]);
-  //멤버 IP handler
+  // 멤버 IP handler
   const handleMemberIp = {
     handleAddFields: () => {
       const values = [...formMemberIpFields, memberIpObj];
@@ -246,7 +264,7 @@ const RegistModal = props => {
     handleIpClear: () => {
       setFormMemberIpFields([memberIpObj]);
     },
-  }; //end 멤버 IP
+  }; // end 멤버 IP
 
   const rulsObj = {
     ruleType: t('RESOURCES_SPECIFY_USER'),
@@ -258,7 +276,7 @@ const RegistModal = props => {
     message: '',
   };
   const [formRulesFields, setFormRulesFields] = useState([rulsObj]);
-  //Rules handler
+  // Rules handler
   const handleRules = {
     handleAddFields: () => {
       const values = [...formRulesFields, rulsObj];
@@ -297,29 +315,27 @@ const RegistModal = props => {
 
       if (field === 'protocol') {
         values[i].protocol = val;
-      } else {
-        if (
-          !values.map(obj => obj.ruleType).includes(val) ||
-          values[i].ruleType === val ||
-          val === '' ||
-          val === 'CUSTOM'
-        ) {
-          values[i].message = '';
-          values[i].ruleType = val;
-          values = setRuleTypeHandler(i, val, values);
+      } else if (
+        !values.map(obj => obj.ruleType).includes(val) ||
+        values[i].ruleType === val ||
+        val === '' ||
+        val === 'CUSTOM'
+      ) {
+        values[i].message = '';
+        values[i].ruleType = val;
+        values = setRuleTypeHandler(i, val, values);
 
-          if (val === 'ALL') {
-            values = values.filter((obj, idx) => idx === i);
-            setBtnDimm(true);
-          } else {
-            setBtnDimm(false);
-          }
+        if (val === 'ALL') {
+          values = values.filter((obj, idx) => idx === i);
+          setBtnDimm(true);
         } else {
-          values[i].message = t('RESOURCES_ALREADY_SELECTED_TYPE');
-          setTimeout(() => {
-            handleRules.deleteMessage(i);
-          }, 1000);
+          setBtnDimm(false);
         }
+      } else {
+        values[i].message = t('RESOURCES_ALREADY_SELECTED_TYPE');
+        setTimeout(() => {
+          handleRules.deleteMessage(i);
+        }, 1000);
       }
 
       setFormRulesFields(values);
@@ -330,11 +346,11 @@ const RegistModal = props => {
       values[i].message = '';
       setFormRulesFields(values);
     },
-  }; //end Rules
+  }; // end Rules
 
-  //유형에 맞는 프로토콜, 포트범위 셋팅
+  // 유형에 맞는 프로토콜, 포트범위 셋팅
   const setRuleTypeHandler = (i, val, values) => {
-    values[i].isCustom = val === 'CUSTOM' ? true : false;
+    values[i].isCustom = val === 'CUSTOM';
     if (val === 'ALL') {
       values[i].protocol = 'ALL';
     } else {
@@ -350,17 +366,7 @@ const RegistModal = props => {
 
     return values;
   };
-  //----------------end
-
-  useEffect(() => {
-    handleMemberIp.handleIpClear();
-  }, [networkName]);
-
-  useEffect(() => {
-    if (!isDuplicate(formRulesFields)) {
-      setIsDupRules(true);
-    }
-  }, [formRulesFields]);
+  // ----------------end
 
   return (
     <>
@@ -411,7 +417,6 @@ const RegistModal = props => {
                     cluster={props.cluster}
                     onChange={e => {
                       setProjectName(e);
-                      getNetworkFilterList(e);
                     }}
                   />
                 </Form.Item>
@@ -423,12 +428,21 @@ const RegistModal = props => {
             label={t('RESOURCES_NETWORK_NAME')}
             rules={[{ required: true, validator: networkValidator }]}
           >
-            <Select
-              name="network"
-              options={networkOptions()}
-              onChange={e => setNetworkName(e)}
-              defaultValue={t('RESOURCES_SELECT')}
-            />
+            <> 
+              <Select
+                name="network"
+                options={networkList}
+                onChange={e => {
+                  setNetworkName(e);
+                  setIsNetworkSelect(true);
+                }}
+                value={networkName}
+                placeholder={t('RESOURCES_SELECT')}
+              />
+              <div className={`form-item-error ${isNetworkSelect ? 'hide' : ''}`}>
+                {t('RESOURCES_SELECT_NETWORK_NAME_TIP')}
+              </div>
+            </>
           </Form.Item>
           <div style={{ padding: 10 }} />
 
