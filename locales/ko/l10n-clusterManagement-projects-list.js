@@ -44,6 +44,7 @@ module.exports = {
   ALIAS_DESC: '별칭 이름은 문자, 숫자 및 하이픈(-)만 포함할 수 있으며 하이픈으로 시작하거나 끝날 수 없습니다. 최대 길이는 63자입니다.',
   // List > Edit Information
   EDIT_INFORMATION: '정보 편집',
+  CREATE_NODEPOOL: '노드풀 생성',
   // List > Delete
   DELETE_TITLE_SI: '{type} 삭제',
   DELETE_TITLE_PL: '여러 {type} 삭제 ',

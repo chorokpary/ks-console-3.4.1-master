@@ -19,20 +19,19 @@
  */
 
 import React from 'react';
-import { toJS } from 'mobx';
-import { isEmpty, omit } from 'lodash';
-import { Link } from 'react-router-dom';
-import { Icon } from '@kube-design/components';
-import { Indicator } from 'components/Base';
+import {toJS} from 'mobx';
+import {Link} from 'react-router-dom';
+import {Icon} from '@kube-design/components';
+import {Indicator} from 'components/Base';
 import Banner from 'components/Cards/Banner';
-import withList, { ListPage } from 'components/HOCs/withList';
+import withList, {ListPage} from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 
-import { getLocalTime } from 'utils';
-
-import styles from './index.scss';
+import {getLocalTime} from 'utils';
 
 import ResourceStore from 'stores/resources/containerresource';
+import styles from './index.scss';
+
 
 @withList({
     store: new ResourceStore(),
@@ -69,8 +68,7 @@ export default class Resource extends React.Component {
 
     get isRuning() {
         const { selectedRowKeys } = toJS(this.props.store.list);
-        const runingFlag = selectedRowKeys.length > 0 ? false : true;
-        return runingFlag;
+        return !(selectedRowKeys.length > 0);
     }
 
     getData = params => {
@@ -114,7 +112,7 @@ export default class Resource extends React.Component {
     }
 
     get tableActions() {
-        const { trigger, getData, routing, tableProps } = this.props;
+        const { trigger, getData, tableProps } = this.props;
         return {
             ...tableProps.tableActions,
             actions: [
@@ -164,7 +162,7 @@ export default class Resource extends React.Component {
     }
 
     getState(state, phase) {
-        if (phase != 'Provisioned' && phase != 'Running') {
+        if (phase !== 'Provisioned' && phase !== 'Running') {
             return 'updating';
         }
 
@@ -185,9 +183,7 @@ export default class Resource extends React.Component {
                 sorter: true,
                 sortOrder: getSortOrder('name'),
                 search: true,
-                render: this.renderAvatar,
                 render: (name, record) => {
-                    const { cluster } = this.props.match.params;
                     const { cluster_ready, phase } = record;
 
                     return (
@@ -236,8 +232,8 @@ export default class Resource extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('Worker Node'),
-                dataIndex: 'md_replicas',
+                title: t('NodePools'),
+                dataIndex: 'nodepool_num',
                 isHideable: true,
                 width: 'auto',
             },
@@ -248,7 +244,7 @@ export default class Resource extends React.Component {
                 filters: this.getResourcesStatus(),
                 search: true,
                 width: 'auto',
-                render: (state, record) => {
+                render: (state) => {
                     return (
                         <div className={styles.iconwrapper}>
                             <i

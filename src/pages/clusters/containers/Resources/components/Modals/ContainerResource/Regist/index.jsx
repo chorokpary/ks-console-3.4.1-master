@@ -1,129 +1,107 @@
-import { get } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react'
 import {
+  Button,
   Form,
   Input,
-  Select,
-  TextArea,
-  Button,
-  Loading,
   Radio,
-  Checkbox,
+  Select,
   Tabs,
-  Icon,
-  Slider,
-} from '@kube-design/components';
-import { Column, Columns } from '@kube-design/components/lib/components/Layout';
-import classnames from 'classnames';
-import axios from 'axios';
+  TextArea,
+} from '@kube-design/components'
+import { Column, Columns } from '@kube-design/components/lib/components/Layout'
+import classnames from 'classnames'
 
-import { Modal } from 'components/Base';
-import * as common from 'utils/resources';
-import { PATTERN_USER_NAME } from 'utils/constants';
-import VmStore from 'stores/resources/vms';
-import ResourceStore from 'stores/resources/containerresource';
-import TypeSelect from '../../../TypeSelect';
-import CardSelect from '../../../CardSelect';
-import styles from './index.scss';
-
-const CONFIG_CPU_MASTER = 8;
-const CONFIG_RAM_MASTER = 16;
-const CONFIG_DISK_MASTER = 160;
-const CONFIG_CPU_WORKER = 4;
-const CONFIG_RAM_WORKER = 8;
-const CONFIG_DISK_WORKER = 80;
+import { Modal } from 'components/Base'
+import { PATTERN_USER_NAME } from 'utils/constants'
+import VmStore from 'stores/resources/vms'
+import ResourceStore from 'stores/resources/containerresource'
+import TypeSelect from '../../../TypeSelect'
+import CardSelect from '../../../CardSelect'
+import styles from './index.scss'
 
 const RegistModal = props => {
-  const form = useRef();
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [formData] = useState({})
 
-  const vmStore = new VmStore();
-  const resourceStore = new ResourceStore();
+  const vmStore = new VmStore()
+  const resourceStore = new ResourceStore()
 
-  const [modelView, setModalView] = useState(true);
-  const [regStep, setRegStep] = useState(1);
+  const [modelView, setModalView] = useState(true)
+  const [regStep, setRegStep] = useState(1)
 
-  const [flavorDataList, setFlavorDataList] = useState([]);
-  const [imageDataList, setImageDataList] = useState([]);
-  const [selectImageName, setSelectImageName] = useState();
-  const [imageOptionList, setImageOptionList] = useState([]);
-  const [networkDataList, setNetworkDataList] = useState([]);
-  const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
-  const [loadBalancerDataList, setLoadBalancerDataList] = useState([]);
+  const [, setFlavorDataList] = useState([])
+  const [imageDataList, setImageDataList] = useState([])
+  const [selectImageName, setSelectImageName] = useState('')
+  const [imageOptionList, setImageOptionList] = useState([])
+  const [networkDataList, setNetworkDataList] = useState([])
+  const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [, setLoadBalancerDataList] = useState([])
 
-  const [clusterName, setClusterName] = useState('');
-  const [imageName, setImageName] = useState('');
-  const [description, setDescription] = useState('');
-  const [masterFlavorSelect, setMasterFlavorSelect] = useState();
-  const [masterFlavorCpu, setMasterFlavorCpu] = useState('');
-  const [masterFlavorMemory, setMasterFlavorMemory] = useState('');
-  const [masterFlavorDisk, setMasterFlavorDisk] = useState('');
-  const [masterFlavorNumber, setMasterFlavorNumber] = useState(1);
-  const [workerFlavorSelect, setWorkerFlavorSelect] = useState();
-  const [workerFlavorCpu, setWorkerFlavorCpu] = useState('');
-  const [workerFlavorMemory, setWorkerFlavorMemory] = useState('');
-  const [workerFlavorDisk, setWorkerFlavorDisk] = useState('');
-  const [workerFlavorNumber, setWorkerFlavorNumber] = useState(1);
+  const [clusterName, setClusterName] = useState('')
+  const [imageName, setImageName] = useState('')
+  const [description, setDescription] = useState('')
+  const [masterArchSelect, setMasterArchSelect] = useState('')
+  const [masterKubeVersionSelect, setMasterKubeVersionSelect] = useState('')
+  const [masterReplicas, setMasterReplicas] = useState(1)
 
-  const [selectOsDistro, setSelectOsDistro] = useState('');
-  const [cniSelect, setCniSelect] = useState('');
-  const [csiSelect, setCsiSelect] = useState('');
-  const [elbSelect, setElbSelect] = useState('');
-  const [expirationSelect, setExpirationSelect] = useState('10');
-  const [ekgStack, setEkgStack] = useState([]);
+  const [selectOsDistro, setSelectOsDistro] = useState('')
+  const [cniSelect, setCniSelect] = useState('')
+  const [csiSelect, setCsiSelect] = useState('')
+  const [elbSelect, setElbSelect] = useState('')
+  const [expirationSelect, setExpirationSelect] = useState('10')
+  const [ekgStack, setEkgStack] = useState([])
 
   // options
-  const [cnis, setCnis] = useState([]);
-  const [csis, setCsis] = useState([]);
-  const [features, setFeatures] = useState([]);
-  const [elbs, setElbs] = useState([]);
+  const [cnis, setCnis] = useState([])
+  const [csis, setCsis] = useState([])
+  const [features, setFeatures] = useState([])
+  const [elbs, setElbs] = useState([])
 
-  const [networkFlag, setNetworkFlag] = useState(1);
-  const [networkName, setNetworkName] = useState('');
-  const [isElb, setIsElb] = useState(false);
+  const [networkFlag, setNetworkFlag] = useState(1)
+  const [networkName, setNetworkName] = useState('')
+  const [isElb, setIsElb] = useState(false)
 
-  const [isAutoScale, setIsAutoScale] = useState(false);
-  const [autoScale, setAutoScale] = useState([1, 3]);
-  const [isFirst, setIsFirst] = useState(true);
+  const [isFirst, setIsFirst] = useState(true)
 
-  const [osType, setOsType] = useState('linux');
+  const [osType] = useState('linux')
+  const [osDistro, setOsDistro] = useState('ubuntu-2004')
 
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
   useEffect(() => {
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor({
         sortBy: 'root_disk',
         ...props,
-      });
+      })
       const listNetwork = await vmStore.fetchVmListNetwork({
         ...props,
         namespace: 'default',
-      });
+      })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
         ...props,
         namespace: 'default',
-      });
+      })
 
-      const listImage = await resourceStore.fetchListImage(props);
-      const listLoadBalancer = await resourceStore.fetchListLoadBalancer(props);
+      const listImage = await resourceStore.fetchListImage(props)
+      const listLoadBalancer = await resourceStore.fetchListLoadBalancer(props)
 
-      setFlavorDataList(listFlavor.flavors);
-      setImageDataList(listImage._originData.images);
-      setImageOptionList(listImage._originData.images);
-      setNetworkDataList(listNetwork.networks);
-      setSriovNetworkDataList(listSriovNetwork.networks);
-      setLoadBalancerDataList(listLoadBalancer._originData.lbs);
-    };
+      setFlavorDataList(listFlavor.flavors)
+      setImageDataList(listImage._originData.images)
+      setImageOptionList(listImage._originData.images)
+      setNetworkDataList(listNetwork.networks)
+      setSriovNetworkDataList(listSriovNetwork.networks)
+      setLoadBalancerDataList(listLoadBalancer._originData.lbs)
+    }
 
-    getVmCreateData();
-  }, []);
+    getVmCreateData()
+  }, [])
 
   useEffect(() => {
     const csiData = request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/csis`
-    );
-    const resCsi = [];
+    )
+    const resCsi = []
     csiData.then(response => {
       if (response.csis) {
         for (let i = 0, n = response.csis.length; i < n; i += 1) {
@@ -131,22 +109,22 @@ const RegistModal = props => {
             label: response.csis[i].name,
             value: response.csis[i].name,
             description: response.csis[i].description,
-          });
+          })
         }
-        setCsis(resCsi);
+        setCsis(resCsi)
       }
-    });
+    })
 
     const featureData = request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/features`
-    );
+    )
     const resFeature = [
       {
         label: t('RESOURCES_SELECT_ALL'),
         value: 'all',
         icon: 'ico-etc-checkall',
       },
-    ];
+    ]
     featureData.then(response => {
       if (response.features) {
         for (let i = 0, n = response.features.length; i < n; i += 1) {
@@ -155,44 +133,42 @@ const RegistModal = props => {
             value: response.features[i].name,
             // icon: response.data.features[i].name.toLowerCase(),
             icon: `ico-etc-${response.features[i].name.toLowerCase()}`,
-          });
+          })
         }
-        setFeatures(resFeature);
+        setFeatures(resFeature)
       }
-    });
+    })
 
     // hier
     const elbsData = request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/elbs`
-    );
-    const resElbs = [];
+    )
+    const resElbs = []
     elbsData.then(response => {
       response?.elbs.forEach(items => {
         resElbs.push({
           label: items.name,
           value: items.name,
-        });
-      });
-      setElbs(resElbs);
-      setElbSelect(resElbs[0].label);
-    });
-  }, []);
+        })
+      })
+      setElbs(resElbs)
+      setElbSelect(resElbs[0].label)
+    })
+  }, [])
 
   useEffect(() => {
     if (selectImageName) {
-      const selectOs = imageOptionList.find(
-        obj => selectImageName === obj.name
-      );
-      setSelectOsDistro(selectOs?.os_distro);
+      const selectOs = imageOptionList.find(obj => selectImageName === obj.name)
+      setSelectOsDistro(selectOs?.os_distro)
     }
-  }, [selectImageName]);
+  }, [selectImageName])
 
   useEffect(() => {
     if (selectOsDistro) {
       const cniData = request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.cluster}/edgetron/resources/capk/metadata/cnis/${selectOsDistro}`
-      );
-      const resCni = [];
+      )
+      const resCni = []
       cniData.then(response => {
         if (response.cnis) {
           for (let i = 0, n = response.cnis.length; i < n; i += 1) {
@@ -200,62 +176,85 @@ const RegistModal = props => {
               label: response.cnis[i].name,
               value: response.cnis[i].name,
               description: response.cnis[i].description,
-            });
+            })
           }
-          setCnis(resCni);
+          setCnis(resCni)
         }
-      });
+      })
     }
-  }, [selectOsDistro]);
+  }, [selectOsDistro])
 
   useEffect(() => {
     if (cnis.length > 0) {
-      setCniSelect(cnis[0].value);
+      setCniSelect(cnis[0].value)
       // document.querySelector(
       //   'input[name="cni"]',
       // ).parentElement.previousElementSibling.innerText = cnis[0].value;
     }
-  }, [cnis]);
+  }, [cnis])
 
-  const osTypeOptions = [
-    { label: 'Linux', value: 'linux', icon: 'ico-linux' },
-    { label: 'Windows', value: 'window', icon: 'ico-windows' },
-  ];
+  const osDistroOptions = [
+    { label: 'Ubuntu 2004', value: 'ubuntu-2004', icon: 'ico-os-ubuntu' },
+    { label: 'RockyLinux 8', value: 'rocky-8', icon: 'ico-os-rocky' },
+    { label: 'AlmaLinux 8', value: 'almalinux-8', icon: 'ico-os-almalinux' },
+  ]
+
+  const archOptions = () => {
+    const uniqueArchOptions = new Set(
+      imageDataList
+        .filter(obj => obj.os_distro === osDistro)
+        .map(obj => t(obj.arch_type))
+    )
+    return Array.from(uniqueArchOptions).map(arch => {
+      let label
+      switch (arch) {
+        case 'x86_64':
+          label = 'amd64'
+          break
+        case 'aarch64':
+          label = 'arm64'
+          break
+        default:
+          label = arch
+      }
+      return {
+        label: t(label),
+        value: t(arch),
+      }
+    })
+    // { label: 'amd64', value: 'x86_64' },
+    // { label: 'arm64', value: 'aarch64' },
+  }
+
+  const kubeVersionOptions = () => {
+    const uniqueKubeVersions = new Set(
+      imageDataList
+        .filter(
+          obj =>
+            obj.os_distro === osDistro && obj.arch_type === masterArchSelect
+        )
+        .map(obj => t(obj.kube_version))
+    )
+    return Array.from(uniqueKubeVersions).map(version => ({
+      label: t(version),
+      value: t(version),
+    }))
+  }
 
   const imageOptions = () => {
-    const opt = imageOptionList.map(obj => {
+    return imageOptionList.map(obj => {
       // const exceptonArray = ['ubuntu', 'centos']
       // const distroType = exceptonArray.includes(obj.distro_type) ? obj.distro_type : "linux"
-      const distroType = obj.os_distro.split('-')[0];
+      const distroType = obj.os_distro.split('-')[0]
       return {
         label: t(obj.name),
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
         description: t(obj.description),
         disabled: obj.phase !== 'Succeeded',
-      };
-    });
-    return opt;
-  };
-
-  const flavorOptions = flag => {
-    const opt = flavorDataList.map(obj => ({
-      label: t(obj.name),
-      description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
-        obj.ram
-      )} Gib / Disk ${obj.root_disk} Gib`,
-      value: t(obj.name),
-      disabled:
-        flag === 1
-          ? obj.vcpus < CONFIG_CPU_MASTER ||
-            common.fnSetBytes(obj.ram) < CONFIG_RAM_MASTER ||
-            obj.root_disk < CONFIG_DISK_MASTER
-          : obj.vcpus < CONFIG_CPU_WORKER ||
-            common.fnSetBytes(obj.ram) < CONFIG_RAM_WORKER ||
-            obj.root_disk < CONFIG_DISK_WORKER,
-    }));
-    return opt;
-  };
+      }
+    })
+  }
 
   const expirationOption = [
     { label: `1${t('RESOURCES_YEAR')}`, value: 1 },
@@ -268,109 +267,86 @@ const RegistModal = props => {
     { label: `8${t('RESOURCES_YEAR')}`, value: 8 },
     { label: `9${t('RESOURCES_YEAR')}`, value: 9 },
     { label: `10${t('RESOURCES_YEAR')}`, value: 10 },
-  ];
+  ]
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
     form.current.validator(() => {
-      setSubmitButtonFlag(true);
+      setSubmitButtonFlag(true)
 
-      const workerScaleRange = {};
-      workerScaleRange.worker_min_replicas = isAutoScale ? autoScale[0] : 0;
-      workerScaleRange.worker_max_replicas = isAutoScale ? autoScale[1] : 0;
+      const { data } = form.current.props
 
-      const { data } = form.current.props;
+      data.external_network = networkCheckItem
+      data.sriov_network = sriovCheckItem
+      data.elb_network = elbCheckItem
+      data.elb_type = elbSelect
 
-      data.external_network = networkCheckItem;
-      data.sriov_network = sriovCheckItem;
-      data.elb_network = elbCheckItem;
-      data.elb_type = elbSelect;
-
-      data.master_number = masterFlavorNumber;
-      data.worker_number = workerFlavorNumber;
-      data.worker_autoscale = isAutoScale;
-      data.worker_scale_range = workerScaleRange;
+      data.master_number = masterReplicas
       if (cniSelect) {
-        data.cni = cniSelect;
+        data.cni = cniSelect
       }
-      data.csi = csiSelect;
-      data.features = ekgStack;
-      data.expiration = expirationSelect;
-      data.private_registry = tab === 'private';
-      onOk({ ...data });
-    });
-  };
+      data.csi = csiSelect
+      data.features = ekgStack
+      data.expiration = expirationSelect
+      data.private_registry = tab === 'private'
+      onOk({ ...data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   const stepMoveCheck = step => {
-    const { data } = form.current.props;
+    const { data } = form.current.props
 
-    if (step == 1) {
+    if (step === 1) {
       if (isFirst) {
         if (networkDataList.length > 0) {
           handleSingleCheck(
             networkDataList.filter(el => el.external)[0].id,
             'network'
-          );
-          setNetworkName(networkDataList.filter(el => el.external)[0].id);
+          )
+          setNetworkName(networkDataList.filter(el => el.external)[0].id)
         }
-        setCniSelect(cnis?.[0]?.value || '');
-        setCsiSelect(csis?.[0]?.value || '');
-        setIsFirst(false);
+        setCniSelect(cnis?.[0]?.value || '')
+        setCsiSelect(csis?.[0]?.value || '')
+        setIsFirst(false)
       }
 
       if (
-        data.name == undefined ||
+        data.name === undefined ||
         !PATTERN_USER_NAME.test(data.name) ||
-        data.image == t('RESOURCES_SELECT') ||
-        data.masterFlavor == t('RESOURCES_SELECT') ||
-        data.workerFlavor == t('RESOURCES_SELECT')
+        data.image === t('RESOURCES_SELECT') ||
+        data.masterFlavor === t('RESOURCES_SELECT')
       ) {
-        handleOk();
+        handleOk()
       } else {
-        setRegStep(2);
+        setRegStep(2)
       }
     }
 
-    if (step == 2) {
+    if (step === 2) {
       if (!networkName) {
-        return false;
+        return false
       }
-      setRegStep(3);
+      setRegStep(3)
     }
 
-    if (step == 3) {
-      setClusterName(data.name);
-      setImageName(data.image);
-      setDescription(data.description);
+    if (step === 3) {
+      setClusterName(data.name)
+      setImageName(data.image)
+      setDescription(data.description)
 
-      const masterFlavorData = flavorDataList.filter(
-        obj => obj.name == data.masterFlavor
-      );
-      setMasterFlavorCpu(masterFlavorData[0].vcpus);
-      setMasterFlavorMemory(common.fnSetBytes(masterFlavorData[0].ram));
-      setMasterFlavorDisk(masterFlavorData[0].root_disk);
-
-      const workerFlavorData = flavorDataList.filter(
-        obj => obj.name == data.workerFlavor
-      );
-      setWorkerFlavorCpu(workerFlavorData[0].vcpus);
-      setWorkerFlavorMemory(common.fnSetBytes(workerFlavorData[0].ram));
-      setWorkerFlavorDisk(workerFlavorData[0].root_disk);
-
-      setRegStep(4);
-      setSubmitButtonFlag(false);
+      setRegStep(4)
+      setSubmitButtonFlag(false)
     }
-  };
+  }
 
   const fnGetModalFooter = () => {
-    let elements = '';
-    elements = (
+    return (
       <>
-        {regStep == 1 && (
+        {regStep === 1 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -381,7 +357,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(1);
+                stepMoveCheck(1)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -389,7 +365,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-        {regStep == 2 && (
+        {regStep === 2 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -399,7 +375,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(regStep - 1);
+                setRegStep(regStep - 1)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -408,7 +384,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(2);
+                stepMoveCheck(2)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -416,7 +392,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-        {regStep == 3 && (
+        {regStep === 3 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -426,7 +402,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(regStep - 1);
+                setRegStep(regStep - 1)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -435,7 +411,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(3);
+                stepMoveCheck(3)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -443,7 +419,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-        {regStep == 4 && (
+        {regStep === 4 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -453,7 +429,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(3);
+                setRegStep(3)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -462,7 +438,7 @@ const RegistModal = props => {
             {submitButtonFlag ? (
               <Button
                 onClick={() => {
-                  handleOk();
+                  handleOk()
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
                 loading={props.store.isSubmitting}
@@ -473,7 +449,7 @@ const RegistModal = props => {
             ) : (
               <Button
                 onClick={() => {
-                  handleOk();
+                  handleOk()
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
                 loading={props.store.isSubmitting}
@@ -485,137 +461,100 @@ const RegistModal = props => {
           </>
         )}
       </>
-    );
+    )
+  }
+  const handleOsDistro = value => {
+    setOsDistro(value)
+    setSelectImageName('')
+    setImageOptionList(
+      imageDataList.filter(
+        obj =>
+          obj.os_distro === value &&
+          obj.arch_type === masterArchSelect &&
+          obj.kube_version === masterKubeVersionSelect
+      )
+    )
+  }
 
-    return elements;
-  };
+  const handleMasterArch = value => {
+    setMasterArchSelect(value)
+    setSelectImageName('')
+    setImageOptionList(
+      imageDataList.filter(
+        obj =>
+          obj.os_distro === osDistro &&
+          obj.arch_type === value &&
+          obj.kube_version === masterKubeVersionSelect
+      )
+    )
+  }
 
-  const handleOsType = value => {
-    setOsType(value);
-    setSelectImageName('');
-    if (value == 'window') {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type == 'window'));
-    } else {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type != 'window'));
-    }
-  };
+  const handleMasterKubeVersion = value => {
+    setMasterKubeVersionSelect(value)
+    setSelectImageName('')
+    setImageOptionList(
+      imageDataList.filter(
+        obj =>
+          obj.os_distro === osDistro &&
+          obj.arch_type === masterArchSelect &&
+          obj.kube_version === value
+      )
+    )
+  }
 
   // 체크 리스트 시작 ==================================================
-  const [networkCheckItem, setNetworkCheckItem] = useState('');
-  const [sriovCheckItem, setSriovCheckItem] = useState('');
-  const [elbCheckItem, setElbCheckItem] = useState('');
-
-  const dataListVariables = {
-    network: networkDataList,
-    sriov: sriovNetworkDataList,
-    elb: loadBalancerDataList,
-  };
-
-  const stateVariables = {
-    network: networkCheckItem,
-    sriov: sriovCheckItem,
-    elb: elbCheckItem,
-  };
-
+  const [networkCheckItem, setNetworkCheckItem] = useState('')
+  const [sriovCheckItem, setSriovCheckItem] = useState('')
+  const [elbCheckItem, setElbCheckItem] = useState('')
   const setVariables = {
     network: setNetworkCheckItem,
     sriov: setSriovCheckItem,
     elb: setElbCheckItem,
-  };
+  }
 
   const handleSingleCheck = (name, type) => {
-    setVariables[type](name);
+    setVariables[type](name)
     if (type !== 'elb') {
-      setNetworkName(name);
+      setNetworkName(name)
     }
-  };
-
-  const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter(el => el !== name));
-  };
-
-  // 체크 리스트 끝 ==================================================
+  }
 
   // Validation 시작 ==================================================
 
   const imageValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') });
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
+      return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') })
     }
-    callback();
-  };
-
-  const masterFlavorValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_MASTER_FLAVOR_TIP') });
-    }
-    callback();
-  };
-  const workerFlavorValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_WORKER_FLAVOR_TIP') });
-    }
-    callback();
-  };
-
-  const networkValidator = (rule, value, callback) => {
-    if (!value) {
-      return callback({ message: t('RESOURCES_SELECT_NETWORK_TIP') });
-    }
-    callback();
-  };
-  // Validation 끝 ==================================================
+    callback()
+  }
 
   // 스크립트 시작 ==================================================
   const onChangeNetwork = el => {
-    setNetworkFlag(el);
-    setNetworkName('');
-    handleSingleCheck('', 'sriov');
-    handleSingleCheck('', 'network');
-  };
+    setNetworkFlag(el)
+    setNetworkName('')
+    handleSingleCheck('', 'sriov')
+    handleSingleCheck('', 'network')
+  }
 
   // cpu count
   const addMasterBtn = e => {
-    e.preventDefault();
-    if (masterFlavorNumber < 5) {
-      setMasterFlavorNumber(masterFlavorNumber + 2);
+    e.preventDefault()
+    if (masterReplicas < 5) {
+      setMasterReplicas(masterReplicas + 2)
     }
-  };
+  }
   const minusMasterBtn = e => {
-    e.preventDefault();
-    if (masterFlavorNumber > 1) {
-      setMasterFlavorNumber(masterFlavorNumber - 2);
+    e.preventDefault()
+    if (masterReplicas > 1) {
+      setMasterReplicas(masterReplicas - 2)
     }
-  };
-  const addWorkerBtn = e => {
-    e.preventDefault();
-    if (workerFlavorNumber < 10) {
-      setWorkerFlavorNumber(workerFlavorNumber + 1);
-    }
-  };
-  const minusWorkerBtn = e => {
-    e.preventDefault();
-    if (workerFlavorNumber > 1) {
-      setWorkerFlavorNumber(workerFlavorNumber - 1);
-    }
-  };
-
-  const handlerAutoScale = e => {
-    if (Array.isArray(e)) {
-      const scale = [e[0], e[1] < 1 ? 1 : e[1]];
-      setAutoScale(scale);
-    } else {
-      const maxNum = e > 10 ? 10 : e < 1 ? 1 : e;
-      setAutoScale([1, maxNum]);
-    }
-  };
-
+  }
   const handleEkgStack = e => {
-    setEkgStack(e.filter(obj => obj !== 'all'));
-  };
+    setEkgStack(e.filter(obj => obj !== 'all'))
+  }
 
-  const [tab, setTab] = useState('private');
-  const { TabPanel } = Tabs;
+  const [tab, setTab] = useState('private')
+  const { TabPanel } = Tabs
 
   // 스크립트 끝 ==================================================
 
@@ -637,13 +576,13 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep === 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${
-                    regStep == 1
+                    regStep === 1
                       ? styles.current
                       : regStep > 1
                       ? styles.done
@@ -657,7 +596,7 @@ const RegistModal = props => {
                   {t('RESOURCES_DEFAULT_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 1
+                  {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
                     ? t('RESOURCES_COMPLETED_SETTINGS')
@@ -668,13 +607,13 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep === 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${
-                    regStep == 2
+                    regStep === 2
                       ? styles.current
                       : regStep > 2
                       ? styles.done
@@ -688,7 +627,7 @@ const RegistModal = props => {
                   {t('RESOURCES_NETWORK_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 2
+                  {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
                     ? t('RESOURCES_COMPLETED_SETTINGS')
@@ -699,13 +638,13 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 3 ? styles.current : ''}`
+                `${regStep === 3 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
                   className={`${
-                    regStep == 3
+                    regStep === 3
                       ? styles.current
                       : regStep > 3
                       ? styles.done
@@ -719,7 +658,7 @@ const RegistModal = props => {
                   {t('RESOURCES_DETAIL_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 3
+                  {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
                     ? t('RESOURCES_COMPLETED_SETTINGS')
@@ -730,12 +669,12 @@ const RegistModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 4 ? styles.current : ''}`
+                `${regStep === 4 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 4 ? styles.current : styles.todo}`}
+                  className={`${regStep === 4 ? styles.current : styles.todo}`}
                 ></div>
               </div>
               <span className={styles.check}></span>
@@ -744,7 +683,7 @@ const RegistModal = props => {
                   {t('RESOURCES_CHECK_INPUT_INFORMATION')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 4
+                  {regStep === 4
                     ? t('RESOURCES_CURRENT')
                     : t('RESOURCES_NOT_SET')}
                 </div>
@@ -756,7 +695,7 @@ const RegistModal = props => {
           <div className={styles.pop_overflow_y}>
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
-              <div className={`${regStep == 1 ? '' : 'hide'}`}>
+              <div className={`${regStep === 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('NAME')}
                   rules={[
@@ -776,7 +715,7 @@ const RegistModal = props => {
                   />
                 </Form.Item>
                 <div style={{ padding: 10 }} />
-                {t('RESOURCES_IMAGE')}
+                {t('RESOURCES_OS_DISTRO')}
                 <span className="form-item-required">*</span>
                 <Form.Group>
                   <Columns>
@@ -791,14 +730,44 @@ const RegistModal = props => {
                       >
                         <CardSelect
                           className={styles.customUl}
-                          onChange={e => handleOsType(e)}
+                          onChange={e => handleOsDistro(e)}
                           name="os_type"
-                          options={osTypeOptions}
-                          defaultValue={osType}
+                          options={osDistroOptions}
+                          defaultValue={osDistro}
                         />
                       </Form.Item>
                     </Column>
+                  </Columns>
+                </Form.Group>
+                ControlPlane
+                <span className="form-item-required">*</span>
+                <Form.Group>
+                  <Columns>
                     <Column>
+                      <Form.Item>
+                        <TypeSelect
+                          name="masterArchitecture"
+                          defaultValue={t('RESOURCES_SELECT')}
+                          options={archOptions()}
+                          placeholder={{ label: t('RESOURCES_SELECT') }}
+                          onChange={e => handleMasterArch(e)}
+                          defaultDescription={t(
+                            'RESOURCES_SELECT_MASTER_ARCH_TIP'
+                          )}
+                        />
+                      </Form.Item>
+                      <Form.Item>
+                        <TypeSelect
+                          name="masterKubeVersion"
+                          defaultValue={t('RESOURCES_SELECT')}
+                          options={kubeVersionOptions()}
+                          placeholder={{ label: t('RESOURCES_SELECT') }}
+                          onChange={e => handleMasterKubeVersion(e)}
+                          defaultDescription={t(
+                            'RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP'
+                          )}
+                        />
+                      </Form.Item>
                       <Form.Item
                         rules={[{ required: true, validator: imageValidator }]}
                       >
@@ -825,79 +794,25 @@ const RegistModal = props => {
                         </Form.Item>
                       )}
                     </Column>
-                  </Columns>
-                </Form.Group>
-                Master Flavor<span className="form-item-required">*</span>
-                <Form.Group>
-                  <Columns>
-                    <Column>
-                      <Form.Item
-                        rules={[
-                          { required: true, validator: masterFlavorValidator },
-                        ]}
-                      >
-                        <TypeSelect
-                          name="masterFlavor"
-                          defaultValue={t('RESOURCES_SELECT')}
-                          options={flavorOptions(1)}
-                          placeholder={{ label: t('RESOURCES_SELECT') }}
-                          onChange={e => setMasterFlavorSelect(e)}
-                          defaultDescription={t(
-                            'RESOURCES_SELECT_MASTER_FLAVOR_TIP'
-                          )}
-                        />
-                      </Form.Item>
-                    </Column>
-                    <Column>
+                    <Column
+                      align={'middle'}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <Form.Item desc={t('RESOURCES_MASTER_COUNT_MAX_DESC')}>
                         <div>
                           <Button icon="substract" onClick={minusMasterBtn} />
                           &nbsp;&nbsp;
                           <Input
                             name="masterNumber"
-                            value={masterFlavorNumber}
+                            value={masterReplicas}
                             style={{ width: '20%', textAlign: 'center' }}
                           />
                           &nbsp;&nbsp;
                           <Button icon="add" onClick={addMasterBtn} />
-                        </div>
-                      </Form.Item>
-                    </Column>
-                  </Columns>
-                </Form.Group>
-                Worker Flavor<span className="form-item-required">*</span>
-                <Form.Group>
-                  <Columns>
-                    <Column>
-                      <Form.Item
-                        rules={[
-                          { required: true, validator: workerFlavorValidator },
-                        ]}
-                      >
-                        <TypeSelect
-                          name="workerFlavor"
-                          defaultValue={t('RESOURCES_SELECT')}
-                          options={flavorOptions(2)}
-                          placeholder={{ label: t('RESOURCES_SELECT') }}
-                          onChange={e => setWorkerFlavorSelect(e)}
-                          defaultDescription={t(
-                            'RESOURCES_SELECT_WORKER_FLAVOR_TIP'
-                          )}
-                        />
-                      </Form.Item>
-                    </Column>
-                    <Column>
-                      <Form.Item desc={t('RESOURCES_WORKER_MAX_COUNT_DESC')}>
-                        <div>
-                          <Button icon="substract" onClick={minusWorkerBtn} />
-                          &nbsp;&nbsp;
-                          <Input
-                            name="workerNumber"
-                            value={workerFlavorNumber}
-                            style={{ width: '20%', textAlign: 'center' }}
-                          />
-                          &nbsp;&nbsp;
-                          <Button icon="add" onClick={addWorkerBtn} />
                         </div>
                       </Form.Item>
                     </Column>
@@ -915,7 +830,7 @@ const RegistModal = props => {
               {/* 기본설정 설정 끝========================================== */}
 
               {/* 네트워크 설정 시작========================================== */}
-              <div className={`${regStep == 2 ? '' : 'hide'}`}>
+              <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 {t('RESOURCES_NETWORK')}
                 <span className="form-item-required">*</span>
                 <Form.Item>
@@ -985,13 +900,13 @@ const RegistModal = props => {
                               )}
                               {networkDataList
                                 ?.filter(el => el.external)
-                                .map((data, key) => (
+                                .map(data => (
                                   <tr key={data.name}>
                                     <td>
                                       <Radio
                                         name={`select-${data.name}`}
                                         checked={data.id === networkCheckItem}
-                                        onChange={e =>
+                                        onChange={() =>
                                           handleSingleCheck(data.id, 'network')
                                         }
                                       />
@@ -1058,13 +973,13 @@ const RegistModal = props => {
                                   </td>
                                 </tr>
                               )}
-                              {sriovNetworkDataList?.map((data, key) => (
+                              {sriovNetworkDataList?.map(data => (
                                 <tr key={data.name}>
                                   <td>
                                     <Radio
                                       name={`select-${data.name}`}
                                       checked={data.name === sriovCheckItem}
-                                      onChange={e =>
+                                      onChange={() =>
                                         handleSingleCheck(data.name, 'sriov')
                                       }
                                     />
@@ -1092,9 +1007,9 @@ const RegistModal = props => {
 
                 <Form.Group
                   label={t('ELB (External Load Balancer)')}
-                  onChange={e => {
-                    setIsElb(!isElb);
-                    handleSingleCheck('', 'elb');
+                  onChange={() => {
+                    setIsElb(!isElb)
+                    handleSingleCheck('', 'elb')
                   }}
                   checkable
                 >
@@ -1156,7 +1071,7 @@ const RegistModal = props => {
                             )}
                             {networkDataList
                               ?.filter(el => el.external)
-                              .map((data, key) => (
+                              .map(data => (
                                 <tr key={data.name}>
                                   <td>
                                     <Radio
@@ -1188,37 +1103,7 @@ const RegistModal = props => {
               {/* 네트워크 설정 끝========================================== */}
 
               {/* 세부 설정 시작========================================== */}
-              <div className={`${regStep == 3 ? '' : 'hide'}`}>
-                <Form.Group
-                  label={t('RESOURCES_AUTO_EXPAND')}
-                  onChange={e => setIsAutoScale(!isAutoScale)}
-                  checkable
-                >
-                  <Form.Item label={t('RESOURCES_SCALING')}>
-                    <Slider
-                      max={10}
-                      min={1}
-                      marks={{
-                        1: '1',
-                        2: '2',
-                        3: '3',
-                        4: '4',
-                        5: '5',
-                        6: '6',
-                        7: '7',
-                        8: '8',
-                        9: '9',
-                        10: '10',
-                      }}
-                      step={1}
-                      value={autoScale}
-                      onChange={e => handlerAutoScale(e)}
-                      range
-                      withInput
-                    />
-                  </Form.Item>
-                </Form.Group>
-
+              <div className={`${regStep === 3 ? '' : 'hide'}`}>
                 {/* <Form.Group label="Plug-in" checkable keepDataWhenUnCheck>
                   <Columns>
                     <Column>
@@ -1312,7 +1197,7 @@ const RegistModal = props => {
               {/* 세부 설정 끝========================================== */}
 
               {/* 입력 정보 확인 시작========================================== */}
-              <div className={`${regStep == 4 ? '' : 'hide'}`}>
+              <div className={`${regStep === 4 ? '' : 'hide'}`}>
                 <div className={styles.boxwrap}>
                   <div className={styles.box_style}>
                     <div className={styles.boxtitle}>
@@ -1323,7 +1208,7 @@ const RegistModal = props => {
                       <Button
                         icon="pen"
                         onClick={() => {
-                          setRegStep(1);
+                          setRegStep(1)
                         }}
                       ></Button>
                     </div>
@@ -1335,32 +1220,7 @@ const RegistModal = props => {
                       <div className={styles.list}>
                         <label>{t('RESOURCES_IMAGE')}</label>
                         <div className={styles.multiline}>
-                          <Icon name="ubunt" size={40} />
                           <div className={styles.bold}>{imageName}</div>
-                        </div>
-                      </div>
-                      <div className={styles.list}>
-                        <label style={{ width: '100%' }}>Master Flavor</label>
-                        <div className={styles.multiline}>
-                          <div className={styles.bold}>
-                            {masterFlavorSelect} / {masterFlavorNumber}
-                          </div>
-                          <p>
-                            CPU {masterFlavorCpu} Cores / Memory{' '}
-                            {masterFlavorMemory} Gib / Disk {masterFlavorDisk}{' '}
-                            Gib
-                          </p>
-                        </div>
-                        <label style={{ width: '100%' }}>Worker Flavor</label>
-                        <div className={styles.multiline}>
-                          <div className={styles.bold}>
-                            {workerFlavorSelect} / {workerFlavorNumber}
-                          </div>
-                          <p>
-                            CPU {workerFlavorCpu} Cores / Memory{' '}
-                            {workerFlavorMemory} Gib / Disk {workerFlavorDisk}{' '}
-                            Gib
-                          </p>
                         </div>
                       </div>
                       <div className={styles.list}>
@@ -1379,7 +1239,7 @@ const RegistModal = props => {
                       <Button
                         icon="pen"
                         onClick={() => {
-                          setRegStep(2);
+                          setRegStep(2)
                         }}
                       ></Button>
                     </div>
@@ -1496,29 +1356,11 @@ const RegistModal = props => {
                       <Button
                         icon="pen"
                         onClick={() => {
-                          setRegStep(3);
+                          setRegStep(3)
                         }}
                       ></Button>
                     </div>
                     <div className={styles.greybgbox}>
-                      <div className={styles.list}>
-                        <label style={{ width: '100%' }}>
-                          {t('RESOURCES_AUTO_EXPAND_SCALING')}
-                        </label>
-                        <div className="multiline">
-                          <div>
-                            {isAutoScale
-                              ? t('RESOURCES_USE')
-                              : t('RESOURCES_NOT_USE')}
-                          </div>
-                          <div className={`${isAutoScale ? '' : 'hide'}`}>
-                            {t('RESOURCES_MIN')} : {autoScale[0]}
-                          </div>
-                          <div className={`${isAutoScale ? '' : 'hide'}`}>
-                            {t('RESOURCES_MAX')} : {autoScale[1]}
-                          </div>
-                        </div>
-                      </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_PLUG_IN')}</label>
                         <div className="multiline">
@@ -1543,7 +1385,7 @@ const RegistModal = props => {
                           {t('RESOURCES_CONTAINER_IMAGE')}
                         </label>
                         <div>
-                          {tab == 'private'
+                          {tab === 'private'
                             ? t('RESOURCES_PRIVATE')
                             : t('RESOURCES_PUBLIC')}
                         </div>
@@ -1569,7 +1411,7 @@ const RegistModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default RegistModal;
+export default RegistModal

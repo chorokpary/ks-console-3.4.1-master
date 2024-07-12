@@ -16,25 +16,24 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection, join } from 'lodash'
-import { observable, action } from 'mobx'
+import { get } from 'lodash'
+import { action } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
-
-import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class ContainerImagesStore extends Base {
-
   records = new List()
 
   module = 'images'
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/capk/images`
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/capk/images`
+
   getListUrl = this.getResourceUrl
 
   @action
@@ -48,7 +47,7 @@ export default class ContainerImagesStore extends Base {
     ...params
   } = {}) {
     if (!silent) {
-      this.list.isLoading = true;
+      this.list.isLoading = true
     }
 
     if (!params.sortBy && params.ascending === undefined) {
@@ -67,62 +66,95 @@ export default class ContainerImagesStore extends Base {
       this.getFilterParams(params)
     )
 
-    // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes']
-    const apiName = mm3Array.includes(this.module) ? this.module : "";
+    // mm3 api 관련
+    const mm3Array = [
+      'vms',
+      'images',
+      'flavors',
+      'networks',
+      'routers',
+      'floating_ips',
+      'lbs',
+      'security_groups',
+      'keypairs',
+      'host_devices',
+      'pci_devices',
+      'volumes',
+      'clusters',
+      'workspaces',
+      'licenses',
+      'distro_types',
+      'containerimages',
+      'resourcesvolumes',
+    ]
+    const apiName = mm3Array.includes(this.module) ? this.module : ''
 
-    const data = (get(result, apiName.replace('resources', '')) || []).map(item => ({
-      cluster,
-      namespace,
-      ...this.mapper(item),
-    }))
+    const data = (get(result, apiName.replace('resources', '')) || []).map(
+      item => ({
+        cluster,
+        namespace,
+        ...this.mapper(item),
+      })
+    )
 
-    // 초기 데이터 처리 
-    this.dataList = data;
+    // 초기 데이터 처리
+    this.dataList = data
 
-    // 검색 관련 처리 
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-    const searchArray = Object.keys(params).map((key) => {
-      let value = params[key];
-      let searchData = {
-        "searchKeywordType": key,
-        "searchKeywordText": value
-      }
-      return searchData
-    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const searchArray = Object.keys(params)
+      .map(key => {
+        const value = params[key]
+        return {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        }
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
 
     if (searchArray.length > 0) {
-      searchArray.map((search) => {
-        let resultList = this.dataList.filter((row) => {
+      // eslint-disable-next-line array-callback-return
+      searchArray.map(search => {
+        this.dataList = this.dataList.filter(row => {
           if (search.searchKeywordType === 'project') {
-            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+            return (
+              row[search.searchKeywordType]?.toLowerCase() ===
+              search.searchKeywordText.toLowerCase()
+            )
           }
-          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-        });
-        this.dataList = resultList;
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase())
+        })
       })
     }
 
-    //정렬 처리
-    const sortType = !!params.ascending ? "asc" : "desc";
+    // 정렬 처리
+    const sortType = params.ascending ? 'asc' : 'desc'
+    // eslint-disable-next-line array-callback-return
     this.dataList.sort((a, b) => {
-      var x = a[params.sortBy];
-      var y = b[params.sortBy];
-      if (sortType == "desc") {
-        return x > y ? -1 : x < y ? 1 : 0;
-      } else if (sortType == "asc") {
-        return x < y ? -1 : x > y ? 1 : 0;
+      const x = a[params.sortBy]
+      const y = b[params.sortBy]
+      if (sortType === 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0
       }
-    });
+      if (sortType === 'asc') {
+        return x < y ? -1 : x > y ? 1 : 0
+      }
+    })
 
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || result.total_count || this.dataList.length || 0,
+      total:
+        result.totalItems || result.total_count || this.dataList.length || 0,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -137,19 +169,15 @@ export default class ContainerImagesStore extends Base {
 
   @action
   async create(data, params = {}) {
+    const url = this.getResourceUrl(params)
 
-    const url = this.getResourceUrl(params);
-
-    console.log("data : " + JSON.stringify(data))
-    const res = await this.submitting(request.post(url, data))
-    return res
+    return await this.submitting(request.post(url, data))
   }
 
   @action
   async update({ name, ...params }, data) {
-
-    const jsonData = {};
-    jsonData.image = data;
+    const jsonData = {}
+    jsonData.image = data
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
@@ -163,10 +191,14 @@ export default class ContainerImagesStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
     )
-    const detail = { ...params, ...this.mapper(result), kind: 'Containerimages' }
+    const detail = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'Containerimages',
+    }
 
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
+    // Yaml 파일 관련
+    await this.fetchYaml(params)
 
     this.detail = detail
     this.isLoading = false
@@ -180,7 +212,11 @@ export default class ContainerImagesStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}/manifest`
     )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Containerimages' }
+    const yamlData = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'Containerimages',
+    }
 
     this.yaml = yamlData.manifest
     this.isLoading = false
@@ -214,5 +250,4 @@ export default class ContainerImagesStore extends Base {
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
-
 }

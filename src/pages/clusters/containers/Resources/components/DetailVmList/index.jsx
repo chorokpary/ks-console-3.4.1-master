@@ -157,7 +157,7 @@ const DetailVmList = props => {
 
     const getVmCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       });
@@ -167,8 +167,8 @@ const DetailVmList = props => {
 
     const getVmWinCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
-        ...paramsData,
+        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+	...paramsData,
         cluster,
       });
       setVmWinCpuData(vmCpuData);
@@ -188,7 +188,7 @@ const DetailVmList = props => {
     const getVmWinMemoryUsageData = async () => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
-        ...paramsData,
+	...paramsData,
         cluster,
       });
 
@@ -276,7 +276,7 @@ const DetailVmList = props => {
                   name="terminal"
                   size={16}
                   clickable
-                  onClick={() => handleOpenVnc(obj.id)}
+                  onClick={() => handleOpenVnc(obj.id, obj.project)}
                 />
               </Tooltip>
             </div>
@@ -288,27 +288,7 @@ const DetailVmList = props => {
             </p>
           </div>
           <div className={styles.text}>
-            <div>
-              {obj.state === 'Stopped'
-                ? t('RESOURCES_STOP')
-                : obj.state === 'Provisioning'
-                ? t('RESOURCES_PROVISIONING')
-                : obj.state === 'Starting'
-                ? t('RESOURCES_STARTING')
-                : obj.state === 'Running'
-                ? t('RESOURCES_RUNNING')
-                : obj.state === 'Paused'
-                ? t('RESOURCES_PAUSED')
-                : obj.state === 'Migrating'
-                ? t('RESOURCES_MIGRATING')
-                : obj.state === 'Stopping'
-                ? t('RESOURCES_STOPPING')
-                : obj.state === 'Terminating'
-                ? t('RESOURCES_TERMINATING')
-                : obj.state === 'Unknown'
-                ? t('RESOURCES_UNKNOWN')
-                : ''}
-            </div>
+            <div>{obj.state}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
@@ -455,19 +435,13 @@ const DetailVmList = props => {
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
 
-    const vmCpuMetricData = _.find(
-      osType == 'linux' ? vmCpuData : vmWinCpuData,
-      data => {
-        if (data.metric.pod === vmId) return data;
-      }
-    );
+    const vmCpuMetricData = _.find(osType == "linux" ? vmCpuData : vmWinCpuData, data => {
+      if (data.metric.pod === vmId) return data;
+    });
 
-    const vmMemoryMetricData = _.find(
-      osType == 'linux' ? vmMemoryData : vmWinMemoryData,
-      data => {
-        if (data.metric.pod === vmId) return data;
-      }
-    );
+    const vmMemoryMetricData = _.find(osType == "linux" ? vmMemoryData : vmWinMemoryData, data => {
+      if (data.metric.pod === vmId) return data;
+    });
 
     if (!vmCpuMetricData && !vmMemoryMetricData)
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>;
@@ -597,11 +571,11 @@ const DetailVmList = props => {
     return 'error';
   };
 
-  const handleOpenVnc = vmId => {
+  const handleOpenVnc = (vmId, project) => {
     // 실제 URL 로 변경 요망
     const apiUrl = `http://${location.hostname}:30020`;
     let param =
-      'path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/';
+      `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`;
     param = `${param + vmId}/vnc`;
 
     const popupName = vmId.replaceAll('-', '');

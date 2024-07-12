@@ -52,10 +52,8 @@ module.exports = {
     'Flavor 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_FLAVOR_TIP: 'Flavor를 선택해 주세요.',
   RESOURCES_FLAVOR_DESC: 'Flavor의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_SELECT_FLOATING_IP_TIP: 'Floating IP를 선택해 주세요.',
   RESOURCES_GPU_USE_CHECK: 'GPU 사용 여부',
   RESOURCES_GPU_CHECK: 'GPU 여부',
-  RESOURCES_HOST_DEVICE: 'Host 디바이스',
   RESOURCES_HOST_DEVICE_ALLOCATABLE: 'Host 디바이스 갯수',
   RESOURCES_IP_POOL_EMPTY_DESC: 'IP POOL을 입력해주세요.',
   RESOURCES_IP_POOL_INFORMATION: 'IP POOL 정보',
@@ -73,7 +71,6 @@ module.exports = {
   RESOURCES_GPU_DRIVER_VERSION: '드라이버 버전',
   RESOURCES_GPU_CUDA_VERSION: 'CUDA 버전',
   RESOURCES_GPU_COUNT: 'GPU 개수',
-  RESOURCES_GPU_WORKLOAD_TYPE: '워크로드',
   RESOURCES_GPU_WORKLOAD_CONFIG: '워크로드 설정',
   RESOURCES_GPU_WORKLOAD_CONTAINER: '컨테이너 할당',
   RESOURCES_GPU_WORKLOAD_CONTAINER_DESC:
@@ -142,6 +139,8 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'KaaS 리소스 수정',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'KaaS 리소스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_CREATE_NODEPOOL: '노드풀 생성',
+  RESOURCES_EDIT_NODEPOOL: '노드풀 수정',
   RESOURCES_KAAS_DESC: 'KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_IMAGE: 'KaaS 이미지',
   RESOURCES_CREATE_KAAS_IMAGE: 'KaaS 이미지 생성',
@@ -151,6 +150,9 @@ module.exports = {
   RESOURCES_KAAS_COMPONENT_STATE: 'KaaS 컴포넌트 상태',
   RESOURCES_CONNECTION_LB: 'LB 연결',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Master Flavor를 선택해 주세요.',
+  RESOURCES_SELECT_MASTER_ARCH_TIP: 'Master 아키텍쳐를 선택해 주세요.',
+  RESOURCES_SELECT_NODEPOOL_ARCH_TIP: '노드풀 아키텍쳐를 선택해 주세요.',
+  RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: '쿠버네티스 버전을 선택해 주세요.',
   RESOURCES_MASTER_COUNT: 'Master 개수',
   RESOURCES_MASTER_COUNT_MAX_DESC:
     'Master는 홀수 개이며 최대 개수는 5개 입니다.',
@@ -179,7 +181,7 @@ module.exports = {
   RESOURCES_SELECT_TARGET_IP_TIP: 'Target IP를 선택해 주세요.',
   RESOURCES_CONNECTION_VM: 'VM 연결',
   RESOURCES_ACCESS_VNC: 'VNC 접속',
-  RESOURCES_SELECT_WORKER_FLAVOR_TIP: 'Worker Flavor를 선택해 주세요.',
+  RESOURCES_SELECT_WORKER_FLAVOR_TIP: 'Nodepool Flavor를 선택해 주세요.',
   RESOURCES_WORKER_COUNT: 'Worker 개수',
   RESOURCES_ADJUST_WORKER: 'Worker 개수 조정',
   RESOURCES_CHANGE_WORKER_COUNT: 'Worker 개수를 변경하시겠습니까?',
@@ -305,7 +307,7 @@ module.exports = {
   RESOURCES_RESOURCE_TYPE: '리소스 타입',
   RESOURCES_RESOURCE_CURRENT_SITUATION_USAGE: '리소스 현황 및 사용량',
   RESOURCES_NOT_FOUND_RESOURCE: '리소스를 찾을 수 없습니다.',
-  RESOURCES_RESOURCE_TEMPLATE: '컴퓨팅 리소스 템플릿',
+  RESOURCES_RESOURCE_TEMPLATE: '컴퓨팅 템플릿',
   RESOURCES_REAL_TIME: '리얼 타임',
   RESOURCES_MIGRATION: '마이그레이션',
   RESOURCES_MIGRATION_TIP: '마이그레이션을 진행 하시겠습니까?',
@@ -318,7 +320,6 @@ module.exports = {
   RESOURCES_ALLOCATED_ALL_RESOURCES: '모든 자원이 할당 되었습니다.',
   RESOURCES_FIP_NO_NETWORK: '플로팅 IP를 생성할 네트워크 자원이 없습니다.',
   RESOURCES_PREVIEW: '미리보기',
-  RESOURCES_NOT_USE: '미사용',
   RESOURCES_NOT_SET: '미설정',
   RESOURCES_NOT_SUPPORT: '미지원',
   RESOURCES_BINDING: '바인딩',
@@ -463,6 +464,7 @@ module.exports = {
   RESOURCES_ALREADY_SELECTED_VM_NAME: '이미 선택한 가상 머신 이름 입니다.',
   RESOURCES_ALREADY_SELECTED_DEVICE: '이미 선택한 디바이스 입니다.',
   RESOURCES_IMAGE: '이미지',
+  RESOURCES_MASTER_IMAGE: '마스터 이미지',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: '이미지 레지스트리 URL을 설정합니다.',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC:
     '(* 퍼블릭 레지스트리의 경우 Quay만 지원합니다.)',
@@ -564,6 +566,7 @@ module.exports = {
   RESOURCES_CORE_COUNT: '코어 수',
   RESOURCES_KUBERNETES: '쿠버네티스',
   RESOURCES_KUBERNETES_VERSION: '쿠버네티스 버전',
+  RESOURCES_ACCELERATOR_TYPE: '가속기 타입',
   RESOURCES_KUBERNETES_SERVER_IP: '쿠버네티스 서버 IP',
   RESOURCES_CLASS: '클래스',
   RESOURCES_CLUSTER: '클러스터',
@@ -653,7 +656,6 @@ module.exports = {
   RESOURCES_END_TIME: '종료 시간',
   RESOURCES_MESSAGE: '메시지',
   RESOURCES_NO_DATA_RESTORE_LOG: '복원 이력이 없습니다',
-  RESOURCES_COMPLETE: '완료',
   RESOURCES_NOT_COMPLETE: '미완료',
   RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP:
     '가상 머신이 종료되지 않았습니다. 확인 후 다시 진행해 주세요.',
@@ -681,15 +683,14 @@ module.exports = {
   RESOURCES_KAAS_DISK_USAGE: 'KaaS 디스크 사용량',
   PERMIGROUP_COMPUTING_WORKLOADS: '컴퓨팅 워크로드',
   PERMIGROUP_COMPUTING_SETTINGS: '컴퓨팅 설정',
-  PERMIGROUP_RESOURCE_TEMPLATE: '컴퓨팅 리소스 템플릿',
+  PERMIGROUP_RESOURCE_TEMPLATE: '컴퓨팅 템플릿',
   PERMISSION_COMPUTING_WORKLOAD_MANAGE: '컴퓨팅 워크로드 관리',
   PERMISSION_COMPUTING_WORKLOAD_VIEW: '컴퓨팅 워크로드 보기',
   PERMISSION_COMPUTING_SETTING_MANAGE: '컴퓨팅 설정 관리',
   PERMISSION_COMPUTING_SETTING_VIEW: '컴퓨팅 설정 보기',
-  PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE:
-    '컴퓨팅 리소스 템플릿 키페어 관리',
-  PERMISSION_RESOURCE_TEMPLATE_MANAGE: '컴퓨팅 리소스 템플릿 관리',
-  PERMISSION_RESOURCE_TEMPLATE_VIEW: '컴퓨팅 리소스 템플릿 보기',
+  PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE: '컴퓨팅 템플릿 키페어 관리',
+  PERMISSION_RESOURCE_TEMPLATE_MANAGE: '컴퓨팅 템플릿 관리',
+  PERMISSION_RESOURCE_TEMPLATE_VIEW: '컴퓨팅 템플릿 보기',
   PERMISSION_COMPUTING_WORKLOAD_MANAGE_DESC:
     '프로젝트 컴퓨팅 워크로드를 관리합니다. ',
   PERMISSION_COMPUTING_WORKLOAD_VIEW_DESC:
@@ -698,11 +699,11 @@ module.exports = {
     '프로젝트 컴퓨팅 설정을 관리합니다.',
   PERMISSION_COMPUTING_SETTING_VIEW_DESC: '프로젝트 컴퓨팅 설정을 조회합니다.',
   PERMISSION_RESOURCE_TEMPLATE_KEYPAIR_MANAGE_DESC:
-    '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
+    '프로젝트 컴퓨팅 템플릿을 관리합니다.',
   PERMISSION_RESOURCE_TEMPLATE_MANAGE_DESC:
-    '프로젝트 컴퓨팅 리소스 템플릿을 관리합니다.',
+    '프로젝트 컴퓨팅 템플릿을 관리합니다.',
   PERMISSION_RESOURCE_TEMPLATE_VIEW_DESC:
-    '프로젝트 컴퓨팅 리소스 템플릿을 조회합니다.',
+    '프로젝트 컴퓨팅 템플릿을 조회합니다.',
   RESOURCES_NETWORK_TRAFFIC_IN: '네트워크 트래픽 IN',
   RESOURCES_NETWORK_TRAFFIC_OUT: '네트워크 트래픽 OUT',
   RESOURCES_REPLICA_DESIRE: '모든 노드',
@@ -865,4 +866,4 @@ module.exports = {
   RESOURCES_PREPARING: '대기 중',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: '파일 업로드 전 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: '이미지 빌드&푸시 전 상태입니다.',
-};
+}

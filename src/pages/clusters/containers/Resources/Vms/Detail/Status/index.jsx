@@ -11,13 +11,14 @@ import { Link } from 'react-router-dom';
 import { Panel, Text, Indicator } from 'components/Base';
 import { TinyArea } from 'components/Charts';
 
+import styles from './index.scss';
+
 import * as common from 'utils/resources';
 import { getAreaChartOps } from 'utils/monitoring';
 
 import DetailSecurityGroupList from 'pages/clusters/containers/Resources/components/DetailSecurityGroupList';
 
 import CustomStore from 'stores/monitoring/custom/monitor';
-import styles from './index.scss';
 
 const Status = props => {
   const store = props.detailStore;
@@ -154,14 +155,11 @@ const Status = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`;
-      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`;
+      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
 
       const vmCpuData = await customStore.fetchMetric({
-        expr:
-          store.detail.vm.os_type == 'linux'
-            ? cpuLinuxDataExpr
-            : cpuWindowsDataExpr,
+	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
         ...paramsData,
       });
 
@@ -177,14 +175,11 @@ const Status = props => {
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`;
-      const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`;
+      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+      const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
 
       const vmMemoryData = await customStore.fetchMetric({
-        expr:
-          store.detail.vm.os_type == 'linux'
-            ? memoryLinuxDataExpr
-            : memoryWindowsDataExpr,
+	expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
         ...paramsData,
       });
 
@@ -298,28 +293,7 @@ const Status = props => {
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
-                  <div>
-                    {/* {store.detail.vm?.state} */}
-                    {store.detail.vm?.state === 'Stopped'
-                      ? t('RESOURCES_STOP')
-                      : store.detail.vm?.state === 'Provisioning'
-                      ? t('RESOURCES_PROVISIONING')
-                      : store.detail.vm?.state === 'Starting'
-                      ? t('RESOURCES_STARTING')
-                      : store.detail.vm?.state === 'Running'
-                      ? t('RESOURCES_RUNNING')
-                      : store.detail.vm?.state === 'Paused'
-                      ? t('RESOURCES_PAUSED')
-                      : store.detail.vm?.state === 'Migrating'
-                      ? t('RESOURCES_MIGRATING')
-                      : store.detail.vm?.state === 'Stopping'
-                      ? t('RESOURCES_STOPPING')
-                      : store.detail.vm?.state === 'Terminating'
-                      ? t('RESOURCES_TERMINATING')
-                      : store.detail.vm?.state === 'Unknown'
-                      ? t('RESOURCES_UNKNOWN')
-                      : ''}
-                  </div>
+                  <div>{store.detail.vm?.state}</div>
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
@@ -356,10 +330,10 @@ const Status = props => {
                       ? detailFlavor.devices.length == 1
                         ? detailFlavor.devices[0].name
                         : `${detailFlavor.devices[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${detailFlavor.devices.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
+                          'RESOURCES_BESIDES'
+                        )} ${detailFlavor.devices.length - 1}${t(
+                          'RESOURCES_COUNT'
+                        )}`
                       : '-'}
                   </div>
                   <p>{t('RESOURCES_HOST_DEVICE')}</p>
@@ -397,10 +371,10 @@ const Status = props => {
                         ? detailFlavor.gpus.length == 1
                           ? detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
-                              'RESOURCES_BESIDES'
-                            )} ${detailFlavor.gpus.length - 1}${t(
-                              'RESOURCES_COUNT'
-                            )}`
+                            'RESOURCES_BESIDES'
+                          )} ${detailFlavor.gpus.length - 1}${t(
+                            'RESOURCES_COUNT'
+                          )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -426,7 +400,7 @@ const Status = props => {
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
-                    {!obj.resource_name ? (
+                    {!!!obj.resource_name ? (
                       <Icon name={`network-duotone`} size={40} />
                     ) : (
                       <i className="ico-type-sriov"></i>
@@ -434,7 +408,7 @@ const Status = props => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {!obj.resource_name ? (
+                      {!!!obj.resource_name ? (
                         <Link
                           to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}
                         >

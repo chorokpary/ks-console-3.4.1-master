@@ -54,6 +54,9 @@ const DetailVmList = (props) => {
   const [vmCpuData, setVmCpuData] = useState([]);
   const [vmMemoryData, setVmMemoryData] = useState([]);
 
+  const [vmWinCpuData, setVmWinCpuData] = useState([]);
+  const [vmWinMemoryData, setVmWinMemoryData] = useState([]);
+
   const perPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState();
@@ -152,12 +155,21 @@ const DetailVmList = (props) => {
 
     const getVmCpuUsageData = async () => {
       const vmCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
-        cluster, namespace
-      })
+        cluster,
+      });
 
-      setVmCpuData(vmCpuData)
+      setVmCpuData(vmCpuData);
+    };
+
+    const getVmWinCpuUsageData = async () => {
+      const vmCpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        ...paramsData,
+        cluster,
+      });
+      setVmWinCpuData(vmCpuData);
     };
 
     // vm memory data
@@ -165,17 +177,27 @@ const DetailVmList = (props) => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
-        cluster, namespace
-      })
+        cluster,
+      });
 
-      setVmMemoryData(vmMemoryData)
+      setVmMemoryData(vmMemoryData);
+    };
 
+    const getVmWinMemoryUsageData = async () => {
+      const vmMemoryData = await customStore.fetchMetric({
+        expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
+        ...paramsData,
+        cluster,
+      });
+
+      setVmWinMemoryData(vmMemoryData);
     };
 
     getVmCpuUsageData();
     getVmMemoryUsageData();
-
-  }
+    getVmWinCpuUsageData();
+    getVmWinMemoryUsageData();
+  };
 
   const getMonitoringCfgs = (cpuData, memoryData) => [
     {
@@ -253,7 +275,7 @@ const DetailVmList = (props) => {
                   name="terminal"
                   size={16}
                   clickable
-                  onClick={() => handleOpenVnc(obj.id)}
+                  onClick={() => handleOpenVnc(obj.id, obj.project)}
                 />
               </Tooltip>
             </div>
@@ -267,7 +289,7 @@ const DetailVmList = (props) => {
             <div>{obj.node != "N/A" ? obj.node : "-"}</div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id, isExpandFlag)}
+	  {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
           </div>
@@ -340,18 +362,18 @@ const DetailVmList = (props) => {
     )
   }
 
-  const renderMonitorings = (vmId, isExpand) => {
+  const renderMonitorings = (vmId, osType, isExpand) => {
 
     // const isExpand = false;
     const loading = false;
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    const vmCpuMetricData = _.find(vmCpuData, (data) => {
+    const vmCpuMetricData = _.find(osType == "linux" ? vmCpuData : vmWinCpuData, data => {
       if (data.metric.pod === vmId) return data;
     });
 
-    const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
+    const vmMemoryMetricData = _.find(osType == "linux" ? vmMemoryData : vmWinMemoryData, data => {
       if (data.metric.pod === vmId) return data;
     });
 
@@ -474,10 +496,10 @@ const DetailVmList = (props) => {
     }
   }
 
-  const handleOpenVnc = (vmId) => {
+  const handleOpenVnc = (vmId, project) => {
     //실제 URL 로 변경 요망
     var apiUrl = "http://" + location.hostname + ":30020";
-    var param = "path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/default/virtualmachineinstances/";
+    var param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`;
     param = param + vmId + "/vnc";
 
     var popupName = vmId.replaceAll("-", "");

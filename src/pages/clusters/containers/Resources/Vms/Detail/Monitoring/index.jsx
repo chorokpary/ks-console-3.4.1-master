@@ -68,8 +68,8 @@ const index = (props) => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
-      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{namespace="default",service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
 
       const vmCpuData = await customStore.fetchMetric({
 	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
@@ -111,8 +111,8 @@ const index = (props) => {
 
     // vm inbound data
     const getVmInboundData = async () => {
-      const inboundLinuxDataExpr = `sum by (pod) (irate(node_network_receive_bytes_total{namespace="default",service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const inboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_received_total{namespace="default",service="launcher-node-exporter"}[5m]))`
+      const inboundLinuxDataExpr = `sum by (pod) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const inboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_received_total{service="launcher-node-exporter"}[5m]))`
 
       const vmInboundData = await customStore.fetchMetric({
 	expr: store.detail.vm.os_type == "linux" ? inboundLinuxDataExpr : inboundWindowsDataExpr,
@@ -130,8 +130,8 @@ const index = (props) => {
 
     // vm outbound data
     const getVmOutboundData = async () => {
-      const outboundLinuxDataExpr = `sum by (pod) (irate(node_network_transmit_bytes_total{namespace="default",service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const outboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_sent_total{namespace="default",service="launcher-node-exporter"}[5m]))`
+      const outboundLinuxDataExpr = `sum by (pod) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const outboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_sent_total{service="launcher-node-exporter"}[5m]))`
 
       const vmOutboundData = await customStore.fetchMetric({
 	expr: store.detail.vm.os_type == "linux" ? outboundLinuxDataExpr : outboundWindowsDataExpr,

@@ -52,11 +52,31 @@ export default {
     },
   },
   'containerresource.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, name: data.name }, data)
+            .update(
+              {
+                ...detail,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                name: data.name,
+              },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -124,8 +144,12 @@ export default {
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           usernames.split(', ').length === 1
-            ? t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', { resource: usernames })
-            : t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', { resource: usernames }),
+            ? t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
+                resource: usernames,
+              })
+            : t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
+                resource: usernames,
+              }),
         resource: usernames,
         store,
         ...props,
@@ -153,7 +177,7 @@ export default {
   'containerresource.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: () => {
           Modal.close(modal)
           success && success()
         },
@@ -167,7 +191,7 @@ export default {
   'containerresource.config.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: () => {
           Modal.close(modal)
           success && success()
         },

@@ -36,7 +36,10 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-              success && setTimeout(() => { success(); }, 1000)
+              success &&
+                setTimeout(() => {
+                  success()
+                }, 1000)
             })
         },
         title: t('RESOURCES_CREATE_KAAS_IMAGE'),
@@ -51,11 +54,31 @@ export default {
     },
   },
   'containerimage.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, name: data.name }, data)
+            .update(
+              {
+                ...detail,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                name: data.name,
+              },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -152,7 +175,7 @@ export default {
   'containerimage.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
           Modal.close(modal)
           success && success()

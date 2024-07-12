@@ -16,95 +16,107 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash';
-import { observable, action } from 'mobx';
-import { Notify } from '@kube-design/components';
-import { LIST_DEFAULT_ORDER } from 'utils/constants';
-import ObjectMapper from 'utils/object.mapper';
-import cookie from 'utils/cookie';
+import { action } from 'mobx'
 
-import Base from '../basemm3';
-import List from '../base.list';
+import Base from '../basemm3'
+import List from '../base.list'
 
 export default class GpuNodeStore extends Base {
-  records = new List();
+  records = new List()
 
-  module = 'gpunodes';
+  module = 'gpunodes'
 
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/gpunodes`;
+    )}/edgetron/resources/kubevirt/gpunodes`
 
   getGpuNodeUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/gpu/node`;
+    )}/edgetron/resources/kubevirt/gpu/node`
 
-  getListUrl = this.getResourceUrl;
+  getListUrl = this.getResourceUrl
 
   @action
   async fetchDetail(params) {
-    this.isLoading = true;
+    this.isLoading = true
 
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
-    );
-    const detail = { ...params, ...this.mapper(result), kind: 'GpuNodes' };
+    )
+    const detail = { ...params, ...this.mapper(result), kind: 'GpuNodes' }
 
-    this.detail = detail;
+    this.detail = detail
 
     // fetch GPU devices
-    await this.fetchGpuDeviceList(params);
+    await this.fetchGpuDeviceList(params)
 
     // fetch MIG configs
-    await this.fetchMigConfigs({ ...params, model: detail.gpunode.model });
+    await this.fetchMigConfigs({ ...params, model: detail.gpunode.model })
 
-    this.isLoading = false;
-    return detail;
+    this.isLoading = false
+    return detail
   }
 
   @action
   async fetchGpuDeviceList(params) {
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpu/devices/${params.name}`
-    );
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/gpu/devices/${params.name}`
+    )
     const response = {
       ...params,
       ...this.mapper(result),
       kind: 'devices',
-    };
-    this.gpuDeviceList = response.devices;
-    return response;
+    }
+    this.gpuDeviceList = response.devices
+    return response
+  }
+
+  @action
+  async fetchAcceleratorTypeList(params) {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/accelerators`
+    )
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'accelerator_types',
+    }
+    this.accelerator_types = response.accelerator_types
+
+    return this.accelerator_types
   }
 
   @action
   async fetchMigConfigs(params) {
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/gpu/mig_configs/${params.model}`
-    );
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/gpu/mig_configs/${params.model}`
+    )
     const response = {
       ...params,
       ...this.mapper(result),
       kind: 'mig_configs',
-    };
-    this.migConfigList = response.mig_configs;
-    return response;
+    }
+    this.migConfigList = response.mig_configs
+    return response
   }
 
   @action
   async applyMigConfig(data, params) {
     const url = `${this.getGpuNodeUrl(params)}/${data.node}`
-    await this.submitting(
-      request.put(url, data)
-    )
+    await this.submitting(request.put(url, data))
   }
 
   @action
   async configWorkloadType(data, params) {
     const url = `${this.getGpuNodeUrl(params)}/workload/${data.node}`
-    await this.submitting(
-      request.put(url, data)
-    )
+    await this.submitting(request.put(url, data))
   }
 }
