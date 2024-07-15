@@ -155,22 +155,14 @@ const Status = props => {
                         </div>
                         <div className={styles.text} style={{ width: '15%' }}>
                           <div>
-                            {detail.phase === 'Stopped'
-                              ? t('RESOURCES_STOP')
-                              : detail.phase === 'Provisioning'
-                              ? t('RESOURCES_PROVISIONING')
-                              : detail.phase === 'Starting'
-                              ? t('RESOURCES_STARTING')
+                            {detail.phase === 'ScalingUp'
+                              ? t('RESOURCES_SCALING_UP')
+                              : detail.phase === 'ScalingDown'
+                              ? t('RESOURCES_SCALING_DOWN')
                               : detail.phase === 'Running'
                               ? t('RESOURCES_RUNNING')
-                              : detail.phase === 'Paused'
-                              ? t('RESOURCES_PAUSED')
-                              : detail.phase === 'Migrating'
-                              ? t('RESOURCES_MIGRATING')
-                              : detail.phase === 'Stopping'
-                              ? t('RESOURCES_STOPPING')
-                              : detail.phase === 'Terminating'
-                              ? t('RESOURCES_TERMINATING')
+                              : detail.phase === 'Failed'
+                              ? t('RESOURCES_FAILED')
                               : detail.phase === 'Unknown'
                               ? t('RESOURCES_UNKNOWN')
                               : ''}
@@ -512,22 +504,20 @@ const Status = props => {
                       </div>
                       <div className={styles.text} style={{ width: '15%' }}>
                         <div>
-                          {detail.phase === 'Stopped'
-                            ? t('RESOURCES_STOP')
+                          {detail.phase === 'Provisioned'
+                            ? t('RESOURCES_PROVISIONED')
                             : detail.phase === 'Provisioning'
                             ? t('RESOURCES_PROVISIONING')
-                            : detail.phase === 'Starting'
-                            ? t('RESOURCES_STARTING')
+                            : detail.phase === 'Pending'
+                            ? t('RESOURCES_PENDING')
                             : detail.phase === 'Running'
                             ? t('RESOURCES_RUNNING')
-                            : detail.phase === 'Paused'
-                            ? t('RESOURCES_PAUSED')
-                            : detail.phase === 'Migrating'
-                            ? t('RESOURCES_MIGRATING')
-                            : detail.phase === 'Stopping'
-                            ? t('RESOURCES_STOPPING')
-                            : detail.phase === 'Terminating'
-                            ? t('RESOURCES_TERMINATING')
+                            : detail.phase === 'Failed'
+                            ? t('RESOURCES_FAILED')
+                            : detail.phase === 'Deleting'
+                            ? t('RESOURCES_DELETING')
+                            : detail.phase === 'Deleted'
+                            ? t('RESOURCES_DELETED')
                             : detail.phase === 'Unknown'
                             ? t('RESOURCES_UNKNOWN')
                             : ''}
@@ -647,22 +637,20 @@ const Status = props => {
                     </div>
                     <div className={styles.text} style={{ width: '15%' }}>
                       <div>
-                        {detail.phase === 'Stopped'
-                          ? t('RESOURCES_STOP')
+		        {detail.phase === 'Provisioned'
+                          ? t('RESOURCES_PROVISIONED')
                           : detail.phase === 'Provisioning'
                           ? t('RESOURCES_PROVISIONING')
-                          : detail.phase === 'Starting'
-                          ? t('RESOURCES_STARTING')
+                          : detail.phase === 'Pending'
+                          ? t('RESOURCES_PENDING')
                           : detail.phase === 'Running'
                           ? t('RESOURCES_RUNNING')
-                          : detail.phase === 'Paused'
-                          ? t('RESOURCES_PAUSED')
-                          : detail.phase === 'Migrating'
-                          ? t('RESOURCES_MIGRATING')
-                          : detail.phase === 'Stopping'
-                          ? t('RESOURCES_STOPPING')
-                          : detail.phase === 'Terminating'
-                          ? t('RESOURCES_TERMINATING')
+                          : detail.phase === 'Failed'
+                          ? t('RESOURCES_FAILED')
+                          : detail.phase === 'Deleting'
+                          ? t('RESOURCES_DELETING')
+                          : detail.phase === 'Deleted'
+                          ? t('RESOURCES_DELETED')
                           : detail.phase === 'Unknown'
                           ? t('RESOURCES_UNKNOWN')
                           : ''}
