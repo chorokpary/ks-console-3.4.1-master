@@ -44,7 +44,6 @@ const RegistNodePoolModal = props => {
 
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
-      setImageOptionList(listImage._originData.images)
       setOsDistro(props.detailStore.detail.cluster.os_distro)
       setKubeVersion(props.detailStore.detail.cluster.kube_version)
     }
