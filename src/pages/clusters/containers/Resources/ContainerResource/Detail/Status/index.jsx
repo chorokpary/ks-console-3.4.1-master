@@ -67,60 +67,60 @@ const Status = props => {
     return (
       <div className={styles.itemExtra}>
         <div className={styles.containers}>
-	  <Fragment>
-          Flavor
-          <div className={classnames(styles.item)}>
-            <div className={styles.icon}>
-              <Icon name="apps" size={40} />
+          <Fragment>
+            Flavor
+            <div className={classnames(styles.item)}>
+              <div className={styles.icon}>
+                <Icon name="apps" size={40} />
+              </div>
+              <div className={classnames(styles.title, styles.name)}>
+                <div>{obj.flavor_detail.name}</div>
+                <p>Flavor</p>
+              </div>
+              <div className={styles.title}>
+                <Text
+                  key="CPU"
+                  icon="cpu"
+                  title={`${obj.flavor_detail.vcpus} Core`}
+                  description={t('CPU')}
+                />
+              </div>
+              <div className={styles.title}>
+                <Text
+                  key="Memory"
+                  icon="memory"
+                  title={`${common.fnSetBytes(obj.flavor_detail.ram)} GiB`}
+                  description={t('Memory')}
+                />
+              </div>
+              <div className={styles.title}>
+                <Text
+                  key="Disk"
+                  icon="storage"
+                  title={`${obj.flavor_detail.root_disk} GiB`}
+                  description={t('Disk')}
+                />
+              </div>
+              <div className={styles.title}>
+                <Text
+                  key="GPU"
+                  icon="gpu"
+                  title={
+                    obj.flavor_detail.gpus.length >= 1
+                      ? obj.flavor_detail.gpus.length === 1
+                        ? obj.flavor_detail.gpus[0].name
+                        : `${obj.flavor_detail.gpus[0].name} ${t(
+                            'RESOURCES_BESIDES'
+                          )} ${obj.flavor_detail.gpus.length - 1}${t(
+                            'RESOURCES_COUNT'
+                          )}`
+                      : '-'
+                  }
+                  description={t('GPU')}
+                />
+              </div>
             </div>
-            <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.flavor_detail.name}</div>
-              <p>Flavor</p>
-            </div>
-            <div className={styles.title}>
-              <Text
-                key="CPU"
-                icon="cpu"
-                title={`${obj.flavor_detail.vcpus} Core`}
-                description={t('CPU')}
-              />
-            </div>
-            <div className={styles.title}>
-              <Text
-                key="Memory"
-                icon="memory"
-                title={`${common.fnSetBytes(obj.flavor_detail.ram)} GiB`}
-                description={t('Memory')}
-              />
-            </div>
-            <div className={styles.title}>
-              <Text
-                key="Disk"
-                icon="storage"
-                title={`${obj.flavor_detail.root_disk} GiB`}
-                description={t('Disk')}
-              />
-            </div>
-            <div className={styles.title}>
-              <Text
-                key="GPU"
-                icon="gpu"
-                title={
-                  obj.flavor_detail.gpus.length >= 1
-                    ? obj.flavor_detail.gpus.length === 1
-                      ? obj.flavor_detail.gpus[0].name
-                      : `${obj.flavor_detail.gpus[0].name} ${t(
-                          'RESOURCES_BESIDES'
-                        )} ${obj.flavor_detail.gpus.length - 1}${t(
-                          'RESOURCES_COUNT'
-                        )}`
-                    : '-'
-                }
-                description={t('GPU')}
-              />
-            </div>
-          </div>
-	  </Fragment>
+          </Fragment>
           {!!machines &&
             machines
               .filter(machine => {
@@ -133,28 +133,28 @@ const Status = props => {
               .map((detail, index) => (
                 <Fragment key={index}>
                   {index === 0 && `Nodes`}
-                    <div className={classnames(styles.expandItem)}>
-		      <div className={styles.itemMainWhite}>
-		        <div className={styles.icon}>
-                          <Icon name="nodes" size={40} />
-                          <Indicator
-                            className={styles.indicator}
-                            type={getState(detail?.ready_status, detail?.phase)}
-                            flicker
-                          />
+                  <div className={classnames(styles.expandItem)}>
+                    <div className={styles.itemMainWhite}>
+                      <div className={styles.icon}>
+                        <Icon name="nodes" size={40} />
+                        <Indicator
+                          className={styles.indicator}
+                          type={getState(detail?.ready_status, detail?.phase)}
+                          flicker
+                        />
+                      </div>
+                      <div className={styles.content}>
+                        <div className={styles.text} style={{ width: '25%' }}>
+                          <div>{detail.name}</div>
+                          <p>
+                            {getLocalTime(detail.timestamp).format(
+                              'YYYY-MM-DD HH:mm:ss'
+                            )}
+                            {t('RESOURCES_CREATED')}
+                          </p>
                         </div>
-		        <div className={styles.content}>
-                          <div className={styles.text} style={{ width: '25%' }}>
-                            <div>{detail.name}</div>
-                            <p>
-                              {getLocalTime(detail.timestamp).format(
-                                'YYYY-MM-DD HH:mm:ss'
-                              )}
-		              {t('RESOURCES_CREATED')}
-                            </p>
-                          </div>
-                          <div className={styles.text} style={{ width: '15%' }}>
-		            <div>
+                        <div className={styles.text} style={{ width: '15%' }}>
+                          <div>
                             {detail.phase === 'Stopped'
                               ? t('RESOURCES_STOP')
                               : detail.phase === 'Provisioning'
@@ -174,39 +174,39 @@ const Status = props => {
                               : detail.phase === 'Unknown'
                               ? t('RESOURCES_UNKNOWN')
                               : ''}
-                            </div>
-                            <p>{t('RESOURCES_STATE')}</p>  
                           </div>
-                          <div className={styles.text}>
-                            {detail?.networks?.filter(
-                              network => network.name !== 'k8s-pod-network'
-                            ).length > 0 ? (
-                              <div>
-                                {detail.networks
-                                  .filter(
-                                    network => network.name !== 'k8s-pod-network'
-                                  )
-                                  .map(network => (
-                                    <div key={network.name}>
-                                      {network.ip} ({network.name})
-                                    </div>
-                                  ))}
-                              </div>
-                            ) : (
-                              <div>-</div>
-                            )}
-                            <p>{t('RESOURCES_NETWORK')}</p>
-                          </div>
-                          {renderMonitorings(
-                            detail.name,
-                            false,
-                            detail.networks.find(
-                              network => network.name === 'k8s-pod-network'
-                            )
-                          )}
+                          <p>{t('RESOURCES_STATE')}</p>
                         </div>
-		      </div>
-		    </div>
+                        <div className={styles.text}>
+                          {detail?.networks?.filter(
+                            network => network.name !== 'k8s-pod-network'
+                          ).length > 0 ? (
+                            <div>
+                              {detail.networks
+                                .filter(
+                                  network => network.name !== 'k8s-pod-network'
+                                )
+                                .map(network => (
+                                  <div key={network.name}>
+                                    {network.ip} ({network.name})
+                                  </div>
+                                ))}
+                            </div>
+                          ) : (
+                            <div>-</div>
+                          )}
+                          <p>{t('RESOURCES_NETWORK')}</p>
+                        </div>
+                        {renderMonitorings(
+                          detail.name,
+                          false,
+                          detail.networks.find(
+                            network => network.name === 'k8s-pod-network'
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </Fragment>
               ))}
         </div>
@@ -507,12 +507,12 @@ const Status = props => {
                           {getLocalTime(detail.timestamp).format(
                             'YYYY-MM-DD HH:mm:ss'
                           )}
-		          {t('RESOURCES_CREATED')}
+                          {t('RESOURCES_CREATED')}
                         </p>
                       </div>
                       <div className={styles.text} style={{ width: '15%' }}>
-		        <div>  
-		          {detail.phase === 'Stopped'
+                        <div>
+                          {detail.phase === 'Stopped'
                             ? t('RESOURCES_STOP')
                             : detail.phase === 'Provisioning'
                             ? t('RESOURCES_PROVISIONING')
@@ -642,32 +642,32 @@ const Status = props => {
                         {getLocalTime(detail.timestamp).format(
                           'YYYY-MM-DD HH:mm:ss'
                         )}
-		        {t('RESOURCES_CREATED')}
+                        {t('RESOURCES_CREATED')}
                       </p>
                     </div>
                     <div className={styles.text} style={{ width: '15%' }}>
-		      <div>
-                          {detail.phase === 'Stopped'
-                            ? t('RESOURCES_STOP')
-                            : detail.phase === 'Provisioning'
-                            ? t('RESOURCES_PROVISIONING')
-                            : detail.phase === 'Starting'
-                            ? t('RESOURCES_STARTING')
-                            : detail.phase === 'Running'
-                            ? t('RESOURCES_RUNNING')
-                            : detail.phase === 'Paused'
-                            ? t('RESOURCES_PAUSED')
-                            : detail.phase === 'Migrating'
-                            ? t('RESOURCES_MIGRATING')
-                            : detail.phase === 'Stopping'
-                            ? t('RESOURCES_STOPPING')
-                            : detail.phase === 'Terminating'
-                            ? t('RESOURCES_TERMINATING')
-                            : detail.phase === 'Unknown'
-                            ? t('RESOURCES_UNKNOWN')
-                            : ''}
-                        </div>
-                        <p>{t('RESOURCES_STATE')}</p>  
+                      <div>
+                        {detail.phase === 'Stopped'
+                          ? t('RESOURCES_STOP')
+                          : detail.phase === 'Provisioning'
+                          ? t('RESOURCES_PROVISIONING')
+                          : detail.phase === 'Starting'
+                          ? t('RESOURCES_STARTING')
+                          : detail.phase === 'Running'
+                          ? t('RESOURCES_RUNNING')
+                          : detail.phase === 'Paused'
+                          ? t('RESOURCES_PAUSED')
+                          : detail.phase === 'Migrating'
+                          ? t('RESOURCES_MIGRATING')
+                          : detail.phase === 'Stopping'
+                          ? t('RESOURCES_STOPPING')
+                          : detail.phase === 'Terminating'
+                          ? t('RESOURCES_TERMINATING')
+                          : detail.phase === 'Unknown'
+                          ? t('RESOURCES_UNKNOWN')
+                          : ''}
+                      </div>
+                      <p>{t('RESOURCES_STATE')}</p>
                     </div>
                     <div className={styles.text} style={{ width: '20%' }}>
                       <div>{detail.kube_image}</div>
