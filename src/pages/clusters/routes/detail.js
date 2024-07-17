@@ -61,7 +61,7 @@ import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
 import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
-import NodepoolResourceDetail from '../containers/Resources/NodepoolResource/Detail'
+import NodepoolDetail from '../containers/Resources/Nodepools/Detail'
 import VolumeDetail from '../containers/Resources/Volumes/Detail'
 import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
@@ -239,8 +239,8 @@ export default [
     component: ContainerResourceDetail,
   },
   {
-    path: `${PATH}/nodepoolresource/:clustername/:name`,
-    component: NodepoolResourceDetail,
+    path: `${PATH}/nodepools/:clustername/:name`,
+    component: NodepoolDetail,
   },
   {
     path: `${PATH}/resourcesvolumes/:name/:id`,

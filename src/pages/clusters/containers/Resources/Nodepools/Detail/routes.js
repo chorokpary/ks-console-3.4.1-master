@@ -21,7 +21,7 @@ import { getIndexRoute } from 'utils/router.config'
 import Status from './Status'
 import Monitoring from './Monitoring'
 
-const PATH = '/clusters/:cluster/nodepoolResource/:clustername/:name'
+const PATH = '/clusters/:cluster/nodepools/:clustername/:name'
 
 export default [
   {

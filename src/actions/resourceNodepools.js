@@ -19,11 +19,11 @@
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
-import ModifyModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolModify'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/NodePools/Modify'
 import DeleteModal from 'components/Modals/Delete'
 
 export default {
-  'nodepoolresource.edit': {
+  'nodepool.edit': {
     on({ store, detail, success, ...params }) {
       const nodepool = detail.nodepool
       const modal = Modal.open({
@@ -41,7 +41,7 @@ export default {
       })
     },
   },
-  'nodepoolresource.remove': {
+  'nodepool.remove': {
     on({ store, detail, success, ...params }) {
       const modal = Modal.open({
         onOk: () => {

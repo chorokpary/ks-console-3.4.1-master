@@ -4,7 +4,7 @@ import classnames from 'classnames'
 
 import { isEmpty } from 'lodash'
 import { Indicator, Panel, Text, Modal } from 'components/Base'
-import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolRegist'
+import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/NodePools/Regist'
 
 import {
   Button,
@@ -162,7 +162,6 @@ const Status = props => {
     }
   }
 
-  console.log(nodepools)
   const getSearchData = (data, searchText) => {
     return data.filter(row => {
       return row['name']?.toLowerCase().includes(searchText.toLowerCase())
@@ -522,7 +521,7 @@ const Status = props => {
                     <div className={styles.text} style={{ width: '20%' }}>
                       <div className={styles.title}>
                         <Link
-                          to={`/clusters/${props.match.params.cluster}/nodepoolResource/${props.match.params.name}/${detail.name}`}
+                          to={`/clusters/${props.match.params.cluster}/nodepools/${props.match.params.name}/${detail.name}`}
                         >
                           {detail.name}
                         </Link>

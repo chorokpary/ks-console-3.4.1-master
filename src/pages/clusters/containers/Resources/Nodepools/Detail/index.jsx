@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react'
 import DetailPage from 'clusters/containers/Base/Detail'
 import { getLocalTime } from 'utils'
 
-import ResourceStore from 'stores/resources/nodepoolresource'
+import ResourceStore from 'stores/resources/nodepools'
 import routes from './routes'
 
 const store = new ResourceStore()
@@ -39,7 +39,7 @@ const ResourceDetail = props => {
         action: 'edit',
         show: showEdit,
         onClick: () => {
-          props.rootStore.triggerAction('nodepoolresource.edit', {
+          props.rootStore.triggerAction('nodepool.edit', {
             type: 'RESOURCE_DETAIL',
             detail: toJS(store.detail),
             store,
@@ -56,7 +56,7 @@ const ResourceDetail = props => {
         type: 'danger',
         show: showEdit,
         onClick: () =>
-          props.rootStore.triggerAction('nodepoolresource.remove', {
+          props.rootStore.triggerAction('nodepool.remove', {
             type: 'RESOURCE_DETAIL',
             detail: toJS(store.detail),
             store,

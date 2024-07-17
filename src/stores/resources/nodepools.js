@@ -75,7 +75,7 @@ export default class ResourceStore extends Base {
     const detail = {
       ...params,
       ...this.mapper(result),
-      kind: 'NodepoolResource',
+      kind: 'Nodepools',
     }
 
     await this.fetchDetailFlavor(params)

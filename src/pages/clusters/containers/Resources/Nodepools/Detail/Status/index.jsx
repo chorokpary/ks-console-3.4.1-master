@@ -4,8 +4,8 @@ import classnames from 'classnames'
 
 import { isEmpty } from 'lodash'
 import { Indicator, Panel, Text, Modal } from 'components/Base'
-import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolRegist'
-import NodePoolModifyModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolModify'
+import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/NodePools/Regist'
+import NodePoolModifyModal from 'clusters/containers/Resources/components/Modals/NodePools/Modify'
 
 import {
   Button,
