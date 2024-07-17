@@ -72,25 +72,6 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
       props.onEdit({ ...data })
     })
   }
-
-  const handleDelete = () => {
-    const modal = Modal.open({
-      onOk: () => {
-        props.onDelete()
-        Modal.close(modal)
-      },
-      modal: DeleteModal,
-      title: t('RESOURCES_DELETE'),
-      desc: t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
-        resource: nodepool.name,
-      }),
-      resource: nodepool.name,
-      module: resourceStore.module,
-      resourceStore,
-      ...props,
-    })
-  }
-
   const closeModal = () => {
     setModalView(false)
   }

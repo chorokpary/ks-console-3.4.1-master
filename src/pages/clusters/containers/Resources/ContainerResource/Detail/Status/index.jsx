@@ -5,7 +5,6 @@ import classnames from 'classnames'
 import { isEmpty } from 'lodash'
 import { Indicator, Panel, Text, Modal } from 'components/Base'
 import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolRegist'
-import NodePoolModifyModal from 'clusters/containers/Resources/components/Modals/ContainerResource/NodePoolModify'
 
 import {
   Button,
@@ -25,6 +24,7 @@ import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 
 import ResourceStore from 'stores/resources/containerresource'
+import { Link } from 'react-router-dom'
 import styles from './index.scss'
 
 const storeResource = new ResourceStore()
@@ -121,86 +121,6 @@ const Status = props => {
               </div>
             </div>
           </Fragment>
-          {!!machines &&
-            machines
-              .filter(machine => {
-                return (
-                  machine.cluster === props.match.params.name &&
-                  !machine.controlplane &&
-                  machine.name.indexOf(`${machine.cluster}-${obj.name}`) === 0
-                )
-              })
-              .map((detail, index) => (
-                <Fragment key={index}>
-                  {index === 0 && `Nodes`}
-                  <div className={classnames(styles.expandItem)}>
-                    <div className={styles.itemMainWhite}>
-                      <div className={styles.icon}>
-                        <Icon name="nodes" size={40} />
-                        <Indicator
-                          className={styles.indicator}
-                          type={getState(detail?.ready_status, detail?.phase)}
-                          flicker
-                        />
-                      </div>
-                      <div className={styles.content}>
-                        <div className={styles.text} style={{ width: '25%' }}>
-                          <div>{detail.name}</div>
-                          <p>
-                            {getLocalTime(detail.timestamp).format(
-                              'YYYY-MM-DD HH:mm:ss'
-                            )}
-                            {t('RESOURCES_CREATED')}
-                          </p>
-                        </div>
-                        <div className={styles.text} style={{ width: '15%' }}>
-                          <div>
-                            {detail.phase === 'ScalingUp'
-                              ? t('RESOURCES_SCALING_UP')
-                              : detail.phase === 'ScalingDown'
-                              ? t('RESOURCES_SCALING_DOWN')
-                              : detail.phase === 'Running'
-                              ? t('RESOURCES_RUNNING')
-                              : detail.phase === 'Failed'
-                              ? t('RESOURCES_FAILED')
-                              : detail.phase === 'Unknown'
-                              ? t('RESOURCES_UNKNOWN')
-                              : ''}
-                          </div>
-                          <p>{t('RESOURCES_STATE')}</p>
-                        </div>
-                        <div className={styles.text}>
-                          {detail?.networks?.filter(
-                            network => network.name !== 'k8s-pod-network'
-                          ).length > 0 ? (
-                            <div>
-                              {detail.networks
-                                .filter(
-                                  network => network.name !== 'k8s-pod-network'
-                                )
-                                .map(network => (
-                                  <div key={network.name}>
-                                    {network.ip} ({network.name})
-                                  </div>
-                                ))}
-                            </div>
-                          ) : (
-                            <div>-</div>
-                          )}
-                          <p>{t('RESOURCES_NETWORK')}</p>
-                        </div>
-                        {renderMonitorings(
-                          detail.name,
-                          false,
-                          detail.networks.find(
-                            network => network.name === 'k8s-pod-network'
-                          )
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Fragment>
-              ))}
         </div>
       </div>
     )
@@ -242,6 +162,7 @@ const Status = props => {
     }
   }
 
+  console.log(nodepools)
   const getSearchData = (data, searchText) => {
     return data.filter(row => {
       return row['name']?.toLowerCase().includes(searchText.toLowerCase())
@@ -599,7 +520,13 @@ const Status = props => {
                   </div>
                   <div className={styles.content}>
                     <div className={styles.text} style={{ width: '20%' }}>
-                      <div>{detail.name}</div>
+                      <div className={styles.title}>
+                        <Link
+                          to={`/clusters/${props.match.params.cluster}/nodepoolResource/${props.match.params.name}/${detail.name}`}
+                        >
+                          {detail.name}
+                        </Link>
+                      </div>
                       <p>
                         {getLocalTime(detail.timestamp).format(
                           'YYYY-MM-DD HH:mm:ss'

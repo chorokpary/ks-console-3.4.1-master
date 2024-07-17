@@ -28,7 +28,6 @@ export default {
       const nodepool = detail.nodepool
       const modal = Modal.open({
         onEdit: data => {
-          console.log(store)
           store.updateNodePool(data, params).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
