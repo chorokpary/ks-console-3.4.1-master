@@ -24,10 +24,12 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 
-import ResourceStore from 'stores/resources/containerresource'
+import ContainerResourceStore from 'stores/resources/containerresource'
+import NodePoolStore from 'stores/resources/nodepools'
 import styles from './index.scss'
 
-const storeResource = new ResourceStore()
+const containerResourceStore = new ContainerResourceStore()
+const nodePoolStore = new NodePoolStore()
 
 const step = '5m'
 const times = 100
@@ -231,7 +233,7 @@ const Status = props => {
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
-    const nodepoolList = await storeResource.fetchListNodePools(
+    const nodepoolList = await nodePoolStore.fetchListNodePools(
       props.match.params
     )
 
@@ -244,7 +246,9 @@ const Status = props => {
       setNodepools(filteredNodepools)
     }
 
-    const response = await storeResource.fetchDetailFlavor(props.match.params)
+    const response = await containerResourceStore.fetchDetailFlavor(
+      props.match.params
+    )
     if (isMounted) {
       setMachines(response._originData.machines)
     }
@@ -280,15 +284,15 @@ const Status = props => {
   const handleNodepoolCreate = () => {
     const modal = Modal.open({
       onOk: data => {
-        storeResource.createNodePool(data, props.match.params).then(() => {
+        nodePoolStore.createNodePool(data, props.match.params).then(() => {
           Modal.close(modal)
           Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
           handleRefresh()
         })
       },
       modal: NodePoolRegistModal,
-      module: storeResource.module,
-      storeResource,
+      module: containerResourceStore.module,
+      storeResource: containerResourceStore,
       ...props,
     })
   }
@@ -297,14 +301,14 @@ const Status = props => {
   const handleNodepoolEdit = nodepool => {
     const modal = Modal.open({
       onEdit: data => {
-        storeResource.updateNodePool(data, props.match.params).then(() => {
+        nodePoolStore.updateNodePool(data, props.match.params).then(() => {
           Modal.close(modal)
           Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
           handleRefresh()
         })
       },
       onDelete: () => {
-        storeResource
+        nodePoolStore
           .deleteNodePool(nodepool.name, props.match.params)
           .then(() => {
             Modal.close(modal)
@@ -313,8 +317,8 @@ const Status = props => {
           })
       },
       modal: NodePoolModifyModal,
-      module: storeResource.module,
-      storeResource,
+      module: containerResourceStore.module,
+      storeResource: containerResourceStore,
       nodepool,
       ...props,
     })
