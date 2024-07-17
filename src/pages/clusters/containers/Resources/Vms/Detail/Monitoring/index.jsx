@@ -68,11 +68,11 @@ const index = (props) => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
-      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuLinuxDataExpr = `(sum by (pod,instance) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod) group_left(instance) node_uname_info) - 1`
+      const cpuWindowsDataExpr = `(sum by (pod,instance) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod) group_left(instance) windows_os_info) - 1`
 
       const vmCpuData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
+	      expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })
@@ -93,7 +93,7 @@ const index = (props) => {
       const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
 
       const vmMemoryData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
+	      expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster
       })
