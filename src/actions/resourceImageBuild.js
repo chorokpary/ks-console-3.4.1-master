@@ -37,7 +37,7 @@ export default {
               setTimeout(success && success(), 1000);
             })
         },
-        title: t('이미지 빌드 생성'),
+        title: t('RESOURCES_CREATE_IMAGE_BUILD'),
         modal: RegistModal,
         store,
         cluster,

@@ -18,8 +18,8 @@
 module.exports = {
   RESOURCES_BESIDES: 'Besides',
   RESOURCES_COUNT: 'Count',
-  RESOURCES_EUL: '을',
-  RESOURCES_LEUL: '를',
+  RESOURCES_EUL: '',
+  RESOURCES_LEUL: '',
   RESOURCES_ONE_TO_AVERAGE: 'One to average',
   RESOURCES_WEEKEND: 'weekend',
   RESOURCES_ADD_UNTIL_FIVE: 'Add Untill five',
@@ -821,6 +821,9 @@ module.exports = {
     'Please enter host route information correctly.</p> Destination - ipv4network, nexthop - ipv4',
   RESOURCES_LOG: 'Log',
   RESOURCES_HARBOR_VALID_TIP: 'Please enter Harbor URL information.',
+  RESOURCES_IMAGE_BUILD: 'Image Build.',
+  RESOURCES_IMAGE_BUILD_DESC:
+    'Manage the status and usage of Image Build.',
   RESOURCES_DELETE_IMAGE_BUILD_TIP:
     'Enter the name of the image build <strong>{resource}</strong> to confirm you understand the risks of this operation.',
   RESOURCES_SELECT_NODE_TIP: 'Please select a node.',
@@ -878,4 +881,5 @@ module.exports = {
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: 'Before file upload.',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: 'Before image build & push.',
   RESOURCES_PHYSICAL_NETWORK_EMPTY_DESC: 'Please enter the physical network.',
+  RESOURCES_CREATE_IMAGE_BUILD: 'Create Image Build',
 }

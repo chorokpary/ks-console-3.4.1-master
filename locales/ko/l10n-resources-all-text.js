@@ -867,4 +867,5 @@ module.exports = {
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: '파일 업로드 전 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: '이미지 빌드&푸시 전 상태입니다.',
   RESOURCES_PHYSICAL_NETWORK_EMPTY_DESC: '물리 네트워크를 입력해주세요',
+  RESOURCES_CREATE_IMAGE_BUILD: '이미지 빌드 생성',
 }

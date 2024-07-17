@@ -388,7 +388,7 @@ export default class Vms extends React.Component {
               security_group_objects.length > 1
                 ? `${
                     security_group_objects[0].name
-                  } 외 ${security_group_objects.length - 1}개`
+                  } ${t('RESOURCES_BESIDES')} ${security_group_objects.length - 1} ${t('RESOURCES_COUNT')}`
                 : security_group_objects.length === 1
                 ? security_group_objects[0].name
                 : '-';
