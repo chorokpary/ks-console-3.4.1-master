@@ -63,8 +63,10 @@ const RegistModal = props => {
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
   ];
+
   const [physnetOptions, setPhysnetOptions] = useState([]);
-  const [physnet, setPhysnet] = useState();
+  const [physnet, setPhysnet] = useState(t('RESOURCES_SELECT'));
+  const [isPhysicalNetworkSelect, setIsPhysicalNetworkSelect] = useState(true)
 
   useEffect(() => {
     const getPhysnetsData = async () => {
@@ -84,14 +86,15 @@ const RegistModal = props => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
+      const { data } = form.current.props;
+
       const error = document.querySelectorAll('.form-item-error');
       for (const i of error) {
         if (!i.classList.contains('hide')) {
           return;
         }
       }
-
-      const { data } = form.current.props;
+ 
       const dns = [];
       data.dns?.map(el => {
         if (el != '') {
@@ -116,7 +119,8 @@ const RegistModal = props => {
       data.host_routes = host_routes;
       data.networktype_app = false;
       data.project = projectName;
-
+      data.physnet_name = data.type == 'FLAT' ? physnet : ' ';
+     
       // console.log(data)
       onOk({ network: data });
     });
@@ -268,6 +272,8 @@ const RegistModal = props => {
 
       document.getElementById('radio.0').click();
       setExternalBool(false);
+      setIsPhysicalNetworkSelect(true);
+      setPhysnet(t('RESOURCES_SELECT'))
     }
   };
 
@@ -289,13 +295,37 @@ const RegistModal = props => {
         data.ip_pool_end == '' ||
         data.gateway_ip == undefined ||
         data.gateway_ip == ''
-      ) {
+      ) {  
+
         handleOk();
+
+        if(data.type == "FLAT"){
+          if((physnet == t('RESOURCES_SELECT') || physnet == 'select')){
+            setIsPhysicalNetworkSelect(false);
+            return false;
+          }
+        }else{
+          setIsPhysicalNetworkSelect(true);
+        }   
+
       } else {
+        
+        if(data.type == "FLAT"){
+          if((physnet == t('RESOURCES_SELECT') || physnet == 'select')){
+            setIsPhysicalNetworkSelect(false);
+            return false;
+          }
+        }else{
+          setIsPhysicalNetworkSelect(true);
+        }
+
         setRegStep(2);
+        setIsPhysicalNetworkSelect(true);
       }
     }
   };
+
+  
 
   const fnGetModalFooter = () => {
     let elements = '';
@@ -394,6 +424,7 @@ const RegistModal = props => {
 
   const segmentIdValidator = (rule, value, callback) => {
     const { data } = form.current.props;
+
     if (data.type !== 'FLAT') {
       if (!value) {
         return callback({
@@ -570,22 +601,26 @@ const RegistModal = props => {
                           </Form.Item>
                         </Column>
                         <Column>
-                          <Form.Item
-                            label={t('RESOURCES_PHYSNET')}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
-                          >
+                          {t('RESOURCES_PHYSNET')}
+                          <span className="form-item-required">*</span>
+                          <Form.Item>
+                            <>
                             <Select
                               name="physnet_name"
                               options={physnetOptions}
                               disabled={!externalBool}
+                              placeholder={t('RESOURCES_SELECT')}
                               onChange={e => {
                                 setPhysnet(e);
+                                setIsPhysicalNetworkSelect(true);
                               }}
+                              value={physnet}    
+                              style={{top: '4px'}}
                             />
+                            <div className={`form-item-error ${isPhysicalNetworkSelect ? 'hide' : ''}`} style={{marginTop: '8px'}}>
+                              {t('RESOURCES_PHYSICAL_NETWORK_EMPTY_DESC')}
+                            </div>
+                            </>
                           </Form.Item>
                         </Column>
                       </Columns>

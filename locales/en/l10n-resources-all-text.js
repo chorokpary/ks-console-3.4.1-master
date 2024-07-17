@@ -877,4 +877,5 @@ module.exports = {
   RESOURCES_PREPARING: 'Preparing',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: 'Before file upload.',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: 'Before image build & push.',
+  RESOURCES_PHYSICAL_NETWORK_EMPTY_DESC: 'Please enter the physical network.',
 }
