@@ -145,8 +145,6 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'Edit KaaS Resource',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'Enter the KaaS resource name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
-  RESOURCES_CREATE_NODEPOOL: 'Create NodePool',
-  RESOURCES_EDIT_NODEPOOL: 'Edit NodePool',
   RESOURCES_KAAS_DESC: 'Manage the status and usage of KaaS resources.',
   RESOURCES_KAAS_IMAGE: 'KaaS Image',
   RESOURCES_CREATE_KAAS_IMAGE: 'Create KaaS Image',
@@ -156,8 +154,6 @@ module.exports = {
   RESOURCES_CONNECTION_LB: 'LB Connection',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Please select the Master Flavor.',
   RESOURCES_SELECT_MASTER_ARCH_TIP: 'Please select the Master Architecture.',
-  RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
-    'Please select the NodePool Architecture.',
   RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: 'Please select Kubernetes version.',
   RESOURCES_MASTER_COUNT: 'Number of Masters',
   RESOURCES_MASTER_COUNT_MAX_DESC:
@@ -187,11 +183,6 @@ module.exports = {
   RESOURCES_SELECT_TARGET_IP_TIP: 'Please select a Target IP.',
   RESOURCES_CONNECTION_VM: 'VM Connection',
   RESOURCES_ACCESS_VNC: 'Access VNC',
-  RESOURCES_SELECT_WORKER_FLAVOR_TIP: 'Please select the Worker Flavor.',
-  RESOURCES_WORKER_COUNT: 'Number of Workers',
-  RESOURCES_ADJUST_WORKER: 'Adjust Number of Workers',
-  RESOURCES_CHANGE_WORKER_COUNT: 'Do you want to change the number of workers?',
-  RESOURCES_WORKER_MAX_COUNT_DESC: 'The maximum number of workers is 10.',
   RESOURCES_VIRTUAL_IP: 'Virtual IP',
   RESOURCES_VROUTER: 'Virtual Router',
   RESOURCES_VROUTER_IP: 'Virtual Router IP',
@@ -513,6 +504,7 @@ module.exports = {
   RESOURCES_INPUT_SOURCE: 'Input Source',
   RESOURCES_CHECK_INPUT_INFORMATION: 'Check Input Information',
   RESOURCES_INPUT_EMPTY_DESC: 'Please enter input.',
+  RESOURCES_AUTO_SCALING: 'Auto Scaling',
   RESOURCES_AUTO_EXPAND: 'Auto Expand',
   RESOURCES_AUTO_EXPAND_SCALING: 'Auto Expand Scaling',
   RESOURCES_RESTART: 'Restart',
@@ -884,4 +876,13 @@ module.exports = {
   RESOURCES_PREPARING: 'Preparing',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: 'Before file upload.',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: 'Before image build & push.',
+
+  // NodePool
+  RESOURCES_NODEPOOL_NAME: 'NodePool Name',
+  RESOURCES_CREATE_NODEPOOL: 'Create NodePool',
+  RESOURCES_EDIT_NODEPOOL: 'Edit NodePool',
+  RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP: 'Please select the NodePool Flavor.',
+  RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
+    'Please select the NodePool Architecture.',
+  RESOURCES_NODE_COUNT: 'Number of Nodes',
 }

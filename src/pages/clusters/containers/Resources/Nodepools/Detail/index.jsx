@@ -68,83 +68,45 @@ const ResourceDetail = props => {
   }
 
   const getAttrs = () => {
-    const detail = toJS(store.detail.cluster)
-    if (isEmpty(detail)) {
+    const nodepool = toJS(store.nodepool)
+    if (isEmpty(nodepool)) {
       return
     }
+
+    console.log(nodepool)
 
     return [
       {
         name: t('RESOURCES_CLUSTER'),
-        value: detail.infra.namespace,
+        value: props.match.params.clustername,
       },
       {
-        name: t('Pod CIDRS'),
-        value:
-          detail.pod_cidrs.length > 0
-            ? detail.pod_cidrs &&
-              detail.pod_cidrs.map(cidr => {
-                return <p key={cidr}>{cidr}</p>
-              })
-            : '-',
+        name: t('RESOURCES_NODEPOOL_NAME'),
+        value: nodepool.name,
       },
       {
-        name: t('Service CIDRS'),
-        value:
-          detail.service_cidrs.length > 0
-            ? detail.service_cidrs &&
-              detail.service_cidrs.map(cidr => {
-                return <p key={cidr}>{cidr}</p>
-              })
-            : '-',
+        name: t('RESOURCES_IMAGE'),
+        value: nodepool.kube_image,
       },
       {
-        name: t('RESOURCES_KUBERNETES_SERVER_IP'),
-        value: detail.cp_endpoint?.host,
+        name: t('RESOURCES_FLAVOR'),
+        value: nodepool.flavor,
       },
       {
-        name: t('Port'),
-        value: detail.cp_endpoint?.port,
+        name: t('RESOURCES_NODE_COUNT'),
+        value: nodepool.nodepool_replicas,
       },
       {
-        name: t('RESOURCES_MASTER_IMAGE'),
-        value: detail.kube_image,
-      },
-      {
-        name: t('RESOURCES_VERSION'),
-        value: detail.kube_version,
-      },
-      {
-        name: t('CNI'),
-        value: detail.cni,
-      },
-      {
-        name: t('CSI'),
-        value: detail.csi,
-      },
-      // {
-      //    name: t('EKG Stack'),
-      //    value: detail.ui,
-      // },
-      {
-        name: t('ELB'),
-        value: detail.elb ? detail.elb : '-',
-      },
-      // {
-      //    name: t('Scalling'),
-      //    value: "-",
-      // },
-      {
-        name: t('RESOURCES_NETWORK'),
-        value: detail.network.name,
+        name: t('RESOURCES_AUTO_SCALING'),
+        value: nodepool.autoscale ? 'True' : 'False',
       },
       {
         name: t('RESOURCES_DESCRIPTION'),
-        value: detail.description ? detail.description : '-',
+        value: nodepool.description ? nodepool.description : '-',
       },
       {
         name: t('RESOURCES_CREATE_DAY'),
-        value: getLocalTime(detail.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        value: getLocalTime(nodepool.timestamp).format('YYYY-MM-DD HH:mm:ss'),
       },
     ]
   }
@@ -154,7 +116,7 @@ const ResourceDetail = props => {
   }
 
   const getBanner = () => {
-    return <Icon name="kubernetes" size={40} />
+    return <Icon name="nodes" size={40} />
   }
 
   const sideProps = {

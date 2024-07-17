@@ -255,7 +255,7 @@ const RegistNodePoolModal = props => {
                           placeholder={{ label: t('RESOURCES_SELECT') }}
                           // onChange={e => setWorkerFlavorSelect(e)}
                           defaultDescription={t(
-                            'RESOURCES_SELECT_WORKER_FLAVOR_TIP'
+                            'RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP'
                           )}
                         />
                       </Form.Item>

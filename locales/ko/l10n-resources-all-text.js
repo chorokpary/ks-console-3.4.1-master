@@ -139,8 +139,6 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'KaaS 리소스 수정',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'KaaS 리소스 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_CREATE_NODEPOOL: '노드풀 생성',
-  RESOURCES_EDIT_NODEPOOL: '노드풀 수정',
   RESOURCES_KAAS_DESC: 'KaaS 리소스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_IMAGE: 'KaaS 이미지',
   RESOURCES_CREATE_KAAS_IMAGE: 'KaaS 이미지 생성',
@@ -151,7 +149,6 @@ module.exports = {
   RESOURCES_CONNECTION_LB: 'LB 연결',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Master Flavor를 선택해 주세요.',
   RESOURCES_SELECT_MASTER_ARCH_TIP: 'Master 아키텍쳐를 선택해 주세요.',
-  RESOURCES_SELECT_NODEPOOL_ARCH_TIP: '노드풀 아키텍쳐를 선택해 주세요.',
   RESOURCES_SELECT_MASTER_KUBE_VERSION_TIP: '쿠버네티스 버전을 선택해 주세요.',
   RESOURCES_MASTER_COUNT: 'Master 개수',
   RESOURCES_MASTER_COUNT_MAX_DESC:
@@ -181,11 +178,6 @@ module.exports = {
   RESOURCES_SELECT_TARGET_IP_TIP: 'Target IP를 선택해 주세요.',
   RESOURCES_CONNECTION_VM: 'VM 연결',
   RESOURCES_ACCESS_VNC: 'VNC 접속',
-  RESOURCES_SELECT_WORKER_FLAVOR_TIP: 'Nodepool Flavor를 선택해 주세요.',
-  RESOURCES_WORKER_COUNT: 'Worker 개수',
-  RESOURCES_ADJUST_WORKER: 'Worker 개수 조정',
-  RESOURCES_CHANGE_WORKER_COUNT: 'Worker 개수를 변경하시겠습니까?',
-  RESOURCES_WORKER_MAX_COUNT_DESC: 'Worker 최대 개수는 10개 입니다.',
   RESOURCES_VIRTUAL_IP: '가상 IP',
   RESOURCES_VROUTER: '가상 라우터',
   RESOURCES_VROUTER_IP: '가상 라우터 IP',
@@ -506,6 +498,7 @@ module.exports = {
   RESOURCES_INPUT_SOURCE: '입력 소스',
   RESOURCES_CHECK_INPUT_INFORMATION: '입력 정보 확인',
   RESOURCES_INPUT_EMPTY_DESC: '입력해 주세요.',
+  RESOURCES_AUTO_SCALING: '자동확장',
   RESOURCES_AUTO_EXPAND: '자동확장',
   RESOURCES_AUTO_EXPAND_SCALING: '자동확장 스케일링',
   RESOURCES_RESTART: '재시작',
@@ -873,4 +866,12 @@ module.exports = {
   RESOURCES_PREPARING: '대기 중',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: '파일 업로드 전 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: '이미지 빌드&푸시 전 상태입니다.',
+
+  // NodePool
+  RESOURCES_NODEPOOL_NAME: '노드풀 이름',
+  RESOURCES_CREATE_NODEPOOL: '노드풀 생성',
+  RESOURCES_EDIT_NODEPOOL: '노드풀 수정',
+  RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP: 'Nodepool Flavor를 선택해 주세요.',
+  RESOURCES_SELECT_NODEPOOL_ARCH_TIP: '노드풀 아키텍쳐를 선택해 주세요.',
+  RESOURCES_NODE_COUNT: '노드 개수',
 }
