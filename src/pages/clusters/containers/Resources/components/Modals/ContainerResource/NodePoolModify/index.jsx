@@ -58,7 +58,7 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
     })
   }
 
-  const handleOk = () => {
+  const handleEdit = () => {
     form.current.validator(() => {
       const { data } = form.current.props
       const scaleRange = {}
@@ -106,7 +106,7 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
         </Button>
         <Button
           onClick={() => {
-            handleOk()
+            handleEdit()
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
           type={'control'}
@@ -114,17 +114,6 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
           disabled={props.isSubmitting}
         >
           {t('RESOURCES_EDIT')}
-        </Button>
-        <Button
-          onClick={() => {
-            handleDelete()
-          }}
-          className={classnames(styles['btn'], styles['btn-danger'])}
-          type={'danger'}
-          loading={props.isSubmitting}
-          disabled={props.isSubmitting}
-        >
-          {t('RESOURCES_DELETE')}
         </Button>
       </>
     )

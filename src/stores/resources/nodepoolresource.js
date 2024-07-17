@@ -16,11 +16,9 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get } from 'lodash'
 import { action } from 'mobx'
 import { Notify } from '@kube-design/components'
 
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
@@ -32,148 +30,13 @@ export default class ResourceStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/capk/clusters`
+    )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+      params.name
+    }`
 
   getListUrl = this.getResourceUrl
 
   // @action
-  async fetchList({
-    cluster,
-    workspace,
-    namespace,
-    more,
-    devops,
-    silent,
-    ...params
-  } = {}) {
-    // console.log("silent : "+ silent)
-    if (!silent) {
-      this.list.isLoading = true
-    }
-
-    if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
-    }
-
-    if (params.limit === Infinity || params.limit === -1) {
-      params.limit = -1
-      params.page = 1
-    }
-
-    params.limit = params.limit || 10
-
-    const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
-      this.getFilterParams(params)
-    )
-
-    // mm3 api 관련
-    const mm3Array = [
-      'vms',
-      'images',
-      'flavors',
-      'networks',
-      'routers',
-      'floating_ips',
-      'lbs',
-      'security_groups',
-      'keypairs',
-      'host_devices',
-      'pci_devices',
-      'volumes',
-      'clusters',
-      'workspaces',
-      'licenses',
-      'distro_types',
-    ]
-    const apiName = mm3Array.includes(this.module) ? this.module : ''
-
-    // // 초기 데이터 처리 // 위 주석으로 세팅해줄 필요없어짐
-    // this.dataList =
-    //   data.length > 0 ? data.map((obj) => {
-    //     const cluster = obj.cluster
-    //     const namespace = obj.namespace
-    //     const temData = obj._originData
-    //     temData.cluster = cluster
-    //     temData.namespace = namespace
-    //     return temData
-    //   }) : [];
-    this.dataList = (get(result, apiName) || []).map(item => ({
-      cluster,
-      namespace,
-      // ...this.mapper(item), // kubesphere Object.maaper 와 중복되어서 주석처리
-      ...item,
-    }))
-
-    // 검색 관련 처리
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
-    const searchArray = Object.keys(params)
-      .map(key => {
-        const value = params[key]
-        return {
-          searchKeywordType: key,
-          searchKeywordText: value,
-        }
-      })
-      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
-
-    if (searchArray.length > 0) {
-      // eslint-disable-next-line array-callback-return
-      searchArray.map(search => {
-        this.dataList = this.dataList.filter(row => {
-          if (typeof row[search.searchKeywordType] === 'boolean') {
-            return (row[search.searchKeywordType]
-              ? 'Ready'
-              : 'Not-ready'
-            ).includes(search.searchKeywordText)
-          }
-          if (search.searchKeywordType === 'project') {
-            return (
-              row[search.searchKeywordType]?.toLowerCase() ===
-              search.searchKeywordText.toLowerCase()
-            )
-          }
-          return row[search.searchKeywordType]
-            ?.toLowerCase()
-            .includes(search.searchKeywordText.toLowerCase())
-        })
-      })
-    }
-
-    // 정렬 처리
-    const sortType = params.ascending ? 'asc' : 'desc'
-    // eslint-disable-next-line array-callback-return
-    this.dataList.sort((a, b) => {
-      const x = a[params.sortBy]
-      const y = b[params.sortBy]
-      if (sortType === 'desc') {
-        return x > y ? -1 : x < y ? 1 : 0
-      }
-      if (sortType === 'asc') {
-        return x < y ? -1 : x > y ? 1 : 0
-      }
-    })
-
-    // mm3 데이터 page 별 Slice 처리
-    const perPage = Number(params.limit) || 10
-    const currentPage = Number(params.page) || 1
-    const mm3SliceData = this.dataList.slice(
-      (currentPage - 1) * perPage,
-      currentPage * perPage
-    )
-
-    this.list.update({
-      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || this.dataList.length || 0,
-      ...params,
-      limit: Number(params.limit) || 10,
-      page: Number(params.page) || 1,
-      isLoading: false,
-      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-    })
-
-    return this.dataList
-  }
 
   @action
   async create(data, params = {}) {
@@ -187,6 +50,7 @@ export default class ResourceStore extends Base {
     reqData.name = data.name
     reqData.kube_image = data.image
     reqData.description = data.description
+    reqData.master_flavor = data.masterFlavor
     reqData.master_number = data.master_number
     reqData.worker_number = data.worker_number
     reqData.worker_autoscale = data.worker_autoscale
@@ -207,61 +71,18 @@ export default class ResourceStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
-    )
+    const result = await request.get(`${this.getResourceUrl(params)}`)
     const detail = {
       ...params,
       ...this.mapper(result),
-      kind: 'ContainerResource',
+      kind: 'NodepoolResource',
     }
 
-    // Yaml 파일 관련
-    await this.fetchYaml(params)
-
     await this.fetchDetailFlavor(params)
-    await this.fetchResourceConfig(params)
 
     this.detail = detail._originData
     this.isLoading = false
     return detail
-  }
-
-  @action
-  async fetchYaml(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
-    )
-    const yamlData = {
-      ...params,
-      ...this.mapper(result),
-      kind: 'ContainerResource',
-    }
-
-    this.yaml = yamlData._originData.manifest
-
-    this.isLoading = false
-    return yamlData
-  }
-
-  @action
-  async fetchResourceConfig(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/config`
-    )
-    const response = {
-      ...params,
-      ...this.mapper(result),
-      kind: 'ContainerResource',
-    }
-
-    this.resourceConfig = response._originData.config
-    this.isLoading = false
-    return response
   }
 
   @action
@@ -351,23 +172,23 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/clusters/${params.name}/machines`
+      )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+        params.name
+      }`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'machines' }
+    const response = { ...params, ...this.mapper(result), kind: 'nodepool' }
     const dataArray = []
-    const promises = response._originData.machines.map(async machine => {
-      const flavorData = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/flavors/${machine.flavor}`
-      )
-      machine.flavor_detail = flavorData.flavor
-      dataArray.push(machine)
-    })
-    await Promise.all(promises)
+    const nodepool = response._originData.nodepool
+    const flavorData = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/flavors/${nodepool.flavor}`
+    )
+    nodepool.flavor_detail = flavorData.flavor
+    dataArray.push(nodepool)
     response._originData.lbs = dataArray
 
-    this.machines = response._originData.machines
+    this.nodepool = response._originData.nodepool
 
     this.isLoading = false
     return response
@@ -455,6 +276,39 @@ export default class ResourceStore extends Base {
         params
       )}/edgetron/resources/capk/clusters/${params.name}/nodepools`,
       jsonData
+    )
+  }
+
+  @action
+  async updateNodePool(data, params = {}) {
+    const jsonData = {}
+    const reqData = {}
+    reqData.name = data.name
+    reqData.description = data.description
+    reqData.replicas = data.replicas
+    reqData.autoscale = data.autoscale
+    reqData.scale_range = data.scale_range
+    jsonData.nodepool = reqData
+
+    return await request.put(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+        params.name
+      }`,
+      jsonData
+    )
+  }
+
+  @action
+  async deleteNodePool(params = {}) {
+    console.log(params)
+    return await request.delete(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+        params.name
+      }`
     )
   }
 }

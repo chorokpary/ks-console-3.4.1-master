@@ -155,14 +155,22 @@ const Status = props => {
                         </div>
                         <div className={styles.text} style={{ width: '15%' }}>
                           <div>
-                            {detail.phase === 'ScalingUp'
-                              ? t('RESOURCES_SCALING_UP')
-                              : detail.phase === 'ScalingDown'
-                              ? t('RESOURCES_SCALING_DOWN')
+                            {detail.phase === 'Stopped'
+                              ? t('RESOURCES_STOP')
+                              : detail.phase === 'Provisioning'
+                              ? t('RESOURCES_PROVISIONING')
+                              : detail.phase === 'Starting'
+                              ? t('RESOURCES_STARTING')
                               : detail.phase === 'Running'
                               ? t('RESOURCES_RUNNING')
-                              : detail.phase === 'Failed'
-                              ? t('RESOURCES_FAILED')
+                              : detail.phase === 'Paused'
+                              ? t('RESOURCES_PAUSED')
+                              : detail.phase === 'Migrating'
+                              ? t('RESOURCES_MIGRATING')
+                              : detail.phase === 'Stopping'
+                              ? t('RESOURCES_STOPPING')
+                              : detail.phase === 'Terminating'
+                              ? t('RESOURCES_TERMINATING')
                               : detail.phase === 'Unknown'
                               ? t('RESOURCES_UNKNOWN')
                               : ''}
@@ -281,6 +289,33 @@ const Status = props => {
       modal: NodePoolRegistModal,
       module: storeResource.module,
       storeResource,
+      ...props,
+    })
+  }
+
+  // nodepool edit
+  const handleNodepoolEdit = nodepool => {
+    const modal = Modal.open({
+      onEdit: data => {
+        storeResource.updateNodePool(data, props.match.params).then(() => {
+          Modal.close(modal)
+          Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+          handleRefresh()
+        })
+      },
+      onDelete: () => {
+        storeResource
+          .deleteNodePool(nodepool.name, props.match.params)
+          .then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            handleRefresh()
+          })
+      },
+      modal: NodePoolModifyModal,
+      module: storeResource.module,
+      storeResource,
+      nodepool,
       ...props,
     })
   }
@@ -427,7 +462,7 @@ const Status = props => {
 
   return (
     <>
-      <Panel title={'ControlPlane Nodes'}>
+      <Panel title={'Master Node'}>
         <div className={styles.wrapper}>
           {!!machines &&
             machines
@@ -477,20 +512,22 @@ const Status = props => {
                       </div>
                       <div className={styles.text} style={{ width: '15%' }}>
                         <div>
-                          {detail.phase === 'Provisioned'
-                            ? t('RESOURCES_PROVISIONED')
+                          {detail.phase === 'Stopped'
+                            ? t('RESOURCES_STOP')
                             : detail.phase === 'Provisioning'
                             ? t('RESOURCES_PROVISIONING')
-                            : detail.phase === 'Pending'
-                            ? t('RESOURCES_PENDING')
+                            : detail.phase === 'Starting'
+                            ? t('RESOURCES_STARTING')
                             : detail.phase === 'Running'
                             ? t('RESOURCES_RUNNING')
-                            : detail.phase === 'Failed'
-                            ? t('RESOURCES_FAILED')
-                            : detail.phase === 'Deleting'
-                            ? t('RESOURCES_DELETING')
-                            : detail.phase === 'Deleted'
-                            ? t('RESOURCES_DELETED')
+                            : detail.phase === 'Paused'
+                            ? t('RESOURCES_PAUSED')
+                            : detail.phase === 'Migrating'
+                            ? t('RESOURCES_MIGRATING')
+                            : detail.phase === 'Stopping'
+                            ? t('RESOURCES_STOPPING')
+                            : detail.phase === 'Terminating'
+                            ? t('RESOURCES_TERMINATING')
                             : detail.phase === 'Unknown'
                             ? t('RESOURCES_UNKNOWN')
                             : ''}
@@ -548,6 +585,7 @@ const Status = props => {
               ))}
         </div>
       </Panel>
+
       <Panel title={'NodePools'}>
         <div className={styles.wrapper}>
           <Level>
@@ -609,20 +647,22 @@ const Status = props => {
                     </div>
                     <div className={styles.text} style={{ width: '15%' }}>
                       <div>
-                        {detail.phase === 'Provisioned'
-                          ? t('RESOURCES_PROVISIONED')
+                        {detail.phase === 'Stopped'
+                          ? t('RESOURCES_STOP')
                           : detail.phase === 'Provisioning'
                           ? t('RESOURCES_PROVISIONING')
-                          : detail.phase === 'Pending'
-                          ? t('RESOURCES_PENDING')
+                          : detail.phase === 'Starting'
+                          ? t('RESOURCES_STARTING')
                           : detail.phase === 'Running'
                           ? t('RESOURCES_RUNNING')
-                          : detail.phase === 'Failed'
-                          ? t('RESOURCES_FAILED')
-                          : detail.phase === 'Deleting'
-                          ? t('RESOURCES_DELETING')
-                          : detail.phase === 'Deleted'
-                          ? t('RESOURCES_DELETED')
+                          : detail.phase === 'Paused'
+                          ? t('RESOURCES_PAUSED')
+                          : detail.phase === 'Migrating'
+                          ? t('RESOURCES_MIGRATING')
+                          : detail.phase === 'Stopping'
+                          ? t('RESOURCES_STOPPING')
+                          : detail.phase === 'Terminating'
+                          ? t('RESOURCES_TERMINATING')
                           : detail.phase === 'Unknown'
                           ? t('RESOURCES_UNKNOWN')
                           : ''}
@@ -648,6 +688,15 @@ const Status = props => {
                     <div className={styles.text} style={{ width: '8%' }}>
                       <div>{detail.updated_replicas}</div>
                       <p>Updated</p>
+                    </div>
+                    <div className={styles.text} style={{ width: '8%' }}>
+                      <Button
+                        type="default"
+                        data-test="detail-edit"
+                        onClick={() => handleNodepoolEdit(detail)}
+                      >
+                        {t('EDIT_INFORMATION')}
+                      </Button>
                     </div>
                     <div
                       className={styles.arrow}
