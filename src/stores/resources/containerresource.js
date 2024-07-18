@@ -268,7 +268,7 @@ export default class ResourceStore extends Base {
   // eslint-disable-next-line no-unused-vars
   async update({ name, ...params }, data) {
     return await this.submitting(
-      request.put(this.getDetailUrl({ name: data.cluster.name }), data)
+      request.put(this.getDetailUrl({ name: data.cluster_obj.name }), data)
     )
   }
 

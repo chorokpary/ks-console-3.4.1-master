@@ -537,7 +537,7 @@ const Status = props => {
                         {t('RESOURCES_CREATED')}
                       </p>
                     </div>
-                    <div className={styles.text} style={{ width: '15%' }}>
+                    <div className={styles.text} style={{ width: '14%' }}>
                       <div>
                         {detail.phase === 'ScalingUp'
                           ? t('RESOURCES_SCALING_UP')
@@ -557,6 +557,10 @@ const Status = props => {
                       <div>{detail.kube_image}</div>
                       <p>{t('RESOURCES_IMAGE')}</p>
                     </div>
+                    <div className={styles.text} style={{ width: '14%' }}>
+                      <div>{detail.flavor}</div>
+                      <p>{t('RESOURCES_FLAVOR')}</p>
+                    </div>
                     <div className={styles.text} style={{ width: '8%' }}>
                       <div>{detail.nodepool_replicas}</div>
                       <p>Replicas</p>
@@ -573,27 +577,8 @@ const Status = props => {
                       <div>{detail.updated_replicas}</div>
                       <p>Updated</p>
                     </div>
-                    <div
-                      className={styles.arrow}
-                      onClick={() => handleExpand(detail.name)}
-                      style={{ width: '5%' }}
-                    >
-                      <Icon
-                        name="chevron-down"
-                        type={
-                          detail.name !== expandItem
-                            ? ''
-                            : detail.name === expandItem &&
-                              isExpandFlag === false
-                            ? ''
-                            : 'light'
-                        }
-                        size={20}
-                      />
-                    </div>
                   </div>
                 </div>
-                {renderExtraContent(detail)}
               </div>
             ))}
         </div>
