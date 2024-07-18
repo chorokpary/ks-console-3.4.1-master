@@ -323,6 +323,7 @@
             .charts {
                 display: flex;
                 align-items: center;
+                flex-direction: row;
                 justify-content: space-between;
                 margin: 0 -10px;
 
@@ -431,4 +432,17 @@
 .cluster {
     width: 260px;
     margin-right: 12px;
+}
+
+.charts {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 -10px;
+
+    & > div {
+        margin: 0 10px;
+        width: calc(50% - 20px);
+    }
 }

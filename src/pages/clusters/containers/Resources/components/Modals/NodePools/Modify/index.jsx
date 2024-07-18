@@ -6,7 +6,6 @@ import classnames from 'classnames'
 import { Modal } from 'components/Base'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import ResourceStore from 'stores/resources/containerresource'
-import DeleteModal from 'components/Modals/Delete'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
@@ -17,14 +16,11 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
   const resourceStore = new ResourceStore()
 
   const [modelView, setModalView] = useState(true)
-
   const [imageOptionList, setImageOptionList] = useState([])
-
   const [nodepoolReplicas, setNodepoolReplicas] = useState(
     nodepool.nodepool_replicas
   )
   const [isAutoScale, setIsAutoScale] = useState(nodepool.autoscale)
-
   const [autoScale, setAutoScale] = useState(() => {
     if (nodepool.autoscale) {
       return [

@@ -17,7 +17,6 @@
  */
 
 import { action } from 'mobx'
-import { Notify } from '@kube-design/components'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -34,138 +33,44 @@ export default class ResourceStore extends Base {
       params.name
     }`
 
-  getListUrl = this.getResourceUrl
-
-  // @action
-
   @action
-  async create(data, params = {}) {
-    const jsonData = {}
-    const reqData = {}
-    reqData.external_network = data.external_network
-    reqData.sriov_network = data.sriov_network
-    reqData.elb_network = data.elb_network
-    reqData.elb_type = data.elb_type.toLowerCase()
-
-    reqData.name = data.name
-    reqData.kube_image = data.image
-    reqData.description = data.description
-    reqData.master_flavor = data.masterFlavor
-    reqData.master_number = data.master_number
-    reqData.worker_number = data.worker_number
-    reqData.worker_autoscale = data.worker_autoscale
-    reqData.worker_scale_range = data.worker_scale_range
-    if (data.cni) reqData.cni = data.cni.toLowerCase()
-    reqData.csi = data.csi.toLowerCase()
-    reqData.ui = 'kubesphere'
-    reqData.features = data.features
-    reqData.expiration = data.expiration
-    reqData.private_registry = data.private_registry
-    jsonData.cluster = reqData
-
-    return await this.submitting(
-      request.post(this.getListUrl(params), jsonData)
-    )
-  }
-
-  @action
-  async fetchDetail(params) {
+  async fetchNodePoolDetail(params) {
     this.isLoading = true
+
     const result = await request.get(`${this.getResourceUrl(params)}`)
-    const detail = {
+    const nodepool = {
       ...params,
       ...this.mapper(result),
-      kind: 'Nodepools',
+      kind: 'Nodepool',
     }
 
+    this.nodepool = nodepool._originData.nodepool
     await this.fetchDetailFlavor(params)
 
-    this.detail = detail._originData
     this.isLoading = false
-    return detail
-  }
-
-  @action
-  async update({ name, ...params }, data) {
-    return await this.submitting(
-      request.put(this.getDetailUrl({ name: data.cluster.name }), data)
-    )
-  }
-
-  @action
-  async batchDelete({ rowKeys, ...params }) {
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(username =>
-            request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
-            )
-          )
-        )
-      )
-    }
-    this.list.selectedRowKeys = []
-  }
-
-  @action
-  delete(user) {
-    if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-      return
-    }
-
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
-  }
-
-  // 등록 관련 데이터 시작
-  @action
-  async fetchListImage(params) {
-    this.isLoading = true
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/images`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'images' }
-
-    this.isLoading = false
-    return response
-  }
-
-  @action
-  async fetchListLoadBalancer(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/kubevirt/lbs`
-    )
-
-    const response = { ...params, ...this.mapper(result), kind: 'lbs' }
-
-    const dataArray = []
-    const promises = response._originData.lbs.map(async lb => {
-      const lbDetail = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/lbs/${lb.id}`
-      )
-      lb.rulesCount = lbDetail.lb.rules.length
-      dataArray.push(lb)
-    })
-    await Promise.all(promises)
-    response._originData.lbs = dataArray
-
-    this.isLoading = false
-    return response
+    return nodepool
   }
 
   @action
   async fetchDetailFlavor(params) {
+    this.isLoading = true
+
+    const nodepool = this.nodepool
+    const flavorData = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/flavors/${nodepool.flavor}`
+    )
+
+    nodepool.flavor_detail = flavorData.flavor
+    this.nodepool = nodepool
+
+    this.isLoading = false
+    return nodepool
+  }
+
+  @action
+  async fetchNodePoolNodes(params) {
     this.isLoading = true
 
     const result = await request.get(
@@ -173,58 +78,14 @@ export default class ResourceStore extends Base {
         params
       )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
         params.name
-      }`
+      }/nodes`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'nodepool' }
-    const dataArray = []
-    const nodepool = response._originData.nodepool
-    const flavorData = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/kubevirt/flavors/${nodepool.flavor}`
-    )
-    nodepool.flavor_detail = flavorData.flavor
-    dataArray.push(nodepool)
-    response._originData.lbs = dataArray
+    const response = { ...params, ...this.mapper(result), kind: 'nodes' }
 
-    this.nodepool = response._originData.nodepool
+    this.nodes = response._originData.nodes
 
     this.isLoading = false
-    return response
-  }
-
-  @action
-  async fetchMachines(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/clusters/${params.name}/machines`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'machines' }
-
-    this.machines = response._originData.machines
-
-    this.isLoading = false
-    return response
-  }
-
-  @action
-  async fetchMachinesAll(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/machines`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'machines' }
-
-    this.machines = response._originData.machines
-
-    this.isLoading = false
-    return this.machines
+    return this.nodes
   }
 
   @action
@@ -237,7 +98,6 @@ export default class ResourceStore extends Base {
       )}/edgetron/resources/capk/clusters/${params.name}/nodepools`
     )
     const response = { ...params, ...this.mapper(result), kind: 'nodepools' }
-    const dataArray = []
     const promises = response._originData.nodepools.map(async nodepool => {
       const flavorData = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
@@ -245,10 +105,8 @@ export default class ResourceStore extends Base {
         )}/edgetron/resources/kubevirt/flavors/${nodepool.flavor}`
       )
       nodepool.flavor_detail = flavorData.flavor
-      dataArray.push(nodepool)
     })
     await Promise.all(promises)
-    response._originData.lbs = dataArray
 
     this.nodepools = response._originData.nodepools
 

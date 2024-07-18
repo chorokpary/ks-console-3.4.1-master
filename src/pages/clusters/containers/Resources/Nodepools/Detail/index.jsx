@@ -7,18 +7,18 @@ import { inject, observer } from 'mobx-react'
 import DetailPage from 'clusters/containers/Base/Detail'
 import { getLocalTime } from 'utils'
 
-import ResourceStore from 'stores/resources/nodepools'
+import NodePoolResourceStore from 'stores/resources/nodepools'
 import routes from './routes'
 
-const store = new ResourceStore()
+const nodepoolStore = new NodePoolResourceStore()
 
 const ResourceDetail = props => {
   useEffect(() => {
-    store.fetchData = fetchData()
+    nodepoolStore.fetchData = fetchData()
   }, [])
 
   const fetchData = async () => {
-    await store.fetchDetail(props.match.params)
+    await nodepoolStore.fetchNodePoolDetail(props.match.params)
   }
 
   const listUrl = () => {
@@ -41,9 +41,12 @@ const ResourceDetail = props => {
         onClick: () => {
           props.rootStore.triggerAction('nodepool.edit', {
             type: 'RESOURCE_DETAIL',
-            detail: toJS(store.detail),
-            store,
-            success: fetchData,
+            detail: toJS(nodepoolStore.nodepool),
+            store: nodepoolStore,
+            success: () => {
+              fetchData()
+              window.location.reload()
+            },
             ...props.match.params,
           })
         },
@@ -58,8 +61,8 @@ const ResourceDetail = props => {
         onClick: () =>
           props.rootStore.triggerAction('nodepool.remove', {
             type: 'RESOURCE_DETAIL',
-            detail: toJS(store.detail),
-            store,
+            detail: toJS(nodepoolStore.nodepool),
+            store: nodepoolStore,
             success: () => routing.push(listUrl()),
             ...props.match.params,
           }),
@@ -68,12 +71,10 @@ const ResourceDetail = props => {
   }
 
   const getAttrs = () => {
-    const nodepool = toJS(store.nodepool)
+    const nodepool = toJS(nodepoolStore.nodepool)
     if (isEmpty(nodepool)) {
       return
     }
-
-    console.log(nodepool)
 
     return [
       {
@@ -111,7 +112,7 @@ const ResourceDetail = props => {
     ]
   }
 
-  if (store.isLoading) {
+  if (nodepoolStore.isLoading) {
     return <Loading className="ks-page-loading" />
   }
 
@@ -121,9 +122,9 @@ const ResourceDetail = props => {
 
   const sideProps = {
     icon: getBanner(),
-    module: store.module,
-    name: get(store.detail.nodepool, 'name'),
-    // desc: get(store.detail.cluster, 'description', ''),
+    module: nodepoolStore.module,
+    name: get(nodepoolStore.nodepool, 'name'),
+    // desc: get(nodepoolStore.detail.cluster, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
@@ -137,7 +138,7 @@ const ResourceDetail = props => {
   return (
     <>
       <DetailPage
-        stores={{ detailStore: store }}
+        stores={{ detailStore: nodepoolStore }}
         routes={routes}
         {...sideProps}
       />

@@ -24,8 +24,8 @@ import DeleteModal from 'components/Modals/Delete'
 
 export default {
   'nodepool.edit': {
-    on({ store, detail, success, ...params }) {
-      const nodepool = detail.nodepool
+    on({ store, success, ...params }) {
+      const nodepool = store.nodepool
       const modal = Modal.open({
         onEdit: data => {
           store.updateNodePool(data, params).then(() => {
@@ -42,7 +42,7 @@ export default {
     },
   },
   'nodepool.remove': {
-    on({ store, detail, success, ...params }) {
+    on({ store, success, ...params }) {
       const modal = Modal.open({
         onOk: () => {
           store.deleteNodePool(params).then(() => {
@@ -55,9 +55,9 @@ export default {
         module: store.module,
         title: t('RESOURCES_DELETE'),
         desc: t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
-          resource: detail.nodepool.name,
+          resource: store.nodepool.name,
         }),
-        resource: detail.nodepool.name,
+        resource: store.nodepool.name,
         ...params,
       })
     },

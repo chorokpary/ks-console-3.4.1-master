@@ -885,4 +885,5 @@ module.exports = {
   RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
     'Please select the NodePool Architecture.',
   RESOURCES_NODE_COUNT: 'Number of Nodes',
+  RESOURCES_NODE_IP: 'Node IP',
 }
