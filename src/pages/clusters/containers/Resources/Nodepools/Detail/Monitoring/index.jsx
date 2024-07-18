@@ -22,14 +22,14 @@ import { observer, inject } from 'mobx-react'
 import { Columns, Column, Loading } from '@kube-design/components'
 import { Card } from 'components/Base'
 import { StatusCircle } from 'components/Cards/Monitoring'
-import ResourceStore from 'stores/resources/containerresource'
+import NodePoolStore from 'stores/resources/nodepools'
 import ClusterResourceSeparation from './ClusterResourceSeparation'
 
 import styles from './index.scss'
 
 const index = props => {
-  const resourceStore = new ResourceStore()
-  const [machines, setMachines] = useState()
+  const nodePoolStore = new NodePoolStore()
+  const [nodes, setNodes] = useState()
   const [isLoading, setIsLoading] = useState(true)
 
   let timer = 0
@@ -43,8 +43,8 @@ const index = props => {
 
   const fetchData = timerSec => {
     timer = setTimeout(async () => {
-      await resourceStore.fetchMachines(props.match.params)
-      setMachines(resourceStore.machines)
+      await nodePoolStore.fetchNodePoolNodes(props.match.params)
+      setNodes(nodePoolStore.nodes)
       setIsLoading(false)
       fetchData(5000)
     }, timerSec)
@@ -57,11 +57,9 @@ const index = props => {
   const componentHealth = () => {
     const result = {}
     const node = {
-      total: machines?.length,
+      total: nodes?.length,
       health:
-        machines?.length > 0
-          ? machines?.filter(obj => obj.ready_status).length
-          : 0,
+        nodes?.length > 0 ? nodes?.filter(obj => obj.ready_status).length : 0,
     }
     result.counts = { node }
     result.isLoading = isLoading
@@ -73,7 +71,7 @@ const index = props => {
     const { health = 0, total = 0 } = counts.node || {}
 
     return (
-      <Card className={styles.node} title={t('CLUSTER_NODE_STATUS')}>
+      <Card className={styles.node} title={t('RESOURCES_NODEPOOL_NODE_STATUS')}>
         <Loading spinning={isLoading}>
           <StatusCircle
             theme="light"
@@ -98,7 +96,7 @@ const index = props => {
           {/* <ClusterResourceStatus cluster={cluster()} kaasName={props.match.params.name} /> */}
           <ClusterResourceSeparation
             cluster={cluster()}
-            kaasName={props.match.params.name}
+            kaasNodePoolName={`${props.match.params.clustername}-${props.match.params.name}`}
           />
         </Column>
       </Columns>

@@ -873,6 +873,7 @@ module.exports = {
   RESOURCES_EDIT_NODEPOOL: '노드풀 수정',
   RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP: 'Nodepool Flavor를 선택해 주세요.',
   RESOURCES_SELECT_NODEPOOL_ARCH_TIP: '노드풀 아키텍쳐를 선택해 주세요.',
+  RESOURCES_NODEPOOL_NODE_STATUS: '노드풀 노드 상태',
   RESOURCES_NODE_COUNT: '노드 개수',
   RESOURCES_NODE_IP: '노드 IP',
 }
