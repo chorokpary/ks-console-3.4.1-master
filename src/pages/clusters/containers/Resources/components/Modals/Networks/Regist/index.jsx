@@ -38,6 +38,7 @@ const RegistModal = props => {
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
   );
+  const [isTenantNetwork, setIsTenantNetwork] = useState(true);
 
   const networkTypeOptions = props.namespace
     ? [
@@ -245,6 +246,7 @@ const RegistModal = props => {
     ) {
       data.segment_id = ' ';
       data.physnet_name = '';
+      /*
       const a = document.getElementById('segment_id');
       if (
         a.nextElementSibling &&
@@ -252,11 +254,13 @@ const RegistModal = props => {
       ) {
         a.nextElementSibling.classList.add('hide');
         a.parentElement.parentElement.classList.remove('error-item');
-      }
+      }*/
       setExternalBool(true);
+      setIsTenantNetwork(false);
     } else {
       data.segment_id = '';
       data.physnet_name = ' ';
+      /*
       const a = document.getElementById('segment_id');
       if (
         a.nextElementSibling &&
@@ -264,10 +268,11 @@ const RegistModal = props => {
       ) {
         a.nextElementSibling.classList.remove('hide');
         a.parentElement.parentElement.classList.add('error-item');
-      }
+      }*/
 
       document.getElementById('radio.0').click();
       setExternalBool(false);
+      setIsTenantNetwork(true);
     }
   };
 
@@ -552,6 +557,7 @@ const RegistModal = props => {
                     </Column>
                     <Column>
                       <Columns>
+	                {isTenantNetwork && (
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_SEGMENT_ID')}
@@ -569,6 +575,8 @@ const RegistModal = props => {
                             />
                           </Form.Item>
                         </Column>
+		        )}
+	                {!isTenantNetwork && (
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_PHYSNET')}
@@ -588,6 +596,7 @@ const RegistModal = props => {
                             />
                           </Form.Item>
                         </Column>
+			)}
                       </Columns>
                     </Column>
                   </Columns>
