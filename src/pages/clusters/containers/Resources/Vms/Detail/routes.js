@@ -21,6 +21,7 @@ import { getIndexRoute } from 'utils/router.config'
 import Status from './Status'
 import Information from './Information'
 import Monitoring from './Monitoring'
+import GpuMonitoring from './GpuMonitoring'
 import Event from './Event'
 import Snapshot from './Snapshot'
 import Clone from './Clone'
@@ -44,6 +45,12 @@ export default [
     path: `${PATH}/monitoring`,
     title: t('RESOURCES_MONITORING'),
     component: Monitoring,
+    exact: true,
+  },
+  {
+    path: `${PATH}/gpu-monitoring`,
+    title: t('RESOURCES_GPU_MONITORING'),
+    component: GpuMonitoring,
     exact: true,
   },
   {
