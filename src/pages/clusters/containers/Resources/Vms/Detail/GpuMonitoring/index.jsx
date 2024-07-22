@@ -67,7 +67,7 @@ const index = (props) => {
     }
 
     const getVmGpuUtilData = async () => {
-      const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${store.detail.id}"}`
+      const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${store.detail.id}"} / 100`
 
       const vmGpuUtilData = await customStore.fetchMetric({
 	expr: gpuUtilDataExpr,
@@ -79,7 +79,7 @@ const index = (props) => {
     }
 
     const getVmGpuRamData = async () => {
-      const gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod="${store.detail.id}"}`
+      const gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod="${store.detail.id}"} * 1000000`
 
       const vmGpuRamData = await customStore.fetchMetric({
         expr: gpuRamDataExpr,
@@ -134,7 +134,8 @@ const index = (props) => {
       {
         type: 'utilisation',
         title: 'RESOURCES_GPU_RAM',
-        unit: 'Mi',
+	unit: '%',
+        unitType: 'memory',
 	legend: vmGpuRamData.map(item => (
             item.metric.device
           )),
