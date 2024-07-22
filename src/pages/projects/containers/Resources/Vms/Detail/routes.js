@@ -19,6 +19,7 @@
 import { getIndexRoute } from 'utils/router.config'
 
 import Status from './Status'
+import ScheduleInfo from './ScheduleInfo'
 import Information from './Information'
 import Monitoring from './Monitoring'
 import GpuMonitoring from './GpuMonitoring'
@@ -33,6 +34,12 @@ export default [
     path: `${PATH}/status`,
     title: t('RESOURCES_STATE'),
     component: Status,
+    exact: true,
+  },
+  {
+    path: `${PATH}/schedule`,
+    title: t('SCHEDULING_INFORMATION'),
+    component: ScheduleInfo,
     exact: true,
   },
   {

@@ -843,6 +843,17 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: 'Executed successfully.',
   RESOURCES_VM_SECURITYGROUP_EDIT: 'Edit Security Group',
   RESOURCES_VM_FLAVOR_EDIT: 'Edit Flavor',
+  RESOURCES_VM_SCHEDULE_STATUS: 'VM Scheduling Status',
+  RESOURCES_VM_SCHEDULE_READY: 'VM Ready',
+  RESOURCES_VM_SCHEDULE_READY_DESC: 'Starts running the VM and allows the VM to be accessed.',
+  RESOURCES_VM_SCHEDULE_DV_READY: 'Data Volume Ready',
+  RESOURCES_VM_SCHEDULE_DV_READY_DESC: 'Creates a data volume and attached it to VM as a boot volume.',
+  RESOURCES_VM_SCHEDULE_MIGRATION: 'VM Migratable',
+  RESOURCES_VM_SCHEDULE_MIGRATION_DESC: 'Migrates the VM to from unhealthy node to another.',
+  RESOURCES_VM_SCHEDULE_AGENT: 'Agent Connected',
+  RESOURCES_VM_SCHEDULE_AGENT_DESC: 'The connected VM agent exposes various VM information.',
+  RESOURCES_VM_SCHEDULING_METHOD: 'VM Scheduling Method',
+  RESOURCES_VM_ASSIGNED_DESC: 'The system schedules a VM to a node with sufficient available resources based on the resource requests of the VM.',
   RESOURCES_INVALID_NAME_DESC:
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), must start and end with a lowercase letter or number, maximum length is 63 characters.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
