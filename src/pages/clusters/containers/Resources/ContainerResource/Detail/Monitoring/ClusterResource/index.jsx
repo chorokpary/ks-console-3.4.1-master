@@ -76,7 +76,7 @@ const ClusterResourceStatus = (props) => {
         const currentTime = Math.floor(Date.now() / 1000);
         return new Promise(async (resolve, reject) => {
             const cpuFetchData = await customStore.fetchMetric({
-		expr: `(sum by (pod,nodename) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod) group_left(nodename) node_uname_info) - 1`,
+		expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
                 start: currentTime - 30000,
                 end: currentTime,
             })
