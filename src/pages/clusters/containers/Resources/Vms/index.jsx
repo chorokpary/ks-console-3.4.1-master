@@ -167,18 +167,7 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc(state) {
-    if (state === 'Stopped' || 
-        state === 'Provisioning' ||
-        state === 'Starting' ||
-        state === 'Running' ||
-        state === 'Paused' ||
-	state === 'Migrating' ||
-	state === 'Stopping' ||
-	state === 'Terminating' ||
-        state === 'Unknown') {
-      return t(`RESOURCES_${state.toUpperCase()}`);
-    }
-    return '-';
+    return t(`RESOURCES_${state.toUpperCase()}`);
   }
 
   getVmsStatus() {
@@ -192,6 +181,13 @@ export default class Vms extends React.Component {
       { text: t('RESOURCES_STOPPING'), value: 'Stopping' },
       { text: t('RESOURCES_TERMINATING'), value: 'Terminating' },
       { text: t('RESOURCES_UNKNOWN'), value: 'Unknown' },
+      { text: t('RESOURCES_CRASHLOOPBACKOFF'), value: 'CrashLoopBackOff' },
+      { text: t('RESOURCES_ERRORUNSCHEDULABLE'), value: 'ErrorUnschedulable' },
+      { text: t('RESOURCES_ERRIMAGEPULL'), value: 'ErrImagePull' },
+      { text: t('RESOURCES_IMAGEPULLBACKOFF'), value: 'ImagePullBackOff' },
+      { text: t('RESOURCES_ERRORPVCNOTFOUND'), value: 'ErrorPvcNotFound' },
+      { text: t('RESOURCES_DATAVOLUMEERROR'), value: 'DataVolumeError' },
+      { text: t('RESOURCES_WAITINGFORVOLUMEBINDING'), value: 'WaitingForVolumeBinding' },
     ];
 
     return VMS_STATUS.map(status => ({
