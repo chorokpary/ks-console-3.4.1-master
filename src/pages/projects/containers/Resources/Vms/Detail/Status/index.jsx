@@ -306,7 +306,7 @@ const Status = props => {
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
-                  <div>{store.detail.vm?.state}</div>
+                  <div>{t(`RESOURCES_${store.detail.vm?.state.toUpperCase()}`)}</div>
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>

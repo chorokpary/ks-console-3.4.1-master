@@ -340,25 +340,7 @@ const Status = props => {
                 </div>
                 <div className={styles.title} style={{ width: '10%' }}>
                   <div>
-                    {detail.phase === 'Stopped'
-                      ? t('RESOURCES_STOP')
-                      : detail.phase === 'Provisioning'
-                      ? t('RESOURCES_PROVISIONING')
-                      : detail.phase === 'Starting'
-                      ? t('RESOURCES_STARTING')
-                      : detail.phase === 'Running'
-                      ? t('RESOURCES_RUNNING')
-                      : detail.phase === 'Paused'
-                      ? t('RESOURCES_PAUSED')
-                      : detail.phase === 'Migrating'
-                      ? t('RESOURCES_MIGRATING')
-                      : detail.phase === 'Stopping'
-                      ? t('RESOURCES_STOPPING')
-                      : detail.phase === 'Terminating'
-                      ? t('RESOURCES_TERMINATING')
-                      : detail.phase === 'Unknown'
-                      ? t('RESOURCES_UNKNOWN')
-                      : ''}
+		    {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
                   </div>
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>

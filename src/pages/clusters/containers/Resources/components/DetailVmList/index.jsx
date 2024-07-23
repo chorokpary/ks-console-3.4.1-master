@@ -289,25 +289,7 @@ const DetailVmList = props => {
           </div>
           <div className={styles.text}>
             <div>
-              {obj.state === 'Stopped'
-                ? t('RESOURCES_STOP')
-                : obj.state === 'Provisioning'
-                ? t('RESOURCES_PROVISIONING')
-                : obj.state === 'Starting'
-                ? t('RESOURCES_STARTING')
-                : obj.state === 'Running'
-                ? t('RESOURCES_RUNNING')
-                : obj.state === 'Paused'
-                ? t('RESOURCES_PAUSED')
-                : obj.state === 'Migrating'
-                ? t('RESOURCES_MIGRATING')
-                : obj.state === 'Stopping'
-                ? t('RESOURCES_STOPPING')
-                : obj.state === 'Terminating'
-                ? t('RESOURCES_TERMINATING')
-                : obj.state === 'Unknown'
-                ? t('RESOURCES_UNKNOWN')
-                : ''}
+	      {t(`RESOURCES_${obj.state.toUpperCase()}`)}
             </div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>

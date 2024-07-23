@@ -167,32 +167,16 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc(state) {
-    if (state === 'Stopped') {
-      return t('RESOURCES_STOP');
-    }
-    if (state === 'Provisioning') {
-      return t('RESOURCES_PROVISIONING');
-    }
-    if (state === 'Starting') {
-      return t('RESOURCES_STARTING');
-    }
-    if (state === 'Running') {
-      return t('RESOURCES_RUNNING');
-    }
-    if (state === 'Paused') {
-      return t('RESOURCES_PAUSED');
-    }
-    if (state === 'Migrating') {
-      return t('RESOURCES_MIGRATING');
-    }
-    if (state === 'Stopping') {
-      return t('RESOURCES_STOPPING');
-    }
-    if (state === 'Terminating') {
-      return t('RESOURCES_TERMINATING');
-    }
-    if (state === 'Unknown') {
-      return t('RESOURCES_UNKNOWN');
+    if (state === 'Stopped' || 
+        state === 'Provisioning' ||
+        state === 'Starting' ||
+        state === 'Running' ||
+        state === 'Paused' ||
+	state === 'Migrating' ||
+	state === 'Stopping' ||
+	state === 'Terminating' ||
+        state === 'Unknown') {
+      return t(`RESOURCES_${state.toUpperCase()}`);
     }
     return '-';
   }
@@ -431,25 +415,7 @@ export default class Vms extends React.Component {
                       {state === 'Stopping' && t('RESOURCES_STOPPING')}
                       {state === 'Terminating' && t('RESOURCES_TERMINATING')}
                       {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
-                      {state === 'Stopped'
-                        ? t('RESOURCES_STOP')
-                        : state === 'Provisioning'
-                        ? t('RESOURCES_PROVISIONING')
-                        : state === 'Starting'
-                        ? t('RESOURCES_STARTING')
-                        : state === 'Running'
-                        ? t('RESOURCES_RUNNING')
-                        : state === 'Paused'
-                        ? t('RESOURCES_PAUSED')
-                        : state === 'Migrating'
-                        ? t('RESOURCES_MIGRATING')
-                        : state === 'Stopping'
-                        ? t('RESOURCES_STOPPING')
-                        : state === 'Terminating'
-                        ? t('RESOURCES_TERMINATING')
-                        : state === 'Unknown'
-                        ? t('RESOURCES_UNKNOWN')
-                        : ''}
+		      {t(`RESOURCES_${state.toUpperCase()}`)}
                     </p>
                   </div>
                 </Dropdown>
@@ -461,25 +427,7 @@ export default class Vms extends React.Component {
               <i className={styles[`ico-status-${state.toLowerCase()}`]} />
               <p>
                 {/* {state} */}
-                {state === 'Stopped'
-                  ? t('RESOURCES_STOP')
-                  : state === 'Provisioning'
-                  ? t('RESOURCES_PROVISIONING')
-                  : state === 'Starting'
-                  ? t('RESOURCES_STARTING')
-                  : state === 'Running'
-                  ? t('RESOURCES_RUNNING')
-                  : state === 'Paused'
-                  ? t('RESOURCES_PAUSED')
-                  : state === 'Migrating'
-                  ? t('RESOURCES_MIGRATING')
-                  : state === 'Stopping'
-                  ? t('RESOURCES_STOPPING')
-                  : state === 'Terminating'
-                  ? t('RESOURCES_TERMINATING')
-                  : state === 'Unknown'
-                  ? t('RESOURCES_UNKNOWN')
-                  : ''}
+		{t(`RESOURCES_${state.toUpperCase()}`)}
               </p>
             </div>
           );

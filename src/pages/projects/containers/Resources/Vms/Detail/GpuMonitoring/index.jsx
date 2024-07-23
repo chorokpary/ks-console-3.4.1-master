@@ -135,7 +135,7 @@ const index = (props) => {
       },
       {
         type: 'utilisation',
-        title: 'RESOURCES_GPU_RAM',
+        title: 'RESOURCES_GPU_RAM_USAGE',
 	unit: '%',
 	unitType: 'memory',
 	legend: vmGpuRamData.map(item => (

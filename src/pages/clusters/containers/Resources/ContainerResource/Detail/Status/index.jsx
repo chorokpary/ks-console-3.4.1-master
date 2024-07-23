@@ -401,23 +401,7 @@ const Status = props => {
                       </div>
                       <div className={styles.text} style={{ width: '15%' }}>
                         <div>
-                          {detail.phase === 'Provisioned'
-                            ? t('RESOURCES_PROVISIONED')
-                            : detail.phase === 'Provisioning'
-                            ? t('RESOURCES_PROVISIONING')
-                            : detail.phase === 'Pending'
-                            ? t('RESOURCES_PENDING')
-                            : detail.phase === 'Running'
-                            ? t('RESOURCES_RUNNING')
-                            : detail.phase === 'Failed'
-                            ? t('RESOURCES_FAILED')
-                            : detail.phase === 'Deleting'
-                            ? t('RESOURCES_DELETING')
-                            : detail.phase === 'Deleted'
-                            ? t('RESOURCES_DELETED')
-                            : detail.phase === 'Unknown'
-                            ? t('RESOURCES_UNKNOWN')
-                            : ''}
+		          {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
                         </div>
                         <p>{t('RESOURCES_STATE')}</p>
                       </div>
@@ -539,17 +523,7 @@ const Status = props => {
                     </div>
                     <div className={styles.text} style={{ width: '14%' }}>
                       <div>
-                        {detail.phase === 'ScalingUp'
-                          ? t('RESOURCES_SCALING_UP')
-                          : detail.phase === 'ScalingDown'
-                          ? t('RESOURCES_SCALING_DOWN')
-                          : detail.phase === 'Running'
-                          ? t('RESOURCES_RUNNING')
-                          : detail.phase === 'Failed'
-                          ? t('RESOURCES_FAILED')
-                          : detail.phase === 'Unknown'
-                          ? t('RESOURCES_UNKNOWN')
-                          : ''}
+		        {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
                       </div>
                       <p>{t('RESOURCES_STATE')}</p>
                     </div>
