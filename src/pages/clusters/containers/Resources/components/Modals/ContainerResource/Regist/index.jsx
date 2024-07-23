@@ -88,7 +88,6 @@ const RegistModal = props => {
 
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
-      setImageOptionList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.networks)
       setLoadBalancerDataList(listLoadBalancer._originData.lbs)
@@ -469,6 +468,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type === 'None' &&
           obj.os_distro === value &&
           obj.arch_type === masterArchSelect &&
           obj.kube_version === masterKubeVersionSelect
@@ -482,6 +482,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type === 'None' &&
           obj.os_distro === osDistro &&
           obj.arch_type === value &&
           obj.kube_version === masterKubeVersionSelect

@@ -6,7 +6,6 @@ import classnames from 'classnames'
 import { Modal } from 'components/Base'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import ResourceStore from 'stores/resources/containerresource'
-import DeleteModal from 'components/Modals/Delete'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
@@ -17,14 +16,11 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
   const resourceStore = new ResourceStore()
 
   const [modelView, setModalView] = useState(true)
-
   const [imageOptionList, setImageOptionList] = useState([])
-
   const [nodepoolReplicas, setNodepoolReplicas] = useState(
     nodepool.nodepool_replicas
   )
   const [isAutoScale, setIsAutoScale] = useState(nodepool.autoscale)
-
   const [autoScale, setAutoScale] = useState(() => {
     if (nodepool.autoscale) {
       return [
@@ -58,7 +54,7 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
     })
   }
 
-  const handleOk = () => {
+  const handleEdit = () => {
     form.current.validator(() => {
       const { data } = form.current.props
       const scaleRange = {}
@@ -72,25 +68,6 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
       props.onEdit({ ...data })
     })
   }
-
-  const handleDelete = () => {
-    const modal = Modal.open({
-      onOk: () => {
-        props.onDelete()
-        Modal.close(modal)
-      },
-      modal: DeleteModal,
-      title: t('RESOURCES_DELETE'),
-      desc: t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
-        resource: nodepool.name,
-      }),
-      resource: nodepool.name,
-      module: resourceStore.module,
-      resourceStore,
-      ...props,
-    })
-  }
-
   const closeModal = () => {
     setModalView(false)
   }
@@ -106,7 +83,7 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
         </Button>
         <Button
           onClick={() => {
-            handleOk()
+            handleEdit()
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
           type={'control'}
@@ -114,17 +91,6 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
           disabled={props.isSubmitting}
         >
           {t('RESOURCES_EDIT')}
-        </Button>
-        <Button
-          onClick={() => {
-            handleDelete()
-          }}
-          className={classnames(styles['btn'], styles['btn-danger'])}
-          type={'danger'}
-          loading={props.isSubmitting}
-          disabled={props.isSubmitting}
-        >
-          {t('RESOURCES_DELETE')}
         </Button>
       </>
     )

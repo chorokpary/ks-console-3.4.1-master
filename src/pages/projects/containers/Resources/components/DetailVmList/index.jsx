@@ -282,7 +282,7 @@ const DetailVmList = (props) => {
             <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}{t('RESOURCES_CREATED')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.state}</div>
+            <div>{t(`RESOURCES_${obj.state.toUpperCase()}`)}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>

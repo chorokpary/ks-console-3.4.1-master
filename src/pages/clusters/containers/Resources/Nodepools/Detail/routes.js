@@ -19,15 +19,9 @@
 import { getIndexRoute } from 'utils/router.config'
 
 import Status from './Status'
-import ScheduleInfo from './ScheduleInfo'
-import Information from './Information'
 import Monitoring from './Monitoring'
-import GpuMonitoring from './GpuMonitoring'
-import Event from './Event'
-import Snapshot from './Snapshot'
-import Clone from './Clone'
 
-const PATH = '/clusters/:cluster/vms/:name/:id'
+const PATH = '/clusters/:cluster/nodepools/:clustername/:name'
 
 export default [
   {
@@ -37,45 +31,9 @@ export default [
     exact: true,
   },
   {
-    path: `${PATH}/schedule`,
-    title: t('SCHEDULING_INFORMATION'),
-    component: ScheduleInfo,
-    exact: true,
-  },
-  {
-    path: `${PATH}/information`,
-    title: t('RESOURCES_CONFIGURATION_INFORMATION'),
-    component: Information,
-    exact: true,
-  },
-  {
     path: `${PATH}/monitoring`,
     title: t('RESOURCES_MONITORING'),
     component: Monitoring,
-    exact: true,
-  },
-  {
-    path: `${PATH}/gpu-monitoring`,
-    title: t('RESOURCES_GPU_MONITORING'),
-    component: GpuMonitoring,
-    exact: true,
-  },
-  {
-    path: `${PATH}/event`,
-    title: t('RESOURCES_EVENT'),
-    component: Event,
-    exact: true,
-  },
-  {
-    path: `${PATH}/snapshot`,
-    title: t('RESOURCES_SNAPSHOT'),
-    component: Snapshot,
-    exact: true,
-  },
-  {
-    path: `${PATH}/clone`,
-    title: t('RESOURCES_CLONE_LOG'),
-    component: Clone,
     exact: true,
   },
   getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),

@@ -61,6 +61,7 @@ const RegistModal = props => {
 
   const [selectImageName, setSelectImageName] = useState();
   const [selectBootId, setSelectBootId] = useState();
+  const [busType, setBusType] = useState('virtio');
   const [selectFlavorName, setSelectFlavorName] = useState();
   const [selectImageDistroType, setSelectImageDistroType] = useState();
 
@@ -290,6 +291,12 @@ const RegistModal = props => {
     return opt;
   };
 
+  const busTypeOptions = [
+    { label: 'VirtIO', value: 'virtio' },
+    { label: 'SATA', value: 'sata' },
+    { label: 'SCSi', value: 'scsi' },
+  ];
+
   const keypairOptions = () => {
     const opt = keypairList.map(obj => ({
       label: t(obj.name),
@@ -320,6 +327,7 @@ const RegistModal = props => {
       data.sriovIps = selectedSriovIpList;
       data.securitygroup = securityGroupCheckItems;
       data.imageType = imageType;
+      data.busType = busType
 
       data.bootvolume =
         data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume;
@@ -882,6 +890,13 @@ const RegistModal = props => {
     callback();
   };
 
+  const busTypeValidator = (rule, value, callback) => {
+    if (value == t('RESOURCES_SELECT') || value == 'select') {
+      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') });
+    }
+    callback();
+  };
+
   const flavorValidator = (rule, value, callback) => {
     if (value === t('RESOURCES_SELECT') || value === 'select') {
       return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') });
@@ -1292,20 +1307,38 @@ const RegistModal = props => {
                 )}
 
                 {imageType === 'B' && (
-                  <Form.Item
-                    label={t('RESOURCES_BOOT_VOLUME')}
-                    rules={[{ required: true, validator: bootVolumeValidator }]}
-                  >
-                    <Select
-                      name="bootvolume"
-                      defaultValue={t('RESOURCES_SELECT')}
-                      options={bootvolumeOptions()}
-                      // clearable
-                      onChange={e => {
-                        setSelectBootId(e);
-                      }}
-                    />
-                  </Form.Item>
+		  <Columns>
+		    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_BOOT_VOLUME')}
+                        rules={[{ required: true, validator: bootVolumeValidator }]}
+                      >
+                        <Select
+                          name="bootvolume"
+                          defaultValue={t('RESOURCES_SELECT')}
+                          options={bootvolumeOptions()}
+                          // clearable
+                          onChange={e => {
+                            setSelectBootId(e);
+                          }}
+                        />
+                      </Form.Item>
+		    </Column>
+		    <Column>
+		      <Form.Item
+                        label={t('RESOURCES_BUS')}
+                        rules={[{ required: true, validator: busTypeValidator }]}
+                      >
+                        <Select
+                          name="busType"
+                          defaultValue={t('RESOURCES_SELECT')}
+                          options={busTypeOptions}
+                          // clearable
+                          onChange={e => setBusType(e)}
+                        />
+                      </Form.Item>
+		    </Column>
+		  </Columns>
                 )}
                 <Columns>
                   <Column>
@@ -1484,6 +1517,7 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleIpSelectClick(data.id, e)
                                   }
+				  disabled={!networkCheckItems.includes(data.id)}
                                   clearable
                                 />
                               </td>
@@ -1619,6 +1653,7 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleSriovIpSelectClick(data.name, e)
                                   }
+				  disabled={!sriovCheckItems.includes(data.name)}
                                   clearable
                                 />
                               </td>

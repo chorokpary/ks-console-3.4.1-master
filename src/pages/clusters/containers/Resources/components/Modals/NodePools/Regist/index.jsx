@@ -44,7 +44,6 @@ const RegistNodePoolModal = props => {
 
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
-      setImageOptionList(listImage._originData.images)
       setOsDistro(props.detailStore.detail.cluster.os_distro)
       setKubeVersion(props.detailStore.detail.cluster.kube_version)
     }
@@ -256,7 +255,7 @@ const RegistNodePoolModal = props => {
                           placeholder={{ label: t('RESOURCES_SELECT') }}
                           // onChange={e => setWorkerFlavorSelect(e)}
                           defaultDescription={t(
-                            'RESOURCES_SELECT_WORKER_FLAVOR_TIP'
+                            'RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP'
                           )}
                         />
                       </Form.Item>
