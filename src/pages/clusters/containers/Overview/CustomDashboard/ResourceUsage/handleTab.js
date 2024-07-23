@@ -64,14 +64,14 @@ function getNodeData(metricData) {
     },
     {
       activeTab: 'memory',
-      name: '메모리',
+      name: t('RESOURCES_MEMORY'),
       unitType: 'memory',
       used: getValue(lastData[MetricTypes.memory_usage]),
       total: getValue(lastData[MetricTypes.memory_total]),
     },
     {
       activeTab: 'disk',
-      name: '디스크',
+      name: t('RESOURCES_DISK'),
       unitType: 'disk',
       used: getValue(lastData[MetricTypes.disk_size_usage]),
       total: getValue(lastData[MetricTypes.disk_size_capacity]),

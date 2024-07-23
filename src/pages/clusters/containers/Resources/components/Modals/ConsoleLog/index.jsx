@@ -73,7 +73,7 @@ export default class ConsoleLoglModal extends React.Component {
 
   render() {
     const { readOnly, visible, onCancel } = this.props
-    const title = t('Console 로그 보기')
+    const title = t('RESOURCES_CONSOLE_LOG_VIEW')
 
     return (
       <Modal

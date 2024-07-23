@@ -131,7 +131,7 @@ export default class ClusterInspection extends React.Component {
 
                       <div className="cont2">
                         <div className="status_wrap">
-                          <p className="status title">
+                          <p className="status title" style={{width: '160px'}}>
                             <span>
                               {t('CLUSTER_INSPECTION_CHECK_ALL_LIST')}
                             </span>
@@ -139,19 +139,19 @@ export default class ClusterInspection extends React.Component {
                           <div className="value">{scoreInfo?.total || 0}</div>
                         </div>
                         <div className="status_wrap">
-                          <p className="status pass">
+                          <p className="status pass" style={{width: '160px'}}>
                             <span>{t('CLUSTER_INSPECTION_PASS')}</span>
                           </p>
                           <div className="value">{scoreInfo?.passing || 0}</div>
                         </div>
                         <div className="status_wrap">
-                          <p className="status warning">
+                          <p className="status warning" style={{width: '160px'}}>
                             <span>{t('CLUSTER_INSPECTION_WARNING')}</span>
                           </p>
                           <div className="value">{scoreInfo?.warning || 0}</div>
                         </div>
                         <div className="status_wrap">
-                          <p className="status danger">
+                          <p className="status danger" style={{width: '160px'}}>
                             <span>{t('CLUSTER_INSPECTION_DANGER')}</span>
                           </p>
                           <div className="value">
@@ -159,7 +159,7 @@ export default class ClusterInspection extends React.Component {
                           </div>
                         </div>
                         <div className="status_wrap">
-                          <p className="status ignore">
+                          <p className="status ignore" style={{width: '160px'}}>
                             <span>{t('CLUSTER_INSPECTION_IGNORE')}</span>
                           </p>
                           <div className="value">{scoreInfo?.ignore || 0}</div>

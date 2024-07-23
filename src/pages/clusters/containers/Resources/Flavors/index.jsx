@@ -157,7 +157,7 @@ export default class Flavors extends React.Component {
             quantities = [0];
           }
 
-          return <p>{quantities} 개</p>;
+          return <p>{quantities} {t('RESOURCES_COUNT')}</p>;
         },
       },
       {
