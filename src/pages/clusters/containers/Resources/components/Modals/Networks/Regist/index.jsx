@@ -38,6 +38,7 @@ const RegistModal = props => {
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
   );
+
   const [isTenantNetwork, setIsTenantNetwork] = useState(true);
 
   const networkTypeOptions = props.namespace
@@ -64,6 +65,7 @@ const RegistModal = props => {
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
   ];
+
   const [physnetOptions, setPhysnetOptions] = useState([]);
   const [physnet, setPhysnet] = useState();
 
@@ -85,6 +87,8 @@ const RegistModal = props => {
     const onOk = props.onOk;
 
     form.current.validator(() => {
+      const { data } = form.current.props;
+
       const error = document.querySelectorAll('.form-item-error');
       for (const i of error) {
         if (!i.classList.contains('hide')) {
@@ -92,7 +96,6 @@ const RegistModal = props => {
         }
       }
 
-      const { data } = form.current.props;
       const dns = [];
       data.dns?.map(el => {
         if (el != '') {
@@ -247,28 +250,29 @@ const RegistModal = props => {
       data.segment_id = ' ';
       data.physnet_name = '';
       /*
-      const a = document.getElementById('segment_id');
+      const a = document.getElementById('segment_id')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
       ) {
-        a.nextElementSibling.classList.add('hide');
-        a.parentElement.parentElement.classList.remove('error-item');
-      }*/
+        a.nextElementSibling.classList.add('hide')
+        a.parentElement.parentElement.classList.remove('error-item')
+      }
+      
+      */
       setExternalBool(true);
       setIsTenantNetwork(false);
     } else {
       data.segment_id = '';
       data.physnet_name = ' ';
-      /*
-      const a = document.getElementById('segment_id');
+      /* const a = document.getElementById('segment_id')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
       ) {
-        a.nextElementSibling.classList.remove('hide');
-        a.parentElement.parentElement.classList.add('error-item');
-      }*/
+        a.nextElementSibling.classList.remove('hide')
+        a.parentElement.parentElement.classList.add('error-item')
+      } */
 
       document.getElementById('radio.0').click();
       setExternalBool(false);
@@ -399,6 +403,7 @@ const RegistModal = props => {
 
   const segmentIdValidator = (rule, value, callback) => {
     const { data } = form.current.props;
+
     if (data.type !== 'FLAT') {
       if (!value) {
         return callback({
@@ -557,46 +562,46 @@ const RegistModal = props => {
                     </Column>
                     <Column>
                       <Columns>
-	                {isTenantNetwork && (
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_SEGMENT_ID')}
-                            rules={[
-                              {
-                                required: true,
-                                validator: segmentIdValidator,
-                              },
-                            ]}
-                          >
-                            <NumberInput
-                              name="segment_id"
-                              disabled={externalBool}
-                              style={{ maxWidth: 'none' }}
-                            />
-                          </Form.Item>
-                        </Column>
-		        )}
-	                {!isTenantNetwork && (
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_PHYSNET')}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
-                          >
-                            <Select
-                              name="physnet_name"
-                              options={physnetOptions}
-                              disabled={!externalBool}
-                              onChange={e => {
-                                setPhysnet(e);
-                              }}
-                            />
-                          </Form.Item>
-                        </Column>
-			)}
+                        {isTenantNetwork && (
+                          <Column>
+                            <Form.Item
+                              label={t('RESOURCES_SEGMENT_ID')}
+                              rules={[
+                                {
+                                  required: true,
+                                  validator: segmentIdValidator,
+                                },
+                              ]}
+                            >
+                              <NumberInput
+                                name="segment_id"
+                                disabled={externalBool}
+                                style={{ maxWidth: 'none' }}
+                              />
+                            </Form.Item>
+                          </Column>
+                        )}
+                        {!isTenantNetwork && (
+                          <Column>
+                            <Form.Item
+                              label={t('RESOURCES_PHYSNET')}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                              ]}
+                            >
+                              <Select
+                                name="physnet_name"
+                                options={physnetOptions}
+                                disabled={!externalBool}
+                                onChange={e => {
+                                  setPhysnet(e);
+                                }}
+                              />
+                            </Form.Item>
+                          </Column>
+                        )}
                       </Columns>
                     </Column>
                   </Columns>

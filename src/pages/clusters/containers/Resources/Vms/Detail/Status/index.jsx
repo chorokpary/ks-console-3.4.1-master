@@ -403,7 +403,7 @@ const Status = props => {
 
         {/* 네트워크 */}
         {detailNetwork.length > 0 && (
-          <Panel title={'네트워크'}>
+          <Panel title={t('RESOURCES_NETWORK')}>
             <div className={styles.wrapper}>
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>

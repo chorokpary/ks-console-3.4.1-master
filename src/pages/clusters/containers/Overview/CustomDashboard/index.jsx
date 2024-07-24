@@ -93,7 +93,7 @@ const CustomDashboard = (props) => {
       },
       modal: DeleteModal,
       title: t('RESOURCES_DELETE_DASHBOARD'),
-      desc: `${name} ${t('RESOURCES_EUL')}/${t('RESOURCES_LEUL')} ${t('RESOURCES_DELETE_DESC')}`,
+      desc: `${name} ${t('RESOURCES_EUL')} ${t('RESOURCES_DELETE_DESC')}`,
     })
   }
 

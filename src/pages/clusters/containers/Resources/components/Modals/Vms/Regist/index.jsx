@@ -1287,7 +1287,7 @@ const RegistModal = props => {
                                 .map(item => item.distro_type)[0];
                               handleIamgeDistroType(distro_type);
                             }}
-                            defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
+                            defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}                            
                           />
                         </Form.Item>
                         {selectImageName && (
@@ -1356,6 +1356,7 @@ const RegistModal = props => {
                           label: t('RESOURCES_SELECT'),
                         }}
                         defaultDescription={t('RESOURCES_SELECT_FLAVOR_TIP')}
+                        newMaxHeight="198"
                       />
                     </Form.Item>
                     <div

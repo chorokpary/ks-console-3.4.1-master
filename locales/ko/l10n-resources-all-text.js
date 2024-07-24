@@ -845,15 +845,20 @@ module.exports = {
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
   RESOURCES_VM_SCHEDULE_STATUS: '가상머신 스케줄링 상태',
   RESOURCES_VM_SCHEDULE_READY: '가상머신 준비',
-  RESOURCES_VM_SCHEDULE_READY_DESC: '가상머신 실행을 시작하고 가상머신에 접근할 수 있도록 합니다.',
+  RESOURCES_VM_SCHEDULE_READY_DESC:
+    '가상머신 실행을 시작하고 가상머신에 접근할 수 있도록 합니다.',
   RESOURCES_VM_SCHEDULE_DV_READY: '데이터 볼륨 준비',
-  RESOURCES_VM_SCHEDULE_DV_READY_DESC: '데이터 볼륨을 생성하고 가상머신의 부트볼륨으로 사용할 수 있도록 합니다.',
+  RESOURCES_VM_SCHEDULE_DV_READY_DESC:
+    '데이터 볼륨을 생성하고 가상머신의 부트볼륨으로 사용할 수 있도록 합니다.',
   RESOURCES_VM_SCHEDULE_MIGRATION: '마이그레이션 가능',
-  RESOURCES_VM_SCHEDULE_MIGRATION_DESC: '가상머신을 다른 노드로 마이그레이션 할 수 있도록 합니다.',
+  RESOURCES_VM_SCHEDULE_MIGRATION_DESC:
+    '가상머신을 다른 노드로 마이그레이션 할 수 있도록 합니다.',
   RESOURCES_VM_SCHEDULE_AGENT: '에이전트 연결 됨',
-  RESOURCES_VM_SCHEDULE_AGENT_DESC: '가상머신에 연결 된 에이전트가 가상머신 정보를 외부에 노출합니다.',
+  RESOURCES_VM_SCHEDULE_AGENT_DESC:
+    '가상머신에 연결 된 에이전트가 가상머신 정보를 외부에 노출합니다.',
   RESOURCES_VM_SCHEDULING_METHOD: '가상머신 스케줄링 방법',
-  RESOURCES_VM_ASSIGNED_DESC: '시스템은 가상머신의 리소스 요청에 따라 사용 가능한 리소스가 충분한 노드로 파드를 스케줄링합니다.',
+  RESOURCES_VM_ASSIGNED_DESC:
+    '시스템은 가상머신의 리소스 요청에 따라 사용 가능한 리소스가 충분한 노드로 파드를 스케줄링합니다.',
   RESOURCES_INVALID_NAME_DESC:
     '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
@@ -889,6 +894,7 @@ module.exports = {
   RESOURCES_PREPARING: '대기 중',
   RESOURCES_FILE_UPLOAD_BEFORE_DESC: '파일 업로드 전 상태입니다. ',
   RESOURCES_IMAGE_BUILD_PUSH_BEFORE_DESC: '이미지 빌드&푸시 전 상태입니다.',
+  RESOURCES_PHYSICAL_NETWORK_EMPTY_DESC: '물리 네트워크를 입력해주세요',
 
   // NodePool
   RESOURCES_NODEPOOL_NAME: '노드풀 이름',

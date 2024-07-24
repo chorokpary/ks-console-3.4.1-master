@@ -33,13 +33,15 @@ export default class TypeSelect extends React.Component {
     options: PropTypes.array.isRequired,
     onChange: PropTypes.func,
     defaultDescription : PropTypes.string,
+    newMaxHeight: PropTypes.string,
   }
 
   static defaultProps = {
     className: '',
     options: [],
     onChange() { },
-    defaultDescription: ''
+    defaultDescription: '',
+    newMaxHeight: '258'
   }
 
   constructor(props) {
@@ -169,6 +171,7 @@ export default class TypeSelect extends React.Component {
         ref={ref => {
           this.optionsRef = ref
         }}
+        style={{'--max-height': `${this.props.newMaxHeight}px`}}
       >
         {selectOption && this.renderOption(selectOption, true)}
         {options
