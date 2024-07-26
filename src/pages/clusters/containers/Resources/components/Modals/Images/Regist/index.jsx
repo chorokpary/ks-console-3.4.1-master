@@ -260,7 +260,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
     return elements;
   };
 
-  console.log("store.isSubmitting : "+ store.isSubmitting)
+
   return (
     <>
       <Modal
@@ -699,16 +699,37 @@ const Step2 = ({
   // harbor list
   const getPriavteHarborRepositories = async () => {
     try {
-      const originUrl = new URL(registryUrl);
-      const urlParams = originUrl.searchParams;
-      const projectName = urlParams.get('projects');
 
-      const response = await request.post(`customharbor/private`, {
-        auth: harborAuth,
-        projectName,
-        originUrl: originUrl.origin,
-      });
-      const list = response.map(obj => {
+      let allData = [];
+      let page = 1;
+      let hasMoreData = true;
+
+      while (hasMoreData) {
+        try {
+
+          const originUrl = new URL(registryUrl)
+          const urlParams = originUrl.searchParams
+          const projectName = urlParams.get('projects')
+
+          const response = await request.post(`customharbor/private`, {
+            auth: harborAuth,
+            projectName,
+            originUrl: originUrl.origin,
+            page:page
+          })
+
+          const fetchedData = response;
+          allData = [...allData, ...fetchedData];
+
+          // 다음 페이지가 있는지 확인
+          hasMoreData =  fetchedData.length === 100;
+          page++;
+        } catch (error) {
+          hasMoreData = false;
+        }
+      }
+
+      const list = allData.map(obj => {
         const [projectName, ...name] = obj.name.split('/');
         obj.name = name.join('/');
         obj.project_name = projectName;
