@@ -164,8 +164,7 @@ export default class ResourceStore extends Base {
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total:
-        result.totalItems || result.total_count || this.dataList.length || 0,
+      total: result.totalItems || this.dataList.length || 0,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -188,8 +187,6 @@ export default class ResourceStore extends Base {
     reqData.name = data.name
     reqData.kube_image = data.image
     reqData.description = data.description
-    reqData.master_flavor = data.masterFlavor
-    reqData.worker_flavor = data.workerFlavor
     reqData.master_number = data.master_number
     reqData.worker_number = data.worker_number
     reqData.worker_autoscale = data.worker_autoscale
@@ -271,7 +268,7 @@ export default class ResourceStore extends Base {
   // eslint-disable-next-line no-unused-vars
   async update({ name, ...params }, data) {
     return await this.submitting(
-      request.put(this.getDetailUrl({ name: data.cluster.name }), data)
+      request.put(this.getDetailUrl({ name: data.cluster_obj.name }), data)
     )
   }
 
@@ -408,87 +405,5 @@ export default class ResourceStore extends Base {
 
     this.isLoading = false
     return this.machines
-  }
-
-  @action
-  async fetchListNodePools(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/clusters/${params.name}/nodepools`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'nodepools' }
-    const dataArray = []
-    const promises = response._originData.nodepools.map(async nodepool => {
-      const flavorData = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/flavors/${nodepool.flavor}`
-      )
-      nodepool.flavor_detail = flavorData.flavor
-      dataArray.push(nodepool)
-    })
-    await Promise.all(promises)
-    response._originData.lbs = dataArray
-
-    this.nodepools = response._originData.nodepools
-
-    this.isLoading = false
-    return this.nodepools
-  }
-
-  @action
-  async createNodePool(data, params = {}) {
-    const jsonData = {}
-    const reqData = {}
-
-    reqData.name = data.name
-    reqData.kube_image = data.kube_image
-    reqData.description = data.description
-    reqData.flavor = data.flavor
-    reqData.nodepool_replicas = data.nodepool_replicas
-    reqData.autoscale = data.autoscale
-    reqData.scale_range = data.scale_range
-    jsonData.nodepool = reqData
-
-    return await request.post(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/clusters/${params.name}/nodepools`,
-      jsonData
-    )
-  }
-
-  @action
-  async updateNodePool(data, params = {}) {
-    const jsonData = {}
-    const reqData = {}
-
-    reqData.name = data.name
-    reqData.description = data.description
-    reqData.replicas = data.replicas
-    reqData.autoscale = data.autoscale
-    reqData.scale_range = data.scale_range
-    jsonData.nodepool = reqData
-
-    return await request.put(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/clusters/${params.name}/nodepools/${
-        data.name
-      }`,
-      jsonData
-    )
-  }
-
-  @action
-  async deleteNodePool(name, params = {}) {
-    return await request.delete(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/capk/clusters/${params.name}/nodepools/${name}`
-    )
   }
 }

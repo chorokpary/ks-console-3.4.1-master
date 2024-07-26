@@ -39,6 +39,8 @@ const RegistModal = props => {
     props.namespace ? props.namespace : 'default'
   );
 
+  const [isTenantNetwork, setIsTenantNetwork] = useState(true);
+
   const networkTypeOptions = props.namespace
     ? [
         { label: 'VXLAN', value: 'VXLAN' },
@@ -65,8 +67,7 @@ const RegistModal = props => {
   ];
 
   const [physnetOptions, setPhysnetOptions] = useState([]);
-  const [physnet, setPhysnet] = useState(t('RESOURCES_SELECT'));
-  const [isPhysicalNetworkSelect, setIsPhysicalNetworkSelect] = useState(true)
+  const [physnet, setPhysnet] = useState();
 
   useEffect(() => {
     const getPhysnetsData = async () => {
@@ -94,7 +95,7 @@ const RegistModal = props => {
           return;
         }
       }
- 
+
       const dns = [];
       data.dns?.map(el => {
         if (el != '') {
@@ -119,8 +120,7 @@ const RegistModal = props => {
       data.host_routes = host_routes;
       data.networktype_app = false;
       data.project = projectName;
-      data.physnet_name = data.type == 'FLAT' ? physnet : ' ';
-     
+
       // console.log(data)
       onOk({ network: data });
     });
@@ -249,31 +249,34 @@ const RegistModal = props => {
     ) {
       data.segment_id = ' ';
       data.physnet_name = '';
-      const a = document.getElementById('segment_id');
+      /*
+      const a = document.getElementById('segment_id')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
       ) {
-        a.nextElementSibling.classList.add('hide');
-        a.parentElement.parentElement.classList.remove('error-item');
+        a.nextElementSibling.classList.add('hide')
+        a.parentElement.parentElement.classList.remove('error-item')
       }
+      
+      */
       setExternalBool(true);
+      setIsTenantNetwork(false);
     } else {
       data.segment_id = '';
       data.physnet_name = ' ';
-      const a = document.getElementById('segment_id');
+      /* const a = document.getElementById('segment_id')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
       ) {
-        a.nextElementSibling.classList.remove('hide');
-        a.parentElement.parentElement.classList.add('error-item');
-      }
+        a.nextElementSibling.classList.remove('hide')
+        a.parentElement.parentElement.classList.add('error-item')
+      } */
 
       document.getElementById('radio.0').click();
       setExternalBool(false);
-      setIsPhysicalNetworkSelect(true);
-      setPhysnet(t('RESOURCES_SELECT'))
+      setIsTenantNetwork(true);
     }
   };
 
@@ -295,37 +298,13 @@ const RegistModal = props => {
         data.ip_pool_end == '' ||
         data.gateway_ip == undefined ||
         data.gateway_ip == ''
-      ) {  
-
+      ) {
         handleOk();
-
-        if(data.type == "FLAT"){
-          if((physnet == t('RESOURCES_SELECT') || physnet == 'select')){
-            setIsPhysicalNetworkSelect(false);
-            return false;
-          }
-        }else{
-          setIsPhysicalNetworkSelect(true);
-        }   
-
       } else {
-        
-        if(data.type == "FLAT"){
-          if((physnet == t('RESOURCES_SELECT') || physnet == 'select')){
-            setIsPhysicalNetworkSelect(false);
-            return false;
-          }
-        }else{
-          setIsPhysicalNetworkSelect(true);
-        }
-
         setRegStep(2);
-        setIsPhysicalNetworkSelect(true);
       }
     }
   };
-
-  
 
   const fnGetModalFooter = () => {
     let elements = '';
@@ -583,46 +562,46 @@ const RegistModal = props => {
                     </Column>
                     <Column>
                       <Columns>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_SEGMENT_ID')}
-                            rules={[
-                              {
-                                required: true,
-                                validator: segmentIdValidator,
-                              },
-                            ]}
-                          >
-                            <NumberInput
-                              name="segment_id"
-                              disabled={externalBool}
-                              style={{ maxWidth: 'none' }}
-                            />
-                          </Form.Item>
-                        </Column>
-                        <Column>
-                          {t('RESOURCES_PHYSNET')}
-                          <span className="form-item-required">*</span>
-                          <Form.Item>
-                            <>
-                            <Select
-                              name="physnet_name"
-                              options={physnetOptions}
-                              disabled={!externalBool}
-                              placeholder={t('RESOURCES_SELECT')}
-                              onChange={e => {
-                                setPhysnet(e);
-                                setIsPhysicalNetworkSelect(true);
-                              }}
-                              value={physnet}    
-                              style={{top: '4px'}}
-                            />
-                            <div className={`form-item-error ${isPhysicalNetworkSelect ? 'hide' : ''}`} style={{marginTop: '8px'}}>
-                              {t('RESOURCES_PHYSICAL_NETWORK_EMPTY_DESC')}
-                            </div>
-                            </>
-                          </Form.Item>
-                        </Column>
+                        {isTenantNetwork && (
+                          <Column>
+                            <Form.Item
+                              label={t('RESOURCES_SEGMENT_ID')}
+                              rules={[
+                                {
+                                  required: true,
+                                  validator: segmentIdValidator,
+                                },
+                              ]}
+                            >
+                              <NumberInput
+                                name="segment_id"
+                                disabled={externalBool}
+                                style={{ maxWidth: 'none' }}
+                              />
+                            </Form.Item>
+                          </Column>
+                        )}
+                        {!isTenantNetwork && (
+                          <Column>
+                            <Form.Item
+                              label={t('RESOURCES_PHYSNET')}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                              ]}
+                            >
+                              <Select
+                                name="physnet_name"
+                                options={physnetOptions}
+                                disabled={!externalBool}
+                                onChange={e => {
+                                  setPhysnet(e);
+                                }}
+                              />
+                            </Form.Item>
+                          </Column>
+                        )}
                       </Columns>
                     </Column>
                   </Columns>

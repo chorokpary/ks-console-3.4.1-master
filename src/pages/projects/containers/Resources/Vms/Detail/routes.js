@@ -19,8 +19,10 @@
 import { getIndexRoute } from 'utils/router.config'
 
 import Status from './Status'
+import ScheduleInfo from './ScheduleInfo'
 import Information from './Information'
 import Monitoring from './Monitoring'
+import GpuMonitoring from './GpuMonitoring'
 import Event from './Event'
 import Snapshot from './Snapshot'
 import Clone from './Clone'
@@ -35,6 +37,12 @@ export default [
     exact: true,
   },
   {
+    path: `${PATH}/schedule`,
+    title: t('SCHEDULING_INFORMATION'),
+    component: ScheduleInfo,
+    exact: true,
+  },
+  {
     path: `${PATH}/information`,
     title: t('RESOURCES_CONFIGURATION_INFORMATION'),
     component: Information,
@@ -44,6 +52,12 @@ export default [
     path: `${PATH}/monitoring`,
     title: t('RESOURCES_MONITORING'),
     component: Monitoring,
+    exact: true,
+  },
+  {
+    path: `${PATH}/gpu-monitoring`,
+    title: t('RESOURCES_GPU_MONITORING'),
+    component: GpuMonitoring,
     exact: true,
   },
   {

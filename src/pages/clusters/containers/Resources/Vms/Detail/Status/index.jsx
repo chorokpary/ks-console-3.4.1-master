@@ -299,25 +299,7 @@ const Status = props => {
                 </div>
                 <div className={styles.text}>
                   <div>
-                    {store.detail.vm?.state === 'Stopped'
-                      ? t('RESOURCES_STOP')
-                      : store.detail.vm?.state === 'Provisioning'
-                      ? t('RESOURCES_PROVISIONING')
-                      : store.detail.vm?.state === 'Starting'
-                      ? t('RESOURCES_STARTING')
-                      : store.detail.vm?.state === 'Running'
-                      ? t('RESOURCES_RUNNING')
-                      : store.detail.vm?.state === 'Paused'
-                      ? t('RESOURCES_PAUSED')
-                      : store.detail.vm?.state === 'Migrating'
-                      ? t('RESOURCES_MIGRATING')
-                      : store.detail.vm?.state === 'Stopping'
-                      ? t('RESOURCES_STOPPING')
-                      : store.detail.vm?.state === 'Terminating'
-                      ? t('RESOURCES_TERMINATING')
-                      : store.detail.vm?.state === 'Unknown'
-                      ? t('RESOURCES_UNKNOWN')
-                      : ''}
+	            {t(`RESOURCES_${store.detail.vm?.state.toUpperCase()}`)}
                   </div>
 
                   <p>{t('RESOURCES_STATE')}</p>

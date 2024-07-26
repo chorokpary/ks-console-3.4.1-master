@@ -360,6 +360,32 @@ export default class VmStore extends Base {
   }
 
   @action
+  async fetchVmStatus(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/status`
+    );
+    const response = { ...params, ...this.mapper(result), kind: 'vms' };
+
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
+  async fetchVmState(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/state`
+    );
+    const response = { ...params, ...this.mapper(result), kind: 'vms' };
+
+    this.isLoading = false;
+    return response;
+  }
+
+  @action
   async fetchYaml(params) {
     this.isLoading = true;
 

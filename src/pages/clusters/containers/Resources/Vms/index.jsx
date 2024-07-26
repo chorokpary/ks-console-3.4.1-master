@@ -167,34 +167,7 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc(state) {
-    if (state === 'Stopped') {
-      return t('RESOURCES_STOP');
-    }
-    if (state === 'Provisioning') {
-      return t('RESOURCES_PROVISIONING');
-    }
-    if (state === 'Starting') {
-      return t('RESOURCES_STARTING');
-    }
-    if (state === 'Running') {
-      return t('RESOURCES_RUNNING');
-    }
-    if (state === 'Paused') {
-      return t('RESOURCES_PAUSED');
-    }
-    if (state === 'Migrating') {
-      return t('RESOURCES_MIGRATING');
-    }
-    if (state === 'Stopping') {
-      return t('RESOURCES_STOPPING');
-    }
-    if (state === 'Terminating') {
-      return t('RESOURCES_TERMINATING');
-    }
-    if (state === 'Unknown') {
-      return t('RESOURCES_UNKNOWN');
-    }
-    return '-';
+    return t(`RESOURCES_${state.toUpperCase()}`);
   }
 
   getVmsStatus() {
@@ -208,6 +181,13 @@ export default class Vms extends React.Component {
       { text: t('RESOURCES_STOPPING'), value: 'Stopping' },
       { text: t('RESOURCES_TERMINATING'), value: 'Terminating' },
       { text: t('RESOURCES_UNKNOWN'), value: 'Unknown' },
+      { text: t('RESOURCES_CRASHLOOPBACKOFF'), value: 'CrashLoopBackOff' },
+      { text: t('RESOURCES_ERRORUNSCHEDULABLE'), value: 'ErrorUnschedulable' },
+      { text: t('RESOURCES_ERRIMAGEPULL'), value: 'ErrImagePull' },
+      { text: t('RESOURCES_IMAGEPULLBACKOFF'), value: 'ImagePullBackOff' },
+      { text: t('RESOURCES_ERRORPVCNOTFOUND'), value: 'ErrorPvcNotFound' },
+      { text: t('RESOURCES_DATAVOLUMEERROR'), value: 'DataVolumeError' },
+      { text: t('RESOURCES_WAITINGFORVOLUMEBINDING'), value: 'WaitingForVolumeBinding' },
     ];
 
     return VMS_STATUS.map(status => ({
@@ -431,25 +411,7 @@ export default class Vms extends React.Component {
                       {state === 'Stopping' && t('RESOURCES_STOPPING')}
                       {state === 'Terminating' && t('RESOURCES_TERMINATING')}
                       {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
-                      {state === 'Stopped'
-                        ? t('RESOURCES_STOP')
-                        : state === 'Provisioning'
-                        ? t('RESOURCES_PROVISIONING')
-                        : state === 'Starting'
-                        ? t('RESOURCES_STARTING')
-                        : state === 'Running'
-                        ? t('RESOURCES_RUNNING')
-                        : state === 'Paused'
-                        ? t('RESOURCES_PAUSED')
-                        : state === 'Migrating'
-                        ? t('RESOURCES_MIGRATING')
-                        : state === 'Stopping'
-                        ? t('RESOURCES_STOPPING')
-                        : state === 'Terminating'
-                        ? t('RESOURCES_TERMINATING')
-                        : state === 'Unknown'
-                        ? t('RESOURCES_UNKNOWN')
-                        : ''}
+		      {t(`RESOURCES_${state.toUpperCase()}`)}
                     </p>
                   </div>
                 </Dropdown>
@@ -461,25 +423,7 @@ export default class Vms extends React.Component {
               <i className={styles[`ico-status-${state.toLowerCase()}`]} />
               <p>
                 {/* {state} */}
-                {state === 'Stopped'
-                  ? t('RESOURCES_STOP')
-                  : state === 'Provisioning'
-                  ? t('RESOURCES_PROVISIONING')
-                  : state === 'Starting'
-                  ? t('RESOURCES_STARTING')
-                  : state === 'Running'
-                  ? t('RESOURCES_RUNNING')
-                  : state === 'Paused'
-                  ? t('RESOURCES_PAUSED')
-                  : state === 'Migrating'
-                  ? t('RESOURCES_MIGRATING')
-                  : state === 'Stopping'
-                  ? t('RESOURCES_STOPPING')
-                  : state === 'Terminating'
-                  ? t('RESOURCES_TERMINATING')
-                  : state === 'Unknown'
-                  ? t('RESOURCES_UNKNOWN')
-                  : ''}
+		{t(`RESOURCES_${state.toUpperCase()}`)}
               </p>
             </div>
           );

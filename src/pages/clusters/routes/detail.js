@@ -50,7 +50,7 @@ import LogCollectionDetail from '../containers/LogCollections/Detail'
 import IPPoolDetail from '../containers/Network/IPPools/Detail'
 import GatewayDetail from '../containers/Gateway/Detail'
 
-//MM3 Detail Page
+// MM3 Detail Page
 import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
 import RouterDetail from '../containers/Resources/Routers/Detail'
@@ -61,6 +61,7 @@ import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
 import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
+import NodepoolDetail from '../containers/Resources/Nodepools/Detail'
 import VolumeDetail from '../containers/Resources/Volumes/Detail'
 import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
@@ -195,7 +196,6 @@ export default [
         path: `${PATH}/projects/:namespace`,
         component: ProjectDetail,
       },
-
     ],
   },
   {
@@ -239,6 +239,10 @@ export default [
     component: ContainerResourceDetail,
   },
   {
+    path: `${PATH}/nodepools/:clustername/:name`,
+    component: NodepoolDetail,
+  },
+  {
     path: `${PATH}/resourcesvolumes/:name/:id`,
     component: VolumeDetail,
   },
@@ -278,5 +282,4 @@ export default [
     path: `${PATH}/gpunodes/:name`,
     component: GpuNodeDetail,
   },
-
 ]

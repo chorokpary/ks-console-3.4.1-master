@@ -1,0 +1,37 @@
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  border-radius: $border-radius;
+  background-color: $card-bg-color;
+}
+
+.info {
+  background-color: transparent;
+  padding: 10px;
+}
+
+.resources {
+  padding: 0;
+}
+
+.header .info {
+  margin: 0px;
+  padding-bottom: 10px;
+}
+
+.cardstatus {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 12px;
+  grid-row-gap: 12px;
+}
+
+.status {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+}
+

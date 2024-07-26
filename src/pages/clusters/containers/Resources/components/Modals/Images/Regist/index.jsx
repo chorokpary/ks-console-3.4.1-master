@@ -145,7 +145,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
   };
 
   const getMarks = () => {
-    const max = 40;
+    const max = 200;
     const count = 5;
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1);
@@ -508,7 +508,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                             <div className={`${styles.select_inner_content}`}>
                               <UnitSlider
                                 name="size"
-                                max={40}
+                                max={200}
                                 min={0}
                                 marks={getMarks()}
                                 defaultValue={imageSize}
