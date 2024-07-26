@@ -77,10 +77,15 @@ module.exports = {
     '단일 GPU 카드에 컨테이너 워크로드를 생성 및 할당하는 방식입니다.',
   RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH: '가상머신 패스스루 할당',
   RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC:
-    '단일 GPU 카드에 VM 워크로드를 생성 및 할당하는 방식입니다.',
+    '물리 GPU 카드에 VM 워크로드를 생성 및 할당하는 방식입니다.',
+  RESOURCES_GPU_WORKLOAD_VM_VGPU: '가상머신 vGPU 할당',
+  RESOURCES_GPU_WORKLOAD_VM_VGPU_DESC:
+    '가상 GPU 카드에 VM 워크로드를 생성 및 할당하는 방식입니다.',
   RESOURCES_GPU_WORKLOAD_TYPE: 'GPU 워크로드 유형',
   RESOURCES_GPU_SELECT_WORKLOAD_TYPE_TIP:
     'GPU 자원을 할당할 사용자 워크로드를 선택해주세요.',
+  RESOURCES_GPU_VGPU_CONFIG: 'vGPU 설정',
+  RESOURCES_GPU_VGPU_CONFIG_STATE: 'vGPU 설정 상태',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU 인덱스',
@@ -102,7 +107,19 @@ module.exports = {
   RESOURCES_APPLY_SUCCESS_DESC: '설정이 정상적으로 적용되었습니다.',
   RESOURCES_CONFIG_SUCCESS_DESC: '선택한 옵션이 정상적으로 설정되었습니다.',
   RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: '가용한 MIG 설정을 찾을 수 없습니다.',
+  RESOURCES_GPU_VGPU_CONFIG: 'vGPU 설정',
+  RESOURCES_GPU_MDEV_ID: 'MDEV ID',
+  RESOURCES_GPU_VGPU_CLASS: 'GPU 유형',
+  RESOURCES_GPU_VGPU_RESOLUTION: '해상도',
+  RESOURCES_GPU_VGPU_NUMBER: '최대 개수',
+  RESOURCES_GPU_VGPU_CUDA: 'CUDA',
+  RESOURCES_GPU_VGPU_MULTIVGPU: '멀티 vGPU',
+  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: '가용한 vGPU 설정을 찾을 수 없습니다.',
+	
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU 구성요소 배포 현황',
+  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS: '컨테이너 워크로드 지원 구성요소 배포 현황',
+  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS: '가상머신 패스스루 지원 구성요소 배포 현황',
+  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS: '가상머신 vGPU 지원 구성요소 배포 현황',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: '컨테이너 툴킷',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC:
     '컨테이너 툴킷은 컨테이너 런타임 라이브러리와 GPU 가속 컨테이너를 자동으로 구성하는 유틸리티를 포함하고 있습니다.',
@@ -131,6 +148,12 @@ module.exports = {
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER: 'VFIO 관리자',
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC:
     'VFIO-PCI 커널모듈 혹은 드라이버를 로드하여 해당 노드 내 모든 GPU 디바이스에 바인드 해주는 역할을 합니다. ',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR: '샌드박스 Validator',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC: '샌드박스 환경을 구성하는 여러 컴포넌트들이 정상적으로 설치되었는지 여부를 검증해주는 역할을 수행합니다.',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER: 'vGPU 관리자',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC: 'vGPU 인스턴스 생성을 위한 관련 GPU 드라이버 설치/삭제 등 관리를 해주는 역할을 수행합니다.',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER: 'vGPU 디바이스 관리자',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC: '시스템 관리자가 vGPU (가상GPU) 디바이스를 보다 쉽게 사용할 수 있도록 설계된 도구입니다.',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS 네트워크 트래픽',
   RESOURCES_KAAS_RESOURCE: 'KaaS 리소스',

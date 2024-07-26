@@ -55,6 +55,9 @@ export default class GpuNodeStore extends Base {
     // fetch MIG configs
     await this.fetchMigConfigs({ ...params, model: detail.gpunode.model })
 
+    // fetch vGPU configs
+    await this.fetchVgpuConfigs({ ...params, model: detail.gpunode.name })
+
     this.isLoading = false
     return detail
   }
@@ -110,7 +113,29 @@ export default class GpuNodeStore extends Base {
 
   @action
   async applyMigConfig(data, params) {
-    const url = `${this.getGpuNodeUrl(params)}/${data.node}`
+    const url = `${this.getGpuNodeUrl(params)}/mig/${data.node}`
+    await this.submitting(request.put(url, data))
+  }
+
+  @action
+  async fetchVgpuConfigs(params) {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/gpu/vgpu_configs/${params.model}`
+    )
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'vgpu_configs',
+    }
+    this.vgpuConfigList = response.vgpu_configs
+    return response
+  }
+
+  @action
+  async applyVgpuConfig(data, params) {
+    const url = `${this.getGpuNodeUrl(params)}/vgpu/${data.node}`
     await this.submitting(request.put(url, data))
   }
 
