@@ -90,7 +90,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                     <tr>
                       <th></th>
                       <th>
-                        <strong>{t('RESOURCES_GPU_VGPU_CONFIG')}</strong>
+                        <strong>{t('RESOURCES_GPU_VGPU_CONFIG_NAME')}</strong>
                       </th>
                       <th>
                         <strong>{t('RESOURCES_GPU_MDEV_ID')}</strong>
@@ -115,7 +115,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                   <tbody>
                     {!vgpuConfigList?.length && (
                       <tr>
-                        <td colSpan="5" className="no-data">
+                        <td colSpan="8" className="no-data">
                           <p>{t('RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND')}</p>
                         </td>
                       </tr>

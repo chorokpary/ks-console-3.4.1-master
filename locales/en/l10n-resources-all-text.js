@@ -114,7 +114,7 @@ module.exports = {
   RESOURCES_CONFIG_SUCCESS_DESC:
     'Selected options have been successfully configured.',
   RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: 'No available MIG configurations found.',
-  RESOURCES_GPU_VGPU_CONFIG: 'vGPU Config',
+  RESOURCES_GPU_VGPU_CONFIG_NAME: 'vGPU Config Name',
   RESOURCES_GPU_MDEV_ID: 'MDEV ID',
   RESOURCES_GPU_VGPU_CLASS: 'GPU Class',
   RESOURCES_GPU_VGPU_RESOLUTION: 'Resolution',

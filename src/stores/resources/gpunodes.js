@@ -56,7 +56,7 @@ export default class GpuNodeStore extends Base {
     await this.fetchMigConfigs({ ...params, model: detail.gpunode.model })
 
     // fetch vGPU configs
-    await this.fetchVgpuConfigs({ ...params, model: detail.gpunode.name })
+    await this.fetchVgpuConfigs({ ...params, node: detail.gpunode.name })
 
     this.isLoading = false
     return detail
@@ -122,7 +122,7 @@ export default class GpuNodeStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/gpu/vgpu_configs/${params.model}`
+      )}/edgetron/resources/kubevirt/gpu/vgpu_configs/${params.node}`
     )
     const response = {
       ...params,
