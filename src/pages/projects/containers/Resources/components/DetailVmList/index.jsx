@@ -286,7 +286,7 @@ const DetailVmList = (props) => {
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.node != "N/A" ? obj.node : "-"}</div>
+            <div>{obj.node ? obj.node : "-"}</div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
 	  {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
