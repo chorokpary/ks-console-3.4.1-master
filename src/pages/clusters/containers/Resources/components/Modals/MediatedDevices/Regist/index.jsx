@@ -109,7 +109,7 @@ const RegistModal = props => {
         <>
             <Modal
                 icon="pen"
-                width={800}
+                width={850}
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
@@ -142,10 +142,11 @@ const RegistModal = props => {
                                 <table>
                                     <colgroup>
                                         <col width="5%" />
-                                        <col width="20%" />
                                         <col width="15%" />
+                                        <col width="13%" />
                                         <col width="10%" />
-                                        <col width="15%" />
+	                                <col width="10%" />
+	                                <col width="12%" />
                                         <col width="10%" />
                                         <col width="10%" />
                                         <col width="15%" />
@@ -162,6 +163,9 @@ const RegistModal = props => {
                                             <th>
                                                 <strong>{t('RESOURCES_GPU_VGPU_CLASS')}</strong>
                                             </th>
+	                                    <th>
+	                                        <strong>{t('RESOURCES_GPU_VGPU_RAM')}</strong>
+	                                    </th>
                                             <th>
                                                 <strong>{t('RESOURCES_GPU_VGPU_RESOLUTION')}</strong>
                                             </th>
@@ -180,7 +184,7 @@ const RegistModal = props => {
                                         {!vgpuDataList?.length && (
                                             <tr>
                                                 <td
-                                                    colSpan="8"
+                                                    colSpan="9"
                                                     className="no-data"
                                                     style={{
                                                         textAlign: 'center',
@@ -209,6 +213,7 @@ const RegistModal = props => {
                                                 <td>{data.name}</td>
                                                 <td>{data.mdev_id}</td>
                                                 <td>{data.clazz}</td>
+						<td>{data.ram}</td>
                                                 <td>{data.resolution}</td>
                                                 <td>{data.max_num}</td>
                                                 <td>{data.cuda ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>

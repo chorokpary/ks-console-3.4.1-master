@@ -61,7 +61,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
     <>
       <Modal
         icon="pen"
-        width={800}
+        width={850}
         title={title}
         onOk={handleOk}
         onCancel={closeModal}
@@ -78,10 +78,11 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                 <table>
                   <colgroup>
                     <col width="5%" />
-                    <col width="20%" />
                     <col width="15%" />
+                    <col width="13%" />
                     <col width="10%" />
-                    <col width="15%" />
+                    <col width="10%" />
+	            <col width="12%" />
                     <col width="10%" />
                     <col width="10%" />
                     <col width="15%" />
@@ -97,6 +98,9 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                       </th>
                       <th>
                         <strong>{t('RESOURCES_GPU_VGPU_CLASS')}</strong>
+                      </th>
+	              <th>
+                        <strong>{t('RESOURCES_GPU_VGPU_RAM')}</strong>
                       </th>
                       <th>
                         <strong>{t('RESOURCES_GPU_VGPU_RESOLUTION')}</strong>
@@ -115,7 +119,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                   <tbody>
                     {!vgpuConfigList?.length && (
                       <tr>
-                        <td colSpan="8" className="no-data">
+                        <td colSpan="9" className="no-data">
                           <p>{t('RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND')}</p>
                         </td>
                       </tr>
@@ -135,7 +139,8 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                         <td>{data.name}</td>
                         <td>{data.mdev_id}</td>
                         <td>{data.clazz}</td>
-                        <td>{data.resolution}</td>
+                        <td>{data.ram}</td>
+			<td>{data.resolution}</td>
                         <td>{data.max_num}</td>
                         <td>{data.cuda ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>
                         <td>{data.multivgpu ? t('RESOURCES_SUPPORT') : t('RESOURCES_NOT_SUPPORT')}</td>
