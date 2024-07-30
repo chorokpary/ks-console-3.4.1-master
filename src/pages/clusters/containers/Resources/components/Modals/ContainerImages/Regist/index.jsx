@@ -714,16 +714,37 @@ const Step2 = ({
   // harbor list
   const getPriavteHarborRepositories = async () => {
     try {
-      const originUrl = new URL(registryUrl)
-      const urlParams = originUrl.searchParams
-      const projectName = urlParams.get('projects')
+     
+      let allData = [];
+      let page = 1;
+      let hasMoreData = true;
 
-      const response = await request.post(`customharbor/private`, {
-        auth: harborAuth,
-        projectName,
-        originUrl: originUrl.origin,
-      })
-      const list = response.map(obj => {
+      while (hasMoreData) {
+        try {
+
+          const originUrl = new URL(registryUrl)
+          const urlParams = originUrl.searchParams
+          const projectName = urlParams.get('projects')
+
+          const response = await request.post(`customharbor/private`, {
+            auth: harborAuth,
+            projectName,
+            originUrl: originUrl.origin,
+            page:page
+          })
+
+          const fetchedData = response;
+          allData = [...allData, ...fetchedData];
+
+          // 다음 페이지가 있는지 확인
+          hasMoreData =  fetchedData.length === 100;
+          page++;
+        } catch (error) {
+          hasMoreData = false;
+        }
+      }
+
+      const list = allData.map(obj => {
         // eslint-disable-next-line no-shadow
         const [projectName, ...name] = obj.name.split('/')
         obj.name = name.join('/')
