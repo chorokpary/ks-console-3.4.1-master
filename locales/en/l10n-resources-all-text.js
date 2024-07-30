@@ -82,18 +82,23 @@ module.exports = {
   RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH:
     'Virtual machine passthrough allocation',
   RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC:
-    'A method of creating and assigning VM workloads to a single GPU card.',
+    'A method of creating and assigning VM workloads to a physical GPU (pGPU) card.',
+  RESOURCES_GPU_WORKLOAD_VM_VGPU: 'Virtual machine vGPU allocation',
+  RESOURCES_GPU_WORKLOAD_VM_VGPU_DESC:
+    'A method of creating and assigning VM workloads to a virtual GPU (vGPU) card.',
   RESOURCES_GPU_WORKLOAD_TYPE: 'GPU workload type',
   RESOURCES_GPU_SELECT_WORKLOAD_TYPE_TIP:
     'Please select a user workload to allocate GPU resources to.',
+  RESOURCES_GPU_VGPU_CONFIG: 'vGPU Config',
+  RESOURCES_GPU_VGPU_CONFIG_STATE: 'vGPU Configs status',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU Index',
   RESOURCES_GPU_DEVICES: 'GPU Devices',
 
-  RESOURCES_GPU_MIG_CONFIG: 'MIG settings',
-  RESOURCES_GPU_MIG_CONFIG_NAME: 'MIG setting name',
-  RESOURCES_GPU_MIG_CONFIG_STATE: 'MIG settings status',
+  RESOURCES_GPU_MIG_CONFIG: 'MIG Config',
+  RESOURCES_GPU_MIG_CONFIG_NAME: 'MIG Config name',
+  RESOURCES_GPU_MIG_CONFIG_STATE: 'MIG Config status',
   RESOURCES_GPU_MIG_SLICE: 'MIG Slice',
   RESOURCES_GPU_MIG_SLICE_NAME: 'MIG Slice name',
   RESOURCES_GPU_MIG_SLICE_NUMBER: 'MIG slice count',
@@ -105,11 +110,24 @@ module.exports = {
   RESOURCES_GPU_MIG_DEVICES: 'MIG Devices',
   RESOURCES_APPLY_MIG: 'Apply MIG',
   RESOURCES_APPLY: 'Apply',
-  RESOURCES_APPLY_SUCCESS_DESC: 'Settings have been successfully applied.',
+  RESOURCES_APPLY_SUCCESS_DESC: 'Configs have been successfully applied.',
   RESOURCES_CONFIG_SUCCESS_DESC:
     'Selected options have been successfully configured.',
   RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: 'No available MIG configurations found.',
+  RESOURCES_GPU_VGPU_CONFIG_NAME: 'vGPU Config Name',
+  RESOURCES_GPU_MDEV_ID: 'MDEV ID',
+  RESOURCES_GPU_VGPU_CLASS: 'GPU Class',
+  RESOURCES_GPU_VGPU_RAM: 'Memory',
+  RESOURCES_GPU_VGPU_RESOLUTION: 'Resolution',
+  RESOURCES_GPU_VGPU_NUMBER: 'Max Number',
+  RESOURCES_GPU_VGPU_CUDA: 'CUDA',
+  RESOURCES_GPU_VGPU_MULTIVGPU: 'Multi vGPU',
+  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: 'No available vGPU configurations found.',  
+
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU Deployment Status',
+  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS: 'Component Deployment Status for Container Workload',
+  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS: 'Component Deployment Status for VM Passthrough',
+  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS: 'Component Deployment Status for VM vGPU',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: 'Container Toolkit',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC:
     'The Container Toolkit includes utilities that automatically configure container runtime libraries and GPU-accelerated containers.',
@@ -137,6 +155,12 @@ module.exports = {
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER: 'VFIO Manager',
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC:
     'Loads the VFIO-PCI kernel module or driver and binds it to all GPU devices in the node.',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR: 'Sandbox Validator',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC: 'Validates whether the various components that make up the sandbox environment are installed correctly.',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER: 'vGPU Manager',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC: 'Plays a role in managing the installation/deletion of related GPU drivers to ensure the creation of vGPU instances.',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER: 'vGPU Device Manager',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC: 'A tool designed for system administrators to make working with vGPU devices easier.',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS network traffic',
   RESOURCES_KAAS_RESOURCE: 'Kaas resource',

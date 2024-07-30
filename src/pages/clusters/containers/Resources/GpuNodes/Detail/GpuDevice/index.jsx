@@ -16,25 +16,36 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getIndexRoute } from 'utils/router.config'
+import React from 'react'
+import { observer, inject } from 'mobx-react'
 
-import Status from 'clusters/containers/Resources/GpuNodes/Detail/Status'
-import GpuDevice from 'clusters/containers/Resources/GpuNodes/Detail/GpuDevice'
+import { Panel } from 'components/Base'
+import DetailGpuDeviceList from 'pages/clusters/containers/Resources/components/DetailGpuDeviceList';
 
-const PATH = '/clusters/:cluster/gpunodes/:name'
+import styles from './index.scss'
 
-export default [
-    {
-        path: `${PATH}/status`,
-        title: t('RESOURCES_STATE'),
-        component: Status,
-        exact: true,
-    },
-    {
-        path: `${PATH}/gpu-devices`,
-        title: t('RESOURCES_GPU_DEVICES'),
-        component: GpuDevice,
-        exact: true,
-    },
-    getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
-]
+const GpuDevice = (props) => {
+  const store = props.detailStore
+  
+  const renderGpuDevices = () => {
+    const cluster = props.match.params.cluster
+    if (store.detail.gpunode.count > 0) {
+      return (
+        <DetailGpuDeviceList
+          gpuDeviceData={store.gpuDeviceList}
+          cluster={cluster}
+        />
+      )
+    }
+  };
+
+  return (
+    <>
+      <div className={styles.main}>
+	{renderGpuDevices()}
+      </div>
+    </>
+  )
+}
+
+export default inject('detailStore')(observer(GpuDevice))

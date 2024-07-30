@@ -310,7 +310,7 @@ const Status = props => {
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
-                  <div>{store.detail.vm?.node}</div>
+	          <div>{store.detail.vm?.node ? store.detail.vm?.node : "-"}</div>
                   <p>{t('RESOURCES_NODE')}</p>
                 </div>
                 {renderMonitorings()}

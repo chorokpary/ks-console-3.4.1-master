@@ -57,6 +57,19 @@ const GpuNodeDetail = props => {
                 });
             },
         },
+	{
+            key: 'applyVgpu',
+            icon: 'gpu',
+            text: t('RESOURCES_GPU_VGPU_CONFIG'),
+            action: 'view',
+            onClick: () => {
+                props.rootStore.triggerAction('gpu.applyVgpu', {
+                    store: store,
+                    cluster: props.match.params.cluster,
+                    success: fetchData,
+                });
+            },
+        },
         {
             key: 'applyMig',
             icon: 'gpu',
@@ -165,6 +178,14 @@ const GpuNodeDetail = props => {
 	    {
                 name: t('RESOURCES_GPU_MIG_CONFIG_STATE'),
                 value: gpunode.mig_config_state,
+            },
+	    {
+                name: t('RESOURCES_GPU_VGPU_CONFIG'),
+                value: gpunode.vgpu_config,
+            },
+            {
+                name: t('RESOURCES_GPU_VGPU_CONFIG_STATE'),
+                value: gpunode.vgpu_config_state,
             },
         ];
     };

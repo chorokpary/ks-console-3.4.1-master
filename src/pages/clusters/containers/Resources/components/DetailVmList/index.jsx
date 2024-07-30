@@ -295,7 +295,7 @@ const DetailVmList = props => {
           </div>
           <div className={styles.text}>
             <div>
-              {obj.node != 'N/A' ? (
+              {obj.node ? (
                 <Link to={`/clusters/${cluster}/nodes/${obj.node}`}>
                   {obj.node}
                 </Link>
