@@ -28,11 +28,9 @@ import styles from './index.scss';
 const ModifyModal = ({ title, onOk, store, ...props }) => {
 
   const [modelView, setModalView] = useState(true);
-
   const [vgpuConfigList, setVgpuConfigList] = useState([]);
-
   const [radioConfig, setRadioConfig] = useState('');
-
+  const [existingConfig, setExistingConfig] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const closeModal = () => {
@@ -41,11 +39,17 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
 
   useEffect(() => {
     const fnGetVgpuConfigList = async () => {
-      setVgpuConfigList(store.vgpuConfigList)
-      const firstConfig = store.vgpuConfigList?.[0]?.name
       const _ = require('lodash');
+      setVgpuConfigList(store.vgpuConfigList)
+      const existing = store.vgpuConfigList.find((data) => data.name === store.detail.gpunode.vgpu_config);
+      var firstConfig = store.vgpuConfigList?.[0]?.name;
+      const defaultConfig = existing?.name;
+      if (!_.isEmpty(defaultConfig)) {
+        setExistingConfig(existing.name);
+	firstConfig = existing.name;
+      }
       if (!_.isEmpty(firstConfig)) {
-        setRadioConfig(firstConfig)
+        setRadioConfig(firstConfig);
       }
     };
     fnGetVgpuConfigList();
@@ -68,7 +72,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
         visible={modelView}
         okText={t('RESOURCES_APPLY')}
         cancelText={t('RESOURCES_CANCEL')}
-        disableSubmit={vgpuConfigList.length === 0 && true}
+	disableSubmit={vgpuConfigList.length === 0 || existingConfig === radioConfig}
         isSubmitting={store.isSubmitting}
       >
         <Form>

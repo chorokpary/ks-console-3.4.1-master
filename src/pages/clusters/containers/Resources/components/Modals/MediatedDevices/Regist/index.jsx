@@ -39,12 +39,17 @@ const RegistModal = props => {
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
     const [nodeDataList, setNodeDataList] = useState([]);
+    const [existingMdevNameList, setExistingMdevNameList] = useState([]);
     const [vgpuDataList, setVgpuDataList] = useState([]);
     const [radioConfig, setRadioConfig] = useState('');
 
     const getData = async () => {
         const listNode = await mediatedDevicesStore.fetchNodeList({ ...props });
         setNodeDataList(listNode.filter(obj => obj.node_role !== 'master'));
+
+	const listMdev = await mediatedDevicesStore.fetchList({ ...props });
+	const mdevNameList = listMdev.map(({ mediated_device_name }) => mediated_device_name);
+	setExistingMdevNameList(mdevNameList);
     };
 
     useEffect(() => {
@@ -205,6 +210,7 @@ const RegistModal = props => {
                                                         name="name"
                                                         value={data.name}
                                                         checked={radioConfig === data.name}
+						        disabled={existingMdevNameList.includes("GRID " + data.name)}
                                                         onChange={e => {
                                                             setRadioConfig(data.name);
                                                         }}
