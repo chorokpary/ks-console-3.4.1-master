@@ -45,40 +45,46 @@ export default class Status extends React.Component {
     const sandbox_device_plugin = { name: "sandbox_device_plugin", flag: deploy.sandbox_device_plugin }
     const cc_manager = { name: "cc_manager", flag: deploy.cc_manager }
     const vfio_manager = { name: "vfio_manager", flag: deploy.vfio_manager }
+    const sandbox_validator = { name: "sandbox_validator", flag: deploy.sandbox_validator }
+    const vgpu_manager = { name: "vgpu_manager", flag: deploy.vgpu_manager }
+    const vgpu_device_manager = { name: "vgpu_device_manager", flag: deploy.vgpu_device_manager }
 
     return (
-      <Panel title={t('RESOURCES_GPU_DEPLOY_STATUS')}>
+      <>
+      <Panel title={t('RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS')}>
         <div className={styles.deployments}>
-	  <DeploymentCard key="container_toolkit" data={container_toolkit} />
-	  <DeploymentCard key="dcgm" data={dcgm} />
-	  <DeploymentCard key="dcgm_exporter" data={dcgm_exporter} />
-	  <DeploymentCard key="device_plugin" data={device_plugin} />
-	  <DeploymentCard key="operator_validator" data={operator_validator} />
-	  <DeploymentCard key="mig_manager" data={mig_manager} />
-	  <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
-	  <DeploymentCard key="cc_manager" data={cc_manager} />
-	  <DeploymentCard key="vfio_manager" data={vfio_manager} />
+          <DeploymentCard key="container_toolkit" data={container_toolkit} />
+          <DeploymentCard key="dcgm" data={dcgm} />
+          <DeploymentCard key="dcgm_exporter" data={dcgm_exporter} />
+          <DeploymentCard key="device_plugin" data={device_plugin} />
+          <DeploymentCard key="operator_validator" data={operator_validator} />
+          <DeploymentCard key="mig_manager" data={mig_manager} />
         </div>
       </Panel>
+      <Panel title={t('RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS')}>
+        <div className={styles.deployments}>
+          <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
+          <DeploymentCard key="cc_manager" data={cc_manager} />
+          <DeploymentCard key="vfio_manager" data={vfio_manager} />
+        </div>
+      </Panel>
+      <Panel title={t('RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS')}>
+        <div className={styles.deployments}>
+          <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
+          <DeploymentCard key="cc_manager" data={cc_manager} />
+          <DeploymentCard key="sandbox_validator" data={sandbox_validator} />
+          <DeploymentCard key="vgpu_manager" data={vgpu_manager} />
+          <DeploymentCard key="vgpu_device_manager" data={vgpu_device_manager} />
+        </div>
+      </Panel>
+      </>
     )
-  };
-  renderGpuDevices() {
-    const cluster = this.props.match.params.cluster
-    if (this.store.detail.gpunode.count > 0) {
-      return (
-        <DetailGpuDeviceList
-          gpuDeviceData={this.store.gpuDeviceList}
-          cluster={cluster}
-        />
-      )
-    }
   };
 
   render() {
     return (
       <div className={styles.main}>
         {this.renderDeployments()}
-	{this.renderGpuDevices()}
       </div>
     )
   }

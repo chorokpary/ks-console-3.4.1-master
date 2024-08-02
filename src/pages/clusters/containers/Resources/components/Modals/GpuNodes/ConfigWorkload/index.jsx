@@ -45,7 +45,8 @@ const ConfigGpuWorkloadType = ({ title, onOk, store, ...props }) => {
 
   const workloadOptions = [
     { label: t('RESOURCES_GPU_WORKLOAD_CONTAINER'), value: 'container' , description: t('RESOURCES_GPU_WORKLOAD_CONTAINER_DESC')},
-    { label: t('RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH'), value: 'vm-passthrough', description: t('RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC')}
+    { label: t('RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH'), value: 'vm-passthrough', description: t('RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC')},
+    { label: t('RESOURCES_GPU_WORKLOAD_VM_VGPU'), value: 'vm-vgpu', description: t('RESOURCES_GPU_WORKLOAD_VM_VGPU_DESC')}
   ];
 
   return (

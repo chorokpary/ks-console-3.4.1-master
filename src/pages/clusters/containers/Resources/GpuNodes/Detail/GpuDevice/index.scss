@@ -1,0 +1,13 @@
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.resources {
+  padding: 0;
+}
+
+.deployments {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 12px;
+  grid-row-gap: 12px;
+}

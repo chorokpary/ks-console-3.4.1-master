@@ -20,6 +20,7 @@ import { Modal } from 'components/Base'
 import { Notify } from '@kube-design/components'
 
 import ApplyMigModal from 'clusters/containers/Resources/components/Modals/GpuNodes/ApplyMig'
+import ApplyVgpuModal from 'clusters/containers/Resources/components/Modals/GpuNodes/ApplyVgpu'
 import ConfigWorkloadModal from 'clusters/containers/Resources/components/Modals/GpuNodes/ConfigWorkload'
 
 export default {
@@ -36,6 +37,24 @@ export default {
                 },
                 title: t('RESOURCES_GPU_MIG_CONFIG'),
                 modal: ApplyMigModal,
+                store,
+                ...props,
+            })
+        },
+    },
+    'gpu.applyVgpu': {
+        on({ store, cluster, success, ...props }) {
+            const modal = Modal.open({
+                onOk: data => {
+                    store.applyVgpuConfig(data, { cluster })
+                    .then(() => {
+                      Modal.close(modal)
+                      Notify.success({ content: t('RESOURCES_APPLY_SUCCESS_DESC') })
+                      success && success()
+                    })
+                },
+                title: t('RESOURCES_GPU_VGPU_CONFIG'),
+                modal: ApplyVgpuModal,
                 store,
                 ...props,
             })
