@@ -668,29 +668,40 @@ const Step2 = ({
   const handleImagePop = async () => {
     if (publicType === 'public') {
       // const response = await axios.get(`https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image`, {
-      try {
-        const originUrl = new URL(registryUrl)
-        const urlParams = originUrl.searchParams
-        const namespace = urlParams.get('namespace')
+      
+      const originUrl = new URL(registryUrl)
+      const urlParams = originUrl.searchParams
+      const namespace = urlParams.get('namespace')
 
-        const response = await axios.get(
-          `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`,
-          {
+      let allRepositories = [];
+      let nextPage = `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`
+
+       try {
+
+        while (nextPage) {
+          const response = await axios.get(nextPage, {
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
             },
-          }
-        )
-        setImageListData(response.data.repositories)
-        setImageList(response.data.repositories)
-        setPopActive(true)
-        setImageText(defaultImageText)
-      } catch {
-        setImageList([])
-        setTagList([])
-        setPopActive(false)
-        setImageText(emptyImageText)
-        setTag('')
+          });
+
+          allRepositories = [...allRepositories, ...response.data.repositories];
+          nextPage = response.data.next_page ? `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image&next_page=${response.data.next_page}` : null;
+        }
+
+        setImageListData(allRepositories);
+        setImageList(allRepositories);
+        setPopActive(true);
+        setImageText(defaultImageText);
+
+      } catch (error) {
+        console.error('error:', error);
+
+        setImageList([]);
+        setTagList([]);
+        setPopActive(false);
+        setImageText(emptyImageText);
+        setTag('');        
       }
     } else if (publicType === 'private') {
       getHarborImages()
