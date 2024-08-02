@@ -116,14 +116,14 @@ export default class GpuNodes extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('RESOURCES_GPU_DRIVER_VERSION'),
-                dataIndex: 'driver_version',
+                title: t('RESOURCES_GPU_DRIVER_TYPE'),
+                dataIndex: 'driver_type',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('RESOURCES_GPU_CUDA_VERSION'),
-                dataIndex: 'cuda_version',
+                title: t('RESOURCES_GPU_DRIVER_VERSION'),
+                dataIndex: 'driver_version',
                 isHideable: true,
                 width: 'auto',
             },
