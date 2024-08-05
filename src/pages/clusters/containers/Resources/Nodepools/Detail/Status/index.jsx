@@ -316,50 +316,48 @@ const Status = props => {
               </div>
             </LevelRight>
           </Level>
-        </div>
-        {!!nodes &&
-          nodes.map(detail => (
-            <Fragment>
-              <div className={classnames(styles.item)}>
-                <div className={styles.icon}>
-                  <Icon name="nodes" size={40} />
-                  <Indicator
-                    className={styles.indicator}
-                    type={getState(detail?.ready_status, detail?.phase)}
-                    flicker
-                  />
-                </div>
-                <div className={styles.title} style={{ width: '20%' }}>
-                  <div>{detail.name}</div>
-                  <p>
-                    {getLocalTime(detail.timestamp).format(
-                      'YYYY-MM-DD HH:mm:ss'
-                    )}
-                    {t('RESOURCES_CREATED')}
-                  </p>
-                </div>
-                <div className={styles.title} style={{ width: '10%' }}>
-                  <div>
-		    {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
+          {!!nodes &&
+            nodes.map(detail => (
+              <Fragment>
+                <div className={classnames(styles.item)}>
+                  <div className={styles.icon}>
+                    <Icon name="nodes" size={40} />
+                    <Indicator
+                      className={styles.indicator}
+                      type={getState(detail?.ready_status, detail?.phase)}
+                      flicker
+                    />
                   </div>
-                  <p>{t('RESOURCES_STATE')}</p>
+                  <div className={styles.title} style={{ width: '20%' }}>
+                    <div>{detail.name}</div>
+                    <p>
+                      {getLocalTime(detail.timestamp).format(
+                        'YYYY-MM-DD HH:mm:ss'
+                      )}
+                      {t('RESOURCES_CREATED')}
+                    </p>
+                  </div>
+                  <div className={styles.title} style={{ width: '10%' }}>
+                    <div>{t(`RESOURCES_${detail.phase.toUpperCase()}`)}</div>
+                    <p>{t('RESOURCES_STATE')}</p>
+                  </div>
+                  <div className={styles.title} style={{ width: '15%' }}>
+                    {detail?.addresses?.service_ip ? (
+                      <div>
+                        <div>{detail.addresses.service_ip}</div>
+                      </div>
+                    ) : (
+                      <div>-</div>
+                    )}
+                    <p>{t('RESOURCES_NODE_IP')}</p>
+                  </div>
+                  <div style={{ width: '55%' }}>
+                    {renderMonitorings(detail.name, detail.addresses.mgmt_ip)}
+                  </div>
                 </div>
-                <div className={styles.title} style={{ width: '15%' }}>
-                  {detail?.addresses?.service_ip ? (
-                    <div>
-                      <div>{detail.addresses.service_ip}</div>
-                    </div>
-                  ) : (
-                    <div>-</div>
-                  )}
-                  <p>{t('RESOURCES_NODE_IP')}</p>
-                </div>
-                <div className={styles.title} style={{ width: '55%' }}>
-                  {renderMonitorings(detail.name, detail.addresses.mgmt_ip)}
-                </div>
-              </div>
-            </Fragment>
-          ))}
+              </Fragment>
+            ))}
+        </div>
       </Panel>
     </>
   )

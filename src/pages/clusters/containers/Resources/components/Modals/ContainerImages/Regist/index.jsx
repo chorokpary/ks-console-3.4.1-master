@@ -217,8 +217,7 @@ const ResourceImageModal = props => {
   }
 
   const fnGetModalFooter = () => {
-    let elements = ''
-    elements = (
+    return (
       <>
         {regStep === 1 && (
           <>
@@ -280,8 +279,6 @@ const ResourceImageModal = props => {
         )}
       </>
     )
-
-    return elements
   }
 
   return (
@@ -714,33 +711,29 @@ const Step2 = ({
   // harbor list
   const getPriavteHarborRepositories = async () => {
     try {
-     
-      let allData = [];
-      let page = 1;
-      let hasMoreData = true;
+      let allData = []
+      let page = 1
+      let hasMoreData = true
 
       while (hasMoreData) {
         try {
-
           const originUrl = new URL(registryUrl)
           const urlParams = originUrl.searchParams
           const projectName = urlParams.get('projects')
 
-          const response = await request.post(`customharbor/private`, {
+          const fetchedData = await request.post(`customharbor/private`, {
             auth: harborAuth,
             projectName,
             originUrl: originUrl.origin,
-            page:page
+            page,
           })
-
-          const fetchedData = response;
-          allData = [...allData, ...fetchedData];
+          allData = [...allData, ...fetchedData]
 
           // 다음 페이지가 있는지 확인
-          hasMoreData =  fetchedData.length === 100;
-          page++;
+          hasMoreData = fetchedData.length === 100
+          page++
         } catch (error) {
-          hasMoreData = false;
+          hasMoreData = false
         }
       }
 
@@ -844,8 +837,7 @@ const Step2 = ({
     setLoading(false)
 
     // eslint-disable-next-line no-shadow
-    let tagList = []
-    tagList = response?.[0]?.tags
+    const tagList = response?.[0]?.tags
 
     setProjectName(projectName)
     setTagList(tagList)

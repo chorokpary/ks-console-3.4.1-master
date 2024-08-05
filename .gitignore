@@ -24,3 +24,5 @@ yarn-error.log*
 *.rdb
 .cache-loader
 /.vs
+
+.env

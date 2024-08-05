@@ -401,7 +401,7 @@ const Status = props => {
                       </div>
                       <div className={styles.text} style={{ width: '15%' }}>
                         <div>
-		          {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
+                          {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
                         </div>
                         <p>{t('RESOURCES_STATE')}</p>
                       </div>
@@ -522,9 +522,7 @@ const Status = props => {
                       </p>
                     </div>
                     <div className={styles.text} style={{ width: '14%' }}>
-                      <div>
-		        {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
-                      </div>
+                      <div>{t(`RESOURCES_${detail.phase.toUpperCase()}`)}</div>
                       <p>{t('RESOURCES_STATE')}</p>
                     </div>
                     <div className={styles.text} style={{ width: '20%' }}>
