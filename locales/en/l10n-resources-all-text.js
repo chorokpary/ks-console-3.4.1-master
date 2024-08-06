@@ -127,12 +127,16 @@ module.exports = {
   RESOURCES_GPU_VGPU_NUMBER: 'Max Number',
   RESOURCES_GPU_VGPU_CUDA: 'CUDA',
   RESOURCES_GPU_VGPU_MULTIVGPU: 'Multi vGPU',
-  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: 'No available vGPU configurations found.',  
+  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND:
+    'No available vGPU configurations found.',
 
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU Deployment Status',
-  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS: 'Component Deployment Status for Container Workload',
-  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS: 'Component Deployment Status for VM Passthrough',
-  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS: 'Component Deployment Status for VM vGPU',
+  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS:
+    'Component Deployment Status for Container Workload',
+  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS:
+    'Component Deployment Status for VM Passthrough',
+  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS:
+    'Component Deployment Status for VM vGPU',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: 'Container Toolkit',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC:
     'The Container Toolkit includes utilities that automatically configure container runtime libraries and GPU-accelerated containers.',
@@ -161,11 +165,14 @@ module.exports = {
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC:
     'Loads the VFIO-PCI kernel module or driver and binds it to all GPU devices in the node.',
   RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR: 'Sandbox Validator',
-  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC: 'Validates whether the various components that make up the sandbox environment are installed correctly.',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC:
+    'Validates whether the various components that make up the sandbox environment are installed correctly.',
   RESOURCES_GPU_DEPLOY_VGPU_MANAGER: 'vGPU Manager',
-  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC: 'Plays a role in managing the installation/deletion of related GPU drivers to ensure the creation of vGPU instances.',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC:
+    'Plays a role in managing the installation/deletion of related GPU drivers to ensure the creation of vGPU instances.',
   RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER: 'vGPU Device Manager',
-  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC: 'A tool designed for system administrators to make working with vGPU devices easier.',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC:
+    'A tool designed for system administrators to make working with vGPU devices easier.',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS network traffic',
   RESOURCES_KAAS_RESOURCE: 'Kaas resource',
@@ -622,6 +629,18 @@ module.exports = {
   RESOURCES_CLUSTER: 'Cluster',
   RESOURCES_CLUSTER_NODE: 'Cluster Node',
   RESOURCES_CLUSTER_COMPONENT_STATE: 'Cluster Component State',
+  RESOURCES_CLUSTER_SCHEDULE_STATUS: 'Cluster Scheduling Status',
+  RESOURCES_CLUSTER_SCHEDULE_READY: 'Cluster Ready',
+  RESOURCES_CLUSTER_SCHEDULE_READY_DESC: 'The operational state of a cluster',
+  RESOURCES_CLUSTER_SCHEDULE_CONTROL_PLANE_READY: 'ControlPlane Ready',
+  RESOURCES_CLUSTER_SCHEDULE_CONTROL_PLANE_READY_DESC:
+    'Ready condition from the control plane object defined for this cluster',
+  RESOURCES_CLUSTER_SCHEDULE_INFRA_READY: 'Cluster Infrastructure Ready',
+  RESOURCES_CLUSTER_SCHEDULE_INFRA_READY_DESC:
+    'Current status of the kubevirt infrastructure object defined for this cluster',
+  RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED: 'Topology Reconciled',
+  RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED_DESC:
+    'Evidence about the reconciliation of a Cluster topology into the managed objects of the Cluster',
   RESOURCES_CLONE: 'Clone',
   RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP:
     'Enter the new virtual machine name for creating a clone data.',

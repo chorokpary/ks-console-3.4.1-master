@@ -121,11 +121,14 @@ module.exports = {
   RESOURCES_GPU_VGPU_CUDA: 'CUDA',
   RESOURCES_GPU_VGPU_MULTIVGPU: '멀티 vGPU',
   RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: '가용한 vGPU 설정을 찾을 수 없습니다.',
-	
+
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU 구성요소 배포 현황',
-  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS: '컨테이너 워크로드 지원 구성요소 배포 현황',
-  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS: '가상머신 패스스루 지원 구성요소 배포 현황',
-  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS: '가상머신 vGPU 지원 구성요소 배포 현황',
+  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS:
+    '컨테이너 워크로드 지원 구성요소 배포 현황',
+  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS:
+    '가상머신 패스스루 지원 구성요소 배포 현황',
+  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS:
+    '가상머신 vGPU 지원 구성요소 배포 현황',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: '컨테이너 툴킷',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC:
     '컨테이너 툴킷은 컨테이너 런타임 라이브러리와 GPU 가속 컨테이너를 자동으로 구성하는 유틸리티를 포함하고 있습니다.',
@@ -155,11 +158,14 @@ module.exports = {
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC:
     'VFIO-PCI 커널모듈 혹은 드라이버를 로드하여 해당 노드 내 모든 GPU 디바이스에 바인드 해주는 역할을 합니다. ',
   RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR: '샌드박스 Validator',
-  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC: '샌드박스 환경을 구성하는 여러 컴포넌트들이 정상적으로 설치되었는지 여부를 검증해주는 역할을 수행합니다.',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC:
+    '샌드박스 환경을 구성하는 여러 컴포넌트들이 정상적으로 설치되었는지 여부를 검증해주는 역할을 수행합니다.',
   RESOURCES_GPU_DEPLOY_VGPU_MANAGER: 'vGPU 관리자',
-  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC: 'vGPU 인스턴스 생성을 위한 관련 GPU 드라이버 설치/삭제 등 관리를 해주는 역할을 수행합니다.',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC:
+    'vGPU 인스턴스 생성을 위한 관련 GPU 드라이버 설치/삭제 등 관리를 해주는 역할을 수행합니다.',
   RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER: 'vGPU 디바이스 관리자',
-  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC: '시스템 관리자가 vGPU (가상GPU) 디바이스를 보다 쉽게 사용할 수 있도록 설계된 도구입니다.',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC:
+    '시스템 관리자가 vGPU (가상GPU) 디바이스를 보다 쉽게 사용할 수 있도록 설계된 도구입니다.',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS 네트워크 트래픽',
   RESOURCES_KAAS_RESOURCE: 'KaaS 리소스',
@@ -613,6 +619,18 @@ module.exports = {
   RESOURCES_CLUSTER: '클러스터',
   RESOURCES_CLUSTER_NODE: '클러스터 노드',
   RESOURCES_CLUSTER_COMPONENT_STATE: '클러스터 컴포넌트 상태',
+  RESOURCES_CLUSTER_SCHEDULE_STATUS: '클러스터 스케줄링 상태',
+  RESOURCES_CLUSTER_SCHEDULE_READY: '클러스터 준비',
+  RESOURCES_CLUSTER_SCHEDULE_READY_DESC: '클러스터의 동작 상태를 나타냅니다.',
+  RESOURCES_CLUSTER_SCHEDULE_CONTROL_PLANE_READY: '컨트롤플레인 준비',
+  RESOURCES_CLUSTER_SCHEDULE_CONTROL_PLANE_READY_DESC:
+    '현재 클러스터의 컨트롤 플레인 컴포넌트들의 준비 상태를 나타냅니다.',
+  RESOURCES_CLUSTER_SCHEDULE_INFRA_READY: '클러스터 인프라 준비',
+  RESOURCES_CLUSTER_SCHEDULE_INFRA_READY_DESC:
+    '현재 클러스터의 Kubevirt 인프라 구성요소들의 상태를 나타냅니다.',
+  RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED: '토폴로지 조정',
+  RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED_DESC:
+    '클러스터 토폴로지에 기반하여 클러스터 관리 요소들이 조정 완료되었는지 나타냅니다.',
   RESOURCES_CLONE: '클론',
   RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP:
     '클론 데이터로 생성할 신규 가상머신 이름을 입력해주세요.',
