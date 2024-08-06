@@ -42,6 +42,7 @@ const GpuNodeDetail = props => {
         return `/clusters/${cluster}/gpunodes`;
     };
     const routing = props.rootStore.routing;
+    const workload_type = store.detail.gpunode?.workload_type;
 
     const getOperations = () => [
         {
@@ -60,6 +61,7 @@ const GpuNodeDetail = props => {
 	{
             key: 'applyVgpu',
             icon: 'gpu',
+            disabled: workload_type !== 'vm-vgpu',
             text: t('RESOURCES_GPU_VGPU_CONFIG'),
             action: 'view',
             onClick: () => {
@@ -73,6 +75,7 @@ const GpuNodeDetail = props => {
         {
             key: 'applyMig',
             icon: 'gpu',
+            disabled: workload_type !== 'container',
             text: t('RESOURCES_GPU_MIG_CONFIG'),
             action: 'view',
             onClick: () => {
