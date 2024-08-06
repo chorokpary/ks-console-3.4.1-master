@@ -136,6 +136,9 @@ const DetailVmList = props => {
     if (props.variables == 'id') {
       return row[props.variables] === props.id
     }
+    if (props.variables == 'gpu_node') {
+      return row['node'] === props.node && row['gpus'].includes(props.gpu);
+    }
     return row[props.variables] === props.name
   }
 
