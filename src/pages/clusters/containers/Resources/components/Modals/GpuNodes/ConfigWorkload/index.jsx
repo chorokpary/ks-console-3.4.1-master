@@ -60,6 +60,7 @@ const ConfigGpuWorkloadType = ({ title, onOk, store, ...props }) => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+	disableSubmit={store.detail.gpunode.workload_type === workloadType}
         isSubmitting={store.isSubmitting}
       >
         <Form data={formData} ref={form}>

@@ -177,7 +177,7 @@ const GpuNodeDetail = props => {
             },
 	    {
                 name: t('RESOURCES_GPU_MIG_CONFIG_STATE'),
-                value: gpunode.mig_config_state,
+                value: gpunode.mig_config_state ? t(`RESOURCES_GPU_CONFIG_STATE_${gpunode.mig_config_state.toUpperCase()}`) : "-",
             },
 	    {
                 name: t('RESOURCES_GPU_VGPU_CONFIG'),
@@ -185,7 +185,7 @@ const GpuNodeDetail = props => {
             },
             {
                 name: t('RESOURCES_GPU_VGPU_CONFIG_STATE'),
-                value: gpunode.vgpu_config_state,
+                value: gpunode.vgpu_config_state ? t(`RESOURCES_GPU_CONFIG_STATE_${gpunode.vgpu_config_state.toUpperCase()}`) : "-",
             },
         ];
     };
