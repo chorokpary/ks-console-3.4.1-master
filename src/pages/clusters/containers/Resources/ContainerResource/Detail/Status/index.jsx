@@ -28,7 +28,7 @@ import styles from './index.scss'
 
 const containerResourceStore = new ContainerResourceStore()
 
-const Status = ({ status, tip }) => {
+const Condition = ({ status, tip }) => {
   const icon = (
     <Icon
       className={styles.status}
@@ -47,7 +47,7 @@ const Status = ({ status, tip }) => {
   return icon
 }
 
-const ScheduleInfo = props => {
+const Status = props => {
   const [status, setStatus] = useState()
   const [phase, setPhase] = useState()
   const [isLoading, setIsLoading] = useState(true)
@@ -101,7 +101,7 @@ const ScheduleInfo = props => {
             title={t(`RESOURCES_${phase.toUpperCase()}`)}
             description={t('CURRENT_STATUS')}
             extra={
-              <Status
+              <Condition
                 status={phase === 'Provisioned' ? 'success' : 'warning'}
               />
             }
@@ -136,4 +136,4 @@ const ScheduleInfo = props => {
   )
 }
 
-export default inject('detailStore')(observer(ScheduleInfo))
+export default inject('detailStore')(observer(Status))

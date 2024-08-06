@@ -27,7 +27,7 @@ import ClusterResourceSeparation from './ClusterResourceSeparation'
 
 import styles from './index.scss'
 
-const index = props => {
+const Monitoring = props => {
   const nodePoolStore = new NodePoolStore()
   const [nodes, setNodes] = useState()
   const [isLoading, setIsLoading] = useState(true)
@@ -67,6 +67,7 @@ const index = props => {
   }
 
   const renderNodeStatus = () => {
+    // eslint-disable-next-line no-shadow
     const { counts, isLoading = false } = componentHealth()
     const { health = 0, total = 0 } = counts.node || {}
 
@@ -104,4 +105,4 @@ const index = props => {
   )
 }
 
-export default inject('detailStore')(observer(index))
+export default inject('detailStore')(observer(Monitoring))

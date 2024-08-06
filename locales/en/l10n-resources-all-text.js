@@ -962,6 +962,16 @@ module.exports = {
   RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
     'Please select the NodePool Architecture.',
   RESOURCES_NODEPOOL_NODE_STATUS: 'NodePool Node Status',
+  RESOURCES_NODEPOOL_SCHEDULE_STATUS: 'NodePool Scheduling Status',
+  RESOURCES_NODEPOOL_SCHEDULE_READY: 'NodePool Ready',
+  RESOURCES_NODEPOOL_SCHEDULE_READY_DESC:
+    'Summarizes the operational state of the NodePool',
+  RESOURCES_NODEPOOL_SCHEDULE_AVAILABLE: 'NodePool Available',
+  RESOURCES_NODEPOOL_SCHEDULE_AVAILABLE_DESC:
+    'Indicates at least the minimum available nodes required are up and running',
+  RESOURCES_NODEPOOL_SCHEDULE_MACHINE_SET_READY: 'NodePool MachineSet Ready',
+  RESOURCES_NODEPOOL_SCHEDULE_MACHINE_SET_READY_DESC:
+    'Summary of current status of the MachineSet owned by the NodePool',
   RESOURCES_NODE_COUNT: 'Number of Nodes',
   RESOURCES_NODE_IP: 'Node IP',
 }

@@ -34,7 +34,7 @@ const nodePoolStore = new NodePoolStore()
 const step = '5m'
 const times = 100
 
-const Status = props => {
+const Node = props => {
   const customStore = new CustomStore()
 
   const [machines, setMachines] = useState([])
@@ -372,7 +372,7 @@ const Status = props => {
                   <div className={styles.itemMain}>
                     <div className={styles.icon}>
                       <Icon
-                        name="nodes"
+                        name="etcd"
                         size={40}
                         type={
                           detail.name !== expandItem
@@ -559,4 +559,4 @@ const Status = props => {
   )
 }
 
-export default inject('detailStore')(observer(Status))
+export default inject('detailStore')(observer(Node))
