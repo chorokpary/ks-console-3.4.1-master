@@ -38,7 +38,7 @@ const StatusCard = ({ data }) => {
             />
           </Tooltip>
         ) : (
-          <Tooltip content={data.flag.message}>
+          <Tooltip content={data.flag.message} className={styles.tooltip}>
             <Icon
               className={styles.substract}
               name="substract"

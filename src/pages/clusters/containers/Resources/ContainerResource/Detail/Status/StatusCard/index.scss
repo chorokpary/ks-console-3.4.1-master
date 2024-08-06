@@ -29,3 +29,7 @@
   background-color: $yellow;
 }
 
+.tooltip {
+  min-width: 300px;
+  white-space: normal; /* 텍스트가 줄 바꿈되도록 설정 */
+}
