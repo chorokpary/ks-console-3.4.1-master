@@ -560,6 +560,7 @@ module.exports = {
   RESOURCES_ACCESS_MODE: '접근모드',
   RESOURCES_CONNECT_SUCCESS_DESC: '정상적으로 연결 되었습니다.',
   RESOURCES_STOPPING: '정지 중',
+  RESOURCES_STOPPED: '정지 됨',
   RESOURCES_POLICY: '정책',
   RESOURCES_POLICY_COUNT: '정책 개수',
   RESOURCES_NO_POLICY: '정책이 없습니다.',

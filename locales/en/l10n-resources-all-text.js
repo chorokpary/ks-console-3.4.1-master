@@ -567,6 +567,7 @@ module.exports = {
   RESOURCES_ACCESS_MODE: 'Access Mode',
   RESOURCES_CONNECT_SUCCESS_DESC: 'Connection successful.',
   RESOURCES_STOPPING: 'Stopping',
+  RESOURCES_STOPPED: 'Stopped',
   RESOURCES_POLICY: 'Policy',
   RESOURCES_POLICY_COUNT: 'Policy Count',
   RESOURCES_NO_POLICY: 'No policy.',
