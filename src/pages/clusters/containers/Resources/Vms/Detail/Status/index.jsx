@@ -339,20 +339,6 @@ const Status = props => {
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.title}>
-                  <div>
-                    {detailFlavor.devices.length >= 1
-                      ? detailFlavor.devices.length == 1
-                        ? detailFlavor.devices[0].name
-                        : `${detailFlavor.devices[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${detailFlavor.devices.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
-                      : '-'}
-                  </div>
-                  <p>{t('RESOURCES_HOST_DEVICE')}</p>
-                </div>
-                <div className={styles.title}>
                   <Text
                     key="CPU"
                     icon="cpu"
