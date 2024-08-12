@@ -37,6 +37,7 @@ export default class MediatedDeviceStore extends Base {
     )}/edgetron/resources/kubevirt/mediated_devices`;
 
   getListUrl = this.getResourceUrl;
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
   @action
   async fetchList({
@@ -189,7 +190,7 @@ export default class MediatedDeviceStore extends Base {
     this.isLoading = true;
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
+      `${this.getResourceUrl(params)}/${params.id}`
     );
     const detail = {
       ...params,
@@ -207,10 +208,9 @@ export default class MediatedDeviceStore extends Base {
 
   @action
   async fetchYaml(params) {
-    this.isLoading = true;
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
+      `${this.getResourceUrl(params)}/${params.id}/manifest`
     );
     const yamlData = {
       ...params,
@@ -219,38 +219,35 @@ export default class MediatedDeviceStore extends Base {
     };
 
     this.yaml = yamlData.manifest;
-    this.isLoading = false;
     return yamlData;
   }
 
   @action
-  async update({ name, ...params }, data) {
-    const res = await this.submitting(
-      request.put(this.getDetailUrl({ name: data.mediatedDevice.name }), data)
-    );
+  async update({ id, ...params }, data) {
+    const jsonData = {}
+    jsonData.mediated_device = data;
 
-    return res;
+    await this.submitting(
+      request.put(this.getDetailUrl({ id, ...params }), jsonData)
+    )
   }
 
   @action
   async batchDelete({ rowKeys, ...params }) {
     if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(username => {
-            const replaceName = username.replace('/', '%5C');
+          rowKeys.map(id => {
             request.delete(
-              `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-                params
-              )}/edgetron/resources/kubevirt/mediated_devices/${replaceName}`
-            );
+              `${this.getDetailUrl({ id, ...params })}`
+            )
           })
         )
-      );
+      )
     }
-    this.list.selectedRowKeys = [];
+    this.list.selectedRowKeys = []
   }
 
   @action
@@ -260,14 +257,7 @@ export default class MediatedDeviceStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
       return;
     }
-    user.name = user.name.replace('/', '%5C');
-    return this.submitting(
-      request.delete(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
-          cluster,
-        })}/edgetron/resources/kubevirt/mediated_devices/${user.name}`
-      )
-    );
+    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 
   @action
@@ -404,8 +394,7 @@ export default class MediatedDeviceStore extends Base {
       request.delete(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/mediated_device_types/${params.node}/${
-          params.vgpu
+        )}/edgetron/resources/kubevirt/mediated_device_types/${params.node}/${params.vgpu
         }`
       )
     );

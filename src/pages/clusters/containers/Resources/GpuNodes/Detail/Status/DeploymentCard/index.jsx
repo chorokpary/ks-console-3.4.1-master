@@ -23,7 +23,7 @@ import { Text } from 'components/Base'
 
 import styles from './index.scss'
 
-const DeploymentCard = ( { data } ) => {
+const DeploymentCard = ({ data }) => {
     return (
         <div className={styles.card}>
             <div className={styles.icon}>

@@ -1,6 +1,6 @@
 /*
  * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
+ * Copyright (C) 2024 The KubeSphere Console Authors.
  *
  * KubeSphere Console is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import React from 'react';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
+import { Link } from 'react-router-dom'
 
 import MediatedDeviceStore from 'stores/resources/mediateddevices';
 
@@ -30,6 +31,7 @@ import styles from './index.scss';
   module: 'mediated_devices',
   authKey: 'mediatedDevices',
   name: t('RESOURCES_MEDIATED_DEVICE'),
+  rowKey: 'id',
 })
 export default class MediatedDevice extends React.Component {
   showAction(record) {
@@ -102,7 +104,7 @@ export default class MediatedDevice extends React.Component {
         dataIndex: 'resource_name',
         sorter: true,
         search: true,
-        render: name => {
+        render: (id, item) => {
           const { cluster } = this.props.match.params;
 
           return (
@@ -111,7 +113,14 @@ export default class MediatedDevice extends React.Component {
                 <i className="ico-type-mediatedvgpu"></i>
               </div>
               <div>
-                <div className={styles.title}>{name}</div>
+                <div>
+                  <Link
+                    className={styles.title}
+                    to={`/clusters/${cluster}/mediateddevices/${item.id}`}
+                  >
+                    {item.name}
+                  </Link>
+                </div>
               </div>
             </div>
           );

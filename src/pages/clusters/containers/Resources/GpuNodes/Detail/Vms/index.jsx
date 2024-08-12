@@ -21,9 +21,6 @@ import { observer, inject } from 'mobx-react'
 import PodsCard from 'components/Cards/Pods'
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
-//@inject('detailStore')
-//@observer
-//export default class Vms extends React.Component {
 const Vms = (props) => {
   const store = props.detailStore
 

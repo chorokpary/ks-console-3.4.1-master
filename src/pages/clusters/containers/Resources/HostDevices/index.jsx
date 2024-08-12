@@ -1,6 +1,6 @@
 /*
  * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
+ * Copyright (C) 2024 The KubeSphere Console Authors.
  *
  * KubeSphere Console is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import React from 'react';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
+import { Link } from 'react-router-dom'
 
 import HostDeviceStore from 'stores/resources/hostdevices';
 
@@ -30,6 +31,7 @@ import styles from './index.scss';
   module: 'host_devices',
   authKey: 'hostDevices',
   name: t('RESOURCES_HOST_DEVICE'),
+  rowKey: 'id',
 })
 export default class HostDevices extends React.Component {
   showAction(record) {
@@ -102,7 +104,7 @@ export default class HostDevices extends React.Component {
         dataIndex: 'name',
         sorter: true,
         search: true,
-        render: name => {
+        render: (id, item) => {
           const { cluster } = this.props.match.params;
 
           return (
@@ -111,7 +113,14 @@ export default class HostDevices extends React.Component {
                 <i className="ico-type-hostdevice"></i>
               </div>
               <div>
-                <div className={styles.title}>{name}</div>
+                <div>
+                  <Link
+                    className={styles.title}
+                    to={`/clusters/${cluster}/hostdevices/${item.id}`}
+                  >
+                    {item.name}
+                  </Link>
+                </div>
               </div>
             </div>
           );
@@ -137,7 +146,7 @@ export default class HostDevices extends React.Component {
         render: isGpu => (isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')),
       },
       {
-        title: t('RESOURCES_HOST_DEVICE_ALLOCATABLE'),
+        title: t('RESOURCES_AVAILABLE_COUNT'),
         dataIndex: 'allocatable',
         isHideable: true,
         width: 'auto',

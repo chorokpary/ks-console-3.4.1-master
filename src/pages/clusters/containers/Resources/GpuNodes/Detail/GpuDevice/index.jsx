@@ -26,7 +26,7 @@ import styles from './index.scss'
 
 const GpuDevice = (props) => {
   const store = props.detailStore
-  
+
   const renderGpuDevices = () => {
     const cluster = props.match.params.cluster
     if (store.detail.gpunode.count > 0) {
@@ -42,7 +42,7 @@ const GpuDevice = (props) => {
   return (
     <>
       <div className={styles.main}>
-	{renderGpuDevices()}
+        {renderGpuDevices()}
       </div>
     </>
   )
