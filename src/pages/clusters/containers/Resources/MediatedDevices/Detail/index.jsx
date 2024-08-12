@@ -80,7 +80,7 @@ const MediatedDeviceDetail = (props) => {
             onClick: () =>
                 props.rootStore.triggerAction('mediatedDevice.remove', {
                     type: 'MEDIATEDDEVICE_DETAIL',
-                    detail: toJS(store.detail),
+                    detail: store.detail.mediated_device,
                     store: store,
                     cluster: props.match.params.cluster,
                     success: () => routing.push(listUrl()),

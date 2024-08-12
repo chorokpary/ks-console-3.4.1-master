@@ -95,9 +95,9 @@ export default {
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
         desc: t.html('RESOURCES_DELETE_HOST_DEVICE_TIP', {
-          resource: detail.host_device.name,
+          resource: detail.name,
         }),
-        resource: detail.host_device.name,
+        resource: detail.name,
         store,
         ...props,
       })

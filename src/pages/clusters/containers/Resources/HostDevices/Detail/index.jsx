@@ -80,7 +80,7 @@ const HostDeviceDetail = (props) => {
             onClick: () =>
                 props.rootStore.triggerAction('hostDevice.remove', {
                     type: 'HOSTDEVICE_DETAIL',
-                    detail: toJS(store.detail),
+                    detail: store.detail.host_device,
                     store: store,
                     cluster: props.match.params.cluster,
                     success: () => routing.push(listUrl()),
