@@ -181,6 +181,16 @@ export default class HostDeviceStore extends Base {
             `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'HostDevices' }
+        const pciData = await this.fetchListPciDevices({ ...params });
+
+        pciData.pci_devices.map((pci) => {
+            if (detail.host_device.vendor_id === pci.vendor_id) {
+                detail.host_device.vendor_name = pci.vendor_name;
+            }
+            if (detail.host_device.product_id === pci.device_id) {
+                detail.host_device.product_name = pci.device_name;
+            }
+        });
 
         // Yaml 파일 관련 
         await this.fetchYaml(params);
@@ -244,14 +254,11 @@ export default class HostDeviceStore extends Base {
     // 등록 관련 데이터
     @action
     async fetchListPciDevices(params) {
-        this.isLoading = true
-
         const result = await request.get(
             `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/pci_devices`
         )
         const response = { ...params, ...this.mapper(result), kind: 'pciDevices' }
 
-        this.isLoading = false
         return response;
     }
 

@@ -103,12 +103,12 @@ const HostDeviceDetail = (props) => {
                 value: detail.cluster,
             },
             {
-                name: t('RESOURCES_MANUFACTURING_COMPANY_ID'),
-                value: detail.host_device.vendor_id,
+                name: t('RESOURCES_MANUFACTURING_COMPANY_NAME'),
+                value: detail.host_device.vendor_name,
             },
             {
-                name: t('RESOURCES_PRODUCT_ID'),
-                value: detail.host_device.product_id,
+                name: t('RESOURCES_PRODUCT_NAME'),
+                value: detail.host_device.product_name,
             },
             {
                 name: t('External'),

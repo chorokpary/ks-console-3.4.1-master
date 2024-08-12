@@ -40,7 +40,7 @@ const ModifyModal = (props) => {
         <>
             <Modal
                 icon="pen"
-                width={500}
+                width={600}
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
