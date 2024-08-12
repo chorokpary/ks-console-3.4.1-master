@@ -22,6 +22,7 @@ import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
+import { getLocalTime } from 'utils';
 import routes from './routes'
 
 const store = new MediatedDeviceStore();
@@ -116,6 +117,12 @@ const MediatedDeviceDetail = (props) => {
             {
                 name: t('RESOURCES_DESCRIPTION'),
                 value: detail.mediated_device.description,
+            },
+	    {
+                name: t('RESOURCES_REGIST_DATE'),
+                value: getLocalTime(detail.mediated_device.timestamp).format(
+                  'YYYY-MM-DD HH:mm:ss'
+                ),
             },
         ]
     }

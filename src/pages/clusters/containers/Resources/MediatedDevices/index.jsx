@@ -21,6 +21,7 @@ import Banner from 'components/Cards/Banner';
 import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 import { Link } from 'react-router-dom'
+import { getLocalTime } from 'utils';
 
 import MediatedDeviceStore from 'stores/resources/mediateddevices';
 
@@ -144,6 +145,19 @@ export default class MediatedDevice extends React.Component {
         dataIndex: 'allocatable',
         isHideable: true,
         width: 'auto',
+      },
+      {
+        title: t('RESOURCES_REGIST_DATE'),
+        dataIndex: 'timestamp',
+        isHideable: true,
+        sorter: true,
+        sortOrder: getSortOrder('descend'),
+        width: 150,
+        render: date => (
+          <p>
+            {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
+          </p>
+        ),
       },
     ];
   };
