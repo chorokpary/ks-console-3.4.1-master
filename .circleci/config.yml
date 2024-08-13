@@ -37,4 +37,4 @@ workflows:
     jobs:
       - development:
           context:
-            - GITLAB_CI_BOT_SECRET
+            - REPOSECRET
