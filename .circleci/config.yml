@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Login to the gitlab
           command: |
-            docker login registry.gitlab.com -u sonaproject -p $GITLAB_CI_BOT_SECRET
+            docker login registry.gitlab.com -u sonaproject -p $sonaproject_secret
       - run:
           name: Build multiarch docker image and push
           command: |
@@ -36,3 +36,5 @@ workflows:
   build:
     jobs:
       - "development"
+          context:
+            - GITLAB_CI_BOT_SECRET
