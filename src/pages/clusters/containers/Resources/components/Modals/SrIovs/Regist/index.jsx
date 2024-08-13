@@ -440,7 +440,7 @@ const RegistModal = props => {
     <>
       <Modal
         icon="pen"
-        width={960}
+        width={800}
         title={props.title}
         onCancel={closeModal}
         bodyClassName={styles.body}
@@ -669,7 +669,6 @@ const RegistModal = props => {
                   <TextArea
                     name="description"
                     maxLength={256}
-                    rows="1"
                     defaultValue=""
                   />
                 </Form.Item>

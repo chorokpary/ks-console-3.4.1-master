@@ -59,7 +59,6 @@ const ModifyModal = (props) => {
             <TextArea
               name="description"
               maxLength={256}
-              rows="1"
               defaultValue={props.store.detail.keypair.description}
             />
           </Form.Item>

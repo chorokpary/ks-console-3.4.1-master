@@ -359,7 +359,7 @@ const RegistNodePoolModal = props => {
                   label={t('RESOURCES_DESCRIPTION')}
                   desc={t('DESCRIPTION_DESC')}
                 >
-                  <TextArea name="description" maxLength={256} rows="1" />
+                  <TextArea name="description" maxLength={256}/>
                 </Form.Item>
                 <div style={{ padding: 25 }} />
               </div>

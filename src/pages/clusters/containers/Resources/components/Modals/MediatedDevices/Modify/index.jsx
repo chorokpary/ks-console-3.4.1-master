@@ -89,7 +89,6 @@ const ModifyModal = (props) => {
                         <TextArea
                             name="description"
                             maxLength={256}
-                            rows="2"
                             defaultValue={props.store.detail.mediated_device.description}
                             style={{ maxWidth: 'none' }}
                         />

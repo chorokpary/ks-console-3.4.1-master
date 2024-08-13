@@ -38,7 +38,7 @@ const ModifyModal = (props) => {
     <>
       <Modal
         icon="pen"
-        width={900}
+        width={600}
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
@@ -68,7 +68,6 @@ const ModifyModal = (props) => {
             <TextArea
               name="description"
               maxLength={256}
-              rows="1"
               defaultValue={props.store.detail.vm.description}
             />
           </Form.Item>
