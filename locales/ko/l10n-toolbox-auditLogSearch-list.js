@@ -38,7 +38,7 @@ module.exports = {
   AUDIT_LOG_SOURCE_IP_ADDRESS_TIP: '감사 로그를 검색할 소스 IP 주소를 입력합니다.',
   SEARCH_BY_VERB: 'Verb으로 검색',
   SEARCH_BY_STATUS_CODE: '상태 코드로 검색',
-  SEARCH_BY_OPERATOR: '연산자로 검색',
+  SEARCH_BY_OPERATOR: '운영자 어카운트로 검색',
   SEARCH_BY_SOURCE_IP_ADDRESS: '소스 IP 주소로 검색',
   ENABLE_AUDIT_LOG_COLLECTION_DESC: '감사 로그 수집이 실행 중지된 경우 실행해야 합니다. <a href="{link}" target="_blank">자세히 알아보기</a>'
 };
