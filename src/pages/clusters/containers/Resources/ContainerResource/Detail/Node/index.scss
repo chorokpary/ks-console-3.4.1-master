@@ -39,6 +39,7 @@
 
     .title {
         min-width: 120px;
+        width: 16%;
 
         & > div {
             @include ellipsis;
@@ -52,7 +53,7 @@
 
         &.name {
             padding-right: 20px;
-            width: 40%;
+            width: 23%;
         }
     }
 
