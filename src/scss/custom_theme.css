@@ -159,8 +159,20 @@ a:hover {
   color: #3617ce !important;
 }
 
-.tabs-container .tabs > ul > li.is-active,
-.tabs-container .tabs > ul > li:active {
+.tabs-container.tabs-new .tab-content .tabs.tabs-button > ul > li.is-active {
+  color: #ffffff !important;
+  background-color: #6371e8 !important;
+}
+
+.tabs-container.tabs-new .tab-content .tabs.tabs-button > ul > li:active {
+  color: #3617ce !important;
+}
+
+[class$=-index__title]:hover {
+  color: #3617ce !important;
+}
+
+.tabs-container .tabs > ul > li.is-active {
   color: #ffffff !important;
 }
 
@@ -170,6 +182,19 @@ a:hover {
 
 .tabs-container .tabs.tabs-button > ul > li:active {
   background-color: transparent !important;
+  color: #3617ce !important;
+}
+
+[class*=-Home-index__] a,
+[class*="-Home-index__card src-components-Modals-"]:hover h4 {
+  color: #3617ce !important;
+}
+
+.src-components-Modals-AuditingSearch-Auditing-Home-index__statistics p > span:last-child a {
+  color: #3617ce !important;
+}
+
+.src-components-Modals-AuditingSearch-Auditing-Home-index__category:hover h4 {
   color: #3617ce !important;
 }
 
