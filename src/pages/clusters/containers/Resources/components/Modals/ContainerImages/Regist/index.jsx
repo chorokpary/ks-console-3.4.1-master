@@ -307,13 +307,12 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
+                  className={`${regStep === 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -325,8 +324,8 @@ const ResourceImageModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -338,13 +337,12 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
+                  className={`${regStep === 2
                       ? styles.current
                       : regStep > 2
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -381,110 +379,114 @@ const ResourceImageModal = props => {
                 />
               </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_IMAGE')}
-                      rules={[{ required: true }]}
-                    >
-                      <CardSelect
-                        className={styles.customUl}
-                        onChange={e => handleOsType(e)}
-                        name="os_type"
-                        options={osTypeOptions}
-                        defaultValue={osType}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_DISTRIBUTION')}
-                      rules={[{ required: true }]}
-                    >
-                      <TypeSelect
-                        // name="distro_type"
-                        onChange={e => setDistroType(e)}
-                        defaultValue={distroType}
-                        options={distroTypeOptions()}
-                      />
-                    </Form.Item>
-                    <Form.Item>
-                      <Input
-                        defaultValue={`${osType[0].toUpperCase() +
-                          osType.slice(1, osType.length)} > ${distroType}`}
-                        readOnly
-                        style={{ maxWidth: 'none' }}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
-              </Form.Item>
+              <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+                <Form.Group>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_IMAGE')}
+                          rules={[{ required: true }]}
+                        >
+                          <CardSelect
+                            className={styles.customUl}
+                            onChange={e => handleOsType(e)}
+                            name="os_type"
+                            options={osTypeOptions}
+                            defaultValue={osType}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_DISTRIBUTION')}
+                          rules={[{ required: true }]}
+                        >
+                          <TypeSelect
+                            // name="distro_type"
+                            onChange={e => setDistroType(e)}
+                            defaultValue={distroType}
+                            options={distroTypeOptions()}
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Input
+                            defaultValue={`${osType[0].toUpperCase() +
+                              osType.slice(1, osType.length)} > ${distroType}`}
+                            readOnly
+                            style={{ maxWidth: 'none' }}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_CPU_TYPE')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="arch_type"
-                        defaultValue="x86_64"
-                        options={archTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_BOOT_TYPE')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="boot_type"
-                        defaultValue="legacy"
-                        options={bootTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_CPU_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="arch_type"
+                            defaultValue="x86_64"
+                            options={archTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_BOOT_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="boot_type"
+                            defaultValue="legacy"
+                            options={bootTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_KUBERNETES_VERSION')}
+                        rules={[{ required: true, validator: versionValidator }]}
+                      >
+                        <Input
+                          name="kube_version"
+                          maxLength={253}
+                          style={{ maxWidth: 'none' }}
+                          placeholder="v1.1.1"
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_ACCELERATOR_TYPE')}
+                        rules={[{ required: false }]}
+                      >
+                        <Select
+                          name="accelerator_type"
+                          defaultValue={acceleratorType}
+                          options={accelTypeOptions()}
+                          onChange={e => setAcceleratorType(e)}
+                        />
+                      </Form.Item>
+                    </Column>
+                  </Columns>
+                </Form.Group>
               </Form.Item>
-              <Columns>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_KUBERNETES_VERSION')}
-                    rules={[{ required: true, validator: versionValidator }]}
-                  >
-                    <Input
-                      name="kube_version"
-                      maxLength={253}
-                      style={{ maxWidth: 'none' }}
-                      placeholder="v1.1.1"
-                    />
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_ACCELERATOR_TYPE')}
-                    rules={[{ required: false }]}
-                  >
-                    <Select
-                      name="accelerator_type"
-                      defaultValue={acceleratorType}
-                      options={accelTypeOptions()}
-                      onChange={e => setAcceleratorType(e)}
-                    />
-                  </Form.Item>
-                </Column>
-              </Columns>
               <Form.Item
                 label={t('RESOURCES_SIZE')}
                 rules={[
@@ -496,9 +498,8 @@ const ResourceImageModal = props => {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${
-                        sizeEmpty ? styles.formErrorStyle : ''
-                      }`}
+                      className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''
+                        }`}
                     >
                       <div className={styles.cont_box_section}>
                         <div className={styles.cont_box_wrap}>
@@ -924,11 +925,10 @@ const Step2 = ({
           <div className={styles.content_box}>
             {/* <label>소스</label> */}
             <div
-              className={`${styles.cont_box_wrap} ${
-                sourceEmpty || harborValidError || userValidError
+              className={`${styles.cont_box_wrap} ${sourceEmpty || harborValidError || userValidError
                   ? styles.formErrorStyle
                   : ''
-              }`}
+                }`}
             >
               <div className={styles.cont_box_section}>
                 <div className={styles.cont_box_wrap}>
@@ -962,7 +962,7 @@ const Step2 = ({
                               placeholder={
                                 publicType === 'private'
                                   ? // eslint-disable-next-line no-template-curly-in-string
-                                    'https://{url}?projects=${project_name}'
+                                  'https://{url}?projects=${project_name}'
                                   : ''
                               }
                               defaultValue={registryUrl}
@@ -1062,9 +1062,8 @@ const Step2 = ({
                                 {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
                                 <i
                                   style={{
-                                    background: `url('/assets/resources/images/icons/ico-os-${
-                                      obj.name.split('-')[0]
-                                    }.svg') center no-repeat`,
+                                    background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]
+                                      }.svg') center no-repeat`,
                                     width: '30px',
                                     height: '30px',
                                     marginRight: '5px',

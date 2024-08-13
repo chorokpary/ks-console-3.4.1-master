@@ -497,6 +497,7 @@ module.exports = {
   RESOURCES_CAPACITY: 'Capacity',
   RESOURCES_WON: 'Won',
   RESOURCES_REMOTE_IP_RANGE: 'Remote IP Range',
+  RESOURCES_BOOT_TEMPLATE: 'Boot Template',
   RESOURCES_TYPE_YOO: 'Type',
   RESOURCES_VALID: 'Validation Check',
   RESOURCES_VALID_TIP: 'Please check the validity.',
@@ -517,6 +518,7 @@ module.exports = {
   RESOURCES_ALREADY_SELECTED_VM_NAME:
     'The virtual machine name is already selected.',
   RESOURCES_ALREADY_SELECTED_DEVICE: 'The device is already selected.',
+  RESOURCES_IMAGE_TEMPLATE: 'Image Template',
   RESOURCES_IMAGE: 'Image',
   RESOURCES_MASTER_IMAGE: 'Master Image',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: 'Set the image registry URL.',
