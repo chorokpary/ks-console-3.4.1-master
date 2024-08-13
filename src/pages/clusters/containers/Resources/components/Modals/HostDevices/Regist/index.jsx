@@ -44,7 +44,7 @@ const RegistModal = props => {
         device_name: data.device_name,
         is_external: data.external,
         is_gpu: data.gpu,
-	refined_device_name: data.refined_device_name,
+        refined_device_name: data.refined_device_name,
       }))
     );
     setOrigDataList(
@@ -55,7 +55,7 @@ const RegistModal = props => {
         device_name: data.device_name,
         is_external: data.external,
         is_gpu: data.gpu,
-	refined_device_name: data.refined_device_name,
+        refined_device_name: data.refined_device_name,
       }))
     );
   };
@@ -88,7 +88,7 @@ const RegistModal = props => {
         {
           name: dataList[index].refined_device_name,
           refined_device_name: dataList[index].refined_device_name,
-	  vendor_id: obj.vendor_id,
+          vendor_id: obj.vendor_id,
           vendor_name: obj.vendor_name,
           device_id: obj.device_id,
           device_name: obj.device_name,
@@ -139,7 +139,7 @@ const RegistModal = props => {
     if (
       addRowList.length - 1 < 1 ||
       addRowList.filter(el => PATTERN_USER_NAME.test(el.name)).length ==
-        addRowList.length - 1
+      addRowList.length - 1
     ) {
       setIsCheckName(false);
     }
@@ -362,15 +362,15 @@ const RegistModal = props => {
                               textAlign: 'left',
                             }}
                           >
-			  {data.is_external ? (
-		              <Toggle
+                            {data.is_external ? (
+                              <Toggle
                                 checked="true"
                                 showText
                                 onText="on"
                                 offText="off"
                                 disabled="true"
                               />
-			    ) : (
+                            ) : (
                               <Toggle
                                 checked={dataList[key].is_external}
                                 showText
@@ -378,22 +378,22 @@ const RegistModal = props => {
                                 offText="off"
                                 onChange={e => handleExternal(e, key)}
                               />
-			    )}
+                            )}
                           </td>
                           <td
                             style={{
                               textAlign: 'left',
                             }}
                           >
-			  {data.is_gpu ? (
-			      <Toggle
+                            {data.is_gpu ? (
+                              <Toggle
                                 checked="true"
                                 showText
                                 onText="on"
                                 offText="off"
-				disabled="true"
+                                disabled="true"
                               />
-			    ) : (
+                            ) : (
                               <Toggle
                                 checked={dataList[key].is_gpu}
                                 showText
@@ -401,7 +401,7 @@ const RegistModal = props => {
                                 offText="off"
                                 onChange={e => handleGpu(e, key)}
                               />
-			    )}
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -458,16 +458,16 @@ const RegistModal = props => {
                                   },
                                 ]}
                               >
-			        {v.refined_device_name != "" ? (
-			          <Input
+                                {v.refined_device_name != "" ? (
+                                  <Input
                                     name={`name-${v.idx}`}
                                     type="text"
                                     defaultValue={v.refined_device_name}
                                     placeholder={v.refined_device_name}
-				    readOnly
+                                    readOnly
                                   />
-				) : (
-				  <Input
+                                ) : (
+                                  <Input
                                     name={`name-${v.idx}`}
                                     type="text"
                                     value=""
@@ -476,7 +476,7 @@ const RegistModal = props => {
                                       handleInput(e, i, `name`);
                                     }}
                                   />
-				)}
+                                )}
                               </Form.Item>
                             </td>
                             <td>{v.vendor_id}</td>
@@ -511,9 +511,8 @@ const RegistModal = props => {
                     </table>
                   </div>
                   <div
-                    className={`form-item-error ${
-                      isCheck && isCheckName ? '' : 'hide'
-                    }`}
+                    className={`form-item-error ${isCheck && isCheckName ? '' : 'hide'
+                      }`}
                     style={{ marginLeft: '10px' }}
                   >
                     {t('RESOURCES_NAME_CHECK_DESC')}

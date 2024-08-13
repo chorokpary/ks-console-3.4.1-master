@@ -42,6 +42,7 @@ const GpuNodeDetail = props => {
         return `/clusters/${cluster}/gpunodes`;
     };
     const routing = props.rootStore.routing;
+    const workload_type = store.detail.gpunode?.workload_type;
 
     const getOperations = () => [
         {
@@ -60,6 +61,7 @@ const GpuNodeDetail = props => {
 	{
             key: 'applyVgpu',
             icon: 'gpu',
+            disabled: workload_type !== 'vm-vgpu',
             text: t('RESOURCES_GPU_VGPU_CONFIG'),
             action: 'view',
             onClick: () => {
@@ -73,6 +75,7 @@ const GpuNodeDetail = props => {
         {
             key: 'applyMig',
             icon: 'gpu',
+            disabled: workload_type !== 'container',
             text: t('RESOURCES_GPU_MIG_CONFIG'),
             action: 'view',
             onClick: () => {
@@ -177,7 +180,7 @@ const GpuNodeDetail = props => {
             },
 	    {
                 name: t('RESOURCES_GPU_MIG_CONFIG_STATE'),
-                value: gpunode.mig_config_state,
+                value: gpunode.mig_config_state ? t(`RESOURCES_GPU_CONFIG_STATE_${gpunode.mig_config_state.toUpperCase()}`) : "-",
             },
 	    {
                 name: t('RESOURCES_GPU_VGPU_CONFIG'),
@@ -185,7 +188,7 @@ const GpuNodeDetail = props => {
             },
             {
                 name: t('RESOURCES_GPU_VGPU_CONFIG_STATE'),
-                value: gpunode.vgpu_config_state,
+                value: gpunode.vgpu_config_state ? t(`RESOURCES_GPU_CONFIG_STATE_${gpunode.vgpu_config_state.toUpperCase()}`) : "-",
             },
         ];
     };

@@ -1,89 +1,49 @@
-import React, { useState, useEffect } from 'react'
+/*
+ * This file is part of KubeSphere Console.
+ * Copyright (C) 2024 The KubeSphere Console Authors.
+ *
+ * KubeSphere Console is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KubeSphere Console is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import React from 'react'
 import { observer, inject } from 'mobx-react'
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
-import classnames from 'classnames'
-
-import { Panel, Text } from 'components/Base'
-import { Icon } from '@kube-design/components'
-import styles from './index.scss'
 
 const Status = (props) => {
     const store = props.detailStore;
-    useEffect(() => {
 
-    }, []);
+    if (store.isLoading) {
+        return <Loading className="ks-page-loading" />;
+    }
+
+    const renderVms = () => {
+
+        return (
+            <>
+                <div>
+                    {/* 가상 머신 상세 관련 샘플 */}
+                    <DetailVmList type={t('RESOURCES_MEDIATED_DEVICE')} variables='mediated_device' name={store.detail.mediated_device.resource_name} gpu={store.detail.mediated_device.is_gpu} />
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
-            <div>
-                {/* 보안그룹 */}
-                <div>
-                    {store.detail.security_group?.rules.filter((rule) => rule.direction === "ingress").length > 0 &&
-                        < Panel title={t('RESOURCES_INBOUND')}>
-                            {store.detail.security_group?.rules.filter((rule) => rule.direction === "ingress").map((rule, index) => (
-                                <div className={styles.wrapper}>
-                                    <div className={classnames(styles.item)}>
-                                        <div className={styles.icon}>
-                                            <Icon name="apps" size={40} />
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.ethernet_type ? rule.protocol : 'ALL'}</div>
-                                            <p>{t('RESOURCES_PROTOCOL')}</p>
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.port_range_min !== rule.port_range_max ? (rule.port_range_min ? rule.port_range_min : 0) + `-` : ''}{rule.ethernet_type ? rule.port_range_max : "0-65535"}</div>
-                                            <p>{t('RESOURCES_PORT_RANGE')}</p>
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.ethernet_type ?? 'ALL'}</div>
-                                            <p>{t('RESOURCES_ETHERNET')}</p>
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.remote_ip_prefix}</div>
-                                            <p>{t('RESOURCES_REMOTE_IP_RANGE')}</p>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            ))}
-                        </Panel>
-                    }
-                    {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").length > 0 &&
-                        <Panel title={t('RESOURCES_OUTBOUND')}>
-                            {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").map((rule, index) => (
-                                <div className={styles.wrapper}>
-                                    <div className={classnames(styles.item)}>
-                                        <div className={styles.icon}>
-                                            <Icon name="apps" size={40} />
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.ethernet_type ? rule.protocol : 'ALL'}</div>
-                                            <p>{t('RESOURCES_PROTOCOL')}</p>
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.port_range_min !== rule.port_range_max ? (rule.port_range_min ? rule.port_range_min : 0) + `-` : ''}{rule.ethernet_type ? rule.port_range_max : "0-65535"}</div>
-                                            <p>{t('RESOURCES_PORT_RANGE')}</p>
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.ethernet_type ?? 'ALL'}</div>
-                                            <p>{t('RESOURCES_ETHERNET')}</p>
-                                        </div>
-                                        <div className={classnames(styles.title, styles.name)}>
-                                            <div>{rule.remote_ip_prefix}</div>
-                                            <p>{t('RESOURCES_REMOTE_IP_RANGE')}</p>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            ))}
-                        </Panel>
-                    }
-                </div>
-                {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type={t('RESOURCES_SECURITY_GROUP')} variables='security_groups' name={props.match.params.name} />
-            </div>
+            {renderVms()}
         </>
-    );
+    )
 };
 
 export default inject('detailStore')(observer(Status))

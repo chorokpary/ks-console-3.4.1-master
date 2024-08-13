@@ -133,101 +133,105 @@ const ResourceImageModal = props => {
             />
           </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_IMAGE')}
-                  rules={[{ required: true }]}
-                >
-                  <CardSelect
-                    className={styles.customUl}
-                    onChange={e => handleOsType(e)}
-                    name="os_type"
-                    options={osTypeOptions}
-                    defaultValue={osType}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_DISTRIBUTION')}
-                  rules={[{ required: true }]}
-                >
-                  <TypeSelect
-                    onChange={e => setDistroType(e)}
-                    defaultValue={distroType}
-                    options={distroTypeOptions()}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Input
-                    defaultValue={`${osType[0].toUpperCase() +
-                      osType.slice(1, osType.length)} > ${distroType}`}
-                    readOnly
-                    style={{ maxWidth: 'none' }}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
+          <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+            <Form.Group>
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_IMAGE')}
+                      rules={[{ required: true }]}
+                    >
+                      <CardSelect
+                        className={styles.customUl}
+                        onChange={e => handleOsType(e)}
+                        name="os_type"
+                        options={osTypeOptions}
+                        defaultValue={osType}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_DISTRIBUTION')}
+                      rules={[{ required: true }]}
+                    >
+                      <TypeSelect
+                        onChange={e => setDistroType(e)}
+                        defaultValue={distroType}
+                        options={distroTypeOptions()}
+                      />
+                    </Form.Item>
+                    <Form.Item>
+                      <Input
+                        defaultValue={`${osType[0].toUpperCase() +
+                          osType.slice(1, osType.length)} > ${distroType}`}
+                        readOnly
+                        style={{ maxWidth: 'none' }}
+                      />
+                    </Form.Item>
+                  </Column>
+                </Columns>
+              </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_CPU_TYPE')}
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    name="arch_type"
-                    defaultValue={store.detail.image.arch_type}
-                    options={archTypeOptions}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_BOOT_TYPE')}
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    name="boot_type"
-                    defaultValue={store.detail.image.boot_type}
-                    options={bootTypeOptions}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_CPU_TYPE')}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        name="arch_type"
+                        defaultValue={store.detail.image.arch_type}
+                        options={archTypeOptions}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_BOOT_TYPE')}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        name="boot_type"
+                        defaultValue={store.detail.image.boot_type}
+                        options={bootTypeOptions}
+                      />
+                    </Form.Item>
+                  </Column>
+                </Columns>
+              </Form.Item>
+              <Columns>
+                <Column>
+                  <Form.Item
+                    label={t('RESOURCES_KUBERNETES_VERSION')}
+                    rules={[{ required: true, validator: versionValidator }]}
+                  >
+                    <Input
+                      name="kube_version"
+                      maxLength={253}
+                      style={{ maxWidth: 'none' }}
+                      defaultValue={store.detail.image.kube_version}
+                    />
+                  </Form.Item>
+                </Column>
+                <Column>
+                  <Form.Item
+                    label={t('RESOURCES_ACCELERATOR_TYPE')}
+                    rules={[{ required: false }]}
+                  >
+                    <Select
+                      name="accelerator_type"
+                      defaultValue={acceleratorType}
+                      options={accelTypeOptions()}
+                      onChange={e => setAcceleratorType(e)}
+                    />
+                  </Form.Item>
+                </Column>
+              </Columns>
+            </Form.Group>
           </Form.Item>
-          <Columns>
-            <Column>
-              <Form.Item
-                label={t('RESOURCES_KUBERNETES_VERSION')}
-                rules={[{ required: true, validator: versionValidator }]}
-              >
-                <Input
-                  name="kube_version"
-                  maxLength={253}
-                  style={{ maxWidth: 'none' }}
-                  defaultValue={store.detail.image.kube_version}
-                />
-              </Form.Item>
-            </Column>
-            <Column>
-              <Form.Item
-                label={t('RESOURCES_ACCELERATOR_TYPE')}
-                rules={[{ required: false }]}
-              >
-                <Select
-                  name="accelerator_type"
-                  defaultValue={acceleratorType}
-                  options={accelTypeOptions()}
-                  onChange={e => setAcceleratorType(e)}
-                />
-              </Form.Item>
-            </Column>
-          </Columns>
 
           <Form.Item
             label={t('RESOURCES_DESCRIPTION')}

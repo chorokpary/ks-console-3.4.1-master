@@ -3079,7 +3079,7 @@ html {
 
 .src-pages-clusters-containers-Resources-components-DetailVmList-index__item
   .src-pages-clusters-containers-Resources-components-DetailVmList-index__title.src-pages-clusters-containers-Resources-components-DetailVmList-index__name {
-  width: 30% !important;
+  width: 25% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemFlavor
@@ -3089,12 +3089,12 @@ html {
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemFlavor
   .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__title.src-pages-clusters-containers-Resources-Vms-Detail-Status-index__name {
-  width: 31% !important;
+  width: 26% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemVolume
   .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__title.src-pages-clusters-containers-Resources-Vms-Detail-Status-index__name {
-  width: 27% !important;
+  width: 26% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemVolume

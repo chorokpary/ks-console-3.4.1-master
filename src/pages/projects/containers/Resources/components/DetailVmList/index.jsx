@@ -313,16 +313,6 @@ const DetailVmList = (props) => {
               <p>Flavor</p>
             </div>
             <div className={styles.title}>
-              <div>
-                {
-                  networkList.length >= 1 ?
-                    networkList.length == 1 ? networkList[0].alias : networkList[0].alias + " 외 " + (networkList.length - 1) + "개"
-                    : "-"
-                }
-              </div>
-              <p>{t('RESOURCES_NETWORK')}</p>
-            </div>
-            <div className={styles.title}>
               <Text
                 key='CPU'
                 icon='cpu'

@@ -55,7 +55,7 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, name: data.name }, data)
+            .update({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -66,6 +66,7 @@ export default {
         modal: ModifyModal,
         store,
         module,
+        detail,
         ...props,
       })
     },
@@ -94,9 +95,9 @@ export default {
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
         desc: t.html('RESOURCES_DELETE_MEDIATED_DEVICE_TIP', {
-          resource: detail.name,
+          resource: detail.resource_name,
         }),
-        resource: detail.name,
+        resource: detail.resource_name,
         store,
         ...props,
       })
@@ -105,7 +106,13 @@ export default {
   'mediatedDevice.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const usernames = rowKeys.join(', ')
+      let arr = new Array
+      store.dataList.map(obj => {
+        if (rowKeys.includes(obj.id)) {
+          arr.push(obj.name)
+        }
+      })
+      const names = arr.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -118,14 +125,14 @@ export default {
         },
         modal: DeleteModal,
         title:
-          usernames.split(', ').length === 1
+          rowKeys.length === 1
             ? t('RESOURCES_DELETE')
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
-          usernames.split(', ').length === 1
-            ? t.html('RESOURCES_DELETE_MEDIATED_DEVICE_TIP', { resource: usernames })
-            : t.html('RESOURCES_DELETE_MEDIATED_DEVICE_TIP', { resource: usernames }),
-        resource: usernames,
+          rowKeys.length === 1
+            ? t.html('RESOURCES_DELETE_NETWORK_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_NETWORK_TIP', { resource: names }),
+        resource: names,
         store,
         ...props,
       })

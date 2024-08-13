@@ -1,24 +1,34 @@
 import { get } from 'lodash'
 import React, { useState, useEffect, useRef } from 'react'
 
-import { Form, Input, Select, TextArea, Button, CheckboxGroup, Checkbox, Slider, Radio, Column, Columns, Tooltip } from '@kube-design/components'
+import { Form, Input, TextArea } from '@kube-design/components'
+import {
+    RadioButton,
+    RadioGroup,
+  } from '@kube-design/components/lib/components/Radio';
 import { Modal } from 'components/Base'
 import styles from './index.scss'
 
-import axios from "axios";
-
 const ModifyModal = (props) => {
-
+    const detail = props.detail;
     const form = useRef();
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
+    const [isGpu, setIsGpu] = useState(detail.is_gpu);
+
+    const isGpuOptions = [
+        { label: t('RESOURCES_NOT_USE'), value: false },
+        { label: t('RESOURCES_USE'), value: true },
+      ];
 
     const handleOk = () => {
         const onOk = props.onOk;
 
         form.current.validator(() => {
             const { data } = form.current.props;
-            onOk({ flavor: data })
+            const { id } = detail;
+            data.id = id;
+            onOk({ ...data });
         })
     }
 
@@ -30,7 +40,7 @@ const ModifyModal = (props) => {
         <>
             <Modal
                 icon="pen"
-                width={1000}
+                width={600}
                 title={props.title}
                 onOk={handleOk}
                 onCancel={closeModal}
@@ -48,11 +58,28 @@ const ModifyModal = (props) => {
                             autoFocus={true}
                             maxLength={63}
                             style={{ maxWidth: 'none' }}
-                            defaultValue={props.store.detail.flavor.name}
+                            defaultValue={props.store.detail.host_device.name}
                             disabled
                         />
                     </Form.Item>
 
+                    <Form.Item
+                        label="GPU"
+                        rules={[{ required: true }]}
+                    >
+                        <RadioGroup
+                            name="is_gpu"
+                            wrapClassName="radio"
+                            defaultValue={isGpu}
+                            onChange={value => setIsGpu(value)}
+                        >
+                            {isGpuOptions.map(option => (
+                                <RadioButton key={option.value} value={option.value}>
+                                    {option.label}
+                                </RadioButton>
+                            ))}
+                        </RadioGroup>
+                    </Form.Item>
 
                     <Form.Item
                         className={styles.textarea}
@@ -62,8 +89,7 @@ const ModifyModal = (props) => {
                         <TextArea
                             name="description"
                             maxLength={256}
-                            rows="1"
-                            defaultValue={props.store.detail.flavor.description}
+                            defaultValue={props.store.detail.host_device.description}
                             style={{ maxWidth: 'none' }}
                         />
                     </Form.Item>

@@ -3,14 +3,14 @@
 # that can be found in the LICENSE file.
 
 # Prepare the build environment
-FROM node:14-alpine as builder
+FROM node:14-alpine3.15 as builder
 
 ARG YARN_VERSION=1.22.4
 
 WORKDIR /kubesphere
 ADD . /kubesphere/
 
-RUN apk add --no-cache --virtual python2
+RUN apk add --no-cache python2
 RUN apk add --no-cache --virtual .build-deps ca-certificates python3 py3-pip make openssl g++ bash
 RUN npm install yarn@${YARN_VERSION}
 
@@ -33,7 +33,7 @@ RUN mv /kubesphere/package.json /out/
 ##############
 # Final Image
 ##############
-FROM node:14-alpine as base_os_context
+FROM node:14-alpine3.15 as base_os_context
 
 RUN adduser -D -g kubesphere -u 1002 kubesphere && \
     mkdir -p /opt/kubesphere/console && \

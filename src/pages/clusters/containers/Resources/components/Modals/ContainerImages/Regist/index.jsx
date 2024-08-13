@@ -217,8 +217,7 @@ const ResourceImageModal = props => {
   }
 
   const fnGetModalFooter = () => {
-    let elements = ''
-    elements = (
+    return (
       <>
         {regStep === 1 && (
           <>
@@ -280,8 +279,6 @@ const ResourceImageModal = props => {
         )}
       </>
     )
-
-    return elements
   }
 
   return (
@@ -310,13 +307,12 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
+                  className={`${regStep === 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -328,8 +324,8 @@ const ResourceImageModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -341,13 +337,12 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
+                  className={`${regStep === 2
                       ? styles.current
                       : regStep > 2
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -384,110 +379,114 @@ const ResourceImageModal = props => {
                 />
               </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_IMAGE')}
-                      rules={[{ required: true }]}
-                    >
-                      <CardSelect
-                        className={styles.customUl}
-                        onChange={e => handleOsType(e)}
-                        name="os_type"
-                        options={osTypeOptions}
-                        defaultValue={osType}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_DISTRIBUTION')}
-                      rules={[{ required: true }]}
-                    >
-                      <TypeSelect
-                        // name="distro_type"
-                        onChange={e => setDistroType(e)}
-                        defaultValue={distroType}
-                        options={distroTypeOptions()}
-                      />
-                    </Form.Item>
-                    <Form.Item>
-                      <Input
-                        defaultValue={`${osType[0].toUpperCase() +
-                          osType.slice(1, osType.length)} > ${distroType}`}
-                        readOnly
-                        style={{ maxWidth: 'none' }}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
-              </Form.Item>
+              <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+                <Form.Group>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_IMAGE')}
+                          rules={[{ required: true }]}
+                        >
+                          <CardSelect
+                            className={styles.customUl}
+                            onChange={e => handleOsType(e)}
+                            name="os_type"
+                            options={osTypeOptions}
+                            defaultValue={osType}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_DISTRIBUTION')}
+                          rules={[{ required: true }]}
+                        >
+                          <TypeSelect
+                            // name="distro_type"
+                            onChange={e => setDistroType(e)}
+                            defaultValue={distroType}
+                            options={distroTypeOptions()}
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Input
+                            defaultValue={`${osType[0].toUpperCase() +
+                              osType.slice(1, osType.length)} > ${distroType}`}
+                            readOnly
+                            style={{ maxWidth: 'none' }}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_CPU_TYPE')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="arch_type"
-                        defaultValue="x86_64"
-                        options={archTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_BOOT_TYPE')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="boot_type"
-                        defaultValue="legacy"
-                        options={bootTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_CPU_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="arch_type"
+                            defaultValue="x86_64"
+                            options={archTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_BOOT_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="boot_type"
+                            defaultValue="legacy"
+                            options={bootTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_KUBERNETES_VERSION')}
+                        rules={[{ required: true, validator: versionValidator }]}
+                      >
+                        <Input
+                          name="kube_version"
+                          maxLength={253}
+                          style={{ maxWidth: 'none' }}
+                          placeholder="v1.1.1"
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_ACCELERATOR_TYPE')}
+                        rules={[{ required: false }]}
+                      >
+                        <Select
+                          name="accelerator_type"
+                          defaultValue={acceleratorType}
+                          options={accelTypeOptions()}
+                          onChange={e => setAcceleratorType(e)}
+                        />
+                      </Form.Item>
+                    </Column>
+                  </Columns>
+                </Form.Group>
               </Form.Item>
-              <Columns>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_KUBERNETES_VERSION')}
-                    rules={[{ required: true, validator: versionValidator }]}
-                  >
-                    <Input
-                      name="kube_version"
-                      maxLength={253}
-                      style={{ maxWidth: 'none' }}
-                      placeholder="v1.1.1"
-                    />
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_ACCELERATOR_TYPE')}
-                    rules={[{ required: false }]}
-                  >
-                    <Select
-                      name="accelerator_type"
-                      defaultValue={acceleratorType}
-                      options={accelTypeOptions()}
-                      onChange={e => setAcceleratorType(e)}
-                    />
-                  </Form.Item>
-                </Column>
-              </Columns>
               <Form.Item
                 label={t('RESOURCES_SIZE')}
                 rules={[
@@ -499,9 +498,8 @@ const ResourceImageModal = props => {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${
-                        sizeEmpty ? styles.formErrorStyle : ''
-                      }`}
+                      className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''
+                        }`}
                     >
                       <div className={styles.cont_box_section}>
                         <div className={styles.cont_box_wrap}>
@@ -668,40 +666,29 @@ const Step2 = ({
   const handleImagePop = async () => {
     if (publicType === 'public') {
       // const response = await axios.get(`https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image`, {
-      
-      const originUrl = new URL(registryUrl)
-      const urlParams = originUrl.searchParams
-      const namespace = urlParams.get('namespace')
+      try {
+        const originUrl = new URL(registryUrl)
+        const urlParams = originUrl.searchParams
+        const namespace = urlParams.get('namespace')
 
-      let allRepositories = [];
-      let nextPage = `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`
-
-       try {
-
-        while (nextPage) {
-          const response = await axios.get(nextPage, {
+        const response = await axios.get(
+          `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`,
+          {
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
             },
-          });
-
-          allRepositories = [...allRepositories, ...response.data.repositories];
-          nextPage = response.data.next_page ? `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image&next_page=${response.data.next_page}` : null;
-        }
-
-        setImageListData(allRepositories);
-        setImageList(allRepositories);
-        setPopActive(true);
-        setImageText(defaultImageText);
-
-      } catch (error) {
-        console.error('error:', error);
-
-        setImageList([]);
-        setTagList([]);
-        setPopActive(false);
-        setImageText(emptyImageText);
-        setTag('');        
+          }
+        )
+        setImageListData(response.data.repositories)
+        setImageList(response.data.repositories)
+        setPopActive(true)
+        setImageText(defaultImageText)
+      } catch {
+        setImageList([])
+        setTagList([])
+        setPopActive(false)
+        setImageText(emptyImageText)
+        setTag('')
       }
     } else if (publicType === 'private') {
       getHarborImages()
@@ -725,33 +712,29 @@ const Step2 = ({
   // harbor list
   const getPriavteHarborRepositories = async () => {
     try {
-     
-      let allData = [];
-      let page = 1;
-      let hasMoreData = true;
+      let allData = []
+      let page = 1
+      let hasMoreData = true
 
       while (hasMoreData) {
         try {
-
           const originUrl = new URL(registryUrl)
           const urlParams = originUrl.searchParams
           const projectName = urlParams.get('projects')
 
-          const response = await request.post(`customharbor/private`, {
+          const fetchedData = await request.post(`customharbor/private`, {
             auth: harborAuth,
             projectName,
             originUrl: originUrl.origin,
-            page:page
+            page,
           })
-
-          const fetchedData = response;
-          allData = [...allData, ...fetchedData];
+          allData = [...allData, ...fetchedData]
 
           // 다음 페이지가 있는지 확인
-          hasMoreData =  fetchedData.length === 100;
-          page++;
+          hasMoreData = fetchedData.length === 100
+          page++
         } catch (error) {
-          hasMoreData = false;
+          hasMoreData = false
         }
       }
 
@@ -855,8 +838,7 @@ const Step2 = ({
     setLoading(false)
 
     // eslint-disable-next-line no-shadow
-    let tagList = []
-    tagList = response?.[0]?.tags
+    const tagList = response?.[0]?.tags
 
     setProjectName(projectName)
     setTagList(tagList)
@@ -943,11 +925,10 @@ const Step2 = ({
           <div className={styles.content_box}>
             {/* <label>소스</label> */}
             <div
-              className={`${styles.cont_box_wrap} ${
-                sourceEmpty || harborValidError || userValidError
+              className={`${styles.cont_box_wrap} ${sourceEmpty || harborValidError || userValidError
                   ? styles.formErrorStyle
                   : ''
-              }`}
+                }`}
             >
               <div className={styles.cont_box_section}>
                 <div className={styles.cont_box_wrap}>
@@ -981,7 +962,7 @@ const Step2 = ({
                               placeholder={
                                 publicType === 'private'
                                   ? // eslint-disable-next-line no-template-curly-in-string
-                                    'https://{url}?projects=${project_name}'
+                                  'https://{url}?projects=${project_name}'
                                   : ''
                               }
                               defaultValue={registryUrl}
@@ -1081,9 +1062,8 @@ const Step2 = ({
                                 {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
                                 <i
                                   style={{
-                                    background: `url('/assets/resources/images/icons/ico-os-${
-                                      obj.name.split('-')[0]
-                                    }.svg') center no-repeat`,
+                                    background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]
+                                      }.svg') center no-repeat`,
                                     width: '30px',
                                     height: '30px',
                                     marginRight: '5px',

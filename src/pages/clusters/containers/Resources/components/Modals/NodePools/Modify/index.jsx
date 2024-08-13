@@ -288,7 +288,6 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
                   <TextArea
                     name="description"
                     maxLength={256}
-                    rows="1"
                     defaultValue={nodepool.description}
                   />
                 </Form.Item>

@@ -35,7 +35,7 @@ export default class HostDeviceStore extends Base {
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/host_devices`
     getListUrl = this.getResourceUrl
-
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
 
     @action
     async fetchList({
@@ -178,9 +178,19 @@ export default class HostDeviceStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}`
+            `${this.getResourceUrl(params)}/${params.id}`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'HostDevices' }
+        const pciData = await this.fetchListPciDevices({ ...params });
+
+        pciData.pci_devices.map((pci) => {
+            if (detail.host_device.vendor_id === pci.vendor_id) {
+                detail.host_device.vendor_name = pci.vendor_name;
+            }
+            if (detail.host_device.product_id === pci.device_id) {
+                detail.host_device.product_name = pci.device_name;
+            }
+        });
 
         // Yaml 파일 관련 
         await this.fetchYaml(params);
@@ -192,25 +202,24 @@ export default class HostDeviceStore extends Base {
 
     @action
     async fetchYaml(params) {
-        this.isLoading = true
-
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/manifest`
+            `${this.getResourceUrl(params)}/${params.id}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'HostDevices' }
 
         this.yaml = yamlData.manifest
-        this.isLoading = false
         return yamlData
     }
 
 
     @action
-    async update({ name, ...params }, data) {
+    async update({ id, ...params }, data) {
+        const jsonData = {}
+        jsonData.host_device = data;
 
-        let res = await this.submitting(request.put(this.getDetailUrl({ name: data.hostDevice.name }), data))
-
-        return res
+        await this.submitting(
+            request.put(this.getDetailUrl({ id, ...params }), jsonData)
+        )
     }
 
 
@@ -221,9 +230,10 @@ export default class HostDeviceStore extends Base {
         } else {
             await this.submitting(
                 Promise.all(
-                    rowKeys.map(username => {
-                        const replaceName = username.replace("/", "%5C");
-                        request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/host_devices/` + replaceName)
+                    rowKeys.map(id => {
+                        request.delete(
+                            `${this.getDetailUrl({ id, ...params })}`
+                        )
                     })
                 )
             )
@@ -238,21 +248,17 @@ export default class HostDeviceStore extends Base {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
-        user.name = user.name.replace("/", "%5C");
-        return this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster })}/edgetron/resources/kubevirt/host_devices/` + user.name))
+        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
 
     // 등록 관련 데이터
     @action
     async fetchListPciDevices(params) {
-        this.isLoading = true
-
         const result = await request.get(
             `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/pci_devices`
         )
         const response = { ...params, ...this.mapper(result), kind: 'pciDevices' }
 
-        this.isLoading = false
         return response;
     }
 

@@ -1,562 +1,137 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { inject, observer } from 'mobx-react'
-import classnames from 'classnames'
+/*
+ * This file is part of KubeSphere Console.
+ * Copyright (C) 2024 The KubeSphere Console Authors.
+ *
+ * KubeSphere Console is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KubeSphere Console is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import { isEmpty } from 'lodash'
-import { Indicator, Panel, Text, Modal } from 'components/Base'
-import NodePoolRegistModal from 'clusters/containers/Resources/components/Modals/NodePools/Regist'
+import React, { useState, useEffect } from 'react'
+import { observer, inject } from 'mobx-react'
 
-import {
-  Button,
-  Icon,
-  InputSearch,
-  Level,
-  LevelItem,
-  LevelRight,
-  Notify,
-} from '@kube-design/components'
-import { TinyArea } from 'components/Charts'
-import { getAreaChartOps } from 'utils/monitoring'
-
-import CustomStore from 'stores/monitoring/custom/monitor'
-
-import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
-
+import { ICON_TYPES } from 'utils/constants'
+import { Panel, Text } from 'components/Base'
+import { Loading, Icon, Tooltip } from '@kube-design/components'
 import ContainerResourceStore from 'stores/resources/containerresource'
-import NodePoolStore from 'stores/resources/nodepools'
-import { Link } from 'react-router-dom'
+import StatusCard from './StatusCard'
 import styles from './index.scss'
 
 const containerResourceStore = new ContainerResourceStore()
-const nodePoolStore = new NodePoolStore()
 
-const step = '5m'
-const times = 100
+const Condition = ({ status, tip }) => {
+  const icon = (
+    <Icon
+      className={styles.status}
+      name={status === 'success' ? 'success' : 'error'}
+      color={{
+        primary: '#fff',
+        secondary: status === 'success' ? '#55bc8a' : '#ca2621',
+      }}
+    />
+  )
+
+  if (tip) {
+    return <Tooltip content={tip}>{icon}</Tooltip>
+  }
+
+  return icon
+}
 
 const Status = props => {
-  const customStore = new CustomStore()
-
-  const [machines, setMachines] = useState([])
-  const [nodepools, setNodepools] = useState([])
-
+  const [status, setStatus] = useState()
+  const [phase, setPhase] = useState()
+  const [isLoading, setIsLoading] = useState(true)
   let isMounted = false
 
-  // node script----------------------------------
-  const [isExpandFlag, setIsExpandFlag] = useState(false)
-  const [expandItem, setExpandItem] = useState()
-
-  // eslint-disable-next-line no-shadow
-  const getState = (state, phase) => {
-    if (phase !== 'Provisioned' && phase !== 'Running') {
-      return 'updating'
-    }
-
-    if (state) {
-      return 'running'
-    }
-    return 'inactive'
-  }
-
-  const getPhase = phase => {
-    if (phase === 'Running') {
-      return 'running'
-    }
-    return 'updating'
-  }
-
-  const renderExtraContent = obj => {
-    return (
-      <div className={styles.itemExtra}>
-        <div className={styles.containers}>
-          <Fragment>
-            Flavor
-            <div className={classnames(styles.item)}>
-              <div className={styles.icon}>
-                <Icon name="apps" size={40} />
-              </div>
-              <div className={classnames(styles.title, styles.name)}>
-                <div>{obj.flavor_detail.name}</div>
-                <p>Flavor</p>
-              </div>
-              <div className={styles.title}>
-                <Text
-                  key="CPU"
-                  icon="cpu"
-                  title={`${obj.flavor_detail.vcpus} Core`}
-                  description={t('CPU')}
-                />
-              </div>
-              <div className={styles.title}>
-                <Text
-                  key="Memory"
-                  icon="memory"
-                  title={`${common.fnSetBytes(obj.flavor_detail.ram)} GiB`}
-                  description={t('Memory')}
-                />
-              </div>
-              <div className={styles.title}>
-                <Text
-                  key="Disk"
-                  icon="storage"
-                  title={`${obj.flavor_detail.root_disk} GiB`}
-                  description={t('Disk')}
-                />
-              </div>
-              <div className={styles.title}>
-                <Text
-                  key="GPU"
-                  icon="gpu"
-                  title={
-                    obj.flavor_detail.gpus.length >= 1
-                      ? obj.flavor_detail.gpus.length === 1
-                        ? obj.flavor_detail.gpus[0].name
-                        : `${obj.flavor_detail.gpus[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${obj.flavor_detail.gpus.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
-                      : '-'
-                  }
-                  description={t('GPU')}
-                />
-              </div>
-            </div>
-          </Fragment>
-        </div>
-      </div>
-    )
-  }
-
-  const handleExpand = name => {
-    setExpandItem(name)
-    setIsExpandFlag(!isExpandFlag)
-  }
-
-  //  Search
-  const [searchValue, setSearchValue] = useState()
-
   useEffect(() => {
     isMounted = true
-    fnGetData()
+    getClusterStatusData()
     return () => {
       isMounted = false
     }
   }, [])
 
-  const fnGetData = async ({ ...params } = {}) => {
-    const nodepoolList = await nodePoolStore.fetchListNodePools(
-      props.match.params
-    )
-
-    const filteredNodepools =
-      params.name !== '' && params.name !== undefined
-        ? getSearchData(nodepoolList, params.name)
-        : nodepoolList
-
-    if (isMounted) {
-      setNodepools(filteredNodepools)
-    }
-
-    const response = await containerResourceStore.fetchDetailFlavor(
+  const getClusterStatusData = async () => {
+    const response = await containerResourceStore.fetchDetail(
       props.match.params
     )
     if (isMounted) {
-      setMachines(response._originData.machines)
+      setStatus(response._originData.cluster.status)
+      setPhase(response._originData.cluster.phase)
+      setIsLoading(false)
     }
   }
-
-  const getSearchData = (data, searchText) => {
-    return data.filter(row => {
-      return row['name']?.toLowerCase().includes(searchText.toLowerCase())
-    })
-  }
-
-  const handleSearch = value => {
-    isMounted = true
-    setSearchValue(value)
-    fnGetData({
-      name: value,
-    })
-    return () => {
-      isMounted = false
+  const renderStatus = () => {
+    const ready_status = {
+      name: 'ready',
+      flag: status.ready,
+      icon: 'success',
     }
-  }
-
-  const handleRefresh = () => {
-    isMounted = true
-    const params = searchValue ? { name: searchValue } : {}
-    fnGetData(params)
-    return () => {
-      isMounted = false
+    const control_plane_ready_status = {
+      name: 'control_plane_ready',
+      flag: status.control_plane_ready,
+      icon: ICON_TYPES['etcd'],
     }
-  }
-
-  // nodepool create
-  const handleNodepoolCreate = () => {
-    const modal = Modal.open({
-      onOk: data => {
-        nodePoolStore.createNodePool(data, props.match.params).then(() => {
-          Modal.close(modal)
-          Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-          handleRefresh()
-        })
-      },
-      modal: NodePoolRegistModal,
-      module: containerResourceStore.module,
-      storeResource: containerResourceStore,
-      ...props,
-    })
-  }
-
-  // monitoring script----------------------------------------------
-  const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] })
-  const [isLoading, setIsLoading] = useState(true)
-  let timer = 0
-
-  useEffect(() => {
-    fetchData(0)
-
-    return () => {
-      clearTimeout(timer)
+    const infra_ready_status = {
+      name: 'infra_ready',
+      flag: status.infra_ready,
+      icon: ICON_TYPES['nodes'],
     }
-  }, [])
-
-  const fetchData = timerSec => {
-    timer = setTimeout(async () => {
-      const kaasCpuFilteredData = []
-      const kaasMemoryFilteredData = []
-
-      Promise.all([getCpuUsageData(), getMemoryUsageData()]).then(values => {
-        if (values[0].length > 0) {
-          // eslint-disable-next-line array-callback-return
-          values[0].map(obj => {
-            if (obj.metric.pod.indexOf(props.match.params.name) === 0) {
-              kaasCpuFilteredData.push(obj)
-            }
-          })
-        }
-
-        if (values[1].length > 0) {
-          // eslint-disable-next-line array-callback-return
-          values[1].map(obj => {
-            if (obj.metric.pod.indexOf(props.match.params.name) === 0) {
-              kaasMemoryFilteredData.push(obj)
-            }
-          })
-        }
-
-        setKaasData({
-          ...kaasData,
-          cpuData: kaasCpuFilteredData,
-          memoryData: kaasMemoryFilteredData,
-        })
-      })
-      fetchData(5000)
-    }, timerSec)
-  }
-
-  useEffect(() => {
-    setIsLoading(false)
-  }, [kaasData])
-
-  // kaas cpu data
-  const getCpuUsageData = () => {
-    const currentTime = Math.floor(Date.now() / 1000)
-    return new Promise(resolve => {
-      const cpuFetchData = customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}[${step}])) * ${times})) / 100`,
-        start: currentTime - 30000,
-        end: currentTime,
-        cluster: props.match.params.cluster,
-      })
-      resolve(cpuFetchData)
-    })
-  }
-
-  // kaas memory data
-  const getMemoryUsageData = () => {
-    const currentTime = Math.floor(Date.now() / 1000)
-    return new Promise(resolve => {
-      const memoryFetchData = customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
-        start: currentTime - 30000,
-        end: currentTime,
-        cluster: props.match.params.cluster,
-      })
-      resolve(memoryFetchData)
-    })
-  }
-
-  const getMonitoringCfgs = metrics => [
-    {
-      type: 'cpu',
-      title: 'CPU',
-      unitType: 'cpu',
-      legend: ['USED'],
-      data: [metrics.cpu],
-      bgColor: 'transparent',
-    },
-    {
-      type: 'memory',
-      title: 'MEMORY',
-      unitType: 'memory',
-      legend: ['USED'],
-      data: [metrics.memory],
-      bgColor: 'transparent',
-    },
-  ]
-
-  // eslint-disable-next-line no-shadow
-  const renderMonitorings = (nodeName, isExpandFlag, nodeNetwork) => {
-    const isExpand = nodeName === expandItem && isExpandFlag
-    const loading = isLoading
-    const podName = kaasData.memoryData?.find(
-      obj => obj.metric?.instance?.split(':')[0] === nodeNetwork?.ip
-    )?.metric?.pod
-    const metrics = {
-      cpu: kaasData.cpuData.find(obj => obj.metric.pod === podName),
-      memory: kaasData.memoryData.find(obj => obj.metric.pod === podName),
+    const topology_reconciled_status = {
+      name: 'topology_reconciled',
+      flag: status.topology_reconciled,
+      icon: ICON_TYPES['components'],
     }
-
-    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
-
-    if (isEmpty(metrics.cpu) && isEmpty(metrics.memory))
-      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
-
-    const configs = getMonitoringCfgs(metrics)
-
     return (
-      <div className={styles.monitors}>
-        <div className={styles.charts}>
-          {configs.map(item => {
-            const config = getAreaChartOps(item)
-
-            return (
-              <div key={item.type}>
-                <TinyArea
-                  key={item.type}
-                  width="100%"
-                  height={40}
-                  {...config}
-                  darkMode={isExpand}
-                />
-              </div>
-            )
-          })}
+      <Panel title={t('RESOURCES_CLUSTER_SCHEDULE_STATUS')}>
+        <div className={styles.header}>
+          <Text
+            className={styles.info}
+            icon="templet"
+            title={t(`RESOURCES_${phase.toUpperCase()}`)}
+            description={t('CURRENT_STATUS')}
+            extra={
+              <Condition
+                status={phase === 'Provisioned' ? 'success' : 'warning'}
+              />
+            }
+          />
         </div>
-      </div>
+        <div className={styles.cardstatus}>
+          <StatusCard key="ready" data={ready_status} />
+          <StatusCard
+            key="control_plane_ready"
+            data={control_plane_ready_status}
+          />
+          <StatusCard key="infra_ready" data={infra_ready_status} />
+          <StatusCard
+            key="topology_reconciled"
+            data={topology_reconciled_status}
+          />
+        </div>
+      </Panel>
     )
   }
 
   return (
     <>
-      <Panel title={'ControlPlane Nodes'}>
-        <div className={styles.wrapper}>
-          {!!machines &&
-            machines
-              .filter(machine => {
-                return (
-                  machine.cluster === props.match.params.name &&
-                  machine.controlplane
-                )
-              })
-              .map((detail, index) => (
-                <div
-                  className={classnames(styles.expandItem, '', {
-                    [styles.expanded]:
-                      detail.name === expandItem ? isExpandFlag : false,
-                  })}
-                  key={index}
-                >
-                  <div className={styles.itemMain}>
-                    <div className={styles.icon}>
-                      <Icon
-                        name="nodes"
-                        size={40}
-                        type={
-                          detail.name !== expandItem
-                            ? 'dark'
-                            : detail.name === expandItem &&
-                              isExpandFlag === false
-                            ? 'dark'
-                            : 'light'
-                        }
-                      />
-                      <Indicator
-                        className={styles.indicator}
-                        type={getState(detail?.ready_status, detail?.phase)}
-                        flicker
-                      />
-                    </div>
-                    <div className={styles.content}>
-                      <div className={styles.text} style={{ width: '25%' }}>
-                        <div>{detail.name}</div>
-                        <p>
-                          {getLocalTime(detail.timestamp).format(
-                            'YYYY-MM-DD HH:mm:ss'
-                          )}
-                          {t('RESOURCES_CREATED')}
-                        </p>
-                      </div>
-                      <div className={styles.text} style={{ width: '15%' }}>
-                        <div>
-		          {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
-                        </div>
-                        <p>{t('RESOURCES_STATE')}</p>
-                      </div>
-                      <div className={styles.text}>
-                        {detail?.networks?.filter(
-                          network => network.name !== 'k8s-pod-network'
-                        ).length > 0 ? (
-                          <div>
-                            {detail.networks
-                              .filter(
-                                network => network.name !== 'k8s-pod-network'
-                              )
-                              .map(obj => (
-                                <div key={obj.name}>
-                                  {obj.ip} ({obj.name})
-                                </div>
-                              ))}
-                          </div>
-                        ) : (
-                          <div>-</div>
-                        )}
-                        <p>{t('RESOURCES_NETWORK')}</p>
-                      </div>
-                      {renderMonitorings(
-                        detail.name,
-                        isExpandFlag,
-                        detail.networks.find(
-                          obj => obj.name === 'k8s-pod-network'
-                        )
-                      )}
-                      <div
-                        className={styles.arrow}
-                        onClick={() => handleExpand(detail.name)}
-                      >
-                        <Icon
-                          name="chevron-down"
-                          type={
-                            detail.name !== expandItem
-                              ? ''
-                              : detail.name === expandItem &&
-                                isExpandFlag === false
-                              ? ''
-                              : 'light'
-                          }
-                          size={20}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  {renderExtraContent(detail)}
-                </div>
-              ))}
+      {isLoading ? (
+        <div className={styles.loading}>
+          <Loading />
         </div>
-      </Panel>
-      <Panel title={'NodePools'}>
-        <div className={styles.wrapper}>
-          <Level>
-            <LevelItem>
-              <InputSearch
-                className={styles.search}
-                name="search"
-                placeholder={t('SEARCH_BY_NAME')}
-                onSearch={handleSearch}
-                style={{ width: '100%' }}
-              />
-            </LevelItem>
-            <LevelRight>
-              <div className={styles.actions}>
-                <Button type="flat" icon="refresh" onClick={handleRefresh} />
-              </div>
-              <Button type="control" onClick={handleNodepoolCreate}>
-                {t('RESOURCES_CREATE')}
-              </Button>
-            </LevelRight>
-          </Level>
-          {!!nodepools &&
-            nodepools.map((detail, index) => (
-              <div
-                className={classnames(styles.expandItem, '', {
-                  [styles.expanded]:
-                    detail.name === expandItem ? isExpandFlag : false,
-                })}
-                key={index}
-              >
-                <div className={styles.itemMain}>
-                  <div className={styles.icon}>
-                    <Icon
-                      name="nodes"
-                      size={40}
-                      type={
-                        detail.name !== expandItem
-                          ? 'dark'
-                          : detail.name === expandItem && isExpandFlag === false
-                          ? 'dark'
-                          : 'light'
-                      }
-                    />
-                    <Indicator
-                      className={styles.indicator}
-                      type={getPhase(detail?.phase)}
-                      flicker
-                    />
-                  </div>
-                  <div className={styles.content}>
-                    <div className={styles.text} style={{ width: '20%' }}>
-                      <div className={styles.title}>
-                        <Link
-                          to={`/clusters/${props.match.params.cluster}/nodepools/${props.match.params.name}/${detail.name}`}
-                        >
-                          {detail.name}
-                        </Link>
-                      </div>
-                      <p>
-                        {getLocalTime(detail.timestamp).format(
-                          'YYYY-MM-DD HH:mm:ss'
-                        )}
-                        {t('RESOURCES_CREATED')}
-                      </p>
-                    </div>
-                    <div className={styles.text} style={{ width: '14%' }}>
-                      <div>
-		        {t(`RESOURCES_${detail.phase.toUpperCase()}`)}
-                      </div>
-                      <p>{t('RESOURCES_STATE')}</p>
-                    </div>
-                    <div className={styles.text} style={{ width: '20%' }}>
-                      <div>{detail.kube_image}</div>
-                      <p>{t('RESOURCES_IMAGE')}</p>
-                    </div>
-                    <div className={styles.text} style={{ width: '14%' }}>
-                      <div>{detail.flavor}</div>
-                      <p>{t('RESOURCES_FLAVOR')}</p>
-                    </div>
-                    <div className={styles.text} style={{ width: '8%' }}>
-                      <div>{detail.nodepool_replicas}</div>
-                      <p>Replicas</p>
-                    </div>
-                    <div className={styles.text} style={{ width: '8%' }}>
-                      <div>{detail.ready_replicas}</div>
-                      <p>Ready</p>
-                    </div>
-                    <div className={styles.text} style={{ width: '8%' }}>
-                      <div>{detail.unavailable_replicas}</div>
-                      <p>Unavailable</p>
-                    </div>
-                    <div className={styles.text} style={{ width: '8%' }}>
-                      <div>{detail.updated_replicas}</div>
-                      <p>Updated</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      </Panel>
+      ) : (
+        <div>{renderStatus()}</div>
+      )}
     </>
   )
 }

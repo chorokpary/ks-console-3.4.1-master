@@ -359,120 +359,124 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 />
               </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_IMAGE')}
-                      rules={[
-                        {
-                          required: true,
-                          message: t('RESOURCES_SELECT_IMAGE_TIP'),
-                        },
-                      ]}
-                    >
-                      <CardSelect
-                        className={`${styles.customUl} customCard`}
-                        onChange={e => handleOsType(e)}
-                        name="os_type"
-                        options={osTypeOptions}
-                        defaultValue={osType}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
-                      <TypeSelect
-                        // name="distro_type"
-                        onChange={e => setDistroType(e)}
-                        defaultValue={distroType}
-                        options={distroTypeOptions()}
-                      />
-                    </Form.Item>
-                    <Form.Item>
-                      <Input
-                        defaultValue={`${osType[0].toUpperCase() +
-                          osType.slice(1, osType.length)} > ${distroType}`}
-                        readOnly
-                        style={{ maxWidth: 'none' }}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
-              </Form.Item>
+              <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+                <Form.Group>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_IMAGE')}
+                          rules={[
+                            {
+                              required: true,
+                              message: t('RESOURCES_SELECT_IMAGE_TIP'),
+                            },
+                          ]}
+                        >
+                          <CardSelect
+                            className={`${styles.customUl} customCard`}
+                            onChange={e => handleOsType(e)}
+                            name="os_type"
+                            options={osTypeOptions}
+                            defaultValue={osType}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
+                          <TypeSelect
+                            // name="distro_type"
+                            onChange={e => setDistroType(e)}
+                            defaultValue={distroType}
+                            options={distroTypeOptions()}
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Input
+                            defaultValue={`${osType[0].toUpperCase() +
+                              osType.slice(1, osType.length)} > ${distroType}`}
+                            readOnly
+                            style={{ maxWidth: 'none' }}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_CPU_TYPE')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="arch_type"
-                        defaultValue="x86_64"
-                        options={archTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_BOOT_TYPE')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="boot_type"
-                        defaultValue="legacy"
-                        options={bootTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
-              </Form.Item>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_CPU_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="arch_type"
+                            defaultValue="x86_64"
+                            options={archTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_BOOT_TYPE')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <Select
+                            name="boot_type"
+                            defaultValue="legacy"
+                            options={bootTypeOptions}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
 
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_REAL_TIME')}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <RadioGroup
-                        name="is_realtime"
-                        wrapClassName="radio"
-                        defaultValue={realTime}
-                        onChange={value => setRealTime(value)}
-                      >
-                        {realTimeOptions.map(option => (
-                          <RadioButton key={option.value} value={option.value}>
-                            {option.label}
-                          </RadioButton>
-                        ))}
-                      </RadioGroup>
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item label={t('RESOURCES_VERSION')}>
-                      <Input
-                        name="version"
-                        maxLength={253}
-                        style={{ maxWidth: 'none' }}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_REAL_TIME')}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <RadioGroup
+                            name="is_realtime"
+                            wrapClassName="radio"
+                            defaultValue={realTime}
+                            onChange={value => setRealTime(value)}
+                          >
+                            {realTimeOptions.map(option => (
+                              <RadioButton key={option.value} value={option.value}>
+                                {option.label}
+                              </RadioButton>
+                            ))}
+                          </RadioGroup>
+                        </Form.Item>
+                      </Column>
+                      <Column>
+                        <Form.Item label={t('RESOURCES_VERSION')}>
+                          <Input
+                            name="version"
+                            maxLength={253}
+                            style={{ maxWidth: 'none' }}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
+                </Form.Group>
               </Form.Item>
 
               <Form.Item
@@ -715,14 +719,14 @@ const Step2 = ({
             auth: harborAuth,
             projectName,
             originUrl: originUrl.origin,
-            page:page
+            page: page
           })
 
           const fetchedData = response;
           allData = [...allData, ...fetchedData];
 
           // 다음 페이지가 있는지 확인
-          hasMoreData =  fetchedData.length === 100;
+          hasMoreData = fetchedData.length === 100;
           page++;
         } catch (error) {
           hasMoreData = false;

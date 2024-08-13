@@ -18,9 +18,9 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/LoadBalancers/Detail/Status'
+import Status from 'clusters/containers/Resources/MediatedDevices/Detail/Status'
 
-const PATH = '/clusters/:cluster/LoadBalancers/:name'
+const PATH = '/clusters/:cluster/MediatedDevices/:id'
 
 export default [
     {

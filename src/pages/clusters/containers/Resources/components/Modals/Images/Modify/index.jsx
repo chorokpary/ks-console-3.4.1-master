@@ -125,87 +125,91 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
             />
           </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_IMAGE')}
-                  rules={[{ required: true }]}
-                >
-                  <CardSelect
-                    className={styles.customUl}
-                    onChange={e => handleOsType(e)}
-                    name="os_type"
-                    options={osTypeOptions}
-                    defaultValue={osType}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
-                  <TypeSelect
-                    onChange={e => setDistroType(e)}
-                    defaultValue={distroType}
-                    options={distroTypeOptions()}
-                  />
-                </Form.Item>
-                <Form.Item>
-                  <Input
-                    defaultValue={`${osType[0].toUpperCase() +
-                      osType.slice(1, osType.length)} > ${distroType}`}
-                    readOnly
-                    style={{ maxWidth: 'none' }}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
+          <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+            <Form.Group>
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_IMAGE')}
+                      rules={[{ required: true }]}
+                    >
+                      <CardSelect
+                        className={styles.customUl}
+                        onChange={e => handleOsType(e)}
+                        name="os_type"
+                        options={osTypeOptions}
+                        defaultValue={osType}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
+                      <TypeSelect
+                        onChange={e => setDistroType(e)}
+                        defaultValue={distroType}
+                        options={distroTypeOptions()}
+                      />
+                    </Form.Item>
+                    <Form.Item>
+                      <Input
+                        defaultValue={`${osType[0].toUpperCase() +
+                          osType.slice(1, osType.length)} > ${distroType}`}
+                        readOnly
+                        style={{ maxWidth: 'none' }}
+                      />
+                    </Form.Item>
+                  </Column>
+                </Columns>
+              </Form.Item>
 
-          <Form.Item>
-            <Columns>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_CPU_TYPE')}
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    name="arch_type"
-                    defaultValue={detail.arch_type}
-                    options={archTypeOptions}
-                  />
-                </Form.Item>
-              </Column>
-              <Column>
-                <Form.Item
-                  label={t('RESOURCES_BOOT_TYPE')}
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    name="boot_type"
-                    defaultValue={detail.boot_type}
-                    options={bootTypeOptions}
-                  />
-                </Form.Item>
-              </Column>
-            </Columns>
-          </Form.Item>
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_CPU_TYPE')}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        name="arch_type"
+                        defaultValue={detail.arch_type}
+                        options={archTypeOptions}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_BOOT_TYPE')}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        name="boot_type"
+                        defaultValue={detail.boot_type}
+                        options={bootTypeOptions}
+                      />
+                    </Form.Item>
+                  </Column>
+                </Columns>
+              </Form.Item>
 
-          <Form.Item
-            label={t('RESOURCES_REAL_TIME')}
-            rules={[{ required: true }]}
-          >
-            <RadioGroup
-              name="is_realtime"
-              wrapClassName="radio"
-              defaultValue={realTime}
-              onChange={value => setRealTime(value)}
-            >
-              {realTimeOptions.map(option => (
-                <RadioButton key={option.value} value={option.value}>
-                  {option.label}
-                </RadioButton>
-              ))}
-            </RadioGroup>
+              <Form.Item
+                label={t('RESOURCES_REAL_TIME')}
+                rules={[{ required: true }]}
+              >
+                <RadioGroup
+                  name="is_realtime"
+                  wrapClassName="radio"
+                  defaultValue={realTime}
+                  onChange={value => setRealTime(value)}
+                >
+                  {realTimeOptions.map(option => (
+                    <RadioButton key={option.value} value={option.value}>
+                      {option.label}
+                    </RadioButton>
+                  ))}
+                </RadioGroup>
+              </Form.Item>
+            </Form.Group>
           </Form.Item>
 
           <Form.Item

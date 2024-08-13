@@ -18,12 +18,19 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from './Status'
+import Node from './Node'
 import Monitoring from './Monitoring'
+import Status from './Status'
 
 const PATH = '/clusters/:cluster/nodepools/:clustername/:name'
 
 export default [
+  {
+    path: `${PATH}/node`,
+    title: t('RESOURCES_NODE'),
+    component: Node,
+    exact: true,
+  },
   {
     path: `${PATH}/status`,
     title: t('RESOURCES_STATE'),
@@ -36,5 +43,5 @@ export default [
     component: Monitoring,
     exact: true,
   },
-  getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
+  getIndexRoute({ path: PATH, to: `${PATH}/node`, exact: true }),
 ]

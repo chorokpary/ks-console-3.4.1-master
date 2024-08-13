@@ -247,11 +247,11 @@ export default [
     component: VolumeDetail,
   },
   {
-    path: `${PATH}/hostdevices/:name`,
+    path: `${PATH}/hostdevices/:id`,
     component: HostDeviceDetail,
   },
   {
-    path: `${PATH}/mediateddevices/:name`,
+    path: `${PATH}/mediateddevices/:id`,
     component: MediatedDeviceDetail,
   },
   {

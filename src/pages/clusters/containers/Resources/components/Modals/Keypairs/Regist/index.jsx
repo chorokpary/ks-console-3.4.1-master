@@ -302,7 +302,6 @@ const RegistModal = (props) => {
               <TextArea
                 name="description"
                 maxLength={256}
-                rows="1"
                 defaultValue=""
               />
             </Form.Item>

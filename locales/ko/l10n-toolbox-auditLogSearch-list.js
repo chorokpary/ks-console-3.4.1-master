@@ -34,11 +34,11 @@ module.exports = {
   AUDIT_LOG_RESOURCE_TYPE_TIP: '감사 로그를 검색할 리소스 유형을 입력합니다.',
   AUDIT_LOG_VERB_TIP: '감사 로그를 검색할 verb를 입력합니다.',
   AUDIT_LOG_STATUS_CODE_TIP: '감사 로그를 검색할 상태 코드를 입력합니다.',
-  AUDIT_LOG_OPERATOR_TIP: '감사 로그를 검색할 연산자를 입력합니다.',
+  AUDIT_LOG_OPERATOR_TIP: '감사 로그를 검색할 운영자 어카운트를 입력합니다.',
   AUDIT_LOG_SOURCE_IP_ADDRESS_TIP: '감사 로그를 검색할 소스 IP 주소를 입력합니다.',
   SEARCH_BY_VERB: 'Verb으로 검색',
   SEARCH_BY_STATUS_CODE: '상태 코드로 검색',
-  SEARCH_BY_OPERATOR: '연산자로 검색',
+  SEARCH_BY_OPERATOR: '운영자 어카운트로 검색',
   SEARCH_BY_SOURCE_IP_ADDRESS: '소스 IP 주소로 검색',
   ENABLE_AUDIT_LOG_COLLECTION_DESC: '감사 로그 수집이 실행 중지된 경우 실행해야 합니다. <a href="{link}" target="_blank">자세히 알아보기</a>'
 };

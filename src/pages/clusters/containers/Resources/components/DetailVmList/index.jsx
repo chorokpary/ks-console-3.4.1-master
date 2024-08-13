@@ -136,6 +136,22 @@ const DetailVmList = props => {
     if (props.variables == 'id') {
       return row[props.variables] === props.id
     }
+    if (props.variables == 'gpu_node') {
+      return row['node'] === props.node && row['gpus'].includes(props.gpu);
+    }
+    if (props.variables == 'host_device') {
+      if (props.gpu) {
+        return row['gpus'].includes(props.name)
+      }
+      if (!props.gpu) {
+        row['host_devices'].includes(props.name)
+      }
+    }
+    if (props.variables == 'mediated_device') {
+      if (props.gpu) {
+        return row['gpus'].includes(props.name)
+      }
+    }
     return row[props.variables] === props.name
   }
 
@@ -345,43 +361,6 @@ const DetailVmList = props => {
                 </Link>
               </div>
               <p>Flavor</p>
-            </div>
-            <div className={styles.title}>
-              <div>
-                {/* {networkList.length >= 1
-                  ? networkList.length === 1
-                    ? networkList[0].alias
-                    : `${networkList[0].alias} 외 ${networkList.length - 1}개`
-                  : '-'} */}
-                {networkList.length === 1 &&
-                  networkList[0].alias !== null &&
-                  networkList[0].alias}
-                {networkList.length === 1 &&
-                  networkList[0].alias === null &&
-                  networkList[0].name}
-                {networkList.length > 1 &&
-                  networkList[0].alias !== null &&
-                  `${networkList[0].alias} 외 ${networkList.length - 1}개`}
-                {networkList.length > 1 &&
-                  networkList[0].alias === null &&
-                  `${networkList[0].name} 외 ${networkList.length - 1}개`}
-
-                {/* {networkList.length >= 1 
-                  // ? networkList.length === 1 && networkList[0].alias !== null
-                  //   ? networkList[0].alias
-                  //   : `${networkList[0].alias} 외 ${networkList.length - 1}개`
-                  // : networkList.length === 1 && networkList[0].alias === null
-                  // ? networkList[0].name
-                  // : `${networkList[0].name} 외 ${networkList.length - 1}개`}
-                // {networkList.length >= 1
-                //   ? networkList.length === 1 && networkList[0].alias !== null
-                //     ? networkList[0].alias
-                //     : networkList.length === 1 && networkList[0].alias === null
-                //   ? networkList[0].name : networkList.length === 1 && networkList[0].alias === null
-                //   ? 
-                //   : `${networkList[0].name} 외 ${networkList.length - 1}개`} */}
-              </div>
-              <p>{t('RESOURCES_NETWORK')}</p>
             </div>
             <div className={styles.title}>
               <Text

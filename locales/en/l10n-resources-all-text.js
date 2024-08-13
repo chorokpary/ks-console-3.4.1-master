@@ -74,6 +74,10 @@ module.exports = {
   RESOURCES_GPU_DRIVER_TYPE: 'Driver Type',
   RESOURCES_GPU_DRIVER_VERSION: 'Driver Version',
   RESOURCES_GPU_CUDA_VERSION: 'CUDA Version',
+  RESOURCES_GPU_CONFIG_STATE: 'Config Status',
+  RESOURCES_GPU_CONFIG_STATE_SUCCESS: 'Success',
+  RESOURCES_GPU_CONFIG_STATE_FAILED: 'Failed',
+  RESOURCES_GPU_CONFIG_STATE_PENDING: 'Pending',
   RESOURCES_GPU_COUNT: 'Number of GPUs',
   RESOURCES_GPU_WORKLOAD_TYPE: 'Workload',
   RESOURCES_GPU_WORKLOAD_CONFIG: 'Workload Configs',
@@ -123,12 +127,16 @@ module.exports = {
   RESOURCES_GPU_VGPU_NUMBER: 'Max Number',
   RESOURCES_GPU_VGPU_CUDA: 'CUDA',
   RESOURCES_GPU_VGPU_MULTIVGPU: 'Multi vGPU',
-  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: 'No available vGPU configurations found.',  
+  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND:
+    'No available vGPU configurations found.',
 
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU Deployment Status',
-  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS: 'Component Deployment Status for Container Workload',
-  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS: 'Component Deployment Status for VM Passthrough',
-  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS: 'Component Deployment Status for VM vGPU',
+  RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS:
+    'Component Deployment Status for Container Workload',
+  RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS:
+    'Component Deployment Status for VM Passthrough',
+  RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS:
+    'Component Deployment Status for VM vGPU',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT: 'Container Toolkit',
   RESOURCES_GPU_DEPLOY_CONTAINER_TOOLKIT_DESC:
     'The Container Toolkit includes utilities that automatically configure container runtime libraries and GPU-accelerated containers.',
@@ -157,11 +165,14 @@ module.exports = {
   RESOURCES_GPU_DEPLOY_VFIO_MANAGER_DESC:
     'Loads the VFIO-PCI kernel module or driver and binds it to all GPU devices in the node.',
   RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR: 'Sandbox Validator',
-  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC: 'Validates whether the various components that make up the sandbox environment are installed correctly.',
+  RESOURCES_GPU_DEPLOY_SANDBOX_VALIDATOR_DESC:
+    'Validates whether the various components that make up the sandbox environment are installed correctly.',
   RESOURCES_GPU_DEPLOY_VGPU_MANAGER: 'vGPU Manager',
-  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC: 'Plays a role in managing the installation/deletion of related GPU drivers to ensure the creation of vGPU instances.',
+  RESOURCES_GPU_DEPLOY_VGPU_MANAGER_DESC:
+    'Plays a role in managing the installation/deletion of related GPU drivers to ensure the creation of vGPU instances.',
   RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER: 'vGPU Device Manager',
-  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC: 'A tool designed for system administrators to make working with vGPU devices easier.',
+  RESOURCES_GPU_DEPLOY_VGPU_DEVICE_MANAGER_DESC:
+    'A tool designed for system administrators to make working with vGPU devices easier.',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS network traffic',
   RESOURCES_KAAS_RESOURCE: 'Kaas resource',
@@ -486,6 +497,7 @@ module.exports = {
   RESOURCES_CAPACITY: 'Capacity',
   RESOURCES_WON: 'Won',
   RESOURCES_REMOTE_IP_RANGE: 'Remote IP Range',
+  RESOURCES_BOOT_TEMPLATE: 'Boot Template',
   RESOURCES_TYPE_YOO: 'Type',
   RESOURCES_VALID: 'Validation Check',
   RESOURCES_VALID_TIP: 'Please check the validity.',
@@ -506,6 +518,7 @@ module.exports = {
   RESOURCES_ALREADY_SELECTED_VM_NAME:
     'The virtual machine name is already selected.',
   RESOURCES_ALREADY_SELECTED_DEVICE: 'The device is already selected.',
+  RESOURCES_IMAGE_TEMPLATE: 'Image Template',
   RESOURCES_IMAGE: 'Image',
   RESOURCES_MASTER_IMAGE: 'Master Image',
   RESOURCES_IMAGE_REGIST_URL_SETTINGS: 'Set the image registry URL.',
@@ -556,6 +569,7 @@ module.exports = {
   RESOURCES_ACCESS_MODE: 'Access Mode',
   RESOURCES_CONNECT_SUCCESS_DESC: 'Connection successful.',
   RESOURCES_STOPPING: 'Stopping',
+  RESOURCES_STOPPED: 'Stopped',
   RESOURCES_POLICY: 'Policy',
   RESOURCES_POLICY_COUNT: 'Policy Count',
   RESOURCES_NO_POLICY: 'No policy.',
@@ -618,6 +632,18 @@ module.exports = {
   RESOURCES_CLUSTER: 'Cluster',
   RESOURCES_CLUSTER_NODE: 'Cluster Node',
   RESOURCES_CLUSTER_COMPONENT_STATE: 'Cluster Component State',
+  RESOURCES_CLUSTER_SCHEDULE_STATUS: 'Cluster Scheduling Status',
+  RESOURCES_CLUSTER_SCHEDULE_READY: 'Cluster Ready',
+  RESOURCES_CLUSTER_SCHEDULE_READY_DESC: 'The operational state of a cluster',
+  RESOURCES_CLUSTER_SCHEDULE_CONTROL_PLANE_READY: 'ControlPlane Ready',
+  RESOURCES_CLUSTER_SCHEDULE_CONTROL_PLANE_READY_DESC:
+    'Ready condition from the control plane object defined for this cluster',
+  RESOURCES_CLUSTER_SCHEDULE_INFRA_READY: 'Cluster Infrastructure Ready',
+  RESOURCES_CLUSTER_SCHEDULE_INFRA_READY_DESC:
+    'Current status of the kubevirt infrastructure object defined for this cluster',
+  RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED: 'Topology Reconciled',
+  RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED_DESC:
+    'Evidence about the reconciliation of a Cluster topology into the managed objects of the Cluster',
   RESOURCES_CLONE: 'Clone',
   RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP:
     'Enter the new virtual machine name for creating a clone data.',
@@ -939,6 +965,16 @@ module.exports = {
   RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
     'Please select the NodePool Architecture.',
   RESOURCES_NODEPOOL_NODE_STATUS: 'NodePool Node Status',
+  RESOURCES_NODEPOOL_SCHEDULE_STATUS: 'NodePool Scheduling Status',
+  RESOURCES_NODEPOOL_SCHEDULE_READY: 'NodePool Ready',
+  RESOURCES_NODEPOOL_SCHEDULE_READY_DESC:
+    'Summarizes the operational state of the NodePool',
+  RESOURCES_NODEPOOL_SCHEDULE_AVAILABLE: 'NodePool Available',
+  RESOURCES_NODEPOOL_SCHEDULE_AVAILABLE_DESC:
+    'Indicates at least the minimum available nodes required are up and running',
+  RESOURCES_NODEPOOL_SCHEDULE_MACHINE_SET_READY: 'NodePool MachineSet Ready',
+  RESOURCES_NODEPOOL_SCHEDULE_MACHINE_SET_READY_DESC:
+    'Summary of current status of the MachineSet owned by the NodePool',
   RESOURCES_NODE_COUNT: 'Number of Nodes',
   RESOURCES_NODE_IP: 'Node IP',
 }
