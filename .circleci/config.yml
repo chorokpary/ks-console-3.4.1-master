@@ -15,9 +15,9 @@ commands:
             docker buildx create --use multi-arch-build
             
 jobs:
-  "development":
+  development:
     machine:
-      image: ubuntu-2004:202010-01
+      image: default
     steps:
       - setup
       - run:
@@ -35,6 +35,6 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - "development"
+      - development:
           context:
             - GITLAB_CI_BOT_SECRET
