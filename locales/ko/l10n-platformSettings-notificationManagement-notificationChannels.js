@@ -34,7 +34,7 @@ module.exports = {
   FILTER_CONDITIONS: '필터 조건',
   CONTAINER: '컨테이너',
   VALUES: 'Values',
-  CONDITION_OPERATOR: '운영자',
+  CONDITION_OPERATOR: '연산자',
   NOTIFICATION_CONDITION_SETTING_TIP: '<strong>포함</strong> 및 <strong>포함하지 않음</strong> 연산자는 하나 이상의 값을 필요로 합니다. <strong>입력</strong> 버튼을 눌러 여러 값을 설정할 수 있습니다.',
   NOTIFICATION_CONDITION_SETTINGS_DESC: '조건에 맞는 알림만 보내도록 시스템을 설정합니다.',
   CONTAIN: '포함',
