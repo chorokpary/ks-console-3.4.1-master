@@ -34,7 +34,7 @@ module.exports = {
   AUDIT_LOG_RESOURCE_TYPE_TIP: '감사 로그를 검색할 리소스 유형을 입력합니다.',
   AUDIT_LOG_VERB_TIP: '감사 로그를 검색할 verb를 입력합니다.',
   AUDIT_LOG_STATUS_CODE_TIP: '감사 로그를 검색할 상태 코드를 입력합니다.',
-  AUDIT_LOG_OPERATOR_TIP: '감사 로그를 검색할 연산자를 입력합니다.',
+  AUDIT_LOG_OPERATOR_TIP: '감사 로그를 검색할 운영자 어카운트를 입력합니다.',
   AUDIT_LOG_SOURCE_IP_ADDRESS_TIP: '감사 로그를 검색할 소스 IP 주소를 입력합니다.',
   SEARCH_BY_VERB: 'Verb으로 검색',
   SEARCH_BY_STATUS_CODE: '상태 코드로 검색',
