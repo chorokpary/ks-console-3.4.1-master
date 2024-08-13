@@ -128,6 +128,10 @@ const NetworkDetail = (props) => {
         value: detail.network.external ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
       },
       {
+        name: t('RESOURCES_NETWORK_OFFLOAD'),
+        value: detail.network.offload ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+      },
+      {
         name: t('RESOURCES_IP_POOL_INFORMATION'),
         value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
       },
