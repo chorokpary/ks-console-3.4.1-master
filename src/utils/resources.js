@@ -42,7 +42,7 @@ export function fnNewlineTransformInput(descriptionData) {
 }
 
 // cidr 계산기
-export function fnCalculateCidr(cidr, withGw) {
+export function fnCalculateCidr_old (cidr, withGw) {
     const bit = cidr.split("/")[1];
     const octet = cidr.split("/")[0].split(".");
 
@@ -87,3 +87,47 @@ export function fnAddCommar(price) {
     let returnString = price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return returnString;
 }
+
+
+// IP 주소를 32비트 정수로 변환
+const ipToInt = (ip) => {
+return ip.split('.').reduce((int, octet) => (int << 8) + parseInt(octet, 10), 0);
+}
+  
+// 32비트 정수를 IP 주소로 변환
+const intToIp = (int) => {
+    return [
+      (int >>> 24) & 255,
+      (int >>> 16) & 255,
+      (int >>> 8) & 255,
+      int & 255
+    ].join('.');
+}
+  
+// CIDR 값을 기반으로 네트워크, 게이트웨이, IP 풀 계산
+ export function fnCalculateCidr (cidr) {
+    const [ip, prefixLength] = cidr.split("/");
+    const prefix = parseInt(prefixLength, 10);
+  
+    // 네트워크 주소 계산
+    const ipInt = ipToInt(ip);
+    const mask = -1 << (32 - prefix);
+    const networkAddressInt = ipInt & mask;
+    const broadcastAddressInt = networkAddressInt | ~mask;
+  
+    // 게이트웨이 IP (네트워크 주소의 첫 번째 사용 가능한 IP)
+    const gatewayIPInt = networkAddressInt + 1;
+  
+    // IP 풀 범위 (네트워크 주소 + 1 부터 브로드캐스트 주소 - 1 까지)
+    const ipPoolStartInt = networkAddressInt + 1;
+    const ipPoolEndInt = broadcastAddressInt - 1;
+  
+    return {
+      networkAddress: intToIp(networkAddressInt),
+      subnetMask: intToIp(mask >>> 0),
+      gatewayIp: intToIp(gatewayIPInt),
+      startIp: intToIp(ipPoolStartInt),
+      endIp: intToIp(ipPoolEndInt),
+    };
+  }
+  
