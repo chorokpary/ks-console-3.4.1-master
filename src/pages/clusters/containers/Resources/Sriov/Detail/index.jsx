@@ -95,6 +95,14 @@ const KeypairDetail = props => {
         value: detail.cluster,
       },
       {
+        name: t('RESOURCES_SR_IOV_NETWORK'),
+        value: detail.network.name,
+      },
+      {
+        name: t('RESOURCES_RESOURCE_NAME'),
+        value: detail.network.resource_name,
+      },
+      {
         name: t('RESOURCES_NETWORK_TYPE_YOO'),
         value: detail.network.type.toUpperCase(),
       },

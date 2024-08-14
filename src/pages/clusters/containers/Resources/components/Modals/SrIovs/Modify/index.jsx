@@ -41,7 +41,7 @@ const ModifyModal = props => {
 
   useEffect(() => {
     const getSriovVfs = async () => {
-      const numberOfVfs = await sriovStore.fetchSriovVfs({ ...props });
+      const numberOfVfs = await sriovStore.fetchSriovVfs({ resourceName: detail.resource_name, ...props });
       setVfs(numberOfVfs.number);
     };
     getSriovVfs();

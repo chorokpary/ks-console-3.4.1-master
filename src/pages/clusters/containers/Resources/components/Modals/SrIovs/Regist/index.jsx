@@ -12,7 +12,7 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
-import { PropertiesInput, NumberInput } from 'components/Inputs';
+import { PropertiesInput, NumberInput, ProjectSelect } from 'components/Inputs';
 import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
 import * as common from 'utils/resources';
 import SriovStore from 'stores/resources/sriovs';
@@ -26,6 +26,9 @@ const RegistModal = props => {
 
   const [modelView, setModalView] = useState(true);
   const [regStep, setRegStep] = useState(1);
+  const [projectName, setProjectName] = useState(
+    props.namespace ? props.namespace : 'default'
+  );
 
   const [bondcheck, setBondCheck] = useState(false);
 
@@ -67,7 +70,7 @@ const RegistModal = props => {
   }, []);
 
   const getVfs = async name => {
-    const numberOfVfs = await sriovStore.fetchSriovVfs({ ...props, name });
+    const numberOfVfs = await sriovStore.fetchSriovVfs({ resourceName: name, ...props });
     setVfs(numberOfVfs.number);
   };
 
@@ -105,6 +108,7 @@ const RegistModal = props => {
       data.dns = dns;
       data.host_routes = host_routes;
       data.networks = bondCheckItems;
+      data.project = projectName;
       // console.log(data)
       onOk({ ...data });
     });
@@ -440,7 +444,7 @@ const RegistModal = props => {
     <>
       <Modal
         icon="pen"
-        width={800}
+        width={850}
         title={props.title}
         onCancel={closeModal}
         bodyClassName={styles.body}
@@ -459,13 +463,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -477,8 +480,8 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -515,26 +518,49 @@ const RegistModal = props => {
                 <Form.Item>
                   <Columns>
                     <Column>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_RESOURCE_NAME')}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                              },
+                            ]}
+                          >
+                            <Select
+                              name="resource_name"
+                              placeholder={t('RESOURCES_SELECT')}
+                              options={resourceNameOptions}
+                              onChange={e => getVfs(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item label={t('VF')}>
+                            <Input name="vfs" defaultValue={vfs} disabled />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Column>
+                    <Column>
                       <Form.Item
-                        label={t('RESOURCES_RESOURCE_NAME')}
+                        label={t('PROJECT')}
+                        desc={t('SELECT_PROJECT_DESC')}
                         rules={[
                           {
                             required: true,
-                            message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                            message: t('PROJECT_NOT_SELECT_DESC'),
                           },
                         ]}
                       >
-                        <Select
-                          name="resource_name"
-                          placeholder={t('RESOURCES_SELECT')}
-                          options={resourceNameOptions}
-                          onChange={e => getVfs(e)}
+                        <ProjectSelect
+                          name="namespace"
+                          defaultValue={projectName}
+                          cluster={props.cluster}
+                          onChange={e => setProjectName(e)}
                         />
-                      </Form.Item>
-                    </Column>
-                    <Column>
-                      <Form.Item label={t('VF')}>
-                        <Input name="vfs" defaultValue={vfs} disabled />
                       </Form.Item>
                     </Column>
                   </Columns>
@@ -723,7 +749,7 @@ const RegistModal = props => {
                                     !!(
                                       dataListVariables['bond'].length > 0 &&
                                       stateVariables['bond'].length ===
-                                        dataListVariables['bond'].length
+                                      dataListVariables['bond'].length
                                     )
                                   }
                                 />

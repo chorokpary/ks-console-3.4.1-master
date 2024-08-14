@@ -150,6 +150,7 @@ export default class SriovStore extends Base {
     networkData.gateway_ip = data.gateway_ip;
     networkData.ip_pool = data.ip_pool;
     networkData.dns = data.dns;
+    networkData.project = data.project;
     networkData.networks = data.networks;
     networkData.host_routes = data.host_routes;
     networkData.segment_id = data.segment_id;
@@ -276,10 +277,10 @@ export default class SriovStore extends Base {
   }
 
   @action
-  async fetchSriovVfs(params) {
+  async fetchSriovVfs({ resourceName, ...params }) {
     this.isLoading = true
 
-    const url = `${this.getResourceUrl(params)}/${params.name}/number_of_vfs`;
+    const url = `${this.getResourceUrl(params)}/${resourceName}/number_of_vfs`;
     const result = await request.get(url)
 
     const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
