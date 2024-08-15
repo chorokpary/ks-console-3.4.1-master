@@ -144,7 +144,7 @@ const RegistModal = props => {
 
       setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
-      setSriovNetworkDataList(listSriovNetwork.networks);
+      setSriovNetworkDataList(listSriovNetwork.sriovs);
       setKeypairDataList(listKeypair.keypairs);
       setNodeDataList(listNode.nodes.filter(obj => obj.node_role != 'master'));
       setSecurityGroupDataList(listSecurityGroup);
