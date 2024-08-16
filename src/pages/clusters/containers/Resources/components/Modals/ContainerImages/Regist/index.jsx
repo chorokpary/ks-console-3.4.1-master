@@ -746,8 +746,7 @@ const ResourceImageModal = props => {
                                       name="regUrl"
                                       placeholder={
                                         publicType === 'private'
-                                          ? // eslint-disable-next-line no-template-curly-in-string
-                                            'https://{url}?projects=${project_name}'
+                                          ? 'https://{url}?projects={project_name}'
                                           : ''
                                       }
                                       defaultValue={registryUrl}
