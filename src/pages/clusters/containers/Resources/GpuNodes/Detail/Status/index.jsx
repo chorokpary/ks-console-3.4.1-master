@@ -63,18 +63,17 @@ export default class Status extends React.Component {
       </Panel>
       <Panel title={t('RESOURCES_GPU_VM_PASSTHROUGH_DEPLOYMENT_STATUS')}>
         <div className={styles.deployments}>
-          <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
-          <DeploymentCard key="cc_manager" data={cc_manager} />
           <DeploymentCard key="vfio_manager" data={vfio_manager} />
+          <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
+          <DeploymentCard key="sandbox_validator" data={sandbox_validator} />
         </div>
       </Panel>
       <Panel title={t('RESOURCES_GPU_VM_VGPU_DEPLOYMENT_STATUS')}>
         <div className={styles.deployments}>
-          <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
-          <DeploymentCard key="cc_manager" data={cc_manager} />
-          <DeploymentCard key="sandbox_validator" data={sandbox_validator} />
           <DeploymentCard key="vgpu_manager" data={vgpu_manager} />
           <DeploymentCard key="vgpu_device_manager" data={vgpu_device_manager} />
+          <DeploymentCard key="sandbox_device_plugin" data={sandbox_device_plugin} />
+          <DeploymentCard key="sandbox_validator" data={sandbox_validator} />
         </div>
       </Panel>
       </>
