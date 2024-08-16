@@ -119,17 +119,6 @@ export default class Keypairs extends React.Component {
         ),
       },
       {
-        title: t('PROJECT'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-        render: project => (
-          <Link to={`/clusters/${cluster}/projects/${project}/overview`}>
-            {project}
-          </Link>
-        ),
-      },
-      {
         title: t('Finger Print'),
         dataIndex: 'finger_print',
         isHideable: true,

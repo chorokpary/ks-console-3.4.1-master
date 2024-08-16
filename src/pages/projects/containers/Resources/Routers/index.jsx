@@ -121,20 +121,6 @@ export default class Routers extends React.Component {
         },
       },
       {
-        title: t('PROJECT'),
-        dataIndex: 'project',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: project => (
-          <Link
-            to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}
-          >
-            {showNameAndAlias(project, 'project')}
-          </Link>
-        ),
-      },
-      {
         title: t('RESOURCES_SNAT_OPTION'),
         dataIndex: 'enable_snat',
         isHideable: true,
