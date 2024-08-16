@@ -132,6 +132,17 @@ const DetailVmList = (props) => {
       return row[props.variables].name === props.name
     } else if (props.variables == 'id') {
       return row[props.variables] === props.id
+    } else if (props.variables == 'host_device') {
+      if (props.gpu) {
+        return row['gpus'].includes(props.name)
+      }
+      if (!props.gpu) {
+        row['host_devices'].includes(props.name)
+      }
+    } else if (props.variables == 'mediated_device') {
+      if (props.gpu) {
+        return row['gpus'].includes(props.name)
+      }
     }
     return row[props.variables] === props.name
   }

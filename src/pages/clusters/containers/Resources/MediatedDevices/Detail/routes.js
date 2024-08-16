@@ -20,7 +20,7 @@ import { getIndexRoute } from 'utils/router.config'
 
 import Status from 'clusters/containers/Resources/MediatedDevices/Detail/Status'
 
-const PATH = '/clusters/:cluster/MediatedDevices/:id'
+const PATH = '/clusters/:cluster/mediateddevices/:id'
 
 export default [
     {

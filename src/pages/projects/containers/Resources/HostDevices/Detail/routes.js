@@ -1,6 +1,6 @@
 /*
  * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
+ * Copyright (C) 2024 The KubeSphere Console Authors.
  *
  * KubeSphere Console is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,9 +18,9 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/HostDevices/Detail/Status'
+import Status from './Status'
 
-const PATH = '/clusters/:cluster/hostdevices/:id'
+const PATH = '/:workspace/clusters/:cluster/projects/:namespace/hostdevices/:id'
 
 export default [
     {

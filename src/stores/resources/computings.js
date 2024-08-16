@@ -55,8 +55,8 @@ export default class ComputingStore extends Base {
       { num: 9, type: 'floating_ips', root: 'floating_ips', name: t('RESOURCES_FLOATING_IP'), routeName: 'floatingip', multitenancy: true, icon: 'intranet-routers', createField: 'not' },
       { num: 10, type: 'lbs', root: 'lbs', name: t('RESOURCES_LOAD_BALANCER'), routeName: 'loadBalancers', multitenancy: true, icon: 'loadbalancer', createField: 'timestamp' },
       { num: 11, type: 'security_groups', root: 'security_groups', name: t('RESOURCES_SECURITY_GROUP'), routeName: 'securityGroups', multitenancy: true, icon: 'shield', createField: 'timestamp' },
-      { num: 12, type: 'host_devices', root: 'host_devices', name: t('RESOURCES_HOST_DEVICE'), routeName: 'hostDevices', multitenancy: false, icon: 'ico-type-hostdevice', createField: 'timestamp' },
-      { num: 13, type: 'mediated_devices', root: 'mediated_devices', name: t('RESOURCES_MEDIATED_DEVICE'), routeName: 'mediatedDevices', multitenancy: false, icon: 'ico-type-mediatedvgpu', createField: 'timestamp' },
+      { num: 12, type: 'host_devices', root: 'host_devices', name: t('RESOURCES_HOST_DEVICE'), routeName: 'hostdevices', multitenancy: false, icon: 'ico-type-hostdevice', createField: 'timestamp' },
+      { num: 13, type: 'mediated_devices', root: 'mediated_devices', name: t('RESOURCES_MEDIATED_DEVICE'), routeName: 'mediateddevices', multitenancy: false, icon: 'ico-type-mediatedvgpu', createField: 'timestamp' },
     ];
 
     const computingDataArray = [];

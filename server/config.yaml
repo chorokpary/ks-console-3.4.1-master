@@ -233,12 +233,6 @@ client:
                 skipAuth: true,
                 showInDisable: true,
               }
-            # - {
-            #   name: sriovs,
-            #   title: "SR-IOV 네트워크",
-            #   skipAuth: true,
-            #   showInDisable: true,
-            # }
             - {
                 name: resourcesVolumes,
                 title: RESOURCES_VOLUME,
@@ -246,13 +240,13 @@ client:
                 showInDisable: true,
               }
             - {
-                name: hostDevices,
+                name: hostdevices,
                 title: RESOURCES_HOST_DEVICE,
                 skipAuth: true,
                 showInDisable: true,
               }
             - {
-                name: mediatedDevices,
+                name: mediateddevices,
                 title: RESOURCES_MEDIATED_DEVICE,
                 skipAuth: true,
                 showInDisable: true,
@@ -566,12 +560,12 @@ client:
                 showInDisable: true,
               }
             - {
-                name: hostDevices,
+                name: hostdevices,
                 title: RESOURCES_HOST_DEVICE,
                 showInDisable: true,
               }
             - {
-                name: mediatedDevices,
+                name: mediateddevices,
                 title: RESOURCES_MEDIATED_DEVICE,
                 showInDisable: true,
               }

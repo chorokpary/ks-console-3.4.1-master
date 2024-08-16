@@ -38,27 +38,11 @@ const HostDeviceDetail = (props) => {
         store.fetchDetail(props.match.params);
     }
     const listUrl = () => {
-        const { cluster } = props.match.params
-        return `/clusters/${cluster}/hostdevices`
+        const { workspace, cluster, namespace } = props.match.params;
+        return `/${workspace}/clusters/${cluster}/projects/${namespace}/hostDevices`
     }
-    const routing = props.rootStore.routing;
-    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
     const getOperations = () => [
-        {
-            key: 'edit',
-            icon: 'pen',
-            text: t('EDIT_INFORMATION'),
-            action: 'edit',
-            show: showEdit,
-            onClick: () =>
-                props.rootStore.triggerAction('hostDevice.edit', {
-                    type: 'HOST_DEVICE_DETAIL',
-                    detail: toJS(store.detail.host_device),
-                    store,
-                    success: fetchData,
-                }),
-        },
         {
             key: 'viewYaml',
             icon: 'eye',
@@ -68,24 +52,6 @@ const HostDeviceDetail = (props) => {
                 props.rootStore.triggerAction('hostDevice.yaml.view', {
                     yaml: store.yaml,
                     readOnly: true,
-                })
-        },
-        {
-            key: 'delete',
-            icon: 'trash',
-            text: t('DELETE'),
-            action: 'delete',
-            type: 'danger',
-            show: showEdit,
-            onClick: () =>
-                props.rootStore.triggerAction('hostDevice.remove', {
-                    type: 'HOSTDEVICE_DETAIL',
-                    detail: store.detail.host_device,
-                    store: store,
-                    cluster: props.match.params.cluster,
-                    success: () => routing.push(listUrl()),
-                    okText: t('RESOURCES_DELETE'),
-                    cancelText: t('RESOURCES_CANCEL'),
                 })
         },
     ]
@@ -130,7 +96,7 @@ const HostDeviceDetail = (props) => {
             {
                 name: t('RESOURCES_REGIST_DATE'),
                 value: getLocalTime(detail.host_device.timestamp).format(
-                  'YYYY-MM-DD HH:mm:ss'
+                    'YYYY-MM-DD HH:mm:ss'
                 ),
             },
         ]
@@ -169,4 +135,3 @@ const HostDeviceDetail = (props) => {
 }
 
 export default inject('rootStore')(observer(HostDeviceDetail));
-

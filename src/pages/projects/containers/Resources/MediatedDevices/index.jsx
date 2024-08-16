@@ -20,6 +20,8 @@ import React from 'react';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
+import { Link } from 'react-router-dom'
+import { getLocalTime } from 'utils';
 
 import MediatedDeviceStore from 'stores/resources/mediateddevices';
 
@@ -54,23 +56,28 @@ export default class MediatedDevice extends React.Component {
 
   getColumns = () => {
     const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { workspace, cluster, namespace } = this.props.match.params;
     return [
       {
         title: t('RESOURCES_NAME'),
         dataIndex: 'resource_name',
         sorter: true,
         search: true,
-        render: name => {
-          const { cluster } = this.props.match.params;
-
+        render: (id, item) => {
           return (
             <div className={styles.avatar}>
               <div className={styles.icon}>
                 <i className="ico-type-mediatedvgpu"></i>
               </div>
               <div>
-                <div className={styles.title}>{name}</div>
+                <div>
+                  <Link
+                    className={styles.title}
+                    to={`/${workspace}/clusters/${cluster}/projects/${namespace}/mediateddevices/${item.id}`}
+                  >
+                    {item.name}
+                  </Link>
+                </div>
               </div>
             </div>
           );
@@ -94,6 +101,19 @@ export default class MediatedDevice extends React.Component {
         dataIndex: 'allocatable',
         isHideable: true,
         width: 'auto',
+      },
+      {
+        title: t('RESOURCES_REGIST_DATE'),
+        dataIndex: 'timestamp',
+        isHideable: true,
+        sorter: true,
+        sortOrder: getSortOrder('descend'),
+        width: 150,
+        render: date => (
+          <p>
+            {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
+          </p>
+        ),
       },
     ];
   };
