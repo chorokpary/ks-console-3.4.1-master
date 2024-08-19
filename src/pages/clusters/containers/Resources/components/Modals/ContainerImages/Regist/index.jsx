@@ -238,6 +238,8 @@ const ResourceImageModal = props => {
         handleOk()
       } else {
         setRegStep(2)
+        setTagList([])
+        setImageName('')
         setSubmitButtonFlag(false)
       }
     }
