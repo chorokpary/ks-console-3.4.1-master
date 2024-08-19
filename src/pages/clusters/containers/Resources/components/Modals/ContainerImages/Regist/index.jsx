@@ -310,7 +310,6 @@ const ResourceImageModal = props => {
       obj => obj.size !== null && obj.size !== 0
     )
     setTagList(tags)
-    setTag(tags?.[0]?.name)
     setSourceEmpty(false)
     getMatchingTags(tags, archType, acceleratorType)
   }
@@ -343,6 +342,7 @@ const ResourceImageModal = props => {
       .filter(ver => tagRegex.test(ver.name))
       .sort((a, b) => b.name.localeCompare(a.name))
     setKubeVersionList(kubeVersions)
+    setTag(kubeVersions?.[0]?.name)
     setLoading(false)
   }
 
