@@ -21,13 +21,13 @@ import classnames from 'classnames'
 import axios from 'axios'
 import { Base64 } from 'js-base64'
 
-import { PATTERN_USER_NAME } from 'utils/constants'
 import GpuNodeStore from 'stores/resources/gpunodes'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
 const defaultImageSize = '12GB'
 const regexVersion = /^v(\d+\.\d+\.\d+)$/
+const regexName = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
 
 const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
 const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE')
@@ -231,7 +231,7 @@ const ResourceImageModal = props => {
     if (step === 1) {
       if (
         data.name === undefined ||
-        !PATTERN_USER_NAME.test(data.name) ||
+        !regexName.test(data.name) ||
         sizeEmpty ||
         (publicType === 'private' && !registryValid)
       ) {
@@ -670,7 +670,7 @@ const ResourceImageModal = props => {
                 rules={[
                   { required: true, message: t('NAME_EMPTY_DESC') },
                   {
-                    pattern: PATTERN_USER_NAME,
+                    pattern: regexName,
                     message: t('RESOURCES_INVALID_NAME_DESC'),
                   },
                 ]}
