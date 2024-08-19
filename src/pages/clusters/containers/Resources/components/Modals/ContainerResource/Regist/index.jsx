@@ -89,7 +89,7 @@ const RegistModal = props => {
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
-      setSriovNetworkDataList(listSriovNetwork.networks)
+      setSriovNetworkDataList(listSriovNetwork.sriovs)
       setLoadBalancerDataList(listLoadBalancer._originData.lbs)
     }
 

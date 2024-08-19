@@ -1,200 +1,200 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { get, omit, range } from 'lodash';
+import React, { useEffect, useRef, useState } from 'react'
+import { range } from 'lodash'
 import {
+  Button,
   Form,
   Input,
-  Select,
-  Button,
-  Tooltip,
-  TextArea,
-  Dropdown,
   Loading,
   Notify,
-} from '@kube-design/components';
-import { Column, Columns } from '@kube-design/components/lib/components/Layout';
+  Select,
+  TextArea,
+} from '@kube-design/components'
+import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import {
   RadioButton,
   RadioGroup,
-} from '@kube-design/components/lib/components/Radio';
-import classnames from 'classnames';
-import axios from 'axios';
-import { Base64 } from 'js-base64';
-import styles from './index.scss';
-import TypeSelect from '../../../TypeSelect';
-import CardSelect from '../../../CardSelect';
+} from '@kube-design/components/lib/components/Radio'
+import classnames from 'classnames'
+import axios from 'axios'
+import { Base64 } from 'js-base64'
 
-import DistroTypeStore from 'stores/resources/distrotype';
-import { UnitSlider, NumberInput } from 'components/Inputs';
-import { Modal, List } from 'components/Base';
-import { PATTERN_USER_NAME } from 'utils/constants';
-import { InputPassword } from '@kube-design/components/lib/components/Input';
+import DistroTypeStore from 'stores/resources/distrotype'
+import { UnitSlider } from 'components/Inputs'
+import { Modal } from 'components/Base'
+import { PATTERN_USER_NAME } from 'utils/constants'
+import { InputPassword } from '@kube-design/components/lib/components/Input'
+import CardSelect from '../../../CardSelect'
+import TypeSelect from '../../../TypeSelect'
+import styles from './index.scss'
 
-const defaultImageSize = '12GB';
+const defaultImageSize = '12GB'
 
-const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC');
-const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE');
+const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
+const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE')
 // const defaultRegistryUrl = 'https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image'
-const defaultRegistryUrl = 'https://quay.io?namespace=edgestack';
+const defaultRegistryUrl = 'https://quay.io?namespace=edgestack'
 
 const realTimeOptions = [
   { label: t('RESOURCES_NOT_USE'), value: false },
   { label: t('RESOURCES_USE'), value: true },
-];
+]
 const publicTypeOptions = [
   { label: t('RESOURCES_PUBLIC'), value: 'public' },
   { label: t('RESOURCES_PRIVATE'), value: 'private' },
-];
+]
 const archTypeOptions = [
   { label: 'x86_64', value: 'x86_64' },
   { label: 'aarch64', value: 'aarch64' },
-];
+]
 const bootTypeOptions = [
   { label: 'legacy', value: 'legacy' },
   { label: 'uefi', value: 'uefi' },
-];
+]
 const osTypeOptions = [
   { label: 'Linux', value: 'linux', icon: 'ico-linux' },
   { label: 'Windows', value: 'windows', icon: 'ico-windows' },
   //   { label: 'etc', value: '', icon: 'ico-plus' },
-];
+]
 
 export default function ResourceImageModal({ title, store, onOk }) {
-  const form = useRef();
-  const [formData, setFormData] = useState({});
-  const distroTypeStore = new DistroTypeStore();
+  const form = useRef()
+  const [formData] = useState({})
+  const distroTypeStore = new DistroTypeStore()
 
-  const [modelView, setModalView] = useState(true);
+  const [modelView, setModalView] = useState(true)
 
-  const [realTime, setRealTime] = useState(false);
-  const [osType, setOsType] = useState('linux');
-  const [distroTypeData, setDistroTypeData] = useState([]);
-  const [distroTypeList, setDistroTypeList] = useState([]);
-  const [distroType, setDistroType] = useState('ubuntu');
+  const [realTime, setRealTime] = useState(false)
+  const [osType, setOsType] = useState('linux')
+  const [distroTypeData, setDistroTypeData] = useState([])
+  const [distroTypeList, setDistroTypeList] = useState([])
+  const [distroType, setDistroType] = useState('ubuntu')
 
-  const [imageSize, setImageSize] = useState(defaultImageSize);
-  const [imageSizeActive, setImageSizeActive] = useState(false);
-  const [sizeEmpty, setSizeEmpty] = useState(false);
+  const [imageSize, setImageSize] = useState(defaultImageSize)
+  const [imageSizeActive, setImageSizeActive] = useState(false)
+  const [sizeEmpty, setSizeEmpty] = useState(false)
 
-  const [regStep, setRegStep] = useState(1);
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+  const [regStep, setRegStep] = useState(1)
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
-  const [imageName, setPropsImageName] = useState('');
-  const [imageTag, setPropsImageTag] = useState('');
-  const [projectName, setProjectName] = useState('edgestack');
-  const [dockerUrl, setDockerUrl] = useState('quay.io');
+  const [imageName, setPropsImageName] = useState('')
+  const [imageTag, setPropsImageTag] = useState('')
+  const [projectName, setProjectName] = useState('edgestack')
+  const [dockerUrl, setDockerUrl] = useState('quay.io')
 
-  const [sourceEmpty, setSourceEmpty] = useState(false);
-  const [userName, setPropsUserName] = useState('');
-  const [userPassword, setPropsUserPassword] = useState('');
+  const [sourceEmpty, setSourceEmpty] = useState(false)
+  const [userName, setPropsUserName] = useState('')
+  const [userPassword, setPropsUserPassword] = useState('')
 
   useEffect(() => {
     const getDistroTypeList = async () => {
-      const dist = await distroTypeStore.fetchList();
-      setDistroTypeData(dist);
-      setDistroTypeList(dist.filter(obj => obj.name != 'windows'));
-    };
-    getDistroTypeList();
-  }, []);
+      const dist = await distroTypeStore.fetchList()
+      setDistroTypeData(dist)
+      setDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
+    }
+    getDistroTypeList()
+  }, [])
 
   const handleImageSizeActive = () => {
     if (imageSizeActive) {
-      setImageSize(defaultImageSize);
-      setImageSizeActive(false);
-      setSizeEmpty(false);
+      setImageSize(defaultImageSize)
+      setImageSizeActive(false)
+      setSizeEmpty(false)
     } else {
-      setImageSizeActive(true);
+      setImageSizeActive(true)
     }
-  };
+  }
 
   const distroTypeOptions = () => {
-    const opt = distroTypeList.map(obj => ({
+    return distroTypeList.map(obj => ({
       label: t(obj.name),
       description: t(obj.vendor),
       icon: `ico-os-${obj.name}`,
       value: t(obj.name),
-    }));
-    return opt;
-  };
+    }))
+  }
 
   const handleOk = () => {
     form.current.validator(() => {
-      const { data } = form.current.props;
+      const { data } = form.current.props
 
       if (sizeEmpty) {
-        return;
+        return
       }
-      data.size = Number(imageSize.slice(0, imageSize.length - 2));
+      data.size = Number(imageSize.slice(0, imageSize.length - 2))
 
-      if (imageTag == '') {
-        setSourceEmpty(true);
-        return;
+      if (imageTag === '') {
+        setSourceEmpty(true)
+        return
       }
-      setSourceEmpty(false);
+      setSourceEmpty(false)
 
-      data.userName = userName;
-      data.userPassword = userPassword;
-      data.distro_type = distroType;
-      data.source = `docker://${dockerUrl}/${projectName}/${imageName}:${imageTag}`;
+      data.userName = userName
+      data.userPassword = userPassword
+      data.distro_type = distroType
+      data.source = `docker://${dockerUrl}/${projectName}/${imageName}:${imageTag}`
 
-      onOk({ image: data });
-    });
-  };
+      onOk({ image: data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   const getMarks = () => {
-    const max = 200;
-    const count = 5;
+    const max = 200
+    const count = 5
     return range(count).reduce((marks, index) => {
-      const value = (max * index) / (count - 1);
-      const mark = value === 0 ? '0' : `${Math.floor(value)}GB`;
-      return { ...marks, [value]: mark };
-    }, {});
-  };
+      const value = (max * index) / (count - 1)
+      const mark = value === 0 ? '0' : `${Math.floor(value)}GB`
+      return { ...marks, [value]: mark }
+    }, {})
+  }
 
   const handleOsType = value => {
-    setOsType(value);
-    if (value == 'windows') {
-      setDistroType('windows');
-      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'));
-    } else if (value == 'linux') {
-      setDistroType('ubuntu');
-      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'));
+    setOsType(value)
+    if (value === 'windows') {
+      setDistroType('windows')
+      setDistroTypeList(distroTypeData.filter(obj => obj.name === 'windows'))
+    } else if (value === 'linux') {
+      setDistroType('ubuntu')
+      setDistroTypeList(distroTypeData.filter(obj => obj.name !== 'windows'))
     } else {
-      setDistroType('');
-      setDistroTypeList([]);
+      setDistroType('')
+      setDistroTypeList([])
     }
-  };
+  }
 
   useEffect(() => {
-    const val = Number(imageSize.substring(0, imageSize.length - 2));
+    const val = Number(imageSize.substring(0, imageSize.length - 2))
 
     if (val < 11) {
-      setSizeEmpty(true);
+      setSizeEmpty(true)
     } else {
-      setSizeEmpty(false);
+      setSizeEmpty(false)
     }
-  }, [imageSize]);
+  }, [imageSize])
 
   const stepMoveCheck = step => {
-    const { data } = form.current.props;
-    if (step == 1) {
-      if (data.name == undefined || !PATTERN_USER_NAME.test(data.name) || sizeEmpty) {
-        handleOk();
+    const { data } = form.current.props
+    if (step === 1) {
+      if (
+        data.name === undefined ||
+        !PATTERN_USER_NAME.test(data.name) ||
+        sizeEmpty
+      ) {
+        handleOk()
       } else {
-        setRegStep(2);
-        setSubmitButtonFlag(false);
+        setRegStep(2)
+        setSubmitButtonFlag(false)
       }
     }
-  };
+  }
 
   const fnGetModalFooter = () => {
-    let elements = '';
-    elements = (
+    return (
       <>
-        {regStep == 1 && (
+        {regStep === 1 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -205,7 +205,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(1);
+                stepMoveCheck(1)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -213,7 +213,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
             </Button>
           </>
         )}
-        {regStep == 2 && (
+        {regStep === 2 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -223,7 +223,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(1);
+                setRegStep(1)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -232,7 +232,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
             {submitButtonFlag ? (
               <Button
                 onClick={() => {
-                  handleOk();
+                  handleOk()
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
                 loading={store.isSubmitting}
@@ -243,7 +243,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
             ) : (
               <Button
                 onClick={() => {
-                  handleOk();
+                  handleOk()
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
                 loading={store.isSubmitting}
@@ -255,11 +255,8 @@ export default function ResourceImageModal({ title, store, onOk }) {
           </>
         )}
       </>
-    );
-
-    return elements;
-  };
-
+    )
+  }
 
   return (
     <>
@@ -282,17 +279,18 @@ export default function ResourceImageModal({ title, store, onOk }) {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep === 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -301,28 +299,29 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   {t('RESOURCES_DEFAULT_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 1
+                  {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep === 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -331,7 +330,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
                   {t('RESOURCES_DETAIL_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 2
+                  {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : t('RESOURCES_NOT_SET')}
                 </div>
@@ -340,7 +339,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
           </div>
 
           <div className={styles.cont_boxwrap}>
-            <div className={`${regStep == 1 ? '' : 'hide'}`}>
+            <div className={`${regStep === 1 ? '' : 'hide'}`}>
               <Form.Item
                 label={t('RESOURCES_NAME')}
                 rules={[
@@ -383,7 +382,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
                         </Form.Item>
                       </Column>
                       <Column>
-                        <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
+                        <Form.Item
+                          label={t('RESOURCES_DISTRIBUTION')}
+                          rules={[{ required: true }]}
+                        >
                           <TypeSelect
                             // name="distro_type"
                             onChange={e => setDistroType(e)}
@@ -458,7 +460,10 @@ export default function ResourceImageModal({ title, store, onOk }) {
                             onChange={value => setRealTime(value)}
                           >
                             {realTimeOptions.map(option => (
-                              <RadioButton key={option.value} value={option.value}>
+                              <RadioButton
+                                key={option.value}
+                                value={option.value}
+                              >
                                 {option.label}
                               </RadioButton>
                             ))}
@@ -490,8 +495,9 @@ export default function ResourceImageModal({ title, store, onOk }) {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''
-                        }`}
+                      className={`${styles.cont_box_wrap} ${
+                        sizeEmpty ? styles.formErrorStyle : ''
+                      }`}
                     >
                       <div className={styles.cont_box_section}>
                         <div className={styles.cont_box_wrap}>
@@ -554,7 +560,7 @@ export default function ResourceImageModal({ title, store, onOk }) {
         </Form>
       </Modal>
     </>
-  );
+  )
 }
 
 /**
@@ -573,94 +579,94 @@ const Step2 = ({
   setPropsUserName,
   setPropsUserPassword,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [publicType, setPublicType] = useState('public');
+  const [loading, setLoading] = useState(false)
+  const [publicType, setPublicType] = useState('public')
 
   const [registryUrl, setRegistryUrl] = useState(
-    publicType == 'private' ? '' : defaultRegistryUrl
-  );
-  const [registryUrlActive, setRegistryUrlActive] = useState(false);
-  const [popActive, setPopActive] = useState(false);
+    publicType === 'private' ? '' : defaultRegistryUrl
+  )
+  const [registryUrlActive, setRegistryUrlActive] = useState(false)
+  const [popActive, setPopActive] = useState(false)
 
-  const [imageName, setImageName] = useState('');
-  const [imageListData, setImageListData] = useState([]);
-  const [imageList, setImageList] = useState([]);
-  const [tagList, setTagList] = useState([]);
-  const [tag, setTag] = useState('');
+  const [imageName, setImageName] = useState('')
+  const [imageListData, setImageListData] = useState([])
+  const [imageList, setImageList] = useState([])
+  const [tagList, setTagList] = useState([])
+  const [tag, setTag] = useState('')
 
-  const [userName, setUserName] = useState('');
-  const [userPassword, setUserPassword] = useState('');
+  const [userName, setUserName] = useState('')
+  const [userPassword, setUserPassword] = useState('')
 
-  const [harborValid, setHarborValid] = useState(false);
-  const [userValidError, setUserValidError] = useState(false);
-  const [harborValidError, setHarborValidError] = useState(false);
-  const [harborAuth, setHarborAuth] = useState('');
+  const [harborValid, setHarborValid] = useState(false)
+  const [userValidError, setUserValidError] = useState(false)
+  const [harborValidError, setHarborValidError] = useState(false)
+  const [harborAuth, setHarborAuth] = useState('')
 
-  const [imageText, setImageText] = useState(defaultImageText);
+  const [imageText, setImageText] = useState(defaultImageText)
 
   useEffect(() => {
-    document.querySelector('#chk-1').checked = false;
-    resetAll();
+    document.querySelector('#chk-1').checked = false
+    resetAll()
 
-    if (publicType == 'public') {
-      setRegistryUrlActive(false);
-      setRegistryUrl(defaultRegistryUrl);
+    if (publicType === 'public') {
+      setRegistryUrlActive(false)
+      setRegistryUrl(defaultRegistryUrl)
     } else {
-      setRegistryUrlActive(true);
-      document.querySelector('#chk-1').checked = true;
-      let regUrlInput = document.querySelector('input[name=regUrl]')
-      if (regUrlInput) regUrlInput.value = '';
-      setRegistryUrl('');
+      setRegistryUrlActive(true)
+      document.querySelector('#chk-1').checked = true
+      const regUrlInput = document.querySelector('input[name=regUrl]')
+      if (regUrlInput) regUrlInput.value = ''
+      setRegistryUrl('')
     }
-  }, [publicType]);
+  }, [publicType])
 
   useEffect(() => {
-    setPropsImageName(imageName);
-  }, [imageName]);
+    setPropsImageName(imageName)
+  }, [imageName])
 
   useEffect(() => {
-    setPropsImageTag(tag);
+    setPropsImageTag(tag)
     if (registryUrl) {
-      const originUrl = new URL(registryUrl);
-      setDockerUrl(originUrl.host);
+      const originUrl = new URL(registryUrl)
+      setDockerUrl(originUrl.host)
     }
-  }, [tag]);
+  }, [tag])
 
   // public type 바뀔때마다 설정 초기화
   const resetAll = () => {
     // setRegistryUrlActive(false); // registry url 비활성
-    setTagList([]);
-    setImageName('');
-    setTag('');
+    setTagList([])
+    setImageName('')
+    setTag('')
 
     // error 초기화
-    setHarborValidError(false);
-    setUserValidError(false);
-    setHarborValid(false);
-  };
+    setHarborValidError(false)
+    setUserValidError(false)
+    setHarborValid(false)
+  }
 
   // registry url 활성/비활성
-  const handleRegistryUrl = (e) => {
+  const handleRegistryUrl = () => {
     if (registryUrlActive) {
-      resetAll();
-      setRegistryUrlActive(false);
+      resetAll()
+      setRegistryUrlActive(false)
     } else {
-      setRegistryUrlActive(true);
+      setRegistryUrlActive(true)
     }
     // error 초기화
-    setHarborValidError(false);
-    setUserValidError(false);
-    setHarborValid(false);
-  };
+    setHarborValidError(false)
+    setUserValidError(false)
+    setHarborValid(false)
+  }
 
   // image list
   const handleImagePop = async () => {
-    if (publicType == 'public') {
+    if (publicType === 'public') {
       // const response = await axios.get(`https://quay.io/api/v1/repository?public=true&namespace=edgestack&last_modified=true&popularity=true&repo_kind=image`, {
       try {
-        const originUrl = new URL(registryUrl);
-        const urlParams = originUrl.searchParams;
-        const namespace = urlParams.get('namespace');
+        const originUrl = new URL(registryUrl)
+        const urlParams = originUrl.searchParams
+        const namespace = urlParams.get('namespace')
 
         const response = await axios.get(
           `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`,
@@ -669,225 +675,220 @@ const Step2 = ({
               'X-Requested-With': 'XMLHttpRequest',
             },
           }
-        );
-        setImageListData(response.data.repositories);
-        setImageList(response.data.repositories);
-        setPopActive(true);
-        setImageText(defaultImageText);
+        )
+        setImageListData(response.data.repositories)
+        setImageList(response.data.repositories)
+        setPopActive(true)
+        setImageText(defaultImageText)
       } catch {
-        setImageList([]);
-        setTagList([]);
-        setPopActive(false);
-        setImageText(emptyImageText);
-        setTag('');
+        setImageList([])
+        setTagList([])
+        setPopActive(false)
+        setImageText(emptyImageText)
+        setTag('')
       }
-    } else if (publicType == 'private') {
-      getHarborImages();
+    } else if (publicType === 'private') {
+      getHarborImages()
     }
-  };
+  }
 
   const getHarborImages = () => {
     if (registryUrlActive) {
       if (!harborValid) {
-        setHarborValidError(true);
+        setHarborValidError(true)
       } else {
-        setHarborValidError(false);
-        getPriavteHarborRepositories();
+        setHarborValidError(false)
+        getPriavteHarborRepositories()
       }
     } else {
-      setHarborValidError(false);
-      getPublicHarborRepositories();
+      setHarborValidError(false)
+      getPublicHarborRepositories()
     }
-  };
+  }
 
   // harbor list
   const getPriavteHarborRepositories = async () => {
     try {
-
-      let allData = [];
-      let page = 1;
-      let hasMoreData = true;
+      let allData = []
+      let page = 1
+      let hasMoreData = true
 
       while (hasMoreData) {
         try {
-
           const originUrl = new URL(registryUrl)
           const urlParams = originUrl.searchParams
           const projectName = urlParams.get('projects')
 
-          const response = await request.post(`customharbor/private`, {
+          const fetchedData = await request.post(`customharbor/private`, {
             auth: harborAuth,
             projectName,
             originUrl: originUrl.origin,
-            page: page
+            page,
           })
-
-          const fetchedData = response;
-          allData = [...allData, ...fetchedData];
+          allData = [...allData, ...fetchedData]
 
           // 다음 페이지가 있는지 확인
-          hasMoreData = fetchedData.length === 100;
-          page++;
+          hasMoreData = fetchedData.length === 100
+          page++
         } catch (error) {
-          hasMoreData = false;
+          hasMoreData = false
         }
       }
 
       const list = allData.map(obj => {
-        const [projectName, ...name] = obj.name.split('/');
-        obj.name = name.join('/');
-        obj.project_name = projectName;
-        obj.popularity = obj.pull_count;
-        return obj;
-      });
-      setImageListData(list);
-      setImageList(list);
-      setPopActive(true);
-      setImageText(defaultImageText);
+        const [projectName, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
+        obj.project_name = projectName
+        obj.popularity = obj.pull_count
+        return obj
+      })
+      setImageListData(list)
+      setImageList(list)
+      setPopActive(true)
+      setImageText(defaultImageText)
     } catch {
-      setImageList([]);
-      setTagList([]);
-      setPopActive(false);
-      setImageText(emptyImageText);
-      setTag('');
+      setImageList([])
+      setTagList([])
+      setPopActive(false)
+      setImageText(emptyImageText)
+      setTag('')
     }
-  };
+  }
 
   // harbor list
   const getPublicHarborRepositories = async () => {
     try {
-      const originUrl = registryUrl ? new URL(registryUrl) : '';
+      const originUrl = registryUrl ? new URL(registryUrl) : ''
       const response = await request.post(`customharbor/public`, {
         originUrl,
-      });
+      })
       const list = response.map(obj => {
-        const [projectName, ...name] = obj.name.split('/');
-        obj.name = name.join('/');
-        obj.project_name = projectName;
-        obj.popularity = obj.pull_count;
-        return obj;
-      });
-      setImageListData(list);
-      setImageList(list);
-      setPopActive(true);
-      setImageText(defaultImageText);
+        const [projectName, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
+        obj.project_name = projectName
+        obj.popularity = obj.pull_count
+        return obj
+      })
+      setImageListData(list)
+      setImageList(list)
+      setPopActive(true)
+      setImageText(defaultImageText)
     } catch {
-      setImageList([]);
-      setTagList([]);
-      setPopActive(false);
-      setImageText(emptyImageText);
-      setTag('');
+      setImageList([])
+      setTagList([])
+      setPopActive(false)
+      setImageText(emptyImageText)
+      setTag('')
     }
-  };
+  }
 
   // image tag list
-  const handleImageTag = (imageName, projectName) => {
-    setPopActive(false);
-    setLoading(true);
-    setImageName(imageName);
-    imageName = encodeURIComponent(imageName);
-    if (publicType == 'public') {
-      getPulicImageTag(imageName);
+  const handleImageTag = (image, projectName) => {
+    setPopActive(false)
+    setLoading(true)
+    setImageName(image)
+    image = encodeURIComponent(image)
+    if (publicType === 'public') {
+      getPulicImageTag(image)
     } else {
-      getPrivateImageTag(imageName, projectName);
+      getPrivateImageTag(image, projectName)
     }
-  };
+  }
 
   // public image tag
-  const getPulicImageTag = async imageName => {
-    const originUrl = new URL(registryUrl);
-    const urlParams = originUrl.searchParams;
-    const namespace = urlParams.get('namespace');
+  const getPulicImageTag = async image => {
+    const originUrl = new URL(registryUrl)
+    const urlParams = originUrl.searchParams
+    const namespace = urlParams.get('namespace')
 
     const response = await axios.get(
-      `${originUrl.origin}/api/v1/repository/${namespace}/${imageName}`,
+      `${originUrl.origin}/api/v1/repository/${namespace}/${image}`,
       {
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
         },
       }
-    );
-    setLoading(false);
+    )
+    setLoading(false)
 
-    const tagList = Object.values(response.data.tags).filter(
-      obj => obj.size != null && obj.size != 0
-    );
-    setTagList(tagList);
-    setTag(tagList?.[0]?.name);
-    setSourceEmpty(false);
-  };
+    const tags = Object.values(response.data.tags).filter(
+      obj => obj.size !== null && obj.size !== 0
+    )
+    setTagList(tags)
+    setTag(tags?.[0]?.name)
+    setSourceEmpty(false)
+  }
 
   // private image tag
-  const getPrivateImageTag = async (imageName, projectName) => {
-    const originUrl = registryUrl ? new URL(registryUrl) : '';
+  const getPrivateImageTag = async (image, projectName) => {
+    const originUrl = registryUrl ? new URL(registryUrl) : ''
     const response = await request.post(`customharbor/tags`, {
       auth: harborAuth,
-      repositoryName: imageName,
+      repositoryName: image,
       projectName,
       originUrl: originUrl.origin,
-    });
-    setLoading(false);
+    })
+    setLoading(false)
 
-    let tagList = [];
-    tagList = response?.[0]?.tags;
+    const tags = response?.[0]?.tags
 
-    setProjectName(projectName);
-    setTagList(tagList);
-    setTag(tagList?.[0]?.name);
-    setSourceEmpty(false);
-  };
+    setProjectName(projectName)
+    setTagList(tags)
+    setTag(tags?.[0]?.name)
+    setSourceEmpty(false)
+  }
 
   const searchImageList = e => {
     if (e.key === 'Enter') {
-      const name = e.target.value;
-      const list = imageListData.filter(item => item.name.includes(name));
-      setImageList(list);
+      const name = e.target.value
+      const list = imageListData.filter(item => item.name.includes(name))
+      setImageList(list)
     }
-  };
+  }
 
   const checkUserValid = async () => {
-    const userAuth = Base64.encode(`${userName}:${userPassword}`);
+    const userAuth = Base64.encode(`${userName}:${userPassword}`)
 
-    const originUrl = new URL(registryUrl);
+    const originUrl = new URL(registryUrl)
     await request
       .post(`customharbor/users`, {
         auth: userAuth,
         originUrl: originUrl.origin,
       })
-      .then(res => {
-        Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') });
-        setHarborValid(true);
-        setHarborValidError(false);
-        setUserValidError(false);
+      .then(() => {
+        Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
+        setHarborValid(true)
+        setHarborValidError(false)
+        setUserValidError(false)
 
-        setHarborAuth(userAuth);
-        setPropsUserName(userName);
-        setPropsUserPassword(userPassword);
+        setHarborAuth(userAuth)
+        setPropsUserName(userName)
+        setPropsUserPassword(userPassword)
       })
-      .catch(err => {
-        setHarborValid(false);
-        setUserValidError(true);
-        setTagList([]);
-        setImageName('');
-        setTag('');
-      });
-  };
+      .catch(() => {
+        setHarborValid(false)
+        setUserValidError(true)
+        setTagList([])
+        setImageName('')
+        setTag('')
+      })
+  }
 
   const handleClickOutside = e => {
     if (!e.target.closest('.select_inner_content')) {
-      setPopActive(false);
+      setPopActive(false)
     }
-  };
+  }
 
   useEffect(() => {
-    window.addEventListener('click', handleClickOutside);
+    window.addEventListener('click', handleClickOutside)
     return () => {
-      window.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
+      window.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
 
   return (
-    <div className={`${regStep == 2 ? '' : 'hide'}`}>
+    <div className={`${regStep === 2 ? '' : 'hide'}`}>
       <Form.Item
         label={t('RESOURCES_SOURCE')}
         rules={[
@@ -915,24 +916,39 @@ const Step2 = ({
           <div className={styles.content_box}>
             {/* <label>소스</label> */}
             <div
-              className={`${styles.cont_box_wrap} ${sourceEmpty || harborValidError || userValidError
-                ? styles.formErrorStyle
-                : ''
-                }`}
+              className={`${styles.cont_box_wrap} ${
+                sourceEmpty || harborValidError || userValidError
+                  ? styles.formErrorStyle
+                  : ''
+              }`}
             >
               <div className={styles.cont_box_section}>
                 <div className={styles.cont_box_wrap}>
                   <h6 className={styles.label}>
                     <div className={styles.form_check}>
-                      <input type="checkbox" name="chk-1" id="chk-1" disabled={publicType === 'private'} />
+                      <input
+                        type="checkbox"
+                        name="chk-1"
+                        id="chk-1"
+                        disabled={publicType === 'private'}
+                      />
                       <label
                         htmlFor="chk-1"
-                        onClick={publicType === 'public' ? () => handleRegistryUrl() : (e) => e.preventDefault()}
+                        onClick={
+                          publicType === 'public'
+                            ? () => handleRegistryUrl()
+                            : e => e.preventDefault()
+                        }
                       ></label>
                     </div>
                     <div className={styles.title}>
                       <p>Registry URL</p>
-                      <span>{t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')} {publicType === 'public' ? t('RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC') : t('RESOURCES_IMAGE_REGIST_URL_SETTINGS_PRIVATE')}</span>
+                      <span>
+                        {t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')}{' '}
+                        {publicType === 'public'
+                          ? t('RESOURCES_IMAGE_REGIST_URL_SETTINGS_PUBLIC')
+                          : t('RESOURCES_IMAGE_REGIST_URL_SETTINGS_PRIVATE')}
+                      </span>
                     </div>
                   </h6>
                   {registryUrlActive && (
@@ -947,11 +963,11 @@ const Step2 = ({
                           >
                             <label>Registry URL</label>
                             <input
-                              name='regUrl'
+                              name="regUrl"
                               type="text"
                               placeholder={
-                                publicType == 'private'
-                                  ? 'https://{url}?projects=${project_name}'
+                                publicType === 'private'
+                                  ? 'https://{url}?projects={project_name}'
                                   : ''
                               }
                               defaultValue={registryUrl}
@@ -960,7 +976,7 @@ const Step2 = ({
                           </div>
                         </div>
                       </div>
-                      {publicType == 'private' && (
+                      {publicType === 'private' && (
                         <div className={styles.regi_group_area}>
                           <div className={styles.formarea}>
                             <div className={styles.custom_input}>
@@ -1058,8 +1074,9 @@ const Step2 = ({
                                 {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
                                 <i
                                   style={{
-                                    background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]
-                                      }.svg') center no-repeat`,
+                                    background: `url('/assets/resources/images/icons/ico-os-${
+                                      obj.name.split('-')[0]
+                                    }.svg') center no-repeat`,
                                     width: '30px',
                                     height: '30px',
                                     marginRight: '5px',
@@ -1096,7 +1113,7 @@ const Step2 = ({
                               name="rdo-tag"
                               value="Y"
                               id={`rdo-tag-n${idx}`}
-                              defaultChecked={idx == 0}
+                              defaultChecked={idx === 0}
                             />
                             <label htmlFor={`rdo-tag-n${idx}`}>
                               <i className={styles.ico_etc_tag}></i>
@@ -1139,5 +1156,5 @@ const Step2 = ({
         />
       </Form.Item>
     </div>
-  );
-};
+  )
+}

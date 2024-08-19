@@ -15,19 +15,19 @@ commands:
             docker buildx create --use multi-arch-build
             
 jobs:
-  "development":
+  development:
     machine:
-      image: ubuntu-2004:202010-01
+      image: default
     steps:
       - setup
       - run:
           name: Login to the gitlab
           command: |
-            docker login registry.gitlab.com -u sonaproject -p glpat-ttCToh1dkmWMNU3fFV5s
+            docker login registry.gitlab.com -u sonaproject -p $sonaproject_secret
       - run:
           name: Build multiarch docker image and push
           command: |
-            if [ "${CIRCLE_BRANCH}" == "3.4.1" ]; then
+            if [ "${CIRCLE_BRANCH}" == "3.4.1-master" ]; then
               ./hack/docker_build_multiarch.sh
             fi
 
@@ -35,4 +35,6 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - "development"
+      - development:
+          context:
+            - REPOSECRET

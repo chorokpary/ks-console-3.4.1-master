@@ -49,7 +49,8 @@ import VmDetail from '../containers/Resources/Vms/Detail'
 import VolumeDetail from '../containers/Resources/Volumes/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
-
+import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
+import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 
 export default PATH => [
   {
@@ -176,6 +177,12 @@ export default PATH => [
     path: `${PATH}/resourcesvolumes/:name/:id`,
     component: VolumeDetail,
   },
-
-
+  {
+    path: `${PATH}/hostdevices/:id`,
+    component: HostDeviceDetail,
+  },
+  {
+    path: `${PATH}/mediateddevices/:id`,
+    component: MediatedDeviceDetail,
+  },
 ]

@@ -17,29 +17,25 @@
  */
 
 import React from 'react';
-import { toJS } from 'mobx';
 import { Icon } from '@kube-design/components';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
-import { Avatar, Status } from 'components/Base';
 import Tabs from 'components/Cards/Banner/Tabs';
-import withList, { ListPage } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
-import Indicator from 'components/Base/Indicator';
+import { ListPage, withClusterList } from 'components/HOCs/withList';
+import ResourceTable from 'clusters/components/ResourceTable';
 
 import { getLocalTime } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
 
 import SriovStore from 'stores/resources/sriovs';
 import styles from './index.scss';
 
-@withList({
+@withClusterList({
   store: new SriovStore(),
   module: 'sriovs',
   authKey: 'sriovs',
   name: t('SR-IOV'),
 })
-export default class ResourcesVolumes extends React.Component {
+export default class SriovNetworks extends React.Component {
   handleTabChange = value => {
     const { cluster } = this.props.match.params;
     this.props.routing.push(`/clusters/${cluster}/${value}`);
@@ -147,6 +143,17 @@ export default class ResourcesVolumes extends React.Component {
         },
       },
       {
+        title: t('PROJECT'),
+        dataIndex: 'project',
+        isHideable: true,
+        width: 'auto',
+        render: project => (
+          <Link to={`/clusters/${cluster}/projects/${project}/overview`}>
+            {project}
+          </Link>
+        ),
+      },
+      {
         title: t('RESOURCES_NETWORK_TYPE'),
         dataIndex: 'type',
         filters: this.getFilterType(),
@@ -233,8 +240,6 @@ export default class ResourcesVolumes extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props;
-    // console.log({ ...this.props })
-
     return (
       <ListPage {...this.props}>
         <div className={classnames(styles.wrapper)}>
@@ -259,15 +264,16 @@ export default class ResourcesVolumes extends React.Component {
           <Tabs tabs={this.tabs} />
         </div>
 
-        <Table
+        <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
-          itemActions={this.itemActions}
           tableActions={this.tableActions}
+          itemActions={this.itemActions}
           columns={this.getColumns()}
           columnSearch={this.columnSearch}
         />
+        
       </ListPage>
     );
   }

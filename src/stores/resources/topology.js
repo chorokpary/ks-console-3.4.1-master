@@ -36,7 +36,7 @@ export default class TopologyStore extends Base {
 
     this.vmList = get(await this.fetchVmList(params), "vms", []);
     this.networkList = get(await this.fetchListNetwork(params), "networks", []);
-    this.sriovList = get(await this.fetchListSriovNetwork(params), "networks", []);
+    this.sriovList = get(await this.fetchListSriovNetwork(params), "sriovs", []);
     this.routerList = get(await this.fetchListRouter(params), "routers", []);
     this.floatingList = get(await this.fetchListFloating(params), "floating_ips", []);
     this.loadbalancerList = get(await this.fetchListLoadBalancer(params), "lbs", []);

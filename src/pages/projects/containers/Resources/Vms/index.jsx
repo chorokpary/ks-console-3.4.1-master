@@ -267,18 +267,6 @@ export default class Vms extends React.Component {
         },
       },
       {
-        title: t('PROJECT'),
-        dataIndex: 'project',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: project => (
-          <Link to={`/${workspace}/clusters/${cluster}/projects/${project}`}>
-            {showNameAndAlias(project, 'project')}
-          </Link>
-        ),
-      },
-      {
         title: t('RESOURCES_IMAGE'),
         dataIndex: 'image',
         isHideable: true,

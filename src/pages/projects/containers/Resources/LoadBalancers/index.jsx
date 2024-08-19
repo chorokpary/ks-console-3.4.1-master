@@ -121,17 +121,6 @@ export default class LoadBalancers extends React.Component {
                 ),
             },
             {
-                title: t('PROJECT'),
-                dataIndex: 'project',
-                isHideable: true,
-                width: 'auto',
-                render: project => (
-                    <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
-                        {project}
-                    </Link>
-                ),
-            },
-            {
                 title: t('RESOURCES_NETWORK_NAME'),
                 dataIndex: 'network.name',
                 isHideable: true,

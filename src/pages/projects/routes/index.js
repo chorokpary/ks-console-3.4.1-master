@@ -180,7 +180,7 @@ export default [
         exact: true,
       },
       {
-        path: `${PATH}/hostDevices`,
+        path: `${PATH}/hostdevices`,
         component: HostDevices,
         exact: true,
       },
@@ -210,7 +210,7 @@ export default [
         exact: true,
       },
       {
-        path: `${PATH}/mediatedDevices`,
+        path: `${PATH}/mediateddevices`,
         component: MediatedDevices,
         exact: true,
       },

@@ -56,6 +56,7 @@ const RegistModal = props => {
   const [selectedSriovIpList, setSelectedSriovIpList] = useState([]);
 
   const [networkList, setNetworkList] = useState([]);
+  const [sriovNetworkList, setSriovNetworkList] = useState([]);
   const [securityGroupList, setSecurityGroupList] = useState([]);
   const [keypairList, setKeypairList] = useState([]);
 
@@ -143,7 +144,7 @@ const RegistModal = props => {
 
       setBootVolumeDataList(listBootVolume.volumes);
       setNetworkDataList(listNetwork.networks);
-      setSriovNetworkDataList(listSriovNetwork.networks);
+      setSriovNetworkDataList(listSriovNetwork.sriovs);
       setKeypairDataList(listKeypair.keypairs);
       setNodeDataList(listNode.nodes.filter(obj => obj.node_role != 'master'));
       setSecurityGroupDataList(listSecurityGroup);
@@ -159,6 +160,10 @@ const RegistModal = props => {
       obj => obj.project === projectName
     );
     setNetworkList(networkList);
+    const sriovNetworkList = sriovNetworkDataList.filter(
+      obj => obj.project === projectName
+    );
+    setSriovNetworkList(sriovNetworkList);
     const securityGroupList = securityGroupDataList
       .filter(obj => obj.project === projectName)
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
@@ -1605,7 +1610,7 @@ const RegistModal = props => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!sriovNetworkDataList?.length && (
+                          {!sriovNetworkList?.length && (
                             <tr>
                               <td colSpan="5" className="no-data">
                                 <p>
@@ -1616,7 +1621,7 @@ const RegistModal = props => {
                               </td>
                             </tr>
                           )}
-                          {sriovNetworkDataList?.map((data, key) => (
+                          {sriovNetworkList?.map((data, key) => (
                             <tr key={data.name}>
                               <td>
                                 <Checkbox

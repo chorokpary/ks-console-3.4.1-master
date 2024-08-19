@@ -38,7 +38,7 @@ const MediatedDeviceDetail = (props) => {
     }
     const listUrl = () => {
         const { cluster } = props.match.params
-        return `/clusters/${cluster}/mediatedDevices`
+        return `/clusters/${cluster}/mediateddevices`
     }
     const routing = props.rootStore.routing;
 

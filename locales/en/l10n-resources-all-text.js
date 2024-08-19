@@ -451,6 +451,7 @@ module.exports = {
   RESOURCES_SERVER_MODEL_NAME: 'Server Model Name',
   RESOURCES_SUBNET: 'Subnet',
   RESOURCES_SUBNET_EXTERNAL: 'External',
+  RESOURCES_NETWORK_OFFLOAD: 'Hardware Offload',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: 'Select',
   RESOURCES_AUTOMATIC: 'Automatic',

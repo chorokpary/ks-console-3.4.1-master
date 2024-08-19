@@ -99,20 +99,6 @@ export default class FloatingIp extends React.Component {
         ),
       },
       {
-        title: t('PROJECT'),
-        dataIndex: 'project',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: project => (
-          <Link
-            to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}
-          >
-            {showNameAndAlias(project, 'project')}
-          </Link>
-        ),
-      },
-      {
         title: t('RESOURCES_RESOURCE_TYPE'),
         dataIndex: 'instance_type',
         isHideable: true,

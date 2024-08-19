@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable'
 
 import { Link } from 'react-router-dom'
 import React from 'react'
@@ -126,17 +125,6 @@ export default class Networks extends React.Component {
             to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${name}/${item.id}`}
             title={name}
           />
-        ),
-      },
-      {
-        title: t('PROJECT'),
-        dataIndex: 'project',
-        isHideable: true,
-        width: 'auto',
-        render: project => (
-          <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
-            {project}
-          </Link>
         ),
       },
       {

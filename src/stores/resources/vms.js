@@ -599,12 +599,12 @@ export default class VmStore extends Base {
     };
 
     if (params?.namespace) {
-      const dataList = response.sriov_networks?.filter(
+      const dataList = response.sriovs?.filter(
         item => item.project == params.namespace
       );
-      response.sriov_networks = dataList;
+      response.sriovs = dataList;
     }
-    this.sriov_networks = response.networks;
+    this.sriov_networks = response.sriovs;
     this.isLoading = false;
     return response;
   }

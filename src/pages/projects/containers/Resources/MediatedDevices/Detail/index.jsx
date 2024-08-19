@@ -15,20 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
-import HostDeviceStore from 'stores/resources/hostdevices'
+import MediatedDeviceStore from 'stores/resources/mediateddevices'
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import { getLocalTime } from 'utils';
-import routes from './routes';
+import routes from './routes'
 
-const store = new HostDeviceStore();
+const store = new MediatedDeviceStore();
 
-const HostDeviceDetail = (props) => {
+const MediatedDeviceDetail = (props) => {
 
     useEffect(() => {
         fetchData();
@@ -38,54 +37,19 @@ const HostDeviceDetail = (props) => {
         store.fetchDetail(props.match.params);
     }
     const listUrl = () => {
-        const { cluster } = props.match.params
-        return `/clusters/${cluster}/hostdevices`
+        const { workspace, cluster, namespace } = props.match.params;
+        return `/${workspace}/clusters/${cluster}/projects/${namespace}/mediateddevices`        
     }
-    const routing = props.rootStore.routing;
-    const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
-
     const getOperations = () => [
-        {
-            key: 'edit',
-            icon: 'pen',
-            text: t('EDIT_INFORMATION'),
-            action: 'edit',
-            show: showEdit,
-            onClick: () =>
-                props.rootStore.triggerAction('hostDevice.edit', {
-                    type: 'HOST_DEVICE_DETAIL',
-                    detail: toJS(store.detail.host_device),
-                    store,
-                    success: fetchData,
-                }),
-        },
         {
             key: 'viewYaml',
             icon: 'eye',
             text: t('VIEW_YAML'),
             action: 'view',
             onClick: () =>
-                props.rootStore.triggerAction('hostDevice.yaml.view', {
+                props.rootStore.triggerAction('mediatedDevice.yaml.view', {
                     yaml: store.yaml,
                     readOnly: true,
-                })
-        },
-        {
-            key: 'delete',
-            icon: 'trash',
-            text: t('DELETE'),
-            action: 'delete',
-            type: 'danger',
-            show: showEdit,
-            onClick: () =>
-                props.rootStore.triggerAction('hostDevice.remove', {
-                    type: 'HOSTDEVICE_DETAIL',
-                    detail: store.detail.host_device,
-                    store: store,
-                    cluster: props.match.params.cluster,
-                    success: () => routing.push(listUrl()),
-                    okText: t('RESOURCES_DELETE'),
-                    cancelText: t('RESOURCES_CANCEL'),
                 })
         },
     ]
@@ -103,33 +67,24 @@ const HostDeviceDetail = (props) => {
                 value: detail.cluster,
             },
             {
-                name: t('RESOURCES_MANUFACTURING_COMPANY_NAME'),
-                value: detail.host_device.vendor_name,
-            },
-            {
-                name: t('RESOURCES_PRODUCT_NAME'),
-                value: detail.host_device.product_name,
-            },
-            {
-                name: t('External'),
-                value: detail.host_device.is_external ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+                name: t('RESOURCES_MEDIATED_DEVICE_NAME'),
+                value: detail.mediated_device.mediated_device_name,
             },
             {
                 name: t('GPU'),
-                value: detail.host_device.is_gpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+                value: detail.mediated_device.is_gpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
             },
             {
                 name: t('RESOURCES_AVAILABLE_COUNT'),
-                value: detail.host_device.allocatable,
+                value: detail.mediated_device.allocatable,
             },
             {
                 name: t('RESOURCES_DESCRIPTION'),
-                value: detail.host_device.description,
-
+                value: detail.mediated_device.description,
             },
-            {
+	    {
                 name: t('RESOURCES_REGIST_DATE'),
-                value: getLocalTime(detail.host_device.timestamp).format(
+                value: getLocalTime(detail.mediated_device.timestamp).format(
                   'YYYY-MM-DD HH:mm:ss'
                 ),
             },
@@ -141,18 +96,18 @@ const HostDeviceDetail = (props) => {
     }
 
     const getBanner = () => {
-        return <i className="ico-type-hostdevice"></i>
+        return <i className="ico-type-mediatedvgpu"></i>
     }
 
     const sideProps = {
         icon: getBanner(),
         module: store.module,
-        name: get(store.detail.host_device, 'name'),
+        name: get(store.detail.mediated_device, 'resource_name'),
         operations: getOperations(),
         attrs: getAttrs(),
         breadcrumbs: [
             {
-                label: t('RESOURCES_HOST_DEVICE'),
+                label: t('RESOURCES_MEDIATED_DEVICE'),
                 url: listUrl,
             },
         ],
@@ -168,5 +123,4 @@ const HostDeviceDetail = (props) => {
     )
 }
 
-export default inject('rootStore')(observer(HostDeviceDetail));
-
+export default inject('rootStore')(observer(MediatedDeviceDetail));

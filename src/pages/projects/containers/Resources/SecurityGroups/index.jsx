@@ -123,17 +123,6 @@ export default class SecurityGroups extends React.Component {
                 ),
             },
             {
-                title: t('PROJECT'),
-                dataIndex: 'project',
-                isHideable: true,
-                width: 'auto',
-                render: project => (
-                    <Link to={`/${workspace}/clusters/${cluster}/projects/${project}/overview`}>
-                        {project}
-                    </Link>
-                ),
-            },
-            {
                 title: t('RESOURCES_INBOUND_RULE_COUNT'),
                 dataIndex: 'ingress_count',
                 isHideable: true,

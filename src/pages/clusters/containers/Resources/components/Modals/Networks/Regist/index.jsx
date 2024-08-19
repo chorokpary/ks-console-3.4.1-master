@@ -27,6 +27,7 @@ const RegistModal = props => {
   const [modelView, setModalView] = useState(true);
   const [external, setExternal] = useState(false);
   const [defaultRoute, setDefaultRoute] = useState(false);
+  const [networkOffload, setNetworkOffload] = useState(false);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
@@ -43,25 +44,29 @@ const RegistModal = props => {
 
   const networkTypeOptions = props.namespace
     ? [
-        { label: 'VXLAN', value: 'VXLAN' },
-        { label: 'GRE', value: 'GRE' },
-        { label: 'GENEVE', value: 'GENEVE' },
-        { label: 'STT', value: 'STT' },
-      ]
+      { label: 'VXLAN', value: 'VXLAN' },
+      { label: 'GRE', value: 'GRE' },
+      { label: 'GENEVE', value: 'GENEVE' },
+      { label: 'STT', value: 'STT' },
+    ]
     : [
-        { label: 'VXLAN', value: 'VXLAN' },
-        { label: 'VLAN', value: 'VLAN' },
-        { label: 'FLAT', value: 'FLAT' },
-        { label: 'GRE', value: 'GRE' },
-        { label: 'GENEVE', value: 'GENEVE' },
-        { label: 'STT', value: 'STT' },
-      ];
+      { label: 'VXLAN', value: 'VXLAN' },
+      { label: 'VLAN', value: 'VLAN' },
+      { label: 'FLAT', value: 'FLAT' },
+      { label: 'GRE', value: 'GRE' },
+      { label: 'GENEVE', value: 'GENEVE' },
+      { label: 'STT', value: 'STT' },
+    ];
 
   const externalOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
   ];
   const defaultRouteOptions = [
+    { label: t('RESOURCES_NOT_USE'), value: false },
+    { label: t('RESOURCES_USE'), value: true },
+  ];
+  const networkOffloadOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
   ];
@@ -452,13 +457,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -470,8 +474,8 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -655,27 +659,48 @@ const RegistModal = props => {
                           </Form.Item>
                         </Column>
                         <Column>
-                          <Form.Item
-                            label={t('RESOURCES_MTU')}
-                            rules={[
-                              {
-                                required: true,
-                                message: t('RESOURCES_MTU_EMPTY_DESC'),
-                              },
-                              {
-                                pattern: PATTERN_MTU,
-                                message: t('RESOURCES_MTU_VALID'),
-                              },
-                            ]}
-                          >
-                            <NumberInput
-                              name="mtu"
-                              defaultValue={1500}
-                              // min={1}
-                              // max={1600}
-                              style={{ maxWidth: 'none' }}
-                            />
-                          </Form.Item>
+                          <Columns>
+                            <Column>
+                              <Form.Item
+                                label={t('RESOURCES_CIDR')}
+                                rules={[
+                                  {
+                                    required: true,
+                                    validator: cidrValidator,
+                                  },
+                                ]}
+                              >
+                                <Input
+                                  name="cidr"
+                                  style={{ maxWidth: 'none' }}
+                                  onChange={e => onChangeCidr(e)}
+                                />
+                              </Form.Item>
+                            </Column>
+                            <Column>
+                              <Form.Item
+                                label={t('RESOURCES_MTU')}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: t('RESOURCES_MTU_EMPTY_DESC'),
+                                  },
+                                  {
+                                    pattern: PATTERN_MTU,
+                                    message: t('RESOURCES_MTU_VALID'),
+                                  },
+                                ]}
+                              >
+                                <NumberInput
+                                  name="mtu"
+                                  defaultValue={1500}
+                                  // min={1}
+                                  // max={1600}
+                                  style={{ maxWidth: 'none' }}
+                                />
+                              </Form.Item>
+                            </Column>
+                          </Columns>
                         </Column>
                       </Columns>
                     </Form.Item>
@@ -684,19 +709,24 @@ const RegistModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_CIDR')}
-                            rules={[
-                              {
-                                required: true,
-                                validator: cidrValidator,
-                              },
-                            ]}
+                            label={t('RESOURCES_DEFAULT_ROUTE')}
+                            rules={[{ required: true }]}
                           >
-                            <Input
-                              name="cidr"
-                              style={{ maxWidth: 'none' }}
-                              onChange={e => onChangeCidr(e)}
-                            />
+                            <RadioGroup
+                              name="default_route"
+                              wrapClassName="radio"
+                              defaultValue={defaultRoute}
+                              onChange={value => setDefaultRoute(value)}
+                            >
+                              {defaultRouteOptions.map(option => (
+                                <RadioButton
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </RadioButton>
+                              ))}
+                            </RadioGroup>
                           </Form.Item>
                         </Column>
                         <Column>
@@ -746,20 +776,17 @@ const RegistModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_DEFAULT_ROUTE')}
+                            label={t('RESOURCES_NETWORK_OFFLOAD')}
                             rules={[{ required: true }]}
                           >
                             <RadioGroup
-                              name="default_route"
+                              name="offload"
                               wrapClassName="radio"
-                              defaultValue={defaultRoute}
-                              onChange={value => setDefaultRoute(value)}
+                              defaultValue={networkOffload}
+                              onChange={value => setNetworkOffload(value)}
                             >
-                              {defaultRouteOptions.map(option => (
-                                <RadioButton
-                                  key={option.value}
-                                  value={option.value}
-                                >
+                              {networkOffloadOptions.map(option => (
+                                <RadioButton key={option.value} value={option.value}>
                                   {option.label}
                                 </RadioButton>
                               ))}
