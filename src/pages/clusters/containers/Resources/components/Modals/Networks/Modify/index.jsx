@@ -89,6 +89,12 @@ const ModifyModal = props => {
     return true;
   };
 
+  const checkNetworkAddress = (value) => {
+    const cidrData = common.fnCalculateCidr(value);
+    const checkNetwork = cidrData.networkAddress == value.split('/')[0] ? true : false;
+    return checkNetwork;
+  }
+
   const cidrValidator = (rule, value, callback) => {
     if (!value) {
       return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') });
@@ -96,7 +102,8 @@ const ModifyModal = props => {
     if (
       value.split('/').length != 2 ||
       !isValidIpAddress(value.split('/')[0]) ||
-      !fnCheckCidrClass(value.split('/')[1])
+      !fnCheckCidrClass(value.split('/')[1]) ||
+      !checkNetworkAddress(value)
     ) {
       return callback({ message: t('RESOURCES_CIDR_VALID') });
     }
