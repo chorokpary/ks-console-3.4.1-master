@@ -903,143 +903,144 @@ const ResourceImageModal = props => {
                 />
               </Form.Item>
             </div>
-            {publicType === 'public' && !registryUrlActive && (
-              <div className={`${regStep === 2 ? '' : 'hide'}`}>
-                <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
-                  <Form.Group>
-                    <Columns>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_DISTRIBUTION')}
-                          rules={[{ required: true }]}
-                        >
-                          <TypeSelect
-                            // name="distro_type"
-                            onChange={e => handleDistroType(e)}
-                            defaultValue={distroType}
-                            options={distroTypeOptions()}
-                          />
-                        </Form.Item>
-                        <Form.Item>
-                          <Input
-                            defaultValue={`Linux > ${distroType}`}
-                            readOnly
-                            style={{ maxWidth: 'none' }}
-                          />
-                        </Form.Item>
-                      </Column>
-                    </Columns>
-                    <Columns>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_CPU_TYPE')}
-                          rules={[
-                            {
-                              required: true,
-                            },
-                          ]}
-                        >
-                          <Select
-                            name="arch_type"
-                            defaultValue="x86_64"
-                            options={archTypeOptions}
-                            onChange={e => handleArchType(e)}
-                          />
-                        </Form.Item>
-                      </Column>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_ACCELERATOR_TYPE')}
-                          rules={[{ required: false }]}
-                        >
-                          <Select
-                            name="accelerator_type"
-                            defaultValue={acceleratorType}
-                            options={accelTypeOptions()}
-                            onChange={e => handleAcceleratorType(e)}
-                          />
-                        </Form.Item>
-                      </Column>
-                    </Columns>
-                  </Form.Group>
-                </Form.Item>
-                <Form.Item>
-                  <div className={styles.content_box_wrap}>
-                    <div
-                      className={`${styles.cont_box_wrap} ${
-                        sourceEmpty ? styles.formErrorStyle : ''
-                      }`}
-                    >
-                      <div className={styles.cont_box_section}>
-                        <div
-                          className={`${styles.select_inner_content} select_inner_content`}
-                          onClick={() => handleDistroType(distroType)}
-                        >
+            {publicType === 'public' &&
+              (!registryUrlActive || registryUrl === defaultRegistryUrl) && (
+                <div className={`${regStep === 2 ? '' : 'hide'}`}>
+                  <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+                    <Form.Group>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_DISTRIBUTION')}
+                            rules={[{ required: true }]}
+                          >
+                            <TypeSelect
+                              // name="distro_type"
+                              onChange={e => handleDistroType(e)}
+                              defaultValue={distroType}
+                              options={distroTypeOptions()}
+                            />
+                          </Form.Item>
+                          <Form.Item>
+                            <Input
+                              defaultValue={`Linux > ${distroType}`}
+                              readOnly
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_CPU_TYPE')}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Select
+                              name="arch_type"
+                              defaultValue="x86_64"
+                              options={archTypeOptions}
+                              onChange={e => handleArchType(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_ACCELERATOR_TYPE')}
+                            rules={[{ required: false }]}
+                          >
+                            <Select
+                              name="accelerator_type"
+                              defaultValue={acceleratorType}
+                              options={accelTypeOptions()}
+                              onChange={e => handleAcceleratorType(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Form.Group>
+                  </Form.Item>
+                  <Form.Item>
+                    <div className={styles.content_box_wrap}>
+                      <div
+                        className={`${styles.cont_box_wrap} ${
+                          sourceEmpty ? styles.formErrorStyle : ''
+                        }`}
+                      >
+                        <div className={styles.cont_box_section}>
                           <div
-                            className={classnames(
-                              styles.select_list_box,
-                              styles.inner_image
-                            )}
+                            className={`${styles.select_inner_content} select_inner_content`}
+                            onClick={() => handleDistroType(distroType)}
                           >
                             <div
                               className={classnames(
-                                styles.selected_item,
-                                styles.image
+                                styles.select_list_box,
+                                styles.inner_image
                               )}
                             >
-                              <p className={styles.inner_image}>
-                                <span>Docker</span>
-                              </p>
-                              <div className={styles.placeholder}>
-                                {imageName}
+                              <div
+                                className={classnames(
+                                  styles.selected_item,
+                                  styles.image
+                                )}
+                              >
+                                <p className={styles.inner_image}>
+                                  <span>Docker</span>
+                                </p>
+                                <div className={styles.placeholder}>
+                                  {imageName}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div className={styles.section_box}>
-                          <Loading spinning={loading}>
-                            {kubeVersionList.length > 0 ? (
-                              <div className={styles.radio_list}>
-                                {kubeVersionList.map((obj, idx) => (
-                                  <div
-                                    className={styles.form_radio}
-                                    key={idx}
-                                    onClick={() => setTag(obj.name)}
-                                  >
-                                    <input
-                                      type="radio"
-                                      name="rdo-tag"
-                                      value="Y"
-                                      id={`rdo-tag-n${idx}`}
-                                      defaultChecked={idx === 0}
-                                    />
-                                    <label htmlFor={`rdo-tag-n${idx}`}>
-                                      <i className={styles.ico_etc_tag}></i>
-                                      <span>{obj.name}</span>
-                                    </label>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <div className={styles.empty}>
-                                <i className={styles.ico_type_container2}></i>
-                                <span>{defaultImageText}</span>
-                              </div>
-                            )}
-                          </Loading>
+                          <div className={styles.section_box}>
+                            <Loading spinning={loading}>
+                              {kubeVersionList.length > 0 ? (
+                                <div className={styles.radio_list}>
+                                  {kubeVersionList.map((obj, idx) => (
+                                    <div
+                                      className={styles.form_radio}
+                                      key={idx}
+                                      onClick={() => setTag(obj.name)}
+                                    >
+                                      <input
+                                        type="radio"
+                                        name="rdo-tag"
+                                        value="Y"
+                                        id={`rdo-tag-n${idx}`}
+                                        defaultChecked={idx === 0}
+                                      />
+                                      <label htmlFor={`rdo-tag-n${idx}`}>
+                                        <i className={styles.ico_etc_tag}></i>
+                                        <span>{obj.name}</span>
+                                      </label>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className={styles.empty}>
+                                  <i className={styles.ico_type_container2}></i>
+                                  <span>{defaultImageText}</span>
+                                </div>
+                              )}
+                            </Loading>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Form.Item>
-                {sourceEmpty && (
-                  <div className="form-item-error">
-                    {t('RESOURCES_SETTING_IMAGE_TIP')}
-                  </div>
-                )}
-              </div>
-            )}
-            {registryUrlActive && (
+                  </Form.Item>
+                  {sourceEmpty && (
+                    <div className="form-item-error">
+                      {t('RESOURCES_SETTING_IMAGE_TIP')}
+                    </div>
+                  )}
+                </div>
+              )}
+            {registryUrlActive && registryUrl !== defaultRegistryUrl && (
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
                   <Form.Group>
