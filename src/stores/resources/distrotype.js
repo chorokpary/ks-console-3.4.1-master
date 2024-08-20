@@ -16,24 +16,18 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
-import { observable, action } from 'mobx'
-import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
-
-
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class DistroTypeStore extends Base {
+  records = new List()
 
-    records = new List()
+  module = 'distro_types'
 
-    module = 'distro_types'
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/metadata/distro_types`
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/metadata/distro_types`
-    getListUrl = this.getResourceUrl
-
+  getListUrl = this.getResourceUrl
 }
