@@ -155,6 +155,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   const resetRegistryValidity = () => {
     setRegistryValid(false)
     setRegistryValidError(false)
+    setSourceEmpty(false)
   }
 
   const handleRegistryType = value => {
@@ -253,7 +254,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       }
       data.size = Number(imageSize.slice(0, imageSize.length - 2))
 
-      if (tag === '') {
+      if (imageName === '' || tag === '') {
         setSourceEmpty(true)
         return
       }
@@ -554,6 +555,11 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
         setSourceEmpty(true)
         handleOk()
       } else {
+        setSourceEmpty(false)
+        setImageList([])
+        setTagList([])
+        setPopActive(false)
+        setImageName('')
         setRegStep(2)
         setSubmitButtonFlag(false)
       }
@@ -752,7 +758,10 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                   <div className={styles.content_box}>
                     <div
                       className={`${styles.cont_box_wrap} ${
-                        !registryValid && registryValidError
+                        (publicType === 'private' &&
+                          !registryValid &&
+                          sourceEmpty) ||
+                        registryValidError
                           ? styles.formErrorStyle
                           : ''
                       }`}
@@ -839,6 +848,14 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                                   </div>
                                 </div>
                               )}
+                              {!registryValid && sourceEmpty && (
+                                <div
+                                  className="form-item-error"
+                                  style={{ color: '#ca2621' }}
+                                >
+                                  {t('RESOURCES_VALID_TIP')}
+                                </div>
+                              )}
                               {registryValidError && (
                                 <div
                                   className="form-item-error"
@@ -850,6 +867,16 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                             </>
                           )}
                         </div>
+                        {publicType === 'private' &&
+                          !registryUrlActive &&
+                          sourceEmpty && (
+                            <div
+                              className="form-item-error"
+                              style={{ color: '#ca2621' }}
+                            >
+                              {t('RESOURCES_HARBOR_VALID_TIP')}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -1155,6 +1182,11 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                     </div>
                   </div>
                 </Form.Item>
+                {sourceEmpty && (
+                  <div className="form-item-error">
+                    {t('RESOURCES_SETTING_IMAGE_TIP')}
+                  </div>
+                )}
               </div>
             )}
             {registryUrlActive && (
@@ -1417,11 +1449,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                 {sourceEmpty && (
                   <div className="form-item-error">
                     {t('RESOURCES_SETTING_IMAGE_TIP')}
-                  </div>
-                )}
-                {registryValidError && (
-                  <div className="form-item-error">
-                    {t('RESOURCES_VALID_TIP')}
                   </div>
                 )}
               </div>
