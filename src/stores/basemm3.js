@@ -23,13 +23,13 @@ import { API_VERSIONS, LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 
 import List from './base.list'
-import axios from "axios";
 
 export default class BaseStore {
   list = new List()
 
-  dataList = [];
-  searchList = [];
+  dataList = []
+
+  searchList = []
 
   @observable
   detail = {}
@@ -67,7 +67,8 @@ export default class BaseStore {
   }
 
   getListUrl = (params = {}) =>
-    `${this.apiVersion}${this.getPath(params)}/${this.module}${params.dryRun ? '?dryRun=All' : ''
+    `${this.apiVersion}${this.getPath(params)}/${this.module}${
+      params.dryRun ? '?dryRun=All' : ''
     }`
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
@@ -79,7 +80,8 @@ export default class BaseStore {
   //   `${this.getWatchListUrl(params)}/${params.name}`
 
   getResourceUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/${this.module
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/${
+      this.module
     }`
 
   getFilterParams = params => {
@@ -103,7 +105,7 @@ export default class BaseStore {
 
     setTimeout(() => {
       promise
-        .catch(() => { })
+        .catch(() => {})
         .finally(() => {
           this.isSubmitting = false
         })
@@ -139,69 +141,112 @@ export default class BaseStore {
       this.getFilterParams(params)
     )
 
-    // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'sriovs', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types', 'containerimages', 'resourcesvolumes', 'gpunodes']
-    const apiName = mm3Array.includes(this.module) ? this.module : "";
+    // mm3 api 관련
+    const mm3Array = [
+      'vms',
+      'images',
+      'flavors',
+      'networks',
+      'sriovs',
+      'routers',
+      'floating_ips',
+      'lbs',
+      'security_groups',
+      'keypairs',
+      'host_devices',
+      'pci_devices',
+      'volumes',
+      'clusters',
+      'workspaces',
+      'licenses',
+      'distro_types',
+      'containerimages',
+      'resourcesvolumes',
+      'gpunodes',
+      'ai_addons',
+    ]
+    const apiName = mm3Array.includes(this.module) ? this.module : ''
 
-    const data = (get(result, apiName.replace('resources', '')) || []).map(item => ({
-      cluster,
-      namespace,
-      ...this.mapper(item),
-    }))
+    const data = (get(result, apiName.replace('resources', '')) || []).map(
+      item => ({
+        cluster,
+        namespace,
+        ...this.mapper(item),
+      })
+    )
     // console.log("data: "+ JSON.stringify())
 
-    // 초기 데이터 처리 
-    this.dataList = data;
+    // 초기 데이터 처리
+    this.dataList = data
 
-    // namespace(project) 있는 경우 
-    const projectExceptionArray = ['images', 'flavors', 'host_devices', 'gpunodes']
+    // namespace(project) 있는 경우
+    const projectExceptionArray = [
+      'images',
+      'flavors',
+      'host_devices',
+      'gpunodes',
+    ]
     if (namespace) {
-      projectExceptionArray.includes(this.module) ? "" : params.project = namespace;
+      projectExceptionArray.includes(this.module)
+        ? ''
+        : (params.project = namespace)
     }
 
-    // 검색 관련 처리 
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-    const searchArray = Object.keys(params).map((key) => {
-      let value = params[key];
-      let searchData = {
-        "searchKeywordType": key,
-        "searchKeywordText": value
-      }
-      return searchData
-    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const searchArray = Object.keys(params)
+      .map(key => {
+        const value = params[key]
+        const searchData = {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        }
+        return searchData
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
 
     if (searchArray.length > 0) {
-      searchArray.map((search) => {
-        let resultList = this.dataList.filter((row) => {
+      searchArray.map(search => {
+        const resultList = this.dataList.filter(row => {
           if (search.searchKeywordType === 'project') {
-            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+            return (
+              row[search.searchKeywordType]?.toLowerCase() ===
+              search.searchKeywordText.toLowerCase()
+            )
           }
-          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-        });
-        this.dataList = resultList;
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase())
+        })
+        this.dataList = resultList
       })
-    }    
+    }
 
-    //정렬 처리
-    const sortType = !!params.ascending ? "asc" : "desc";
+    // 정렬 처리
+    const sortType = params.ascending ? 'asc' : 'desc'
     this.dataList.sort((a, b) => {
-      var x = a[params.sortBy];
-      var y = b[params.sortBy];
-      if (sortType == "desc") {
-        return x > y ? -1 : x < y ? 1 : 0;
-      } else if (sortType == "asc") {
-        return x < y ? -1 : x > y ? 1 : 0;
+      const x = a[params.sortBy]
+      const y = b[params.sortBy]
+      if (sortType === 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0
       }
-    });
+      if (sortType === 'asc') {
+        return x < y ? -1 : x > y ? 1 : 0
+      }
+    })
 
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || result.total_count || this.dataList.length || 0,
+      total:
+        result.totalItems || result.total_count || this.dataList.length || 0,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -233,10 +278,10 @@ export default class BaseStore {
 
     const data = Array.isArray(result.items)
       ? result.items.map(item => ({
-        cluster,
-        module: module || this.module,
-        ...this.mapper(item),
-      }))
+          cluster,
+          module: module || this.module,
+          ...this.mapper(item),
+        }))
       : []
 
     this.list.update({

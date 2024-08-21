@@ -617,6 +617,9 @@ module.exports = {
   RESOURCES_CORE_COUNT: '코어 수',
   RESOURCES_KUBERNETES: '쿠버네티스',
   RESOURCES_KUBERNETES_VERSION: '쿠버네티스 버전',
+  RESOURCES_AI_ADDON_TYPE: 'AI 애드온',
+  RESOURCES_SETTING_AI_ADDON_TIP:
+    'AI 애드온을 사용하기 위해서는 가속기 타입을 선택해야합니다.',
   RESOURCES_ACCELERATOR_TYPE: '가속기 타입',
   RESOURCES_KUBERNETES_SERVER_IP: '쿠버네티스 서버 IP',
   RESOURCES_CLASS: '클래스',

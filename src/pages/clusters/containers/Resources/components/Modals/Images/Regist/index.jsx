@@ -19,6 +19,7 @@ import axios from 'axios'
 import { Base64 } from 'js-base64'
 
 import DistroTypeStore from 'stores/resources/distrotype'
+import AiAddonStore from 'stores/resources/aiaddon'
 import GpuNodeStore from 'stores/resources/gpunodes'
 import { UnitSlider } from 'components/Inputs'
 import { Modal } from 'components/Base'
@@ -57,6 +58,7 @@ const osTypeOptions = [
 
 const ResourceImageModal = ({ props, title, store, onOk }) => {
   const distroTypeStore = new DistroTypeStore()
+  const aiAddonStore = new AiAddonStore()
   const gpuNodeStore = new GpuNodeStore()
 
   const form = useRef()
@@ -93,6 +95,8 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   const [distroTypeList, setDistroTypeList] = useState([])
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
+  const [aiAddonType, setAiAddonType] = useState('None')
+  const [aiAddonList, setAiAddonList] = useState([])
   const [archType, setArchType] = useState('x86_64')
 
   const [imageName, setImageName] = useState('')
@@ -104,6 +108,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
 
   const [loading, setLoading] = useState(false)
   const [sourceEmpty, setSourceEmpty] = useState(false)
+  const [accelEmptyError, setAccelEmptyError] = useState(false)
 
   useEffect(() => {
     const getDistroTypeList = async () => {
@@ -114,7 +119,13 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
 
     const getAcceleratorTypeList = async () => {
       const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
+      accelList.sort()
       setAcceleratorTypeList(accelList)
+    }
+
+    const getAiAddonList = async () => {
+      const addonList = await aiAddonStore.fetchList()
+      setAiAddonList(addonList)
     }
 
     const getVmImageList = async () => {
@@ -139,6 +150,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
 
     getDistroTypeList()
     getAcceleratorTypeList()
+    getAiAddonList()
     getVmImageList()
   }, [])
 
@@ -245,6 +257,14 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     }))
   }
 
+  const aiAddonOptions = () => {
+    return aiAddonList.map(obj => ({
+      label: t(obj.name),
+      description: t(obj.description),
+      value: t(obj.name),
+    }))
+  }
+
   const handleOk = () => {
     form.current.validator(() => {
       const { data } = form.current.props
@@ -254,7 +274,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       }
       data.size = Number(imageSize.slice(0, imageSize.length - 2))
 
-      if (imageName === '' || tag === '') {
+      if (imageName === '' || tag === '' || accelEmptyError) {
         setSourceEmpty(true)
         return
       }
@@ -374,7 +394,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     )
     setTagListData(tags)
     setSourceEmpty(false)
-    getMatchingTag(tags, archType, acceleratorType)
+    getMatchingTag(tags, archType, acceleratorType, aiAddonType)
   }
 
   const getPrivateImageTag = async (image, project) => {
@@ -399,24 +419,44 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   const handleArchType = value => {
     setLoading(true)
     setArchType(value)
-    getMatchingTag(tagListData, value, acceleratorType)
+    getMatchingTag(tagListData, value, acceleratorType, aiAddonType)
   }
 
   const handleAcceleratorType = value => {
     setLoading(true)
     setAcceleratorType(value)
-    getMatchingTag(tagListData, archType, value)
+    getMatchingTag(tagListData, archType, value, aiAddonType)
   }
 
-  const getMatchingTag = (tags, arch, accel) => {
+  const handleAiAddonType = value => {
+    setLoading(true)
+    setAiAddonType(value)
+    getMatchingTag(tagListData, archType, acceleratorType, value)
+  }
+
+  const getMatchingTag = (tags, arch, accel, aiAddon) => {
+    setAccelEmptyError(false)
+    if (accel === 'None' && aiAddon !== 'None') {
+      setAccelEmptyError(true)
+    }
     const filteredTag = tags.filter(item => {
-      if (accel === 'None') {
+      if (accel === 'None' && aiAddon === 'None') {
         return item.name === arch
       }
-      return item.name.includes(accel.toLowerCase()) && item.name.includes(arch)
+      if (accel !== 'None' && aiAddon === 'None') {
+        return item.name === `${accel.toLowerCase()}_${arch}`
+      }
+      return (
+        item.name === `${accel.toLowerCase()}_${aiAddon.toLowerCase()}_${arch}`
+      )
     })
+    if (filteredTag.length > 0) {
+      setTag(filteredTag?.[0].name)
+      setSourceEmpty(false)
+    } else {
+      setTag('')
+    }
     setTagList(filteredTag)
-    setTag(filteredTag?.[0]?.name)
     setLoading(false)
   }
 
@@ -1033,11 +1073,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                               />
                             </Form.Item>
                           </Column>
-                        </Columns>
-                      </Form.Item>
-
-                      <Form.Item>
-                        <Columns>
                           <Column>
                             <Form.Item
                               label={t('RESOURCES_REAL_TIME')}
@@ -1064,9 +1099,34 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                               </RadioGroup>
                             </Form.Item>
                           </Column>
-                          <Column></Column>
                         </Columns>
                       </Form.Item>
+
+                      <Form.Item>
+                        <Columns>
+                          <Column>
+                            <Form.Item
+                              label={t('RESOURCES_AI_ADDON_TYPE')}
+                              rules={[{ required: false }]}
+                            >
+                              <TypeSelect
+                                className={`${
+                                  accelEmptyError ? styles.formErrorStyle : ''
+                                }`}
+                                name="ai_addon_type"
+                                defaultValue={aiAddonType}
+                                options={aiAddonOptions()}
+                                onChange={e => handleAiAddonType(e)}
+                              />
+                            </Form.Item>
+                          </Column>
+                        </Columns>
+                      </Form.Item>
+                      {accelEmptyError && (
+                        <div className="form-item-error">
+                          {t('RESOURCES_SETTING_AI_ADDON_TIP')}
+                        </div>
+                      )}
                     </Form.Group>
                   </Form.Item>
                   <Form.Item>
