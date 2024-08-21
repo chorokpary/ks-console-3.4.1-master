@@ -1,286 +1,266 @@
-import { get, find, omit } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
+import { find, get } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Modal } from 'components/Base';
-import { ProjectSelect } from 'components/Inputs';
+import { Modal } from 'components/Base'
+import { ProjectSelect } from 'components/Inputs'
 import {
+  Button,
+  Checkbox,
   Form,
   Input,
-  Select,
-  TextArea,
-  Button,
-  Loading,
-  Radio,
-  Checkbox,
   InputPassword,
   Notify,
+  Select,
   Tabs,
-  Icon,
-} from '@kube-design/components';
-import { Column, Columns } from '@kube-design/components/lib/components/Layout';
-import {
-  RadioButton,
-  RadioGroup,
-} from '@kube-design/components/lib/components/Radio';
-import * as common from 'utils/resources';
-import { PATTERN_USER_NAME, PATTERN_PACKAGE_NAME } from 'utils/constants';
-import classnames from 'classnames';
-import VmStore from 'stores/resources/vms';
-import TypeSelect from '../../../TypeSelect';
-import CardSelect from '../../../CardSelect';
+  TextArea,
+} from '@kube-design/components'
+import { Column, Columns } from '@kube-design/components/lib/components/Layout'
+import * as common from 'utils/resources'
+import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
+import classnames from 'classnames'
+import VmStore from 'stores/resources/vms'
+import TypeSelect from '../../../TypeSelect'
+import CardSelect from '../../../CardSelect'
 
-import styles from './index.scss';
-import './checkbox.disabled.css';
+import styles from './index.scss'
+import './checkbox.disabled.css'
 
 const RegistModal = props => {
-  const form = useRef();
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [formData] = useState({})
 
-  const vmStore = new VmStore();
+  const vmStore = new VmStore()
 
-  const [modelView, setModalView] = useState(true);
-  const [regStep, setRegStep] = useState(1);
+  const [modelView, setModalView] = useState(true)
+  const [regStep, setRegStep] = useState(1)
 
-  const [flavorDataList, setFlavorDataList] = useState([]);
-  const [imageDataList, setImageDataList] = useState([]);
-  const [bootVolumeDataList, setBootVolumeDataList] = useState([]);
-  const [nodeDataList, setNodeDataList] = useState([]);
-  const [keypairDataList, setKeypairDataList] = useState([]);
-  const [networkDataList, setNetworkDataList] = useState([]);
-  const [sriovNetworkDataList, setSriovNetworkDataList] = useState([]);
-  const [securityGroupDataList, setSecurityGroupDataList] = useState([]);
-  const [storegeClassDataList, setStoregeClassDataList] = useState([]);
-  const [availableIpList, setAvailableIpList] = useState([]);
-  const [selectedIpList, setSelectedIpList] = useState([]);
-  const [availableSriovIpList, setAvailableSriovIpList] = useState([]);
-  const [selectedSriovIpList, setSelectedSriovIpList] = useState([]);
+  const [flavorDataList, setFlavorDataList] = useState([])
+  const [imageDataList, setImageDataList] = useState([])
+  const [bootVolumeDataList, setBootVolumeDataList] = useState([])
+  const [nodeDataList, setNodeDataList] = useState([])
+  const [keypairDataList, setKeypairDataList] = useState([])
+  const [networkDataList, setNetworkDataList] = useState([])
+  const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [securityGroupDataList, setSecurityGroupDataList] = useState([])
+  const [storegeClassDataList, setStoregeClassDataList] = useState([])
+  const [availableIpList, setAvailableIpList] = useState([])
+  const [selectedIpList, setSelectedIpList] = useState([])
+  const [availableSriovIpList, setAvailableSriovIpList] = useState([])
+  const [selectedSriovIpList, setSelectedSriovIpList] = useState([])
 
-  const [networkList, setNetworkList] = useState([]);
-  const [sriovNetworkList, setSriovNetworkList] = useState([]);
-  const [securityGroupList, setSecurityGroupList] = useState([]);
-  const [keypairList, setKeypairList] = useState([]);
+  const [networkList, setNetworkList] = useState([])
+  const [sriovNetworkList, setSriovNetworkList] = useState([])
+  const [securityGroupList, setSecurityGroupList] = useState([])
+  const [keypairList, setKeypairList] = useState([])
 
-  const [selectImageName, setSelectImageName] = useState();
-  const [selectBootId, setSelectBootId] = useState();
-  const [busType, setBusType] = useState('virtio');
-  const [selectFlavorName, setSelectFlavorName] = useState();
-  const [selectImageDistroType, setSelectImageDistroType] = useState();
+  const [selectImageName, setSelectImageName] = useState()
+  const [selectBootId, setSelectBootId] = useState()
+  const [busType, setBusType] = useState('virtio')
+  const [selectFlavorName, setSelectFlavorName] = useState()
+  const [selectImageDistroType, setSelectImageDistroType] = useState()
 
-  const [imageOptionList, setImageOptionList] = useState([]);
+  const [imageOptionList, setImageOptionList] = useState([])
 
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
-  );
-  const [vmName, setVmName] = useState('');
-  const [imageName, setImageName] = useState('');
-  const [bootVolumeName, setBootVolumeName] = useState('');
-  const [flavorName, setFlavorName] = useState('');
-  const [flavorCpu, setFlavorCpu] = useState('');
-  const [flavorMemory, setFlavorMemory] = useState('');
-  const [flavorDisk, setFlavorDisk] = useState('');
-  const [description, setDescription] = useState('');
-  const [keypairName, setKeypairName] = useState('');
-  const [nodeName, setNodeName] = useState('');
-  const [storageClass, setStorageClass] = useState('');
+  )
+  const [vmName, setVmName] = useState('')
+  const [imageName, setImageName] = useState('')
+  const [bootVolumeName, setBootVolumeName] = useState('')
+  const [flavorName, setFlavorName] = useState('')
+  const [flavorCpu, setFlavorCpu] = useState('')
+  const [flavorMemory, setFlavorMemory] = useState('')
+  const [flavorDisk, setFlavorDisk] = useState('')
+  const [description, setDescription] = useState('')
+  const [keypairName, setKeypairName] = useState('')
+  const [nodeName, setNodeName] = useState('')
+  const [storageClass, setStorageClass] = useState('')
 
-  const [imageType, setImageType] = useState('I');
-  const [osType, setOsType] = useState('linux');
+  const [imageType, setImageType] = useState('I')
+  const [osType, setOsType] = useState('linux')
 
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
+  const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
-  const [isScript, setIsScript] = useState(false);
-  const [isPassword, setIsPassword] = useState(false);
-  const [isPackage, setIsPackage] = useState(false);
-  const [isFileWrite, setIsFileWrite] = useState(false);
-  const [isUserScript, setIsUserScript] = useState(false);
+  const [isScript, setIsScript] = useState(false)
+  const [isPassword, setIsPassword] = useState(false)
+  const [isPackage, setIsPackage] = useState(false)
+  const [isFileWrite, setIsFileWrite] = useState(false)
+  const [isUserScript, setIsUserScript] = useState(false)
 
-  const [isPasswordError, setIsPasswordError] = useState(false);
-  const [isPackageError, setIsPackageError] = useState(false);
-  const [isFileWriteError, setIsFileWriteError] = useState(false);
-  const [isUserScriptError, setIsUserScriptError] = useState(false);
-  const [isKeypiarPasswordError, setIsKeypiarPasswordError] = useState(false);
+  const [isPasswordError, setIsPasswordError] = useState(false)
+  const [isPackageError, setIsPackageError] = useState(false)
+  const [isFileWriteError, setIsFileWriteError] = useState(false)
+  const [isUserScriptError, setIsUserScriptError] = useState(false)
+  const [isKeypiarPasswordError, setIsKeypiarPasswordError] = useState(false)
 
-  const [packageValidationError, setIsPackageValidationError] = useState(false);
+  const [packageValidationError, setIsPackageValidationError] = useState(false)
 
-  const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
+  const [flavorSizeCheck, setFlavorSizeCheck] = useState(true)
 
   // const initialScriptId1 = useRef('');
 
   useEffect(() => {
     const getVmImage = async () => {
-      const listImage = await vmStore.fetchVmListImage({ ...props });
-      setImageDataList(listImage.images);
+      const listImage = await vmStore.fetchVmListImage({ ...props })
+      setImageDataList(listImage.images)
       setImageOptionList(
         listImage.images.filter(obj => obj.os_type !== 'windows')
-      );
-    };
-    getVmImage();
+      )
+    }
+    getVmImage()
 
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor({
         sortBy: 'root_disk',
         ...props,
-      });
+      })
 
-      const listAvailableIps = await vmStore.fetchAllAvailableIps({ ...props });
+      const listAvailableIps = await vmStore.fetchAllAvailableIps({ ...props })
       const listAvailableSriovIps = await vmStore.fetchAllAvailableSriovIps({
         ...props,
-      });
-      const listBootVolume = await vmStore.fetchVmListBootVolume({ ...props });
-      const listNetwork = await vmStore.fetchVmListNetwork({ ...props });
+      })
+      const listBootVolume = await vmStore.fetchVmListBootVolume({ ...props })
+      const listNetwork = await vmStore.fetchVmListNetwork({ ...props })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
         ...props,
-      });
-      const listKeypair = await vmStore.fetchVmListKeypair({ ...props });
-      const listNode = await vmStore.fetchVmListNode({ ...props });
+      })
+      const listKeypair = await vmStore.fetchVmListKeypair({ ...props })
+      const listNode = await vmStore.fetchVmListNode({ ...props })
       const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({
         ...props,
-      });
+      })
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
         ...props,
-      });
+      })
 
-      setFlavorDataList(listFlavor.flavors);
+      setFlavorDataList(listFlavor.flavors)
 
-      setBootVolumeDataList(listBootVolume.volumes);
-      setNetworkDataList(listNetwork.networks);
-      setSriovNetworkDataList(listSriovNetwork.sriovs);
-      setKeypairDataList(listKeypair.keypairs);
-      setNodeDataList(listNode.nodes.filter(obj => obj.node_role != 'master'));
-      setSecurityGroupDataList(listSecurityGroup);
-      setStoregeClassDataList(listStoregeClass.user_sces);
-      setAvailableIpList(listAvailableIps.all_ips);
-      setAvailableSriovIpList(listAvailableSriovIps.all_ips);
-    };
-    getVmCreateData();
-  }, []);
+      setBootVolumeDataList(listBootVolume.volumes)
+      setNetworkDataList(listNetwork.networks)
+      setSriovNetworkDataList(listSriovNetwork.sriovs)
+      setKeypairDataList(listKeypair.keypairs)
+      setNodeDataList(listNode.nodes.filter(obj => obj.node_role !== 'master'))
+      setSecurityGroupDataList(listSecurityGroup)
+      setStoregeClassDataList(listStoregeClass.user_sces)
+      setAvailableIpList(listAvailableIps.all_ips)
+      setAvailableSriovIpList(listAvailableSriovIps.all_ips)
+    }
+    getVmCreateData()
+  }, [])
 
-  const projectFilteredData = projectName => {
-    const networkList = networkDataList.filter(
-      obj => obj.project === projectName
-    );
-    setNetworkList(networkList);
-    const sriovNetworkList = sriovNetworkDataList.filter(
-      obj => obj.project === projectName
-    );
-    setSriovNetworkList(sriovNetworkList);
-    const securityGroupList = securityGroupDataList
-      .filter(obj => obj.project === projectName)
-      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
-    setSecurityGroupList(securityGroupList);
-    const keypairList = keypairDataList.filter(
-      obj => obj.project === projectName
-    );
-    setKeypairList(keypairList);
-  };
+  const projectFilteredData = project => {
+    const networks = networkDataList.filter(obj => obj.project === project)
+    setNetworkList(networks)
+    const sriovNetworks = sriovNetworkDataList.filter(
+      obj => obj.project === project
+    )
+    setSriovNetworkList(sriovNetworks)
+    const securityGroups = securityGroupDataList
+      .filter(obj => obj.project === project)
+      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    setSecurityGroupList(securityGroups)
+    const keypairs = keypairDataList.filter(obj => obj.project === project)
+    setKeypairList(keypairs)
+  }
 
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux' },
     { label: 'Windows', value: 'windows', icon: 'ico-windows' },
     // { label: 'etc', value: '', icon: 'ico-plus', }
-  ];
+  ]
 
   const availableIpOptions = netId => {
-    const networkIps = availableIpList.find(obj => obj.network === netId);
+    const networkIps = availableIpList.find(obj => obj.network === netId)
     if (networkIps !== undefined) {
-      const opt = networkIps.ips.map(ip => {
+      return networkIps.ips.map(ip => {
         return {
           label: t(ip),
           value: t(ip),
-        };
-      });
-      return opt;
+        }
+      })
     }
-  };
+  }
 
   const handleIpSelectClick = (netId, val) => {
-    const record = {};
-    record.network_name = netId;
-    record.fixed_ip = val;
-    const existing = selectedIpList.filter(obj => obj.network_name !== netId);
-    if (val != t('RESOURCES_SELECT') && val != undefined) {
-      existing.push(record);
+    const record = {}
+    record.network_name = netId
+    record.fixed_ip = val
+    const existing = selectedIpList.filter(obj => obj.network_name !== netId)
+    if (val !== t('RESOURCES_SELECT') && val !== undefined) {
+      existing.push(record)
     }
-    setSelectedIpList(existing);
-  };
+    setSelectedIpList(existing)
+  }
 
   const availableSriovIpOptions = netName => {
-    const networkIps = availableSriovIpList.find(
-      obj => obj.network === netName
-    );
+    const networkIps = availableSriovIpList.find(obj => obj.network === netName)
     if (networkIps !== undefined) {
-      const opt = networkIps.ips.map(ip => {
+      return networkIps.ips.map(ip => {
         return {
           label: t(ip),
           value: t(ip),
-        };
-      });
-      return opt;
+        }
+      })
     }
-  };
+  }
 
   const handleSriovIpSelectClick = (netName, val) => {
-    const record = {};
-    record.network_name = netName;
-    record.fixed_ip = val;
+    const record = {}
+    record.network_name = netName
+    record.fixed_ip = val
     const existing = selectedSriovIpList.filter(
       obj => obj.network_name !== netName
-    );
+    )
     if (val !== t('RESOURCES_SELECT') && val !== undefined) {
-      existing.push(record);
+      existing.push(record)
     }
-    setSelectedSriovIpList(existing);
-  };
+    setSelectedSriovIpList(existing)
+  }
 
   const storageClassOptions = () => {
-    const opt = storegeClassDataList.map(obj => {
+    return storegeClassDataList.map(obj => {
       return {
         label: t(obj.name),
         value: t(obj.name),
-      };
-    });
-    return opt;
-  };
+      }
+    })
+  }
 
   const imageOptions = () => {
-    const opt = imageOptionList.map(obj => {
+    return imageOptionList.map(obj => {
       return {
         label: t(obj.name),
         icon: `ico-os-${obj.distro_type}`,
         description: t(obj.description),
         value: t(obj.name),
         disabled: obj.phase !== 'Succeeded',
-      };
-    });
-    return opt;
-  };
+      }
+    })
+  }
 
   const flavorOptions = () => {
-    let size;
-    const regex = /[^0-9]/g;
-    let selectedRootDisk = 0;
+    let size
+    const regex = /[^0-9]/g
+    let selectedRootDisk
     if (imageType === 'I') {
       selectedRootDisk = imageDataList.find(
         item => item.name === selectImageName
-      );
-      size = selectedRootDisk?.size.replace(regex, '') || 0;
+      )
+      size = selectedRootDisk?.size.replace(regex, '') || 0
     } else {
-      selectedRootDisk = bootVolumeDataList.find(
-        obj => obj.id === selectBootId
-      );
-      size = selectedRootDisk?.capacity.replace(regex, '') || 0;
+      selectedRootDisk = bootVolumeDataList.find(obj => obj.id === selectBootId)
+      size = selectedRootDisk?.capacity.replace(regex, '') || 0
     }
 
-    const opt = flavorDataList.map(obj => ({
+    return flavorDataList.map(obj => ({
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
         obj.ram
       )} Gib / Disk ${obj.root_disk} Gib`,
       value: t(obj.name),
       disabled: Number(obj.root_disk) < Number(size),
-    }));
-    return opt;
-  };
+    }))
+  }
 
   const bootvolumeOptions = () => {
     const filterData = bootVolumeDataList.filter(
@@ -288,73 +268,70 @@ const RegistModal = props => {
         !item.name.includes('boot-dv') &&
         !item.name.includes('boot-volume') &&
         !item.name.includes('bootdisk')
-    );
-    const opt = filterData.map(obj => ({
+    )
+    return filterData.map(obj => ({
       label: t(obj.name),
       value: t(obj.id),
-    }));
-    return opt;
-  };
+    }))
+  }
 
   const busTypeOptions = [
     { label: 'VirtIO', value: 'virtio' },
     { label: 'SATA', value: 'sata' },
     { label: 'SCSi', value: 'scsi' },
-  ];
+  ]
 
   const keypairOptions = () => {
-    const opt = keypairList.map(obj => ({
+    return keypairList.map(obj => ({
       label: t(obj.name),
       value: t(obj.id),
-    }));
-    return opt;
-  };
+    }))
+  }
 
   const nodeOptions = () => {
-    const opt = nodeDataList.map(obj => ({
+    return nodeDataList.map(obj => ({
       label: t(obj.name),
       value: t(obj.name),
-    }));
-    return opt;
-  };
+    }))
+  }
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
     form.current.validator(() => {
-      setSubmitButtonFlag(true);
+      setSubmitButtonFlag(true)
 
-      const { data } = form.current.props;
+      const { data } = form.current.props
 
-      data.project = projectName;
-      data.network = networkCheckItems;
-      data.ips = selectedIpList;
-      data.sriov = sriovCheckItems;
-      data.sriovIps = selectedSriovIpList;
-      data.securitygroup = securityGroupCheckItems;
-      data.imageType = imageType;
+      data.project = projectName
+      data.network = networkCheckItems
+      data.ips = selectedIpList
+      data.sriov = sriovCheckItems
+      data.sriovIps = selectedSriovIpList
+      data.securitygroup = securityGroupCheckItems
+      data.imageType = imageType
       data.busType = busType
 
       data.bootvolume =
-        data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume;
-      data.keypair = data.keypair === t('RESOURCES_SELECT') ? '' : data.keypair;
-      data.node = data.node === t('RESOURCES_SELECT') ? '' : data.node;
-      data.storageClass = storageClass;
+        data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume
+      data.keypair = data.keypair === t('RESOURCES_SELECT') ? '' : data.keypair
+      data.node = data.node === t('RESOURCES_SELECT') ? '' : data.node
+      data.storageClass = storageClass
 
       if (isScript) {
-        data.makeScript = getScript();
+        data.makeScript = getScript()
       }
 
-      onOk({ ...data });
-    });
-  };
+      onOk({ ...data })
+    })
+  }
 
   const getScript = () => {
-    const { data } = form.current.props;
-    let makeScriptStep_1 = false;
-    let makeScriptStep_2 = false;
-    let makeScriptStep_3 = false;
+    const { data } = form.current.props
+    let makeScriptStep_1 = false
+    let makeScriptStep_2 = false
+    let makeScriptStep_3 = false
 
-    let makeScript = '#cloud-config';
+    let makeScript = '#cloud-config'
 
     /*
     #cloud-config
@@ -373,116 +350,122 @@ const RegistModal = props => {
         - newuser:test#@@!
         - seconduser:Passw0rd!TWO!
     */
-    let userPasswordScript = '';
+    let userPasswordScript = ''
     if (listPasswordRoute.length === 1) {
-      listPasswordRoute.map(obj => {
+      listPasswordRoute.forEach(obj => {
         if (data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `\nssh_pwauth: true\n`;
-          userPasswordScript += `users:\n`;
-          userPasswordScript += `  - default\n`;
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
-          userPasswordScript += `\n`;
-          userPasswordScript += `chpasswd:\n`;
-          userPasswordScript += `  expire: false\n`;
-          userPasswordScript += `  list:\n`;
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${data[`scriptPassword_${obj}`]
-            }\n`;
+          userPasswordScript += `\nssh_pwauth: true\n`
+          userPasswordScript += `users:\n`
+          userPasswordScript += `  - default\n`
+          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
+          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
+          userPasswordScript += `\n`
+          userPasswordScript += `chpasswd:\n`
+          userPasswordScript += `  expire: false\n`
+          userPasswordScript += `  list:\n`
+          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
+            data[`scriptPassword_${obj}`]
+          }\n`
 
-          makeScriptStep_1 = true;
+          makeScriptStep_1 = true
         }
-      });
+      })
     } else {
-      userPasswordScript += `\nssh_pwauth: true\n`;
-      userPasswordScript += `users:\n`;
-      userPasswordScript += `  - default\n`;
-      listPasswordRoute.map(obj => {
+      userPasswordScript += `\nssh_pwauth: true\n`
+      userPasswordScript += `users:\n`
+      userPasswordScript += `  - default\n`
+      listPasswordRoute.forEach(obj => {
         if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`;
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`;
-          makeScriptStep_1 = true;
+          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
+          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
+          makeScriptStep_1 = true
         }
-      });
-      userPasswordScript += `\n`;
-      userPasswordScript += `chpasswd:\n`;
-      userPasswordScript += `  expire: false\n`;
-      userPasswordScript += `  list:\n`;
-      listPasswordRoute.map(obj => {
+      })
+      userPasswordScript += `\n`
+      userPasswordScript += `chpasswd:\n`
+      userPasswordScript += `  expire: false\n`
+      userPasswordScript += `  list:\n`
+      listPasswordRoute.forEach(obj => {
         if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${data[`scriptPassword_${obj}`]
-            }\n`;
+          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
+            data[`scriptPassword_${obj}`]
+          }\n`
         }
-      });
+      })
     }
 
-    let fileScript = '';
+    let fileScript = ''
     if (listFileRoute.length === 1) {
-      listFileRoute.map(obj => {
+      listFileRoute.forEach(obj => {
         if (data[`scriptPath_${obj}`]) {
-          fileScript += `\nwrite_files:\n  - path: ${data[`scriptPath_${obj}`]
-            }\n    content: |\n      ${data[`scriptContent_${obj}`]}\n`;
-          makeScriptStep_2 = true;
+          fileScript += `\nwrite_files:\n  - path: ${
+            data[`scriptPath_${obj}`]
+          }\n    content: |\n      ${data[`scriptContent_${obj}`]}\n`
+          makeScriptStep_2 = true
         }
-      });
+      })
     } else {
-      fileScript += `\nwrite_files:\n`;
-      listFileRoute.map(obj => {
+      fileScript += `\nwrite_files:\n`
+      listFileRoute.forEach(obj => {
         if (!!data[`scriptPath_${obj}`] && !!data[`scriptContent_${obj}`]) {
-          fileScript += `  - path: ${data[`scriptPath_${obj}`]
-            }\n    content: |\n      ${data[`scriptContent_${obj}`]}\n`;
-          makeScriptStep_2 = true;
+          fileScript += `  - path: ${
+            data[`scriptPath_${obj}`]
+          }\n    content: |\n      ${data[`scriptContent_${obj}`]}\n`
+          makeScriptStep_2 = true
         }
-      });
+      })
     }
 
-    let packageScript = '';
+    let packageScript = ''
     if (listPackageRoute.length === 1) {
-      listPackageRoute.map(obj => {
+      listPackageRoute.forEach(obj => {
         if (data[`scriptPackage_${obj}`]) {
           if (data[`scriptVersion_${obj}`]) {
-            packageScript += `packages:\n  - [${data[`scriptPackage_${obj}`]
-              }, ${data[`scriptVersion_${obj}`]}]\n`;
+            packageScript += `packages:\n  - [${
+              data[`scriptPackage_${obj}`]
+            }, ${data[`scriptVersion_${obj}`]}]\n`
           } else {
-            packageScript += `packages:\n  - ${data[`scriptPackage_${obj}`]}\n`;
+            packageScript += `packages:\n  - ${data[`scriptPackage_${obj}`]}\n`
           }
-          makeScriptStep_3 = true;
+          makeScriptStep_3 = true
         }
-      });
+      })
     } else {
-      packageScript += `packages:\n`;
-      listPackageRoute.map(obj => {
+      packageScript += `packages:\n`
+      listPackageRoute.forEach(obj => {
         if (data[`scriptVersion_${obj}`]) {
-          packageScript += `  - [${data[`scriptPackage_${obj}`]}, ${data[`scriptVersion_${obj}`]
-            }]\n`;
+          packageScript += `  - [${data[`scriptPackage_${obj}`]}, ${
+            data[`scriptVersion_${obj}`]
+          }]\n`
         } else {
-          packageScript += `  - ${data[`scriptPackage_${obj}`]}\n`;
+          packageScript += `  - ${data[`scriptPackage_${obj}`]}\n`
         }
-        makeScriptStep_3 = true;
-      });
+        makeScriptStep_3 = true
+      })
     }
 
     if (!makeScriptStep_1) {
-      userPasswordScript = '';
+      userPasswordScript = ''
     }
     if (!makeScriptStep_2) {
-      fileScript = '';
+      fileScript = ''
     }
     if (!makeScriptStep_3) {
-      packageScript = '';
+      packageScript = ''
     }
 
-    makeScript += userPasswordScript + fileScript + packageScript;
+    makeScript += userPasswordScript + fileScript + packageScript
     // makeScript += userPasswordScript;
 
-    return makeScript;
-  };
+    return makeScript
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   const stepMoveCheck = step => {
-    const { data } = form.current.props;
+    const { data } = form.current.props
     if (step === 1) {
       if (
         imageType === 'I' &&
@@ -491,7 +474,7 @@ const RegistModal = props => {
           data.image === t('RESOURCES_SELECT') ||
           data.flavor === t('RESOURCES_SELECT'))
       ) {
-        handleOk();
+        handleOk()
       } else if (
         imageType === 'B' &&
         (data.name === undefined ||
@@ -499,58 +482,58 @@ const RegistModal = props => {
           data.bootvolume === t('RESOURCES_SELECT') ||
           data.flavor === t('RESOURCES_SELECT'))
       ) {
-        handleOk();
+        handleOk()
       } else {
         const imageSize =
           imageType === 'I'
             ? imageDataList
-              .filter(item => item.name === selectImageName)
-              .map(item => item.size)[0]
-              .replace('Gi', '')
+                .filter(item => item.name === selectImageName)
+                .map(item => item.size)[0]
+                .replace('Gi', '')
             : bootVolumeDataList
-              .filter(item => item.id === selectBootId)
-              .map(item => item.capacity)[0]
-              .replace('Gi', '');
+                .filter(item => item.id === selectBootId)
+                .map(item => item.capacity)[0]
+                .replace('Gi', '')
         const flavorSize = flavorDataList
           .filter(item => item.name === selectFlavorName)
-          .map(item => item.root_disk);
+          .map(item => item.root_disk)
 
         if (Number(flavorSize) >= Number(imageSize)) {
-          setRegStep(2);
-          setFlavorSizeCheck(true);
-          projectFilteredData(projectName);
+          setRegStep(2)
+          setFlavorSizeCheck(true)
+          projectFilteredData(projectName)
         } else {
-          setFlavorSizeCheck(false);
+          setFlavorSizeCheck(false)
         }
       }
     }
     if (step === 2) {
-      setRegStep(3);
+      setRegStep(3)
     }
 
     if (step === 3) {
-      setVmName(data.name);
-      setImageName(data.image);
-      setBootVolumeName(data.bootvolume);
-      setFlavorName(data.flavor);
-      setDescription(data.description);
+      setVmName(data.name)
+      setImageName(data.image)
+      setBootVolumeName(data.bootvolume)
+      setFlavorName(data.flavor)
+      setDescription(data.description)
       setKeypairName(
         data.keypair === t('RESOURCES_SELECT')
           ? ''
           : get(find(keypairList, { id: data.keypair }), 'name')
-      );
-      setNodeName(data.node === t('RESOURCES_SELECT') ? '' : data.node);
+      )
+      setNodeName(data.node === t('RESOURCES_SELECT') ? '' : data.node)
 
-      const flavorData = flavorDataList.filter(obj => obj.name === data.flavor);
-      setFlavorCpu(flavorData[0].vcpus);
-      setFlavorMemory(common.fnSetBytes(flavorData[0].ram));
-      setFlavorDisk(flavorData[0].root_disk);
+      const flavorData = flavorDataList.filter(obj => obj.name === data.flavor)
+      setFlavorCpu(flavorData[0].vcpus)
+      setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
+      setFlavorDisk(flavorData[0].root_disk)
 
       if (isScript) {
-        const checkFlagPassword = checkScriptPassword();
-        const checkFlagFileWrite = checkScriptFilewrite();
-        const checkFlagPackage = checkScriptPackage();
-        const checkFlagUserScript = checkScriptUserScript();
+        const checkFlagPassword = checkScriptPassword()
+        const checkFlagFileWrite = checkScriptFilewrite()
+        const checkFlagPackage = checkScriptPackage()
+        const checkFlagUserScript = checkScriptUserScript()
 
         if (
           checkFlagPassword ||
@@ -558,136 +541,137 @@ const RegistModal = props => {
           checkFlagPackage ||
           checkFlagUserScript
         ) {
-          return false;
+          return false
         }
       }
 
       // keypair 와 passworkd 둘다 설정하지 않을때...
-      const checkFlagKeypairOrPassword = checkKeypairPassword();
+      const checkFlagKeypairOrPassword = checkKeypairPassword()
       if (checkFlagKeypairOrPassword) {
-        return false;
+        return false
       }
 
-      setIsPasswordError(false);
-      setIsPackageError(false);
-      setIsFileWriteError(false);
-      setIsUserScriptError(false);
-      setIsKeypiarPasswordError(false);
-      setIsPackageValidationError(false);
+      setIsPasswordError(false)
+      setIsPackageError(false)
+      setIsFileWriteError(false)
+      setIsUserScriptError(false)
+      setIsKeypiarPasswordError(false)
+      setIsPackageValidationError(false)
 
-      setRegStep(4);
-      setSubmitButtonFlag(false);
+      setRegStep(4)
+      setSubmitButtonFlag(false)
     }
-  };
+  }
 
   // 스크립트 Validation 시작===================
   const checkScriptPassword = () => {
     if (isPassword) {
-      const { data } = form.current.props;
+      const { data } = form.current.props
       try {
-        listPasswordRoute.map(obj => {
+        listPasswordRoute.forEach(obj => {
+          // eslint-disable-next-line no-empty
           if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
           } else {
-            setIsPasswordError(true);
-            throw true;
+            setIsPasswordError(true)
+            throw new Error(`Password error for ${obj}`)
           }
-        });
+        })
       } catch (e) {
-        return e;
+        return e
       }
     }
-    setIsPasswordError(false);
-    return false;
-  };
+    setIsPasswordError(false)
+    return false
+  }
 
   const checkScriptFilewrite = () => {
     if (isFileWrite) {
-      const { data } = form.current.props;
+      const { data } = form.current.props
       try {
-        listFileRoute.map(obj => {
+        listFileRoute.forEach(obj => {
+          // eslint-disable-next-line no-empty
           if (data[`scriptPath_${obj}`]) {
           } else {
-            setIsFileWriteError(true);
-            throw true;
+            setIsFileWriteError(true)
+            throw new Error(`File write error for ${obj}`)
           }
-        });
+        })
       } catch (e) {
-        return e;
+        return e
       }
     }
-    setIsFileWriteError(false);
-    return false;
-  };
+    setIsFileWriteError(false)
+    return false
+  }
 
   const checkScriptPackage = () => {
     if (isPackage) {
-      const { data } = form.current.props;
+      const { data } = form.current.props
       try {
-        listPackageRoute.map(obj => {
+        listPackageRoute.forEach(obj => {
           if (
             !!data[`scriptPackage_${obj}`] &&
             !!data[`scriptVersion_${obj}`]
           ) {
-            setIsPackageError(false);
+            setIsPackageError(false)
             if (!PATTERN_PACKAGE_NAME.test(data[`scriptPackage_${obj}`])) {
-              setIsPackageValidationError(true);
-              throw true;
+              setIsPackageValidationError(true)
+              throw new Error(`Package validation error for ${obj}`)
             }
           } else {
             if (!PATTERN_PACKAGE_NAME.test(data[`scriptPackage_${obj}`])) {
-              setIsPackageValidationError(true);
+              setIsPackageValidationError(true)
             } else {
-              setIsPackageValidationError(false);
+              setIsPackageValidationError(false)
             }
-            setIsPackageError(true);
-            throw true;
+            setIsPackageError(true)
+            throw new Error(`Package error for ${obj}`)
           }
-        });
+        })
       } catch (e) {
-        return e;
+        return e
       }
     }
-    setIsPackageError(false);
-    setIsPackageValidationError(false);
-    return false;
-  };
+    setIsPackageError(false)
+    setIsPackageValidationError(false)
+    return false
+  }
 
   const checkScriptUserScript = () => {
-    let flag = false;
+    let flag = false
     if (isUserScript) {
-      const { data } = form.current.props;
+      const { data } = form.current.props
       if (data['userScript']) {
-        flag = false;
-        setIsUserScriptError(false);
+        flag = false
+        setIsUserScriptError(false)
       } else {
-        flag = true;
-        setIsUserScriptError(true);
+        flag = true
+        setIsUserScriptError(true)
       }
     } else {
-      setIsUserScriptError(false);
+      setIsUserScriptError(false)
     }
-    return flag;
-  };
+    return flag
+  }
   // 스크립트 Validation 끝===================
 
   const checkKeypairPassword = () => {
-    const { data } = form.current.props;
+    const { data } = form.current.props
 
-    let flag = false;
+    let flag
     if (data['keypair']) {
-      flag = false;
+      flag = false
     } else {
-      isPassword ? (flag = false) : (flag = true);
+      isPassword ? (flag = false) : (flag = true)
     }
 
-    flag ? setIsKeypiarPasswordError(true) : setIsKeypiarPasswordError(false);
+    flag ? setIsKeypiarPasswordError(true) : setIsKeypiarPasswordError(false)
 
-    return flag;
-  };
+    return flag
+  }
 
   const fnGetModalFooter = () => {
-    let elements = '';
-    elements = (
+    return (
       <>
         {regStep === 1 && (
           <>
@@ -700,7 +684,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(1);
+                stepMoveCheck(1)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -718,7 +702,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(regStep - 1);
+                setRegStep(regStep - 1)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -727,7 +711,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(2);
+                stepMoveCheck(2)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -745,7 +729,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(regStep - 1);
+                setRegStep(regStep - 1)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -754,7 +738,7 @@ const RegistModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(3);
+                stepMoveCheck(3)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -772,7 +756,7 @@ const RegistModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(3);
+                setRegStep(3)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -781,7 +765,7 @@ const RegistModal = props => {
             {submitButtonFlag && props.isSubmitting ? (
               <Button
                 onClick={() => {
-                  handleOk();
+                  handleOk()
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
                 disabled
@@ -792,7 +776,7 @@ const RegistModal = props => {
             ) : (
               <Button
                 onClick={() => {
-                  handleOk();
+                  handleOk()
                 }}
                 className={classnames(styles['btn'], styles['btn-control'])}
               >
@@ -802,74 +786,68 @@ const RegistModal = props => {
           </>
         )}
       </>
-    );
-
-    return elements;
-  };
+    )
+  }
 
   // 설명이 길어지면 ui가 깨짐
   const handleOsType = value => {
-    setOsType(value);
-    setSelectImageName('');
+    setOsType(value)
+    setSelectImageName('')
     if (value === 'windows') {
-      setImageOptionList(
-        imageDataList.filter(obj => obj.os_type === 'windows')
-      );
+      setImageOptionList(imageDataList.filter(obj => obj.os_type === 'windows'))
     } else if (value === 'linux') {
-      setImageOptionList(
-        imageDataList.filter(obj => obj.os_type !== 'windows')
-      );
+      setImageOptionList(imageDataList.filter(obj => obj.os_type !== 'windows'))
     } else {
-      setImageOptionList([]);
+      setImageOptionList([])
     }
-  };
+  }
 
   // 체크 리스트 시작 ==================================================
-  const [networkCheckItems, setNetworkCheckItems] = useState([]);
-  const [sriovCheckItems, setSriovCheckItems] = useState([]);
-  const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([]);
+  const [networkCheckItems, setNetworkCheckItems] = useState([])
+  const [sriovCheckItems, setSriovCheckItems] = useState([])
+  const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([])
 
   const dataListVariables = {
     network: networkList,
     sriov: sriovNetworkDataList,
     security: securityGroupList,
-  };
+  }
 
   const stateVariables = {
     network: networkCheckItems,
     sriov: sriovCheckItems,
     security: securityGroupCheckItems,
-  };
+  }
 
   const setVariables = {
     network: setNetworkCheckItems,
     sriov: setSriovCheckItems,
     security: setSecurityGroupCheckItems,
-  };
+  }
 
   const handleSingleCheck = (checked, name, type) => {
     if (checked) {
-      setVariables[type](prev => [...prev, name]);
+      setVariables[type](prev => [...prev, name])
     } else {
-      setVariables[type](stateVariables[type].filter(el => el !== name));
+      setVariables[type](stateVariables[type].filter(el => el !== name))
     }
-  };
+  }
 
   const handleAllCheck = (checked, type) => {
     if (checked) {
-      const nameArray = [];
+      const nameArray = []
       dataListVariables[type].forEach(el =>
         type === 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
-      );
-      setVariables[type](nameArray);
+      )
+      setVariables[type](nameArray)
     } else {
-      setVariables[type]([]);
+      setVariables[type]([])
     }
-  };
+  }
 
   const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter(el => el !== name));
-  };
+    setVariables[type](stateVariables[type].filter(el => el !== name))
+  }
 
   // 체크 리스트 끝 ==================================================
 
@@ -877,161 +855,155 @@ const RegistModal = props => {
 
   const imageValidator = (rule, value, callback) => {
     if (value === t('RESOURCES_SELECT') || value === 'select') {
-      return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') });
+      return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
 
   const bootVolumeValidator = (rule, value, callback) => {
     if (value === t('RESOURCES_SELECT') || value === 'select') {
-      return callback({ message: t('RESOURCES_SELECT_BOOT_VOLUME_TIP') });
+      return callback({ message: t('RESOURCES_SELECT_BOOT_VOLUME_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
 
   const busTypeValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') });
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
+      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
 
   const flavorValidator = (rule, value, callback) => {
     if (value === t('RESOURCES_SELECT') || value === 'select') {
-      return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') });
+      return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
   // Validation 끝 ==================================================
 
   // 스크립트 시작 ==================================================
-  const nextPasswordRoute = useRef(1);
-  const [listPasswordRoute, setlistPasswordRoute] = useState([1]);
+  const nextPasswordRoute = useRef(1)
+  const [listPasswordRoute, setlistPasswordRoute] = useState([1])
 
   // const imageDistroTypeRef = useRef();
   useEffect(() => {
-    checkScriptPassword();
-  }, [listPasswordRoute]);
+    checkScriptPassword()
+  }, [listPasswordRoute])
 
   const handlePasswordRoute = {
     addColumn: () => {
       if (listPasswordRoute.length > 4) {
-        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'));
-        return false;
+        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
+        return false
       }
-      nextPasswordRoute.current += 1;
-      setlistPasswordRoute(prevList => [
-        ...prevList,
-        nextPasswordRoute.current,
-      ]);
+      nextPasswordRoute.current += 1
+      setlistPasswordRoute(prevList => [...prevList, nextPasswordRoute.current])
     },
 
     delColumn: id => {
-      setlistPasswordRoute(listPasswordRoute.filter(el => el !== id));
+      setlistPasswordRoute(listPasswordRoute.filter(el => el !== id))
     },
-  };
+  }
 
-  const nextFileRoute = useRef(1);
-  const [listFileRoute, setlistFileRoute] = useState([1]);
+  const nextFileRoute = useRef(1)
+  const [listFileRoute, setlistFileRoute] = useState([1])
 
   useEffect(() => {
-    checkScriptFilewrite();
-  }, [listFileRoute]);
+    checkScriptFilewrite()
+  }, [listFileRoute])
 
   const handleFileRoute = {
     addColumn: () => {
       if (listFileRoute.length > 4) {
-        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'));
-        return false;
+        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
+        return false
       }
-      nextFileRoute.current += 1;
-      setlistFileRoute(listFileRoute => [
-        ...listFileRoute,
-        nextFileRoute.current,
-      ]);
+      nextFileRoute.current += 1
+      setlistFileRoute(fileRoutes => [...fileRoutes, nextFileRoute.current])
     },
     delColumn: id => {
-      setlistFileRoute(listFileRoute.filter(el => el !== id));
+      setlistFileRoute(listFileRoute.filter(el => el !== id))
     },
-  };
+  }
 
-  const nextPackageRoute = useRef(1);
-  const [listPackageRoute, setlistPackageRoute] = useState([1]);
+  const nextPackageRoute = useRef(1)
+  const [listPackageRoute, setlistPackageRoute] = useState([1])
 
   useEffect(() => {
-    checkScriptPackage();
-  }, [listPackageRoute]);
+    checkScriptPackage()
+  }, [listPackageRoute])
 
   const handlePackageRoute = {
     addColumn: () => {
       if (listPackageRoute.length > 4) {
-        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'));
-        return false;
+        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
+        return false
       }
-      nextPackageRoute.current += 1;
-      setlistPackageRoute(listPackageRoute => [
-        ...listPackageRoute,
+      nextPackageRoute.current += 1
+      setlistPackageRoute(packageRoutes => [
+        ...packageRoutes,
         nextPackageRoute.current,
-      ]);
+      ])
     },
     delColumn: id => {
-      setlistPackageRoute(listPackageRoute.filter(el => el !== id));
+      setlistPackageRoute(listPackageRoute.filter(el => el !== id))
     },
-  };
+  }
 
   const handleIamgeDistroType = distro_type => {
-    setSelectImageDistroType(distro_type);
+    setSelectImageDistroType(distro_type)
 
     if (isPassword) {
-      const { data } = form.current.props;
-      data['scriptId_1'] = distro_type;
+      const { data } = form.current.props
+      data['scriptId_1'] = distro_type
     }
-  };
+  }
 
   // 스크립트 끝 ==================================================
 
-  const [tab, setTab] = useState('I');
-  const { TabPanel } = Tabs;
+  const [tab, setTab] = useState('I')
+  const { TabPanel } = Tabs
 
   const renderIds = () => {
-    const list = document.querySelectorAll('[name^="scriptId"]');
-    const values = [];
+    const list = document.querySelectorAll('[name^="scriptId"]')
+    const values = []
     for (const el of list) {
-      values.push(el.value);
+      values.push(el.value)
     }
     return (
       <>
         {t('RESOURCES_CHANGE_PASSWORD')} - {values.join(', ')}
       </>
-    );
-  };
+    )
+  }
 
   const renderFiles = () => {
-    const list = document.querySelectorAll('[name^="scriptPath"]');
-    const values = [];
+    const list = document.querySelectorAll('[name^="scriptPath"]')
+    const values = []
     for (const el of list) {
-      values.push(el.value);
+      values.push(el.value)
     }
     return (
       <>
         {t('RESOURCES_WRITE_FILE')} - {values.join(', ')}
       </>
-    );
-  };
+    )
+  }
 
   const renderPackages = () => {
-    const list = document.querySelectorAll('[name^="scriptPackage"]');
-    const list2 = document.querySelectorAll('[name^="scriptVersion"]');
-    const values = [];
+    const list = document.querySelectorAll('[name^="scriptPackage"]')
+    const list2 = document.querySelectorAll('[name^="scriptVersion"]')
+    const values = []
     for (let i = 0; i < list.length; i++) {
-      values.push(`${list[i].value}:${list2[i].value}`);
+      values.push(`${list[i].value}:${list2[i].value}`)
     }
     return (
       <>
         {t('RESOURCES_INSTALL_PACKAGE')} - {values.join(', ')}
       </>
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -1056,12 +1028,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -1073,8 +1046,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1086,12 +1059,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -1103,8 +1077,8 @@ const RegistModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1116,12 +1090,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 3
-                    ? styles.current
-                    : regStep > 3
+                  className={`${
+                    regStep === 3
+                      ? styles.current
+                      : regStep > 3
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -1133,8 +1108,8 @@ const RegistModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1206,10 +1181,10 @@ const RegistModal = props => {
                           defaultValue={projectName}
                           cluster={props.cluster}
                           onChange={e => {
-                            setProjectName(e);
-                            setNetworkCheckItems([]);
-                            setSriovCheckItems([]);
-                            setSecurityGroupCheckItems([]);
+                            setProjectName(e)
+                            setNetworkCheckItems([])
+                            setSriovCheckItems([])
+                            setSecurityGroupCheckItems([])
                           }}
                         />
                       </Form.Item>
@@ -1231,9 +1206,9 @@ const RegistModal = props => {
                         type="button"
                         activeName={tab}
                         onChange={newTab => {
-                          setTab(newTab);
-                          setImageType(newTab);
-                          setStorageClass('');
+                          setTab(newTab)
+                          setImageType(newTab)
+                          setStorageClass('')
                         }}
                       >
                         <TabPanel label={t('RESOURCES_IMAGE')} name="I" />
@@ -1278,13 +1253,15 @@ const RegistModal = props => {
                                 }}
                                 options={imageOptions()}
                                 onChange={e => {
-                                  setSelectImageName(e);
+                                  setSelectImageName(e)
                                   const distro_type = imageOptionList
                                     .filter(item => item.name === e)
-                                    .map(item => item.distro_type)[0];
-                                  handleIamgeDistroType(distro_type);
+                                    .map(item => item.distro_type)[0]
+                                  handleIamgeDistroType(distro_type)
                                 }}
-                                defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
+                                defaultDescription={t(
+                                  'RESOURCES_SELECT_IMAGE_TIP'
+                                )}
                               />
                             </Form.Item>
                             {selectImageName && (
@@ -1308,7 +1285,12 @@ const RegistModal = props => {
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_BOOT_VOLUME')}
-                            rules={[{ required: true, validator: bootVolumeValidator }]}
+                            rules={[
+                              {
+                                required: true,
+                                validator: bootVolumeValidator,
+                              },
+                            ]}
                           >
                             <Select
                               name="bootvolume"
@@ -1316,7 +1298,7 @@ const RegistModal = props => {
                               options={bootvolumeOptions()}
                               // clearable
                               onChange={e => {
-                                setSelectBootId(e);
+                                setSelectBootId(e)
                               }}
                             />
                           </Form.Item>
@@ -1324,7 +1306,9 @@ const RegistModal = props => {
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_BUS')}
-                            rules={[{ required: true, validator: busTypeValidator }]}
+                            rules={[
+                              { required: true, validator: busTypeValidator },
+                            ]}
                           >
                             <Select
                               name="busType"
@@ -1342,7 +1326,9 @@ const RegistModal = props => {
                         {imageType === 'B' && <div style={{ padding: 8 }} />}
                         <Form.Item
                           label={t('RESOURCES_FLAVOR')}
-                          rules={[{ required: true, validator: flavorValidator }]}
+                          rules={[
+                            { required: true, validator: flavorValidator },
+                          ]}
                         >
                           <TypeSelect
                             name="flavor"
@@ -1352,13 +1338,16 @@ const RegistModal = props => {
                             placeholder={{
                               label: t('RESOURCES_SELECT'),
                             }}
-                            defaultDescription={t('RESOURCES_SELECT_FLAVOR_TIP')}
+                            defaultDescription={t(
+                              'RESOURCES_SELECT_FLAVOR_TIP'
+                            )}
                             newMaxHeight="198"
                           />
                         </Form.Item>
                         <div
-                          className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            flavorSizeCheck ? 'hide' : ''
+                          }`}
                         >
                           {imageType === 'I'
                             ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
@@ -1371,8 +1360,8 @@ const RegistModal = props => {
                         {imageType === 'I' && (
                           <Form.Group
                             label={t('RESOURCES_STOREGE_CLASS')}
-                            onChange={e => {
-                              setStorageClass('');
+                            onChange={() => {
+                              setStorageClass('')
                             }}
                             checkable
                           >
@@ -1399,11 +1388,7 @@ const RegistModal = props => {
                   label={t('RESOURCES_DESCRIPTION')}
                   desc={t('DESCRIPTION_DESC')}
                 >
-                  <TextArea
-                    name="description"
-                    maxLength={256}
-                    value=""
-                  />
+                  <TextArea name="description" maxLength={256} value="" />
                 </Form.Item>
               </div>
               {/* 기본설정 설정 끝========================================== */}
@@ -1451,7 +1436,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['network'].length > 0 &&
                                     stateVariables['network'].length ===
-                                    dataListVariables['network'].length
+                                      dataListVariables['network'].length
                                   )
                                 }
                               />
@@ -1485,7 +1470,7 @@ const RegistModal = props => {
                               </td>
                             </tr>
                           )}
-                          {networkList?.map((data, key) => (
+                          {networkList?.map(data => (
                             <tr key={data.id}>
                               <td>
                                 <Checkbox
@@ -1514,7 +1499,9 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleIpSelectClick(data.id, e)
                                   }
-                                  disabled={!networkCheckItems.includes(data.id)}
+                                  disabled={
+                                    !networkCheckItems.includes(data.id)
+                                  }
                                   clearable
                                 />
                               </td>
@@ -1529,7 +1516,7 @@ const RegistModal = props => {
                         {networkCheckItems?.map(id => {
                           const name = networkList
                             ?.filter(data => data.id === id)
-                            .map(item => item.name)[0];
+                            .map(item => item.name)[0]
                           return (
                             <span key={id}>
                               <Button
@@ -1539,7 +1526,7 @@ const RegistModal = props => {
                                 {name}
                               </Button>
                             </span>
-                          );
+                          )
                         })}
                       </div>
                     </div>
@@ -1587,7 +1574,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['sriov'].length > 0 &&
                                     stateVariables['sriov'].length ===
-                                    dataListVariables['sriov'].length
+                                      dataListVariables['sriov'].length
                                   )
                                 }
                               />
@@ -1621,7 +1608,7 @@ const RegistModal = props => {
                               </td>
                             </tr>
                           )}
-                          {sriovNetworkList?.map((data, key) => (
+                          {sriovNetworkList?.map(data => (
                             <tr key={data.name}>
                               <td>
                                 <Checkbox
@@ -1650,7 +1637,9 @@ const RegistModal = props => {
                                   onChange={e =>
                                     handleSriovIpSelectClick(data.name, e)
                                   }
-                                  disabled={!sriovCheckItems.includes(data.name)}
+                                  disabled={
+                                    !sriovCheckItems.includes(data.name)
+                                  }
                                   clearable
                                 />
                               </td>
@@ -1691,8 +1680,9 @@ const RegistModal = props => {
 
                 <div className={styles.wrapperError}>
                   <div
-                    className={`form-item-error ${!isKeypiarPasswordError ? 'hide' : ''
-                      }`}
+                    className={`form-item-error ${
+                      !isKeypiarPasswordError ? 'hide' : ''
+                    }`}
                   >
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
@@ -1738,7 +1728,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['security'].length > 0 &&
                                     stateVariables['security'].length ===
-                                    dataListVariables['security'].length
+                                      dataListVariables['security'].length
                                   )
                                 }
                               />
@@ -1775,7 +1765,7 @@ const RegistModal = props => {
                               </td>
                             </tr>
                           )}
-                          {securityGroupList?.map((data, key) => (
+                          {securityGroupList?.map(data => (
                             <tr key={data.id}>
                               <td>
                                 <Checkbox
@@ -1806,7 +1796,7 @@ const RegistModal = props => {
                         {securityGroupCheckItems?.map(id => {
                           const name = securityGroupList
                             ?.filter(data => data.id === id)
-                            .map(item => item.name)[0];
+                            .map(item => item.name)[0]
                           return (
                             <span key={id}>
                               <Button
@@ -1816,7 +1806,7 @@ const RegistModal = props => {
                                 {name}
                               </Button>
                             </span>
-                          );
+                          )
                         })}
                       </div>
                     </div>
@@ -1835,7 +1825,7 @@ const RegistModal = props => {
                 <Form.Group
                   label={t('RESOURCES_SCRIPT')}
                   onChange={() => {
-                    setIsScript(!isScript);
+                    setIsScript(!isScript)
                   }}
                   checkable
                 >
@@ -1843,14 +1833,14 @@ const RegistModal = props => {
                     className={isUserScript ? 'disabled' : ''}
                     onClick={e => {
                       if (isUserScript) {
-                        e.preventDefault();
+                        e.preventDefault()
                       }
                     }}
                   >
                     <Form.Group
                       label={t('RESOURCES_CHANGE_PASSWORD')}
-                      onChange={e => {
-                        setIsPassword(!isPassword);
+                      onChange={() => {
+                        setIsPassword(!isPassword)
                       }}
                       checkable
                       className={'disabled'}
@@ -1872,8 +1862,8 @@ const RegistModal = props => {
                                         ? false
                                         : !!(obj === 1 && imageType === 'I')
                                     }
-                                    onChange={e => {
-                                      checkScriptPassword();
+                                    onChange={() => {
+                                      checkScriptPassword()
                                     }}
                                   />
                                 </Form.Item>
@@ -1883,7 +1873,7 @@ const RegistModal = props => {
                                   <InputPassword
                                     name={`scriptPassword_${obj}`}
                                     placeholder={t('Password')}
-                                    onChange={e => checkScriptPassword()}
+                                    onChange={() => checkScriptPassword()}
                                   />
                                 </Form.Item>
                               </Column>
@@ -1892,14 +1882,14 @@ const RegistModal = props => {
                               type="flat"
                               icon="trash"
                               className={styles.scriptdelete}
-                              onClick={e =>
+                              onClick={() =>
                                 listPasswordRoute.length > 1 &&
                                 obj > 1 &&
                                 handlePasswordRoute.delColumn(obj)
                               }
                             />
                           </div>
-                        );
+                        )
                       })}
 
                       <div className="text-right">
@@ -1911,8 +1901,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPasswordError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPasswordError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                       </div>
@@ -1920,8 +1911,8 @@ const RegistModal = props => {
 
                     <Form.Group
                       label={t('RESOURCES_WRITE_FILE')}
-                      onChange={e => {
-                        setIsFileWrite(!isFileWrite);
+                      onChange={() => {
+                        setIsFileWrite(!isFileWrite)
                       }}
                       checkable
                     >
@@ -1966,8 +1957,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isFileWriteError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isFileWriteError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                       </div>
@@ -1976,7 +1968,7 @@ const RegistModal = props => {
                     <Form.Group
                       label={t('RESOURCES_INSTALL_PACKAGE')}
                       onChange={() => {
-                        setIsPackage(!isPackage);
+                        setIsPackage(!isPackage)
                       }}
                       checkable
                     >
@@ -2022,14 +2014,16 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPackageError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPackageError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}
                       </div>
                       <div
-                        className={`form-item-error ${!packageValidationError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !packageValidationError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}
                       </div>
@@ -2041,7 +2035,7 @@ const RegistModal = props => {
                     }
                     onClick={e => {
                       if (isPassword || isPackage || isFileWrite) {
-                        e.preventDefault();
+                        e.preventDefault()
                       }
                     }}
                   >
@@ -2049,7 +2043,7 @@ const RegistModal = props => {
                       label={t('RESOURCES_CUSTOM')}
                       checkable
                       onChange={() => {
-                        setIsUserScript(!isUserScript);
+                        setIsUserScript(!isUserScript)
                       }}
                     >
                       <Form.Item className={styles.textarea}>
@@ -2062,8 +2056,9 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                       <div
-                        className={`form-item-error ${!isUserScriptError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isUserScriptError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
                       </div>
@@ -2085,7 +2080,7 @@ const RegistModal = props => {
                       <Button
                         icon="pen"
                         onClick={() => {
-                          setRegStep(1);
+                          setRegStep(1)
                         }}
                       ></Button>
                     </div>
@@ -2101,13 +2096,15 @@ const RegistModal = props => {
                         </div>
                       )}
                       <div className={styles.list}>
-                        <label>{`${imageType === 'I'
-                          ? t('RESOURCES_IMAGE')
-                          : t('RESOURCES_BOOT_VOLUME')
-                          }`}</label>
+                        <label>{`${
+                          imageType === 'I'
+                            ? t('RESOURCES_IMAGE')
+                            : t('RESOURCES_BOOT_VOLUME')
+                        }`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{`${imageType === 'I' ? imageName : bootVolumeName
-                            }`}</div>
+                          <div className={styles.bold}>{`${
+                            imageType === 'I' ? imageName : bootVolumeName
+                          }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
@@ -2161,7 +2158,7 @@ const RegistModal = props => {
                       <Button
                         icon="pen"
                         onClick={() => {
-                          setRegStep(2);
+                          setRegStep(2)
                         }}
                       ></Button>
                     </div>
@@ -2222,7 +2219,7 @@ const RegistModal = props => {
                       <Button
                         icon="pen"
                         onClick={() => {
-                          setRegStep(3);
+                          setRegStep(3)
                         }}
                       ></Button>
                     </div>
@@ -2278,7 +2275,7 @@ const RegistModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default RegistModal;
+export default RegistModal
