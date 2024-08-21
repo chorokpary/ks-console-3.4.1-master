@@ -168,39 +168,12 @@ export default class Vms extends React.Component {
   }
 
   getItemDesc(state) {
-    if (state === 'Stopped') {
-      return t('RESOURCES_STOP');
-    }
-    if (state === 'Provisioning') {
-      return t('RESOURCES_PROVISIONING');
-    }
-    if (state === 'Starting') {
-      return t('RESOURCES_STARTING');
-    }
-    if (state === 'Running') {
-      return t('RESOURCES_RUNNING');
-    }
-    if (state === 'Paused') {
-      return t('RESOURCES_PAUSED');
-    }
-    if (state === 'Migrating') {
-      return t('RESOURCES_MIGRATING');
-    }
-    if (state === 'Stopping') {
-      return t('RESOURCES_STOPPING');
-    }
-    if (state === 'Terminating') {
-      return t('RESOURCES_TERMINATING');
-    }
-    if (state === 'Unknown') {
-      return t('RESOURCES_UNKNOWN');
-    }
-    return '-';
+    return t(`RESOURCES_${state.toUpperCase()}`);
   }
 
   getVmsStatus() {
     const VMS_STATUS = [
-      { text: t('RESOURCES_STOP'), value: 'Stopped' },
+      { text: t('RESOURCES_STOPPED'), value: 'Stopped' },
       { text: t('RESOURCES_PROVISIONING'), value: 'Provisioning' },
       { text: t('RESOURCES_STARTING'), value: 'Starting' },
       { text: t('RESOURCES_RUNNING'), value: 'Running' },
