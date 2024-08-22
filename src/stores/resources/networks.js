@@ -34,6 +34,8 @@ export default class NetworkStore extends Base {
 
     getPhysnetUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/physnets`
 
+    getNodeUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/nodes`
+
     @action
     async create(data, params = {}) {
         if (data.network.type == "FLAT") {
@@ -106,6 +108,18 @@ export default class NetworkStore extends Base {
         this.yaml = yamlData.manifest
         this.isLoading = false
         return yamlData
+    }
+
+    @action
+    async fetchAvailableNodes(params) {
+        this.isLoading = true;
+
+        const result = await request.get(
+            `${this.getNodeUrl(params)}/available_nodes/${params.resourceName}`
+        );
+
+        this.isLoading = false;
+        return result
     }
 
     @action

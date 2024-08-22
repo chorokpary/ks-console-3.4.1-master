@@ -8,7 +8,7 @@ import {
   PATTERN_SEGMENT_ID,
   PATTERN_MTU,
 } from 'utils/constants';
-import { Form, Input, Select, Button } from '@kube-design/components';
+import { Form, Input, Select, Button, Tooltip } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import {
   RadioButton,
@@ -28,6 +28,8 @@ const RegistModal = props => {
   const [external, setExternal] = useState(false);
   const [defaultRoute, setDefaultRoute] = useState(false);
   const [networkOffload, setNetworkOffload] = useState(false);
+  const [networkOffloadConfigurable, setNetworkOffloadConfigurable] = useState(false);
+  const [networkOffloadInfo, setNetworkOffloadInfo] = useState('');
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
@@ -72,7 +74,7 @@ const RegistModal = props => {
   ];
 
   const [physnetOptions, setPhysnetOptions] = useState([]);
-  const [physnet, setPhysnet] = useState();
+  const [physnet, setPhysnet] = useState(undefined);
 
   useEffect(() => {
     const getPhysnetsData = async () => {
@@ -274,6 +276,7 @@ const RegistModal = props => {
       */
       setExternalBool(true);
       setIsTenantNetwork(false);
+      setPhysnet('');
     } else {
       data.segment_id = '';
       data.physnet_name = ' ';
@@ -289,7 +292,53 @@ const RegistModal = props => {
       document.getElementById('radio.0').click();
       setExternalBool(false);
       setIsTenantNetwork(true);
+      refreshNetworkOffloadTooltip('tunnel');
     }
+    document.getElementById('radio_offload_off').click();
+  };
+
+  // Reload network offload nodes when physnet changes
+  useEffect(() => {
+    if (physnet == undefined) {
+      // Default network type is VXLAN and physnet is undefined at the beginning
+      refreshNetworkOffloadTooltip('tunnel');
+    } else if (typeof physnet == 'string' && physnet.trim() != '') {
+      refreshNetworkOffloadTooltip(physnet);
+    } else {
+      // physnet becomes '' after switching the network type
+      setNetworkOffloadInfo(t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'));
+      disableNetworkOffloadTooltip();
+    }
+  }, [physnet]);
+
+  const disableNetworkOffloadTooltip = () => {
+    document.getElementById('radio_offload_off').click();
+    setNetworkOffloadConfigurable(false);
+  };
+
+  const refreshNetworkOffloadTooltip = async (resourceName) => {
+    const vfResourcePrefix = 'openshift.io/';
+    const resp = await networkStore.fetchAvailableNodes({
+      ...props,
+      resourceName: vfResourcePrefix + resourceName
+    });
+
+    const nodes = resp.nodes.join(' ');
+    const allocatable = resp.allocatable;
+    const capacity = resp.capacity;
+
+    if (resp.nodes.length == 0) {
+      disableNetworkOffloadTooltip();
+      setNetworkOffloadInfo(`${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} | ${resourceName}: ${allocatable}/${capacity}`);
+    } else if (resp.allocatable == 0) {
+      disableNetworkOffloadTooltip();
+      setNetworkOffloadInfo(`${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} | ${resourceName}: ${allocatable}/${capacity} | ${nodes}`);
+    } else {
+      setNetworkOffloadConfigurable(true);
+      setNetworkOffloadInfo(`${t('RESOURCES_READY_NODE')} | ${resourceName}: ${allocatable}/${capacity} | ${nodes}`);
+    }
+
+    return resp;
   };
 
   const stepMoveCheck = step => {
@@ -785,11 +834,28 @@ const RegistModal = props => {
                               defaultValue={networkOffload}
                               onChange={value => setNetworkOffload(value)}
                             >
-                              {networkOffloadOptions.map(option => (
-                                <RadioButton key={option.value} value={option.value}>
-                                  {option.label}
-                                </RadioButton>
-                              ))}
+                              {networkOffloadOptions.map(option =>
+                                option.value ? (
+                                  <Tooltip content={networkOffloadInfo} placement="right">
+                                    <RadioButton
+                                      id="radio_offload_on"
+                                      key={option.value}
+                                      value={option.value}
+                                      disabled={!networkOffloadConfigurable}
+                                    >
+                                      {option.label}
+                                    </RadioButton>
+                                  </Tooltip>
+                                ) : (
+                                  <RadioButton
+                                    id="radio_offload_off"
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                )
+                              )}
                             </RadioGroup>
                           </Form.Item>
                         </Column>
