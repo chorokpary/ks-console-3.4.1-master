@@ -114,7 +114,14 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList()
       setDistroTypeData(dist)
-      setDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
+      setDistroTypeList(
+        dist.filter(
+          obj =>
+            obj.name !== 'windows' &&
+            obj.name !== 'fedora' &&
+            obj.name !== 'rhel'
+        )
+      )
     }
 
     const getAcceleratorTypeList = async () => {
@@ -194,15 +201,27 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       setRegistryUrlActive(false)
     } else {
       setRegistryUrlActive(true)
+      // setDistroTypeList(distroTypeData)
     }
     resetRegistryValidity()
   }
 
   const handleRegistryUrl = value => {
     resetRegistryValidity()
+    setDistroTypeList(distroTypeData)
     const originUrl = new URL(value)
     setDockerUrl(originUrl.host)
     setRegistryUrl(value)
+    if (value === defaultRegistryUrl) {
+      setDistroTypeList(
+        distroTypeData.filter(
+          obj =>
+            obj.name !== 'windows' &&
+            obj.name !== 'fedora' &&
+            obj.name !== 'rhel'
+        )
+      )
+    }
   }
 
   const checkUserValid = async () => {
@@ -318,7 +337,18 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     } else if (value === 'linux') {
       distro = 'ubuntu'
       setDistroType('ubuntu')
-      setDistroTypeList(distroTypeData.filter(obj => obj.name !== 'windows'))
+      if (!registryUrlActive || registryUrl === defaultRegistryUrl) {
+        setDistroTypeList(
+          distroTypeData.filter(
+            obj =>
+              obj.name !== 'windows' &&
+              obj.name !== 'fedora' &&
+              obj.name !== 'rhel'
+          )
+        )
+      } else {
+        setDistroTypeList(distroTypeData.filter(obj => obj.name !== 'windows'))
+      }
     } else {
       setDistroType('')
       setDistroTypeList([])
