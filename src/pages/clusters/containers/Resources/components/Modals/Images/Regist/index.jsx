@@ -93,6 +93,8 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroType, setDistroType] = useState('ubuntu')
   const [distroTypeList, setDistroTypeList] = useState([])
+  const [linuxDistroTypeList, setLinuxDistroTypeList] = useState([])
+  const [edgeDistroTypeList, setEdgeDistroTypeList] = useState([])
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
   const [aiAddonType, setAiAddonType] = useState('None')
@@ -114,6 +116,15 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList()
       setDistroTypeData(dist)
+      setEdgeDistroTypeList(
+        dist.filter(
+          obj =>
+            obj.name !== 'windows' &&
+            obj.name !== 'fedora' &&
+            obj.name !== 'rhel'
+        )
+      )
+      setLinuxDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
       setDistroTypeList(
         dist.filter(
           obj =>
@@ -198,29 +209,23 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   const handleRegistryUrlActive = () => {
     if (registryUrlActive) {
       setDockerUrl('quay.io')
+      setRegistryUrl(defaultRegistryUrl)
       setRegistryUrlActive(false)
+      setDistroTypeList(edgeDistroTypeList)
     } else {
       setRegistryUrlActive(true)
-      // setDistroTypeList(distroTypeData)
     }
     resetRegistryValidity()
   }
 
   const handleRegistryUrl = value => {
     resetRegistryValidity()
-    setDistroTypeList(distroTypeData)
     const originUrl = new URL(value)
     setDockerUrl(originUrl.host)
     setRegistryUrl(value)
+    setDistroTypeList(linuxDistroTypeList)
     if (value === defaultRegistryUrl) {
-      setDistroTypeList(
-        distroTypeData.filter(
-          obj =>
-            obj.name !== 'windows' &&
-            obj.name !== 'fedora' &&
-            obj.name !== 'rhel'
-        )
-      )
+      setDistroTypeList(edgeDistroTypeList)
     }
   }
 
@@ -337,30 +342,22 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     } else if (value === 'linux') {
       distro = 'ubuntu'
       setDistroType('ubuntu')
-      if (!registryUrlActive || registryUrl === defaultRegistryUrl) {
-        setDistroTypeList(
-          distroTypeData.filter(
-            obj =>
-              obj.name !== 'windows' &&
-              obj.name !== 'fedora' &&
-              obj.name !== 'rhel'
-          )
-        )
+      if (registryUrl === defaultRegistryUrl) {
+        setDistroTypeList(edgeDistroTypeList)
       } else {
-        setDistroTypeList(distroTypeData.filter(obj => obj.name !== 'windows'))
+        setDistroTypeList(linuxDistroTypeList)
       }
     } else {
       setDistroType('')
       setDistroTypeList([])
     }
-    if (publicType === 'public') {
+    if (registryUrl === defaultRegistryUrl) {
       getPublicImageList(distro)
     }
   }
 
   const handleDistroType = value => {
     setDistroType(value)
-    setLoading(true)
     getPublicImageList(value)
   }
 
@@ -418,7 +415,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
         },
       }
     )
-
+    setLoading(false)
     const tags = Object.values(response.data.tags).filter(
       obj => obj.size !== null && obj.size !== 0
     )
@@ -447,19 +444,16 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   }
 
   const handleArchType = value => {
-    setLoading(true)
     setArchType(value)
     getMatchingTag(tagListData, value, acceleratorType, aiAddonType)
   }
 
   const handleAcceleratorType = value => {
-    setLoading(true)
     setAcceleratorType(value)
     getMatchingTag(tagListData, archType, value, aiAddonType)
   }
 
   const handleAiAddonType = value => {
-    setLoading(true)
     setAiAddonType(value)
     getMatchingTag(tagListData, archType, acceleratorType, value)
   }
@@ -487,7 +481,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       setTag('')
     }
     setTagList(filteredTag)
-    setLoading(false)
   }
 
   // image list
@@ -506,7 +499,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
             },
           }
         )
-        setImageListData(response.data.repositories)
         setImageList(response.data.repositories)
         setPopActive(true)
         setImageText(defaultImageText)
@@ -573,7 +565,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
         obj.popularity = obj.pull_count
         return obj
       })
-      setImageListData(list)
       setImageList(list)
       setPopActive(true)
       setImageText(defaultImageText)
@@ -600,7 +591,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
         obj.popularity = obj.pull_count
         return obj
       })
-      setImageListData(list)
       setImageList(list)
       setPopActive(true)
       setImageText(defaultImageText)
@@ -1019,269 +1009,266 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                 />
               </Form.Item>
             </div>
-            {publicType === 'public' &&
-              (!registryUrlActive || registryUrl === defaultRegistryUrl) && (
-                <div className={`${regStep === 2 ? '' : 'hide'}`}>
-                  <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
-                    <Form.Group>
-                      <Form.Item>
-                        <Columns>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_IMAGE')}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: t('RESOURCES_SELECT_IMAGE_TIP'),
-                                },
-                              ]}
+            {registryUrl === defaultRegistryUrl && (
+              <div className={`${regStep === 2 ? '' : 'hide'}`}>
+                <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
+                  <Form.Group>
+                    <Form.Item>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_IMAGE')}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('RESOURCES_SELECT_IMAGE_TIP'),
+                              },
+                            ]}
+                          >
+                            <CardSelect
+                              className={`${styles.customUl} customCard`}
+                              onChange={e => handleOsType(e)}
+                              name="os_type"
+                              options={osTypeOptions}
+                              defaultValue={osType}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_DISTRIBUTION')}
+                            rules={[{ required: true }]}
+                          >
+                            <TypeSelect
+                              // name="distro_type"
+                              onChange={e => handleDistroType(e)}
+                              defaultValue={distroType}
+                              options={distroTypeOptions()}
+                            />
+                          </Form.Item>
+                          <Form.Item>
+                            <Input
+                              defaultValue={`${osType[0].toUpperCase() +
+                                osType.slice(
+                                  1,
+                                  osType.length
+                                )} > ${distroType}`}
+                              readOnly
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Form.Item>
+                    <Form.Item>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_CPU_TYPE')}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <Select
+                              name="arch_type"
+                              defaultValue="x86_64"
+                              options={archTypeOptions}
+                              onChange={e => handleArchType(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_ACCELERATOR_TYPE')}
+                            rules={[{ required: false }]}
+                          >
+                            <Select
+                              name="accelerator_type"
+                              defaultValue={acceleratorType}
+                              options={accelTypeOptions()}
+                              onChange={e => handleAcceleratorType(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_REAL_TIME')}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                            ]}
+                          >
+                            <RadioGroup
+                              name="is_realtime"
+                              wrapClassName="radio"
+                              defaultValue={realTime}
+                              onChange={value => setRealTime(value)}
                             >
-                              <CardSelect
-                                className={`${styles.customUl} customCard`}
-                                onChange={e => handleOsType(e)}
-                                name="os_type"
-                                options={osTypeOptions}
-                                defaultValue={osType}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_DISTRIBUTION')}
-                              rules={[{ required: true }]}
-                            >
-                              <TypeSelect
-                                // name="distro_type"
-                                onChange={e => handleDistroType(e)}
-                                defaultValue={distroType}
-                                options={distroTypeOptions()}
-                              />
-                            </Form.Item>
-                            <Form.Item>
-                              <Input
-                                defaultValue={`${osType[0].toUpperCase() +
-                                  osType.slice(
-                                    1,
-                                    osType.length
-                                  )} > ${distroType}`}
-                                readOnly
-                                style={{ maxWidth: 'none' }}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                      </Form.Item>
-                      <Form.Item>
-                        <Columns>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_CPU_TYPE')}
-                              rules={[
-                                {
-                                  required: true,
-                                },
-                              ]}
-                            >
-                              <Select
-                                name="arch_type"
-                                defaultValue="x86_64"
-                                options={archTypeOptions}
-                                onChange={e => handleArchType(e)}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_ACCELERATOR_TYPE')}
-                              rules={[{ required: false }]}
-                            >
-                              <Select
-                                name="accelerator_type"
-                                defaultValue={acceleratorType}
-                                options={accelTypeOptions()}
-                                onChange={e => handleAcceleratorType(e)}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_REAL_TIME')}
-                              rules={[
-                                {
-                                  required: true,
-                                },
-                              ]}
-                            >
-                              <RadioGroup
-                                name="is_realtime"
-                                wrapClassName="radio"
-                                defaultValue={realTime}
-                                onChange={value => setRealTime(value)}
-                              >
-                                {realTimeOptions.map(option => (
-                                  <RadioButton
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </RadioButton>
-                                ))}
-                              </RadioGroup>
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                      </Form.Item>
+                              {realTimeOptions.map(option => (
+                                <RadioButton
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </RadioButton>
+                              ))}
+                            </RadioGroup>
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Form.Item>
 
-                      <Form.Item>
-                        <Columns>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_AI_ADDON_TYPE')}
-                              rules={[{ required: false }]}
-                            >
-                              <TypeSelect
-                                className={`${
-                                  accelEmptyError ? styles.formErrorStyle : ''
-                                }`}
-                                name="ai_addon_type"
-                                defaultValue={aiAddonType}
-                                options={aiAddonOptions()}
-                                onChange={e => handleAiAddonType(e)}
-                              />
-                            </Form.Item>
-                          </Column>
-                        </Columns>
-                      </Form.Item>
-                      {accelEmptyError && (
-                        <div className="form-item-error">
-                          {t('RESOURCES_SETTING_AI_ADDON_TIP')}
-                        </div>
-                      )}
-                    </Form.Group>
-                  </Form.Item>
-                  <Form.Item>
-                    <div className={styles.content_box_wrap}>
-                      <div className={styles.content_box}>
-                        {/* <label>소스</label> */}
-                        <div
-                          className={`${styles.cont_box_wrap} ${
-                            sourceEmpty ? styles.formErrorStyle : ''
-                          }`}
-                        >
-                          <div className={styles.cont_box_section}>
+                    <Form.Item>
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_AI_ADDON_TYPE')}
+                            rules={[{ required: false }]}
+                          >
+                            <TypeSelect
+                              className={`${
+                                accelEmptyError ? styles.formErrorStyle : ''
+                              }`}
+                              name="ai_addon_type"
+                              defaultValue={aiAddonType}
+                              options={aiAddonOptions()}
+                              onChange={e => handleAiAddonType(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Form.Item>
+                    {accelEmptyError && (
+                      <div className="form-item-error">
+                        {t('RESOURCES_SETTING_AI_ADDON_TIP')}
+                      </div>
+                    )}
+                  </Form.Group>
+                </Form.Item>
+                <Form.Item>
+                  <div className={styles.content_box_wrap}>
+                    <div className={styles.content_box}>
+                      {/* <label>소스</label> */}
+                      <div
+                        className={`${styles.cont_box_wrap} ${
+                          sourceEmpty ? styles.formErrorStyle : ''
+                        }`}
+                      >
+                        <div className={styles.cont_box_section}>
+                          <div
+                            className={`${styles.select_inner_content} select_inner_content`}
+                          >
                             <div
-                              className={`${styles.select_inner_content} select_inner_content`}
+                              className={classnames(
+                                styles.select_list_box,
+                                styles.inner_image
+                              )}
                             >
                               <div
                                 className={classnames(
-                                  styles.select_list_box,
-                                  styles.inner_image
+                                  styles.selected_item,
+                                  styles.image
                                 )}
+                                onClick={() => handleDistroType(distroType)}
                               >
-                                <div
-                                  className={classnames(
-                                    styles.selected_item,
-                                    styles.image
-                                  )}
-                                  onClick={() => handleDistroType(distroType)}
-                                >
-                                  <p className={styles.inner_image}>
-                                    <span>Docker</span>
-                                  </p>
-                                  <div className={styles.placeholder}>
-                                    {imageName}
-                                  </div>
+                                <p className={styles.inner_image}>
+                                  <span>Docker</span>
+                                </p>
+                                <div className={styles.placeholder}>
+                                  {imageName}
                                 </div>
-                                {popActive && (
-                                  <div
-                                    className={styles.select_list_image}
-                                    style={{ display: 'block' }}
-                                  >
-                                    <ul className={styles.sel_img}>
-                                      {imageList.length > 0 &&
-                                        imageList.map((obj, idx) => (
-                                          <li
-                                            onClick={() =>
-                                              handleImageTag(
-                                                obj.name,
-                                                obj.project_name
-                                              )
-                                            }
-                                            key={idx}
-                                          >
-                                            <i
-                                              style={{
-                                                background: `url('/assets/resources/images/icons/ico-os-${
-                                                  obj.name.split('-')[0]
-                                                }.svg') center no-repeat`,
-                                                width: '30px',
-                                                height: '30px',
-                                                marginRight: '5px',
-                                              }}
-                                            ></i>
-                                            <p className={styles.name}>
-                                              <strong>{obj.name}</strong>
-                                              <span>{obj.description}</span>
-                                            </p>
-                                            <div className={styles.rank}>
-                                              <i
-                                                className={styles.ico_type_star}
-                                              ></i>
-                                              <span>{obj.popularity}</span>
-                                            </div>
-                                          </li>
-                                        ))}
-                                    </ul>
-                                  </div>
-                                )}
                               </div>
+                              {popActive && (
+                                <div
+                                  className={styles.select_list_image}
+                                  style={{ display: 'block' }}
+                                >
+                                  <ul className={styles.sel_img}>
+                                    {imageList.length > 0 &&
+                                      imageList.map((obj, idx) => (
+                                        <li
+                                          onClick={() =>
+                                            handleImageTag(
+                                              obj.name,
+                                              obj.project_name
+                                            )
+                                          }
+                                          key={idx}
+                                        >
+                                          <i
+                                            style={{
+                                              background: `url('/assets/resources/images/icons/ico-os-${
+                                                obj.name.split('-')[0]
+                                              }.svg') center no-repeat`,
+                                              width: '30px',
+                                              height: '30px',
+                                              marginRight: '5px',
+                                            }}
+                                          ></i>
+                                          <p className={styles.name}>
+                                            <strong>{obj.name}</strong>
+                                            <span>{obj.description}</span>
+                                          </p>
+                                          <div className={styles.rank}>
+                                            <i
+                                              className={styles.ico_type_star}
+                                            ></i>
+                                            <span>{obj.popularity}</span>
+                                          </div>
+                                        </li>
+                                      ))}
+                                  </ul>
+                                </div>
+                              )}
                             </div>
-                            <div className={styles.section_box}>
-                              <Loading spinning={loading}>
-                                {tagList.length > 0 ? (
-                                  <div className={styles.radio_list}>
-                                    {tagList.map((obj, idx) => (
-                                      <div
-                                        className={styles.form_radio}
-                                        key={idx}
-                                        onClick={() => setTag(obj.name)}
-                                      >
-                                        <input
-                                          type="radio"
-                                          name="rdo-tag"
-                                          value="Y"
-                                          id={`rdo-tag-n${idx}`}
-                                          defaultChecked={idx === 0}
-                                        />
-                                        <label htmlFor={`rdo-tag-n${idx}`}>
-                                          <i className={styles.ico_etc_tag}></i>
-                                          <span>{obj.name}</span>
-                                        </label>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <div className={styles.empty}>
-                                    <i
-                                      className={styles.ico_type_container2}
-                                    ></i>
-                                    <span>{imageText}</span>
-                                  </div>
-                                )}
-                              </Loading>
-                            </div>
+                          </div>
+                          <div className={styles.section_box}>
+                            <Loading spinning={loading}>
+                              {tagList.length > 0 ? (
+                                <div className={styles.radio_list}>
+                                  {tagList.map((obj, idx) => (
+                                    <div
+                                      className={styles.form_radio}
+                                      key={idx}
+                                      onClick={() => setTag(obj.name)}
+                                    >
+                                      <input
+                                        type="radio"
+                                        name="rdo-tag"
+                                        value="Y"
+                                        id={`rdo-tag-n${idx}`}
+                                        defaultChecked={idx === 0}
+                                      />
+                                      <label htmlFor={`rdo-tag-n${idx}`}>
+                                        <i className={styles.ico_etc_tag}></i>
+                                        <span>{obj.name}</span>
+                                      </label>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className={styles.empty}>
+                                  <i className={styles.ico_type_container2}></i>
+                                  <span>{imageText}</span>
+                                </div>
+                              )}
+                            </Loading>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </Form.Item>
-                  {sourceEmpty && (
-                    <div className="form-item-error">
-                      {t('RESOURCES_SETTING_IMAGE_TIP')}
-                    </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                </Form.Item>
+                {sourceEmpty && (
+                  <div className="form-item-error">
+                    {t('RESOURCES_SETTING_IMAGE_TIP')}
+                  </div>
+                )}
+              </div>
+            )}
             {registryUrlActive && registryUrl !== defaultRegistryUrl && (
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
