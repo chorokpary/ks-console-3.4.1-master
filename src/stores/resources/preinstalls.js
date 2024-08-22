@@ -22,12 +22,12 @@ import List from '../base.list'
 export default class AiAddonStore extends Base {
   records = new List()
 
-  module = 'ai_addons'
+  module = 'pre_installs'
 
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/metadata/ai_addons`
+    )}/edgetron/resources/kubevirt/metadata/pre_installs`
 
   getListUrl = this.getResourceUrl
 }

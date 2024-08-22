@@ -19,7 +19,7 @@ import axios from 'axios'
 import { Base64 } from 'js-base64'
 
 import DistroTypeStore from 'stores/resources/distrotype'
-import AiAddonStore from 'stores/resources/aiaddon'
+import PreInstallAppStore from 'stores/resources/preinstalls'
 import GpuNodeStore from 'stores/resources/gpunodes'
 import { UnitSlider } from 'components/Inputs'
 import { Modal } from 'components/Base'
@@ -58,7 +58,7 @@ const osTypeOptions = [
 
 const ResourceImageModal = ({ props, title, store, onOk }) => {
   const distroTypeStore = new DistroTypeStore()
-  const aiAddonStore = new AiAddonStore()
+  const preInstallAppStore = new PreInstallAppStore()
   const gpuNodeStore = new GpuNodeStore()
 
   const form = useRef()
@@ -97,8 +97,8 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   const [edgeDistroTypeList, setEdgeDistroTypeList] = useState([])
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
-  const [aiAddonType, setAiAddonType] = useState('None')
-  const [aiAddonList, setAiAddonList] = useState([])
+  const [preInstallAppType, setPreInstallAppType] = useState('None')
+  const [preInstallAppList, setPreInstallAppList] = useState([])
   const [archType, setArchType] = useState('x86_64')
 
   const [imageName, setImageName] = useState('')
@@ -141,9 +141,9 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       setAcceleratorTypeList(accelList)
     }
 
-    const getAiAddonList = async () => {
-      const addonList = await aiAddonStore.fetchList()
-      setAiAddonList(addonList)
+    const getPreInstallAppList = async () => {
+      const preInstallApps = await preInstallAppStore.fetchList()
+      setPreInstallAppList(preInstallApps)
     }
 
     const getVmImageList = async () => {
@@ -168,7 +168,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
 
     getDistroTypeList()
     getAcceleratorTypeList()
-    getAiAddonList()
+    getPreInstallAppList()
     getVmImageList()
   }, [])
 
@@ -281,8 +281,8 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     }))
   }
 
-  const aiAddonOptions = () => {
-    return aiAddonList.map(obj => ({
+  const preInstallAppOptions = () => {
+    return preInstallAppList.map(obj => ({
       label: t(obj.name),
       description: t(obj.description),
       value: t(obj.name),
@@ -421,7 +421,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     )
     setTagListData(tags)
     setSourceEmpty(false)
-    getMatchingTag(tags, archType, acceleratorType, aiAddonType)
+    getMatchingTag(tags, archType, acceleratorType, preInstallAppType)
   }
 
   const getPrivateImageTag = async (image, project) => {
@@ -445,33 +445,34 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
 
   const handleArchType = value => {
     setArchType(value)
-    getMatchingTag(tagListData, value, acceleratorType, aiAddonType)
+    getMatchingTag(tagListData, value, acceleratorType, preInstallAppType)
   }
 
   const handleAcceleratorType = value => {
     setAcceleratorType(value)
-    getMatchingTag(tagListData, archType, value, aiAddonType)
+    getMatchingTag(tagListData, archType, value, preInstallAppType)
   }
 
-  const handleAiAddonType = value => {
-    setAiAddonType(value)
+  const handlePreInstallAppType = value => {
+    setPreInstallAppType(value)
     getMatchingTag(tagListData, archType, acceleratorType, value)
   }
 
-  const getMatchingTag = (tags, arch, accel, aiAddon) => {
+  const getMatchingTag = (tags, arch, accel, preInstallApp) => {
     setAccelEmptyError(false)
-    if (accel === 'None' && aiAddon !== 'None') {
+    if (accel === 'None' && preInstallApp !== 'None') {
       setAccelEmptyError(true)
     }
     const filteredTag = tags.filter(item => {
-      if (accel === 'None' && aiAddon === 'None') {
+      if (accel === 'None' && preInstallApp === 'None') {
         return item.name === arch
       }
-      if (accel !== 'None' && aiAddon === 'None') {
+      if (accel !== 'None' && preInstallApp === 'None') {
         return item.name === `${accel.toLowerCase()}_${arch}`
       }
       return (
-        item.name === `${accel.toLowerCase()}_${aiAddon.toLowerCase()}_${arch}`
+        item.name ===
+        `${accel.toLowerCase()}_${preInstallApp.toLowerCase()}_${arch}`
       )
     })
     if (filteredTag.length > 0) {
@@ -1125,17 +1126,17 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_AI_ADDON_TYPE')}
+                            label={t('RESOURCES_PRE_INSTALLED_APP')}
                             rules={[{ required: false }]}
                           >
                             <TypeSelect
                               className={`${
                                 accelEmptyError ? styles.formErrorStyle : ''
                               }`}
-                              name="ai_addon_type"
-                              defaultValue={aiAddonType}
-                              options={aiAddonOptions()}
-                              onChange={e => handleAiAddonType(e)}
+                              name="pre_installed_app"
+                              defaultValue={preInstallAppType}
+                              options={preInstallAppOptions()}
+                              onChange={e => handlePreInstallAppType(e)}
                             />
                           </Form.Item>
                         </Column>
@@ -1143,7 +1144,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                     </Form.Item>
                     {accelEmptyError && (
                       <div className="form-item-error">
-                        {t('RESOURCES_SETTING_AI_ADDON_TIP')}
+                        {t('RESOURCES_SETTING_PRE_INSTALLED_APP_TIP')}
                       </div>
                     )}
                   </Form.Group>

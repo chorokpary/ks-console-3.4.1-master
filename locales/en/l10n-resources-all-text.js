@@ -628,8 +628,9 @@ module.exports = {
   RESOURCES_KUBERNETES: 'Kubernetes',
   RESOURCES_KUBERNETES_VERSION: 'Kubernetes Version',
   RESOURCES_ACCELERATOR_TYPE: 'Accelerator Type',
-  RESOURCES_AI_ADDON_TYPE: 'AI Addon',
-  RESOURCES_SETTING_AI_ADDON_TIP: 'Select Accelerator type to use AI Add-on',
+  RESOURCES_PRE_INSTALLED_APP: 'Pre-Installed Application',
+  RESOURCES_SETTING_PRE_INSTALLED_APP_TIP:
+    'Select Accelerator type to use pre-installed applications',
   RESOURCES_KUBERNETES_SERVER_IP: 'Kubernetes Server IP',
   RESOURCES_CLASS: 'Class',
   RESOURCES_CLUSTER: 'Cluster',

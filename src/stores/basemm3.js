@@ -163,7 +163,7 @@ export default class BaseStore {
       'containerimages',
       'resourcesvolumes',
       'gpunodes',
-      'ai_addons',
+      'pre_installs',
     ]
     const apiName = mm3Array.includes(this.module) ? this.module : ''
 
@@ -206,8 +206,8 @@ export default class BaseStore {
       .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
 
     if (searchArray.length > 0) {
-      searchArray.map(search => {
-        const resultList = this.dataList.filter(row => {
+      searchArray.forEach(search => {
+        this.dataList = this.dataList.filter(row => {
           if (search.searchKeywordType === 'project') {
             return (
               row[search.searchKeywordType]?.toLowerCase() ===
@@ -218,7 +218,6 @@ export default class BaseStore {
             ?.toLowerCase()
             .includes(search.searchKeywordText.toLowerCase())
         })
-        this.dataList = resultList
       })
     }
 
@@ -230,9 +229,7 @@ export default class BaseStore {
       if (sortType === 'desc') {
         return x > y ? -1 : x < y ? 1 : 0
       }
-      if (sortType === 'asc') {
-        return x < y ? -1 : x > y ? 1 : 0
-      }
+      return x < y ? -1 : x > y ? 1 : 0
     })
 
     // mm3 데이터 page 별 Slice 처리
