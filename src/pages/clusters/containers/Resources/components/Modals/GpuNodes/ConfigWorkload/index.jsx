@@ -44,9 +44,9 @@ const ConfigGpuWorkloadType = ({ title, onOk, store, ...props }) => {
   }
 
   const workloadOptions = [
-    { label: t('RESOURCES_GPU_WORKLOAD_CONTAINER'), value: 'container', description: t('RESOURCES_GPU_WORKLOAD_CONTAINER_DESC'), disabled: store.detail.gpunode.driver_type === 'vgpu' },
+    { label: t('RESOURCES_GPU_WORKLOAD_CONTAINER'), value: 'container', description: t('RESOURCES_GPU_WORKLOAD_CONTAINER_DESC'), disabled: store.detail.gpunode.driver_type === 'vgpu' || store.detail.gpunode.driver_type === 'none' },
     { label: t('RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH'), value: 'vm-passthrough', description: t('RESOURCES_GPU_WORKLOAD_VM_PASSTHROUGH_DESC')},
-    { label: t('RESOURCES_GPU_WORKLOAD_VM_VGPU'), value: 'vm-vgpu', description: t('RESOURCES_GPU_WORKLOAD_VM_VGPU_DESC'), disabled: store.detail.gpunode.driver_type === 'native' }
+    { label: t('RESOURCES_GPU_WORKLOAD_VM_VGPU'), value: 'vm-vgpu', description: t('RESOURCES_GPU_WORKLOAD_VM_VGPU_DESC'), disabled: store.detail.gpunode.driver_type === 'native' || store.detail.gpunode.driver_type === 'none' }
   ];
 
   return (
