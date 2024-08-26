@@ -18,15 +18,13 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
+import { Avatar } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
 
-import RoleStore from 'stores/role'
 import ImageStore from 'stores/resources/images'
 
 @withList({
@@ -36,8 +34,7 @@ import ImageStore from 'stores/resources/images'
   name: t('RESOURCES_VM_IMAGE'),
 })
 export default class Images extends React.Component {
-
-  //auto refresh start  ##################################
+  // auto refresh start  ##################################
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
@@ -55,7 +52,7 @@ export default class Images extends React.Component {
   }
 
   refreshHandler = () => {
-    const { page, limit } = toJS(this.props.store.list);
+    const { page, limit } = toJS(this.props.store.list)
     if (this.isRuning) {
       this.getData({ silent: true, page, limit })
     } else {
@@ -66,7 +63,7 @@ export default class Images extends React.Component {
 
   get isRuning() {
     const { selectedRowKeys } = toJS(this.props.store.list)
-    const runingFlag = selectedRowKeys.length > 0 ? false : true;
+    const runingFlag = !(selectedRowKeys.length > 0)
     return runingFlag
   }
 
@@ -74,10 +71,10 @@ export default class Images extends React.Component {
     this.props.store.fetchList({
       ...this.props.match.params,
       ...params,
-      ...this.props.query // search param
+      ...this.props.query, // search param
     })
   }
-  //auto refresh end  ##################################
+  // auto refresh end  ##################################
 
   showAction(record) {
     return globals.user.username !== record.name
@@ -103,7 +100,7 @@ export default class Images extends React.Component {
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       actions: [
@@ -223,7 +220,7 @@ export default class Images extends React.Component {
         isHideable: true,
         width: 'auto',
         render: distro_type => {
-          const icon = "ico-os-" + distro_type;
+          const icon = `ico-os-${distro_type}`
           return (
             <i
               style={{
@@ -231,8 +228,9 @@ export default class Images extends React.Component {
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
                 width: '40px',
-                height: '40px'
-              }}></i>
+                height: '40px',
+              }}
+            ></i>
           )
         },
       },
@@ -257,9 +255,7 @@ export default class Images extends React.Component {
         width: 150,
         render: date => (
           <p>
-            {date
-              ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-              : t('-')}
+            {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
           </p>
         ),
       },
@@ -271,7 +267,6 @@ export default class Images extends React.Component {
   }
 
   render() {
-
     const { bannerProps, tableProps } = this.props
     // console.log({ ...tableProps })
     return (
@@ -296,5 +291,3 @@ export default class Images extends React.Component {
     )
   }
 }
-
-

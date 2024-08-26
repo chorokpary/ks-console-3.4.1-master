@@ -1,60 +1,58 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx';
-import { get, isEmpty } from 'lodash';
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
-import { getIndexRoute } from 'utils/router.config';
-import ImageStore from 'stores/resources/images';
-import DetailPage from 'clusters/containers/Base/Detail';
-import { Card } from 'components/Base';
-import { getLocalTime } from 'utils';
+import React, { useEffect, useReducer, useState } from 'react'
+import { toJS } from 'mobx'
+import { isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
+import { getIndexRoute } from 'utils/router.config'
+import ImageStore from 'stores/resources/images'
+import DetailPage from 'clusters/containers/Base/Detail'
+import { getLocalTime } from 'utils'
 
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
+import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
-const store = new ImageStore();
+const store = new ImageStore()
 
 const ImageDetail = props => {
   const [activationTrigger, setActivationTrigger] = useReducer(
     activationTrigger => !activationTrigger,
     false
-  );
-  const [detail, setDetail] = useState();
+  )
+  const [detail, setDetail] = useState()
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
-  let timer = 0;
+  let timer = 0
   const activeCrListTimer = () => {
     timer = setTimeout(() => {
-      fetchData();
-      setActivationTrigger();
-    }, 4000);
-  };
+      fetchData()
+      setActivationTrigger()
+    }, 4000)
+  }
 
   useEffect(() => {
-    activeCrListTimer();
+    activeCrListTimer()
     return () => {
-      clearTimeout(timer);
-    };
-  }, [activationTrigger]);
+      clearTimeout(timer)
+    }
+  }, [activationTrigger])
 
   const fetchData = async () => {
-    const detail = await store.fetchDetail(props.match.params);
-    setDetail(detail);
-  };
+    const detailInfo = await store.fetchDetail(props.match.params)
+    setDetail(detailInfo)
+  }
 
-  const { cluster } = props.match.params;
-  const listUrl = `/clusters/${cluster}/images`;
+  const { cluster } = props.match.params
+  const listUrl = `/clusters/${cluster}/images`
 
-  const { routing } = props.rootStore;
+  const { routing } = props.rootStore
 
-  const PATH = `${listUrl}/${props.match.params.name}`;
+  const PATH = `${listUrl}/${props.match.params.name}`
 
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
-  );
+  )
 
   const getOperations = () => [
     {
@@ -100,13 +98,13 @@ const ImageDetail = props => {
           cancelText: t('RESOURCES_CANCEL'),
         }),
     },
-  ];
+  ]
 
   const getAttrs = () => {
     // const detail = toJS(store.detail);
 
     if (isEmpty(detail)) {
-      return;
+      return
     }
 
     return [
@@ -121,6 +119,14 @@ const ImageDetail = props => {
       {
         name: t('RESOURCES_BOOT_TYPE'),
         value: detail.image.boot_type,
+      },
+      {
+        name: t('RESOURCES_ACCELERATOR_TYPE'),
+        value: detail.image.accelerator_type,
+      },
+      {
+        name: t('RESOURCES_PRE_INSTALLED_APP'),
+        value: detail.image.pre_installed_app,
       },
       {
         name: t('RESOURCES_REAL_TIME'),
@@ -150,11 +156,11 @@ const ImageDetail = props => {
           'YYYY-MM-DD HH:mm:ss'
         ),
       },
-    ];
-  };
+    ]
+  }
 
   if (store.isLoading && !store.detail.name) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const sideProps = {
@@ -169,7 +175,7 @@ const ImageDetail = props => {
         url: listUrl,
       },
     ],
-  };
+  }
 
   return (
     <>
@@ -188,13 +194,13 @@ const ImageDetail = props => {
         {...sideProps}
       />
     </>
-  );
-};
+  )
+}
 
-export default inject('rootStore')(observer(ImageDetail));
+export default inject('rootStore')(observer(ImageDetail))
 
 const Status = ({ route }) => {
-  const imageName = route.name;
+  const imageName = route.name
 
   return (
     <DetailVmList
@@ -202,5 +208,5 @@ const Status = ({ route }) => {
       variables="image"
       name={imageName}
     />
-  );
-};
+  )
+}
