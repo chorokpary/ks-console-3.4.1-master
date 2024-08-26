@@ -329,13 +329,13 @@ const RegistModal = props => {
 
     if (resp.nodes.length == 0) {
       disableNetworkOffloadTooltip();
-      setNetworkOffloadInfo(`${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} | ${resourceName}: ${allocatable}/${capacity}`);
+      setNetworkOffloadInfo(t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'));
     } else if (resp.allocatable == 0) {
       disableNetworkOffloadTooltip();
-      setNetworkOffloadInfo(`${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} | ${resourceName}: ${allocatable}/${capacity} | ${nodes}`);
+      setNetworkOffloadInfo(`[${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} | ${resourceName}: ${allocatable}/${capacity}] ${nodes}`);
     } else {
       setNetworkOffloadConfigurable(true);
-      setNetworkOffloadInfo(`${t('RESOURCES_READY_NODE')} | ${resourceName}: ${allocatable}/${capacity} | ${nodes}`);
+      setNetworkOffloadInfo(`[${resourceName}: ${allocatable}/${capacity}] ${nodes}`);
     }
 
     return resp;
