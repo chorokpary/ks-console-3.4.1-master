@@ -8,7 +8,7 @@ import {
   PATTERN_SEGMENT_ID,
   PATTERN_MTU,
 } from 'utils/constants';
-import { Form, Input, Select, Button, Tooltip } from '@kube-design/components';
+import { Form, Input, Select, Button, Tooltip, TextArea } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import {
   RadioButton,
@@ -35,6 +35,7 @@ const RegistModal = props => {
     false
   );
   const [externalBool, setExternalBool] = useState(false);
+  const [externalInfo, setExternalInfo] = useState(t('RESOURCES_EXTERNAL_NETWORK_TIP'));
 
   const [regStep, setRegStep] = useState(1);
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false);
@@ -128,7 +129,6 @@ const RegistModal = props => {
       data.networktype_app = false;
       data.project = projectName;
 
-      // console.log(data)
       onOk({ network: data });
     });
   };
@@ -275,6 +275,7 @@ const RegistModal = props => {
       
       */
       setExternalBool(true);
+      setExternalInfo('');
       setIsTenantNetwork(false);
       setPhysnet('');
     } else {
@@ -291,6 +292,7 @@ const RegistModal = props => {
 
       document.getElementById('radio.0').click();
       setExternalBool(false);
+      setExternalInfo(t('RESOURCES_EXTERNAL_NETWORK_TIP'));
       setIsTenantNetwork(true);
       refreshNetworkOffloadTooltip('tunnel');
     }
@@ -685,23 +687,27 @@ const RegistModal = props => {
                             >
                               {externalOptions.map((option, idx) =>
                                 !props.namespace ? (
-                                  <RadioButton
-                                    id={`radio.${idx}`}
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled={!!(!externalBool && idx == 1)}
-                                  >
-                                    {option.label}
-                                  </RadioButton>
+                                  <Tooltip content={externalInfo} placement="right">
+                                    <RadioButton
+                                      id={`radio.${idx}`}
+                                      key={option.value}
+                                      value={option.value}
+                                      disabled={!!(!externalBool && idx == 1)}
+                                    >
+                                      {option.label}
+                                    </RadioButton>
+                                  </Tooltip>
                                 ) : (
-                                  <RadioButton
-                                    id={`radio.${idx}`}
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled={idx == 1}
-                                  >
-                                    {option.label}
-                                  </RadioButton>
+                                  <Tooltip content={t('RESOURCES_TENANT_NOT_ALLOWED')} placement="right">
+                                    <RadioButton
+                                      id={`radio.${idx}`}
+                                      key={option.value}
+                                      value={option.value}
+                                      disabled={idx == 1}
+                                    >
+                                      {option.label}
+                                    </RadioButton>
+                                  </Tooltip>
                                 )
                               )}
                             </RadioGroup>
@@ -880,6 +886,20 @@ const RegistModal = props => {
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_DESCRIPTION')}
+                      desc={t('DESCRIPTION_DESC')}
+                    >
+                      <TextArea
+                        style={{ maxWidth: 'none' }}
+                        name="description"
+                        maxLength={256}
+                      />
+                    </Form.Item>
+                  </Column>
+                </Columns>
               </div>
               {/* 기본설정 설정 끝========================================== */}
 
