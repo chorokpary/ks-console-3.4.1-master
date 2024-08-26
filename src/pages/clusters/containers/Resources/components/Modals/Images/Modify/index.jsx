@@ -1,100 +1,91 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Form,
-  Input,
-  Select,
-  Icon,
-  Tooltip,
-  TextArea,
-  Dropdown,
-} from '@kube-design/components';
-import { Column, Columns } from '@kube-design/components/lib/components/Layout';
+import React, { useEffect, useRef, useState } from 'react'
+import { Form, Input, Select, TextArea } from '@kube-design/components'
+import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import {
   RadioButton,
   RadioGroup,
-} from '@kube-design/components/lib/components/Radio';
-import { Modal } from 'components/Base';
-import DistroTypeStore from 'stores/resources/distrotype';
-import styles from './index.scss';
-import TypeSelect from '../../../TypeSelect';
-import CardSelect from '../../../CardSelect';
+} from '@kube-design/components/lib/components/Radio'
+import { Modal } from 'components/Base'
+import DistroTypeStore from 'stores/resources/distrotype'
+import styles from './index.scss'
+import TypeSelect from '../../../TypeSelect'
+import CardSelect from '../../../CardSelect'
 
 export default function ResourceImageModal({ title, store, onOk, detail }) {
-  const form = useRef();
-  const [formData, setFormData] = useState({});
-  const distroTypeStore = new DistroTypeStore();
+  const form = useRef()
+  const [formData, setFormData] = useState({})
+  const distroTypeStore = new DistroTypeStore()
 
-  const [modelView, setModalView] = useState(true);
+  const [modelView, setModalView] = useState(true)
 
-  const [realTime, setRealTime] = useState(detail.is_realtime);
-  const [osType, setOsType] = useState(detail.os_type);
-  const [distroTypeData, setDistroTypeData] = useState([]);
-  const [distroTypeList, setDistroTypeList] = useState([]);
-  const [distroType, setDistroType] = useState(detail.distro_type);
+  const [realTime, setRealTime] = useState(detail.is_realtime)
+  const [osType, setOsType] = useState(detail.os_type)
+  const [distroTypeData, setDistroTypeData] = useState([])
+  const [distroTypeList, setDistroTypeList] = useState([])
+  const [distroType, setDistroType] = useState(detail.distro_type)
 
   useEffect(() => {
     const getDistroTypeList = async () => {
-      const dist = await distroTypeStore.fetchList();
-      setDistroTypeData(dist);
+      const dist = await distroTypeStore.fetchList()
+      setDistroTypeData(dist)
       if (detail.distro_type === 'windows') {
-        setDistroTypeList(dist.filter(obj => obj.name === 'windows'));
+        setDistroTypeList(dist.filter(obj => obj.name === 'windows'))
       } else {
-        setDistroTypeList(dist.filter(obj => obj.name !== 'windows'));
+        setDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
       }
-
-    };
-    getDistroTypeList();
-  }, []);
+    }
+    getDistroTypeList()
+  }, [])
 
   const realTimeOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
-  ];
+  ]
   const archTypeOptions = [
     { label: 'x86_64', value: 'x86_64' },
     { label: 'aarch64', value: 'aarch64' },
-  ];
+  ]
   const bootTypeOptions = [
     { label: 'legacy', value: 'legacy' },
     { label: 'uefi', value: 'uefi' },
-  ];
+  ]
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux' },
     { label: 'Windows', value: 'windows', icon: 'ico-windows' },
     // { label: 'etc', value: '', icon: 'ico-plus', }
-  ];
+  ]
   const distroTypeOptions = () => {
     const opt = distroTypeList.map(obj => ({
       label: t(obj.name),
       description: t(obj.vendor),
       icon: `ico-os-${obj.name}`,
       value: t(obj.name),
-    }));
-    return opt;
-  };
+    }))
+    return opt
+  }
 
   const handleOk = () => {
     form.current.validator(() => {
-      const { data } = form.current.props;
-      data.distro_type = distroType;
-      onOk({ ...data });
-    });
-  };
+      const { data } = form.current.props
+      data.distro_type = distroType
+      onOk({ ...data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   const handleOsType = value => {
-    setOsType(value);
-    if (value == 'windows') {
-      setDistroType('windows');
-      setDistroTypeList(distroTypeData.filter(obj => obj.name == 'windows'));
+    setOsType(value)
+    if (value === 'windows') {
+      setDistroType('windows')
+      setDistroTypeList(distroTypeData.filter(obj => obj.name === 'windows'))
     } else {
-      setDistroType('ubuntu');
-      setDistroTypeList(distroTypeData.filter(obj => obj.name != 'windows'));
+      setDistroType('ubuntu')
+      setDistroTypeList(distroTypeData.filter(obj => obj.name !== 'windows'))
     }
-  };
+  }
 
   return (
     <>
@@ -144,7 +135,10 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
+                    <Form.Item
+                      label={t('RESOURCES_DISTRIBUTION')}
+                      rules={[{ required: true }]}
+                    >
                       <TypeSelect
                         onChange={e => setDistroType(e)}
                         defaultValue={distroType}
@@ -232,5 +226,5 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
         </Form>
       </Modal>
     </>
-  );
+  )
 }
