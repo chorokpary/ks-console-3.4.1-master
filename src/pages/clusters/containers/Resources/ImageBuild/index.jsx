@@ -16,21 +16,18 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
-import { toJS } from 'mobx';
-import { get, find } from 'lodash';
-import ResourceTable from 'clusters/components/ResourceTable';
-import { Avatar, Status } from 'components/Base';
-import Banner from 'components/Cards/Banner';
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
+import React from 'react'
+import { toJS } from 'mobx'
+import { get } from 'lodash'
+import { Avatar } from 'components/Base'
+import Banner from 'components/Cards/Banner'
+import withList, { ListPage } from 'components/HOCs/withList'
+import Table from 'components/Tables/List'
 
-import { getLocalTime } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
-import * as common from 'utils/resources';
+import { getLocalTime } from 'utils'
+import * as common from 'utils/resources'
 
-import ImageBuildStore from 'stores/resources/imagebuild';
-
+import ImageBuildStore from 'stores/resources/imagebuild'
 
 @withList({
   store: new ImageBuildStore(),
@@ -40,65 +37,63 @@ import ImageBuildStore from 'stores/resources/imagebuild';
   rowKey: 'name',
 })
 export default class ImageBuild extends React.Component {
+  // auto refresh start  ##################################
+  constructor(props) {
+    super(props)
+    this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+  }
 
-    // auto refresh start  ##################################
-    constructor(props) {
-      super(props);
-      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+  componentDidUpdate() {
+    if (this.refreshTimer === null && this.isRuning) {
+      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
     }
-  
-    componentDidUpdate() {
-      if (this.refreshTimer === null && this.isRuning) {
-        this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
-      }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.refreshTimer)
+    this.unsubscribe && this.unsubscribe()
+  }
+
+  refreshHandler = () => {
+    const { page, limit } = toJS(this.props.store.list)
+    if (this.isRuning) {
+      this.getData({ silent: true, page, limit })
+    } else {
+      clearInterval(this.refreshTimer)
+      this.refreshTimer = null
     }
-  
-    componentWillUnmount() {
-      clearInterval(this.refreshTimer);
-      this.unsubscribe && this.unsubscribe();
-    }
-  
-    refreshHandler = () => {
-      const { page, limit } = toJS(this.props.store.list);
-      if (this.isRuning) {
-        this.getData({ silent: true, page, limit });
-      } else {
-        clearInterval(this.refreshTimer);
-        this.refreshTimer = null;
-      }
-    };
-  
-    get isRuning() {
-      const { selectedRowKeys } = toJS(this.props.store.list);
-      const runingFlag = !(selectedRowKeys.length > 0);
-      return runingFlag;
-    }
-  
-    getData = params => {
-      this.props.store.fetchList({
-        ...this.props.match.params,
-        ...params,
-        ...this.props.query, // search param
-      });
-    };
-    // auto refresh end  ##################################
+  }
+
+  get isRuning() {
+    const { selectedRowKeys } = toJS(this.props.store.list)
+    const runingFlag = !(selectedRowKeys.length > 0)
+    return runingFlag
+  }
+
+  getData = params => {
+    this.props.store.fetchList({
+      ...this.props.match.params,
+      ...params,
+      ...this.props.query, // search param
+    })
+  }
+  // auto refresh end  ##################################
 
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   showActionUpload(item) {
-    const uploadInfo = get(item, ['upload-info-list', 'upload-info'], [])
+    // const uploadInfo = get(item, ['upload-info-list', 'upload-info'], [])
     const podStatus = get(item, 'pod-status')
 
-    if(podStatus.replace(/\s/gi, "") == 'ServerReady'){
-      return true;
-    }else{
-      return false;
+    if (podStatus.replace(/\s/gi, '') === 'ServerReady') {
+      return true
     }
+    return false
 
     // let showFlag = true;
-    // if(!!uploadInfo){        
+    // if(!!uploadInfo){
     //   const status = uploadInfo[0]['upload-file-info']['Status'];
     //   const statusText = !!status ? status : "-";
     //   showFlag = !(statusText.toLowerCase()).includes('completed');
@@ -108,7 +103,7 @@ export default class ImageBuild extends React.Component {
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
 
     return [
       {
@@ -123,7 +118,7 @@ export default class ImageBuild extends React.Component {
             success: getData,
             ...this.props.match.params,
           }),
-      },     
+      },
       {
         key: 'upload',
         icon: 'upload',
@@ -132,17 +127,16 @@ export default class ImageBuild extends React.Component {
         show: item => this.showActionUpload(item),
         onClick: item =>
           trigger('imagebuild.image.upload', {
-              detail: item,
-              success: getData,
-              ...this.props.match.params,
-          }
-        ),               
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       actions: [
@@ -176,12 +170,12 @@ export default class ImageBuild extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    };
+    }
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('RESOURCES_NAME'),
@@ -190,19 +184,23 @@ export default class ImageBuild extends React.Component {
         sortOrder: getSortOrder('imagename'),
         search: true,
         render: (imagename, record) => {
-          const name = record.name;
+          const name = record.name
 
           const podStatus = get(record, 'pod-status')
-          const podStatusText = podStatus.replace(/\s/gi, "")
+          const podStatusText = podStatus.replace(/\s/gi, '')
 
-           return (
+          return (
             <Avatar
-            icon="image"
-            iconSize={40}
-            to={podStatusText != "ServerConfiguring" ? `/clusters/${cluster}/imagebuild/${imagename}/${name}` : ''}
-            title={imagename}
-           />
-           )
+              icon="image"
+              iconSize={40}
+              to={
+                podStatusText !== 'ServerConfiguring'
+                  ? `/clusters/${cluster}/imagebuild/${imagename}/${name}`
+                  : ''
+              }
+              title={imagename}
+            />
+          )
         },
       },
       {
@@ -211,8 +209,8 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (cputype, record) => {
-          const cpuType = get(record, ['tags','cpuType'], '-')
-          return cpuType;
+          const cpuType = get(record, ['tags', 'cpuType'], '-')
+          return cpuType
         },
       },
       {
@@ -221,8 +219,8 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (tag, record) => {
-          const tagName = get(record, ['tags','tag'], '-')
-          return tagName;
+          const tagName = get(record, ['tags', 'tag'], '-')
+          return tagName
         },
       },
       {
@@ -231,8 +229,8 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (os, record) => {
-          const osInfo = get(record, ['tags','os'], '-')
-          return osInfo;
+          const osInfo = get(record, ['tags', 'os'], '-')
+          return osInfo
         },
       },
       {
@@ -243,9 +241,10 @@ export default class ImageBuild extends React.Component {
         render: (filename, record) => {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
-          if(!!uploadInfo) {
-            const MetaData = uploadInfo[0]['upload-file-info']['file-info']['MetaData'];
-            const fileName = get(MetaData, 'filename', '-').split(".")[0]
+          if (uploadInfo) {
+            const MetaData =
+              uploadInfo[0]['upload-file-info']['file-info']['MetaData']
+            const fileName = get(MetaData, 'filename', '-').split('.')[0]
 
             return fileName
           }
@@ -260,9 +259,12 @@ export default class ImageBuild extends React.Component {
         render: (size, record) => {
           const uploadInfo = get(record, ['upload-info-list', 'upload-info'])
 
-          if(!!uploadInfo) {
-            const fileSize = uploadInfo[0]['upload-file-info']['file-info']['Size'];
-            const fileSizeText = fileSize ? common.fnFormatBytes(fileSize.toString()) : "-";
+          if (uploadInfo) {
+            const fileSize =
+              uploadInfo[0]['upload-file-info']['file-info']['Size']
+            const fileSizeText = fileSize
+              ? common.fnFormatBytes(fileSize.toString())
+              : '-'
 
             return fileSizeText
           }
@@ -275,19 +277,27 @@ export default class ImageBuild extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (status, record) => {
-
-          const stepRunningArray = ['ServerReady', 'FileUploading', 'ImageBuild']
+          const stepRunningArray = [
+            'ServerReady',
+            'FileUploading',
+            'ImageBuild',
+          ]
           const stepSucceedArray = ['ImageBuildSucceed']
           const stepFailedArray = ['Fail']
 
           const podStatus = get(record, 'pod-status')
 
-          const podStatusText = stepFailedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_FAIL') 
-                    : stepRunningArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_RUNNING') 
-                    : stepSucceedArray.includes(podStatus.replace(/\s/gi, "")) ? t('RESOURCES_COMPLETE') 
-                    : t('RESOURCES_PREPARING')
+          const podStatusText = stepFailedArray.includes(
+            podStatus.replace(/\s/gi, '')
+          )
+            ? t('RESOURCES_FAIL')
+            : stepRunningArray.includes(podStatus.replace(/\s/gi, ''))
+            ? t('RESOURCES_RUNNING')
+            : stepSucceedArray.includes(podStatus.replace(/\s/gi, ''))
+            ? t('RESOURCES_COMPLETE')
+            : t('RESOURCES_PREPARING')
 
-          return podStatusText;
+          return podStatusText
         },
       },
       {
@@ -298,14 +308,16 @@ export default class ImageBuild extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('create-time'),
         render: (timestamp, record) => (
-          <p>{getLocalTime(record['create-time']).format('YYYY-MM-DD HH:mm:ss')}</p>
+          <p>
+            {getLocalTime(record['create-time']).format('YYYY-MM-DD HH:mm:ss')}
+          </p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {
@@ -315,11 +327,11 @@ export default class ImageBuild extends React.Component {
         title: t('RESOURCES_NAME'),
         search: true,
       },
-    ];
+    ]
   }
 
   render() {
-    const { bannerProps, tableProps } = this.props;
+    const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
         <Banner
@@ -338,6 +350,6 @@ export default class ImageBuild extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-    );
+    )
   }
 }

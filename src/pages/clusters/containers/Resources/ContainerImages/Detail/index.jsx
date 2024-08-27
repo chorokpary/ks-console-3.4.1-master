@@ -1,32 +1,29 @@
-
 import React, { useEffect, useReducer, useState } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
-import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
+import { isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
 import { getLocalTime } from 'utils'
 
-import * as common from 'utils/resources'
+import ContainerImageStore from 'stores/resources/containerimages'
 import routes from './routes'
 
-import ContainerImageStore from 'stores/resources/containerimages'
+const store = new ContainerImageStore()
 
-const store = new ContainerImageStore();
-
-const ContainerImageDetail = (props) => {
-
-  const [activationTrigger, setActivationTrigger] = useReducer(activationTrigger => !activationTrigger, false);
-  const [detail, setDetail] = useState();
+const ContainerImageDetail = props => {
+  const [activationTrigger, setActivationTrigger] = useReducer(
+    activationTrigger => !activationTrigger,
+    false
+  )
+  const [detail, setDetail] = useState()
 
   useEffect(() => {
-    fetchData();
+    fetchData()
   }, [])
 
-  let timer = 0;
+  let timer = 0
   const activeCrListTimer = () => {
     timer = setTimeout(() => {
       fetchData()
@@ -42,15 +39,17 @@ const ContainerImageDetail = (props) => {
   }, [activationTrigger])
 
   const fetchData = async () => {
-    let detail = await store.fetchDetail(props.match.params);
+    const detail = await store.fetchDetail(props.match.params)
     setDetail(detail)
-  };
+  }
 
   const { cluster } = props.match.params
   const listUrl = `/clusters/${cluster}/containerimages`
 
-  const routing = props.rootStore.routing;
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  const routing = props.rootStore.routing
+  const showEdit = !globals.config.presetClusterRoles.includes(
+    props.match.params.name
+  )
 
   const getOperations = () => [
     {
@@ -63,7 +62,7 @@ const ContainerImageDetail = (props) => {
         props.rootStore.triggerAction('containerimage.edit', {
           type: 'KEYPAIR_DETAIL',
           detail: toJS(store.detail),
-          store: store,
+          store,
           success: fetchData,
         }),
     },
@@ -90,7 +89,7 @@ const ContainerImageDetail = (props) => {
         props.rootStore.triggerAction('containerimage.remove', {
           type: 'KEYPAIR_DETAIL',
           detail: toJS(store.detail),
-          store: store,
+          store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
         }),
@@ -139,17 +138,19 @@ const ContainerImageDetail = (props) => {
       },
       {
         name: t('RESOURCES_REGIST_DATE'),
-        value: getLocalTime(detail.image.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        value: getLocalTime(detail.image.timestamp).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
       },
     ]
   }
 
   if (store.isLoading && !store.detail.name) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const sideProps = {
-    icon: "snapshot",
+    icon: 'snapshot',
     module: store.module,
     name: detail?.image.name,
     operations: getOperations(),
@@ -168,10 +169,10 @@ const ContainerImageDetail = (props) => {
         stores={{ detailStore: store }}
         routes={routes}
         icon={'snapshot'}
-        {...sideProps} />
+        {...sideProps}
+      />
     </>
   )
 }
 
-export default inject('rootStore')(observer(ContainerImageDetail));
-
+export default inject('rootStore')(observer(ContainerImageDetail))

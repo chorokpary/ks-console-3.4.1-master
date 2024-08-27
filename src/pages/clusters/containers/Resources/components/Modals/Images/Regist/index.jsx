@@ -147,20 +147,26 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
     }
 
     const getVmImageList = async () => {
-      try {
-        const originUrl = new URL(registryUrl)
-        const urlParams = originUrl.searchParams
-        const namespace = urlParams.get('namespace')
+      const originUrl = new URL(registryUrl)
+      const urlParams = originUrl.searchParams
+      const namespace = urlParams.get('namespace')
 
-        const response = await axios.get(
-          `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`,
-          {
+      let allRepositories = []
+      let nextPage = `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&popularity=true&repo_kind=image&`
+
+      try {
+        while (nextPage) {
+          const response = await axios.get(nextPage, {
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
             },
-          }
-        )
-        setImageListData(response.data.repositories)
+          })
+          allRepositories = [...allRepositories, ...response.data.repositories]
+          nextPage = response.data.next_page
+            ? `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image&next_page=${response.data.next_page}`
+            : null
+        }
+        setImageListData(allRepositories)
       } catch {
         setImageListData([])
       }
@@ -487,23 +493,32 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   // image list
   const handleImagePop = async () => {
     if (publicType === 'public') {
-      try {
-        const originUrl = new URL(registryUrl)
-        const urlParams = originUrl.searchParams
-        const namespace = urlParams.get('namespace')
+      const originUrl = new URL(registryUrl)
+      const urlParams = originUrl.searchParams
+      const namespace = urlParams.get('namespace')
 
-        const response = await axios.get(
-          `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`,
-          {
+      let allRepositories = []
+      let nextPage = `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image`
+
+      try {
+        while (nextPage) {
+          const response = await axios.get(nextPage, {
             headers: {
               'X-Requested-With': 'XMLHttpRequest',
             },
-          }
-        )
-        setImageList(response.data.repositories)
+          })
+
+          allRepositories = [...allRepositories, ...response.data.repositories]
+          nextPage = response.data.next_page
+            ? `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image&next_page=${response.data.next_page}`
+            : null
+        }
+
+        setImageListData(allRepositories)
+        setImageList(allRepositories)
         setPopActive(true)
         setImageText(defaultImageText)
-      } catch {
+      } catch (error) {
         setImageList([])
         setTagList([])
         setPopActive(false)
