@@ -665,6 +665,7 @@ module.exports = {
   RESOURCES_POWER: '파워',
   RESOURCES_WRITE_FILE: '파일 쓰기',
   RESOURCES_SELECT_MIN_ONE_PANEL: '패널을 최소 1개 이상 선택해주세요.',
+  RESOURCES_JUPYTER_CONFIG: 'Jupyter Lab 설정',
   RESOURCES_PASSWORD: '패스워드',
   RESOURCES_CHANGE_PASSWORD: '패스워드 변경',
   RESOURCES_INSTALL_PACKAGE: '패키지 설치',
@@ -710,7 +711,8 @@ module.exports = {
   RESOURCES_MEMORY_USAGE: '메모리 사용량',
   RESOURCES_DISK_USAGE: '디스크 사용량',
   RESOURCES_SELECT_NETWORK_NAME_TIP: '네트워크 이름을 선택해 주세요.',
-  RESOURCES_EXTERNAL_NETWORK_TIP: 'FLAT 유형의 네트워크만 External 네트워크로 설정할 수 있습니다.',
+  RESOURCES_EXTERNAL_NETWORK_TIP:
+    'FLAT 유형의 네트워크만 External 네트워크로 설정할 수 있습니다.',
   RESOURCES_ALREADY_SELECTED_TYPE: '이미 선택한 유형 입니다.',
   RESOURCES_SELECT_POLICY_TIP: '정책을 선택해 주세요.',
   RESOURCES_DUPLICATE_POLICY_TIP: '중복된 정책이 있습니다.',
@@ -922,6 +924,9 @@ module.exports = {
     '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 대문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
+  RESOURCES_JUPYTER_PORT_RANGE_DESC:
+    '포트는 1024~49151 숫자 범위이어야 합니다.',
+  RESOURCES_JUPYTER_TOKEN_DESC: '토큰은 48자리의 16진수여야 합니다.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
   RESOURCES_SUCCESS: '성공',
   RESOURCES_ENVIRONMENT_CONFIGURATION: '서버 구성',

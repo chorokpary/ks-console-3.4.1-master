@@ -675,6 +675,7 @@ module.exports = {
   RESOURCES_POWER: 'Power',
   RESOURCES_WRITE_FILE: 'Write File',
   RESOURCES_SELECT_MIN_ONE_PANEL: 'Please select at least one panel.',
+  RESOURCES_JUPYTER_CONFIG: 'Jupyter Lab Configuration',
   RESOURCES_PASSWORD: 'Password',
   RESOURCES_CHANGE_PASSWORD: 'Change Password',
   RESOURCES_INSTALL_PACKAGE: 'Install Package',
@@ -719,7 +720,8 @@ module.exports = {
   RESOURCES_MEMORY_USAGE: 'Memory Usage',
   RESOURCES_DISK_USAGE: 'Disk Usage',
   RESOURCES_SELECT_NETWORK_NAME_TIP: 'Please select a network name.',
-  RESOURCES_EXTERNAL_NETWORK_TIP: 'Only FLAT type network can be configured as external.',
+  RESOURCES_EXTERNAL_NETWORK_TIP:
+    'Only FLAT type network can be configured as external.',
   RESOURCES_ALREADY_SELECTED_TYPE: 'Already selected type.',
   RESOURCES_SELECT_POLICY_TIP: 'Please select a policy.',
   RESOURCES_DUPLICATE_POLICY_TIP: 'Duplicate policy exists.',
@@ -931,6 +933,9 @@ module.exports = {
 
   RESOURCES_INTERVAL_60_OVER_DESC: 'Please enter an interval of 60 or more.',
   RESOURCES_ID_EMPTY_DESC: 'Please enter the ID.',
+  RESOURCES_JUPYTER_PORT_RANGE_DESC:
+    'Port range should be a number or a range from 1024 to 49151.',
+  RESOURCES_JUPYTER_TOKEN_DESC: 'Token should be 48-character hexadecimal.',
   RESOURCES_PASSWORD_EMPTY_DESC: 'Please enter the password.',
   RESOURCES_SUCCESS: 'Success',
   RESOURCES_ENVIRONMENT_CONFIGURATION: 'Server Configuration',
