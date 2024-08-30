@@ -317,6 +317,7 @@ const RegistModal = props => {
       data.securitygroup = securityGroupCheckItems
       data.imageType = imageType
       data.busType = busType
+      data.preInstalledApp = preInstalledApp
 
       data.bootvolume =
         data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume
