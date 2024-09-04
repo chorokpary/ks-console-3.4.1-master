@@ -19,6 +19,7 @@ import * as common from 'utils/resources'
 import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
 import VmStore from 'stores/resources/vms'
+import YAML from 'js-yaml'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
@@ -42,7 +43,7 @@ const RegistModal = props => {
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
   const [securityGroupDataList, setSecurityGroupDataList] = useState([])
-  const [storegeClassDataList, setStoregeClassDataList] = useState([])
+  const [storageClassDataList, setStorageClassDataList] = useState([])
   const [availableIpList, setAvailableIpList] = useState([])
   const [selectedIpList, setSelectedIpList] = useState([])
   const [availableSriovIpList, setAvailableSriovIpList] = useState([])
@@ -66,6 +67,7 @@ const RegistModal = props => {
   )
   const [vmName, setVmName] = useState('')
   const [imageName, setImageName] = useState('')
+  const [preInstalledApp, setPreInstalledApp] = useState('None')
   const [bootVolumeName, setBootVolumeName] = useState('')
   const [flavorName, setFlavorName] = useState('')
   const [flavorCpu, setFlavorCpu] = useState('')
@@ -82,11 +84,16 @@ const RegistModal = props => {
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
   const [isScript, setIsScript] = useState(false)
+  const [isJupyterConfig, setIsJupyterConfig] = useState(false)
   const [isPassword, setIsPassword] = useState(false)
   const [isPackage, setIsPackage] = useState(false)
   const [isFileWrite, setIsFileWrite] = useState(false)
   const [isUserScript, setIsUserScript] = useState(false)
 
+  const [jupyterToken, setJupyterToken] = useState('')
+
+  const [isJupyterPortError, setIsJupyterPortError] = useState(false)
+  const [isJupyterTokenError, setIsJupyterTokenError] = useState(false)
   const [isPasswordError, setIsPasswordError] = useState(false)
   const [isPackageError, setIsPackageError] = useState(false)
   const [isFileWriteError, setIsFileWriteError] = useState(false)
@@ -141,7 +148,7 @@ const RegistModal = props => {
       setKeypairDataList(listKeypair.keypairs)
       setNodeDataList(listNode.nodes.filter(obj => obj.node_role !== 'master'))
       setSecurityGroupDataList(listSecurityGroup)
-      setStoregeClassDataList(listStoregeClass.user_sces)
+      setStorageClassDataList(listStoregeClass.user_sces)
       setAvailableIpList(listAvailableIps.all_ips)
       setAvailableSriovIpList(listAvailableSriovIps.all_ips)
     }
@@ -218,7 +225,7 @@ const RegistModal = props => {
   }
 
   const storageClassOptions = () => {
-    return storegeClassDataList.map(obj => {
+    return storageClassDataList.map(obj => {
       return {
         label: t(obj.name),
         value: t(obj.name),
@@ -310,6 +317,7 @@ const RegistModal = props => {
       data.securitygroup = securityGroupCheckItems
       data.imageType = imageType
       data.busType = busType
+      data.preInstalledApp = preInstalledApp
 
       data.bootvolume =
         data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume
@@ -330,6 +338,7 @@ const RegistModal = props => {
     let makeScriptStep_1 = false
     let makeScriptStep_2 = false
     let makeScriptStep_3 = false
+    let makeScriptStep_4 = false
 
     let makeScript = '#cloud-config'
 
@@ -350,6 +359,22 @@ const RegistModal = props => {
         - newuser:test#@@!
         - seconduser:Passw0rd!TWO!
     */
+    const files = []
+    let fileScript = ''
+    if (isJupyterConfig) {
+      files.push({
+        path: `/home/${selectImageDistroType}/.jupyter/jupyter_lab_config.py`,
+        content: `c = get_config()
+c.ServerApp.ip = '0.0.0.0'
+c.ServerApp.token = '${jupyterToken}'
+c.ServerApp.port = ${data[`scriptJupyterPort`]}
+`,
+        owner: `${selectImageDistroType}:${selectImageDistroType}`,
+        permissions: '0644',
+      })
+      makeScriptStep_1 = true
+    }
+
     let userPasswordScript = ''
     if (listPasswordRoute.length === 1) {
       listPasswordRoute.forEach(obj => {
@@ -367,7 +392,7 @@ const RegistModal = props => {
             data[`scriptPassword_${obj}`]
           }\n`
 
-          makeScriptStep_1 = true
+          makeScriptStep_2 = true
         }
       })
     } else {
@@ -378,7 +403,7 @@ const RegistModal = props => {
         if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
           userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
           userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
-          makeScriptStep_1 = true
+          makeScriptStep_2 = true
         }
       })
       userPasswordScript += `\n`
@@ -394,26 +419,25 @@ const RegistModal = props => {
       })
     }
 
-    let fileScript = ''
-    if (listFileRoute.length === 1) {
-      listFileRoute.forEach(obj => {
-        if (data[`scriptPath_${obj}`]) {
-          fileScript += `\nwrite_files:\n  - path: ${
-            data[`scriptPath_${obj}`]
-          }\n    content: |\n      ${data[`scriptContent_${obj}`]}\n`
-          makeScriptStep_2 = true
-        }
-      })
-    } else {
-      fileScript += `\nwrite_files:\n`
-      listFileRoute.forEach(obj => {
-        if (!!data[`scriptPath_${obj}`] && !!data[`scriptContent_${obj}`]) {
-          fileScript += `  - path: ${
-            data[`scriptPath_${obj}`]
-          }\n    content: |\n      ${data[`scriptContent_${obj}`]}\n`
-          makeScriptStep_2 = true
-        }
-      })
+    listFileRoute.forEach(obj => {
+      if (!!data[`scriptPath_${obj}`] && !!data[`scriptContent_${obj}`]) {
+        files.push({
+          path: `${data[`scriptPath_${obj}`]}`,
+          content: `${data[`scriptContent_${obj}`]}`,
+        })
+        makeScriptStep_3 = true
+      }
+    })
+
+    if (files.length > 0) {
+      // const writeFiles = files.map(file => ({
+      //   path: file.path,
+      //   content: file.content.trim().replace(/\n/g, '\n'),
+      // }))
+      const cloudInitConfig = {
+        write_files: files,
+      }
+      fileScript = YAML.dump(cloudInitConfig, {})
     }
 
     let packageScript = ''
@@ -427,7 +451,7 @@ const RegistModal = props => {
           } else {
             packageScript += `packages:\n  - ${data[`scriptPackage_${obj}`]}\n`
           }
-          makeScriptStep_3 = true
+          makeScriptStep_4 = true
         }
       })
     } else {
@@ -440,17 +464,17 @@ const RegistModal = props => {
         } else {
           packageScript += `  - ${data[`scriptPackage_${obj}`]}\n`
         }
-        makeScriptStep_3 = true
+        makeScriptStep_4 = true
       })
     }
 
-    if (!makeScriptStep_1) {
+    if (!makeScriptStep_2) {
       userPasswordScript = ''
     }
-    if (!makeScriptStep_2) {
+    if (!makeScriptStep_1 && !makeScriptStep_3) {
       fileScript = ''
     }
-    if (!makeScriptStep_3) {
+    if (!makeScriptStep_4) {
       packageScript = ''
     }
 
@@ -530,12 +554,14 @@ const RegistModal = props => {
       setFlavorDisk(flavorData[0].root_disk)
 
       if (isScript) {
+        const checkFlagJupyter = checkScriptJupyter()
         const checkFlagPassword = checkScriptPassword()
         const checkFlagFileWrite = checkScriptFilewrite()
         const checkFlagPackage = checkScriptPackage()
         const checkFlagUserScript = checkScriptUserScript()
 
         if (
+          checkFlagJupyter ||
           checkFlagPassword ||
           checkFlagFileWrite ||
           checkFlagPackage ||
@@ -551,6 +577,8 @@ const RegistModal = props => {
         return false
       }
 
+      setIsJupyterPortError(false)
+      setIsJupyterTokenError(false)
       setIsPasswordError(false)
       setIsPackageError(false)
       setIsFileWriteError(false)
@@ -563,7 +591,38 @@ const RegistModal = props => {
     }
   }
 
+  const generateToken = () => {
+    let token = ''
+    for (let i = 0; i < 48; i++) {
+      const randomIndex = Math.floor(Math.random() * 16).toString(16)
+      token += randomIndex
+    }
+    return token
+  }
+
   // 스크립트 Validation 시작===================
+  const checkScriptJupyter = () => {
+    const hexRegex = /^[0-9a-fA-F]{48}$/
+    if (isJupyterConfig) {
+      const { data } = form.current.props
+      if (
+        data['scriptJupyterPort'] < 1024 ||
+        data['scriptJupyterPort'] > 49151
+      ) {
+        setIsJupyterPortError(true)
+        return true
+      }
+      if (!hexRegex.test(data['scriptJupyterToken'])) {
+        setIsJupyterTokenError(true)
+        return true
+      }
+      setJupyterToken(data['scriptJupyterToken'])
+    }
+    setIsJupyterPortError(false)
+    setIsJupyterTokenError(false)
+    return false
+  }
+
   const checkScriptPassword = () => {
     if (isPassword) {
       const { data } = form.current.props
@@ -884,7 +943,7 @@ const RegistModal = props => {
 
   // 스크립트 시작 ==================================================
   const nextPasswordRoute = useRef(1)
-  const [listPasswordRoute, setlistPasswordRoute] = useState([1])
+  const [listPasswordRoute, setListPasswordRoute] = useState([1])
 
   // const imageDistroTypeRef = useRef();
   useEffect(() => {
@@ -898,16 +957,16 @@ const RegistModal = props => {
         return false
       }
       nextPasswordRoute.current += 1
-      setlistPasswordRoute(prevList => [...prevList, nextPasswordRoute.current])
+      setListPasswordRoute(prevList => [...prevList, nextPasswordRoute.current])
     },
 
     delColumn: id => {
-      setlistPasswordRoute(listPasswordRoute.filter(el => el !== id))
+      setListPasswordRoute(listPasswordRoute.filter(el => el !== id))
     },
   }
 
   const nextFileRoute = useRef(1)
-  const [listFileRoute, setlistFileRoute] = useState([1])
+  const [listFileRoute, setListFileRoute] = useState([1])
 
   useEffect(() => {
     checkScriptFilewrite()
@@ -920,10 +979,10 @@ const RegistModal = props => {
         return false
       }
       nextFileRoute.current += 1
-      setlistFileRoute(fileRoutes => [...fileRoutes, nextFileRoute.current])
+      setListFileRoute(fileRoutes => [...fileRoutes, nextFileRoute.current])
     },
     delColumn: id => {
-      setlistFileRoute(listFileRoute.filter(el => el !== id))
+      setListFileRoute(listFileRoute.filter(el => el !== id))
     },
   }
 
@@ -951,12 +1010,20 @@ const RegistModal = props => {
     },
   }
 
-  const handleIamgeDistroType = distro_type => {
+  const handleImageDistroType = distro_type => {
     setSelectImageDistroType(distro_type)
 
     if (isPassword) {
       const { data } = form.current.props
       data['scriptId_1'] = distro_type
+    }
+  }
+
+  const handlePreInstalledApp = app => {
+    setPreInstalledApp(app)
+    if (app === 'Jupyter') {
+      setJupyterToken(generateToken)
+      setIsJupyterConfig(true)
     }
   }
 
@@ -1257,7 +1324,11 @@ const RegistModal = props => {
                                   const distro_type = imageOptionList
                                     .filter(item => item.name === e)
                                     .map(item => item.distro_type)[0]
-                                  handleIamgeDistroType(distro_type)
+                                  handleImageDistroType(distro_type)
+                                  const app = imageOptionList
+                                    .filter(item => item.name === e)
+                                    .map(item => item.pre_installed_app)[0]
+                                  handlePreInstalledApp(app)
                                 }}
                                 defaultDescription={t(
                                   'RESOURCES_SELECT_IMAGE_TIP'
@@ -1837,6 +1908,77 @@ const RegistModal = props => {
                       }
                     }}
                   >
+                    {preInstalledApp === 'Jupyter' && (
+                      <Form.Group
+                        label={t('RESOURCES_JUPYTER_CONFIG')}
+                        onChange={() => {
+                          setIsJupyterConfig(!isJupyterConfig)
+                        }}
+                        checkable
+                      >
+                        <div className={styles.scriptitem}>
+                          <Columns>
+                            <Column>
+                              <Form.Item>
+                                <Input
+                                  placeholder={t('PORT')}
+                                  defaultValue={t('PORT')}
+                                  disabled={true}
+                                />
+                              </Form.Item>
+                            </Column>
+                            <Column>
+                              <Form.Item>
+                                <Input
+                                  type="number"
+                                  name={`scriptJupyterPort`}
+                                  placeholder={8888}
+                                  defaultValue={8888}
+                                  onChange={() => checkScriptJupyter()}
+                                />
+                              </Form.Item>
+                            </Column>
+                          </Columns>
+                        </div>
+                        <div
+                          className={`form-item-error ${
+                            !isJupyterPortError ? 'hide' : ''
+                          }`}
+                        >
+                          {t('RESOURCES_JUPYTER_PORT_RANGE_DESC')}
+                        </div>
+                        <div className={styles.scriptitem}>
+                          <Columns>
+                            <Column>
+                              <Form.Item>
+                                <Input
+                                  placeholder={t('TOKEN')}
+                                  defaultValue={t('TOKEN')}
+                                  disabled={true}
+                                />
+                              </Form.Item>
+                            </Column>
+                            <Column>
+                              <Form.Item>
+                                <Input
+                                  name={`scriptJupyterToken`}
+                                  placeholder={jupyterToken}
+                                  defaultValue={jupyterToken}
+                                  onChange={() => checkScriptJupyter()}
+                                />
+                              </Form.Item>
+                            </Column>
+                          </Columns>
+                        </div>
+                        <div
+                          className={`form-item-error ${
+                            !isJupyterTokenError ? 'hide' : ''
+                          }`}
+                        >
+                          {t('RESOURCES_JUPYTER_TOKEN_DESC')}
+                        </div>
+                      </Form.Group>
+                    )}
                     <Form.Group
                       label={t('RESOURCES_CHANGE_PASSWORD')}
                       onChange={() => {
@@ -2031,10 +2173,17 @@ const RegistModal = props => {
                   </div>
                   <div
                     className={
-                      isPassword || isPackage || isFileWrite ? 'disabled' : ''
+                      isJupyterConfig || isPassword || isPackage || isFileWrite
+                        ? 'disabled'
+                        : ''
                     }
                     onClick={e => {
-                      if (isPassword || isPackage || isFileWrite) {
+                      if (
+                        isJupyterConfig ||
+                        isPassword ||
+                        isPackage ||
+                        isFileWrite
+                      ) {
                         e.preventDefault()
                       }
                     }}
