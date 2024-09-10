@@ -28,7 +28,7 @@ import CardSelect from '../../../CardSelect'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
-const defaultImageSize = '12GB'
+const defaultImageSize = '15GB'
 
 const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
 const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE')
