@@ -25,7 +25,7 @@ import GpuNodeStore from 'stores/resources/gpunodes'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
-const defaultImageSize = '12GB'
+const defaultImageSize = '15GB'
 const regexVersion = /^v(\d+\.\d+\.\d+)$/
 const regexName = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
 
