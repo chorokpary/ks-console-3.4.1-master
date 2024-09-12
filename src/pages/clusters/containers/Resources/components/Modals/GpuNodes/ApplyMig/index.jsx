@@ -28,11 +28,9 @@ import styles from './index.scss';
 const ModifyModal = ({ title, onOk, store, ...props }) => {
 
   const [modelView, setModalView] = useState(true);
-
   const [migConfigList, setMigConfigList] = useState([]);
-
   const [radioConfig, setRadioConfig] = useState('');
-
+  const [existingConfig, setExistingConfig] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const closeModal = () => {
@@ -41,12 +39,18 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
 
   useEffect(() => {
     const fnGetMigConfigList = async () => {
-        setMigConfigList(store.migConfigList)
-        const firstConfig = store.migConfigList?.[0]?.name
-        const _ = require('lodash');
-        if (!_.isEmpty(firstConfig)) {
-	  setRadioConfig(firstConfig)
-	}
+      const _ = require('lodash');
+      setMigConfigList(store.migConfigList)
+      const existing = store.migConfigList.find((data) => data.name === store.detail.gpunode.mig_config);
+      var firstConfig = store.migConfigList?.[0]?.name;
+      const defaultConfig = existing?.name;
+      if (!_.isEmpty(defaultConfig)) {
+        setExistingConfig(existing.name);
+        firstConfig = existing.name;
+      }
+      if (!_.isEmpty(firstConfig)) {
+        setRadioConfig(firstConfig);
+      }
     };
     fnGetMigConfigList();
   }, []);
@@ -68,7 +72,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
         visible={modelView}
         okText={t('RESOURCES_APPLY')}
         cancelText={t('RESOURCES_CANCEL')}
-        disableSubmit={migConfigList.length === 0 && true}
+        disableSubmit={migConfigList.length === 0 || existingConfig === radioConfig}
         isSubmitting={store.isSubmitting}
       >
         <Form>
@@ -101,34 +105,34 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                     </tr>
                   </thead>
                   <tbody>
-	            {!migConfigList?.length && (
+                    {!migConfigList?.length && (
                       <tr>
                         <td colSpan="5" className="no-data">
                           <p>{t('RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND')}</p>
                         </td>
                       </tr>
                     )}
-	            {migConfigList?.map(data => (
+                    {migConfigList?.map(data => (
                       <tr key={data.name}>
-		        <td rowSpan={data.mig_config_instances.length}>
+                        <td rowSpan={data.mig_config_instances.length}>
                           <Radio
                             name="config"
                             value={data.name}
-			    checked={radioConfig === data.name}
+                            checked={radioConfig === data.name}
                             onChange={e => {
                               setRadioConfig(data.name);
                             }}
                           />
                         </td>
-			<td rowSpan={data.mig_config_instances.length}>{data.name}</td>
-			{data.mig_config_instances.map(inst => (
-                            <><td>{inst.devices}</td>
-			    <td>{inst.mig_enabled ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
-		            <td>{inst.mig_profiles.map(p => (
-                                    <div>{p.name}:{p.number}</div>
+                        <td rowSpan={data.mig_config_instances.length}>{data.name}</td>
+                        {data.mig_config_instances.map(inst => (
+                          <><td>{inst.devices}</td>
+                            <td>{inst.mig_enabled ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')}</td>
+                            <td>{inst.mig_profiles.map(p => (
+                              <div>{p.name}:{p.number}</div>
                             ))}</td></>
                         ))}
-		      </tr>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
