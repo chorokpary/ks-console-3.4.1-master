@@ -127,7 +127,7 @@ const RegistModal = props => {
         data.resource_name == '' ||
         data.cidr == undefined ||
         data.cidr == '' ||
-        data.cidr.split('/')[1] > data.vfs ||
+        availableRange > data.vfs ||
         data.ip_pool_start == undefined ||
         !isValidIpAddress(data.ip_pool_start) ||
         data.ip_pool_start == '' ||
@@ -137,7 +137,7 @@ const RegistModal = props => {
         !checkNetworkAddress(data.cidr)
       ) {
         handleOk();
-      } else if (availableRange <= data.vfs) {
+      } else {
         setRegStep(2);
       }
     }
