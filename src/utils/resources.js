@@ -118,8 +118,8 @@ const intToIp = (int) => {
     // 게이트웨이 IP (네트워크 주소의 첫 번째 사용 가능한 IP)
     const gatewayIPInt = networkAddressInt + 1;
   
-    // IP 풀 범위 (네트워크 주소 + 1 부터 브로드캐스트 주소 - 1 까지)
-    const ipPoolStartInt = networkAddressInt + 1;
+    // IP 풀 범위 (게이트웨이 주소 + 1 부터 브로드캐스트 주소 - 1 까지)
+    const ipPoolStartInt = gatewayIPInt + 1;
     const ipPoolEndInt = broadcastAddressInt - 1;
   
     return {
