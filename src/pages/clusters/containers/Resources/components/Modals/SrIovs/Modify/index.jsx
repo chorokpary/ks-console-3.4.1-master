@@ -118,7 +118,7 @@ const ModifyModal = props => {
         !checkNetworkAddress(data.cidr)
       ) {
         handleOk();
-      } else if (availableRange <= data.vfs) {
+      } else {
         setRegStep(2);
       }
     }
@@ -500,9 +500,7 @@ const ModifyModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-                      <Form.Item label={t('VF')}>
-                        <Input name="vfs" defaultValue={vfs} disabled />
-                      </Form.Item>
+                      <div/>
                     </Column>
                   </Columns>
                 </Form.Item>
