@@ -48,19 +48,21 @@ const DetailMachineList = props => {
     const page = get(params, 'page', 1)
 
     const machineList = await kaasStore.fetchMachinesAll()
-
-    setMachines(machineList.filter(machine => machine.name === props.name))
+    const filteredMachineList = machineList.filter(
+      machine => machine.name === props.name
+    )
+    setMachines(filteredMachineList)
 
     const machineSearchData =
       params.name !== '' && params.name !== undefined
-        ? getSearchData(machines, params.name)
+        ? getSearchData(filteredMachineList, params.name)
         : []
     const machineSliceData =
       machineSearchData.length > 0
         ? getSliceData(machineSearchData, page)
         : params.name !== '' && params.name !== undefined
         ? getSliceData(machineSearchData, page)
-        : getSliceData(machineList, page)
+        : getSliceData(filteredMachineList, page)
 
     setCurrentPage(page)
     setMachineSearchDataList(machineSearchData)
