@@ -19,7 +19,6 @@ import * as common from 'utils/resources'
 import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
 import VmStore from 'stores/resources/vms'
-import YAML from 'js-yaml'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
@@ -335,151 +334,48 @@ const RegistModal = props => {
 
   const getScript = () => {
     const { data } = form.current.props
-    let makeScriptStep_1 = false
-    let makeScriptStep_2 = false
-    let makeScriptStep_3 = false
-    let makeScriptStep_4 = false
 
-    let makeScript = '#cloud-config'
-
-    /*
-    #cloud-config
-    ssh_pwauth: true
-    users:
-      - default
-      - name: newuser
-        sudo: ALL=(ALL) NOPASSWD:ALL
-      - name: seconduser
-        sudo: ALL=(ALL) NOPASSWD:ALL
-    
-    chpasswd:
-      expire: false
-      list:
-        - ubuntu:1234
-        - newuser:test#@@!
-        - seconduser:Passw0rd!TWO!
-    */
-    const files = []
-    let fileScript = ''
-    if (isJupyterConfig) {
-      files.push({
-        path: `/home/${selectImageDistroType}/.jupyter/jupyter_lab_config.py`,
-        content: `c = get_config()
-c.ServerApp.ip = '0.0.0.0'
-c.ServerApp.token = '${jupyterToken}'
-c.ServerApp.port = ${data[`scriptJupyterPort`]}
-`,
-        owner: `${selectImageDistroType}:${selectImageDistroType}`,
-        permissions: '0644',
-      })
-      makeScriptStep_1 = true
+    if (data.userScript !== '' && data.userScript !== undefined) {
+      return {
+        custom_script: data.userScript,
+      }
     }
 
-    let userPasswordScript = ''
-    if (listPasswordRoute.length === 1) {
-      listPasswordRoute.forEach(obj => {
-        if (data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `\nssh_pwauth: true\n`
-          userPasswordScript += `users:\n`
-          userPasswordScript += `  - default\n`
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
-          userPasswordScript += `\n`
-          userPasswordScript += `chpasswd:\n`
-          userPasswordScript += `  expire: false\n`
-          userPasswordScript += `  list:\n`
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-            data[`scriptPassword_${obj}`]
-          }\n`
+    const makeScript = {}
 
-          makeScriptStep_2 = true
-        }
-      })
-    } else {
-      userPasswordScript += `\nssh_pwauth: true\n`
-      userPasswordScript += `users:\n`
-      userPasswordScript += `  - default\n`
+    if (listPasswordRoute.length !== 0) {
+      const userPassWord = []
       listPasswordRoute.forEach(obj => {
-        if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
-          makeScriptStep_2 = true
-        }
+        userPassWord.push({
+          user_name: data[`scriptId_${obj}`],
+          password: data[`scriptPassword_${obj}`],
+        })
       })
-      userPasswordScript += `\n`
-      userPasswordScript += `chpasswd:\n`
-      userPasswordScript += `  expire: false\n`
-      userPasswordScript += `  list:\n`
-      listPasswordRoute.forEach(obj => {
-        if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-            data[`scriptPassword_${obj}`]
-          }\n`
-        }
-      })
+      makeScript['user_password'] = userPassWord
     }
 
+    const writeFiles = []
     listFileRoute.forEach(obj => {
       if (!!data[`scriptPath_${obj}`] && !!data[`scriptContent_${obj}`]) {
-        files.push({
-          path: `${data[`scriptPath_${obj}`]}`,
-          content: `${data[`scriptContent_${obj}`]}`,
+        writeFiles.push({
+          path: data[`scriptPath_${obj}`],
+          content: data[`scriptContent_${obj}`],
         })
-        makeScriptStep_3 = true
       }
     })
+    if (writeFiles.length !== 0) {
+      makeScript['write_files'] = writeFiles
+    }
 
-    if (files.length > 0) {
-      // const writeFiles = files.map(file => ({
-      //   path: file.path,
-      //   content: file.content.trim().replace(/\n/g, '\n'),
-      // }))
-      const cloudInitConfig = {
-        write_files: files,
+    if (isJupyterConfig) {
+      const preInstalled = {}
+      preInstalled['jupyter_lab'] = {
+        distro_type: selectImageDistroType,
+        token: jupyterToken,
+        port: data[`scriptJupyterPort`],
       }
-      fileScript = YAML.dump(cloudInitConfig, {})
+      makeScript['pre_installed_app'] = preInstalled
     }
-
-    let packageScript = ''
-    if (listPackageRoute.length === 1) {
-      listPackageRoute.forEach(obj => {
-        if (data[`scriptPackage_${obj}`]) {
-          if (data[`scriptVersion_${obj}`]) {
-            packageScript += `packages:\n  - [${
-              data[`scriptPackage_${obj}`]
-            }, ${data[`scriptVersion_${obj}`]}]\n`
-          } else {
-            packageScript += `packages:\n  - ${data[`scriptPackage_${obj}`]}\n`
-          }
-          makeScriptStep_4 = true
-        }
-      })
-    } else {
-      packageScript += `packages:\n`
-      listPackageRoute.forEach(obj => {
-        if (data[`scriptVersion_${obj}`]) {
-          packageScript += `  - [${data[`scriptPackage_${obj}`]}, ${
-            data[`scriptVersion_${obj}`]
-          }]\n`
-        } else {
-          packageScript += `  - ${data[`scriptPackage_${obj}`]}\n`
-        }
-        makeScriptStep_4 = true
-      })
-    }
-
-    if (!makeScriptStep_2) {
-      userPasswordScript = ''
-    }
-    if (!makeScriptStep_1 && !makeScriptStep_3) {
-      fileScript = ''
-    }
-    if (!makeScriptStep_4) {
-      packageScript = ''
-    }
-
-    makeScript += userPasswordScript + fileScript + packageScript
-    // makeScript += userPasswordScript;
 
     return makeScript
   }
@@ -1021,7 +917,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
 
   const handlePreInstalledApp = app => {
     setPreInstalledApp(app)
-    if (app === 'Jupyter') {
+    if (app.toLowerCase() === 'jupyter') {
       setJupyterToken(generateToken)
       setIsJupyterConfig(true)
     }
@@ -1908,7 +1804,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                       }
                     }}
                   >
-                    {preInstalledApp === 'Jupyter' && (
+                    {preInstalledApp.toLowerCase() === 'jupyter' && (
                       <Form.Group
                         label={t('RESOURCES_JUPYTER_CONFIG')}
                         onChange={() => {
@@ -1921,8 +1817,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                             <Column>
                               <Form.Item>
                                 <Input
-                                  placeholder={t('PORT')}
-                                  defaultValue={t('PORT')}
+                                  placeholder={'Port'}
+                                  defaultValue={'Port'}
                                   disabled={true}
                                 />
                               </Form.Item>
