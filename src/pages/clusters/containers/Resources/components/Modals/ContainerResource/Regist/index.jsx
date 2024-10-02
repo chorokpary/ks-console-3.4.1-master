@@ -1376,7 +1376,7 @@ const RegistModal = props => {
                         </div>
                       </div>
                       <div className={styles.list} style={{ width: '100%' }}>
-                        <label>{t('PETASUS_KUBERNETES_STACK_DESC')}</label>
+                        <label>{t('RESOURCES_PETASUS_KUBERNETES_STACK')}</label>
                         <div className={styles.multiline}>
                           {ekgStack.map((obj, index) => (
                             <div key={index}>{obj}</div>
