@@ -219,6 +219,7 @@ const RegistModal = props => {
       return {
         label: t(label),
         value: t(arch),
+        description: t(arch) + ' ' + t('RESOURCES_CPU_ARCH'),
       }
     })
     // { label: 'amd64', value: 'x86_64' },
@@ -237,6 +238,7 @@ const RegistModal = props => {
     return Array.from(uniqueKubeVersions).map(version => ({
       label: t(version),
       value: t(version),
+      description: t('RESOURCES_KUBERNETES') + ' ' + t(version) + ' ' + t('RESOURCES_VERSION'),
     }))
   }
 

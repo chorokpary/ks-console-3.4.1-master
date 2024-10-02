@@ -795,6 +795,7 @@ module.exports = {
   RESOURCES_ARM: 'ARM',
   RESOURCES_AMD64: 'AMD64',
   RESOURCES_ARM64: 'ARM64',
+  RESOURCES_CPU_ARCH: 'CPU Architecture',
   RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC:
     'Select a size larger than the boot volume size.',
   RESOURCES_APP_DEPLOY_MANAGE: 'Manage Application Deployment',

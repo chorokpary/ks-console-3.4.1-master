@@ -79,6 +79,7 @@ const RegistNodePoolModal = props => {
       return {
         label: t(label),
         value: t(arch),
+        description: t(arch) + ' ' + t('RESOURCES_CPU_ARCH'),
       }
     })
   }

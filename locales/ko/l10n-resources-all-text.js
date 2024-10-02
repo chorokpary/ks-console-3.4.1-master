@@ -784,6 +784,7 @@ module.exports = {
   RESOURCES_ARM: 'ARM',
   RESOURCES_AMD64: 'AMD64',
   RESOURCES_ARM64: 'ARM64',
+  RESOURCES_CPU_ARCH: 'CPU 아키텍처',
   RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC:
     '부트볼륨 사이즈보다 큰 사이즈를 선택해 주세요.',
   RESOURCES_APP_DEPLOY_MANAGE: '애플리케이션 배포 관리',
