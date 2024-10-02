@@ -603,7 +603,7 @@ module.exports = {
   RESOURCES_PETASUS_KUBERNETES_STACK: 'Petasus Kubernetes Stack',
   RESOURCES_MIN: 'Min',
   RESOURCES_MAX: 'Max',
-  RESOURCES_PLUG_IN: 'Plug-in',
+  RESOURCES_PLUG_IN: '플러그인',
   RESOURCES_CNI: 'CNI',
   RESOURCES_CSI: 'CSI',
   RESOURCES_PETASUS_KUBERNETES_STACK_DESC: 'Petasus Kubernetes Stack (PKS)',

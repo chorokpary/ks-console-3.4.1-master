@@ -1216,17 +1216,17 @@ const RegistModal = props => {
                       ></Button>
                     </div>
                     <div className={styles.greybgbox}>
-                      <div className={styles.list}>
+                      <div className={styles.list} style={{ width: '25%' }}>
                         <label>{t('RESOURCES_NAME')}</label>
                         <div className={styles.bold}>{clusterName}</div>
                       </div>
-                      <div className={styles.list}>
+                      <div className={styles.list} style={{ width: '35%' }}>
                         <label>{t('RESOURCES_IMAGE')}</label>
                         <div className={styles.multiline}>
                           <div className={styles.bold}>{imageName}</div>
                         </div>
                       </div>
-                      <div className={styles.list}>
+                      <div className={styles.list} style={{ width: '40%' }}>
                         <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
                       </div>
@@ -1253,20 +1253,26 @@ const RegistModal = props => {
                       .filter(x => networkCheckItem === x.id)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list} style={{ width: '100%' }}>
+                            <label>{t('RESOURCES_GATEWAY')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.gateway_ip}</div>
                             </div>
                           </div>
                         </div>
@@ -1278,20 +1284,26 @@ const RegistModal = props => {
                       .filter(x => sriovCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list} style={{ width: '100%' }}>
+                            <label>{t('RESOURCES_GATEWAY')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.gateway_ip}</div>
                             </div>
                           </div>
                         </div>
@@ -1304,43 +1316,29 @@ const RegistModal = props => {
                           : 'hide'
                       }`}
                     >
-                      ELB
+                      ELB ({elbSelect})
                     </label>
                     {networkDataList
                       .filter(x => elbCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list} style={{ width: '15%' }}>
-                            <label>{t('RESOURCES_TYPE')}</label>
-                            <div>{elbSelect}</div>
-                          </div>
-                          <div className={styles.list} style={{ width: '20%' }}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list} style={{ width: '15%' }}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '10%' }}>
-                            <label>{t('RESOURCES_PATH')}</label>
-                            <div className={styles.multiline}>
-                              <div>
-                                {obj.default_route
-                                  ? t('RESOURCES_USE')
-                                  : t('RESOURCES_NOT_USE')}
-                              </div>
-                            </div>
-                          </div>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
                           </div>
-                          <div className={styles.list}>
+                          <div className={styles.list} style={{ width: '100%' }}>
                             <label>{t('RESOURCES_GATEWAY')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.gateway_ip}</div>
@@ -1383,7 +1381,7 @@ const RegistModal = props => {
                           ))}
                         </div>
                       </div>
-                      <div className={styles.list}>
+                      <div className={styles.list} style={{ width: '100%' }}>
                         <label style={{ width: '100%' }}>
                           {t('RESOURCES_CONTAINER_IMAGE')}
                         </label>
@@ -1392,6 +1390,8 @@ const RegistModal = props => {
                             ? t('RESOURCES_PRIVATE')
                             : t('RESOURCES_PUBLIC')}
                         </div>
+                      </div>
+                      <div className={styles.list} style={{ width: '100%' }}>
                         <label style={{ width: '100%' }}>
                           {t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}
                         </label>
