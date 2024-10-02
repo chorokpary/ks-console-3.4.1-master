@@ -456,6 +456,7 @@ module.exports = {
   RESOURCES_NETWORK_OFFLOAD: 'Hardware Offload',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: 'Select',
+  RESOURCES_NOT_SELECTED: 'Not Selected',
   RESOURCES_AUTOMATIC: 'Automatic',
   RESOURCES_DELETE_SELECT_FLOATING_IP_DESC:
     'Do you want to delete the selected floating IP?',

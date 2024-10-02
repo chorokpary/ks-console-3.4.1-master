@@ -449,6 +449,7 @@ module.exports = {
   RESOURCES_NETWORK_OFFLOAD: '하드웨어 오프로딩',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: '선택',
+  RESOURCES_NOT_SELECTED: '선택 안됨',
   RESOURCES_AUTOMATIC: '자동',
   RESOURCES_DELETE_SELECT_FLOATING_IP_DESC:
     '선택한 플로팅 IP를 삭제하시겠습니까?',
