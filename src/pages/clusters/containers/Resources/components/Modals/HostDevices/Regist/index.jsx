@@ -454,7 +454,7 @@ const RegistModal = props => {
                                     pattern: regexName,
                                     message: t(
                                       'RESOURCES_INVALID_NAME_HOSTDEVICES_DESC'
-                                    ),
+                                    ) + ' ex) nvidia.com/TU104GL_TESLA_T4',
                                   },
                                 ]}
                               >
@@ -520,7 +520,6 @@ const RegistModal = props => {
                 </div>
               )}
             </div>
-            {`${t('RESOURCES_INVALID_NAME_HOSTDEVICES_DESC')} ex) nvidia.com/TU104GL_TESLA_T4`}
           </div>
           {/* </Form.Item> */}
         </Form>
