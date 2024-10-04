@@ -261,20 +261,20 @@ const Status = props => {
       state === 'Starting' ||
       state === 'Stopping' ||
       state === 'Terminating' ||
-      state === 'Migrating'
+      state === 'Migrating' ||
+      state === 'WaitingForVolumeBinding'
     ) {
       return 'waiting'
     }
-    if (state === 'Running') {
+    else if (state === 'Running') {
       return 'running'
     }
-    if (state === 'Stopped' || state === 'Paused') {
+    else if (state === 'Stopped' || state === 'Paused') {
       return 'stopped'
     }
-    if (state === 'Unknown') {
+    else {
       return 'error'
     }
-    return 'error'
   }
 
   return (
@@ -299,19 +299,19 @@ const Status = props => {
                 </div>
                 <div className={styles.text}>
                   <div>
-	            {t(`RESOURCES_${store.detail.vm?.state.toUpperCase()}`)}
+                    {t(`RESOURCES_${store.detail.vm?.state.toUpperCase()}`)}
                   </div>
 
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
                   <div>{store.detail.vm?.node ? (
-			  <Link 
-			    to={`/clusters/${cluster}/nodes/${store.detail.vm.node}`}
-			  >
-			    {store.detail.vm.node}
-			  </Link>
-			) : ("-")}</div>
+                    <Link
+                      to={`/clusters/${cluster}/nodes/${store.detail.vm.node}`}
+                    >
+                      {store.detail.vm.node}
+                    </Link>
+                  ) : ("-")}</div>
                   <p>{t('RESOURCES_NODE')}</p>
                 </div>
                 {renderMonitorings()}
@@ -371,10 +371,10 @@ const Status = props => {
                         ? detailFlavor.gpus.length == 1
                           ? detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
-                              'RESOURCES_BESIDES'
-                            )} ${detailFlavor.gpus.length - 1}${t(
-                              'RESOURCES_COUNT'
-                            )}`
+                            'RESOURCES_BESIDES'
+                          )} ${detailFlavor.gpus.length - 1}${t(
+                            'RESOURCES_COUNT'
+                          )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -431,7 +431,11 @@ const Status = props => {
                     <p>CIDR</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.gateway_ip}</div>
+                    <div>{`${obj.gateway_ip === undefined || obj.gateway_ip === ""
+                      ? "-"
+                      : obj.gateway_ip
+                      }`}
+                    </div>
                     <p>{t('RESOURCES_GATEWAY')}</p>
                   </div>
                 </div>
