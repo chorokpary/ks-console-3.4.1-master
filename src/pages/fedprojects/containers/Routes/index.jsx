@@ -136,7 +136,7 @@ export default class Routers extends React.Component {
         dataIndex: 'status',
         isHideable: true,
         width: '22%',
-        render: status => <Status type={status} name={t(status)} flicker />,
+        render: status => <Status type={status} name={t(status.toUpperCase())} flicker />,
       },
       {
         title: t('APP'),

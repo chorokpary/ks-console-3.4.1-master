@@ -144,7 +144,7 @@ export default class ContainerDetail extends React.Component {
       },
       {
         name: t('STATUS'),
-        value: t(status),
+        value: t(status.toUpperCase()),
       },
       {
         name: t('IMAGE'),

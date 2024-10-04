@@ -89,7 +89,7 @@ export default class CRDApps extends React.Component {
         width: '20%',
         render: (status, record) =>
           status === 'Deleting' ? (
-            <Status type={status} name={t(status)} flicker />
+            <Status type={status} name={t(status.toUpperCase())} flicker />
           ) : (
             <ClusterWrapper
               clusters={record.clusters}

@@ -148,7 +148,7 @@ export default class OPApps extends React.Component {
       )
     }
 
-    return <Status name={t(status)} type={status} flicker />
+    return <Status name={t(status.toUpperCase())} type={status} flicker />
   }
 
   showDeploy = () => {

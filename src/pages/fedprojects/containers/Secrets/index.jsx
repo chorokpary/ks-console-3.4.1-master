@@ -104,7 +104,7 @@ export default class Secrets extends React.Component {
         dataIndex: 'status',
         isHideable: true,
         width: '12%',
-        render: status => <Status type={status} name={t(status)} flicker />,
+        render: status => <Status type={status} name={t(status.toUpperCase())} flicker />,
       },
       {
         title: t('TYPE'),

@@ -158,12 +158,12 @@ export default class OPAppDetail extends React.Component {
     if (detail.additional_info) {
       return (
         <Tooltip content={detail.additional_info}>
-          <Status name={t(status)} type={status} />
+          <Status name={t(status.toUpperCase())} type={status} />
         </Tooltip>
       )
     }
 
-    return <Status name={t(status)} type={status} />
+    return <Status name={t(status.toUpperCase())} type={status} />
   }
 
   render() {

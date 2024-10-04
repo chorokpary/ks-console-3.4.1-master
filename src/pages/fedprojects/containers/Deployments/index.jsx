@@ -163,7 +163,7 @@ export default class Deployments extends React.Component {
         width: '22%',
         render: (status, record) =>
           status === 'Deleting' ? (
-            <Status type={status} name={t(status)} flicker />
+            <Status type={status} name={t(status.toUpperCase())} flicker />
           ) : (
             <FedWorkloadStatus
               data={record}
