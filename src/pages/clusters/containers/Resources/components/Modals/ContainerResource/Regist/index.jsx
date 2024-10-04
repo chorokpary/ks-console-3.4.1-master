@@ -45,7 +45,7 @@ const RegistModal = props => {
   const [masterReplicas, setMasterReplicas] = useState(1)
 
   const [selectOsDistro, setSelectOsDistro] = useState('')
-  const [cniSelect, setCniSelect] = useState('')
+  const [cniSelect, setCniSelect] = useState('cilium')
   const [csiSelect, setCsiSelect] = useState('')
   const [elbSelect, setElbSelect] = useState('')
   const [expirationSelect, setExpirationSelect] = useState('10')
@@ -219,7 +219,7 @@ const RegistModal = props => {
       return {
         label: t(label),
         value: t(arch),
-        description: t(arch) + ' ' + t('RESOURCES_CPU_ARCH'),
+        description: `${t(arch)} ${t('RESOURCES_CPU_ARCH')}`,
       }
     })
     // { label: 'amd64', value: 'x86_64' },
@@ -238,7 +238,9 @@ const RegistModal = props => {
     return Array.from(uniqueKubeVersions).map(version => ({
       label: t(version),
       value: t(version),
-      description: t('RESOURCES_KUBERNETES') + ' ' + t(version) + ' ' + t('RESOURCES_VERSION'),
+      description: `${t('RESOURCES_KUBERNETES')} ${t(version)} ${t(
+        'RESOURCES_VERSION'
+      )}`,
     }))
   }
 
@@ -310,7 +312,7 @@ const RegistModal = props => {
           )
           setNetworkName(networkDataList.filter(el => el.external)[0].id)
         }
-        setCniSelect(cnis?.[0]?.value || '')
+        setCniSelect(cnis?.[0]?.value || 'cilium')
         setCsiSelect(csis?.[0]?.value || '')
         setIsFirst(false)
       }
@@ -826,7 +828,7 @@ const RegistModal = props => {
                   label={t('RESOURCES_DESCRIPTION')}
                   desc={t('DESCRIPTION_DESC')}
                 >
-                  <TextArea name="description" maxLength={256}/>
+                  <TextArea name="description" maxLength={256} />
                 </Form.Item>
                 <div style={{ padding: 25 }} />
               </div>
@@ -1253,23 +1255,35 @@ const RegistModal = props => {
                       .filter(x => networkCheckItem === x.id)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_GATEWAY')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.gateway_ip}</div>
@@ -1284,23 +1298,35 @@ const RegistModal = props => {
                       .filter(x => sriovCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_GATEWAY')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.gateway_ip}</div>
@@ -1322,23 +1348,35 @@ const RegistModal = props => {
                       .filter(x => elbCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
                           </div>
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label>{t('RESOURCES_GATEWAY')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.gateway_ip}</div>
