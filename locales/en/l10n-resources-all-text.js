@@ -651,6 +651,26 @@ module.exports = {
   RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED: 'Topology Reconciled',
   RESOURCES_CLUSTER_SCHEDULE_TOPOLOGY_RECONCILED_DESC:
     'Evidence about the reconciliation of a Cluster topology into the managed objects of the Cluster',
+
+  RESOURCES_CLUSTER_PROVISIONING: 'Provisioning',
+  RESOURCES_CLUSTER_PENDING: 'Pending',
+  RESOURCES_CLUSTER_PROVISIONED: 'Provisioned',
+  RESOURCES_CLUSTER_DELETING: 'Deleting',
+  RESOURCES_CLUSTER_FAILED: 'Failed',
+  RESOURCES_CLUSTER_UNKNOWN: 'Unknown',
+
+  RESOURCES_CLUSTER_READY: 'Ready',
+  RESOURCES_CLUSTER_NOT_READY: 'NotReady',
+
+  RESOURCES_MACHINE_PENDING: 'Pending',
+  RESOURCES_MACHINE_PROVISIONING: 'Provisioning',
+  RESOURCES_MACHINE_PROVISIONED: 'Provisioned',
+  RESOURCES_MACHINE_RUNNING: 'Running',
+  RESOURCES_MACHINE_DELETING: 'Deleting',
+  RESOURCES_MACHINE_DELETED: 'Deleted',
+  RESOURCES_MACHINE_FAILED: 'Failed',
+  RESOURCES_MACHINE_UNKNOWN: 'Unknown',
+
   RESOURCES_CLONE: 'Clone',
   RESOURCES_CREATE_CLONE_DATA_VM_NAME_TIP:
     'Enter the new virtual machine name for creating a clone data.',

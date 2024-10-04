@@ -19,15 +19,15 @@
  */
 
 import React from 'react';
-import {toJS} from 'mobx';
-import {Link} from 'react-router-dom';
-import {Icon} from '@kube-design/components';
-import {Indicator} from 'components/Base';
+import { toJS } from 'mobx';
+import { Link } from 'react-router-dom';
+import { Icon } from '@kube-design/components';
+import { Indicator } from 'components/Base';
 import Banner from 'components/Cards/Banner';
-import withList, {ListPage} from 'components/HOCs/withList';
+import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 
-import {getLocalTime} from 'utils';
+import { getLocalTime } from 'utils';
 
 import ResourceStore from 'stores/resources/containerresource';
 import styles from './index.scss';
@@ -215,7 +215,7 @@ export default class Resource extends React.Component {
                 width: 'auto',
                 render: phase => (
                     <p className="tall">
-                        <span>{phase}</span>
+                        <span>{t(`RESOURCES_MACHINE_${phase.toUpperCase()}`)}</span>
                     </p>
                 ),
             },
@@ -255,7 +255,7 @@ export default class Resource extends React.Component {
                                     ]
                                 }
                             />
-                            <p>{state ? 'Ready' : 'Not-ready'}</p>
+                            <p>{state ? t('RESOURCES_CLUSTER_READY') : t('RESOURCES_CLUSTER_NOT_READY')}</p>
                         </div>
                     );
                 },
