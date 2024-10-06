@@ -122,11 +122,11 @@ const ImageDetail = props => {
       },
       {
         name: t('RESOURCES_ACCELERATOR_TYPE'),
-        value: detail.image.accelerator_type,
+        value: t(`RESOURCES_IMAGE_${detail.image.accelerator_type.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_PRE_INSTALLED_APP'),
-        value: detail.image.pre_installed_app,
+        value: t(`RESOURCES_IMAGE_${detail.image.pre_installed_app.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_REAL_TIME'),
@@ -136,7 +136,7 @@ const ImageDetail = props => {
       },
       {
         name: t('RESOURCES_STEP'),
-        value: detail.image.phase,
+        value: t(`RESOURCES_IMAGE_${detail.image.phase.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_PROGRESS'),
