@@ -122,7 +122,7 @@ const ContainerImageDetail = props => {
       },
       {
         name: t('RESOURCES_STEP'),
-        value: detail.image.phase,
+        value: t(`RESOURCES_IMAGE_${detail.image.phase.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_PROGRESS'),

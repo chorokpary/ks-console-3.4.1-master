@@ -241,6 +241,11 @@ export default class Images extends React.Component {
         dataIndex: 'phase',
         isHideable: true,
         width: 'auto',
+        render: phase => (
+          <p className="tall">
+            <span>{t(`RESOURCES_IMAGE_${phase.toUpperCase()}`)}</span>
+          </p>
+        ),
       },
       {
         title: t('RESOURCES_PROGRESS'),
