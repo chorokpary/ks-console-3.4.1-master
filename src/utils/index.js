@@ -446,13 +446,13 @@ export const getWebSocketProtocol = protocol => {
 }
 
 export const getWebsiteUrl = () => {
-  const useLang = get(globals, 'user.lang', 'en')
+  const useLang = get(globals, 'user.lang', 'ko')
   const lang = useLang === 'ko' ? 'ko' : 'en'
   return globals.config.documents[lang]
 }
 
 export const getCustomizedWebsiteUrl = () => {
-  const useLang = get(globals, 'user.lang', 'en')
+  const useLang = get(globals, 'user.lang', 'ko')
   const lang = useLang === 'ko' ? 'ko' : 'en'
 
   const host = window.location.hostname
