@@ -111,11 +111,11 @@ export default class NetworkStore extends Base {
     }
 
     @action
-    async fetchAvailableNodes(params) {
+    async fetchNodeResources(params) {
         this.isLoading = true;
 
         const result = await request.get(
-            `${this.getNodeUrl(params)}/available_nodes/${params.resourceName}`
+            `${this.getNodeUrl(params)}/resources`
         );
 
         this.isLoading = false;

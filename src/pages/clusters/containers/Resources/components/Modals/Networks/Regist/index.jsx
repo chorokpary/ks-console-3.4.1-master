@@ -320,24 +320,40 @@ const RegistModal = props => {
 
   const refreshNetworkOffloadTooltip = async (resourceName) => {
     const vfResourcePrefix = 'openshift.io/';
-    const resp = await networkStore.fetchAvailableNodes({
-      ...props,
-      resourceName: vfResourcePrefix + resourceName
-    });
+    const resp = await networkStore.fetchNodeResources({...props});
 
-    const nodes = resp.nodes.join(' ');
-    const allocatable = resp.allocatable;
-    const capacity = resp.capacity;
+    const fullResourceName = vfResourcePrefix + resourceName;
 
-    if (resp.nodes.length == 0) {
+    const aggregated = {
+      'available': resp.aggregated[fullResourceName].available,
+      'allocatable': resp.aggregated[fullResourceName].allocatable,
+    };
+    let nodes = {};
+    for (const [key, val] of Object.entries(resp.nodes)) {
+      if (fullResourceName in val) {
+        nodes[key] = {
+          'available': val[fullResourceName].available,
+          'allocatable': val[fullResourceName].allocatable,
+        };
+      }
+    }
+
+    const aggregatedStatus = `${aggregated.available}/${aggregated.allocatable}`;
+    let nodeStatus = '';
+    for (const [key, val] of Object.entries(nodes)) {
+      nodeStatus += `${key}(${val.available}/${val.allocatable}), `;
+    }
+    nodeStatus = nodeStatus.slice(0, -2);
+
+    if (Object.keys(nodes).length == 0) {
       disableNetworkOffloadTooltip();
-      setNetworkOffloadInfo(t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'));
-    } else if (resp.allocatable == 0) {
+      setNetworkOffloadInfo(`${resourceName}: ${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}`);
+    } else if (aggregated.available == 0) {
       disableNetworkOffloadTooltip();
-      setNetworkOffloadInfo(`[${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} | ${resourceName}: ${allocatable}/${capacity}] ${nodes}`);
+      setNetworkOffloadInfo(`${resourceName}: ${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} ${nodeStatus}`);
     } else {
       setNetworkOffloadConfigurable(true);
-      setNetworkOffloadInfo(`[${resourceName}: ${allocatable}/${capacity}] ${nodes}`);
+      setNetworkOffloadInfo(`[${resourceName}] ${nodeStatus}`);
     }
 
     return resp;
