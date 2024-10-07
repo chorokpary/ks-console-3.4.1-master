@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { Link } from 'react-router-dom'
 import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
-import { isAppsPage, getWebsiteUrl } from 'utils'
+import { isAppsPage, getCustomizedWebsiteUrl } from 'utils'
 
 import LoginInfo from '../LoginInfo'
 
@@ -47,7 +47,7 @@ class Header extends React.Component {
   }
 
   renderDocumentList() {
-    const { url, api } = getWebsiteUrl()
+    const { url, api } = getCustomizedWebsiteUrl()
     return (
       <Menu onClick={this.handleDocumentLinkClick} data-test="header-docs">
         <Menu.MenuItem key={url}>

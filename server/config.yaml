@@ -69,7 +69,7 @@ client:
   encryptKey: kubesphere
 
   version:
-    kubesphere: 3.1.0
+    kubesphere: 3.4.1
 
   # kubesphere urls
   issueUrl: https://github.com/kubesphere/kubesphere/issues/new/choose
@@ -77,11 +77,11 @@ client:
   slackUrl: https://kubesphere.slack.com
   documents:
     en:
-      url: https://kubesphere.io/docs
-      api: https://kubesphere.io/docs/reference/api-docs/
-    zh:
-      url: https://kubesphere.com.cn/docs
-      api: https://kubesphere.com.cn/docs/reference/api-docs/
+      url: http://localhost:32080/en
+      api: http://localhost:32080/edgetron/docs
+    ko:
+      url: http://localhost:32080
+      api: http://localhost:32080/edgetron/docs
 
   # current support lanaguages
   supportLangs:
@@ -785,32 +785,32 @@ client:
   # docs url for resources
   resourceDocs:
     # Project User Guide
-    applications: /project-user-guide/application/app-template/
-    composingapps: /project-user-guide/application/compose-app/
-    deployments: /project-user-guide/application-workloads/deployments/
-    statefulsets: /project-user-guide/application-workloads/statefulsets/
-    daemonsets: /project-user-guide/application-workloads/daemonsets/
-    jobs: /project-user-guide/application-workloads/jobs/
-    cronjobs: /project-user-guide/application-workloads/cronjobs/
-    services: /project-user-guide/application-workloads/services/
-    ingresses: /project-user-guide/application-workloads/routes/
-    s2i_template: /project-user-guide/image-builder/s2i-templates/
-    volumes: /project-user-guide/storage/volumes/
-    secrets: /project-user-guide/configuration/secrets/
-    configmaps: /project-user-guide/configuration/configmaps/
-    serviceaccounts: /project-user-guide/configuration/serviceaccounts/
-    imageregistry: /project-user-guide/configuration/image-registry/
+    applications: /docs/doc/user/application/app-template/
+    composingapps: /docs/doc/user/application/deploy-app-from-app-store/
+    deployments: /docs/doc/user/app-workload/deployment/
+    statefulsets: /docs/doc/user/app-workload/statefulset/
+    daemonsets: /docs/doc/user/app-workload/daemonset/
+    jobs: /docs/doc/user/app-workload/job/
+    cronjobs: /docs/doc/user/app-workload/cronjob/
+    services: /docs/doc/user/app-workload/service/
+    ingresses: /docs/doc/user/app-workload/ingress/
+    s2i_template: /docs/doc/user/app-workload/s2i-template/
+    volumes: /docs/category/storage/
+    secrets: /docs/doc/user/configuration/secret/
+    configmaps: /docs/doc/user/configuration/configmap/
+    serviceaccounts: /docs/doc/user/configuration/service-account/
+    imageregistry: /docs/doc/user/configuration/image-registry/
     grayrelease: /project-user-guide/grayscale-release/overview/
 
     # Project Administration
-    internet: /project-administration/project-gateway/
-    project_base_info: /workspace-administration/project-quotas/
-    project_roles: /project-administration/role-and-member-management/
-    project_members: /project-administration/role-and-member-management/
+    internet: /docs/doc/admin/cluster-config/cluster-gateway/
+    project_base_info: /docs/doc/admin/project/project-quota/
+    project_roles: /docs/doc/admin/project/role-member-management/
+    project_members: /docs/doc/admin/project/role-member-management/
 
     # Cluster Administrator Guide
-    nodes: /cluster-administration/nodes/
-    storageclasses: /cluster-administration/persistent-volume-and-storage-class/
+    nodes: /docs/doc/admin/cluster-config/nodes/
+    storageclasses: /docs/doc/user/storage/storage-class/
 
     # DevOps User Guide
     pipelines: /devops-user-guide/how-to-use/pipelines/pipeline-settings/
@@ -824,7 +824,7 @@ client:
     custom_console: /cluster-administration/platform-settings/customize-basic-information/
 
     # Kube Config
-    kube_config: /multicluster-management/enable-multicluster/retrieve-kubeconfig/
+    kube_config: /docs/doc/admin/toolbox/kubeconfig/
   # devops:
   #  replace sonarqube link to customize url origin, default is useless
   # sonarqubeURL: http://139.123.123.123:8080
