@@ -349,6 +349,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_480: 'Fail to remove SRIOV policy, as SRIOV networks are dependent on it.',
   RESOURCES_MMS_ERROR_DESC_481: 'Fail to create SRIOV policy, as the resource is already bound to other policies.',
   RESOURCES_MMS_ERROR_DESC_482: 'Fail to remove SRIOV resource, as the resource is bound to SRIOV network.',
+  RESOURCES_MMS_ERROR_DESC_483: 'Invalid MTU value. Please check the MTU setting of the NIC.',
   RESOURCES_MMS_ERROR_DESC_540: 'Router not found',
   RESOURCES_MMS_ERROR_DESC_541: 'No routers are associated with network',
   RESOURCES_MMS_ERROR_DESC_550: 'Router name duplicated',

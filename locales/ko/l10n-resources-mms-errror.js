@@ -370,6 +370,7 @@ module.exports = {
     'Resource가 이미 다른 정책에 속해 있기 때문에 SR-IOV 정책을 만들 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_482:
     'Resource가 SR-IOV 네트워크에 속해 있으므로 SR-IOV 리소스를 제거할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_483: '올바르지 않은 MTU입니다. NIC의 MTU 설정을 확인하세요.',
   RESOURCES_MMS_ERROR_DESC_540: '라우터를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_541: '네트워크에 연결된 라우터가 없습니다.',
   RESOURCES_MMS_ERROR_DESC_550: '라우터 이름이 중복됩니다.',
