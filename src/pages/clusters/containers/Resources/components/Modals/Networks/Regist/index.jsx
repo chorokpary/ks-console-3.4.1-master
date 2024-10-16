@@ -320,35 +320,28 @@ const RegistModal = props => {
 
   const refreshNetworkOffloadTooltip = async (resourceName) => {
     const vfResourcePrefix = 'openshift.io/';
-    const resp = await networkStore.fetchNodeResources({...props});
-
     const fullResourceName = vfResourcePrefix + resourceName;
+    const resp = await networkStore.fetchNodes({...props});
 
-    const aggregated = {
-      'available': resp.aggregated[fullResourceName].available,
-      'allocatable': resp.aggregated[fullResourceName].allocatable,
-    };
-    let nodes = {};
-    for (const [key, val] of Object.entries(resp.nodes)) {
-      if (fullResourceName in val) {
-        nodes[key] = {
-          'available': val[fullResourceName].available,
-          'allocatable': val[fullResourceName].allocatable,
-        };
+    let nodeResource = {};
+    for (const node of resp.nodes) {
+      if ('name' in node && 'resource' in node && node.resource && fullResourceName in node.resource) {
+        nodeResource[node.name] = node.resource[fullResourceName];
       }
     }
 
-    const aggregatedStatus = `${aggregated.available}/${aggregated.allocatable}`;
     let nodeStatus = '';
-    for (const [key, val] of Object.entries(nodes)) {
+    let totalAvailable = 0;
+    for (const [key, val] of Object.entries(nodeResource)) {
       nodeStatus += `${key}(${val.available}/${val.allocatable}), `;
+      totalAvailable += val.available;
     }
     nodeStatus = nodeStatus.slice(0, -2);
 
-    if (Object.keys(nodes).length == 0) {
+    if (Object.keys(nodeResource).length == 0) {
       disableNetworkOffloadTooltip();
       setNetworkOffloadInfo(`${resourceName}: ${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')}`);
-    } else if (aggregated.available == 0) {
+    } else if (totalAvailable == 0) {
       disableNetworkOffloadTooltip();
       setNetworkOffloadInfo(`${resourceName}: ${t('RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION')} ${nodeStatus}`);
     } else {
