@@ -802,6 +802,28 @@ client:
     imageregistry: /docs/doc/user/configuration/image-registry/
     grayrelease: /project-user-guide/grayscale-release/overview/
 
+    # Compute Workload
+    vms: /docs/category/virtual-machine/
+    clusters: docs/category/kaas/
+
+    # Compute Config
+    networks: /docs/category/network/
+    security_groups: /docs/category/security-groups/
+    routers: /docs/category/routers/
+    floating_ips: /docs/category/floating-ip/
+    lbs: /docs/category/load-balancer/
+    resourcesvolumes: /docs/category/volume/
+    host_devices: /docs/category/host-devices/
+    mediated_devices: /docs/category/mediated-devices/
+    appdeploy: /docs/category/app-deploy/
+
+    # Compute Template
+    flavors: /docs/category/flavor/
+    keypairs: /docs/category/keypair/
+    images: /docs/category/virtual-machine-image/
+    containerimages: /docs/category/kaas-image/
+    imagebuild: /docs/category/virtual-machine-image-build/
+
     # Project Administration
     internet: /docs/doc/admin/cluster-config/cluster-gateway/
     project_base_info: /docs/doc/admin/project/project-quota/
