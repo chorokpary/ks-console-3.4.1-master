@@ -23,6 +23,7 @@ import { Avatar, Status } from 'components/Base'
 import Tabs from 'components/Cards/Banner/Tabs'
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import { getDocsUrl } from 'utils'
 
 import { getLocalTime } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
@@ -202,6 +203,7 @@ export default class Networks extends React.Component {
   render() {
 
     const { bannerProps, tableProps } = this.props
+    const docUrl = getDocsUrl('networks')
     return (
       <ListPage {...this.props}>
         <div className={classnames(styles.wrapper)}>
@@ -213,6 +215,12 @@ export default class Networks extends React.Component {
               <div className="h3">{t('RESOURCES_NETWORK')}</div>
               <p className="text-second">
                 {t('RESOURCES_NETWORK_DESC')}
+                <span className={styles.more}>
+                  <Icon name="documentation" size={16} />
+                  <a href={docUrl} target="_blank" rel="noreferrer noopener">
+                    {t('LEARN_MORE')}
+                  </a>
+                </span>
               </p>
             </div>
             <div className={styles.divRight}>

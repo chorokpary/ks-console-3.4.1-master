@@ -27,7 +27,6 @@
     background-color: $bg-color;
   }
 
-
   .divRight {
     @include vertical-center;
     text-align: center;
@@ -48,5 +47,20 @@
         line-height: 32px;
       }
     }
+  }
+}
+
+.more {
+  margin-left: 12px;
+
+  :global {
+    .icon {
+      margin-right: 4px;
+      margin-top: -2px;
+    }
+  }
+
+  & > a {
+    @include TypographySymbolText(#3385b0);
   }
 }

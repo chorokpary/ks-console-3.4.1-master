@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import { Avatar, Status } from 'components/Base';
 import Tabs from 'components/Cards/Banner/Tabs';
+import { getDocsUrl } from 'utils'
 import { ListPage, withClusterList } from 'components/HOCs/withList';
 
 import { getLocalTime } from 'utils';
@@ -205,6 +206,7 @@ export default class Networks extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props;
+    const docUrl = getDocsUrl('networks')
     return (
       <ListPage {...this.props}>
         <div className={classnames(styles.wrapper)}>
@@ -214,7 +216,15 @@ export default class Networks extends React.Component {
             </div>
             <div className={styles.title}>
               <div className="h3">{t('RESOURCES_NETWORK')}</div>
-              <p className="text-second">{t('RESOURCES_NETWORK_DESC')}</p>
+              <p className="text-second">
+                {t('RESOURCES_NETWORK_DESC')}
+                <span className={styles.more}>
+                  <Icon name="documentation" size={16} />
+                  <a href={docUrl} target="_blank" rel="noreferrer noopener">
+                    {t('LEARN_MORE')}
+                  </a>
+                </span>
+              </p>
             </div>
             <div className={styles.divRight}>
               <div

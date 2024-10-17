@@ -50,3 +50,18 @@
     }
   }
 }
+
+.more {
+  margin-left: 12px;
+
+  :global {
+    .icon {
+      margin-right: 4px;
+      margin-top: -2px;
+    }
+  }
+
+  & > a {
+    @include TypographySymbolText(#3385b0);
+  }
+}
