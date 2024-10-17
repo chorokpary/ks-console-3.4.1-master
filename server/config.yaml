@@ -801,6 +801,11 @@ client:
     serviceaccounts: /docs/doc/user/configuration/service-account/
     imageregistry: /docs/doc/user/configuration/image-registry/
     grayrelease: /project-user-guide/grayscale-release/overview/
+    persistentvolumes: /docs/doc/user/storage/persistent-volume-claim/
+
+    custom-monitoring: /docs/doc/user/monitoring-alert/monitoring/
+    rules: /docs/doc/user/monitoring-alert/alerting-policy/
+    alerts: /docs/doc/user/monitoring-alert/alerting-message/
 
     # Compute Workload
     vms: /docs/category/virtual-machine/
@@ -832,7 +837,11 @@ client:
 
     # Cluster Administrator Guide
     nodes: /docs/doc/admin/cluster-config/nodes/
+    gpunodes: /docs/doc/admin/cluster-config/gpu-nodes/
     storageclasses: /docs/doc/user/storage/storage-class/
+    networkpolicies: /docs/doc/admin/project/network-isolation/
+    volumesnapshotclasses: /docs/doc/user/storage/volume-snapshot-class/
+    volume-snapshots: /docs/doc/user/storage/volume-snapshot/
 
     # DevOps User Guide
     pipelines: /devops-user-guide/how-to-use/pipelines/pipeline-settings/
