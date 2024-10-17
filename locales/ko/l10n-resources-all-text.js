@@ -852,7 +852,7 @@ module.exports = {
     '베어메탈 모니터링은 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다',
   RESOURCES_CLUSTER_FAULT_TITLE: '클러스터 문제 진단',
   RESOURCES_CLUSTER_FAULT_DETAIL:
-    '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 웅요 이슈들을 자동으로 ㅌ마지하고 이를 해결하기 위한 솔루션을 제시합니다.',
+    '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 운용 이슈들을 자동으로 탐지하고 이를 해결하기 위한 솔루션을 제시합니다.',
   RESOURCES_CLUSTER_FAULT_SET: '설정',
   RESOURCES_CLUSTER_FAULT_DESC: '문제 진단 Provider를 설정합니다.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: '네임스페이스',

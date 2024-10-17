@@ -928,6 +928,8 @@ module.exports = {
   RESOURCES_HOSTROUTE_VALID:
     'Please enter host route information correctly.</p> Destination - ipv4network, nexthop - ipv4',
   RESOURCES_LOG: 'Log',
+  RESOURCES_IMAGE_BUILD: 'Image Build',
+  RESOURCES_IMAGE_BUILD_DESC: 'Manage the status and usage of the image build.',
   RESOURCES_HARBOR_VALID_TIP: 'Please enter Harbor URL information.',
   RESOURCES_DELETE_IMAGE_BUILD_TIP:
     'Enter the name of the image build <strong>{resource}</strong> to confirm you understand the risks of this operation.',

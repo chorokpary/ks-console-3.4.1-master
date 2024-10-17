@@ -37,7 +37,7 @@ export default {
               setTimeout(success && success(), 1000);
             })
         },
-        title: t('RESOURCES_CREATE_IMAGE_BUILD'),
+        title: t('RESOURCES_IMAGE_BUILD'),
         modal: RegistModal,
         store,
         cluster,
