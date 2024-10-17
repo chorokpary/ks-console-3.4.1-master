@@ -804,7 +804,7 @@ client:
 
     # Compute Workload
     vms: /docs/category/virtual-machine/
-    clusters: docs/category/kaas/
+    clusters: /docs/category/kaas/
 
     # Compute Config
     networks: /docs/category/network/
