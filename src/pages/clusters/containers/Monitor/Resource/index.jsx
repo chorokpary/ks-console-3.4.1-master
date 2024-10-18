@@ -45,6 +45,7 @@ class ResourceStatus extends React.Component {
           title={t('APPLICATION_RESOURCE_PL')}
           description={t('MONITORING_APPLICATION_DESC')}
           routes={this.routes}
+          module="app-resource"
         />
         {renderRoutes(routes)}
       </div>

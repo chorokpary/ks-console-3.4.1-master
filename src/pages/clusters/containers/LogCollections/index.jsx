@@ -238,6 +238,7 @@ export default class LogCollection extends React.Component {
           title={t('LOG_RECEIVER_PL')}
           description={t('LOG_COLLECTION_DESC')}
           tabs={this.tabs}
+          module="log-collection"
           extra={
             <div className={styles.extra}>
               <Button type="flat" onClick={this.refresh}>

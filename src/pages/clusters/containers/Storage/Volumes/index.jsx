@@ -70,7 +70,7 @@ export default class Volumes extends React.Component {
   renderBanner() {
     if (this.pv.ksVersion >= 3.2) {
       return (
-        <Banner {...this.bannerProps} tips={this.tips} routes={this.routes} />
+        <Banner {...this.bannerProps} tips={this.tips} routes={this.routes} module="persistentvolumes" />
       )
     }
     return <Banner {...this.bannerProps} tips={this.tips} />

@@ -803,10 +803,6 @@ client:
     grayrelease: /project-user-guide/grayscale-release/overview/
     persistentvolumes: /docs/doc/user/storage/persistent-volume-claim/
 
-    custom-monitoring: /docs/doc/user/monitoring-alert/monitoring/
-    rules: /docs/doc/user/monitoring-alert/alerting-policy/
-    alerts: /docs/doc/user/monitoring-alert/alerting-message/
-
     # Compute Workload
     vms: /docs/category/virtual-machine/
     clusters: /docs/category/kaas/
@@ -842,6 +838,7 @@ client:
     networkpolicies: /docs/doc/admin/project/network-isolation/
     volumesnapshotclasses: /docs/doc/user/storage/volume-snapshot-class/
     volume-snapshots: /docs/doc/user/storage/volume-snapshot/
+    log-collection: /docs/doc/admin/project/log-collection/
 
     # DevOps User Guide
     pipelines: /devops-user-guide/how-to-use/pipelines/pipeline-settings/
@@ -853,6 +850,17 @@ client:
 
     # Custom Console
     custom_console: /cluster-administration/platform-settings/customize-basic-information/
+
+    # Monitoring
+    clusterdashboards: /docs/doc/user/monitoring-alert/monitoring/
+    rules: /docs/doc/user/monitoring-alert/alerting-policy/
+    alerts: /docs/doc/user/monitoring-alert/alerting-message/
+    cluster-status: /docs/doc/admin/monitoring-alert/cluster-status/
+    app-resource: /docs/doc/admin/monitoring-alert/application-resources/
+    computing-kaas: /docs/doc/admin/monitoring-alert/computing-kaas/
+    baremetal: /docs/doc/admin/monitoring-alert/baremetal/
+    baremetal-ci: /docs/doc/admin/monitoring-alert/baremetal-carbon-indicator/
+    cluster-inspector: /docs/doc/admin/monitoring-alert/cluster-inspector/
 
     # Kube Config
     kube_config: /docs/doc/admin/toolbox/kubeconfig/

@@ -66,6 +66,7 @@ class ClusterStability extends React.Component {
             title={t('CLUSTER_STATUS')}
             description={t('MONITORING_CLUSTER_DESC')}
             routes={this.routes}
+            module="cluster-status"
           />
           {renderRoutes(routes)}
         </>

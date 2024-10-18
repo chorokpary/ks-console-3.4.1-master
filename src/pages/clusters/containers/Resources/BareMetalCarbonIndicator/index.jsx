@@ -123,8 +123,7 @@ const BareMetalCarbonIndicator = () => {
         icon="linechart"
         title={t('RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS')}
         description={t('RESOURCES_BAREMETAL_CARBON_INDICATOR_STATISTICS_DESC')}
-      // description={t('MONITORING_CLUSTER_DESC')}
-      // routes={this.routes}
+        module="baremetal-ci"
       />
 
       <MonitoringController

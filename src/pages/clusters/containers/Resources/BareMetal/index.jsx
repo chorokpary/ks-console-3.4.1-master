@@ -687,6 +687,7 @@ export default class BareMetalDashboard extends React.Component {
           icon={this.getBanner}
           title={t('RESOURCES_BAREMETAL_MONITORING')}
           description={t('RESOURCES_BAREMETAL_MONITORING_DESC')}
+          module="baremetal"
         />
 
         <div className="content_box_wrap">
