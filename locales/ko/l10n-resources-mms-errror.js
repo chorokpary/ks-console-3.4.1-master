@@ -377,8 +377,9 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_551: '라우터 이름이 일치하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_552: '라우터는 여전히 Float IP와 연결되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_553: '외부 네트워크없이 SNAT를 구성하면 안됩니다.',
-  RESOURCES_MMS_ERROR_DESC_554:
-    '몇 가지 이유로 인해 라우터를 업데이트 할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_554: '몇 가지 이유로 인해 라우터를 업데이트 할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_555: '외부 네트워크가 올바르게 구성되지 않았습니다.',
+  RESOURCES_MMS_ERROR_DESC_556: '외부 네트워크의 MTU가 충분하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_640: 'Float IP를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_650: 'Float IP는 여전히 VM과 연결되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_651:

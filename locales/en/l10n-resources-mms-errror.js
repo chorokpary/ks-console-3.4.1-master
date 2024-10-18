@@ -358,6 +358,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_553: 'SNAT should not be configured without external network',
   RESOURCES_MMS_ERROR_DESC_554: 'Not able to update router due to several reasons',
   RESOURCES_MMS_ERROR_DESC_555: 'Not able to attach the external network to the given router due to lack of proper physnet configured',
+  RESOURCES_MMS_ERROR_DESC_556: 'The MTU of the external network is not big enough',
   RESOURCES_MMS_ERROR_DESC_640: 'Floating IP not found',
   RESOURCES_MMS_ERROR_DESC_650: 'Floating IP is still associated with VM',
   RESOURCES_MMS_ERROR_DESC_651: 'Floating IP is still associated with fixed IP',
