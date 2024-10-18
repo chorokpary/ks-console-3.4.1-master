@@ -122,11 +122,11 @@ const ImageDetail = props => {
       },
       {
         name: t('RESOURCES_ACCELERATOR_TYPE'),
-        value: t(`RESOURCES_IMAGE_${detail.image.accelerator_type.toUpperCase()}`),
+        value: detail.image.accelerator_type,
       },
       {
         name: t('RESOURCES_PRE_INSTALLED_APP'),
-        value: t(`RESOURCES_IMAGE_${detail.image.pre_installed_app.toUpperCase()}`),
+        value: detail.image.pre_installed_app,
       },
       {
         name: t('RESOURCES_REAL_TIME'),
