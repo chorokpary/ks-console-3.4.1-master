@@ -23,6 +23,7 @@ module.exports = {
   ADD_LOG_RECEIVER: '添加紀錄接收器',
   LOG_COLLECTION_TIPS: '每種類型的紀錄收集器只能添加一個。',
   ES_DESC: 'Elasticsearch 是分布式、RESTful 風格的搜尋和分析引擎',
+  OPENSEARCH_DESC: 'OpenSearch 是分布式、RESTful 風格的搜尋和分析引擎',
   KAFKA_DESC: 'Kafka 是流行的開源流處理平台',
   FLUENTD_DESC: 'Fluentd 是提供統一紀錄處理層的開源數據收集器',
   // Banner > Add Log Receiver > Elasticsearch
