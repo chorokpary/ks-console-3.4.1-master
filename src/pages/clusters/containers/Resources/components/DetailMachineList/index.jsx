@@ -1,7 +1,8 @@
 import { get } from 'lodash'
 import React, { Fragment, useEffect, useState } from 'react'
+import { inject } from 'mobx-react'
 import classnames from 'classnames'
-
+import { Link } from 'react-router-dom'
 import {
   Button,
   Icon,
@@ -25,6 +26,8 @@ const DetailMachineList = props => {
   // }
 
   const kaasStore = new ContainerResourceStore()
+
+  const cluster = props.detailStore?.detail.cluster
 
   const [machineSearchDataList, setMachineSearchDataList] = useState([])
   const [machineSliceDataList, setMachineSliceDataList] = useState([])
@@ -61,8 +64,8 @@ const DetailMachineList = props => {
       machineSearchData.length > 0
         ? getSliceData(machineSearchData, page)
         : params.name !== '' && params.name !== undefined
-        ? getSliceData(machineSearchData, page)
-        : getSliceData(filteredMachineList, page)
+          ? getSliceData(machineSearchData, page)
+          : getSliceData(filteredMachineList, page)
 
     setCurrentPage(page)
     setMachineSearchDataList(machineSearchData)
@@ -84,42 +87,39 @@ const DetailMachineList = props => {
                 flicker
               />
             </div>
+            <div className={styles.title}>
+              <Text
+                title={obj.ready_status ? t('RESOURCES_CLUSTER_READY') : t('RESOURCES_CLUSTER_NOT_READY')}
+                description={t('RESOURCES_NODE_STATUS')}
+              />
+            </div>
             <div className={classnames(styles.title, styles.name)}>
               <div>{obj.name}</div>
               <p>{t('RESOURCES_NAME')}</p>
             </div>
             <div className={styles.title}>
-              <div>{obj.phase}</div>
-              <p>Phase</p>
+              <div>{t(`RESOURCES_MACHINE_${obj.phase.toUpperCase()}`)}</div>
+              <p>{t('RESOURCES_INFRA_STATUS')}</p>
+            </div>
+            <div className={styles.title}>
+              <div>
+                <Link
+                  className={styles.title}
+                  to={`/clusters/${cluster}/containerResource/${obj.cluster}`}
+                >
+                  {obj.cluster}
+                </Link>
+              </div>
+              <p>{t('RESOURCES_CLUSTER')}</p>
             </div>
             <div className={styles.title}>
               <Text
-                // key='CPU'
-                // icon='cpu'
-                title={obj.cluster}
-                description={t('Cluster')}
-              />
-            </div>
-            <div className={styles.title}>
-              <Text
-                // key='CPU'
-                // icon='cpu'
                 title={obj.flavor}
                 description={t('Flavor')}
               />
             </div>
             <div className={styles.title}>
               <Text
-                // key='Memory'
-                // icon='memory'
-                title={obj.ready_status ? 'Ready' : 'Not-ready'}
-                description={t('RESOURCES_STATE')}
-              />
-            </div>
-            <div className={styles.title}>
-              <Text
-                // key='Disk'
-                // icon='storage'
                 title={obj.networks
                   .filter(network => network.name !== 'k8s-pod-network')
                   .map(o => `${o.ip} (${o.name})`)}
@@ -251,4 +251,4 @@ const DetailMachineList = props => {
   )
 }
 
-export default DetailMachineList
+export default inject('detailStore')(DetailMachineList)

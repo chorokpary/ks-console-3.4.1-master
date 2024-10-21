@@ -652,6 +652,8 @@ module.exports = {
   RESOURCES_KUBERNETES_SERVER_IP: 'Kubernetes Server IP',
   RESOURCES_CLASS: 'Class',
   RESOURCES_CLUSTER: 'Cluster',
+  RESOURCES_INFRA_STATUS: 'Infra Status',
+  RESOURCES_NODE_STATUS: 'Node Status',
   RESOURCES_CLUSTER_NODE: 'Cluster Node',
   RESOURCES_CLUSTER_COMPONENT_STATE: 'Cluster Component State',
   RESOURCES_CLUSTER_SCHEDULE_STATUS: 'Cluster Scheduling Status',

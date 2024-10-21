@@ -2,7 +2,7 @@
 @import '~scss/mixins';
 
 .wrapper {
-  padding: 4px;
+  padding: 10px;
   background-color: $card-bg-color;
   border-radius: $border-radius;
 }
@@ -38,6 +38,7 @@
   }
 
   .title {
+    width: 20%;
     min-width: 120px;
     text-align: left;
 
