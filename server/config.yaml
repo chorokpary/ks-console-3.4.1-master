@@ -802,6 +802,7 @@ client:
     imageregistry: /docs/doc/user/configuration/image-registry/
     grayrelease: /project-user-guide/grayscale-release/overview/
     persistentvolumes: /docs/doc/user/storage/persistent-volume-claim/
+    volume-snapshots: /docs/doc/user/storage/volume-snapshot/
 
     # Compute Workload
     vms: /docs/category/virtual-machine/
@@ -834,10 +835,9 @@ client:
     # Cluster Administrator Guide
     nodes: /docs/doc/admin/cluster-config/nodes/
     gpunodes: /docs/doc/admin/cluster-config/gpu-nodes/
-    storageclasses: /docs/doc/user/storage/storage-class/
+    storageclasses: /docs/doc/admin/storage/storage-class/
     networkpolicies: /docs/doc/admin/project/network-isolation/
-    volumesnapshotclasses: /docs/doc/user/storage/volume-snapshot-class/
-    volume-snapshots: /docs/doc/user/storage/volume-snapshot/
+    volumesnapshotclasses: /docs/doc/admin/storage/volume-snapshot-class/
     log-collection: /docs/doc/admin/project/log-collection/
 
     # DevOps User Guide
