@@ -87,15 +87,15 @@ const DetailMachineList = props => {
                 flicker
               />
             </div>
+            <div className={classnames(styles.title, styles.name)}>
+              <div>{obj.name}</div>
+              <p>{t('RESOURCES_NAME')}</p>
+            </div>
             <div className={styles.title}>
               <Text
                 title={obj.ready_status ? t('RESOURCES_CLUSTER_READY') : t('RESOURCES_CLUSTER_NOT_READY')}
                 description={t('RESOURCES_NODE_STATUS')}
               />
-            </div>
-            <div className={classnames(styles.title, styles.name)}>
-              <div>{obj.name}</div>
-              <p>{t('RESOURCES_NAME')}</p>
             </div>
             <div className={styles.title}>
               <div>{t(`RESOURCES_MACHINE_${obj.phase.toUpperCase()}`)}</div>
