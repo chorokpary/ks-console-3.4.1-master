@@ -477,7 +477,7 @@ const Status = props => {
                     <p>{t('RESOURCES_CAPACITY')}</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.phase}</div>
+                    <div>{t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}</div>
                     <p>{t('RESOURCES_STATE')}</p>
                   </div>
                 </div>

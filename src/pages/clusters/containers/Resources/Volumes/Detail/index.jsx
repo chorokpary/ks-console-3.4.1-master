@@ -97,7 +97,7 @@ const VolumeDetail = props => {
               }
             },
           }
-	);
+        );
       }
       operations.push(
         {
@@ -162,10 +162,10 @@ const VolumeDetail = props => {
       },
       {
         name: t('RESOURCES_VOLUME_TYPE'),
-        value: 
-	  detail.volume.boot_volume === true
-	    ? t('RESOURCES_BOOT_VOLUME')
-	    : t('RESOURCES_NORMAL_VOLUME'),
+        value:
+          detail.volume.boot_volume === true
+            ? t('RESOURCES_BOOT_VOLUME')
+            : t('RESOURCES_NORMAL_VOLUME'),
       },
       {
         name: t('RESOURCES_CPU_TYPE'),
@@ -185,7 +185,7 @@ const VolumeDetail = props => {
       },
       {
         name: t('RESOURCES_PHASE'),
-        value: detail.volume.phase,
+        value: t(`RESOURCES_IMAGE_${detail.volume.phase.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_DESCRIPTION'),
