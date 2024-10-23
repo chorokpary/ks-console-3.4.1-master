@@ -350,7 +350,7 @@ const Status = props => {
                   <Text
                     key="Memory"
                     icon="memory"
-                    title={`${common.fnSetBytes(detailFlavor.ram)} Gib`}
+                    title={`${common.fnSetBytes(detailFlavor.ram)} GiB`}
                     description={t('Memory')}
                   />
                 </div>
@@ -358,7 +358,7 @@ const Status = props => {
                   <Text
                     key="Disk"
                     icon="storage"
-                    title={`${detailFlavor.root_disk} Gib`}
+                    title={`${detailFlavor.root_disk} GiB`}
                     description={t('Disk')}
                   />
                 </div>

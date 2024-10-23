@@ -335,7 +335,7 @@ const DetailVmList = (props) => {
               <Text
                 key='Memory'
                 icon='memory'
-                title={common.fnSetBytes(obj.flavor_object.ram) + " Gib"}
+                title={common.fnSetBytes(obj.flavor_object.ram) + " GiB"}
                 description={t('Memory')}
               />
             </div>
@@ -343,7 +343,7 @@ const DetailVmList = (props) => {
               <Text
                 key='Disk'
                 icon='storage'
-                title={obj.flavor_object.root_disk + " Gib"}
+                title={obj.flavor_object.root_disk + " GiB"}
                 description={t('Disk')}
               />
             </div>
