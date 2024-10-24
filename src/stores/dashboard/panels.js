@@ -129,7 +129,7 @@ export const podPanel = ({ x, y, w, h }) => {
       <div class="grid-stack-item-content">
         <div class="grid_item">
           <div class="grid_title">
-            <label>Pod</label>
+            <label>${t('POD_PL')}</label>
             <i class="ico-btn-trash"></i>
           </div>
           <div class="grid_info style_status">
@@ -268,7 +268,7 @@ export const resourceUsagePanel = ({ x, y, w, h }) => {
                 </label>
                 <label htmlFor="name2_2">
                   <input type="radio" name="box-tab" id="name2_2" value="name4" />
-                  <span>Pod</span>
+                  <span>${t('POD_PL')}</span>
                 </label>
                 <label htmlFor="name2_3">
                   <input type="radio" name="box-tab" id="name2_3" value="name5" />
@@ -365,7 +365,7 @@ export const networkTrafficPanel = ({ x, y, w, h }) => {
                 </label>
                 <label htmlFor="name4">
                   <input type="radio" name="box-tab1" id="name4" value="name4" />
-                  <span>Pod</span>
+                  <span>${t('POD_PL')}</span>
                 </label>
                 <label htmlFor="name5">
                   <input type="radio" name="box-tab1" id="name5" value="name5" />
@@ -485,7 +485,7 @@ export const usageTop5Panel = ({ x, y, w, h }) => {
                       </li>
                       <li>
                         <p>
-                          <strong>Pod</strong>
+                          <strong>${t('POD_PL')}</strong>
                         </p>
                       </li>
                       <li>
@@ -615,7 +615,7 @@ export const recentResourcePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_pod">Pod</span>
+                  <span class="type_pod">${t('POD_PL')}</span>
                 </div>
               </li>
               <li class="li_type_01">
@@ -707,7 +707,7 @@ export const issuePanel = ({ x, y, w, h }) => {
                   </h6>
                 </div>
                 <div class="type">
-                  <span class="type_pod">Pod</span>
+                  <span class="type_pod">${t('POD_PL')}</span>
                 </div>
               </li>
               <li class="li_type_01">
@@ -1076,7 +1076,7 @@ export const resourceChangePanel = ({ x, y, w, h }) => {
               <div class="grid_info style_status box_long">
                 <div class="box type_status">
                   <div class="cont_group">
-                    <h5><i class="ico-type-pod"></i>Pod</h5>
+                    <h5><i class="ico-type-pod"></i>${t('POD_PL')}</h5>
                     <div class="number_wrap">
                       <p><span class="em">12</span></p>
                     </div>
