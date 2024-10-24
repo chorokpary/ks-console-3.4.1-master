@@ -24,6 +24,7 @@ import Information from './Information'
 import Monitoring from './Monitoring'
 import GpuMonitoring from './GpuMonitoring'
 import Event from './Event'
+import PowerLog from './PowerLog'
 import Snapshot from './Snapshot'
 import Clone from './Clone'
 
@@ -64,6 +65,12 @@ export default [
     path: `${PATH}/event`,
     title: t('RESOURCES_EVENT'),
     component: Event,
+    exact: true,
+  },
+  {
+    path: `${PATH}/power`,
+    title: t('RESOURCES_POWER_LOG'),
+    component: PowerLog,
     exact: true,
   },
   {

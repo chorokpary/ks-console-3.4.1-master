@@ -3,30 +3,62 @@ import { observer, inject } from 'mobx-react'
 
 import { getLocalTime } from 'utils'
 import { Loading } from '@kube-design/components'
+import { Panel } from 'components/Base'
 
 import VmStore from 'stores/resources/vms'
 
 import styles from './index.scss'
 
-const Event = props => {
-  const store = props.detailStore
+const PowerLog = props => {
   const vmStore = new VmStore()
 
   const [eventList, setEventList] = useState([])
+  const [totalRunningTime, setTotalRunningTime] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const getVmEventList = async () => {
-      const response = await vmStore.fetchVmEventList(props.match.params)
+    const getVmPhaseEventList = async () => {
+      const response = await vmStore.fetchVmPhaseEventList(props.match.params)
       setEventList(response.events)
       setIsLoading(false)
     }
-    getVmEventList()
+    const getVmTotalRunningTIme = async () => {
+      const metering = await vmStore.fetchVmMetering(props.match.params)
+      setTotalRunningTime(metering.running_time)
+      console.log(metering.running_time)
+      setIsLoading(false)
+    }
+    getVmPhaseEventList()
+    getVmTotalRunningTIme()
   }, [])
+
+  const minuteParser = totalRunningTime => {
+    const parseTime = minutes => {
+      const days = Math.floor(minutes / (60 * 24))
+      const hours = Math.floor((minutes % (60 * 24)) / 60)
+      const remainingMinutes = minutes % 60
+
+      return { days, hours, minutes: remainingMinutes }
+    }
+
+    const { days, hours, minutes } = parseTime(totalRunningTime)
+
+    return (
+      <div>
+        <p>
+          {days} {t('RESOURCES_DAY')} {hours} {t('RESOURCES_HOUR')} {minutes}{' '}
+          {t('RESOURCES_MINUTE')}
+        </p>
+      </div>
+    )
+  }
 
   return (
     <>
-      <div className={styles.defaultWrapper}>
+      <Panel title={t('RESOURCES_TOTAL_RUNNING_TIME')}>
+        <div>{minuteParser(totalRunningTime)}</div>
+      </Panel>
+      <Panel title={t('RESOURCES_POWER_LOG')}>
         {eventList?.length === 0 && (
           <div className={styles.wrapper}>
             {isLoading ? (
@@ -45,32 +77,20 @@ const Event = props => {
           <div className={styles.table}>
             <table>
               <colgroup>
-                <col width="10%" />
-                <col width="15%" />
-                <col width="15%" />
                 <col width="20%" />
                 <col width="20%" />
-                <col width="20%" />
+                <col width="60%" />
               </colgroup>
               <thead>
                 <tr>
                   <th>
-                    <strong>VM</strong>
-                  </th>
-                  <th>
-                    <strong>{t('RESOURCES_REASON')}</strong>
-                  </th>
-                  <th>
-                    <strong>{t('RESOURCES_TYPE')}</strong>
-                  </th>
-                  <th>
-                    <strong>{t('RESOURCES_START_TIME')}</strong>
-                  </th>
-                  <th>
-                    <strong>{t('RESOURCES_END_TIME')}</strong>
+                    <strong>{t('RESOURCES_STATE')}</strong>
                   </th>
                   <th>
                     <strong>{t('RESOURCES_MESSAGE')}</strong>
+                  </th>
+                  <th>
+                    <strong>{t('RESOURCES_EVENT_TIME')}</strong>
                   </th>
                 </tr>
               </thead>
@@ -79,30 +99,17 @@ const Event = props => {
                   eventList.map((obj, index) => (
                     <tr key={index}>
                       <td>
-                        <p className="underline">{store.detail.name}</p>
-                      </td>
-                      <td>
-                        <p>{obj.reason}</p>
-                      </td>
-                      <td>
-                        <p>{obj.type}</p>
-                      </td>
-                      <td>
-                        <p>
-                          {getLocalTime(obj.first_timestamp).format(
-                            'YYYY-MM-DD HH:mm:ss'
-                          )}
-                        </p>
-                      </td>
-                      <td>
-                        <p>
-                          {getLocalTime(obj.last_timestamp).format(
-                            'YYYY-MM-DD HH:mm:ss'
-                          )}
-                        </p>
+                        <p>{t(`RESOURCES_${obj.status}`.toUpperCase())}</p>
                       </td>
                       <td>
                         <p>{obj.message}</p>
+                      </td>
+                      <td>
+                        <p>
+                          {getLocalTime(obj.timestamp).format(
+                            'YYYY-MM-DD HH:mm:ss'
+                          )}
+                        </p>
                       </td>
                     </tr>
                   ))}
@@ -110,9 +117,9 @@ const Event = props => {
             </table>
           </div>
         )}
-      </div>
+      </Panel>
     </>
   )
 }
 
-export default inject('detailStore')(observer(Event))
+export default inject('detailStore')(observer(PowerLog))

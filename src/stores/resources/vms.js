@@ -439,6 +439,32 @@ export default class VmStore extends Base {
   }
 
   @action
+  async fetchVmPhaseEventList(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/phase_event`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'vme' }
+
+    this.isLoading = false
+    return response
+  }
+
+  @action
+  async fetchVmMetering(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/metering`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'vme' }
+
+    this.isLoading = false
+    return response.metering
+  }
+
+  @action
   async batchDelete({ rowKeys, ...params }) {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
