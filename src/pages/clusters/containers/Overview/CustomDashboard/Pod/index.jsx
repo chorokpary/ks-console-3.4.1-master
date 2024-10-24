@@ -30,7 +30,7 @@ const Pod = ({ x, y, w, h, ...props }) => {
           {/* grid_item */}
           <div className="grid_item">
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>Pod</label>
+              <label>{t('POD_PL')}</label>
             </div>
             <Loading spinning={loading}>
               <div className="grid_info style_status">
