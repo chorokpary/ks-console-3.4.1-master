@@ -25,14 +25,13 @@ const PowerLog = props => {
     const getVmTotalRunningTIme = async () => {
       const metering = await vmStore.fetchVmMetering(props.match.params)
       setTotalRunningTime(metering.running_time)
-      console.log(metering.running_time)
       setIsLoading(false)
     }
     getVmPhaseEventList()
     getVmTotalRunningTIme()
   }, [])
 
-  const minuteParser = totalRunningTime => {
+  const minuteParser = runningTime => {
     const parseTime = minutes => {
       const days = Math.floor(minutes / (60 * 24))
       const hours = Math.floor((minutes % (60 * 24)) / 60)
@@ -41,7 +40,7 @@ const PowerLog = props => {
       return { days, hours, minutes: remainingMinutes }
     }
 
-    const { days, hours, minutes } = parseTime(totalRunningTime)
+    const { days, hours, minutes } = parseTime(runningTime)
 
     return (
       <div>
@@ -55,7 +54,7 @@ const PowerLog = props => {
 
   return (
     <>
-      <Panel title={t('RESOURCES_TOTAL_RUNNING_TIME')}>
+      <Panel title={t('RESOURCES_TOTAL_OPERATION_TIME')}>
         <div>{minuteParser(totalRunningTime)}</div>
       </Panel>
       <Panel title={t('RESOURCES_POWER_LOG')}>
