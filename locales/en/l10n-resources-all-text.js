@@ -97,6 +97,7 @@ module.exports = {
     'Please select a user workload to allocate GPU resources to.',
   RESOURCES_GPU_VGPU_CONFIG: 'vGPU Config',
   RESOURCES_GPU_VGPU_CONFIG_STATE: 'vGPU Configs status',
+  RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND: 'vGPU Configs not found',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU Index',

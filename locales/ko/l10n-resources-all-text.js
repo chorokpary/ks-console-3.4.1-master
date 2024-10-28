@@ -92,6 +92,7 @@ module.exports = {
     'GPU 자원을 할당할 사용자 워크로드를 선택해주세요.',
   RESOURCES_GPU_VGPU_CONFIG: 'vGPU 설정',
   RESOURCES_GPU_VGPU_CONFIG_STATE: 'vGPU 설정 상태',
+  RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND: 'vGPU 설정을 찾을 수 없음',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU 인덱스',
