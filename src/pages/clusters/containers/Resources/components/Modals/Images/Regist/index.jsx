@@ -958,14 +958,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                   </div>
                 </div>
               </Form.Item>
-              <Form.Item
-                label={t('RESOURCES_SIZE')}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
+              <Form.Item label={t('RESOURCES_SIZE')}>
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
