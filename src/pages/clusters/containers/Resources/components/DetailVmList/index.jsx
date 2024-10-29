@@ -1,9 +1,9 @@
-import { get, groupBy, isEmpty } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { observer, inject } from 'mobx-react'
+import { get } from 'lodash'
+import React, { useEffect, useState } from 'react'
+import { inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import { Panel, Text, Indicator } from 'components/Base'
+import { Indicator, Panel, Text } from 'components/Base'
 import { TinyArea } from 'components/Charts'
 import { Link } from 'react-router-dom'
 
@@ -104,14 +104,14 @@ const DetailVmList = props => {
     const vmList = await store.fetchList({ cluster })
     const vmFilterData = vmList?.filter(row => variablesFilter(row))
     const vmSearchData =
-      params.name != '' && params.name != undefined
+      params.name !== '' && params.name !== undefined
         ? getSearchData(vmFilterData, params.name)
         : []
 
     const vmSliceData =
       vmSearchData.length > 0
         ? getSliceData(vmSearchData, page)
-        : params.name != '' && params.name != undefined
+        : params.name !== '' && params.name !== undefined
         ? getSliceData(vmSearchData, page)
         : getSliceData(vmFilterData, page)
 
@@ -133,13 +133,13 @@ const DetailVmList = props => {
     if (props.variables === 'flavor_object') {
       return row[props.variables].name === props.name
     }
-    if (props.variables == 'id') {
+    if (props.variables === 'id') {
       return row[props.variables] === props.id
     }
-    if (props.variables == 'gpu_node') {
-      return row['node'] === props.node && row['gpus'].includes(props.gpu);
+    if (props.variables === 'gpu_node') {
+      return row['node'] === props.node && row['gpus'].includes(props.gpu)
     }
-    if (props.variables == 'host_device') {
+    if (props.variables === 'host_device') {
       if (props.gpu) {
         return row['gpus'].includes(props.name)
       }
@@ -147,7 +147,7 @@ const DetailVmList = props => {
         row['host_devices'].includes(props.name)
       }
     }
-    if (props.variables == 'mediated_device') {
+    if (props.variables === 'mediated_device') {
       if (props.gpu) {
         return row['gpus'].includes(props.name)
       }
@@ -172,43 +172,43 @@ const DetailVmList = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const vmCpuData = await customStore.fetchMetric({
+      const data = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       })
 
-      setVmCpuData(vmCpuData)
+      setVmCpuData(data)
     }
 
     const getVmWinCpuUsageData = async () => {
-      const vmCpuData = await customStore.fetchMetric({
+      const data = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       })
-      setVmWinCpuData(vmCpuData)
+      setVmWinCpuData(data)
     }
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const vmMemoryData = await customStore.fetchMetric({
+      const data = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
         cluster,
       })
 
-      setVmMemoryData(vmMemoryData)
+      setVmMemoryData(data)
     }
 
     const getVmWinMemoryUsageData = async () => {
-      const vmMemoryData = await customStore.fetchMetric({
+      const data = await customStore.fetchMetric({
         expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
         ...paramsData,
         cluster,
       })
 
-      setVmWinMemoryData(vmMemoryData)
+      setVmWinMemoryData(data)
     }
 
     getVmCpuUsageData()
@@ -237,11 +237,10 @@ const DetailVmList = props => {
   ]
 
   const renderContent = () => {
-    if (vmSliceDataList.length == 0) {
-      const content = (
+    if (vmSliceDataList.length === 0) {
+      return (
         <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
       )
-      return content
     }
 
     const content = vmSliceDataList.map((obj, index) => {
@@ -249,12 +248,12 @@ const DetailVmList = props => {
         <div className={styles.wrapper} key={index}>
           <div
             className={classnames(styles.expandItem, '', {
-              [styles.expanded]: obj.name == expandItem ? isExpandFlag : false,
+              [styles.expanded]: obj.name === expandItem ? isExpandFlag : false,
             })}
           >
             <div className={styles.itemMain}>
               <div className={styles.icon}>
-                {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
+                {/* <Icon name="templet" size={40} type={obj.name !== expandItem ? 'dark' : (obj.name === expandItem && isExpandFlag === false) ? 'dark' : 'light'} /> */}
                 <i className="ico-type40-vm"></i>
                 <Indicator
                   className={styles.indicator}
@@ -304,9 +303,7 @@ const DetailVmList = props => {
             </p>
           </div>
           <div className={styles.text}>
-            <div>
-	      {t(`RESOURCES_${obj.state.toUpperCase()}`)}
-            </div>
+            <div>{t(`RESOURCES_${obj.state.toUpperCase()}`)}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
@@ -326,9 +323,9 @@ const DetailVmList = props => {
             <Icon
               name="chevron-down"
               type={
-                obj.name != expandItem
+                obj.name !== expandItem
                   ? ''
-                  : obj.name == expandItem && isExpandFlag == false
+                  : obj.name === expandItem && isExpandFlag === false
                   ? ''
                   : 'light'
               }
@@ -341,10 +338,6 @@ const DetailVmList = props => {
   }
 
   const renderExtraContent = obj => {
-    const networkList = obj.networks.filter(
-      network => network.name != 'k8s-pod-network'
-    )
-
     return (
       <div className={styles.itemExtra}>
         <div className={styles.containers}>
@@ -392,7 +385,7 @@ const DetailVmList = props => {
                 icon="gpu"
                 title={
                   obj.flavor_object.gpus.length >= 1
-                    ? obj.flavor_object.gpus.length == 1
+                    ? obj.flavor_object.gpus.length === 1
                       ? obj.flavor_object.gpus[0].name
                       : `${obj.flavor_object.gpus[0].name} ${t(
                           'RESOURCES_BESIDES'
@@ -417,14 +410,14 @@ const DetailVmList = props => {
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
     const vmCpuMetricData = _.find(
-      osType == 'linux' ? vmCpuData : vmWinCpuData,
+      osType === 'linux' ? vmCpuData : vmWinCpuData,
       data => {
         if (data.metric.pod === vmId) return data
       }
     )
 
     const vmMemoryMetricData = _.find(
-      osType == 'linux' ? vmMemoryData : vmWinMemoryData,
+      osType === 'linux' ? vmMemoryData : vmWinMemoryData,
       data => {
         if (data.metric.pod === vmId) return data
       }
@@ -466,25 +459,19 @@ const DetailVmList = props => {
 
   const getPagination = () => {
     const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length
-    const pagination = { page: currentPage, limit: perPage, total }
-    return pagination
+    return { page: currentPage, limit: perPage, total }
   }
 
   const getSearchData = (data, searchText) => {
     setIsSearchFlag(true)
-    const resultList = data.filter(row => {
+    return data.filter(row => {
       return row['name']?.toLowerCase().includes(searchText.toLowerCase())
     })
-    return resultList
   }
 
   const getSliceData = (data, page) => {
-    const currentPage = page
-    const sliceData = data.slice(
-      (currentPage - 1) * perPage,
-      currentPage * perPage
-    )
-    return sliceData
+    const current = page
+    return data.slice((current - 1) * perPage, current * perPage)
   }
 
   const handleSearch = value => {
@@ -582,14 +569,14 @@ const DetailVmList = props => {
         </Panel>
       )}
 
-      {vmDataList.length == 0 && (
+      {vmDataList.length === 0 && (
         <Panel title={t('RESOURCES_VM')}>
           <div className={styles.wrapper}>
             {isLoading ? (
               <div>
                 <Loading />
               </div>
-            ) : props.variables == 'project' ? (
+            ) : props.variables === 'project' ? (
               <div className={styles.empty}>
                 {t('RESOURCES_NOT_FOUND_RESOURCE')}
               </div>

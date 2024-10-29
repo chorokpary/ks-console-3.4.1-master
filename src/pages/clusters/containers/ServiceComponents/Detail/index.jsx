@@ -64,7 +64,7 @@ export default class ComponentDetail extends React.Component {
     return [
       {
         name: t('STATUS'),
-        value: <Status type={status} name={t(status)} />,
+        value: <Status type={status} name={t(status.toUpperCase())} />,
       },
       {
         name: t('CLUSTER'),

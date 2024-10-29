@@ -148,7 +148,7 @@ export default class Services extends React.Component {
         title: t('STATUS'),
         dataIndex: 'status',
         isHideable: true,
-        render: status => <Status type={status} name={t(status)} flicker />,
+        render: status => <Status type={status} name={t(status.toUpperCase())} flicker />,
       },
       {
         title: t('SERVICE_TYPE_TCAP'),

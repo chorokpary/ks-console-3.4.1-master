@@ -57,7 +57,7 @@ export default class Events extends React.Component {
       title: t('STATUS'),
       dataIndex: 'status',
       width: '16%',
-      render: status => <Status type={status} name={t(status)} />,
+      render: status => <Status type={status} name={t(status.toUpperCase())} />,
     },
     {
       title: t('MESSAGE'),

@@ -85,7 +85,7 @@ export default class Pods extends React.Component {
       type !== 'running' && type !== 'completed' ? (
         <StatusReason
           status={type}
-          reason={t(status)}
+          reason={t(status.toUpperCase())}
           data={record}
           type="pod"
         />

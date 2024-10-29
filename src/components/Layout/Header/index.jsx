@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { Link } from 'react-router-dom'
 import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
-import { isAppsPage, getWebsiteUrl } from 'utils'
+import { isAppsPage, getCustomizedWebsiteUrl } from 'utils'
 
 import LoginInfo from '../LoginInfo'
 
@@ -47,7 +47,7 @@ class Header extends React.Component {
   }
 
   renderDocumentList() {
-    const { url, api } = getWebsiteUrl()
+    const { url, api } = getCustomizedWebsiteUrl()
     return (
       <Menu onClick={this.handleDocumentLinkClick} data-test="header-docs">
         <Menu.MenuItem key={url}>
@@ -62,7 +62,7 @@ class Header extends React.Component {
 
   render() {
     const { className, innerRef, location } = this.props
-    const logo = globals.config.logo || '/assets/logo.png'
+    const logo = globals.config.logo || '/assets/logo.svg'
 
     return (
       <div
@@ -78,7 +78,7 @@ class Header extends React.Component {
         <Link to={isAppsPage() && !globals.user ? '/apps' : '/'}>
           <img
             className={styles.logo}
-            src={isAppsPage() ? `/assets/logo_white.png` : logo}
+            src={isAppsPage() ? `/assets/logo.svg` : logo}
             alt=""
           />
         </Link>

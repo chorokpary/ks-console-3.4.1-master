@@ -112,12 +112,12 @@ const Information = (props) => {
                   </div>
                   <div className="data"><i className="ico-type24-memory"></i>
                     <div className="info_text">
-                      <h6>{t('RESOURCES_MEMORY')}</h6><span>{common.fnSetBytes(store.detail.vm?.flavor?.ram)} Gib</span>
+                      <h6>{t('RESOURCES_MEMORY')}</h6><span>{common.fnSetBytes(store.detail.vm?.flavor?.ram)} GiB</span>
                     </div>
                   </div>
                   <div className="data"><i className="ico-type24-disk"></i>
                     <div className="info_text">
-                      <h6>{t('RESOURCES_DISK')}</h6><span>{store.detail.vm?.flavor?.root_disk} Gib</span>
+                      <h6>{t('RESOURCES_DISK')}</h6><span>{store.detail.vm?.flavor?.root_disk} GiB</span>
                     </div>
                   </div>
                 </div>

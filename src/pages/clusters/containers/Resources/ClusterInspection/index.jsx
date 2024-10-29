@@ -24,7 +24,7 @@ import * as common from 'utils/resources';
 
 @withList({
   store: new ClusterInspectionStore(),
-  module: 'clusterInspection',
+  module: 'cluster-inspector',
   authKey: 'clusterInspection',
   name: 'ClusterInspection',
 })
@@ -247,6 +247,7 @@ export default class ClusterInspection extends React.Component {
           {...bannerProps}
           title={t('CLUSTER_INSPECTION_MORNITORING')}
           description={t('CLUSTER_INSPECTION_DESC')}
+          module="cluster-inspector"
         />
         {this.renderChart()}
 

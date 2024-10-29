@@ -160,6 +160,33 @@ const VolumeDetail = (props) => {
         value: detail.volume.volume_mode,
       },
       {
+        name: t('RESOURCES_VOLUME_TYPE'),
+        value:
+          detail.volume.boot_volume === true
+            ? t('RESOURCES_BOOT_VOLUME')
+            : t('RESOURCES_NORMAL_VOLUME'),
+      },
+      {
+        name: t('RESOURCES_CPU_TYPE'),
+        value: detail.volume.cpu_arch,
+      },
+      {
+        name: t('RESOURCES_OS_TYPE'),
+        value: detail.volume.os_type,
+      },
+      {
+        name: t('RESOURCES_OS_DISTRO'),
+        value: detail.volume.os_distro,
+      },
+      {
+        name: t('RESOURCES_BOOT_TYPE'),
+        value: detail.volume.boot_type,
+      },
+      {
+        name: t('RESOURCES_PHASE'),
+        value: t(`RESOURCES_IMAGE_${detail.volume.phase.toUpperCase()}`),
+      },
+      {
         name: t('RESOURCES_DESCRIPTION'),
         value: detail.volume.description,
       },

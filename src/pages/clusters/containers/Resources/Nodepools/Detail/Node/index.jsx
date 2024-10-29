@@ -328,7 +328,7 @@ const Node = props => {
                       flicker
                     />
                   </div>
-                  <div className={styles.title} style={{ width: '20%' }}>
+                  <div className={styles.title} style={{ width: '30%' }}>
                     <div>{detail.name}</div>
                     <p>
                       {getLocalTime(detail.timestamp).format(
@@ -338,7 +338,7 @@ const Node = props => {
                     </p>
                   </div>
                   <div className={styles.title} style={{ width: '10%' }}>
-                    <div>{t(`RESOURCES_${detail.phase.toUpperCase()}`)}</div>
+                    <div>{t(`RESOURCES_MACHINE_${detail.phase.toUpperCase()}`)}</div>
                     <p>{t('RESOURCES_STATE')}</p>
                   </div>
                   <div className={styles.title} style={{ width: '15%' }}>
@@ -351,7 +351,7 @@ const Node = props => {
                     )}
                     <p>{t('RESOURCES_NODE_IP')}</p>
                   </div>
-                  <div style={{ width: '55%' }}>
+                  <div style={{ width: '45%' }}>
                     {renderMonitorings(detail.name, detail.addresses.mgmt_ip)}
                   </div>
                 </div>

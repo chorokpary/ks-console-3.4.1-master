@@ -190,11 +190,16 @@ export default class ResourcesVolumes extends React.Component {
           !!used_by_vmi ? t('MOUNTED') : t('NOT_MOUNTED'),
       },
       {
-         title: t('RESOURCES_PHASE'),
-         dataIndex: 'phase',
-         isHideable: true,
-         search: true,
-         width: 'auto',
+        title: t('RESOURCES_PHASE'),
+        dataIndex: 'phase',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: phase => (
+          <p className="tall">
+            <span>{t(`RESOURCES_IMAGE_${phase.toUpperCase()}`)}</span>
+          </p>
+        ),
       },
       {
         title: t('RESOURCES_REGIST_DATE'),

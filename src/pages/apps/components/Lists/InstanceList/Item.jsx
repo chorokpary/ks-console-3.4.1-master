@@ -52,7 +52,7 @@ export default class InstanceItem extends React.PureComponent {
             <Status
               className={styles.status}
               type={detail.status}
-              name={t(detail.status)}
+              name={t(detail.status.toUpperCase())}
             />
           </dt>
           <dd>{t('STATUS')}</dd>

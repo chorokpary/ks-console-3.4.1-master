@@ -135,7 +135,7 @@ export default class CRDAppDetail extends React.Component {
       },
       {
         name: t('STATUS'),
-        value: <Status name={t(detail.status)} type={detail.status} />,
+        value: <Status name={t(detail.status.toUpperCase())} type={detail.status} />,
       },
       {
         name: t('VERSION'),

@@ -149,7 +149,7 @@ export default class ProjectDetail extends React.Component {
     return [
       {
         name: t('STATUS'),
-        value: <Status type={detail.status} name={t(detail.status)} />,
+        value: <Status type={detail.status} name={t(detail.status.toUpperCase())} />,
       },
       {
         name: t('CLUSTER'),

@@ -723,129 +723,120 @@ const ResourceImageModal = props => {
                       }`}
                     >
                       <div className={styles.cont_box_section}>
-                        <div className={styles.cont_box_wrap}>
-                          <h6 className={styles.label}>
-                            <div className={styles.form_check}>
-                              <input type="checkbox" name="chk-1" id="chk-1" />
-                              <label
-                                htmlFor="chk-1"
-                                onClick={() => handleRegistryUrlActive()}
-                              ></label>
+                        <h6 className={styles.label}>
+                          <div className={styles.form_check}>
+                            <input type="checkbox" name="chk-1" id="chk-1" />
+                            <label
+                              htmlFor="chk-1"
+                              onClick={() => handleRegistryUrlActive()}
+                            ></label>
+                          </div>
+                          <div className={styles.title}>
+                            <p>Registry URL</p>
+                            <span>
+                              {t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')}
+                            </span>
+                          </div>
+                        </h6>
+                        {registryUrlActive && (
+                          <>
+                            <div className={styles.regi_group_area}>
+                              <div className={styles.formarea}>
+                                <div
+                                  className={classnames(
+                                    styles.custom_input,
+                                    styles.w_1
+                                  )}
+                                >
+                                  <label>Registry URL</label>
+                                  <input
+                                    type="text"
+                                    name="regUrl"
+                                    placeholder={
+                                      publicType === 'private'
+                                        ? 'https://{url}?projects={project_name}'
+                                        : ''
+                                    }
+                                    defaultValue={registryUrl}
+                                    onChange={e =>
+                                      handleRegistryUrl(e.target.value)
+                                    }
+                                  />
+                                </div>
+                              </div>
                             </div>
-                            <div className={styles.title}>
-                              <p>Registry URL</p>
-                              <span>
-                                {t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')}
-                              </span>
-                            </div>
-                          </h6>
-                          {registryUrlActive && (
-                            <>
+                            {publicType === 'private' && (
                               <div className={styles.regi_group_area}>
                                 <div className={styles.formarea}>
-                                  <div
-                                    className={classnames(
-                                      styles.custom_input,
-                                      styles.w_1
-                                    )}
-                                  >
-                                    <label>Registry URL</label>
+                                  <div className={styles.custom_input}>
+                                    <label>{t('RESOURCES_USER_NAME')}</label>
                                     <input
                                       type="text"
-                                      name="regUrl"
-                                      placeholder={
-                                        publicType === 'private'
-                                          ? 'https://{url}?projects={project_name}'
-                                          : ''
-                                      }
-                                      defaultValue={registryUrl}
+                                      name="username"
+                                      defaultValue={userName}
                                       onChange={e =>
-                                        handleRegistryUrl(e.target.value)
+                                        setUserName(e.target.value)
                                       }
                                     />
                                   </div>
+                                  <div className={styles.custom_input}>
+                                    <label>{t('RESOURCES_PASSWORD')}</label>
+                                    <input
+                                      type="password"
+                                      name="password"
+                                      defaultValue={userPassword}
+                                      onChange={e =>
+                                        setUserPassword(e.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className={classnames(
+                                      styles.btn,
+                                      styles.btn_control
+                                    )}
+                                    onClick={() => checkUserValid()}
+                                  >
+                                    {t('RESOURCES_VALID')}
+                                  </button>
                                 </div>
                               </div>
-                              {publicType === 'private' && (
-                                <div className={styles.regi_group_area}>
-                                  <div className={styles.formarea}>
-                                    <div className={styles.custom_input}>
-                                      <label>{t('RESOURCES_USER_NAME')}</label>
-                                      <input
-                                        type="text"
-                                        name="username"
-                                        defaultValue={userName}
-                                        onChange={e =>
-                                          setUserName(e.target.value)
-                                        }
-                                      />
-                                    </div>
-                                    <div className={styles.custom_input}>
-                                      <label>{t('RESOURCES_PASSWORD')}</label>
-                                      <input
-                                        type="password"
-                                        name="password"
-                                        defaultValue={userPassword}
-                                        onChange={e =>
-                                          setUserPassword(e.target.value)
-                                        }
-                                      />
-                                    </div>
-                                    <button
-                                      type="button"
-                                      className={classnames(
-                                        styles.btn,
-                                        styles.btn_control
-                                      )}
-                                      onClick={() => checkUserValid()}
-                                    >
-                                      {t('RESOURCES_VALID')}
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                              {!registryValid && sourceEmpty && (
-                                <div
-                                  className="form-item-error"
-                                  style={{ color: '#ca2621' }}
-                                >
-                                  {t('RESOURCES_VALID_TIP')}
-                                </div>
-                              )}
-                              {registryValidError && (
-                                <div
-                                  className="form-item-error"
-                                  style={{ color: '#ca2621' }}
-                                >
-                                  {t('RESOURCES_FAIL_VALID_TIP')}
-                                </div>
-                              )}
-                            </>
-                          )}
-                        </div>
-                        {publicType === 'private' &&
-                          !registryUrlActive &&
-                          sourceEmpty && (
-                            <div
-                              className="form-item-error"
-                              style={{ color: '#ca2621' }}
-                            >
-                              {t('RESOURCES_HARBOR_VALID_TIP')}
-                            </div>
-                          )}
+                            )}
+                            {!registryValid && sourceEmpty && (
+                              <div
+                                className="form-item-error"
+                                style={{ color: '#ca2621' }}
+                              >
+                                {t('RESOURCES_VALID_TIP')}
+                              </div>
+                            )}
+                            {registryValidError && (
+                              <div
+                                className="form-item-error"
+                                style={{ color: '#ca2621' }}
+                              >
+                                {t('RESOURCES_FAIL_VALID_TIP')}
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
+                      {publicType === 'private' &&
+                        !registryUrlActive &&
+                        sourceEmpty && (
+                          <div
+                            className="form-item-error"
+                            style={{ color: '#ca2621' }}
+                          >
+                            {t('RESOURCES_HARBOR_VALID_TIP')}
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
               </Form.Item>
-              <Form.Item
-                label={t('RESOURCES_SIZE')}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
+              <Form.Item label={t('RESOURCES_SIZE')}>
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div

@@ -219,7 +219,7 @@ export default class ImageBuilderLastRun extends React.Component {
             <Status
               className={styles.status}
               type={status}
-              name={t(t(status))}
+              name={t(t(status.toUpperCase()))}
               flicker
             />
           </div>

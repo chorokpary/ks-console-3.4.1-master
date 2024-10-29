@@ -549,8 +549,26 @@ const Node = props => {
                       <div>{detail.updated_replicas}</div>
                       <p>Updated</p>
                     </div>
+                    <div
+                      className={styles.arrow}
+                      onClick={() => handleExpand(detail.name)}
+                    >
+                      <Icon
+                        name="chevron-down"
+                        type={
+                          detail.name !== expandItem
+                            ? ''
+                            : detail.name === expandItem &&
+                              isExpandFlag === false
+                            ? ''
+                            : 'light'
+                        }
+                        size={20}
+                      />
+                    </div>
                   </div>
                 </div>
+                {renderExtraContent(detail)}
               </div>
             ))}
         </div>

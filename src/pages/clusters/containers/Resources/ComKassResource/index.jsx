@@ -281,6 +281,7 @@ const index = (props) => {
         icon="linechart"
         title={t('RESOURCES_COMPUTING_KAAS_RESOURCE')}
         description={t('RESOURCES_COMPUTING_KAAS_RESOURCE_MONITORING_DESC')}
+        module="computing-kaas"
       />
 
 

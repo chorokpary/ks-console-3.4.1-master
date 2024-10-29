@@ -14,7 +14,7 @@ const typeOption = [
   },
   {
     value: 'pod',
-    label: 'Pod'
+    label: t('POD_PL')
   },
   {
     value: 'vm',

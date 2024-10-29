@@ -33,7 +33,7 @@ import styles from './index.scss';
 import ResourceTable from 'clusters/components/ResourceTable';
 @withList({
   store: new VolumeStore(),
-  module: 'resourcesVolumes',
+  module: 'resourcesvolumes',
   authKey: 'resourcesVolumes',
   name: t('RESOURCES_VOLUME'),
   rowKey: 'id',
@@ -165,24 +165,18 @@ export default class ResourcesVolumes extends React.Component {
         width: 'auto',
         render: used_by_vmi => (used_by_vmi ? t('MOUNTED') : t('NOT_MOUNTED')),
       },
-      // {
-      //   title: t('상태'),
-      //   dataIndex: 'phase',
-      //   isHideable: true,
-      //   search: true,
-      //   width: 'auto',
-      //   render: (phase, record) => {
-      //     const type = !!phase == true ? phase : "Bound"
-      //     const flicker = true;
-
-      //       return (
-      //         <div className={styles.iconwrapper}>
-      //           <Indicator className={styles.indicator} type={type} flicker={flicker} />
-      //           <p>{type}</p>
-      //         </div>
-      //       )
-      //   },
-      // },
+      {
+        title: t('RESOURCES_PHASE'),
+        dataIndex: 'phase',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: phase => (
+          <p className="tall">
+            <span>{t(`RESOURCES_IMAGE_${phase.toUpperCase()}`)}</span>
+          </p>
+        ),
+      },
       {
         title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',

@@ -1,40 +1,40 @@
-import { get, groupBy } from 'lodash';
-import React, { useState, useEffect } from 'react';
-import { toJS } from 'mobx';
-import { observer, inject } from 'mobx-react';
+import React, { useState, useEffect } from 'react'
+import { observer, inject } from 'mobx-react'
 
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
-import DetailKaasList from 'pages/clusters/containers/Resources/components/DetailKaasList';
-
-import styles from './index.scss';
+import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
+import DetailMachineList from 'pages/clusters/containers/Resources/components/DetailMachineList'
 
 const Status = props => {
-  const store = props.detailStore;
+  const store = props.detailStore
 
-  const [id, setId] = useState();
+  const [id, setId] = useState()
+  const [isManagedK8s, setIsManagedK8s] = useState(false)
 
   useEffect(() => {
-    setId(store.detail.volume?.used_by_vmi);
-  }, [id]);
+    setId(store.detail.volume?.used_by_vmi)
+    if (store.detail.volume?.managed_k8s === 'true') {
+      setIsManagedK8s(true)
+    }
+  }, [id])
 
   return (
     <>
-      {id && !id?.includes('control-plane') && !id?.includes('-md-') && (
+      {id && !isManagedK8s && (
         // used_by_vmi 가 VM 일 경우
         <div>
           <DetailVmList type={t('RESOURCES_VOLUME')} variables="id" id={id} />
         </div>
       )}
-      {!id && (!id?.includes('control-plane') || !id?.includes('-md-')) && (
+      {!id && (
         // used_by_vmi 가 비어있는 경우
         <div>
           <DetailVmList type={t('RESOURCES_VOLUME')} variables="id" id={id} />
         </div>
       )}
-      {id && (id?.includes('control-plane') || id?.includes('-md-')) && (
+      {id && isManagedK8s && (
         // used_by_vmi 가 KaaS 일 경우
         <div>
-          <DetailKaasList
+          <DetailMachineList
             type={t('RESOURCES_VOLUME')}
             variables="name"
             name={id}
@@ -42,7 +42,7 @@ const Status = props => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default inject('detailStore')(observer(Status));
+export default inject('detailStore')(observer(Status))

@@ -95,7 +95,7 @@ const ModifyFlavorModal = props => {
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
         obj.ram
-      )} Gib / Disk ${obj.root_disk} Gib`,
+      )} GiB / Disk ${obj.root_disk} GiB`,
       value: t(obj.name),
       disabled: Number(obj.root_disk) < Number(size),
     }));

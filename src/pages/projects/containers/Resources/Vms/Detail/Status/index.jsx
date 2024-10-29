@@ -170,9 +170,9 @@ const Status = props => {
       const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
 
       const vmCpuData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
+        expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
         ...paramsData,
-	cluster, namespace
+        cluster, namespace
       });
 
       const vmCpuMetricData = _.find(vmCpuData, data => {
@@ -191,9 +191,9 @@ const Status = props => {
       const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
 
       const vmMemoryData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
+        expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
         ...paramsData,
-	cluster, namespace
+        cluster, namespace
       });
 
       const vmMemoryMetricData = _.find(vmMemoryData, data => {
@@ -269,20 +269,20 @@ const Status = props => {
       state === 'Starting' ||
       state === 'Stopping' ||
       state === 'Terminating' ||
-      state === 'Migrating'
+      state === 'Migrating' ||
+      state === 'WaitingForVolumeBinding'
     ) {
-      return 'waiting';
+      return 'waiting'
     }
-    if (state === 'Running') {
-      return 'running';
+    else if (state === 'Running') {
+      return 'running'
     }
-    if (state === 'Stopped' || state === 'Paused') {
-      return 'stopped';
+    else if (state === 'Stopped' || state === 'Paused') {
+      return 'stopped'
     }
-    if (state === 'Unknown') {
-      return 'error';
+    else {
+      return 'error'
     }
-    return 'error';
   };
 
   return (
@@ -310,7 +310,7 @@ const Status = props => {
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
-	          <div>{store.detail.vm?.node ? store.detail.vm?.node : "-"}</div>
+                  <div>{store.detail.vm?.node ? store.detail.vm?.node : "-"}</div>
                   <p>{t('RESOURCES_NODE')}</p>
                 </div>
                 {renderMonitorings()}
@@ -349,7 +349,7 @@ const Status = props => {
                   <Text
                     key="Memory"
                     icon="memory"
-                    title={`${common.fnSetBytes(detailFlavor.ram)} Gib`}
+                    title={`${common.fnSetBytes(detailFlavor.ram)} GiB`}
                     description={t('Memory')}
                   />
                 </div>
@@ -357,7 +357,7 @@ const Status = props => {
                   <Text
                     key="Disk"
                     icon="storage"
-                    title={`${detailFlavor.root_disk} Gib`}
+                    title={`${detailFlavor.root_disk} GiB`}
                     description={t('Disk')}
                   />
                 </div>
@@ -370,10 +370,10 @@ const Status = props => {
                         ? detailFlavor.gpus.length == 1
                           ? detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
-                              'RESOURCES_BESIDES'
-                            )} ${detailFlavor.gpus.length - 1}${t(
-                              'RESOURCES_COUNT'
-                            )}`
+                            'RESOURCES_BESIDES'
+                          )} ${detailFlavor.gpus.length - 1}${t(
+                            'RESOURCES_COUNT'
+                          )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -432,7 +432,11 @@ const Status = props => {
                     <p>CIDR</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.gateway_ip}</div>
+                    <div>{`${obj.gateway_ip === undefined || obj.gateway_ip === ""
+                      ? "-"
+                      : obj.gateway_ip
+                      }`}
+                    </div>
                     <p>{t('RESOURCES_GATEWAY')}</p>
                   </div>
                 </div>
@@ -473,7 +477,7 @@ const Status = props => {
                     <p>{t('RESOURCES_CAPACITY')}</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{obj.phase}</div>
+                    <div>{t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}</div>
                     <p>{t('RESOURCES_STATE')}</p>
                   </div>
                 </div>

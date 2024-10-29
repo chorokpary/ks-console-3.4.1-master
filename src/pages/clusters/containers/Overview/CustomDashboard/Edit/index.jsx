@@ -309,7 +309,7 @@ const CustomDashboardEdit = (props) => {
                   <input type="checkbox" id="podPanel-toggle" className="toggle" defaultChecked={activeDashboard.pod} />
                   <span className="slider" onClick={(e) => toggleHandler(e, 'pod')}></span>
                 </label>
-                <label className="section-title">Pod</label>
+                <label className="section-title">{t('POD_PL')}</label>
                 <button className="open-popover-button icon_preview"><i className="ico-etc-preview"></i></button>
 
                 <div className="popover-container">

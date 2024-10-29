@@ -198,7 +198,7 @@ export default class VmStore extends Base {
     resourceData.image = data.imageType === 'I' ? data.image : ''
     resourceData.flavor = data.flavor
     resourceData.keypair = data.keypair
-    resourceData.pre_installed_app = data.preInstalledApp
+    // resourceData.pre_installed_app = data.preInstalledApp
 
     // 값 전달 시 invalid_boot_volume 오류 발생
     resourceData.boot_dv = data.imageType === 'I' ? '' : data.bootvolume
@@ -227,10 +227,10 @@ export default class VmStore extends Base {
     // api에서 이름 넣으면 스크립트 오류 발생 함
     // resourceData.username = globals.user.username; // Failed to validate the cloud-init script 오류나서 안보냄
     resourceData.username = ''
-    resourceData.user_script =
-      data.userScript === '' || data.userScript === undefined
-        ? data.makeScript
-        : data.userScript
+    resourceData.user_script = data.makeScript
+    // data.userScript === '' || data.userScript === undefined
+    //   ? data.makeScript
+    //   : data.userScript
 
     const sriovNetworksArray = []
     data.sriov.forEach(name => {
@@ -263,10 +263,10 @@ export default class VmStore extends Base {
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
 
-    if (data.preInstalledApp === 'Jupyter') {
-      resourceData.jupyter_port = data.scriptJupyterPort
-      resourceData.jupyter_token = data.scriptJupyterToken
-    }
+    // if (data.preInstalledApp === 'Jupyter') {
+    //   resourceData.jupyter_port = data.scriptJupyterPort
+    //   resourceData.jupyter_token = data.scriptJupyterToken
+    // }
 
     jsonData.vm = resourceData
 
@@ -436,6 +436,32 @@ export default class VmStore extends Base {
 
     this.isLoading = false
     return response
+  }
+
+  @action
+  async fetchVmPhaseEventList(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/phase_event`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'vme' }
+
+    this.isLoading = false
+    return response
+  }
+
+  @action
+  async fetchVmMetering(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `${this.getResourceUrl(params)}/${params.id}/metering`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'vme' }
+
+    this.isLoading = false
+    return response.metering
   }
 
   @action

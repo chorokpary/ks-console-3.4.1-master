@@ -250,7 +250,7 @@ class ScheduleInfo extends React.Component {
           <Text
             className={styles.info}
             icon="pod"
-            title={t(status)}
+            title={t(status.toUpperCase())}
             description={t('CURRENT_STATUS')}
             extra={
               <Status status={status === 'Running' ? 'success' : 'warning'} />

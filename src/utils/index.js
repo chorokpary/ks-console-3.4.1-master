@@ -446,20 +446,38 @@ export const getWebSocketProtocol = protocol => {
 }
 
 export const getWebsiteUrl = () => {
-  const useLang = get(globals, 'user.lang', 'en')
-  const lang = useLang === 'zh' ? 'zh' : 'en'
+  const useLang = get(globals, 'user.lang', 'ko')
+  const lang = useLang === 'ko' ? 'ko' : 'en'
   return globals.config.documents[lang]
+}
+
+export const getCustomizedWebsiteUrl = () => {
+  const useLang = get(globals, 'user.lang', 'ko')
+  const lang = useLang === 'ko' ? 'ko' : 'en'
+
+  const host = window.location.hostname
+  const { url: origUrl, api: origApi } = globals.config.documents[lang]
+  const url = origUrl.replace("localhost", host)
+  const api = origApi.replace("localhost", host)
+  const document = { url: url, api: api}
+  return document
 }
 
 export const getDocsUrl = module => {
   const { url: prefix } = getWebsiteUrl()
+
+  const host = window.location.hostname
+
+  // replace host name
+  const newPrefix = prefix.replace("localhost", host)
+
   const docUrl = get(globals.config, `resourceDocs[${module}]`, '')
 
   if (!docUrl) {
     return ''
   }
 
-  return `${prefix}${docUrl}`
+  return `${newPrefix}${docUrl}`
 }
 
 export const hasChinese = str => /.*[\u4E00-\u9FA5]+.*/.test(str)

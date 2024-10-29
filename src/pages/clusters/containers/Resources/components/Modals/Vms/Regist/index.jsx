@@ -19,7 +19,6 @@ import * as common from 'utils/resources'
 import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
 import VmStore from 'stores/resources/vms'
-import YAML from 'js-yaml'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
@@ -197,6 +196,15 @@ const RegistModal = props => {
       existing.push(record)
     }
     setSelectedIpList(existing)
+
+    const updatedNetworkList = networkList.map(item => {
+      if (item.id === netId) {
+        return { ...item, ip: val }
+      }
+      return item
+    })
+
+    setNetworkList(updatedNetworkList)
   }
 
   const availableSriovIpOptions = netName => {
@@ -222,6 +230,15 @@ const RegistModal = props => {
       existing.push(record)
     }
     setSelectedSriovIpList(existing)
+
+    const updatedSriovNetworkList = sriovNetworkList.map(item => {
+      if (item.name === netName) {
+        return { ...item, ip: val }
+      }
+      return item
+    })
+
+    setSriovNetworkList(updatedSriovNetworkList)
   }
 
   const storageClassOptions = () => {
@@ -263,7 +280,7 @@ const RegistModal = props => {
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
         obj.ram
-      )} Gib / Disk ${obj.root_disk} Gib`,
+      )} GiB / Disk ${obj.root_disk} GiB`,
       value: t(obj.name),
       disabled: Number(obj.root_disk) < Number(size),
     }))
@@ -335,151 +352,48 @@ const RegistModal = props => {
 
   const getScript = () => {
     const { data } = form.current.props
-    let makeScriptStep_1 = false
-    let makeScriptStep_2 = false
-    let makeScriptStep_3 = false
-    let makeScriptStep_4 = false
 
-    let makeScript = '#cloud-config'
-
-    /*
-    #cloud-config
-    ssh_pwauth: true
-    users:
-      - default
-      - name: newuser
-        sudo: ALL=(ALL) NOPASSWD:ALL
-      - name: seconduser
-        sudo: ALL=(ALL) NOPASSWD:ALL
-    
-    chpasswd:
-      expire: false
-      list:
-        - ubuntu:1234
-        - newuser:test#@@!
-        - seconduser:Passw0rd!TWO!
-    */
-    const files = []
-    let fileScript = ''
-    if (isJupyterConfig) {
-      files.push({
-        path: `/home/${selectImageDistroType}/.jupyter/jupyter_lab_config.py`,
-        content: `c = get_config()
-c.ServerApp.ip = '0.0.0.0'
-c.ServerApp.token = '${jupyterToken}'
-c.ServerApp.port = ${data[`scriptJupyterPort`]}
-`,
-        owner: `${selectImageDistroType}:${selectImageDistroType}`,
-        permissions: '0644',
-      })
-      makeScriptStep_1 = true
+    if (data.userScript !== '' && data.userScript !== undefined) {
+      return {
+        custom_script: data.userScript,
+      }
     }
 
-    let userPasswordScript = ''
-    if (listPasswordRoute.length === 1) {
-      listPasswordRoute.forEach(obj => {
-        if (data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `\nssh_pwauth: true\n`
-          userPasswordScript += `users:\n`
-          userPasswordScript += `  - default\n`
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
-          userPasswordScript += `\n`
-          userPasswordScript += `chpasswd:\n`
-          userPasswordScript += `  expire: false\n`
-          userPasswordScript += `  list:\n`
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-            data[`scriptPassword_${obj}`]
-          }\n`
+    const makeScript = {}
 
-          makeScriptStep_2 = true
-        }
-      })
-    } else {
-      userPasswordScript += `\nssh_pwauth: true\n`
-      userPasswordScript += `users:\n`
-      userPasswordScript += `  - default\n`
+    if (listPasswordRoute.length !== 0) {
+      const userPassWord = []
       listPasswordRoute.forEach(obj => {
-        if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `  - name: ${data[`scriptId_${obj}`]}\n`
-          userPasswordScript += `    sudo: ALL=(ALL) NOPASSWD:ALL\n`
-          makeScriptStep_2 = true
-        }
+        userPassWord.push({
+          user_name: data[`scriptId_${obj}`],
+          password: data[`scriptPassword_${obj}`],
+        })
       })
-      userPasswordScript += `\n`
-      userPasswordScript += `chpasswd:\n`
-      userPasswordScript += `  expire: false\n`
-      userPasswordScript += `  list:\n`
-      listPasswordRoute.forEach(obj => {
-        if (!!data[`scriptId_${obj}`] && !!data[`scriptPassword_${obj}`]) {
-          userPasswordScript += `    - ${data[`scriptId_${obj}`]}:${
-            data[`scriptPassword_${obj}`]
-          }\n`
-        }
-      })
+      makeScript['user_password'] = userPassWord
     }
 
+    const writeFiles = []
     listFileRoute.forEach(obj => {
       if (!!data[`scriptPath_${obj}`] && !!data[`scriptContent_${obj}`]) {
-        files.push({
-          path: `${data[`scriptPath_${obj}`]}`,
-          content: `${data[`scriptContent_${obj}`]}`,
+        writeFiles.push({
+          path: data[`scriptPath_${obj}`],
+          content: data[`scriptContent_${obj}`],
         })
-        makeScriptStep_3 = true
       }
     })
+    if (writeFiles.length !== 0) {
+      makeScript['write_files'] = writeFiles
+    }
 
-    if (files.length > 0) {
-      // const writeFiles = files.map(file => ({
-      //   path: file.path,
-      //   content: file.content.trim().replace(/\n/g, '\n'),
-      // }))
-      const cloudInitConfig = {
-        write_files: files,
+    if (isJupyterConfig) {
+      const preInstalled = {}
+      preInstalled['jupyter_lab'] = {
+        distro_type: selectImageDistroType,
+        token: jupyterToken,
+        port: data[`scriptJupyterPort`],
       }
-      fileScript = YAML.dump(cloudInitConfig, {})
+      makeScript['pre_installed_app'] = preInstalled
     }
-
-    let packageScript = ''
-    if (listPackageRoute.length === 1) {
-      listPackageRoute.forEach(obj => {
-        if (data[`scriptPackage_${obj}`]) {
-          if (data[`scriptVersion_${obj}`]) {
-            packageScript += `packages:\n  - [${
-              data[`scriptPackage_${obj}`]
-            }, ${data[`scriptVersion_${obj}`]}]\n`
-          } else {
-            packageScript += `packages:\n  - ${data[`scriptPackage_${obj}`]}\n`
-          }
-          makeScriptStep_4 = true
-        }
-      })
-    } else {
-      packageScript += `packages:\n`
-      listPackageRoute.forEach(obj => {
-        if (data[`scriptVersion_${obj}`]) {
-          packageScript += `  - [${data[`scriptPackage_${obj}`]}, ${
-            data[`scriptVersion_${obj}`]
-          }]\n`
-        } else {
-          packageScript += `  - ${data[`scriptPackage_${obj}`]}\n`
-        }
-        makeScriptStep_4 = true
-      })
-    }
-
-    if (!makeScriptStep_2) {
-      userPasswordScript = ''
-    }
-    if (!makeScriptStep_1 && !makeScriptStep_3) {
-      fileScript = ''
-    }
-    if (!makeScriptStep_4) {
-      packageScript = ''
-    }
-
-    makeScript += userPasswordScript + fileScript + packageScript
-    // makeScript += userPasswordScript;
 
     return makeScript
   }
@@ -511,13 +425,13 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
         const imageSize =
           imageType === 'I'
             ? imageDataList
-                .filter(item => item.name === selectImageName)
-                .map(item => item.size)[0]
-                .replace('Gi', '')
+              .filter(item => item.name === selectImageName)
+              .map(item => item.size)[0]
+              .replace('Gi', '')
             : bootVolumeDataList
-                .filter(item => item.id === selectBootId)
-                .map(item => item.capacity)[0]
-                .replace('Gi', '')
+              .filter(item => item.id === selectBootId)
+              .map(item => item.capacity)[0]
+              .replace('Gi', '')
         const flavorSize = flavorDataList
           .filter(item => item.name === selectFlavorName)
           .map(item => item.root_disk)
@@ -1021,7 +935,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
 
   const handlePreInstalledApp = app => {
     setPreInstalledApp(app)
-    if (app === 'Jupyter') {
+    if (app.toLowerCase() === 'jupyter') {
       setJupyterToken(generateToken)
       setIsJupyterConfig(true)
     }
@@ -1095,13 +1009,12 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep === 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -1113,8 +1026,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1126,13 +1039,12 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
-                      ? styles.current
-                      : regStep > 2
+                  className={`${regStep === 2
+                    ? styles.current
+                    : regStep > 2
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -1144,8 +1056,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1157,13 +1069,12 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 3
-                      ? styles.current
-                      : regStep > 3
+                  className={`${regStep === 3
+                    ? styles.current
+                    : regStep > 3
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -1175,8 +1086,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1416,9 +1327,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                           />
                         </Form.Item>
                         <div
-                          className={`form-item-error ${
-                            flavorSizeCheck ? 'hide' : ''
-                          }`}
+                          className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
+                            }`}
                         >
                           {imageType === 'I'
                             ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
@@ -1507,7 +1417,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                                   !!(
                                     dataListVariables['network'].length > 0 &&
                                     stateVariables['network'].length ===
-                                      dataListVariables['network'].length
+                                    dataListVariables['network'].length
                                   )
                                 }
                               />
@@ -1645,7 +1555,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                                   !!(
                                     dataListVariables['sriov'].length > 0 &&
                                     stateVariables['sriov'].length ===
-                                      dataListVariables['sriov'].length
+                                    dataListVariables['sriov'].length
                                   )
                                 }
                               />
@@ -1751,9 +1661,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
 
                 <div className={styles.wrapperError}>
                   <div
-                    className={`form-item-error ${
-                      !isKeypiarPasswordError ? 'hide' : ''
-                    }`}
+                    className={`form-item-error ${!isKeypiarPasswordError ? 'hide' : ''
+                      }`}
                   >
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
@@ -1799,7 +1708,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                                   !!(
                                     dataListVariables['security'].length > 0 &&
                                     stateVariables['security'].length ===
-                                      dataListVariables['security'].length
+                                    dataListVariables['security'].length
                                   )
                                 }
                               />
@@ -1908,7 +1817,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                       }
                     }}
                   >
-                    {preInstalledApp === 'Jupyter' && (
+                    {preInstalledApp.toLowerCase() === 'jupyter' && (
                       <Form.Group
                         label={t('RESOURCES_JUPYTER_CONFIG')}
                         onChange={() => {
@@ -1921,8 +1830,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                             <Column>
                               <Form.Item>
                                 <Input
-                                  placeholder={t('PORT')}
-                                  defaultValue={t('PORT')}
+                                  placeholder={'Port'}
+                                  defaultValue={'Port'}
                                   disabled={true}
                                 />
                               </Form.Item>
@@ -1941,9 +1850,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${
-                            !isJupyterPortError ? 'hide' : ''
-                          }`}
+                          className={`form-item-error ${!isJupyterPortError ? 'hide' : ''
+                            }`}
                         >
                           {t('RESOURCES_JUPYTER_PORT_RANGE_DESC')}
                         </div>
@@ -1971,9 +1879,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${
-                            !isJupyterTokenError ? 'hide' : ''
-                          }`}
+                          className={`form-item-error ${!isJupyterTokenError ? 'hide' : ''
+                            }`}
                         >
                           {t('RESOURCES_JUPYTER_TOKEN_DESC')}
                         </div>
@@ -2043,9 +1950,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${
-                          !isPasswordError ? 'hide' : ''
-                        }`}
+                        className={`form-item-error ${!isPasswordError ? 'hide' : ''
+                          }`}
                       >
                         {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                       </div>
@@ -2099,9 +2005,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${
-                          !isFileWriteError ? 'hide' : ''
-                        }`}
+                        className={`form-item-error ${!isFileWriteError ? 'hide' : ''
+                          }`}
                       >
                         {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                       </div>
@@ -2156,16 +2061,14 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${
-                          !isPackageError ? 'hide' : ''
-                        }`}
+                        className={`form-item-error ${!isPackageError ? 'hide' : ''
+                          }`}
                       >
                         {t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}
                       </div>
                       <div
-                        className={`form-item-error ${
-                          !packageValidationError ? 'hide' : ''
-                        }`}
+                        className={`form-item-error ${!packageValidationError ? 'hide' : ''
+                          }`}
                       >
                         {t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}
                       </div>
@@ -2205,9 +2108,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         />
                       </Form.Item>
                       <div
-                        className={`form-item-error ${
-                          !isUserScriptError ? 'hide' : ''
-                        }`}
+                        className={`form-item-error ${!isUserScriptError ? 'hide' : ''
+                          }`}
                       >
                         {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
                       </div>
@@ -2245,15 +2147,13 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         </div>
                       )}
                       <div className={styles.list}>
-                        <label>{`${
-                          imageType === 'I'
-                            ? t('RESOURCES_IMAGE')
-                            : t('RESOURCES_BOOT_VOLUME')
-                        }`}</label>
+                        <label>{`${imageType === 'I'
+                          ? t('RESOURCES_IMAGE')
+                          : t('RESOURCES_BOOT_VOLUME')
+                          }`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{`${
-                            imageType === 'I' ? imageName : bootVolumeName
-                          }`}</div>
+                          <div className={styles.bold}>{`${imageType === 'I' ? imageName : bootVolumeName
+                            }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
@@ -2261,8 +2161,8 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         <div className={styles.multiline}>
                           <div className={styles.bold}>{flavorName}</div>
                           <p>
-                            CPU {flavorCpu} Cores / Memory {flavorMemory} Gib/
-                            Disk {flavorDisk} Gib
+                            CPU {flavorCpu} Cores / Memory {flavorMemory} GiB/
+                            Disk {flavorDisk} GiB
                           </p>
                         </div>
                       </div>
@@ -2323,7 +2223,17 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                           <div className={styles.list}>
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.type}</div>
+                              <div>{obj.type.toUpperCase()}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
+                            <div className={styles.multiline}>
+                              <div>{`${obj.ip === undefined
+                                ? t('RESOURCES_AUTOMATIC')
+                                : obj.ip
+                                }`}
+                              </div>
                             </div>
                           </div>
                           <div className={styles.list}>
@@ -2335,7 +2245,7 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                         </div>
                       ))}
                     <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
-                    {sriovNetworkDataList
+                    {sriovNetworkList
                       .filter(x => sriovCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
@@ -2346,7 +2256,17 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                           <div className={styles.list}>
                             <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.type}</div>
+                              <div>{obj.type.toUpperCase()}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
+                            <div className={styles.multiline}>
+                              <div>{`${obj.ip === undefined
+                                ? t('RESOURCES_AUTOMATIC')
+                                : obj.ip
+                                }`}
+                              </div>
                             </div>
                           </div>
                           <div className={styles.list}>
@@ -2375,22 +2295,35 @@ c.ServerApp.port = ${data[`scriptJupyterPort`]}
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_KEYPAIR')}</label>
-                        <div>{keypairName}</div>
+                        <div>{`${keypairName === undefined
+                          ? t('RESOURCES_NOT_SELECTED')
+                          : keypairName
+                          }`}</div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div className={styles.multiline}>
-                          {securityGroupCheckItems.map(id => (
-                            <div key={id}>
-                              {get(find(securityGroupList, { id }), 'name')}
-                            </div>
-                          ))}
+                          {securityGroupCheckItems.length === 0
+                            ? t('RESOURCES_NOT_SELECTED')
+                            : securityGroupCheckItems.map(id => {
+                              const securityGroup = find(securityGroupList, { id });
+                              const name = get(securityGroup, 'name', '');
+                              return (
+                                <div key={id}>
+                                  {name}
+                                </div>
+                              );
+                            })
+                          }
                         </div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_NODE')}</label>
                         <div className={styles.multiline}>
-                          <div>{nodeName}</div>
+                          <div>{`${nodeName === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : nodeName
+                            }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>

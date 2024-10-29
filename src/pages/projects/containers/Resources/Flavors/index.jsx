@@ -85,7 +85,7 @@ export default class Flavors extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('RESOURCES_MEMORY')+' (Gib)',
+                title: t('RESOURCES_MEMORY')+' (GiB)',
                 dataIndex: 'ram',
                 isHideable: true,
                 width: 'auto',
@@ -96,13 +96,13 @@ export default class Flavors extends React.Component {
                 ),
             },
             {
-                title: t('RESOURCES_ROOT_DISK')+' (Gib)',
+                title: t('RESOURCES_ROOT_DISK')+' (GiB)',
                 dataIndex: 'root_disk',
                 isHideable: true,
                 width: 'auto',
             },
             {
-                title: t('RESOURCES_TEMPORARY_DISK')+' (Gib)',
+                title: t('RESOURCES_TEMPORARY_DISK')+' (GiB)',
                 dataIndex: 'ephemeral_disk',
                 isHideable: true,
                 width: 'auto',

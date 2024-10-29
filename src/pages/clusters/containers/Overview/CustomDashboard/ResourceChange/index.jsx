@@ -155,7 +155,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
                 <div className="grid_info style_status box_long">
                   <div className="box type_status">
                     <div className="cont_group">
-                      <h5><i className="ico-type-pod"></i>Pod</h5>
+                      <h5><i className="ico-type-pod"></i>{t('POD_PL')}</h5>
                       <div className="number_wrap">
                         <p><span className="em">{podCnt?.Run}</span></p>
                       </div>

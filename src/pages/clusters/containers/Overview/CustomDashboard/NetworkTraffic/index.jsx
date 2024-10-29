@@ -169,7 +169,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
                   </label>
                   <label htmlFor="name4">
                     <input type="radio" name="box-tab1" id="name4" value="name4" onClick={() => onClickRightTab('pod')} />
-                    <span>Pod</span>
+                    <span>{t('POD_PL')}</span>
                   </label>
                   <label htmlFor="name5">
                     <input type="radio" name="box-tab1" id="name5" value="name5" onClick={() => onClickRightTab('vm')} />

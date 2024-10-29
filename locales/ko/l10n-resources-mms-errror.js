@@ -370,14 +370,16 @@ module.exports = {
     'Resource가 이미 다른 정책에 속해 있기 때문에 SR-IOV 정책을 만들 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_482:
     'Resource가 SR-IOV 네트워크에 속해 있으므로 SR-IOV 리소스를 제거할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_483: '올바르지 않은 MTU입니다. NIC의 MTU 설정을 확인하세요.',
   RESOURCES_MMS_ERROR_DESC_540: '라우터를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_541: '네트워크에 연결된 라우터가 없습니다.',
   RESOURCES_MMS_ERROR_DESC_550: '라우터 이름이 중복됩니다.',
   RESOURCES_MMS_ERROR_DESC_551: '라우터 이름이 일치하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_552: '라우터는 여전히 Float IP와 연결되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_553: '외부 네트워크없이 SNAT를 구성하면 안됩니다.',
-  RESOURCES_MMS_ERROR_DESC_554:
-    '몇 가지 이유로 인해 라우터를 업데이트 할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_554: '몇 가지 이유로 인해 라우터를 업데이트 할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_555: '외부 네트워크가 올바르게 구성되지 않았습니다.',
+  RESOURCES_MMS_ERROR_DESC_556: '외부 네트워크의 MTU가 충분하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_640: 'Float IP를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_650: 'Float IP는 여전히 VM과 연결되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_651:

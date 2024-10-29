@@ -24,6 +24,7 @@ module.exports = {
   ADD_LOG_RECEIVER: 'Add Log Receiver',
   LOG_COLLECTION_TIPS: 'You can add one log receiver for each type.',
   ES_DESC: 'Elasticsearch is a distributed, RESTful search and analytics engine.',
+  OPENSEARCH_DESC: 'OpenSearch is a distributed, RESTful search and analytics engine.',
   KAFKA_DESC: 'Kafka is a popular open-source, stream-processing platform.',
   FLUENTD_DESC: 'Fluentd is an open-source data collector for unified logging layer.',
   // Banner > Add Log Receiver > Elasticsearch
