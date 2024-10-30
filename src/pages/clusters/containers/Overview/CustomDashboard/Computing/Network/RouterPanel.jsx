@@ -15,11 +15,11 @@ const Panel = ({ router }) => {
                     <div className="cont2">
                         <div className="status_wrap">
                             <div className="value">{router.internal}</div>
-                            <p className="status internal"><span>Internal</span></p>
+                            <p className="status internal"><span>{t('RESOURCES_INTERNAL')}</span></p>
                         </div>
                         <div className="status_wrap">
                             <div className="value">{router.external}</div>
-                            <p className="status external"><span>External</span></p>
+                            <p className="status external"><span>{t('RESOURCES_EXTERNAL')}</span></p>
                         </div>
                     </div>
                 </div>

@@ -45,11 +45,11 @@ const Kaas = ({ x, y, w, h, ...props }) => {
                     <div className="cont2">
                       <div className="status_wrap">
                         <div className="value">{data.ready}</div>
-                        <p className="status running"><span>Ready</span></p>
+                        <p className="status running"><span>{t('RESOURCES_CLUSTER_READY')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.notReady}</div>
-                        <p className="status waiting"><span>NotReady</span></p>
+                        <p className="status waiting"><span>{t('RESOURCES_CLUSTER_NOT_READY')}</span></p>
                       </div>
                     </div>
                   </div>
