@@ -38,31 +38,31 @@ const ClusterNode = ({ x, y, w, h, ...props }) => {
                   <div className="cont_group clusternode">
                     <div className="cont1">
                       <div className="number_wrap">
-                        <i className="ico-type-clusternode"><span>Master</span></i>
+                        <i className="ico-type-clusternode"><span>{t('CONTROL_PLANE')}</span></i>
 
                         <p><span className="em">{data.master.on}</span>/{data.master.total}</p>
                       </div>
                       <div className="number_wrap">
-                        <i className="ico-type-clusternode"><span>Worker</span></i>
+                        <i className="ico-type-clusternode"><span>{t('WORKER')}</span></i>
                         <p><span className="em">{data.worker.on}</span>/{data.worker.total}</p>
                       </div>
                     </div>
                     <div className="cont3">
                       <div className="status_wrap">
                         <div className="value">{data.running}</div>
-                        <p className="status running"><span>Running</span></p>
+                        <p className="status running"><span>{t('RESOURCES_RUNNING')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.warning}</div>
-                        <p className="status warning"><span>Warning</span></p>
+                        <p className="status warning"><span>{t('RESOURCES_WARNING')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.unschedulable}</div>
-                        <p className="status unschedulable"><span>Unschedulable</span></p>
+                        <p className="status unschedulable"><span>{t('RESOURCES_UNSCHEDULABLE')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.total}</div>
-                        <p className="status total"><span>Total</span></p>
+                        <p className="status total"><span>{t('TOTAL')}</span></p>
                       </div>
                     </div>
                   </div>

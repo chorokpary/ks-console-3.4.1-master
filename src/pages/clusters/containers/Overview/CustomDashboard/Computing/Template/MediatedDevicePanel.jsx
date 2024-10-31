@@ -15,11 +15,11 @@ const Panel = ({ md }) => {
                     <div className="cont2">
                         <div className="status_wrap">
                             <div className="value">{md.used}</div>
-                            <p className="status used"><span>Used</span></p>
+                            <p className="status used"><span>{t('RESOURCES_USED')}</span></p>
                         </div>
                         <div className="status_wrap">
                             <div className="value">{md.unused}</div>
-                            <p className="status unused"><span>Unused</span></p>
+                            <p className="status unused"><span>{t('RESOURCES_UNUSED')}</span></p>
                         </div>
                     </div>
                 </div>

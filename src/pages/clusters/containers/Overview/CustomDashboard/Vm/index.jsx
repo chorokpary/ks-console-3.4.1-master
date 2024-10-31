@@ -46,19 +46,19 @@ const Vm = ({ x, y, w, h, ...props }) => {
                     <div className="cont2">
                       <div className="status_wrap">
                         <div className="value">{data.waiting}</div>
-                        <p className="status waiting"><span>Progressing</span></p>
+                        <p className="status waiting"><span>{t('RESOURCES_PROGRESSING')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.running}</div>
-                        <p className="status running"><span>Running</span></p>
+                        <p className="status running"><span>{t('RESOURCES_RUNNING')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.stopped}</div>
-                        <p className="status warning"><span>Stopped</span></p>
+                        <p className="status warning"><span>{t('RESOURCES_STOPPED')}</span></p>
                       </div>
                       <div className="status_wrap">
                         <div className="value">{data.error}</div>
-                        <p className="status error"><span>Error</span></p>
+                        <p className="status error"><span>{t('RESOURCES_ERROR')}</span></p>
                       </div>
                     </div>
                   </div>

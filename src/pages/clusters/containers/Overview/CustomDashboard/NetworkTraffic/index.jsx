@@ -190,7 +190,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
                     <div className="chart_tab no-tab">
                       <div className="title">
                         <i className="ico-type-outbound"></i>
-                        <h5>Outbound</h5>
+                        <h5>{t('RESOURCES_OUTBOUND')}</h5>
                       </div>
                       <div className="data">
                         <div className="number_wrap data-r">
@@ -201,7 +201,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
                     <div className="chart_tab no-tab">
                       <div className="title">
                         <i className="ico-type-inbound"></i>
-                        <h5>Inbound</h5>
+                        <h5>{t('RESOURCES_INBOUND')}</h5>
                       </div>
                       <div className="data">
                         <div className="number_wrap data-r">
@@ -212,7 +212,7 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
                     <div className="chart_tab no-tab">
                       <div className="title">
                         <i className="ico-type-network"></i>
-                        <h5>Total</h5>
+                        <h5>{t('TOTAL')}</h5>
                       </div>
                       <div className="data">
                         <div className="number_wrap data-r">
