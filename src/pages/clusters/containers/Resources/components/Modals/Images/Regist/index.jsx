@@ -314,7 +314,10 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       data.userPassword = userPassword
       data.distro_type = distroType
       data.source = `docker://${dockerUrl}/${projectName}/${imageName}:${tag}`
-      if (publicType === 'public' && !registryUrlActive) {
+      if (
+        publicType === 'public' &&
+        (!registryUrlActive || registryUrl === defaultRegistryUrl)
+      ) {
         data.boot_type = 'legacy'
         if (distroType === 'rocky') {
           data.boot_type = 'uefi'

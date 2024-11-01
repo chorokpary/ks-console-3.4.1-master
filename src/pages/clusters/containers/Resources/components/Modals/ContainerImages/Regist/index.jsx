@@ -195,7 +195,10 @@ const ResourceImageModal = props => {
       data.userPassword = userPassword
       data.os_distro = distroType
       data.source = `docker://${dockerUrl}/${projectName}/${imageName}:${tag}`
-      if (publicType === 'public' && !registryUrlActive) {
+      if (
+        publicType === 'public' &&
+        (!registryUrlActive || registryUrl === defaultRegistryUrl)
+      ) {
         data.kube_version = tag.split('-')[0]
         data.boot_type = 'legacy'
         if (distroType === 'rocky-8') {
