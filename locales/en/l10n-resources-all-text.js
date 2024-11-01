@@ -669,6 +669,7 @@ module.exports = {
   RESOURCES_SETTING_PRE_INSTALLED_APP_TIP:
     'Select Accelerator type to use pre-installed applications',
   RESOURCES_KUBERNETES_SERVER_IP: 'Kubernetes Server IP',
+  RESOURCES_KUBERNETES_SERVER_PORT: 'Kubernetes Server Port',
   RESOURCES_CLASS: 'Class',
   RESOURCES_CLUSTER: 'Cluster',
   RESOURCES_INFRA_STATUS: 'Infra Status',
