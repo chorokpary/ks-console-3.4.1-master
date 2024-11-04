@@ -542,6 +542,7 @@ module.exports = {
   RESOURCES_SUCCESS_VALID_DESC: 'Validation check completed.',
   RESOURCES_FAIL_VALID_TIP: 'Invalid user.',
   RESOURCES_FAIL_VALID_INFO: 'Invalid information.',
+  RESOURCES_FAIL_VALID_URL: 'Invalid URL.',
   RESOURCES_MIGRATING: 'Migrating',
   RESOURCES_ETHERNET: 'Ethernet',
   RESOURCES_ETHERNET_TYPE: 'Ethernet Type',

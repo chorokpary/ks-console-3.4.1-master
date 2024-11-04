@@ -70,6 +70,7 @@ const ResourceImageModal = props => {
   const [userName, setUserName] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [registryValidError, setRegistryValidError] = useState(false)
+  const [registryUrlValidError, setRegistryUrlValidError] = useState(false)
   const [popActive, setPopActive] = useState(false)
   const [imageList, setImageList] = useState([])
   const [imageListData, setImageListData] = useState([])
@@ -102,6 +103,7 @@ const ResourceImageModal = props => {
     setRegistryValid(false)
     setRegistryValidError(false)
     setSourceEmpty(false)
+    setRegistryUrlValidError(false)
   }
 
   const handleRegistryType = value => {
@@ -135,13 +137,34 @@ const ResourceImageModal = props => {
 
   const handleRegistryUrl = value => {
     resetRegistryValidity()
-    const originUrl = new URL(value)
-    setDockerUrl(originUrl.host)
     setRegistryUrl(value)
+    const originUrl = new URL(value)
+    setDockerUrl(originUrl.host)    
+  }
+
+  function isValidUrl(url) {
+    try {
+     console.log("url : "+ url)
+      new URL(url);
+      setRegistryValid(true)
+      setRegistryUrlValidError(false)
+      return true; 
+    } catch (error) {
+      setRegistryValid(false)
+      setRegistryUrlValidError(true)
+      return false; 
+    }
   }
 
   const checkUserValid = async () => {
     const userAuth = Base64.encode(`${userName}:${userPassword}`)
+
+    const isRegistUrlValid = isValidUrl(registryUrl)
+    console.log("registryUrl : "+ registryUrl)
+    console.log("isRegistUrlValid : "+ isRegistUrlValid)
+    if(!isRegistUrlValid){
+      return false
+    }
 
     const originUrl = new URL(registryUrl)
     await request
@@ -239,7 +262,7 @@ const ResourceImageModal = props => {
         sizeEmpty ||
         (publicType === 'private' && !registryValid)
       ) {
-        setSourceEmpty(true)
+        publicType === 'private' && setSourceEmpty(true)
         handleOk()
       } else {
         setRegStep(2)
@@ -820,6 +843,14 @@ const ResourceImageModal = props => {
                                 style={{ color: '#ca2621' }}
                               >
                                 {t('RESOURCES_FAIL_VALID_TIP')}
+                              </div>
+                            )}
+                            {registryUrlValidError && (
+                              <div
+                                className="form-item-error"
+                                style={{ color: '#ca2621' }}
+                              >
+                                {t('RESOURCES_FAIL_VALID_URL')}
                               </div>
                             )}
                           </>
