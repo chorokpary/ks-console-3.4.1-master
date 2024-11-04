@@ -660,6 +660,7 @@ module.exports = {
     '사전 설치 어플리케이션을 사용하기 위해서는 가속기 타입을 선택해야합니다.',
   RESOURCES_ACCELERATOR_TYPE: '가속기 타입',
   RESOURCES_KUBERNETES_SERVER_IP: '쿠버네티스 서버 IP',
+  RESOURCES_KUBERNETES_SERVER_PORT: '쿠버네티스 서버 Port',
   RESOURCES_CLASS: '클래스',
   RESOURCES_CLUSTER: '클러스터',
   RESOURCES_CLUSTER_NODE: '클러스터 노드',

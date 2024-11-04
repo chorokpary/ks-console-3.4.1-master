@@ -670,6 +670,7 @@ module.exports = {
   RESOURCES_SETTING_PRE_INSTALLED_APP_TIP:
     'Select Accelerator type to use pre-installed applications',
   RESOURCES_KUBERNETES_SERVER_IP: 'Kubernetes Server IP',
+  RESOURCES_KUBERNETES_SERVER_PORT: 'Kubernetes Server Port',
   RESOURCES_CLASS: 'Class',
   RESOURCES_CLUSTER: 'Cluster',
   RESOURCES_INFRA_STATUS: 'Infra Status',
@@ -793,7 +794,8 @@ module.exports = {
   RESOURCES_REASON: 'Reason',
   RESOURCES_DAY: 'Days',
   RESOURCES_HOUR: 'Hours',
-  RESOURCES_MINUTE: 'MINUTES',
+  RESOURCES_MINUTE: 'Minutes',
+  RESOURCES_TOTAL_OPERATION_TIME: 'Total Operation Time',
   RESOURCES_EVENT_TIME: 'Event Time',
   RESOURCES_START_TIME: 'Start Time',
   RESOURCES_END_TIME: 'End Time',

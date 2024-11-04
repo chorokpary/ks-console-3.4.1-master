@@ -104,7 +104,7 @@ const ResourceDetail = props => {
         value: detail.infra.namespace,
       },
       {
-        name: t('Pod CIDRS'),
+        name: t('PODS_CIDR'),
         value:
           detail.pod_cidrs.length > 0
             ? detail.pod_cidrs &&
@@ -114,7 +114,7 @@ const ResourceDetail = props => {
             : '-',
       },
       {
-        name: t('Service CIDRS'),
+        name: t('SERVICE_CIDR'),
         value:
           detail.service_cidrs.length > 0
             ? detail.service_cidrs &&
@@ -128,7 +128,7 @@ const ResourceDetail = props => {
         value: detail.cp_endpoint?.host,
       },
       {
-        name: t('Port'),
+        name: t('RESOURCES_KUBERNETES_SERVER_PORT'),
         value: detail.cp_endpoint?.port,
       },
       {
