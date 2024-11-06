@@ -1081,9 +1081,9 @@ const RegistModal = props => {
                                   <td>
                                     <Radio
                                       name={`select-${data.name}`}
-                                      checked={data.name === elbCheckItem}
+                                      checked={data.id === elbCheckItem}
                                       onChange={() =>
-                                        handleSingleCheck(data.name, 'elb')
+                                        handleSingleCheck(data.id, 'elb')
                                       }
                                     />
                                   </td>
