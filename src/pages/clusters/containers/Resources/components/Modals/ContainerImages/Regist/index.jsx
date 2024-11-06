@@ -66,10 +66,12 @@ const ResourceImageModal = props => {
     publicType === 'private' ? '' : defaultRegistryUrl
   )
   const [registryAuth, setRegistryAuth] = useState('')
-  const [registryValid, setRegistryValid] = useState(false)
   const [userName, setUserName] = useState('')
   const [userPassword, setUserPassword] = useState('')
-  const [registryValidError, setRegistryValidError] = useState(false)
+  const [registryChecked, setRegistryChecked] = useState(false)
+  const [registryUrlInValid, setRegistryUrlInValid] = useState(false)
+  const [registryCheckInValid, setRegistryCheckInValid] = useState(false)
+  const [registryUserInvalid, setRegistryUserInvalid] = useState(false)
   const [popActive, setPopActive] = useState(false)
   const [imageList, setImageList] = useState([])
   const [imageListData, setImageListData] = useState([])
@@ -99,9 +101,10 @@ const ResourceImageModal = props => {
   const [sourceEmpty, setSourceEmpty] = useState(false)
 
   const resetRegistryValidity = () => {
-    setRegistryValid(false)
-    setRegistryValidError(false)
-    setSourceEmpty(false)
+    setRegistryUrlInValid(false)
+    setRegistryUserInvalid(false)
+    setRegistryCheckInValid(false)
+    setRegistryChecked(false)
   }
 
   const handleRegistryType = value => {
@@ -135,35 +138,94 @@ const ResourceImageModal = props => {
 
   const handleRegistryUrl = value => {
     resetRegistryValidity()
-    const originUrl = new URL(value)
+    let originUrl = URL
+    try {
+      originUrl = new URL(value)
+    } catch {
+      setRegistryUrlInValid(true)
+      setRegistryChecked(false)
+      setRegistryUserInvalid(false)
+      return
+    }
     setDockerUrl(originUrl.host)
     setRegistryUrl(value)
   }
 
+  const handleRegistryUserName = value => {
+    resetRegistryValidity()
+    if (value === '') {
+      setRegistryUserInvalid(true)
+      return
+    }
+    setUserName(value)
+  }
+
+  const handleRegistryUserPassword = value => {
+    resetRegistryValidity()
+    if (value === '') {
+      setRegistryUserInvalid(true)
+      return
+    }
+    setUserPassword(value)
+  }
+
   const checkUserValid = async () => {
+    setRegistryChecked(true)
+    setRegistryCheckInValid(false)
+    if (registryUrl === '') {
+      setRegistryUrlInValid(true)
+      return
+    }
+    if (userName === '' || userPassword === '') {
+      setRegistryUserInvalid(true)
+      return
+    }
+
     const userAuth = Base64.encode(`${userName}:${userPassword}`)
 
     const originUrl = new URL(registryUrl)
-    await request
-      .post(`customharbor/users`, {
-        auth: userAuth,
-        originUrl: originUrl.origin,
-      })
+    const urlParams = originUrl.searchParams
+    const project = urlParams.get('projects')
+    fetchWithTimeout(userAuth, originUrl, 1000)
       .then(() => {
-        Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
-        setRegistryValid(true)
-        setRegistryValidError(false)
-        setSourceEmpty(false)
+        setRegistryUrlInValid(false)
+        setRegistryUserInvalid(false)
 
         setRegistryAuth(userAuth)
         setRegistryUrl(registryUrl)
         setUserName(userName)
         setUserPassword(userPassword)
+        request
+          .post(`customharbor/private`, {
+            auth: userAuth,
+            projectName: project,
+            originUrl: originUrl.origin,
+            page: 1,
+          })
+          .then(() => {
+            Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
+            setRegistryUrlInValid(false)
+          })
+          .catch(() => {
+            setRegistryUrlInValid(true)
+          })
       })
       .catch(() => {
-        setRegistryValid(false)
-        setRegistryValidError(true)
+        setRegistryUrlInValid(false)
+        setRegistryUserInvalid(true)
       })
+  }
+
+  function fetchWithTimeout(userAuth, originUrl, timeout = 5000) {
+    return Promise.race([
+      request.post(`customharbor/users`, {
+        auth: userAuth,
+        originUrl: originUrl.origin,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), timeout)
+      ),
+    ])
   }
 
   const handleImageSizeActive = () => {
@@ -233,13 +295,13 @@ const ResourceImageModal = props => {
     const { data } = form.current.props
 
     if (step === 1) {
+      setRegistryCheckInValid(!registryChecked)
       if (
         data.name === undefined ||
         !regexName.test(data.name) ||
-        sizeEmpty ||
-        (publicType === 'private' && !registryValid)
+        (publicType === 'private' &&
+          (registryUrlInValid || registryUserInvalid || !registryChecked))
       ) {
-        setSourceEmpty(true)
         handleOk()
       } else {
         setRegStep(2)
@@ -438,14 +500,14 @@ const ResourceImageModal = props => {
 
   const getHarborImages = () => {
     if (registryUrlActive) {
-      if (!registryValid) {
-        setRegistryValidError(true)
+      if (registryUrlInValid) {
+        setRegistryUserInvalid(true)
       } else {
-        setRegistryValidError(false)
+        setRegistryUserInvalid(false)
         getPriavteHarborRepositories()
       }
     } else {
-      setRegistryValidError(false)
+      setRegistryUserInvalid(false)
       getPublicHarborRepositories()
     }
   }
@@ -717,10 +779,10 @@ const ResourceImageModal = props => {
                   <div className={styles.content_box}>
                     <div
                       className={`${styles.cont_box_wrap} ${
-                        (publicType === 'private' &&
-                          !registryValid &&
-                          sourceEmpty) ||
-                        registryValidError
+                        publicType === 'private' &&
+                        (registryUrlInValid ||
+                          registryCheckInValid ||
+                          registryUserInvalid)
                           ? styles.formErrorStyle
                           : ''
                       }`}
@@ -778,7 +840,7 @@ const ResourceImageModal = props => {
                                       name="username"
                                       defaultValue={userName}
                                       onChange={e =>
-                                        setUserName(e.target.value)
+                                        handleRegistryUserName(e.target.value)
                                       }
                                     />
                                   </div>
@@ -789,7 +851,9 @@ const ResourceImageModal = props => {
                                       name="password"
                                       defaultValue={userPassword}
                                       onChange={e =>
-                                        setUserPassword(e.target.value)
+                                        handleRegistryUserPassword(
+                                          e.target.value
+                                        )
                                       }
                                     />
                                   </div>
@@ -806,7 +870,7 @@ const ResourceImageModal = props => {
                                 </div>
                               </div>
                             )}
-                            {!registryValid && sourceEmpty && (
+                            {publicType === 'private' && registryCheckInValid && (
                               <div
                                 className="form-item-error"
                                 style={{ color: '#ca2621' }}
@@ -814,27 +878,25 @@ const ResourceImageModal = props => {
                                 {t('RESOURCES_VALID_TIP')}
                               </div>
                             )}
-                            {registryValidError && (
+                            {publicType === 'private' && registryUserInvalid && (
                               <div
                                 className="form-item-error"
                                 style={{ color: '#ca2621' }}
                               >
-                                {t('RESOURCES_FAIL_VALID_TIP')}
+                                {t('RESOURCES_HARBOR_USER_INVALID_TIP')}
+                              </div>
+                            )}
+                            {registryUrlInValid && (
+                              <div
+                                className="form-item-error"
+                                style={{ color: '#ca2621' }}
+                              >
+                                {t('RESOURCES_HARBOR_URL_INVALID_TIP')}
                               </div>
                             )}
                           </>
                         )}
                       </div>
-                      {publicType === 'private' &&
-                        !registryUrlActive &&
-                        sourceEmpty && (
-                          <div
-                            className="form-item-error"
-                            style={{ color: '#ca2621' }}
-                          >
-                            {t('RESOURCES_HARBOR_VALID_TIP')}
-                          </div>
-                        )}
                     </div>
                   </div>
                 </div>
@@ -1260,11 +1322,6 @@ const ResourceImageModal = props => {
                 {sourceEmpty && (
                   <div className="form-item-error">
                     {t('RESOURCES_SETTING_IMAGE_TIP')}
-                  </div>
-                )}
-                {registryValidError && (
-                  <div className="form-item-error">
-                    {t('RESOURCES_VALID_TIP')}
                   </div>
                 )}
               </div>

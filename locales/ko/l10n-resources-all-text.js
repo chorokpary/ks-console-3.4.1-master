@@ -948,6 +948,8 @@ module.exports = {
     '호스트 라우트 정보를 정확히 입력해주세요.</p> Destination - ipv4network, nexthop - ipv4',
   RESOURCES_LOG: '로그',
   RESOURCES_HARBOR_VALID_TIP: 'Harbor URL 정보를 입력해 주세요.',
+  RESOURCES_HARBOR_URL_INVALID_TIP: '유효하지 않은 Harbor URL 입니다.',
+  RESOURCES_HARBOR_USER_INVALID_TIP: '유효하지 않은 Harbor 사용자 입니다.',
   RESOURCES_IMAGE_BUILD: '이미지 빌드',
   RESOURCES_IMAGE_BUILD_DESC:
     '이미지 빌드의 상태와 사용현황을 관리 할 수 있습니다.',
