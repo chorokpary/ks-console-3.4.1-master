@@ -18,7 +18,7 @@
 module.exports = {
   // Banner
   LOG_RECEIVER_PL: '로그 수신기',
-  LOG_COLLECTION_DESC: '시스템은 각 컨테이너에서 표준 출력(stdout) 및 표준 오류(stderr) 로그를 수집하여 하나 이상의 대상 서비스로 보냅니다.',
+  LOG_COLLECTION_DESC: '시스템은 각 컨테이너에서 표준 출력(stdout) 및 표준 오류(stderr) 로그를 수집하여 하나 이상의 대상 서버로 보냅니다.',
   // Banner > Add Log Receiver
   ADD_LOG_RECEIVER: '로그 수신기 추가',
   LOG_COLLECTION_TIPS: '각 유형에 대해 하나의 로그 수신기를 추가할 수 있습니다.',
@@ -27,19 +27,19 @@ module.exports = {
   KAFKA_DESC: 'Kafka는 오픈 소스 스트림 처리 플랫폼입니다.',
   FLUENTD_DESC: 'Fluentd는 통합 로깅 계층을 위한 오픈 소스 데이터 수집기입니다.',
   // Banner > Add Log Receiver > Elasticsearch
-  LOG_COLLECTION_ES_URL_TIPS: '기본 제공 ElasticSearch 서비스가 기본적으로 사용됩니다. 클러스터 내부 또는 외부에 독립적으로 배포된 ElasticSearch의 IP 주소를 입력할 수도 있습니다.',
+  LOG_COLLECTION_ES_URL_TIPS: '기본 제공 ElasticSearch 서버가 기본적으로 사용됩니다. 클러스터 내부 또는 외부에 독립적으로 배포된 ElasticSearch의 IP 주소를 입력할 수도 있습니다.',
   LOG_COLLECTION_ES_INDEX_TIPS: '인덱스 접두사를 사용하여 쿼리 속도를 높입니다. 인덱스 접두사는 <Index prefix>-<Year-month-date> 형식으로 자동 생성됩니다.',
   ADDRESS_VALUE: '주소: {value}',
   // Banner > Add Log Receiver > Kafka
   TOPIC: '주제',
   ADD_SERVICE_ADDRESS: '추가',
   SERVICE_ADDRESS: '서버 주소',
-  ENTER_SERVICE_ADDRESS: '서비스 주소를 입력하십시오.',
-  INVALID_SERVICE_ADDRESS: '올바른 서비스 주소를 입력하십시오.',
-  SERVICE_ADDRESS_EXIST: '서비스 주소가 이미 존재합니다. 다른 서비스 주소를 입력하십시오.',
+  ENTER_SERVICE_ADDRESS: '서버 주소를 입력하십시오.',
+  INVALID_SERVICE_ADDRESS: '올바른 서버 주소를 입력하십시오.',
+  SERVICE_ADDRESS_EXIST: '서버 주소가 이미 존재합니다. 다른 서버 주소를 입력하십시오.',
   EXAMPLE_VALUE: '예: {value}',
   // Banner > Add Log Receiver > Fluentd
-  LOG_COLLECTION_FLUENTD_URL_TIPS: '로그를 수신하는 Fluentd 서비스의 주소를 입력합니다.',
+  LOG_COLLECTION_FLUENTD_URL_TIPS: '로그를 수신하는 Fluentd 서버의 주소를 입력합니다.',
   // Container Logs
   EMPTY_LOG_COLLECTIONS: '로그 수신기를 찾을 수 없습니다. 로그 수신기를 추가하고 로그를 외부 로그 수신기로 보낼 수 있습니다.',
   // Resource Events
