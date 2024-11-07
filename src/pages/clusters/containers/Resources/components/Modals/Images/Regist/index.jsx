@@ -646,6 +646,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
         obj.popularity = obj.pull_count
         return obj
       })
+      setImageListData(list)
       setImageList(list)
       setPopActive(true)
       setImageText(defaultImageText)
