@@ -153,16 +153,18 @@ const ModifyModal = props => {
   // cpu count
   const addVcpus = e => {
     e.preventDefault();
-    setVcpus(vcpus + 1);
     const { data } = form.current.props;
-    data.vcpus = vcpus + 1;
+    if(regexNum.test(data.vcpus) || data.vcpus == "" || data.vcpus == 0){
+        setVcpus(Number(vcpus) + 1);
+        data.vcpus = Number(vcpus) + 1;  
+    }    
   };
   const minusVcpus = e => {
     e.preventDefault();
     if (vcpus > 0) {
-      setVcpus(vcpus - 1);
+      setVcpus(Number(vcpus) - 1);
       const { data } = form.current.props;
-      data.vcpus = vcpus - 1;
+      data.vcpus = Number(vcpus) - 1;
     }
   };
 
