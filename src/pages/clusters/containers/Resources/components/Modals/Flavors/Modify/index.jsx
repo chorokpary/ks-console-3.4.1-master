@@ -61,6 +61,13 @@ const ModifyModal = props => {
         ? props.store.detail.flavor.ram
         : props.store.detail.flavor.ram / 1024
     );
+
+    setTab(
+      props.store.detail.flavor.ram / 1024 < 1
+        ? "MiB"
+        : "GiB"
+    );
+
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
       obj => obj.value === 'True'
     );
@@ -282,14 +289,14 @@ const ModifyModal = props => {
 
   const handleByte = size => {
     if (size === 'MiB') {
-      if (ram !== 0) {
-        setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
-      }
+      // if (ram !== 0) {
+      //   setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
+      // }
       setByteFlag(false);
     } else {
-      if (ram !== 0) {
-        setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
-      }
+      // if (ram !== 0) {
+      //   setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
+      // }
       setByteFlag(true);
     }
   };
@@ -333,6 +340,7 @@ const ModifyModal = props => {
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
+      
       onOk({ flavor: data });
     });
   };
