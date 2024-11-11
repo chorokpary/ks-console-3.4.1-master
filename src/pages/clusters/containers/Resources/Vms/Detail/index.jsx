@@ -289,7 +289,7 @@ const VmDetail = props => {
         value:
           detail.vm.networks.length > 0
             ? detail.vm.networks &&
-              detail.vm.networks.forEach(network => {
+              detail.vm.networks.map(network => {
                 if (network.name !== 'k8s-pod-network') {
                   return <p key={network.name}>{network.ip}</p>
                 }

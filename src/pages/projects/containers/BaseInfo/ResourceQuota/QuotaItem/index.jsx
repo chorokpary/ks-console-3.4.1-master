@@ -103,7 +103,7 @@ const QuotaItem = ({ name, total, used }) => {
       used = `${memoryFormat(used, 'Gi')} Gi`
       total = `${memoryFormat(total, 'Gi')} Gi`
     }
-  } else if (name === 'limits.storage' || name === 'requests.storage') {
+  } else if (name === 'requests.storage') {
     if (total) {
       ratio = Number(memoryFormat(used)) / Number(memoryFormat(total))
       used = `${memoryFormat(used, 'Gi')} Gi`

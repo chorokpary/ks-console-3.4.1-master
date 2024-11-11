@@ -53,8 +53,8 @@ export default class ResourceLimit extends React.Component {
 
   static defaultProps = {
     value: {},
-    onChange() {},
-    onError() {},
+    onChange() { },
+    onError() { },
     cpuProps: {},
     memoryProps: {},
     storageProps: {},
@@ -163,13 +163,6 @@ export default class ResourceLimit extends React.Component {
       true
     )
 
-    const storageLimits = ResourceLimit.allowInputDot(
-      limitSto,
-      storageUnit,
-      memoryFormat,
-      true
-    )
-
     const workspaceReqMeo = memoryFormat(
       `${ResourceLimit.getWorkspaceRequestLimit(props, 'memory')}Mi`,
       memoryUnit
@@ -194,12 +187,11 @@ export default class ResourceLimit extends React.Component {
       requests: {
         cpu: cpuRequests,
         memory: memoryRequests,
-	storage: storageRequests,
+        storage: storageRequests,
       },
       limits: {
         cpu: cpuLimits,
         memory: memoryLimits,
-	storage: storageLimits,
       },
       workspaceRequests: {
         cpu: isNaN(workspaceCpuRequests) ? 'Not Limited' : workspaceCpuRequests,
@@ -351,14 +343,6 @@ export default class ResourceLimit extends React.Component {
       Number(requests.memory) > Number(limits.memory)
     ) {
       memoryError = 'RequestExceed'
-    }
-
-    if (
-      limits.storage &&
-      !String(limits.storage).endsWith('.') &&
-      Number(requests.storage) > Number(limits.storage)
-    ) {
-      storageError = 'RequestExceed'
     }
 
     return { cpuError, memoryError, storageError }
@@ -518,9 +502,8 @@ export default class ResourceLimit extends React.Component {
 
   handleStorageChange = value => {
     this.setState(
-      ({ requests, limits }) => ({
+      ({ requests }) => ({
         requests: { ...requests, storage: value[0] === 0 ? '' : value[0] },
-        limits: { ...limits, storage: value[1] === 0 ? '' : value[1] },
       }),
       this.checkAndTrigger
     )
@@ -771,9 +754,9 @@ export default class ResourceLimit extends React.Component {
             </Column>
           </Columns>
         </div>
-	<div className={styles.inputWrapper}>
-	  <Columns className="is-gapless">
-	    <Column>
+        <div className={styles.inputWrapper}>
+          <Columns className="is-gapless">
+            <Column>
               <div className={styles.inputGroup}>
                 <Icon name="storage" size={48} />
                 <div
@@ -792,27 +775,11 @@ export default class ResourceLimit extends React.Component {
                     <span className={styles.unit}>{this.storageUnit}</span>
                   </div>
                 </div>
-                <div
-                  className={classnames(styles.input, {
-                    [styles.error]: storageError || limit.limitStorageError,
-                  })}
-                >
-                  <span className={styles.label}>{t('STORAGE_LIMIT')}</span>
-                  <div className={styles.inputBox}>
-                    <Input
-                      name="limits.storage"
-                      value={this.getLimit(this.state.limits.storage)}
-                      onChange={this.handleInputChange}
-                      placeholder={t('NO_LIMIT')}
-                    />
-                    <span className={styles.unit}>{this.storageUnit}</span>
-                  </div>
-                </div>
               </div>
             </Column>
-	    {supportGpuSelect && this.renderGpuSelect()}
-	  </Columns>
-	</div>
+            {supportGpuSelect && this.renderGpuSelect()}
+          </Columns>
+        </div>
         {this.ifRenderTip && this.renderQuotasTip()}
         {(cpuError || memoryError || storageError) && (
           <Alert
