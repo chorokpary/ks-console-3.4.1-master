@@ -230,12 +230,11 @@ export default class QuotaEditModal extends React.Component {
         limits: {
           cpu: get(formTemplate, 'spec.hard["limits.cpu"]'),
           memory: get(formTemplate, 'spec.hard["limits.memory"]'),
-	  storage: get(formTemplate, 'spec.hard["limits.storage"]'),
         },
         requests: {
           cpu: get(formTemplate, 'spec.hard["requests.cpu"]'),
           memory: get(formTemplate, 'spec.hard["requests.memory"]'),
-	  storage: get(formTemplate, 'spec.hard["requests.storage"]'),
+          storage: get(formTemplate, 'spec.hard["requests.storage"]'),
           ...gpuSetting,
         },
       },
@@ -251,11 +250,6 @@ export default class QuotaEditModal extends React.Component {
           'spec.hard["limits.memory"]',
           get(value, 'limits.memory', null)
         )
-	set(
-          formTemplate,
-          'spec.hard["limits.storage"]',
-          get(value, 'limits.storage', null)
-        )
         set(
           formTemplate,
           'spec.hard["requests.cpu"]',
@@ -266,7 +260,7 @@ export default class QuotaEditModal extends React.Component {
           'spec.hard["requests.memory"]',
           get(value, 'requests.memory', null)
         )
-	set(
+        set(
           formTemplate,
           'spec.hard["requests.storage"]',
           get(value, 'requests.storage', null)
