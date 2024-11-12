@@ -414,6 +414,8 @@ const RegistModal = props => {
                 <div className={styles.situation}>
                   {regStep == 2
                     ? t('RESOURCES_CURRENT')
+                    : regStep > 2
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
                     : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
