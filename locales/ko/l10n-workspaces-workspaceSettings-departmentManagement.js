@@ -34,7 +34,7 @@ module.exports = {
   CREATE_DEPARTMENT: '부서 생성',
   DELETE_GROUP_TIP: '부서 <strong>{group_name}</strong>을(를) 삭제하시겠습니까? 관련된 역할이 사용자로부터 언바운드됩니다.',
   DELETE_PARENT_GROUP_TIP: '부서 <strong>{group_name}</strong>을(를) 삭제하시겠습니까? 하위 부서도 삭제되고 관련 역할이 사용자로부터 언바인딩 됩니다.',
-  PROJECT_VALUE: '프로토콜: {value}',
+  PROJECT_VALUE: '프로젝트: {value}',
   PROJECT_ROLE_VALUE: '프로젝트 역할: {value}',
   DEVOPS_VALUE: '데브옵스 프로젝트: {value}',
   DEVOPS_PROJECT_ROLES_VALUE: '데브옵스 프로젝트 역할: {value}',

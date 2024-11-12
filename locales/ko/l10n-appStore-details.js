@@ -30,7 +30,7 @@ module.exports = {
   CLUSTER_NAME_DESC: '이름은 소문자, 숫자 및 하이픈(-)만 포함할 수 있으며 소문자로 시작하고 소문자 또는 숫자로 끝나야 합니다. 최대 길이는 32자입니다.',
   FEDPROJECT_CANNOT_DEPLOY_APP_TIP: '멀티 클러스터 프로젝트에는 앱을 배포할 수 없습니다.',
   LATEST_VERSION_SCAP: '최신 버전',
-  WORKSPACE_EMPTY_DESC: '\b워크스페이스를 선택하십시오',
+  WORKSPACE_EMPTY_DESC: '워크스페이스를 선택하십시오',
   VERSION_EMPTY_DESC: '버전을 선택해주세요.',
   // Install > App Settings
   HELM_APP_SCHEMA_FORM_TIP: '사용자 인터페이스 혹은 YAML 파일을 통해 앱을 설정할 수 있습니다. 사용자 인터페이스나 혹은 YAML 파일을 이용한 설정은 서로 영향주지 않습니다.',

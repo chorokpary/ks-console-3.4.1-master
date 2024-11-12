@@ -1081,9 +1081,9 @@ const RegistModal = props => {
                                   <td>
                                     <Radio
                                       name={`select-${data.name}`}
-                                      checked={data.name === elbCheckItem}
+                                      checked={data.id === elbCheckItem}
                                       onChange={() =>
-                                        handleSingleCheck(data.name, 'elb')
+                                        handleSingleCheck(data.id, 'elb')
                                       }
                                     />
                                   </td>
@@ -1336,7 +1336,7 @@ const RegistModal = props => {
                       ))}
                     <label
                       className={`${
-                        networkDataList.filter(x => elbCheckItem === x.name)
+                        networkDataList.filter(x => elbCheckItem === x.id)
                           .length > 0
                           ? ''
                           : 'hide'
@@ -1345,7 +1345,7 @@ const RegistModal = props => {
                       ELB ({elbSelect})
                     </label>
                     {networkDataList
-                      .filter(x => elbCheckItem === x.name)
+                      .filter(x => elbCheckItem === x.id)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div
