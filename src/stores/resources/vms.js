@@ -530,7 +530,7 @@ export default class VmStore extends Base {
       const result = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/volumes`
+        )}/edgetron/resources/kubevirt/volumes/vm/${params.id}`
       )
       const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
 
@@ -736,7 +736,7 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/floating_ips`
+      )}/edgetron/resources/kubevirt/floating_ips/vm/${params.id}`
     )
     const response = {
       ...params,
@@ -756,7 +756,7 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/security_groups`
+      )}/edgetron/resources/kubevirt/security_groups/vm/${params.id}`
     )
     const response = {
       ...params,
