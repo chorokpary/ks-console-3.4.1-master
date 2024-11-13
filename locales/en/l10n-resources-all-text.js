@@ -1008,6 +1008,7 @@ module.exports = {
     'Port range should be a number or a range from 1024 to 49151.',
   RESOURCES_JUPYTER_TOKEN_DESC: 'Token should be 48-character hexadecimal.',
   RESOURCES_PASSWORD_EMPTY_DESC: 'Please enter the password.',
+  RESOURCES_DELETING_DEFAULT_NOT_ALLOWED:'The default item cannot be deleted.',
   RESOURCES_SUCCESS: 'Success',
   RESOURCES_ENVIRONMENT_CONFIGURATION: 'Server Configuration',
   RESOURCES_UPLOAD: 'Upload',

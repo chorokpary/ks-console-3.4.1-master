@@ -875,7 +875,12 @@ const RegistModal = props => {
     },
 
     delColumn: id => {
-      setListPasswordRoute(listPasswordRoute.filter(el => el !== id))
+      if (listPasswordRoute.length === 1) {
+        Notify.info(t('RESOURCES_DELETING_DEFAULT_NOT_ALLOWED'))
+        return false
+      }
+      if (listPasswordRoute.length > 1 && id > 1)
+        setListPasswordRoute(listPasswordRoute.filter(el => el !== id))
     },
   }
 
@@ -896,7 +901,12 @@ const RegistModal = props => {
       setListFileRoute(fileRoutes => [...fileRoutes, nextFileRoute.current])
     },
     delColumn: id => {
-      setListFileRoute(listFileRoute.filter(el => el !== id))
+      if (listFileRoute.length === 1) {
+        Notify.info(t('RESOURCES_DELETING_DEFAULT_NOT_ALLOWED'))
+        return false
+      }
+      if (listFileRoute.length > 1)
+        setListFileRoute(listFileRoute.filter(el => el !== id))
     },
   }
 
@@ -920,7 +930,12 @@ const RegistModal = props => {
       ])
     },
     delColumn: id => {
-      setlistPackageRoute(listPackageRoute.filter(el => el !== id))
+      if (listPackageRoute.length === 1) {
+        Notify.info(t('RESOURCES_DELETING_DEFAULT_NOT_ALLOWED'))
+        return false
+      }
+      if (listPackageRoute.length > 1)
+        setlistPackageRoute(listPackageRoute.filter(el => el !== id))
     },
   }
 
@@ -1933,8 +1948,8 @@ const RegistModal = props => {
                                 icon="trash"
                                 className={styles.scriptdelete}
                                 onClick={() =>
-                                  listPasswordRoute.length > 1 &&
-                                  obj > 1 &&
+                                  //listPasswordRoute.length > 1 &&
+                                  //obj > 1 &&
                                   handlePasswordRoute.delColumn(obj)
                                 }
                               />
@@ -1993,7 +2008,7 @@ const RegistModal = props => {
                               icon="trash"
                               className={styles.scriptdelete}
                               onClick={() =>
-                                listFileRoute.length > 1 &&
+                                //listFileRoute.length > 1 &&
                                 handleFileRoute.delColumn(obj)
                               }
                             />
@@ -2051,7 +2066,7 @@ const RegistModal = props => {
                               icon="trash"
                               className={styles.scriptdelete}
                               onClick={() =>
-                                listPackageRoute.length > 1 &&
+                                //listPackageRoute.length > 1 &&
                                 handlePackageRoute.delColumn(obj)
                               }
                             />

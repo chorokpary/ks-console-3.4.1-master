@@ -997,6 +997,7 @@ module.exports = {
     '포트는 1024~49151 숫자 범위이어야 합니다.',
   RESOURCES_JUPYTER_TOKEN_DESC: '토큰은 48자리의 16진수여야 합니다.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
+  RESOURCES_DELETING_DEFAULT_NOT_ALLOWED:'기본 항목은 삭제가 허용되지 않습니다.',
   RESOURCES_SUCCESS: '성공',
   RESOURCES_ENVIRONMENT_CONFIGURATION: '서버 구성',
   RESOURCES_UPLOAD: '업로드',
