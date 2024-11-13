@@ -225,6 +225,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_1284: 'REQUIRE_SERVICE_NETWORK',
   RESOURCES_MMS_ERROR_1285: 'MACHINE_NOT_READY',
   RESOURCES_MMS_ERROR_1286: 'MACHINE_ACTION_NOT_SUPPORTED',
+  RESOURCES_MMS_ERROR_1287: 'RESOURCE_IN_USE',
   RESOURCES_MMS_ERROR_1301: 'HELM_CHART_NOT_FOUND',
   RESOURCES_MMS_ERROR_1302: 'HELM_REPO_NOT_FOUND',
   RESOURCES_MMS_ERROR_1303: 'HELM_RELEASE_NOT_FOUND',
@@ -260,7 +261,8 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_100: '관리자에게 문의해주세요.',
   RESOURCES_MMS_ERROR_DESC_101: 'Secret을 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_130: 'Secret이 이미 존재합니다.',
-  RESOURCES_MMS_ERROR_DESC_140: '시스템 프로젝트에 컴퓨팅 리소스를 생성할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_140:
+    '시스템 프로젝트에 컴퓨팅 리소스를 생성할 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_240: 'VM을 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_241: 'VM console logger 를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_242: 'VM keypair를 찾을 수 없습니다.',
@@ -370,14 +372,16 @@ module.exports = {
     'Resource가 이미 다른 정책에 속해 있기 때문에 SR-IOV 정책을 만들 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_482:
     'Resource가 SR-IOV 네트워크에 속해 있으므로 SR-IOV 리소스를 제거할 수 없습니다.',
-  RESOURCES_MMS_ERROR_DESC_483: '올바르지 않은 MTU입니다. NIC의 MTU 설정을 확인하세요.',
+  RESOURCES_MMS_ERROR_DESC_483:
+    '올바르지 않은 MTU입니다. NIC의 MTU 설정을 확인하세요.',
   RESOURCES_MMS_ERROR_DESC_540: '라우터를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_541: '네트워크에 연결된 라우터가 없습니다.',
   RESOURCES_MMS_ERROR_DESC_550: '라우터 이름이 중복됩니다.',
   RESOURCES_MMS_ERROR_DESC_551: '라우터 이름이 일치하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_552: '라우터는 여전히 Float IP와 연결되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_553: '외부 네트워크없이 SNAT를 구성하면 안됩니다.',
-  RESOURCES_MMS_ERROR_DESC_554: '몇 가지 이유로 인해 라우터를 업데이트 할 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_554:
+    '몇 가지 이유로 인해 라우터를 업데이트 할 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_555: '외부 네트워크가 올바르게 구성되지 않았습니다.',
   RESOURCES_MMS_ERROR_DESC_556: '외부 네트워크의 MTU가 충분하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_640: 'Float IP를 찾을 수 없습니다.',
@@ -511,6 +515,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_1285:
     '클러스터 머신은 Lifecycle 관리를 위한 준비가 되어 있지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_1286: '선택한 머신 작업은 지원되지 않습니다.',
+  RESOURCES_MMS_ERROR_DESC_1287: '사용 중인 리소스는 삭제할 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_1301: 'helm chart를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_1302: 'helm repository를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_1303: 'helm release를 찾을 수 없습니다.',
@@ -521,16 +526,25 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_1371: 'Helm repository 목록을 얻지 못했습니다.',
   RESOURCES_MMS_ERROR_DESC_1372: 'Helm charts 목록을 얻지 못했습니다.',
   RESOURCES_MMS_ERROR_DESC_1373: 'Helm release 목록을 얻지 못했습니다.',
-  RESOURCES_MMS_ERROR_DESC_1401: '지정된 이름의 MIG 지원 장치를 찾을 수 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_1401:
+    '지정된 이름의 MIG 지원 장치를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_1402: '지정된 이름의 MIG 설정을 찾을 수 없습니다.',
-  RESOURCES_MMS_ERROR_DESC_1403: '지정된 노드에서 GPU 인스턴스를 발견하지 못했습니다.',
-  RESOURCES_MMS_ERROR_DESC_1431: '지정한 MIG 설정이 대상 GPU 노드에서 지원되지 않습니다.',
-  RESOURCES_MMS_ERROR_DESC_1432: '선택한 GPU 워크로드 유형이 지원되지 않습니다.',
-  RESOURCES_MMS_ERROR_DESC_1433: '지정한 vGPU 설정이 대상 GPU 노드에서 지원되지 않습니다.',
-  RESOURCES_MMS_ERROR_DESC_1451: '대상 GPU 노드에 MIG 설정을 적용하는데 실패하였습니다.',
-  RESOURCES_MMS_ERROR_DESC_1452: '선택한 워크로드 유형으로 GPU 노드를 구성하는데 실패하였습니다.',
-  RESOURCES_MMS_ERROR_DESC_1453: '대상 GPU 노드에 vGPU 설정을 적용하는데 실패하였습니다.',
-  RESOURCES_MMS_ERROR_DESC_1454: 'GPU 노드에 설정을 적용하는데 실패하였습니다. 노드에 장착된 GPU를 사용 중인 가상머신이 존재하는 경우이니 가상머신을 제거 후 다시 시도하시기 바랍니다.',
+  RESOURCES_MMS_ERROR_DESC_1403:
+    '지정된 노드에서 GPU 인스턴스를 발견하지 못했습니다.',
+  RESOURCES_MMS_ERROR_DESC_1431:
+    '지정한 MIG 설정이 대상 GPU 노드에서 지원되지 않습니다.',
+  RESOURCES_MMS_ERROR_DESC_1432:
+    '선택한 GPU 워크로드 유형이 지원되지 않습니다.',
+  RESOURCES_MMS_ERROR_DESC_1433:
+    '지정한 vGPU 설정이 대상 GPU 노드에서 지원되지 않습니다.',
+  RESOURCES_MMS_ERROR_DESC_1451:
+    '대상 GPU 노드에 MIG 설정을 적용하는데 실패하였습니다.',
+  RESOURCES_MMS_ERROR_DESC_1452:
+    '선택한 워크로드 유형으로 GPU 노드를 구성하는데 실패하였습니다.',
+  RESOURCES_MMS_ERROR_DESC_1453:
+    '대상 GPU 노드에 vGPU 설정을 적용하는데 실패하였습니다.',
+  RESOURCES_MMS_ERROR_DESC_1454:
+    'GPU 노드에 설정을 적용하는데 실패하였습니다. 노드에 장착된 GPU를 사용 중인 가상머신이 존재하는 경우이니 가상머신을 제거 후 다시 시도하시기 바랍니다.',
   RESOURCES_MMS_ERROR_DESC_9040: '라이센스를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_9041:
     '현재 사이트는 사이트명을 구성하지 않았습니다.',
@@ -545,4 +559,4 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_9057: '라이센스 키는 유효하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_9061: '기본 라이센스가 여러 개 설치되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_9062: '기본 라이센스가 설치되어 있지 않습니다.',
-};
+}

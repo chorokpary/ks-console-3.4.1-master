@@ -61,6 +61,7 @@ export default {
       isFederated,
       renderScheduleTab = false,
       supportGpuSelect = false,
+      supportStorageSelect = true,
       ...props
     }) {
       const kind = MODULE_KIND_MAP[module]
@@ -172,6 +173,7 @@ export default {
         modal: CreateModal,
         store,
         supportGpuSelect,
+        supportStorageSelect,
         ...props,
       })
     },
@@ -258,7 +260,7 @@ export default {
     },
   },
   'workload.template.edit': {
-    on({ store, detail, success, supportGpuSelect = false, ...props }) {
+    on({ store, detail, success, supportGpuSelect = false, supportStorageSelect = true, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           const customMode = get(data, 'spec.template.spec.customMode', {})
@@ -277,6 +279,7 @@ export default {
         detail: toJS(detail._originData),
         modal: EditConfigTemplateModal,
         supportGpuSelect,
+        supportStorageSelect,
         hideVolumeSetting: store.module === 'statefulsets',
         ...props,
       })

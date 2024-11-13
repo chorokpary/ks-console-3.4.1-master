@@ -225,6 +225,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_1284: 'REQUIRE_SERVICE_NETWORK',
   RESOURCES_MMS_ERROR_1285: 'MACHINE_NOT_READY',
   RESOURCES_MMS_ERROR_1286: 'MACHINE_ACTION_NOT_SUPPORTED',
+  RESOURCES_MMS_ERROR_1287: 'RESOURCE_IN_USE',
   RESOURCES_MMS_ERROR_1301: 'HELM_CHART_NOT_FOUND',
   RESOURCES_MMS_ERROR_1302: 'HELM_REPO_NOT_FOUND',
   RESOURCES_MMS_ERROR_1303: 'HELM_RELEASE_NOT_FOUND',
@@ -260,7 +261,8 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_100: 'Need to contact Admin',
   RESOURCES_MMS_ERROR_DESC_101: 'Secret not found',
   RESOURCES_MMS_ERROR_DESC_130: 'Secret already existed',
-  RESOURCES_MMS_ERROR_DESC_140: 'It is not allowed to create any computing resource into system project',
+  RESOURCES_MMS_ERROR_DESC_140:
+    'It is not allowed to create any computing resource into system project',
   RESOURCES_MMS_ERROR_DESC_240: 'VM not found',
   RESOURCES_MMS_ERROR_DESC_241: 'VM console logger not found',
   RESOURCES_MMS_ERROR_DESC_242: 'The given VM keypair is not found',
@@ -271,7 +273,8 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_250: 'VM name is duplicated',
   RESOURCES_MMS_ERROR_DESC_251: 'VM name is not identical',
   RESOURCES_MMS_ERROR_DESC_252: 'VM console logger already existed',
-  RESOURCES_MMS_ERROR_DESC_253: 'A duplicated VM keypair has been found in the store',
+  RESOURCES_MMS_ERROR_DESC_253:
+    'A duplicated VM keypair has been found in the store',
   RESOURCES_MMS_ERROR_DESC_254: 'VM image name is duplicated',
   RESOURCES_MMS_ERROR_DESC_255: 'VM image name is not identical',
   RESOURCES_MMS_ERROR_DESC_256: 'VM snapshot name is not identical',
@@ -288,29 +291,39 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_267: 'Failed to obtain the VM info',
   RESOURCES_MMS_ERROR_DESC_268: 'Failed to obtain the logged user list',
   RESOURCES_MMS_ERROR_DESC_269: 'Failed to delete VM',
-  RESOURCES_MMS_ERROR_DESC_270: 'It is not allowed to schedule the VM to a specific node when attaching host devices',
-  RESOURCES_MMS_ERROR_DESC_271: 'There is no worker node fulfills the requests of resource',
+  RESOURCES_MMS_ERROR_DESC_270:
+    'It is not allowed to schedule the VM to a specific node when attaching host devices',
+  RESOURCES_MMS_ERROR_DESC_271:
+    'There is no worker node fulfills the requests of resource',
   RESOURCES_MMS_ERROR_DESC_273: 'Failed to annotate pause state for VM',
   RESOURCES_MMS_ERROR_DESC_275: 'The given VM keypair names are not identical',
   RESOURCES_MMS_ERROR_DESC_276: 'Failed to migrate VM',
   RESOURCES_MMS_ERROR_DESC_277: 'Failed to cancel VM migration',
-  RESOURCES_MMS_ERROR_DESC_278: 'The given VM definition cannot create migratable VM',
+  RESOURCES_MMS_ERROR_DESC_278:
+    'The given VM definition cannot create migratable VM',
   RESOURCES_MMS_ERROR_DESC_279: 'The given SR-IOV networks do not support VM',
   RESOURCES_MMS_ERROR_DESC_280: 'OS Type is not specified for VM provisioning',
   RESOURCES_MMS_ERROR_DESC_281: 'The given OS type is not supported',
   RESOURCES_MMS_ERROR_DESC_282: 'VM template file is not specified',
-  RESOURCES_MMS_ERROR_DESC_283: 'The given SR-IOV networks do not support container',
+  RESOURCES_MMS_ERROR_DESC_283:
+    'The given SR-IOV networks do not support container',
   RESOURCES_MMS_ERROR_DESC_284: 'The given cloud-init script is invalid.',
-  RESOURCES_MMS_ERROR_DESC_285: 'VM root disk size should be larger than VM image size',
+  RESOURCES_MMS_ERROR_DESC_285:
+    'VM root disk size should be larger than VM image size',
   RESOURCES_MMS_ERROR_DESC_286: 'No flavor is provided for VM provisioning',
-  RESOURCES_MMS_ERROR_DESC_287: 'The selected node is not architecture compatible',
-  RESOURCES_MMS_ERROR_DESC_288: 'None of the cluster nodes support the given architecture',
+  RESOURCES_MMS_ERROR_DESC_287:
+    'The selected node is not architecture compatible',
+  RESOURCES_MMS_ERROR_DESC_288:
+    'None of the cluster nodes support the given architecture',
   RESOURCES_MMS_ERROR_DESC_289: 'The VM does not support snapshotting',
   RESOURCES_MMS_ERROR_DESC_290: 'The VM does not support cloning',
-  RESOURCES_MMS_ERROR_DESC_291: 'The given VM image is not ready for VM provisioning',
-  RESOURCES_MMS_ERROR_DESC_292: 'Failed to update the VM flavor, the new root disk size should be larger than original.',
+  RESOURCES_MMS_ERROR_DESC_291:
+    'The given VM image is not ready for VM provisioning',
+  RESOURCES_MMS_ERROR_DESC_292:
+    'Failed to update the VM flavor, the new root disk size should be larger than original.',
   RESOURCES_MMS_ERROR_DESC_293: 'The selected VM action is not support',
-  RESOURCES_MMS_ERROR_DESC_294: 'The given IP address is not in the range of network CIDR',
+  RESOURCES_MMS_ERROR_DESC_294:
+    'The given IP address is not in the range of network CIDR',
   RESOURCES_MMS_ERROR_DESC_340: 'Node not found',
   RESOURCES_MMS_ERROR_DESC_341: 'Node features are not discovered',
   RESOURCES_MMS_ERROR_DESC_440: 'Network not found',
@@ -318,51 +331,75 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_442: 'SRIOV network not found',
   RESOURCES_MMS_ERROR_DESC_443: 'SRIOV policy not found',
   RESOURCES_MMS_ERROR_DESC_444: 'SRIOV resource not found',
-  RESOURCES_MMS_ERROR_DESC_450: 'Have duplicated network name has been found in the store.',
-  RESOURCES_MMS_ERROR_DESC_451: 'The two input network names are not identical.',
+  RESOURCES_MMS_ERROR_DESC_450:
+    'Have duplicated network name has been found in the store.',
+  RESOURCES_MMS_ERROR_DESC_451:
+    'The two input network names are not identical.',
   RESOURCES_MMS_ERROR_DESC_452: 'Network is still in use',
   RESOURCES_MMS_ERROR_DESC_453: 'Network is already associated with router',
   RESOURCES_MMS_ERROR_DESC_454: 'Network is NOT associated with router',
   RESOURCES_MMS_ERROR_DESC_455: 'CIDR is overlapped with the existing network',
-  RESOURCES_MMS_ERROR_DESC_456: 'Cannot attach the network which has duplicated CIDR in the same router',
+  RESOURCES_MMS_ERROR_DESC_456:
+    'Cannot attach the network which has duplicated CIDR in the same router',
   RESOURCES_MMS_ERROR_DESC_457: 'Gateway IP is not in CIDR range',
   RESOURCES_MMS_ERROR_DESC_458: 'Start IP is not in CIDR range',
   RESOURCES_MMS_ERROR_DESC_459: 'End IP is not in CIDR range',
-  RESOURCES_MMS_ERROR_DESC_460: 'Should not specify segment ID for flat network',
+  RESOURCES_MMS_ERROR_DESC_460:
+    'Should not specify segment ID for flat network',
   RESOURCES_MMS_ERROR_DESC_461: 'Should specify segment ID for tenant network',
   RESOURCES_MMS_ERROR_DESC_462: 'Unsupported network type',
   RESOURCES_MMS_ERROR_DESC_463: 'Not enough SR-IOV resources are available',
-  RESOURCES_MMS_ERROR_DESC_464: 'The input network name is preoccupied by the system',
-  RESOURCES_MMS_ERROR_DESC_465: 'The number of bonding interface for SR-IOV resource should be 2',
-  RESOURCES_MMS_ERROR_DESC_466: 'The SR-IOV bonding interfaces contain duplicated element',
-  RESOURCES_MMS_ERROR_DESC_467: 'The selected interfaces are not SR-IOV bonding capable',
+  RESOURCES_MMS_ERROR_DESC_464:
+    'The input network name is preoccupied by the system',
+  RESOURCES_MMS_ERROR_DESC_465:
+    'The number of bonding interface for SR-IOV resource should be 2',
+  RESOURCES_MMS_ERROR_DESC_466:
+    'The SR-IOV bonding interfaces contain duplicated element',
+  RESOURCES_MMS_ERROR_DESC_467:
+    'The selected interfaces are not SR-IOV bonding capable',
   RESOURCES_MMS_ERROR_DESC_468: 'The given SRIOV device type is not supported',
   RESOURCES_MMS_ERROR_DESC_469: 'Not enough SR-IOV IP addresses are available',
-  RESOURCES_MMS_ERROR_DESC_470: 'Some already allocated IP addresses are not in the new IP range',
-  RESOURCES_MMS_ERROR_DESC_471: 'VFs are not enough to accommodate all SR-IOV IP addresses',
-  RESOURCES_MMS_ERROR_DESC_472: 'A duplicated SRIOV network name has been found in the store',
-  RESOURCES_MMS_ERROR_DESC_473: 'A duplicated SRIOV policy name has been found in the store',
-  RESOURCES_MMS_ERROR_DESC_474: 'A duplicated SRIOV resource name has been found in the store',
+  RESOURCES_MMS_ERROR_DESC_470:
+    'Some already allocated IP addresses are not in the new IP range',
+  RESOURCES_MMS_ERROR_DESC_471:
+    'VFs are not enough to accommodate all SR-IOV IP addresses',
+  RESOURCES_MMS_ERROR_DESC_472:
+    'A duplicated SRIOV network name has been found in the store',
+  RESOURCES_MMS_ERROR_DESC_473:
+    'A duplicated SRIOV policy name has been found in the store',
+  RESOURCES_MMS_ERROR_DESC_474:
+    'A duplicated SRIOV resource name has been found in the store',
   RESOURCES_MMS_ERROR_DESC_475: 'The SRIOV network names are not identical.',
-  RESOURCES_MMS_ERROR_DESC_476: 'Should specify the physnet name for flat network',
-  RESOURCES_MMS_ERROR_DESC_477: 'Should not specify the physnet name for tenant network',
-  RESOURCES_MMS_ERROR_DESC_480: 'Fail to remove SRIOV policy, as SRIOV networks are dependent on it.',
-  RESOURCES_MMS_ERROR_DESC_481: 'Fail to create SRIOV policy, as the resource is already bound to other policies.',
-  RESOURCES_MMS_ERROR_DESC_482: 'Fail to remove SRIOV resource, as the resource is bound to SRIOV network.',
-  RESOURCES_MMS_ERROR_DESC_483: 'Invalid MTU value. Please check the MTU setting of the NIC.',
+  RESOURCES_MMS_ERROR_DESC_476:
+    'Should specify the physnet name for flat network',
+  RESOURCES_MMS_ERROR_DESC_477:
+    'Should not specify the physnet name for tenant network',
+  RESOURCES_MMS_ERROR_DESC_480:
+    'Fail to remove SRIOV policy, as SRIOV networks are dependent on it.',
+  RESOURCES_MMS_ERROR_DESC_481:
+    'Fail to create SRIOV policy, as the resource is already bound to other policies.',
+  RESOURCES_MMS_ERROR_DESC_482:
+    'Fail to remove SRIOV resource, as the resource is bound to SRIOV network.',
+  RESOURCES_MMS_ERROR_DESC_483:
+    'Invalid MTU value. Please check the MTU setting of the NIC.',
   RESOURCES_MMS_ERROR_DESC_540: 'Router not found',
   RESOURCES_MMS_ERROR_DESC_541: 'No routers are associated with network',
   RESOURCES_MMS_ERROR_DESC_550: 'Router name duplicated',
   RESOURCES_MMS_ERROR_DESC_551: 'Router name is not identical',
   RESOURCES_MMS_ERROR_DESC_552: 'Router is still associated with floating IP',
-  RESOURCES_MMS_ERROR_DESC_553: 'SNAT should not be configured without external network',
-  RESOURCES_MMS_ERROR_DESC_554: 'Not able to update router due to several reasons',
-  RESOURCES_MMS_ERROR_DESC_555: 'Not able to attach the external network to the given router due to lack of proper physnet configured',
-  RESOURCES_MMS_ERROR_DESC_556: 'The MTU of the external network is not big enough',
+  RESOURCES_MMS_ERROR_DESC_553:
+    'SNAT should not be configured without external network',
+  RESOURCES_MMS_ERROR_DESC_554:
+    'Not able to update router due to several reasons',
+  RESOURCES_MMS_ERROR_DESC_555:
+    'Not able to attach the external network to the given router due to lack of proper physnet configured',
+  RESOURCES_MMS_ERROR_DESC_556:
+    'The MTU of the external network is not big enough',
   RESOURCES_MMS_ERROR_DESC_640: 'Floating IP not found',
   RESOURCES_MMS_ERROR_DESC_650: 'Floating IP is still associated with VM',
   RESOURCES_MMS_ERROR_DESC_651: 'Floating IP is still associated with fixed IP',
-  RESOURCES_MMS_ERROR_DESC_652: 'Floating IP is still associated with load balancer',
+  RESOURCES_MMS_ERROR_DESC_652:
+    'Floating IP is still associated with load balancer',
   RESOURCES_MMS_ERROR_DESC_653: 'A tenant network should be provided.',
   RESOURCES_MMS_ERROR_DESC_654: 'A fixed IP address should be provided.',
   RESOURCES_MMS_ERROR_DESC_660: 'Failed to allocate floating IP address',
@@ -377,21 +414,25 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_755: 'Security Group name is duplicated',
   RESOURCES_MMS_ERROR_DESC_840: 'Load Balancer is not found',
   RESOURCES_MMS_ERROR_DESC_841: 'Load Balancer Rule is not found',
-  RESOURCES_MMS_ERROR_DESC_842: 'No members are selected, need to select more than 1 member first.',
+  RESOURCES_MMS_ERROR_DESC_842:
+    'No members are selected, need to select more than 1 member first.',
   RESOURCES_MMS_ERROR_DESC_850: 'Protocol is not supported',
   RESOURCES_MMS_ERROR_DESC_851: 'Port range is not valid',
-  RESOURCES_MMS_ERROR_DESC_852: 'Should not specify port number without protocol',
+  RESOURCES_MMS_ERROR_DESC_852:
+    'Should not specify port number without protocol',
   RESOURCES_MMS_ERROR_DESC_853: 'Load Balancer already existed',
   RESOURCES_MMS_ERROR_DESC_854: 'Load Balancer names are not identical',
   RESOURCES_MMS_ERROR_DESC_860: 'Failed to allocate virtual IP address',
-  RESOURCES_MMS_ERROR_DESC_861: 'The given members are not found in the given network.',
+  RESOURCES_MMS_ERROR_DESC_861:
+    'The given members are not found in the given network.',
   RESOURCES_MMS_ERROR_DESC_940: 'Storage Class is not found',
   RESOURCES_MMS_ERROR_DESC_941: 'Boot volume is not found',
   RESOURCES_MMS_ERROR_DESC_942: 'Data volume is not found',
   RESOURCES_MMS_ERROR_DESC_943: 'HPE Primera credential not found',
   RESOURCES_MMS_ERROR_DESC_944: 'HPE Primera storage info not found',
   RESOURCES_MMS_ERROR_DESC_950: 'Boot volume is duplicated or not entered',
-  RESOURCES_MMS_ERROR_DESC_951: 'Affinity request for the specified volume is invalid',
+  RESOURCES_MMS_ERROR_DESC_951:
+    'Affinity request for the specified volume is invalid',
   RESOURCES_MMS_ERROR_DESC_952: 'The given boot type is not supported',
   RESOURCES_MMS_ERROR_DESC_953: 'The given CPU architecture is not supported',
   RESOURCES_MMS_ERROR_DESC_954: 'The given OS type is not supported',
@@ -401,18 +442,24 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_961: 'Failed to detach the volume to VM',
   RESOURCES_MMS_ERROR_DESC_962: 'Volume is already attached to VM',
   RESOURCES_MMS_ERROR_DESC_963: 'Volume is not attached to any VM',
-  RESOURCES_MMS_ERROR_DESC_964: 'Migratable VM cannot get hotplug volume attached',
-  RESOURCES_MMS_ERROR_DESC_965: 'Available disk space information is not obtainable.',
-  RESOURCES_MMS_ERROR_DESC_966: 'The new volume size should be larger than original volume size',
-  RESOURCES_MMS_ERROR_DESC_967: 'The number of default VM storage class should be equal to one.',
+  RESOURCES_MMS_ERROR_DESC_964:
+    'Migratable VM cannot get hotplug volume attached',
+  RESOURCES_MMS_ERROR_DESC_965:
+    'Available disk space information is not obtainable.',
+  RESOURCES_MMS_ERROR_DESC_966:
+    'The new volume size should be larger than original volume size',
+  RESOURCES_MMS_ERROR_DESC_967:
+    'The number of default VM storage class should be equal to one.',
   RESOURCES_MMS_ERROR_DESC_970: 'The given VM is not migratable.',
-  RESOURCES_MMS_ERROR_DESC_971: 'There are not sufficient worker nodes to migrate VM.',
+  RESOURCES_MMS_ERROR_DESC_971:
+    'There are not sufficient worker nodes to migrate VM.',
   RESOURCES_MMS_ERROR_DESC_1040: 'Host device not found',
   RESOURCES_MMS_ERROR_DESC_1041: 'Mediated device type not found',
   RESOURCES_MMS_ERROR_DESC_1042: 'Device driver not installed',
   RESOURCES_MMS_ERROR_DESC_1043: 'Mediated device not found',
   RESOURCES_MMS_ERROR_DESC_1050: 'Host device already existed',
-  RESOURCES_MMS_ERROR_DESC_1051: 'Failed to remove host device due to unresolved dependency',
+  RESOURCES_MMS_ERROR_DESC_1051:
+    'Failed to remove host device due to unresolved dependency',
   RESOURCES_MMS_ERROR_DESC_1052: 'Mediated device type already existed',
   RESOURCES_MMS_ERROR_DESC_1053: 'Failed to remove mediated device type',
   RESOURCES_MMS_ERROR_DESC_1054: 'Mediated device already existed',
@@ -420,35 +467,48 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_1150: 'Flavor name duplicated',
   RESOURCES_MMS_ERROR_DESC_1151: 'Failed to remove flavor',
   RESOURCES_MMS_ERROR_DESC_1152: 'Flavor name is not identical',
-  RESOURCES_MMS_ERROR_DESC_1160: 'The given vCPU does not fulfill the minimum requirements',
-  RESOURCES_MMS_ERROR_DESC_1161: 'The given RAM does not fulfill the minimum requirements',
-  RESOURCES_MMS_ERROR_DESC_1162: 'The given disk does not fulfill the minimum requirements',
+  RESOURCES_MMS_ERROR_DESC_1160:
+    'The given vCPU does not fulfill the minimum requirements',
+  RESOURCES_MMS_ERROR_DESC_1161:
+    'The given RAM does not fulfill the minimum requirements',
+  RESOURCES_MMS_ERROR_DESC_1162:
+    'The given disk does not fulfill the minimum requirements',
   RESOURCES_MMS_ERROR_DESC_1240: 'Cluster is not found',
-  RESOURCES_MMS_ERROR_DESC_1241: 'There is no VM image available based on the given Kubernetes version',
-  RESOURCES_MMS_ERROR_DESC_1242: 'There is no VM image available based the given OS distribution',
-  RESOURCES_MMS_ERROR_DESC_1243: 'There is no VM flavor available with the given name',
-  RESOURCES_MMS_ERROR_DESC_1244: 'There is no CNI available with the given name',
-  RESOURCES_MMS_ERROR_DESC_1245: 'There is no CSI available with the given name',
+  RESOURCES_MMS_ERROR_DESC_1241:
+    'There is no VM image available based on the given Kubernetes version',
+  RESOURCES_MMS_ERROR_DESC_1242:
+    'There is no VM image available based the given OS distribution',
+  RESOURCES_MMS_ERROR_DESC_1243:
+    'There is no VM flavor available with the given name',
+  RESOURCES_MMS_ERROR_DESC_1244:
+    'There is no CNI available with the given name',
+  RESOURCES_MMS_ERROR_DESC_1245:
+    'There is no CSI available with the given name',
   RESOURCES_MMS_ERROR_DESC_1246: 'There is no UI available with the given name',
   RESOURCES_MMS_ERROR_DESC_1247: 'The Kubernetes VM image not found',
-  RESOURCES_MMS_ERROR_DESC_1248: 'There is no CPI available with the given name',
+  RESOURCES_MMS_ERROR_DESC_1248:
+    'There is no CPI available with the given name',
   RESOURCES_MMS_ERROR_DESC_1249: 'vSphere configuration is not found',
   RESOURCES_MMS_ERROR_DESC_1250: 'Machine is not found',
   RESOURCES_MMS_ERROR_DESC_1251: 'The given provider is not supported',
-  RESOURCES_MMS_ERROR_DESC_1252: 'Target replicas is identical to the current machine deployment replicas',
-  RESOURCES_MMS_ERROR_DESC_1253: 'Target replicas is identical to the current control plane replicas',
+  RESOURCES_MMS_ERROR_DESC_1252:
+    'Target replicas is identical to the current machine deployment replicas',
+  RESOURCES_MMS_ERROR_DESC_1253:
+    'Target replicas is identical to the current control plane replicas',
   RESOURCES_MMS_ERROR_DESC_1254: 'The given CNI is not supported',
   RESOURCES_MMS_ERROR_DESC_1255: 'The given CSI is not supported',
   RESOURCES_MMS_ERROR_DESC_1256: 'The given CPI is not supported',
   RESOURCES_MMS_ERROR_DESC_1257: 'The given monitoring tool is not supported',
   RESOURCES_MMS_ERROR_DESC_1258: 'The given ELB is not supported',
   RESOURCES_MMS_ERROR_DESC_1259: 'The given UI is not supported',
-  RESOURCES_MMS_ERROR_DESC_1271: 'The given certificate expiration range is invalid',
+  RESOURCES_MMS_ERROR_DESC_1271:
+    'The given certificate expiration range is invalid',
   RESOURCES_MMS_ERROR_DESC_1272: 'The given boot type is not supported.',
   RESOURCES_MMS_ERROR_DESC_1273: 'The given CPU architecture is not supported.',
   RESOURCES_MMS_ERROR_DESC_1274: 'The cluster already existed',
   RESOURCES_MMS_ERROR_DESC_1275: 'The Kubernetes VM image is not identical',
-  RESOURCES_MMS_ERROR_DESC_1276: 'The given Kubernetes VM image already existed',
+  RESOURCES_MMS_ERROR_DESC_1276:
+    'The given Kubernetes VM image already existed',
   RESOURCES_MMS_ERROR_DESC_1277: 'The given cluster names are not identical',
   RESOURCES_MMS_ERROR_DESC_1278: 'The given machine names are not identical',
   RESOURCES_MMS_ERROR_DESC_1260: 'Failed to create Kubernetes cluster',
@@ -456,18 +516,27 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_1262: 'Failed to scale in/out Kubernetes cluster',
   RESOURCES_MMS_ERROR_DESC_1263: 'Failed to allocate IP address for VM',
   RESOURCES_MMS_ERROR_DESC_1264: 'Service IP addresses are not sufficient',
-  RESOURCES_MMS_ERROR_DESC_1265: 'There is no worker node fulfills the requests of resource',
-  RESOURCES_MMS_ERROR_DESC_1266: 'The given storage class does not fulfill the request of resource',
+  RESOURCES_MMS_ERROR_DESC_1265:
+    'There is no worker node fulfills the requests of resource',
+  RESOURCES_MMS_ERROR_DESC_1266:
+    'The given storage class does not fulfill the request of resource',
   RESOURCES_MMS_ERROR_DESC_1267: 'The given network is associated with routers',
-  RESOURCES_MMS_ERROR_DESC_1268: 'Not enough IP addresses are available in network',
-  RESOURCES_MMS_ERROR_DESC_1269: 'The Kubernetes VM image is not ready for cluster provisioning',
-  RESOURCES_MMS_ERROR_DESC_1280: 'Not enough SR-IOV IP addresses for provisioning the Kubernetes cluster',
-  RESOURCES_MMS_ERROR_DESC_1281: 'Not enough external IP addresses for provisioning the Kubernetes cluster',
-  RESOURCES_MMS_ERROR_DESC_1282: 'Node selection is not supported with hardware passthrough',
+  RESOURCES_MMS_ERROR_DESC_1268:
+    'Not enough IP addresses are available in network',
+  RESOURCES_MMS_ERROR_DESC_1269:
+    'The Kubernetes VM image is not ready for cluster provisioning',
+  RESOURCES_MMS_ERROR_DESC_1280:
+    'Not enough SR-IOV IP addresses for provisioning the Kubernetes cluster',
+  RESOURCES_MMS_ERROR_DESC_1281:
+    'Not enough external IP addresses for provisioning the Kubernetes cluster',
+  RESOURCES_MMS_ERROR_DESC_1282:
+    'Node selection is not supported with hardware passthrough',
   RESOURCES_MMS_ERROR_DESC_1283: 'Attaching multiple networks are not allowed',
   RESOURCES_MMS_ERROR_DESC_1284: 'Attaching one service network is required',
-  RESOURCES_MMS_ERROR_DESC_1285: 'Cluster machine is not ready for lifecycle management',
+  RESOURCES_MMS_ERROR_DESC_1285:
+    'Cluster machine is not ready for lifecycle management',
   RESOURCES_MMS_ERROR_DESC_1286: 'The selected machine action is not support',
+  RESOURCES_MMS_ERROR_DESC_1287: 'Deleting resources in use is not allowed',
   RESOURCES_MMS_ERROR_DESC_1301: 'The helm chart not found',
   RESOURCES_MMS_ERROR_DESC_1302: 'The helm repository not found',
   RESOURCES_MMS_ERROR_DESC_1303: 'The helm release not found',
@@ -478,27 +547,40 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_1371: 'Failed to obtain list of helm repositories',
   RESOURCES_MMS_ERROR_DESC_1372: 'Failed to obtain list of helm charts',
   RESOURCES_MMS_ERROR_DESC_1373: 'Failed to obtain list of helm releases',
-  RESOURCES_MMS_ERROR_DESC_1401: 'Cannot find MIG capable devices with the given name',
-  RESOURCES_MMS_ERROR_DESC_1402: 'Cannot find the MIG config with the given name',
-  RESOURCES_MMS_ERROR_DESC_1403: 'None GPU instances are discovered at the given node',
-  RESOURCES_MMS_ERROR_DESC_1431: 'The given MIG config is not compatible with the target GPU node',
+  RESOURCES_MMS_ERROR_DESC_1401:
+    'Cannot find MIG capable devices with the given name',
+  RESOURCES_MMS_ERROR_DESC_1402:
+    'Cannot find the MIG config with the given name',
+  RESOURCES_MMS_ERROR_DESC_1403:
+    'None GPU instances are discovered at the given node',
+  RESOURCES_MMS_ERROR_DESC_1431:
+    'The given MIG config is not compatible with the target GPU node',
   RESOURCES_MMS_ERROR_DESC_1432: 'The given GPU workload type is not supported',
-  RESOURCES_MMS_ERROR_DESC_1433: 'The given vGPU config is not compatible with the target GPU node',
-  RESOURCES_MMS_ERROR_DESC_1451: 'Failed to apply the MIG configuration to the target GPU node',
-  RESOURCES_MMS_ERROR_DESC_1452: 'Failed to configure the GPU node with the given workload type',
-  RESOURCES_MMS_ERROR_DESC_1453: 'Failed to apply the vGPU configuration to the target GPU node',
-  RESOURCES_MMS_ERROR_DESC_1454: 'Failed to apply the configuration to the GPU node due to the GPUs are in use by workloads.',
+  RESOURCES_MMS_ERROR_DESC_1433:
+    'The given vGPU config is not compatible with the target GPU node',
+  RESOURCES_MMS_ERROR_DESC_1451:
+    'Failed to apply the MIG configuration to the target GPU node',
+  RESOURCES_MMS_ERROR_DESC_1452:
+    'Failed to configure the GPU node with the given workload type',
+  RESOURCES_MMS_ERROR_DESC_1453:
+    'Failed to apply the vGPU configuration to the target GPU node',
+  RESOURCES_MMS_ERROR_DESC_1454:
+    'Failed to apply the configuration to the GPU node due to the GPUs are in use by workloads.',
   RESOURCES_MMS_ERROR_DESC_9040: 'License not found',
   RESOURCES_MMS_ERROR_DESC_9041: 'Current site was not configured a sitename',
-  RESOURCES_MMS_ERROR_DESC_9042: 'There is no sitename attribute in the given license',
-  RESOURCES_MMS_ERROR_DESC_9051: 'The given license is signed with invalid signature',
+  RESOURCES_MMS_ERROR_DESC_9042:
+    'There is no sitename attribute in the given license',
+  RESOURCES_MMS_ERROR_DESC_9051:
+    'The given license is signed with invalid signature',
   RESOURCES_MMS_ERROR_DESC_9052: 'The license is valid from XXX',
   RESOURCES_MMS_ERROR_DESC_9053: 'The license is valid until XXX',
-  RESOURCES_MMS_ERROR_DESC_9054: 'The total number of nodes exceeds the valid node number',
+  RESOURCES_MMS_ERROR_DESC_9054:
+    'The total number of nodes exceeds the valid node number',
   RESOURCES_MMS_ERROR_DESC_9055: 'The license is already existed',
-  RESOURCES_MMS_ERROR_DESC_9056: 'The sitename included in license does not match with current sitename',
+  RESOURCES_MMS_ERROR_DESC_9056:
+    'The sitename included in license does not match with current sitename',
   RESOURCES_MMS_ERROR_DESC_9057: 'The given license key is invalid',
-  RESOURCES_MMS_ERROR_DESC_9061: 'There are multiple default licenses installed',
+  RESOURCES_MMS_ERROR_DESC_9061:
+    'There are multiple default licenses installed',
   RESOURCES_MMS_ERROR_DESC_9062: 'There are no default licenses installed',
-
-};
+}

@@ -187,6 +187,7 @@ export default class ContainerSetting extends React.Component {
       defaultContainerType,
       onContainerTypeChange,
       supportGpuSelect,
+      supportStorageSelect,
     } = this.props
     const defaultResourceLimit = this.defaultResourceLimit
 
@@ -243,6 +244,7 @@ export default class ContainerSetting extends React.Component {
               defaultValue={defaultResourceLimit}
               onError={this.handleError}
               workspaceLimitProps={this.workspaceLimitProps}
+              supportStorageSelect={supportStorageSelect}
               supportGpuSelect={supportGpuSelect}
             />
           </Form.Item>

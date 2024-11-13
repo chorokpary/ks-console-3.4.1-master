@@ -196,6 +196,7 @@ export default class ContaineForm extends React.Component {
       namespace,
       withService,
       supportGpuSelect,
+      supportStorageSelect,
       projectDetail,
       containers,
       type,
@@ -220,6 +221,7 @@ export default class ContaineForm extends React.Component {
             defaultContainerType={containerType}
             onContainerTypeChange={this.handleContainerTypeChange}
             workspaceQuota={this.props.workspaceQuota}
+            supportStorageSelect={supportStorageSelect}
             supportGpuSelect={supportGpuSelect}
             containers={containers}
             type={type}
