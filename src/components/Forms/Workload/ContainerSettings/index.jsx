@@ -605,6 +605,7 @@ export default class ContainerSetting extends React.Component {
       isFederated,
       cluster,
       supportGpuSelect,
+      supportStorageSelect,
       projectDetail,
     } = this.props
     const { limitRange, imageRegistries } = this.state
@@ -628,6 +629,7 @@ export default class ContainerSetting extends React.Component {
         workspaceQuota={this.workspaceQuota}
         cluster={cluster}
         supportGpuSelect={supportGpuSelect}
+        supportStorageSelect={supportStorageSelect}
         containers={this.containers}
         isEdit={this.props.isEdit}
         {...params}

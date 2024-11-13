@@ -105,6 +105,7 @@ export default {
         store: quotaStore,
         modal: QuotaEditModal,
         supportGpuSelect: true,
+        supportStorageSelect: true,
         ...props,
       })
     },
@@ -180,6 +181,7 @@ export default {
         store,
         detail,
         supportGpuSelect: true,
+        supportStorageSelect: true,
         namespace,
         cluster,
         isFederated,

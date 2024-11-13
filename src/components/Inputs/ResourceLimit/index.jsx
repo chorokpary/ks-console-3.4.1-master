@@ -49,6 +49,7 @@ export default class ResourceLimit extends React.Component {
     onChange: PropTypes.func,
     onError: PropTypes.func,
     supportGpuSelect: PropTypes.bool,
+    supportStorageSelect: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -59,6 +60,7 @@ export default class ResourceLimit extends React.Component {
     memoryProps: {},
     storageProps: {},
     supportGpuSelect: false,
+    supportStorageSelect: true,
   }
 
   constructor(props) {
@@ -669,9 +671,35 @@ export default class ResourceLimit extends React.Component {
     )
   }
 
+  renderStorageSelect = (storageError, limit) => {
+    return (
+      <Column>
+        <div className={styles.inputGroup}>
+          <Icon name="storage" size={48} />
+          <div
+            className={classnames(styles.input, {
+              [styles.error]: storageError || limit.requestStorageError,
+            })}
+          >
+            <span className={styles.label}>{t('STORAGE_REQUEST')}</span>
+            <div className={styles.inputBox}>
+              <Input
+                name="requests.storage"
+                value={this.getRequest(this.state.requests.storage)}
+                onChange={this.handleInputChange}
+                placeholder={t('NO_REQUEST')}
+              />
+              <span className={styles.unit}>{this.storageUnit}</span>
+            </div>
+          </div>
+        </div>
+      </Column>
+    )
+  }
+
   render() {
     const { cpuError, memoryError, storageError, workspaceLimitCheck: limit } = this.state
-    const { supportGpuSelect } = this.props
+    const { supportGpuSelect, supportStorageSelect } = this.props
     const outWorkSpaceLimit = this.getWorkspaceCheckError()
 
     return (
@@ -756,27 +784,7 @@ export default class ResourceLimit extends React.Component {
         </div>
         <div className={styles.inputWrapper}>
           <Columns className="is-gapless">
-            <Column>
-              <div className={styles.inputGroup}>
-                <Icon name="storage" size={48} />
-                <div
-                  className={classnames(styles.input, {
-                    [styles.error]: storageError || limit.requestStorageError,
-                  })}
-                >
-                  <span className={styles.label}>{t('STORAGE_REQUEST')}</span>
-                  <div className={styles.inputBox}>
-                    <Input
-                      name="requests.storage"
-                      value={this.getRequest(this.state.requests.storage)}
-                      onChange={this.handleInputChange}
-                      placeholder={t('NO_REQUEST')}
-                    />
-                    <span className={styles.unit}>{this.storageUnit}</span>
-                  </div>
-                </div>
-              </div>
-            </Column>
+            {supportStorageSelect && this.renderStorageSelect(storageError, limit)}
             {supportGpuSelect && this.renderGpuSelect()}
           </Columns>
         </div>

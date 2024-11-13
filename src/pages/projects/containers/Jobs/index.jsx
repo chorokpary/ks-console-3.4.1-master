@@ -166,6 +166,7 @@ export default class Jobs extends React.Component {
       namespace: match.params.namespace,
       cluster: match.params.cluster,
       supportGpuSelect: true,
+      supportStorageSelect: false,
     })
   }
 
