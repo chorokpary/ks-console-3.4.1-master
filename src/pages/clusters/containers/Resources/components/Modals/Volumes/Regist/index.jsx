@@ -55,7 +55,7 @@ const RegistModal = props => {
   const [distroTypeData, setDistroTypeData] = useState([]);
   const [distroTypeList, setDistroTypeList] = useState([]);
   const [distroType, setDistroType] = useState('ubuntu');
-  
+
   const [imageInfoActive, setImageInfoActive] = useState(false);
 
   useEffect(() => {
@@ -145,7 +145,7 @@ const RegistModal = props => {
 
   const accessModeOptions = [
     { label: 'RWO (Read Write Once)', value: 'ReadWriteOnce' },
-    { label: 'ROX (Read Only Many)',  value: 'ReadOnlyMany' },
+    { label: 'ROX (Read Only Many)', value: 'ReadOnlyMany' },
     { label: 'RWX (Read Write Many)', value: 'ReadWriteMany' },
   ];
 
@@ -197,9 +197,9 @@ const RegistModal = props => {
       data.project = projectName;
 
       if (imageInfoActive) {
-	data.os_distro = distroType;
+        data.os_distro = distroType;
       } else {
-	data.cpu_arch = "";
+        data.cpu_arch = "";
         data.os_type = "";
         data.os_distro = "";
         data.boot_type = "";
@@ -295,7 +295,7 @@ const RegistModal = props => {
             >
               {t('RESOURCES_PREVIOUS')}
             </Button>
-	    <Button
+            <Button
               type="control"
               onClick={() => {
                 stepMoveCheck(2);
@@ -306,7 +306,7 @@ const RegistModal = props => {
             </Button>
           </>
         )}
-	{regStep == 3 && (
+        {regStep == 3 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -372,13 +372,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
+                  className={`${regStep == 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -390,8 +389,8 @@ const RegistModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -402,8 +401,13 @@ const RegistModal = props => {
               )}
             >
               <div className={styles.status}>
-                <div
-                  className={`${regStep == 2 ? styles.current : styles.todo}`}
+              <div
+                  className={`${regStep == 2
+                      ? styles.current
+                      : regStep > 2
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.check}></span>
@@ -415,13 +419,13 @@ const RegistModal = props => {
                   {regStep == 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
 
-	    <div
+            <div
               className={classnames(
                 styles.process_item,
                 `${regStep == 3 ? styles.current : ''}`
@@ -509,8 +513,8 @@ const RegistModal = props => {
               </div>
               {/* 기본설정 설정 끝========================================== */}
               {/* 입력소스 설정 시작======================================== */}
-	      <div className={`${regStep == 2 ? '' : 'hide'}`}>
-	        <Form.Item label={t('RESOURCES_INPUT_SOURCE')}>
+              <div className={`${regStep == 2 ? '' : 'hide'}`}>
+                <Form.Item label={t('RESOURCES_INPUT_SOURCE')}>
                   <Select
                     name="import_source"
                     defaultValue={importSource}
@@ -520,7 +524,7 @@ const RegistModal = props => {
                     }}
                   />
                 </Form.Item>
-	        {importSource === 'ImageVolume' && (
+                {importSource === 'ImageVolume' && (
                   <Form.Item label={t('RESOURCES_VM_IMAGE')}>
                     <Select
                       name="import_endpoint"
@@ -530,8 +534,8 @@ const RegistModal = props => {
                     />
                   </Form.Item>
                 )}
-	        {importSource === 'UploadImage' && (
-		  <Form.Item
+                {importSource === 'UploadImage' && (
+                  <Form.Item
                     label={t('RESOURCES_IMAGE_INFO')}
                     rules={[
                       {
@@ -539,107 +543,107 @@ const RegistModal = props => {
                       },
                     ]}
                   >
-		  <div className={styles.cont_box_section}>
-                    <div className={styles.cont_box_wrap}>
-                      <h6 className={styles.label}>
-                        <div className={styles.form_check}>
-                          <input type="checkbox" name="chk-0" id="chk-0" />
-                          <label
-                            htmlFor="chk-0"
-                            onClick={() => handleImageInfoActive()}
-                          ></label>
-                        </div>
-                        <div className={styles.title}>
-                          <p>{t('RESOURCES_SPECIFY_BOOT_VOLUME')}</p>
-                          <span>{t('RESOURCES_SPECIFY_BOOT_VOLUME_TIP')}</span>
-                        </div>
-                      </h6>
-		      {imageInfoActive && (
-	          <div className={`${styles.select_inner_content}`}>
-		  <Form.Item>
-                    <Columns>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_IMAGE')}
-                          rules={[
-                            {
-                              required: true,
-                              message: t('RESOURCES_SELECT_IMAGE_TIP'),
-                            },
-                          ]}
-                        >
-                          <CardSelect
-                            className={`${styles.customUl} customCard`}
-                            onChange={e => handleOsType(e)}
-                            name="os_type"
-                            options={osTypeOptions}
-                            defaultValue={osType}
-                          />
-                        </Form.Item>
-                      </Column>
-                      <Column>
-                        <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
-                          <TypeSelect
-                            onChange={e => setDistroType(e)}
-                            defaultValue={distroType}
-                            options={distroTypeOptions()}
-                          />
-                        </Form.Item>
-                        <Form.Item>
-                          <Input
-                            defaultValue={`${osType[0].toUpperCase() +
-                              osType.slice(1, osType.length)} > ${distroType}`}
-                            readOnly
-                            style={{ maxWidth: 'none' }}
-                          />
-                        </Form.Item>
-                      </Column>
-                    </Columns>
-		  </Form.Item>
-		  <Form.Item>
-		    <Columns>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_CPU_TYPE')}
-                          rules={[
-                            {
-                              required: true,
-                            },
-                          ]}
-                        >
-                          <Select
-                            name="cpu_arch"
-                            defaultValue="x86_64"
-                            options={archTypeOptions}
-                          />
-                        </Form.Item>
-                      </Column>
-		      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_BOOT_TYPE')}
-                          rules={[
-                            {
-                              required: true,
-                            },
-                          ]}
-                        >
-                          <Select
-                            name="boot_type"
-                            defaultValue="legacy"
-                            options={bootTypeOptions}
-                          />
-                        </Form.Item>
-		      </Column>
-		    </Columns>
+                    <div className={styles.cont_box_section}>
+                      <div className={styles.cont_box_wrap}>
+                        <h6 className={styles.label}>
+                          <div className={styles.form_check}>
+                            <input type="checkbox" name="chk-0" id="chk-0" />
+                            <label
+                              htmlFor="chk-0"
+                              onClick={() => handleImageInfoActive()}
+                            ></label>
+                          </div>
+                          <div className={styles.title}>
+                            <p>{t('RESOURCES_SPECIFY_BOOT_VOLUME')}</p>
+                            <span>{t('RESOURCES_SPECIFY_BOOT_VOLUME_TIP')}</span>
+                          </div>
+                        </h6>
+                        {imageInfoActive && (
+                          <div className={`${styles.select_inner_content}`}>
+                            <Form.Item>
+                              <Columns>
+                                <Column>
+                                  <Form.Item
+                                    label={t('RESOURCES_IMAGE')}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: t('RESOURCES_SELECT_IMAGE_TIP'),
+                                      },
+                                    ]}
+                                  >
+                                    <CardSelect
+                                      className={`${styles.customUl} customCard`}
+                                      onChange={e => handleOsType(e)}
+                                      name="os_type"
+                                      options={osTypeOptions}
+                                      defaultValue={osType}
+                                    />
+                                  </Form.Item>
+                                </Column>
+                                <Column>
+                                  <Form.Item label={t('RESOURCES_DISTRIBUTION')} rules={[{ required: true, }]}>
+                                    <TypeSelect
+                                      onChange={e => setDistroType(e)}
+                                      defaultValue={distroType}
+                                      options={distroTypeOptions()}
+                                    />
+                                  </Form.Item>
+                                  <Form.Item>
+                                    <Input
+                                      defaultValue={`${osType[0].toUpperCase() +
+                                        osType.slice(1, osType.length)} > ${distroType}`}
+                                      readOnly
+                                      style={{ maxWidth: 'none' }}
+                                    />
+                                  </Form.Item>
+                                </Column>
+                              </Columns>
+                            </Form.Item>
+                            <Form.Item>
+                              <Columns>
+                                <Column>
+                                  <Form.Item
+                                    label={t('RESOURCES_CPU_TYPE')}
+                                    rules={[
+                                      {
+                                        required: true,
+                                      },
+                                    ]}
+                                  >
+                                    <Select
+                                      name="cpu_arch"
+                                      defaultValue="x86_64"
+                                      options={archTypeOptions}
+                                    />
+                                  </Form.Item>
+                                </Column>
+                                <Column>
+                                  <Form.Item
+                                    label={t('RESOURCES_BOOT_TYPE')}
+                                    rules={[
+                                      {
+                                        required: true,
+                                      },
+                                    ]}
+                                  >
+                                    <Select
+                                      name="boot_type"
+                                      defaultValue="legacy"
+                                      options={bootTypeOptions}
+                                    />
+                                  </Form.Item>
+                                </Column>
+                              </Columns>
+                            </Form.Item>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </Form.Item>
-		  </div>
-	                )}
-		  </div>
-		</div>
-		</Form.Item>
-		)}
-	      </div>
-	      {/* 입력소스 설정 끝======================================== */}
+                )}
+              </div>
+              {/* 입력소스 설정 끝======================================== */}
               {/* 세부설정 시작========================================== */}
               <div className={`${regStep == 3 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_STOREGE_CLASS')}>
