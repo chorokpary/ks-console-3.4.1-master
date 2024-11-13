@@ -58,7 +58,7 @@ export default class ResourceNamed extends React.Component {
             { required: true, message: t('NAME_EMPTY_DESC') },
             {
               pattern: PATTERN_NAME,
-              message: t('INVALID_NAME_DESC', { message: t('LONG_NAME_DESC') }),
+              message: t('LONG_NAME_DESC', { message: t('LONG_NAME_DESC') }),
             },
           ]}
           desc={t('LONG_NAME_DESC')}

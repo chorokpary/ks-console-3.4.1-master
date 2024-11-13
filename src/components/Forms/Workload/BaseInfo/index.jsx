@@ -135,7 +135,7 @@ export default class BaseInfo extends React.Component {
                 { required: true, message: t('NAME_EMPTY_DESC') },
                 {
                   pattern: PATTERN_NAME,
-                  message: t('INVALID_NAME_DESC', { message: desc }),
+                  message: t('LONG_NAME_DESC', { message: desc }),
                 },
                 { validator: this.nameValidator },
               ]}
