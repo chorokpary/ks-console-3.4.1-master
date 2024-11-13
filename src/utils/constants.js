@@ -1085,7 +1085,6 @@ export const CLUSTER_PROVIDER_ICON = {
   'Azure Kubernetes Service': 'windows',
   'Huawei Cloud CCE': 'kubernetes',
   'Amazon EKS': 'aws',
-  'SKT Kubernetes Service': 'kubernetes',
   'Google Kubernetes Engine': 'google-plus',
   'QingCloud Kubernetes Engine': 'qingcloud',
   'Tencent Kubernetes Engine': 'kubernetes',
@@ -1112,11 +1111,6 @@ export const CLUSTER_PROVIDERS = [
     label: 'Amazon EKS',
     value: 'Amazon EKS',
     icon: 'aws',
-  },
-  {
-    label: 'SKT Kubernetes Service',
-    value: 'SKT Kubernetes Service',
-    icon: 'kubernetes',
   },
   {
     label: 'Google Kubernetes Engine',
