@@ -1927,16 +1927,18 @@ const RegistModal = props => {
                                 </Form.Item>
                               </Column>
                             </Columns>
-                            <Button
-                              type="flat"
-                              icon="trash"
-                              className={styles.scriptdelete}
-                              onClick={() =>
-                                listPasswordRoute.length > 1 &&
-                                obj > 1 &&
-                                handlePasswordRoute.delColumn(obj)
-                              }
-                            />
+                            {index > 0 &&
+                              <Button
+                                type="flat"
+                                icon="trash"
+                                className={styles.scriptdelete}
+                                onClick={() =>
+                                  listPasswordRoute.length > 1 &&
+                                  obj > 1 &&
+                                  handlePasswordRoute.delColumn(obj)
+                                }
+                              />
+                            }
                           </div>
                         )
                       })}
@@ -1985,15 +1987,17 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
-                          <Button
-                            type="flat"
-                            icon="trash"
-                            className={styles.scriptdelete}
-                            onClick={() =>
-                              listFileRoute.length > 1 &&
-                              handleFileRoute.delColumn(obj)
-                            }
-                          />
+                          { listFileRoute.length > 1 && 
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() =>
+                                listFileRoute.length > 1 &&
+                                handleFileRoute.delColumn(obj)
+                              }
+                            />
+                          }
                         </div>
                       ))}
                       <div className="text-right">
@@ -2041,15 +2045,17 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
-                          <Button
-                            type="flat"
-                            icon="trash"
-                            className={styles.scriptdelete}
-                            onClick={() =>
-                              listPackageRoute.length > 1 &&
-                              handlePackageRoute.delColumn(obj)
-                            }
-                          />
+                          {listPackageRoute.length > 1 &&
+                            <Button
+                              type="flat"
+                              icon="trash"
+                              className={styles.scriptdelete}
+                              onClick={() =>
+                                listPackageRoute.length > 1 &&
+                                handlePackageRoute.delColumn(obj)
+                              }
+                            />
+                          }
                         </div>
                       ))}
                       <div className="text-right">

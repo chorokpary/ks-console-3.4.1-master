@@ -535,6 +535,7 @@ module.exports = {
   RESOURCES_SUCCESS_VALID_DESC: '유효성 체크가 완료되었습니다.',
   RESOURCES_FAIL_VALID_TIP: '유효하지 않은 사용자입니다.',
   RESOURCES_FAIL_VALID_INFO: '유효하지 않은 정보입니다.',
+  RESOURCES_FAIL_VALID_URL: '유효하지 않은 URL입니다.',
   RESOURCES_MIGRATING: '마이그레이션 중',
   RESOURCES_ETHERNET: '이더넷',
   RESOURCES_ETHERNET_TYPE: '이더넷 유형',

@@ -61,6 +61,13 @@ const ModifyModal = props => {
         ? props.store.detail.flavor.ram
         : props.store.detail.flavor.ram / 1024
     );
+
+    setTab(
+      props.store.detail.flavor.ram / 1024 < 1
+        ? "MiB"
+        : "GiB"
+    );
+
     checkExtraSpecs = [...props.store.detail.flavor.extra_specs].filter(
       obj => obj.value === 'True'
     );
@@ -146,16 +153,18 @@ const ModifyModal = props => {
   // cpu count
   const addVcpus = e => {
     e.preventDefault();
-    setVcpus(vcpus + 1);
     const { data } = form.current.props;
-    data.vcpus = vcpus + 1;
+    if(regexNum.test(data.vcpus) || data.vcpus == "" || data.vcpus == 0){
+        setVcpus(Number(vcpus) + 1);
+        data.vcpus = Number(vcpus) + 1;  
+    }    
   };
   const minusVcpus = e => {
     e.preventDefault();
     if (vcpus > 0) {
-      setVcpus(vcpus - 1);
+      setVcpus(Number(vcpus) - 1);
       const { data } = form.current.props;
-      data.vcpus = vcpus - 1;
+      data.vcpus = Number(vcpus) - 1;
     }
   };
 
@@ -282,14 +291,14 @@ const ModifyModal = props => {
 
   const handleByte = size => {
     if (size === 'MiB') {
-      if (ram !== 0) {
-        setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
-      }
+      // if (ram !== 0) {
+      //   setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
+      // }
       setByteFlag(false);
     } else {
-      if (ram !== 0) {
-        setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
-      }
+      // if (ram !== 0) {
+      //   setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
+      // }
       setByteFlag(true);
     }
   };
@@ -333,6 +342,7 @@ const ModifyModal = props => {
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
+      
       onOk({ flavor: data });
     });
   };
