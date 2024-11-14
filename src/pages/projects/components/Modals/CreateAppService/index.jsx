@@ -191,6 +191,8 @@ export default class ServiceCreateModal extends React.Component {
           ? { name: t('STATELESS_SERVICE') }
           : { title: t('EDIT_TITLE', { title: t('STATELESS_SERVICE') }) }
 
+        let supportStorageSelect = false
+          
         content = (
           <CreateModal
             width={960}
@@ -209,6 +211,7 @@ export default class ServiceCreateModal extends React.Component {
             onOk={onOk}
             onCancel={onCancel}
             maskClosable={false}
+            supportStorageSelect={supportStorageSelect}
             okBtnText={!isEmpty(detail) ? t('OK') : t('CREATE')}
           />
         )

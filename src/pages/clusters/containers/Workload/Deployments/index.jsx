@@ -224,6 +224,7 @@ export default class Deployments extends React.Component {
       namespace: query.namespace,
       cluster: match.params.cluster,
       supportGpuSelect: true,
+      supportStorageSelect: false,
     })
   }
 

@@ -288,6 +288,8 @@ export default class ServiceCreateModal extends React.Component {
           workloadStore = new FederatedStore(this.workloadStore)
         }
 
+        let supportStorageSelect = false
+
         content = (
           <CreateModal
             width={960}
@@ -302,6 +304,7 @@ export default class ServiceCreateModal extends React.Component {
             steps={steps}
             formTemplate={formTemplate}
             isSubmitting={isSubmitting}
+            supportStorageSelect={supportStorageSelect}
             onOk={onOk}
             onCancel={onCancel}
           />
