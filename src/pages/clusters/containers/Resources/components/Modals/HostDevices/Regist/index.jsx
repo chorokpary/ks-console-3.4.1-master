@@ -178,13 +178,13 @@ const RegistModal = props => {
     if (e) {
       if (keyword === 1) {
         setDataList(
-          dataList.filter(el =>
+          origDataList.filter(el =>
             el.vendor_name.toLowerCase().includes(e.toLowerCase())
           )
         );
       } else {
         setDataList(
-          dataList.filter(el =>
+          origDataList.filter(el =>
             el.device_name.toLowerCase().includes(e.toLowerCase())
           )
         );
@@ -342,7 +342,7 @@ const RegistModal = props => {
                           </td>
                         </tr>
                       )}
-                      {origDataList?.map((data, key) => (
+                      {dataList?.map((data, key) => (
                         <tr key={data.name}>
                           <td>
                             <Checkbox
