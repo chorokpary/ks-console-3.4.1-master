@@ -23,6 +23,7 @@ import { range } from 'lodash';
 import styles from './index.scss';
 
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
+const regxOnlyNum = /^[1-9][0-9]*$/;
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const RegistModal = props => {
   const store = new FlavorStore();
@@ -37,6 +38,7 @@ const RegistModal = props => {
   const [sizeEmpty, setSizeEmpty] = useState(false);
 
   const [vcpus, setVcpus] = useState(1);
+  const [vcpusErrorFlag, setVcpusErrorFlag] = useState(0);
 
   const [hostDevices, setHostDevices] = useState();
   const [gpus, setGpus] = useState();
@@ -121,17 +123,22 @@ const RegistModal = props => {
   const addVcpus = e => {
     e.preventDefault();
     const { data } = form.current.props;
-    if(regexNum.test(data.vcpus) || data.vcpus == "" || data.vcpus == 0){
-        setVcpus(Number(vcpus) + 1);
-        data.vcpus = Number(vcpus) + 1;  
-    }    
+
+    if(regxOnlyNum.test(data.vcpus) || data.vcpus == "" || data.vcpus == 0){
+      setVcpus(Number(data.vcpus) + 1);
+      data.vcpus = Number(data.vcpus) + 1;  
+      setVcpusErrorFlag(0);
+      getCpuInoutError('remove');
+    }  
   };
   const minusVcpus = e => {
     e.preventDefault();
-    if (vcpus > 0) {
+    const { data } = form.current.props;
+
+    if (regxOnlyNum.test(data.vcpus) && vcpus > 0) {
       setVcpus(Number(vcpus) - 1);
-      const { data } = form.current.props;
       data.vcpus = Number(vcpus) - 1;
+      setVcpusErrorFlag(0);
     }
   };
 
@@ -287,6 +294,11 @@ const RegistModal = props => {
 
     form.current.validator(() => {
       const { data } = form.current.props;
+
+      if(vcpusErrorFlag > 0){
+        return false;
+      }
+
       data.vcpus = vcpus;
       data.ram = byteFlag ? ram * 1024 : ram;
 
@@ -309,6 +321,7 @@ const RegistModal = props => {
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
+
       onOk({ flavor: data });
     });
   };
@@ -319,8 +332,7 @@ const RegistModal = props => {
       if (
         data.name === undefined ||
         !PATTERN_USER_NAME.test(data.name) ||
-        data.vcpus === undefined ||
-        !regexNum.test(data.vcpus) ||
+        vcpusErrorFlag > 0 ||
         data.ram === undefined ||
         !regexNum.test(data.ram) ||
         data.root_disk === undefined ||
@@ -436,6 +448,15 @@ const RegistModal = props => {
       return { ...marks, [value]: mark };
     }, {});
   };
+
+  const getCpuInoutError = (type) => {
+    const a = document.getElementById('vcpus');
+    if(type == "add"){
+      a.parentElement.parentElement.classList.add('error-item');
+    }else{
+      a.parentElement.parentElement.classList.remove('error-item');
+    }    
+  }
 
   return (
     <>
@@ -562,23 +583,38 @@ const RegistModal = props => {
                       rules={[
                         {
                           required: true,
-                          message: t('ROSOURCES_CPU_VALID'),
+                          message: '',
                         },
                         {
                           pattern: regexNum,
-                          message: t('ROSOURCES_CPU_NUM_VALID'),
+                          message: '',
                         },
                       ]}
                     >
                       <Input
                         name="vcpus"
                         defaultValue={vcpus}
-                        style={{ width: '100%' }}
-                        onChange={e => setVcpus(e)}
+                        style={{ width: '100%'}}
+                         onChange={(e) => {
+                          if(e === ''){
+                            setVcpusErrorFlag(1); 
+                            getCpuInoutError('add');
+                          }else if(!regxOnlyNum.test(e)){
+                            setVcpusErrorFlag(2); 
+                            getCpuInoutError('add');
+                          }else{
+                            setVcpusErrorFlag(0); 
+                            setVcpus(e);
+                            getCpuInoutError('remove');
+                          }
+                        }}
                       />
                     </Form.Item>
                     &nbsp;&nbsp;
                     <Button icon="add" onClick={e => addVcpus(e)} />
+                  </div>
+                  <div className={`form-item-error ${vcpusErrorFlag < 1 ? 'hide' : ''  }`} >
+                    {vcpusErrorFlag === 1 ? t('ROSOURCES_CPU_VALID') : t('ROSOURCES_CPU_NUM_VALID')}
                   </div>
                 </Column>
                 <Column>
