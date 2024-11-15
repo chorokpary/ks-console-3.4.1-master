@@ -371,12 +371,10 @@ export default class Vms extends React.Component {
           const stateArray = ['Stopped', 'Running', 'Paused'];
 
           if (stateArray.includes(state)) {
-            const vmsRole = get(globals.user.projectRules, [
-              cluster,
-              namespace,
-              'vms',
-            ]);
-            if (vmsRole?.includes('manage')) {
+            const vmsRole = get(globals.user.projectRules, [ cluster, namespace, 'vms', ]);
+            const _Role = get(globals.user.projectRules, [ cluster, namespace, '_', ]);
+     
+            if (vmsRole?.includes('manage') || _Role?.includes('manage')) {
               return (
                 <div>
                   <Dropdown

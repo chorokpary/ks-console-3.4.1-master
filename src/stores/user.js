@@ -167,7 +167,7 @@ export default class UsersStore extends Base {
           })
 
           if (params.workspace === globals.config.systemWorkspace) {
-            rules = globals.config.systemWorkspaceProjectRules
+            rules = { ...rules, ...globals.config.systemWorkspaceProjectRules }
           }
 
           set(
