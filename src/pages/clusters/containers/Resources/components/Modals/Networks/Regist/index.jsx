@@ -77,7 +77,6 @@ const RegistModal = props => {
 
     const getNodeData = async () => {
       const listNode = await networkStore.fetchNodes(props);
-      console.log(listNode);
       let sttSupported = true;
       for (const node of listNode.nodes) {
         if (node?.info?.kernelVersion) {
