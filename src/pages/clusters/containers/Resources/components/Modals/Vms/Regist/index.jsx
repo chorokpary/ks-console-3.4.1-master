@@ -425,13 +425,13 @@ const RegistModal = props => {
         const imageSize =
           imageType === 'I'
             ? imageDataList
-              .filter(item => item.name === selectImageName)
-              .map(item => item.size)[0]
-              .replace('Gi', '')
+                .filter(item => item.name === selectImageName)
+                .map(item => item.size)[0]
+                .replace('Gi', '')
             : bootVolumeDataList
-              .filter(item => item.id === selectBootId)
-              .map(item => item.capacity)[0]
-              .replace('Gi', '')
+                .filter(item => item.id === selectBootId)
+                .map(item => item.capacity)[0]
+                .replace('Gi', '')
         const flavorSize = flavorDataList
           .filter(item => item.name === selectFlavorName)
           .map(item => item.root_disk)
@@ -1024,12 +1024,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -1041,8 +1042,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1054,12 +1055,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -1071,8 +1073,8 @@ const RegistModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1084,12 +1086,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 3
-                    ? styles.current
-                    : regStep > 3
+                  className={`${
+                    regStep === 3
+                      ? styles.current
+                      : regStep > 3
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -1101,8 +1104,8 @@ const RegistModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1342,8 +1345,9 @@ const RegistModal = props => {
                           />
                         </Form.Item>
                         <div
-                          className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            flavorSizeCheck ? 'hide' : ''
+                          }`}
                         >
                           {imageType === 'I'
                             ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
@@ -1432,7 +1436,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['network'].length > 0 &&
                                     stateVariables['network'].length ===
-                                    dataListVariables['network'].length
+                                      dataListVariables['network'].length
                                   )
                                 }
                               />
@@ -1570,7 +1574,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['sriov'].length > 0 &&
                                     stateVariables['sriov'].length ===
-                                    dataListVariables['sriov'].length
+                                      dataListVariables['sriov'].length
                                   )
                                 }
                               />
@@ -1676,8 +1680,9 @@ const RegistModal = props => {
 
                 <div className={styles.wrapperError}>
                   <div
-                    className={`form-item-error ${!isKeypiarPasswordError ? 'hide' : ''
-                      }`}
+                    className={`form-item-error ${
+                      !isKeypiarPasswordError ? 'hide' : ''
+                    }`}
                   >
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
@@ -1723,7 +1728,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['security'].length > 0 &&
                                     stateVariables['security'].length ===
-                                    dataListVariables['security'].length
+                                      dataListVariables['security'].length
                                   )
                                 }
                               />
@@ -1865,8 +1870,9 @@ const RegistModal = props => {
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${!isJupyterPortError ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            !isJupyterPortError ? 'hide' : ''
+                          }`}
                         >
                           {t('RESOURCES_JUPYTER_PORT_RANGE_DESC')}
                         </div>
@@ -1894,8 +1900,9 @@ const RegistModal = props => {
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${!isJupyterTokenError ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            !isJupyterTokenError ? 'hide' : ''
+                          }`}
                         >
                           {t('RESOURCES_JUPYTER_TOKEN_DESC')}
                         </div>
@@ -1942,18 +1949,18 @@ const RegistModal = props => {
                                 </Form.Item>
                               </Column>
                             </Columns>
-                            {index > 0 &&
+                            {index > 0 && (
                               <Button
                                 type="flat"
                                 icon="trash"
                                 className={styles.scriptdelete}
                                 onClick={() =>
-                                  //listPasswordRoute.length > 1 &&
-                                  //obj > 1 &&
+                                  // listPasswordRoute.length > 1 &&
+                                  // obj > 1 &&
                                   handlePasswordRoute.delColumn(obj)
                                 }
                               />
-                            }
+                            )}
                           </div>
                         )
                       })}
@@ -1967,8 +1974,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPasswordError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPasswordError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                       </div>
@@ -2002,17 +2010,17 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
-                          { listFileRoute.length > 1 && 
+                          {listFileRoute.length > 1 && (
                             <Button
                               type="flat"
                               icon="trash"
                               className={styles.scriptdelete}
                               onClick={() =>
-                                //listFileRoute.length > 1 &&
+                                // listFileRoute.length > 1 &&
                                 handleFileRoute.delColumn(obj)
                               }
                             />
-                          }
+                          )}
                         </div>
                       ))}
                       <div className="text-right">
@@ -2024,8 +2032,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isFileWriteError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isFileWriteError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                       </div>
@@ -2060,17 +2069,17 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
-                          {listPackageRoute.length > 1 &&
+                          {listPackageRoute.length > 1 && (
                             <Button
                               type="flat"
                               icon="trash"
                               className={styles.scriptdelete}
                               onClick={() =>
-                                //listPackageRoute.length > 1 &&
+                                // listPackageRoute.length > 1 &&
                                 handlePackageRoute.delColumn(obj)
                               }
                             />
-                          }
+                          )}
                         </div>
                       ))}
                       <div className="text-right">
@@ -2082,14 +2091,16 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPackageError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPackageError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}
                       </div>
                       <div
-                        className={`form-item-error ${!packageValidationError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !packageValidationError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}
                       </div>
@@ -2129,8 +2140,9 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                       <div
-                        className={`form-item-error ${!isUserScriptError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isUserScriptError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
                       </div>
@@ -2168,13 +2180,15 @@ const RegistModal = props => {
                         </div>
                       )}
                       <div className={styles.list}>
-                        <label>{`${imageType === 'I'
-                          ? t('RESOURCES_IMAGE')
-                          : t('RESOURCES_BOOT_VOLUME')
-                          }`}</label>
+                        <label>{`${
+                          imageType === 'I'
+                            ? t('RESOURCES_IMAGE')
+                            : t('RESOURCES_BOOT_VOLUME')
+                        }`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{`${imageType === 'I' ? imageName : bootVolumeName
-                            }`}</div>
+                          <div className={styles.bold}>{`${
+                            imageType === 'I' ? imageName : bootVolumeName
+                          }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
@@ -2250,9 +2264,11 @@ const RegistModal = props => {
                           <div className={styles.list}>
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
-                              <div>{`${obj.ip === undefined
-                                ? t('RESOURCES_AUTOMATIC')
-                                : obj.ip
+                              <div>
+                                {`${
+                                  obj.ip === undefined
+                                    ? t('RESOURCES_AUTOMATIC')
+                                    : obj.ip
                                 }`}
                               </div>
                             </div>
@@ -2283,9 +2299,11 @@ const RegistModal = props => {
                           <div className={styles.list}>
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
-                              <div>{`${obj.ip === undefined
-                                ? t('RESOURCES_AUTOMATIC')
-                                : obj.ip
+                              <div>
+                                {`${
+                                  obj.ip === undefined
+                                    ? t('RESOURCES_AUTOMATIC')
+                                    : obj.ip
                                 }`}
                               </div>
                             </div>
@@ -2316,10 +2334,11 @@ const RegistModal = props => {
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_KEYPAIR')}</label>
-                        <div>{`${keypairName === undefined
-                          ? t('RESOURCES_NOT_SELECTED')
-                          : keypairName
-                          }`}</div>
+                        <div>{`${
+                          keypairName === undefined
+                            ? t('RESOURCES_NOT_SELECTED')
+                            : keypairName
+                        }`}</div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
@@ -2327,24 +2346,22 @@ const RegistModal = props => {
                           {securityGroupCheckItems.length === 0
                             ? t('RESOURCES_NOT_SELECTED')
                             : securityGroupCheckItems.map(id => {
-                              const securityGroup = find(securityGroupList, { id });
-                              const name = get(securityGroup, 'name', '');
-                              return (
-                                <div key={id}>
-                                  {name}
-                                </div>
-                              );
-                            })
-                          }
+                                const securityGroup = find(securityGroupList, {
+                                  id,
+                                })
+                                const name = get(securityGroup, 'name', '')
+                                return <div key={id}>{name}</div>
+                              })}
                         </div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_NODE')}</label>
                         <div className={styles.multiline}>
-                          <div>{`${nodeName === undefined
-                            ? t('RESOURCES_AUTOMATIC')
-                            : nodeName
-                            }`}</div>
+                          <div>{`${
+                            nodeName === undefined
+                              ? t('RESOURCES_AUTOMATIC')
+                              : nodeName
+                          }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
