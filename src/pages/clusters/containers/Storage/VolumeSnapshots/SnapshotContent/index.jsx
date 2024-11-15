@@ -65,6 +65,7 @@ export default class VolumeSnapshotContent extends React.Component {
           })
         },
       },
+      /*
       {
         key: 'delete',
         icon: 'trash',
@@ -77,6 +78,7 @@ export default class VolumeSnapshotContent extends React.Component {
             success: routing.query,
           }),
       },
+      */
     ]
   }
 
