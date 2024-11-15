@@ -68,7 +68,7 @@ class ResourceUsage extends React.Component {
     super(props)
 
     this.state = {
-      resourceType: this.computingResource ? 'computing' : 'application',
+      resourceType: this.computingResource ? 'computing' : this.applicationResource ? 'application' : 'physical',
       range: 43200,
     }
 
@@ -366,9 +366,10 @@ class ResourceUsage extends React.Component {
       </Loading>
     )
   }
+  
 
   renderHeader() {
-
+    console.log("this.state.resourceType : "+ this.state.resourceType)
     return (
       <div className={styles.header}>
         <RadioGroup
