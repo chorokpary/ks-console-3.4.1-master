@@ -42,7 +42,22 @@ export default class FloatingIp extends React.Component {
   }
 
   get itemActions() {
-    return [];
+    const { getData, trigger } = this.props;
+    return [
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('RESOURCES_DELETE'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('floatingIp.remove', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
+    ];
   }
 
   get tableActions() {
