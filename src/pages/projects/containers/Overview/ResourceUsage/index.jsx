@@ -136,12 +136,19 @@ class ResourceUsage extends React.Component {
     if (get(globals.user.globalRules, 'clusters')?.includes('manage')) {
       return true
     }
-    const computingWorkloadServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'vms'], [])
-    const computingSettingServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'networks'], [])
-    const computingResourceServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'flavors'], [])
 
-    const flag = (computingWorkloadServieRole.length > 0 || computingSettingServieRole.length > 0 || computingResourceServieRole.length > 0) ? true : false;
-    return flag;
+    const _Role = get(globals.user.projectRules, [ this.cluster, this.namespace, '_', ]);
+
+    if(_Role?.includes('manage')){
+      return true;
+    }else{        
+      const computingWorkloadServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'vms'], [])
+      const computingSettingServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'networks'], [])
+      const computingResourceServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'flavors'], [])
+
+      const flag = (computingWorkloadServieRole.length > 0 || computingSettingServieRole.length > 0 || computingResourceServieRole.length > 0) ? true : false;
+      return flag;
+    }    
   }
 
   fetchData = params => {
@@ -277,7 +284,7 @@ class ResourceUsage extends React.Component {
   renderApplicationResource() {
 
     if (!this.applicationResource) {
-      return false;
+      //return false;
     }
 
     const { isLoading } = toJS(this.overviewStore.resource)
@@ -342,7 +349,7 @@ class ResourceUsage extends React.Component {
   renderComputingResource() {
 
     if (!this.computingResource) {
-      return false;
+      //return false;
     }
     const { isLoading, resources } = this.computingStore
 
@@ -378,16 +385,16 @@ class ResourceUsage extends React.Component {
           onChange={this.handleResouceTypeChange}
           size="small"
         >
-          {this.computingResource &&
+
             <RadioButton value="computing">
               {t('컴퓨팅 리소스')}
             </RadioButton>
-          }
-          {this.applicationResource &&
+      
+
             <RadioButton value="application">
               {t('APPLICATION_RESOURCE_PL')}
             </RadioButton>
-          }
+
           <RadioButton value="physical">
             {t('PHYSICAL_RESOURCE_PL')}
           </RadioButton>
