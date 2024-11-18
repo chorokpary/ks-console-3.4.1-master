@@ -272,7 +272,7 @@ export default class DefaultResourceEditModal extends React.Component {
   render() {
     const { visible, onCancel, isSubmitting } = this.props
     const { error } = this.state
-
+    
     return (
       <Modal
         width={960}
@@ -289,6 +289,7 @@ export default class DefaultResourceEditModal extends React.Component {
           onChange={this.handleChange}
           onError={this.handleError}
           supportGpuSelect={this.props.supportGpuSelect || false}
+          supportStorageSelect={false}
           workspaceLimitProps={this.workspaceLimitProps}
         />
       </Modal>

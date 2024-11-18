@@ -44,22 +44,7 @@ const RegistModal = props => {
   );
 
   const [isTenantNetwork, setIsTenantNetwork] = useState(true);
-
-  const networkTypeOptions = props.namespace
-    ? [
-      { label: 'VXLAN', value: 'VXLAN' },
-      { label: 'GRE', value: 'GRE' },
-      { label: 'GENEVE', value: 'GENEVE' },
-      { label: 'STT', value: 'STT' },
-    ]
-    : [
-      { label: 'VXLAN', value: 'VXLAN' },
-      { label: 'VLAN', value: 'VLAN' },
-      { label: 'FLAT', value: 'FLAT' },
-      { label: 'GRE', value: 'GRE' },
-      { label: 'GENEVE', value: 'GENEVE' },
-      { label: 'STT', value: 'STT' },
-    ];
+  const [networkTypeOptions, setNetworkTypeOptions] = useState([]);
 
   const externalOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
@@ -89,6 +74,45 @@ const RegistModal = props => {
       setPhysnetOptions(opt);
     };
     getPhysnetsData();
+
+    const getNodeData = async () => {
+      const listNode = await networkStore.fetchNodes(props);
+      let sttSupported = true;
+      for (const node of listNode.nodes) {
+        if (node?.info?.kernelVersion) {
+          const kernelVersionMajor = parseInt(node.info.kernelVersion.split('.')[0]);
+          const kernelVersionMinor = parseInt(node.info.kernelVersion.split('.')[1]);
+          if (kernelVersionMajor > 5 || (kernelVersionMajor == 5 && kernelVersionMinor >= 14)) {
+            // Disable STT if kernel version is 5.14 or higher
+            sttSupported = false;
+            break;
+          }
+        } else {
+          // Disable STT if kernel version is unknown
+          sttSupported = false;
+          break;
+        }
+      }
+
+      let networkTypeOptions = [];
+      if (!props.namespace) {
+        networkTypeOptions = networkTypeOptions.concat([
+          { label: 'FLAT', value: 'FLAT' },
+          { label: 'VLAN', value: 'VLAN' },
+        ]);
+      }
+      networkTypeOptions = networkTypeOptions.concat([
+        { label: 'VXLAN', value: 'VXLAN' },
+        { label: 'GENEVE', value: 'GENEVE' },
+        { label: 'GRE', value: 'GRE' },
+      ]);
+      if (sttSupported) {
+        networkTypeOptions.push({ label: 'STT', value: 'STT' });
+      }
+      setNetworkTypeOptions(networkTypeOptions);
+    }
+    getNodeData();
+
   }, []);
 
   const handleOk = () => {
