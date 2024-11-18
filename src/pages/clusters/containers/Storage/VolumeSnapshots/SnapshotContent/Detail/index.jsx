@@ -93,6 +93,7 @@ export default class VolumeDetail extends React.Component {
           })
         },
       },
+      /*
       {
         key: 'delete',
         icon: 'trash',
@@ -105,6 +106,7 @@ export default class VolumeDetail extends React.Component {
             success: this.returnTolist,
           }),
       },
+      */
     ]
   }
 

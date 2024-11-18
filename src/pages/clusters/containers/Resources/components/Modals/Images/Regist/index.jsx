@@ -112,7 +112,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
 
   const [loading, setLoading] = useState(false)
   const [sourceEmpty, setSourceEmpty] = useState(false)
-  const [accelEmptyError, setAccelEmptyError] = useState(false)
 
   useEffect(() => {
     const getDistroTypeList = async () => {
@@ -366,7 +365,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
       }
       data.size = Number(imageSize.slice(0, imageSize.length - 2))
 
-      if (imageName === '' || tag === '' || accelEmptyError) {
+      if (imageName === '' || tag === '') {
         setSourceEmpty(true)
         return
       }
@@ -530,13 +529,12 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   }
 
   const getMatchingTag = (tags, arch, accel, preInstallApp) => {
-    setAccelEmptyError(false)
-    if (accel === 'None' && preInstallApp !== 'None') {
-      setAccelEmptyError(true)
-    }
     const filteredTag = tags.filter(item => {
       if (accel === 'None' && preInstallApp === 'None') {
         return item.name === arch
+      }
+      if (accel === 'None' && preInstallApp !== 'None') {
+        return item.name === `${preInstallApp.toLowerCase()}_${arch}`
       }
       if (accel !== 'None' && preInstallApp === 'None') {
         return item.name === `${accel.toLowerCase()}_${arch}`
@@ -1200,9 +1198,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                             rules={[{ required: false }]}
                           >
                             <TypeSelect
-                              className={`${
-                                accelEmptyError ? styles.formErrorStyle : ''
-                              }`}
                               name="pre_installed_app"
                               defaultValue={preInstallAppType}
                               options={preInstallAppOptions()}
@@ -1212,11 +1207,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                         </Column>
                       </Columns>
                     </Form.Item>
-                    {accelEmptyError && (
-                      <div className="form-item-error">
-                        {t('RESOURCES_SETTING_PRE_INSTALLED_APP_TIP')}
-                      </div>
-                    )}
                   </Form.Group>
                 </Form.Item>
                 <Form.Item>

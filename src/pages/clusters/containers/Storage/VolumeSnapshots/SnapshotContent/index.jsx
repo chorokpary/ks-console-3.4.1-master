@@ -25,6 +25,7 @@ import Table from 'components/Tables/List'
 import { Avatar, Status } from 'components/Base'
 import SnapshotContentStore from 'stores/volumeSnapshotContent'
 import { isEmpty } from 'lodash'
+import { Icon, Tooltip } from '@kube-design/components'
 import { getLocalTime, memoryFormat } from 'utils'
 
 @withClusterList({
@@ -64,6 +65,7 @@ export default class VolumeSnapshotContent extends React.Component {
           })
         },
       },
+      /*
       {
         key: 'delete',
         icon: 'trash',
@@ -76,6 +78,7 @@ export default class VolumeSnapshotContent extends React.Component {
             success: routing.query,
           }),
       },
+      */
     ]
   }
 

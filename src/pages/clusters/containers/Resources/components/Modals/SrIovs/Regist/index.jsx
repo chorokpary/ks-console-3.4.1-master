@@ -17,6 +17,7 @@ import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
 import * as common from 'utils/resources';
 import SriovStore from 'stores/resources/sriovs';
 import styles from './index.scss';
+import { parse } from 'diff2html';
 
 const RegistModal = props => {
   const form = useRef();
@@ -279,6 +280,14 @@ const RegistModal = props => {
     const checkNetwork = cidrData.networkAddress == value.split('/')[0] ? true : false;
     return checkNetwork;
   }
+
+  const segmentIdValidator = (rule, value, callback) => {
+    // Check if the value is number string and between 2 and 4094
+    if (!/^\d+$/.test(value) || parseInt(value) < 2 || parseInt(value) > 4094) {
+      return callback({ message: t('RESOURCES_SEGMENT_ID_VALID_VLAN') });
+    }
+    callback();
+  };
 
   const cidrValidator = (rule, value, callback) => {
     const { data } = form.current.props;
@@ -595,7 +604,15 @@ const RegistModal = props => {
                       </Form.Item>
                     </Column>
                     <Column>
-                      <Form.Item label={t('RESOURCES_SEGMENT_ID')}>
+                      <Form.Item
+                        label={t('RESOURCES_SEGMENT_ID')}
+                        rules={[
+                          {
+                            required: true,
+                            validator: segmentIdValidator,
+                          },
+                        ]}
+                      >
                         <NumberInput
                           name="segment_id"
                           disabled={externalBool}

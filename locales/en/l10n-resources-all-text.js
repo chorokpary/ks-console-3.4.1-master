@@ -497,6 +497,7 @@ module.exports = {
   RESOURCES_SEGMENT_ID: 'Segment ID',
   RESOURCES_SEGMENT_ID_EMPTY_DESC: 'Please enter the segment ID',
   RESOURCES_SEGMENT_ID_VALID: 'Please enter a value between 0 and 16777215.',
+  RESOURCES_SEGMENT_ID_VALID_VLAN: 'Please enter a value between 2 and 4094.',
   RESOURCES_DETAIL_SETTINGS: 'Detailed Settings',
   RESOURCES_PINE_TREE: 'Pine Tree',
   RESOURCES_SOURCE: 'Source',
