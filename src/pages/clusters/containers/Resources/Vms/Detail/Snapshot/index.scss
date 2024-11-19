@@ -3,10 +3,9 @@
 
 .wrapper {
   padding: 4px;
-  margin-right: 8px;
-  margin-left: 8px;
+  margin-right: 0px;
+  margin-left: 0px;
   background-color: $card-bg-color;
-  border-radius: $border-radius;
 }
 
 .item {
@@ -98,7 +97,8 @@
   position: relative;
   height: 100px;
   margin-bottom: 8px;
-
+  margin-right: 8px;
+  margin-left: 8px;
   &:last-child {
     margin-bottom: 0;
   }
