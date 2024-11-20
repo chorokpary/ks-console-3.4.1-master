@@ -81,6 +81,7 @@ export default {
         detail,
         store: quotaStore,
         modal: WorkspaceQuotaEditModal,
+        supportStorageSelect: false,
         ...props,
       })
     },

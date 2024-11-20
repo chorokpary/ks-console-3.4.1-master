@@ -54,8 +54,8 @@ export default class ResourceLimit extends React.Component {
 
   static defaultProps = {
     value: {},
-    onChange() { },
-    onError() { },
+    onChange() {},
+    onError() {},
     cpuProps: {},
     memoryProps: {},
     storageProps: {},
@@ -134,7 +134,6 @@ export default class ResourceLimit extends React.Component {
     const requestSto = ResourceLimit.getDefaultRequestValue(props, 'storage')
     const limitCpu = ResourceLimit.getDefaultLimitValue(props, 'cpu')
     const limitMeo = ResourceLimit.getDefaultLimitValue(props, 'memory')
-    const limitSto = ResourceLimit.getDefaultLimitValue(props, 'storage')
 
     const cpuRequests = ResourceLimit.allowInputDot(
       requestCpu,
@@ -297,7 +296,7 @@ export default class ResourceLimit extends React.Component {
   }
 
   get storageUnit() {
-    return this.props.storageProps.unit || 'Mi'
+    return this.props.storageProps.unit || 'Gi'
   }
 
   get gpuOption() {
@@ -328,7 +327,7 @@ export default class ResourceLimit extends React.Component {
   checkError = state => {
     let cpuError = ''
     let memoryError = ''
-    let storageError = ''
+    const storageError = ''
     const { requests, limits } = state
 
     if (
@@ -588,7 +587,6 @@ export default class ResourceLimit extends React.Component {
   renderQuotasTip() {
     const { workspaceLimitProps: pWL, supportGpuSelect } = this.props
     const { workspaceLimits: wsL, workspaceRequests: wsR } = this.state
-    const storageUnit = this.storageUnit
     const memoryUnit = this.memoryUnit
     const cpuUnit = this.cpuUnit
 
@@ -698,7 +696,12 @@ export default class ResourceLimit extends React.Component {
   }
 
   render() {
-    const { cpuError, memoryError, storageError, workspaceLimitCheck: limit } = this.state
+    const {
+      cpuError,
+      memoryError,
+      storageError,
+      workspaceLimitCheck: limit,
+    } = this.state
     const { supportGpuSelect, supportStorageSelect } = this.props
     const outWorkSpaceLimit = this.getWorkspaceCheckError()
 
@@ -784,7 +787,8 @@ export default class ResourceLimit extends React.Component {
         </div>
         <div className={styles.inputWrapper}>
           <Columns className="is-gapless">
-            {supportStorageSelect && this.renderStorageSelect(storageError, limit)}
+            {supportStorageSelect &&
+              this.renderStorageSelect(storageError, limit)}
             {supportGpuSelect && this.renderGpuSelect()}
           </Columns>
         </div>

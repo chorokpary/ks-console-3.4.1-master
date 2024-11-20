@@ -127,22 +127,22 @@ export default class QuotaEditModal extends React.Component {
         unit: 'Gi',
         valueFormatter: memoryFormatter,
       },
-      storageProps: {
-        marks: [
-          { value: 0, label: t('NO_REQUEST'), weight: 4 },
-          { value: 2, label: 2, weight: 4 },
-          { value: 4, label: 4, weight: 2 },
-          { value: 6, label: 6, weight: 2 },
-          { value: 8, label: 8 },
-          { value: 10, label: 10 },
-          { value: 12, label: 12 },
-          { value: 14, label: 14 },
-          { value: 16, label: 16 },
-          { value: Infinity, label: t('NO_LIMIT') },
-        ],
-        unit: 'Gi',
-        valueFormatter: memoryFormatter,
-      },
+      // storageProps: {
+      //   marks: [
+      //     { value: 0, label: t('NO_REQUEST'), weight: 4 },
+      //     { value: 2, label: 2, weight: 4 },
+      //     { value: 4, label: 4, weight: 2 },
+      //     { value: 6, label: 6, weight: 2 },
+      //     { value: 8, label: 8 },
+      //     { value: 10, label: 10 },
+      //     { value: 12, label: 12 },
+      //     { value: 14, label: 14 },
+      //     { value: 16, label: 16 },
+      //     { value: Infinity, label: t('NO_LIMIT') },
+      //   ],
+      //   unit: 'Gi',
+      //   valueFormatter: memoryFormatter,
+      // },
       defaultValue: {
         limits: {
           cpu: get(formTemplate, 'spec.quota.hard["limits.cpu"]'),
@@ -151,7 +151,7 @@ export default class QuotaEditModal extends React.Component {
         requests: {
           cpu: get(formTemplate, 'spec.quota.hard["requests.cpu"]'),
           memory: get(formTemplate, 'spec.quota.hard["requests.memory"]'),
-          storage: get(formTemplate, 'spec.quota.hard["requests.storage"]'),
+          // storage: get(formTemplate, 'spec.quota.hard["requests.storage"]'),
         },
       },
       onChange: value => {
@@ -175,11 +175,11 @@ export default class QuotaEditModal extends React.Component {
           'spec.quota.hard["requests.memory"]',
           get(value, 'requests.memory', null)
         )
-        set(
+        /*        set(
           formTemplate,
           'spec.quota.hard["requests.storage"]',
           get(value, 'requests.storage', null)
-        )
+        ) */
       },
       onError: error => {
         this.setState({ error })
@@ -205,7 +205,10 @@ export default class QuotaEditModal extends React.Component {
       >
         <div className={styles.body}>
           <Form.Item>
-            <ResourceLimit {...this.resourceLimitProps} />
+            <ResourceLimit
+              {...this.resourceLimitProps}
+              supportStorageSelect={false}
+            />
           </Form.Item>
         </div>
       </Modal.Form>
