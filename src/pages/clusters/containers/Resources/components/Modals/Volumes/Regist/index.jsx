@@ -117,7 +117,10 @@ const RegistModal = props => {
 
   useEffect(() => {
     const getDistroTypeList = async () => {
-      const dist = await distroTypeStore.fetchList();
+      const dist = await distroTypeStore.fetchList({
+        cluster: props.cluster,
+        namespace: props.namespace,
+      });
       setDistroTypeData(dist);
       setDistroTypeList(dist.filter(obj => obj.name != 'windows'));
     };

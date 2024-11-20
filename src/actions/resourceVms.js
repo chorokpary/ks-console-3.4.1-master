@@ -69,8 +69,8 @@ export default {
             .update({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') });         
+              success && success()         
             })
         },
         title: t('RESOURCES_EDIT_VM'),
