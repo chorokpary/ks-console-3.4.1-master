@@ -168,7 +168,6 @@ export default class Services extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        width: '20%',
         render: (name, record) => (
           <Avatar
             icon={ICON_TYPES[module]}

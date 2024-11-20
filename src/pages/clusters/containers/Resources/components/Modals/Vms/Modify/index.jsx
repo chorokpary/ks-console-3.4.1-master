@@ -54,7 +54,7 @@ const ModifyModal = (props) => {
               name="name"
               autoFocus={true}
               maxLength={63}
-              defaultValue={props.store.detail.vm.name}
+              defaultValue={props.store.vmsDetail.vm.name}
               disabled
               style={{ maxWidth: 'none' }}
             />
@@ -68,7 +68,7 @@ const ModifyModal = (props) => {
             <TextArea
               name="description"
               maxLength={256}
-              defaultValue={props.store.detail.vm.description}
+              defaultValue={props.store.vmsDetail.vm.description}
             />
           </Form.Item>
 

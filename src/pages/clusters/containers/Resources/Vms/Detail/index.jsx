@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
@@ -26,6 +26,17 @@ const VmDetail = props => {
   const fetchData = () => {
     store.fetchDetail(props.match.params)
   }
+
+  const [vmsDetail, setVmsDetail] = useState({})
+
+  useEffect(() => {
+    const fetchVmsDetail = async () => {
+        const vmsDetail = await store.fetchVmsDetail(props.match.params)
+        setVmsDetail(vmsDetail)
+    };
+
+    !store.isLoading  && fetchVmsDetail();
+  }, [store.isLoading]);
 
   const { cluster } = props.match.params
   const listUrl = `/clusters/${cluster}/vms`
@@ -326,7 +337,7 @@ const VmDetail = props => {
       },
       {
         name: t('RESOURCES_DESCRIPTION'),
-        value: detail.vm.description,
+        value: vmsDetail.vm.description,
       },
       {
         name: t('RESOURCES_CREATE_TIME'),
