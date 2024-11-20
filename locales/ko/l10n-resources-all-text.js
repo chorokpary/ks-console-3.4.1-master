@@ -51,6 +51,8 @@ module.exports = {
   RESOURCES_DELETE_FLAVOR_TIP:
     'Flavor 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_SELECT_FLAVOR_TIP: 'Flavor를 선택해 주세요.',
+  RESOURCES_SELECT_FLAVOR_QUOTA_TIP:
+    '프로젝트의 CPU, Memory 할당량을 설정한 경우,\ncpu-pinned 옵션이 활성화 된 Flavor를 선택해 주세요.',
   RESOURCES_FLAVOR_DESC: 'Flavor의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_GPU_USE_CHECK: 'GPU 사용 여부',
   RESOURCES_GPU_CHECK: 'GPU 여부',
@@ -998,7 +1000,8 @@ module.exports = {
     '포트는 1024~49151 숫자 범위이어야 합니다.',
   RESOURCES_JUPYTER_TOKEN_DESC: '토큰은 48자리의 16진수여야 합니다.',
   RESOURCES_PASSWORD_EMPTY_DESC: '패스워드를 입력해 주세요.',
-  RESOURCES_DELETING_DEFAULT_NOT_ALLOWED:'기본 항목은 삭제가 허용되지 않습니다.',
+  RESOURCES_DELETING_DEFAULT_NOT_ALLOWED:
+    '기본 항목은 삭제가 허용되지 않습니다.',
   RESOURCES_SUCCESS: '성공',
   RESOURCES_ENVIRONMENT_CONFIGURATION: '서버 구성',
   RESOURCES_UPLOAD: '업로드',
