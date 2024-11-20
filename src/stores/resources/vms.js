@@ -369,16 +369,6 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchVmsDetail(params) {
-    const url = `${this.getResourceUrl(params)}/${params.id}/info`
-
-    const result = await request.get(url)
-    const detail = { ...params, ...this.mapper(result), kind: 'vms' }
-    this.vmsDetail = detail
-    return detail
-  }
-
-  @action
   async fetchVmStatus(params) {
     this.isLoading = true
 
