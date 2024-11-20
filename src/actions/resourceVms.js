@@ -68,11 +68,9 @@ export default {
           store
             .update({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
             .then(() => {
-              setTimeout(() => { 
-                Modal.close(modal)
-                setTimeout(() => { Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') }); }, 500)                
-                success && success()
-              }, 1000)              
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+              success && success()
             })
         },
         title: t('RESOURCES_EDIT_VM'),
