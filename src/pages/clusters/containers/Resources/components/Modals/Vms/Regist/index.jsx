@@ -19,6 +19,7 @@ import * as common from 'utils/resources'
 import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
 import VmStore from 'stores/resources/vms'
+import QuotaStore from 'stores/quota'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
@@ -30,6 +31,7 @@ const RegistModal = props => {
   const [formData] = useState({})
 
   const vmStore = new VmStore()
+  const quotaStore = new QuotaStore()
 
   const [modelView, setModalView] = useState(true)
   const [regStep, setRegStep] = useState(1)
@@ -82,6 +84,7 @@ const RegistModal = props => {
 
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
+  const [isProjectQuotaSet, setIsProjectQuotaSet] = useState(false)
   const [isScript, setIsScript] = useState(false)
   const [isJupyterConfig, setIsJupyterConfig] = useState(false)
   const [isPassword, setIsPassword] = useState(false)
@@ -104,6 +107,37 @@ const RegistModal = props => {
   const [flavorSizeCheck, setFlavorSizeCheck] = useState(true)
 
   // const initialScriptId1 = useRef('');
+  useEffect(() => {
+    const getProjectQuota = async () => {
+      const listFlavor = await vmStore.fetchVmListFlavor({
+        sortBy: 'root_disk',
+        ...props,
+      })
+
+      const resourceQuota = await quotaStore.fetch({
+        ...props,
+        namespace: projectName,
+      })
+      if (
+        'hard' in resourceQuota.data &&
+        ('limits.cpu' in resourceQuota.data.hard ||
+          'limits.memory' in resourceQuota.data.hard)
+      ) {
+        setIsProjectQuotaSet(true)
+        setFlavorDataList(
+          listFlavor.flavors.filter(flavor =>
+            flavor.extra_specs.some(
+              spec => spec.key === 'cpu-pinning' && spec.value === 'True'
+            )
+          )
+        )
+      } else {
+        setIsProjectQuotaSet(false)
+        setFlavorDataList(listFlavor.flavors)
+      }
+    }
+    getProjectQuota()
+  }, [projectName])
 
   useEffect(() => {
     const getVmImage = async () => {
@@ -116,11 +150,6 @@ const RegistModal = props => {
     getVmImage()
 
     const getVmCreateData = async () => {
-      const listFlavor = await vmStore.fetchVmListFlavor({
-        sortBy: 'root_disk',
-        ...props,
-      })
-
       const listAvailableIps = await vmStore.fetchAllAvailableIps({ ...props })
       const listAvailableSriovIps = await vmStore.fetchAllAvailableSriovIps({
         ...props,
@@ -138,8 +167,6 @@ const RegistModal = props => {
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
         ...props,
       })
-
-      setFlavorDataList(listFlavor.flavors)
 
       setBootVolumeDataList(listBootVolume.volumes)
       setNetworkDataList(listNetwork.networks)
@@ -1380,6 +1407,9 @@ const RegistModal = props => {
                         )}
                       </Column>
                     </Columns>
+                    {isProjectQuotaSet && (
+                      <div>{t('RESOURCES_SELECT_FLAVOR_QUOTA_TIP')}</div>
+                    )}
                   </Form.Group>
                 </Form.Item>
 
