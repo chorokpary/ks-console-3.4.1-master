@@ -21,8 +21,6 @@ import { observable, action } from 'mobx';
 import { Notify } from '@kube-design/components';
 
 import { LIST_DEFAULT_ORDER } from 'utils/constants';
-import ObjectMapper from 'utils/object.mapper';
-import cookie from 'utils/cookie';
 import Base from '../basemm3'; // mm3 관련 추가 파일
 import List from '../base.list';
 
@@ -37,6 +35,126 @@ export default class VolumeStore extends Base {
     )}/edgetron/resources/kubevirt/volumes`;
   getListUrl = this.getResourceUrl;
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`;
+  getPaginatedUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/volumes/paged/${params.page}/${params.limit}`
+
+  @action
+  async fetchList({
+    cluster,
+    workspace,
+    namespace,
+    more,
+    devops,
+    silent,
+    ...params
+  } = {}) {
+    if (!silent) {
+      this.list.isLoading = true
+    }
+
+    if (!params.sortBy && params.ascending === undefined) {
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
+    }
+
+    if (params.limit === Infinity || params.limit === -1) {
+      params.limit = -1
+      params.page = 1
+    }
+
+    params.page = params.page || 1
+    params.limit = params.limit || 10
+
+    const page = params.page
+    const limit = params.limit
+
+    const result = await request.get(
+      this.getPaginatedUrl({ cluster, workspace, namespace, devops, page, limit }),
+      this.getFilterParams(params)
+    )
+
+    const data = (get(result, "volumes") || []).map(item => ({
+      cluster,
+      namespace,
+      ...this.mapper(item),
+    }))
+
+    const total = (get(result, "total") || 0)
+
+    // 초기 정렬 처리
+    data.sort((a, b) => {
+      return a.creation_timestamp < b.creation_timestamp
+        ? 1
+        : a.creation_timestamp > b.creation_timestamp
+        ? -1
+        : 0
+    })
+
+    // 초기 데이터 처리
+    this.dataList = data
+
+    // namespace(project) 있는 경우
+    if (namespace) {
+      params.project = namespace
+    }
+
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const searchArray = Object.keys(params)
+      .map(key => {
+        const value = params[key]
+        return {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        }
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
+
+    this.searchList = this.dataList
+    if (searchArray.length > 0) {
+      searchArray.forEach(search => {
+        this.searchList = this.searchList.filter(row => {
+          if (
+            search.searchKeywordType === 'project' &&
+            search.searchKeywordText !== ''
+          ) {
+            return (
+              row[search.searchKeywordType]?.toLowerCase() ===
+              search.searchKeywordText.toLowerCase()
+            )
+          }
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase())
+        })
+      })
+      this.dataList = this.searchList
+    }
+
+    // 정렬 처리
+    const sortType = params.ascending ? 'asc' : 'desc'
+    this.dataList.sort((a, b) => {
+      const x = a[params.sortBy]
+      const y = b[params.sortBy]
+      if (sortType === 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0
+      }
+      return x < y ? -1 : x > y ? 1 : 0
+    })
+
+    this.list.update({
+      data: more ? [...this.list.data, ...this.dataList] : this.dataList,
+      total: total,
+      ...params,
+      limit: Number(params.limit) || 10,
+      page: Number(params.page) || 1,
+      isLoading: false,
+      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
+    })
+
+    return this.dataList
+  }
 
   @action
   async create(data, params = {}) {

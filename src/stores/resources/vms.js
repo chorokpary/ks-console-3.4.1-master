@@ -37,6 +37,11 @@ export default class VmStore extends Base {
 
   getListUrl = this.getResourceUrl
 
+  getPaginatedUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/vms/paged/${params.page}/${params.limit}`
+
   @action
   async fetchList({
     cluster,
@@ -60,40 +65,24 @@ export default class VmStore extends Base {
       params.page = 1
     }
 
+    params.page = params.page || 1
     params.limit = params.limit || 10
+
+    const page = params.page
+    const limit = params.limit
+
     const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
+      this.getPaginatedUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
 
-    // mm3 api 관련
-    const mm3Array = [
-      'vms',
-      'images',
-      'flavors',
-      'networks',
-      'routers',
-      'floating_ips',
-      'lbs',
-      'security_groups',
-      'keypairs',
-      'host_devices',
-      'pci_devices',
-      'volumes',
-      'clusters',
-      'workspaces',
-      'licenses',
-      'distro_types',
-      'containerimages',
-      'resourcesvolumes',
-    ]
-    const apiName = mm3Array.includes(this.module) ? this.module : ''
-
-    const data = (get(result, apiName) || []).map(item => ({
+    const data = (get(result, "vms") || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
+
+    const total = (get(result, "total") || 0)
 
     // 초기 정렬 처리
     data.sort((a, b) => {
@@ -162,26 +151,15 @@ export default class VmStore extends Base {
       return x < y ? -1 : x > y ? 1 : 0
     })
 
-    // mm3 데이터 page 별 Slice 처리
-    const perPage = Number(params.limit) || 10
-    const currentPage = Number(params.page) || 1
-    const mm3SliceData = this.dataList.slice(
-      (currentPage - 1) * perPage,
-      currentPage * perPage
-    )
-
     this.list.update({
-      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total:
-        result.totalItems || result.total_count || this.dataList.length || 0,
+      data: more ? [...this.list.data, ...this.dataList] : this.dataList,
+      total: total,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
-
-    // console.log(this.dataList)
 
     return this.dataList
   }
