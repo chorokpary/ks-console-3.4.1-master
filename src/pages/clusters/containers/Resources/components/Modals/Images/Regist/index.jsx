@@ -379,7 +379,6 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
         publicType === 'public' &&
         (!registryUrlActive || registryUrl === defaultRegistryUrl)
       ) {
-        data.boot_type = 'legacy'
         if (distroType === 'rocky') {
           data.boot_type = 'uefi'
         }
@@ -1163,28 +1162,18 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
                         </Column>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_REAL_TIME')}
+                            label={t('RESOURCES_BOOT_TYPE')}
                             rules={[
                               {
                                 required: true,
                               },
                             ]}
                           >
-                            <RadioGroup
-                              name="is_realtime"
-                              wrapClassName="radio"
-                              defaultValue={realTime}
-                              onChange={value => setRealTime(value)}
-                            >
-                              {realTimeOptions.map(option => (
-                                <RadioButton
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </RadioButton>
-                              ))}
-                            </RadioGroup>
+                            <Select
+                              name="boot_type"
+                              defaultValue="legacy"
+                              options={bootTypeOptions}
+                            />
                           </Form.Item>
                         </Column>
                       </Columns>

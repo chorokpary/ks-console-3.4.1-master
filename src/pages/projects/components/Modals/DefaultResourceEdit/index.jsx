@@ -80,16 +80,16 @@ export default class DefaultResourceEditModal extends React.Component {
 
   get resourceLimit() {
     return {
-      requests: get(this.props.detail, 'limit.defaultRequest', {}),
-      limits: get(this.props.detail, 'limit.default', {}),
+      requests: get(this.props.detail, 'limit.min', {}),
+      limits: get(this.props.detail, 'limit.max', {}),
     }
   }
 
   handleChange = data => {
     this.setState({
       data: {
-        default: data.limits,
-        defaultRequest: data.requests,
+        max: data.limits,
+        min: data.requests,
       },
     })
   }
@@ -272,7 +272,7 @@ export default class DefaultResourceEditModal extends React.Component {
   render() {
     const { visible, onCancel, isSubmitting } = this.props
     const { error } = this.state
-    
+
     return (
       <Modal
         width={960}
@@ -288,7 +288,7 @@ export default class DefaultResourceEditModal extends React.Component {
           defaultValue={this.resourceLimit}
           onChange={this.handleChange}
           onError={this.handleError}
-          supportGpuSelect={this.props.supportGpuSelect || false}
+          supportGpuSelect={false}
           supportStorageSelect={false}
           workspaceLimitProps={this.workspaceLimitProps}
         />

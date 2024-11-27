@@ -33,10 +33,13 @@ export default class ResourceStore extends Base {
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
     )}/edgetron/resources/capk/clusters`
-
   getListUrl = this.getResourceUrl
+  getPaginatedUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/capk/clusters/paged/${params.page}/${params.limit}`
 
-  // @action
+  @action
   async fetchList({
     cluster,
     workspace,
@@ -46,7 +49,6 @@ export default class ResourceStore extends Base {
     silent,
     ...params
   } = {}) {
-    // console.log("silent : "+ silent)
     if (!silent) {
       this.list.isLoading = true
     }
@@ -60,50 +62,24 @@ export default class ResourceStore extends Base {
       params.page = 1
     }
 
+    params.page = params.page || 1
     params.limit = params.limit || 10
 
+    const page = params.page
+    const limit = params.limit
+
     const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
+      this.getPaginatedUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
 
-    // mm3 api 관련
-    const mm3Array = [
-      'vms',
-      'images',
-      'flavors',
-      'networks',
-      'routers',
-      'floating_ips',
-      'lbs',
-      'security_groups',
-      'keypairs',
-      'host_devices',
-      'pci_devices',
-      'volumes',
-      'clusters',
-      'workspaces',
-      'licenses',
-      'distro_types',
-    ]
-    const apiName = mm3Array.includes(this.module) ? this.module : ''
-
-    // // 초기 데이터 처리 // 위 주석으로 세팅해줄 필요없어짐
-    // this.dataList =
-    //   data.length > 0 ? data.map((obj) => {
-    //     const cluster = obj.cluster
-    //     const namespace = obj.namespace
-    //     const temData = obj._originData
-    //     temData.cluster = cluster
-    //     temData.namespace = namespace
-    //     return temData
-    //   }) : [];
-    this.dataList = (get(result, apiName) || []).map(item => ({
+    this.dataList = (get(result, "clusters") || []).map(item => ({
       cluster,
       namespace,
-      // ...this.mapper(item), // kubesphere Object.maaper 와 중복되어서 주석처리
       ...item,
     }))
+
+    const total = (get(result, "total") || 0)
 
     // 검색 관련 처리
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
@@ -154,17 +130,9 @@ export default class ResourceStore extends Base {
       }
     })
 
-    // mm3 데이터 page 별 Slice 처리
-    const perPage = Number(params.limit) || 10
-    const currentPage = Number(params.page) || 1
-    const mm3SliceData = this.dataList.slice(
-      (currentPage - 1) * perPage,
-      currentPage * perPage
-    )
-
     this.list.update({
-      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || this.dataList.length || 0,
+      data: more ? [...this.list.data, ...this.dataList] : this.dataList,
+      total: total,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
