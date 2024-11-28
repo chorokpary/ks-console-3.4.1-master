@@ -57,6 +57,8 @@ const DetailVmList = props => {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchValue, setSearchValue] = useState()
 
+  const [total, setTotal] = useState(0)
+
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
     let value = parseFloat(timeStr)
@@ -100,9 +102,10 @@ const DetailVmList = props => {
     setIsLoading(true)
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
+    const detailParams = { cluster, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
+    const vmList = await store.fetchVmsDetail(detailParams)
 
-    const vmList = await store.fetchList({ cluster })
-    const vmFilterData = vmList?.filter(row => variablesFilter(row))
+    const vmFilterData = vmList.vms 
     const vmSearchData =
       params.name !== '' && params.name !== undefined
         ? getSearchData(vmFilterData, params.name)
@@ -110,49 +113,18 @@ const DetailVmList = props => {
 
     const vmSliceData =
       vmSearchData.length > 0
-        ? getSliceData(vmSearchData, page)
+        ? vmSearchData
         : params.name !== '' && params.name !== undefined
-        ? getSliceData(vmSearchData, page)
-        : getSliceData(vmFilterData, page)
+        ? vmSearchData
+        : vmFilterData
 
+    setTotal(vmList.total)
     setCurrentPage(page)
     setVmDataList(vmFilterData)
     setVmSliceDataList(vmSliceData)
     setVmSearchDataList(vmSearchData)
 
     setIsLoading(false)
-  }
-
-  const variablesFilter = row => {
-    if (props.variables === 'security_group_objects') {
-      return _.find(row[props.variables], { id: props.id })
-    }
-    if (props.variables === 'networks') {
-      return _.find(row[props.variables], { name: props.id })
-    }
-    if (props.variables === 'flavor_object') {
-      return row[props.variables].name === props.name
-    }
-    if (props.variables === 'id') {
-      return row[props.variables] === props.id
-    }
-    if (props.variables === 'gpu_node') {
-      return row['node'] === props.node && row['gpus'].includes(props.gpu)
-    }
-    if (props.variables === 'host_device') {
-      if (props.gpu) {
-        return row['gpus'].includes(props.name)
-      }
-      if (!props.gpu) {
-        row['host_devices'].includes(props.name)
-      }
-    }
-    if (props.variables === 'mediated_device') {
-      if (props.gpu) {
-        return row['gpus'].includes(props.name)
-      }
-    }
-    return row[props.variables] === props.name
   }
 
   const fetchData = async () => {
@@ -458,7 +430,6 @@ const DetailVmList = props => {
   }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length
     return { page: currentPage, limit: perPage, total }
   }
 
@@ -467,11 +438,6 @@ const DetailVmList = props => {
     return data.filter(row => {
       return row['name']?.toLowerCase().includes(searchText.toLowerCase())
     })
-  }
-
-  const getSliceData = (data, page) => {
-    const current = page
-    return data.slice((current - 1) * perPage, current * perPage)
   }
 
   const handleSearch = value => {
