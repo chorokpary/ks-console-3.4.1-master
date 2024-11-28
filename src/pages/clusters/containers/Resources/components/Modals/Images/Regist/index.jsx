@@ -56,7 +56,7 @@ const osTypeOptions = [
   //   { label: 'etc', value: '', icon: 'ico-plus' },
 ]
 
-const ResourceImageModal = ({ props, title, store, onOk }) => {
+const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
   const distroTypeStore = new DistroTypeStore()
   const preInstallAppStore = new PreInstallAppStore()
   const gpuNodeStore = new GpuNodeStore()
@@ -388,6 +388,7 @@ const ResourceImageModal = ({ props, title, store, onOk }) => {
   }
 
   const closeModal = () => {
+    startRefresh();
     setModalView(false)
   }
 

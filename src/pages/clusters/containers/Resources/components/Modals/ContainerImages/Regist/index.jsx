@@ -315,6 +315,7 @@ const ResourceImageModal = props => {
   }
 
   const closeModal = () => {
+    props.startRefresh();
     setModalView(false)
   }
 
