@@ -44,6 +44,7 @@ export default class Vms extends React.Component {
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+    this.isRefresh = false;
   }
 
   componentDidUpdate() {
@@ -60,7 +61,8 @@ export default class Vms extends React.Component {
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list)
     const project = this.props.clusterStore.project || ''
-    if (this.isRuning) {
+
+    if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit, project })
     } else {
       clearInterval(this.refreshTimer)
@@ -80,6 +82,15 @@ export default class Vms extends React.Component {
       ...this.props.query, // search param
     })
   }
+
+  stopRefresh = () => {
+    this.isRefresh = true;
+  }
+
+  startRefresh = () => {
+    this.isRefresh = false;
+  }
+
   // auto refresh end  ##################################
 
   showAction(record) {
@@ -95,7 +106,7 @@ export default class Vms extends React.Component {
         text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
-        onClick: item =>
+        onClick: item => 
           trigger('vm.remove', {
             detail: item,
             success: getData,
@@ -107,6 +118,7 @@ export default class Vms extends React.Component {
 
   get tableActions() {
     const { trigger, getData, tableProps } = this.props
+
     return {
       ...tableProps.tableActions,
       actions: [
@@ -115,12 +127,15 @@ export default class Vms extends React.Component {
           type: 'control',
           text: t('RESOURCES_CREATE'),
           action: 'create',
-          onClick: () =>
+          onClick: () => {
             trigger('vm.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
-            }),
+              startRefresh: this.startRefresh
+            })
+            this.stopRefresh();
+          },            
         },
       ],
       selectActions: [

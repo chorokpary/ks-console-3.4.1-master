@@ -40,6 +40,7 @@ export default class Images extends React.Component {
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+    this.isRefresh = false;
   }
 
   componentDidUpdate() {
@@ -55,7 +56,7 @@ export default class Images extends React.Component {
 
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list)
-    if (this.isRuning) {
+    if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit })
     } else {
       clearInterval(this.refreshTimer)
@@ -76,6 +77,15 @@ export default class Images extends React.Component {
       ...this.props.query, // search param
     })
   }
+
+  stopRefresh = () => {
+    this.isRefresh = true;
+  }
+
+  startRefresh = () => {
+    this.isRefresh = false;
+  }
+
   // auto refresh end  ##################################
 
   showAction(record) {
@@ -111,12 +121,15 @@ export default class Images extends React.Component {
           type: 'control',
           text: t('RESOURCES_CREATE'),
           action: 'create',
-          onClick: () =>
+          onClick: () => {
             trigger('images.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
-            }),
+              startRefresh: this.startRefresh
+            })
+            this.stopRefresh();
+          },            
         },
       ],
       selectActions: [

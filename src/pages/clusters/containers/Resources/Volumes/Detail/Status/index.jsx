@@ -22,13 +22,13 @@ const Status = props => {
       {id && !isManagedK8s && (
         // used_by_vmi 가 VM 일 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables="id" id={id} />
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables="volume" id={props.match.params.id} />
         </div>
       )}
       {!id && (
         // used_by_vmi 가 비어있는 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables="id" id={id} />
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables="volume" id={id} />
         </div>
       )}
       {id && isManagedK8s && (
@@ -36,7 +36,7 @@ const Status = props => {
         <div>
           <DetailMachineList
             type={t('RESOURCES_VOLUME')}
-            variables="name"
+            variables="volume"
             name={id}
           />
         </div>

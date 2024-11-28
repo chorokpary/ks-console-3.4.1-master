@@ -39,7 +39,7 @@ import RestoreModal from 'clusters/containers/Resources/components/Modals/Vms/Re
 
 export default {
   'vm.regist': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, startRefresh, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
@@ -48,8 +48,10 @@ export default {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
               success && setTimeout(() => { success(); }, 1000)
+              startRefresh()
             })
         },
+        startRefresh: () => { startRefresh(); },
         title: t('RESOURCES_CREATE_VM'),
         modal: RegistModal,
         store,

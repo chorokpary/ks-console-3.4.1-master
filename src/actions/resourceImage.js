@@ -28,7 +28,7 @@ import ModifyModal from 'clusters/containers/Resources/components/Modals/Images/
 
 export default {
   'images.regist': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, startRefresh, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
@@ -37,8 +37,10 @@ export default {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
               success && success()
+              startRefresh()
             })
         },
+        startRefresh: () => { startRefresh(); },
         title: t('RESOURCES_CREATE_VM_IMAGE'),
         modal: RegistModal,
         store,
