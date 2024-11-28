@@ -955,4 +955,50 @@ export default class VmStore extends Base {
     )}/edgetron/resources/kubevirt/vms/clones/${id}`
     return this.submitting(request.delete(url))
   }
+
+
+  getVmsDetailUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/vms/${params.resource}/paged/${params.resource_id}/${params.page}/${params.limit}`
+    
+  @action
+  async fetchVmsDetail({
+    cluster,
+    workspace,
+    namespace,
+    ...params
+  } = {}) {
+    this.isLoading = true
+
+    params.page = params.page || 1
+    params.limit = params.limit || 10
+
+    const apiName = {
+      flavor_object : "flavor",
+      image : "image",
+      networks : "network",
+      security_group_objects : "security_group",
+      host_device : "host_device",
+      mediated_device : "mediated_device",
+      volume : "volume",
+      id : "id",
+    }
+
+    const pathIdArray = ['security_group', 'network', 'volume', 'id', 'host_device', 'mediated_device']
+    const resource = get(apiName, params.resource)
+    const resource_id = pathIdArray.includes(resource) ? params.id : params.name 
+ 
+    const page = params.page
+    const limit = params.limit
+
+    const result = await request.get(
+      this.getVmsDetailUrl({ cluster, workspace, namespace, resource, resource_id, page, limit }),
+      this.getFilterParams(params)
+    )
+
+    this.isLoading = false
+    return result
+  }
+
 }
