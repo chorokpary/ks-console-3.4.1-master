@@ -64,10 +64,7 @@ export default class Vms extends React.Component {
 
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit, project })
-    } else {
-      clearInterval(this.refreshTimer)
-      this.refreshTimer = null
-    }
+    } 
   }
 
   get isRuning() {

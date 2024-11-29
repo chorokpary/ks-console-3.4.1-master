@@ -29,7 +29,7 @@ import ConsoleConfiglModal from 'clusters/containers/Resources/components/Modals
 
 export default {
   'containerresource.regist': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, startRefresh, devops, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
@@ -38,8 +38,10 @@ export default {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
               success && success()
+              startRefresh()
             })
         },
+        startRefresh: () => { startRefresh(); },
         title: t('RESOURCES_CREATE_KAAS_RESOURCE'),
         modal: RegistModal,
         store,
