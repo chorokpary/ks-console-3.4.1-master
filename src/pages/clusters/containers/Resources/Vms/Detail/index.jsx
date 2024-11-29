@@ -15,9 +15,6 @@ const store = new VmStore()
 const floatingstore = new FloatingIpStore()
 
 const VmDetail = props => {
-  useEffect(() => {
-    fetchData()
-  }, [])
 
   useEffect(() => {
     fetchData()

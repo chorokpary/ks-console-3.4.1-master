@@ -58,10 +58,7 @@ export default class Images extends React.Component {
     const { page, limit } = toJS(this.props.store.list)
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit })
-    } else {
-      clearInterval(this.refreshTimer)
-      this.refreshTimer = null
-    }
+    } 
   }
 
   get isRuning() {

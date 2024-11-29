@@ -44,6 +44,7 @@ export default class Resource extends React.Component {
     constructor(props) {
         super(props);
         this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+        this.isRefresh = false;
     }
 
     componentDidUpdate() {
@@ -58,11 +59,8 @@ export default class Resource extends React.Component {
     }
 
     refreshHandler = () => {
-        if (this.isRuning) {
+        if (this.isRuning && !this.isRefresh) {
             this.getData({ silent: true });
-        } else {
-            clearInterval(this.refreshTimer);
-            this.refreshTimer = null;
         }
     };
 
@@ -78,6 +76,15 @@ export default class Resource extends React.Component {
             ...this.props.query, // search param
         });
     };
+
+    stopRefresh = () => {
+        this.isRefresh = true;
+      }
+    
+      startRefresh = () => {
+        this.isRefresh = false;
+      }
+
     // auto refresh end  ##################################
 
     handleFetch = (params, refresh) => {
@@ -121,12 +128,15 @@ export default class Resource extends React.Component {
                     type: 'control',
                     text: t('RESOURCES_CREATE'),
                     action: 'create',
-                    onClick: () =>
+                    onClick: () => {
                         trigger('containerresource.regist', {
                             ...this.props.match.params,
                             type: this.name,
                             success: getData,
+                            startRefresh: this.startRefresh
                         }),
+                        this.stopRefresh();
+                    },                       
                 },
             ],
             selectActions: [
