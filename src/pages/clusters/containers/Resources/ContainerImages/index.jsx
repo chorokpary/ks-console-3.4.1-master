@@ -54,13 +54,9 @@ export default class Images extends React.Component {
 
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list)
-    console.log("this.isRefresh : "+ this.isRefresh)
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit })
-    } else {
-      clearInterval(this.refreshTimer)
-      this.refreshTimer = null
-    }
+    } 
   }
 
   get isRuning() {

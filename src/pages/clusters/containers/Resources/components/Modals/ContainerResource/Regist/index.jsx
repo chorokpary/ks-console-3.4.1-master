@@ -297,6 +297,7 @@ const RegistModal = props => {
   }
 
   const closeModal = () => {
+    props.startRefresh();
     setModalView(false)
   }
 
