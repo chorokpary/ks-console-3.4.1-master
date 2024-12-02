@@ -34,13 +34,12 @@ export default class VmStore extends Base {
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
     )}/edgetron/resources/kubevirt/vms`
-
   getListUrl = this.getResourceUrl
 
-  getPaginatedUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/kubevirt/vms/paged/${params.page}/${params.limit}`
+  getPaginatedUrl = (params = {}) => {    
+    const pagedPath = !!params.namespace ? `project/paged/${params.namespace}` : `paged`
+    return `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms/${pagedPath}/${params.page}/${params.limit}`
+  }
 
   @action
   async fetchList({
