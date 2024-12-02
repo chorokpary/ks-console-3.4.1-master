@@ -60,6 +60,24 @@ const FloatingIpDetail = props => {
           },
         ]
       : [
+        {
+          key: 'delete',
+          icon: 'trash',
+          text: t('RESOURCES_DELETE'),
+          action: 'delete',
+          type: 'danger',
+          onClick: () =>
+            props.rootStore.triggerAction('floatingIp.remove', {
+              type: 'FLOATINGIP_DETAIL',
+              detail,
+              store,
+              cluster: props.match.params.cluster,
+              success: () => routing.push(listUrl),
+              okText: t('RESOURCES_DELETE'),
+              cancelText: t('RESOURCES_CANCEL'),
+              ...props,
+            }),
+        },
           {
             key: 'edit1',
             icon: 'image',
