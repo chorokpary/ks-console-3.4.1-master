@@ -25,8 +25,14 @@ import { Component as Base } from 'core/containers/Base/Detail'
 export default class DetailPage extends Base {
   get enabledActions() {
     const { cluster, namespace: project } = this.props.match.params
+
+    const replaceModule = { 
+      floating_ips : "floatingip" 
+    }
+    const module = replaceModule[this.authKey] ?  replaceModule[this.authKey] : this.authKey;
+
     return globals.app.getActions({
-      module: this.authKey,
+      module: module,
       cluster,
       project,
     })
