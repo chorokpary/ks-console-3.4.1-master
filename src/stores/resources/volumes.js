@@ -35,10 +35,12 @@ export default class VolumeStore extends Base {
     )}/edgetron/resources/kubevirt/volumes`;
   getListUrl = this.getResourceUrl;
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`;
-  getPaginatedUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/kubevirt/volumes/paged/${params.page}/${params.limit}`
+
+  getPaginatedUrl = (params = {}) => {    
+    const pagedPath = !!params.namespace ? `project/paged/${params.namespace}` : `paged`
+    return `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/volumes/${pagedPath}/${params.page}/${params.limit}`
+  }
+    
 
   @action
   async fetchList({
