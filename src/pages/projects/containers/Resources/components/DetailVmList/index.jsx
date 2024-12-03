@@ -1,13 +1,11 @@
-import { get, groupBy, isEmpty } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { observer, inject } from 'mobx-react'
+import { get } from 'lodash'
+import React, { useEffect, useState } from 'react'
+import { inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import { Panel, Text, Indicator } from 'components/Base'
+import { Indicator, Panel, Text } from 'components/Base'
 import { TinyArea } from 'components/Charts'
 import { Link } from 'react-router-dom'
-
-import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 import CustomStore from 'stores/monitoring/custom/monitor'
@@ -24,8 +22,9 @@ import {
   LevelRight,
   Loading,
   Pagination,
-  Tooltip
+  Tooltip,
 } from '@kube-design/components'
+import styles from './index.scss'
 
 const DetailVmList = (props) => {
 
@@ -42,24 +41,26 @@ const DetailVmList = (props) => {
   const cluster = props.cluster;
   const namespace = props.namespace;
 
-  const [vmDataList, setVmDataList] = useState([]);
-  const [vmSliceDataList, setVmSliceDataList] = useState([]);
-  const [vmSearchDataList, setVmSearchDataList] = useState([]);
+  const [vmDataList, setVmDataList] = useState([])
+  const [vmSliceDataList, setVmSliceDataList] = useState([])
+  const [vmSearchDataList, setVmSearchDataList] = useState([])
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
-  const [expandItem, setExpandItem] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSearchFlag, setIsSearchFlag] = useState(false);
+  const [expandItem, setExpandItem] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSearchFlag, setIsSearchFlag] = useState(false)
 
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
+  const [vmCpuData, setVmCpuData] = useState([])
+  const [vmMemoryData, setVmMemoryData] = useState([])
 
-  const [vmWinCpuData, setVmWinCpuData] = useState([]);
-  const [vmWinMemoryData, setVmWinMemoryData] = useState([]);
+  const [vmWinCpuData, setVmWinCpuData] = useState([])
+  const [vmWinMemoryData, setVmWinMemoryData] = useState([])
 
-  const perPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState();
+  const perPage = 6
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchValue, setSearchValue] = useState()
+
+  const [total, setTotal] = useState(0)
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -101,51 +102,33 @@ const DetailVmList = (props) => {
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
+    setIsLoading(true)
+    setIsSearchFlag(false)
+    const page = get(params, 'page', 1)
+    const detailParams = { cluster, namespace, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
+    const vmList = await store.fetchVmsDetail(detailParams)
 
-    setIsLoading(true);
-    setIsSearchFlag(false);
-    const page = get(params, "page", 1);
+    const vmFilterData = vmList.vms 
+    const vmSearchData =
+      params.name !== '' && params.name !== undefined
+        ? getSearchData(vmFilterData, params.name)
+        : []
 
-    const vmList = await store.fetchList({ cluster, namespace });
-    const vmFilterData = vmList?.filter((row) =>
-      variablesFilter(row)
-    )
-    const vmSearchData = (params.name != "" && params.name != undefined) ? getSearchData(vmFilterData, params.name) : [];
+    const vmSliceData =
+      vmSearchData.length > 0
+        ? vmSearchData
+        : params.name !== '' && params.name !== undefined
+        ? vmSearchData
+        : vmFilterData
 
-    const vmSliceData = vmSearchData.length > 0 ? getSliceData(vmSearchData, page) :
-      (params.name != "" && params.name != undefined) ? getSliceData(vmSearchData, page) : getSliceData(vmFilterData, page);
-
-    setCurrentPage(page);
-    setVmDataList(vmFilterData);
-    setVmSliceDataList(vmSliceData);
+    setTotal(vmList.total)
+    setCurrentPage(page)
+    setVmDataList(vmFilterData)
+    setVmSliceDataList(vmSliceData)
     setVmSearchDataList(vmSearchData)
 
-    setIsLoading(false);
+    setIsLoading(false)
   };
-
-  const variablesFilter = (row) => {
-    if (props.variables === 'security_group_objects') {
-      return _.find(row[props.variables], { 'id': props.id })
-    } else if (props.variables === 'networks') {
-      return _.find(row[props.variables], { 'name': props.id })
-    } else if (props.variables === 'flavor_object') {
-      return row[props.variables].name === props.name
-    } else if (props.variables == 'id') {
-      return row[props.variables] === props.id
-    } else if (props.variables == 'host_device') {
-      if (props.gpu) {
-        return row['gpus'].includes(props.name)
-      }
-      if (!props.gpu) {
-        row['host_devices'].includes(props.name)
-      }
-    } else if (props.variables == 'mediated_device') {
-      if (props.gpu) {
-        return row['gpus'].includes(props.name)
-      }
-    }
-    return row[props.variables] === props.name
-  }
 
   const fetchData = async () => {
 
@@ -413,23 +396,14 @@ const DetailVmList = (props) => {
   }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length;
-    const pagination = { "page": currentPage, "limit": perPage, "total": total }
-    return pagination
+    return { page: currentPage, limit: perPage, total }
   }
 
   const getSearchData = (data, searchText) => {
-    setIsSearchFlag(true);
-    const resultList = data.filter((row) => {
-      return row["name"]?.toLowerCase().includes(searchText.toLowerCase());
-    });
-    return resultList;
-  }
-
-  const getSliceData = (data, page) => {
-    const currentPage = page;
-    const sliceData = data.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-    return sliceData;
+    setIsSearchFlag(true)
+    return data.filter(row => {
+      return row['name']?.toLowerCase().includes(searchText.toLowerCase())
+    })
   }
 
   const handleSearch = value => {
