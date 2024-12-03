@@ -22,6 +22,7 @@ import { UnitSlider } from 'components/Inputs';
 import FlavorStore from 'stores/resources/flavors';
 import styles from './index.scss';
 
+const regexOneOverNum = /^[1-9]\d*$/;
 const regexNum = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const regexRootDisk = /^[1-9]\d*GiB?|[1-9]\d*$/;
 const ModifyModal = props => {
@@ -87,6 +88,7 @@ const ModifyModal = props => {
         { name: t('RESOURCES_SELECT'), quantity: 0, message: '' },
       ]);
     }
+
   }, [props]);
 
   useEffect(() => {
@@ -284,21 +286,24 @@ const ModifyModal = props => {
 
   // ram num check
   const changeRam = e => {
-    // const { value } = e.target;
-    const onlyNumber = e.replace(/[^0-9]/g, '');
-    setRam(Number(onlyNumber));
+    setRam(e);
   };
 
   const handleByte = size => {
+
+    const { data } = form.current.props;
+
     if (size === 'MiB') {
-      // if (ram !== 0) {
-      //   setRam(Math.round((ram / 1024 / 1024) * 1024 * 1024 * 1024));
-      // }
+      if (ram !== 0) {
+        setRam(Math.round((ram * 1024) * 10) / 10)
+        data.ram = Math.round((ram * 1024) * 10) / 10
+      }
       setByteFlag(false);
     } else {
-      // if (ram !== 0) {
-      //   setRam(Math.round((ram / 1024 / 1024 / 1024) * 1024 * 1024));
-      // }
+      if (ram !== 0) {
+        setRam(Math.round((ram / 1024) * 10) / 10)
+        data.ram = Math.round((ram / 1024) * 10) / 10
+      }
       setByteFlag(true);
     }
   };
@@ -342,7 +347,7 @@ const ModifyModal = props => {
         obj =>
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
-      
+
       onOk({ flavor: data });
     });
   };
@@ -354,7 +359,7 @@ const ModifyModal = props => {
         data.vcpus === undefined ||
         !regexNum.test(data.vcpus) ||
         data.ram === undefined ||
-        !regexNum.test(data.ram) ||
+        !regexOneOverNum.test(data.ram) ||
         data.root_disk === undefined ||
         !regexRootDisk.test(data.root_disk)
       ) {
@@ -606,7 +611,7 @@ const ModifyModal = props => {
                               message: t('ROSOURCES_CPU_VALID'),
                             },
                             {
-                              pattern: regexNum,
+                              pattern: regexOneOverNum,
                               message: t('ROSOURCES_CPU_NUM_VALID'),
                             },
                           ]}

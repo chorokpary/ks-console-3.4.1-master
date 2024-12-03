@@ -63,10 +63,17 @@ export default class ComputingStore extends Base {
 
     const promises = apiArray.map(async (item) => {
       const pagedModule = ['vms', 'volumes']
-      const pagedProjectPath = pagedModule.includes(item.type) ?  `/project/paged/${namespace}` : ``;
 
-      const result = get(await request.get(`${apiUrl}/${item.type}${pagedProjectPath}`), item.root, []);
-      const resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;
+      let result = [];
+      let resultCount = 0;
+
+      if(pagedModule.includes(item.type)){
+        resultCount = get(await request.get(`${apiUrl}/${item.type}/project/paged/${namespace}`), 'total', 0);
+      }else{
+        result = get(await request.get(`${apiUrl}/${item.type}`), item.root, []);
+        resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;
+      }
+
       computingDataArray.push({ num: item.num, count: resultCount, name: item.name, routeName: item.routeName, icon: item.icon, dataList: result, createField: item.createField, multitenancy: item.multitenancy });
     })
 

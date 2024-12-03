@@ -961,6 +961,11 @@ export default class VmStore extends Base {
       params
     )}/edgetron/resources/kubevirt/vms/${params.resource}/paged/${params.resource_id}/${params.page}/${params.limit}`
     
+  getVmsProjectDetailUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/vms/${params.resource}/paged/${params.resource_id}/${params.namespace}/${params.page}/${params.limit}`
+
   @action
   async fetchVmsDetail({
     cluster,
@@ -992,7 +997,8 @@ export default class VmStore extends Base {
     const limit = params.limit
 
     const result = await request.get(
-      this.getVmsDetailUrl({ cluster, workspace, namespace, resource, resource_id, page, limit }),
+      !!namespace ?  this.getVmsProjectDetailUrl({ cluster, workspace, namespace, resource, resource_id, page, limit })
+       : this.getVmsDetailUrl({ cluster, workspace, namespace, resource, resource_id, page, limit }),
       this.getFilterParams(params)
     )
 
