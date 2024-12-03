@@ -24,19 +24,19 @@ const Status = (props) => {
       {id && !id?.includes('control-plane') &&
         // used_by_vmi 가 VM 일 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables='id' {...props.match.params} id={id} />
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='volume' {...props.match.params} id={props.match.params.id} />
         </div>
       }
       {!id && !id?.includes('control-plane') &&
         // used_by_vmi 가 비어있는 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables='id'{...props.match.params} id={id} />
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='volume'{...props.match.params} id={id} />
         </div>
       }
       {id && id?.includes('control-plane') &&
         // used_by_vmi 가 KaaS 일 경우
         <div>
-          <DetailKaasList type={t('RESOURCES_VOLUME')} variables='name'{...props.match.params} name={id} />
+          <DetailKaasList type={t('RESOURCES_VOLUME')} variables='volume'{...props.match.params} name={id} />
         </div>
       }
     </>
