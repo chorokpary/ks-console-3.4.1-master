@@ -68,7 +68,7 @@ export default class ComputingStore extends Base {
       let resultCount = 0;
 
       if(pagedModule.includes(item.type)){
-        resultCount = get(await request.get(`${apiUrl}/${item.type}/project/paged/${namespace}`), 'total', 0);
+        resultCount = get(await request.get(`${apiUrl}/${item.type}?project=${namespace}`), 'total', 0);
       }else{
         result = get(await request.get(`${apiUrl}/${item.type}`), item.root, []);
         resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;

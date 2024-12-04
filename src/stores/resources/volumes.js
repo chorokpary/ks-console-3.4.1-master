@@ -36,12 +36,6 @@ export default class VolumeStore extends Base {
   getListUrl = this.getResourceUrl;
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`;
 
-  getPaginatedUrl = (params = {}) => {    
-    const pagedPath = !!params.namespace ? `project/paged/${params.namespace}` : `paged`
-    return `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/volumes/${pagedPath}/${params.page}/${params.limit}`
-  }
-    
-
   @action
   async fetchList({
     cluster,
@@ -72,7 +66,7 @@ export default class VolumeStore extends Base {
     const limit = params.limit
 
     const result = await request.get(
-      this.getPaginatedUrl({ cluster, workspace, namespace, devops, page, limit }),
+      this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
 
