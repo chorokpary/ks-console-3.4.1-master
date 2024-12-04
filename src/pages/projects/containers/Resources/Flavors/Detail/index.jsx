@@ -78,7 +78,7 @@ const FlavorDetail = props => {
         value:
           detail.flavor.gpus.length < 1
             ? '-'
-            : detail.flavor.gpus.map(gpu => `${gpu.name}\r\n`),
+            : detail.flavor.gpus.map(gpu => `${gpu.quantity} ${gpu.name}\r\n`),
       },
       {
         name: t('Host Device'),
