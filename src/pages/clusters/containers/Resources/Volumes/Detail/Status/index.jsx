@@ -17,6 +17,8 @@ const Status = props => {
     }
   }, [id])
 
+  console.log("store.detail.volume :"+ JSON.stringify(store.detail))
+
   return (
     <>
       {id && !isManagedK8s && (
@@ -28,7 +30,7 @@ const Status = props => {
       {!id && (
         // used_by_vmi 가 비어있는 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables="volume" id={id} />
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables="volume" id={props.match.params.id} />
         </div>
       )}
       {id && isManagedK8s && (

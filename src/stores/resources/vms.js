@@ -954,17 +954,6 @@ export default class VmStore extends Base {
     return this.submitting(request.delete(url))
   }
 
-
-  getVmsDetailUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/kubevirt/vms/${params.resource}/paged/${params.resource_id}/${params.page}/${params.limit}`
-    
-  getVmsProjectDetailUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/kubevirt/vms/${params.resource}/paged/${params.resource_id}/${params.namespace}/${params.page}/${params.limit}`
-
   @action
   async fetchVmsDetail({
     cluster,
@@ -991,13 +980,15 @@ export default class VmStore extends Base {
     const pathIdArray = ['security_group', 'network', 'volume', 'id', 'host_device', 'mediated_device']
     const resource = get(apiName, params.resource)
     const resource_id = pathIdArray.includes(resource) ? params.id : params.name 
- 
-    const page = params.page
-    const limit = params.limit
 
+    params[resource] = resource_id
+
+    delete params["resource"]
+    delete params["id"]
+    delete params["name"]
+    
     const result = await request.get(
-      !!namespace ?  this.getVmsProjectDetailUrl({ cluster, workspace, namespace, resource, resource_id, page, limit })
-       : this.getVmsDetailUrl({ cluster, workspace, namespace, resource, resource_id, page, limit }),
+      this.getResourceUrl({cluster, workspace, namespace}),
       this.getFilterParams(params)
     )
 
