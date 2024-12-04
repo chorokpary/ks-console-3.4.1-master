@@ -30,7 +30,7 @@ const Status = (props) => {
       {!id && !id?.includes('control-plane') &&
         // used_by_vmi 가 비어있는 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables='volume'{...props.match.params} id={id} />
+          <DetailVmList type={t('RESOURCES_VOLUME')} variables='volume'{...props.match.params} id={props.match.params.id} />
         </div>
       }
       {id && id?.includes('control-plane') &&

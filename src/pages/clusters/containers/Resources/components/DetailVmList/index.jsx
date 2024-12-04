@@ -358,7 +358,7 @@ const DetailVmList = props => {
                 title={
                   obj.flavor_object.gpus.length >= 1
                     ? obj.flavor_object.gpus.length === 1
-                      ? obj.flavor_object.gpus[0].name
+                      ? obj.flavor_object.gpus[0].quantity+" "+obj.flavor_object.gpus[0].name
                       : `${obj.flavor_object.gpus[0].name} ${t(
                           'RESOURCES_BESIDES'
                         )} ${obj.flavor_object.gpus.length - 1}${t(

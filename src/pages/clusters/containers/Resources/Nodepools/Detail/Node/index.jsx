@@ -286,7 +286,7 @@ const Node = props => {
                 title={
                   flavor.gpus.length >= 1
                     ? flavor.gpus.length === 1
-                      ? flavor.gpus[0].name
+                      ? flavor.gpus[0].quantity+" "+flavor.gpus[0].name
                       : `${flavor.gpus[0].name} ${t(
                           'RESOURCES_BESIDES'
                         )} ${flavor.gpus.length - 1}${t('RESOURCES_COUNT')}`

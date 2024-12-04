@@ -83,6 +83,8 @@ const FlavorDetail = props => {
       return;
     }
 
+    console.log("detail.flavor : "+ JSON.stringify(detail.flavor))
+
     return [
       {
         name: t('RESOURCES_CLUSTER'),
@@ -109,7 +111,7 @@ const FlavorDetail = props => {
         value:
           detail.flavor.gpus.length < 1
             ? '-'
-            : detail.flavor.gpus.map(gpu => `${gpu.name}\r\n`),
+            : detail.flavor.gpus.map(gpu => `${gpu.quantity} ${gpu.name}\r\n`),
       },
       {
         name: t('Host Device'),

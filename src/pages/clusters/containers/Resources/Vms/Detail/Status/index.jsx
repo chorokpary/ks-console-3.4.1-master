@@ -369,7 +369,7 @@ const Status = props => {
                     title={
                       detailFlavor.gpus.length >= 1
                         ? detailFlavor.gpus.length == 1
-                          ? detailFlavor.gpus[0].name
+                          ? detailFlavor.gpus[0].quantity+" " +detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
                             'RESOURCES_BESIDES'
                           )} ${detailFlavor.gpus.length - 1}${t(
