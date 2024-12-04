@@ -105,7 +105,7 @@ const DetailVmList = (props) => {
     setIsLoading(true)
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
-    const detailParams = { cluster, namespace, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
+    const detailParams = { cluster, project: namespace, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
     const vmList = await store.fetchVmsDetail(detailParams)
 
     const vmFilterData = vmList.vms 
