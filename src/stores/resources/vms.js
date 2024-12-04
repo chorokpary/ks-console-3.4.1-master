@@ -37,8 +37,7 @@ export default class VmStore extends Base {
   getListUrl = this.getResourceUrl
 
   getPaginatedUrl = (params = {}) => {    
-    const pagedPath = !!params.namespace ? `project/paged/${params.namespace}` : `paged`
-    return `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms/${pagedPath}/${params.page}/${params.limit}`
+    return `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
   }
 
   @action
@@ -71,7 +70,7 @@ export default class VmStore extends Base {
     const limit = params.limit
 
     const result = await request.get(
-      this.getPaginatedUrl({ cluster, workspace, namespace, devops, page, limit }),
+      this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
 
