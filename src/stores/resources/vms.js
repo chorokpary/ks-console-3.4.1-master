@@ -55,7 +55,7 @@ export default class VmStore extends Base {
     }
 
     if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'creation_timestamp'
     }
 
     if (params.limit === Infinity || params.limit === -1) {
@@ -68,7 +68,7 @@ export default class VmStore extends Base {
 
     const page = params.page
     const limit = params.limit
-
+    
     const result = await request.get(
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
@@ -104,40 +104,7 @@ export default class VmStore extends Base {
     if (namespace) {
       params.project = namespace
     }
-
-    // 검색 관련 처리
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
-    const searchArray = Object.keys(params)
-      .map(key => {
-        const value = params[key]
-        return {
-          searchKeywordType: key,
-          searchKeywordText: value,
-        }
-      })
-      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
-
-    this.searchList = this.dataList
-    if (searchArray.length > 0) {
-      searchArray.forEach(search => {
-        this.searchList = this.searchList.filter(row => {
-          if (
-            search.searchKeywordType === 'project' &&
-            search.searchKeywordText !== ''
-          ) {
-            return (
-              row[search.searchKeywordType]?.toLowerCase() ===
-              search.searchKeywordText.toLowerCase()
-            )
-          }
-          return row[search.searchKeywordType]
-            ?.toLowerCase()
-            .includes(search.searchKeywordText.toLowerCase())
-        })
-      })
-      this.dataList = this.searchList
-    }
-
+ 
     // 정렬 처리
     const sortType = params.ascending ? 'asc' : 'desc'
     this.dataList.sort((a, b) => {
