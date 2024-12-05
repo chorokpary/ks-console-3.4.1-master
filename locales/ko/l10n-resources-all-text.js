@@ -357,7 +357,7 @@ module.exports = {
   RESOURCES_GPU_UTILIZATION: 'GPU 사용량',
   RESOURCES_GPU_RAM_USAGE: 'GPU 메모리 사용량',
   RESOURCES_GPU_TEMPERATURE: 'GPU 온도',
-  RESOURCES_GPU_POWER: 'GPU 전략 사용량',
+  RESOURCES_GPU_POWER: 'GPU 전력 사용량',
   RESOURCES_SELECT_ALL: '모두 선택',
   RESOURCES_ALLOCATED_ALL_RESOURCES: '모든 자원이 할당 되었습니다.',
   RESOURCES_FIP_NO_NETWORK: '플로팅 IP를 생성할 네트워크 자원이 없습니다.',
