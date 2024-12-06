@@ -15,7 +15,6 @@ const store = new VmStore()
 const floatingstore = new FloatingIpStore()
 
 const VmDetail = props => {
-
   useEffect(() => {
     fetchData()
   }, [props.match.params.id])
@@ -268,7 +267,7 @@ const VmDetail = props => {
       return
     }
 
-    return [
+    const attrs = [
       {
         name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
@@ -332,6 +331,30 @@ const VmDetail = props => {
         ),
       },
     ]
+    if (detail.vm.pre_installed_app !== '') {
+      const preInstalledApp = JSON.parse(detail.vm.pre_installed_app)
+      const appType = Object.keys(preInstalledApp)[0]
+      if (appType === 'jupyter_lab') {
+        const token = preInstalledApp[appType].token
+        const port = preInstalledApp[appType].port
+        attrs.push(
+          {
+            name: t('RESOURCES_PRE_INSTALLED_APP'),
+            value: 'Jupyter Lab',
+          },
+          {
+            name: t('TOKEN'),
+            value: token,
+          },
+          {
+            name: t('PORT'),
+            value: port,
+          }
+        )
+      }
+    }
+
+    return attrs
   }
 
   if (store.isLoading) {
