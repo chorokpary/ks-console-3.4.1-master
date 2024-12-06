@@ -112,11 +112,15 @@ export default class Flavors extends React.Component {
                 dataIndex: 'gpus',
                 isHideable: true,
                 width: 'auto',
-                render: gpus => (
-                    <p>
-                        {gpus.length} 개
-                    </p>
-                ),
+                render: gpus => {
+                    let quantities = 0;
+                    if (gpus && gpus.length > 0) {
+                      gpus.forEach(gpu => {
+                        quantities = quantities + Number(gpu.quantity)
+                      });
+                    }
+                    return <p>{quantities} {t('RESOURCES_COUNT')}</p>;
+                },
             },
             {
                 title: t('RESOURCES_REGIST_DATE'),

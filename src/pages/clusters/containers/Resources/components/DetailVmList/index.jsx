@@ -39,8 +39,6 @@ const DetailVmList = props => {
   const cluster = props.detailStore?.detail.cluster
 
   const [vmDataList, setVmDataList] = useState([])
-  const [vmSliceDataList, setVmSliceDataList] = useState([])
-  const [vmSearchDataList, setVmSearchDataList] = useState([])
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState()
@@ -103,27 +101,17 @@ const DetailVmList = props => {
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
     const detailParams = { cluster, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
+
+    if(params.name !== '' && params.name !== undefined){
+      detailParams.searchName = params.name 
+    }
+    
     const vmList = await store.fetchVmsDetail(detailParams)
-
-    const vmFilterData = vmList.vms 
-    const vmSearchData =
-      params.name !== '' && params.name !== undefined
-        ? getSearchData(vmFilterData, params.name)
-        : []
-
-    const vmSliceData =
-      vmSearchData.length > 0
-        ? vmSearchData
-        : params.name !== '' && params.name !== undefined
-        ? vmSearchData
-        : vmFilterData
+    const vmData = vmList.vms 
 
     setTotal(vmList.total)
     setCurrentPage(page)
-    setVmDataList(vmFilterData)
-    setVmSliceDataList(vmSliceData)
-    setVmSearchDataList(vmSearchData)
-
+    setVmDataList(vmData)
     setIsLoading(false)
   }
 
@@ -209,13 +197,13 @@ const DetailVmList = props => {
   ]
 
   const renderContent = () => {
-    if (vmSliceDataList.length === 0) {
+    if (vmDataList.length === 0) {
       return (
         <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
       )
     }
 
-    const content = vmSliceDataList.map((obj, index) => {
+    const content = vmDataList.map((obj, index) => {
       return (
         <div className={styles.wrapper} key={index}>
           <div
@@ -433,13 +421,6 @@ const DetailVmList = props => {
     return { page: currentPage, limit: perPage, total }
   }
 
-  const getSearchData = (data, searchText) => {
-    setIsSearchFlag(true)
-    return data.filter(row => {
-      return row['name']?.toLowerCase().includes(searchText.toLowerCase())
-    })
-  }
-
   const handleSearch = value => {
     setSearchValue(value)
     fnGetData({
@@ -526,38 +507,35 @@ const DetailVmList = props => {
   }
 
   return (
-    <>
-      {vmDataList.length > 0 && (
+    <>    
         <Panel title={t('RESOURCES_VM')} className={classnames(styles.main)}>
-          {renderHeader()}
-          {renderContent()}
+          {renderHeader()}          
+          {vmDataList.length > 0 && (
+            renderContent()
+          )}
+          {vmDataList.length === 0 && (
+              <div className={styles.wrapper}>
+                {isLoading ? (
+                  <div>
+                    <Loading />
+                  </div>
+                ) : props.variables === 'project' ? (
+                  <div className={styles.empty}>
+                    {t('RESOURCES_NOT_FOUND_RESOURCE')}
+                  </div>
+                ) : (
+                  <div className={styles.empty}>
+                    {props.type}
+                    {props.type === t('RESOURCES_SECURITY_GROUP')
+                      ? t('RESOURCES_EUL')
+                      : t('RESOURCES_LEUL')}{' '}
+                    {t('RESOURCES_NO_USE_VM')}
+                  </div>
+                )}
+              </div>
+          )}
           {renderFooter()}
-        </Panel>
-      )}
-
-      {vmDataList.length === 0 && (
-        <Panel title={t('RESOURCES_VM')}>
-          <div className={styles.wrapper}>
-            {isLoading ? (
-              <div>
-                <Loading />
-              </div>
-            ) : props.variables === 'project' ? (
-              <div className={styles.empty}>
-                {t('RESOURCES_NOT_FOUND_RESOURCE')}
-              </div>
-            ) : (
-              <div className={styles.empty}>
-                {props.type}
-                {props.type === t('RESOURCES_SECURITY_GROUP')
-                  ? t('RESOURCES_EUL')
-                  : t('RESOURCES_LEUL')}{' '}
-                {t('RESOURCES_NO_USE_VM')}
-              </div>
-            )}
-          </div>
-        </Panel>
-      )}
+        </Panel>   
     </>
   )
 }

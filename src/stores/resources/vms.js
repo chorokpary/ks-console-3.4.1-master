@@ -954,6 +954,12 @@ export default class VmStore extends Base {
     delete params["resource"]
     delete params["id"]
     delete params["name"]
+
+    if(params.searchName !== '' && params.searchName !== undefined){
+      params.name = params.searchName 
+    }
+
+    delete params["searchName"]
     
     const result = await request.get(
       this.getResourceUrl({cluster, workspace, namespace}),

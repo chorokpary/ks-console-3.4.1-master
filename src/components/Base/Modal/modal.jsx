@@ -77,6 +77,7 @@ export default class Modal extends React.Component {
     fullScreen: PropTypes.bool,
     rightScreen: PropTypes.bool,
     disableSubmit: PropTypes.bool,
+    disableCloseButton: PropTypes.bool,    
   }
 
   static defaultProps = {
@@ -93,6 +94,7 @@ export default class Modal extends React.Component {
     okButtonType: 'control',
     cancelButtonType: 'default',
     disableSubmit: false,
+    disableCloseButton: false,
   }
 
   static open = options => {
@@ -172,6 +174,7 @@ export default class Modal extends React.Component {
       icon,
       imageIcon,
       disableSubmit,
+      disableCloseButton,
       ...rest
     } = this.props
 
@@ -223,6 +226,7 @@ export default class Modal extends React.Component {
                 iconType="light"
                 type="control"
                 onClick={onCancel}
+                disabled={disableCloseButton}
                 data-test="modal-close"
               />
             )}

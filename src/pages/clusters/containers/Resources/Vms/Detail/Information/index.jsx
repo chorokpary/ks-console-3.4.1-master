@@ -130,17 +130,21 @@ const Information = (props) => {
                   detailFlavor?.gpus.map((device) => {
                     const is_gpu = fnGetHostDeviceIsGpu(device.name);
                     return (
-                      <li>
-                        <div className="tree_box">
-                          <div className="title_icon"><i className={is_gpu ? "ico-type40-hostgpu" : "ico-type40-hostdevice"}></i></div>
-                          <div className="cont_box1">
-                            <h5><span className="bg_01">{is_gpu ? t('RESOURCES_GPU_DEVICES') : t('RESOURCES_HOST_DEVICE')}</span>{device.quantity} {device.name}</h5>
-                            <div className="group">
-                              <div className="info"><span>{(device.name).split("/")[1]}</span></div>
+                      <>
+                        {Array.from({ length: device.quantity }, (_, index) => (
+                          <li>       
+                            <div className="tree_box">
+                              <div className="title_icon"><i className={is_gpu ? "ico-type40-hostgpu" : "ico-type40-hostdevice"}></i></div>
+                              <div className="cont_box1">
+                                <h5><span className="bg_01">{is_gpu ? t('RESOURCES_GPU_DEVICES') : t('RESOURCES_HOST_DEVICE')}</span>{device.name}</h5>
+                                <div className="group">
+                                  <div className="info"><span>{(device.name).split("/")[1]}</span></div>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </li>
+                          </li>
+                        ))}
+                      </>                     
                     )
                   })
                 }
