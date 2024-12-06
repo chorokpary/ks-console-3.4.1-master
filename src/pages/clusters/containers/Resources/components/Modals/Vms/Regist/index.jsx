@@ -748,22 +748,25 @@ const RegistModal = props => {
           </>
         )}
         {regStep === 4 && (
-          <>
-            <Button
-              onClick={() => closeModal()}
-              className={classnames(styles['btn'], styles['btn-default'])}
-            >
-              {t('RESOURCES_CANCEL')}
-            </Button>
-            <Button
-              onClick={() => {
-                setRegStep(3)
-              }}
-              className={classnames(styles['btn'], styles['btn-default'])}
-            >
-              {t('RESOURCES_PREVIOUS')}
-            </Button>
+          <>           
             {submitButtonFlag && props.isSubmitting ? (
+              <>
+               <Button
+                onClick={() => closeModal()}
+                className={classnames(styles['btn'], styles['btn-default'])}
+                disabled
+              >
+                {t('RESOURCES_CANCEL')}
+              </Button>
+              <Button
+                onClick={() => {
+                  setRegStep(3)
+                }}
+                className={classnames(styles['btn'], styles['btn-default'])}
+                disabled
+              >
+                {t('RESOURCES_PREVIOUS')}
+              </Button>
               <Button
                 onClick={() => {
                   handleOk()
@@ -774,7 +777,23 @@ const RegistModal = props => {
               >
                 {t('RESOURCES_CREATE')}
               </Button>
+              </>
             ) : (
+              <>
+              <Button
+                onClick={() => closeModal()}
+                className={classnames(styles['btn'], styles['btn-default'])}
+              >
+                {t('RESOURCES_CANCEL')}
+              </Button>
+              <Button
+                onClick={() => {
+                  setRegStep(3)
+                }}
+                className={classnames(styles['btn'], styles['btn-default'])}
+              >
+                {t('RESOURCES_PREVIOUS')}
+              </Button>
               <Button
                 onClick={() => {
                   handleOk()
@@ -783,6 +802,7 @@ const RegistModal = props => {
               >
                 {t('RESOURCES_CREATE')}
               </Button>
+              </>
             )}
           </>
         )}
@@ -1039,6 +1059,7 @@ const RegistModal = props => {
         bodyClassName={styles.body}
         visible={modelView}
         hideFooter
+        disableCloseButton={(submitButtonFlag && props.isSubmitting)  ? true : false}
       >
         <Form data={formData} ref={form}>
           {/* Header */}

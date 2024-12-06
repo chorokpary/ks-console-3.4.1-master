@@ -44,36 +44,35 @@ import styles from './index.scss';
 export default class Vms extends React.Component {
   // auto refresh start  ##################################
   constructor(props) {
-    super(props);
-    this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+    super(props)
+    this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
+    this.isRefresh = false;
   }
 
   componentDidUpdate() {
     if (this.refreshTimer === null && this.isRuning) {
-      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000);
+      this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.refreshTimer);
-    this.unsubscribe && this.unsubscribe();
+    clearInterval(this.refreshTimer)
+    this.unsubscribe && this.unsubscribe()
   }
 
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list);
-    if (this.isRuning) {
-      this.getData({ silent: true, page, limit });
-    } else {
-      clearInterval(this.refreshTimer);
-      this.refreshTimer = null;
-    }
+
+    if (this.isRuning && !this.isRefresh) {
+      this.getData({ silent: true, page, limit })
+    } 
   };
 
   get isRuning() {
-    const { selectedRowKeys } = toJS(this.props.store.list);
-    const runingFlag = !(selectedRowKeys.length > 0);
-    return runingFlag;
+    const { selectedRowKeys } = toJS(this.props.store.list)
+    return !(selectedRowKeys.length > 0)
   }
+
 
   getData = params => {
     this.props.store.fetchList({
@@ -82,6 +81,15 @@ export default class Vms extends React.Component {
       ...this.props.query, // search param
     });
   };
+
+  stopRefresh = () => {
+    this.isRefresh = true;
+  }
+
+  startRefresh = () => {
+    this.isRefresh = false;
+  }
+
   // auto refresh end  ##################################
 
   showAction(record) {
@@ -117,12 +125,15 @@ export default class Vms extends React.Component {
           type: 'control',
           text: t('RESOURCES_CREATE'),
           action: 'create',
-          onClick: () =>
+          onClick: () => {
             trigger('vm.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
-            }),
+              startRefresh: this.startRefresh
+            })
+            this.stopRefresh();
+          },         
         },
       ],
       selectActions: [

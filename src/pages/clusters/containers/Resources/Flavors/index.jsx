@@ -146,17 +146,12 @@ export default class Flavors extends React.Component {
         isHideable: true,
         width: 'auto',
         render: gpus => {
-          let quantities = [];
+          let quantities = 0;
           if (gpus && gpus.length > 0) {
             gpus.forEach(gpu => {
-              quantities.push(gpu.quantity);
+              quantities = quantities + Number(gpu.quantity)
             });
           }
-
-          if (quantities.length === 0) {
-            quantities = [0];
-          }
-
           return <p>{quantities} {t('RESOURCES_COUNT')}</p>;
         },
       },
