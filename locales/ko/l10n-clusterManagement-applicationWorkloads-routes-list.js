@@ -25,7 +25,7 @@ module.exports = {
   ROUTE_PL: '인그레스',
   // List
   GATEWAY_ADDRESS_TCAP: '게이트웨이 주소',
-  ROUTE_EMPTY_DESC: '\b인그레스를 생성하세요.',
+  ROUTE_EMPTY_DESC: '인그레스를 생성하세요.',
   // List > Create > Basic Information
   // List > Create > Routing Rules
   ADD_ROUTING_RULE_DESC: '라우팅 규칙을 추가하여 도메인 이름 경로를 서비스에 매핑합니다.',
