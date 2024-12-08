@@ -35,7 +35,7 @@ module.exports = {
   PERMISSION_PROJECTS_VIEW: '프로젝트 보기',
   PERMISSION_PROJECTS_VIEW_DESC: '워크스페이스 내 모든 리소스를 조회합니다.',
   PERMISSION_PROJECTS_MANAGEMENT: '프로젝트 관리',
-  PERMISSION_PROJECTS_MANAGEMENT_DESC: '\b워크스페이스 내 프로젝트들을 생성, 편집 및 삭제합니다.',
+  PERMISSION_PROJECTS_MANAGEMENT_DESC: '워크스페이스 내 프로젝트들을 생성, 편집 및 삭제합니다.',
   PERMISSION_PROJECTS_CREATE: '프로젝트 생성',
   PERMISSION_PROJECTS_CREATE_DESC: '프로젝트를 생성하고 생성된 프로젝트의 관리자가 됩니다.',
   // List > Create > Edit Permissions > DevOps Project Management

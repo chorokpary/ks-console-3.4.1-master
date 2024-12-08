@@ -42,7 +42,7 @@ module.exports = {
   // Delete Workspace
   DELETE_DESC: '리소스를 삭제하시겠습니까? 리소스를 삭제한 후에는 복원할 수 없습니다.',
   // Delete Workspace > Delete
-  DELETE_WORKSPACE_PROJECTS_DESC: '\b워크스페이스 내 모든 프로젝트 삭제',
+  DELETE_WORKSPACE_PROJECTS_DESC: '워크스페이스 내 모든 프로젝트 삭제',
   DELETE_WORKSPACE_DESC: '워크스페이스를 삭제한 후에는 복원할 수 없으며 워크스페이스에 포함 된 모든 리소스가 제거됩니다.',
   DELETE_WORKSPACE_TIP: '워크스페이스 <strong>{resource}</strong>을(를) 삭제하시겠습니까? 워크스페이스를 삭제한 후에는 복원할 수 없으며 워크스페이스 내 모든 리소스가 제거됩니다.'
 };
