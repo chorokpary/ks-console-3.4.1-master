@@ -68,6 +68,10 @@ export default class VmStore extends Base {
 
     const page = params.page
     const limit = params.limit
+
+    if(!!namespace) {
+      params.project = namespace
+    }
     
     const result = await request.get(
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
