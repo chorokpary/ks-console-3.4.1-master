@@ -65,6 +65,10 @@ export default class VolumeStore extends Base {
     const page = params.page
     const limit = params.limit
 
+    if(!!namespace) {
+      params.project = namespace
+    }
+
     const result = await request.get(
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
@@ -93,39 +97,6 @@ export default class VolumeStore extends Base {
     // namespace(project) 있는 경우
     if (namespace) {
       params.project = namespace
-    }
-
-    // 검색 관련 처리
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
-    const searchArray = Object.keys(params)
-      .map(key => {
-        const value = params[key]
-        return {
-          searchKeywordType: key,
-          searchKeywordText: value,
-        }
-      })
-      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
-
-    this.searchList = this.dataList
-    if (searchArray.length > 0) {
-      searchArray.forEach(search => {
-        this.searchList = this.searchList.filter(row => {
-          if (
-            search.searchKeywordType === 'project' &&
-            search.searchKeywordText !== ''
-          ) {
-            return (
-              row[search.searchKeywordType]?.toLowerCase() ===
-              search.searchKeywordText.toLowerCase()
-            )
-          }
-          return row[search.searchKeywordType]
-            ?.toLowerCase()
-            .includes(search.searchKeywordText.toLowerCase())
-        })
-      })
-      this.dataList = this.searchList
     }
 
     // 정렬 처리
