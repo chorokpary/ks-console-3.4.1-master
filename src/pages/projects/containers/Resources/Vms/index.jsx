@@ -65,7 +65,7 @@ export default class Vms extends React.Component {
 
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit })
-    } 
+    }
   };
 
   get isRuning() {
@@ -133,7 +133,7 @@ export default class Vms extends React.Component {
               startRefresh: this.startRefresh
             })
             this.stopRefresh();
-          },         
+          },
         },
       ],
       selectActions: [
@@ -296,18 +296,12 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: networks => {
-          let networkIpList = '';
-          const networksList = this.props.store.networksList;
-          const { workspace, cluster, namespace } = this.props.match.params;
+          let networkIpList;
           if (!!networks) {
             networkIpList = networks.map(el => {
               if (el.name != 'k8s-pod-network') {
-                const networkName = get(
-                  find(networksList, { id: el.name }),
-                  'name'
-                );
                 return (
-		  <p key={el.name}>{el.ip}</p>
+                  <p key={el.name}>{el.ip}</p>
                 );
               }
             });
@@ -358,12 +352,11 @@ export default class Vms extends React.Component {
           if (!!security_group_objects) {
             securityGroupText =
               security_group_objects.length > 1
-                ? `${
-                    security_group_objects[0].name
-                  } 외 ${security_group_objects.length - 1}개`
+                ? `${security_group_objects[0].name
+                } 외 ${security_group_objects.length - 1}개`
                 : security_group_objects.length == 1
-                ? security_group_objects[0].name
-                : '-';
+                  ? security_group_objects[0].name
+                  : '-';
           } else {
             securityGroupText = '';
           }
@@ -382,9 +375,9 @@ export default class Vms extends React.Component {
           const stateArray = ['Stopped', 'Running', 'Paused'];
 
           if (stateArray.includes(state)) {
-            const vmsRole = get(globals.user.projectRules, [ cluster, namespace, 'vms', ]);
-            const _Role = get(globals.user.projectRules, [ cluster, namespace, '_', ]);
-     
+            const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms',]);
+            const _Role = get(globals.user.projectRules, [cluster, namespace, '_',]);
+
             if (vmsRole?.includes('manage') || _Role?.includes('manage')) {
               return (
                 <div>
@@ -410,22 +403,22 @@ export default class Vms extends React.Component {
                         {state === 'Stopped'
                           ? t('RESOURCES_STOP')
                           : state === 'Provisioning'
-                          ? t('RESOURCES_PROVISIONING')
-                          : state === 'Starting'
-                          ? t('RESOURCES_STARTING')
-                          : state === 'Running'
-                          ? t('RESOURCES_RUNNING')
-                          : state === 'Paused'
-                          ? t('RESOURCES_PAUSED')
-                          : state === 'Migrating'
-                          ? t('RESOURCES_MIGRATING')
-                          : state === 'Stopping'
-                          ? t('RESOURCES_STOPPING')
-                          : state === 'Terminating'
-                          ? t('RESOURCES_TERMINATING')
-                          : state === 'Unknown'
-                          ? t('RESOURCES_UNKNOWN')
-                          : ''}
+                            ? t('RESOURCES_PROVISIONING')
+                            : state === 'Starting'
+                              ? t('RESOURCES_STARTING')
+                              : state === 'Running'
+                                ? t('RESOURCES_RUNNING')
+                                : state === 'Paused'
+                                  ? t('RESOURCES_PAUSED')
+                                  : state === 'Migrating'
+                                    ? t('RESOURCES_MIGRATING')
+                                    : state === 'Stopping'
+                                      ? t('RESOURCES_STOPPING')
+                                      : state === 'Terminating'
+                                        ? t('RESOURCES_TERMINATING')
+                                        : state === 'Unknown'
+                                          ? t('RESOURCES_UNKNOWN')
+                                          : ''}
                       </p>
                     </div>
                   </Dropdown>
@@ -449,22 +442,22 @@ export default class Vms extends React.Component {
                 {state === 'Stopped'
                   ? t('RESOURCES_STOP')
                   : state === 'Provisioning'
-                  ? t('RESOURCES_PROVISIONING')
-                  : state === 'Starting'
-                  ? t('RESOURCES_STARTING')
-                  : state === 'Running'
-                  ? t('RESOURCES_RUNNING')
-                  : state === 'Paused'
-                  ? t('RESOURCES_PAUSED')
-                  : state === 'Migrating'
-                  ? t('RESOURCES_MIGRATING')
-                  : state === 'Stopping'
-                  ? t('RESOURCES_STOPPING')
-                  : state === 'Terminating'
-                  ? t('RESOURCES_TERMINATING')
-                  : state === 'Unknown'
-                  ? t('RESOURCES_UNKNOWN')
-                  : ''}
+                    ? t('RESOURCES_PROVISIONING')
+                    : state === 'Starting'
+                      ? t('RESOURCES_STARTING')
+                      : state === 'Running'
+                        ? t('RESOURCES_RUNNING')
+                        : state === 'Paused'
+                          ? t('RESOURCES_PAUSED')
+                          : state === 'Migrating'
+                            ? t('RESOURCES_MIGRATING')
+                            : state === 'Stopping'
+                              ? t('RESOURCES_STOPPING')
+                              : state === 'Terminating'
+                                ? t('RESOURCES_TERMINATING')
+                                : state === 'Unknown'
+                                  ? t('RESOURCES_UNKNOWN')
+                                  : ''}
               </p>
             </div>
           );

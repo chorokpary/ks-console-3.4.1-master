@@ -316,12 +316,10 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: networks => {
           let networkIpList
-          const networksList = this.props.store.networksList
 
           if (networks) {
             networkIpList = networks.map(el => {
               if (el.name !== 'k8s-pod-network') {
-                get(find(networksList, { id: el.name }), 'name')
                 return <p key={el.name}>{el.ip}</p>
               }
             })
