@@ -842,13 +842,31 @@ td > div[class$=-index__avatar] {
   background-color: #55bc8a !important;
 }
 
+[class*="__active:before"],
+[class*="__available:before"],
+[class*="__bound:before"],
+[class*="__healthy:before"],
+[class*="__jobrunning:before"],
+[class*="__normal:before"],
+[class*="__ok:before"],
+[class*="__passed:before"],
+[class*="__published:before"],
+[class*="__ready:before"],
+[class*="__running:before"],
+[class*="__succeeded:before"],
+[class*="__success:before"],
+[class*="__successful:before"],
+[class*="__working:before"] {
+  background-color: #55bc8a !important;
+}
+
 /* running, status green 색상 */
 :global .charttip-content span.active::before,
 :global .badge-wrapper > span.badge.is-success {
   background-color: #55bc8a !important;
 }
 
-[class*=StatusCard-index__check] {
+[class*=-index__check] {
   background-color: #55bc8a !important;
 }
 
