@@ -830,7 +830,7 @@ const RegistModal = props => {
 
   const dataListVariables = {
     network: networkList,
-    sriov: sriovNetworkDataList,
+    sriov: sriovNetworkList,
     security: securityGroupList,
   }
 
