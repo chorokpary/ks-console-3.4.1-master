@@ -101,9 +101,6 @@ export default class VmStore extends Base {
     // FloatingIp List 추출
     await this.fetchFloatingList({ cluster, namespace })
 
-    // Network List 추출
-    await this.fetchVmListNetwork({ cluster, namespace })
-
     // namespace(project) 있는 경우
     if (namespace) {
       params.project = namespace
