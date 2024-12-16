@@ -139,16 +139,11 @@ class ResourceUsage extends React.Component {
 
     const _Role = get(globals.user.projectRules, [ this.cluster, this.namespace, '_', ]);
 
-    if(_Role?.includes('manage')){
+    if(_Role?.includes('manage') || _Role?.includes('view')){
       return true;
-    }else{        
-      const computingWorkloadServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'vms'], [])
-      const computingSettingServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'networks'], [])
-      const computingResourceServieRole = get(globals.user.projectRules, [this.cluster, this.namespace, 'flavors'], [])
+    }
 
-      const flag = (computingWorkloadServieRole.length > 0 || computingSettingServieRole.length > 0 || computingResourceServieRole.length > 0) ? true : false;
-      return flag;
-    }    
+    return false;
   }
 
   fetchData = params => {
@@ -349,7 +344,7 @@ class ResourceUsage extends React.Component {
   renderComputingResource() {
 
     if (!this.computingResource) {
-      //return false;
+      return false;
     }
     const { isLoading, resources } = this.computingStore
 
