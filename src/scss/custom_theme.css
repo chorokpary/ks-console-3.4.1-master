@@ -372,7 +372,7 @@ input .src-pages-clusters-containers-Resources-components-Modals-ComputingAppDep
 }
 
 /* 탭라디오 태그 색상 : [클러스터 설정] > [시스템 구성 요소] 상단 Running 개수 색상 */
-.radio-group-button .label-value .tag.tag-default {
+.radio-group-button label.radio-button.checked .label-value .tag.tag-default {
   background: #0fa1e3 !important;
   -webkit-box-shadow: none !important;
           box-shadow: none !important;
@@ -381,6 +381,12 @@ input .src-pages-clusters-containers-Resources-components-Modals-ComputingAppDep
 /* 탭라디오 개수 태그 색상 공통 */
 .badge-wrapper > span.badge.is-success {
   background: #0fa1e3 !important;
+}
+
+/* Default gray 색상 */
+.badge-wrapper > span.badge.is-default,
+.radio-group-button .label-value .tag.tag-default {
+  background-color: #79879c !important;
 }
 
 /* 토글 스위치 색상 */
@@ -861,13 +867,25 @@ td > div[class$=-index__avatar] {
 }
 
 /* running, status green 색상 */
-:global .charttip-content span.active::before,
-:global .badge-wrapper > span.badge.is-success {
+:global .charttip-content span.active::before {
   background-color: #55bc8a !important;
 }
 
 [class*=-index__check] {
   background-color: #55bc8a !important;
+}
+
+[class*=-Regist-index__check] {
+  background-color: transparent !important;
+}
+
+.src-components-Base-Steps-index__steps > ul > li.src-components-Base-Steps-index__finished .src-components-Base-Steps-index__icon:after {
+  border-color: #55bc8a !important;
+  background-color: #55bc8a !important;
+}
+
+.src-components-Base-Steps-index__steps > ul > li.src-components-Base-Steps-index__current .src-components-Base-Steps-index__icon:after {
+  border-color: #55bc8a !important;
 }
 
 /* indicator 위치*/
@@ -881,9 +899,19 @@ td > div[class$=-index__avatar] {
   right: 5px !important;
 }
 
-.src-components-Base-Indicator-index__icon::before {
-  width: 10px;
-  height: 10px;
+.src-pages-apps-components-VersionStatus-index__icon .src-pages-apps-components-VersionStatus-index__passed svg,
+svg.kubed-icon.kubed-icon-success {
+  fill: #55bc8a !important;
+}
+
+/* 클러스터 상태 */
+.src-pages-clusters-containers-Monitor-Cluster-Overview-index__components .src-pages-clusters-containers-Monitor-Cluster-Overview-index__wrapper .src-pages-clusters-containers-Monitor-Cluster-Overview-index__list.src-pages-clusters-containers-Monitor-Cluster-Overview-index__core .src-pages-clusters-containers-Monitor-Cluster-Overview-index__itemIcon.src-pages-clusters-containers-Monitor-Cluster-Overview-index__healthy, .src-pages-clusters-containers-Monitor-Cluster-Overview-index__components .src-pages-clusters-containers-Monitor-Cluster-Overview-index__wrapper .src-pages-clusters-containers-Monitor-Cluster-Overview-index__list.src-pages-clusters-containers-Monitor-Cluster-Overview-index__core .src-pages-clusters-containers-Monitor-Cluster-Overview-index__itemIcon.src-pages-clusters-containers-Monitor-Cluster-Overview-index__ready {
+  background-color: #55bc8a !important;
+}
+
+/* 알림 규칙 비활성화 */
+.src-pages-projects-containers-Alerting-Policies-Detail-AlertRules-RuleList-index__status_inactive:after, .src-pages-projects-containers-Alerting-Policies-Detail-AlertRules-RuleList-index__status_inactive:before {
+  background-color: transparent !important;
 }
 
 .src-components-Base-Status-index__indicator {
