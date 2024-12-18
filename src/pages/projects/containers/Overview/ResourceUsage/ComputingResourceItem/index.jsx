@@ -40,7 +40,7 @@ const ResourceCard = (props) => {
   const resourceData = props.dataList; 
   const resourceCreateField = props.createField;
 
-  const graphExceptionArray = ['floatingip','hostDevices','mediatedDevices']
+  const graphExceptionArray = ['floatingIp','hostDevices','mediatedDevices']
 
   const [vmData, setVmData] = useState({});
   const [imageData, setImageData] = useState({});
@@ -156,7 +156,10 @@ const ResourceCard = (props) => {
       unixTime -= 86400000;
     })
 
-    setVariables[resourceType]({ data: arrList });
+
+    if (typeof setVariables[resourceType] === 'function') {
+      setVariables[resourceType]({ data: arrList });
+    }
 
   }
 

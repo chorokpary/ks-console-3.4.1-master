@@ -52,6 +52,9 @@ const RegistModal = props => {
   const [tab, setTab] = useState('GiB');
   const { TabPanel } = Tabs;
 
+  const [gpuValidationError, setGpuValidationError] = useState(false)
+  const [hostDeviceValidationError, setHostDeviceValidationError] = useState(false)
+
   useEffect(() => {
     const useEffectFunction = async () => {
       // hostDevices
@@ -135,7 +138,7 @@ const RegistModal = props => {
     e.preventDefault();
     const { data } = form.current.props;
 
-    if (regxOnlyNum.test(data.vcpus) && vcpus > 0) {
+    if (regxOnlyNum.test(data.vcpus) && vcpus > 1) {
       setVcpus(Number(vcpus) - 1);
       data.vcpus = Number(vcpus) - 1;
       setVcpusErrorFlag(0);
@@ -322,9 +325,20 @@ const RegistModal = props => {
           delete obj.message && obj.name && obj.name !== t('RESOURCES_SELECT')
       );
 
+      !validateQuantity(data.gpus) ? setGpuValidationError(true) : setGpuValidationError(false);
+      !validateQuantity(data.devices) ? setHostDeviceValidationError(true) : setHostDeviceValidationError(false);
+
       onOk({ flavor: data });
     });
   };
+
+const validateQuantity = (data) => {
+  if (data.length >= 1) {
+      const hasZeroQuantity = data.some(item => item.quantity === 0);
+      return !hasZeroQuantity;
+  }
+  return true; 
+}
 
   const stepMoveCheck = step => {
     const { data } = form.current.props;
@@ -830,6 +844,11 @@ const RegistModal = props => {
                       />
                     </div>
                   ))}
+                  <div className="margin-t8">
+                    <div className={`form-item-error ${gpuValidationError ? '' : 'hide'}`} >
+                      {t('ROSOURCES_CPU_VALID')}
+                    </div>               
+                  </div>
                   <div className="text-right">
                     <Button
                       className={styles.add}
@@ -897,6 +916,11 @@ const RegistModal = props => {
                       />
                     </div>
                   ))}
+                  <div className="margin-t8">
+                    <div className={`form-item-error ${hostDeviceValidationError ? '' : 'hide'}`} >
+                      {t('ROSOURCES_CPU_VALID')}
+                    </div>               
+                  </div>
                   <div className="text-right">
                     <Button
                       className={styles.add}
