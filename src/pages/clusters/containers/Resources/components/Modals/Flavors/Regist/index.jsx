@@ -161,6 +161,8 @@ const RegistModal = props => {
 
     handleRemoveFields: i => {
       const values = [...formDeviceFields].filter((obj, idx) => idx !== i);
+      const isQuantity = values.some( item => item.name !== "선택" );
+      (formDeviceFields.length == 1 || !isQuantity ) ? setHostDeviceValidationError(false) : "";
       setFormDeviceFields(values);
     },
 
@@ -221,6 +223,8 @@ const RegistModal = props => {
 
     handleRemoveFields: i => {
       const values = [...formGpuFields].filter((obj, idx) => idx !== i);
+      const isQuantity = values.some( item => item.name !== "선택" );
+      (formGpuFields.length == 1 || !isQuantity ) ? setGpuValidationError(false) : "";
       setFormGpuFields(values);
     },
 
@@ -327,6 +331,10 @@ const RegistModal = props => {
 
       !validateQuantity(data.gpus) ? setGpuValidationError(true) : setGpuValidationError(false);
       !validateQuantity(data.devices) ? setHostDeviceValidationError(true) : setHostDeviceValidationError(false);
+
+      if(!validateQuantity(data.gpus) || !validateQuantity(data.devices)){
+        return false;
+      }
 
       onOk({ flavor: data });
     });
