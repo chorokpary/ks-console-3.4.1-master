@@ -75,7 +75,7 @@ const FloatingIpDetail = props => {
               success: () => routing.push(listUrl),
               okText: t('RESOURCES_DELETE'),
               cancelText: t('RESOURCES_CANCEL'),
-              ...props,
+              ...props.match.params,
             }),
         },
           {
