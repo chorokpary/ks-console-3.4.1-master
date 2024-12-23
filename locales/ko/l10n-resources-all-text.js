@@ -236,7 +236,8 @@ module.exports = {
   RESOURCES_CREATE_VM: '가상머신 생성',
   RESOURCES_EDIT_VM: '가상머신 수정',
   RESOURCES_DELETE_VM_TIP:
-    '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+    '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다. ' +
+    '가상머신 삭제 시 가삼머신에 연결된 볼륨 또한 삭제됩니다.',
   RESOURCES_VM_IMAGE: '가상머신 이미지',
   RESOURCES_CREATE_VM_IMAGE: '가상머신 이미지 생성',
   RESOURCES_EDIT_VM_IMAGE: '가상머신 이미지 수정',
