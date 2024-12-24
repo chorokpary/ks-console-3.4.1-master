@@ -111,7 +111,7 @@ const KeypairDetail = (props) => {
 
   const sideProps = {
     icon: getBanner(),
-    module: store.module,
+    module: "networks",
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
     operations: getOperations(),
