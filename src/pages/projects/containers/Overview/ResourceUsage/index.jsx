@@ -133,17 +133,7 @@ class ResourceUsage extends React.Component {
   }
 
   get computingResource() {
-    if (get(globals.user.globalRules, 'clusters')?.includes('manage')) {
-      return true
-    }
-
-    const _Role = get(globals.user.projectRules, [ this.cluster, this.namespace, '_', ]);
-
-    if(_Role?.includes('manage') || _Role?.includes('view')){
-      return true;
-    }
-
-    return false;
+    return true;
   }
 
   fetchData = params => {
@@ -371,7 +361,7 @@ class ResourceUsage extends React.Component {
   
 
   renderHeader() {
-    console.log("this.state.resourceType : "+ this.state.resourceType)
+    
     return (
       <div className={styles.header}>
         <RadioGroup
