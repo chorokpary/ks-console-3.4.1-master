@@ -162,6 +162,7 @@ module.exports = {
   RESOURCES_MMS_ERROR_965: 'INVALID_AVAILABLE_STORAGE_SPACE',
   RESOURCES_MMS_ERROR_966: 'INVALID_NEW_VOLUME_SIZE',
   RESOURCES_MMS_ERROR_967: 'MORE_THAN_ONE_DEFAULT_VM_SC',
+  RESOURCES_MMS_ERROR_968: 'VOLUME_IN_USE',
   RESOURCES_MMS_ERROR_970: 'VM_NOT_MIGRATABLE',
   RESOURCES_MMS_ERROR_971: 'NOT_ENOUGH_NODES_FOR_MIGRATION',
   RESOURCES_MMS_ERROR_1040: 'HOST_DEVICE_NOT_FOUND',
@@ -450,6 +451,7 @@ module.exports = {
     'The new volume size should be larger than original volume size',
   RESOURCES_MMS_ERROR_DESC_967:
     'The number of default VM storage class should be equal to one.',
+  RESOURCES_MMS_ERROR_DESC_968: 'VM attached Volumes cannot be deleted.',
   RESOURCES_MMS_ERROR_DESC_970: 'The given VM is not migratable.',
   RESOURCES_MMS_ERROR_DESC_971:
     'There are not sufficient worker nodes to migrate VM.',

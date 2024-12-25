@@ -242,7 +242,8 @@ module.exports = {
   RESOURCES_CREATE_VM: 'Create Virtual Machine',
   RESOURCES_EDIT_VM: 'Edit Virtual Machine',
   RESOURCES_DELETE_VM_TIP:
-    'Enter the virtual machine name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
+    'Enter the virtual machine name <strong>{resource}</strong> to confirm that you understand the risk of this action. ' +
+    'Deleting a virtual machine will also delete the volumes attached to it.',
   RESOURCES_VM_IMAGE: 'Virtual Machine Image',
   RESOURCES_CREATE_VM_IMAGE: 'Create Virtual Machine Image',
   RESOURCES_EDIT_VM_IMAGE: 'Edit Virtual Machine Image',
