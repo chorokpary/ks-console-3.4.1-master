@@ -374,13 +374,20 @@ input .src-pages-clusters-containers-Resources-components-Modals-ComputingAppDep
 /* 탭라디오 태그 색상 : [클러스터 설정] > [시스템 구성 요소] 상단 Running 개수 색상 */
 .radio-group-button label.radio-button.checked .label-value .tag.tag-default {
   background: #0fa1e3 !important;
+  box-shadow: none !important;
   -webkit-box-shadow: none !important;
-          box-shadow: none !important;
+}
+
+.src-pages-clusters-containers-ServiceComponents-index__toolbar .tag {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
 
 /* 탭라디오 개수 태그 색상 공통 */
 .badge-wrapper > span.badge.is-success {
   background: #0fa1e3 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
 
 /* Default gray 색상 */
@@ -871,7 +878,7 @@ td > div[class$=-index__avatar] {
   background-color: #55bc8a !important;
 }
 
-[class*=-index__check] {
+[class*=__cardstatus] [class*=-index__check] {
   background-color: #55bc8a !important;
 }
 
@@ -902,6 +909,21 @@ td > div[class$=-index__avatar] {
 .src-pages-apps-components-VersionStatus-index__icon .src-pages-apps-components-VersionStatus-index__passed svg,
 svg.kubed-icon.kubed-icon-success {
   fill: #55bc8a !important;
+}
+
+span[style="width: 40px; height: 40px;"] > .kubed-icon.kubed-icon-dark {
+  fill: #b6c2cd !important;
+  color: #324558 !important;
+}
+
+span[style="width: 40px; height: 40px;"] > .kubed-icon.kubed-icon-light {
+  fill: hsla(0, 0%, 100%, 0.4) !important;
+  color: hsla(0, 0%, 100%, 0.9) !important;
+}
+
+[class*=__tab][class*=index__active] span[style="width: 40px; height: 40px;"] > .kubed-icon.kubed-icon-dark {
+  color: hsla(0, 0%, 100%, 0.9) !important;
+  fill: hsla(0, 0%, 100%, 0.4) !important;
 }
 
 /* 클러스터 상태 */
