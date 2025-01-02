@@ -552,8 +552,8 @@ module.exports = {
     '현재 사이트는 사이트명을 구성하지 않았습니다.',
   RESOURCES_MMS_ERROR_DESC_9042: '라이센스에는 사이트명 속성이 없습니다.',
   RESOURCES_MMS_ERROR_DESC_9051: '라이센스는 잘못된 서명으로 서명되었습니다.',
-  RESOURCES_MMS_ERROR_DESC_9052: '라이센스는 XXX에서 유효합니다.',
-  RESOURCES_MMS_ERROR_DESC_9053: '라이센스는 XXX까지 유효합니다.',
+  RESOURCES_MMS_ERROR_DESC_9052: '라이센스가 만료되었습니다.',
+  RESOURCES_MMS_ERROR_DESC_9053: '라이센스가 만료되었습니다.',
   RESOURCES_MMS_ERROR_DESC_9054: '총 노드 수는 유효한 노드 수를 초과합니다.',
   RESOURCES_MMS_ERROR_DESC_9055: '라이센스가 이미 존재합니다.',
   RESOURCES_MMS_ERROR_DESC_9056:
