@@ -2,7 +2,8 @@
 @import '~scss/mixins';
 
 .wrapper {
-  padding: 4px;
+  padding: 8px;
+  margin: 6px;
   background-color: $card-bg-color;
   border-radius: $border-radius;
 }
@@ -116,13 +117,20 @@
   }
 }
 
+.gridTitle {
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  cursor: move;
+}
+
 .itemMain {
   display: flex;
   padding: 12px;
   height: 64px;
   line-height: 20px;
-  margin-right: 8px;
-  margin-left: 8px;
+  margin-right: 0px;
+  margin-left: 0px;
   background-color: $white;
   border: 1px solid $border-color;
   border-radius: 4px;
