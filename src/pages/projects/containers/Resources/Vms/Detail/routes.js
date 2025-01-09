@@ -26,6 +26,7 @@ import GpuMonitoring from './GpuMonitoring'
 import Event from './Event'
 import Snapshot from './Snapshot'
 import Clone from './Clone'
+import PowerLog from '../../../../../clusters/containers/Resources/Vms/Detail/PowerLog'
 
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace/vms/:name/:id'
 
@@ -64,6 +65,12 @@ export default [
     path: `${PATH}/event`,
     title: t('RESOURCES_EVENT'),
     component: Event,
+    exact: true,
+  },
+  {
+    path: `${PATH}/power`,
+    title: t('RESOURCES_POWER_LOG'),
+    component: PowerLog,
     exact: true,
   },
   {
