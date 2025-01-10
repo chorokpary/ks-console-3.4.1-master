@@ -115,7 +115,7 @@ export default class ClusterInspection extends React.Component {
                                     dy={-10}
                                   />
                                   <Label
-                                    value={`Health Score`}
+                                    value={t('CLUSTER_INSPECTION_HEALTH_SCORE')}
                                     position="bottom"
                                     fontSize={13}
                                     dy={25}

@@ -216,7 +216,8 @@ const DetailClusterList = props => {
               <div
                 style={{
                   padding: '4px',
-                  backgroundColor: '#f9fbfd',
+                  margin: '4px',
+                  backgroundColor: '#fcfcfc',
                   borderRadius: '4px',
                 }}
               >
@@ -226,13 +227,15 @@ const DetailClusterList = props => {
                     whiteSpace: 'nowrap',
                     wordWrap: 'normal',
                     overflow: 'hidden',
-                    fontSize: '12px',
+                    fontSize: '14px',
                     lineHeight: 1.67,
                     fontStyle: 'normal',
                     fontStretch: 'normal',
                     letterSpacing: 'normal',
                     fontWeight: 'bold',
                     color: '#242e42',
+                    marginLeft: '15px',
+                    marginTop: '10px',
                   }}
                 >
                   {value.namespace}
@@ -808,7 +811,7 @@ const DetailClusterList = props => {
         </div>
       </div>
       <div className="grid_item">
-        <div className="grid_title">
+        <div className={styles.gridTitle}>
           <label></label>
           <div
             className="content_box_wrap"

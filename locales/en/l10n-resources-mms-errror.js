@@ -574,8 +574,8 @@ module.exports = {
     'There is no sitename attribute in the given license',
   RESOURCES_MMS_ERROR_DESC_9051:
     'The given license is signed with invalid signature',
-  RESOURCES_MMS_ERROR_DESC_9052: 'The license is valid from XXX',
-  RESOURCES_MMS_ERROR_DESC_9053: 'The license is valid until XXX',
+  RESOURCES_MMS_ERROR_DESC_9052: 'The license has been expired.',
+  RESOURCES_MMS_ERROR_DESC_9053: 'The license has been expired.',
   RESOURCES_MMS_ERROR_DESC_9054:
     'The total number of nodes exceeds the valid node number',
   RESOURCES_MMS_ERROR_DESC_9055: 'The license is already existed',
