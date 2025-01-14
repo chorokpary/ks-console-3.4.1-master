@@ -50,8 +50,8 @@ const ResourceImageModal = props => {
   ]
 
   const bootTypeOptions = [
-    { label: 'legacy', value: 'legacy' },
-    { label: 'uefi', value: 'uefi' },
+    { label: 'BIOS', value: 'legacy' },
+    { label: 'UEFI', value: 'uefi' },
   ]
 
   const osTypeOptions = [
