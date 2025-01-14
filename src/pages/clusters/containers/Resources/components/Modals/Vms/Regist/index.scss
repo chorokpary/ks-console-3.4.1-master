@@ -558,3 +558,26 @@ button {
 .wrapperError {
   height: 20px;
 }
+
+.box_wrapper {
+  margin-bottom: 12px;
+  padding: 11px 18px;
+  border-radius: 4px;
+  border: solid 1px $border-color;
+  background-color: $white;
+
+  .box_title {
+    font-weight: $font-bold;
+
+    :global {
+      label.checkbox span.label-value {
+        font-weight: $font-bold;
+      }
+    }
+  }
+
+  .box_desc {
+    color: $second-text-color;
+    padding-left: 28px;
+  }
+}

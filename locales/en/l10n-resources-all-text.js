@@ -514,6 +514,7 @@ module.exports = {
   RESOURCES_SCALING: 'Scaling',
   RESOURCES_SCRIPT: 'Script',
   RESOURCES_STOREGE_CLASS: 'Storage Class',
+  RESOURCES_SECURE_BOOT: 'Activate Secure Boot',
   RESOURCES_SYSTEM_MONITORING: 'System Monitoring',
   RESOURCES_STARTING: 'Starting',
   RESOURCES_WAITING: 'Waiting',

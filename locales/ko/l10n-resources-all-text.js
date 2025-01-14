@@ -510,6 +510,7 @@ module.exports = {
   RESOURCES_SCALING: '스케일링',
   RESOURCES_SCRIPT: '스크립트',
   RESOURCES_STOREGE_CLASS: '스토리지 클래스',
+  RESOURCES_SECURE_BOOT: '보안 부팅 활성화',
   RESOURCES_SYSTEM_MONITORING: '시스템 모니터링',
   RESOURCES_STARTING: '시작 중',
   RESOURCES_WAITING: '대기 중',
