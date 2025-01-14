@@ -1432,7 +1432,7 @@ const RegistModal = props => {
                           <div className={styles.box_wrapper}>
                             <div className={styles.box_title}>
                               <Checkbox checked={secureBoot} onChange={sb => setSecureBoot(sb)}>
-                                {t('RESOURCES_SECURE_BOOT')}
+                                {t('RESOURCES_ENABLE_SECURE_BOOT')}
                               </Checkbox>
                             </div>
                           </div>
