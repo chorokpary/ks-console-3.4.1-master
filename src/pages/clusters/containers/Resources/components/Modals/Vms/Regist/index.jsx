@@ -1408,34 +1408,34 @@ const RegistModal = props => {
                         <div className={styles.caption}>
                           {t('RESOURCES_VM_CUSTOM_SETTINGS')}
                         </div>
-                          {imageType === 'I' && (
-                            <Form.Group
-                              label={t('RESOURCES_STORAGE_CLASS')}
-                              onChange={() => {
-                                setStorageClass('')
-                              }}
-                              checkable
-                            >
-                              <Form.Item>
-                                <Select
-                                  options={storageClassOptions()}
-                                  onChange={el => setStorageClass(el)}
-                                  value={
-                                    storageClass !== ''
-                                      ? storageClass
-                                      : t('RESOURCES_SELECT')
-                                  }
-                                />
-                              </Form.Item>
-                            </Form.Group>
-                          )}
-                          <div className={styles.box_wrapper}>
-                            <div className={styles.box_title}>
-                              <Checkbox checked={secureBoot} onChange={sb => setSecureBoot(sb)}>
-                                {t('RESOURCES_ENABLE_SECURE_BOOT')}
-                              </Checkbox>
-                            </div>
+                        {imageType === 'I' && (
+                          <Form.Group
+                            label={t('RESOURCES_STORAGE_CLASS')}
+                            onChange={() => {
+                              setStorageClass('')
+                            }}
+                            checkable
+                          >
+                            <Form.Item>
+                              <Select
+                                options={storageClassOptions()}
+                                onChange={el => setStorageClass(el)}
+                                value={
+                                  storageClass !== ''
+                                    ? storageClass
+                                    : t('RESOURCES_SELECT')
+                                }
+                              />
+                            </Form.Item>
+                          </Form.Group>
+                        )}
+                        <div className={styles.box_wrapper}>
+                          <div className={styles.box_title}>
+                            <Checkbox checked={secureBoot} onChange={sb => setSecureBoot(sb)}>
+                              {t('RESOURCES_ENABLE_SECURE_BOOT')}
+                            </Checkbox>
                           </div>
+                        </div>
                       </Column>
                     </Columns>
                     {isProjectQuotaSet && (
@@ -2271,6 +2271,13 @@ const RegistModal = props => {
                           </div>
                         )}
                         <div className={styles.list}>
+                          <label>{t('RESOURCES_SECURE_BOOT')}</label>
+                          <div>{`${secureBoot === true
+                            ? t('USER_ACTIVE')
+                            : t('USER_DISABLED')
+                            }`}</div>
+                        </div>
+                        <div className={styles.list}>
                           <label>{t('RESOURCES_DESCRIPTION')}</label>
                           <div>{description}</div>
                         </div>
@@ -2404,12 +2411,10 @@ const RegistModal = props => {
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_NODE')}</label>
-                        <div className={styles.multiline}>
-                          <div>{`${nodeName === undefined
-                            ? t('RESOURCES_AUTOMATIC')
-                            : nodeName
-                            }`}</div>
-                        </div>
+                        <div>{`${nodeName === undefined
+                          ? t('RESOURCES_AUTOMATIC')
+                          : nodeName
+                          }`}</div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SCRIPT')}</label>
