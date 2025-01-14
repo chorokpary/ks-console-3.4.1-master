@@ -76,7 +76,7 @@ const Status = (props) => {
                 <div>
                   {store.detail.volume?.storage_class}
                 </div>
-                <p>{t('RESOURCES_STOREGE_CLASS')}</p>
+                <p>{t('RESOURCES_STORAGE_CLASS')}</p>
               </div>
               <div className={styles.title}>
                 <div>{store.detail.volume?.volume_mode}</div>

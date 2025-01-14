@@ -135,7 +135,7 @@ const VolumeDetail = props => {
         value: detail.cluster,
       },
       {
-        name: t('RESOURCES_STOREGE_CLASS'),
+        name: t('RESOURCES_STORAGE_CLASS'),
         value: detail.volume.storage_class,
       },
       {

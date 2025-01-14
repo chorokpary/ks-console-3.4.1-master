@@ -649,7 +649,7 @@ const RegistModal = props => {
               {/* 입력소스 설정 끝======================================== */}
               {/* 세부설정 시작========================================== */}
               <div className={`${regStep == 3 ? '' : 'hide'}`}>
-                <Form.Item label={t('RESOURCES_STOREGE_CLASS')}>
+                <Form.Item label={t('RESOURCES_STORAGE_CLASS')}>
                   <Select
                     name="storage_class"
                     defaultValue={storageClass}

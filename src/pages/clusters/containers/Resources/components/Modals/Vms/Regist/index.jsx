@@ -1404,35 +1404,38 @@ const RegistModal = props => {
                       </Column>
 
                       <Column>
-                        <div style={{ padding: 12 }} />
-                        {imageType === 'I' && (
-                          <Form.Group
-                            label={t('RESOURCES_STOREGE_CLASS')}
-                            onChange={() => {
-                              setStorageClass('')
-                            }}
-                            checkable
-                          >
-                            <Form.Item>
-                              <Select
-                                options={storageClassOptions()}
-                                onChange={el => setStorageClass(el)}
-                                value={
-                                  storageClass !== ''
-                                    ? storageClass
-                                    : t('RESOURCES_SELECT')
-                                }
-                              />
-                            </Form.Item>
-                          </Form.Group>
-                        )}
-                        <div className={styles.box_wrapper}>
-                          <div className={styles.box_title}>
-                            <Checkbox checked={secureBoot} onChange={sb => setSecureBoot(sb)}>
-                              {t('RESOURCES_SECURE_BOOT')}
-                            </Checkbox>
-                          </div>
+                        {imageType === 'B' && <div style={{ padding: 8 }} />}
+                        <div className={styles.caption}>
+                          {t('RESOURCES_VM_CUSTOM_SETTINGS')}
                         </div>
+                          {imageType === 'I' && (
+                            <Form.Group
+                              label={t('RESOURCES_STORAGE_CLASS')}
+                              onChange={() => {
+                                setStorageClass('')
+                              }}
+                              checkable
+                            >
+                              <Form.Item>
+                                <Select
+                                  options={storageClassOptions()}
+                                  onChange={el => setStorageClass(el)}
+                                  value={
+                                    storageClass !== ''
+                                      ? storageClass
+                                      : t('RESOURCES_SELECT')
+                                  }
+                                />
+                              </Form.Item>
+                            </Form.Group>
+                          )}
+                          <div className={styles.box_wrapper}>
+                            <div className={styles.box_title}>
+                              <Checkbox checked={secureBoot} onChange={sb => setSecureBoot(sb)}>
+                                {t('RESOURCES_SECURE_BOOT')}
+                              </Checkbox>
+                            </div>
+                          </div>
                       </Column>
                     </Columns>
                     {isProjectQuotaSet && (
@@ -2261,7 +2264,7 @@ const RegistModal = props => {
                         </div>
                         {storageClass && (
                           <div className={styles.list}>
-                            <label>{t('RESOURCES_STOREGE_CLASS')}</label>
+                            <label>{t('RESOURCES_STORAGE_CLASS')}</label>
                             <div className={styles.multiline}>
                               <div className={styles.bold}>{storageClass}</div>
                             </div>
