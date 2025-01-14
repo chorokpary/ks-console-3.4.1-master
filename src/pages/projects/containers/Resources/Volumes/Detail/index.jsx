@@ -180,7 +180,7 @@ const VolumeDetail = (props) => {
       },
       {
         name: t('RESOURCES_BOOT_TYPE'),
-        value: detail.volume.boot_type,
+        value: t(`RESOURCES_BOOT_TYPE_${detail.volume.boot_type.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_PHASE'),

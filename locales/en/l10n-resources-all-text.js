@@ -439,6 +439,8 @@ module.exports = {
     'Enter the volume name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
   RESOURCES_VOLUME_DESC: 'Manage the status and usage of volumes.',
   RESOURCES_BOOT_TYPE: 'Boot Type',
+  RESOURCES_BOOT_TYPE_UEFI: 'UEFI',
+  RESOURCES_BOOT_TYPE_LEGACY: 'BIOS',
   RESOURCES_BUS_TYPE: 'BUS Type',
   RESOURCES_BUS: 'BUS',
   RESOURCES_SELECT_BUS_TIP: 'Please select a BUS type.',

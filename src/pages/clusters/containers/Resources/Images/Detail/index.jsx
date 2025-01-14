@@ -118,7 +118,7 @@ const ImageDetail = props => {
       },
       {
         name: t('RESOURCES_BOOT_TYPE'),
-        value: detail.image.boot_type,
+        value: t(`RESOURCES_IMAGE_${detail.image.boot_type.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_ACCELERATOR_TYPE'),
