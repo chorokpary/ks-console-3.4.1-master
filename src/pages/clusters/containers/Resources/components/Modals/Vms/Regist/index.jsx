@@ -2397,7 +2397,7 @@ const RegistModal = props => {
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
-                        <div className={styles.multiline}>
+                        <div>
                           {securityGroupCheckItems.length === 0
                             ? t('RESOURCES_NOT_SELECTED')
                             : securityGroupCheckItems.map(id => {
