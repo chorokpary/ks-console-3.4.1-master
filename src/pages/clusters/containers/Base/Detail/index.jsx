@@ -27,8 +27,10 @@ export default class DetailPage extends Base {
     const { cluster, namespace: project } = this.props.match.params
 
     const replaceModule = { 
-      floating_ips : "floatingip" 
+      floating_ips : "floatingip",
+      lbs : "loadBalancers"
     }
+
     const module = replaceModule[this.authKey] ?  replaceModule[this.authKey] : this.authKey;
 
     return globals.app.getActions({
