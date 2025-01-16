@@ -150,7 +150,7 @@ const Snapshot = (props) => {
             <div>{get(obj, "description", "-")}</div>
             <p>Description</p>
           </div>      */}
-          {vmsRole.includes('manage') &&
+          {vmsRole?.includes('manage') &&
             <div className={styles.button}>
               <div className={styles.div_top}><Button type="primary" onClick={() => handleRestore(obj.id)}>Restore</Button></div>
               <div className={styles.div_bottom}><Button type="danger" onClick={() => handleDeleteSnapshot(obj.id)} style={{ width: "92.69px" }}>Delete</Button></div>
@@ -196,7 +196,7 @@ const Snapshot = (props) => {
                 <div>{obj.complete ? t('RESOURCES_COMPLETE') : t('RESOURCES_NOT_COMPLETE')}</div>
                 <p>Complete</p>
               </div>
-              {vmsRole.includes('manage') &&
+              {vmsRole?.includes('manage') &&
                 <div className={styles.arrow}>
                   <Button type="danger" onClick={() => handleDeleteRestore(obj.id)}>Delete</Button>
                 </div>
