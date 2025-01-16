@@ -183,8 +183,8 @@ export default class Images extends React.Component {
 
   getBootType() {
     const BOOT_TYPE = [
-      { text: 'legacy', value: 'legacy' },
-      { text: 'uefi', value: 'uefi' },
+      { text: 'BIOS', value: 'legacy' },
+      { text: 'UEFI', value: 'uefi' },
     ]
 
     return BOOT_TYPE.map(status => ({
@@ -225,6 +225,11 @@ export default class Images extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+        render: boot_type => (
+          <p className="tall">
+            <span>{t(`RESOURCES_BOOT_TYPE_${boot_type.toUpperCase()}`)}</span>
+          </p>
+        ),
       },
       {
         title: t('RESOURCES_DISTRIBUTION'),

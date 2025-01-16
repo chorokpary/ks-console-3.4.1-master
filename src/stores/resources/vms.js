@@ -149,6 +149,8 @@ export default class VmStore extends Base {
 
     resourceData.bus_type = data.busType
 
+    resourceData.secure_boot = data.secureBoot
+
     const securityGroupsArray = []
     data.securitygroup.forEach(name => {
       securityGroupsArray.push(name)
