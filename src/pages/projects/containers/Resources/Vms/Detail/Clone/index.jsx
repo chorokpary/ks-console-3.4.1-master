@@ -127,7 +127,7 @@ const Clone = (props) => {
             <div>{obj.phase}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
-          {vmsRole.includes('manage') &&
+          {vmsRole?.includes('manage') &&
             <div className={styles.arrow}>
               <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
             </div>
