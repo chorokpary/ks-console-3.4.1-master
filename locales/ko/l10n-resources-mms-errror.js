@@ -550,15 +550,18 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_9040: '라이센스를 찾을 수 없습니다.',
   RESOURCES_MMS_ERROR_DESC_9041:
     '현재 사이트는 사이트명을 구성하지 않았습니다.',
-  RESOURCES_MMS_ERROR_DESC_9042: '라이센스에는 사이트명 속성이 없습니다.',
-  RESOURCES_MMS_ERROR_DESC_9051: '라이센스는 잘못된 서명으로 서명되었습니다.',
+  RESOURCES_MMS_ERROR_DESC_9042: '라이센스에 사이트명 속성이 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_9043: '라이센스에 지문 속성이 없습니다.',
+  RESOURCES_MMS_ERROR_DESC_9051: '라이센스는 잘못된 시그니처로 서명되었습니다.',
   RESOURCES_MMS_ERROR_DESC_9052: '라이센스가 만료되었습니다.',
   RESOURCES_MMS_ERROR_DESC_9053: '라이센스가 만료되었습니다.',
-  RESOURCES_MMS_ERROR_DESC_9054: '총 노드 수는 유효한 노드 수를 초과합니다.',
+  RESOURCES_MMS_ERROR_DESC_9054: '총 노드개수가 라이센스에서 허용한 노드개수를 초과하였습니다.',
   RESOURCES_MMS_ERROR_DESC_9055: '라이센스가 이미 존재합니다.',
   RESOURCES_MMS_ERROR_DESC_9056:
     '라이센스에 포함된 사이트명은 현재 사이트명과 일치하지 않습니다.',
   RESOURCES_MMS_ERROR_DESC_9057: '라이센스 키는 유효하지 않습니다.',
+  RESOURCES_MMS_ERROR_DESC_9058: '라이센스 키에 포함 된 지문이 유효하지 않습니다.',
+  RESOURCES_MMS_ERROR_DESC_9059: '총 가상머신 개수가 라이센스에서 허용한 가상머신 개수를 초과하였습니다.',
   RESOURCES_MMS_ERROR_DESC_9061: '기본 라이센스가 여러 개 설치되어 있습니다.',
   RESOURCES_MMS_ERROR_DESC_9062: '기본 라이센스가 설치되어 있지 않습니다.',
 }
