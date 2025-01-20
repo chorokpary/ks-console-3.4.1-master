@@ -60,6 +60,9 @@ export default class LoginInfo extends Component {
       case 'logout':
         this.props.rootStore.logout()
         break
+      case 'license':
+        routing.push("/clusters/default/licenses")
+        break
       default:
         break
     }
@@ -74,6 +77,9 @@ export default class LoginInfo extends Component {
       <Menu onClick={this.handleMoreClick}>
         <Menu.MenuItem key="setting">
           <Icon name="wrench" /> {t('USER_SETTINGS')}
+        </Menu.MenuItem>
+        <Menu.MenuItem key="license">
+          <Icon name="licenses" /> {t('RESOURCES_LICENSE')}
         </Menu.MenuItem>
         <Menu.MenuItem key="logout">
           <Icon name="logout" /> {t('LOG_OUT')}

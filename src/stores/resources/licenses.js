@@ -61,6 +61,21 @@ export default class LicenseStore extends Base {
   }
 
   @action
+  async update({ name, ...params }, data) {
+    const jsonData = {};
+    const licenseData = {};
+
+    licenseData.name = data.name;
+    licenseData.description = data?.description;
+
+    jsonData.license = licenseData;
+
+    await this.submitting(
+      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+    );
+  }
+
+  @action
   async setDefault({ name, ...params }, data) {
     const jsonData = {};
     const licenseData = {};

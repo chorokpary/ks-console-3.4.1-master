@@ -730,6 +730,7 @@ module.exports = {
   RESOURCES_TYPE: '타입',
   RESOURCES_LICENSE: '라이선스',
   RESOURCES_LICENSE_KEY: '라이선스 키',
+  RESOURCES_EDIT_LICENSE: '라이선스 편집',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: '라이선스 키를 입력해주세요.',
   RESOURCES_LICENSE_DEFAULT_USE: '기본 라이선스로 사용',
   RESOURCES_LICENSE_DESC: 'Petasus Cloud 라이선스 상태를 확인하고 관리할 수 있는 인터페이스를 제공합니다.',

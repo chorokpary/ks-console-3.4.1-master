@@ -736,6 +736,7 @@ module.exports = {
   RESOURCES_KEYPAIR_DESC: 'Manage the status and usage of keypairs.',
   RESOURCES_TYPE: 'Type',
   RESOURCES_LICENSE: 'License',
+  RESOURCES_EDIT_LICENSE: 'Edit License',
   RESOURCES_LICENSE_KEY: 'License Key',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: 'Please enter the license key.',
   RESOURCES_LICENSE_DEFAULT_USE: 'Use as the default license',
