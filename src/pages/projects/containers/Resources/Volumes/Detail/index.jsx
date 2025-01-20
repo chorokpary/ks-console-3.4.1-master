@@ -136,7 +136,7 @@ const VolumeDetail = (props) => {
         value: detail.cluster,
       },
       {
-        name: t('RESOURCES_STOREGE_CLASS'),
+        name: t('RESOURCES_STORAGE_CLASS'),
         value: detail.volume.storage_class,
       },
       {
@@ -180,7 +180,7 @@ const VolumeDetail = (props) => {
       },
       {
         name: t('RESOURCES_BOOT_TYPE'),
-        value: detail.volume.boot_type,
+        value: t(`RESOURCES_BOOT_TYPE_${detail.volume.boot_type.toUpperCase()}`),
       },
       {
         name: t('RESOURCES_PHASE'),

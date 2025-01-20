@@ -281,6 +281,12 @@ const VmDetail = props => {
         value: detail.vm.flavor.name,
       },
       {
+        name: t('RESOURCES_SECURE_BOOT'),
+        value: detail.vm.secure_boot === true
+          ? t('USER_ACTIVE')
+          : t('USER_DISABLED')
+      },
+      {
         name: t('RESOURCES_NETWORK'),
         value:
           detail.vm.networks.length > 0

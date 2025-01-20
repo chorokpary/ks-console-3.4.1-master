@@ -163,7 +163,7 @@ const VolumeModal = props => {
                         <strong>{t('RESOURCES_BUS_TYPE')}</strong>
                       </th>
                       <th>
-                        <strong>{t('RESOURCES_STOREGE_CLASS')}</strong>
+                        <strong>{t('RESOURCES_STORAGE_CLASS')}</strong>
                       </th>
                       <th>
                         <strong>{t('RESOURCES_CAPACITY')}</strong>

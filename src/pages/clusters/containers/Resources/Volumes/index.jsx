@@ -158,7 +158,7 @@ export default class ResourcesVolumes extends React.Component {
         width: 'auto',
       },
       {
-        title: t('RESOURCES_STOREGE_CLASS'),
+        title: t('RESOURCES_STORAGE_CLASS'),
         dataIndex: 'storage_class',
         isHideable: true,
         search: true,
