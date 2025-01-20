@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Button,
+  Checkbox,
   Form,
   Input,
   Radio,
@@ -56,6 +57,7 @@ const RegistModal = props => {
   const [csis, setCsis] = useState([])
   const [features, setFeatures] = useState([])
   const [elbs, setElbs] = useState([])
+  const [secureBoot, setSecureBoot] = useState(false)
 
   const [networkFlag, setNetworkFlag] = useState(1)
   const [networkName, setNetworkName] = useState('')
@@ -292,12 +294,13 @@ const RegistModal = props => {
       data.features = ekgStack
       data.expiration = expirationSelect
       data.private_registry = tab === 'private'
+      data.secure_boot = secureBoot
       onOk({ ...data })
     })
   }
 
   const closeModal = () => {
-    props.startRefresh();
+    props.startRefresh()
     setModalView(false)
   }
 
@@ -1179,17 +1182,37 @@ const RegistModal = props => {
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
-
-                <Form.Item label={t('RESOURCES_CONTAINER_IMAGE')}>
-                  <Tabs
-                    type="button"
-                    activeName={tab}
-                    onChange={newTab => setTab(newTab)}
-                  >
-                    <TabPanel label={t('RESOURCES_PRIVATE')} name="private" />
-                    <TabPanel label={t('RESOURCES_PUBLIC')} name="public" />
-                  </Tabs>
-                </Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item label={t('RESOURCES_CONTAINER_IMAGE')}>
+                      <Tabs
+                        type="button"
+                        activeName={tab}
+                        onChange={newTab => setTab(newTab)}
+                      >
+                        <TabPanel
+                          label={t('RESOURCES_PRIVATE')}
+                          name="private"
+                        />
+                        <TabPanel label={t('RESOURCES_PUBLIC')} name="public" />
+                      </Tabs>
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                    <Form.Item label={t('RESOURCES_VM_CUSTOM_SETTINGS')}>
+                      <div className={styles.box_wrapper}>
+                        <div className={styles.box_title}>
+                          <Checkbox
+                            checked={secureBoot}
+                            onChange={sb => setSecureBoot(sb)}
+                          >
+                            {t('RESOURCES_ENABLE_SECURE_BOOT')}
+                          </Checkbox>
+                        </div>
+                      </div>
+                    </Form.Item>
+                  </Column>
+                </Columns>
 
                 <Form.Item label={t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}>
                   <Select
