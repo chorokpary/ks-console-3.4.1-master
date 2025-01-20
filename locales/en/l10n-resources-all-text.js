@@ -737,6 +737,7 @@ module.exports = {
   RESOURCES_TYPE: 'Type',
   RESOURCES_LICENSE: 'License',
   RESOURCES_EDIT_LICENSE: 'Edit License',
+  RESOURCES_SET_DEFAULT_LICENSE: 'Set as Default License',
   RESOURCES_LICENSE_KEY: 'License Key',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: 'Please enter the license key.',
   RESOURCES_LICENSE_DEFAULT_USE: 'Use as the default license',

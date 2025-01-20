@@ -34,6 +34,7 @@ export default class LicenseStore extends Base {
 
   getListUrl = this.getResourceUrl;
 
+  getDefaultUrl = (params = {}) => `${this.getListUrl(params)}`;
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`;
 
   @action
@@ -76,16 +77,15 @@ export default class LicenseStore extends Base {
   }
 
   @action
-  async setDefault({ name, ...params }, data) {
+  async setdefault({ name, ...params }) {
     const jsonData = {};
     const licenseData = {};
 
-    licenseData.name = data.name;
-
+    licenseData.name = name;
     jsonData.license = licenseData;
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(this.getDefaultUrl({ name, ...params }), jsonData)
     );
   }
 
