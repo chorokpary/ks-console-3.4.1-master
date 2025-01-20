@@ -80,6 +80,8 @@ import LoadBalancers from '../containers/Resources/LoadBalancers'
 
 import GpuNodes from '../containers/Resources/GpuNodes'
 
+import Licenses from '../containers/Resources/Licenses'
+
 import BareMetal from '../containers/Resources/BareMetal'
 import BareMetalCarbonIndicator from '../containers/Resources/BareMetalCarbonIndicator'
 import ComKassResource from '../containers/Resources/ComKassResource'
@@ -371,6 +373,11 @@ export default [
           {
             path: `${PATH}/gpunodes`,
             component: GpuNodes,
+            exact: true,
+          },
+          {
+            path: `${PATH}/licenses`,
+            component: Licenses,
             exact: true,
           },
           {

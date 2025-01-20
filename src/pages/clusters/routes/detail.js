@@ -72,6 +72,7 @@ import ImageBuildDetail from '../containers/Resources/ImageBuild/Detail'
 import ComputingAppDeployDetail from '../containers/Resources/ComputingAppDeploy/Detail'
 import ClusterFaultSetting from '../containers/Resources/ClusterFault/Setting'
 import GpuNodeDetail from '../containers/Resources/GpuNodes/Detail'
+import LicenseDetail from '../containers/Resources/Licenses/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -281,5 +282,9 @@ export default [
   {
     path: `${PATH}/gpunodes/:name`,
     component: GpuNodeDetail,
+  },
+  {
+    path: `${PATH}/licenses/:name`,
+    component: LicenseDetail,
   },
 ]

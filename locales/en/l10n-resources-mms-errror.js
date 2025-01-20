@@ -572,16 +572,20 @@ module.exports = {
   RESOURCES_MMS_ERROR_DESC_9041: 'Current site was not configured a sitename',
   RESOURCES_MMS_ERROR_DESC_9042:
     'There is no sitename attribute in the given license',
+  RESOURCES_MMS_ERROR_DESC_9043: 'The fingerprint is not found inside the license',
   RESOURCES_MMS_ERROR_DESC_9051:
     'The given license is signed with invalid signature',
   RESOURCES_MMS_ERROR_DESC_9052: 'The license has been expired.',
   RESOURCES_MMS_ERROR_DESC_9053: 'The license has been expired.',
   RESOURCES_MMS_ERROR_DESC_9054:
-    'The total number of nodes exceeds the valid node number',
+    'The total number of nodes exceeds the valid node number specified in the license',
   RESOURCES_MMS_ERROR_DESC_9055: 'The license is already existed',
   RESOURCES_MMS_ERROR_DESC_9056:
     'The sitename included in license does not match with current sitename',
   RESOURCES_MMS_ERROR_DESC_9057: 'The given license key is invalid',
+  RESOURCES_MMS_ERROR_DESC_9058: 'The given license is signed with invalid fingerprint',
+  RESOURCES_MMS_ERROR_DESC_9059: 
+    'The total number of VMs exceeds the valid VM number specified in the license',
   RESOURCES_MMS_ERROR_DESC_9061:
     'There are multiple default licenses installed',
   RESOURCES_MMS_ERROR_DESC_9062: 'There are no default licenses installed',
