@@ -48,7 +48,7 @@ const LicenseDetail = props => {
                 success: fetchData,
                 ...props.match.params
               }),
-          },
+        },
         {
             key: 'delete',
             icon: 'trash',
@@ -120,7 +120,7 @@ const LicenseDetail = props => {
         ]
     }
 
-    if (store.isLoading && !store.detail.name) {
+    if (store.isLoading) {
         return <Loading className="ks-page-loading" />
     }
 
