@@ -102,7 +102,7 @@ const StatusPage = (props) => {
         const fingerprint_status = { name: "fingerprint", flag: validityDetail.fingerprint, icon: "certification" }
         const period_status = { name: "period", flag: validityDetail.period, icon: "timed-task" }
         const node_num_status = { name: "node_num", flag: validityDetail.node_num, icon: "nodes" }
-        const vm_num_status = { name: "vm_num", flag: validityDetail.agent_vm_num, icon: "vmware" }
+        const vm_num_status = { name: "vm_num", flag: validityDetail.vm_num, icon: "vmware" }
         return (
             <Panel title={t('RESOURCES_LICENSE_STATUS')}>
                 <div className={styles.header}>

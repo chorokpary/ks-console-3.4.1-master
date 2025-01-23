@@ -10,7 +10,7 @@ const StatusCard = ({ data }) => {
         <div className={styles.card}>
             <div className={styles.icon}>
                 <Icon name={data.icon} size={40} />
-                {data ? (
+                {data.flag ? (
                     <Tooltip maxWidth="400" placement="bottom-start">
                         <Icon
                             className={styles.check}
@@ -20,7 +20,7 @@ const StatusCard = ({ data }) => {
                         />
                     </Tooltip>
                 ) : (
-                    <Tooltip content={data.flag.message}>
+                    <Tooltip>
                         <Icon
                             className={styles.substract}
                             name="substract"

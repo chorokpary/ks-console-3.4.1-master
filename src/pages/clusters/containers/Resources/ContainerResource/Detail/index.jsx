@@ -155,6 +155,11 @@ const ResourceDetail = props => {
         name: t('ELB'),
         value: detail.elb ? detail.elb : '-',
       },
+      {
+        name: t('RESOURCES_SECURE_BOOT'),
+        value:
+          detail.secure_boot === true ? t('USER_ACTIVE') : t('USER_DISABLED'),
+      },
       // {
       //    name: t('Scalling'),
       //    value: "-",

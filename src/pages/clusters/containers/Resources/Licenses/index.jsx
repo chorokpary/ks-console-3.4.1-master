@@ -40,8 +40,16 @@ export default class Licenses extends React.Component {
     }
 
     get itemActions() {
-        const { getData, trigger } = this.props;
+        const { store, getData, routing, trigger } = this.props;
         return [
+            {
+                key: 'setdefault',
+                icon: 'check',
+                text: t('RESOURCES_SET_DEFAULT_LICENSE'),
+                action: 'edit',
+                show: this.showAction,
+                onClick: item => store.setdefault(item).then(routing.query),
+            },
             {
                 key: 'delete',
                 icon: 'trash',
@@ -122,9 +130,9 @@ export default class Licenses extends React.Component {
                 search: true,
                 width: 'auto',
                 render: inuse => (
-                    inuse === true 
-                    ? t('RESOURCES_USED')
-                    : t('RESOURCES_UNUSED')
+                    inuse === true
+                        ? t('RESOURCES_USED')
+                        : t('RESOURCES_UNUSED')
                 ),
             },
             {
@@ -134,9 +142,9 @@ export default class Licenses extends React.Component {
                 search: true,
                 width: 'auto',
                 render: validity => (
-                    validity === true 
-                    ? t('HEALTHY')
-                    : t('ERROR')
+                    validity === true
+                        ? t('HEALTHY')
+                        : t('ERROR')
                 ),
             },
             {

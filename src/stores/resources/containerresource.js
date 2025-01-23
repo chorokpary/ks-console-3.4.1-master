@@ -33,7 +33,9 @@ export default class ResourceStore extends Base {
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
     )}/edgetron/resources/capk/clusters`
+
   getListUrl = this.getResourceUrl
+
   getPaginatedUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
@@ -69,17 +71,24 @@ export default class ResourceStore extends Base {
     const limit = params.limit
 
     const result = await request.get(
-      this.getPaginatedUrl({ cluster, workspace, namespace, devops, page, limit }),
+      this.getPaginatedUrl({
+        cluster,
+        workspace,
+        namespace,
+        devops,
+        page,
+        limit,
+      }),
       this.getFilterParams(params)
     )
 
-    this.dataList = (get(result, "clusters") || []).map(item => ({
+    this.dataList = (get(result, 'clusters') || []).map(item => ({
       cluster,
       namespace,
       ...item,
     }))
 
-    const total = (get(result, "total") || 0)
+    const total = get(result, 'total') || 0
 
     // 검색 관련 처리
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
@@ -132,7 +141,7 @@ export default class ResourceStore extends Base {
 
     this.list.update({
       data: more ? [...this.list.data, ...this.dataList] : this.dataList,
-      total: total,
+      total,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -165,6 +174,7 @@ export default class ResourceStore extends Base {
     reqData.features = data.features
     reqData.expiration = data.expiration
     reqData.private_registry = data.private_registry
+    reqData.secure_boot = data.secure_boot
     jsonData.cluster = reqData
 
     return await this.submitting(

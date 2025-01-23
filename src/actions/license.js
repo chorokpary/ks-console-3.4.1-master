@@ -21,6 +21,7 @@ import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/Licenses/Regist'
+import ModifyModal from 'clusters/containers/Resources/components/Modals/Licenses/Modify'
 
 import DeleteModal from 'components/Modals/Delete'
 
@@ -44,6 +45,29 @@ export default {
         workspace,
         namespace,
         devops,
+        ...props,
+      })
+    },
+  },
+  'license.edit': {
+    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .update({ ...detail, cluster, workspace, namespace, devops, name: data.name }, data)
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        title: t('RESOURCES_EDIT_LICENSE'),
+        modal: ModifyModal,
+        store,
+        cluster,
+        workspace,
+        namespace,
+        module,
         ...props,
       })
     },

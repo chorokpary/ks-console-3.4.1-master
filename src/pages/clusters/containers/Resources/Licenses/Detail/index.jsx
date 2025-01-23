@@ -35,6 +35,21 @@ const LicenseDetail = props => {
 
     const getOperations = () => [
         {
+            key: 'edit',
+            icon: 'pen',
+            text: t('EDIT_INFORMATION'),
+            action: 'edit',
+            show: showEdit,
+            onClick: () =>
+              props.rootStore.triggerAction('license.edit', {
+                type: 'LICENSE_DETAIL',
+                detail: toJS(store.detail),
+                store: store,
+                success: fetchData,
+                ...props.match.params
+              }),
+        },
+        {
             key: 'delete',
             icon: 'trash',
             text: t('DELETE'),
@@ -105,7 +120,7 @@ const LicenseDetail = props => {
         ]
     }
 
-    if (store.isLoading && !store.detail.name) {
+    if (store.isLoading) {
         return <Loading className="ks-page-loading" />
     }
 
