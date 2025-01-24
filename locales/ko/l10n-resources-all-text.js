@@ -730,6 +730,7 @@ module.exports = {
   RESOURCES_TYPE: '타입',
   RESOURCES_LICENSE: '라이선스',
   RESOURCES_LICENSE_KEY: '라이선스 키',
+  RESOURCES_CLUSTER_KEY: '클러스터 키',
   RESOURCES_EDIT_LICENSE: '라이선스 편집',
   RESOURCES_SET_DEFAULT_LICENSE: '기본 라이선스로 설정',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: '라이선스 키를 입력해주세요.',

@@ -17,15 +17,17 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
 import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 import { getLocalTime } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
+import { Icon } from '@kube-design/components';
+import classnames from 'classnames';
 import LicenseStore from 'stores/resources/licenses';
+
+import styles from './index.scss';
 
 @withList({
     store: new LicenseStore(),
@@ -35,6 +37,7 @@ import LicenseStore from 'stores/resources/licenses';
     rowKey: 'name',
 })
 export default class Licenses extends React.Component {
+    
     showAction(record) {
         return globals.user.username !== record.name;
     }
@@ -203,16 +206,40 @@ export default class Licenses extends React.Component {
         ];
     }
 
+    modalClusterKey = () => {
+        const { getData, trigger } = this.props;
+        trigger('license.fingerprint', {
+            success: getData,
+            ...this.props.match.params,
+        });
+    };
+
     render() {
         const { bannerProps, tableProps } = this.props;
         return (
             <ListPage {...this.props}>
-                <Banner
-                    {...bannerProps}
-                    icon="licenses"
-                    title={t('RESOURCES_LICENSE')}
-                    description={t('RESOURCES_LICENSE_DESC')}
-                />
+                <div className={classnames(styles.wrapper)}>
+                    <div className={styles.titleWrapper}>
+                        <div className={styles.icon}>
+                            <Icon name={'licenses'} size={48} />
+                        </div>
+                        <div className={styles.title}>
+                            <div className="h3">{t('RESOURCES_LICENSE')}</div>
+                            <p className="text-second">
+                                {t('RESOURCES_LICENSE_DESC')}
+                            </p>
+                        </div>
+                        <div className={styles.divRight}>
+                            <div
+                                className={styles.iconRight}
+                                onClick={() => this.modalClusterKey()}
+                            >
+                                <Icon name={'passport'} size={36} />
+                            </div>
+                            <p>{t('RESOURCES_CLUSTER_KEY')}</p>
+                        </div>
+                    </div>
+                </div>
                 <Table
                     {...tableProps}
                     emptyProps={this.emptyProps}

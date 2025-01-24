@@ -36,6 +36,21 @@ export default class LicenseStore extends Base {
 
   getDefaultUrl = (params = {}) => `${this.getListUrl(params)}`;
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`;
+  getFingerprintUrl = (params = {}) => `${this.getListUrl(params)}/fingerprint/show`;
+
+  @action
+  async fetchList({
+    cluster,
+    workspace,
+    namespace,
+    more,
+    devops,
+    silent,
+    ...params
+  } = {}) {
+    await super.fetchList(params);
+    await this.fetchFingerprint(params);
+  }
 
   @action
   async create(data, params = {}) {
@@ -101,6 +116,20 @@ export default class LicenseStore extends Base {
     this.detail = detail;
     this.isLoading = false;
     return detail;
+  }
+
+  @action
+  async fetchFingerprint(params) {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getFingerprintUrl(params)}`
+    );
+    const fingerprint = { ...params, ...this.mapper(result), kind: 'Fingerprint' };
+
+    this.fingerprint = fingerprint;
+    this.isLoading = false;
+    return fingerprint;
   }
 
   @action

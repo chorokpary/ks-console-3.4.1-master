@@ -739,6 +739,7 @@ module.exports = {
   RESOURCES_EDIT_LICENSE: 'Edit License',
   RESOURCES_SET_DEFAULT_LICENSE: 'Set as Default License',
   RESOURCES_LICENSE_KEY: 'License Key',
+  RESOURCES_CLUSTER_KEY: 'Cluster Key',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: 'Please enter the license key.',
   RESOURCES_LICENSE_DEFAULT_USE: 'Use as the default license',
   RESOURCES_LICENSE_DESC: 'Provides an interface to check and manage the license status of Petasus Cloud.',

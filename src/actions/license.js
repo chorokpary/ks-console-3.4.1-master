@@ -22,8 +22,8 @@ import { Modal } from 'components/Base'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/Licenses/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/Licenses/Modify'
-
 import DeleteModal from 'components/Modals/Delete'
+import FingerPrintModal from 'clusters/containers/Resources/components/Modals/Licenses/Fingerprint'
 
 export default {
   'license.regist': {
@@ -134,6 +134,19 @@ export default {
             ? t.html('RESOURCES_DELETE_LICENSE_TIP', { resource: names })
             : t.html('RESOURCES_DELETE_LICENSE_TIP', { resource: names }),
         resource: names,
+        store,
+        ...props,
+      })
+    },
+  },
+  'license.fingerprint': {
+    on({ store, detail, success, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          Modal.close(modal)
+        },
+        title: t('RESOURCES_CLUSTER_KEY'),
+        modal: FingerPrintModal,
         store,
         ...props,
       })
