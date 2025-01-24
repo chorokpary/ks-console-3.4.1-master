@@ -120,7 +120,7 @@ const Clone = (props) => {
             <p>{t('RESOURCES_ID')}</p>
           </div>
           <div className={styles.text}>
-            <div><Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.alias}/${obj.target_vm_id}`}>{obj.alias}</Link></div>
+            <div><Link onClick={() => handleRedirect(`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.alias}/${obj.target_vm_id}`)}>{obj.alias}</Link></div>            
             <p>{t('RESOURCES_TARGET_VM_NAME')}</p>
           </div>
           <div className={styles.text}>
@@ -214,6 +214,10 @@ const Clone = (props) => {
       </Level>
     )
   }
+
+  const handleRedirect = (path) => {
+    window.location.href = path
+  };
 
   return (
     <>
