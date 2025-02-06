@@ -13,7 +13,12 @@ const ModifyModal = props => {
 
     form.current.validator(() => {
       const { data } = form.current.props
-      onOk({ cluster_obj: data })
+      data.project = props.store.detail.cluster.cp.namespace
+        ? props.store.detail.cluster.cp.namespace
+        : 'default'
+      onOk({
+        cluster_obj: data,
+      })
     })
   }
 

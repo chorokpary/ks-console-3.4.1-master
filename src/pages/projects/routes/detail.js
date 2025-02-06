@@ -37,7 +37,7 @@ import RoleDetail from '../containers/Roles/Detail'
 import ImageBuilderDetail from '../containers/ImageBuilder/Detail'
 import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 
-//MM3 Detail Page
+// MM3 Detail Page
 import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import FlavorDetail from '../containers/Resources/Flavors/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
@@ -51,6 +51,8 @@ import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
 import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
+import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
+import NodepoolDetail from '../containers/Resources/Nodepools/Detail'
 
 export default PATH => [
   {
@@ -172,6 +174,14 @@ export default PATH => [
   {
     path: `${PATH}/vms/:name/:id`,
     component: VmDetail,
+  },
+  {
+    path: `${PATH}/containerresource/:name`,
+    component: ContainerResourceDetail,
+  },
+  {
+    path: `${PATH}/nodepools/:clustername/:name`,
+    component: NodepoolDetail,
   },
   {
     path: `${PATH}/resourcesvolumes/:name/:id`,

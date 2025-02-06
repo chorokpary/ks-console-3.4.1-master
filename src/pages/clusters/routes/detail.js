@@ -194,6 +194,14 @@ export default [
         component: NetworkPoliciesDetail,
       },
       {
+        path: `${PATH}/projects/:namespace/containerresource/:name`,
+        component: ContainerResourceDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/nodepools/:clustername/:name`,
+        component: NodepoolDetail,
+      },
+      {
         path: `${PATH}/projects/:namespace`,
         component: ProjectDetail,
       },
@@ -234,14 +242,6 @@ export default [
   {
     path: `${PATH}/containerimages/:name`,
     component: ContainerImageDetail,
-  },
-  {
-    path: `${PATH}/containerresource/:name`,
-    component: ContainerResourceDetail,
-  },
-  {
-    path: `${PATH}/nodepools/:clustername/:name`,
-    component: NodepoolDetail,
   },
   {
     path: `${PATH}/resourcesvolumes/:name/:id`,

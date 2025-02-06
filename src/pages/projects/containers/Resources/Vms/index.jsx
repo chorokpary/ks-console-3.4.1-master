@@ -17,22 +17,20 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
-import { toJS } from 'mobx';
-import { cloneDeep, get, isEmpty, omit, find } from 'lodash';
-import { Link } from 'react-router-dom';
-import { Dropdown, Menu, Button, Notify, Icon } from '@kube-design/components';
-import { Avatar, Status, Indicator } from 'components/Base';
-import Banner from 'components/Cards/Banner';
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
-import ResourceTable from 'clusters/components/ResourceTable';
+import React from 'react'
+import { toJS } from 'mobx'
+import { get } from 'lodash'
+import { Link } from 'react-router-dom'
+import { Dropdown, Menu, Notify } from '@kube-design/components'
+import { Indicator } from 'components/Base'
+import Banner from 'components/Cards/Banner'
+import withList, { ListPage } from 'components/HOCs/withList'
+import Table from 'components/Tables/List'
 
-import { getLocalTime, showNameAndAlias } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
+import { getLocalTime } from 'utils'
 
-import VmStore from 'stores/resources/vms';
-import styles from './index.scss';
+import VmStore from 'stores/resources/vms'
+import styles from './index.scss'
 
 @withList({
   store: new VmStore(),
@@ -46,7 +44,7 @@ export default class Vms extends React.Component {
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
-    this.isRefresh = false;
+    this.isRefresh = false
   }
 
   componentDidUpdate() {
@@ -61,43 +59,42 @@ export default class Vms extends React.Component {
   }
 
   refreshHandler = () => {
-    const { page, limit } = toJS(this.props.store.list);
+    const { page, limit } = toJS(this.props.store.list)
 
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit })
     }
-  };
+  }
 
   get isRuning() {
     const { selectedRowKeys } = toJS(this.props.store.list)
     return !(selectedRowKeys.length > 0)
   }
 
-
   getData = params => {
     this.props.store.fetchList({
       ...this.props.match.params,
       ...params,
       ...this.props.query, // search param
-    });
-  };
+    })
+  }
 
   stopRefresh = () => {
-    this.isRefresh = true;
+    this.isRefresh = true
   }
 
   startRefresh = () => {
-    this.isRefresh = false;
+    this.isRefresh = false
   }
 
   // auto refresh end  ##################################
 
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     return [
       {
         key: 'delete',
@@ -112,11 +109,11 @@ export default class Vms extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       actions: [
@@ -130,9 +127,9 @@ export default class Vms extends React.Component {
               ...this.props.match.params,
               type: this.name,
               success: getData,
-              startRefresh: this.startRefresh
+              startRefresh: this.startRefresh,
             })
-            this.stopRefresh();
+            this.stopRefresh()
           },
         },
       ],
@@ -153,7 +150,7 @@ export default class Vms extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    };
+    }
   }
 
   getState(state) {
@@ -164,22 +161,22 @@ export default class Vms extends React.Component {
       state === 'Terminating' ||
       state === 'Migrating'
     ) {
-      return 'waiting';
+      return 'waiting'
     }
     if (state === 'Running') {
-      return 'running';
+      return 'running'
     }
     if (state === 'Stopped' || state === 'Paused') {
-      return 'stopped';
+      return 'stopped'
     }
     if (state === 'Unknown') {
-      return 'error';
+      return 'error'
     }
-    return 'error';
+    return 'error'
   }
 
   getItemDesc(state) {
-    return t(`RESOURCES_${state.toUpperCase()}`);
+    return t(`RESOURCES_${state.toUpperCase()}`)
   }
 
   getVmsStatus() {
@@ -193,30 +190,30 @@ export default class Vms extends React.Component {
       { text: t('RESOURCES_STOPPING'), value: 'Stopping' },
       { text: t('RESOURCES_TERMINATING'), value: 'Terminating' },
       { text: t('RESOURCES_UNKNOWN'), value: 'Unknown' },
-    ];
+    ]
 
     return VMS_STATUS.map(status => ({
       // text: t(status.text),
       text: status.text,
       value: status.value,
-    }));
+    }))
   }
 
   getVmsCpuType() {
     const VMS_CPU_TYPE = [
       { text: 'x86_64', value: 'x86_64' },
       { text: 'aarch64', value: 'aarch64' },
-    ];
+    ]
 
     return VMS_CPU_TYPE.map(status => ({
       text: status.text,
       value: status.value,
-    }));
+    }))
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { workspace, cluster, namespace } = this.props.match.params;
+    const { getSortOrder } = this.props
+    const { workspace, cluster, namespace } = this.props.match.params
     return [
       {
         title: t('NAME'),
@@ -225,7 +222,7 @@ export default class Vms extends React.Component {
         sortOrder: getSortOrder('name'),
         search: true,
         render: (name, record) => {
-          const { state } = record;
+          const { state } = record
 
           return (
             <div className={styles.avatar}>
@@ -247,7 +244,7 @@ export default class Vms extends React.Component {
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
             </div>
-          );
+          )
         },
       },
       {
@@ -257,7 +254,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (image, record) => {
-          const icon = `ico-os-${record.image_object?.distro_type}`;
+          const icon = `ico-os-${record.image_object?.distro_type}`
           return image ? (
             <Link
               to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}
@@ -274,7 +271,7 @@ export default class Vms extends React.Component {
             </Link>
           ) : (
             <p className={styles.textCenter}>N/A</p>
-          );
+          )
         },
       },
       {
@@ -284,9 +281,8 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (cpu_arch, record) => {
-          const arch_type = <p>{cpu_arch}</p>;
-          return arch_type;
+        render: cpu_arch => {
+          return <p>{cpu_arch}</p>
         },
       },
       {
@@ -296,20 +292,19 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: networks => {
-          let networkIpList;
+          let networkIpList
           if (!!networks) {
             networkIpList = networks.map(el => {
-              if (el.name != 'k8s-pod-network') {
-                return (
-                  <p key={el.name}>{el.ip}</p>
-                );
+              if (el.name !== 'k8s-pod-network') {
+                return <p key={el.name}>{el.ip}</p>
               }
-            });
+              return <p />
+            })
           } else {
-            networkIpList = <p>-</p>;
+            networkIpList = <p>-</p>
           }
 
-          return networkIpList;
+          return networkIpList
         },
       },
       {
@@ -319,14 +314,14 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (floating, record) => {
-          const floatingList = this.props.store.floatingIpList;
+          const floatingList = this.props.store.floatingIpList
           const floatingIp =
             floatingList &&
             floatingList
-              ?.filter(row => row.instance_id == record.id)
-              .map(el => <p key={el.id}>{el.floating_ip}</p>);
+              ?.filter(row => row.instance_id === record.id)
+              .map(el => <p key={el.id}>{el.floating_ip}</p>)
 
-          return floatingIp == '' ? '-' : floatingIp;
+          return floatingIp === '' ? '-' : floatingIp
         },
       },
       {
@@ -337,8 +332,7 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: node => {
           // const nodeLink = node == "N/A" ? node : <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>;
-          const nodeLink = node === 'N/A' ? node : node;
-          return nodeLink;
+          return node === 'N/A' ? node : node
         },
       },
       {
@@ -348,20 +342,18 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: security_group_objects => {
-          let securityGroupText = '';
+          let securityGroupText = ''
           if (!!security_group_objects) {
             securityGroupText =
               security_group_objects.length > 1
-                ? `${security_group_objects[0].name
-                } 외 ${security_group_objects.length - 1}개`
-                : security_group_objects.length == 1
-                  ? security_group_objects[0].name
-                  : '-';
-          } else {
-            securityGroupText = '';
+                ? `${
+                    security_group_objects[0].name
+                  } 외 ${security_group_objects.length - 1}개`
+                : security_group_objects.length === 1
+                ? security_group_objects[0].name
+                : '-'
           }
-
-          return securityGroupText;
+          return securityGroupText
         },
       },
       {
@@ -372,11 +364,19 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (state, record) => {
-          const stateArray = ['Stopped', 'Running', 'Paused'];
+          const stateArray = ['Stopped', 'Running', 'Paused']
 
           if (stateArray.includes(state)) {
-            const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms',]);
-            const _Role = get(globals.user.projectRules, [cluster, namespace, '_',]);
+            const vmsRole = get(globals.user.projectRules, [
+              cluster,
+              namespace,
+              'vms',
+            ])
+            const _Role = get(globals.user.projectRules, [
+              cluster,
+              namespace,
+              '_',
+            ])
 
             if (vmsRole?.includes('manage') || _Role?.includes('manage')) {
               return (
@@ -403,27 +403,27 @@ export default class Vms extends React.Component {
                         {state === 'Stopped'
                           ? t('RESOURCES_STOP')
                           : state === 'Provisioning'
-                            ? t('RESOURCES_PROVISIONING')
-                            : state === 'Starting'
-                              ? t('RESOURCES_STARTING')
-                              : state === 'Running'
-                                ? t('RESOURCES_RUNNING')
-                                : state === 'Paused'
-                                  ? t('RESOURCES_PAUSED')
-                                  : state === 'Migrating'
-                                    ? t('RESOURCES_MIGRATING')
-                                    : state === 'Stopping'
-                                      ? t('RESOURCES_STOPPING')
-                                      : state === 'Terminating'
-                                        ? t('RESOURCES_TERMINATING')
-                                        : state === 'Unknown'
-                                          ? t('RESOURCES_UNKNOWN')
-                                          : ''}
+                          ? t('RESOURCES_PROVISIONING')
+                          : state === 'Starting'
+                          ? t('RESOURCES_STARTING')
+                          : state === 'Running'
+                          ? t('RESOURCES_RUNNING')
+                          : state === 'Paused'
+                          ? t('RESOURCES_PAUSED')
+                          : state === 'Migrating'
+                          ? t('RESOURCES_MIGRATING')
+                          : state === 'Stopping'
+                          ? t('RESOURCES_STOPPING')
+                          : state === 'Terminating'
+                          ? t('RESOURCES_TERMINATING')
+                          : state === 'Unknown'
+                          ? t('RESOURCES_UNKNOWN')
+                          : ''}
                       </p>
                     </div>
                   </Dropdown>
                 </div>
-              );
+              )
             }
           }
           return (
@@ -442,25 +442,25 @@ export default class Vms extends React.Component {
                 {state === 'Stopped'
                   ? t('RESOURCES_STOP')
                   : state === 'Provisioning'
-                    ? t('RESOURCES_PROVISIONING')
-                    : state === 'Starting'
-                      ? t('RESOURCES_STARTING')
-                      : state === 'Running'
-                        ? t('RESOURCES_RUNNING')
-                        : state === 'Paused'
-                          ? t('RESOURCES_PAUSED')
-                          : state === 'Migrating'
-                            ? t('RESOURCES_MIGRATING')
-                            : state === 'Stopping'
-                              ? t('RESOURCES_STOPPING')
-                              : state === 'Terminating'
-                                ? t('RESOURCES_TERMINATING')
-                                : state === 'Unknown'
-                                  ? t('RESOURCES_UNKNOWN')
-                                  : ''}
+                  ? t('RESOURCES_PROVISIONING')
+                  : state === 'Starting'
+                  ? t('RESOURCES_STARTING')
+                  : state === 'Running'
+                  ? t('RESOURCES_RUNNING')
+                  : state === 'Paused'
+                  ? t('RESOURCES_PAUSED')
+                  : state === 'Migrating'
+                  ? t('RESOURCES_MIGRATING')
+                  : state === 'Stopping'
+                  ? t('RESOURCES_STOPPING')
+                  : state === 'Terminating'
+                  ? t('RESOURCES_TERMINATING')
+                  : state === 'Unknown'
+                  ? t('RESOURCES_UNKNOWN')
+                  : ''}
               </p>
             </div>
-          );
+          )
         },
       },
       {
@@ -476,39 +476,38 @@ export default class Vms extends React.Component {
           </p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   handleVmAction = (action, state, vmId) => {
-    if (state == 'Stopped' && action == 'pause') {
-      Notify.warning(t('RESOURCES_STOPED_PAUSE_DESC'));
-      return;
+    if (state === 'Stopped' && action === 'pause') {
+      Notify.warning(t('RESOURCES_STOPED_PAUSE_DESC'))
+      return
     }
-    if (state == 'Stopped' && action == 'restart') {
-      Notify.warning(t('RESOURCES_STOPED_RESTART_DESC'));
-      return;
+    if (state === 'Stopped' && action === 'restart') {
+      Notify.warning(t('RESOURCES_STOPED_RESTART_DESC'))
+      return
     }
 
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
 
-    const data = {};
-    data.vmId = vmId;
-    data.state = state;
-    data.actionType = action;
+    const data = {}
+    data.vmId = vmId
+    data.state = state
+    data.actionType = action
 
     trigger('vm.actionState', {
       data,
       success: getData,
       ...this.props.match.params,
-    });
-  };
+    })
+  }
 
   fnGetActionColumn = (state, vmId) => {
-    let elements = '';
-    elements = (
+    return (
       <>
         {/* Stopped */}
-        {state == 'Stopped' && (
+        {state === 'Stopped' && (
           <Menu.MenuItem
             key="option-1"
             onClick={() => this.handleVmAction('start', state, vmId)}
@@ -518,7 +517,7 @@ export default class Vms extends React.Component {
           </Menu.MenuItem>
         )}
         {/* Running */}
-        {state == 'Running' && (
+        {state === 'Running' && (
           <>
             <Menu.MenuItem
               key="option-1"
@@ -544,7 +543,7 @@ export default class Vms extends React.Component {
           </>
         )}
         {/* Paused */}
-        {state == 'Paused' && (
+        {state === 'Paused' && (
           <>
             <Menu.MenuItem
               key="option-1"
@@ -570,13 +569,11 @@ export default class Vms extends React.Component {
           </>
         )}
       </>
-    );
-
-    return elements;
-  };
+    )
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {
@@ -596,28 +593,23 @@ export default class Vms extends React.Component {
         title: t('RESOURCES_CPU_TYPE'),
         search: true,
       },
-    ];
+    ]
   }
 
   handleFetch = (params, refresh) => {
-    this.routing.query(params, refresh);
-  };
+    this.routing.query(params, refresh)
+  }
 
   get routing() {
-    return this.props.rootStore.routing;
+    return this.props.rootStore.routing
   }
 
   getBanner = () => {
-    return <i className="ico-type-vm"></i>;
-  };
-
-  fnMoveDetail = (route, name) => {
-    const detailUrl = `clusters/default/${route}/${name}`;
-    routing.push(listUrl);
-  };
+    return <i className="ico-type-vm"></i>
+  }
 
   render() {
-    const { bannerProps, tableProps } = this.props;
+    const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
 
     return (
@@ -641,6 +633,6 @@ export default class Vms extends React.Component {
           onFetch={this.handleFetch}
         />
       </ListPage>
-    );
+    )
   }
 }

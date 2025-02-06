@@ -349,6 +349,8 @@ const Node = props => {
     )
   }
 
+  const { workspace, cluster, namespace, name } = props.match.params
+
   return (
     <>
       <Panel title={'ControlPlane Nodes'}>
@@ -356,10 +358,7 @@ const Node = props => {
           {!!machines &&
             machines
               .filter(machine => {
-                return (
-                  machine.cluster === props.match.params.name &&
-                  machine.controlplane
-                )
+                return machine.cluster === name && machine.controlplane
               })
               .map((detail, index) => (
                 <div
@@ -509,7 +508,7 @@ const Node = props => {
                     <div className={styles.text} style={{ width: '20%' }}>
                       <div className={styles.title}>
                         <Link
-                          to={`/clusters/${props.match.params.cluster}/projects/${props.match.params.namespace}/nodepools/${props.match.params.name}/${detail.name}`}
+                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/nodepools/${name}/${detail.name}`}
                         >
                           {detail.name}
                         </Link>

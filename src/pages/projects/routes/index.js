@@ -52,7 +52,7 @@ import grayReleaseRoutes from './grayrelease'
 import getDetailPath from './detail'
 import Gateway from '../containers/Gateway'
 
-//MM3 List Page
+// MM3 List Page
 import Vms from '../containers/Resources/Vms'
 import Keypairs from '../containers/Resources/Keypairs'
 import Flavors from '../containers/Resources/Flavors'
@@ -66,7 +66,7 @@ import ResourcesVolumes from '../containers/Resources/Volumes'
 import Sriov from '../containers/Resources/Sriov'
 import MediatedDevices from '../containers/Resources/MediatedDevices'
 import LoadBalancers from '../containers/Resources/LoadBalancers'
-
+import ContainerResource from '../containers/Resources/ContainerResource'
 
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
@@ -167,6 +167,11 @@ export default [
       {
         path: `${PATH}/vms`,
         component: Vms,
+        exact: true,
+      },
+      {
+        path: `${PATH}/containerresource`,
+        component: ContainerResource,
         exact: true,
       },
       {

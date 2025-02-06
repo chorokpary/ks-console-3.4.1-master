@@ -23,7 +23,7 @@ import Monitoring from './Monitoring'
 import Status from './Status'
 
 const PATH =
-  '/clusters/:cluster/projects/:namespace/nodepools/:clustername/:name'
+  '/:workspace/clusters/:cluster/projects/:namespace/nodepools/:clustername/:name'
 
 export default [
   {

@@ -22,8 +22,8 @@ const ResourceDetail = props => {
   }
 
   const listUrl = () => {
-    const { cluster, namespace, clustername } = props.match.params
-    return `/clusters/${cluster}/projects/${namespace}/containerResource/${clustername}`
+    const { workspace, cluster, clustername, namespace } = props.match.params
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/containerResource/${clustername}`
   }
 
   const routing = props.rootStore.routing

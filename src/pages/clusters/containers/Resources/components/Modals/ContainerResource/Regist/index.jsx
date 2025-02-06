@@ -13,6 +13,7 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import classnames from 'classnames'
 
 import { Modal } from 'components/Base'
+import { ProjectSelect } from 'components/Inputs'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
@@ -27,6 +28,10 @@ const RegistModal = props => {
   const vmStore = new VmStore()
   const resourceStore = new ResourceStore()
 
+  const [projectName, setProjectName] = useState(
+    props.namespace ? props.namespace : 'default'
+  )
+
   const [modelView, setModalView] = useState(true)
   const [regStep, setRegStep] = useState(1)
 
@@ -37,6 +42,9 @@ const RegistModal = props => {
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
   const [, setLoadBalancerDataList] = useState([])
+
+  const [networkList, setNetworkList] = useState([])
+  const [sriovNetworkList, setSriovNetworkList] = useState([])
 
   const [clusterName, setClusterName] = useState('')
   const [imageName, setImageName] = useState('')
@@ -78,11 +86,9 @@ const RegistModal = props => {
       })
       const listNetwork = await vmStore.fetchVmListNetwork({
         ...props,
-        namespace: 'default',
       })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
         ...props,
-        namespace: 'default',
       })
 
       const listImage = await resourceStore.fetchListImage(props)
@@ -91,12 +97,23 @@ const RegistModal = props => {
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
+      setNetworkList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
+      setSriovNetworkList(listSriovNetwork.sriovs)
       setLoadBalancerDataList(listLoadBalancer._originData.lbs)
     }
 
     getVmCreateData()
   }, [])
+
+  const projectFilteredData = project => {
+    const networks = networkDataList.filter(obj => obj.project === project)
+    setNetworkList(networks)
+    const sriovNetworks = sriovNetworkDataList.filter(
+      obj => obj.project === project
+    )
+    setSriovNetworkList(sriovNetworks)
+  }
 
   useEffect(() => {
     const csiData = request.get(
@@ -281,6 +298,7 @@ const RegistModal = props => {
 
       const { data } = form.current.props
 
+      data.project = projectName
       data.external_network = networkCheckItem
       data.sriov_network = sriovCheckItem
       data.elb_network = elbCheckItem
@@ -309,12 +327,12 @@ const RegistModal = props => {
 
     if (step === 1) {
       if (isFirst) {
-        if (networkDataList.length > 0) {
+        if (networkList.length > 0) {
           handleSingleCheck(
-            networkDataList.filter(el => el.external)[0].id,
+            networkList.filter(el => el.external)[0].id,
             'network'
           )
-          setNetworkName(networkDataList.filter(el => el.external)[0].id)
+          setNetworkName(networkList.filter(el => el.external)[0].id)
         }
         setCniSelect(cnis?.[0]?.value || 'cilium')
         setCsiSelect(csis?.[0]?.value || '')
@@ -330,6 +348,7 @@ const RegistModal = props => {
         handleOk()
       } else {
         setRegStep(2)
+        projectFilteredData(projectName)
       }
     }
 
@@ -705,24 +724,54 @@ const RegistModal = props => {
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
               <div className={`${regStep === 1 ? '' : 'hide'}`}>
-                <Form.Item
-                  label={t('NAME')}
-                  rules={[
-                    { required: true, message: t('NAME_EMPTY_DESC') },
-                    {
-                      pattern: PATTERN_USER_NAME,
-                      message: t('RESOURCES_INVALID_NAME_DESC'),
-                    },
-                  ]}
-                  desc={t('NAME_DESC')}
-                >
-                  <Input
-                    name="name"
-                    autoFocus={true}
-                    maxLength={63}
-                    style={{ maxWidth: 'none' }}
-                  />
-                </Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('NAME')}
+                      rules={[
+                        { required: true, message: t('NAME_EMPTY_DESC') },
+                        {
+                          pattern: PATTERN_USER_NAME,
+                          message: t('RESOURCES_INVALID_NAME_DESC'),
+                        },
+                      ]}
+                      desc={t('NAME_DESC')}
+                    >
+                      <Input
+                        name="name"
+                        autoFocus={true}
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}
+                      />
+                    </Form.Item>
+                  </Column>
+                  {!props.namespace && (
+                    <Column>
+                      <Form.Item
+                        label={t('PROJECT')}
+                        desc={t('SELECT_PROJECT_DESC')}
+                        rules={[
+                          {
+                            required: true,
+                            message: t('PROJECT_NOT_SELECT_DESC'),
+                          },
+                        ]}
+                      >
+                        <ProjectSelect
+                          name="metadata.namespace"
+                          defaultValue={projectName}
+                          cluster={props.cluster}
+                          onChange={e => {
+                            setProjectName(e)
+                            setNetworkCheckItem('')
+                            setSriovCheckItem('')
+                            setElbCheckItem('')
+                          }}
+                        />
+                      </Form.Item>
+                    </Column>
+                  )}
+                </Columns>
                 <div style={{ padding: 10 }} />
                 {t('RESOURCES_OS_DISTRO')}
                 <span className="form-item-required">*</span>
@@ -895,7 +944,7 @@ const RegistModal = props => {
                               </tr>
                             </thead>
                             <tbody>
-                              {!networkDataList?.filter(el => el.external)
+                              {!networkList?.filter(el => el.external)
                                 .length && (
                                 <tr>
                                   <td colSpan="6" className="no-data">
@@ -907,7 +956,7 @@ const RegistModal = props => {
                                   </td>
                                 </tr>
                               )}
-                              {networkDataList
+                              {networkList
                                 ?.filter(el => el.external)
                                 .map(data => (
                                   <tr key={data.name}>
@@ -971,7 +1020,7 @@ const RegistModal = props => {
                               </tr>
                             </thead>
                             <tbody>
-                              {!sriovNetworkDataList?.length && (
+                              {!sriovNetworkList?.length && (
                                 <tr>
                                   <td colSpan="5" className="no-data">
                                     <p>
@@ -982,7 +1031,7 @@ const RegistModal = props => {
                                   </td>
                                 </tr>
                               )}
-                              {sriovNetworkDataList?.map(data => (
+                              {sriovNetworkList?.map(data => (
                                 <tr key={data.name}>
                                   <td>
                                     <Radio
@@ -1066,8 +1115,7 @@ const RegistModal = props => {
                             </tr>
                           </thead>
                           <tbody>
-                            {!networkDataList?.filter(el => el.external)
-                              .length && (
+                            {!networkList?.filter(el => el.external).length && (
                               <tr>
                                 <td colSpan="6" className="no-data">
                                   <p>
@@ -1078,7 +1126,7 @@ const RegistModal = props => {
                                 </td>
                               </tr>
                             )}
-                            {networkDataList
+                            {networkList
                               ?.filter(el => el.external)
                               .map(data => (
                                 <tr key={data.name}>
@@ -1246,6 +1294,12 @@ const RegistModal = props => {
                         <label>{t('RESOURCES_NAME')}</label>
                         <div className={styles.bold}>{clusterName}</div>
                       </div>
+                      {projectName && (
+                        <div className={styles.list}>
+                          <label>{t('RESOURCES_PROJECT')}</label>
+                          <div className={styles.bold}>{projectName}</div>
+                        </div>
+                      )}
                       <div className={styles.list} style={{ width: '35%' }}>
                         <label>{t('RESOURCES_IMAGE')}</label>
                         <div className={styles.multiline}>
@@ -1275,7 +1329,7 @@ const RegistModal = props => {
                     <label className={`${networkFlag === 1 ? '' : 'hide'}`}>
                       {t('RESOURCES_NETWORK')}
                     </label>
-                    {networkDataList
+                    {networkList
                       .filter(x => networkCheckItem === x.id)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
@@ -1318,7 +1372,7 @@ const RegistModal = props => {
                     <label className={`${networkFlag === 2 ? '' : 'hide'}`}>
                       {t('RESOURCES_SR_IOV_NETWORK')}
                     </label>
-                    {sriovNetworkDataList
+                    {sriovNetworkList
                       .filter(x => sriovCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
@@ -1360,15 +1414,15 @@ const RegistModal = props => {
                       ))}
                     <label
                       className={`${
-                        networkDataList.filter(x => elbCheckItem === x.id)
-                          .length > 0
+                        networkList.filter(x => elbCheckItem === x.id).length >
+                        0
                           ? ''
                           : 'hide'
                       }`}
                     >
                       ELB ({elbSelect})
                     </label>
-                    {networkDataList
+                    {networkList
                       .filter(x => elbCheckItem === x.id)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>

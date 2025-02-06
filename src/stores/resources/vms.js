@@ -34,11 +34,8 @@ export default class VmStore extends Base {
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
     )}/edgetron/resources/kubevirt/vms`
-  getListUrl = this.getResourceUrl
 
-  getPaginatedUrl = (params = {}) => {    
-    return `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
-  }
+  getListUrl = this.getResourceUrl
 
   @action
   async fetchList({
@@ -69,22 +66,22 @@ export default class VmStore extends Base {
     const page = params.page
     const limit = params.limit
 
-    if(!!namespace) {
+    if (namespace) {
       params.project = namespace
     }
-    
+
     const result = await request.get(
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
 
-    const data = (get(result, "vms") || []).map(item => ({
+    const data = (get(result, 'vms') || []).map(item => ({
       cluster,
       namespace,
       ...this.mapper(item),
     }))
 
-    const total = (get(result, "total") || 0)
+    const total = get(result, 'total') || 0
 
     // 초기 정렬 처리
     data.sort((a, b) => {
@@ -105,7 +102,7 @@ export default class VmStore extends Base {
     if (namespace) {
       params.project = namespace
     }
- 
+
     // 정렬 처리
     const sortType = params.ascending ? 'asc' : 'desc'
     this.dataList.sort((a, b) => {
@@ -119,7 +116,7 @@ export default class VmStore extends Base {
 
     this.list.update({
       data: more ? [...this.list.data, ...this.dataList] : this.dataList,
-      total: total,
+      total,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -925,52 +922,52 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchVmsDetail({
-    cluster,
-    workspace,
-    namespace,
-    ...params
-  } = {}) {
+  async fetchVmsDetail({ cluster, workspace, namespace, ...params } = {}) {
     this.isLoading = true
 
     params.page = params.page || 1
     params.limit = params.limit || 10
 
     const apiName = {
-      flavor_object : "flavor",
-      image : "image",
-      networks : "network",
-      security_group_objects : "security_group",
-      host_device : "host_device",
-      mediated_device : "mediated_device",
-      volume : "volume",
-      node: "node",
-      id : "id",
+      flavor_object: 'flavor',
+      image: 'image',
+      networks: 'network',
+      security_group_objects: 'security_group',
+      host_device: 'host_device',
+      mediated_device: 'mediated_device',
+      volume: 'volume',
+      node: 'node',
+      id: 'id',
     }
 
-    const pathIdArray = ['security_group', 'network', 'volume', 'id', 'host_device', 'mediated_device']
+    const pathIdArray = [
+      'security_group',
+      'network',
+      'volume',
+      'id',
+      'host_device',
+      'mediated_device',
+    ]
     const resource = get(apiName, params.resource)
-    const resource_id = pathIdArray.includes(resource) ? params.id : params.name 
 
-    params[resource] = resource_id
+    params[resource] = pathIdArray.includes(resource) ? params.id : params.name
 
-    delete params["resource"]
-    delete params["id"]
-    delete params["name"]
+    delete params['resource']
+    delete params['id']
+    delete params['name']
 
-    if(params.searchName !== '' && params.searchName !== undefined){
-      params.name = params.searchName 
+    if (params.searchName !== '' && params.searchName !== undefined) {
+      params.name = params.searchName
     }
 
-    delete params["searchName"]
-    
+    delete params['searchName']
+
     const result = await request.get(
-      this.getResourceUrl({cluster, workspace, namespace}),
+      this.getResourceUrl({ cluster, workspace, namespace }),
       this.getFilterParams(params)
     )
 
     this.isLoading = false
     return result
   }
-
 }

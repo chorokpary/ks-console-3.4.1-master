@@ -22,7 +22,7 @@ import Node from './Node'
 import Monitoring from './Monitoring'
 import Status from './Status'
 
-const PATH = '/clusters/:cluster/containerResource/:name'
+const PATH = '/clusters/:cluster/projects/:namespace/containerResource/:name'
 
 export default [
   {

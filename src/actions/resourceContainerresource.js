@@ -29,90 +29,53 @@ import ConsoleConfiglModal from 'clusters/containers/Resources/components/Modals
 
 export default {
   'containerresource.regist': {
-    on({ store, cluster, workspace, namespace, success, startRefresh, devops, ...props }) {
+    on({ store, cluster, success, startRefresh, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .create(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-              success && success()
-              startRefresh()
-            })
+          store.create(data, { cluster }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+            success && success()
+            startRefresh()
+          })
         },
-        startRefresh: () => { startRefresh(); },
+        startRefresh: () => {
+          startRefresh()
+        },
         title: t('RESOURCES_CREATE_KAAS_RESOURCE'),
         modal: RegistModal,
         store,
         cluster,
-        workspace,
-        namespace,
-        devops,
         ...props,
       })
     },
   },
   'containerresource.edit': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .update(
-              {
-                ...detail,
-                cluster,
-                workspace,
-                namespace,
-                devops,
-                name: data.name,
-              },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.update(data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_EDIT_KAAS_RESOURCE'),
         modal: ModifyModal,
         store,
-        module,
         ...props,
       })
     },
   },
   'containerresource.remove': {
-    on({
-      store,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, cluster, namespace, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
-          store
-            .delete({ ...detail, cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-              success && success()
-            })
+          store.delete({ ...detail, cluster, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
@@ -126,13 +89,47 @@ export default {
     },
   },
   'containerresource.remove.batch': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, namespace, success, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const usernames = rowKeys.join(', ')
+      const name = rowKeys.join(', ')
+      const modal = Modal.open({
+        onOk: () => {
+          store.batchDelete({ rowKeys, cluster, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        title:
+          name.split(', ').length === 1
+            ? t('RESOURCES_DELETE')
+            : t('RESOURCES_DELETE_MULTIPLE'),
+        desc:
+          name.split(', ').length === 1
+            ? t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
+                resource: name,
+              })
+            : t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
+                resource: name,
+              }),
+        resource: name,
+        store,
+        ...props,
+      })
+    },
+  },
+  'containerresource.remove.clusterbatch': {
+    on({ store, cluster, success, ...props }) {
+      const rowKeys = toJS(store.list.selectedRowKeys)
+      const names = rowKeys.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            .clusterBatchDelete({
+              rowKeys,
+              cluster,
+            })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
@@ -141,18 +138,18 @@ export default {
         },
         modal: DeleteModal,
         title:
-          usernames.split(', ').length === 1
+          names.split(', ').length === 1
             ? t('RESOURCES_DELETE')
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
-          usernames.split(', ').length === 1
+          names.split(', ').length === 1
             ? t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
-                resource: usernames,
+                resource: names,
               })
             : t.html('RESOURCES_DELETE_KAAS_RESOURCE_TIP', {
-                resource: usernames,
+                resource: names,
               }),
-        resource: usernames,
+        resource: names,
         store,
         ...props,
       })

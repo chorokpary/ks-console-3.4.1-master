@@ -39,7 +39,16 @@ import RestoreModal from 'clusters/containers/Resources/components/Modals/Vms/Re
 
 export default {
   'vm.regist': {
-    on({ store, cluster, workspace, namespace, success, startRefresh, devops, ...props }) {
+    on({
+      store,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      startRefresh,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
@@ -47,11 +56,16 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
-              success && setTimeout(() => { success(); }, 1000)
+              success &&
+                setTimeout(() => {
+                  success()
+                }, 1000)
               startRefresh()
             })
         },
-        startRefresh: () => { startRefresh(); },
+        startRefresh: () => {
+          startRefresh()
+        },
         title: t('RESOURCES_CREATE_VM'),
         modal: RegistModal,
         store,
@@ -64,11 +78,24 @@ export default {
     },
   },
   'vm.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
+            .update(
+              { ...detail, cluster, workspace, namespace, devops, id: data.id },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -79,17 +106,31 @@ export default {
         modal: ModifyModal,
         store,
         module,
-        cluster, namespace,
+        cluster,
+        namespace,
         ...props,
       })
     },
   },
   'vm.edit.securitygroup': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .updateSecurity({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
+            .updateSecurity(
+              { ...detail, cluster, workspace, namespace, devops, id: data.id },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -100,17 +141,31 @@ export default {
         modal: ModifySecurityGroupModal,
         store,
         module,
-        cluster, namespace,
+        cluster,
+        namespace,
         ...props,
       })
     },
   },
   'vm.edit.flavor': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .updateFlavor({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
+            .updateFlavor(
+              { ...detail, cluster, workspace, namespace, devops, id: data.id },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -121,7 +176,8 @@ export default {
         modal: ModifyFlavorModal,
         store,
         module,
-        cluster, namespace,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -154,7 +210,8 @@ export default {
         }),
         resource: detail.name,
         store,
-        cluster, namespace,
+        cluster,
+        namespace,
         ...props,
       })
     },
@@ -162,8 +219,8 @@ export default {
   'vm.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
-      store.dataList.map(obj => {
+      const arr = []
+      store.dataList.forEach(obj => {
         if (rowKeys.includes(obj.id)) {
           arr.push(obj.name)
         }
@@ -215,7 +272,7 @@ export default {
   'vm.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Modal.close(modal)
           success && success()
         },
@@ -229,7 +286,7 @@ export default {
   'vm.log.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Modal.close(modal)
           success && success()
         },
@@ -250,8 +307,8 @@ export default {
             success && success()
           })
         },
-        title: !!title ? title : t('RESOURCES_CHANGE_STATE'),
-        desc: !!desc ? desc : t('RESOURCES_CHANGE_VM_STATE'),
+        title: title || t('RESOURCES_CHANGE_STATE'),
+        desc: desc || t('RESOURCES_CHANGE_VM_STATE'),
         modal: ConfirmModal,
         module: store.module,
         detail,
@@ -262,7 +319,7 @@ export default {
   },
   'vm.volumePop': {
     on({ store, success, ...props }) {
-      const modal = Modal.open({
+      Modal.open({
         onOk: () => {
           success && success()
         },
@@ -293,7 +350,7 @@ export default {
   },
   'vm.floatingIpPop': {
     on({ store, success, ...props }) {
-      const modal = Modal.open({
+      Modal.open({
         title: t('RESOURCES_FLOATING_IP_SETTINGS'),
         modal: FloatingIpModal,
         store,
@@ -341,7 +398,7 @@ export default {
   // },
   'vm.snapshotPop': {
     on({ store, success, ...props }) {
-      const modal = Modal.open({
+      Modal.open({
         title: t('RESOURCES_CREATE_SNAPSHOT'),
         modal: SnapshotModal,
         store,
@@ -370,7 +427,7 @@ export default {
   },
   'vm.restorePop': {
     on({ store, name, success, ...props }) {
-      const modal = Modal.open({
+      Modal.open({
         title: t('RESOURCES_RUNNING_RESTORE'),
         modal: RestoreModal,
         name,
@@ -400,7 +457,7 @@ export default {
   },
   'vm.clonePop': {
     on({ store, success, ...props }) {
-      const modal = Modal.open({
+      Modal.open({
         title: t('RESOURCES_CREATE_CLONE'),
         modal: CloneModal,
         store,
@@ -429,9 +486,9 @@ export default {
   },
   'vm.alertPop': {
     on({ store, detail, success, data, title, desc, ...props }) {
-      const modal = Modal.open({
-        title: !!title ? title : t('RESOURCES_ALERTING_MESSAGE'),
-        desc: !!desc ? desc : t('RESOURCES_ALERTING_MESSAGE_DESCRIPTION'),
+      Modal.open({
+        title: title || t('RESOURCES_ALERTING_MESSAGE'),
+        desc: desc || t('RESOURCES_ALERTING_MESSAGE_DESCRIPTION'),
         modal: AlertModal,
         module: store.module,
         detail,
@@ -440,5 +497,4 @@ export default {
       })
     },
   },
-
 }

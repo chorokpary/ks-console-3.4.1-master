@@ -37,7 +37,9 @@ export default class ResourceStore extends Base {
   async fetchNodePoolDetail(params) {
     this.isLoading = true
 
-    const result = await request.get(`${this.getResourceUrl(params)}`)
+    const result = await request.get(`${this.getResourceUrl(params)}`, {
+      project: params.namespace,
+    })
     const nodepool = {
       ...params,
       ...this.mapper(result),
@@ -78,7 +80,8 @@ export default class ResourceStore extends Base {
         params
       )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
         params.name
-      }/nodes`
+      }/nodes`,
+      { project: params.namespace }
     )
     const response = { ...params, ...this.mapper(result), kind: 'nodes' }
 
@@ -95,7 +98,8 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/clusters/${params.name}/nodepools`
+      )}/edgetron/resources/capk/clusters/${params.name}/nodepools`,
+      { project: params.namespace }
     )
     const response = { ...params, ...this.mapper(result), kind: 'nodepools' }
     const promises = response._originData.nodepools.map(async nodepool => {
@@ -120,6 +124,7 @@ export default class ResourceStore extends Base {
     const reqData = {}
 
     reqData.name = data.name
+    reqData.project = params.namespace
     reqData.kube_image = data.kube_image
     reqData.description = data.description
     reqData.flavor = data.flavor
@@ -152,20 +157,20 @@ export default class ResourceStore extends Base {
         params
       )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
         params.name
-      }`,
+      }?project=${params.namespace}`,
       jsonData
     )
   }
 
   @action
   async deleteNodePool(params = {}) {
-    console.log(params)
     return await request.delete(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
       )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
         params.name
-      }`
+      }`,
+      { project: params.namespace }
     )
   }
 }

@@ -18,7 +18,6 @@
 
 import { get } from 'lodash'
 import { action } from 'mobx'
-import { Notify } from '@kube-design/components'
 
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import Base from '../basemm3' // mm3 관련 추가 파일
@@ -70,6 +69,10 @@ export default class ResourceStore extends Base {
     const page = params.page
     const limit = params.limit
 
+    if (namespace) {
+      params.project = namespace
+    }
+
     const result = await request.get(
       this.getPaginatedUrl({
         cluster,
@@ -85,6 +88,8 @@ export default class ResourceStore extends Base {
     this.dataList = (get(result, 'clusters') || []).map(item => ({
       cluster,
       namespace,
+      workspace,
+      project_name: `${item.project}/${item.name}`,
       ...item,
     }))
 
@@ -156,6 +161,8 @@ export default class ResourceStore extends Base {
   async create(data, params = {}) {
     const jsonData = {}
     const reqData = {}
+
+    reqData.project = data.project
     reqData.external_network = data.external_network
     reqData.sriov_network = data.sriov_network
     reqData.elb_network = data.elb_network
@@ -185,8 +192,13 @@ export default class ResourceStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
+
+    if (params.namespace) {
+      params.project = params.namespace
+    }
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
+      `${this.getResourceUrl(params)}/${params.name}`,
+      { project: params.project }
     )
     const detail = {
       ...params,
@@ -210,7 +222,8 @@ export default class ResourceStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
+      `${this.getResourceUrl(params)}/${params.name}/manifest`,
+      { project: params.namespace }
     )
     const yamlData = {
       ...params,
@@ -229,7 +242,8 @@ export default class ResourceStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/config`
+      `${this.getResourceUrl(params)}/${params.name}/config`,
+      { project: params.namespace }
     )
     const response = {
       ...params,
@@ -243,8 +257,7 @@ export default class ResourceStore extends Base {
   }
 
   @action
-  // eslint-disable-next-line no-unused-vars
-  async update({ name, ...params }, data) {
+  async update(data) {
     return await this.submitting(
       request.put(this.getDetailUrl({ name: data.cluster_obj.name }), data)
     )
@@ -252,30 +265,44 @@ export default class ResourceStore extends Base {
 
   @action
   async batchDelete({ rowKeys, ...params }) {
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(username =>
-            request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
-            )
-          )
+    await this.submitting(
+      Promise.all(
+        rowKeys.map(name =>
+          request.delete(`${this.getDetailUrl({ name, ...params })}`, {
+            project: params.namespace,
+          })
         )
       )
-    }
+    )
     this.list.selectedRowKeys = []
   }
 
   @action
-  delete(user) {
-    if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-      return
-    }
+  async clusterBatchDelete({ rowKeys, cluster }) {
+    const rowKeyDict = rowKeys.map(key => {
+      const [project, name] = key.split('/')
+      return { project, name }
+    })
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDetailUrl({ name: rowKey.name, cluster })}`,
+            { project: rowKey.project }
+          )
+        )
+      )
+    )
+    this.list.selectedRowKeys = []
+  }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  @action
+  delete(params) {
+    return this.submitting(
+      request.delete(`${this.getDetailUrl(params)}`, {
+        project: params.project,
+      })
+    )
   }
 
   // 등록 관련 데이터 시작
@@ -329,7 +356,8 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/clusters/${params.name}/machines`
+      )}/edgetron/resources/capk/clusters/${params.name}/machines`,
+      { project: params.namespace }
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
     const dataArray = []
@@ -358,7 +386,8 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/clusters/${params.name}/machines`
+      )}/edgetron/resources/capk/clusters/${params.name}/machines`,
+      { project: params.namespace }
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
 
@@ -375,7 +404,8 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/machines`
+      )}/edgetron/resources/capk/machines`,
+      { project: params.namespace }
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
 

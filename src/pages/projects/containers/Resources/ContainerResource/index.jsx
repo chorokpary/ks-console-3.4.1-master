@@ -27,13 +27,13 @@ import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
-import { getLocalTime, showNameAndAlias } from 'utils'
+import { getLocalTime } from 'utils'
 
-import ResourceStore from 'stores/resources/containerresource'
+import KaasStore from 'stores/resources/containerresource'
 import styles from './index.scss'
 
 @withList({
-  store: new ResourceStore(),
+  store: new KaasStore(),
   module: 'clusters',
   authKey: 'clusters',
   name: 'KaaS',
@@ -47,7 +47,7 @@ export default class Resource extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.refreshTimer === null && this.isRuning) {
+    if (this.refreshTimer === null && this.isRunning) {
       this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
     }
   }
@@ -58,12 +58,12 @@ export default class Resource extends React.Component {
   }
 
   refreshHandler = () => {
-    if (this.isRuning && !this.isRefresh) {
+    if (this.isRunning && !this.isRefresh) {
       this.getData({ silent: true })
     }
   }
 
-  get isRuning() {
+  get isRunning() {
     const { selectedRowKeys } = toJS(this.props.store.list)
     return !(selectedRowKeys.length > 0)
   }
@@ -145,7 +145,7 @@ export default class Resource extends React.Component {
           text: t('REMOVE'),
           action: 'delete',
           onClick: () =>
-            trigger('containerresource.remove.clusterbatch', {
+            trigger('containerresource.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -184,8 +184,7 @@ export default class Resource extends React.Component {
 
   getColumns = () => {
     const { getSortOrder } = this.props
-    const { cluster } = this.props.match.params
-
+    const { workspace, cluster, namespace } = this.props.match.params
     return [
       {
         title: t('NAME'),
@@ -194,7 +193,7 @@ export default class Resource extends React.Component {
         sortOrder: getSortOrder('name'),
         search: true,
         render: (name, record) => {
-          const { cluster_ready, project, phase } = record
+          const { cluster_ready, phase } = record
 
           return (
             <div className={styles.avatar}>
@@ -209,7 +208,7 @@ export default class Resource extends React.Component {
               <div>
                 <Link
                   className={styles.title}
-                  to={`/clusters/${cluster}/projects/${project}/containerResource/${name}`}
+                  to={`/${workspace}/clusters/${cluster}/projects/${namespace}/containerResource/${name}`}
                 >
                   {name}
                 </Link>
@@ -217,18 +216,6 @@ export default class Resource extends React.Component {
             </div>
           )
         },
-      },
-      {
-        title: t('PROJECT'),
-        dataIndex: 'project',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: project => (
-          <Link to={`/clusters/${cluster}/projects/${project}`}>
-            {showNameAndAlias(project, 'project')}
-          </Link>
-        ),
       },
       {
         title: t('RESOURCES_DEPLOY_STEP'),
@@ -318,7 +305,6 @@ export default class Resource extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
     return (
       <ListPage {...this.props}>
         <Banner
@@ -330,7 +316,6 @@ export default class Resource extends React.Component {
         />
         <Table
           {...tableProps}
-          rowKey="project_name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}
