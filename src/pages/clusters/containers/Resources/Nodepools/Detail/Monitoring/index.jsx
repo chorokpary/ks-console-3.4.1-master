@@ -98,6 +98,7 @@ const Monitoring = props => {
           <ClusterResourceSeparation
             cluster={cluster()}
             kaasNodePoolName={`${props.match.params.clustername}-${props.match.params.name}`}
+            namespace={props.match.params.namespace}
           />
         </Column>
       </Columns>

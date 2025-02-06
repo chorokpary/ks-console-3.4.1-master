@@ -1,28 +1,21 @@
-import { get, isEmpty, find } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { toJS } from 'mobx'
+import { isEmpty } from 'lodash'
+import React, { useState } from 'react'
 import { observer, inject } from 'mobx-react'
-import classnames from 'classnames'
 
-import { getChartData, getAreaChartOps } from 'utils/monitoring'
+import { getAreaChartOps } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
-import ResourceStore from 'stores/resources/containerresource'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
 
-import styles from './index.scss'
+const index = props => {
+  const customStore = new CustomStore()
 
-const index = (props) => {
+  const [kaasCpuData, setKaasCpuData] = useState([])
+  const [kaasMemoryData, setKaasMemoryData] = useState([])
 
-  const customStore = new CustomStore();
-  const resourceStore = new ResourceStore();
-
-  const [kaasCpuData, setKaasCpuData] = useState([]);
-  const [kaasMemoryData, setKaasMemoryData] = useState([]);
-
-  const [kaasInboundData, setKaasInboundData] = useState([]);
-  const [kaasOutboundData, setKaasOutboundData] = useState([]);
+  const [kaasInboundData, setKaasInboundData] = useState([])
+  const [kaasOutboundData, setKaasOutboundData] = useState([])
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -53,8 +46,7 @@ const index = (props) => {
     return { start, end }
   }
 
-  const fetchData = async (params) => {
-
+  const fetchData = async params => {
     const paramsData = Object.assign(params, {
       start: params.start,
       end: params.end,
@@ -69,53 +61,52 @@ const index = (props) => {
     }
 
     const getKaasCpuUsageData = async () => {
-      const kaasCpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${props.kaasName}.*"}[5m])) * 100)) / 100`,
+      const cpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="${props.detailStore.detail.cluster.project}",service="launcher-node-exporter",mode="idle",pod=~"${props.kaasName}.*"}[5m])) * 100)) / 100`,
         ...paramsData,
-        cluster: props.cluster
+        cluster: props.cluster,
       })
 
-      setKaasCpuData(kaasCpuData)
-    };
+      setKaasCpuData(cpuData)
+    }
 
     // kaas memory data
     const getKaasMemoryUsageData = async () => {
-      const kaasMemoryData = await customStore.fetchMetric({
-        expr: `sum by (pod) (node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"})`,
+      const memoryData = await customStore.fetchMetric({
+        expr: `sum by (pod) (node_memory_MemTotal_bytes{namespace="${props.detailStore.detail.cluster.project}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasName}.*"})`,
         ...paramsData,
-        cluster: props.cluster
+        cluster: props.cluster,
       })
 
-      setKaasMemoryData(kaasMemoryData)
-    };
+      setKaasMemoryData(memoryData)
+    }
 
     // inbound data
     const getKaasInboundData = async () => {
-      const kaasInboundData = await customStore.fetchMetric({
-        expr: `sum by (pod) (irate(node_network_receive_bytes_total{service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasName}.*"}[5m]))`,
+      const inboundData = await customStore.fetchMetric({
+        expr: `sum by (pod) (irate(node_network_receive_bytes_total{namespace="${props.detailStore.detail.cluster.project}",service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasName}.*"}[5m]))`,
         ...paramsData,
-        cluster: props.cluster
+        cluster: props.cluster,
       })
 
-      setKaasInboundData(kaasInboundData);
-    };
+      setKaasInboundData(inboundData)
+    }
 
     // outbound data
     const getKaasOutboundData = async () => {
-      const kaasOutboundData = await customStore.fetchMetric({
-        expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace='default',service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasName}.*"}[5m]))`,
+      const outboundData = await customStore.fetchMetric({
+        expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace="${props.detailStore.detail.cluster.project}",service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasName}.*"}[5m]))`,
         ...paramsData,
-        cluster: props.cluster
+        cluster: props.cluster,
       })
 
-      setKaasOutboundData(kaasOutboundData);
-    };
+      setKaasOutboundData(outboundData)
+    }
 
-    getKaasCpuUsageData();
-    getKaasMemoryUsageData();
-    getKaasInboundData();
-    getKaasOutboundData();
-
+    getKaasCpuUsageData()
+    getKaasMemoryUsageData()
+    getKaasInboundData()
+    getKaasOutboundData()
   }
 
   const getMonitoringCfgs = () => {
@@ -124,10 +115,7 @@ const index = (props) => {
         type: 'utilisation',
         title: 'CPU_USAGE',
         unit: '%',
-        legend:
-          kaasCpuData.map(item => (
-            item.metric.pod
-          )),
+        legend: kaasCpuData.map(item => item.metric.pod),
         data: kaasCpuData,
       },
       {
@@ -135,30 +123,21 @@ const index = (props) => {
         title: 'MEMORY_USAGE',
         unit: '%',
         unitType: 'memory',
-        legend:
-          kaasMemoryData.map(item => (
-            item.metric.pod
-          )),
+        legend: kaasMemoryData.map(item => item.metric.pod),
         data: kaasMemoryData,
       },
       {
         type: 'bandwidth',
         title: 'RESOURCES_NETWORK_TRAFFIC_IN',
         unitType: 'bandwidth',
-        legend:
-          kaasInboundData.map(item => (
-            item.metric.pod
-          )),
+        legend: kaasInboundData.map(item => item.metric.pod),
         data: kaasInboundData,
       },
       {
         type: 'bandwidth',
         title: 'RESOURCES_NETWORK_TRAFFIC_OUT',
         unitType: 'bandwidth',
-        legend:
-          kaasOutboundData.map(item => (
-            item.metric.pod
-          )),
+        legend: kaasOutboundData.map(item => item.metric.pod),
         data: kaasOutboundData,
       },
     ]
@@ -179,10 +158,8 @@ const index = (props) => {
         if (isEmpty(config.data)) return null
         return <SimpleArea key={config.title} width="100%" {...config} />
       })}
-
     </MonitoringController>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(observer(index))
-
