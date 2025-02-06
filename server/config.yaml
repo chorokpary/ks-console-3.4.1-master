@@ -526,6 +526,7 @@ client:
           authKey: 'vms'
           children:
             - { name: vms, title: RESOURCES_VM }
+            - { name: containerResource, title: KaaS }
         - name: computing
           title: RESOURCES_SETTINGS
           icon: computing-setting
