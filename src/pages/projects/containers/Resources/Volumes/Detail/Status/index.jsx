@@ -3,20 +3,23 @@ import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 import { Icon } from '@kube-design/components'
 import { Link } from 'react-router-dom'
-import { Panel } from 'components/Base';
+import { Panel } from 'components/Base'
 import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList'
-import DetailKaasList from 'pages/projects/containers/Resources/components/DetailKaasList'
+import DetailMachineList from 'pages/projects/containers/Resources/components/DetailMachineList'
 
 import styles from './index.scss'
 
-const Status = (props) => {
-
-  const store = props.detailStore;
+const Status = props => {
+  const store = props.detailStore
 
   const [id, setId] = useState()
+  const [isManagedK8s, setIsManagedK8s] = useState(false)
 
   useEffect(() => {
     setId(store.detail.volume?.used_by_vmi)
+    if (store.detail.volume?.managed_k8s === 'true') {
+      setIsManagedK8s(true)
+    }
   }, [id])
 
   const cluster = store.detail.cluster
@@ -25,24 +28,39 @@ const Status = (props) => {
   return (
     <>
       {/* 가상머신 혹은 KaaS 리스트 */}
-      {id && !id?.includes('control-plane') &&
+      {id && !isManagedK8s && (
         // used_by_vmi 가 VM 일 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables='volume' {...props.match.params} id={props.match.params.id} />
+          <DetailVmList
+            type={t('RESOURCES_VOLUME')}
+            variables="volume"
+            {...props.match.params}
+            id={props.match.params.id}
+          />
         </div>
-      }
-      {!id && !id?.includes('control-plane') &&
+      )}
+      {!id && !id?.includes('control-plane') && (
         // used_by_vmi 가 비어있는 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables='volume'{...props.match.params} id={props.match.params.id} />
+          <DetailVmList
+            type={t('RESOURCES_VOLUME')}
+            variables="volume"
+            {...props.match.params}
+            id={props.match.params.id}
+          />
         </div>
-      }
-      {id && id?.includes('control-plane') &&
+      )}
+      {id && isManagedK8s && (
         // used_by_vmi 가 KaaS 일 경우
         <div>
-          <DetailKaasList type={t('RESOURCES_VOLUME')} variables='volume'{...props.match.params} name={id} />
+          <DetailMachineList
+            type={t('RESOURCES_VOLUME')}
+            variables="volume"
+            {...props.match.params}
+            name={id}
+          />
         </div>
-      }
+      )}
 
       {/* PVC 리스트 */}
       <div>
@@ -52,7 +70,10 @@ const Status = (props) => {
               <div className={styles.icon}>
                 <Icon name="storage" size={40} />
               </div>
-              <div className={classnames(styles.title, styles.name)} style={{ width: '32%' }}>
+              <div
+                className={classnames(styles.title, styles.name)}
+                style={{ width: '32%' }}
+              >
                 <div>
                   <Link
                     to={`/clusters/${cluster}/projects/${project}/volumes/${props.match.params.id}/resource-status`}
@@ -64,7 +85,9 @@ const Status = (props) => {
               </div>
               <div className={styles.title} style={{ width: '18%' }}>
                 <div>
-                  {t(`PV_STATUS_${store.detail.volume?.pvc_phase.toUpperCase()}`)}
+                  {t(
+                    `PV_STATUS_${store.detail.volume?.pvc_phase.toUpperCase()}`
+                  )}
                 </div>
                 <p>{t('STATUS')}</p>
               </div>
@@ -73,9 +96,7 @@ const Status = (props) => {
                 <p>{t('RESOURCES_CAPACITY')}</p>
               </div>
               <div className={styles.title}>
-                <div>
-                  {store.detail.volume?.storage_class}
-                </div>
+                <div>{store.detail.volume?.storage_class}</div>
                 <p>{t('RESOURCES_STORAGE_CLASS')}</p>
               </div>
               <div className={styles.title}>
@@ -87,8 +108,7 @@ const Status = (props) => {
         </Panel>
       </div>
     </>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(observer(Status))
-
