@@ -181,7 +181,11 @@ const VolumeDetail = props => {
       },
       {
         name: t('RESOURCES_BOOT_TYPE'),
-        value: t(`RESOURCES_BOOT_TYPE_${detail.volume.boot_type.toUpperCase()}`),
+        value: t(
+          `RESOURCES_BOOT_TYPE_${typeof detail.volume.boot_type === "string" && detail.volume.boot_type.trim() !== "" 
+            ? detail.volume.boot_type.toUpperCase() 
+            : "NONE"}`
+        ),
       },
       {
         name: t('RESOURCES_PHASE'),
