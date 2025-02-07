@@ -1,41 +1,37 @@
-
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
 import { getLocalTime } from 'utils'
 
-import * as common from 'utils/resources'
+import VolumeStore from 'stores/resources/volumes'
 import routes from './routes'
 
-import VolumeStore from 'stores/resources/volumes'
+const store = new VolumeStore()
 
-const store = new VolumeStore();
-
-const VolumeDetail = (props) => {
-
-  const volumnName = props.match.params.name;
+const VolumeDetail = props => {
+  const volumnName = props.match.params.name
 
   useEffect(() => {
-    fetchData();
+    fetchData()
   }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params);
+    store.fetchDetail(props.match.params)
   }
 
   const { workspace, cluster, namespace } = props.match.params
   const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes`
 
-  const routing = props.rootStore.routing;
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  const routing = props.rootStore.routing
+  const showEdit = !globals.config.presetClusterRoles.includes(
+    props.match.params.name
+  )
 
-  const id = props.match.params.id;
+  const id = props.match.params.id
   const used_by_vmi = store.detail.volume?.used_by_vmi
 
   const getOperations = volumeName => {
@@ -52,7 +48,7 @@ const VolumeDetail = (props) => {
             detail: toJS(store.detail),
             store,
             success: fetchData,
-            ...props.match.params
+            ...props.match.params,
           }),
       },
       {
@@ -64,10 +60,10 @@ const VolumeDetail = (props) => {
           props.rootStore.triggerAction('resourcesvolume.yaml.view', {
             yaml: store.yaml,
             readOnly: true,
-          });
+          })
         },
       },
-    ];
+    ]
 
     if (
       !volumeName.includes('boot-dv') &&
@@ -78,10 +74,7 @@ const VolumeDetail = (props) => {
         {
           key: 'volume',
           icon: 'storage',
-          text:
-            !used_by_vmi
-              ? t('RESOURCES_BINDING')
-              : t('RESOURCES_ISOLATE'),
+          text: !used_by_vmi ? t('RESOURCES_BINDING') : t('RESOURCES_ISOLATE'),
           action: 'view',
           onClick: () => {
             if (!used_by_vmi) {
@@ -89,15 +82,15 @@ const VolumeDetail = (props) => {
                 type: 'VOLUME_DETAIL',
                 store,
                 success: fetchData,
-                ...props.match.params
-              });
+                ...props.match.params,
+              })
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
                 data: { id, vmId: used_by_vmi, actionType: 'D' },
                 store,
                 success: fetchData,
-                ...props.match.params
-              });
+                ...props.match.params,
+              })
             }
           },
         },
@@ -114,20 +107,24 @@ const VolumeDetail = (props) => {
               detail: toJS(store.detail),
               store,
               success: () => routing.push(listUrl),
-              ...props.match.params
+              ...props.match.params,
             }),
         }
-      );
+      )
     }
 
-    return operations;
-  };
+    return operations
+  }
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
 
     if (isEmpty(detail)) {
       return
+    }
+
+    if (!detail.volume.boot_type) {
+      detail.volume.boot_type = 'uefi'
     }
 
     return [
@@ -141,11 +138,13 @@ const VolumeDetail = (props) => {
       },
       {
         name: t('RESOURCES_ACCESS_MODE'),
-        value: detail.volume.access_modes.length > 0 ?
-          detail.volume.access_modes && (detail.volume.access_modes).map((volume) => (
-            <p key={volume}>{volume}</p>
-          ))
-          : "-",
+        value:
+          detail.volume.access_modes.length > 0
+            ? detail.volume.access_modes &&
+              detail.volume.access_modes.map(volume => (
+                <p key={volume}>{volume}</p>
+              ))
+            : '-',
       },
       {
         name: t('RESOURCES_CAPACITY'),
@@ -181,9 +180,7 @@ const VolumeDetail = (props) => {
       {
         name: t('RESOURCES_BOOT_TYPE'),
         value: t(
-          `RESOURCES_BOOT_TYPE_${typeof detail.volume.boot_type === "string" && detail.volume.boot_type.trim() !== "" 
-            ? detail.volume.boot_type.toUpperCase() 
-            : "NONE"}`
+          `RESOURCES_BOOT_TYPE_${detail.volume.boot_type.toUpperCase()}`
         ),
       },
       {
@@ -196,17 +193,19 @@ const VolumeDetail = (props) => {
       },
       {
         name: t('RESOURCES_CREATE_DAY'),
-        value: getLocalTime(detail.volume.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+        value: getLocalTime(detail.volume.timestamp).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
       },
     ]
   }
 
   if (store.isLoading) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const sideProps = {
-    icon: "storage",
+    icon: 'storage',
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
@@ -226,10 +225,10 @@ const VolumeDetail = (props) => {
         stores={{ detailStore: store }}
         routes={routes}
         authKey="resourcesVolumes"
-        {...sideProps} />
+        {...sideProps}
+      />
     </>
   )
 }
 
-export default inject('rootStore')(observer(VolumeDetail));
-
+export default inject('rootStore')(observer(VolumeDetail))

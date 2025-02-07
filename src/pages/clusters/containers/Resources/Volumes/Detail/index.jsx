@@ -1,37 +1,37 @@
 /* eslint-disable no-console */
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'
 
-import { toJS } from 'mobx';
-import { get, isEmpty } from 'lodash';
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
-import DetailPage from 'clusters/containers/Base/Detail';
-import { getLocalTime } from 'utils';
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
+import DetailPage from 'clusters/containers/Base/Detail'
+import { getLocalTime } from 'utils'
 
-import VolumeStore from 'stores/resources/volumes';
-import routes from './routes';
+import VolumeStore from 'stores/resources/volumes'
+import routes from './routes'
 
-const store = new VolumeStore();
+const store = new VolumeStore()
 
 const VolumeDetail = props => {
   const fetchData = () => {
-    store.fetchDetail(props.match.params);
-  };
-  const volumnName = props.match.params.name;
-  const { cluster } = props.match.params;
-  const listUrl = `/clusters/${cluster}/resourcesvolumes`;
-  const routing = props.rootStore.routing;
+    store.fetchDetail(props.match.params)
+  }
+  const volumnName = props.match.params.name
+  const { cluster } = props.match.params
+  const listUrl = `/clusters/${cluster}/resourcesvolumes`
+  const routing = props.rootStore.routing
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
-  );
-  const id = props.match.params.id;
-  const used_by_vmi = store.detail.volume?.used_by_vmi;
-  const boot_volume = store.detail.volume?.boot_volume;
+  )
+  const id = props.match.params.id
+  const used_by_vmi = store.detail.volume?.used_by_vmi
+  const boot_volume = store.detail.volume?.boot_volume
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const getOperations = volumeName => {
     const operations = [
@@ -58,10 +58,10 @@ const VolumeDetail = props => {
           props.rootStore.triggerAction('resourcesvolume.yaml.view', {
             yaml: store.yaml,
             readOnly: true,
-          });
+          })
         },
       },
-    ];
+    ]
 
     if (
       !volumeName.includes('boot-dv') &&
@@ -70,63 +70,60 @@ const VolumeDetail = props => {
       !(boot_volume === true && used_by_vmi)
     ) {
       if (boot_volume === false) {
-        operations.push(
-          {
-            key: 'volume',
-            icon: 'storage',
-            text:
-              !used_by_vmi
-                ? t('RESOURCES_BINDING')
-                : t('RESOURCES_ISOLATE'),
-            action: 'view',
-            onClick: () => {
-              if (!used_by_vmi) {
-                props.rootStore.triggerAction('resourcesvolume.bindingPop', {
-                  type: 'VOLUME_DETAIL',
-                  store,
-                  success: fetchData,
-                  ...props.match.params
-                });
-              } else {
-                props.rootStore.triggerAction('resourcesvolume.detach', {
-                  data: { id, vmId: used_by_vmi, actionType: 'D' },
-                  store,
-                  success: fetchData,
-                  ...props.match.params
-                });
-              }
-            },
-          }
-        );
+        operations.push({
+          key: 'volume',
+          icon: 'storage',
+          text: !used_by_vmi ? t('RESOURCES_BINDING') : t('RESOURCES_ISOLATE'),
+          action: 'view',
+          onClick: () => {
+            if (!used_by_vmi) {
+              props.rootStore.triggerAction('resourcesvolume.bindingPop', {
+                type: 'VOLUME_DETAIL',
+                store,
+                success: fetchData,
+                ...props.match.params,
+              })
+            } else {
+              props.rootStore.triggerAction('resourcesvolume.detach', {
+                data: { id, vmId: used_by_vmi, actionType: 'D' },
+                store,
+                success: fetchData,
+                ...props.match.params,
+              })
+            }
+          },
+        })
       }
-      operations.push(
-        {
-          key: 'delete',
-          icon: 'trash',
-          text: t('DELETE'),
-          action: 'delete',
-          type: 'danger',
-          show: showEdit,
-          onClick: () =>
-            props.rootStore.triggerAction('resourcesvolume.remove', {
-              type: 'VOLUME_DETAIL',
-              detail: toJS(store.detail),
-              store,
-              cluster: props.match.params.cluster,
-              success: () => routing.push(listUrl),
-            }),
-        }
-      );
+      operations.push({
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('resourcesvolume.remove', {
+            type: 'VOLUME_DETAIL',
+            detail: toJS(store.detail),
+            store,
+            cluster: props.match.params.cluster,
+            success: () => routing.push(listUrl),
+          }),
+      })
     }
 
-    return operations;
-  };
+    return operations
+  }
 
   const getAttrs = () => {
-    const detail = toJS(store.detail);
+    const detail = toJS(store.detail)
 
     if (isEmpty(detail)) {
-      return;
+      return
+    }
+
+    if (!detail.volume.boot_type) {
+      detail.volume.boot_type = 'uefi'
     }
 
     return [
@@ -143,9 +140,9 @@ const VolumeDetail = props => {
         value:
           detail.volume.access_modes.length > 0
             ? detail.volume.access_modes &&
-            detail.volume.access_modes.map(volume => (
-              <p key={volume}>{volume}</p>
-            ))
+              detail.volume.access_modes.map(volume => (
+                <p key={volume}>{volume}</p>
+              ))
             : '-',
       },
       {
@@ -182,9 +179,7 @@ const VolumeDetail = props => {
       {
         name: t('RESOURCES_BOOT_TYPE'),
         value: t(
-          `RESOURCES_BOOT_TYPE_${typeof detail.volume.boot_type === "string" && detail.volume.boot_type.trim() !== "" 
-            ? detail.volume.boot_type.toUpperCase() 
-            : "NONE"}`
+          `RESOURCES_BOOT_TYPE_${detail.volume.boot_type.toUpperCase()}`
         ),
       },
       {
@@ -201,11 +196,11 @@ const VolumeDetail = props => {
           'YYYY-MM-DD HH:mm:ss'
         ),
       },
-    ];
-  };
+    ]
+  }
 
   if (store.isLoading) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const sideProps = {
@@ -221,7 +216,7 @@ const VolumeDetail = props => {
         url: listUrl,
       },
     ],
-  };
+  }
 
   return (
     <>
@@ -231,7 +226,7 @@ const VolumeDetail = props => {
         {...sideProps}
       />
     </>
-  );
-};
+  )
+}
 
-export default inject('rootStore')(observer(VolumeDetail));
+export default inject('rootStore')(observer(VolumeDetail))

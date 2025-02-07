@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { observer, inject } from 'mobx-react'
-import classnames from 'classnames';
-import { Icon } from '@kube-design/components';
-import { Link } from 'react-router-dom';
-import { Panel } from 'components/Base';
+import classnames from 'classnames'
+import { Icon } from '@kube-design/components'
+import { Link } from 'react-router-dom'
+import { Panel } from 'components/Base'
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 import DetailMachineList from 'pages/clusters/containers/Resources/components/DetailMachineList'
-import styles from './index.scss';
+import styles from './index.scss'
 
 const Status = props => {
   const store = props.detailStore
@@ -30,13 +30,21 @@ const Status = props => {
       {id && !isManagedK8s && (
         // used_by_vmi 가 VM 일 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables="volume" id={props.match.params.id} />
+          <DetailVmList
+            type={t('RESOURCES_VOLUME')}
+            variables="volume"
+            id={props.match.params.id}
+          />
         </div>
       )}
       {!id && (
         // used_by_vmi 가 비어있는 경우
         <div>
-          <DetailVmList type={t('RESOURCES_VOLUME')} variables="volume" id={props.match.params.id} />
+          <DetailVmList
+            type={t('RESOURCES_VOLUME')}
+            variables="volume"
+            id={props.match.params.id}
+          />
         </div>
       )}
       {id && isManagedK8s && (
@@ -58,7 +66,10 @@ const Status = props => {
               <div className={styles.icon}>
                 <Icon name="storage" size={40} />
               </div>
-              <div className={classnames(styles.title, styles.name)} style={{ width: '32%' }}>
+              <div
+                className={classnames(styles.title, styles.name)}
+                style={{ width: '32%' }}
+              >
                 <div>
                   <Link
                     to={`/clusters/${cluster}/projects/${project}/volumes/${props.match.params.id}/resource-status`}
@@ -70,7 +81,9 @@ const Status = props => {
               </div>
               <div className={styles.title} style={{ width: '18%' }}>
                 <div>
-                  {t(`PV_STATUS_${store.detail.volume?.pvc_phase.toUpperCase()}`)}
+                  {t(
+                    `PV_STATUS_${store.detail.volume?.pvc_phase.toUpperCase()}`
+                  )}
                 </div>
                 <p>{t('STATUS')}</p>
               </div>
@@ -82,7 +95,8 @@ const Status = props => {
                 <div>
                   <Link
                     to={`/clusters/${cluster}/storageclasses/${store.detail.volume?.storage_class}/volumes`}
-                  >{store.detail.volume?.storage_class}
+                  >
+                    {store.detail.volume?.storage_class}
                   </Link>
                 </div>
                 <p>{t('RESOURCES_STORAGE_CLASS')}</p>

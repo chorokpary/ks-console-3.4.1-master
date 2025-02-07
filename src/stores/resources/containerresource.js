@@ -404,8 +404,7 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/machines`,
-      { project: params.namespace }
+      )}/edgetron/resources/capk/machines`
     )
     const response = { ...params, ...this.mapper(result), kind: 'machines' }
 
