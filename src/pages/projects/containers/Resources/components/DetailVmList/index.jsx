@@ -26,27 +26,26 @@ import {
 } from '@kube-design/components'
 import styles from './index.scss'
 
-const DetailVmList = (props) => {
-
+const DetailVmList = props => {
   // props = {
   //   type : '이미지' // 빈 화면 일때 사용할 이름,
   //   variables : 'image' // vm 데이터 내에서 비교할 파라미터,
   //   name : 'ubuntu' // 예시대로 vm 데이터 내의 image 이름이 ubuntu 인 것,
   // }
 
-  const store = new VmStore();
-  const customStore = new CustomStore();
+  const store = new VmStore()
+  const customStore = new CustomStore()
 
-  const workspace = props.workspace;
-  const cluster = props.cluster;
-  const namespace = props.namespace;
+  const workspace = props.workspace
+  const cluster = props.cluster
+  const namespace = props.namespace
 
   const [vmDataList, setVmDataList] = useState([])
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState()
   const [isLoading, setIsLoading] = useState(true)
-  const [isSearchFlag, setIsSearchFlag] = useState(false)
+  const [, setIsSearchFlag] = useState(false)
 
   const [vmCpuData, setVmCpuData] = useState([])
   const [vmMemoryData, setVmMemoryData] = useState([])
@@ -89,38 +88,46 @@ const DetailVmList = (props) => {
     return { start, end }
   }
 
-  const handleExpand = (name) => {
-    setExpandItem(name);
+  const handleExpand = name => {
+    setExpandItem(name)
     setIsExpandFlag(!isExpandFlag)
   }
 
   useEffect(() => {
-    fnGetData();
-    fetchData();
+    fnGetData()
+    fetchData()
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
     setIsLoading(true)
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
-    const detailParams = { cluster, namespace, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
+    const detailParams = {
+      cluster,
+      namespace,
+      project: namespace,
+      resource: props.variables,
+      id: props.id,
+      name: props.name,
+      page,
+      limit: perPage,
+    }
 
-    if(params.name !== '' && params.name !== undefined){
-      detailParams.searchName = params.name 
+    if (params.name !== '' && params.name !== undefined) {
+      detailParams.searchName = params.name
     }
 
     const vmList = await store.fetchVmsDetail(detailParams)
-    const vmData = vmList.vms 
+    const vmData = vmList.vms
 
     setTotal(vmList.total)
     setCurrentPage(page)
     setVmDataList(vmData)
     setIsLoading(false)
-  };
+  }
 
   const fetchData = async () => {
-
-    const params = { "times": 50, "step": "10m" }
+    const params = { times: 50, step: '10m' }
 
     const paramsData = Object.assign(params, {
       start: params.start,
@@ -136,50 +143,50 @@ const DetailVmList = (props) => {
     }
 
     const getVmCpuUsageData = async () => {
-      const vmCpuData = await customStore.fetchMetric({
+      const cpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
-      });
+      })
 
-      setVmCpuData(vmCpuData);
-    };
+      setVmCpuData(cpuData)
+    }
 
     const getVmWinCpuUsageData = async () => {
-      const vmCpuData = await customStore.fetchMetric({
+      const cpuData = await customStore.fetchMetric({
         expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
-      });
-      setVmWinCpuData(vmCpuData);
-    };
+      })
+      setVmWinCpuData(cpuData)
+    }
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const vmMemoryData = await customStore.fetchMetric({
+      const memoryData = await customStore.fetchMetric({
         expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
         ...paramsData,
         cluster,
-      });
+      })
 
-      setVmMemoryData(vmMemoryData);
-    };
+      setVmMemoryData(memoryData)
+    }
 
     const getVmWinMemoryUsageData = async () => {
-      const vmMemoryData = await customStore.fetchMetric({
+      const memoryData = await customStore.fetchMetric({
         expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
         ...paramsData,
         cluster,
-      });
+      })
 
-      setVmWinMemoryData(vmMemoryData);
-    };
+      setVmWinMemoryData(memoryData)
+    }
 
-    getVmCpuUsageData();
-    getVmMemoryUsageData();
-    getVmWinCpuUsageData();
-    getVmWinMemoryUsageData();
-  };
+    getVmCpuUsageData()
+    getVmMemoryUsageData()
+    getVmWinCpuUsageData()
+    getVmWinMemoryUsageData()
+  }
 
   const getMonitoringCfgs = (cpuData, memoryData) => [
     {
@@ -201,56 +208,56 @@ const DetailVmList = (props) => {
   ]
 
   const renderContent = () => {
-
-    if (vmDataList.length == 0) {
-      const content = (
-        <div className={styles.nodata}>
-          {t('RESOURCES_NOT_FOUND_RESOURCE')}
-        </div>
+    if (vmDataList.length === 0) {
+      return (
+        <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
       )
-      return content;
     }
 
-    const content = (
-      vmDataList.map((obj, index) => {
-        return (
-          <div className={styles.wrapper} key={index}>
-            <div
-              className={classnames(styles.expandItem, "", {
-                [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-              })}
-            >
-              <div className={styles.itemMain}>
-                <div className={styles.icon}>
-                  {/* <Icon name="templet" size={40} type={obj.name != expandItem ? 'dark' : (obj.name == expandItem && isExpandFlag == false) ? 'dark' : 'light'} /> */}
-                  <i className="ico-type40-vm"></i>
-                  <Indicator
-                    className={styles.indicator}
-                    type={getState(obj.state)}
-                    flicker
-                  />
-                </div>
-                {renderContentDetail(obj)}
+    const content = vmDataList.map((obj, index) => {
+      return (
+        <div className={styles.wrapper} key={index}>
+          <div
+            className={classnames(styles.expandItem, '', {
+              [styles.expanded]: obj.name === expandItem ? isExpandFlag : false,
+            })}
+          >
+            <div className={styles.itemMain}>
+              <div className={styles.icon}>
+                {/* <Icon name="templet" size={40} type={obj.name !== expandItem ? 'dark' : (obj.name === expandItem && isExpandFlag === false) ? 'dark' : 'light'} /> */}
+                <i className="ico-type40-vm"></i>
+                <Indicator
+                  className={styles.indicator}
+                  type={getState(obj.state)}
+                  flicker
+                />
               </div>
-              {renderExtraContent(obj)}
+              {renderContentDetail(obj)}
             </div>
+            {renderExtraContent(obj)}
           </div>
-        )
-      }
+        </div>
       )
-    )
+    })
 
-    return <Loading spinning={isLoading}><>{content}</></Loading>
+    return (
+      <Loading spinning={isLoading}>
+        <>{content}</>
+      </Loading>
+    )
   }
 
-  const renderContentDetail = (obj) => {
-
+  const renderContentDetail = obj => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.name}/${obj.id}`}>{obj.name}</Link>
+              <Link
+                to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.name}/${obj.id}`}
+              >
+                {obj.name}
+              </Link>
               <Tooltip content={t('VNC')}>
                 <Icon
                   className="margin-l8"
@@ -261,31 +268,44 @@ const DetailVmList = (props) => {
                 />
               </Tooltip>
             </div>
-            <p>{getLocalTime(obj.creation_timestamp).format('YYYY-MM-DD HH:mm:ss')}{t('RESOURCES_CREATED')}</p>
+            <p>
+              {getLocalTime(obj.creation_timestamp).format(
+                'YYYY-MM-DD HH:mm:ss'
+              )}
+              {t('RESOURCES_CREATED')}
+            </p>
           </div>
           <div className={styles.text}>
             <div>{t(`RESOURCES_${obj.state.toUpperCase()}`)}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
-            <div>{obj.node ? obj.node : "-"}</div>
+            <div>{obj.node ? obj.node : '-'}</div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-	  {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
+          {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
-            <Icon name="chevron-down" type={obj.name != expandItem ? '' : (obj.name == expandItem && isExpandFlag == false) ? '' : 'light'} size={20} />
+            <Icon
+              name="chevron-down"
+              type={
+                obj.name !== expandItem
+                  ? ''
+                  : obj.name === expandItem && isExpandFlag === false
+                  ? ''
+                  : 'light'
+              }
+              size={20}
+            />
           </div>
         </div>
       </>
     )
   }
 
-  const renderExtraContent = (obj) => {
-
-    const networkList = obj.networks.filter((network) => network.name != "k8s-pod-network");
+  const renderExtraContent = obj => {
     return (
       <div className={styles.itemExtra}>
-        <div className={styles.containers} >
+        <div className={styles.containers}>
           <div className={classnames(styles.item)}>
             <div className={styles.icon}>
               <Icon name="apps" size={40} />
@@ -296,45 +316,45 @@ const DetailVmList = (props) => {
             </div>
             <div className={styles.title}>
               <Text
-                key='CPU'
-                icon='cpu'
-                title={obj.flavor_object.vcpus + " Core"}
+                key="CPU"
+                icon="cpu"
+                title={`${obj.flavor_object.vcpus} Core`}
                 description={t('CPU')}
               />
             </div>
             <div className={styles.title}>
               <Text
-                key='Memory'
-                icon='memory'
-                title={common.fnSetBytes(obj.flavor_object.ram) + " GiB"}
+                key="Memory"
+                icon="memory"
+                title={`${common.fnSetBytes(obj.flavor_object.ram)} GiB`}
                 description={t('Memory')}
               />
             </div>
             <div className={styles.title}>
               <Text
-                key='Disk'
-                icon='storage'
-                title={obj.flavor_object.root_disk + " GiB"}
+                key="Disk"
+                icon="storage"
+                title={`${obj.flavor_object.root_disk} GiB`}
                 description={t('Disk')}
               />
             </div>
             <div className={styles.title}>
               <Text
-                  key="GPU"
-                  icon="gpu"
-                  title={
-                    obj.flavor_object.gpus.length >= 1
-                      ? obj.flavor_object.gpus.length === 1
-                        ? obj.flavor_object.gpus[0].quantity+" "+obj.flavor_object.gpus[0].name
-                        : `${obj.flavor_object.gpus[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${obj.flavor_object.gpus.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
-                      : '-'
-                  }
-                  description={t('GPU')}
-                />
+                key="GPU"
+                icon="gpu"
+                title={
+                  obj.flavor_object.gpus.length >= 1
+                    ? obj.flavor_object.gpus.length === 1
+                      ? `${obj.flavor_object.gpus[0].quantity} ${obj.flavor_object.gpus[0].name}`
+                      : `${obj.flavor_object.gpus[0].name} ${t(
+                          'RESOURCES_BESIDES'
+                        )} ${obj.flavor_object.gpus.length - 1}${t(
+                          'RESOURCES_COUNT'
+                        )}`
+                    : '-'
+                }
+                description={t('GPU')}
+              />
             </div>
           </div>
         </div>
@@ -343,27 +363,32 @@ const DetailVmList = (props) => {
   }
 
   const renderMonitorings = (vmId, osType, isExpand) => {
-
     // const isExpand = false;
-    const loading = false;
+    const loading = false
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    const vmCpuMetricData = _.find(osType == "linux" ? vmCpuData : vmWinCpuData, data => {
-      if (data.metric.pod === vmId) return data;
-    });
+    const vmCpuMetricData = _.find(
+      osType === 'linux' ? vmCpuData : vmWinCpuData,
+      data => {
+        if (data.metric.pod === vmId) return data
+      }
+    )
 
-    const vmMemoryMetricData = _.find(osType == "linux" ? vmMemoryData : vmWinMemoryData, data => {
-      if (data.metric.pod === vmId) return data;
-    });
+    const vmMemoryMetricData = _.find(
+      osType === 'linux' ? vmMemoryData : vmWinMemoryData,
+      data => {
+        if (data.metric.pod === vmId) return data
+      }
+    )
 
-    if (!!!vmCpuMetricData && !!!vmMemoryMetricData)
+    if (!vmCpuMetricData && !vmMemoryMetricData)
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
-    const vmCpuArray = [];
+    const vmCpuArray = []
     vmCpuArray.push(vmCpuMetricData)
 
-    const vmMemoryArray = [];
+    const vmMemoryArray = []
     vmMemoryArray.push(vmMemoryMetricData)
 
     const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray)
@@ -396,20 +421,22 @@ const DetailVmList = (props) => {
   }
 
   const handleSearch = value => {
-    setSearchValue(value);
+    setSearchValue(value)
     fnGetData({
       name: value,
     })
   }
 
   const handleRefresh = () => {
-    const params = searchValue ? { name: searchValue, page: currentPage } : { page: currentPage }
-    fnGetData(params);
+    const params = searchValue
+      ? { name: searchValue, page: currentPage }
+      : { page: currentPage }
+    fnGetData(params)
   }
 
   const handlePage = page => {
-    const params = page ? { page: page } : {}
-    fnGetData(params);
+    const params = page ? { page } : {}
+    fnGetData(params)
   }
 
   const renderHeader = () => {
@@ -430,11 +457,11 @@ const DetailVmList = (props) => {
 
   const renderFooter = () => {
     const pagination = getPagination()
-    const { total } = pagination
+    const { tot } = pagination
 
     return (
       <Level className={styles.footer}>
-        <LevelLeft>{t('TOTAL_ITEMS', { num: total })}</LevelLeft>
+        <LevelLeft>{t('TOTAL_ITEMS', { num: tot })}</LevelLeft>
         <LevelRight>
           <Pagination {...pagination} onChange={handlePage} />
         </LevelRight>
@@ -442,54 +469,68 @@ const DetailVmList = (props) => {
     )
   }
 
-  const getState = (state) => {
-    if (state === 'Provisioning'
-      || state === 'Starting'
-      || state === 'Stopping'
-      || state === 'Terminating'
-      || state === 'Migrating') {
-      return "waiting"
-    } else if (state === 'Running') {
-      return "running"
-    } else if (state === 'Stopped' || state === 'Paused') {
-      return "stopped"
-    } else if (state === 'Unknown') {
-      return "error"
-    } else {
-      return "error"
+  const getState = state => {
+    if (
+      state === 'Provisioning' ||
+      state === 'Starting' ||
+      state === 'Stopping' ||
+      state === 'Terminating' ||
+      state === 'Migrating'
+    ) {
+      return 'waiting'
     }
+    if (state === 'Running') {
+      return 'running'
+    }
+    if (state === 'Stopped' || state === 'Paused') {
+      return 'stopped'
+    }
+    if (state === 'Unknown') {
+      return 'error'
+    }
+    return 'error'
   }
 
   const handleOpenVnc = (vmId, project) => {
-    //실제 URL 로 변경 요망
-    var apiUrl = "http://" + location.hostname + ":30020";
-    var param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`;
-    param = param + vmId + "/vnc";
+    // 실제 URL 로 변경 요망
+    const apiUrl = `http://${location.hostname}:30020`
+    let param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`
+    param = `${param + vmId}/vnc`
 
-    var popupName = vmId.replaceAll("-", "");
-    window.open(apiUrl + '/vnc_lite.html?' + param, popupName, 'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840');
+    const popupName = vmId.replaceAll('-', '')
+    window.open(
+      `${apiUrl}/vnc_lite.html?${param}`,
+      popupName,
+      'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840'
+    )
   }
 
   return (
-    <>    
-        <Panel title={t('RESOURCES_VM')} className={classnames(styles.main)}>
-          {renderHeader()}
-          {vmDataList.length > 0 &&
-            renderContent()
-          }
-          {vmDataList.length == 0 &&
-            <div className={styles.wrapper}>
-              {isLoading ?
-                <div><Loading /></div>
-                : <div className={styles.empty}>{props.type}{props.type === t('RESOURCES_SECURITY_GROUP') ? t('RESOURCES_EUL') : t('RESOURCES_LEUL')} {t('RESOURCES_NO_USE_VM')}</div>
-              }
-            </div>
-           }
-          {renderFooter()}
-        </Panel>    
+    <>
+      <Panel title={t('RESOURCES_VM')} className={classnames(styles.main)}>
+        {renderHeader()}
+        {vmDataList.length > 0 && renderContent()}
+        {vmDataList.length === 0 && (
+          <div className={styles.wrapper}>
+            {isLoading ? (
+              <div>
+                <Loading />
+              </div>
+            ) : (
+              <div className={styles.empty}>
+                {props.type}
+                {props.type === t('RESOURCES_SECURITY_GROUP')
+                  ? t('RESOURCES_EUL')
+                  : t('RESOURCES_LEUL')}{' '}
+                {t('RESOURCES_NO_USE_VM')}
+              </div>
+            )}
+          </div>
+        )}
+        {renderFooter()}
+      </Panel>
     </>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(DetailVmList)
-

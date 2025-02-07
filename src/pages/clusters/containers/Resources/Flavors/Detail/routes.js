@@ -23,11 +23,11 @@ import Status from 'clusters/containers/Resources/Flavors/Detail/Status'
 const PATH = '/clusters/:cluster/flavors/:name'
 
 export default [
-    {
-        path: `${PATH}/status`,
-        title: t('RESOURCES_STATE'),
-        component: Status,
-        exact: true,
-    },
-    getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
+  {
+    path: `${PATH}/status`,
+    title: t('RESOURCES_STATE'),
+    component: Status,
+    exact: true,
+  },
+  getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
 ]

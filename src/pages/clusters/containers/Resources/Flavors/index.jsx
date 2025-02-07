@@ -16,18 +16,15 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
-import { toJS } from 'mobx';
+import React from 'react'
 
-import { Avatar, Status } from 'components/Base';
-import Banner from 'components/Cards/Banner';
-import withList, { ListPage } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
-import { getLocalTime } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
-import RoleStore from 'stores/role';
-import FlavorStore from 'stores/resources/flavors';
-import * as common from 'utils/resources';
+import { Avatar } from 'components/Base'
+import Banner from 'components/Cards/Banner'
+import withList, { ListPage } from 'components/HOCs/withList'
+import Table from 'components/Tables/List'
+import { getLocalTime } from 'utils'
+import FlavorStore from 'stores/resources/flavors'
+import * as common from 'utils/resources'
 
 @withList({
   store: new FlavorStore(),
@@ -37,11 +34,11 @@ import * as common from 'utils/resources';
 })
 export default class Flavors extends React.Component {
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     return [
       {
         key: 'delete',
@@ -56,11 +53,11 @@ export default class Flavors extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       actions: [
@@ -94,12 +91,12 @@ export default class Flavors extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    };
+    }
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('RESOURCES_NAME'),
@@ -146,13 +143,17 @@ export default class Flavors extends React.Component {
         isHideable: true,
         width: 'auto',
         render: gpus => {
-          let quantities = 0;
+          let quantities = 0
           if (gpus && gpus.length > 0) {
             gpus.forEach(gpu => {
-              quantities = quantities + Number(gpu.quantity)
-            });
+              quantities += Number(gpu.quantity)
+            })
           }
-          return <p>{quantities} {t('RESOURCES_COUNT')}</p>;
+          return (
+            <p>
+              {quantities} {t('RESOURCES_COUNT')}
+            </p>
+          )
         },
       },
       {
@@ -168,11 +169,11 @@ export default class Flavors extends React.Component {
           </p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') };
+    return { desc: t('RESOURCES_NO_DATA') }
   }
 
   get columnSearch() {
@@ -182,11 +183,11 @@ export default class Flavors extends React.Component {
         title: t('RESOURCES_NAME'),
         search: true,
       },
-    ];
+    ]
   }
 
   render() {
-    const { bannerProps, tableProps } = this.props;
+    const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
         <Banner
@@ -205,6 +206,6 @@ export default class Flavors extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-    );
+    )
   }
 }

@@ -1,35 +1,28 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx';
-import { get, isEmpty } from 'lodash';
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
-import FlavorStore from 'stores/resources/flavors';
-import DetailPage from 'clusters/containers/Base/Detail';
-import { Card } from 'components/Base';
-import { getLocalTime } from 'utils';
-import * as common from 'utils/resources';
-import routes from './routes';
+import React, { useEffect } from 'react'
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
+import FlavorStore from 'stores/resources/flavors'
+import DetailPage from 'clusters/containers/Base/Detail'
+import { getLocalTime } from 'utils'
+import * as common from 'utils/resources'
+import routes from './routes'
 
-const store = new FlavorStore();
+const store = new FlavorStore()
 
 const FlavorDetail = props => {
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params);
-  };
+    store.fetchDetail(props.match.params)
+  }
   const listUrl = () => {
-    const { workspace, cluster, namespace } = props.match.params;
-    return `/${workspace}/clusters/${cluster}/projects/${namespace}/flavors`;
-  };
-  const routing = props.rootStore.routing;
-
-  const showEdit = !globals.config.presetClusterRoles.includes(
-    props.match.params.name
-  );
+    const { workspace, cluster, namespace } = props.match.params
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/flavors`
+  }
 
   const getOperations = () => [
     {
@@ -43,13 +36,13 @@ const FlavorDetail = props => {
           readOnly: true,
         }),
     },
-  ];
+  ]
 
   const getAttrs = () => {
-    const detail = toJS(store.detail);
+    const detail = toJS(store.detail)
 
     if (isEmpty(detail)) {
-      return;
+      return
     }
 
     return [
@@ -106,11 +99,11 @@ const FlavorDetail = props => {
           'YYYY-MM-DD HH:mm:ss'
         ),
       },
-    ];
-  };
+    ]
+  }
 
   if (store.isLoading) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const sideProps = {
@@ -126,7 +119,7 @@ const FlavorDetail = props => {
         url: listUrl,
       },
     ],
-  };
+  }
 
   return (
     <>
@@ -136,7 +129,7 @@ const FlavorDetail = props => {
         {...sideProps}
       />
     </>
-  );
-};
+  )
+}
 
-export default inject('rootStore')(observer(FlavorDetail));
+export default inject('rootStore')(observer(FlavorDetail))
