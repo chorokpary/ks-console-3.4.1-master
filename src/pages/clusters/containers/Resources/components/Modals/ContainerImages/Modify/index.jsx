@@ -49,24 +49,18 @@ const ResourceImageModal = props => {
     { label: 'aarch64', value: 'aarch64' },
   ]
 
-  const bootTypeOptions = [
-    { label: 'BIOS', value: 'legacy' },
-    { label: 'UEFI', value: 'uefi' },
-  ]
-
   const osTypeOptions = [
     { label: 'Linux', value: 'linux', icon: 'ico-linux' },
     // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
   const distroTypeOptions = () => {
-    const opt = distroTypeList.map(obj => ({
+    return distroTypeList.map(obj => ({
       label: t(obj.name),
       description: t(obj.vendor),
       icon: `ico-os-${obj.name.split('-')[0]}`,
       value: t(obj.name),
     }))
-    return opt
   }
 
   const accelTypeOptions = () => {
@@ -190,13 +184,14 @@ const ResourceImageModal = props => {
                   </Column>
                   <Column>
                     <Form.Item
-                      label={t('RESOURCES_BOOT_TYPE')}
-                      rules={[{ required: true }]}
+                      label={t('RESOURCES_ACCELERATOR_TYPE')}
+                      rules={[{ required: false }]}
                     >
                       <Select
-                        name="boot_type"
-                        defaultValue={store.detail.image.boot_type}
-                        options={bootTypeOptions}
+                        name="accelerator_type"
+                        defaultValue={acceleratorType}
+                        options={accelTypeOptions()}
+                        onChange={e => setAcceleratorType(e)}
                       />
                     </Form.Item>
                   </Column>
@@ -213,19 +208,6 @@ const ResourceImageModal = props => {
                       maxLength={253}
                       style={{ maxWidth: 'none' }}
                       defaultValue={store.detail.image.kube_version}
-                    />
-                  </Form.Item>
-                </Column>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_ACCELERATOR_TYPE')}
-                    rules={[{ required: false }]}
-                  >
-                    <Select
-                      name="accelerator_type"
-                      defaultValue={acceleratorType}
-                      options={accelTypeOptions()}
-                      onChange={e => setAcceleratorType(e)}
                     />
                   </Form.Item>
                 </Column>

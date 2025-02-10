@@ -38,7 +38,7 @@ export default class Images extends React.Component {
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
-    this.isRefresh = false;
+    this.isRefresh = false
   }
 
   componentDidUpdate() {
@@ -56,13 +56,12 @@ export default class Images extends React.Component {
     const { page, limit } = toJS(this.props.store.list)
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit })
-    } 
+    }
   }
 
   get isRuning() {
     const { selectedRowKeys } = toJS(this.props.store.list)
-    const runingFlag = !(selectedRowKeys.length > 0)
-    return runingFlag
+    return !(selectedRowKeys.length > 0)
   }
 
   getData = params => {
@@ -74,11 +73,11 @@ export default class Images extends React.Component {
   }
 
   stopRefresh = () => {
-    this.isRefresh = true;
+    this.isRefresh = true
   }
 
   startRefresh = () => {
-    this.isRefresh = false;
+    this.isRefresh = false
   }
 
   // auto refresh end  ##################################
@@ -122,9 +121,9 @@ export default class Images extends React.Component {
               ...this.props.match.params,
               type: this.name,
               success: getData,
-              startRefresh: this.startRefresh
-            }),
-            this.stopRefresh();
+              startRefresh: this.startRefresh,
+            })
+            this.stopRefresh()
           },
         },
       ],
@@ -160,11 +159,6 @@ export default class Images extends React.Component {
         title: t('RESOURCES_CPU_TYPE'),
         search: true,
       },
-      {
-        dataIndex: 'boot_type',
-        title: t('RESOURCES_BOOT_TYPE'),
-        search: true,
-      },
     ]
   }
 
@@ -175,18 +169,6 @@ export default class Images extends React.Component {
     ]
 
     return CPU_TYPE.map(status => ({
-      text: status.text,
-      value: status.value,
-    }))
-  }
-
-  getBootType() {
-    const BOOT_TYPE = [
-      { text: 'BIOS', value: 'legacy' },
-      { text: 'UEFI', value: 'uefi' },
-    ]
-
-    return BOOT_TYPE.map(status => ({
       text: status.text,
       value: status.value,
     }))
@@ -216,19 +198,6 @@ export default class Images extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-      },
-      {
-        title: t('RESOURCES_BOOT_TYPE'),
-        dataIndex: 'boot_type',
-        filters: this.getBootType(),
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: boot_type => (
-          <p className="tall">
-            <span>{t(`RESOURCES_BOOT_TYPE_${boot_type.toUpperCase()}`)}</span>
-          </p>
-        ),
       },
       {
         title: t('RESOURCES_DISTRIBUTION'),

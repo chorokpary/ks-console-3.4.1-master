@@ -113,10 +113,6 @@ const ContainerImageDetail = props => {
         value: detail.image.arch_type,
       },
       {
-        name: t('RESOURCES_BOOT_TYPE'),
-        value: t(`RESOURCES_BOOT_TYPE_${detail.image.boot_type.toUpperCase()}`),
-      },
-      {
         name: t('RESOURCES_KUBERNETES_VERSION'),
         value: detail.image.kube_version,
       },

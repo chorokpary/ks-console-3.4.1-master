@@ -44,11 +44,6 @@ const archTypeOptions = [
   { label: 'aarch64', value: 'aarch64' },
 ]
 
-const bootTypeOptions = [
-  { label: 'BIOS', value: 'legacy' },
-  { label: 'UEFI', value: 'uefi' },
-]
-
 const ResourceImageModal = props => {
   const distroTypeStore = new ClusterDistroTypeStore()
   const gpuNodeStore = new GpuNodeStore()
@@ -262,10 +257,6 @@ const ResourceImageModal = props => {
         (!registryUrlActive || registryUrl === defaultRegistryUrl)
       ) {
         data.kube_version = tag.split('-')[0]
-        data.boot_type = 'legacy'
-        if (distroType === 'rocky-8') {
-          data.boot_type = 'uefi'
-        }
       }
       onOk({ image: data })
     })
@@ -315,7 +306,7 @@ const ResourceImageModal = props => {
   }
 
   const closeModal = () => {
-    props.startRefresh();
+    props.startRefresh()
     setModalView(false)
   }
 
@@ -1145,17 +1136,14 @@ const ResourceImageModal = props => {
                         </Column>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_BOOT_TYPE')}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
+                            label={t('RESOURCES_ACCELERATOR_TYPE')}
+                            rules={[{ required: false }]}
                           >
                             <Select
-                              name="boot_type"
-                              defaultValue="legacy"
-                              options={bootTypeOptions}
+                              name="accelerator_type"
+                              defaultValue={acceleratorType}
+                              options={accelTypeOptions()}
+                              onChange={e => setAcceleratorType(e)}
                             />
                           </Form.Item>
                         </Column>
@@ -1174,19 +1162,6 @@ const ResourceImageModal = props => {
                             maxLength={253}
                             style={{ maxWidth: 'none' }}
                             placeholder="v1.1.1"
-                          />
-                        </Form.Item>
-                      </Column>
-                      <Column>
-                        <Form.Item
-                          label={t('RESOURCES_ACCELERATOR_TYPE')}
-                          rules={[{ required: false }]}
-                        >
-                          <Select
-                            name="accelerator_type"
-                            defaultValue={acceleratorType}
-                            options={accelTypeOptions()}
-                            onChange={e => setAcceleratorType(e)}
                           />
                         </Form.Item>
                       </Column>
