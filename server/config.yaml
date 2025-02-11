@@ -579,6 +579,7 @@ client:
             - { name: flavors, title: RESOURCES_FLAVOR, showInDisable: true }
             - { name: keypairs, title: RESOURCES_KEYPAIR, showInDisable: true }
             - { name: images, title: RESOURCES_VM_IMAGE, showInDisable: true }
+            - { name: containerImages, title: RESOURCES_KAAS_IMAGE, showInDisable: true }
         - name: storage
           title: STORAGE
           icon: database

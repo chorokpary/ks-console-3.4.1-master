@@ -26,9 +26,9 @@ const DetailKaasListFlavor = props => {
 
   const kaasStore = new ContainerResourceStore()
 
-  const [vmDataList, setVmDataList] = useState([])
-  const [vmSliceDataList, setVmSliceDataList] = useState([])
-  const [vmSearchDataList, setVmSearchDataList] = useState([])
+  const [kaasDataList, setKaasDataList] = useState([])
+  const [kaasSliceDataList, setKaasSliceDataList] = useState([])
+  const [kaasSearchDataList, setKaasSearchDataList] = useState([])
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState()
@@ -60,7 +60,7 @@ const DetailKaasListFlavor = props => {
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
 
-    const vmList = await kaasStore.fetchList({ project: props.namespace })
+    const kaasList = await kaasStore.fetchList({ project: props.namespace })
     const machineList = await kaasStore.fetchMachinesAll({
       project: props.namespace,
     })
@@ -75,37 +75,37 @@ const DetailKaasListFlavor = props => {
     })
     setMachinesData(machineFilterData)
 
-    const vmFilterData = vmList?.filter(row => {
+    const kaasFilterData = kaasList?.filter(row => {
       return availableMachine.has(row.name)
     })
 
-    const vmSearchData =
+    const kaasSearchData =
       params.name !== '' && params.name !== undefined
-        ? getSearchData(vmFilterData, params.name)
+        ? getSearchData(kaasFilterData, params.name)
         : []
     const vmSliceData =
-      vmSearchData.length > 0
-        ? getSliceData(vmSearchData, page)
+      kaasSearchData.length > 0
+        ? getSliceData(kaasSearchData, page)
         : params.name !== '' && params.name !== undefined
-        ? getSliceData(vmSearchData, page)
-        : getSliceData(vmFilterData, page)
+        ? getSliceData(kaasSearchData, page)
+        : getSliceData(kaasFilterData, page)
 
     setCurrentPage(page)
-    setVmDataList(vmFilterData)
-    setVmSliceDataList(vmSliceData)
-    setVmSearchDataList(vmSearchData)
+    setKaasDataList(kaasFilterData)
+    setKaasSliceDataList(vmSliceData)
+    setKaasSearchDataList(kaasSearchData)
 
     setIsLoading(false)
   }
 
   const renderContent = () => {
-    if (vmSliceDataList.length === 0) {
+    if (kaasSliceDataList.length === 0) {
       return (
         <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
       )
     }
 
-    const content = vmSliceDataList.map((obj, index) => {
+    const content = kaasSliceDataList.map((obj, index) => {
       return (
         <div className={styles.wrapper} key={index}>
           <div
@@ -189,68 +189,127 @@ const DetailKaasListFlavor = props => {
     return (
       <div className={styles.itemExtra}>
         <div className={styles.containers}>
-          {machines.map((obj, idx) => (
-            <Fragment key={idx}>
-              {idx === 0 && !obj.name.includes('control-plane')
-                ? `Worker ${t('RESOURCES_NODE')}`
-                : idx === 0 && obj.name.includes('control-plane')
-                ? `Master ${t('RESOURCES_NODE')}`
-                : idx === 1 && machines[idx - 1].name.includes('control-plane')
-                ? `Worker ${t('RESOURCES_NODE')}`
-                : ''}
-              <div className={classnames(styles.item)}>
-                <div className={styles.icon}>
-                  <Icon name="nodes" size={40} />
-                  <Indicator
-                    className={styles.indicator}
-                    type={getState(obj?.ready_status, obj?.phase)}
-                    flicker
-                  />
+          {machines
+            .filter(machine => machine.controlplane)
+            .map((obj, idx) => (
+              <Fragment key={idx}>
+                {idx === 0 && `Master ${t('RESOURCES_NODE')}`}
+                <div className={classnames(styles.item)}>
+                  <div className={styles.icon}>
+                    <Icon name="nodes" size={40} />
+                    <Indicator
+                      className={styles.indicator}
+                      type={getState(obj?.ready_status, obj?.phase)}
+                      flicker
+                    />
+                  </div>
+                  <div className={classnames(styles.title, styles.name)}>
+                    <div>{obj.name}</div>
+                    <p>{t('RESOURCES_NAME')}</p>
+                  </div>
+                  <div className={styles.title}>
+                    <div>
+                      {t(`RESOURCES_MACHINE_${obj.phase.toUpperCase()}`)}
+                    </div>
+                    <p>{t('RESOURCES_DEPLOY_STEP')}</p>
+                  </div>
+                  <div className={styles.title}>
+                    <Text
+                      // key='CPU'
+                      // icon='cpu'
+                      title={obj.flavor}
+                      description={t('Flavor')}
+                    />
+                  </div>
+                  <div className={styles.title}>
+                    <Text
+                      // key='Memory'
+                      // icon='memory'
+                      title={
+                        obj.ready_status
+                          ? t('RESOURCES_CLUSTER_READY')
+                          : t('RESOURCES_CLUSTER_NOT_READY')
+                      }
+                      description={t('RESOURCES_STATE')}
+                    />
+                  </div>
+                  <div className={styles.title}>
+                    <Text
+                      // key='Disk'
+                      // icon='storage'
+                      title={obj.networks
+                        .filter(network => network.name !== 'k8s-pod-network')
+                        .map(o => `${o.ip} (${o.name})`)}
+                      description={`IP (${t('RESOURCES_NETWORK')})`}
+                    />
+                  </div>
                 </div>
-                <div className={classnames(styles.title, styles.name)}>
-                  <div>{obj.name}</div>
-                  <p>{t('RESOURCES_NAME')}</p>
+              </Fragment>
+            ))}
+          {machines
+            .filter(machine => !machine.controlplane)
+            .map((obj, idx) => (
+              <Fragment key={idx}>
+                {idx === 0 && `Worker ${t('RESOURCES_NODE')}`}
+                <div className={classnames(styles.item)}>
+                  <div className={styles.icon}>
+                    <Icon name="nodes" size={40} />
+                    <Indicator
+                      className={styles.indicator}
+                      type={getState(obj?.ready_status, obj?.phase)}
+                      flicker
+                    />
+                  </div>
+                  <div className={classnames(styles.title, styles.name)}>
+                    <div>{obj.name}</div>
+                    <p>{t('RESOURCES_NAME')}</p>
+                  </div>
+                  <div className={styles.title}>
+                    <div>{obj.phase}</div>
+                    <p>Phase</p>
+                  </div>
+                  <div className={styles.title}>
+                    <Text
+                      // key='CPU'
+                      // icon='cpu'
+                      title={obj.flavor}
+                      description={t('Flavor')}
+                    />
+                  </div>
+                  <div className={styles.title}>
+                    <Text
+                      // key='Memory'
+                      // icon='memory'
+                      title={
+                        obj.ready_status
+                          ? t('RESOURCES_CLUSTER_READY')
+                          : t('RESOURCES_CLUSTER_NOT_READY')
+                      }
+                      description={t('RESOURCES_STATE')}
+                    />
+                  </div>
+                  <div className={styles.title}>
+                    <Text
+                      // key='Disk'
+                      // icon='storage'
+                      title={obj.networks
+                        .filter(network => network.name !== 'k8s-pod-network')
+                        .map(o => `${o.ip} (${o.name})`)}
+                      description={`IP (${t('RESOURCES_NETWORK')})`}
+                    />
+                  </div>
                 </div>
-                <div className={styles.title}>
-                  <div>{obj.phase}</div>
-                  <p>Phase</p>
-                </div>
-                <div className={styles.title}>
-                  <Text
-                    // key='CPU'
-                    // icon='cpu'
-                    title={obj.flavor}
-                    description={t('Flavor')}
-                  />
-                </div>
-                <div className={styles.title}>
-                  <Text
-                    // key='Memory'
-                    // icon='memory'
-                    title={obj.ready_status ? 'Ready' : 'Not-ready'}
-                    description={t('RESOURCES_STATE')}
-                  />
-                </div>
-                <div className={styles.title}>
-                  <Text
-                    // key='Disk'
-                    // icon='storage'
-                    title={obj.networks
-                      .filter(network => network.name !== 'k8s-pod-network')
-                      .map(o => `${o.ip} (${o.name})`)}
-                    description={`IP (${t('RESOURCES_NETWORK')})`}
-                  />
-                </div>
-              </div>
-            </Fragment>
-          ))}
+              </Fragment>
+            ))}
         </div>
       </div>
     )
   }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? vmDataList.length : vmSearchDataList.length
+    const total = !isSearchFlag
+      ? kaasDataList.length
+      : kaasSearchDataList.length
     return { page: currentPage, limit: perPage, total }
   }
 
@@ -328,7 +387,7 @@ const DetailKaasListFlavor = props => {
 
   return (
     <>
-      {vmDataList.length > 0 && (
+      {kaasDataList.length > 0 && (
         <Panel
           title={t('RESOURCES_KAAS_RESOURCE')}
           className={classnames(styles.main)}
@@ -339,7 +398,7 @@ const DetailKaasListFlavor = props => {
         </Panel>
       )}
 
-      {vmDataList.length === 0 && (
+      {kaasDataList.length === 0 && (
         <Panel title={t('RESOURCES_KAAS_RESOURCE')}>
           <div className={styles.wrapper}>
             {isLoading ? (

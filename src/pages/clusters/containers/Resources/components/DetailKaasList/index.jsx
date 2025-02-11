@@ -146,6 +146,10 @@ const DetailKaasList = props => {
             <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
+            <div>{obj.project}</div>
+            <p>{t('RESOURCES_PROJECT')}</p>
+          </div>
+          <div className={styles.text}>
             <div>{t(`RESOURCES_CLUSTER_${obj.phase.toUpperCase()}`)}</div>
             <p>{t('RESOURCES_DEPLOY_STEP')}</p>
           </div>

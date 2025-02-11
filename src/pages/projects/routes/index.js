@@ -58,6 +58,7 @@ import Keypairs from '../containers/Resources/Keypairs'
 import Flavors from '../containers/Resources/Flavors'
 import HostDevices from '../containers/Resources/HostDevices'
 import Images from '../containers/Resources/Images'
+import ContainerImage from '../containers/Resources/ContainerImages'
 import Routers from '../containers/Resources/Routers'
 import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
@@ -167,6 +168,11 @@ export default [
       {
         path: `${PATH}/vms`,
         component: Vms,
+        exact: true,
+      },
+      {
+        path: `${PATH}/containerimages`,
+        component: ContainerImage,
         exact: true,
       },
       {

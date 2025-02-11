@@ -41,6 +41,7 @@ import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 import KeypairDetail from '../containers/Resources/Keypairs/Detail'
 import FlavorDetail from '../containers/Resources/Flavors/Detail'
 import ImageDetail from '../containers/Resources/Images/Detail'
+import ContainerImageDetail from '../containers/Resources/ContainerImages/Detail'
 import RouterDetail from '../containers/Resources/Routers/Detail'
 import SecurityGroupDetail from '../containers/Resources/SecurityGroups/Detail'
 import NetworkDetail from '../containers/Resources/Networks/Detail'
@@ -150,6 +151,10 @@ export default PATH => [
   {
     path: `${PATH}/images/:name`,
     component: ImageDetail,
+  },
+  {
+    path: `${PATH}/containerimages/:name`,
+    component: ContainerImageDetail,
   },
   {
     path: `${PATH}/securityGroups/:name/:id`,
