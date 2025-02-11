@@ -372,7 +372,7 @@ class ResourceUsage extends React.Component {
         >
 
             <RadioButton value="computing">
-              {t('컴퓨팅 리소스')}
+              {t('RESOURCES_COMPUTING_RESOURCE')}
             </RadioButton>
       
 

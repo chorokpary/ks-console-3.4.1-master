@@ -665,6 +665,7 @@ module.exports = {
   RESOURCES_COMPUTING_NETWORK_TRAFFIC: 'Computing Network Traffic',
   RESOURCES_COMPUTING_NETWORK_CURRENT_SITUATION:
     'Computing Network Current Situation',
+  RESOURCES_COMPUTING_RESOURCE: 'Computing Resource',
   RESOURCES_COMPUTING_RESOURCE_USAGE: 'Computing Resource Usage',
   RESOURCES_SETTINGS: 'Computing Settings',
   RESOURCES_WORKLOAD: 'Computing Workload',
