@@ -526,9 +526,7 @@ const DetailVmList = props => {
                 ) : (
                   <div className={styles.empty}>
                     {props.type}
-                    {props.type === t('RESOURCES_SECURITY_GROUP')
-                      ? t('RESOURCES_EUL')
-                      : t('RESOURCES_LEUL')}{' '}
+                    {t('RESOURCES_SG_PL')}{' '}
                     {t('RESOURCES_NO_USE_VM')}
                   </div>
                 )}

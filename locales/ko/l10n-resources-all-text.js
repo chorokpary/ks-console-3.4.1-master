@@ -20,6 +20,7 @@ module.exports = {
   RESOURCES_COUNT: '개',
   RESOURCES_EUL: '을',
   RESOURCES_LEUL: '를',
+  RESOURCES_SG_PL: '을(를)',
   RESOURCES_ONE_TO_AVERAGE: '1대 평균',
   RESOURCES_WEEKEND: '1주일',
   RESOURCES_ADD_UNTIL_FIVE: '5개까지 추가 가능합니다.',
