@@ -168,16 +168,16 @@ const Information = (props) => {
 
                 { // Mediated 디바이스
                   detailFlavor?.devices.length > 0 &&
-                  detailFlavor?.devices.map((gpu) => {
+                  detailFlavor?.devices.map((device) => {
                     const is_gpu = fnGetMediatedDeviceIsGpu(device.name);
                     return (
                       <li>
                         <div className="tree_box">
-                          <div className="title_icon"><i className={is_gpu ? "ico-type40-mediatedvgpu" : "ico-type40-mediateddevice"}></i></div>
+                          <div className="title_icon"><i className={is_gpu ? "ico-type40-mediatedvgpu" : "ico-type40-hostdevice"}></i></div>
                           <div className="cont_box1">
-                            <h5><span className="bg_01">{is_gpu ? t('RESOURCES_GPU_DEVICES') : t('RESOURCES_MEDIATED_DEVICE')}</span>{gpu.name}</h5>
+                            <h5><span className="bg_01">{is_gpu ? t('RESOURCES_GPU_DEVICES') : t('RESOURCES_HOST_DEVICE')}</span>{device.name}</h5>
                             <div className="group">
-                              <div className="info"><span>{(gpu.name).split("/")[1]}</span></div>
+                              <div className="info"><span>{(device.name).split("/")[1]}</span></div>
                             </div>
                           </div>
                         </div>
