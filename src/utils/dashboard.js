@@ -43,25 +43,6 @@ export const fnSetPods = (list, data) => {
     return data;
 }
 
-export const fnSetVms = (list, data) => {
-    list.map((obj) => {
-        if (obj.state === 'Provisioning'
-            || obj.state === 'Starting'
-            || obj.state === 'Stopping'
-            || obj.state === 'Terminating'
-            || obj.state === 'Migrating') {
-            data.waiting += 1
-        } else if (obj.state === 'Running') {
-            data.running += 1
-        } else if (obj.state === 'Stopped' || obj.state === 'Paused') {
-            data.stopped += 1
-        } else if (obj.state === 'Unknown') {
-            data.error += 1
-        }
-    })
-    data.total = list.length
-    return data;
-}
 export const fnSetK8s = (list, data) => {
     list.map((obj) => {
         if (!obj.cluster_ready) {

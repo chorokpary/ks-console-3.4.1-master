@@ -922,6 +922,17 @@ export default class VmStore extends Base {
   }
 
   @action
+  async fetchVmStats(params) {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/vms/stats`
+    )
+
+    return result.stat
+  }
+
+  @action
   async fetchVmsDetail({ cluster, workspace, namespace, ...params } = {}) {
     this.isLoading = true
 

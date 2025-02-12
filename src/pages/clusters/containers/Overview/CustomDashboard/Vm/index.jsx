@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import VmStore from 'stores/resources/vms'
 import VmModel from 'stores/dashboard/vms';
-import { fnSetVms } from 'utils/dashboard'
 import cleanupTrigger from '../cleanupTrigger';
 
 const Vm = ({ x, y, w, h, ...props }) => {
@@ -10,19 +9,16 @@ const Vm = ({ x, y, w, h, ...props }) => {
   const vmStore = new VmStore();
 
   const fetchData = async () => {
-    return await vmStore.vmList({ ...props })
+    return await vmStore.fetchVmStats({ ...props })
   }
-  const [list, error, loading] = cleanupTrigger(fetchData, [])
+  const [stat, error, loading] = cleanupTrigger(fetchData, [])
 
   const vms = new VmModel({ ...props });
   const [data, setData] = useState(vms);
 
   useEffect(() => {
-    if (list.length > 0) {
-      const data = fnSetVms(list, vms)
-      setData(data)
-    }
-  }, [list])
+    setData(stat)
+  }, [stat])
 
   return (
     <>
