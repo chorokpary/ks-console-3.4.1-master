@@ -388,7 +388,7 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
   }
 
   const closeModal = () => {
-    startRefresh();
+    startRefresh()
     setModalView(false)
   }
 
@@ -537,11 +537,14 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
         return item.name === `${preInstallApp.toLowerCase()}_${arch}`
       }
       if (accel !== 'None' && preInstallApp === 'None') {
-        return item.name === `${accel.toLowerCase()}_${arch}`
+        return (
+          item.name.includes(accel.toLowerCase()) && item.name.includes(arch)
+        )
       }
       return (
-        item.name ===
-        `${accel.toLowerCase()}_${preInstallApp.toLowerCase()}_${arch}`
+        item.name.includes(accel.toLowerCase()) &&
+        item.name.includes(preInstallApp.toLowerCase()) &&
+        item.name.includes(arch)
       )
     })
     if (filteredTag.length > 0) {
