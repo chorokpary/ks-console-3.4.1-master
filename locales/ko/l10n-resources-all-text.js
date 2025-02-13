@@ -66,7 +66,7 @@ module.exports = {
 
   RESOURCES_GPU_NODE: 'GPU 노드',
   RESOURCES_GPU_NODE_DESC:
-    'GPU 노드는 Petasus Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
+    'GPU 노드는 Petasus AI Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
   RESOURCES_MACHINE: '머신 모델명',
   RESOURCES_GPU_FAMILY: 'GPU 아키텍처',
   RESOURCES_GPU_MODEL: 'GPU 모델명',
@@ -738,7 +738,7 @@ module.exports = {
   RESOURCES_SET_DEFAULT_LICENSE: '기본 라이선스로 설정',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: '라이선스 키를 입력해주세요.',
   RESOURCES_LICENSE_DEFAULT_USE: '기본 라이선스로 사용',
-  RESOURCES_LICENSE_DESC: 'Petasus Cloud 라이선스 상태를 확인하고 관리할 수 있는 인터페이스를 제공합니다.',
+  RESOURCES_LICENSE_DESC: 'Petasus AI Cloud 라이선스 상태를 확인하고 관리할 수 있는 인터페이스를 제공합니다.',
   RESOURCES_LICENSE_STATUS: '라이선스 상태',
   RESOURCES_IMPORT_LICENSE: '라이선스 등록',
   RESOURCES_LICENSE_STATUS_FINGERPRINT: '지문 유효성',
@@ -924,7 +924,7 @@ module.exports = {
     '베어메탈 모니터링은 ARM 과 x86의 전력 사용량, CO2 발생량, 전력 사용료, 필요 소나무 모니터링 데이터를 볼 수 있습니다',
   RESOURCES_CLUSTER_FAULT_TITLE: '클러스터 문제 진단',
   RESOURCES_CLUSTER_FAULT_DETAIL:
-    '생성형 AI를 기반으로 Petasus Cloud 클러스터의 다양한 운용 이슈들을 자동으로 탐지하고 이를 해결하기 위한 솔루션을 제시합니다.',
+    '생성형 AI를 기반으로 Petasus AI Cloud 클러스터의 다양한 운용 이슈들을 자동으로 탐지하고 이를 해결하기 위한 솔루션을 제시합니다.',
   RESOURCES_CLUSTER_FAULT_SET: '설정',
   RESOURCES_CLUSTER_FAULT_DESC: '문제 진단 Provider를 설정합니다.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: '네임스페이스',

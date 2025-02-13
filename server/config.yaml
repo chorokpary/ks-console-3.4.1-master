@@ -64,8 +64,8 @@ server:
   dockerHubUrl: https://hub.docker.com
 
 client:
-  title: Petasus Cloud
-  description: 'SK Telecom Cloud Platform'
+  title: Petasus AI Cloud
+  description: 'SK Telecom AI Cloud Platform'
   encryptKey: kubesphere
 
   version:

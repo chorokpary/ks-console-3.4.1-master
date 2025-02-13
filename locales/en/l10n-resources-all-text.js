@@ -69,7 +69,7 @@ module.exports = {
 
   RESOURCES_GPU_NODE: 'GPU Node',
   RESOURCES_GPU_NODE_DESC:
-    'GPU nodes are a set of GPU-equipped servers among Petasus Cloud cluster nodes. You can check and manage GPU node status on this page.',
+    'GPU nodes are a set of GPU-equipped servers among Petasus AI Cloud cluster nodes. You can check and manage GPU node status on this page.',
   RESOURCES_MACHINE: 'Machine model name',
   RESOURCES_GPU_FAMILY: 'GPU architecture',
   RESOURCES_GPU_MODEL: 'GPU model name',
@@ -745,7 +745,7 @@ module.exports = {
   RESOURCES_CLUSTER_KEY: 'Cluster Key',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: 'Please enter the license key.',
   RESOURCES_LICENSE_DEFAULT_USE: 'Use as the default license',
-  RESOURCES_LICENSE_DESC: 'Provides an interface to check and manage the license status of Petasus Cloud.',
+  RESOURCES_LICENSE_DESC: 'Provides an interface to check and manage the license status of Petasus AI Cloud.',
   RESOURCES_LICENSE_STATUS: 'License Status',
   RESOURCES_IMPORT_LICENSE: 'Import License',
   RESOURCES_LICENSE_STATUS_FINGERPRINT: 'Fingerprint Validity',
@@ -931,7 +931,7 @@ module.exports = {
     'Baremetal monitoring allows viewing power usage, CO2 emissions, electricity charges, and necessary pine tree monitoring data for ARM and x86.',
   RESOURCES_CLUSTER_FAULT_TITLE: 'Cluster Fault Diagnosis',
   RESOURCES_CLUSTER_FAULT_DETAIL:
-    'Automatically diagnose various issues of Petasus Cloud cluster based on generative AI and provide solutions to resolve them.',
+    'Automatically diagnose various issues of Petasus AI Cloud cluster based on generative AI and provide solutions to resolve them.',
   RESOURCES_CLUSTER_FAULT_SET: 'Set',
   RESOURCES_CLUSTER_FAULT_DESC: 'Set the problem diagnosis provider.',
   RESOURCES_CLUSTER_FAULT_NAMESPACE: 'Namespace',
