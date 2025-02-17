@@ -282,8 +282,9 @@ const RegistModal = props => {
   }
 
   const segmentIdValidator = (rule, value, callback) => {
-    // Check if the value is number string and between 2 and 4094
-    if (!/^\d+$/.test(value) || parseInt(value) < 2 || parseInt(value) > 4094) {
+    const { data } = form.current.props;
+    // Check if the vlan value is number string and between 2 and 4094
+    if (data.type == 'vlan' && (!/^\d+$/.test(value) || parseInt(value) < 2 || parseInt(value) > 4094)) {
       return callback({ message: t('RESOURCES_SEGMENT_ID_VALID_VLAN') });
     }
     callback();
