@@ -94,7 +94,7 @@ const ModifyModal = ({ title, onOk, store, ...props }) => {
                         <strong>{t('RESOURCES_GPU_MIG_CONFIG')}</strong>
                       </th>
                       <th>
-                        <strong>{t('RESOURCES_GPU_DEVICES')}</strong>
+                        <strong>{t('RESOURCES_GPU_DEVICE')}</strong>
                       </th>
                       <th>
                         <strong>{t('RESOURCES_GPU_MIG_USE_FLAG')}</strong>

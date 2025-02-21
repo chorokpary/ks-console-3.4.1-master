@@ -95,7 +95,7 @@ const DetailGpuDeviceList = (props) => {
 
     return (
         <>
-            <Panel title={t('RESOURCES_GPU_DEVICES')} >
+            <Panel title={t('RESOURCES_GPU_DEVICE')} >
                 <div className={styles.wrapper}>
                     {(props.gpuDeviceData).map((obj, index) => {
                         return (

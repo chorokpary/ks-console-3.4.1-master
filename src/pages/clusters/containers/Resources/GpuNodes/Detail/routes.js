@@ -33,7 +33,7 @@ export default [
     },
     {
         path: `${PATH}/gpu-devices`,
-        title: t('RESOURCES_GPU_DEVICES'),
+        title: t('RESOURCES_GPU_DEVICE'),
         component: GpuDevice,
         exact: true,
     },
