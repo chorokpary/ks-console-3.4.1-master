@@ -37,6 +37,7 @@ export default class LicenseStore extends Base {
   getDefaultUrl = (params = {}) => `${this.getListUrl(params)}`;
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`;
   getFingerprintUrl = (params = {}) => `${this.getListUrl(params)}/fingerprint/show`;
+  getDefaultValidationUrl = `kapis/edgestack.kubesphere.io/v1alpha1/edgetron/licenses/default_license/validate`
 
   @action
   async fetchList({
@@ -116,6 +117,20 @@ export default class LicenseStore extends Base {
     this.detail = detail;
     this.isLoading = false;
     return detail;
+  }
+
+  @action
+  async defaultValidation() {
+    this.isLoading = true;
+
+    const result = await request.get(
+      `${this.getDefaultValidationUrl}`
+    );
+    const validation = { ...this.mapper(result), kind: 'Validation' };
+
+    this.validation = validation;
+    this.isLoading = false;
+    return validation;
   }
 
   @action

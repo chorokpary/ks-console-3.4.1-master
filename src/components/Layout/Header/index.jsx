@@ -22,12 +22,26 @@ import classnames from 'classnames'
 import { Link } from 'react-router-dom'
 import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
 import { isAppsPage, getCustomizedWebsiteUrl } from 'utils'
+import LicenseStore from 'stores/resources/licenses'
 
 import LoginInfo from '../LoginInfo'
 
 import styles from './index.scss'
 
 class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.licenseStore = new LicenseStore();
+    this.state = {
+      licenseStatus: null,
+      isLoading: true,
+    };
+  }
+
+  componentDidMount() {
+    this.fetchValidation();
+  }
+
   static propTypes = {
     className: PropTypes.string,
     innerRef: PropTypes.object,
@@ -36,6 +50,16 @@ class Header extends React.Component {
 
   get isLoggedIn() {
     return Boolean(globals.user)
+  }
+
+  async fetchValidation() {
+    try {
+      const result = await this.licenseStore.defaultValidation();
+      this.setState({ licenseStatus: result, isLoading: false });
+    } catch (error) {
+      console.error('License validation result fetching failed:', error);
+      this.setState({ isLoading: false });
+    }
   }
 
   handleLinkClick = link => () => {
@@ -63,68 +87,78 @@ class Header extends React.Component {
   render() {
     const { className, innerRef, location } = this.props
     const logo = globals.config.logo || '/assets/logo.svg'
+    const { licenseStatus } = this.state;
 
     return (
-      <div
-        ref={innerRef}
-        className={classnames(
-          styles.header,
-          {
-            [styles.inAppsPage]: isAppsPage(),
-          },
-          className
-        )}
-      >
-        <Link to={isAppsPage() && !globals.user ? '/apps' : '/'}>
-          <img
-            className={styles.logo}
-            src={isAppsPage() ? `/assets/logo.svg` : logo}
-            alt=""
-          />
-        </Link>
-        <div className="header-bottom" />
-        {this.isLoggedIn && (
-          <div className={styles.navs}>
-            {globals.app.enableGlobalNav && (
-              <Button
-                type="flat"
-                icon="cogwheel"
-                onClick={this.props.onToggleNav}
-              >
-                {t('PLATFORM')}
-              </Button>
-            )}
-            {globals.app.enableAppStore && (
-              <Button
-                type="flat"
-                icon="appcenter"
-                onClick={this.handleLinkClick('/apps')}
-                className={classnames({
-                  [styles.active]: location.pathname === '/apps',
-                })}
-              >
-                {t('APP_STORE')}
-              </Button>
-            )}
-            <Button
-              type="flat"
-              icon="dashboard"
-              onClick={this.handleLinkClick('/')}
-              className={classnames({
-                [styles.active]: location.pathname === '/',
-              })}
-            >
-              {t('WORKBENCH')}
-            </Button>
+      <div>
+        {licenseStatus && licenseStatus.validate_result === false && 
+          this.state.isLoading === false && (
+          <div className="header-license">
+            {t(`RESOURCES_MMS_ERROR_DESC_${licenseStatus.validate_code}`)}
           </div>
         )}
-        <div className={styles.right}>
-          {this.isLoggedIn && (
-            <Dropdown content={this.renderDocumentList()}>
-              <Button type="flat" icon="documentation" />
-            </Dropdown>
+        <div
+          ref={innerRef}
+          className={classnames(
+            styles.header,
+            {
+              [styles.inAppsPage]: isAppsPage(),
+              [styles.hasNotification]: licenseStatus && licenseStatus.validate_result === false && this.state.isLoading === false,
+            },
+            className
           )}
-          <LoginInfo className={styles.loginInfo} isAppsPage={isAppsPage()} />
+        >
+          <Link to={isAppsPage() && !globals.user ? '/apps' : '/'}>
+            <img
+              className={styles.logo}
+              src={isAppsPage() ? `/assets/logo.svg` : logo}
+              alt=""
+            />
+          </Link>
+          <div className="header-bottom" />
+          {this.isLoggedIn && (
+            <div className={styles.navs}>
+              {globals.app.enableGlobalNav && (
+                <Button
+                  type="flat"
+                  icon="cogwheel"
+                  onClick={this.props.onToggleNav}
+                >
+                  {t('PLATFORM')}
+                </Button>
+              )}
+              {globals.app.enableAppStore && (
+                <Button
+                  type="flat"
+                  icon="appcenter"
+                  onClick={this.handleLinkClick('/apps')}
+                  className={classnames({
+                    [styles.active]: location.pathname === '/apps',
+                  })}
+                >
+                  {t('APP_STORE')}
+                </Button>
+              )}
+              <Button
+                type="flat"
+                icon="dashboard"
+                onClick={this.handleLinkClick('/')}
+                className={classnames({
+                  [styles.active]: location.pathname === '/',
+                })}
+              >
+                {t('WORKBENCH')}
+              </Button>
+            </div>
+          )}
+          <div className={styles.right}>
+            {this.isLoggedIn && (
+              <Dropdown content={this.renderDocumentList()}>
+                <Button type="flat" icon="documentation" />
+              </Dropdown>
+            )}
+            <LoginInfo className={styles.loginInfo} isAppsPage={isAppsPage()} />
+          </div>
         </div>
       </div>
     )
