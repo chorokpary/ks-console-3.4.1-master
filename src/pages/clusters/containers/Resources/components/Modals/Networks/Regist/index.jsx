@@ -78,6 +78,7 @@ const RegistModal = props => {
     const getNodeData = async () => {
       const listNode = await networkStore.fetchNodes(props);
       let sttSupported = true;
+      let tunnelSupported = true;
       for (const node of listNode.nodes) {
         if (node?.info?.kernelVersion) {
           const kernelVersionMajor = parseInt(node.info.kernelVersion.split('.')[0]);
@@ -94,6 +95,13 @@ const RegistModal = props => {
         }
       }
 
+      for (const node of listNode.nodes) {
+        if (node?.node_role == 'master' && !node?.data_ip) {
+          tunnelSupported = false;
+          break;
+        }
+      }
+
       let networkTypeOptions = [];
       if (!props.namespace) {
         networkTypeOptions = networkTypeOptions.concat([
@@ -101,13 +109,15 @@ const RegistModal = props => {
           { label: 'VLAN', value: 'VLAN' },
         ]);
       }
-      networkTypeOptions = networkTypeOptions.concat([
-        { label: 'VXLAN', value: 'VXLAN' },
-        { label: 'GENEVE', value: 'GENEVE' },
-        { label: 'GRE', value: 'GRE' },
-      ]);
-      if (sttSupported) {
-        networkTypeOptions.push({ label: 'STT', value: 'STT' });
+      if (tunnelSupported) {
+        networkTypeOptions = networkTypeOptions.concat([
+          { label: 'VXLAN', value: 'VXLAN' },
+          { label: 'GENEVE', value: 'GENEVE' },
+          { label: 'GRE', value: 'GRE' },
+        ]);
+        if (sttSupported) {
+          networkTypeOptions.push({ label: 'STT', value: 'STT' });
+        }
       }
       setNetworkTypeOptions(networkTypeOptions);
     }
@@ -650,7 +660,7 @@ const RegistModal = props => {
                       >
                         <Select
                           name="type"
-                          defaultValue="VXLAN"
+                          defaultValue="FLAT"
                           options={networkTypeOptions}
                           onChange={e => handleNetworkType(e)}
                         />
