@@ -886,6 +886,10 @@ td > div[class$=-index__avatar] {
   background-color: transparent !important;
 }
 
+[class*=-Modify-index__check] {
+  background-color: transparent !important;
+}
+
 .src-components-Base-Steps-index__steps > ul > li.src-components-Base-Steps-index__finished .src-components-Base-Steps-index__icon:after {
   border-color: #55bc8a !important;
   background-color: #55bc8a !important;
