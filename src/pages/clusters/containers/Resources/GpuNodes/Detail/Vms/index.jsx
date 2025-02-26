@@ -26,7 +26,7 @@ const Vms = (props) => {
 
   const renderVms = () => {
     return (
-      <DetailVmList type={t('RESOURCES_NODE')} variables='gpu_node' gpu={store.detail.gpunode.resource_name} node={store.detail.gpunode.name} />
+      <DetailVmList type={t('RESOURCES_NODE')} variables='node' name={store.detail.gpunode.name} />
     )
   };
 
