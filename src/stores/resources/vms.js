@@ -948,6 +948,7 @@ export default class VmStore extends Base {
       mediated_device: 'mediated_device',
       volume: 'volume',
       node: 'node',
+      project: 'project',
       id: 'id',
     }
 
