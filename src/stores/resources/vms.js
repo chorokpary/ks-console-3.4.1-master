@@ -42,6 +42,7 @@ export default class VmStore extends Base {
     cluster,
     workspace,
     namespace,
+    infinite,
     more,
     devops,
     silent,
