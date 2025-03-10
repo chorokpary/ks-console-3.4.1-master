@@ -41,6 +41,7 @@ export default class VolumeStore extends Base {
     cluster,
     workspace,
     namespace,
+    infinite,
     more,
     devops,
     silent,
@@ -52,6 +53,10 @@ export default class VolumeStore extends Base {
 
     if (!params.sortBy && params.ascending === undefined) {
       params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
+    }
+
+    if (infinite) {
+      params.limit = -1
     }
 
     if (params.limit === Infinity || params.limit === -1) {

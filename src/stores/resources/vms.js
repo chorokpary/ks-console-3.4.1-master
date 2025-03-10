@@ -55,6 +55,10 @@ export default class VmStore extends Base {
       params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'creation_timestamp'
     }
 
+    if (infinite) {
+      params.limit = -1
+    }
+
     if (params.limit === Infinity || params.limit === -1) {
       params.limit = -1
       params.page = 1

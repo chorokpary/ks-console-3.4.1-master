@@ -66,6 +66,7 @@ const VolumeModal = props => {
       const volumeData = await volumeStore.fetchList({
         cluster: props.cluster,
         namespace: props.namespace,
+        infinite: true,
       });
 
       // 볼륨 리스트 중 해당 가상머신과 연결이 되어 있건, 아무것도 연결이 안되어 있는 볼륨 리스트.
