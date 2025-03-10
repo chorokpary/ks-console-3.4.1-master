@@ -349,7 +349,7 @@ const RegistModal = props => {
   };
 
   const getMarks = max => {
-    const count = 5;
+    const count = 9;
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1);
       const mark = value === 0 ? '0' : `${Math.floor(value)}GiB`;
@@ -684,9 +684,9 @@ const RegistModal = props => {
                   ]}
                 >
                   <UnitSlider
-                    max={320}
+                    max={2048}
                     min={0}
-                    marks={getMarks(320)}
+                    marks={getMarks(2048)}
                     defaultValue={volumeCapacity}
                     unit={'GiB'}
                     withInput
