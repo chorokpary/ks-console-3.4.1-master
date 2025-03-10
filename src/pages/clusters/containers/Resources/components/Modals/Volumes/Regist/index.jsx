@@ -87,6 +87,11 @@ const RegistModal = props => {
     getImageStore();
   }, []);
 
+  const handleImportSource = (e) => {
+    setImportSource(e)
+    setImageInfoActive(false)
+  }
+
   const handleImageInfoActive = () => {
     if (imageInfoActive) {
       setImageInfoActive(false);
@@ -522,9 +527,7 @@ const RegistModal = props => {
                     name="import_source"
                     defaultValue={importSource}
                     options={importSourceOptions}
-                    onChange={e => {
-                      setImportSource(e);
-                    }}
+                    onChange={e => handleImportSource(e)}
                   />
                 </Form.Item>
                 {importSource === 'ImageVolume' && (
