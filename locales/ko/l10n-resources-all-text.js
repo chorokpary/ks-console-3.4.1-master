@@ -824,6 +824,7 @@ module.exports = {
   RESOURCES_POWER_LOG: '전원 이력',
   RESOURCES_CLONE_LOG: '클론 이력',
   RESOURCES_NO_DATA_EVENT_LOG: '이벤트 이력이 없습니다.',
+  RESOURCES_NO_POWER_LOG: '전원 이력이 없습니다.',
   RESOURCES_LOAD_BALANCER_NAME: '로드 밸런서 이름',
   RESOURCES_REASON: '사유',
   RESOURCES_DAY: '일',

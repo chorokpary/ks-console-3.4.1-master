@@ -830,6 +830,7 @@ module.exports = {
   RESOURCES_POWER_LOG: 'Power Log',
   RESOURCES_CLONE_LOG: 'Clone Log',
   RESOURCES_NO_DATA_EVENT_LOG: 'No event history available.',
+  RESOURCES_NO_POWER_LOG: 'No power log available.',
   RESOURCES_LOAD_BALANCER_NAME: 'Load Balancer Name',
   RESOURCES_REASON: 'Reason',
   RESOURCES_DAY: 'Days',

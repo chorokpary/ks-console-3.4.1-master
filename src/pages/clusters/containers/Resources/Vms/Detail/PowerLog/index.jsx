@@ -66,7 +66,7 @@ const PowerLog = props => {
               </div>
             ) : (
               <div className={styles.empty}>
-                {t('RESOURCES_NO_DATA_EVENT_LOG')}
+                {t('RESOURCES_NO_POWER_LOG')}
               </div>
             )}
           </div>
