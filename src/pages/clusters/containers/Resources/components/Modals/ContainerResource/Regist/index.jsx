@@ -74,7 +74,7 @@ const RegistModal = props => {
   const [isFirst, setIsFirst] = useState(true)
 
   const [osType] = useState('linux')
-  const [osDistro, setOsDistro] = useState('ubuntu-2004')
+  const [osDistro, setOsDistro] = useState('ubuntu-2404')
 
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
@@ -212,7 +212,7 @@ const RegistModal = props => {
   }, [cnis])
 
   const osDistroOptions = [
-    { label: 'Ubuntu 2004', value: 'ubuntu-2004', icon: 'ico-os-ubuntu' },
+    { label: 'Ubuntu 2404', value: 'ubuntu-2404', icon: 'ico-os-ubuntu' },
     { label: 'RockyLinux 8', value: 'rocky-8', icon: 'ico-os-rocky' },
     { label: 'AlmaLinux 8', value: 'almalinux-8', icon: 'ico-os-almalinux' },
   ]

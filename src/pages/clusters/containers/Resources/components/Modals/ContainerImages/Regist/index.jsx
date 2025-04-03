@@ -79,7 +79,7 @@ const ResourceImageModal = props => {
   const [regStep, setRegStep] = useState(1)
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
-  const [distroType, setDistroType] = useState('ubuntu-2004')
+  const [distroType, setDistroType] = useState('ubuntu-2404')
   const [distroTypeList, setDistroTypeList] = useState([])
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])

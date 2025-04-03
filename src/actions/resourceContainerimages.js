@@ -28,7 +28,16 @@ import DeleteModal from 'components/Modals/Delete'
 
 export default {
   'containerimage.regist': {
-    on({ store, cluster, workspace, namespace, success, startRefresh, devops, ...props }) {
+    on({
+      store,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      startRefresh,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
@@ -43,7 +52,9 @@ export default {
               startRefresh()
             })
         },
-        startRefresh: () => { startRefresh(); },
+        startRefresh: () => {
+          startRefresh()
+        },
         title: t('RESOURCES_CREATE_KAAS_IMAGE'),
         modal: RegistModal,
         store,
