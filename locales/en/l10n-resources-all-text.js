@@ -71,6 +71,7 @@ module.exports = {
   RESOURCES_GPU_NODE_DESC:
     'GPU nodes are a set of GPU-equipped servers among Petasus AI Cloud cluster nodes. You can check and manage GPU node status on this page.',
   RESOURCES_MACHINE: 'Machine model name',
+  RESOURCES_GPU_VENDOR: 'GPU Vendor',
   RESOURCES_GPU_FAMILY: 'GPU architecture',
   RESOURCES_GPU_MODEL: 'GPU model name',
   RESOURCES_GPU_RAM: 'GPU Memory',

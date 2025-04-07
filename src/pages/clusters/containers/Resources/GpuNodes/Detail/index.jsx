@@ -139,6 +139,10 @@ const GpuNodeDetail = props => {
                 value: info.architecture.toUpperCase(),
             },
             {
+                name: t('RESOURCES_GPU_VENDOR'),
+                value: gpunode.vendor_name.toUpperCase(),
+            },
+            {
                 name: t('RESOURCES_GPU_FAMILY'),
                 value: gpunode.family.toUpperCase(),
             },

@@ -85,6 +85,17 @@ export default class GpuNodes extends React.Component {
         },
       },
       {
+        title: t('RESOURCES_GPU_VENDOR'),
+        dataIndex: 'vendor',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: (_, record) => {
+          const vendor = record.vendor_name
+          return vendor.toUpperCase();
+        }
+      },
+      {
         title: t('RESOURCES_GPU_MODEL'),
         dataIndex: 'model',
         isHideable: true,

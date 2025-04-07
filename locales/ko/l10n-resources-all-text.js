@@ -68,6 +68,7 @@ module.exports = {
   RESOURCES_GPU_NODE_DESC:
     'GPU 노드는 Petasus AI Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
   RESOURCES_MACHINE: '머신 모델명',
+  RESOURCES_GPU_VENDOR: 'GPU 벤더',
   RESOURCES_GPU_FAMILY: 'GPU 아키텍처',
   RESOURCES_GPU_MODEL: 'GPU 모델명',
   RESOURCES_GPU_RAM: 'GPU 메모리',
