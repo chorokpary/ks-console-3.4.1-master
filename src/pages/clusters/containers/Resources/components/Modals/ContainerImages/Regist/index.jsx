@@ -344,8 +344,8 @@ const ResourceImageModal = props => {
   const handleDistroType = value => {
     let kubeDistroImage
     setDistroType(value)
-    if (value === 'rocky-8') {
-      kubeDistroImage = 'rocky-8-uefi-kube'
+    if (value === 'rocky-8' || value === 'rocky-9') {
+      kubeDistroImage = `${value}-uefi-kube`
     } else {
       kubeDistroImage = `${value}-kube`
     }

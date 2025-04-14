@@ -213,8 +213,8 @@ const RegistModal = props => {
 
   const osDistroOptions = [
     { label: 'Ubuntu 2404', value: 'ubuntu-2404', icon: 'ico-os-ubuntu' },
-    { label: 'RockyLinux 8', value: 'rocky-8', icon: 'ico-os-rocky' },
-    { label: 'AlmaLinux 8', value: 'almalinux-8', icon: 'ico-os-almalinux' },
+    { label: 'RockyLinux 9', value: 'rocky-9', icon: 'ico-os-rocky' },
+    { label: 'AlmaLinux 9', value: 'almalinux-9', icon: 'ico-os-almalinux' },
   ]
 
   const archOptions = () => {
