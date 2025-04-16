@@ -47,8 +47,8 @@ const archTypeOptions = [
   { label: 'aarch64', value: 'aarch64' },
 ]
 const bootTypeOptions = [
-  { label: 'BIOS', value: 'legacy' },
   { label: 'UEFI', value: 'uefi' },
+  { label: 'BIOS', value: 'legacy' },
 ]
 const osTypeOptions = [
   { label: 'Linux', value: 'linux', icon: 'ico-linux' },
