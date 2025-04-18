@@ -1175,7 +1175,7 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
                           >
                             <Select
                               name="boot_type"
-                              defaultValue="legacy"
+                              defaultValue="uefi"
                               options={bootTypeOptions}
                             />
                           </Form.Item>
@@ -1404,7 +1404,7 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
                           >
                             <Select
                               name="boot_type"
-                              defaultValue="legacy"
+                              defaultValue="uefi"
                               options={bootTypeOptions}
                             />
                           </Form.Item>
