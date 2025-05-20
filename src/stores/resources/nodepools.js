@@ -129,6 +129,7 @@ export default class ResourceStore extends Base {
     reqData.description = data.description
     reqData.flavor = data.flavor
     reqData.nodepool_replicas = data.nodepool_replicas
+    reqData.accelerator = data.accelerator.toLowerCase()
     reqData.autoscale = data.autoscale
     reqData.scale_range = data.scale_range
     jsonData.nodepool = reqData

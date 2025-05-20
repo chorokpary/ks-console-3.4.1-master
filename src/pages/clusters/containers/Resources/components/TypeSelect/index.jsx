@@ -32,16 +32,16 @@ export default class TypeSelect extends React.Component {
     defaultValue: PropTypes.any,
     options: PropTypes.array.isRequired,
     onChange: PropTypes.func,
-    defaultDescription : PropTypes.string,
+    defaultDescription: PropTypes.string,
     newMaxHeight: PropTypes.string,
   }
 
   static defaultProps = {
     className: '',
     options: [],
-    onChange() { },
+    onChange() {},
     defaultDescription: '',
-    newMaxHeight: '258'
+    newMaxHeight: '258',
   }
 
   constructor(props) {
@@ -125,7 +125,9 @@ export default class TypeSelect extends React.Component {
         {this.renderIcon(option)}
         <div className={styles.text}>
           <div>{option.label}</div>
-          {option.description && <p>{option.description}</p>}
+          {option.description && (
+            <p style={{ whiteSpace: 'pre-line' }}>{option.description}</p>
+          )}
         </div>
         {option.details && this.renderDetail(option.details)}
       </div>
@@ -140,14 +142,16 @@ export default class TypeSelect extends React.Component {
     if (isString(option.icon)) {
       return (
         <div className={styles.leftIcon}>
-          <i className={option.icon}
+          <i
+            className={option.icon}
             style={{
               backgroundImage: `url('/assets/resources/images/icons/${option.icon}.svg')`,
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               width: '40px',
-              height: '40px'
-            }}></i>
+              height: '40px',
+            }}
+          ></i>
         </div>
       )
     }
@@ -171,7 +175,7 @@ export default class TypeSelect extends React.Component {
         ref={ref => {
           this.optionsRef = ref
         }}
-        style={{'--max-height': `${this.props.newMaxHeight}px`}}
+        style={{ '--max-height': `${this.props.newMaxHeight}px` }}
       >
         {selectOption && this.renderOption(selectOption, true)}
         {options
@@ -182,7 +186,7 @@ export default class TypeSelect extends React.Component {
   }
 
   renderControl() {
-    const { placeholder, options, disabled, defaultDescription} = this.props
+    const { placeholder, options, disabled, defaultDescription } = this.props
     const { value, showOptions } = this.state
     const option =
       options.find(item => isEqual(item.value, value)) || placeholder || {}
@@ -197,8 +201,12 @@ export default class TypeSelect extends React.Component {
         {this.renderIcon(option)}
         <div className={styles.text}>
           <div>{option.label}</div>
-          {(defaultDescription && !!!option.description ) && <p>{defaultDescription}</p>}
-          {option.description && <p>{option.description}</p>}
+          {defaultDescription && !option.description && (
+            <p>{defaultDescription}</p>
+          )}
+          {option.description && (
+            <p style={{ whiteSpace: 'pre-line' }}>{option.description}</p>
+          )}
         </div>
         {option.details && this.renderDetail(option.details)}
         {!disabled && (

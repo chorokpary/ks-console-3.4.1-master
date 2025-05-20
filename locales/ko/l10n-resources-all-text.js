@@ -739,17 +739,22 @@ module.exports = {
   RESOURCES_SET_DEFAULT_LICENSE: '기본 라이선스로 설정',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: '라이선스 키를 입력해주세요.',
   RESOURCES_LICENSE_DEFAULT_USE: '기본 라이선스로 사용',
-  RESOURCES_LICENSE_DESC: 'Petasus AI Cloud 라이선스 상태를 확인하고 관리할 수 있는 인터페이스를 제공합니다.',
+  RESOURCES_LICENSE_DESC:
+    'Petasus AI Cloud 라이선스 상태를 확인하고 관리할 수 있는 인터페이스를 제공합니다.',
   RESOURCES_LICENSE_STATUS: '라이선스 상태',
   RESOURCES_IMPORT_LICENSE: '라이선스 등록',
   RESOURCES_LICENSE_STATUS_FINGERPRINT: '지문 유효성',
-  RESOURCES_LICENSE_STATUS_FINGERPRINT_DESC: '라이선스에 포함된 지문이 클러스터의 지문과 일치하지는 여부를 확인합니다.',
+  RESOURCES_LICENSE_STATUS_FINGERPRINT_DESC:
+    '라이선스에 포함된 지문이 클러스터의 지문과 일치하지는 여부를 확인합니다.',
   RESOURCES_LICENSE_STATUS_PERIOD: '사용 기간',
-  RESOURCES_LICENSE_STATUS_PERIOD_DESC: '라이선스의 사용 기간이 유효한지 여부를 확인합니다.',
+  RESOURCES_LICENSE_STATUS_PERIOD_DESC:
+    '라이선스의 사용 기간이 유효한지 여부를 확인합니다.',
   RESOURCES_LICENSE_STATUS_NODE_NUM: '지원 노드 수',
-  RESOURCES_LICENSE_STATUS_NODE_NUM_DESC: '설치 된 라이선스가 클러스터의 최대 노드 수를 지원하는지 여부를 확인합니다.',
+  RESOURCES_LICENSE_STATUS_NODE_NUM_DESC:
+    '설치 된 라이선스가 클러스터의 최대 노드 수를 지원하는지 여부를 확인합니다.',
   RESOURCES_LICENSE_STATUS_VM_NUM: '지원 가상머신 수',
-  RESOURCES_LICENSE_STATUS_VM_NUM_DESC: '설치 된 라이선스가 클러스터의 최대 가상머신 수를 지원하는지 여부를 확인합니다.',
+  RESOURCES_LICENSE_STATUS_VM_NUM_DESC:
+    '설치 된 라이선스가 클러스터의 최대 가상머신 수를 지원하는지 여부를 확인합니다.',
   RESOURCES_DELETE_LICENSE_TIP:
     '라이선스 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_START_DATE: '시작 일자',
@@ -1079,6 +1084,7 @@ module.exports = {
   RESOURCES_EDIT_NODEPOOL: '노드풀 수정',
   RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP: 'Nodepool Flavor를 선택해 주세요.',
   RESOURCES_SELECT_NODEPOOL_ARCH_TIP: '노드풀 아키텍쳐를 선택해 주세요.',
+  RESOURCES_SELECT_NODEPOOL_ACCELERATOR_TIP: '노드풀 가속기를 선택해 주세요.',
   RESOURCES_NODEPOOL_NODE_STATUS: '노드풀 노드 상태',
   RESOURCES_NODEPOOL_SCHEDULE_STATUS: '노드풀 스케줄링 상태',
   RESOURCES_NODEPOOL_SCHEDULE_READY: '노드풀 준비',

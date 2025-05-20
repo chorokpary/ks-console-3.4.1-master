@@ -7,6 +7,7 @@ import { Modal } from 'components/Base'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
+import GpuNodeStore from 'stores/resources/gpunodes'
 import * as common from 'utils/resources'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
@@ -17,13 +18,18 @@ const RegistNodePoolModal = props => {
 
   const vmStore = new VmStore()
   const resourceStore = new ResourceStore()
+  const gpuNodeStore = new GpuNodeStore()
 
   const [modelView, setModalView] = useState(true)
 
   const [flavorDataList, setFlavorDataList] = useState([])
+  const [flavorOptionList, setFlavorOptionList] = useState([])
   const [imageDataList, setImageDataList] = useState([])
   const [selectImageName, setSelectImageName] = useState('')
   const [imageOptionList, setImageOptionList] = useState([])
+
+  const [acceleratorType, setAcceleratorType] = useState('None')
+  const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
 
   const [kubeVersion, setKubeVersion] = useState('')
   const [nodepoolReplicas, setNodepoolReplicas] = useState(1)
@@ -47,8 +53,13 @@ const RegistNodePoolModal = props => {
       setOsDistro(props.detailStore.detail.cluster.os_distro)
       setKubeVersion(props.detailStore.detail.cluster.kube_version)
     }
+    const getAcceleratorTypeList = async () => {
+      const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
+      setAcceleratorTypeList(accelList)
+    }
 
-    getVmCreateData()
+    getVmCreateData().then()
+    getAcceleratorTypeList().then()
   }, [])
 
   useEffect(() => {
@@ -79,19 +90,35 @@ const RegistNodePoolModal = props => {
       return {
         label: t(label),
         value: t(arch),
-        description: t(arch) + ' ' + t('RESOURCES_CPU_ARCH'),
+        description: `${t(arch)} ${t('RESOURCES_CPU_ARCH')}`,
       }
     })
   }
 
   const flavorOptions = () => {
-    return flavorDataList.map(obj => ({
-      label: t(obj.name),
-      description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
+    return flavorOptionList.map(obj => {
+      const gpuDesc =
+        obj.gpus && obj.gpus.length > 0
+          ? ` / ${obj.gpus
+              .map(g => `${g.name.split('/')[1]}: ${g.quantity}`)
+              .join(', ')}`
+          : ''
+
+      const deviceDesc =
+        obj.devices && obj.devices.length > 0
+          ? `\n ${obj.devices.map(d => `${d.name}: ${d.quantity}`).join(', ')}`
+          : ''
+
+      const desc = `CPU ${obj.vcpus} Cores / Mem ${common.fnSetBytes(
         obj.ram
-      )} Gib / Disk ${obj.root_disk} Gib`,
-      value: t(obj.name),
-    }))
+      )}GiB / Disk ${obj.root_disk}GiB${gpuDesc}${deviceDesc}`
+
+      return {
+        label: t(obj.name),
+        description: desc,
+        value: t(obj.name),
+      }
+    })
   }
 
   const imageOptions = () => {
@@ -101,10 +128,18 @@ const RegistNodePoolModal = props => {
         label: t(obj.name),
         icon: `ico-os-${distroType}`,
         value: t(obj.name),
-        description: t(obj.description),
+        description: obj.description ? t(obj.description) : '-',
         disabled: obj.phase !== 'Succeeded',
       }
     })
+  }
+
+  const acceleratorOptions = () => {
+    return acceleratorTypeList.map(obj => ({
+      label: t(obj),
+      description: ' ',
+      value: t(obj),
+    }))
   }
 
   const handleOk = () => {
@@ -154,10 +189,35 @@ const RegistNodePoolModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type.toLowerCase() ===
+            acceleratorType.toLowerCase() &&
           obj.os_distro === osDistro &&
-          obj.arch_type === value &&
+          obj.kube_version === kubeVersion &&
+          obj.arch_type === value
+      )
+    )
+  }
+
+  const handleAcceleratorType = value => {
+    setAcceleratorType(value)
+    setSelectImageName('')
+    setImageOptionList(
+      imageDataList.filter(
+        obj =>
+          obj.accelerator_type.toLowerCase() === value.toLowerCase() &&
+          obj.os_distro === osDistro &&
           obj.kube_version === kubeVersion
       )
+    )
+    setFlavorOptionList(
+      flavorDataList.filter(flavor => {
+        if (value.toLowerCase() === '' || value.toLowerCase() === 'none') {
+          return flavor.gpus.length === 0
+        }
+        return flavor.gpus.some(gpu =>
+          gpu.name.toLowerCase().includes(value.toLowerCase())
+        )
+      })
     )
   }
 
@@ -238,6 +298,18 @@ const RegistNodePoolModal = props => {
                     <Column>
                       <Form.Item>
                         <TypeSelect
+                          name="accelerator"
+                          defaultValue={t('RESOURCES_SELECT')}
+                          options={acceleratorOptions()}
+                          placeholder={{ label: t('RESOURCES_SELECT') }}
+                          onChange={e => handleAcceleratorType(e)}
+                          defaultDescription={t(
+                            'RESOURCES_SELECT_NODEPOOL_ACCELERATOR_TIP'
+                          )}
+                        />
+                      </Form.Item>
+                      <Form.Item>
+                        <TypeSelect
                           name="architecture"
                           defaultValue={t('RESOURCES_SELECT')}
                           options={archOptions()}
@@ -248,20 +320,19 @@ const RegistNodePoolModal = props => {
                           )}
                         />
                       </Form.Item>
+                    </Column>
+                    <Column>
                       <Form.Item>
                         <TypeSelect
                           name="flavor"
                           defaultValue={t('RESOURCES_SELECT')}
                           options={flavorOptions()}
                           placeholder={{ label: t('RESOURCES_SELECT') }}
-                          // onChange={e => setWorkerFlavorSelect(e)}
                           defaultDescription={t(
                             'RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP'
                           )}
                         />
                       </Form.Item>
-                    </Column>
-                    <Column>
                       <Form.Item
                         rules={[{ required: true, validator: imageValidator }]}
                       >
@@ -360,7 +431,7 @@ const RegistNodePoolModal = props => {
                   label={t('RESOURCES_DESCRIPTION')}
                   desc={t('DESCRIPTION_DESC')}
                 >
-                  <TextArea name="description" maxLength={256}/>
+                  <TextArea name="description" maxLength={256} />
                 </Form.Item>
                 <div style={{ padding: 25 }} />
               </div>

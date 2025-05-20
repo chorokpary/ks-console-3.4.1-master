@@ -746,17 +746,22 @@ module.exports = {
   RESOURCES_CLUSTER_KEY: 'Cluster Key',
   RESOURCES_LICENSE_KEY_EMPTY_DESC: 'Please enter the license key.',
   RESOURCES_LICENSE_DEFAULT_USE: 'Use as the default license',
-  RESOURCES_LICENSE_DESC: 'Provides an interface to check and manage the license status of Petasus AI Cloud.',
+  RESOURCES_LICENSE_DESC:
+    'Provides an interface to check and manage the license status of Petasus AI Cloud.',
   RESOURCES_LICENSE_STATUS: 'License Status',
   RESOURCES_IMPORT_LICENSE: 'Import License',
   RESOURCES_LICENSE_STATUS_FINGERPRINT: 'Fingerprint Validity',
-  RESOURCES_LICENSE_STATUS_FINGERPRINT_DESC: 'Verify whether the fingerprint included in the license matches the clusters fingerprint.',
+  RESOURCES_LICENSE_STATUS_FINGERPRINT_DESC:
+    'Verify whether the fingerprint included in the license matches the clusters fingerprint.',
   RESOURCES_LICENSE_STATUS_PERIOD: 'Usage Period',
-  RESOURCES_LICENSE_STATUS_PERIOD_DESC: 'Check whether the license usage period is valid',
+  RESOURCES_LICENSE_STATUS_PERIOD_DESC:
+    'Check whether the license usage period is valid',
   RESOURCES_LICENSE_STATUS_NODE_NUM: 'Maximum Node Number',
-  RESOURCES_LICENSE_STATUS_NODE_NUM_DESC: 'Ensure the installed license supports the clusters maximum number of nodes.',
+  RESOURCES_LICENSE_STATUS_NODE_NUM_DESC:
+    'Ensure the installed license supports the clusters maximum number of nodes.',
   RESOURCES_LICENSE_STATUS_VM_NUM: 'Maximum VM Number',
-  RESOURCES_LICENSE_STATUS_VM_NUM_DESC: 'Ensure the installed license supports the clusters maximum number of virtual machines.',
+  RESOURCES_LICENSE_STATUS_VM_NUM_DESC:
+    'Ensure the installed license supports the clusters maximum number of virtual machines.',
   RESOURCES_DELETE_LICENSE_TIP:
     'Enter the license name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
   RESOURCES_START_DATE: 'Start Date',
@@ -1089,6 +1094,8 @@ module.exports = {
   RESOURCES_SELECT_NODEPOOL_FLAVOR_TIP: 'Please select the NodePool Flavor.',
   RESOURCES_SELECT_NODEPOOL_ARCH_TIP:
     'Please select the NodePool Architecture.',
+  RESOURCES_SELECT_NODEPOOL_ACCELERATOR_TIP:
+    'Please select the NodePool Accelerator.',
   RESOURCES_NODEPOOL_NODE_STATUS: 'NodePool Node Status',
   RESOURCES_NODEPOOL_SCHEDULE_STATUS: 'NodePool Scheduling Status',
   RESOURCES_NODEPOOL_SCHEDULE_READY: 'NodePool Ready',
