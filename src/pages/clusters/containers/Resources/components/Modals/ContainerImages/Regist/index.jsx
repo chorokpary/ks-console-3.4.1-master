@@ -84,10 +84,10 @@ const ResourceImageModal = props => {
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
   const [archType, setArchType] = useState('x86_64')
-  const [kubeVersionList, setKubeVersionList] = useState(['None'])
 
   const [imageName, setImageName] = useState('')
-  const [tagList, setTagList] = useState([])
+  const [unfilteredTags, setUnfilteredTags] = useState([])
+  const [filteredTags, setFilteredTags] = useState([])
   const [tag, setTag] = useState('')
   const [projectName, setProjectName] = useState('edgestack')
   const [dockerUrl, setDockerUrl] = useState('quay.io')
@@ -297,7 +297,7 @@ const ResourceImageModal = props => {
       } else {
         setRegStep(2)
         setSourceEmpty(false)
-        setTagList([])
+        setUnfilteredTags([])
         setPopActive(false)
         setImageName('')
         setSubmitButtonFlag(false)
@@ -372,7 +372,7 @@ const ResourceImageModal = props => {
     const tags = Object.values(response.data.tags).filter(
       obj => obj.size !== null && obj.size !== 0
     )
-    setTagList(tags)
+    setUnfilteredTags(tags)
     setSourceEmpty(false)
     getMatchingTags(tags, archType, acceleratorType)
   }
@@ -380,13 +380,13 @@ const ResourceImageModal = props => {
   const handleArchType = value => {
     setLoading(true)
     setArchType(value)
-    getMatchingTags(tagList, value, acceleratorType)
+    getMatchingTags(unfilteredTags, value, acceleratorType)
   }
 
   const handleAcceleratorType = value => {
     setLoading(true)
     setAcceleratorType(value)
-    getMatchingTags(tagList, archType, value)
+    getMatchingTags(unfilteredTags, archType, value)
   }
 
   const getMatchingTags = (tags, arch, accel) => {
@@ -398,14 +398,14 @@ const ResourceImageModal = props => {
       tagRegex = RegExp(`^v\\d+\\.\\d+\\.\\d+(-${arch})$`)
     } else {
       tagRegex = RegExp(
-        `^v\\d+\\.\\d+\\.\\d+(-${accel.toLowerCase()}-${arch})$`
+        `^v\\d+\\.\\d+\\.\\d+(-${accel.toLowerCase()}(?:-\\d+)?-${arch})$`
       )
     }
-    const kubeVersions = tags
+    const matchingTags = tags
       .filter(ver => tagRegex.test(ver.name))
       .sort((a, b) => b.name.localeCompare(a.name))
-    setKubeVersionList(kubeVersions)
-    setTag(kubeVersions?.[0]?.name)
+    setFilteredTags(matchingTags)
+    setTag(matchingTags?.[0]?.name)
     setLoading(false)
   }
 
@@ -453,7 +453,7 @@ const ResourceImageModal = props => {
     const tagList = response?.[0]?.tags
 
     setProjectName(project)
-    setTagList(tagList)
+    setUnfilteredTags(tagList)
     setTag(tagList?.[0]?.name)
     setSourceEmpty(false)
   }
@@ -480,7 +480,7 @@ const ResourceImageModal = props => {
         setImageText(defaultImageText)
       } catch {
         setImageList([])
-        setTagList([])
+        setUnfilteredTags([])
         setPopActive(false)
         setImageText(emptyImageText)
         setTag('')
@@ -547,7 +547,7 @@ const ResourceImageModal = props => {
       setImageText(defaultImageText)
     } catch {
       setImageList([])
-      setTagList([])
+      setUnfilteredTags([])
       setPopActive(false)
       setImageText(emptyImageText)
       setTag('')
@@ -574,7 +574,7 @@ const ResourceImageModal = props => {
       setImageText(defaultImageText)
     } catch {
       setImageList([])
-      setTagList([])
+      setUnfilteredTags([])
       setPopActive(false)
       setImageText(emptyImageText)
       setTag('')
@@ -1047,9 +1047,9 @@ const ResourceImageModal = props => {
                           </div>
                           <div className={styles.section_box}>
                             <Loading spinning={loading}>
-                              {kubeVersionList.length > 0 ? (
+                              {filteredTags.length > 0 ? (
                                 <div className={styles.radio_list}>
-                                  {kubeVersionList.map((obj, idx) => (
+                                  {filteredTags.map((obj, idx) => (
                                     <div
                                       className={styles.form_radio}
                                       key={idx}
@@ -1259,9 +1259,9 @@ const ResourceImageModal = props => {
                           </div>
                           <div className={styles.section_box}>
                             <Loading spinning={loading}>
-                              {tagList.length > 0 ? (
+                              {unfilteredTags.length > 0 ? (
                                 <div className={styles.radio_list}>
-                                  {tagList.map((obj, idx) => (
+                                  {unfilteredTags.map((obj, idx) => (
                                     <div
                                       className={styles.form_radio}
                                       key={idx}
