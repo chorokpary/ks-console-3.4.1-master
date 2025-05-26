@@ -263,7 +263,7 @@ const ResourceImageModal = props => {
   }
 
   const getMarks = () => {
-    const max = 40
+    const max = 200
     const count = 5
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1)
@@ -919,14 +919,14 @@ const ResourceImageModal = props => {
                           <div className={`${styles.select_inner_content}`}>
                             <UnitSlider
                               name="size"
-                              max={40}
+                              max={200}
                               min={0}
                               marks={getMarks()}
                               defaultValue={imageSize}
                               unit={'GB'}
                               withInput
                               onChange={e => setImageSize(e)}
-                              style={{ padding: '5px' }}
+                              style={{ padding: '5px', marginLeft: '10px' }}
                             />
                           </div>
                         )}
