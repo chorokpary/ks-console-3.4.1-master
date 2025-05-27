@@ -321,35 +321,6 @@ export default class ResourceStore extends Base {
   }
 
   @action
-  async fetchListLoadBalancer(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/kubevirt/lbs`
-    )
-
-    const response = { ...params, ...this.mapper(result), kind: 'lbs' }
-
-    const dataArray = []
-    const promises = response._originData.lbs.map(async lb => {
-      const lbDetail = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/lbs/${lb.id}`
-      )
-      lb.rulesCount = lbDetail.lb.rules.length
-      dataArray.push(lb)
-    })
-    await Promise.all(promises)
-    response._originData.lbs = dataArray
-
-    this.isLoading = false
-    return response
-  }
-
-  @action
   async fetchDetailFlavor(params) {
     this.isLoading = true
 

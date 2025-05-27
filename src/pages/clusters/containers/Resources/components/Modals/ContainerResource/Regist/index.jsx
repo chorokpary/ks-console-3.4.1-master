@@ -16,7 +16,7 @@ import { Modal } from 'components/Base'
 import { ProjectSelect } from 'components/Inputs'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import VmStore from 'stores/resources/vms'
-import ResourceStore from 'stores/resources/containerresource'
+import KaasStore from 'stores/resources/containerresource'
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 import styles from './index.scss'
@@ -26,7 +26,7 @@ const RegistModal = props => {
   const [formData] = useState({})
 
   const vmStore = new VmStore()
-  const resourceStore = new ResourceStore()
+  const kaasStore = new KaasStore()
 
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
@@ -41,7 +41,6 @@ const RegistModal = props => {
   const [imageOptionList, setImageOptionList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
-  const [, setLoadBalancerDataList] = useState([])
 
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
@@ -91,8 +90,7 @@ const RegistModal = props => {
         ...props,
       })
 
-      const listImage = await resourceStore.fetchListImage(props)
-      const listLoadBalancer = await resourceStore.fetchListLoadBalancer(props)
+      const listImage = await kaasStore.fetchListImage(props)
 
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
@@ -100,7 +98,6 @@ const RegistModal = props => {
       setNetworkList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
       setSriovNetworkList(listSriovNetwork.sriovs)
-      setLoadBalancerDataList(listLoadBalancer._originData.lbs)
     }
 
     getVmCreateData()

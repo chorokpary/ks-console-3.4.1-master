@@ -23,12 +23,12 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 
-import ContainerResourceStore from 'stores/resources/containerresource'
+import KaasStore from 'stores/resources/containerresource'
 import NodePoolStore from 'stores/resources/nodepools'
 import { Link } from 'react-router-dom'
 import styles from './index.scss'
 
-const containerResourceStore = new ContainerResourceStore()
+const kaasStore = new KaasStore()
 const nodePoolStore = new NodePoolStore()
 
 const step = '5m'
@@ -158,9 +158,7 @@ const Node = props => {
       setNodepools(filteredNodepools)
     }
 
-    const response = await containerResourceStore.fetchDetailFlavor(
-      props.match.params
-    )
+    const response = await kaasStore.fetchDetailFlavor(props.match.params)
     if (isMounted) {
       setMachines(response._originData.machines)
     }
@@ -203,8 +201,8 @@ const Node = props => {
         })
       },
       modal: NodePoolRegistModal,
-      module: containerResourceStore.module,
-      storeResource: containerResourceStore,
+      module: kaasStore.module,
+      storeResource: kaasStore,
       ...props,
     })
   }
