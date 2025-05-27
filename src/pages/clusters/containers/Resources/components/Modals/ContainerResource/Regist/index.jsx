@@ -247,7 +247,9 @@ const RegistModal = props => {
       imageDataList
         .filter(
           obj =>
-            obj.os_distro === osDistro && obj.arch_type === masterArchSelect
+            obj.os_distro === osDistro &&
+            obj.arch_type === masterArchSelect &&
+            obj.accelerator_type.toLowerCase() === 'none'
         )
         .map(obj => t(obj.kube_version))
     )
