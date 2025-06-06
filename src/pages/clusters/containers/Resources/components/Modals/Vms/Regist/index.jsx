@@ -390,6 +390,8 @@ const RegistModal = props => {
 
     const makeScript = {}
 
+    makeScript['os_type'] = osType
+
     if (listPasswordRoute.length !== 0) {
       const userPassWord = []
       listPasswordRoute.forEach(obj => {
