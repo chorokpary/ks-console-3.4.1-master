@@ -693,6 +693,8 @@ module.exports = {
   RESOURCES_NODE_STATUS: 'Node Status',
   RESOURCES_CLUSTER_NODE: 'Cluster Node',
   RESOURCES_CLUSTER_COMPONENT_STATE: 'Cluster Component State',
+  RESOURCES_CLUSTER_COMPONENT_STATE_DESC:
+    'Cluster Component is Succesfully Deployed',
   RESOURCES_CLUSTER_SCHEDULE_STATUS: 'Cluster Scheduling Status',
   RESOURCES_CLUSTER_SCHEDULE_READY: 'Cluster Ready',
   RESOURCES_CLUSTER_SCHEDULE_READY_DESC: 'The operational state of a cluster',

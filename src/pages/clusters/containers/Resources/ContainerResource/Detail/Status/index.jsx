@@ -20,7 +20,7 @@ import React, { useState, useEffect } from 'react'
 import { observer, inject } from 'mobx-react'
 
 import { ICON_TYPES } from 'utils/constants'
-import { Panel, Text } from 'components/Base'
+import { Indicator, Panel, Text } from 'components/Base'
 import { Loading, Icon, Tooltip } from '@kube-design/components'
 import ContainerResourceStore from 'stores/resources/containerresource'
 import StatusCard from './StatusCard'
@@ -49,6 +49,7 @@ const Condition = ({ status, tip }) => {
 
 const Status = props => {
   const [status, setStatus] = useState()
+  const [addons, setAddons] = useState()
   const [phase, setPhase] = useState()
   const [isLoading, setIsLoading] = useState(true)
   let isMounted = false
@@ -66,6 +67,7 @@ const Status = props => {
       props.match.params
     )
     if (isMounted) {
+      setAddons(response._originData.cluster.addons)
       setStatus(response._originData.cluster.status)
       setPhase(response._originData.cluster.phase)
       setIsLoading(false)
@@ -93,33 +95,73 @@ const Status = props => {
       icon: ICON_TYPES['components'],
     }
     return (
-      <Panel title={t('RESOURCES_CLUSTER_SCHEDULE_STATUS')}>
-        <div className={styles.header}>
-          <Text
-            className={styles.info}
-            icon="templet"
-            title={t(`RESOURCES_${phase.toUpperCase()}`)}
-            description={t('CURRENT_STATUS')}
-            extra={
-              <Condition
-                status={phase === 'Provisioned' ? 'success' : 'warning'}
-              />
-            }
-          />
-        </div>
-        <div className={styles.cardstatus}>
-          <StatusCard key="ready" data={ready_status} />
-          <StatusCard
-            key="control_plane_ready"
-            data={control_plane_ready_status}
-          />
-          <StatusCard key="infra_ready" data={infra_ready_status} />
-          <StatusCard
-            key="topology_reconciled"
-            data={topology_reconciled_status}
-          />
-        </div>
-      </Panel>
+      <>
+        <Panel title={t('RESOURCES_CLUSTER_SCHEDULE_STATUS')}>
+          <div className={styles.header}>
+            <Text
+              className={styles.info}
+              icon="templet"
+              title={t(`RESOURCES_${phase.toUpperCase()}`)}
+              description={t('CURRENT_STATUS')}
+              extra={
+                <Condition
+                  status={phase === 'Provisioned' ? 'success' : 'warning'}
+                />
+              }
+            />
+          </div>
+          <div className={styles.cardstatus}>
+            <StatusCard key="ready" data={ready_status} />
+            <StatusCard
+              key="control_plane_ready"
+              data={control_plane_ready_status}
+            />
+            <StatusCard key="infra_ready" data={infra_ready_status} />
+            <StatusCard
+              key="topology_reconciled"
+              data={topology_reconciled_status}
+            />
+          </div>
+        </Panel>
+        <Panel title={t('RESOURCES_CLUSTER_COMPONENT_STATE')}>
+          {!!addons &&
+            addons.map((detail, index) => (
+              <div key={index}>
+                <div className={styles.itemMain}>
+                  <div className={styles.icon}>
+                    <Icon name="helm" size={40} type="dark" />
+                    <Indicator
+                      className={styles.indicator}
+                      type={detail.ready ? 'running' : 'updating'}
+                      flicker
+                    />
+                  </div>
+                  <div className={styles.content}>
+                    <div className={styles.text} style={{ width: '20%' }}>
+                      <div>{detail.name}</div>
+                      <p>{t('RESOURCES_NAME')}</p>
+                    </div>
+                    <div className={styles.text} style={{ width: '10%' }}>
+                      <div>{detail.revision}</div>
+                      <p>{t('REVISION')}</p>
+                    </div>
+                    <div className={styles.text} style={{ width: '20%' }}>
+                      <div>{detail.status}</div>
+                      <p>{t('RESOURCES_STATE')}</p>
+                    </div>
+                    <div className={styles.text} style={{ width: '50%' }}>
+                      <div>
+                        {detail.reason === ''
+                          ? t('RESOURCES_CLUSTER_COMPONENT_STATE_DESC')
+                          : detail.reason}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </Panel>
+      </>
     )
   }
 
