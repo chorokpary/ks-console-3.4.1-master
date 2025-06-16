@@ -192,6 +192,10 @@ export default class Networks extends React.Component {
           value: 'sriovs',
           label: t('RESOURCES_NETWORK_TAB2'),
         },
+        {
+          value: 'physicalnetworks',
+          label: t('RESOURCES_NETWORK_TAB3'),
+        },
       ],
     };
   }

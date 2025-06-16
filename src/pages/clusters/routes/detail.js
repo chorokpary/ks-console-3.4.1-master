@@ -68,6 +68,7 @@ import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
+import PhysicalNetworkDetail from '../containers/Resources/PhysicalNetworks/Detail'
 import ImageBuildDetail from '../containers/Resources/ImageBuild/Detail'
 import ComputingAppDeployDetail from '../containers/Resources/ComputingAppDeploy/Detail'
 import ClusterFaultSetting from '../containers/Resources/ClusterFault/Setting'
@@ -266,6 +267,10 @@ export default [
   {
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
+  },
+  {
+    path: `${PATH}/physicalnetworks/:name/:id`,
+    component: PhysicalNetworkDetail,
   },
   {
     path: `${PATH}/imagebuild/:name/:id`,

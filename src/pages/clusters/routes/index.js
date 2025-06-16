@@ -73,6 +73,7 @@ import CustomOverviewEdit from '../containers/Overview/CustomDashboard/Edit'
 import ContainerImage from '../containers/Resources/ContainerImages'
 import ContainerResource from '../containers/Resources/ContainerResource'
 import ResourcesVolumes from '../containers/Resources/Volumes'
+import PhysicalNetworks from '../containers/Resources/PhysicalNetworks'
 import Sriov from '../containers/Resources/Sriov'
 import HostDevices from '../containers/Resources/HostDevices'
 import MediatedDevices from '../containers/Resources/MediatedDevices'
@@ -353,6 +354,11 @@ export default [
           {
             path: `${PATH}/sriovs`,
             component: Sriov,
+            exact: true,
+          },
+          {
+            path: `${PATH}/physicalnetworks`,
+            component: PhysicalNetworks,
             exact: true,
           },
           {

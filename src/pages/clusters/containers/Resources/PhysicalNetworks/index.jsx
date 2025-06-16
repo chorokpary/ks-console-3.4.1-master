@@ -1,6 +1,6 @@
 /*
  * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
+ * Copyright (C) 2025 The KubeSphere Console Authors.
  *
  * KubeSphere Console is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,27 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import React from 'react';
-import { Icon } from '@kube-design/components';
-import classnames from 'classnames';
-import { Link } from 'react-router-dom';
-import Tabs from 'components/Cards/Banner/Tabs';
-import { ListPage, withClusterList } from 'components/HOCs/withList';
 import ResourceTable from 'clusters/components/ResourceTable';
 
-import { getLocalTime } from 'utils';
+import { Link } from 'react-router-dom';
+import React from 'react';
+import { Avatar, Status } from 'components/Base';
+import Tabs from 'components/Cards/Banner/Tabs';
+import { getDocsUrl } from 'utils'
+import { ListPage, withClusterList } from 'components/HOCs/withList';
 
-import SriovStore from 'stores/resources/sriovs';
+import { getLocalTime } from 'utils';
+import { Icon } from '@kube-design/components';
+import classnames from 'classnames';
+
+import PhysicalNetworkStore from 'stores/resources/physicalnetworks';
+
 import styles from './index.scss';
 
 @withClusterList({
-  store: new SriovStore(),
-  module: 'sriovs',
-  authKey: 'sriovs',
-  name: t('SR-IOV'),
+  store: new PhysicalNetworkStore(),
+  module: 'physicalnetworks',
+  authKey: 'physicalnetworks',
+  name: t('RESOURCES_PHYSICAL_NETWORK'),
+  rowKey: 'id',
 })
-export default class SriovNetworks extends React.Component {
+export default class PhysicalNetworks extends React.Component {
   handleTabChange = value => {
     const { cluster } = this.props.match.params;
     this.props.routing.push(`/clusters/${cluster}/${value}`);
@@ -43,18 +47,6 @@ export default class SriovNetworks extends React.Component {
 
   showAction(record) {
     return globals.user.username !== record.name;
-  }
-
-  getFilterType() {
-    const NETWORK_TYPE = [
-      { text: 'VLAN', value: 'vlan' },
-      { text: 'FLAT', value: 'flat' },
-    ];
-
-    return NETWORK_TYPE.map(status => ({
-      text: status.text,
-      value: status.value,
-    }));
   }
 
   get itemActions() {
@@ -67,7 +59,7 @@ export default class SriovNetworks extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('sriov.remove', {
+          trigger('networks.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -78,6 +70,7 @@ export default class SriovNetworks extends React.Component {
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props;
+
     return {
       ...tableProps.tableActions,
       actions: [
@@ -87,7 +80,7 @@ export default class SriovNetworks extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('sriov.regist', {
+            trigger('networks.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -101,7 +94,7 @@ export default class SriovNetworks extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('sriov.remove.batch', {
+            trigger('networks.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -122,25 +115,14 @@ export default class SriovNetworks extends React.Component {
         title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
-        render: (name, record) => {
-          return (
-            <div className={styles.avatar}>
-              <div className={styles.icon}>
-                <i className="ico-type-sriov"></i>
-              </div>
-              <div>
-                <Link
-                  className={styles.title}
-                  to={`/clusters/${cluster}/sriovs/${name}`}
-                >
-                  {name}
-                </Link>
-              </div>
-            </div>
-          );
-        },
+        render: (name, item) => (
+          <Avatar
+            icon="network-duotone"
+            iconSize={40}
+            to={`/clusters/${cluster}/physicalnetworks/${name}/${item.id}`}
+            title={name}
+          />
+        ),
       },
       {
         title: t('PROJECT'),
@@ -154,16 +136,25 @@ export default class SriovNetworks extends React.Component {
         ),
       },
       {
-        title: t('RESOURCES_NETWORK_TYPE'),
-        dataIndex: 'type',
-        filters: this.getFilterType(),
+        title: t('RESOURCES_PHYSICAL_NETWORK_FABRIC'),
+        dataIndex: 'fabric',
         isHideable: true,
-        search: true,
         width: 'auto',
-        render: type => <p>{type.toUpperCase()}</p>,
       },
       {
-        title: t('CIDR'),
+        title: t('RESOURCES_NETWORK_TYPE'),
+        dataIndex: 'type',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_MTU'),
+        dataIndex: 'mtu',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_CIDR'),
         dataIndex: 'cidr',
         isHideable: true,
         width: 'auto',
@@ -175,42 +166,23 @@ export default class SriovNetworks extends React.Component {
         width: 'auto',
       },
       {
-        title: t('RESOURCES_SEGMENT_ID'),
-        dataIndex: 'segment_id',
-        isHideable: true,
-        width: 'auto',
-      },
-      {
         title: t('RESOURCES_REGIST_DATE'),
         dataIndex: 'timestamp',
         isHideable: true,
-        width: 150,
         sorter: true,
-        sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
-          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+        sortOrder: getSortOrder('descend'),
+        width: 150,
+        render: date => (
+          <p>
+            {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
+          </p>
         ),
       },
     ];
   };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
-  }
-
-  get columnSearch() {
-    return [
-      {
-        dataIndex: 'name',
-        title: t('RESOURCES_NAME'),
-        search: true,
-      },
-      {
-        dataIndex: 'cidr',
-        title: t('CIDR'),
-        search: true,
-      },
-    ];
+    return { desc: t('RESOURCES_NO_DATA') };
   }
 
   get tabs() {
@@ -227,9 +199,9 @@ export default class SriovNetworks extends React.Component {
           label: t('RESOURCES_NETWORK_TAB2'),
         },
         {
-          value: 'physicalnetworks',
-          label: t('RESOURCES_NETWORK_TAB3'),
-        },
+            value: 'physicalnetworks',
+            label: t('RESOURCES_NETWORK_TAB3'),
+          },
       ],
     };
   }
@@ -244,6 +216,7 @@ export default class SriovNetworks extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props;
+    const docUrl = getDocsUrl('networks')
     return (
       <ListPage {...this.props}>
         <div className={classnames(styles.wrapper)}>
@@ -252,8 +225,16 @@ export default class SriovNetworks extends React.Component {
               <Icon name={'network-duotone'} size={48} />
             </div>
             <div className={styles.title}>
-              <div className="h3">{t('RESOURCES_NETWORK')}</div>
-              <p className="text-second">{t('RESOURCES_NETWORK_DESC')}</p>
+              <div className="h3">{t('RESOURCES_PHYSICAL_NETWORK')}</div>
+              <p className="text-second">
+                {t('RESOURCES_PHYSICAL_NETWORK_DESC')}
+                <span className={styles.more}>
+                  <Icon name="documentation" size={16} />
+                  <a href={docUrl} target="_blank" rel="noreferrer noopener">
+                    {t('LEARN_MORE')}
+                  </a>
+                </span>
+              </p>
             </div>
             <div className={styles.divRight}>
               <div
@@ -271,13 +252,11 @@ export default class SriovNetworks extends React.Component {
         <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
-          className={'table-2-6 table-4-3'}
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
-          columnSearch={this.columnSearch}
+          searchType="name"
         />
-        
       </ListPage>
     );
   }

@@ -148,6 +148,7 @@ export default class BaseStore {
       'flavors',
       'networks',
       'sriovs',
+      'physicalnetworks',
       'routers',
       'floating_ips',
       'lbs',
