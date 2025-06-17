@@ -140,11 +140,18 @@ export default class HostDevices extends React.Component {
         width: 'auto',
       },
       {
-        title: t('RESOURCES_GPU_USE_CHECK'),
+        title: t('RESOURCES_GPU_CHECK'),
         dataIndex: 'is_gpu',
         isHideable: true,
         width: 'auto',
-        render: isGpu => (isGpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')),
+        render: isGpu => (isGpu ? t('YES') : t('NO')),
+      },
+      {
+        title: t('RESOURCES_NET_CHECK'),
+        dataIndex: 'is_net',
+        isHideable: true,
+        width: 'auto',
+        render: isNet => (isNet ? t('YES') : t('NO')),
       },
       {
         title: t('RESOURCES_AVAILABLE_COUNT'),

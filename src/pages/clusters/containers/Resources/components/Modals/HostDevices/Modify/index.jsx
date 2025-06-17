@@ -15,10 +15,12 @@ const ModifyModal = (props) => {
     const [modelView, setModalView] = useState(true);
     const [formData, setFormData] = useState({});
     const [isGpu, setIsGpu] = useState(detail.is_gpu);
+    const [isNet, setIsNet] = useState(detail.is_net);
 
-    const isGpuOptions = [
-        { label: t('RESOURCES_NOT_USE'), value: false },
-        { label: t('RESOURCES_USE'), value: true },
+
+    const options = [
+        { label: t('NO'), value: false },
+        { label: t('YES'), value: true },
       ];
 
     const handleOk = () => {
@@ -64,7 +66,7 @@ const ModifyModal = (props) => {
                     </Form.Item>
 
                     <Form.Item
-                        label="GPU"
+                        label={t('RESOURCES_GPU_CHECK')}
                         rules={[{ required: true }]}
                     >
                         <RadioGroup
@@ -73,7 +75,25 @@ const ModifyModal = (props) => {
                             defaultValue={isGpu}
                             onChange={value => setIsGpu(value)}
                         >
-                            {isGpuOptions.map(option => (
+                            {options.map(option => (
+                                <RadioButton key={option.value} value={option.value}>
+                                    {option.label}
+                                </RadioButton>
+                            ))}
+                        </RadioGroup>
+                    </Form.Item>
+
+                    <Form.Item
+                        label={t('RESOURCES_NET_CHECK')}
+                        rules={[{ required: true }]}
+                    >
+                        <RadioGroup
+                            name="is_net"
+                            wrapClassName="radio"
+                            defaultValue={isNet}
+                            onChange={value => setIsNet(value)}
+                        >
+                            {options.map(option => (
                                 <RadioButton key={option.value} value={option.value}>
                                     {option.label}
                                 </RadioButton>

@@ -57,6 +57,8 @@ module.exports = {
   RESOURCES_FLAVOR_DESC: 'Flavor의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_GPU_USE_CHECK: 'GPU 사용 여부',
   RESOURCES_GPU_CHECK: 'GPU 여부',
+  RESOURCES_NET_CHECK: '네트워크 장치 여부',
+  RESOURCES_EXT_CHECK: '외부 프로바이더 사용 여부',
   RESOURCES_HOST_DEVICE_ALLOCATABLE: 'Host 디바이스 갯수',
   RESOURCES_IP_POOL_EMPTY_DESC: 'IP POOL을 입력해주세요.',
   RESOURCES_IP_POOL_INFORMATION: 'IP POOL 정보',

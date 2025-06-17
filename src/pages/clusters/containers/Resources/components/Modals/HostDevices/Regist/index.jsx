@@ -55,6 +55,7 @@ const RegistModal = props => {
         device_name: data.device_name,
         is_external: data.external,
         is_gpu: data.gpu,
+        is_net: data.net,
         refined_device_name: data.refined_device_name,
       }))
     );
@@ -94,6 +95,7 @@ const RegistModal = props => {
           device_name: obj.device_name,
           is_external: dataList[index].is_external,
           is_gpu: dataList[index].is_gpu,
+          is_net: dataList[index].is_net,
           description: '',
           idx: (nextIndex.current += 1),
         },
@@ -154,6 +156,12 @@ const RegistModal = props => {
   const handleGpu = (e, i) => {
     const valuesData = [...dataList];
     valuesData[i].is_gpu = e;
+    setDataList(valuesData);
+  };
+
+  const handleNet = (e, i) => {
+    const valuesData = [...dataList];
+    valuesData[i].is_net = e;
     setDataList(valuesData);
   };
 
@@ -289,6 +297,7 @@ const RegistModal = props => {
                       <col width="30%" />
                       <col width="10%" />
                       <col width="10%" />
+                      <col width="10%" />
                     </colgroup>
                     <thead>
                       <tr>
@@ -319,10 +328,13 @@ const RegistModal = props => {
                           <strong>{t('RESOURCES_PRODUCT_NAME')}</strong>
                         </th>
                         <th>
-                          <strong>External</strong>
+                          <strong>EXT</strong>
                         </th>
                         <th>
                           <strong>GPU</strong>
+                        </th>
+                        <th>
+                          <strong>NET</strong>
                         </th>
                       </tr>
                     </thead>
@@ -403,6 +415,29 @@ const RegistModal = props => {
                               />
                             )}
                           </td>
+                          <td
+                            style={{
+                              textAlign: 'left',
+                            }}
+                          >
+                            {data.is_net ? (
+                              <Toggle
+                                checked="true"
+                                showText
+                                onText="on"
+                                offText="off"
+                                disabled="true"
+                              />
+                            ) : (
+                              <Toggle
+                                checked={dataList[key].is_net}
+                                showText
+                                onText="on"
+                                offText="off"
+                                onChange={e => handleNet(e, key)}
+                              />
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -428,6 +463,7 @@ const RegistModal = props => {
                         <col width="17%" />
                         <col width="5%" />
                         <col width="23%" />
+                        <col width="10%" />
                         <col width="10%" />
                         <col width="10%" />
                       </colgroup>
@@ -505,6 +541,7 @@ const RegistModal = props => {
                               )}
                             </td>
                             <td>{v.is_gpu ? 'GPU' : 'Non-GPU'}</td>
+                            <td>{v.is_net ? 'Network' : 'Non-Network'}</td>
                           </tr>
                         ))}
                       </tbody>

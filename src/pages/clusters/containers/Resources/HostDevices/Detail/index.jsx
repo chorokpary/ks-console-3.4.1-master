@@ -111,12 +111,16 @@ const HostDeviceDetail = (props) => {
                 value: detail.host_device.product_name,
             },
             {
-                name: t('External'),
-                value: detail.host_device.is_external ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+                name: t('RESOURCES_EXT_CHECK'),
+                value: detail.host_device.is_external ? t('YES') : t('NO'),
             },
             {
-                name: t('GPU'),
-                value: detail.host_device.is_gpu ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+                name: t('RESOURCES_GPU_CHECK'),
+                value: detail.host_device.is_gpu ? t('YES') : t('NO'),
+            },
+            {
+                name: t('RESOURCES_NET_CHECK'),
+                value: detail.host_device.is_net ? t('YES') : t('NO'),
             },
             {
                 name: t('RESOURCES_AVAILABLE_COUNT'),
