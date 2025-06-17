@@ -44,9 +44,9 @@ const PhysicalNetworkDetail = props => {
       action: 'edit',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('networks.edit', {
+        props.rootStore.triggerAction('physicalnetworks.edit', {
           type: 'NETWORK_DETAIL',
-          detail: toJS(store.detail.network),
+          detail: toJS(store.detail.physicalnetwork),
           store,
           success: fetchData,
         }),
@@ -57,7 +57,7 @@ const PhysicalNetworkDetail = props => {
       text: t('VIEW_YAML'),
       action: 'view',
       onClick: () =>
-        props.rootStore.triggerAction('networks.yaml.view', {
+        props.rootStore.triggerAction('physicalnetworks.yaml.view', {
           yaml: store.yaml,
           readOnly: true,
         }),
@@ -70,7 +70,7 @@ const PhysicalNetworkDetail = props => {
       type: 'danger',
       show: showEdit,
       onClick: () =>
-        props.rootStore.triggerAction('networks.remove', {
+        props.rootStore.triggerAction('physicalnetworks.remove', {
           type: 'NETWORK_DETAIL',
           detail: toJS(store.detail),
           store,
@@ -95,7 +95,11 @@ const PhysicalNetworkDetail = props => {
         value: detail.cluster,
       },
       {
-        name: t('RESOURCES_PHYSICAL_NETWORK_FABRIC'),
+        name: t('RESOURCES_RESOURCE_NAME'),
+        value: detail.physicalnetwork.resource_name,
+      },
+      {
+        name: t('RESOURCES_FABRIC'),
         value: detail.physicalnetwork.fabric.toUpperCase(),
       },
       {
@@ -127,6 +131,10 @@ const PhysicalNetworkDetail = props => {
       {
         name: t('RESOURCES_IP_POOL_INFORMATION'),
         value: `${detail.physicalnetwork.ip_pool.start}\n${detail.physicalnetwork.ip_pool.end}`,
+      },
+      {
+        name: t('RESOURCES_INTERFACE'),
+        value: detail.physicalnetwork.interface,
       },
       {
         name: t('RESOURCES_DESCRIPTION'),

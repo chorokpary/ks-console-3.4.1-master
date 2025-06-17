@@ -222,7 +222,11 @@ module.exports = {
   RESOURCES_DELETE_PHYSICAL_NETWORK_TIP:
     'Enter the physical network name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
   RESOURCES_PHYSICAL_NETWORK_DESC: 'Manage the status and usage of physical network.',
-  RESOURCES_PHYSICAL_NETWORK_FABRIC: 'Network Fabric',
+  RESOURCES_FABRIC: 'Network Fabric',
+  RESOURCES_SELECT_FABRIC_TIP: 'Please select a Network Fabric.',
+  RESOURCES_INTERFACE: 'Interface',
+  RESOURCES_INTERFACE_INDEX: 'Interface Index',
+  RESOURCES_SELECT_INTERFACE_INDEX_TIP: 'Please select an Interface Index.',
   RESOURCES_SR_IOV_NETWORK: 'SR-IOV Network',
   RESOURCES_CREATE_SR_IOV: 'Create SR-IOV',
   RESOURCES_EDIT_SR_IOV: 'Edit SR-IOV',

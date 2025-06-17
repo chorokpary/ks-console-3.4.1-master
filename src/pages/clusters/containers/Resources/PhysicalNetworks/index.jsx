@@ -59,7 +59,7 @@ export default class PhysicalNetworks extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('networks.remove', {
+          trigger('physicalnetworks.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -80,7 +80,7 @@ export default class PhysicalNetworks extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('networks.regist', {
+            trigger('physicalnetworks.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -94,7 +94,7 @@ export default class PhysicalNetworks extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('networks.remove.batch', {
+            trigger('physicalnetworks.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -136,16 +136,26 @@ export default class PhysicalNetworks extends React.Component {
         ),
       },
       {
-        title: t('RESOURCES_PHYSICAL_NETWORK_FABRIC'),
+        title: t('RESOURCES_FABRIC'),
         dataIndex: 'fabric',
         isHideable: true,
         width: 'auto',
+        render: fabric => (
+          <p className="tall">
+            <span>{fabric.toUpperCase()}</span>
+          </p>
+        ),
       },
       {
         title: t('RESOURCES_NETWORK_TYPE'),
         dataIndex: 'type',
         isHideable: true,
         width: 'auto',
+        render: type => (
+          <p className="tall">
+            <span>{type.toUpperCase()}</span>
+          </p>
+        ),
       },
       {
         title: t('RESOURCES_MTU'),
@@ -225,9 +235,9 @@ export default class PhysicalNetworks extends React.Component {
               <Icon name={'network-duotone'} size={48} />
             </div>
             <div className={styles.title}>
-              <div className="h3">{t('RESOURCES_PHYSICAL_NETWORK')}</div>
+              <div className="h3">{t('RESOURCES_NETWORK')}</div>
               <p className="text-second">
-                {t('RESOURCES_PHYSICAL_NETWORK_DESC')}
+                {t('RESOURCES_NETWORK_DESC')}
                 <span className={styles.more}>
                   <Icon name="documentation" size={16} />
                   <a href={docUrl} target="_blank" rel="noreferrer noopener">

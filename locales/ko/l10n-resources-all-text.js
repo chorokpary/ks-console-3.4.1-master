@@ -216,7 +216,11 @@ module.exports = {
   RESOURCES_DELETE_PHYSICAL_NETWORK_TIP:
     '물리 네트워크 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_PHYSICAL_NETWORK_DESC: '물리 네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_PHYSICAL_NETWORK_FABRIC: '네트워크 패브릭',
+  RESOURCES_FABRIC: '네트워크 패브릭',
+  RESOURCES_SELECT_FABRIC_TIP: '네트워크 패브릭을 선택해 주세요.',
+  RESOURCES_INTERFACE: '인터페이스',
+  RESOURCES_INTERFACE_INDEX: '인터페이스 인덱스',
+  RESOURCES_SELECT_INTERFACE_INDEX_TIP: '인터페이스 인덱스를 선택해 주세요.',
   RESOURCES_SR_IOV_NETWORK: 'SR-IOV 네트워크',
   RESOURCES_CREATE_SR_IOV: 'SR-IOV 생성',
   RESOURCES_EDIT_SR_IOV: 'SR-IOV 수정',
