@@ -118,7 +118,7 @@ export default class PhysicalNetworks extends React.Component {
         render: (name, item) => (
           <div className={styles.avatar}>
             <div className={styles.icon}>
-              <i className="ico-type-sriov"></i>
+              <i className="ico-type24-sriov"></i>
             </div>
             <div>
               <Link

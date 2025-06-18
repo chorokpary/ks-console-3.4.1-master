@@ -49,6 +49,7 @@ const ResourceCard = (props) => {
   const [keypairData, setKeypairData] = useState({});
   const [networkData, setNetworkData] = useState({});
   const [sriovData, setSriovData] = useState({});
+  const [physicalNetworkData, setPhysicalNetworkData] = useState({});
   const [routerData, setRouterData] = useState({});
   const [floatingData, setFloatingData] = useState({});
   const [loadBalancerData, setLoadBalancerData] = useState({});
@@ -63,7 +64,8 @@ const ResourceCard = (props) => {
     flavors: flavorData,
     keypairs: keypairData,   
     networks: networkData,       
-    sriovs: sriovData,             
+    sriovs: sriovData,
+    physicalnetworks: physicalNetworkData,             
     routers: routerData,
     floatingip: floatingData, 
     loadBalancers: loadBalancerData,  
@@ -79,7 +81,8 @@ const ResourceCard = (props) => {
     flavors: setFlavorData,
     keypairs: setKeypairData,   
     networks: setNetworkData,       
-    sriovs: setSriovData,             
+    sriovs: setSriovData,
+    physicalnetworks: setPhysicalNetworkData, 
     routers: setRouterData,
     floatingip: setFloatingData, 
     loadBalancers: setLoadBalancerData,  

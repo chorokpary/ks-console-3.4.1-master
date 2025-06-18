@@ -51,12 +51,13 @@ export default class ComputingStore extends Base {
       { num: 5, type: 'keypairs', root: 'keypairs', name: t('RESOURCES_KEYPAIR'), routeName: 'keypairs', multitenancy: true, icon: 'key', createField: 'timestamp' },
       { num: 6, type: 'networks', root: 'networks', name: t('RESOURCES_NETWORK'), routeName: 'networks', multitenancy: true, icon: 'network-duotone', createField: 'timestamp' },
       { num: 7, type: 'sriov_networks', root: 'sriovs', name: t('RESOURCES_SR_IOV_NETWORK'), routeName: 'sriovs', multitenancy: true, icon: 'ico-type-sriov', createField: 'timestamp' },
-      { num: 8, type: 'routers', root: 'routers', name: t('RESOURCES_VROUTER'), routeName: 'routers', multitenancy: true, icon: 'router', createField: 'timestamp' },
-      { num: 9, type: 'floating_ips', root: 'floating_ips', name: t('RESOURCES_FLOATING_IP'), routeName: 'floatingip', multitenancy: true, icon: 'intranet-routers', createField: 'not' },
-      { num: 10, type: 'lbs', root: 'lbs', name: t('RESOURCES_LOAD_BALANCER'), routeName: 'loadBalancers', multitenancy: true, icon: 'loadbalancer', createField: 'timestamp' },
-      { num: 11, type: 'security_groups', root: 'security_groups', name: t('RESOURCES_SECURITY_GROUP'), routeName: 'securityGroups', multitenancy: true, icon: 'shield', createField: 'timestamp' },
-      { num: 12, type: 'host_devices', root: 'host_devices', name: t('RESOURCES_HOST_DEVICE'), routeName: 'hostdevices', multitenancy: false, icon: 'ico-type-hostdevice', createField: 'timestamp' },
-      { num: 13, type: 'mediated_devices', root: 'mediated_devices', name: t('RESOURCES_MEDIATED_DEVICE'), routeName: 'mediateddevices', multitenancy: false, icon: 'ico-type-mediatedvgpu', createField: 'timestamp' },
+      { num: 8, type: 'physical_networks', root: 'physicalnetworks', name: t('RESOURCES_PHYSICAL_NETWORK'), routeName: 'physicalnetworks', multitenancy: true, icon: 'ico-type-sriov', createField: 'timestamp' },
+      { num: 9, type: 'routers', root: 'routers', name: t('RESOURCES_VROUTER'), routeName: 'routers', multitenancy: true, icon: 'router', createField: 'timestamp' },
+      { num: 10, type: 'floating_ips', root: 'floating_ips', name: t('RESOURCES_FLOATING_IP'), routeName: 'floatingip', multitenancy: true, icon: 'intranet-routers', createField: 'not' },
+      { num: 11, type: 'lbs', root: 'lbs', name: t('RESOURCES_LOAD_BALANCER'), routeName: 'loadBalancers', multitenancy: true, icon: 'loadbalancer', createField: 'timestamp' },
+      { num: 12, type: 'security_groups', root: 'security_groups', name: t('RESOURCES_SECURITY_GROUP'), routeName: 'securityGroups', multitenancy: true, icon: 'shield', createField: 'timestamp' },
+      { num: 13, type: 'host_devices', root: 'host_devices', name: t('RESOURCES_HOST_DEVICE'), routeName: 'hostdevices', multitenancy: false, icon: 'ico-type-hostdevice', createField: 'timestamp' },
+      { num: 14, type: 'mediated_devices', root: 'mediated_devices', name: t('RESOURCES_MEDIATED_DEVICE'), routeName: 'mediateddevices', multitenancy: false, icon: 'ico-type-mediatedvgpu', createField: 'timestamp' },
     ];
 
     const computingDataArray = [];
