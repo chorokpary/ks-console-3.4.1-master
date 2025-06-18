@@ -64,6 +64,7 @@ import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 import ResourcesVolumes from '../containers/Resources/Volumes'
+import PhysicalNetworks from '../containers/Resources/PhysicalNetworks'
 import Sriov from '../containers/Resources/Sriov'
 import MediatedDevices from '../containers/Resources/MediatedDevices'
 import LoadBalancers from '../containers/Resources/LoadBalancers'
@@ -228,6 +229,11 @@ export default [
       {
         path: `${PATH}/sriovs`,
         component: Sriov,
+        exact: true,
+      },
+      {
+        path: `${PATH}/physicalnetworks`,
+        component: PhysicalNetworks,
         exact: true,
       },
       {

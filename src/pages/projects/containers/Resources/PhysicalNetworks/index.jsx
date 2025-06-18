@@ -1,6 +1,6 @@
 /*
  * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
+ * Copyright (C) 2025 The KubeSphere Console Authors.
  *
  * KubeSphere Console is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,45 +16,41 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Link } from 'react-router-dom'
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Tabs from 'components/Cards/Banner/Tabs'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import { Link } from 'react-router-dom';
+import React from 'react';
+import { Avatar, Status } from 'components/Base';
+import Tabs from 'components/Cards/Banner/Tabs';
 import { getDocsUrl } from 'utils'
+import withList, { ListPage } from 'components/HOCs/withList'
+import Table from 'components/Tables/List'
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-import { Icon } from '@kube-design/components'
-import classnames from 'classnames'
+import { getLocalTime } from 'utils';
+import { Icon } from '@kube-design/components';
+import classnames from 'classnames';
 
-import RoleStore from 'stores/role'
-import NetworkStore from 'stores/resources/networks'
+import PhysicalNetworkStore from 'stores/resources/physicalnetworks';
 
-import styles from './index.scss'
+import styles from './index.scss';
 
 @withList({
-  store: new NetworkStore(),
-  module: 'networks',
-  authKey: 'networks',
-  name: t('RESOURCES_NETWORK'),
-  rowKey: 'id'
+  store: new PhysicalNetworkStore(),
+  module: 'physicalnetworks',
+  authKey: 'physicalnetworks',
+  name: t('RESOURCES_PHYSICAL_NETWORK'),
+  rowKey: 'id',
 })
-export default class Networks extends React.Component {
-
+export default class PhysicalNetworks extends React.Component {
   handleTabChange = value => {
     const { cluster, workspace, namespace } = this.props.match.params
     this.props.routing.push(`/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`)
   }
 
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -63,17 +59,17 @@ export default class Networks extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('networks.remove', {
+          trigger('physicalnetworks.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
 
     return {
       ...tableProps.tableActions,
@@ -84,7 +80,7 @@ export default class Networks extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('networks.regist', {
+            trigger('physicalnetworks.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -98,7 +94,7 @@ export default class Networks extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('networks.remove.batch', {
+            trigger('physicalnetworks.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -108,11 +104,11 @@ export default class Networks extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props
+    const { getSortOrder } = this.props;
     const { workspace, cluster, namespace } = this.props.match.params
     return [
       {
@@ -120,12 +116,30 @@ export default class Networks extends React.Component {
         dataIndex: 'name',
         sorter: true,
         render: (name, item) => (
-          <Avatar
-            icon="network-duotone"
-            iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${name}/${item.id}`}
-            title={name}
-          />
+          <div className={styles.avatar}>
+            <div className={styles.icon}>
+              <i className="ico-type-sriov"></i>
+            </div>
+            <div>
+              <Link
+                className={styles.title}
+                to={`/${workspace}/clusters/${cluster}/projects/${namespace}/physicalnetworks/${name}/${item.id}`}
+              >
+                {name}
+              </Link>
+            </div>
+          </div>
+        ),
+      },
+      {
+        title: t('RESOURCES_FABRIC'),
+        dataIndex: 'fabric',
+        isHideable: true,
+        width: 'auto',
+        render: fabric => (
+          <p className="tall">
+            <span>{fabric.toUpperCase()}</span>
+          </p>
         ),
       },
       {
@@ -133,15 +147,20 @@ export default class Networks extends React.Component {
         dataIndex: 'type',
         isHideable: true,
         width: 'auto',
+        render: type => (
+          <p className="tall">
+            <span>{type.toUpperCase()}</span>
+          </p>
+        ),
       },
       {
-        title: t('MTU'),
+        title: t('RESOURCES_MTU'),
         dataIndex: 'mtu',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('CIDR'),
+        title: t('RESOURCES_CIDR'),
         dataIndex: 'cidr',
         isHideable: true,
         width: 'auto',
@@ -161,17 +180,15 @@ export default class Networks extends React.Component {
         width: 150,
         render: date => (
           <p>
-            {date
-              ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-              : t('-')}
+            {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
           </p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') }
+    return { desc: t('RESOURCES_NO_DATA') };
   }
 
   get tabs() {
@@ -192,21 +209,19 @@ export default class Networks extends React.Component {
           label: t('RESOURCES_NETWORK_TAB3'),
         },
       ],
-    }
+    };
   }
 
   modalTopology = () => {
-    const { getData, trigger } = this.props
-
+    const { getData, trigger } = this.props;
     trigger('networks.topology.project', {
       success: getData,
       ...this.props.match.params,
     })
-  }
+  };
 
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps } = this.props;
     const docUrl = getDocsUrl('networks')
     return (
       <ListPage {...this.props}>
@@ -219,16 +234,13 @@ export default class Networks extends React.Component {
               <div className="h3">{t('RESOURCES_NETWORK')}</div>
               <p className="text-second">
                 {t('RESOURCES_NETWORK_DESC')}
-                <span className={styles.more}>
-                  <Icon name="documentation" size={16} />
-                  <a href={docUrl} target="_blank" rel="noreferrer noopener">
-                    {t('LEARN_MORE')}
-                  </a>
-                </span>
               </p>
             </div>
             <div className={styles.divRight}>
-              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
+              <div
+                className={styles.iconRight}
+                onClick={() => this.modalTopology()}
+              >
                 <Icon name={'topology'} size={36} />
               </div>
               <p>{t('RESOURCES_TOPOLOGY')}</p>
@@ -246,8 +258,6 @@ export default class Networks extends React.Component {
           searchType="name"
         />
       </ListPage>
-    )
+    );
   }
 }
-
-

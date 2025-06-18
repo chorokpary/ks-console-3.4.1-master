@@ -50,6 +50,7 @@ import VmDetail from '../containers/Resources/Vms/Detail'
 import VolumeDetail from '../containers/Resources/Volumes/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
+import PhysicalNetworkDetail from '../containers/Resources/PhysicalNetworks/Detail'
 import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 import ContainerResourceDetail from '../containers/Resources/ContainerResource/Detail'
@@ -171,6 +172,10 @@ export default PATH => [
   {
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
+  },
+  {
+    path: `${PATH}/physicalnetworks/:name/:id`,
+    component: PhysicalNetworkDetail,
   },
   {
     path: `${PATH}/loadbalancers/:name/:id`,
