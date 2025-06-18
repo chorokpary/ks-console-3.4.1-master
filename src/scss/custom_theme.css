@@ -925,11 +925,6 @@ span[style="width: 40px; height: 40px;"] > .kubed-icon.kubed-icon-light {
   color: hsla(0, 0%, 100%, 0.9) !important;
 }
 
-[class*=__tab][class*=index__active] span[style="width: 40px; height: 40px;"] > .kubed-icon.kubed-icon-dark {
-  color: hsla(0, 0%, 100%, 0.9) !important;
-  fill: hsla(0, 0%, 100%, 0.4) !important;
-}
-
 /* 클러스터 상태 */
 .src-pages-clusters-containers-Monitor-Cluster-Overview-index__components .src-pages-clusters-containers-Monitor-Cluster-Overview-index__wrapper .src-pages-clusters-containers-Monitor-Cluster-Overview-index__list.src-pages-clusters-containers-Monitor-Cluster-Overview-index__core .src-pages-clusters-containers-Monitor-Cluster-Overview-index__itemIcon.src-pages-clusters-containers-Monitor-Cluster-Overview-index__healthy, .src-pages-clusters-containers-Monitor-Cluster-Overview-index__components .src-pages-clusters-containers-Monitor-Cluster-Overview-index__wrapper .src-pages-clusters-containers-Monitor-Cluster-Overview-index__list.src-pages-clusters-containers-Monitor-Cluster-Overview-index__core .src-pages-clusters-containers-Monitor-Cluster-Overview-index__itemIcon.src-pages-clusters-containers-Monitor-Cluster-Overview-index__ready {
   background-color: #55bc8a !important;
