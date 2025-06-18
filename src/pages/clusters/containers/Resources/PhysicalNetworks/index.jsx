@@ -116,12 +116,19 @@ export default class PhysicalNetworks extends React.Component {
         dataIndex: 'name',
         sorter: true,
         render: (name, item) => (
-          <Avatar
-            icon="network-duotone"
-            iconSize={40}
-            to={`/clusters/${cluster}/physicalnetworks/${name}/${item.id}`}
-            title={name}
-          />
+          <div className={styles.avatar}>
+            <div className={styles.icon}>
+              <i className="ico-type-sriov"></i>
+            </div>
+            <div>
+              <Link
+                className={styles.title}
+                to={`/clusters/${cluster}/physicalnetworks/${name}/${item.id}`}
+              >
+                {name}
+              </Link>
+            </div>
+          </div>
         ),
       },
       {
@@ -209,9 +216,9 @@ export default class PhysicalNetworks extends React.Component {
           label: t('RESOURCES_NETWORK_TAB2'),
         },
         {
-            value: 'physicalnetworks',
-            label: t('RESOURCES_NETWORK_TAB3'),
-          },
+          value: 'physicalnetworks',
+          label: t('RESOURCES_NETWORK_TAB3'),
+        },
       ],
     };
   }
@@ -238,12 +245,6 @@ export default class PhysicalNetworks extends React.Component {
               <div className="h3">{t('RESOURCES_NETWORK')}</div>
               <p className="text-second">
                 {t('RESOURCES_NETWORK_DESC')}
-                <span className={styles.more}>
-                  <Icon name="documentation" size={16} />
-                  <a href={docUrl} target="_blank" rel="noreferrer noopener">
-                    {t('LEARN_MORE')}
-                  </a>
-                </span>
               </p>
             </div>
             <div className={styles.divRight}>

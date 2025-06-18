@@ -153,11 +153,14 @@ const PhysicalNetworkDetail = props => {
     return <Loading className="ks-page-loading" />;
   }
 
+  const getBanner = () => {
+    return <i className="ico-type24-sriov"></i>
+  }
+
   const sideProps = {
-    icon: 'network-duotone',
+    icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
-    // desc: get(store.detail.network, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [

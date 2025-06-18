@@ -310,6 +310,9 @@ export default class VmStore extends Base {
     // SRIOV Network
     await this.fetchVmListSriovNetwork(params)
 
+    // Physical Network
+    await this.fetchVmListPhysicalNetwork(params)
+
     this.detail = detail
     this.isLoading = false
 
@@ -619,6 +622,43 @@ export default class VmStore extends Base {
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
       )}/edgetron/resources/kubevirt/sriov_networks/available_ips`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'all_ips' }
+
+    this.isLoading = false
+    return response
+  }
+
+  @action
+  async fetchVmListPhysicalNetwork(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/physical_networks`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'physicalnetworks' }
+
+    if (params?.namespace) {
+      response.physicalnetworks = response.physicalnetworks.filter(
+        item => item.project === params.namespace
+      )
+    }
+
+    this.physicalnetworksList = response.physicalnetworks
+    this.isLoading = false
+    return response
+  }
+
+  @action
+  async fetchAllAvailablePhysicalIps(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/physical_networks/available_ips`
     )
     const response = { ...params, ...this.mapper(result), kind: 'all_ips' }
 
