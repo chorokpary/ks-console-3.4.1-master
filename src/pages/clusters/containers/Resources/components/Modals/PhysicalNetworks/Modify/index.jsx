@@ -363,7 +363,8 @@ const ModifyModal = props => {
                                 label={t('RESOURCES_FABRIC')}
                                 rules={[
                                   {
-                                    required: false,
+                                    required: true,
+                                    message: t('RESOURCES_SELECT_FABRIC_TIP'),
                                   },
                                 ]}
                               >

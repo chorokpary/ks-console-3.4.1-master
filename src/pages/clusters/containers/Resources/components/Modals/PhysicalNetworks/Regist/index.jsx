@@ -635,6 +635,10 @@ const RegistModal = props => {
                             label={t('RESOURCES_GATEWAY_IP')}
                             rules={[
                               {
+                                required: true,
+                                message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC'),
+                              },
+                              {
                                 pattern: PATTERN_IP,
                                 message: t('RESOURCES_GATEWAY_IP_POOL_VALID'),
                               },
