@@ -137,19 +137,23 @@ const Status = props => {
                     />
                   </div>
                   <div className={styles.content}>
-                    <div className={styles.text} style={{ width: '20%' }}>
+                    <div className={styles.text} style={{ width: '15%' }}>
                       <div>{detail.name}</div>
                       <p>{t('RESOURCES_NAME')}</p>
+                    </div>
+                    <div className={styles.text} style={{ width: '10%' }}>
+                      <div>{detail.version}</div>
+                      <p>{t('VERSION')}</p>
                     </div>
                     <div className={styles.text} style={{ width: '10%' }}>
                       <div>{detail.revision}</div>
                       <p>{t('REVISION')}</p>
                     </div>
-                    <div className={styles.text} style={{ width: '20%' }}>
+                    <div className={styles.text} style={{ width: '10%' }}>
                       <div>{detail.status}</div>
                       <p>{t('RESOURCES_STATE')}</p>
                     </div>
-                    <div className={styles.text} style={{ width: '50%' }}>
+                    <div className={styles.text} style={{ width: '55%' }}>
                       <div>
                         {detail.reason === ''
                           ? t('RESOURCES_CLUSTER_COMPONENT_STATE_DESC')
