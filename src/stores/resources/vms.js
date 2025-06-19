@@ -193,6 +193,19 @@ export default class VmStore extends Base {
     })
     resourceData.sriov_networks = sriovNetworksArray
 
+    const physicalnetworksArray = []
+    data.physicalnetwork.forEach(name => {
+      const physicalnetworkObj = {}
+      physicalnetworkObj.network_name = name
+      const fixedIpObj = data.physicalnetworkIps.find(obj => obj.network_name === name)
+      if (fixedIpObj !== undefined) {
+        physicalnetworksArray.push(fixedIpObj)
+      } else {
+        physicalnetworksArray.push(physicalnetworkObj)
+      }
+    })
+    resourceData.physical_networks = physicalnetworksArray
+
     const hostDeviceArray = []
     resourceData.host_devices = hostDeviceArray
 
