@@ -54,7 +54,7 @@ export default class NetworkStorages extends React.Component {
         action: 'delete',
         show: this.showAction,
         onClick: item =>
-          trigger('storageconfigs.remove', {
+          trigger('networkstorages.remove', {
             detail: item,
             success: getData,
             ...this.props.match.params,
@@ -194,14 +194,6 @@ export default class NetworkStorages extends React.Component {
   get emptyProps() {
     return { desc: t('RESOURCES_NO_DATA') };
   }
-
-  modalTopology = () => {
-    const { getData, trigger } = this.props;
-    trigger('networks.topology', {
-      success: getData,
-      ...this.props.match.params,
-    });
-  };
 
   render() {
     const { bannerProps, tableProps } = this.props;
