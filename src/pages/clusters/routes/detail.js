@@ -66,6 +66,7 @@ import VolumeDetail from '../containers/Resources/Volumes/Detail'
 import HostDeviceDetail from '../containers/Resources/HostDevices/Detail'
 import MediatedDeviceDetail from '../containers/Resources/MediatedDevices/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
+import NetworkStorageDetail from '../containers/Resources/NetworkStorages/Detail'
 import BareMetalDetail from '../containers/Resources/BareMetal/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
 import PhysicalNetworkDetail from '../containers/Resources/PhysicalNetworks/Detail'
@@ -197,6 +198,10 @@ export default [
       {
         path: `${PATH}/projects/:namespace/containerresource/:name`,
         component: ContainerResourceDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/networkstorages/:name`,
+        component: NetworkStorageDetail,
       },
       {
         path: `${PATH}/projects/:namespace/nodepools/:clustername/:name`,

@@ -78,6 +78,7 @@ import Sriov from '../containers/Resources/Sriov'
 import HostDevices from '../containers/Resources/HostDevices'
 import MediatedDevices from '../containers/Resources/MediatedDevices'
 import LoadBalancers from '../containers/Resources/LoadBalancers'
+import NetworkStorages from '../containers/Resources/NetworkStorages'
 
 import GpuNodes from '../containers/Resources/GpuNodes'
 
@@ -374,6 +375,11 @@ export default [
           {
             path: `${PATH}/loadbalancers`,
             component: LoadBalancers,
+            exact: true,
+          },
+          {
+            path: `${PATH}/networkstorages`,
+            component: NetworkStorages,
             exact: true,
           },
           {

@@ -1125,4 +1125,14 @@ module.exports = {
     'Summary of current status of the MachineSet owned by the NodePool',
   RESOURCES_NODE_COUNT: 'Number of Nodes',
   RESOURCES_NODE_IP: 'Node IP',
+
+  RESOURCES_NETWORK_STORAGE: 'Network Storage',
+  RESOURCES_NETWORK_STORAGE_DESC: 'Manage the status and usage of network storage.',
+  RESOURCES_FILESYSTEM: 'File System',
+  RESOURCES_PROTOCOL: 'Protocol',
+  RESOURCES_TRANSPORT: 'Transport',
+  RESOURCES_ENDPOINT: 'Endpoint',
+  RESOURCES_MOUNT_POINT: 'Mount Point',
+  RESOURCES_MOUNT_OPTIONS: 'Mount Options',
+  RESOURCES_MAX_CONNECTION: 'Max Connection',
 }

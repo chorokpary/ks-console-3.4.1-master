@@ -1113,4 +1113,14 @@ module.exports = {
     '노드풀이 소유한 머신세트의 상태를 나타냅니다.',
   RESOURCES_NODE_COUNT: '노드 개수',
   RESOURCES_NODE_IP: '노드 IP',
+
+  RESOURCES_NETWORK_STORAGE: '네트워크 스토리지',
+  RESOURCES_NETWORK_STORAGE_DESC: '네트워크 스토리지 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_FILESYSTEM: '파일 시스템',
+  RESOURCES_PROTOCOL: '프로토콜',
+  RESOURCES_TRANSPORT: '통신 방식',
+  RESOURCES_ENDPOINT: '엔드 포인트',
+  RESOURCES_MOUNT_POINT: '마운트 포인트',
+  RESOURCES_MOUNT_OPTIONS: '마운트 옵션',
+  RESOURCES_MAX_CONNECTION: '최대 연결수',
 }
