@@ -342,6 +342,7 @@ client:
                 authKey: volumes,
                 requiredClusterVersion: v3.3.0,
               }
+            - { name: networkstorages, title: RESOURCES_NETWORK_STORAGE }
         - name: monitoring-alerting
           title: MONITORING_AND_ALERTING
           icon: monitor
@@ -586,6 +587,7 @@ client:
           children:
             - { name: volumes, title: PERSISTENT_VOLUME_CLAIM_PL }
             - { name: volume-snapshots, title: VOLUME_SNAPSHOT_PL }
+            - { name: networkstorages, title: RESOURCES_NETWORK_STORAGE }
         - name: config
           title: CONFIGURATION
           icon: hammer

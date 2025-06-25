@@ -48,6 +48,7 @@ import NetworkDetail from '../containers/Resources/Networks/Detail'
 import FloatingIpDetail from '../containers/Resources/FloatingIp/Detail'
 import VmDetail from '../containers/Resources/Vms/Detail'
 import VolumeDetail from '../containers/Resources/Volumes/Detail'
+import NetworkStorageDetail from '../containers/Resources/NetworkStorages/Detail'
 import LoadBalancerDetail from '../containers/Resources/LoadBalancers/Detail'
 import SrIovDetail from '../containers/Resources/Sriov/Detail'
 import PhysicalNetworkDetail from '../containers/Resources/PhysicalNetworks/Detail'
@@ -196,6 +197,10 @@ export default PATH => [
   {
     path: `${PATH}/resourcesvolumes/:name/:id`,
     component: VolumeDetail,
+  },
+  {
+    path: `${PATH}/networkstorages/:name`,
+    component: NetworkStorageDetail,
   },
   {
     path: `${PATH}/hostdevices/:id`,

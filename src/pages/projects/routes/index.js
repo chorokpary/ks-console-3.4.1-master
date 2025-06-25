@@ -64,6 +64,7 @@ import SecurityGroups from '../containers/Resources/SecurityGroups'
 import Networks from '../containers/Resources/Networks'
 import FloatingIp from '../containers/Resources/FloatingIp'
 import ResourcesVolumes from '../containers/Resources/Volumes'
+import NetworkStorages from '../containers/Resources/NetworkStorages'
 import PhysicalNetworks from '../containers/Resources/PhysicalNetworks'
 import Sriov from '../containers/Resources/Sriov'
 import MediatedDevices from '../containers/Resources/MediatedDevices'
@@ -244,6 +245,11 @@ export default [
       {
         path: `${PATH}/resourcesvolumes`,
         component: ResourcesVolumes,
+        exact: true,
+      },
+       {
+        path: `${PATH}/networkstorages`,
+        component: NetworkStorages,
         exact: true,
       },
 

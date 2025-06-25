@@ -47,8 +47,6 @@ export default class NetworkStorageStore extends Base {
     async fetchDetail(params) {
         this.isLoading = true
 
-        console.log(params)
-
         const result = await request.get(
             `${this.getResourceUrl(params)}/${params.name}/${params.namespace}/info`
         )
@@ -79,8 +77,14 @@ export default class NetworkStorageStore extends Base {
     @action
     async batchDelete({ rowKeys, ...params }) {
         const rowKeyDict = rowKeys.map(key => {
-            const [project, name] = key.split('/')
-            return { project, name }
+            if (key.includes('/')) {
+                const [project, name] = key.split('/')
+                return { project, name }
+            } else {
+                const project = params.namespace
+                const name = key
+                return { project, name }
+            }
         })
 
         await this.submitting(
