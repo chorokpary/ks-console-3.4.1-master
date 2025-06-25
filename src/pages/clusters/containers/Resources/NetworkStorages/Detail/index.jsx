@@ -95,39 +95,39 @@ const NetworkStorageDetail = props => {
       },
       {
         name: t('RESOURCES_FILESYSTEM'),
-        value: detail.storage_config.filesystem.toUpperCase(),
+        value: detail.network_storage.filesystem.toUpperCase(),
       },
       {
         name: t('RESOURCES_PROTOCOL'),
-        value: detail.storage_config.protocol.toUpperCase(),
+        value: detail.network_storage.protocol.toUpperCase(),
       },
       {
         name: t('RESOURCES_TRANSPORT'),
-        value: detail.storage_config.transport.toUpperCase(),
+        value: detail.network_storage.transport.toUpperCase(),
       },
       {
         name: t('RESOURCES_MAX_CONNECTION'),
-        value: detail.storage_config.max_connection,
+        value: detail.network_storage.max_connection,
       },
       {
         name: t('RESOURCES_ENDPOINT'),
-        value: detail.storage_config.endpoint,
+        value: detail.network_storage.endpoint,
       },
       {
         name: t('RESOURCES_MOUNT_POINT'),
-        value: detail.storage_config.mount_point,
+        value: detail.network_storage.mount_point,
       },
       {
         name: t('RESOURCES_MOUNT_OPTIONS'),
-        value: detail.storage_config.gateway_ip,
+        value: detail.network_storage.gateway_ip,
       },
       {
         name: t('RESOURCES_DESCRIPTION'),
-        value: detail.storage_config.description,
+        value: detail.network_storage.description,
       },
       {
         name: t('RESOURCES_REGIST_DATE'),
-        value: getLocalTime(detail.storage_config.timestamp).format(
+        value: getLocalTime(detail.network_storage.timestamp).format(
           'YYYY-MM-DD HH:mm:ss'
         ),
       },

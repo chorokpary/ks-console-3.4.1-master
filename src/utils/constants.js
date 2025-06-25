@@ -620,6 +620,7 @@ export const PATTERN_ENV_NAME = /^[-._a-zA-Z][-._a-zA-Z0-9]*$/;
 export const CRON_EXP = /^(@(annually|yearly|monthly|weekly|daily|hourly|midnight))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})$/;
 export const PATTERN_SEGMENT_ID = /^(1677721[0-5]|167772[0-1]\d{2}|16777[0-1]\d{3}|1677[0-6]\d{4}|167[0-6]\d{5}|16[0-6]\d{6}|1[0-5]\d{7}|\d{1,7})$/;
 export const PATTERN_MTU = /^([1-8]\d{0,3}|9000)$/;
+export const PATTERN_FILE_PATH = /^\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\/?$/;
 
 export const PIPELINE_TASKS = {
   All: [

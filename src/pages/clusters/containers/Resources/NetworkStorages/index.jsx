@@ -90,6 +90,7 @@ export default class NetworkStorages extends React.Component {
           action: 'delete',
           onClick: () =>
             trigger('networkstorages.remove.batch', {
+              rowKey: 'uid',
               success: getData,
               ...this.props.match.params,
             }),
@@ -209,6 +210,7 @@ export default class NetworkStorages extends React.Component {
         />
         <ResourceTable
           {...tableProps}
+          rowKey="project_name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}

@@ -1,17 +1,13 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { Modal, TypeSelect, List, Panel } from 'components/Base';
-import { PropertiesInput, NumberInput, ProjectSelect } from 'components/Inputs';
+import { ProjectSelect } from 'components/Inputs';
 import {
   PATTERN_USER_NAME,
-  PATTERN_IP,
-  PATTERN_IP_MASK,
-  PATTERN_MTU,
+  PATTERN_FILE_PATH
 } from 'utils/constants';
-import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio';
 import { Form, Input, Select, Button, Tooltip, TextArea } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 
-import classnames from 'classnames';
 import styles from './index.scss';
 
 const RegistModal = props => {
@@ -55,12 +51,9 @@ const RegistModal = props => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
-      data.snatType = radioSnatType;
-      data.internal = internalCheckItems;
-      data.external = radioExternal;
       data.project = projectName;
 
-      onOk({ network_storage: data });
+      onOk({ storage: data });
     });
   };
 
@@ -78,7 +71,7 @@ const RegistModal = props => {
         onCancel={closeModal}
         bodyClassName={styles.body}
         visible={modelView}
-        hideFooter
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Columns>
@@ -95,7 +88,7 @@ const RegistModal = props => {
                 desc={t('NAME_DESC')}
               >
                 <Input
-                  name="routerName"
+                  name="name"
                   autoFocus={true}
                   maxLength={63}
                   style={{ maxWidth: 'none' }}
@@ -193,6 +186,11 @@ const RegistModal = props => {
                       rules={[
                         {
                           required: true,
+
+                        },
+                        {
+                          pattern: PATTERN_FILE_PATH,
+                          message: t('RESOURCES_INVALID_MOUNT_POINT_DESC'),
                         },
                       ]}
                     >

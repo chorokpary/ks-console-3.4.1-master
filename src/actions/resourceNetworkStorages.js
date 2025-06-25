@@ -106,13 +106,7 @@ export default {
   'networkstorages.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
-      store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
-          arr.push(obj.name)
-        }
-      })
-      const names = arr.join(', ')
+      const names = rowKeys.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -136,26 +130,6 @@ export default {
             ? t.html('RESOURCES_DELETE_NETWORK_STORAGE_TIP', { resource: names })
             : t.html('RESOURCES_DELETE_NETWORK_STORAGE_TIP', { resource: names }),
         resource: names,
-        store,
-        ...props,
-      })
-    },
-  },
-  'networkstorages.delete': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: () => {
-          store.delete(detail).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
-        },
-        title: t('RESOURCES_DELETE'),
-        desc: t('RESOURCES_DELETE_DESC'),
-        modal: DeleteModal,
-        module: store.module,
-        detail,
         store,
         ...props,
       })

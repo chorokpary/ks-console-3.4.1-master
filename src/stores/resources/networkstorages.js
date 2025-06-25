@@ -24,10 +24,10 @@ import List from '../base.list'
 
 export default class NetworkStorageStore extends Base {
     records = new List()
-        
-    module = 'storage_configs'
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/storage_configs`
+    module = 'network_storages'
+
+    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/network_storages`
     getListUrl = this.getResourceUrl
     getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
 
@@ -40,10 +40,7 @@ export default class NetworkStorageStore extends Base {
 
     @action
     async update({ name, ...params }, data) {
-        const jsonData = {};
-        jsonData.config = data;
-        
-        await this.submitting(request.put(this.getResourceUrl(params), jsonData))
+        await this.submitting(request.put(this.getResourceUrl(params), data))
     }
 
     @action
@@ -81,30 +78,29 @@ export default class NetworkStorageStore extends Base {
 
     @action
     async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-        } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(id =>
-                        request.delete(
-                            `${this.getDetailUrl({ id, ...params })}`
-                        )
+        const rowKeyDict = rowKeys.map(key => {
+            const [project, name] = key.split('/')
+            return { project, name }
+        })
+
+        await this.submitting(
+            Promise.all(
+                rowKeyDict.map(rowKey =>
+                    request.delete(
+                        `${this.getDetailUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
                     )
                 )
             )
-        }
+        )
         this.list.selectedRowKeys = []
     }
 
     @action
     delete(user) {
-        user.name = user.id;
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
-
         return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
 }

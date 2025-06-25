@@ -1124,6 +1124,7 @@ module.exports = {
   RESOURCES_SELECT_TRANSPORT_TIP: '통신 방식을 선택해 주세요.',
   RESOURCES_ENDPOINT: '엔드 포인트',
   RESOURCES_MOUNT_POINT: '마운트 포인트',
+  RESOURCES_INVALID_MOUNT_POINT_DESC: '잘못된 마운트 포인트입니다. 마운트 포인트는 파일 경로 양식으로 지정해야하고, 루트 경로는 마운트 포인트로 사용할 수 없습니다.',
   RESOURCES_MOUNT_OPTIONS: '마운트 옵션',
   RESOURCES_MAX_CONNECTION: '최대 연결수',
   RESOURCES_MAX_CONNECTION_TIP: '최대 연결수를 선택해 주세요.',

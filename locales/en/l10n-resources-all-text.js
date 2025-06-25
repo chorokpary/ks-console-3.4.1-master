@@ -1136,6 +1136,7 @@ module.exports = {
   RESOURCES_SELECT_TRANSPORT_TIP: 'Please select a transport method.',
   RESOURCES_ENDPOINT: 'Endpoint',
   RESOURCES_MOUNT_POINT: 'Mount Point',
+  RESOURCES_INVALID_MOUNT_POINT_DESC: 'Invalid mount point. Mount point should follow the filepath format, and it does not allow to specify the root path.',
   RESOURCES_MOUNT_OPTIONS: 'Mount Options',
   RESOURCES_MAX_CONNECTION: 'Max Connection',
   RESOURCES_MAX_CONNECTION_TIP: 'Please select the number of maximum connection.',
