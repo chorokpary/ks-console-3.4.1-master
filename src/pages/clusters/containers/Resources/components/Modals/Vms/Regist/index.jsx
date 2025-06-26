@@ -281,8 +281,8 @@ const RegistModal = props => {
     setSriovNetworkList(updatedSriovNetworkList)
   }
 
-  const availablePhysicalNetworkIpOptions = netId => {
-    const networkIps = availablePhysicalnetworkIpList.find(obj => obj.network === netId)
+  const availablePhysicalNetworkIpOptions = (name, project) => {
+    const networkIps = availablePhysicalnetworkIpList.find(obj => obj.network === name && obj.project === project)
     if (networkIps !== undefined) {
       return networkIps.ips.map(ip => {
         return {
@@ -293,18 +293,18 @@ const RegistModal = props => {
     }
   }
 
-  const handlePhysicalNetworkIpSelectClick = (netId, val) => {
+  const handlePhysicalNetworkIpSelectClick = (name, val) => {
     const record = {}
-    record.network_name = netId
+    record.network_name = name
     record.fixed_ip = val
-    const existing = selectedPhysicalnetworkIpList.filter(obj => obj.network_name !== netId)
+    const existing = selectedPhysicalnetworkIpList.filter(obj => obj.network_name !== name)
     if (val !== t('RESOURCES_SELECT') && val !== undefined) {
       existing.push(record)
     }
     setSelectedPhysicalnetworkIpList(existing)
 
     const updatedNetworkList = physicalNetworkList.map(item => {
-      if (item.id === netId) {
+      if (item.id === name,e) {
         return { ...item, ip: val }
       }
       return item
@@ -912,7 +912,7 @@ const RegistModal = props => {
     if (checked) {
       const nameArray = []
       dataListVariables[type].forEach(el =>
-        type === 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
+        type === 'sriov' || type === 'physicalnetwork' ? nameArray.push(el.name) : nameArray.push(el.id)
       )
       setVariables[type](nameArray)
     } else {
@@ -1862,19 +1862,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {physicalNetworkList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['physicalnetwork'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'physicalnetwork'
                                     )
                                   }
@@ -1884,14 +1884,14 @@ const RegistModal = props => {
                               <td>{data.type.toUpperCase()}</td>
                               <td>
                                 <Select
-                                  name={`${data.id}-ip`}
+                                  name={`${data.name}-ip`}
                                   placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availablePhysicalNetworkIpOptions(data.id)}
+                                  options={availablePhysicalNetworkIpOptions(data.name, data.project)}
                                   onChange={e =>
-                                    handlePhysicalNetworkIpSelectClick(data.id, e)
+                                    handlePhysicalNetworkIpSelectClick(data.name, e)
                                   }
                                   disabled={
-                                    !physicalnetworkCheckItems.includes(data.id)
+                                    !physicalnetworkCheckItems.includes(data.name)
                                   }
                                   clearable
                                 />
@@ -1905,7 +1905,7 @@ const RegistModal = props => {
                       <div className={styles.removeCheckWrapper}>
                         {physicalnetworkCheckItems?.map(id => {
                           const name = physicalNetworkList
-                            ?.filter(data => data.id === id)
+                            ?.filter(data => data.name === id)
                             .map(item => item.name)[0]
                           return (
                             <span key={id}>
