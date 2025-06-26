@@ -29,7 +29,7 @@ import { getLocalTime } from 'utils';
 import { getIndexRoute } from 'utils/router.config';
 import Status from 'projects/containers/Resources/PhysicalNetworks/Detail/Status';
 
-const PATH_DETAIL = '/:workspace/clusters/:cluster/projects/:namespace/physicalnetworks/:name/:id'
+const PATH_DETAIL = '/:workspace/clusters/:cluster/projects/:namespace/physicalnetworks/:name'
 
 const store = new PhysicalNetworkStore();
 
@@ -89,7 +89,7 @@ const PhysicalNetworkDetail = props => {
       onClick: () =>
         props.rootStore.triggerAction('physicalnetworks.remove', {
           type: 'NETWORK_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.physicalnetwork),
           store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),

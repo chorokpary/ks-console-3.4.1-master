@@ -12,7 +12,7 @@ import { getLocalTime } from 'utils';
 import { getIndexRoute } from 'utils/router.config';
 import Status from 'clusters/containers/Resources/PhysicalNetworks/Detail/Status';
 
-const PATH_DETAIL = '/clusters/:cluster/physicalnetworks/:name';
+const PATH_DETAIL = '/clusters/:cluster/projects/:namespace/physicalnetworks/:name';
 
 const store = new PhysicalNetworkStore();
 
@@ -30,7 +30,7 @@ const PhysicalNetworkDetail = props => {
 
   const { routing } = props.rootStore;
 
-  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`;
+  const PATH = `${listUrl}/${props.match.params.name}`;
 
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
@@ -72,7 +72,7 @@ const PhysicalNetworkDetail = props => {
       onClick: () =>
         props.rootStore.triggerAction('physicalnetworks.remove', {
           type: 'NETWORK_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.physicalnetwork),
           store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),

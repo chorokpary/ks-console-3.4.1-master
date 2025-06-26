@@ -268,8 +268,6 @@ const RegistModal = props => {
         data.name == '' ||
         data.resource_name == undefined ||
         data.resource_name == '' ||
-        data.interface_index == undefined ||
-        data.interface_index == '' ||
         !PATTERN_MTU.test(data.mtu) ||
         data.cidr == undefined ||
         data.cidr == '' ||

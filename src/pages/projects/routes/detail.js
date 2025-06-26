@@ -175,7 +175,7 @@ export default PATH => [
     component: SrIovDetail,
   },
   {
-    path: `${PATH}/physicalnetworks/:name/:id`,
+    path: `${PATH}/physicalnetworks/:name`,
     component: PhysicalNetworkDetail,
   },
   {
