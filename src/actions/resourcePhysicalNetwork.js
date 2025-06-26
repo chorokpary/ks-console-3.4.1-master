@@ -26,10 +26,6 @@ import DeleteModal from 'components/Modals/Delete'
 import RegistModal from 'clusters/containers/Resources/components/Modals/PhysicalNetworks/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/PhysicalNetworks/Modify'
 
-import TopologyModal from 'clusters/containers/Resources/components/Modals/Topology'
-import TopologyModalProject from 'projects/containers/Resources/components/Modals/Topology'
-
-
 export default {
   'physicalnetworks.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
@@ -110,13 +106,7 @@ export default {
   'physicalnetworks.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
-      store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
-          arr.push(obj.name)
-        }
-      })
-      const names = arr.join(', ')
+      const names = rowKeys.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -145,26 +135,6 @@ export default {
       })
     },
   },
-  'physicalnetworks.delete': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: () => {
-          store.delete(detail).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
-        },
-        title: t('RESOURCES_DELETE'),
-        desc: t('RESOURCES_DELETE_DESC'),
-        modal: DeleteModal,
-        module: store.module,
-        detail,
-        store,
-        ...props,
-      })
-    },
-  },
   'physicalnetworks.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
@@ -176,32 +146,6 @@ export default {
         detail,
         store,
         modal: EditYamlModal,
-        ...props,
-      })
-    },
-  },
-  'networks.topology': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: async data => {
-          Modal.close(modal)
-        },
-        detail,
-        store,
-        modal: TopologyModal,
-        ...props,
-      })
-    },
-  },
-  'networks.topology.project': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: async data => {
-          Modal.close(modal)
-        },
-        detail,
-        store,
-        modal: TopologyModalProject,
         ...props,
       })
     },

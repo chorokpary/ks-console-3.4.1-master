@@ -60,8 +60,6 @@ const ModifyModal = props => {
         }
       }
 
-      const { id } = detail;
-
       const host_routes = [];
       listHostRoute?.map(el => {
         if (data.Destination?.[el] && data.Nexthop?.[el]) {
@@ -72,9 +70,9 @@ const ModifyModal = props => {
         }
       });
       data.host_routes = host_routes;
-      data.id = id;
+      data.project = detail.project
 
-      onOk({ ...data });
+      onOk({ network: data });
     });
   };
 

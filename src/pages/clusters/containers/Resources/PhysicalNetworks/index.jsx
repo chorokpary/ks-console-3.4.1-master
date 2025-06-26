@@ -37,7 +37,6 @@ import styles from './index.scss';
   module: 'physicalnetworks',
   authKey: 'physicalnetworks',
   name: t('RESOURCES_PHYSICAL_NETWORK'),
-  rowKey: 'id',
 })
 export default class PhysicalNetworks extends React.Component {
   handleTabChange = value => {
@@ -115,7 +114,7 @@ export default class PhysicalNetworks extends React.Component {
         title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
-        render: (name, item) => (
+        render: (name, record) => (
           <div className={styles.avatar}>
             <div className={styles.icon}>
               <i className="ico-type24-sriov"></i>
@@ -123,7 +122,7 @@ export default class PhysicalNetworks extends React.Component {
             <div>
               <Link
                 className={styles.title}
-                to={`/clusters/${cluster}/physicalnetworks/${name}/${item.id}`}
+                to={`/clusters/${cluster}/projects/${record.project}/physicalnetworks/${name}`}
               >
                 {name}
               </Link>
@@ -262,6 +261,7 @@ export default class PhysicalNetworks extends React.Component {
 
         <ResourceTable
           {...tableProps}
+          rowKey="project_name"
           emptyProps={this.emptyProps}
           tableActions={this.tableActions}
           itemActions={this.itemActions}

@@ -24,12 +24,12 @@ import List from '../base.list'
 
 export default class PhysicalNetworkStore extends Base {
     records = new List()
-    
+
     module = 'physicalnetworks'
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/physical_networks`
     getListUrl = this.getResourceUrl
-    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
 
     @action
     async create(data, params = {}) {
@@ -38,25 +38,13 @@ export default class PhysicalNetworkStore extends Base {
         }
 
         let res
-        if (params.workspace) {
-            res = await this.submitting(
-                request.post(this.getResourceUrl(params), data)
-            )
-        } else {
-            res = await this.submitting(request.post(this.getListUrl(params), data))
-        }
-
+        res = await this.submitting(request.post(this.getResourceUrl(params), data))
         return res
     }
 
     @action
-    async update({ id, ...params }, data) {
-        const jsonData = {};
-        jsonData.network = data;
-        
-        await this.submitting(
-            request.put(this.getDetailUrl({ id, ...params }), jsonData)
-        )
+    async update({ name, ...params }, data) {
+        await this.submitting(request.put(this.getResourceUrl(params), data))
     }
 
     @action
@@ -64,7 +52,7 @@ export default class PhysicalNetworkStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}`
+            `${this.getResourceUrl(params)}/${params.name}/${params.namespace}/info`
         )
         const detail = { ...params, ...this.mapper(result), kind: 'PhysicalNetworks' }
 
@@ -80,7 +68,7 @@ export default class PhysicalNetworkStore extends Base {
         this.isLoading = true
 
         const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}/manifest`
+            `${this.getResourceUrl(params)}/${params.name}/${params.namespace}/manifest`
         )
         const yamlData = { ...params, ...this.mapper(result), kind: 'PhysicalNetworks' }
 
@@ -91,25 +79,31 @@ export default class PhysicalNetworkStore extends Base {
 
     @action
     async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-        } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(id =>
-                        request.delete(
-                            `${this.getDetailUrl({ id, ...params })}`
-                        )
+        const rowKeyDict = rowKeys.map(key => {
+            if (key.includes('/')) {
+                const [project, name] = key.split('/')
+                return { project, name }
+            } else {
+                const project = params.namespace
+                const name = key
+                return { project, name }
+            }
+        })
+
+        await this.submitting(
+            Promise.all(
+                rowKeyDict.map(rowKey =>
+                    request.delete(
+                        `${this.getDetailUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
                     )
                 )
             )
-        }
+        )
         this.list.selectedRowKeys = []
     }
 
     @action
     delete(user) {
-        user.name = user.id;
         if (user.name === globals.user.username) {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
@@ -117,5 +111,5 @@ export default class PhysicalNetworkStore extends Base {
 
         return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
-    
+
 }

@@ -204,6 +204,10 @@ export default [
         component: NetworkStorageDetail,
       },
       {
+        path: `${PATH}/projects/:namespace/physicalnetworks/:name`,
+        component: PhysicalNetworkDetail,
+      },
+      {
         path: `${PATH}/projects/:namespace/nodepools/:clustername/:name`,
         component: NodepoolDetail,
       },
@@ -272,10 +276,6 @@ export default [
   {
     path: `${PATH}/sriovs/:name`,
     component: SrIovDetail,
-  },
-  {
-    path: `${PATH}/physicalnetworks/:name/:id`,
-    component: PhysicalNetworkDetail,
   },
   {
     path: `${PATH}/imagebuild/:name/:id`,

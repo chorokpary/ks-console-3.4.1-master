@@ -12,7 +12,7 @@ import { getLocalTime } from 'utils';
 import { getIndexRoute } from 'utils/router.config';
 import Status from 'clusters/containers/Resources/PhysicalNetworks/Detail/Status';
 
-const PATH_DETAIL = '/clusters/:cluster/physicalnetworks/:name/:id';
+const PATH_DETAIL = '/clusters/:cluster/physicalnetworks/:name';
 
 const store = new PhysicalNetworkStore();
 
