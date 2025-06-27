@@ -182,7 +182,7 @@ const PhysicalNetworkDetail = props => {
     attrs: getAttrs(),
     breadcrumbs: [
       {
-        label: t('RESOURCES_PHYSICAL_NETWORK'),
+        label: t('RESOURCES_DEDICATED_NETWORK'),
         url: listUrl,
       },
     ],

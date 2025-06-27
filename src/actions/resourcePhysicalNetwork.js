@@ -39,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: t('RESOURCES_CREATE_PHYSICAL_NETWORK'),
+        title: t('RESOURCES_CREATE_DEDICATED_NETWORK'),
         modal: RegistModal,
         store,
         cluster,
@@ -62,7 +62,7 @@ export default {
               success && success()
             })
         },
-        title: t('RESOURCES_EDIT_PHYSICAL_NETWORK'),
+        title: t('RESOURCES_EDIT_DEDICATED_NETWORK'),
         modal: ModifyModal,
         store,
         detail,
@@ -94,7 +94,7 @@ export default {
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
-        desc: t.html('RESOURCES_DELETE_PHYSICAL_NETWORK_TIP', {
+        desc: t.html('RESOURCES_DELETE_DEDICATED_NETWORK_TIP', {
           resource: detail.name,
         }),
         resource: detail.name,
@@ -127,8 +127,8 @@ export default {
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
           rowKeys.length === 1
-            ? t.html('RESOURCES_DELETE_PHYSICAL_NETWORK_TIP', { resource: names })
-            : t.html('RESOURCES_DELETE_PHYSICAL_NETWORK_TIP', { resource: names }),
+            ? t.html('RESOURCES_DELETE_DEDICATED_NETWORK_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_DEDICATED_NETWORK_TIP', { resource: names }),
         resource: names,
         store,
         ...props,

@@ -36,7 +36,7 @@ const Status = props => {
           type={t('RESOURCES_NETWORK')}
           variables="networks"
           {...props.match.params}
-          id={props.match.params.id}
+          id={props.match.params.name}
         />
       </div>
     </>

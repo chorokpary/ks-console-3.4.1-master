@@ -36,7 +36,7 @@ import styles from './index.scss';
   store: new PhysicalNetworkStore(),
   module: 'physicalnetworks',
   authKey: 'physicalnetworks',
-  name: t('RESOURCES_PHYSICAL_NETWORK'),
+  name: t('RESOURCES_DEDICATED_NETWORK'),
 })
 export default class PhysicalNetworks extends React.Component {
   handleTabChange = value => {

@@ -1786,7 +1786,7 @@ const RegistModal = props => {
                   </div>
                 </Form.Item>
 
-                <Form.Item label={t('RESOURCES_PHYSICAL_NETWORK')}>
+                <Form.Item label={t('RESOURCES_DEDICATED_NETWORK')}>
                   <div className={styles.wrapper}>
                     {stateVariables['physicalnetwork'].length > 0 && (
                       <div
@@ -2582,7 +2582,7 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
-                  <label>{t('RESOURCES_PHYSICAL_NETWORK')}</label>
+                  <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
                     {physicalNetworkList
                       .filter(x => physicalnetworkCheckItems.includes(x.id))
                       .map((obj, index) => (
