@@ -234,7 +234,6 @@ const RegistModal = props => {
 
     // 가용 범위 계산
     const available = endIPNum - startIPNum + 1;
-    setAvailableRange(available);
     return available;
   };
 
