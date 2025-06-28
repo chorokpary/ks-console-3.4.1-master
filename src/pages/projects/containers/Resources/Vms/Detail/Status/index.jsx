@@ -69,14 +69,20 @@ const Status = props => {
         return networkNameArray.includes(item.name);
       });
 
+      const physicalNetworkData = store.physicalnetworksList
+      const physicalNetworkFilterData = physicalNetworkData.filter(item => {
+        return networkNameArray.includes(item.name)
+      });
+
       if (filterData.length > 0) {
         const promises = filterData.filter(async network => {
           if (network.name != 'k8s-pod-network') {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/networks/${network.id}`
             );
+            networkDetail.network.endpoint = "networks"
+            networkDetail.network.unique = "id"
             setDetailNetwork(value => [...value, networkDetail.network]);
-            setNetworkType('network');
           }
         });
         await Promise.all(promises);
@@ -88,11 +94,26 @@ const Status = props => {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
             );
+            networkDetail.network.endpoint = "sriovs"
+            networkDetail.network.unique = "name"
             setDetailNetwork(value => [...value, networkDetail.network]);
-            setNetworkType('sriovnetwork');
           }
         });
         await Promise.all(promises);
+      }
+
+      if (physicalNetworkFilterData.length > 0) {
+        const promises = physicalNetworkFilterData.filter(async network => {
+          if (network.name != 'k8s-pod-network') {
+            const networkDetail = await request.get(
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}/${network.project}/info`
+            )
+            networkDetail.physicalnetwork.endpoint = "physicalnetworks"
+            networkDetail.physicalnetwork.unique = "name"
+            setDetailNetwork(value => [...value, networkDetail.physicalnetwork])
+          }
+        })
+        await Promise.all(promises)
       }
     };
 
@@ -368,7 +389,7 @@ const Status = props => {
                     title={
                       detailFlavor.gpus.length >= 1
                         ? detailFlavor.gpus.length == 1
-                          ? detailFlavor.gpus[0].quantity+" " +detailFlavor.gpus[0].name
+                          ? detailFlavor.gpus[0].quantity + " " + detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
                             'RESOURCES_BESIDES'
                           )} ${detailFlavor.gpus.length - 1}${t(
@@ -407,16 +428,14 @@ const Status = props => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {!obj.resource_name ? (
+                      {obj.unique == "id" ? (
                         <Link
-                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${obj.name}/${obj.id}`}
+                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/${obj.endpoint}/${obj.name}/${obj.id}`}
                         >
                           {obj.name}
                         </Link>
                       ) : (
-                        <Link
-                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/sriovs/${obj.name}`}
-                        >
+                        <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/${obj.endpoint}/${obj.name}`}>
                           {obj.name}
                         </Link>
                       )}
