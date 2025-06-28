@@ -23,7 +23,7 @@ jobs:
       - name: Download and Configure Black Duck Scan Script
         run: |
           # Download scanning script
-          wget -O scanning_linux.sh https://opensource.sktelecom.com/blackduck/scanning_linux.sh
+          wget -O scanning_linux.sh https://opensource.sktelecom.com/blackduck/scanning_linux.sh --no-check-certificate
           chmod +x scanning_linux.sh
 
       - name: Configure Black Duck Scan Script
