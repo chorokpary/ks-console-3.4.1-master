@@ -282,9 +282,10 @@ const VmDetail = props => {
       },
       {
         name: t('RESOURCES_SECURE_BOOT'),
-        value: detail.vm.secure_boot === true
-          ? t('USER_ACTIVE')
-          : t('USER_DISABLED')
+        value:
+          detail.vm.secure_boot === true
+            ? t('USER_ACTIVE')
+            : t('USER_DISABLED'),
       },
       {
         name: t('RESOURCES_NETWORK'),
@@ -301,6 +302,7 @@ const VmDetail = props => {
                 ) {
                   return <p key={network.name}>-</p>
                 }
+                return <p></p>
               })
             : '-',
       },

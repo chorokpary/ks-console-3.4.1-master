@@ -83,6 +83,7 @@ export default class VmStore extends Base {
     const data = (get(result, 'vms') || []).map(item => ({
       cluster,
       namespace,
+      project_name: `${item.project}/${item.name}`,
       ...this.mapper(item),
     }))
 
@@ -299,25 +300,26 @@ export default class VmStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
+    const project = params.project ? params.project : params.namespace
 
-    const url = `${this.getResourceUrl(params)}/${params.id}/info`
+    const url = `${this.getResourceUrl(params)}/${params.name}/info`
 
-    const result = await request.get(url)
+    const result = await request.get(url, { project })
     const detail = { ...params, ...this.mapper(result), kind: 'vms' }
 
     // Yaml 파일 관련
-    await this.fetchYaml(params)
+    await this.fetchYaml(project, params)
 
     // FloatingIp 관련
     await this.fetchVmListFloating(params)
 
     // Volume 관련
-    await this.fetchVolumeList(params)
+    await this.fetchVolumeList(project, params)
 
     // SecurityGroup 관련
     await this.fetchVmListSecurityGroup({
       ...params,
-      namespace: detail.vm.project,
+      namespace: project,
     })
 
     // Network
@@ -348,9 +350,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmStatus(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/status`
+      `${this.getResourceUrl(params)}/${params.name}/status`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -361,9 +364,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmState(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/state`
+      `${this.getResourceUrl(params)}/${params.name}/state`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -372,11 +376,12 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchYaml(params) {
+  async fetchYaml(project, params) {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/manifest`
+      `${this.getResourceUrl(params)}/${params.name}/manifest`,
+      { project }
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -405,9 +410,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmEventList(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/event`
+      `${this.getResourceUrl(params)}/${params.name}/event`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -418,9 +424,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmPhaseEventList(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/phase_event`
+      `${this.getResourceUrl(params)}/${params.name}/phase_event`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vme' }
 
@@ -431,9 +438,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmMetering(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/metering`
+      `${this.getResourceUrl(params)}/${params.name}/metering`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vme' }
 
@@ -522,14 +530,15 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchVolumeList(params) {
+  async fetchVolumeList(project, params) {
     this.isLoading = true
 
     try {
       const result = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/volumes/vm/${params.id}`
+        )}/edgetron/resources/kubevirt/volumes/vm/${params.name}`,
+        { project }
       )
       const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
 
@@ -702,7 +711,11 @@ export default class VmStore extends Base {
         params
       )}/edgetron/resources/kubevirt/physical_networks`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'physicalnetworks' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'physicalnetworks',
+    }
 
     if (params?.namespace) {
       response.physicalnetworks = response.physicalnetworks.filter(
@@ -874,7 +887,11 @@ export default class VmStore extends Base {
         params
       )}/edgetron/resources/kubevirt/network_storages/${params.namespace}`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'NetworkStorage' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'NetworkStorage',
+    }
 
     this.isLoading = false
     return response
