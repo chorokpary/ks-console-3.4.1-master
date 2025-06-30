@@ -46,6 +46,7 @@ const RegistModal = props => {
   const [physicalNetworkDataList, setPhysicalNetworkDataList] = useState([])
   const [securityGroupDataList, setSecurityGroupDataList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
+  const [networkStorageDataList, setNetworkStorageDataList] = useState([])
   const [availableIpList, setAvailableIpList] = useState([])
   const [selectedIpList, setSelectedIpList] = useState([])
   const [availableSriovIpList, setAvailableSriovIpList] = useState([])
@@ -176,6 +177,7 @@ const RegistModal = props => {
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
         ...props,
       })
+      const listNetworkStorage = await vmStore.fetchNetworkStorage({ ...props, namespace: projectName })
 
       setBootVolumeDataList(listBootVolume.volumes)
       setNetworkDataList(listNetwork.networks)
@@ -188,6 +190,7 @@ const RegistModal = props => {
       setAvailableIpList(listAvailableIps.all_ips)
       setAvailableSriovIpList(listAvailableSriovIps.all_ips)
       setAvailablePhysicalnetworkIpList(listAvailablePhysicalnetworkIps.all_ips)
+      setNetworkStorageDataList(listNetworkStorage.network_storages)
     }
     getVmCreateData()
   }, [])
@@ -322,6 +325,15 @@ const RegistModal = props => {
     })
   }
 
+  const networkStorageOptions = () => {
+    return networkStorageDataList.map(obj => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+    })
+  }
+
   const imageOptions = () => {
     return imageOptionList.map(obj => {
       return {
@@ -414,6 +426,7 @@ const RegistModal = props => {
         data?.bootvolume === t('RESOURCES_SELECT') ? '' : data?.bootvolume
       data.keypair = data.keypair === t('RESOURCES_SELECT') ? '' : data.keypair
       data.node = data.node === t('RESOURCES_SELECT') ? '' : data.node
+      data.networkStorage = data.networkStorage === t('RESOURCES_SELECT') ? '' : data.networkStorage
       data.storageClass = storageClass
       data.secureBoot = secureBoot
 
@@ -2069,6 +2082,15 @@ const RegistModal = props => {
                       </div>
                     </div>
                   </div>
+                </Form.Item>
+
+                <Form.Item label={t('RESOURCES_NETWORK_STORAGE')}>
+                  <Select
+                    name="networkStorage"
+                    placeholder={t('RESOURCES_SELECT')}
+                    options={networkStorageOptions()}
+                    clearable
+                  />
                 </Form.Item>
 
                 <Form.Item label={t('RESOURCES_NODE')}>

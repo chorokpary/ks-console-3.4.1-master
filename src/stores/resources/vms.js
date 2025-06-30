@@ -223,6 +223,7 @@ export default class VmStore extends Base {
 
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
+    resourceData.network_storage = data.networkStorage
 
     // if (data.preInstalledApp === 'Jupyter') {
     //   resourceData.jupyter_port = data.scriptJupyterPort
@@ -814,7 +815,20 @@ export default class VmStore extends Base {
     return response
   }
 
-  // 등록 관련 데이터 끝
+  @action
+  async fetchNetworkStorage(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/network_storages/${params.namespace}`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'NetworkStorage' }
+
+    this.isLoading = false
+    return response
+  }
 
   @action
   async vmList(params) {
