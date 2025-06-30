@@ -183,7 +183,7 @@ export default PATH => [
     component: LoadBalancerDetail,
   },
   {
-    path: `${PATH}/vms/:name/:id`,
+    path: `${PATH}/vms/:name`,
     component: VmDetail,
   },
   {

@@ -197,7 +197,9 @@ export default class VmStore extends Base {
     data.physicalnetwork.forEach(name => {
       const physicalnetworkObj = {}
       physicalnetworkObj.network_name = name
-      const fixedIpObj = data.physicalnetworkIps.find(obj => obj.network_name === name)
+      const fixedIpObj = data.physicalnetworkIps.find(
+        obj => obj.network_name === name
+      )
       if (fixedIpObj !== undefined) {
         physicalnetworksArray.push(fixedIpObj)
       } else {
@@ -440,18 +442,40 @@ export default class VmStore extends Base {
   }
 
   @action
-  async batchDelete({ rowKeys, ...params }) {
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(id =>
-            request.delete(`${this.getResourceUrl(params)}/${id}`)
+  async batchDelete({ rowKeyNames, ...params }) {
+    await this.submitting(
+      Promise.all(
+        rowKeyNames.map(name =>
+          request.delete(
+            `${this.getResourceUrl({ name, ...params })}/${name}`,
+            {
+              project: params.namespace,
+            }
           )
         )
       )
-    }
+    )
+    this.list.selectedRowKeys = []
+  }
+
+  @action
+  async clusterBatchDelete({ rowKeys, ...params }) {
+    const rowKeyDict = rowKeys.map(key => {
+      const [project, name] = key.split('/')
+      return { project, name }
+    })
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDetailUrl({ name: rowKey.name, ...params })}`,
+            {
+              project: rowKey.project,
+            }
+          )
+        )
+      )
+    )
     this.list.selectedRowKeys = []
   }
 

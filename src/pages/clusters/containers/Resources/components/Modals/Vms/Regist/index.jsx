@@ -327,7 +327,7 @@ const RegistModal = props => {
     setSelectedPhysicalnetworkIpList(existing)
 
     const updatedNetworkList = physicalNetworkList.map(item => {
-      if ((item.id === name, e)) {
+      if (item.id === name) {
         return { ...item, ip: val }
       }
       return item

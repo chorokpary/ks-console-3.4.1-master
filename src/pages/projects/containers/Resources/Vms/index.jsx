@@ -237,7 +237,7 @@ export default class Vms extends React.Component {
               <div>
                 <Link
                   className={styles.title}
-                  to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${name}/${record.id}`}
+                  to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${record.name}`}
                 >
                   {name}
                 </Link>
