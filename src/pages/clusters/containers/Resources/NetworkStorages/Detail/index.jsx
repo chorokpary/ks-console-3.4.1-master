@@ -11,7 +11,7 @@ import { getLocalTime } from 'utils';
 import { getIndexRoute } from 'utils/router.config';
 import Status from 'clusters/containers/Resources/NetworkStorages/Detail/Status';
 
-const PATH_DETAIL = '/clusters/:cluster/networkstorages/:name';
+const PATH_DETAIL = '/clusters/:cluster/projects/:namespace/networkstorages/:name';
 
 const store = new NetworkStorageStore();
 

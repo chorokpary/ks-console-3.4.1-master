@@ -9,7 +9,7 @@ import { Card } from 'components/Base';
 import { getLocalTime } from 'utils';
 
 import { getIndexRoute } from 'utils/router.config';
-import Status from 'clusters/containers/Resources/NetworkStorages/Detail/Status';
+import Status from 'projects/containers/Resources/NetworkStorages/Detail/Status';
 
 const PATH_DETAIL = '/:workspace/clusters/:cluster/projects/:namespace/networkstorages/:name'
 

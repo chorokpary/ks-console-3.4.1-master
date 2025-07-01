@@ -6,12 +6,20 @@ import DetailVmList from 'pages/clusters/containers/Resources/components/DetailV
 const Status = props => {
   const store = props.detailStore;
   const cluster = props.detailStore?.detail.cluster;
-  
+
   useEffect(() => {
   }, []);
 
   return (
     <>
+      <div>
+        <DetailVmList
+          type={t('RESOURCES_NETWORK_STORAGE')}
+          variables="network_storage"
+          {...props.match.params}
+          name={props.match.params.name}
+        />
+      </div>
     </>
   );
 };
