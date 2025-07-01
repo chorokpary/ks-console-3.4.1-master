@@ -1,52 +1,39 @@
-import { get } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
-import { observer, inject } from 'mobx-react';
+import React, { useState, useRef } from 'react'
 
-import {
-  Form,
-  Input,
-  Notify,
-  Select,
-  TextArea,
-  Button,
-  Loading,
-} from '@kube-design/components';
-import { Modal } from 'components/Base';
-import VmStore from 'stores/resources/vms';
-import styles from './index.scss';
+import { Form, Input, Notify } from '@kube-design/components'
+import { Modal } from 'components/Base'
+import VmStore from 'stores/resources/vms'
 
 const SnapshotModal = props => {
-  const vmStore = new VmStore();
-  const vmName = props.store.detail.name;
-  const vmId = props.store.detail.id;
+  const vmStore = new VmStore()
+  const vmName = props.store.detail.name
 
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData] = useState({})
 
   const handleOk = () => {
-    const success = props.success;
+    const success = props.success
     const params = {
       cluster: props.cluster,
-      namespace: props.namespace,
-    };
+      namespace: props.store.detail.vm.project,
+    }
 
     form.current.validator(async () => {
-      const { data } = form.current.props;
-      data.vmName = vmName;
-      data.vmId = vmId;
+      const { data } = form.current.props
+      data.vmName = vmName
 
       vmStore.snapshotCreate(data, params).then(() => {
-        Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') });
-        success();
-        closeModal();
-      });
-    });
-  };
+        Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+        success()
+        closeModal()
+      })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   return (
     <>
@@ -78,7 +65,7 @@ const SnapshotModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default SnapshotModal;
+export default SnapshotModal

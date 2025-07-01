@@ -465,8 +465,12 @@ export default class Vms extends React.Component {
     const { getData, trigger } = this.props
 
     const data = {}
+    const project = vmId.split('/')[0]
+    const vmName = vmId.split('/')[1]
     data.vmId = vmId
     data.state = state
+    data.project = project
+    data.vmName = vmName
     data.actionType = action
 
     trigger('vm.actionState', {

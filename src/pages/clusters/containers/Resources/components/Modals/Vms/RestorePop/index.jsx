@@ -1,48 +1,40 @@
-import { get } from 'lodash'
-import React, { useState, useRef, useEffect } from 'react'
-import { observer, inject } from 'mobx-react';
+import React, { useState, useRef } from 'react'
 
-import { Form, Input, Notify, Select, TextArea, Button, Loading } from '@kube-design/components'
+import { Form, Input, Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
-import styles from './index.scss'
-
 import VmStore from 'stores/resources/vms'
 
-const RestoreModal = (props) => {
+const RestoreModal = props => {
+  const vmStore = new VmStore()
+  const snapshotId = props.id
 
-  const vmStore = new VmStore();
-  const snapshotId = props.id;
-
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData] = useState({})
 
   const handleOk = () => {
-
-    const success = props.success;
+    const success = props.success
 
     const params = {
       cluster: props.cluster,
-      namespace: props.namespace,
-      name: props.name
+      namespace: props.project ? props.project : props.namespace,
+      name: props.name,
     }
 
     form.current.validator(async () => {
-
-      const { data } = form.current.props;
-      data.snapshotId = snapshotId;
+      const { data } = form.current.props
+      data.snapshotId = snapshotId
 
       vmStore.restoreCreate(data, params).then(() => {
         Notify.success({ content: t('RESOURCES_RESTORE_SUCCESSFUL') })
-        success();
-        closeModal();
+        success()
+        closeModal()
       })
-
     })
   }
 
   const closeModal = () => {
-    setModalView(false);
+    setModalView(false)
   }
 
   return (
@@ -58,19 +50,19 @@ const RestoreModal = (props) => {
         <Form data={formData} ref={form}>
           <Form.Item
             label={t('RESOURCES_DESCRIPTION')}
-            rules={[{ required: true, message: t('RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP') }]}
+            rules={[
+              {
+                required: true,
+                message: t('RESOURCES_RESTORE_DATA_LOG_INFORMATION_TIP'),
+              },
+            ]}
           >
-            <Input
-              name="description"
-              style={{ maxWidth: 'none' }}
-            />
+            <Input name="description" style={{ maxWidth: 'none' }} />
           </Form.Item>
         </Form>
       </Modal>
-
     </>
-  );
-};
+  )
+}
 
 export default RestoreModal
-

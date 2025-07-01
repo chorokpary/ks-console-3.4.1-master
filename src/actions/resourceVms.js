@@ -78,106 +78,54 @@ export default {
     },
   },
   'vm.edit': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .update(
-              { ...detail, cluster, workspace, namespace, devops, id: data.id },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.update({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_EDIT_VM'),
         modal: ModifyModal,
         store,
         module,
-        cluster,
-        namespace,
         ...props,
       })
     },
   },
   'vm.edit.securitygroup': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .updateSecurity(
-              { ...detail, cluster, workspace, namespace, devops, id: data.id },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.updateSecurity({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_VM_SECURITYGROUP_EDIT'),
         modal: ModifySecurityGroupModal,
         store,
-        module,
-        cluster,
-        namespace,
         ...props,
       })
     },
   },
   'vm.edit.flavor': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .updateFlavor(
-              { ...detail, cluster, workspace, namespace, devops, id: data.id },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.updateFlavor({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_VM_FLAVOR_EDIT'),
         modal: ModifyFlavorModal,
         store,
         module,
-        cluster,
-        namespace,
         ...props,
       })
     },

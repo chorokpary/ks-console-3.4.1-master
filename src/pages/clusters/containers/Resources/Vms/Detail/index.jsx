@@ -17,7 +17,7 @@ const floatingstore = new FloatingIpStore()
 const VmDetail = props => {
   useEffect(() => {
     fetchData()
-  }, [props.match.params.id])
+  }, [props.match.params.name])
 
   const fetchData = () => {
     store.fetchDetail(props.match.params)
@@ -44,22 +44,21 @@ const VmDetail = props => {
   const disableFip = !!filterData.some(obj => !obj.external)
 
   const vmName = props.match.params.name
-  const vmId = props.match.params.id
   const floatingData = toJS(store.floatingList)
   const floatingId = floatingData
-    ?.filter(row => row.instance_id === vmId)
+    ?.filter(row => row.instance_id === vmName && row.project === project)
     .map(el => el.id)[0]
   const floatingIp = floatingData
-    ?.filter(row => row.instance_id === vmId)
+    ?.filter(row => row.instance_id === vmName && row.project === project)
     .map(el => el.floating_ip)[0]
 
   const fnOpenVncPopup = () => {
     // 실제 URL 로 변경 요망
     const apiUrl = `http://${location.hostname}:30020`
     let param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`
-    param = `${param + vmId}/vnc`
+    param = `${param + vmName}/vnc`
 
-    const popupName = vmId.replaceAll('-', '')
+    const popupName = vmName.replaceAll('-', '')
     window.open(
       `${apiUrl}/vnc_lite.html?${param}`,
       popupName,
@@ -100,6 +99,7 @@ const VmDetail = props => {
       onClick: () => {
         props.rootStore.triggerAction('vm.edit.securitygroup', {
           type: 'VM_DETAIL',
+          detail: toJS(store.detail),
           store,
           success: fetchData,
         })
@@ -114,6 +114,7 @@ const VmDetail = props => {
       onClick: () => {
         props.rootStore.triggerAction('vm.edit.flavor', {
           type: 'VM_DETAIL',
+          detail: toJS(store.detail),
           store,
           success: fetchData,
         })
@@ -192,7 +193,8 @@ const VmDetail = props => {
       onClick: () => {
         const data = {}
         data.vmName = vmName
-        data.vmId = vmId
+        data.vmId = vmName
+        data.project = project
         data.actionType = 'migrate'
 
         props.rootStore.triggerAction('vm.actionState', {
@@ -214,7 +216,7 @@ const VmDetail = props => {
       onClick: () => {
         const data = {}
         data.vmName = vmName
-        data.vmId = vmId
+        data.vmId = vmName
 
         props.rootStore.triggerAction('vm.snapshotPop', {
           ...props.match.params,
@@ -233,7 +235,7 @@ const VmDetail = props => {
       onClick: () => {
         const data = {}
         data.vmName = vmName
-        data.vmId = vmId
+        data.vmId = vmName
 
         props.rootStore.triggerAction('vm.clonePop', {
           ...props.match.params,

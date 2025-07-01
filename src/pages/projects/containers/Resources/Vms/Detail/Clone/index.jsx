@@ -1,118 +1,112 @@
-import { get, groupBy, isEmpty } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { observer, inject } from 'mobx-react'
+import { get } from 'lodash'
+import React, { useEffect, useState } from 'react'
+import { inject, observer } from 'mobx-react'
 import classnames from 'classnames'
-import { toJS } from 'mobx'
 
-import { Panel, Text, Indicator } from 'components/Base'
+import { Panel } from 'components/Base'
 import { Link } from 'react-router-dom'
-
-import styles from './index.scss'
 
 import VmStore from 'stores/resources/vms'
 
 import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
 
 import {
   Button,
-  Icon,
   InputSearch,
   Level,
   LevelLeft,
   LevelRight,
   Loading,
   Pagination,
-  Tooltip
 } from '@kube-design/components'
+import styles from './index.scss'
 
-const Clone = (props) => {
-
-  const { workspace, cluster, namespace } = props.match?.params;
+const Clone = props => {
+  const { workspace, cluster, namespace } = props.match?.params
   const vmsRole = get(globals.user.projectRules, [cluster, namespace, 'vms'])
 
-  const store = new VmStore();
+  const store = new VmStore()
 
-  const [dataList, setDataList] = useState([]);
-  const [sliceDataList, setSliceDataList] = useState([]);
-  const [searchDataList, setSearchDataList] = useState([]);
+  const [dataList, setDataList] = useState([])
+  const [sliceDataList, setSliceDataList] = useState([])
+  const [searchDataList, setSearchDataList] = useState([])
 
-  const [isExpandFlag, setIsExpandFlag] = useState(false)
-  const [expandItem, setExpandItem] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSearchFlag, setIsSearchFlag] = useState(false);
+  const [isExpandFlag] = useState(false)
+  const [expandItem] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSearchFlag, setIsSearchFlag] = useState(false)
 
-  const perPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchValue, setSearchValue] = useState();
+  const perPage = 6
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchValue, setSearchValue] = useState()
 
   useEffect(() => {
-    fnGetData();
+    fnGetData()
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
+    setIsLoading(true)
+    setIsSearchFlag(false)
+    const page = get(params, 'page', 1)
 
-    setIsLoading(true);
-    setIsSearchFlag(false);
-    const page = get(params, "page", 1);
+    const filterData = await store.cloneList(props.match.params)
+    const searchData =
+      params.name !== '' && params.name !== undefined
+        ? getSearchData(filterData, params.name)
+        : []
 
-    const filterData = await store.cloneList(props.match.params);
-    const searchData = (params.name != "" && params.name != undefined) ? getSearchData(filterData, params.name) : [];
+    const sliceData =
+      searchData.length > 0
+        ? getSliceData(searchData, page)
+        : params.name !== '' && params.name !== undefined
+        ? getSliceData(searchData, page)
+        : getSliceData(filterData, page)
 
-    const sliceData = searchData.length > 0 ? getSliceData(searchData, page) :
-      (params.name != "" && params.name != undefined) ? getSliceData(searchData, page) : getSliceData(filterData, page);
-
-    setCurrentPage(page);
-    setDataList(filterData);
-    setSliceDataList(sliceData);
+    setCurrentPage(page)
+    setDataList(filterData)
+    setSliceDataList(sliceData)
     setSearchDataList(searchData)
 
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   const renderContent = () => {
-
-    if (sliceDataList.length == 0) {
-      const content = (
-        <div className={styles.nodata}>
-          {t('RESOURCES_NOT_FOUND_RESOURCE')}
-        </div>
+    if (sliceDataList.length === 0) {
+      return (
+        <div className={styles.nodata}>{t('RESOURCES_NOT_FOUND_RESOURCE')}</div>
       )
-      return content;
     }
 
-    const content = (
-      sliceDataList.map((obj, index) => {
-        return (
-          <div className={styles.wrapper} key={index}>
-            <div
-              className={classnames(styles.expandItem, "", {
-                [styles.expanded]: (obj.name == expandItem ? isExpandFlag : false),
-              })}
-            >
-              <div className={styles.itemMain}>
-                <div className={styles.icon}>
-                  <i className="ico-type-clone"></i>
-                </div>
-                {renderContentDetail(obj)}
+    const content = sliceDataList.map((obj, index) => {
+      return (
+        <div className={styles.wrapper} key={index}>
+          <div
+            className={classnames(styles.expandItem, '', {
+              [styles.expanded]: obj.name === expandItem ? isExpandFlag : false,
+            })}
+          >
+            <div className={styles.itemMain}>
+              <div className={styles.icon}>
+                <i className="ico-type-clone"></i>
               </div>
+              {renderContentDetail(obj)}
             </div>
           </div>
-        )
-      }
+        </div>
       )
-    )
+    })
 
     return <Loading spinning={isLoading}>{content}</Loading>
   }
 
-  const renderContentDetail = (obj) => {
-
+  const renderContentDetail = obj => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>{getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}</div>
+            <div>
+              {getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}
+            </div>
             <p>{t('RESOURCES_REGIST_DATE')}</p>
           </div>
           <div className={styles.name}>
@@ -120,69 +114,80 @@ const Clone = (props) => {
             <p>{t('RESOURCES_ID')}</p>
           </div>
           <div className={styles.text}>
-            <div><Link onClick={() => handleRedirect(`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.alias}/${obj.target_vm_id}`)}>{obj.alias}</Link></div>            
+            <div>
+              <Link
+                onClick={() =>
+                  handleRedirect(
+                    `/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.alias}/${obj.target_vm_id}`
+                  )
+                }
+              >
+                {obj.alias}
+              </Link>
+            </div>
             <p>{t('RESOURCES_TARGET_VM_NAME')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.phase}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
-          {vmsRole?.includes('manage') &&
+          {vmsRole?.includes('manage') && (
             <div className={styles.arrow}>
-              <Button type="danger" onClick={() => handleDelete(obj.id)}>{t('RESOURCES_DELETE')}</Button>
+              <Button type="danger" onClick={() => handleDelete(obj.id)}>
+                {t('RESOURCES_DELETE')}
+              </Button>
             </div>
-          }
+          )}
         </div>
       </>
     )
   }
 
-  const handleDelete = (id) => {
-    console.log("handleDelete!!");
+  const handleDelete = id => {
     props.rootStore.triggerAction('vm.cloneDelete', {
       ...props.match.params,
       type: 'VM_DETAIL',
-      id: id,
-      store: store,
+      id,
+      store,
       success: fnGetData,
     })
   }
 
   const getPagination = () => {
-    const total = !isSearchFlag ? dataList.length : searchDataList.length;
-    const pagination = { "page": currentPage, "limit": perPage, "total": total }
-    return pagination
+    const total = !isSearchFlag ? dataList.length : searchDataList.length
+    return { page: currentPage, limit: perPage, total }
   }
 
   const getSearchData = (data, searchText) => {
-    setIsSearchFlag(true);
-    const resultList = data.filter((row) => {
-      return row["target_vm_id"]?.toLowerCase().includes(searchText.toLowerCase());
-    });
-    return resultList;
+    setIsSearchFlag(true)
+    return data.filter(row => {
+      return row['target_vm_id']
+        ?.toLowerCase()
+        .includes(searchText.toLowerCase())
+    })
   }
 
   const getSliceData = (data, page) => {
-    const currentPage = page;
-    const sliceData = data.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-    return sliceData;
+    return data.slice((page - 1) * perPage, page * perPage)
   }
 
   const handleSearch = value => {
-    setSearchValue(value);
+    setSearchValue(value)
     fnGetData({
       name: value,
     })
   }
 
   const handleRefresh = () => {
-    const params = searchValue ? { name: searchValue, page: currentPage } : { page: currentPage }
-    fnGetData(params);
+    const params = searchValue
+      ? { name: searchValue, page: currentPage }
+      : { page: currentPage }
+    fnGetData(params)
   }
 
   const handlePage = page => {
-    const params = page ? { page: page } : {}
-    fnGetData(params);
+    const params = page ? { page } : {}
+    fnGetData(params)
   }
 
   const renderHeader = () => {
@@ -215,35 +220,38 @@ const Clone = (props) => {
     )
   }
 
-  const handleRedirect = (path) => {
+  const handleRedirect = path => {
     window.location.href = path
-  };
+  }
 
   return (
     <>
-      {dataList.length > 0 &&
-        <Panel
-          className={classnames(styles.main)}
-        >
+      {dataList.length > 0 && (
+        <Panel className={classnames(styles.main)}>
           {renderHeader()}
           {renderContent()}
           {renderFooter()}
         </Panel>
-      }
+      )}
 
-      {dataList.length == 0 &&
-        <Panel >
+      {dataList.length === 0 && (
+        <Panel>
           <div className={styles.wrapper}>
-            {isLoading ?
-              <div className={styles.loading}><Loading /></div>
-              : <div className={styles.empty}> {t('RESOURCES_NO_DATA_CLONE_LOG')}</div>
-            }
+            {isLoading ? (
+              <div className={styles.loading}>
+                <Loading />
+              </div>
+            ) : (
+              <div className={styles.empty}>
+                {' '}
+                {t('RESOURCES_NO_DATA_CLONE_LOG')}
+              </div>
+            )}
           </div>
         </Panel>
-      }
+      )}
     </>
-  );
-};
+  )
+}
 
 export default inject('rootStore')(observer(Clone))
-
