@@ -14,10 +14,18 @@ const ModifyModal = props => {
   const form = useRef();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
+  const [disableFilesystem, setDisableFilesystem] = useState(false);
+
+  useEffect(() => {
+    const storage = props.store.detail.network_storage
+    if (storage.protocol === "lustre" || storage.protocol === "gpfs") {
+      setDisableFilesystem(true)
+    } else {
+      setDisableFilesystem(false)
+    }
+  }, [])
 
   const filesystemOptions = [
-    { label: 'LUSTRE', value: 'lustre' },
-    { label: 'GPFS', value: 'gpfs' },
     { label: 'EXT4', value: 'ext4' },
     { label: 'XFS', value: 'xfs' },
   ]
@@ -42,6 +50,14 @@ const ModifyModal = props => {
     { label: '6', value: '6' },
   ]
 
+  const configProtocol = protocol => {
+    if (protocol === "lustre" || protocol === "gpfs") {
+      setDisableFilesystem(true)
+    } else {
+      setDisableFilesystem(false)
+    }
+  }
+
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -49,6 +65,10 @@ const ModifyModal = props => {
       const { data } = form.current.props;
 
       data.project = props.store.detail.network_storage.project
+
+      if (data.protocol === "lustre" || data.protocol === "gpfs") {
+        data.filesystem = data.protocol
+      }
 
       onOk({ storage: data });
     });
@@ -131,6 +151,9 @@ const ModifyModal = props => {
                         placeholder={t('RESOURCES_SELECT')}
                         options={protocolOptions}
                         defaultValue={props.store.detail.network_storage.protocol}
+                        onChange={e => {
+                          configProtocol(e)
+                        }}
                       />
                     </Form.Item>
                   </Column>
@@ -148,7 +171,8 @@ const ModifyModal = props => {
                         name="filesystem"
                         placeholder={t('RESOURCES_SELECT')}
                         options={filesystemOptions}
-                        defaultValue={props.store.detail.network_storage.filesystem}
+                        disabled={disableFilesystem}
+                        defaultValue={'ext4'}
                       />
                     </Form.Item>
                   </Column>
@@ -192,8 +216,8 @@ const ModifyModal = props => {
                         },
                       ]}
                     >
-                      <Input 
-                        name="mount_point" 
+                      <Input
+                        name="mount_point"
                         defaultValue={props.store.detail.network_storage.mount_point}
                       />
                     </Form.Item>
@@ -207,8 +231,8 @@ const ModifyModal = props => {
                         },
                       ]}
                     >
-                      <Input 
-                        name="endpoint" 
+                      <Input
+                        name="endpoint"
                         defaultValue={props.store.detail.network_storage.endpoint}
                       />
                     </Form.Item>
@@ -239,7 +263,7 @@ const ModifyModal = props => {
                     <Form.Item
                       label={t('RESOURCES_MOUNT_OPTIONS')}
                     >
-                      <Input 
+                      <Input
                         name="mount_options"
                         defaultValue={props.store.detail.network_storage.mount_options}
                       />
@@ -254,10 +278,10 @@ const ModifyModal = props => {
             label={t('RESOURCES_DESCRIPTION')}
             desc={t('DESCRIPTION_DESC')}
           >
-            <TextArea 
+            <TextArea
               name="description"
               maxLength={256}
-              defaultValue={props.store.detail.network_storage.description} 
+              defaultValue={props.store.detail.network_storage.description}
             />
           </Form.Item>
         </Form>

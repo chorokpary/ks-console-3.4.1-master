@@ -14,13 +14,12 @@ const RegistModal = props => {
   const form = useRef();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
+  const [disableFilesystem, setDisableFilesystem] = useState(false);
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
   );
 
   const filesystemOptions = [
-    { label: 'LUSTRE', value: 'lustre' },
-    { label: 'GPFS', value: 'gpfs' },
     { label: 'EXT4', value: 'ext4' },
     { label: 'XFS', value: 'xfs' },
   ]
@@ -45,6 +44,14 @@ const RegistModal = props => {
     { label: '6', value: '6' },
   ]
 
+  const configProtocol = protocol => {
+    if (protocol === "lustre" || protocol === "gpfs") {
+      setDisableFilesystem(true)
+    } else {
+      setDisableFilesystem(false)
+    }
+  }
+
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -52,6 +59,10 @@ const RegistModal = props => {
       const { data } = form.current.props;
 
       data.project = projectName;
+      
+      if (data.protocol === "lustre" || data.protocol === "gpfs") {
+        data.filesystem = data.protocol
+      }
 
       onOk({ storage: data });
     });
@@ -135,23 +146,22 @@ const RegistModal = props => {
                         name="protocol"
                         placeholder={t('RESOURCES_SELECT')}
                         options={protocolOptions}
+                        onChange={e => {
+                          configProtocol(e)
+                        }}
                       />
                     </Form.Item>
                   </Column>
                   <Column>
                     <Form.Item
                       label={t('RESOURCES_FILESYSTEM')}
-                      rules={[
-                        {
-                          required: true,
-                          message: t('RESOURCES_SELECT_FILESYSTEM_TIP'),
-                        },
-                      ]}
                     >
                       <Select
                         name="filesystem"
                         placeholder={t('RESOURCES_SELECT')}
                         options={filesystemOptions}
+                        disabled={disableFilesystem}
+                        defaultValue={'ext4'}
                       />
                     </Form.Item>
                   </Column>
@@ -233,6 +243,12 @@ const RegistModal = props => {
                   <Column>
                     <Form.Item
                       label={t('RESOURCES_MOUNT_OPTIONS')}
+                      rules={[
+                        {
+                          required: true,
+                          message: t('RESOURCES_MOUNT_OPTIONS_TIP'),
+                        },
+                      ]}
                     >
                       <Input name="mount_options" />
                     </Form.Item>

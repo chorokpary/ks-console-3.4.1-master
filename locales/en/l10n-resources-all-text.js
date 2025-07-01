@@ -1138,6 +1138,7 @@ module.exports = {
   RESOURCES_MOUNT_POINT: 'Mount Point',
   RESOURCES_INVALID_MOUNT_POINT_DESC: 'Invalid mount point. Mount point should follow the filepath format, and it does not allow to specify the root path.',
   RESOURCES_MOUNT_OPTIONS: 'Mount Options',
+  RESOURCES_MOUNT_OPTIONS_TIP: 'Please enter mount options.',
   RESOURCES_MAX_CONNECTION: 'Max Connection',
   RESOURCES_MAX_CONNECTION_TIP: 'Please select the number of maximum connection.',
   RESOURCES_CREATE_NETWORK_STORAGE: 'Create Network Storage',
