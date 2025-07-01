@@ -161,6 +161,7 @@ export default class HostDeviceStore extends Base {
             hostDeviceData.product_id = hostDevice.device_id;
             hostDeviceData.is_external = hostDevice.is_external;
             hostDeviceData.is_gpu = hostDevice.is_gpu;
+            hostDeviceData.is_net = hostDevice.is_net;
             hostDeviceData.description = "";
 
             jsonData.host_device = hostDeviceData;
