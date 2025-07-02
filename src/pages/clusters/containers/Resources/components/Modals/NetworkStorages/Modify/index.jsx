@@ -26,6 +26,7 @@ const ModifyModal = props => {
   }, [])
 
   const filesystemOptions = [
+    { label: 'NFS', value: 'nfs' },
     { label: 'EXT4', value: 'ext4' },
     { label: 'XFS', value: 'xfs' },
   ]
@@ -172,7 +173,7 @@ const ModifyModal = props => {
                         placeholder={t('RESOURCES_SELECT')}
                         options={filesystemOptions}
                         disabled={disableFilesystem}
-                        defaultValue={'ext4'}
+                        defaultValue={'nfs'}
                       />
                     </Form.Item>
                   </Column>

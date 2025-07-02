@@ -20,6 +20,7 @@ const RegistModal = props => {
   );
 
   const filesystemOptions = [
+    { label: 'NFS', value: 'nfs' },
     { label: 'EXT4', value: 'ext4' },
     { label: 'XFS', value: 'xfs' },
   ]
@@ -161,7 +162,7 @@ const RegistModal = props => {
                         placeholder={t('RESOURCES_SELECT')}
                         options={filesystemOptions}
                         disabled={disableFilesystem}
-                        defaultValue={'ext4'}
+                        defaultValue={'nfs'}
                       />
                     </Form.Item>
                   </Column>
