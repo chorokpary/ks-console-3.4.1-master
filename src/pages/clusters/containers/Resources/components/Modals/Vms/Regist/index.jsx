@@ -90,6 +90,7 @@ const RegistModal = props => {
   const [nodeName, setNodeName] = useState('')
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
+  const [networkStorage, setNetworkStorage] = useState('')
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -575,6 +576,8 @@ const RegistModal = props => {
       setFlavorCpu(flavorData[0].vcpus)
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
       setFlavorDisk(flavorData[0].root_disk)
+
+      setNetworkStorage(data.networkStorage === t('RESOURCES_SELECT') ? '' : data.networkStorage)
 
       if (isScript) {
         const checkFlagJupyter = checkScriptJupyter()
@@ -2640,7 +2643,7 @@ const RegistModal = props => {
                       ))}
                     <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
                     {physicalNetworkList
-                      .filter(x => physicalnetworkCheckItems.includes(x.id))
+                      .filter(x => physicalnetworkCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div className={styles.list}>
@@ -2717,6 +2720,14 @@ const RegistModal = props => {
                           nodeName === undefined
                             ? t('RESOURCES_AUTOMATIC')
                             : nodeName
+                        }`}</div>
+                      </div>
+                      <div className={styles.list}>
+                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
+                        <div>{`${
+                          networkStorage === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : networkStorage
                         }`}</div>
                       </div>
                       <div className={styles.list}>

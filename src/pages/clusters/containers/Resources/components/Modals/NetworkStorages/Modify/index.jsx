@@ -263,6 +263,12 @@ const ModifyModal = props => {
                   <Column>
                     <Form.Item
                       label={t('RESOURCES_MOUNT_OPTIONS')}
+                      rules={[
+                        {
+                          required: true,
+                          message: t('RESOURCES_MOUNT_OPTIONS_TIP'),
+                        },
+                      ]}
                     >
                       <Input
                         name="mount_options"

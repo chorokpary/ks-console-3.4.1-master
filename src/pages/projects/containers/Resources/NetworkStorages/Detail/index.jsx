@@ -119,7 +119,7 @@ const NetworkStorageDetail = props => {
       },
       {
         name: t('RESOURCES_MOUNT_OPTIONS'),
-        value: detail.network_storage.gateway_ip,
+        value: detail.network_storage.mount_options,
       },
       {
         name: t('RESOURCES_DESCRIPTION'),
