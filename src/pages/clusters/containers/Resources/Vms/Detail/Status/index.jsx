@@ -29,6 +29,7 @@ const Status = props => {
   const [detailNetwork, setDetailNetwork] = useState([])
   const [detailSecurityGroup, setDetailSecurityGroup] = useState([])
   const [detailVolume, setDetailVolume] = useState([])
+  const [detailNetworkStorage, setDetailNetworkStorage] = useState(null)
 
   const [vmCpuData, setVmCpuData] = useState([])
   const [vmMemoryData, setVmMemoryData] = useState([])
@@ -124,11 +125,16 @@ const Status = props => {
       setDetailVolume(volumeData)
     }
 
+    const fnGetNetworkStorage = async () => {
+      setDetailNetworkStorage(store.networkStorageInfo)
+    }
+
     fnGetFlavor()
     fnGetNetwork()
     fnGetSecurityGroup()
     fnGetVolume()
     fetchData(intiParams)
+    fnGetNetworkStorage()
   }, [store])
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
@@ -513,7 +519,42 @@ const Status = props => {
             </div>
           </Panel>
         )}
-      </div>
+
+        {/* 네트워크 스토리지 */}
+        {!!detailNetworkStorage && (
+          <Panel title={t('RESOURCES_NETWORK_STORAGE')}>
+            <div className={styles.wrapper}>
+              <div className={classnames(styles.itemVolume)}>
+                <div className={styles.icon}>
+                  <Icon name="storage" size={40} />
+                </div>
+                <div className={classnames(styles.title, styles.name)}>
+                  <div>
+                    <Link
+                      to={`/clusters/${cluster}/projects/${detailNetworkStorage.project}/networkstorages/${detailNetworkStorage.name}`}
+                    >
+                      {detailNetworkStorage.name}
+                    </Link>
+                  </div>
+                  <p>{t('RESOURCES_NAME')}</p>
+                </div>
+                <div className={styles.title}>
+                  <div>{detailNetworkStorage.protocol}</div>
+                  <p>{t('RESOURCES_PROTOCOL')}</p>
+                </div>
+                <div className={styles.title}>
+                  <div>{detailNetworkStorage.transport}</div>
+                  <p>{t('RESOURCES_TRANSPORT')}</p>
+                </div>
+                <div className={styles.title}>
+                  <div>{detailNetworkStorage.mount_point}</div>
+                  <p>{t('RESOURCES_MOUNT_POINT')}</p>
+                </div>
+              </div>
+            </div>
+          </Panel>
+        )}
+    </div >
     </>
   )
 }

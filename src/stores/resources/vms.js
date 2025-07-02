@@ -93,8 +93,8 @@ export default class VmStore extends Base {
       return a.creation_timestamp < b.creation_timestamp
         ? 1
         : a.creation_timestamp > b.creation_timestamp
-        ? -1
-        : 0
+          ? -1
+          : 0
     })
 
     // 초기 데이터 처리
@@ -326,6 +326,16 @@ export default class VmStore extends Base {
 
     // Physical Network
     await this.fetchVmListPhysicalNetwork(params)
+
+    // Network Storage
+    if (detail.vm.network_storage !== "") {
+      await this.fetchVmListNetworkStorage({
+        ...params,
+        namespace: detail.vm.project,
+        name: detail.vm.network_storage,
+      })
+    }
+
 
     this.detail = detail
     this.isLoading = false
@@ -584,6 +594,22 @@ export default class VmStore extends Base {
     }
 
     this.networksList = response.networks
+    this.isLoading = false
+    return response
+  }
+
+  @action
+  async fetchVmListNetworkStorage(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${params.namespace}/info`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'networkstorage' }
+
+    this.networkStorageInfo = response.network_storage
     this.isLoading = false
     return response
   }
