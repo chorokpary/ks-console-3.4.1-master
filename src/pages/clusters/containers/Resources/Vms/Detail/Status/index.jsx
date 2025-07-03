@@ -496,7 +496,6 @@ const Status = props => {
           <Panel title={t('RESOURCES_VOLUME')}>
             <div className={styles.wrapper}>
               {detailVolume.map((obj, index) => {
-                console.log(obj)
                 return (
                   <div className={classnames(styles.itemVolume)} key={index}>
                     <div className={styles.icon}>

@@ -18,7 +18,6 @@
 
 import { get } from 'lodash'
 import { action } from 'mobx'
-import { Notify } from '@kube-design/components'
 
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import Base from '../basemm3' // mm3 관련 추가 파일
@@ -158,22 +157,22 @@ export default class VolumeStore extends Base {
 
     jsonData.volume = volumeData
 
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
     return await this.submitting(request.post(url, jsonData))
   }
 
   @action
-  async update({ id, ...params }, data) {
+  async update({ name, ...params }, data) {
     const jsonData = {}
     const volumeData = {}
 
-    volumeData.id = id
+    volumeData.id = name
+    volumeData.project = params.project ? params.project : params.namespace
     volumeData.description = data?.description
 
     jsonData.volume = volumeData
 
     await this.submitting(
-      request.put(this.getDetailUrl({ id, ...params }), jsonData)
+      request.put(this.getDetailUrl({ name, ...params }), jsonData)
     )
   }
 
@@ -254,13 +253,11 @@ export default class VolumeStore extends Base {
   }
 
   @action
-  delete(user) {
-    if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-      return
-    }
-
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  delete(params) {
+    const project = params.project ? params.project : params.namespace
+    return this.submitting(
+      request.delete(`${this.getDetailUrl(params)}`, { project })
+    )
   }
 
   @action
@@ -268,7 +265,7 @@ export default class VolumeStore extends Base {
     const jsonData = {}
     const actionData = {}
 
-    actionData.vm_id = data.vmId
+    actionData.vm_id = data.vmName
     if (data.actionType === 'A') {
       actionData.persist = true
       actionData.action = 'attach'
@@ -278,12 +275,13 @@ export default class VolumeStore extends Base {
 
     actionData.hotplug = data.hotplug
     actionData.bus = data.bus
+    actionData.project = params.project ? params.project : params.namespace
 
     jsonData.action = actionData
 
     await this.submitting(
       request.put(
-        `${this.getDetailUrl({ ...params, id: data.id })}/action`,
+        `${this.getDetailUrl({ ...params, name: data.name })}/action`,
         jsonData
       )
     )

@@ -85,7 +85,11 @@ const VolumeDetail = props => {
               })
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
-                data: { id: volumeName, vmId: used_by_vmi, actionType: 'D' },
+                data: {
+                  name: volumeName,
+                  vmName: used_by_vmi,
+                  actionType: 'D',
+                },
                 store,
                 success: fetchData,
                 ...props.match.params,

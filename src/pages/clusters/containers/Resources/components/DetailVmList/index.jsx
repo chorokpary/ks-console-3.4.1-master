@@ -105,7 +105,7 @@ const DetailVmList = props => {
       volume: props.name,
       page,
       limit: perPage,
-      project: props.project,
+      project: props.detailStore.detail.project,
     }
 
     if (params.name !== '' && params.name !== undefined) {

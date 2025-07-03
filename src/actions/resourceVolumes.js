@@ -50,17 +50,7 @@ export default {
     },
   },
   'resourcesvolume.edit': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, cluster, workspace, namespace, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
           store
@@ -70,7 +60,6 @@ export default {
                 cluster,
                 workspace,
                 namespace,
-                devops,
                 name: data.name,
               },
               data
@@ -84,26 +73,16 @@ export default {
         title: t('RESOURCES_EDIT_VOLUME'),
         modal: ModifyModal,
         store,
-        module,
         ...props,
       })
     },
   },
   'resourcesvolume.remove': {
-    on({
-      store,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, cluster, workspace, namespace, success, ...props }) {
       const modal = Modal.open({
         onOk: () => {
           store
-            .delete({ ...detail, cluster, workspace, namespace, devops })
+            .delete({ ...detail, cluster, workspace, namespace })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
@@ -228,7 +207,7 @@ export default {
     },
   },
   'resourcesvolume.detach': {
-    on({ store, detail, success, data, title, desc, ...props }) {
+    on({ store, success, data, ...props }) {
       const modal = Modal.open({
         onOk: () => {
           store.actionState({ data, ...props }).then(() => {
