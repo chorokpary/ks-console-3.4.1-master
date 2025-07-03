@@ -93,8 +93,8 @@ export default class VmStore extends Base {
       return a.creation_timestamp < b.creation_timestamp
         ? 1
         : a.creation_timestamp > b.creation_timestamp
-          ? -1
-          : 0
+        ? -1
+        : 0
     })
 
     // 초기 데이터 처리
@@ -333,14 +333,13 @@ export default class VmStore extends Base {
     await this.fetchVmListPhysicalNetwork(params)
 
     // Network Storage
-    if (detail.vm.network_storage !== "") {
+    if (detail.vm.network_storage !== '') {
       await this.fetchVmListNetworkStorage({
         ...params,
         namespace: detail.vm.project,
         name: detail.vm.network_storage,
       })
     }
-
 
     this.detail = detail
     this.isLoading = false
@@ -636,9 +635,15 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${params.namespace}/info`
+      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${
+        params.namespace
+      }/info`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'networkstorage' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'networkstorage',
+    }
 
     this.networkStorageInfo = response.network_storage
     this.isLoading = false
@@ -1084,34 +1089,7 @@ export default class VmStore extends Base {
     params.page = params.page || 1
     params.limit = params.limit || 10
 
-    const apiName = {
-      flavor_object: 'flavor',
-      image: 'image',
-      networks: 'network',
-      security_group_objects: 'security_group',
-      host_device: 'host_device',
-      mediated_device: 'mediated_device',
-      volume: 'volume',
-      node: 'node',
-      network_storage: 'network_storage',
-      project: 'project',
-      id: 'id',
-    }
-
-    const pathIdArray = [
-      'security_group',
-      'network',
-      'volume',
-      'id',
-      'host_device',
-      'mediated_device',
-    ]
-    const resource = get(apiName, params.resource)
-
-    params[resource] = pathIdArray.includes(resource) ? params.id : params.name
-
     delete params['resource']
-    delete params['id']
     delete params['name']
 
     if (params.searchName !== '' && params.searchName !== undefined) {

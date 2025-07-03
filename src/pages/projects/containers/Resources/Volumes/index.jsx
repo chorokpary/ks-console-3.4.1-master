@@ -105,11 +105,11 @@ export default class ResourcesVolumes extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: (name, item) => (
+        render: name => (
           <Avatar
             icon="storage"
             iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes/${name}/${item.id}`}
+            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes/${name}`}
             title={name}
           />
         ),

@@ -191,10 +191,10 @@ export default class VolumeStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}`
-    )
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
     const detail = { ...params, ...this.mapper(result), kind: 'Volumes' }
 
     // Yaml 파일 관련
@@ -208,10 +208,10 @@ export default class VolumeStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/manifest`
-    )
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+      project,
+    })
     const yamlData = { ...params, ...this.mapper(result), kind: 'Volumes' }
 
     this.yaml = yamlData.manifest

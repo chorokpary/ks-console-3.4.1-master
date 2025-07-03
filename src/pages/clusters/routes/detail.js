@@ -254,7 +254,7 @@ export default [
     component: ContainerImageDetail,
   },
   {
-    path: `${PATH}/resourcesvolumes/:name/:id`,
+    path: `${PATH}/resourcesvolumes/:project/:name`,
     component: VolumeDetail,
   },
   {

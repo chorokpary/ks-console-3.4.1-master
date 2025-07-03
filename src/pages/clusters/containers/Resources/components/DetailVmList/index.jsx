@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, find } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { inject } from 'mobx-react'
 import classnames from 'classnames'
@@ -43,7 +43,6 @@ const DetailVmList = props => {
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState()
   const [isLoading, setIsLoading] = useState(true)
-  const [isSearchFlag, setIsSearchFlag] = useState(false)
 
   const [vmCpuData, setVmCpuData] = useState([])
   const [vmMemoryData, setVmMemoryData] = useState([])
@@ -98,16 +97,23 @@ const DetailVmList = props => {
 
   const fnGetData = async ({ ...params } = {}) => {
     setIsLoading(true)
-    setIsSearchFlag(false)
     const page = get(params, 'page', 1)
-    const detailParams = { cluster, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
-
-    if(params.name !== '' && params.name !== undefined){
-      detailParams.searchName = params.name 
+    const detailParams = {
+      cluster,
+      resource: props.variables,
+      name: props.name,
+      volume: props.name,
+      page,
+      limit: perPage,
+      project: props.project,
     }
-    
+
+    if (params.name !== '' && params.name !== undefined) {
+      detailParams.searchName = params.name
+    }
+
     const vmList = await store.fetchVmsDetail(detailParams)
-    const vmData = vmList.vms 
+    const vmData = vmList.vms
 
     setTotal(vmList.total)
     setCurrentPage(page)
@@ -133,7 +139,7 @@ const DetailVmList = props => {
 
     const getVmCpuUsageData = async () => {
       const data = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       })
@@ -143,7 +149,7 @@ const DetailVmList = props => {
 
     const getVmWinCpuUsageData = async () => {
       const data = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       })
@@ -242,7 +248,7 @@ const DetailVmList = props => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>
+              <Link to={`/clusters/${cluster}/vms/${obj.project}/${obj.name}`}>
                 {obj.name}
               </Link>
               <Tooltip content={t('VNC')}>
@@ -251,7 +257,7 @@ const DetailVmList = props => {
                   name="terminal"
                   size={16}
                   clickable
-                  onClick={() => handleOpenVnc(obj.id, obj.project)}
+                  onClick={() => handleOpenVnc(obj.name, obj.project)}
                 />
               </Tooltip>
             </div>
@@ -278,7 +284,7 @@ const DetailVmList = props => {
             </div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
+          {renderMonitorings(obj.name, obj.os_type, obj.project, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon
               name="chevron-down"
@@ -346,7 +352,7 @@ const DetailVmList = props => {
                 title={
                   obj.flavor_object.gpus.length >= 1
                     ? obj.flavor_object.gpus.length === 1
-                      ? obj.flavor_object.gpus[0].quantity+" "+obj.flavor_object.gpus[0].name
+                      ? `${obj.flavor_object.gpus[0].quantity} ${obj.flavor_object.gpus[0].name}`
                       : `${obj.flavor_object.gpus[0].name} ${t(
                           'RESOURCES_BESIDES'
                         )} ${obj.flavor_object.gpus.length - 1}${t(
@@ -363,23 +369,25 @@ const DetailVmList = props => {
     )
   }
 
-  const renderMonitorings = (vmId, osType, isExpand) => {
+  const renderMonitorings = (vmName, osType, project, isExpand) => {
     // const isExpand = false;
     const loading = false
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    const vmCpuMetricData = _.find(
+    const vmCpuMetricData = find(
       osType === 'linux' ? vmCpuData : vmWinCpuData,
       data => {
-        if (data.metric.pod === vmId) return data
+        if (data.metric.pod === vmName && data.metric.namespace === project)
+          return data
       }
     )
 
-    const vmMemoryMetricData = _.find(
+    const vmMemoryMetricData = find(
       osType === 'linux' ? vmMemoryData : vmWinMemoryData,
       data => {
-        if (data.metric.pod === vmId) return data
+        if (data.metric.pod === vmName && data.metric.namespace === project)
+          return data
       }
     )
 
@@ -458,11 +466,10 @@ const DetailVmList = props => {
 
   const renderFooter = () => {
     const pagination = getPagination()
-    const { total } = pagination
 
     return (
       <Level className={styles.footer}>
-        <LevelLeft>{t('TOTAL_ITEMS', { num: total })}</LevelLeft>
+        <LevelLeft>{t('TOTAL_ITEMS', { num: pagination.total })}</LevelLeft>
         <LevelRight>
           <Pagination {...pagination} onChange={handlePage} />
         </LevelRight>
@@ -492,13 +499,13 @@ const DetailVmList = props => {
     return 'error'
   }
 
-  const handleOpenVnc = (vmId, project) => {
+  const handleOpenVnc = (vmName, project) => {
     // 실제 URL 로 변경 요망
     const apiUrl = `http://${location.hostname}:30020`
     let param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${project}/virtualmachineinstances/`
-    param = `${param + vmId}/vnc`
+    param = `${param + vmName}/vnc`
 
-    const popupName = vmId.replaceAll('-', '')
+    const popupName = vmName.replaceAll('-', '')
     window.open(
       `${apiUrl}/vnc_lite.html?${param}`,
       popupName,
@@ -507,33 +514,30 @@ const DetailVmList = props => {
   }
 
   return (
-    <>    
-        <Panel title={t('RESOURCES_VM')} className={classnames(styles.main)}>
-          {renderHeader()}          
-          {vmDataList.length > 0 && (
-            renderContent()
-          )}
-          {vmDataList.length === 0 && (
-              <div className={styles.wrapper}>
-                {isLoading ? (
-                  <div>
-                    <Loading />
-                  </div>
-                ) : props.variables === 'project' ? (
-                  <div className={styles.empty}>
-                    {t('RESOURCES_NOT_FOUND_RESOURCE')}
-                  </div>
-                ) : (
-                  <div className={styles.empty}>
-                    {props.type}
-                    {t('RESOURCES_SG_PL')}{' '}
-                    {t('RESOURCES_NO_USE_VM')}
-                  </div>
-                )}
+    <>
+      <Panel title={t('RESOURCES_VM')} className={classnames(styles.main)}>
+        {renderHeader()}
+        {vmDataList.length > 0 && renderContent()}
+        {vmDataList.length === 0 && (
+          <div className={styles.wrapper}>
+            {isLoading ? (
+              <div>
+                <Loading />
               </div>
-          )}
-          {renderFooter()}
-        </Panel>   
+            ) : props.variables === 'project' ? (
+              <div className={styles.empty}>
+                {t('RESOURCES_NOT_FOUND_RESOURCE')}
+              </div>
+            ) : (
+              <div className={styles.empty}>
+                {props.type}
+                {t('RESOURCES_SG_PL')} {t('RESOURCES_NO_USE_VM')}
+              </div>
+            )}
+          </div>
+        )}
+        {renderFooter()}
+      </Panel>
     </>
   )
 }

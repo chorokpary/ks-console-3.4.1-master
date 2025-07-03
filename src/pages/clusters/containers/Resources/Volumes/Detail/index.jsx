@@ -25,7 +25,6 @@ const VolumeDetail = props => {
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
   )
-  const id = props.match.params.id
   const used_by_vmi = store.detail.volume?.used_by_vmi
   const boot_volume = store.detail.volume?.boot_volume
 
@@ -85,7 +84,7 @@ const VolumeDetail = props => {
               })
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
-                data: { id, vmId: used_by_vmi, actionType: 'D' },
+                data: { id: volumeName, vmId: used_by_vmi, actionType: 'D' },
                 store,
                 success: fetchData,
                 ...props.match.params,

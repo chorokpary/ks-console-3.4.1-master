@@ -502,7 +502,7 @@ const Status = props => {
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
                       <Link
-                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes/${obj.project}/${obj.name}`}
+                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes/${obj.name}`}
                       >
                         {obj.name}
                       </Link>

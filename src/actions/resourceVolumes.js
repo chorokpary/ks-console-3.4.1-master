@@ -27,7 +27,6 @@ import BindingModal from 'clusters/containers/Resources/components/Modals/Volume
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
-import devops from './devops'
 
 export default {
   'resourcesvolume.regist': {

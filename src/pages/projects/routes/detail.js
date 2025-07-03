@@ -195,7 +195,7 @@ export default PATH => [
     component: NodepoolDetail,
   },
   {
-    path: `${PATH}/resourcesvolumes/:name/:id`,
+    path: `${PATH}/resourcesvolumes/:name`,
     component: VolumeDetail,
   },
   {
