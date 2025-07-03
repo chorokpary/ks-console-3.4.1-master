@@ -27,19 +27,18 @@ import BindingModal from 'clusters/containers/Resources/components/Modals/Volume
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
+import devops from './devops'
 
 export default {
   'resourcesvolume.regist': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .create(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
-              success && success()
-            })
+          store.create(data, { cluster, workspace, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_CREATE_VOLUME'),
         modal: RegistModal,
@@ -47,17 +46,36 @@ export default {
         cluster,
         workspace,
         namespace,
-        devops,
         ...props,
       })
     },
   },
   'resourcesvolume.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, name: data.name }, data)
+            .update(
+              {
+                ...detail,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                name: data.name,
+              },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -105,19 +123,46 @@ export default {
     },
   },
   'resourcesvolume.remove.batch': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
-      store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
-          arr.push(obj.name)
-        }
+      const rowKeyNames = rowKeys.map(key => {
+        const name = key.split('/')[1]
+        return [name]
       })
-      const names = arr.join(', ')
+      const names = rowKeyNames.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            .batchDelete({ rowKeyNames, cluster, workspace, namespace })
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        modal: DeleteModal,
+        title:
+          names.length === 1
+            ? t('RESOURCES_DELETE')
+            : t('RESOURCES_DELETE_MULTIPLE'),
+        desc:
+          names.length === 1
+            ? t.html('RESOURCES_DELETE_VOLUME_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_VOLUME_TIP', { resource: names }),
+        resource: names,
+        store,
+        ...props,
+      })
+    },
+  },
+  'resourcesvolume.remove.clusterbatch': {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
+      const rowKeys = toJS(store.list.selectedRowKeys)
+      const names = rowKeys.join(', ')
+      const modal = Modal.open({
+        onOk: () => {
+          store
+            .clusterBatchDelete({ rowKeys, cluster, workspace, namespace })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
@@ -160,7 +205,7 @@ export default {
   'resourcesvolume.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
           Modal.close(modal)
           success && success()
@@ -174,7 +219,7 @@ export default {
   },
   'resourcesvolume.bindingPop': {
     on({ store, success, ...props }) {
-      const modal = Modal.open({
+      Modal.open({
         title: t('RESOURCES_BINDING'),
         modal: BindingModal,
         store,
@@ -201,5 +246,4 @@ export default {
       })
     },
   },
-
 }

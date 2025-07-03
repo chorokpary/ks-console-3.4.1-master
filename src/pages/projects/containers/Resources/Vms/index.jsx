@@ -37,7 +37,6 @@ import styles from './index.scss'
   module: 'vms',
   authKey: 'vms',
   name: t('RESOURCES_VM'),
-  rowKey: 'id',
 })
 export default class Vms extends React.Component {
   // auto refresh start  ##################################
@@ -628,6 +627,7 @@ export default class Vms extends React.Component {
         />
         <Table
           {...tableProps}
+          rowKey="project_name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}

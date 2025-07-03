@@ -46,22 +46,19 @@ export default {
       namespace,
       success,
       startRefresh,
-      devops,
       ...props
     }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .create(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
-              success &&
-                setTimeout(() => {
-                  success()
-                }, 1000)
-              startRefresh()
-            })
+          store.create(data, { cluster, workspace, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+            success &&
+              setTimeout(() => {
+                success()
+              }, 1000)
+            startRefresh()
+          })
         },
         startRefresh: () => {
           startRefresh()
@@ -72,7 +69,6 @@ export default {
         cluster,
         workspace,
         namespace,
-        devops,
         ...props,
       })
     },
@@ -165,7 +161,7 @@ export default {
     },
   },
   'vm.remove.batch': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       const rowKeyNames = rowKeys.map(key => {
         const name = key.split('/')[1]
@@ -175,7 +171,7 @@ export default {
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeyNames, cluster, workspace, namespace, devops })
+            .batchDelete({ rowKeyNames, cluster, workspace, namespace })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
@@ -198,7 +194,7 @@ export default {
     },
   },
   'vm.remove.clusterbatch': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
       const names = rowKeys.join(', ')
       const modal = Modal.open({
@@ -209,7 +205,6 @@ export default {
               cluster,
               workspace,
               namespace,
-              devops,
             })
             .then(() => {
               Modal.close(modal)
