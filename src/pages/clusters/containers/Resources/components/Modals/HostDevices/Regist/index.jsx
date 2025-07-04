@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Form,
   Input,
@@ -7,69 +7,69 @@ import {
   Toggle,
   InputSearch,
   Button,
-} from '@kube-design/components';
-import classnames from 'classnames';
+} from '@kube-design/components'
 
-import { Modal, Indicator } from 'components/Base';
-import HostDeviceStore from 'stores/resources/hostdevices';
-import { PATTERN_USER_NAME, COLORS_MAP } from 'utils/constants';
+import { Modal, Indicator } from 'components/Base'
+import HostDeviceStore from 'stores/resources/hostdevices'
+import { PATTERN_USER_NAME } from 'utils/constants'
 
-import styles from './index.scss';
+import styles from './index.scss'
 
-const regexName = /^[a-z][a-z0-9-]*\.[a-z]{2,}\/[a-zA-Z0-9_]+$/;
+const regexName = /^[a-z][a-z0-9-]*\.[a-z]{2,}\/[a-zA-Z0-9_]+$/
 
 const RegistModal = props => {
-  const hostDeviceStore = new HostDeviceStore();
+  const hostDeviceStore = new HostDeviceStore()
 
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData] = useState({})
 
-  const [dataList, setDataList] = useState([]);
-  const [origDataList, setOrigDataList] = useState([]);
-  const [keyword, setKeyword] = useState(2);
-  const [isCheck, setIsCheck] = useState(false);
-  const [isCheckName, setIsCheckName] = useState(false);
+  const [dataList, setDataList] = useState([])
+  const [origDataList, setOrigDataList] = useState([])
+  const [keyword, setKeyword] = useState(2)
+  const [isCheck, setIsCheck] = useState(false)
+  const [isCheckName, setIsCheckName] = useState(false)
 
-  const [addRowList, setAddRowList] = useState([]);
-  const [checkItems, setCheckItems] = useState([]);
+  const [addRowList, setAddRowList] = useState([])
+  const [checkItems, setCheckItems] = useState([])
 
   const getCreateData = async () => {
-    const listPciDevice = await hostDeviceStore.fetchListPciDevices(props);
+    const listPciDevice = await hostDeviceStore.fetchListPciDevices(props)
     setDataList(
       listPciDevice.pci_devices.map(data => ({
         vendor_id: data.vendor_id,
         vendor_name: data.vendor_name,
         device_id: data.device_id,
         device_name: data.device_name,
-        is_external: data.external,
-        is_gpu: data.gpu,
+        is_external: !!data.external,
+        is_gpu: !!data.gpu,
+        is_net: !!data.net,
         refined_device_name: data.refined_device_name,
       }))
-    );
+    )
     setOrigDataList(
       listPciDevice.pci_devices.map(data => ({
         vendor_id: data.vendor_id,
         vendor_name: data.vendor_name,
         device_id: data.device_id,
         device_name: data.device_name,
-        is_external: data.external,
-        is_gpu: data.gpu,
-        is_net: data.net,
+        is_external: !!data.external,
+        is_gpu: !!data.gpu,
+        is_net: !!data.net,
         refined_device_name: data.refined_device_name,
       }))
-    );
-  };
+    )
+  }
 
   useEffect(() => {
-    getCreateData();
-  }, []);
+    getCreateData()
+  }, [])
 
   // 체크 리스트 시작 ==================================================
-  const nextIndex = useRef(0);
+  const nextIndex = useRef(0)
   const handleSingleCheck = (checked, obj, index) => {
     if (checked) {
-      setCheckItems(prev => [...prev, obj.device_name]);
+      setCheckItems(prev => [...prev, obj.device_name])
       // setAddRowList(prev => [
       //   ...prev,
       //   {
@@ -99,21 +99,19 @@ const RegistModal = props => {
           description: '',
           idx: (nextIndex.current += 1),
         },
-      ]);
+      ])
     } else {
-      setCheckItems(checkItems.filter(el => el !== obj.device_name));
-      setAddRowList(
-        addRowList.filter(el => el.device_name !== obj.device_name)
-      );
+      setCheckItems(checkItems.filter(el => el !== obj.device_name))
+      setAddRowList(addRowList.filter(el => el.device_name !== obj.device_name))
     }
-  };
+  }
 
   // 체크박스 전체 선택
   const handleAllCheckModal = checked => {
     if (checked) {
-      const idArray = [];
-      dataList.forEach(el => idArray.push(el.device_name));
-      setCheckItems(idArray);
+      const idArray = []
+      dataList.forEach(el => idArray.push(el.device_name))
+      setCheckItems(idArray)
 
       // setAddRowList(
       //   dataList.map(data => {
@@ -130,55 +128,55 @@ const RegistModal = props => {
       //   })
       // );
     } else {
-      setCheckItems([]);
-      setAddRowList([]);
+      setCheckItems([])
+      setAddRowList([])
     }
-  };
+  }
 
   const handleDelete = name => {
-    setCheckItems(checkItems.filter(el => el !== name));
-    setAddRowList(addRowList.filter(el => el.device_name !== name));
+    setCheckItems(checkItems.filter(el => el !== name))
+    setAddRowList(addRowList.filter(el => el.device_name !== name))
     if (
       addRowList.length - 1 < 1 ||
-      addRowList.filter(el => PATTERN_USER_NAME.test(el.name)).length ==
-      addRowList.length - 1
+      addRowList.filter(el => PATTERN_USER_NAME.test(el.name)).length ===
+        addRowList.length - 1
     ) {
-      setIsCheckName(false);
+      setIsCheckName(false)
     }
-  };
+  }
 
   const handleExternal = (e, i) => {
-    const valuesData = [...dataList];
-    valuesData[i].is_external = e;
-    setDataList(valuesData);
-  };
+    const valuesData = [...dataList]
+    valuesData[i].is_external = e
+    setDataList(valuesData)
+  }
 
   const handleGpu = (e, i) => {
-    const valuesData = [...dataList];
-    valuesData[i].is_gpu = e;
-    setDataList(valuesData);
-  };
+    const valuesData = [...dataList]
+    valuesData[i].is_gpu = e
+    setDataList(valuesData)
+  }
 
   const handleNet = (e, i) => {
-    const valuesData = [...dataList];
-    valuesData[i].is_net = e;
-    setDataList(valuesData);
-  };
+    const valuesData = [...dataList]
+    valuesData[i].is_net = e
+    setDataList(valuesData)
+  }
 
   const handleInput = (value, i, type) => {
-    const valuesAddRowList = [...addRowList];
+    const valuesAddRowList = [...addRowList]
 
-    if (type.indexOf('description') != -1) {
-      valuesAddRowList[i].description = value;
+    if (type.indexOf('description') !== -1) {
+      valuesAddRowList[i].description = value
     } else {
-      valuesAddRowList[i].name = value;
+      valuesAddRowList[i].name = value
       if (PATTERN_USER_NAME.test(value)) {
-        setIsCheckName(false);
+        setIsCheckName(false)
       }
     }
 
     // setAddRowList(valuesAddRowList);
-  };
+  }
 
   // 체크 리스트 끝 ==================================================
 
@@ -189,44 +187,38 @@ const RegistModal = props => {
           origDataList.filter(el =>
             el.vendor_name.toLowerCase().includes(e.toLowerCase())
           )
-        );
+        )
       } else {
         setDataList(
           origDataList.filter(el =>
             el.device_name.toLowerCase().includes(e.toLowerCase())
           )
-        );
+        )
       }
     } else {
-      getCreateData();
+      getCreateData()
     }
-  };
+  }
 
   const handleOk = () => {
-    const onOk = props.onOk;
-    const filterCount = addRowList.filter(el => regexName.test(el.name)).length;
+    const onOk = props.onOk
+    const filterCount = addRowList.filter(el => regexName.test(el.name)).length
 
-    setIsCheck(true);
-    const checkName = filterCount == addRowList.length && filterCount > 0;
-    setIsCheckName(!checkName);
+    setIsCheck(true)
+    const checkName = filterCount === addRowList.length && filterCount > 0
+    setIsCheckName(!checkName)
     if (!checkName) {
-      return false;
+      return false
     }
 
     form.current.validator(() => {
-      const { data } = form.current.props;
-      onOk({ hostDevices: [...addRowList].filter(el => el.name) });
-    });
-  };
+      onOk({ hostDevices: [...addRowList].filter(el => el.name) })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
-
-  const color = {
-    primary: COLORS_MAP['white'],
-    secondary: COLORS_MAP['white'],
-  };
+    setModalView(false)
+  }
 
   return (
     <>
@@ -488,13 +480,13 @@ const RegistModal = props => {
                                   },
                                   {
                                     pattern: regexName,
-                                    message: t(
+                                    message: `${t(
                                       'RESOURCES_INVALID_NAME_HOSTDEVICES_DESC'
-                                    ) + ' ex) nvidia.com/TU104GL_TESLA_T4',
+                                    )} ex) nvidia.com/TU104GL_TESLA_T4`,
                                   },
                                 ]}
                               >
-                                {v.refined_device_name != "" ? (
+                                {v.refined_device_name !== '' ? (
                                   <Input
                                     name={`name-${v.idx}`}
                                     type="text"
@@ -509,7 +501,7 @@ const RegistModal = props => {
                                     value=""
                                     placeholder={t('RESOURCES_NAME')}
                                     onChange={e => {
-                                      handleInput(e, i, `name`);
+                                      handleInput(e, i, `name`)
                                     }}
                                   />
                                 )}
@@ -548,8 +540,9 @@ const RegistModal = props => {
                     </table>
                   </div>
                   <div
-                    className={`form-item-error ${isCheck && isCheckName ? '' : 'hide'
-                      }`}
+                    className={`form-item-error ${
+                      isCheck && isCheckName ? '' : 'hide'
+                    }`}
                     style={{ marginLeft: '10px' }}
                   >
                     {t('RESOURCES_NAME_CHECK_DESC')}
@@ -562,7 +555,7 @@ const RegistModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default RegistModal;
+export default RegistModal
