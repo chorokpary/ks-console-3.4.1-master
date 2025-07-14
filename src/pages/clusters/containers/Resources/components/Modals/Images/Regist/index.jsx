@@ -440,9 +440,13 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
       distro = 'win'
       containerDisk = '-container-image'
     }
+    if (distro === 'almalinux') {
+      distro = 'alma'
+    }
     const targetImageList = imageListData
       .filter(
-        item => item.name.includes(distro) && item.name.includes(containerDisk)
+        item =>
+          item.name.includes(`${distro}-`) && item.name.includes(containerDisk)
       )
       .sort((a, b) => b.name.localeCompare(a.name))
     setImageList(targetImageList)
