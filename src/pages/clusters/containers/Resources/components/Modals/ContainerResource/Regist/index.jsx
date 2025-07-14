@@ -494,7 +494,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
-          obj.accelerator_type === 'None' &&
+          obj.accelerator_type.toLowerCase() === 'none' &&
           obj.os_distro === value &&
           obj.arch_type === masterArchSelect &&
           obj.kube_version === masterKubeVersionSelect
@@ -508,7 +508,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
-          obj.accelerator_type === 'None' &&
+          obj.accelerator_type.toLowerCase() === 'none' &&
           obj.os_distro === osDistro &&
           obj.arch_type === value &&
           obj.kube_version === masterKubeVersionSelect
@@ -522,6 +522,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type.toLowerCase() === 'none' &&
           obj.os_distro === osDistro &&
           obj.arch_type === masterArchSelect &&
           obj.kube_version === value
