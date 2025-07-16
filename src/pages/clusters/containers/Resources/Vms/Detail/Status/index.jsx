@@ -46,7 +46,7 @@ const Status = props => {
       const networkData = store.networksList
       const networkNameArray = store.detail.vm?.networks.map(item => item.name)
       const filterData = networkData.filter(item => {
-        return networkNameArray.includes(item.id)
+        return networkNameArray.includes(item.name)
       })
 
       const sriovNetworkData = store.sriov_networks
@@ -63,10 +63,10 @@ const Status = props => {
         const promises = filterData.filter(async network => {
           if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.id}`
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
             )
             networkDetail.network.endpoint = 'networks'
-            networkDetail.network.unique = 'id'
+            networkDetail.network.unique = 'project_name'
             setDetailNetwork(value => [...value, networkDetail.network])
           }
         })
@@ -106,10 +106,10 @@ const Status = props => {
       setDetailSecurityGroup([])
       const securityData = store.securigyGroupList
       const securityIdArray = store.detail.vm.security_groups.map(
-        item => item.id
+        item => item.name
       )
       const filterData = securityData.filter(item =>
-        securityIdArray.includes(item.id)
+        securityIdArray.includes(item.name)
       )
       setDetailSecurityGroup(filterData)
     }
@@ -427,6 +427,7 @@ const Status = props => {
           <DetailSecurityGroupList
             securityGroupData={detailSecurityGroup}
             cluster={cluster}
+            namespace={store.detail.vm.project}
           />
         )}
 
@@ -445,13 +446,7 @@ const Status = props => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {obj.unique === 'id' ? (
-                        <Link
-                          to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}/${obj.id}`}
-                        >
-                          {obj.name}
-                        </Link>
-                      ) : obj.unique === 'name' ? (
+                      {obj.unique === 'name' ? (
                         <Link
                           to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}
                         >

@@ -20,7 +20,7 @@ import { getIndexRoute } from 'utils/router.config'
 
 import Status from 'clusters/containers/Resources/SecurityGroups/Detail/Status'
 
-const PATH = '/clusters/:cluster/securityGroups/:name/:id'
+const PATH = '/clusters/:cluster/projects/:namespace/securityGroups/:name'
 
 export default [
     {

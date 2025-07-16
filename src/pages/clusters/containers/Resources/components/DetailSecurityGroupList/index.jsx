@@ -8,21 +8,20 @@ import { Icon } from '@kube-design/components'
 import styles from './index.scss'
 import { Link } from 'react-router-dom'
 
-import * as common from 'utils/resources'
-
 const DetailSecurityGroupList = (props) => {
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState();
 
   const cluster = props.cluster;
+  const namespace = props.namespace;
 
   const renderContent = (obj) => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div><Link to={`/clusters/${cluster}/securityGroups/${obj.name}/${obj.id}`}>{obj.name}</Link></div>
+            <div><Link to={`/clusters/${cluster}/projects/${namespace}/securityGroups/${obj.name}`}>{obj.name}</Link></div>
             <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>

@@ -200,6 +200,30 @@ export default [
         component: ContainerResourceDetail,
       },
       {
+        path: `${PATH}/projects/:namespace/keypairs/:name`,
+        component: KeypairDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/networks/:name`,
+        component: NetworkDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/routers/:name`,
+        component: RouterDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/loadbalancers/:name`,
+        component: LoadBalancerDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/securitygroups/:name`,
+        component: SecurityGroupDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/floatingip/:id`,
+        component: FloatingIpDetail,
+      },
+      {
         path: `${PATH}/projects/:namespace/networkstorages/:name`,
         component: NetworkStorageDetail,
       },
@@ -218,32 +242,12 @@ export default [
     ],
   },
   {
-    path: `${PATH}/keypairs/:name/:id`,
-    component: KeypairDetail,
-  },
-  {
     path: `${PATH}/images/:name`,
     component: ImageDetail,
   },
   {
-    path: `${PATH}/routers/:name/:id`,
-    component: RouterDetail,
-  },
-  {
     path: `${PATH}/flavors/:name`,
     component: FlavorDetail,
-  },
-  {
-    path: `${PATH}/securitygroups/:name/:id`,
-    component: SecurityGroupDetail,
-  },
-  {
-    path: `${PATH}/networks/:name/:id`,
-    component: NetworkDetail,
-  },
-  {
-    path: `${PATH}/floatingip/:id`,
-    component: FloatingIpDetail,
   },
   {
     path: `${PATH}/vms/:project/:name`,
@@ -264,10 +268,6 @@ export default [
   {
     path: `${PATH}/mediateddevices/:id`,
     component: MediatedDeviceDetail,
-  },
-  {
-    path: `${PATH}/loadbalancers/:name/:id`,
-    component: LoadBalancerDetail,
   },
   {
     path: `${PATH}/baremetalmonitoring/:name`,

@@ -6,14 +6,12 @@ import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base';
 import { getLocalTime } from 'utils';
-import * as common from 'utils/resources';
 
 import { getIndexRoute } from 'utils/router.config';
 import Status from 'clusters/containers/Resources/Networks/Detail/Status';
 
-const PATH_DETAIL = '/clusters/:cluster/networks/:name/:id';
+const PATH_DETAIL = '/clusters/:cluster/projects/:namespace/networks/:name';
 
 const store = new NetworkStore();
 
@@ -30,9 +28,6 @@ const NetworkDetail = props => {
   const listUrl = `/clusters/${cluster}/networks`;
 
   const { routing } = props.rootStore;
-
-  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`;
-
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
   );

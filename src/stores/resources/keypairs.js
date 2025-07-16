@@ -16,12 +16,8 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash';
 import { observable, action } from 'mobx';
 import { Notify } from '@kube-design/components';
-import { LIST_DEFAULT_ORDER } from 'utils/constants';
-import ObjectMapper from 'utils/object.mapper';
-import cookie from 'utils/cookie';
 
 import Base from '../basemm3'; // mm3 관련 추가 파일
 import List from '../base.list';
@@ -37,8 +33,8 @@ export default class KeypairStore extends Base {
     )}/edgetron/resources/kubevirt/keypairs`;
 
   getListUrl = this.getResourceUrl;
-
-  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`;
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`;
+  getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
 
   @action
   async create(data, params = {}) {
@@ -70,7 +66,6 @@ export default class KeypairStore extends Base {
     const jsonData = {};
     const keypairData = {};
 
-    keypairData.id = data.id;
     keypairData.description = data?.description;
 
     jsonData.keypair = keypairData;
@@ -83,10 +78,10 @@ export default class KeypairStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true;
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}`
-    );
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
     const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' };
 
     // Yaml 파일 관련
@@ -99,32 +94,41 @@ export default class KeypairStore extends Base {
 
   @action
   async fetchYaml(params) {
-    this.isLoading = true;
+    this.isLoading = true
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+      project,
+    })
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' }
 
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/manifest`
-    );
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' };
-
-    this.yaml = yamlData.manifest;
-    this.isLoading = false;
-    return yamlData;
+    this.yaml = yamlData.manifest
+    this.isLoading = false
+    return yamlData
   }
 
   @action
   async batchDelete({ rowKeys, ...params }) {
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(id =>
-            request.delete(`${this.getDetailUrl({ id, ...params })}`)
+    const rowKeyDict = rowKeys.map(key => {
+      if (key.includes('/')) {
+        const [project, name] = key.split('/')
+        return { project, name }
+      } else {
+        const project = params.namespace
+        const name = key
+        return { project, name }
+      }
+    })
+
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
           )
         )
-      );
-    }
-    this.list.selectedRowKeys = [];
+      )
+    )
+    this.list.selectedRowKeys = []
   }
 
   @action
@@ -134,6 +138,6 @@ export default class KeypairStore extends Base {
       return;
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`));
+    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`));
   }
 }

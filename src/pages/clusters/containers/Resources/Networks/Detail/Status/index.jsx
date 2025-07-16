@@ -14,6 +14,7 @@ const Status = props => {
   // console.log("props : "+ JSON.stringify(props))
   const store = props.detailStore;
   const cluster = props.detailStore?.detail.cluster;
+  const namespace = props.detailStore?.detail.namespace;
 
   const routerStore = new RouterStore();
   const loadBalancerStore = new LoadBalancerStore();
@@ -25,15 +26,15 @@ const Status = props => {
   const [isLoadingLoadBalancer, setIsLoadingLoadBalancer] = useState(true);
 
   useEffect(() => {
-    const networkId = props.match.params.id;
+    const networkName = props.match.params.name;
 
     const fnGetRouterData = async () => {
       const routerList = await routerStore.fetchList(props.match.params);
       const routerExternalList = await routerList.filter(
-        item => item.external?.id === networkId,
+        item => item.external?.name === networkName,
       );
       const routerInternalList = await routerList.filter(item =>
-        _.find(item['internal'], { id: networkId }),
+        _.find(item['internal'], { name: networkName }),
       );
 
       const routerTernalList =
@@ -65,7 +66,8 @@ const Status = props => {
           type={t('RESOURCES_NETWORK')}
           variables="networks"
           {...props.match.params}
-          id={props.match.params.id}
+          name={props.match.params.name}
+          project={namespace}
         />
 
         {/* 라우터 */}
@@ -96,7 +98,7 @@ const Status = props => {
                     <div className={classnames(styles.title, styles.name)}>
                       <div>
                         <Link
-                          to={`/clusters/${cluster}/routers/${obj.name}/${obj.id}`}
+                          to={`/clusters/${cluster}/projects/${namespace}/routers/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
@@ -184,7 +186,7 @@ const Status = props => {
                       <p>{t('RESOURCES_VIRTUAL_IP')}</p>
                     </div>
                     <div className={styles.title}>
-                      <div>{obj.rules_count}</div>
+                      <div>{obj.rule_count}</div>
                       <p>{t('RESOURCES_POLICY_COUNT')}</p>
                     </div>
                   </div>

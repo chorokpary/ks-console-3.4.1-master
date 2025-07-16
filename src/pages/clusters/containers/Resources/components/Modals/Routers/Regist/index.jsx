@@ -72,13 +72,13 @@ const RegistModal = props => {
 
     setRouterExternal([]);
     routerList?.map(router => {
-      setRouterExternal(prev => [...prev, router.external?.id]);
+      setRouterExternal(prev => [...prev, router.external?.name]);
     });
 
     setRouterInternal([]);
     routerList?.map(router => {
       router.internal.map(it => {
-        setRouterInternal(prev => [...prev, it.id]);
+        setRouterInternal(prev => [...prev, it.name]);
       });
     });
 
@@ -105,7 +105,7 @@ const RegistModal = props => {
 
   const dataListVariables = {
     internal:
-      internalNetworkList?.filter(data => !routerInternal.includes(data.id)) ||
+      internalNetworkList?.filter(data => !routerInternal.includes(data.name)) ||
       [],
   };
 
@@ -117,26 +117,26 @@ const RegistModal = props => {
     internal: setInternalCheckItems,
   };
 
-  const handleSingleCheck = (checked, id, type) => {
+  const handleSingleCheck = (checked, name, type) => {
     if (checked) {
-      setVariables[type](prev => [...prev, id]);
+      setVariables[type](prev => [...prev, name]);
     } else {
-      setVariables[type](stateVariables[type].filter(el => el !== id));
+      setVariables[type](stateVariables[type].filter(el => el !== name));
     }
   };
 
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = [];
-      dataListVariables[type].forEach(el => nameArray.push(el.id));
+      dataListVariables[type].forEach(el => nameArray.push(el.name));
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
     }
   };
 
-  const handleDelete = (id, type) => {
-    setVariables[type](stateVariables[type].filter(el => el !== id));
+  const handleDelete = (name, type) => {
+    setVariables[type](stateVariables[type].filter(el => el !== name));
   };
 
   // 체크 리스트 끝 ==================================================
@@ -263,7 +263,7 @@ const RegistModal = props => {
                   </thead>
                   <tbody>
                     {!internalNetworkList?.filter(
-                      data => !routerInternal.includes(data.id)
+                      data => !routerInternal.includes(data.name)
                     ).length && (
                       <tr>
                         <td colSpan="6" className="no-data">
@@ -272,20 +272,20 @@ const RegistModal = props => {
                       </tr>
                     )}
                     {internalNetworkList
-                      ?.filter(data => !routerInternal.includes(data.id))
+                      ?.filter(data => !routerInternal.includes(data.name))
                       .map((data, key) => {
                         return (
-                          <tr key={data.id}>
+                          <tr key={data.name}>
                             <td>
                               <Checkbox
-                                name={`select-${data.id}`}
+                                name={`select-${data.name}`}
                                 checked={
-                                  !!stateVariables['internal'].includes(data.id)
+                                  !!stateVariables['internal'].includes(data.name)
                                 }
                                 onChange={checked =>
                                   handleSingleCheck(
                                     checked,
-                                    data.id,
+                                    data.name,
                                     'internal'
                                   )
                                 }
@@ -306,15 +306,12 @@ const RegistModal = props => {
                   </tbody>
                 </table>
                 <div className={styles.removeCheckWrapper}>
-                  {internalCheckItems?.map(id => {
-                    const name = internalNetworkList
-                      ?.filter(data => data.id == id)
-                      .map(item => item.name)[0];
+                  {internalCheckItems?.map(name => {
                     return (
-                      <span key={id}>
+                      <span key={name}>
                         <Button
                           icon="close"
-                          onClick={() => handleDelete(id, 'internal')}
+                          onClick={() => handleDelete(name, 'internal')}
                         >
                           {name}
                         </Button>
@@ -376,7 +373,7 @@ const RegistModal = props => {
                   </thead>
                   <tbody>
                     {!externalNetworkList?.filter(
-                      data => !routerExternal.includes(data.id)
+                      data => !routerExternal.includes(data.name)
                     ).length && (
                       <tr>
                         <td colSpan="6" className="no-data">
@@ -385,17 +382,17 @@ const RegistModal = props => {
                       </tr>
                     )}
                     {externalNetworkList
-                      ?.filter(data => !routerExternal.includes(data.id))
+                      ?.filter(data => !routerExternal.includes(data.name))
                       .map(data => {
                         return (
                           <tr key={data.name}>
                             <td>
                               <Radio
                                 name="external"
-                                value={data.id}
-                                checked={radioExternal === data.id}
+                                value={data.name}
+                                checked={radioExternal === data.name}
                                 onChange={e => {
-                                  setRadioExternal(data.id);
+                                  setRadioExternal(data.name);
                                 }}
                               />
                             </td>

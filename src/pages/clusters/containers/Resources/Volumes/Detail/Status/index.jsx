@@ -32,7 +32,7 @@ const Status = props => {
         <div>
           <DetailVmList
             type={t('RESOURCES_VOLUME')}
-            variables="volume"
+            match="volume"
             name={props.match.params.name}
             project={project}
           />
@@ -43,7 +43,7 @@ const Status = props => {
         <div>
           <DetailVmList
             type={t('RESOURCES_VOLUME')}
-            variables="volume"
+            match="volume"
             name={props.match.params.name}
             project={project}
           />

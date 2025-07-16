@@ -101,11 +101,12 @@ const DetailVmList = props => {
     const detailParams = {
       cluster,
       resource: props.variables,
+      match: props.match,
+      id: props.id,
       name: props.name,
-      volume: props.name,
       page,
       limit: perPage,
-      project: props.detailStore.detail.project,
+      project: props.project,
     }
 
     if (params.name !== '' && params.name !== undefined) {

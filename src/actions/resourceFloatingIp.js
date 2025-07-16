@@ -189,13 +189,7 @@ export default {
     'floatingIp.remove.batch': {
         on({ store, cluster, workspace, namespace, success, devops, ...props }) {
             const rowKeys = toJS(store.list.selectedRowKeys)
-            let arr = new Array
-            store.dataList.map(obj => {
-                if (rowKeys.includes(obj.id)) {
-                    arr.push(obj.floating_ip)
-                }
-            })
-            const names = arr.join(', ')
+            const names = rowKeys.join(', ')
             const modal = Modal.open({
                 onOk: () => {
                     store
@@ -217,26 +211,6 @@ export default {
                         : t.html('RESOURCES_DELETE_FLOATING_IP_TIP', { resource: names }),
                 module: names,
                 resource: names,
-                store,
-                ...props,
-            })
-        },
-    },
-    'floatingIp.delete': {
-        on({ store, detail, success, ...props }) {
-            const modal = Modal.open({
-                onOk: () => {
-                    store.delete(detail).then(() => {
-                        Modal.close(modal)
-                        Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-                        success && success()
-                    })
-                },
-                title: t('RESOURCES_DELETE_FLOATING_IP'),
-                desc: t('RESOURCES_DELETE_DESC'),
-                modal: DeleteModal,
-                module: store.module,
-                detail,
                 store,
                 ...props,
             })

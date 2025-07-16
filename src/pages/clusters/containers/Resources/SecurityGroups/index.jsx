@@ -32,7 +32,7 @@ import SecurityGroupStore from 'stores/resources/securityGroups'
   module: 'security_groups',
   authKey: 'securityGroups',
   name: t('RESOURCES_SECURITY_GROUP'),
-  rowKey: 'id',
+  rowKey: 'project_name',
 })
 export default class SecurityGroups extends React.Component {
   showAction(record) {
@@ -108,11 +108,11 @@ export default class SecurityGroups extends React.Component {
         dataIndex: 'name',
         sorter: true,
         search: true,
-        render: (name, item) => (
+        render: (name, record) => (
           <Avatar
             icon="shield"
             iconSize={40}
-            to={`/clusters/${cluster}/securityGroups/${name}/${item.id}`}
+            to={`/clusters/${cluster}/projects/${record.project}/securityGroups/${name}`}
             title={name}
           />
         ),
@@ -130,13 +130,13 @@ export default class SecurityGroups extends React.Component {
       },
       {
         title: t('RESOURCES_INBOUND_RULE_COUNT'),
-        dataIndex: 'ingress_count',
+        dataIndex: 'ingress',
         isHideable: true,
         width: 'auto',
       },
       {
         title: t('RESOURCES_OUTBOUND_RULE_COUNT'),
-        dataIndex: 'egress_count',
+        dataIndex: 'egress',
         isHideable: true,
         width: 'auto',
       },

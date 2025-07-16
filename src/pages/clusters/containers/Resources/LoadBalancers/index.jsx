@@ -37,7 +37,7 @@ import ResourceTable from 'clusters/components/ResourceTable'
     module: 'lbs',
     authKey: 'loadBalancers',
     name: t('RESOURCES_LOAD_BALANCER'),
-    rowKey: 'id'
+    rowKey: 'project_name'
 })
 export default class LoadBalancers extends React.Component {
 
@@ -111,11 +111,11 @@ export default class LoadBalancers extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: (name, item) => (
+                render: (name, record) => (
                     <Avatar
                         icon="loadbalancer"
                         iconSize={40}
-                        to={`/clusters/${cluster}/loadBalancers/${name}/${item.id}`}
+                        to={`/clusters/${cluster}/projects/${record.project}/loadBalancers/${name}`}
                         title={name}
                     />
                 ),
@@ -156,7 +156,7 @@ export default class LoadBalancers extends React.Component {
             },
             {
                 title: t('RESOURCES_RULE_COUNT'),
-                dataIndex: 'rules_count',
+                dataIndex: 'rule_count',
                 isHideable: true,
                 width: 'auto',
             },

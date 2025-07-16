@@ -120,7 +120,6 @@ const SecurityGroupDetail = props => {
     icon: 'shield',
     module: store.module,
     name: get(store.detail, 'name'),
-    // desc: get(store.detail.security_group, 'description', ''),
     operations:
       get(store.detail, 'id') === 'c5071a6b-d606-4fde-86c1-6bcc3160bb28' ||
       get(store.detail, 'id') === 'eb99fdd0-560f-4f85-b3a4-3780a22f3a00'

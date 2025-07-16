@@ -1,6 +1,4 @@
-import { get, groupBy } from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { toJS } from 'mobx';
 import { observer, inject } from 'mobx-react';
 import classnames from 'classnames';
 import { Icon, Button, Notify } from '@kube-design/components';
@@ -13,6 +11,7 @@ import styles from './index.scss';
 const Status = props => {
   const store = props.detailStore;
   const cluster = props.match.params.cluster;
+  const project = props.match.params.namespace;
 
   const [externalNetwork, setExternalNetwork] = useState(null);
   const [internalNetwork, setInternalNetwork] = useState([]);
@@ -20,7 +19,7 @@ const Status = props => {
   useEffect(() => {
     const fnGetExternalNetwork = async () => {
       const externalData = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.id}`
+        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${cluster}/edgetron/resources/kubevirt/networks/${store.detail.router.external.name}?project=${project}`
       );
       setExternalNetwork(externalData?.network);
     };
@@ -29,7 +28,7 @@ const Status = props => {
       setInternalNetwork([]);
       const promises = (store.detail.router?.internal).map(async item => {
         const internalData = await request.get(
-          `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${item.id}`
+          `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${cluster}/edgetron/resources/kubevirt/networks/${item.name}?project=${project}`
         );
         setInternalNetwork(internalNetwork => [
           ...internalNetwork,
@@ -60,7 +59,7 @@ const Status = props => {
                 <div className={styles.text}>
                   <div>
                     <Link
-                      to={`/clusters/${cluster}/networks/${externalNetwork.name}/${externalNetwork.id}`}
+                      to={`/clusters/${cluster}/projects/${project}/networks/${externalNetwork.name}`}
                     >
                       {externalNetwork.name}
                     </Link>
@@ -99,7 +98,7 @@ const Status = props => {
                       {/* <div>{obj.name}</div> */}
                       <div>
                         <Link
-                          to={`/clusters/${cluster}/networks/${obj.name}/${obj.id}`}
+                          to={`/clusters/${cluster}/projects/${project}/networks/${obj.name}`}
                         >
                           {obj.name}
                         </Link>

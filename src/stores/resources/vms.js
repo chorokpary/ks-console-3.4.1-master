@@ -837,7 +837,7 @@ export default class VmStore extends Base {
       const securityDetail = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/security_groups/${security.id}`
+        )}/edgetron/resources/kubevirt/security_groups/${security.name}`
       )
 
       securityDetail.security_group.egress_count = securityDetail.security_group.rules.filter(
@@ -1089,6 +1089,9 @@ export default class VmStore extends Base {
     params.page = params.page || 1
     params.limit = params.limit || 10
 
+    // we also can query the VMs by specifying the queried parameter to backend server
+    params[params.match] = params.name;
+
     delete params['resource']
     delete params['name']
 
@@ -1096,7 +1099,7 @@ export default class VmStore extends Base {
       params.name = params.searchName
     }
 
-    delete params['searchName']
+    delete params['searchName']    
 
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace }),
