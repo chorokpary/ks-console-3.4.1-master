@@ -27,6 +27,7 @@ import {
   Tooltip,
 } from '@kube-design/components'
 import styles from './index.scss'
+import { namespace } from 'd3-selection'
 
 const DetailGpuVmList = props => {
   // props = {
@@ -54,6 +55,8 @@ const DetailGpuVmList = props => {
 
   const [vmWinCpuData, setVmWinCpuData] = useState([])
   const [vmWinMemoryData, setVmWinMemoryData] = useState([])
+
+  const [vmGpuUtilData, setVmGpuUtilData] = useState([]);
 
   const perPage = 6
   const [currentPage, setCurrentPage] = useState(1)
@@ -175,13 +178,27 @@ const DetailGpuVmList = props => {
       setVmWinMemoryData(data)
     }
 
+    const getVmGpuUtilData = async () => {
+      // const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${store.detail.id}"} / 100`
+      const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter"} / 100`
+
+      const vmGpuUtilData = await customStore.fetchMetric({
+	    expr: gpuUtilDataExpr,
+        ...paramsData,
+        cluster,
+      })
+
+      setVmGpuUtilData(vmGpuUtilData)
+    }
+
     getVmCpuUsageData()
     getVmMemoryUsageData()
     getVmWinCpuUsageData()
     getVmWinMemoryUsageData()
+    getVmGpuUtilData()
   }
 
-  const getMonitoringCfgs = (cpuData, memoryData) => [
+  const getMonitoringCfgs = (cpuData, memoryData, gpuData) => [
     {
       type: 'cpu',
       title: 'CPU',
@@ -198,6 +215,14 @@ const DetailGpuVmList = props => {
       data: memoryData,
       bgColor: 'transparent',
     },
+     {
+      type: 'cpu',
+      title: 'GPU',
+      unitType: 'cpu',
+      legend: ['USED'],
+      data: gpuData,
+      bgColor: 'transparent',
+    },
   ]
 
   const renderContent = () => {
@@ -209,7 +234,7 @@ const DetailGpuVmList = props => {
 
     const content = vmDataList.map((obj, index) => {
       return (
-        <div className={styles.wrapper} key={index}>
+        <div className={styles.wrapper} key={`${obj.name}-${index}`}>
           <div
             className={classnames(styles.expandItem, '', {
               [styles.expanded]: obj.name === expandItem ? isExpandFlag : false,
@@ -217,13 +242,11 @@ const DetailGpuVmList = props => {
           >
             <div className={styles.itemMain}>
               <div className={styles.icon}>
-                {/* <Icon name="templet" size={40} type={obj.name !== expandItem ? 'dark' : (obj.name === expandItem && isExpandFlag === false) ? 'dark' : 'light'} /> */}
                 <i className="ico-type40-vm"></i>
                 <Indicator
                   className={styles.indicator}
                   type={getState(obj.state)}
-                  flicker
-                />
+                  flicker/>
               </div>
               {renderContentDetail(obj)}
             </div>
@@ -248,7 +271,7 @@ const DetailGpuVmList = props => {
               <Link to={`/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>
                 {obj.name}
               </Link>
-              <Tooltip content={t('VNC')}>
+              {/* <Tooltip content={t('VNC')}>
                 <Icon
                   className="margin-l8"
                   name="terminal"
@@ -256,13 +279,10 @@ const DetailGpuVmList = props => {
                   clickable
                   onClick={() => handleOpenVnc(obj.id, obj.project)}
                 />
-              </Tooltip>
+              </Tooltip> */}
             </div>
             <p>
-              {getLocalTime(obj.creation_timestamp).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )}
-              {t('RESOURCES_CREATED')}
+              {t('RESOURCES_NAME')}
             </p>
           </div>
           <div className={styles.text}>
@@ -307,7 +327,14 @@ const DetailGpuVmList = props => {
       }
     )
 
-    if (!vmCpuMetricData && !vmMemoryMetricData)
+    const vmGpuMetricData = _.find(
+      vmGpuUtilData,
+      data => {
+        if (data.metric.pod === vmId) return data
+      }
+    )
+
+    if (!vmCpuMetricData && !vmMemoryMetricData && !vmGpuMetricData)
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
     const vmCpuArray = []
@@ -316,7 +343,10 @@ const DetailGpuVmList = props => {
     const vmMemoryArray = []
     vmMemoryArray.push(vmMemoryMetricData)
 
-    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray)
+    const vmGpuArray = []
+    vmGpuArray.push(vmGpuMetricData)
+
+    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray, vmGpuArray)
 
     return (
       <div className={styles.monitors}>
@@ -325,7 +355,7 @@ const DetailGpuVmList = props => {
             const config = getAreaChartOps(item)
 
             return (
-              <div key={item.type}>
+              <div key={`${item.type}-${item.title}`}>
                 <TinyArea
                   key={item.type}
                   width="100%"
@@ -367,6 +397,7 @@ const DetailGpuVmList = props => {
   const handleCreate = () => {
     rootStore.triggerAction('gpuclusters.regist', {
       cluster,
+      namespace: cluster,
       id: props.id, 
       name: props.name,
       type: props.name,
@@ -445,7 +476,7 @@ const DetailGpuVmList = props => {
 
   return (
     <>    
-        <Panel title={t('RESOURCES_GPU_NODE_POOLS')} className={classnames(styles.main)}>
+        <Panel title={t('RESOURCES_VM')} className={classnames(styles.main)}>
           {renderHeader()}          
           {vmDataList.length > 0 && (
             renderContent()

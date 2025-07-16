@@ -4,7 +4,14 @@ import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import { Card } from 'components/Base'
-import { Button, Notify } from '@kube-design/components'
+
+import classnames from 'classnames'
+
+import { Icon, Button, Notify } from '@kube-design/components'
+import { Link } from 'react-router-dom'
+import { Panel, Text, Indicator } from 'components/Base'
+import { TinyArea } from 'components/Charts'
+
 
 import DetailGpuVmList from 'pages/clusters/containers/Resources/components/DetailGpuVmList';
 
@@ -12,9 +19,9 @@ import styles from './index.scss'
 
 const Status = (props) => {
 
-  console.log(props)
-
   const store = props.detailStore;
+
+  const { cluster } = props.match.params
 
   const [detailFlavor, setDetailFlavor] = useState(null)
   const [detailNetwork, setDetailNetwork] = useState([])
@@ -27,7 +34,30 @@ const Status = (props) => {
   return (
     <>
       <div>
-        
+
+        {/* GPU 클러스터 */}
+        <Panel title={'GPU 클러스터'}>
+          <div className={styles.wrapper}>
+            <div className={classnames(styles.itemFlavor)}>
+              <div className={styles.icon}>
+                <i className="ico-type-mediatedvgpu"></i>
+              </div>
+              <div className={classnames(styles.title, styles.name)}>
+                <div>
+                    클러스터 이름
+                </div>
+                <p>{t('RESOURCES_GPU_CLUSTER')}</p>
+              </div>
+              <div className={classnames(styles.title, styles.name)}>
+                <div>
+                    프로젝트 이름
+                </div>
+                <p>{t('RESOURCES_PROJECT')}</p>
+              </div>
+            </div>
+          </div>
+        </Panel>
+
         {/* Flavor */}
         {!!detailFlavor && (
           <Panel title={'Flavor'}>
@@ -93,7 +123,64 @@ const Status = (props) => {
           </Panel>
         )}
 
-         <DetailGpuVmList
+        {/* 네트워크 */}
+        {detailNetwork.length > 0 && (
+          <Panel title={t('RESOURCES_NETWORK')}>
+            <div className={styles.wrapper}>
+              {detailNetwork.map((obj, index) => (
+                <div className={classnames(styles.itemNetwork)} key={index}>
+                  <div className={styles.icon}>
+                    {!obj.resource_name ? (
+                      <Icon name={`network-duotone`} size={40} />
+                    ) : (
+                      <i className="ico-type40-sriov"></i>
+                    )}
+                  </div>
+                  <div className={classnames(styles.title, styles.name)}>
+                    <div>
+                      {obj.unique == "id" ? (
+                        <Link
+                          to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}/${obj.id}`}
+                        >
+                          {obj.name}
+                        </Link>
+                      ) : (
+                        obj.unique == "name" ? (
+                          <Link to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}>
+                            {obj.name}
+                          </Link>
+                        ) : (
+                          <Link to={`/clusters/${cluster}/projects/${obj.project}/${obj.endpoint}/${obj.name}`}>
+                            {obj.name}
+                          </Link>
+                        )
+                      )}
+                    </div>
+                    <p>{t('RESOURCES_NAME')}</p>
+                  </div>
+                  <div className={styles.title}>
+                    <div>{obj.type.toUpperCase()}</div>
+                    <p>{t('RESOURCES_TYPE_YOO')}</p>
+                  </div>
+                  <div className={styles.title}>
+                    <div>{obj.cidr}</div>
+                    <p>CIDR</p>
+                  </div>
+                  <div className={styles.title}>
+                    <div>{`${obj.gateway_ip === undefined || obj.gateway_ip === ""
+                      ? "-"
+                      : obj.gateway_ip
+                      }`}
+                    </div>
+                    <p>{t('RESOURCES_GATEWAY')}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        )}
+
+        <DetailGpuVmList
           type={t('RESOURCES_NETWORK')}
           variables="networks"
           {...props.match.params}

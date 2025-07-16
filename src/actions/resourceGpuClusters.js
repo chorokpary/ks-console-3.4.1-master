@@ -39,7 +39,7 @@ export default {
               success && success()
             })
         },
-        title: t('RESOURCES_CREATE_GPU_CLUSTER'),
+        title: t('RESOURCES_CREATE_VM'),
         modal: RegistModal,
         store,
         cluster,

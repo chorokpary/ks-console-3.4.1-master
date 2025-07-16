@@ -1,8 +1,8 @@
-import { find, get } from 'lodash'
+import { find, get, range } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Modal } from 'components/Base'
-import { ProjectSelect } from 'components/Inputs'
+import { ProjectSelect, UnitSlider } from 'components/Inputs'
 import {
   Button,
   Checkbox,
@@ -25,6 +25,9 @@ import CardSelect from '../../../CardSelect'
 
 import styles from './index.scss'
 import './checkbox.disabled.css'
+
+
+const regexRootDisk = /^[1-9][0-9]*$/;
 
 const RegistModal = props => {
   const form = useRef()
@@ -66,6 +69,7 @@ const RegistModal = props => {
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : 'default'
   )
+
   const [vmName, setVmName] = useState('')
   const [imageName, setImageName] = useState('')
   const [preInstalledApp, setPreInstalledApp] = useState('None')
@@ -80,6 +84,9 @@ const RegistModal = props => {
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
 
+  const [vmCount, setVmCount] = useState('1');
+  const [gpuVmName, setGpuVmName] = useState('');
+  
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
 
@@ -428,7 +435,7 @@ const RegistModal = props => {
   }
 
   const closeModal = () => {
-    props.startRefresh();
+    //props.startRefresh();
     setModalView(false)
   }
 
@@ -437,17 +444,7 @@ const RegistModal = props => {
     if (step === 1) {
       if (
         imageType === 'I' &&
-        (data.name === undefined ||
-          !PATTERN_USER_NAME.test(data.name) ||
-          data.image === t('RESOURCES_SELECT') ||
-          data.flavor === t('RESOURCES_SELECT'))
-      ) {
-        handleOk()
-      } else if (
-        imageType === 'B' &&
-        (data.name === undefined ||
-          !PATTERN_USER_NAME.test(data.name) ||
-          data.bootvolume === t('RESOURCES_SELECT') ||
+        (data.image === t('RESOURCES_SELECT') ||
           data.flavor === t('RESOURCES_SELECT'))
       ) {
         handleOk()
@@ -480,7 +477,6 @@ const RegistModal = props => {
     }
 
     if (step === 3) {
-      setVmName(data.name)
       setImageName(data.image)
       setBootVolumeName(data.bootvolume)
       setFlavorName(data.flavor)
@@ -1051,10 +1047,32 @@ const RegistModal = props => {
     )
   }
 
+  const getMarks = max => {
+      const count = 5;
+      return range(count).reduce((marks, index) => {
+        const value = (max * index) / (count - 1);
+        const mark = value === 0 ? '0' : `${Math.floor(value)}`;
+        return { ...marks, [value]: mark };
+      }, {});
+  };
+
+  useEffect(() => {
+    const namePrefix = props.namespace; 
+    if (Number(vmCount) === 0) {
+      setGpuVmName('');
+    } else if (Number(vmCount) === 1) {
+      setGpuVmName(`${namePrefix}_01`);
+    } else {
+      const first = `${namePrefix}_01`;
+      const last = `${namePrefix}_${vmCount.toString().padStart(2, '0')}`;
+      setGpuVmName(`${first} ~ ${last}`);
+    }
+  }, [vmCount]);
+
   return (
     <>
       <Modal
-        icon="pen"
+        icon=""
         width={960}
         title={props.title}
         onCancel={closeModal}
@@ -1086,7 +1104,7 @@ const RegistModal = props => {
               <span className={styles.basic}></span>
               <div className={styles.title}>
                 <div className={styles.step_name}>
-                  {t('RESOURCES_DEFAULT_SETTINGS')}
+                  {t('RESOURCES_VM_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
                   {regStep === 1
@@ -1189,101 +1207,100 @@ const RegistModal = props => {
               <div className={`${regStep === 1 ? '' : 'hide'}`}>
                 <Columns>
                   <Column>
-                    <Form.Item
-                      label={t('RESOURCES_NAME')}
-                      rules={[
-                        { required: true, message: t('NAME_EMPTY_DESC') },
-                        {
-                          pattern: PATTERN_USER_NAME,
-                          message: t('RESOURCES_INVALID_NAME_DESC'),
-                        },
-                      ]}
-                      desc={t('NAME_DESC')}
+                     <Form.Item
+                      label={t('RESOURCES_GPU_CLUSTER')}
                     >
                       <Input
-                        name="name"
-                        autoFocus={true}
+                        name="gpu_cluster"
                         maxLength={63}
                         style={{ maxWidth: 'none' }}
+                        defaultValue={props.name}
+                        disabled={true}
+                      />
+                    </Form.Item>                    
+                  </Column>                
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_PROJECT')}
+                    >
+                      <Input
+                        name="project_text"
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}
+                        defaultValue={props.namespace}
+                        disabled={true}
                       />
                     </Form.Item>
-                  </Column>
-                  {!props.namespace && (
-                    <Column>
-                      <Form.Item
-                        label={t('PROJECT')}
-                        desc={t('SELECT_PROJECT_DESC')}
-                        rules={[
-                          {
-                            required: true,
-                            message: t('PROJECT_NOT_SELECT_DESC'),
-                          },
-                        ]}
-                      >
-                        <ProjectSelect
-                          name="metadata.namespace"
-                          defaultValue={projectName}
-                          cluster={props.cluster}
-                          onChange={e => {
-                            setProjectName(e)
-                            setNetworkCheckItems([])
-                            setSriovCheckItems([])
-                            setSecurityGroupCheckItems([])
-                          }}
-                        />
-                      </Form.Item>
-                    </Column>
-                  )}
+                    {!props.namespace && (
+                    <Form.Item
+                      label={t('PROJECT')}
+                      desc={t('SELECT_PROJECT_DESC')}
+                      rules={[
+                        {
+                          required: true,
+                          message: t('PROJECT_NOT_SELECT_DESC'),
+                        },
+                      ]}
+                    >
+                      <ProjectSelect
+                        name="metadata.namespace"
+                        defaultValue={projectName}
+                        cluster={props.cluster}
+                        onChange={e => {
+                          setProjectName(e)
+                          setNetworkCheckItems([])
+                          setSriovCheckItems([])
+                          setSecurityGroupCheckItems([])
+                        }}
+                      />
+                    </Form.Item>
+                      )}
+                  </Column>                 
                 </Columns>
 
-                {/* <Form.Item
-                  label={t('RESOURCES_NAME')}
-                  rules={[{ required: true, validator: nameValidator }]}
-                  desc={t('NAME_DESC')}
-                >
-                  <Input name="name" autoFocus={true} maxLength={63} style={{ maxWidth: 'none' }} />
-                </Form.Item> */}
-                <Form.Item label={t('RESOURCES_BOOT_TEMPLATE')}>
-                  <Form.Group>
-                    <Form.Item label={t('RESOURCES_TYPE_YOO')}>
-                      <Tabs
-                        type="button"
-                        activeName={tab}
-                        onChange={newTab => {
-                          setTab(newTab)
-                          setImageType(newTab)
-                          setStorageClass('')
-                          setSecureBoot(false)
-                        }}
-                      >
-                        <TabPanel label={t('RESOURCES_IMAGE')} name="I" />
-                        <TabPanel label={t('RESOURCES_BOOT_VOLUME')} name="B" />
-                      </Tabs>
-                    </Form.Item>
+                <label className="form-item-label" htmlFor="name">
+                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT')}
+                  <span className="form-item-required">*</span>
+                </label>                
+                  <Form.Item
+                    rules={[
+                      {
+                        required: true,
+                      },
+                      {
+                        pattern: regexRootDisk,
+                        message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
+                      },
+                    ]}
+                  >
+                    <UnitSlider
+                      name="vm_count"
+                      max={127}
+                      min={0}
+                      marks={getMarks(127)}
+                      defaultValue={vmCount}
+                      unit={''}
+                      withInput
+                      onChange={e => setVmCount(e)}
+                      style={{ padding: '5px', width: '10%' }}
+                    />
+                  </Form.Item>
+                      
+                  <Form.Item
+                    label={t('RESOURCES_VM_NAME')}
+                  >
+                    <Input
+                      maxLength={200}
+                      style={{ maxWidth: 'none' }}
+                      value={gpuVmName}
+                      disabled={true}
+                    />
+                  </Form.Item>    
 
-                    {imageType === 'I' && (
-                      <Form.Item>
-                        <Columns>
-                          <Column>
-                            <Form.Item
-                              label={t('RESOURCES_OS_TYPE')}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: t('RESOURCES_SELECT_OS_TIP'),
-                                },
-                              ]}
-                            >
-                              <CardSelect
-                                className={styles.customUl}
-                                onChange={e => handleOsType(e)}
-                                name="os_type"
-                                options={osTypeOptions}
-                                defaultValue={osType}
-                              />
-                            </Form.Item>
-                          </Column>
-                          <Column style={{ maxWidth: '472px' }}>
+                  {imageType === 'I' && (
+                    <Form.Item>
+                      <Columns>
+                        <Column>      
                             <Form.Item
                               label={t('RESOURCES_IMAGE')}
                               rules={[
@@ -1324,125 +1341,44 @@ const RegistModal = props => {
                                 </div>
                               </Form.Item>
                             )}
-                          </Column>
-                        </Columns>
-                      </Form.Item>
-                    )}
-
-                    {imageType === 'B' && (
-                      <Columns>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_BOOT_VOLUME')}
-                            rules={[
-                              {
-                                required: true,
-                                validator: bootVolumeValidator,
-                              },
-                            ]}
-                          >
-                            <Select
-                              name="bootvolume"
-                              defaultValue={t('RESOURCES_SELECT')}
-                              options={bootvolumeOptions()}
-                              // clearable
-                              onChange={e => {
-                                setSelectBootId(e)
-                              }}
-                            />
-                          </Form.Item>
                         </Column>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_BUS')}
-                            rules={[
-                              { required: true, validator: busTypeValidator },
-                            ]}
-                          >
-                            <Select
-                              name="busType"
-                              defaultValue={t('RESOURCES_SELECT')}
-                              options={busTypeOptions}
-                              // clearable
-                              onChange={e => setBusType(e)}
-                            />
-                          </Form.Item>
-                        </Column>
-                      </Columns>
-                    )}
-                    <Columns>
-                      <Column>
-                        {imageType === 'B' && <div style={{ padding: 8 }} />}
-                        <Form.Item
-                          label={t('RESOURCES_FLAVOR')}
-                          rules={[
-                            { required: true, validator: flavorValidator },
-                          ]}
-                        >
-                          <TypeSelect
-                            name="flavor"
-                            defaultValue={t('RESOURCES_SELECT')}
-                            options={flavorOptions()}
-                            onChange={e => setSelectFlavorName(e)}
-                            placeholder={{
-                              label: t('RESOURCES_SELECT'),
-                            }}
-                            defaultDescription={t(
-                              'RESOURCES_SELECT_FLAVOR_TIP'
-                            )}
-                            newMaxHeight="198"
-                          />
-                        </Form.Item>
-                        <div
-                          className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
-                            }`}
-                        >
-                          {imageType === 'I'
-                            ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
-                            : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}
-                        </div>
-                      </Column>
-
-                      <Column>
-                        {imageType === 'B' && <div style={{ padding: 8 }} />}
-                        <div className={styles.caption}>
-                          {t('RESOURCES_VM_CUSTOM_SETTINGS')}
-                        </div>
-                        {imageType === 'I' && (
-                          <Form.Group
-                            label={t('RESOURCES_STORAGE_CLASS')}
-                            onChange={() => {
-                              setStorageClass('')
-                            }}
-                            checkable
-                          >
-                            <Form.Item>
-                              <Select
-                                options={storageClassOptions()}
-                                onChange={el => setStorageClass(el)}
-                                value={
-                                  storageClass !== ''
-                                    ? storageClass
-                                    : t('RESOURCES_SELECT')
-                                }
+                        <Column style={{ maxWidth: '472px' }}>
+                            <Form.Item
+                              label={t('RESOURCES_FLAVOR')}
+                              rules={[
+                                { required: true, validator: flavorValidator },
+                              ]}
+                            >
+                              <TypeSelect
+                                name="flavor"
+                                defaultValue={t('RESOURCES_SELECT')}
+                                options={flavorOptions()}
+                                onChange={e => setSelectFlavorName(e)}
+                                placeholder={{
+                                  label: t('RESOURCES_SELECT'),
+                                }}
+                                defaultDescription={t(
+                                  'RESOURCES_SELECT_FLAVOR_TIP'
+                                )}
+                                newMaxHeight="198"
                               />
                             </Form.Item>
-                          </Form.Group>
-                        )}
-                        <div className={styles.box_wrapper}>
-                          <div className={styles.box_title}>
-                            <Checkbox checked={secureBoot} onChange={sb => setSecureBoot(sb)}>
-                              {t('RESOURCES_ENABLE_SECURE_BOOT')}
-                            </Checkbox>
-                          </div>
-                        </div>
-                      </Column>
-                    </Columns>
-                    {isProjectQuotaSet && (
-                      <div>{t('RESOURCES_SELECT_FLAVOR_QUOTA_TIP')}</div>
-                    )}
-                  </Form.Group>
-                </Form.Item>
+                            <div
+                              className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
+                                }`}
+                            >
+                              {imageType === 'I'
+                                ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
+                                : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}
+                            </div>
+                        </Column>
+                      </Columns>
+                    </Form.Item>
+                  )}
+                  {isProjectQuotaSet && (
+                    <div>{t('RESOURCES_SELECT_FLAVOR_QUOTA_TIP')}</div>
+                  )}
+
 
                 <Form.Item
                   className={styles.textarea}
@@ -1594,7 +1530,132 @@ const RegistModal = props => {
                   </div>
                 </Form.Item>
 
-                <Form.Item label={t('RESOURCES_SR_IOV_NETWORK')}>
+                <Form.Item label={t('RESOURCES_SECURITY_GROUP')}>
+                  <div className={styles.wrapper}>
+                    {stateVariables['security'].length > 0 && (
+                      <div
+                        className={classnames(
+                          styles.table_title,
+                          styles.table_title_bg
+                        )}
+                      >
+                        <Button
+                          className={styles.table_title_button}
+                          onClick={() => handleAllCheck(false, 'security')}
+                        >
+                          {t('RESOURCES_ALL_DESELECT')}
+                        </Button>
+                        {stateVariables['security'].length}
+                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                      </div>
+                    )}
+                    <div className={styles.table}>
+                      <table>
+                        <colgroup>
+                          <col width="5%" />
+                          <col width="30%" />
+                          <col width="30%" />
+                          <col width="20%" />
+                          <col width="20%" />
+                        </colgroup>
+                        <thead>
+                          <tr>
+                            <th>
+                              <Checkbox
+                                name="select-all-security"
+                                onChange={checked =>
+                                  handleAllCheck(checked, 'security')
+                                }
+                                checked={
+                                  !!(
+                                    dataListVariables['security'].length > 0 &&
+                                    stateVariables['security'].length ===
+                                    dataListVariables['security'].length
+                                  )
+                                }
+                              />
+                            </th>
+                            <th>
+                              <strong>
+                                {t('RESOURCES_SECURITY_GROUP_NAME')}
+                              </strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_DESCRIPTION')}</strong>
+                            </th>
+                            <th>
+                              <strong>
+                                {t('RESOURCES_INBOUND_RULE_COUNT')}
+                              </strong>
+                            </th>
+                            <th>
+                              <strong>
+                                {t('RESOURCES_OUTBOUND_RULE_COUNT')}
+                              </strong>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {!securityGroupList?.length && (
+                            <tr>
+                              <td colSpan="5" className="no-data">
+                                <p>
+                                  {t(
+                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                  )}
+                                </p>
+                              </td>
+                            </tr>
+                          )}
+                          {securityGroupList?.map(data => (
+                            <tr key={data.id}>
+                              <td>
+                                <Checkbox
+                                  name={`select-${data.id}`}
+                                  checked={
+                                    !!stateVariables['security'].includes(
+                                      data.id
+                                    )
+                                  }
+                                  onChange={checked =>
+                                    handleSingleCheck(
+                                      checked,
+                                      data.id,
+                                      'security'
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>{data.name}</td>
+                              <td>{data.description}</td>
+                              <td>{data.ingress_count}</td>
+                              <td>{data.egress_count}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className={styles.removeCheckWrapper}>
+                        {securityGroupCheckItems?.map(id => {
+                          const name = securityGroupList
+                            ?.filter(data => data.id === id)
+                            .map(item => item.name)[0]
+                          return (
+                            <span key={id}>
+                              <Button
+                                icon="close"
+                                onClick={() => handleDelete(id, 'security')}
+                              >
+                                {name}
+                              </Button>
+                            </span>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Form.Item>
+
+                {/* <Form.Item label={t('RESOURCES_SR_IOV_NETWORK')}>
                   <div className={styles.wrapper}>
                     {stateVariables['sriov'].length > 0 && (
                       <div
@@ -1724,7 +1785,7 @@ const RegistModal = props => {
                       </div>
                     </div>
                   </div>
-                </Form.Item>
+                </Form.Item> */}
               </div>
               {/* 네트워크 설정 끝========================================== */}
 
@@ -1748,139 +1809,14 @@ const RegistModal = props => {
                   </div>
                 </div>
 
-                <Form.Item label={t('RESOURCES_SECURITY_GROUP')}>
-                  <div className={styles.wrapper}>
-                    {stateVariables['security'].length > 0 && (
-                      <div
-                        className={classnames(
-                          styles.table_title,
-                          styles.table_title_bg
-                        )}
-                      >
-                        <Button
-                          className={styles.table_title_button}
-                          onClick={() => handleAllCheck(false, 'security')}
-                        >
-                          {t('RESOURCES_ALL_DESELECT')}
-                        </Button>
-                        {stateVariables['security'].length}
-                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
-                      </div>
-                    )}
-                    <div className={styles.table}>
-                      <table>
-                        <colgroup>
-                          <col width="5%" />
-                          <col width="30%" />
-                          <col width="30%" />
-                          <col width="20%" />
-                          <col width="20%" />
-                        </colgroup>
-                        <thead>
-                          <tr>
-                            <th>
-                              <Checkbox
-                                name="select-all-security"
-                                onChange={checked =>
-                                  handleAllCheck(checked, 'security')
-                                }
-                                checked={
-                                  !!(
-                                    dataListVariables['security'].length > 0 &&
-                                    stateVariables['security'].length ===
-                                    dataListVariables['security'].length
-                                  )
-                                }
-                              />
-                            </th>
-                            <th>
-                              <strong>
-                                {t('RESOURCES_SECURITY_GROUP_NAME')}
-                              </strong>
-                            </th>
-                            <th>
-                              <strong>{t('RESOURCES_DESCRIPTION')}</strong>
-                            </th>
-                            <th>
-                              <strong>
-                                {t('RESOURCES_INBOUND_RULE_COUNT')}
-                              </strong>
-                            </th>
-                            <th>
-                              <strong>
-                                {t('RESOURCES_OUTBOUND_RULE_COUNT')}
-                              </strong>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {!securityGroupList?.length && (
-                            <tr>
-                              <td colSpan="5" className="no-data">
-                                <p>
-                                  {t(
-                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                  )}
-                                </p>
-                              </td>
-                            </tr>
-                          )}
-                          {securityGroupList?.map(data => (
-                            <tr key={data.id}>
-                              <td>
-                                <Checkbox
-                                  name={`select-${data.id}`}
-                                  checked={
-                                    !!stateVariables['security'].includes(
-                                      data.id
-                                    )
-                                  }
-                                  onChange={checked =>
-                                    handleSingleCheck(
-                                      checked,
-                                      data.id,
-                                      'security'
-                                    )
-                                  }
-                                />
-                              </td>
-                              <td>{data.name}</td>
-                              <td>{data.description}</td>
-                              <td>{data.ingress_count}</td>
-                              <td>{data.egress_count}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      <div className={styles.removeCheckWrapper}>
-                        {securityGroupCheckItems?.map(id => {
-                          const name = securityGroupList
-                            ?.filter(data => data.id === id)
-                            .map(item => item.name)[0]
-                          return (
-                            <span key={id}>
-                              <Button
-                                icon="close"
-                                onClick={() => handleDelete(id, 'security')}
-                              >
-                                {name}
-                              </Button>
-                            </span>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </Form.Item>
-
-                <Form.Item label={t('RESOURCES_NODE')}>
+                {/* <Form.Item label={t('RESOURCES_NODE')}>
                   <Select
                     name="node"
                     placeholder={t('RESOURCES_SELECT')}
                     options={nodeOptions()}
                     clearable
                   />
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Group
                   label={t('RESOURCES_SCRIPT')}
@@ -2224,7 +2160,7 @@ const RegistModal = props => {
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_NAME')}</label>
-                        <div className={styles.bold}>{vmName}</div>
+                        <div className={styles.bold}>{gpuVmName}</div>
                       </div>
                       {projectName && (
                         <div className={styles.list}>

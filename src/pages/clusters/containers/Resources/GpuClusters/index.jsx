@@ -29,6 +29,8 @@ import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
 import GpuClustersStore from 'stores/resources/gpuclusters';
 
+import styles from './index.scss';
+
 @withClusterList({
   store: new GpuClustersStore(),
   module: 'keypairs',
@@ -66,18 +68,18 @@ export default class gpuclusters extends React.Component {
     return {
       ...tableProps.tableActions,
       actions: [
-        {
-          key: 'regist',
-          type: 'control',
-          text: t('RESOURCES_CREATE'),
-          action: 'create',
-          onClick: () =>
-            trigger('gpuclusters.regist', {
-              ...this.props.match.params,
-              type: this.name,
-              success: getData,
-            }),
-        },
+        // {
+        //   key: 'regist',
+        //   type: 'control',
+        //   text: t('RESOURCES_CREATE'),
+        //   action: 'create',
+        //   onClick: () =>
+        //     trigger('gpuclusters.regist', {
+        //       ...this.props.match.params,
+        //       type: this.name,
+        //       success: getData,
+        //     }),
+        // },
       ],
       selectActions: [
         // {
@@ -110,12 +112,21 @@ export default class gpuclusters extends React.Component {
         sortOrder: getSortOrder('name'),
         search: true,
         render: (name, item) => (
-          <Avatar
-            icon="key"
-            iconSize={40}
-            to={`/clusters/${cluster}/gpuclusters/${name}/${item.id}`}
-            title={name}
-          />
+          <div className={styles.avatar}>
+              <div className={styles.icon}>
+                <i className="ico-type-mediatedvgpu"></i>
+              </div>
+              <div>
+                <div>
+                  <Link
+                    className={styles.title}
+                    to={`/clusters/${cluster}/gpuclusters/${name}/${item.id}`}
+                  >
+                    {name}
+                  </Link>
+                </div>
+              </div>
+            </div>
         ),
       },
       {
@@ -130,7 +141,14 @@ export default class gpuclusters extends React.Component {
         ),
       },
       {
-        title: t('RESOURCES_GPU_CLUSTER_NODE_COUNT'),
+        title: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
+        dataIndex: 'finger_print',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+      },
+      {
+        title: t('RESOURCES_STATE'),
         dataIndex: 'finger_print',
         isHideable: true,
         search: true,
@@ -169,8 +187,8 @@ export default class gpuclusters extends React.Component {
     ];
   }
 
-   getBanner = () => {
-    return <i className="ico-type-vm"></i>
+  getBanner = () => {
+    return <i className="ico-type40-mediatedvgpu"></i>
   }
 
   render() {
@@ -183,7 +201,7 @@ export default class gpuclusters extends React.Component {
           title={t('RESOURCES_GPU_CLUSTER')}
           description={t('RESOURCES_GPU_CLUSTER_DESC')}
         />
-        <ResourceTable
+        <Table
           {...tableProps}
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}

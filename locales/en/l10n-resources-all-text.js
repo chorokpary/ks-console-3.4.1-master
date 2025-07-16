@@ -1147,7 +1147,6 @@ module.exports = {
   RESOURCES_NETWORK_STORAGE_COMMON: 'Basic Information',
   RESOURCES_NETWORK_STORAGE_MOUNT: 'Mount Information',
 
-  // GPU CLUSTERS
   RESOURCES_GPU_CLUSTER: 'GPU Cluster',
   RESOURCES_DELETE_GPU_CLUSTER_TIP: 'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
@@ -1160,4 +1159,8 @@ module.exports = {
   RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
   RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
   RESOURCES_GPU_NODE_POOLS: 'Node Pools',
+  RESOURCES_GPU_CLUSTER_VM_COUNT: '가상머신 수',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: '가상머신 생성 수',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID: '가상머신 생성 수를  1 이상 입력해주세요',
+  RESOURCES_VM_SETTINGS: 'VM Settings',
 }

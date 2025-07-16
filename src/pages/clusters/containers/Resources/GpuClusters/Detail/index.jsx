@@ -34,49 +34,49 @@ const GpuClustersDetail = (props) => {
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
   const getOperations = () => [
-    {
-      key: 'edit',
-      icon: 'pen',
-      text: t('EDIT_INFORMATION'),
-      action: 'edit',
-      show: showEdit,
-      onClick: () =>
-        props.rootStore.triggerAction('gpuclusters.edit', {
-          type: 'KEYPAIR_DETAIL',
-          detail: toJS(store.detail),
-          store: store,
-          success: fetchData,
-          ...props.match.params
-        }),
-    },
-    {
-      key: 'viewYaml',
-      icon: 'eye',
-      text: t('VIEW_YAML'),
-      action: 'view',
-      onClick: () => {
-        props.rootStore.triggerAction('gpuclusters.yaml.view', {
-          yaml: store.yaml,
-          readOnly: true,
-        })
-      },
-    },
-    {
-      key: 'delete',
-      icon: 'trash',
-      text: t('DELETE'),
-      action: 'delete',
-      type: 'danger',
-      show: showEdit,
-      onClick: () =>
-        props.rootStore.triggerAction('gpuclusters.remove', {
-          type: 'GPUCLUSTERS_DETAIL',
-          detail: toJS(store.detail),
-          store: store,
-          cluster: props.match.params.cluster,
-          success: () => routing.push(listUrl),
-        }),
-    },
+    // {
+    //   key: 'edit',
+    //   icon: 'pen',
+    //   text: t('EDIT_INFORMATION'),
+    //   action: 'edit',
+    //   show: showEdit,
+    //   onClick: () =>
+    //     props.rootStore.triggerAction('gpuclusters.edit', {
+    //       type: 'KEYPAIR_DETAIL',
+    //       detail: toJS(store.detail),
+    //       store: store,
+    //       success: fetchData,
+    //       ...props.match.params
+    //     }),
+    // },
+    // {
+    //   key: 'viewYaml',
+    //   icon: 'eye',
+    //   text: t('VIEW_YAML'),
+    //   action: 'view',
+    //   onClick: () => {
+    //     props.rootStore.triggerAction('gpuclusters.yaml.view', {
+    //       yaml: store.yaml,
+    //       readOnly: true,
+    //     })
+    //   },
+    // },
+    // {
+    //   key: 'delete',
+    //   icon: 'trash',
+    //   text: t('DELETE'),
+    //   action: 'delete',
+    //   type: 'danger',
+    //   show: showEdit,
+    //   onClick: () =>
+    //     props.rootStore.triggerAction('gpuclusters.remove', {
+    //       type: 'GPUCLUSTERS_DETAIL',
+    //       detail: toJS(store.detail),
+    //       store: store,
+    //       cluster: props.match.params.cluster,
+    //       success: () => routing.push(listUrl),
+    //     }),
+    // },
   ]
 
   const getAttrs = () => {
@@ -92,7 +92,11 @@ const GpuClustersDetail = (props) => {
         value: detail.cluster,
       },
       {
-        name: t('RESOURCES_DESCRIPTION'),
+        name: t('RESOURCES_PROJECT'),
+        value: detail.cluster,
+      },
+      {
+        name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
         value: detail.keypair.description,
       },
     ]
@@ -102,8 +106,12 @@ const GpuClustersDetail = (props) => {
     return <Loading className="ks-page-loading" />;
   }
 
+  const getBanner = () => {
+        return <i className="ico-type-mediatedvgpu"></i>
+  }
+
   const sideProps = {
-    icon: "key",
+    icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
     desc: get(store.detail.flavor, 'description', ''),
