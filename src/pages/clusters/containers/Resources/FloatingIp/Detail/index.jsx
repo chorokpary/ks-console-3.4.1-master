@@ -39,7 +39,7 @@ const FloatingIpDetail = props => {
   const listUrl = `/clusters/${cluster}/floatingip`;
 
   const { routing } = props.rootStore;
-  const PATH = `${listUrl}/${props.match.params.id}`;
+  const PATH = '/clusters/:cluster/projects/:namespace/floatingip/:id'
 
   // const showEdit = !globals.config.presetClusterRoles.includes(
   //   props.match.params.name

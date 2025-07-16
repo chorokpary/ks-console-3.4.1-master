@@ -232,6 +232,14 @@ export default [
         component: PhysicalNetworkDetail,
       },
       {
+        path: `${PATH}/projects/:namespace/vms/:name`,
+        component: VmDetail,
+      },
+      {
+        path: `${PATH}/projects/:namespace/resourcesvolumes/:name`,
+        component: VolumeDetail,
+      },
+      {
         path: `${PATH}/projects/:namespace/nodepools/:clustername/:name`,
         component: NodepoolDetail,
       },
@@ -250,16 +258,8 @@ export default [
     component: FlavorDetail,
   },
   {
-    path: `${PATH}/vms/:project/:name`,
-    component: VmDetail,
-  },
-  {
     path: `${PATH}/containerimages/:name`,
     component: ContainerImageDetail,
-  },
-  {
-    path: `${PATH}/resourcesvolumes/:project/:name`,
-    component: VolumeDetail,
   },
   {
     path: `${PATH}/hostdevices/:id`,

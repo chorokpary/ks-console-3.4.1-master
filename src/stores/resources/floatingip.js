@@ -74,15 +74,15 @@ export default class FloatingIpStore extends Base {
     }
 
     @action
-    async batchDelete({ rowKeys, ...params }) {
-        const rowKeyDict = rowKeys.map(key => {
+    async batchDelete({ projecyKeys, ...params }) {
+        const rowKeyDict = projecyKeys.map(key => {
             if (key.includes('/')) {
-                const [project, name] = key.split('/')
-                return { project, name }
+                const [project, id] = key.split('/')
+                return { project, id }
             } else {
                 const project = params.namespace
-                const name = key
-                return { project, name }
+                const id = key
+                return { project, id }
             }
         })
 
@@ -90,7 +90,7 @@ export default class FloatingIpStore extends Base {
             Promise.all(
                 rowKeyDict.map(rowKey =>
                     request.delete(
-                        `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
+                        `${this.getDeleteUrl({ id: rowKey.id, project: rowKey.project, ...params })}`
                     )
                 )
             )

@@ -189,11 +189,19 @@ export default {
     'floatingIp.remove.batch': {
         on({ store, cluster, workspace, namespace, success, devops, ...props }) {
             const rowKeys = toJS(store.list.selectedRowKeys)
-            const names = rowKeys.join(', ')
+            let fips = new Array
+            let projecyKeys = new Array
+            store.dataList.map(obj => {
+                if (rowKeys.includes(obj.id)) {
+                    fips.push(obj.floating_ip)
+                    projecyKeys.push(obj.project_id)
+                }
+            })
+            const names = fips.join(', ')
             const modal = Modal.open({
                 onOk: () => {
                     store
-                        .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+                        .batchDelete({ projecyKeys, cluster, workspace, namespace, devops })
                         .then(() => {
                             Modal.close(modal)
                             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })

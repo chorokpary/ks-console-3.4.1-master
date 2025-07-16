@@ -499,7 +499,7 @@ const Status = props => {
                     <div className={classnames(styles.title, styles.name)}>
                       <div>
                         <Link
-                          to={`/clusters/${cluster}/resourcesvolumes/${obj.project}/${obj.name}`}
+                          to={`/clusters/${cluster}/projects/${obj.project}/resourcesvolumes/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
