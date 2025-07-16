@@ -1146,4 +1146,18 @@ module.exports = {
   RESOURCES_DELETE_NETWORK_STORAGE_TIP: 'Enter the network storage name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
   RESOURCES_NETWORK_STORAGE_COMMON: 'Basic Information',
   RESOURCES_NETWORK_STORAGE_MOUNT: 'Mount Information',
+
+  // GPU CLUSTERS
+  RESOURCES_GPU_CLUSTER: 'GPU Cluster',
+  RESOURCES_DELETE_GPU_CLUSTER_TIP: 'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
+  RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
+  RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
+  RESOURCES_DELETE_GPU_CLUSTER_TIP: 'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
+  RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
+  RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
+  RESOURCES_GPU_NODE_POOLS: 'Node Pools',
 }

@@ -197,6 +197,7 @@ client:
           children:
             - { name: vms, title: 'RESOURCES_VM' }
             - { name: containerResource, title: 'KaaS' }
+            - { name: gpuclusters, title: RESOURCES_GPU_CLUSTER }
         - name: computing
           title: RESOURCES_SETTINGS
           icon: computing-setting

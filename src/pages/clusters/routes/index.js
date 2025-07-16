@@ -93,6 +93,8 @@ import ComputingAppDeploy from '../containers/Resources/ComputingAppDeploy'
 import ClusterFault from '../containers/Resources/ClusterFault'
 import ClusterInspection from '../containers/Resources/ClusterInspection'
 
+import GpuClusters from '../containers/Resources/GpuClusters'
+
 const PATH = '/clusters/:cluster'
 
 export default [
@@ -425,6 +427,11 @@ export default [
           {
             path: `${PATH}/kubeeye-monitoring`,
             component: ClusterInspection,
+            exact: true,
+          },
+          {
+            path: `${PATH}/gpuclusters`,
+            component: GpuClusters,
             exact: true,
           },
 
