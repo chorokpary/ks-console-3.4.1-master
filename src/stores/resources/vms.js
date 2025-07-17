@@ -712,7 +712,9 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/physical_networks?project=${params.namespace}`
+      )}/edgetron/resources/kubevirt/physical_networks?project=${
+        params.namespace
+      }`
     )
     const response = {
       ...params,
@@ -888,7 +890,9 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages?project=${params.namespace}`
+      )}/edgetron/resources/kubevirt/network_storages?project=${
+        params.namespace
+      }`
     )
     const response = {
       ...params,
@@ -1090,7 +1094,7 @@ export default class VmStore extends Base {
     params.limit = params.limit || 10
 
     // we also can query the VMs by specifying the queried parameter to backend server
-    params[params.match] = params.name;
+    params[params.match] = params.name
 
     delete params['resource']
     delete params['name']
@@ -1099,7 +1103,7 @@ export default class VmStore extends Base {
       params.name = params.searchName
     }
 
-    delete params['searchName']    
+    delete params['searchName']
 
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace }),

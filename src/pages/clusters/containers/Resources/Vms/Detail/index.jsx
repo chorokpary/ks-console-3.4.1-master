@@ -257,7 +257,7 @@ const VmDetail = props => {
           type: 'VM_DETAIL',
           detail: toJS(store.detail),
           store,
-          cluster: props.match.params.cluster,
+          ...props.match.params,
           success: () => routing.push(listUrl),
         }),
     },
