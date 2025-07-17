@@ -29,55 +29,120 @@ import List from '../base.list';
 export default class GpuClustersStore extends Base {
   records = new List();
 
-  module = 'keypairs';
+  module = 'gpuclusters';
 
-  getResourceUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/kubevirt/keypairs`;
+  // getResourceUrl = (params = {}) =>
+  //   `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+  //     params
+  //   )}/gpu-cluster/clusters`;
+
+  getResourceUrl = (params = {}) => `/gpu-cluster/clusters`
+  getResourceDetailUrl = (params = {}) => `/gpu-cluster/cluster`
 
   getListUrl = this.getResourceUrl;
+  
+  getDeleteUrl = (params = {}) => `${this.getResourceDetailUrl(params)}/${params.id}`;
 
-  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`;
+  @action
+  async fetchList({
+    cluster,
+    workspace,
+    namespace,
+    infinite,
+    more,
+    devops,
+    silent,
+    ...params
+  } = {}) {
+    if (!silent) {
+      this.list.isLoading = true
+    }
+
+    if (!params.sortBy && params.ascending === undefined) {
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'created_at'
+    }
+
+    if (infinite) {
+      params.limit = -1
+    }
+
+    if (params.limit === Infinity || params.limit === -1) {
+      params.limit = -1
+      params.page = 1
+    }
+
+    params.page = params.page || 1
+    params.limit = params.limit || 10
+
+    const page = params.page
+    const limit = params.limit
+
+    if (namespace) {
+      params.project = namespace
+    }
+ 
+    const result = await request.get(
+      this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
+      this.getFilterParams(params)
+    )
+
+    const data = (get(result, 'data') || []).map(item => ({
+      cluster,
+      namespace,
+      ...this.mapper(item),
+    }))
+
+    const total = data.length || 0
+
+    // 초기 정렬 처리
+    data.sort((a, b) => {
+      return a.creation_timestamp < b.creation_timestamp
+        ? 1
+        : a.creation_timestamp > b.creation_timestamp
+          ? -1
+          : 0
+    })
+
+    // 초기 데이터 처리
+    this.dataList = data
+
+    // namespace(project) 있는 경우
+    if (namespace) {
+      params.project = namespace
+    }
+
+    // 정렬 처리
+    const sortType = params.ascending ? 'asc' : 'desc'
+    this.dataList.sort((a, b) => {
+      const x = a[params.sortBy]
+      const y = b[params.sortBy]
+      if (sortType === 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0
+      }
+      return x < y ? -1 : x > y ? 1 : 0
+    })
+
+    this.list.update({
+      data: more ? [...this.list.data, ...this.dataList] : this.dataList,
+      total,
+      ...params,
+      limit: Number(params.limit) || 10,
+      page: Number(params.page) || 1,
+      isLoading: false,
+      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
+    })
+
+    return this.dataList
+  }
 
   @action
   async create(data, params = {}) {
 
-    const getResourceUrlTmp = (params = {}) =>
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/kubevirt/keypairs`;
-
-    //const url = this.getResourceUrl(params);
-    const url = getResourceUrlTmp(params);
-
-    const jsonData = {};
-    const keypairData = {};
-
-    keypairData.name = data.name;
-    keypairData.public_key = data.publicKey;
-    keypairData.project = data.project;
-    keypairData.description = data?.description;
-
-    jsonData.keypair = keypairData;
-
-    const res = await this.submitting(request.post(url, jsonData));
-    return res;
   }
 
   @action
   async update({ name, ...params }, data) {
-    const jsonData = {};
-    const keypairData = {};
 
-    keypairData.id = data.id;
-    keypairData.description = data?.description;
-
-    jsonData.keypair = keypairData;
-
-    await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    );
   }
 
   @action
@@ -85,12 +150,9 @@ export default class GpuClustersStore extends Base {
     this.isLoading = true;
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}`
+      `${this.getResourceDetailUrl(params)}/${params.name}`
     );
-    const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' };
-
-    // Yaml 파일 관련
-    await this.fetchYaml(params);
+    const detail = { ...params, ...this.mapper(result), kind: 'data' };
 
     this.detail = detail;
     this.isLoading = false;
@@ -104,7 +166,7 @@ export default class GpuClustersStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.id}/manifest`
     );
-    const yamlData = { ...params, ...this.mapper(result), kind: 'Keypairs' };
+    const yamlData = { ...params, ...this.mapper(result), kind: 'gpucluster' };
 
     this.yaml = yamlData.manifest;
     this.isLoading = false;

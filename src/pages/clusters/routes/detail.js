@@ -299,7 +299,7 @@ export default [
     component: LicenseDetail,
   },
   {
-    path: `${PATH}/gpuclusters/:name/:id`,
+    path: `${PATH}/gpuclusters/:name`,
     component: GpuClustersDetail,
   },  
 ]

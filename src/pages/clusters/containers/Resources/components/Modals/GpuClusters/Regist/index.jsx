@@ -1057,15 +1057,15 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
-    const namePrefix = props.namespace; 
+    const namePrefix = props.namespace;
     if (Number(vmCount) === 0) {
       setGpuVmName('');
     } else if (Number(vmCount) === 1) {
-      setGpuVmName(`${namePrefix}_01`);
+      setGpuVmName(`${namePrefix}_001`);
     } else {
-      const first = `${namePrefix}_01`;
-      const last = `${namePrefix}_${vmCount.toString().padStart(2, '0')}`;
-      setGpuVmName(`${first} ~ ${last}`);
+      const first = `${namePrefix}_001`;
+      const last = `${namePrefix}_${vmCount.toString().padStart(3, '0')}`;
+      setGpuVmName(`${first} - ${last}`);
     }
   }, [vmCount]);
 
@@ -2031,70 +2031,7 @@ const RegistModal = props => {
                         {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                       </div>
                     </Form.Group>
-
-                    <Form.Group
-                      label={t('RESOURCES_INSTALL_PACKAGE')}
-                      onChange={() => {
-                        setIsPackage(!isPackage)
-                      }}
-                      checkable
-                    >
-                      {listPackageRoute.map(obj => (
-                        <div className={styles.scriptitem} key={obj}>
-                          <Columns>
-                            <Column>
-                              <Form.Item>
-                                <Input
-                                  name={`scriptPackage_${obj}`}
-                                  placeholder={t('Package')}
-                                  onChange={() => checkScriptPackage()}
-                                />
-                              </Form.Item>
-                            </Column>
-                            <Column>
-                              <Form.Item>
-                                <Input
-                                  name={`scriptVersion_${obj}`}
-                                  placeholder={t('Ver')}
-                                  onChange={() => checkScriptPackage()}
-                                />
-                              </Form.Item>
-                            </Column>
-                          </Columns>
-                          {listPackageRoute.length > 1 && (
-                            <Button
-                              type="flat"
-                              icon="trash"
-                              className={styles.scriptdelete}
-                              onClick={() =>
-                                // listPackageRoute.length > 1 &&
-                                handlePackageRoute.delColumn(obj)
-                              }
-                            />
-                          )}
-                        </div>
-                      ))}
-                      <div className="text-right">
-                        <Button
-                          className={styles.scriptadd}
-                          onClick={handlePackageRoute.addColumn}
-                        >
-                          {t('RESOURCES_ADD')}
-                        </Button>
-                      </div>
-                      <div
-                        className={`form-item-error ${!isPackageError ? 'hide' : ''
-                          }`}
-                      >
-                        {t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}
-                      </div>
-                      <div
-                        className={`form-item-error ${!packageValidationError ? 'hide' : ''
-                          }`}
-                      >
-                        {t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}
-                      </div>
-                    </Form.Group>
+                    
                   </div>
                   <div
                     className={
@@ -2148,7 +2085,7 @@ const RegistModal = props => {
                     <div className={styles.boxtitle}>
                       <div className={styles.titlename}>
                         <span className={styles.basic}></span>
-                        <label>{t('RESOURCES_DEFAULT_SETTINGS')}</label>
+                        <label>{t('RESOURCES_VM_SETTINGS')}</label>
                       </div>
                       <Button
                         icon="pen"
@@ -2159,8 +2096,10 @@ const RegistModal = props => {
                     </div>
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
-                        <label>{t('RESOURCES_NAME')}</label>
-                        <div className={styles.bold}>{gpuVmName}</div>
+                        <label>{t('RESOURCES_VM_NAME')}</label>
+                        <div className={styles.multiline}>
+                          <div className={styles.bold}>{gpuVmName}</div>
+                        </div>
                       </div>
                       {projectName && (
                         <div className={styles.list}>
@@ -2190,39 +2129,12 @@ const RegistModal = props => {
                       </div>
                     </div>
 
-                    {imageType === 'I' && (
+                    {(imageType === 'I' && description) && (
                       <div className={styles.greybgbox}>
-                        <div className={styles.list}>
-                          <label>{t('RESOURCES_OS_TYPE')}</label>
-                          <div className={styles.multiline}>
-                            <div className={styles.bold}>{osType}</div>
-                          </div>
-                        </div>
-                        {storageClass && (
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_STORAGE_CLASS')}</label>
-                            <div className={styles.multiline}>
-                              <div className={styles.bold}>{storageClass}</div>
-                            </div>
-                          </div>
-                        )}
-                        <div className={styles.list}>
-                          <label>{t('RESOURCES_SECURE_BOOT')}</label>
-                          <div>{`${secureBoot === true
-                            ? t('USER_ACTIVE')
-                            : t('USER_DISABLED')
-                            }`}</div>
-                        </div>
                         <div className={styles.list}>
                           <label>{t('RESOURCES_DESCRIPTION')}</label>
                           <div>{description}</div>
                         </div>
-                      </div>
-                    )}
-                    {imageType === 'B' && description && (
-                      <div className={styles.list}>
-                        <label>{t('RESOURCES_DESCRIPTION')}</label>
-                        <div>{description}</div>
                       </div>
                     )}
                   </div>
@@ -2274,9 +2186,10 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
-                    <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
-                    {sriovNetworkList
-                      .filter(x => sriovCheckItems.includes(x.name))
+
+                    <label>{t('RESOURCES_SECURITY_GROUP')}</label>
+                    {securityGroupList
+                      .filter(x => securityGroupCheckItems.includes(x.id))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div className={styles.list}>
@@ -2284,26 +2197,21 @@ const RegistModal = props => {
                             <div>{obj.name}</div>
                           </div>
                           <div className={styles.list}>
-                            <label>{t('RESOURCES_TYPE_YOO')}</label>
+                            <label>{t('RESOURCES_DESCRIPTION')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.type.toUpperCase()}</div>
+                              <div>{obj.description}</div>
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
+                            <label>{t('RESOURCES_INBOUND_RULE')}</label>
                             <div className={styles.multiline}>
-                              <div>
-                                {`${obj.ip === undefined
-                                  ? t('RESOURCES_AUTOMATIC')
-                                  : obj.ip
-                                  }`}
-                              </div>
+                              <div>{obj.ingress_count}</div>
                             </div>
                           </div>
                           <div className={styles.list}>
-                            <label>{t('RESOURCES_CIDR')}</label>
+                            <label>{t('RESOURCES_OUTBOUND_RULE')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.cidr}</div>
+                              <div>{obj.egress_count}</div>
                             </div>
                           </div>
                         </div>
@@ -2329,27 +2237,6 @@ const RegistModal = props => {
                         <div>{`${keypairName === undefined
                           ? t('RESOURCES_NOT_SELECTED')
                           : keypairName
-                          }`}</div>
-                      </div>
-                      <div className={styles.list}>
-                        <label>{t('RESOURCES_SECURITY_GROUP')}</label>
-                        <div>
-                          {securityGroupCheckItems.length === 0
-                            ? t('RESOURCES_NOT_SELECTED')
-                            : securityGroupCheckItems.map(id => {
-                              const securityGroup = find(securityGroupList, {
-                                id,
-                              })
-                              const name = get(securityGroup, 'name', '')
-                              return <div key={id}>{name}</div>
-                            })}
-                        </div>
-                      </div>
-                      <div className={styles.list}>
-                        <label>{t('RESOURCES_NODE')}</label>
-                        <div>{`${nodeName === undefined
-                          ? t('RESOURCES_AUTOMATIC')
-                          : nodeName
                           }`}</div>
                       </div>
                       <div className={styles.list}>

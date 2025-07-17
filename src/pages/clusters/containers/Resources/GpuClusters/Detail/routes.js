@@ -22,7 +22,7 @@ import Status from './Status'
 import Monitoring from './Monitoring'
 import GpuMonitoring from './GpuMonitoring'
 
-const PATH = '/clusters/:cluster/gpuclusters/:name/:id'
+const PATH = '/clusters/:cluster/gpuclusters/:name'
 
 export default [
   {

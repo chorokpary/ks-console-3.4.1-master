@@ -151,6 +151,11 @@ const webBaremetalProxy = {
   changeOrigin: true,
 }
 
+const webGpuClusterProxy = {
+  target: `${serverConfig.apiServer.gpuclusterUrl}`,
+  changeOrigin: true,
+}
+
 const b2iFileProxy = {
   target: serverConfig.apiServer.url,
   changeOrigin: true,
@@ -197,4 +202,5 @@ module.exports = {
   webAppDeployProxy,
   webBaremetalProxy,
   webImageBuildProxy,
+  webGpuClusterProxy,
 }

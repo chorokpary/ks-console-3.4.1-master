@@ -89,7 +89,7 @@ const GpuClustersDetail = (props) => {
     return [
       {
         name: t('RESOURCES_CLUSTER'),
-        value: detail.cluster,
+        value: detail.name,
       },
       {
         name: t('RESOURCES_PROJECT'),
@@ -97,7 +97,7 @@ const GpuClustersDetail = (props) => {
       },
       {
         name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        value: detail.keypair.description,
+        value: detail.data.nodes.length,
       },
     ]
   }
@@ -114,7 +114,7 @@ const GpuClustersDetail = (props) => {
     icon: getBanner(),
     module: store.module,
     name: get(store.detail, 'name'),
-    desc: get(store.detail.flavor, 'description', ''),
+    desc: get(store.detail, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [

@@ -35,6 +35,7 @@ const {
   webAppDeployProxy,
   webBaremetalProxy,
   webImageBuildProxy,
+  webGpuClusterProxy,
 } = require('./proxy')
 
 const {
@@ -84,7 +85,8 @@ router
   
   .use(proxy('/app-manager/(.*)', webAppDeployProxy))
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
-  // .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))  
+  // .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))
+  .use(proxy('/gpu-cluster/(.*)', webGpuClusterProxy))  
 
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))

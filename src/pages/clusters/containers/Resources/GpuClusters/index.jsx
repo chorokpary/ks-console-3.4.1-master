@@ -33,10 +33,10 @@ import styles from './index.scss';
 
 @withClusterList({
   store: new GpuClustersStore(),
-  module: 'keypairs',
-  authKey: 'keypairs',
+  module: 'gpuclusters',
+  authKey: 'gpuclusters',
   name: t('RESOURCES_GPU_CLUSTER'),
-  rowKey: 'id',
+  rowKey: 'namespace',
 })
 export default class gpuclusters extends React.Component {
   showAction(record) {
@@ -107,9 +107,9 @@ export default class gpuclusters extends React.Component {
     return [
       {
         title: t('RESOURCES_GPU_CLUSTER'),
-        dataIndex: 'name',
+        dataIndex: 'namespace',
         sorter: true,
-        sortOrder: getSortOrder('name'),
+        sortOrder: getSortOrder('namespace'),
         search: true,
         render: (name, item) => (
           <div className={styles.avatar}>
@@ -120,7 +120,7 @@ export default class gpuclusters extends React.Component {
                 <div>
                   <Link
                     className={styles.title}
-                    to={`/clusters/${cluster}/gpuclusters/${name}/${item.id}`}
+                    to={`/clusters/${cluster}/gpuclusters/${name}`}
                   >
                     {name}
                   </Link>
@@ -131,18 +131,18 @@ export default class gpuclusters extends React.Component {
       },
       {
         title: t('PROJECT'),
-        dataIndex: 'project',
+        dataIndex: 'cluster',
         isHideable: true,
         width: 'auto',
-        render: project => (
-          <Link to={`/clusters/${cluster}/projects/${project}/overview`}>
-            {project}
+        render: cluster => (
+          <Link to={`/clusters/${cluster}/projects/${cluster}/overview`}>
+            {cluster}
           </Link>
         ),
       },
       {
         title: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        dataIndex: 'finger_print',
+        dataIndex: 'total_node_count',
         isHideable: true,
         search: true,
         width: 'auto',
@@ -156,13 +156,13 @@ export default class gpuclusters extends React.Component {
       },
       {
         title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'timestamp',
+        dataIndex: 'created_at',
         isHideable: true,
         width: 150,
         sorter: true,
         sortOrder: getSortOrder('timestamp'),
-        render: timestamp => (
-          <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
+        render: created_at => (
+          <p>{getLocalTime(created_at).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
     ];
