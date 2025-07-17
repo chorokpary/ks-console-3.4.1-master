@@ -93,8 +93,8 @@ export default class VmStore extends Base {
       return a.creation_timestamp < b.creation_timestamp
         ? 1
         : a.creation_timestamp > b.creation_timestamp
-          ? -1
-          : 0
+        ? -1
+        : 0
     })
 
     // 초기 데이터 처리
@@ -197,7 +197,9 @@ export default class VmStore extends Base {
     data.physicalnetwork.forEach(name => {
       const physicalnetworkObj = {}
       physicalnetworkObj.network_name = name
-      const fixedIpObj = data.physicalnetworkIps.find(obj => obj.network_name === name)
+      const fixedIpObj = data.physicalnetworkIps.find(
+        obj => obj.network_name === name
+      )
       if (fixedIpObj !== undefined) {
         physicalnetworksArray.push(fixedIpObj)
       } else {
@@ -325,17 +327,16 @@ export default class VmStore extends Base {
     await this.fetchVmListSriovNetwork(params)
 
     // Physical Network
-    await this.fetchVmListPhysicalNetwork(params)
+    // await this.fetchVmListPhysicalNetwork(params)
 
     // Network Storage
-    if (detail.vm.network_storage !== "") {
-      await this.fetchVmListNetworkStorage({
-        ...params,
-        namespace: detail.vm.project,
-        name: detail.vm.network_storage,
-      })
-    }
-
+    // if (detail.vm.network_storage !== '') {
+    //   await this.fetchVmListNetworkStorage({
+    //     ...params,
+    //     namespace: detail.vm.project,
+    //     name: detail.vm.network_storage,
+    //   })
+    // }
 
     this.detail = detail
     this.isLoading = false
@@ -605,9 +606,15 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${params.namespace}/info`
+      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${
+        params.namespace
+      }/info`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'networkstorage' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'networkstorage',
+    }
 
     this.networkStorageInfo = response.network_storage
     this.isLoading = false
@@ -678,7 +685,11 @@ export default class VmStore extends Base {
         params
       )}/edgetron/resources/kubevirt/physical_networks`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'physicalnetworks' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'physicalnetworks',
+    }
 
     if (params?.namespace) {
       response.physicalnetworks = response.physicalnetworks.filter(
@@ -850,7 +861,11 @@ export default class VmStore extends Base {
         params
       )}/edgetron/resources/kubevirt/network_storages/${params.namespace}`
     )
-    const response = { ...params, ...this.mapper(result), kind: 'NetworkStorage' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'NetworkStorage',
+    }
 
     this.isLoading = false
     return response
