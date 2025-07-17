@@ -28,7 +28,7 @@ import PowerLog from './PowerLog'
 import Snapshot from './Snapshot'
 import Clone from './Clone'
 
-const PATH = '/clusters/:cluster/vms/:name/:id'
+const PATH = '/clusters/:cluster/projects/:namespace/vms/:name'
 
 export default [
   {

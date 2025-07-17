@@ -1,114 +1,101 @@
-import { toJS } from 'mobx';
-import { get } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react'
 
-import {
-  Form,
-  Input,
-  Select,
-  TextArea,
-  Button,
-  Loading,
-  Checkbox,
-} from '@kube-design/components';
-import { Modal } from 'components/Base';
+import { Form } from '@kube-design/components'
+import { Modal } from 'components/Base'
 
-import * as common from 'utils/resources';
+import * as common from 'utils/resources'
 
-import classnames from 'classnames';
-import VmStore from 'stores/resources/vms';
-import styles from './index.scss';
+import VmStore from 'stores/resources/vms'
+import styles from './index.scss'
 
-import TypeSelect from '../../../TypeSelect';
+import TypeSelect from '../../../TypeSelect'
 
 const ModifyFlavorModal = props => {
-  const imageData = props.store.detail.vm.image;
-  const flavorData = props.store.detail.vm.flavor;
+  const imageData = props.store.detail.vm.image
+  const flavorData = props.store.detail.vm.flavor
 
-  const vmStore = new VmStore();
+  const vmStore = new VmStore()
 
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData] = useState({})
 
-  const [flavorDataList, setFlavorDataList] = useState([]);
-  const [imageDataList, setImageDataList] = useState([]);
+  const [flavorDataList, setFlavorDataList] = useState([])
+  const [imageDataList, setImageDataList] = useState([])
 
-  const [selectFlavorName, setSelectFlavorName] = useState(flavorData.name);
-  const [selectImageName, setSelectImageName] = useState(imageData.name);
+  const [selectFlavorName, setSelectFlavorName] = useState(flavorData.name)
+  const [selectImageName] = useState(imageData.name)
 
-  const [flavorSizeCheck, setFlavorSizeCheck] = useState(true);
+  const [flavorSizeCheck, setFlavorSizeCheck] = useState(true)
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
 
     form.current.validator(() => {
-      const { data } = form.current.props;
-      data.id = props.store.detail.vm.id;
+      const { data } = form.current.props
+      data.id = props.store.detail.vm.name
 
       const flavorSize = flavorDataList
-        .filter(item => item.name == selectFlavorName)
-        .map(item => item.root_disk);
+        .filter(item => item.name === selectFlavorName)
+        .map(item => item.root_disk)
       const imageSize = imageDataList
-        .filter(item => item.name == selectImageName)
+        .filter(item => item.name === selectImageName)
         .map(item => item.size)[0]
-        .replace('Gi', '');
+        .replace('Gi', '')
 
       if (flavorSize < imageSize) {
-        setFlavorSizeCheck(false);
-        return false;
+        setFlavorSizeCheck(false)
+        return false
       }
 
-      onOk({ ...data });
-    });
-  };
+      onOk({ ...data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   useEffect(() => {
-    console.log(props);
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor({
         sortBy: 'root_disk',
         ...props,
-      });
-      const listImage = await vmStore.fetchVmListImage({ ...props });
+      })
+      const listImage = await vmStore.fetchVmListImage({ ...props })
 
-      setFlavorDataList(listFlavor.flavors);
-      setImageDataList(listImage.images);
-    };
+      setFlavorDataList(listFlavor.flavors)
+      setImageDataList(listImage.images)
+    }
 
-    getVmCreateData();
-  }, []);
+    getVmCreateData()
+  }, [])
 
   const flavorOptions = () => {
-    let size;
-    const regex = /[^0-9]/g;
-    let selectedRootDisk = 0;
+    let size
+    const regex = /[^0-9]/g
+    let selectedRootDisk
 
-    selectedRootDisk = imageDataList.find(item => item.name == selectImageName);
-    size = selectedRootDisk?.size.replace(regex, '') || 0;
+    selectedRootDisk = imageDataList.find(item => item.name === selectImageName)
+    size = selectedRootDisk?.size.replace(regex, '') || 0
 
-    const opt = flavorDataList.map(obj => ({
+    return flavorDataList.map(obj => ({
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
         obj.ram
       )} GiB / Disk ${obj.root_disk} GiB`,
       value: t(obj.name),
       disabled: Number(obj.root_disk) < Number(size),
-    }));
-    return opt;
-  };
+    }))
+  }
 
   // Validation 시작 ==================================================
   const flavorValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') });
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
+      return callback({ message: t('RESOURCES_SELECT_FLAVOR_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
   // Validation 끝 ==================================================
 
   return (
@@ -146,7 +133,7 @@ const ModifyFlavorModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default ModifyFlavorModal;
+export default ModifyFlavorModal

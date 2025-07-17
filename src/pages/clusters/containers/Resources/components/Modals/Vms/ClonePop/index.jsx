@@ -1,62 +1,53 @@
-import { get } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
-import { observer, inject } from 'mobx-react';
+import React, { useState, useRef } from 'react'
 
-import {
-  Form,
-  Input,
-  Notify,
-  Select,
-  TextArea,
-  Button,
-  Loading,
-} from '@kube-design/components';
-import { Modal } from 'components/Base';
-import VmStore from 'stores/resources/vms';
-import { PATTERN_USER_NAME } from 'utils/constants';
-import styles from './index.scss';
+import { Form, Input, Notify, Button } from '@kube-design/components'
+import { Modal } from 'components/Base'
+import VmStore from 'stores/resources/vms'
+import { PATTERN_USER_NAME } from 'utils/constants'
+import styles from './index.scss'
 
 const CloneModal = props => {
-  const { cluster, namespace } = props.store.detail;
+  const vmStore = new VmStore()
+  const vmName = props.store.detail.name
 
-  const vmStore = new VmStore();
-  const vmId = props.store.detail.id;
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData] = useState({})
 
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const [buttonDisabled, setButtonDisabled] = useState(false)
 
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-
-  const defaultCloneName = `${props.data.vmName}-clone`;
+  const defaultCloneName = `${props.data.vmName}-clone`
 
   const handleOk = () => {
-    const success = props.success;
+    const success = props.success
 
-    const params = { cluster, namespace };
+    const params = {
+      cluster: props.cluster,
+      namespace: props.store.detail.vm.project,
+    }
 
     form.current.validator(async () => {
-      const { data } = form.current.props;
-      data.source_vm_id = vmId;
+      const { data } = form.current.props
+      data.source_vm_id = vmName
 
-      setButtonDisabled(true);
+      setButtonDisabled(true)
       vmStore
         .cloneCreate(data, params)
         .then(() => {
-          Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') });
-          success();
-          setButtonDisabled(false);
-          closeModal();
+          Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+          success()
+          setButtonDisabled(false)
+          closeModal()
         })
-        .catch(e => {
-          setButtonDisabled(false);
-        });
-    });
-  };
+        .catch(() => {
+          setButtonDisabled(false)
+        })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   return (
     <>
@@ -132,7 +123,7 @@ const CloneModal = props => {
         </div>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default CloneModal;
+export default CloneModal

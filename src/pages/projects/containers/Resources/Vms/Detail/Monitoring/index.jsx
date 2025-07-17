@@ -1,29 +1,24 @@
-import { get, isEmpty, find } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { toJS } from 'mobx'
+import { isEmpty, find } from 'lodash'
+import React, { useState } from 'react'
 import { observer, inject } from 'mobx-react'
-import classnames from 'classnames'
 
-import { getChartData, getAreaChartOps } from 'utils/monitoring'
+import { getAreaChartOps } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
 
-import styles from './index.scss'
+const index = props => {
+  const store = props.detailStore
+  const customStore = new CustomStore()
 
-const index = (props) => {
+  const { cluster, namespace } = props.match.params
 
-  const store = props.detailStore;
-  const customStore = new CustomStore();
-
-  const { cluster, namespace } = props.match.params;
-
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
-  const [vmInboundData, setVmInboundData] = useState({});
-  const [vmOutboundData, setVmOutboundData] = useState({});
-  const [vmDiskData, setVmDiskData] = useState([]);
+  const [vmCpuData, setVmCpuData] = useState([])
+  const [vmMemoryData, setVmMemoryData] = useState([])
+  const [vmInboundData, setVmInboundData] = useState({})
+  const [vmOutboundData, setVmOutboundData] = useState({})
+  const [vmDiskData, setVmDiskData] = useState([])
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -54,8 +49,7 @@ const index = (props) => {
     return { start, end }
   }
 
-  const fetchData = async (params) => {
-
+  const fetchData = async params => {
     const paramsData = Object.assign(params, {
       start: params.start,
       end: params.end,
@@ -72,109 +66,140 @@ const index = (props) => {
     const getVmCpuUsageData = async () => {
       const cpuLinuxDataExpr = `((sum by (pod,instance) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance) node_uname_info) - 1) / ${store.detail.vm.flavor.vcpus}`
       const cpuWindowsDataExpr = `((sum by (pod,instance) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance) windows_os_info) - 1) / ${store.detail.vm.flavor.vcpus}`
-
-      const vmCpuData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
+      const cpuData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? cpuLinuxDataExpr
+            : cpuWindowsDataExpr,
         ...paramsData,
-	cluster, namespace
+        cluster,
+        namespace,
       })
 
-      const vmCpuMetricData = _.find(vmCpuData, (data) => {
-        if (data.metric.pod === store.detail.id) return data;
-      });
+      const vmCpuMetricData = find(cpuData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
+      })
 
-      // 배열 처리 
-      const vmCpuArray = [];
+      // 배열 처리
+      const vmCpuArray = []
       vmCpuArray.push(vmCpuMetricData)
       setVmCpuData(vmCpuArray)
-    };
+    }
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
       const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
       const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
 
-      const vmMemoryData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
+      const memoryData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? memoryLinuxDataExpr
+            : memoryWindowsDataExpr,
         ...paramsData,
-        cluster, namespace
+        cluster,
+        namespace,
       })
 
-      const vmMemoryMetricData = _.find(vmMemoryData, (data) => {
-        if (data.metric.pod === store.detail.id) return data;
-      });
+      const vmMemoryMetricData = find(memoryData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
+      })
 
-      // 배열 처리 
-      const vmMemoryArray = [];
+      // 배열 처리
+      const vmMemoryArray = []
       vmMemoryArray.push(vmMemoryMetricData)
       setVmMemoryData(vmMemoryArray)
-
-    };
+    }
 
     // vm inbound data
     const getVmInboundData = async () => {
-      const inboundLinuxDataExpr = `sum by (pod) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const inboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_received_total{service="launcher-node-exporter"}[5m]))`
+      const inboundLinuxDataExpr = `sum by (pod,instance) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const inboundWindowsDataExpr = `sum by (pod,instance) (irate(windows_net_bytes_received_total{service="launcher-node-exporter"}[5m]))`
 
-      const vmInboundData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? inboundLinuxDataExpr : inboundWindowsDataExpr,
+      const inboundData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? inboundLinuxDataExpr
+            : inboundWindowsDataExpr,
         ...paramsData,
-        cluster, namespace
+        cluster,
+        namespace,
       })
 
-      const vmInboundMetricData = _.find(vmInboundData, (data) => {
-        if (data.metric.pod === store.detail.id) return data;
-      });
+      const vmInboundMetricData = find(inboundData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
+      })
 
       setVmInboundData(vmInboundMetricData)
-
-    };
+    }
 
     // vm outbound data
     const getVmOutboundData = async () => {
-      const outboundLinuxDataExpr = `sum by (pod) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const outboundWindowsDataExpr = `sum by (pod) (irate(windows_net_bytes_sent_total{service="launcher-node-exporter"}[5m]))`
+      const outboundLinuxDataExpr = `sum by (pod,instance) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const outboundWindowsDataExpr = `sum by (pod,instance) (irate(windows_net_bytes_sent_total{service="launcher-node-exporter"}[5m]))`
 
-      const vmOutboundData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? outboundLinuxDataExpr : outboundWindowsDataExpr,
+      const outboundData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? outboundLinuxDataExpr
+            : outboundWindowsDataExpr,
         ...paramsData,
-        cluster, namespace
+        cluster,
+        namespace,
       })
 
-      const vmOutboundMetricData = _.find(vmOutboundData, (data) => {
-        if (data.metric.pod === store.detail.id) return data;
-      });
+      const vmOutboundMetricData = find(outboundData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
+      })
 
       setVmOutboundData(vmOutboundMetricData)
-
-    };
+    }
 
     const getVmDiskUsageData = async () => {
       const diskLinuxDataExpr = `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`
       const diskWindowsDataExpr = `(100 - (((sum by(pod) (windows_logical_disk_free_bytes)) / sum by(pod) (windows_logical_disk_size_bytes)) * 100)) / 100`
 
-      const vmDiskData = await customStore.fetchMetric({
-	expr: store.detail.vm.os_type == "linux" ? diskLinuxDataExpr : diskWindowsDataExpr,
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
         ...paramsData,
-        cluster, namespace
+        cluster,
+        namespace,
       })
 
-      const vmDiskMetricData = _.find(vmDiskData, (data) => {
-        if (data.metric?.pod === store.detail.id) return data;
-      });
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.id) return data
+      })
 
-      // 배열 처리 
-      const vmDiskArray = [];
+      // 배열 처리
+      const vmDiskArray = []
       vmDiskArray.push(vmDiskMetricData)
       setVmDiskData(vmDiskArray)
-    };
+    }
 
-    getVmCpuUsageData();
-    getVmMemoryUsageData();
-    getVmInboundData();
-    getVmOutboundData();
-    getVmDiskUsageData();
-
+    getVmCpuUsageData()
+    getVmMemoryUsageData()
+    getVmInboundData()
+    getVmOutboundData()
+    getVmDiskUsageData()
   }
 
   const getMonitoringCfgs = () => {
@@ -226,10 +251,8 @@ const index = (props) => {
         if (isEmpty(config.data)) return null
         return <SimpleArea key={config.title} width="100%" {...config} />
       })}
-
     </MonitoringController>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(observer(index))
-

@@ -37,7 +37,6 @@ import styles from './index.scss'
   module: 'vms',
   authKey: 'vms',
   name: t('RESOURCES_VM'),
-  rowKey: 'id',
 })
 export default class Vms extends React.Component {
   // auto refresh start  ##################################
@@ -237,7 +236,7 @@ export default class Vms extends React.Component {
               <div>
                 <Link
                   className={styles.title}
-                  to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${name}/${record.id}`}
+                  to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${record.name}`}
                 >
                   {name}
                 </Link>
@@ -492,8 +491,12 @@ export default class Vms extends React.Component {
     const { getData, trigger } = this.props
 
     const data = {}
+    const project = vmId.split('/')[0]
+    const vmName = vmId.split('/')[1]
     data.vmId = vmId
     data.state = state
+    data.project = project
+    data.vmName = vmName
     data.actionType = action
 
     trigger('vm.actionState', {
@@ -624,6 +627,7 @@ export default class Vms extends React.Component {
         />
         <Table
           {...tableProps}
+          rowKey="project_name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}

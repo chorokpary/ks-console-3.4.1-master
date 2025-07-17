@@ -34,7 +34,7 @@ import KeypairStore from 'stores/resources/keypairs';
   module: 'keypairs',
   authKey: 'keypairs',
   name: t('RESOURCES_KEYPAIR'),
-  rowKey: 'id',
+  rowKey: 'project_name',
 })
 export default class Keypairs extends React.Component {
   showAction(record) {
@@ -108,11 +108,11 @@ export default class Keypairs extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('name'),
         search: true,
-        render: (name, item) => (
+        render: (name, record) => (
           <Avatar
             icon="key"
             iconSize={40}
-            to={`/clusters/${cluster}/keypairs/${name}/${item.id}`}
+            to={`/clusters/${cluster}/projects/${record.project}/keypairs/${name}`}
             title={name}
           />
         ),

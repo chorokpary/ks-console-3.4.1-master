@@ -327,7 +327,7 @@ const RegistModal = props => {
     setSelectedPhysicalnetworkIpList(existing)
 
     const updatedNetworkList = physicalNetworkList.map(item => {
-      if ((item.id === name, e)) {
+      if (item.id === name) {
         return { ...item, ip: val }
       }
       return item
@@ -412,7 +412,7 @@ const RegistModal = props => {
   const keypairOptions = () => {
     return keypairList.map(obj => ({
       label: t(obj.name),
-      value: t(obj.id),
+      value: t(obj.name),
     }))
   }
 
@@ -568,7 +568,7 @@ const RegistModal = props => {
       setKeypairName(
         data.keypair === t('RESOURCES_SELECT')
           ? ''
-          : get(find(keypairList, { id: data.keypair }), 'name')
+          : get(find(keypairList, { name: data.keypair }), 'name')
       )
       setNodeName(data.node === t('RESOURCES_SELECT') ? '' : data.node)
 
@@ -946,9 +946,7 @@ const RegistModal = props => {
     if (checked) {
       const nameArray = []
       dataListVariables[type].forEach(el =>
-        type === 'sriov' || type === 'physicalnetwork'
-          ? nameArray.push(el.name)
-          : nameArray.push(el.id)
+        nameArray.push(el.name)
       )
       setVariables[type](nameArray)
     } else {
@@ -1624,19 +1622,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {networkList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['network'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'network'
                                     )
                                   }
@@ -1646,14 +1644,14 @@ const RegistModal = props => {
                               <td>{data.type.toUpperCase()}</td>
                               <td>
                                 <Select
-                                  name={`${data.id}-ip`}
+                                  name={`${data.name}-ip`}
                                   placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.id)}
+                                  options={availableIpOptions(data.name)}
                                   onChange={e =>
-                                    handleIpSelectClick(data.id, e)
+                                    handleIpSelectClick(data.name, e)
                                   }
                                   disabled={
-                                    !networkCheckItems.includes(data.id)
+                                    !networkCheckItems.includes(data.name)
                                   }
                                   clearable
                                 />
@@ -1666,15 +1664,12 @@ const RegistModal = props => {
                       </table>
 
                       <div className={styles.removeCheckWrapper}>
-                        {networkCheckItems?.map(id => {
-                          const name = networkList
-                            ?.filter(data => data.id === id)
-                            .map(item => item.name)[0]
+                        {networkCheckItems?.map(name => {
                           return (
-                            <span key={id}>
+                            <span key={name}>
                               <Button
                                 icon="close"
-                                onClick={() => handleDelete(id, 'network')}
+                                onClick={() => handleDelete(name, 'network')}
                               >
                                 {name}
                               </Button>
@@ -2069,19 +2064,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {securityGroupList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['security'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'security'
                                     )
                                   }
@@ -2096,15 +2091,12 @@ const RegistModal = props => {
                         </tbody>
                       </table>
                       <div className={styles.removeCheckWrapper}>
-                        {securityGroupCheckItems?.map(id => {
-                          const name = securityGroupList
-                            ?.filter(data => data.id === id)
-                            .map(item => item.name)[0]
+                        {securityGroupCheckItems?.map(name => {
                           return (
-                            <span key={id}>
+                            <span key={name}>
                               <Button
                                 icon="close"
-                                onClick={() => handleDelete(id, 'security')}
+                                onClick={() => handleDelete(name, 'security')}
                               >
                                 {name}
                               </Button>
@@ -2558,7 +2550,7 @@ const RegistModal = props => {
                     </div>
                     <label>{t('RESOURCES_NETWORK')}</label>
                     {networkList
-                      .filter(x => networkCheckItems.includes(x.id))
+                      .filter(x => networkCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div className={styles.list}>
@@ -2686,12 +2678,8 @@ const RegistModal = props => {
                         <div>
                           {securityGroupCheckItems.length === 0
                             ? t('RESOURCES_NOT_SELECTED')
-                            : securityGroupCheckItems.map(id => {
-                              const securityGroup = find(securityGroupList, {
-                                id,
-                              })
-                              const name = get(securityGroup, 'name', '')
-                              return <div key={id}>{name}</div>
+                            : securityGroupCheckItems.map(name => {
+                              return <div key={name}>{name}</div>
                             })}
                         </div>
                       </div>

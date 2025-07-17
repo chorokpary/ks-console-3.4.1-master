@@ -35,7 +35,7 @@ import RouterStore from 'stores/resources/routers';
   module: 'routers',
   authKey: 'routers',
   name: t('RESOURCES_VROUTER'),
-  rowKey: 'id',
+  rowKey: 'project_name',
 })
 export default class Routers extends React.Component {
   showAction(record) {
@@ -114,7 +114,7 @@ export default class Routers extends React.Component {
             <Avatar
               icon="router"
               iconSize={40}
-              to={`/clusters/${cluster}/routers/${name}/${record.id}`}
+              to={`/clusters/${cluster}/projects/${record.project}/routers/${name}`}
               title={name}
             />
           );

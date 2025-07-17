@@ -28,7 +28,7 @@ const Event = props => {
   return (
     <>
       {eventList?.length === 0 && (
-        <Panel >
+        <Panel>
           <div className={styles.wrapper}>
             {isLoading ? (
               <div className={styles.loading}>

@@ -2,14 +2,11 @@
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
 import routes from './routes'
 import FloatingIpStore from 'stores/resources/floatingip';
 

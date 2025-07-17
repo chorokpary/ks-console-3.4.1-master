@@ -1,124 +1,112 @@
-import { get, omit, pick } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
-import { observer, inject } from 'mobx-react';
-import { Form, Notify, Select, Radio } from '@kube-design/components';
+import React, { useEffect, useRef, useState } from 'react'
+import { Form, Notify, Radio, Select } from '@kube-design/components'
 
-import { Modal } from 'components/Base';
-import styles from './index.scss';
-import VmStore from 'stores/resources/vms';
-import VolumeStore from 'stores/resources/volumes';
+import { Modal } from 'components/Base'
+import VmStore from 'stores/resources/vms'
+import VolumeStore from 'stores/resources/volumes'
+import styles from './index.scss'
 
 const BindingModal = props => {
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData] = useState({})
 
-  const vmStore = new VmStore();
-  const volumeStore = new VolumeStore();
+  const vmStore = new VmStore()
+  const volumeStore = new VolumeStore()
 
-  const [vmList, setVmList] = useState([]);
-  const [vmId, setVmId] = useState();
-  const [radioHotplug, setRadioHotplug] = useState('T');
-  const [bus, setBus] = useState();
-
-  const [volumeList, setVolumeList] = useState([]);
-  const [attachedVmList, setAttachedVmList] = useState([]);
+  const [vmList, setVmList] = useState([])
+  const [vmName, setVmName] = useState()
+  const [radioHotplug, setRadioHotplug] = useState('T')
+  const [bus, setBus] = useState()
 
   const handleOk = () => {
-    const success = props.success;
+    const success = props.success
 
     form.current.validator(() => {
-      const data = {};
+      const data = {}
 
-      data.vmId = vmId;
-      data.hotplug = radioHotplug == 'T' ? true : false;
-      data.actionType = 'A';
-      data.id = props.store.detail.id;
-      data.bus = bus;
+      data.vmName = vmName
+      data.hotplug = radioHotplug === 'T'
+      data.actionType = 'A'
+      data.name = props.store.detail.name
+      data.bus = bus
 
       volumeStore.actionState({ data, ...props }).then(() => {
-        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') });
-        success();
-        closeModal();
-      });
-    });
-  };
+        Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
+        success()
+        closeModal()
+      })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   useEffect(() => {
     const getVmCreateData = async () => {
       const vmListData = await vmStore.fetchList({
         cluster: props.cluster,
-        namespace: props.namespace,
-      });
+        namespace: props.project ? props.project : props.namespace,
+      })
 
       const volumeData = await volumeStore.fetchList({
         cluster: props.cluster,
-        namespace: props.namespace,
-      });
+        namespace: props.project ? props.project : props.namespace,
+      })
 
       const findVolumeData = volumeData?.find(was => {
-        return was.name == props.name;
-      });
+        return was.name === props.name
+      })
 
-      const vol_node = props.store.detail.volume.selected_node;
+      const vol_node = props.store.detail.volume.selected_node
 
       const filterVm = vmListData?.filter(vm => {
-	if (!!vol_node) {
-	  return vm.project == findVolumeData.project && vm.node == vol_node;
-	} else {
-	  return vm.project == findVolumeData.project;
-	}
-      });
+        if (vol_node) {
+          return vm.project === findVolumeData.project && vm.node === vol_node
+        }
+        return vm.project === findVolumeData.project
+      })
 
-      setVmList(filterVm);
+      setVmList(filterVm)
+    }
 
-      const attachedVmList = volumeData
-        ?.filter(row => row.used_by_vmi != '' && row.used_by_vmi != null)
-        .map(el => el.used_by_vmi);
-      setAttachedVmList(attachedVmList);
-    };
+    getVmCreateData()
+  }, [])
 
-    getVmCreateData();
-  }, []);
-
-  const handleSelect = id => {
-    setVmId(id);
-  };
+  const handleSelect = name => {
+    setVmName(name)
+  }
 
   const vmOptions = () => {
-    const opt = vmList.map(obj => {
+    return vmList.map(obj => {
       return {
         label: obj.name,
-        value: t(obj.id),
-      };
-    });
-    return opt;
-  };
+        value: t(obj.name),
+      }
+    })
+  }
 
   const busTypeOptions = [
     { label: 'VirtIO', value: 'virtio' },
     { label: 'SATA', value: 'sata' },
     { label: 'SCSi', value: 'scsi' },
-  ];
+  ]
 
   // Validation 시작 ==================================================
   const vmValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_VM_TIP') });
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
+      return callback({ message: t('RESOURCES_SELECT_VM_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
 
   const busTypeValidator = (rule, value, callback) => {
-    if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') });
+    if (value === t('RESOURCES_SELECT') || value === 'select') {
+      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
 
   // Validation 끝 ==================================================
 
@@ -145,16 +133,14 @@ const BindingModal = props => {
             />
           </Form.Item>
 
-          <Form.Item 
-	    label={t('RESOURCES_HOTPLUG_FLAG')}
-	  >
+          <Form.Item label={t('RESOURCES_HOTPLUG_FLAG')}>
             <div className={styles.wrapper}>
               <Radio
                 name="snatType"
                 value="T"
                 checked={radioHotplug === 'T'}
-                onChange={e => {
-                  setRadioHotplug('T');
+                onChange={() => {
+                  setRadioHotplug('T')
                 }}
               >
                 {t('RESOURCES_USE')}
@@ -163,31 +149,31 @@ const BindingModal = props => {
                 name="snatType"
                 value="F"
                 checked={radioHotplug === 'F'}
-                onChange={e => {
-                  setRadioHotplug('F');
+                onChange={() => {
+                  setRadioHotplug('F')
                 }}
               >
                 {t('RESOURCES_NOT_USE')}
               </Radio>
             </div>
           </Form.Item>
-          <Form.Item 
-	    label={t('RESOURCES_BUS_TYPE')}
-	    rules={[{ required: true, validator: busTypeValidator }]}
-	  >
-	    <Select
+          <Form.Item
+            label={t('RESOURCES_BUS_TYPE')}
+            rules={[{ required: true, validator: busTypeValidator }]}
+          >
+            <Select
               name="bus"
               placeholder={t('RESOURCES_SELECT')}
               options={busTypeOptions}
               defaultValue="virtio"
-	      onChange={e => setBus(e)}
-	      disabled={radioHotplug === 'T'}
+              onChange={e => setBus(e)}
+              disabled={radioHotplug === 'T'}
             />
-	  </Form.Item>
+          </Form.Item>
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default BindingModal;
+export default BindingModal

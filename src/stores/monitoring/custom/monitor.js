@@ -62,9 +62,9 @@ export default class PanelMonitor {
     if (cluster) {
       path += `/klusters/${cluster}`
     }
-    // if (namespace) {
-    //   path += `/namespaces/${namespace}`
-    // }
+    if (namespace) {
+      path += `/namespaces/${namespace}`
+    }
     return path
   }
 

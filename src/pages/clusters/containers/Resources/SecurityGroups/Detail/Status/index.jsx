@@ -9,6 +9,8 @@ import styles from './index.scss'
 
 const Status = (props) => {
     const store = props.detailStore;
+    const namespace = props.detailStore?.detail.namespace;
+
     useEffect(() => {
 
     }, []);
@@ -80,7 +82,12 @@ const Status = (props) => {
                     }
                 </div>
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type={t('RESOURCES_SECURITY_GROUP')} variables='security_group_objects' id={props.match.params.id} />
+                <DetailVmList 
+                    type={t('RESOURCES_SECURITY_GROUP')} 
+                    match='security_group'
+                    name={props.match.params.name}
+                    project={namespace}
+                />
             </div>
         </>
     );

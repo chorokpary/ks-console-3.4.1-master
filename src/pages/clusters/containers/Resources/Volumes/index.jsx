@@ -18,36 +18,31 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { toJS } from 'mobx';
-import classNames from 'classnames';
-import { Icon, Tooltip } from '@kube-design/components';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Icon, Tooltip } from '@kube-design/components'
 
-import { Avatar, Status } from 'components/Base';
-import Banner from 'components/Cards/Banner';
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
-import Indicator from 'components/Base/Indicator';
-import { getLocalTime, map_accessModes } from 'utils';
-import VolumeStore from 'stores/resources/volumes';
-import ResourceTable from 'clusters/components/ResourceTable';
-import styles from './index.scss';
+import { Avatar } from 'components/Base'
+import Banner from 'components/Cards/Banner'
+import { ListPage, withClusterList } from 'components/HOCs/withList'
+import { getLocalTime, map_accessModes } from 'utils'
+import VolumeStore from 'stores/resources/volumes'
+import ResourceTable from 'clusters/components/ResourceTable'
+import styles from './index.scss'
 
 @withClusterList({
   store: new VolumeStore(),
   module: 'resourcesvolumes',
   authKey: 'resourcesVolumes',
   name: t('RESOURCES_VOLUME'),
-  rowKey: 'id',
 })
 export default class ResourcesVolumes extends React.Component {
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     return [
       {
         key: 'delete',
@@ -62,11 +57,11 @@ export default class ResourcesVolumes extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       actions: [
@@ -90,7 +85,7 @@ export default class ResourcesVolumes extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('resourcesvolume.remove.batch', {
+            trigger('resourcesvolume.remove.clusterbatch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -100,12 +95,12 @@ export default class ResourcesVolumes extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    };
+    }
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('NAME'),
@@ -117,7 +112,7 @@ export default class ResourcesVolumes extends React.Component {
           <Avatar
             icon="storage"
             iconSize={40}
-            to={`/clusters/${cluster}/resourcesvolumes/${name}/${item.id}`}
+            to={`/clusters/${cluster}/projects/${item.project}/resourcesvolumes/${name}`}
             title={name}
           />
         ),
@@ -170,7 +165,7 @@ export default class ResourcesVolumes extends React.Component {
             >
               {data.storage_class}
             </Link>
-          );
+          )
         },
       },
       {
@@ -212,13 +207,13 @@ export default class ResourcesVolumes extends React.Component {
           <p>{getLocalTime(timestamp).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   mapperAccessMode = accessModes => {
-    const modes = map_accessModes(accessModes);
-    return <span>{modes.join(',')}</span>;
-  };
+    const modes = map_accessModes(accessModes)
+    return <span>{modes.join(',')}</span>
+  }
 
   renderAccessTitle = () => {
     const renderModeTip = (
@@ -227,7 +222,7 @@ export default class ResourcesVolumes extends React.Component {
         <div>{t('ROX_DESC')}</div>
         <div>{t('RWX_DESC')}</div>
       </div>
-    );
+    )
     return (
       <div className={styles.mode_title}>
         {t('ACCESS_MODE_TCAP')}
@@ -235,11 +230,11 @@ export default class ResourcesVolumes extends React.Component {
           <Icon name="question" size={16} className={styles.question}></Icon>
         </Tooltip>
       </div>
-    );
-  };
+    )
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {
@@ -249,11 +244,11 @@ export default class ResourcesVolumes extends React.Component {
         title: t('RESOURCES_NAME'),
         search: true,
       },
-    ];
+    ]
   }
 
   render() {
-    const { bannerProps, tableProps } = this.props;
+    const { bannerProps, tableProps } = this.props
     // console.log({ ...this.props })
 
     return (
@@ -267,6 +262,7 @@ export default class ResourcesVolumes extends React.Component {
         />
         <ResourceTable
           {...tableProps}
+          rowKey="project_name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}
@@ -275,6 +271,6 @@ export default class ResourcesVolumes extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-    );
+    )
   }
 }
