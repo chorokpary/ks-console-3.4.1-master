@@ -97,7 +97,7 @@ const GpuClustersDetail = (props) => {
       },
       {
         name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        value: detail.data.nodes.length,
+        value: (detail.data.nodes).filter(item => item.vmi).length,
       },
     ]
   }
@@ -107,7 +107,7 @@ const GpuClustersDetail = (props) => {
   }
 
   const getBanner = () => {
-        return <i className="ico-type-mediatedvgpu"></i>
+    return <i className="ico-type-mediatedvgpu"></i>
   }
 
   const sideProps = {

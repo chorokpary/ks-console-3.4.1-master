@@ -198,4 +198,59 @@ export default class GpuClustersStore extends Base {
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`));
   }
+
+  @action
+  async fetchVmsDetail({ cluster, workspace, namespace, ...params } = {}) {
+    this.isLoading = true
+
+    params.page = params.page || 1
+    params.limit = params.limit || 10
+
+    const name = params.name;
+
+    const perPage = Number(params.limit) || 10;
+    const currentPage = Number(params.page) || 1;
+
+    console.log("params : "+ JSON.stringify(params))
+ 
+    delete params['resource']
+    delete params['id']
+    delete params['name']
+
+    const result = await request.get(
+      `${this.getResourceDetailUrl(params)}/${name}`
+    )
+
+    // 실제 할당된 가상머신 데이터
+    const vmData = (result.data.nodes).filter(item => item.vmi)
+
+    // 데이터 검색
+    let searchData = [];
+    if (params.searchName !== '' && params.searchName !== undefined) {
+         searchData = vmData.filter((row) => {
+          return get(row.vmi, params.searchType)?.toLowerCase().includes(params.searchName?.toLowerCase());
+      });      
+    }
+
+    delete params['searchType']
+    delete params['searchName']    
+
+    const dataList = searchData.length == 0 ? vmData : searchData;
+
+    // 정렬 처리
+    const sortedList = [...dataList].sort((a, b) => {
+      return a.vmi.vm_name < b.vmi.vm_name ? 1 : a.vmi.vm_name > b.vmi.vm_name ? -1 : 0;
+    });
+
+    // 데이터 page 별 Slice 처리 
+    const currentData = sortedList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+
+    const resultData = {}
+    resultData.vmList = currentData;
+    resultData.total = dataList.length;
+
+    this.isLoading = false
+    return resultData
+  }
+  
 }

@@ -3,15 +3,11 @@ import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
-import { Card } from 'components/Base'
-
 import classnames from 'classnames'
 
 import { Icon, Button, Notify } from '@kube-design/components'
 import { Link } from 'react-router-dom'
 import { Panel, Text, Indicator } from 'components/Base'
-import { TinyArea } from 'components/Charts'
-
 
 import DetailGpuVmList from 'pages/clusters/containers/Resources/components/DetailGpuVmList';
 
@@ -29,7 +25,9 @@ const Status = (props) => {
   // 초기 데이터 처리
   useEffect(() => {
 
-  }, [])
+      if (!store.detail) return
+
+  }, [store])
 
   return (
     <>
@@ -44,13 +42,13 @@ const Status = (props) => {
               </div>
               <div className={classnames(styles.title, styles.name)}>
                 <div>
-                    클러스터 이름
+                    {store.detail.name}
                 </div>
                 <p>{t('RESOURCES_GPU_CLUSTER')}</p>
               </div>
               <div className={classnames(styles.title, styles.name)}>
                 <div>
-                    프로젝트 이름
+                    {store.detail.cluster}
                 </div>
                 <p>{t('RESOURCES_PROJECT')}</p>
               </div>
@@ -182,7 +180,7 @@ const Status = (props) => {
 
         <DetailGpuVmList
           type={t('RESOURCES_NETWORK')}
-          variables="networks"
+          variables="gpuclusters"
           {...props.match.params}
           // id={props.match.params.id}
           id="1ae2da65-2f98-42f3-b32c-ef56adfe3223"          

@@ -142,7 +142,7 @@ export default class gpuclusters extends React.Component {
       },
       {
         title: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        dataIndex: 'total_node_count',
+        dataIndex: 'assigned_vm_count',
         isHideable: true,
         search: true,
         width: 'auto',

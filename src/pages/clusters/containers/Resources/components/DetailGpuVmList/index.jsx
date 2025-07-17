@@ -7,13 +7,12 @@ import { Indicator, Panel, Text } from 'components/Base'
 import { TinyArea } from 'components/Charts'
 import { Link } from 'react-router-dom'
 
-import VmStore from 'stores/resources/vms'
 import CustomStore from 'stores/monitoring/custom/monitor'
+import GpuClustersStore from 'stores/resources/gpuclusters';
+
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import { getAreaChartOps } from 'utils/monitoring'
-
-import { trigger } from 'utils/action'
 
 import {
   Button,
@@ -35,10 +34,10 @@ const DetailGpuVmList = props => {
   //   variables : 'image' // vm 데이터 내에서 비교할 파라미터,
   //   name : 'ubuntu' // 예시대로 vm 데이터 내의 image 이름이 ubuntu 인 것,
   // }
+  
+  const rootStore = props.rootStore;    
 
-  const rootStore = props.rootStore;
-
-  const store = new VmStore()
+  const store = new GpuClustersStore()
   const customStore = new CustomStore()
 
   const cluster = props.detailStore?.detail.cluster
@@ -52,9 +51,6 @@ const DetailGpuVmList = props => {
 
   const [vmCpuData, setVmCpuData] = useState([])
   const [vmMemoryData, setVmMemoryData] = useState([])
-
-  const [vmWinCpuData, setVmWinCpuData] = useState([])
-  const [vmWinMemoryData, setVmWinMemoryData] = useState([])
 
   const [vmGpuUtilData, setVmGpuUtilData] = useState([]);
 
@@ -110,15 +106,16 @@ const DetailGpuVmList = props => {
     const detailParams = { cluster, resource: props.variables, id: props.id, name: props.name, page: page, limit: perPage }
 
     if(params.name !== '' && params.name !== undefined){
-      detailParams.searchName = params.name 
+      detailParams.searchType = "vm_name",
+      detailParams.searchName = params.name       
     }
-    
-    const vmList = await store.fetchVmsDetail(detailParams)
-    const vmData = vmList.vms 
 
-    setTotal(vmList.total)
+    const vmData = await store.fetchVmsDetail(detailParams)
+    const vmList = vmData.vmList;
+
+    setTotal(vmData.total)
     setCurrentPage(page)
-    setVmDataList(vmData)
+    setVmDataList(vmList)
     setIsLoading(false)
   }
 
@@ -148,15 +145,6 @@ const DetailGpuVmList = props => {
       setVmCpuData(data)
     }
 
-    const getVmWinCpuUsageData = async () => {
-      const data = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
-        ...paramsData,
-        cluster,
-      })
-      setVmWinCpuData(data)
-    }
-
     // vm memory data
     const getVmMemoryUsageData = async () => {
       const data = await customStore.fetchMetric({
@@ -166,16 +154,6 @@ const DetailGpuVmList = props => {
       })
 
       setVmMemoryData(data)
-    }
-
-    const getVmWinMemoryUsageData = async () => {
-      const data = await customStore.fetchMetric({
-        expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
-        ...paramsData,
-        cluster,
-      })
-
-      setVmWinMemoryData(data)
     }
 
     const getVmGpuUtilData = async () => {
@@ -193,8 +171,6 @@ const DetailGpuVmList = props => {
 
     getVmCpuUsageData()
     getVmMemoryUsageData()
-    getVmWinCpuUsageData()
-    getVmWinMemoryUsageData()
     getVmGpuUtilData()
   }
 
@@ -234,10 +210,10 @@ const DetailGpuVmList = props => {
 
     const content = vmDataList.map((obj, index) => {
       return (
-        <div className={styles.wrapper} key={`${obj.name}-${index}`}>
+        <div className={styles.wrapper} key={`${obj.vmi.vm_name}-${index}`}>
           <div
             className={classnames(styles.expandItem, '', {
-              [styles.expanded]: obj.name === expandItem ? isExpandFlag : false,
+              [styles.expanded]: obj.vmi.vm_name === expandItem ? isExpandFlag : false,
             })}
           >
             <div className={styles.itemMain}>
@@ -245,7 +221,7 @@ const DetailGpuVmList = props => {
                 <i className="ico-type40-vm"></i>
                 <Indicator
                   className={styles.indicator}
-                  type={getState(obj.state)}
+                  type={getState(obj.vmi.phase)}
                   flicker/>
               </div>
               {renderContentDetail(obj)}
@@ -268,8 +244,8 @@ const DetailGpuVmList = props => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/vms/${obj.name}/${obj.id}`}>
-                {obj.name}
+              <Link to={`/clusters/${cluster}/vms/${obj.vmi.vm_name}/${obj.id}`}>
+                {obj.vmi.vm_name}
               </Link>
               {/* <Tooltip content={t('VNC')}>
                 <Icon
@@ -286,42 +262,44 @@ const DetailGpuVmList = props => {
             </p>
           </div>
           <div className={styles.text}>
-            <div>{t(`RESOURCES_${obj.state.toUpperCase()}`)}</div>
+            <div>{t(`RESOURCES_${obj.vmi.phase.toUpperCase()}`)}</div>
             <p>{t('RESOURCES_STATE')}</p>
           </div>
           <div className={styles.text}>
             <div>
-              {obj.node ? (
-                <Link to={`/clusters/${cluster}/nodes/${obj.node}`}>
-                  {obj.node}
-                </Link>
+              {obj.vmi.node_hostname ? (
+                // <Link to={`/clusters/${cluster}/nodes/${obj.vmi.node_hostname}`}>
+                //   {obj.vmi.node_hostname}
+                // </Link>
+                  <div>{obj.vmi.node_hostname}</div>
               ) : (
                 '-'
               )}
             </div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
+          {/* {renderMonitorings(obj.vmi.vm_name, isExpandFlag)} */}
+          {renderMonitorings("40cd85ec-2327-4de6-95ec-9a4ffc228517", isExpandFlag)} 
         </div>
       </>
     )
   }
 
-  const renderMonitorings = (vmId, osType, isExpand) => {
+  const renderMonitorings = (vmId, isExpand) => {
     // const isExpand = false;
     const loading = false
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
     const vmCpuMetricData = _.find(
-      osType === 'linux' ? vmCpuData : vmWinCpuData,
+      vmCpuData,
       data => {
         if (data.metric.pod === vmId) return data
       }
     )
 
     const vmMemoryMetricData = _.find(
-      osType === 'linux' ? vmMemoryData : vmWinMemoryData,
+      vmMemoryData,
       data => {
         if (data.metric.pod === vmId) return data
       }
@@ -390,7 +368,7 @@ const DetailGpuVmList = props => {
   }
 
   const handlePage = page => {
-    const params = page ? { page } : {}
+    const params = page ? { page, name: searchValue } : {}
     fnGetData(params)
   }
 
