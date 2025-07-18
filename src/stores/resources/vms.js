@@ -820,7 +820,7 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchVmListSecurityGroup(params) {
+  async fetchVmListSecurityGroupSummray(params) {
     this.isLoading = true
 
     const result = await request.get(
@@ -842,6 +842,53 @@ export default class VmStore extends Base {
     }
 
     const dataList = params.namespace ? namespaceDataList : response.security_groups
+    this.isLoading = false
+    return dataList
+  }
+
+  @action
+  async fetchVmListSecurityGroup(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/security_groups?project=${params.namespace}`
+    )
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'security_groups',
+    }
+
+    const securityArray = []
+    const promises = response.security_groups.map(async security => {
+      const securityDetail = await request.get(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          params
+        )}/edgetron/resources/kubevirt/security_groups/${security.name}?project=${params.namespace}`
+      )
+
+      securityDetail.security_group.egress = securityDetail.security_group.rules.filter(
+        el => el.direction === 'egress'
+      ).length
+      securityDetail.security_group.ingress = securityDetail.security_group.rules.filter(
+        el => el.direction === 'ingress'
+      ).length
+
+      securityArray.push(securityDetail.security_group)
+    })
+
+    await Promise.all(promises)
+
+    let namespaceDataList = []
+    if (params.namespace) {
+      namespaceDataList = securityArray.filter(
+        item => item.project === params.namespace
+      )
+    }
+
+    const dataList = params.namespace ? namespaceDataList : securityArray
     this.securigyGroupList = dataList
     this.isLoading = false
     return dataList

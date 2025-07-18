@@ -22,7 +22,7 @@ const ModifySecurityGroupModal = (props) => {
     form.current.validator(() => {
       if (securityGroupCheckItems.length > 0) {
         const { data } = form.current.props;
-        data.id = props.store.detail.vm.id;
+        data.project = props.store.detail.vm.project;
         data.scurityGroups = securityGroupCheckItems;
 
         onOk({ ...data })
@@ -40,7 +40,7 @@ const ModifySecurityGroupModal = (props) => {
       const securityData = props.store.securigyGroupList;
       setSecurityGroupDataList(securityData);
 
-      const securityIdArray = props.store.detail.vm.security_groups.map(item => item.id)
+      const securityIdArray = props.store.detail.vm.security_groups.map(item => item.name)
       setSecurityGroupCheckItems(securityIdArray)
     };
 
@@ -74,7 +74,7 @@ const ModifySecurityGroupModal = (props) => {
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = [];
-      dataListVariables[type].forEach((el) => nameArray.push(el.id));
+      dataListVariables[type].forEach((el) => nameArray.push(el.name));
       setVariables[type](nameArray);
     } else {
       setVariables[type]([]);
@@ -104,7 +104,7 @@ const ModifySecurityGroupModal = (props) => {
           {t('RESOURCES_SECURITY_GROUP')}<span className="form-item-required">*</span>
           <Form.Item>
             <div className={styles.wrapper}>
-              {securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.id)) && stateVariables['security'].length > 0 &&
+              {securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.name)) && stateVariables['security'].length > 0 &&
                 <div className={classnames(styles.table_title, styles.table_title_bg)}>
                   <Button className={styles.table_title_button} onClick={() => handleAllCheck(false, "security")}>{t('RESOURCES_ALL_DESELECT')}</Button>  {stateVariables['security'].length}{t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
                 </div>
@@ -140,29 +140,28 @@ const ModifySecurityGroupModal = (props) => {
                       </tr>
                     }
                     {securityGroupDataList?.map((data, key) => (
-                      <tr key={data.id}>
+                      <tr key={data.name}>
                         <td>
-                          <Checkbox name={`select-${data.id}`} checked={stateVariables['security'].includes(data.id) ? true : false}
-                            onChange={(checked) => handleSingleCheck(checked, data.id, "security")} />
+                          <Checkbox name={`select-${data.name}`} checked={stateVariables['security'].includes(data.name) ? true : false}
+                            onChange={(checked) => handleSingleCheck(checked, data.name, "security")} />
                         </td>
                         <td>{data.name}</td>
                         <td>{data.description}</td>
-                        <td>{data.ingress_count}</td>
-                        <td>{data.egress_count}</td>
+                        <td>{data.ingress}</td>
+                        <td>{data.egress}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
                 <div className={styles.removeCheckWrapper}>
-                  {securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.id)) &&
-                    securityGroupCheckItems?.map((id) => {
-                      const name = securityGroupDataList?.filter((data) => data.id == id).map(item => item.name)[0]
-                      return <span key={id}><Button icon="close" onClick={() => handleDelete(id, "security")}>{name}</Button></span>
+                  {securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.name)) &&
+                    securityGroupCheckItems?.map((name) => {
+                      return <span key={name}><Button icon="close" onClick={() => handleDelete(name, "security")}>{name}</Button></span>
                     }
                     )}
                 </div>
               </div>
-              <div className={`form-item-error ${securityGroupCheckItems.length > 0 && securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.id)) ? "hide" : ""}`}>{t('RESOURCES_SELECT_SECURITY_GROUP_TIP')}</div>
+              <div className={`form-item-error ${securityGroupCheckItems.length > 0 && securityGroupDataList.find(obj => securityGroupCheckItems.includes(obj.name)) ? "hide" : ""}`}>{t('RESOURCES_SELECT_SECURITY_GROUP_TIP')}</div>
             </div>
           </Form.Item>
 

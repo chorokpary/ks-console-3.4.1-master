@@ -120,7 +120,7 @@ const Status = props => {
       )
       setDetailVolume(volumeData)
     }
-
+    
     const fnGetNetworkStorage = async () => {
       setDetailNetworkStorage(store.networkStorageInfo)
     }

@@ -182,7 +182,7 @@ const RegistModal = props => {
       })
       const listKeypair = await vmStore.fetchVmListKeypair({ ...props })
       const listNode = await vmStore.fetchVmListNode({ ...props })
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({
+      const listSecurityGroup = await vmStore.fetchVmListSecurityGroupSummray({
         ...props,
       })
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
@@ -223,7 +223,6 @@ const RegistModal = props => {
     const securityGroups = securityGroupDataList
       .filter(obj => obj.project === project)
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
-    console.log(securityGroups)
     setSecurityGroupList(securityGroups)
     const keypairs = keypairDataList.filter(obj => obj.project === project)
     setKeypairList(keypairs)

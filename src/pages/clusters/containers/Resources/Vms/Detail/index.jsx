@@ -326,7 +326,7 @@ const VmDetail = props => {
           detail.vm.security_groups.length > 0
             ? detail.vm.security_groups &&
               detail.vm.security_groups.map(security => (
-                <p key={security.id}>{security.name}</p>
+                <p key={security.name}>{security.name}</p>
               ))
             : '-',
       },
