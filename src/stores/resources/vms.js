@@ -834,35 +834,14 @@ export default class VmStore extends Base {
       kind: 'security_groups',
     }
 
-    const securityArray = []
-    const promises = response.security_groups.map(async security => {
-      const securityDetail = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/security_groups/${security.name}`
-      )
-
-      securityDetail.security_group.egress_count = securityDetail.security_group.rules.filter(
-        el => el.direction === 'egress'
-      ).length
-      securityDetail.security_group.ingress_count = securityDetail.security_group.rules.filter(
-        el => el.direction === 'ingress'
-      ).length
-
-      securityArray.push(securityDetail.security_group)
-    })
-
-    await Promise.all(promises)
-
     let namespaceDataList = []
     if (params.namespace) {
-      namespaceDataList = securityArray.filter(
+      namespaceDataList = response.security_groups.filter(
         item => item.project === params.namespace
       )
     }
 
-    const dataList = params.namespace ? namespaceDataList : securityArray
-
+    const dataList = params.namespace ? namespaceDataList : response.security_groups
     this.securigyGroupList = dataList
     this.isLoading = false
     return dataList

@@ -223,6 +223,7 @@ const RegistModal = props => {
     const securityGroups = securityGroupDataList
       .filter(obj => obj.project === project)
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    console.log(securityGroups)
     setSecurityGroupList(securityGroups)
     const keypairs = keypairDataList.filter(obj => obj.project === project)
     setKeypairList(keypairs)
@@ -234,8 +235,8 @@ const RegistModal = props => {
     // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
-  const availableIpOptions = netId => {
-    const networkIps = availableIpList.find(obj => obj.network === netId)
+  const availableIpOptions = (netId, project) => {
+    const networkIps = availableIpList.find(obj => obj.network === netId && obj.project === project)
     if (networkIps !== undefined) {
       return networkIps.ips.map(ip => {
         return {
@@ -1650,7 +1651,7 @@ const RegistModal = props => {
                                 <Select
                                   name={`${data.name}-ip`}
                                   placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.name)}
+                                  options={availableIpOptions(data.name, data.project)}
                                   onChange={e =>
                                     handleIpSelectClick(data.name, e)
                                   }
@@ -2089,8 +2090,8 @@ const RegistModal = props => {
                               </td>
                               <td>{data.name}</td>
                               <td>{data.description}</td>
-                              <td>{data.ingress_count}</td>
-                              <td>{data.egress_count}</td>
+                              <td>{data.ingress}</td>
+                              <td>{data.egress}</td>
                             </tr>
                           ))}
                         </tbody>
