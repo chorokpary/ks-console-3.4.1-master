@@ -328,10 +328,10 @@ const RegistModal = props => {
       if (isFirst) {
         if (networkList.length > 0) {
           handleSingleCheck(
-            networkList.filter(el => el.external)[0].id,
+            networkList.filter(el => el.external)[0].name,
             'network'
           )
-          setNetworkName(networkList.filter(el => el.external)[0].id)
+          setNetworkName(networkList.filter(el => el.external)[0].name)
         }
         setCniSelect(cnis?.[0]?.value || 'cilium')
         setCsiSelect(csis?.[0]?.value || '')
@@ -963,9 +963,12 @@ const RegistModal = props => {
                                     <td>
                                       <Radio
                                         name={`select-${data.name}`}
-                                        checked={data.id === networkCheckItem}
+                                        checked={data.name === networkCheckItem}
                                         onChange={() =>
-                                          handleSingleCheck(data.id, 'network')
+                                          handleSingleCheck(
+                                            data.name,
+                                            'network'
+                                          )
                                         }
                                       />
                                     </td>
@@ -1133,9 +1136,9 @@ const RegistModal = props => {
                                   <td>
                                     <Radio
                                       name={`select-${data.name}`}
-                                      checked={data.id === elbCheckItem}
+                                      checked={data.name === elbCheckItem}
                                       onChange={() =>
-                                        handleSingleCheck(data.id, 'elb')
+                                        handleSingleCheck(data.name, 'elb')
                                       }
                                     />
                                   </td>
@@ -1330,7 +1333,7 @@ const RegistModal = props => {
                       {t('RESOURCES_NETWORK')}
                     </label>
                     {networkList
-                      .filter(x => networkCheckItem === x.id)
+                      .filter(x => networkCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div
@@ -1414,8 +1417,8 @@ const RegistModal = props => {
                       ))}
                     <label
                       className={`${
-                        networkList.filter(x => elbCheckItem === x.id).length >
-                        0
+                        networkList.filter(x => elbCheckItem === x.name)
+                          .length > 0
                           ? ''
                           : 'hide'
                       }`}
@@ -1423,7 +1426,7 @@ const RegistModal = props => {
                       ELB ({elbSelect})
                     </label>
                     {networkList
-                      .filter(x => elbCheckItem === x.id)
+                      .filter(x => elbCheckItem === x.name)
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div
