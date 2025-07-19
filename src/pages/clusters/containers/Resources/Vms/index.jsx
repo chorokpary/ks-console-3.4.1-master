@@ -340,7 +340,7 @@ export default class Vms extends React.Component {
           const floatingIp =
             floatingList &&
             floatingList
-              ?.filter(row => row.instance_id === record.id)
+              ?.filter(row => row.instance_id === record.name)
               .map(el => <p key={el.id}>{el.floating_ip}</p>)
 
           return floatingIp === '' ? '-' : floatingIp
@@ -587,7 +587,6 @@ export default class Vms extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>

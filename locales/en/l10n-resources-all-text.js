@@ -819,6 +819,8 @@ module.exports = {
   RESOURCES_DEALLOCATE_FLOATING_IP: 'Deallocate Floating IP',
   RESOURCES_SELECT_FLOATING_IP_TIP: 'Please select a floating IP.',
   RESOURCES_FLOATING_IP_DESC: 'Manage the status and usage of floating IPs.',
+  RESOURCES_FLOATING_IP_VM: 'VirtualMachine',
+  RESOURCES_FLOATING_IP_LB: 'LoadBalancer',
   RESOURCES_PIXEL_COUNT: 'Pixel Count',
   RESOURCES_NEED_TO_TREE: 'Need Pine',
   RESOURCES_ALLOCATION: 'Allocation',

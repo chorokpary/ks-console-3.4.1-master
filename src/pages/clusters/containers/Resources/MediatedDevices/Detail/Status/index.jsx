@@ -33,7 +33,7 @@ const Status = (props) => {
             <>
                 <div>
                     {/* 가상 머신 상세 관련 샘플 */}
-                    <DetailVmList type={t('RESOURCES_MEDIATED_DEVICE')} variables='mediated_device' id={props.match.params.id} name={store.detail.mediated_device.resource_name} gpu={store.detail.mediated_device.is_gpu} />
+                    <DetailVmList type={t('RESOURCES_MEDIATED_DEVICE')} match='mediated_device' name={props.match.params.id} gpu={store.detail.mediated_device.is_gpu} />
                 </div>
             </>
         );

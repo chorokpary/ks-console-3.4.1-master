@@ -29,10 +29,11 @@ const LoadBalancerDetail = (props) => {
     const routing = props.rootStore.routing;
 
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
-    const lbId = props.match.params.id;
+    const lbName = props.match.params.name;
+    const project = props.match.params.namespace;
     const floatingData = toJS(store.floatingIpsList)
-    const floatingId = floatingData?.filter((row) => row.instance_id == lbId).map((el) => el.id)[0]
-    const floatingIp = floatingData?.filter((row) => row.instance_id == lbId).map((el) => el.floating_ip)[0]
+    const floatingId = floatingData?.filter((row) => row.instance_id == lbName).map((el) => el.id)[0]
+    const floatingIp = floatingData?.filter((row) => row.instance_id == lbName).map((el) => el.floating_ip)[0]
 
     const getOperations = () => [
         {
@@ -68,7 +69,7 @@ const LoadBalancerDetail = (props) => {
                         store: floatingstore,
                         success: fetchData,
                         ...props.match.params,
-                        data: { id: floatingId }
+                        data: { id: floatingId, project: project }
                     })
                 }
             },

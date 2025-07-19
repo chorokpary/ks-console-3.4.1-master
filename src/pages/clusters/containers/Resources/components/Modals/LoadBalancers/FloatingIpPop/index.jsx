@@ -14,7 +14,8 @@ const FloatingIpModal = props => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  const lbId = props.store.detail.id;
+  const lbName = props.store.detail.name;
+  const project = props.store.detail.namespace;
 
   const [floatingList, setFloatingList] = useState([]);
 
@@ -37,10 +38,10 @@ const FloatingIpModal = props => {
       data.name = floatingId;
       data.id = floatingId;
       data.instance_type = 'lb';
-      data.instance_id = lbId;
+      data.instance_id = lbName;
       data.target_network = networkName;
+      data.project = project;
       data.target_ip = vIp;
-      console.log(data);
       floatingStore
         .update({ cluster: props.cluster, namespace: props.namespace, ...data })
         .then(() => {
@@ -73,13 +74,14 @@ const FloatingIpModal = props => {
       const routerArr = [];
       routerList?.routers.map(obj => {
         obj.internal?.map(it => {
-          if (it.id === props.store.detail.lb.network.id) {
-            routerArr.push(obj.external.id);
+          if (it.name === props.store.detail.lb.network.name) {
+            routerArr.push(obj.external.name);
           }
         });
       });
 
       const floatingListData = props.store.floatingIpsList;
+      console.log(floatingListData)
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가
       const floatingIpArray = [];
       floatingListData.map(floating => {

@@ -5,8 +5,6 @@ import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base';
-import { getLocalTime } from 'utils';
 
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
 import FloatingIpStore from 'stores/resources/floatingip';
@@ -46,7 +44,6 @@ const FloatingIpDetail = props => {
   // );
 
   const getOperations = () => {
-    console.log(namespace)
     return fipConnected
       ? [
           {

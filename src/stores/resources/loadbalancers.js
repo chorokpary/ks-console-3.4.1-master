@@ -81,8 +81,8 @@ export default class LoadBalancerStore extends Base {
         })
         const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
 
-        // Yaml 파일 관련 
         await this.fetchYaml(params);
+        await this.fetchFloatingList(params);
 
         this.detail = detail
         this.isLoading = false

@@ -135,7 +135,10 @@ export default class FloatingIp extends React.Component {
         dataIndex: 'instance_type',
         isHideable: true,
         width: 'auto',
-        render: instance_type => <p>{instance_type?.toUpperCase()}</p>,
+        render: instance_type => 
+          !!instance_type ? (
+            <span>{t(`RESOURCES_FLOATING_IP_${instance_type.toUpperCase()}`)}</span>
+          ) : ""
       },
       {
         title: t('RESOURCES_RESOURCE_NAME'),
