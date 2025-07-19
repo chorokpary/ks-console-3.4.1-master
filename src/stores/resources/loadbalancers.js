@@ -44,7 +44,8 @@ export default class LoadBalancerStore extends Base {
             const jsonData = {};
             const promises = data.lb.lb_rule.map(async (obj) => {
                 const ruleData = {};
-                ruleData.lb_id = res.id;
+                ruleData.lb_name = res.name;
+                ruleData.project = res.project;
                 ruleData.protocol = obj.protocol.toLowerCase();
                 if (obj.portRangeMax.indexOf("-") != -1) {
                     ruleData.port_range_min = obj.portRangeMax.split("-")[0];
@@ -119,18 +120,18 @@ export default class LoadBalancerStore extends Base {
 
     @action
     async update(params, data) {
-
-        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.id }), data))
+        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.name }), data))
         if (res.message === "OK") {
             const jsonData = {};
             if (data.lb.setAll) {
                 // 기존 rule 전체 삭제
-                await this.deleteLbRules({ ...params }, data.lb.originRule)
+                await this.deleteLbRules({ ...params }, data.lb.originRule, data.lb.project)
                 const [port_range_min, port_range_max] = data.lb.lb_rule[0].portRangeMax.split("-")
                 jsonData.lb_rule = {
                     port_range_min,
                     port_range_max,
-                    lb_id: data.lb.id,
+                    lb_name: data.lb.name,
+                    project: data.lb.project,
                     protocol: 'all'
                 }
                 // all 추가
@@ -141,7 +142,8 @@ export default class LoadBalancerStore extends Base {
 
                     if (!obj.originRuleId) {
                         const ruleData = {};
-                        ruleData.lb_id = params.id;
+                        ruleData.lb_name = params.name;
+                        ruleData.project = data.lb.project;
                         ruleData.protocol = obj.protocol.toLowerCase();
                         if (obj.portRangeMax.indexOf("-") != -1) {
                             const [port_range_min, port_range_max] = obj.portRangeMax.split("-")
@@ -165,9 +167,8 @@ export default class LoadBalancerStore extends Base {
 
                 if (delOriginRule.length > 0) {
                     // 기존 rule 중 삭제건 처리
-                    await this.deleteLbRules({ ...params }, delOriginRule)
+                    await this.deleteLbRules({ ...params }, delOriginRule, data.lb.project)
                 }
-
             }
         }
 
@@ -175,9 +176,9 @@ export default class LoadBalancerStore extends Base {
     }
 
     @action
-    async deleteLbRules({ ...params }, rules) {
+    async deleteLbRules({ ...params }, rules, project) {
         const promises = rules.map(async (id) => {
-            await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules/${id}`));
+            await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules/${id}/${project}`));
         })
         await Promise.all(promises);
     }
