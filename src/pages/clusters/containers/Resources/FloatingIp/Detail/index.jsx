@@ -35,7 +35,7 @@ const FloatingIpDetail = props => {
     }
   };
 
-  const { cluster } = props.match.params;
+  const { cluster, namespace } = props.match.params;
   const listUrl = `/clusters/${cluster}/floatingip`;
 
   const { routing } = props.rootStore;
@@ -46,10 +46,11 @@ const FloatingIpDetail = props => {
   // );
 
   const getOperations = () => {
+    console.log(namespace)
     return fipConnected
       ? [
           {
-            key: 'edit1',
+            key: 'disassociate',
             icon: 'image',
             text: t('RESOURCES_DEALLOCATE_FLOATING_IP'),
             action: 'view',
@@ -57,7 +58,7 @@ const FloatingIpDetail = props => {
               props.rootStore.triggerAction('floatingIp.deallocate', {
                 ...props.match.params,
                 store,
-                data: { id: detail.id },
+                data: { id: detail.id, project: namespace },
                 type: 'LB_POP',
                 success: () => handleConnectSuccess(false),
               }),
@@ -84,7 +85,7 @@ const FloatingIpDetail = props => {
               }),
           },
           {
-            key: 'edit1',
+            key: 'associate_vm',
             icon: 'image',
             text: t('RESOURCES_CONNECTION_VM'),
             action: 'view',
@@ -97,7 +98,7 @@ const FloatingIpDetail = props => {
               }),
           },
           {
-            key: 'edit2',
+            key: 'associate_lb',
             icon: 'image',
             text: t('RESOURCES_CONNECTION_LB'),
             action: 'view',

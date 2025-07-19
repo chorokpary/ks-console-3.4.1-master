@@ -635,9 +635,9 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${
+      )}/edgetron/resources/kubevirt/network_storages/${params.name}?project=${
         params.namespace
-      }/info`
+      }`
     )
     const response = {
       ...params,
@@ -712,9 +712,7 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/physical_networks?project=${
-        params.namespace
-      }`
+      )}/edgetron/resources/kubevirt/physical_networks`
     )
     const response = {
       ...params,
@@ -795,6 +793,12 @@ export default class VmStore extends Base {
     )
     const response = { ...params, ...this.mapper(result), kind: 'routers' }
 
+    if (params?.namespace) {
+      response.routers = response.routers.filter(
+        item => item.project === params.namespace
+      )
+    }
+
     this.isLoading = false
     return response
   }
@@ -812,6 +816,12 @@ export default class VmStore extends Base {
       ...params,
       ...this.mapper(result),
       kind: 'floating_ips',
+    }
+
+    if (params?.namespace) {
+      response.floating_ips = response.floating_ips.filter(
+        item => item.project === params.namespace
+      )
     }
 
     this.floatingList = response.floating_ips

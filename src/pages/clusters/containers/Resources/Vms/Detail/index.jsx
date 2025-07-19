@@ -39,7 +39,7 @@ const VmDetail = props => {
   const networkData = store.networksList || []
   const networkNameArray = store.detail.vm?.networks.map(item => item.name)
   const filterData = networkData?.filter(item =>
-    networkNameArray?.includes(item.id)
+    networkNameArray?.includes(item.name)
   )
   const disableFip = !!filterData.some(obj => !obj.external)
 
@@ -138,7 +138,7 @@ const VmDetail = props => {
           })
         } else {
           props.rootStore.triggerAction('vm.floatingIpPop.deallocate', {
-            data: { id: floatingId },
+            data: { id: floatingId, project: project },
             store: floatingstore,
             success: fetchData,
           })

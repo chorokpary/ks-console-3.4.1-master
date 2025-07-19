@@ -52,7 +52,6 @@ const ModifyModal = props => {
         }
       }
 
-      const { id } = detail;
       const dns = [];
       data.dns?.map(el => {
         if (el != '') {
@@ -71,12 +70,12 @@ const ModifyModal = props => {
         }
       });
       data.host_routes = host_routes;
+      data.project = detail.project;
 
       data.ip_pool = {
         start: data.ip_pool_start,
         end: data.ip_pool_end,
       };
-      data.id = id;
 
       onOk({ ...data });
     });

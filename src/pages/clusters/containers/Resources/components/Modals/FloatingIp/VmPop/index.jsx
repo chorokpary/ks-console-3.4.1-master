@@ -36,7 +36,7 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
     setModalView(false);
   }
 
-  const params = {cluster, workspace, namespace}   
+  const params = { cluster, workspace, namespace }
 
   useEffect(() => {
 
@@ -70,7 +70,7 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
       })
       const vmArr = new Set();
       vmDataList.map(obj => {
-        if (!arr.has(obj.id)) {
+        if (!arr.has(obj.name)) {
           vmArr.add(obj)
         }
       })
@@ -81,7 +81,7 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
 
   useEffect(() => {
     if (vmList.length > 0 && routerList.length > 0) {
-      const internalList = routerList.find((obj) => obj.external?.id == fipDetail.network)?.internal || [];
+      const internalList = routerList.find((obj) => obj.external?.name == fipDetail.network)?.internal || [];
       setInternalList(internalList)
 
       const arr = new Set();
@@ -89,7 +89,7 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
         var net = obj.networks;
         net.map((obj2) => {
           internalList.forEach(el => {
-            if (el.id == obj2.name) {
+            if (el.name == obj2.name) {
               arr.add(obj);
             }
           })
@@ -106,11 +106,12 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
     const network = data.network[radioExternalIdx].split(" ")
 
     onOk({
-      cluster : params.cluster,
-      namespace : params.namespace,
-      workspace : params.workspace,
+      cluster: params.cluster,
+      namespace: params.namespace,
+      workspace: params.workspace,
       id: fipDetail.id,
       instance_type: 'vm',
+      project: params.namespace,
       instance_id: radioExternal,
       target_network: network[0],
       target_ip: network[1],
@@ -119,7 +120,7 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
 
   const handleVmData = (data, idx) => {
     setVmData(data)
-    setRadioExternal(data.id)
+    setRadioExternal(data.name)
     setRadioExternalIdx(idx)
   }
 
@@ -129,10 +130,10 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
     let defaultValue = '';
     data?.map((networks) => (
       internalList.map((el) => {
-        if (el.id == networks.name) {
+        if (el.name == networks.name) {
           if (idx == 0) defaultValue = `${networks.name} ${networks.ip}`
           options.push({
-            label: `${networks.alias} ${networks.ip}`,
+            label: `${networks.name} ${networks.ip}`,
             value: `${networks.name} ${networks.ip}`
           })
           idx++;
@@ -188,7 +189,7 @@ const VmPop = ({ title, onOk, store, match, cluster, workspace, namespace }) => 
                       <td>
                         <Form.Item >
                           <Radio name="external" value={data.name}
-                            checked={radioExternal === data.id}
+                            checked={radioExternal === data.name}
                             onChange={(e) => { handleVmData(data, idx); }} />
                         </Form.Item>
                       </td>

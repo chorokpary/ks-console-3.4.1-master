@@ -11,7 +11,6 @@ import RouterStore from 'stores/resources/routers';
 import LoadBalancerStore from 'stores/resources/loadbalancers';
 
 const Status = props => {
-  // console.log("props : "+ JSON.stringify(props))
   const store = props.detailStore;
   const namespace = props.match.params.namespace;
   const cluster = props.detailStore?.detail.cluster;
@@ -47,7 +46,7 @@ const Status = props => {
     const fnGetLoadBalancerData = async () => {
       const loadBalancerList = await loadBalancerStore.fetchList(props.match.params);
       const loadBalancerFilterList = loadBalancerList.filter(
-        item => item.network.id == networkId,
+        item => item.network.name == networkName,
       );
 
       setLoadBalancerList(loadBalancerFilterList);
