@@ -1124,6 +1124,7 @@ export default class VmStore extends Base {
 
     delete params['resource']
     delete params['name']
+    delete params['match']
 
     if (params.searchName !== '' && params.searchName !== undefined) {
       params.name = params.searchName

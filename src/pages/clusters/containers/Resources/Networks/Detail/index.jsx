@@ -68,7 +68,7 @@ const NetworkDetail = props => {
       onClick: () =>
         props.rootStore.triggerAction('networks.remove', {
           type: 'NETWORK_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.network),
           store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),

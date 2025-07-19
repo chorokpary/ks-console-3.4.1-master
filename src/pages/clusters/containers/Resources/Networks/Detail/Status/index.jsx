@@ -13,8 +13,8 @@ import LoadBalancerStore from 'stores/resources/loadbalancers';
 const Status = props => {
   // console.log("props : "+ JSON.stringify(props))
   const store = props.detailStore;
+  const namespace = props.match.params.namespace;
   const cluster = props.detailStore?.detail.cluster;
-  const namespace = props.detailStore?.detail.namespace;
 
   const routerStore = new RouterStore();
   const loadBalancerStore = new LoadBalancerStore();
@@ -65,7 +65,6 @@ const Status = props => {
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
           match="network"
-          {...props.match.params}
           name={props.match.params.name}
           project={namespace}
         />

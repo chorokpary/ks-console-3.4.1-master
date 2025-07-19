@@ -93,7 +93,7 @@ export default class NetworkStorageStore extends Base {
             Promise.all(
                 rowKeyDict.map(rowKey =>
                     request.delete(
-                        `${this.getDeletelUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
+                        `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
                     )
                 )
             )
@@ -107,6 +107,6 @@ export default class NetworkStorageStore extends Base {
             Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
             return
         }
-        return this.submitting(request.delete(`${this.getDeletelUrl(user)}`))
+        return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
     }
 }

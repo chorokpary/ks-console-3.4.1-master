@@ -79,7 +79,7 @@ const SecurityGroupDetail = props => {
       onClick: () =>
         props.rootStore.triggerAction('securityGroup.remove', {
           type: 'SECURITYGROUP_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.security_group),
           store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl()),

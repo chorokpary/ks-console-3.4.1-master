@@ -94,7 +94,7 @@ const LoadBalancerDetail = (props) => {
             onClick: () =>
                 props.rootStore.triggerAction('loadBalancer.remove', {
                     type: 'LB_DETAIL',
-                    detail: toJS(store.detail),
+                    detail: toJS(store.detail.lb),
                     store: store,
                     cluster: props.match.params.cluster,
                     success: () => routing.push(listUrl()),

@@ -71,7 +71,7 @@ const KeypairDetail = (props) => {
       onClick: () =>
         props.rootStore.triggerAction('keypair.remove', {
           type: 'KEYPAIR_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.keypair),
           store: store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),

@@ -136,6 +136,12 @@ export default class BaseStore {
 
     params.limit = params.limit || 10
 
+    const project = namespace !== undefined ? namespace : undefined
+
+    if (project !== undefined) {
+      params.project = project
+    }
+
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)

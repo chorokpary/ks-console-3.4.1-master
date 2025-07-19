@@ -21,22 +21,15 @@ import { observer, inject } from 'mobx-react';
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
 
 const Status = props => {
-  const store = props.detailStore;
-  const cluster = props.detailStore?.detail.cluster;
-  
-  useEffect(() => {
-    const networkId = props.match.params.id;
-  }, []);
-
   return (
     <>
       <div>
         {/* 가상 머신 상세 관련 샘플 */}
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
-          variables="networks"
-          {...props.match.params}
-          id={props.match.params.name}
+          match="network"
+          name={props.match.params.name}
+          project={props.match.params.namespace}
         />
       </div>
     </>
