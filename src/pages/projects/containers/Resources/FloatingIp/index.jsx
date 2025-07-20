@@ -24,10 +24,7 @@ import withList, { ListPage } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 
 import { Link } from 'react-router-dom';
-import { ICON_TYPES } from 'utils/constants';
-import { getLocalTime, showNameAndAlias } from 'utils';
 
-import RoleStore from 'stores/role';
 import FloatingIpStore from 'stores/resources/floatingip';
 
 @withList({
@@ -54,7 +51,7 @@ export default class FloatingIp extends React.Component {
           trigger('floatingIp.remove', {
             detail: item,
             success: getData,
-            ...this.props.match.params,
+            ...this.props,
           }),
       },
     ];
@@ -91,6 +88,10 @@ export default class FloatingIp extends React.Component {
             }),
         },
       ],
+      getCheckboxProps: record => ({
+        disabled: !this.showAction(record),
+        name: record.name,
+      }),
     };
   }
 
@@ -118,7 +119,10 @@ export default class FloatingIp extends React.Component {
         dataIndex: 'instance_type',
         isHideable: true,
         width: 'auto',
-        render: instance_type => <p>{instance_type?.toUpperCase()}</p>,
+        render: instance_type => 
+          !!instance_type ? (
+            <span>{t(`RESOURCES_FLOATING_IP_${instance_type.toUpperCase()}`)}</span>
+          ) : ""
       },
       {
         title: t('RESOURCES_RESOURCE_NAME'),
@@ -130,7 +134,7 @@ export default class FloatingIp extends React.Component {
             <Link
               to={`/${workspace}/clusters/${cluster}/projects/${item?.project}/vms/${item?.instance_name}/${item?.instance_id}`}
             >
-              {item?.instance_name}
+              {instance_name}
             </Link>
           );
         },
@@ -138,12 +142,13 @@ export default class FloatingIp extends React.Component {
       {
         title: t('RESOURCES_NETWORK_NAME'),
         dataIndex: 'network',
-        render: (floating_ip, item) => {
+        width: 'auto',
+        render: (network, item) => {
           return (
             <Link
               to={`/${workspace}/clusters/${cluster}/projects/${item?.project}/networks/${item?.network_alias}/${item?.network}`}
             >
-              {item?.network_alias}
+              {network}
             </Link>
           );
         },

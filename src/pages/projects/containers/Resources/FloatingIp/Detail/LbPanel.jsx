@@ -1,44 +1,48 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import LbsIpStore from 'stores/resources/loadbalancers';
-import { Icon } from '@kube-design/components'
-import { Panel, Text } from 'components/Base'
-import styles from './index.scss'
+import { Icon } from '@kube-design/components';
+import { Panel, Text } from 'components/Base';
+import { Link } from 'react-router-dom'
 import classNames from 'classnames';
 import { inject } from 'mobx-react';
+import styles from './index.scss';
 
-const LbPanel = (props) => {
-
+const LbPanel = props => {
   const store = new LbsIpStore();
   const [lbDetail, setLbDetail] = useState();
-
+  
   useEffect(() => {
     const fnGetLbDetail = async () => {
-      const lbDetail = await store.fetchDetailLbs({ ...props.detailStore.detail, id: props.id });
-      setLbDetail(lbDetail.lb)
+      const lbDetail = await store.fetchDetailLbs({
+        ...props.detailStore.detail,
+        name: props.name,
+      });
+      setLbDetail(lbDetail.lb);
     };
 
     fnGetLbDetail();
-  }, [])
+  }, []);
 
-  const renderContent = (obj) => {
+  const renderContent = obj => {
     return (
       <>
         <div className={styles.content}>
           <div className={styles.text}>
-            <div>{obj.network.name}</div>
+            <div>
+              <Link to={`/${props.workspace}/clusters/${props.cluster}/projects/${props.project}/loadBalancers/${obj.name}`}>
+                {obj.name}
+              </Link>
+            </div>
             <p>{t('RESOURCES_NAME')}</p>
           </div>
           <div className={styles.text}>
-            {obj.members?.length > 1 ?
-              <div>{`${obj.members?.[0]} 외 ${obj.members?.length - 1} 건`}</div>
-              :
+            {obj.members?.length > 1 ? (
+              <div>{`${obj.members?.[0]} 외 ${obj.members?.length -
+                1} 건`}</div>
+            ) : (
               <div>{obj.members?.[0]}</div>
-            }
+            )}
             <p>{t('RESOURCES_NETWORK')}</p>
-          </div>
-          <div className={styles.text}>
-            <div>{obj.name}</div>
-            <p>{t('RESOURCES_LOAD_BALANCER_NAME')}</p>
           </div>
           <div className={styles.text}>
             <div>{obj.virtual_ip}</div>
@@ -50,20 +54,20 @@ const LbPanel = (props) => {
           </div>
         </div>
       </>
-    )
-  }
+    );
+  };
 
   return (
     <>
-      {lbDetail &&
-        <Panel title={t("RESOURCES_LOAD_BALANCER")} >
+      {lbDetail && (
+        <Panel title={t('RESOURCES_LOAD_BALANCER')}>
           <div className={styles.wrapper}>
             <div
-              className={classNames(styles.expandItem, "", {
+              className={classNames(styles.expandItem, '', {
                 [styles.expanded]: false,
               })}
             >
-              <div className={styles.itemMain} >
+              <div className={styles.itemMain}>
                 <div className={styles.icon}>
                   <Icon name="loadbalancer" size={40} />
                 </div>
@@ -72,9 +76,9 @@ const LbPanel = (props) => {
             </div>
           </div>
         </Panel>
-      }
+      )}
     </>
-  )
-}
+  );
+};
 
-export default inject('detailStore')(LbPanel)
+export default inject('detailStore')(LbPanel);

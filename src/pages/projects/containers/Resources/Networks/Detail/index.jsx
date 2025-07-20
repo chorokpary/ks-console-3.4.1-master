@@ -15,7 +15,7 @@ import * as common from 'utils/resources'
 import { getIndexRoute } from 'utils/router.config'
 import Status from 'projects/containers/Resources/Networks/Detail/Status'
 
-const PATH_DETAIL = '/:workspace/clusters/:cluster/projects/:namespace/networks/:name/:id'
+const PATH_DETAIL = '/:workspace/clusters/:cluster/projects/:namespace/networks/:name'
 
 
 const store = new NetworkStore();
@@ -35,7 +35,7 @@ const NetworkDetail = (props) => {
 
   const { routing } = props.rootStore;
 
-  const PATH = `${listUrl}/${props.match.params.name}/${props.match.params.id}`
+  const PATH = `${listUrl}/${props.match.params.name}`
 
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 

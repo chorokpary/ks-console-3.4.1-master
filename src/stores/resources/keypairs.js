@@ -67,6 +67,7 @@ export default class KeypairStore extends Base {
     const keypairData = {};
 
     keypairData.description = data?.description;
+    keypairData.project = data.project;
 
     jsonData.keypair = keypairData;
 

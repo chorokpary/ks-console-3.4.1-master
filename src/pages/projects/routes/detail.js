@@ -139,7 +139,7 @@ export default PATH => [
     component: AlertPoliciesDetail,
   },
   {
-    path: `${PATH}/keypairs/:name/:id`,
+    path: `${PATH}/keypairs/:name`,
     component: KeypairDetail,
   },
   {
@@ -159,15 +159,15 @@ export default PATH => [
     component: ContainerImageDetail,
   },
   {
-    path: `${PATH}/securityGroups/:name/:id`,
+    path: `${PATH}/securityGroups/:name`,
     component: SecurityGroupDetail,
   },
   {
-    path: `${PATH}/networks/:name/:id`,
+    path: `${PATH}/networks/:name`,
     component: NetworkDetail,
   },
   {
-    path: `${PATH}/routers/:name/:id`,
+    path: `${PATH}/routers/:name`,
     component: RouterDetail,
   },
   {
@@ -179,7 +179,7 @@ export default PATH => [
     component: PhysicalNetworkDetail,
   },
   {
-    path: `${PATH}/loadbalancers/:name/:id`,
+    path: `${PATH}/loadbalancers/:name`,
     component: LoadBalancerDetail,
   },
   {

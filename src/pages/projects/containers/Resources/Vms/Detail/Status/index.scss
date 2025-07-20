@@ -181,7 +181,7 @@
 
   .title {
     min-width: 120px;
-    width: 16%;
+    width: 12%;
 
     & > div {
       @include ellipsis;
@@ -195,7 +195,7 @@
 
     &.name {
       padding-right: 20px;
-      width: 26%;
+      width: 28%;
     }
   }
 
@@ -295,7 +295,6 @@
 
   .title {
     min-width: 120px;
-    width: 20%;
 
     & > div {
       @include ellipsis;
@@ -309,7 +308,7 @@
 
     &.name {
       padding-right: 20px;
-      width: 26%;
+      width: 28%;
     }
   }
 

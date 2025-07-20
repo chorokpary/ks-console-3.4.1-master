@@ -15,46 +15,42 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import { Link } from 'react-router-dom'
-import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
-import Tabs from 'components/Cards/Banner/Tabs'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+
+import { Link } from 'react-router-dom';
+import React from 'react';
+import { Avatar, Status } from 'components/Base';
+import Tabs from 'components/Cards/Banner/Tabs';
 import { getDocsUrl } from 'utils'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 
-import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
-import { Icon } from '@kube-design/components'
-import classnames from 'classnames'
+import { getLocalTime } from 'utils';
+import { Icon } from '@kube-design/components';
+import classnames from 'classnames';
 
-import RoleStore from 'stores/role'
-import NetworkStore from 'stores/resources/networks'
+import NetworkStore from 'stores/resources/networks';
 
-import styles from './index.scss'
+import styles from './index.scss';
 
 @withList({
   store: new NetworkStore(),
   module: 'networks',
   authKey: 'networks',
   name: t('RESOURCES_NETWORK'),
-  rowKey: 'id'
+  rowKey: 'name'
 })
 export default class Networks extends React.Component {
-
   handleTabChange = value => {
     const { cluster, workspace, namespace } = this.props.match.params
-    this.props.routing.push(`/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`)
-  }
+    this.props.routing.push(`/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`);
+  };
 
   showAction(record) {
-    return globals.user.username !== record.name
+    return globals.user.username !== record.name;
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { getData, trigger } = this.props;
     return [
       {
         key: 'delete',
@@ -69,11 +65,11 @@ export default class Networks extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ]
+    ];
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props
+    const { trigger, getData, routing, tableProps } = this.props;
 
     return {
       ...tableProps.tableActions,
@@ -108,22 +104,22 @@ export default class Networks extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    }
+    };
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props
+    const { getSortOrder } = this.props;
     const { workspace, cluster, namespace } = this.props.match.params
     return [
       {
         title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
-        render: (name, item) => (
+        render: name => (
           <Avatar
             icon="network-duotone"
             iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${name}/${item.id}`}
+            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${name}`}
             title={name}
           />
         ),
@@ -135,13 +131,13 @@ export default class Networks extends React.Component {
         width: 'auto',
       },
       {
-        title: t('MTU'),
+        title: t('RESOURCES_MTU'),
         dataIndex: 'mtu',
         isHideable: true,
         width: 'auto',
       },
       {
-        title: t('CIDR'),
+        title: t('RESOURCES_CIDR'),
         dataIndex: 'cidr',
         isHideable: true,
         width: 'auto',
@@ -161,17 +157,15 @@ export default class Networks extends React.Component {
         width: 150,
         render: date => (
           <p>
-            {date
-              ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-              : t('-')}
+            {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
           </p>
         ),
       },
-    ]
-  }
+    ];
+  };
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') }
+    return { desc: t('RESOURCES_NO_DATA') };
   }
 
   get tabs() {
@@ -192,17 +186,16 @@ export default class Networks extends React.Component {
           label: t('RESOURCES_NETWORK_TAB3'),
         },
       ],
-    }
+    };
   }
 
   modalTopology = () => {
-    const { getData, trigger } = this.props
-
-    trigger('networks.topology.project', {
+    const { getData, trigger } = this.props;
+    trigger('networks.topology', {
       success: getData,
       ...this.props.match.params,
-    })
-  }
+    });
+  };
 
   render() {
 
@@ -249,5 +242,3 @@ export default class Networks extends React.Component {
     )
   }
 }
-
-

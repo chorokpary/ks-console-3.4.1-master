@@ -1,4 +1,4 @@
-/* eslint-disable no-extra-boolean-cast */
+/* eslint-disable no-undef */
 /*
  * This file is part of KubeSphere Console.
  * Copyright (C) 2019 The KubeSphere Console Authors.
@@ -27,7 +27,7 @@ import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
-import { getLocalTime } from 'utils'
+import { getLocalTime, showNameAndAlias } from 'utils'
 
 import VmStore from 'stores/resources/vms'
 import styles from './index.scss'
@@ -59,9 +59,10 @@ export default class Vms extends React.Component {
 
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list)
+    const project = this.props.clusterStore.project || ''
 
     if (this.isRuning && !this.isRefresh) {
-      this.getData({ silent: true, page, limit })
+      this.getData({ silent: true, page, limit, project })
     }
   }
 
@@ -113,6 +114,7 @@ export default class Vms extends React.Component {
 
   get tableActions() {
     const { trigger, getData, tableProps } = this.props
+
     return {
       ...tableProps.tableActions,
       actions: [
@@ -139,7 +141,7 @@ export default class Vms extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('vm.remove.batch', {
+            trigger('vm.remove.clusterbatch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -189,6 +191,16 @@ export default class Vms extends React.Component {
       { text: t('RESOURCES_STOPPING'), value: 'Stopping' },
       { text: t('RESOURCES_TERMINATING'), value: 'Terminating' },
       { text: t('RESOURCES_UNKNOWN'), value: 'Unknown' },
+      { text: t('RESOURCES_CRASHLOOPBACKOFF'), value: 'CrashLoopBackOff' },
+      { text: t('RESOURCES_ERRORUNSCHEDULABLE'), value: 'ErrorUnschedulable' },
+      { text: t('RESOURCES_ERRIMAGEPULL'), value: 'ErrImagePull' },
+      { text: t('RESOURCES_IMAGEPULLBACKOFF'), value: 'ImagePullBackOff' },
+      { text: t('RESOURCES_ERRORPVCNOTFOUND'), value: 'ErrorPvcNotFound' },
+      { text: t('RESOURCES_DATAVOLUMEERROR'), value: 'DataVolumeError' },
+      {
+        text: t('RESOURCES_WAITINGFORVOLUMEBINDING'),
+        value: 'WaitingForVolumeBinding',
+      },
     ]
 
     return VMS_STATUS.map(status => ({
@@ -238,7 +250,7 @@ export default class Vms extends React.Component {
                   className={styles.title}
                   to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${record.name}`}
                 >
-                  {name}
+                  {name}{' '}
                 </Link>
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
@@ -255,9 +267,7 @@ export default class Vms extends React.Component {
         render: (image, record) => {
           const icon = `ico-os-${record.image_object?.distro_type}`
           return image ? (
-            <Link
-              to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}
-            >
+            <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}>
               <i
                 style={{
                   backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
@@ -292,12 +302,13 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: networks => {
           let networkIpList
-          if (!!networks) {
+
+          if (networks) {
             networkIpList = networks.map(el => {
               if (el.name !== 'k8s-pod-network') {
                 return <p key={el.name}>{el.ip}</p>
               }
-              return <p />
+              return <p></p>
             })
           } else {
             networkIpList = <p>-</p>
@@ -317,7 +328,7 @@ export default class Vms extends React.Component {
           const floatingIp =
             floatingList &&
             floatingList
-              ?.filter(row => row.instance_id === record.id)
+              ?.filter(row => row.instance_id === record.name)
               .map(el => <p key={el.id}>{el.floating_ip}</p>)
 
           return floatingIp === '' ? '-' : floatingIp
@@ -341,17 +352,22 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: security_group_objects => {
-          let securityGroupText = ''
-          if (!!security_group_objects) {
+          let securityGroupText
+          if (security_group_objects) {
             securityGroupText =
               security_group_objects.length > 1
-                ? `${
-                    security_group_objects[0].name
-                  } 외 ${security_group_objects.length - 1}개`
+                ? `${security_group_objects[0].name} ${t(
+                    'RESOURCES_BESIDES'
+                  )} ${security_group_objects.length - 1} ${t(
+                    'RESOURCES_COUNT'
+                  )}`
                 : security_group_objects.length === 1
                 ? security_group_objects[0].name
                 : '-'
+          } else {
+            securityGroupText = ''
           }
+
           return securityGroupText
         },
       },
@@ -365,8 +381,7 @@ export default class Vms extends React.Component {
         render: (state, record) => {
           const stateArray = ['Stopped', 'Running', 'Paused']
 
-          if (stateArray.includes(state)) {
-            const vmsRole = get(globals.user.projectRules, [
+          const vmsRole = get(globals.user.projectRules, [
               cluster,
               namespace,
               'vms',
@@ -378,85 +393,31 @@ export default class Vms extends React.Component {
             ])
 
             if (vmsRole?.includes('manage') || _Role?.includes('manage')) {
-              return (
-                <div>
-                  <Dropdown
-                    content={
-                      <Menu>{this.fnGetActionColumn(state, record.id)}</Menu>
-                    }
-                  >
-                    <div className={styles.iconwrapper}>
-                      <i
-                        className={styles[`ico-status-${state.toLowerCase()}`]}
-                      />
-                      <p>
-                        {/* {state === 'Stopped' && t('RESOURCES_STOP')}
-                      {state === 'Provisioning' && t('RESOURCES_PROVISIONING')}
-                      {state === 'Starting' && t('RESOURCES_STARTING')}
-                      {state === 'Running' && t('RESOURCES_RUNNING')}
-                      {state === 'Paused' && t('RESOURCES_PAUSED')}
-                      {state === 'Migrating' && t('RESOURCES_MIGRATING')}
-                      {state === 'Stopping' && t('RESOURCES_STOPPING')}
-                      {state === 'Terminating' && t('RESOURCES_TERMINATING')}
-                      {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
-                        {state === 'Stopped'
-                          ? t('RESOURCES_STOP')
-                          : state === 'Provisioning'
-                          ? t('RESOURCES_PROVISIONING')
-                          : state === 'Starting'
-                          ? t('RESOURCES_STARTING')
-                          : state === 'Running'
-                          ? t('RESOURCES_RUNNING')
-                          : state === 'Paused'
-                          ? t('RESOURCES_PAUSED')
-                          : state === 'Migrating'
-                          ? t('RESOURCES_MIGRATING')
-                          : state === 'Stopping'
-                          ? t('RESOURCES_STOPPING')
-                          : state === 'Terminating'
-                          ? t('RESOURCES_TERMINATING')
-                          : state === 'Unknown'
-                          ? t('RESOURCES_UNKNOWN')
-                          : ''}
-                      </p>
-                    </div>
-                  </Dropdown>
-                </div>
-              )
-            }
+            return (
+              <div>
+                <Dropdown
+                  content={
+                    <Menu>{this.fnGetActionColumn(state, record.id)}</Menu>
+                  }
+                >
+                  <div className={styles.iconwrapper}>
+                    <i
+                      className={styles[`ico-status-${state.toLowerCase()}`]}
+                    />
+                    <p>
+                      {t(`RESOURCES_${state.toUpperCase()}`)}
+                    </p>
+                  </div>
+                </Dropdown>
+              </div>
+            )
           }
           return (
             <div className={styles.iconwrapper}>
               <i className={styles[`ico-status-${state.toLowerCase()}`]} />
               <p>
-                {/* {state === 'Stopped' && t('RESOURCES_STOP')}
-                      {state === 'Provisioning' && t('RESOURCES_PROVISIONING')}
-                      {state === 'Starting' && t('RESOURCES_STARTING')}
-                      {state === 'Running' && t('RESOURCES_RUNNING')}
-                      {state === 'Paused' && t('RESOURCES_PAUSED')}
-                      {state === 'Migrating' && t('RESOURCES_MIGRATING')}
-                      {state === 'Stopping' && t('RESOURCES_STOPPING')}
-                      {state === 'Terminating' && t('RESOURCES_TERMINATING')}
-                      {state === 'Unknown' && t('RESOURCES_UNKNOWN')} */}
-                {state === 'Stopped'
-                  ? t('RESOURCES_STOP')
-                  : state === 'Provisioning'
-                  ? t('RESOURCES_PROVISIONING')
-                  : state === 'Starting'
-                  ? t('RESOURCES_STARTING')
-                  : state === 'Running'
-                  ? t('RESOURCES_RUNNING')
-                  : state === 'Paused'
-                  ? t('RESOURCES_PAUSED')
-                  : state === 'Migrating'
-                  ? t('RESOURCES_MIGRATING')
-                  : state === 'Stopping'
-                  ? t('RESOURCES_STOPPING')
-                  : state === 'Terminating'
-                  ? t('RESOURCES_TERMINATING')
-                  : state === 'Unknown'
-                  ? t('RESOURCES_UNKNOWN')
-                  : ''}
+                {/* {state} */}
+                {t(`RESOURCES_${state.toUpperCase()}`)}
               </p>
             </div>
           )
