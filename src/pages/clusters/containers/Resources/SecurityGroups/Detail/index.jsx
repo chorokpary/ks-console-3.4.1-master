@@ -100,6 +100,10 @@ const SecurityGroupDetail = props => {
         value: detail.cluster,
       },
       {
+        name: t('PROJECT'),
+        value: detail.namespace,
+      },
+      {
         name: t('RESOURCES_DESCRIPTION'),
         value: detail.security_group.description,
       },
@@ -121,8 +125,8 @@ const SecurityGroupDetail = props => {
     module: store.module,
     name: get(store.detail, 'name'),
     operations:
-      get(store.detail, 'id') === 'c5071a6b-d606-4fde-86c1-6bcc3160bb28' ||
-      get(store.detail, 'id') === 'eb99fdd0-560f-4f85-b3a4-3780a22f3a00'
+      get(store.detail, 'name') === 'allow-egress-all' ||
+      get(store.detail, 'name') === 'allow-ingress-all'
         ? getDefaultSCOperations()
         : getOperations(),
     attrs: getAttrs(),

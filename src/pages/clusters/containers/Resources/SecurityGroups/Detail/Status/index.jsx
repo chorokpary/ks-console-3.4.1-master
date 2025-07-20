@@ -9,7 +9,7 @@ import styles from './index.scss'
 
 const Status = (props) => {
     const store = props.detailStore;
-    const namespace = props.detailStore?.detail.namespace;
+    const namespace = props.match.params.namespace;
 
     useEffect(() => {
 
