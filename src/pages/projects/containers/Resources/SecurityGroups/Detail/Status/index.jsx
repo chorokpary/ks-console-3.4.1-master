@@ -85,7 +85,7 @@ const Status = (props) => {
                 <DetailVmList
                     type={t('RESOURCES_SECURITY_GROUP')}
                     match='security_group'
-                    name={namespace + "/" + props.match.params.name}
+                    name={props.match.params.name}
                     project={namespace}
                     cluster={cluster}
                     workspace={workspace}
