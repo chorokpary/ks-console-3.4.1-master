@@ -37,8 +37,7 @@ import SecurityGroupStore from 'stores/resources/securityGroups'
 export default class SecurityGroups extends React.Component {
   showAction(record) {
     return !(
-      record.project === 'default' &&
-      (record.name === 'default' || record.name === 'ingress-all')
+      (record.name === 'allow-egress-all' || record.name === 'allow-ingress-all')
     )
   }
 

@@ -27,9 +27,6 @@ const ModifyModal = props => {
   const [modelView, setModalView] = useState(true);
   const [formData, setFormData] = useState({});
 
-  const [projectName, setProjectName] = useState(
-    props.namespace ? props.namespace : 'default'
-  );
   const [btnDimmOut, setBtnDimmOut] = useState(false);
   const [btnDimmIn, setBtnDimmIn] = useState(false);
 
@@ -366,7 +363,7 @@ const ModifyModal = props => {
       const sgData = {
         rules: [...formRulesIngressFields, ...formRulesEgressFields],
         project: props.namespace,
-        security_group_id: sgDetail.id,
+        security_group_name: sgDetail.name,
         originRules: [...inRulesIds, ...outRulesIds],
       };
       // console.log(sgData)

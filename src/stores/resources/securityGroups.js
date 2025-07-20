@@ -41,19 +41,22 @@ export default class SecurityGroupStore extends Base {
     let res = await this.submitting(request.post(this.getListUrl(params), data))
     if (res.message === "OK") {
 
+      const project = data.security_group.project;
+
       const jsonData = {};
       const promises = data.security_group.security_group_rules.map(async (obj) => {
-        const data = {};
-        data.security_group_id = res.id;
-        data.direction = obj.direction.toLowerCase();
-        data.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
-        data.protocol = obj.protocol.toLowerCase();
-        data.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
-        data.port_range_max = obj.portRangeMax;
+        const item = {};
+        item.security_group_name = res.name;
+        item.direction = obj.direction.toLowerCase();
+        item.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
+        item.protocol = obj.protocol.toLowerCase();
+        item.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
+        item.port_range_max = obj.portRangeMax;
+        item.project = project;
 
-        data.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
+        item.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
 
-        jsonData.security_group_rule = data;
+        jsonData.security_group_rule = item;
 
         await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
       })
@@ -141,13 +144,14 @@ export default class SecurityGroupStore extends Base {
     const promises = rules.map(async (obj) => {
       if (!obj.originRuleId) {
         const jData = {};
-        jData.security_group_id = data.security_group.security_group_id;
+        jData.security_group_name = data.security_group.security_group_name;
         jData.direction = obj.direction.toLowerCase();
         jData.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
         jData.protocol = obj.protocol.toLowerCase();
         jData.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
         jData.port_range_max = obj.portRangeMax;
         jData.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
+        jData.project = data.security_group.project;
         jsonData.security_group_rule = jData;
 
         await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));

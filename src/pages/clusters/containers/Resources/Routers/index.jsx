@@ -17,16 +17,13 @@
  */
 
 import React from 'react';
-import { toJS } from 'mobx';
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
 import ResourceTable from 'clusters/components/ResourceTable';
+import { ListPage, withClusterList } from 'components/HOCs/withList'
 
 import { Link } from 'react-router-dom';
 import { getLocalTime, showNameAndAlias } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
 
 import RouterStore from 'stores/resources/routers';
 
@@ -155,7 +152,11 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: internal => internal.map(item => <p>{item.name}</p>),
+        render: (internal, record) => internal.map(item => <Link
+          to={`/clusters/${cluster}/projects/${record.project}/networks/${item.name}`}
+        >
+          {item.name}
+        </Link>),
       },
       {
         title: t('RESOURCES_EXTERNAL_NETWORK'),
@@ -163,10 +164,10 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: external => {
+        render: (external, record) => {
           return (
             <Link
-              to={`/clusters/${cluster}/networks/${external?.name}/${external?.id}`}
+              to={`/clusters/${cluster}/projects/${record.project}/networks/${external?.name}`}
             >
               {external?.name}
             </Link>
@@ -191,21 +192,6 @@ export default class Routers extends React.Component {
     return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
   }
 
-  get columnSearch() {
-    return [
-      {
-        dataIndex: 'name',
-        title: t('RESOURCES_NAME'),
-        search: true,
-      },
-      {
-        dataIndex: 'enable_snat',
-        title: t('RESOURCES_SNAT_OPTION'),
-        search: true,
-      },
-    ];
-  }
-
   render() {
     const { bannerProps, tableProps } = this.props;
     return (
@@ -220,7 +206,6 @@ export default class Routers extends React.Component {
         <ResourceTable
           {...tableProps}
           emptyProps={this.emptyProps}
-          className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}
           tableActions={this.tableActions}
           columns={this.getColumns()}
