@@ -165,17 +165,17 @@ export default class SecurityGroupStore extends Base {
 
     if (delOriginRule.length > 0) {
       // 기존 rule 중 삭제건 처리
-      await this.deleteSgRules({ ...params }, delOriginRule)
+      await this.deleteSgRules({ ...params }, delOriginRule, data.security_group.project)
     }
   }
 
 
   @action
-  async deleteSgRules({ ...params }, rules) {
+  async deleteSgRules({ ...params }, rules, project) {
+    console.log(project)
     const promises = rules.map(async (id) => {
-      await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/${id}`));
+      await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/${id}/${project}`));
     })
     await Promise.all(promises);
   }
-
 }
