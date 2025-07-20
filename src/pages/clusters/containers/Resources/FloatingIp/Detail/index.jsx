@@ -194,8 +194,8 @@ const Status = () => {
     return (
       <LbPanel
         type={t('RESOURCES_FLOATING_IP')}
-        variables="id"
-        id={detailFip.instance_id}
+        name={detailFip.instance_id}
+        project={store.detail.namespace}
       />
     );
   }
