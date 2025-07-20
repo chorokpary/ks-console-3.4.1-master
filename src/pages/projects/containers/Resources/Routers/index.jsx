@@ -17,16 +17,13 @@
  */
 
 import React from 'react';
-import { toJS } from 'mobx';
 import { Avatar, Status } from 'components/Base';
 import Banner from 'components/Cards/Banner';
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
-import ResourceTable from 'clusters/components/ResourceTable';
+import withList, { ListPage } from 'components/HOCs/withList';
 
 import { Link } from 'react-router-dom';
 import { getLocalTime, showNameAndAlias } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
 
 import RouterStore from 'stores/resources/routers';
 
@@ -35,7 +32,7 @@ import RouterStore from 'stores/resources/routers';
   module: 'routers',
   authKey: 'routers',
   name: t('RESOURCES_VROUTER'),
-  rowKey: 'id',
+  rowKey: 'name',
 })
 export default class Routers extends React.Component {
   showAction(record) {
@@ -72,7 +69,7 @@ export default class Routers extends React.Component {
           text: t('RESOURCES_CREATE'),
           action: 'create',
           onClick: () =>
-            trigger('router.regist.project', {
+            trigger('router.regist', {
               ...this.props.match.params,
               type: this.name,
               success: getData,
@@ -114,7 +111,7 @@ export default class Routers extends React.Component {
             <Avatar
               icon="router"
               iconSize={40}
-              to={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${name}/${record.id}`}
+              to={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${name}`}
               title={name}
             />
           );
@@ -143,7 +140,11 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: internal => internal.map(item => <p>{item.name}</p>),
+        render: (internal, record) => internal.map(item => <Link
+          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${item.name}`}
+        >
+          {item.name}
+        </Link>),
       },
       {
         title: t('RESOURCES_EXTERNAL_NETWORK'),
@@ -151,16 +152,15 @@ export default class Routers extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (external, item) => {
+        render: (external, record) => {
           return (
             <Link
-              to={`/${workspace}/clusters/${cluster}/projects/${item?.project}/networks/${external?.name}/${external?.id}`}
+              to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networks/${external?.name}`}
             >
               {external?.name}
             </Link>
           );
         },
-        // render: external => <p>{external?.name}</p>,
       },
       {
         title: t('RESOURCES_REGIST_DATE'),
@@ -178,21 +178,6 @@ export default class Routers extends React.Component {
 
   get emptyProps() {
     return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
-  }
-
-  get columnSearch() {
-    return [
-      {
-        dataIndex: 'name',
-        title: t('RESOURCES_NAME'),
-        search: true,
-      },
-      {
-        dataIndex: 'enable_snat',
-        title: t('RESOURCES_SNAT_OPTION'),
-        search: true,
-      },
-    ];
   }
 
   render() {

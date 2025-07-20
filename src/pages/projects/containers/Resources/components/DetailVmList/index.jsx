@@ -38,7 +38,7 @@ const DetailVmList = props => {
 
   const workspace = props.workspace
   const cluster = props.cluster
-  const namespace = props.namespace
+  const namespace = props.project
 
   const [vmDataList, setVmDataList] = useState([])
 
@@ -105,12 +105,13 @@ const DetailVmList = props => {
     const detailParams = {
       cluster,
       namespace,
-      project: namespace,
-      volume: props.name,
       resource: props.variables,
+      match: props.match,
+      id: props.id,
       name: props.name,
       page,
       limit: perPage,
+      project: props.project,
     }
 
     if (params.name !== '' && params.name !== undefined) {

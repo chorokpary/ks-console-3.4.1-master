@@ -6,10 +6,7 @@ import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import DetailPage from 'clusters/containers/Base/Detail';
-import { Card } from 'components/Base';
-import { getLocalTime } from 'utils';
 
-import * as common from 'utils/resources';
 import routes from './routes';
 
 import KeypairStore from 'stores/resources/keypairs';
