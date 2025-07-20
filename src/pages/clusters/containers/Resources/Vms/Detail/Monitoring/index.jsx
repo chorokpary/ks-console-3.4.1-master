@@ -183,7 +183,7 @@ const index = props => {
       })
 
       const vmDiskMetricData = find(diskData, data => {
-        if (data.metric?.pod === store.detail.id) return data
+        if (data.metric?.pod === store.detail.name) return data
       })
 
       // 배열 처리
