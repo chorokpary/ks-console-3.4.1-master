@@ -104,6 +104,10 @@ const ResourceDetail = props => {
         value: detail.infra.namespace,
       },
       {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
+      },
+      {
         name: t('PODS_CIDR'),
         value:
           detail.pod_cidrs.length > 0

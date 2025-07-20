@@ -91,6 +91,10 @@ const NetworkDetail = props => {
         value: detail.cluster,
       },
       {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
+      },
+      {
         name: t('RESOURCES_NETWORK_TYPE_YOO'),
         value: detail.network.type.toUpperCase(),
       },

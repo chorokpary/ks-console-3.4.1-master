@@ -101,7 +101,7 @@ const SecurityGroupDetail = props => {
       },
       {
         name: t('PROJECT'),
-        value: detail.namespace,
+        value: props.match.params.namespace,
       },
       {
         name: t('RESOURCES_DESCRIPTION'),

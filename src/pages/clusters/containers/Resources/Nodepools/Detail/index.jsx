@@ -82,6 +82,10 @@ const ResourceDetail = props => {
         value: props.match.params.clustername,
       },
       {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
+      },
+      {
         name: t('RESOURCES_NODEPOOL_NAME'),
         value: nodepool.name,
       },

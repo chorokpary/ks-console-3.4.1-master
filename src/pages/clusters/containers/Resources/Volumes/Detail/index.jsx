@@ -135,6 +135,10 @@ const VolumeDetail = props => {
         value: detail.cluster,
       },
       {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
+      },
+      {
         name: t('RESOURCES_STORAGE_CLASS'),
         value: detail.volume.storage_class,
       },

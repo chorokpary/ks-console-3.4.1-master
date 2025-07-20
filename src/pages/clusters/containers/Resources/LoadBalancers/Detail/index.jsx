@@ -116,6 +116,10 @@ const LoadBalancerDetail = (props) => {
                 value: detail.cluster,
             },
             {
+                name: t('PROJECT'),
+                value: props.match.params.namespace,
+            },
+            {
                 name: t('RESOURCES_NETWORK_NAME'),
                 value: detail.lb.network.name,
             },

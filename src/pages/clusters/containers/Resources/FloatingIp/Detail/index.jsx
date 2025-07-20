@@ -122,6 +122,10 @@ const FloatingIpDetail = props => {
         value: get(store.detail, 'cluster'),
       },
       {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
+      },
+      {
         name: t('RESOURCES_NETWORK_NAME'),
         value: detail?.network_alias,
       },
