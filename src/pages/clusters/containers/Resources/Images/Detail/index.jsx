@@ -188,7 +188,7 @@ const ImageDetail = props => {
             component: Status,
             exact: true,
             name: props.match.params.name,
-            namespace: props.detailStore?.detail.namespace,
+            namespace : props.match.params.namespace,
           },
           getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}

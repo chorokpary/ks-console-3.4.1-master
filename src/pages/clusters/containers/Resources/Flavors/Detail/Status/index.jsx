@@ -4,7 +4,7 @@ import DetailVmList from 'pages/clusters/containers/Resources/components/DetailV
 import DetailKaasListFlavor from 'pages/clusters/containers/Resources/components/DetailKaasListFlavor'
 
 const Status = props => {
-  const namespace = props.detailStore?.detail.namespace;
+  const namespace = props.match.params.namespace;
   
   return (
     <>
