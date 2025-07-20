@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import DetailPage from 'clusters/containers/Base/Detail';
+import DetailPage from 'projects/containers/Base/Detail';
 import NetworkStorageStore from 'stores/resources/networkstorages';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base';
 import { getLocalTime } from 'utils';
 
 import { getIndexRoute } from 'utils/router.config';

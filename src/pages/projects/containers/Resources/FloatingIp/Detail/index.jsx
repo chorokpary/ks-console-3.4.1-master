@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getIndexRoute } from 'utils/router.config';
-import DetailPage from 'clusters/containers/Base/Detail';
+import DetailPage from 'projects/containers/Base/Detail';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';

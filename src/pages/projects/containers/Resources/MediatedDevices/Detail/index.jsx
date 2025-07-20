@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React, { useEffect } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
+import DetailPage from 'projects/containers/Base/Detail'
 import MediatedDeviceStore from 'stores/resources/mediateddevices'
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'

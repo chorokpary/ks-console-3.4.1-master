@@ -2,12 +2,10 @@
 import React, { useEffect } from 'react'
 import DetailPage from 'projects/containers/Base/Detail'
 
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
 
 import routes from './routes'

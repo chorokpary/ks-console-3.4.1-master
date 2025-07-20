@@ -16,14 +16,12 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React, { useEffect } from 'react';
-import DetailPage from 'clusters/containers/Base/Detail';
+import DetailPage from 'projects/containers/Base/Detail';
 import PhysicalNetworkStore from 'stores/resources/physicalnetworks';
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base';
 import { getLocalTime } from 'utils';
 
 import { getIndexRoute } from 'utils/router.config';

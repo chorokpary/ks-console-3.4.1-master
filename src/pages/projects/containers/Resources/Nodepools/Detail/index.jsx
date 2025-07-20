@@ -4,7 +4,7 @@ import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Icon, Loading } from '@kube-design/components'
 import { inject, observer } from 'mobx-react'
-import DetailPage from 'clusters/containers/Base/Detail'
+import DetailPage from 'projects/containers/Base/Detail'
 import { getLocalTime } from 'utils'
 
 import NodePoolResourceStore from 'stores/resources/nodepools'
