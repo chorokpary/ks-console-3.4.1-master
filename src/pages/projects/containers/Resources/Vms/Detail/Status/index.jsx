@@ -109,7 +109,7 @@ const Status = props => {
         item => item.name
       )
       const filterData = securityData.filter(item =>
-        securityIdArray.includes(item.name)
+        securityIdArray.includes(store.detail.vm.project + "/" + item.name)
       )
       setDetailSecurityGroup(filterData)
     }
