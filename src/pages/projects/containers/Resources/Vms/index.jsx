@@ -59,10 +59,10 @@ export default class Vms extends React.Component {
 
   refreshHandler = () => {
     const { page, limit } = toJS(this.props.store.list)
-    const project = this.props.clusterStore.project || ''
+    const { namespace } = this.props.match.params
 
     if (this.isRuning && !this.isRefresh) {
-      this.getData({ silent: true, page, limit, project })
+      this.getData({ silent: true, page, limit, namespace })
     }
   }
 
@@ -574,7 +574,6 @@ export default class Vms extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>
@@ -588,7 +587,7 @@ export default class Vms extends React.Component {
         />
         <Table
           {...tableProps}
-          rowKey="project_name"
+          rowKey="name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}

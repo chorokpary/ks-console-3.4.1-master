@@ -219,7 +219,6 @@ const RegistModal = props => {
     const physicalnetworks = physicalNetworkDataList.filter(
       obj => obj.project === project
     )
-    console.log(physicalNetworkDataList)
     setPhysicalNetworkList(physicalnetworks)
     const securityGroups = securityGroupDataList
       .filter(obj => obj.project === project)
