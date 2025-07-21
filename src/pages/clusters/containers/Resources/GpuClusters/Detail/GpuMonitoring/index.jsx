@@ -247,35 +247,39 @@ const index = props => {
           }}
         >
           <Panel>
-            {renderHeader()}
-            <div className={styles.content}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>{t('가상머신')}</th>
-                  </tr>
-                </thead>
-                <tbody className={styles.vm_list}>
-                  {vmDataList.map((vm, idx) => (
-                    <tr key={idx}>
-                      <td
-                        style={{
-                          backgroundColor:
-                            selectedVm === vm.id ? '#EEF2FF' : '',
-                        }}
-                        onClick={() => {
-                          setSelectedVm(vm.id)
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <i className="ico-type-vm"></i>
-                          <span style={{ marginLeft: 8 }}>{vm.name}</span>
-                        </div>
-                      </td>
+            <div style={{ height: '600px', overflowY: 'scroll' }}>
+              {renderHeader()}
+              <div className={styles.content}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>{t('가상머신')}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className={styles.vm_list}>
+                    {vmDataList.map((vm, idx) => (
+                      <tr key={idx}>
+                        <td
+                          style={{
+                            backgroundColor:
+                              selectedVm === vm.id ? '#EEF2FF' : '',
+                          }}
+                          onClick={() => {
+                            setSelectedVm(vm.id)
+                          }}
+                        >
+                          <div
+                            style={{ display: 'flex', alignItems: 'center' }}
+                          >
+                            <i className="ico-type-vm"></i>
+                            <span style={{ marginLeft: 8 }}>{vm.name}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </Panel>
         </div>
