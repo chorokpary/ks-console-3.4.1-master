@@ -30,7 +30,7 @@ export default class Vms extends React.Component {
     const { cluster, namespace } = this.props.match.params
 
     return (
-      <DetailVmList type={t(namespace)} variables='project' name={namespace} />
+      <DetailVmList type={t(namespace)} match='project' name={namespace} />
     )
   }
 }
