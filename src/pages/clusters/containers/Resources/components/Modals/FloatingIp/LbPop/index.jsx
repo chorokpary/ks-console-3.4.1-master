@@ -50,12 +50,9 @@ const LbPop = ({ title, onOk, store, ...props }) => {
 
   useEffect(() => {
     if (lbList.length > 0 && routerList.length > 0) {
-      console.log(lbList)
-      console.log(routerList)
-      console.log(fipDetail)
-      const internalList = routerList.find((obj) => obj.external?.id == fipDetail.network)?.internal || [];
+      const internalList = routerList.find((obj) => obj.external?.name == fipDetail.network)?.internal || [];
 
-      const list = lbList.filter((obj) => internalList.find(it => it.id == obj.network.id))
+      const list = lbList.filter((obj) => internalList.find(it => it.name == obj.network.name))
       setList(list)
       if (list.length > 0) handleLbData(list[0])
     }
@@ -64,11 +61,13 @@ const LbPop = ({ title, onOk, store, ...props }) => {
   const handleOk = () => {
     onOk(
       {
-        cluster: props.cluster, namespace: props.namespace,
+        cluster: props.cluster, 
+        namespace: props.namespace,
+        project: props.namespace,
         id: fipDetail.id,
         instance_type: 'lb',
-        instance_id: lbData.id,
-        target_network: lbData.network.id,
+        instance_id: lbData.name,
+        target_network: lbData.network.name,
         target_ip: lbData.virtual_ip
       })
   }

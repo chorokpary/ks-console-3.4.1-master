@@ -12,52 +12,49 @@ import styles from './index.scss'
 const Status = props => {
   const store = props.detailStore
 
-  const [id, setId] = useState()
+  const [name, setName] = useState()
   const [isManagedK8s, setIsManagedK8s] = useState(false)
 
   useEffect(() => {
-    setId(store.detail.volume?.used_by_vmi)
+    setName(store.detail.volume?.used_by_vmi)
     if (store.detail.volume?.managed_k8s === 'true') {
       setIsManagedK8s(true)
     }
-  }, [id])
+  }, [name])
 
-  const cluster = store.detail.cluster
-  const project = store.detail.volume?.project
+  const { workspace, cluster, namespace } = props.match.params
 
   return (
     <>
       {/* 가상머신 혹은 KaaS 리스트 */}
-      {id && !isManagedK8s && (
+      {name && !isManagedK8s && (
         // used_by_vmi 가 VM 일 경우
         <div>
           <DetailVmList
             type={t('RESOURCES_VOLUME')}
             variables="volume"
             {...props.match.params}
-            id={props.match.params.id}
           />
         </div>
       )}
-      {!id && !id?.includes('control-plane') && (
+      {!name && !name?.includes('control-plane') && (
         // used_by_vmi 가 비어있는 경우
         <div>
           <DetailVmList
             type={t('RESOURCES_VOLUME')}
             variables="volume"
             {...props.match.params}
-            id={props.match.params.id}
           />
         </div>
       )}
-      {id && isManagedK8s && (
+      {name && isManagedK8s && (
         // used_by_vmi 가 KaaS 일 경우
         <div>
           <DetailMachineList
             type={t('RESOURCES_VOLUME')}
             variables="volume"
             {...props.match.params}
-            name={id}
+            name={name}
           />
         </div>
       )}
@@ -76,9 +73,9 @@ const Status = props => {
               >
                 <div>
                   <Link
-                    to={`/clusters/${cluster}/projects/${project}/volumes/${props.match.params.id}/resource-status`}
+                    to={`/${workspace}/clusters/${cluster}/projects/${namespace}/volumes/${props.match.params.name}/resource-status`}
                   >
-                    {props.match.params.id}
+                    {props.match.params.name}
                   </Link>
                 </div>
                 <p>{t('NAME')}</p>

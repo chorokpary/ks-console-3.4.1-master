@@ -66,7 +66,7 @@ const ModifyModal = props => {
   const [btnDimm, setBtnDimm] = useState(false);
 
   const [networkName, setNetworkName] = useState(
-    props.store.detail?.lb?.network.id
+    props.store.detail?.lb?.network.name
   );
   const [networkList, setNetworkList] = useState([]);
 
@@ -133,7 +133,7 @@ const ModifyModal = props => {
       .filter(el => el.networks.map(elN => elN.name).includes(networkName))
       .map(obj => ({
         label: t(obj.name),
-        value: t(obj.id),
+        value: t(obj.name),
         disabled: obj.state === 'Running' ? false : true,
       }));
     return opt;
@@ -145,7 +145,7 @@ const ModifyModal = props => {
     const opt = props.store.detail?.lb.members.map(obj => ({
       vmId: vmDataList.filter(el =>
         el.networks.map(elN => elN.ip).includes(obj)
-      )[0]?.id,
+      )[0]?.name,
       memberIp: obj,
     }));
     setFormMemberIpFields(opt);
@@ -174,10 +174,11 @@ const ModifyModal = props => {
         isRules
       ) {
         const { data } = form.current.props;
-        const { id, lb } = props.store.detail;
+        const { name, lb } = props.store.detail;
         data.members = members;
-        data.id = id;
-        data.network = lb.network.id;
+        data.name = name;
+        data.network = lb.network.name;
+        data.project = props.namespace;
         data.description = data.description || '';
         data.lb_rule = [
           ...formRulesFields.filter(
@@ -226,7 +227,7 @@ const ModifyModal = props => {
       const values = [...formMemberIpFields];
 
       const opt = vmDataList
-        .filter(el => el.id === val)
+        .filter(el => el.name === val)
         .map(obj => {
           return obj.networks
             .filter(el => el.name === networkName)
@@ -277,7 +278,7 @@ const ModifyModal = props => {
       .filter(el => !el.external)
       .map(obj => ({
         label: t(obj.name),
-        value: t(obj.id),
+        value: t(obj.name),
       }));
     return opt;
   };

@@ -29,7 +29,8 @@ export default class PhysicalNetworkStore extends Base {
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/physical_networks`
     getListUrl = this.getResourceUrl
-    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+    getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
 
     @action
     async create(data, params = {}) {
@@ -44,16 +45,16 @@ export default class PhysicalNetworkStore extends Base {
 
     @action
     async update({ name, ...params }, data) {
-        await this.submitting(request.put(this.getResourceUrl(params), data))
+        await this.submitting(request.put(`${this.getResourceUrl(params)}/${name}`, data))
     }
 
     @action
     async fetchDetail(params) {
         this.isLoading = true
-
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/${params.namespace}/info`
-        )
+        const project = params.project ? params.project : params.namespace
+        const result = await request.get(`${this.getDetailUrl(params)}`, {
+            project,
+        })
         const detail = { ...params, ...this.mapper(result), kind: 'PhysicalNetworks' }
 
         await this.fetchYaml(params);
@@ -67,9 +68,10 @@ export default class PhysicalNetworkStore extends Base {
     async fetchYaml(params) {
         this.isLoading = true
 
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.name}/${params.namespace}/manifest`
-        )
+        const project = params.project ? params.project : params.namespace
+        const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+            project,
+        })
         const yamlData = { ...params, ...this.mapper(result), kind: 'PhysicalNetworks' }
 
         this.yaml = yamlData.manifest
@@ -94,7 +96,7 @@ export default class PhysicalNetworkStore extends Base {
             Promise.all(
                 rowKeyDict.map(rowKey =>
                     request.delete(
-                        `${this.getDetailUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
+                        `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
                     )
                 )
             )
@@ -109,7 +111,7 @@ export default class PhysicalNetworkStore extends Base {
             return
         }
 
-        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+        return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
     }
 
 }

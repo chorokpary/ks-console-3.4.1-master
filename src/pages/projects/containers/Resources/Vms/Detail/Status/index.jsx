@@ -1,182 +1,166 @@
-import { get, groupBy, isEmpty } from 'lodash';
-import React, { useState, useEffect } from 'react';
-import { toJS } from 'mobx';
-import { observer, inject } from 'mobx-react';
-import classnames from 'classnames';
+import { isEmpty, find } from 'lodash'
+import React, { useState, useEffect } from 'react'
+import { observer, inject } from 'mobx-react'
+import classnames from 'classnames'
 
-import axios from 'axios';
-import { Panel, Text, Indicator } from 'components/Base';
-import { Icon, Button, Notify } from '@kube-design/components';
-import { TinyArea } from 'components/Charts';
-import { Link } from 'react-router-dom';
+import { Icon } from '@kube-design/components'
+import { Link } from 'react-router-dom'
+import { Panel, Text, Indicator } from 'components/Base'
+import { TinyArea } from 'components/Charts'
 
-import * as common from 'utils/resources';
-import { getAreaChartOps } from 'utils/monitoring';
+import * as common from 'utils/resources'
+import { getAreaChartOps } from 'utils/monitoring'
 
-import DetailSecurityGroupList from 'pages/projects/containers/Resources/components/DetailSecurityGroupList';
+import DetailSecurityGroupList from 'pages/clusters/containers/Resources/components/DetailSecurityGroupList'
 
-import CustomStore from 'stores/monitoring/custom/monitor';
-import styles from './index.scss';
+import CustomStore from 'stores/monitoring/custom/monitor'
+import styles from './index.scss'
 
 const Status = props => {
-  const store = props.detailStore;
-  const customStore = new CustomStore();
+  const store = props.detailStore
+  const customStore = new CustomStore()
 
-  const { workspace, cluster, namespace } = props.match.params;
+  const { cluster } = props.match.params
 
-  const [detailFlavor, setDetailFlavor] = useState(null);
-  const [detailNetwork, setDetailNetwork] = useState([]);
-  const [detailSecurityGroup, setDetailSecurityGroup] = useState([]);
-  const [detailVolume, setDetailVolume] = useState([]);
-  const [detailNetworkStorage, setDetailNetworkStorage] = useState(null);
+  const [detailFlavor, setDetailFlavor] = useState(null)
+  const [detailNetwork, setDetailNetwork] = useState([])
+  const [detailSecurityGroup, setDetailSecurityGroup] = useState([])
+  const [detailVolume, setDetailVolume] = useState([])
+  const [detailNetworkStorage, setDetailNetworkStorage] = useState(null)
 
-  const [vmCpuData, setVmCpuData] = useState([]);
-  const [vmMemoryData, setVmMemoryData] = useState([]);
+  const [vmCpuData, setVmCpuData] = useState([])
+  const [vmMemoryData, setVmMemoryData] = useState([])
 
-  const intiParams = { times: 50, step: '10m' };
-  const [networkType, setNetworkType] = useState('network');
-
-  const getPath = ({ cluster, namespace } = {}) => {
-    let path = '';
-    if (cluster) {
-      path += `klusters/${cluster}`;
-    }
-    if (namespace) {
-      path += `/namespaces/${namespace}`;
-    }
-    return path;
-  };
+  const intiParams = { times: 50, step: '10m' }
 
   useEffect(() => {
-    if (!store.detail.vm) return;
+    if (!store.detail.vm) return
 
     const fnGetFlavor = async () => {
-      setDetailFlavor(store.detail.vm?.flavor);
-    };
+      setDetailFlavor(store.detail.vm?.flavor)
+    }
 
     const fnGetNetwork = async () => {
-      const path = getPath({ cluster, namespace });
+      setDetailNetwork([])
 
-      setDetailNetwork([]);
-
-      const networkData = store.networksList;
-      const networkNameArray = store.detail.vm?.networks.map(item => item.name);
+      const networkData = store.networksList
+      const networkNameArray = store.detail.vm?.networks.map(item => item.name)
       const filterData = networkData.filter(item => {
-        return networkNameArray.includes(item.id);
-      });
+        return networkNameArray.includes(item.name)
+      })
 
-      const sriovNetworkData = store.sriov_networks;
+      const sriovNetworkData = store.sriov_networks
       const sriovFilterData = sriovNetworkData.filter(item => {
-        return networkNameArray.includes(item.name);
-      });
+        return networkNameArray.includes(item.name)
+      })
 
       const physicalNetworkData = store.physicalnetworksList
       const physicalNetworkFilterData = physicalNetworkData.filter(item => {
         return networkNameArray.includes(item.name)
-      });
+      })
 
       if (filterData.length > 0) {
         const promises = filterData.filter(async network => {
-          if (network.name != 'k8s-pod-network') {
+          if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/networks/${network.id}`
-            );
-            networkDetail.network.endpoint = "networks"
-            networkDetail.network.unique = "id"
-            setDetailNetwork(value => [...value, networkDetail.network]);
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
+            )
+            networkDetail.network.endpoint = 'networks'
+            networkDetail.network.unique = 'project_name'
+            setDetailNetwork(value => [...value, networkDetail.network])
           }
-        });
-        await Promise.all(promises);
+        })
+        await Promise.all(promises)
       }
 
       if (sriovFilterData.length > 0) {
         const promises = sriovFilterData.filter(async network => {
-          if (network.name != 'k8s-pod-network') {
+          if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/${path}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
-            );
-            networkDetail.network.endpoint = "sriovs"
-            networkDetail.network.unique = "name"
-            setDetailNetwork(value => [...value, networkDetail.network]);
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
+            )
+            networkDetail.network.endpoint = 'sriovs'
+            networkDetail.network.unique = 'name'
+            setDetailNetwork(value => [...value, networkDetail.network])
           }
-        });
-        await Promise.all(promises);
+        })
+        await Promise.all(promises)
       }
 
       if (physicalNetworkFilterData.length > 0) {
         const promises = physicalNetworkFilterData.filter(async network => {
-          if (network.name != 'k8s-pod-network') {
+          if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}/${network.project}/info`
             )
-            networkDetail.physicalnetwork.endpoint = "physicalnetworks"
-            networkDetail.physicalnetwork.unique = "name"
+            networkDetail.physicalnetwork.endpoint = 'physicalnetworks'
+            networkDetail.physicalnetwork.unique = 'project_name'
             setDetailNetwork(value => [...value, networkDetail.physicalnetwork])
           }
         })
         await Promise.all(promises)
       }
-    };
+    }
 
     const fnGetSecurityGroup = async () => {
-      setDetailSecurityGroup([]);
-      const securityData = store.securigyGroupList;
+      setDetailSecurityGroup([])
+      const securityData = store.securigyGroupList
       const securityIdArray = store.detail.vm.security_groups.map(
-        item => item.id
-      );
+        item => item.name
+      )
       const filterData = securityData.filter(item =>
-        securityIdArray.includes(item.id)
-      );
-      setDetailSecurityGroup(filterData);
-    };
+        securityIdArray.includes(item.name)
+      )
+      setDetailSecurityGroup(filterData)
+    }
 
     const fnGetVolume = async () => {
       const volumeData = store.volumeList?.filter(
-        el => el.used_by_vmi == store.detail.vm?.id
-      );
-      setDetailVolume(volumeData);
-    };
-
+        el => el.used_by_vmi === store.detail.vm?.name
+      )
+      setDetailVolume(volumeData)
+    }
+    
     const fnGetNetworkStorage = async () => {
       setDetailNetworkStorage(store.networkStorageInfo)
-    };
+    }
 
-    store.detail.vm?.flavor && fnGetFlavor();
-    store.detail.vm?.networks && fnGetNetwork();
-    store.detail.vm?.security_groups && fnGetSecurityGroup();
-    store.detail.vm?.network_storage && fnGetNetworkStorage();
-    fnGetVolume();
-    fetchData(intiParams);
-  }, []);
+    fnGetFlavor()
+    fnGetNetwork()
+    fnGetSecurityGroup()
+    fnGetVolume()
+    fetchData(intiParams)
+    fnGetNetworkStorage()
+  }, [store])
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
-    const unit = timeStr.slice(-1);
-    let value = parseFloat(timeStr);
+    const unit = timeStr.slice(-1)
+    let value = parseFloat(timeStr)
 
     switch (unit) {
       default:
       case 's':
-        break;
+        break
       case 'm':
-        value *= 60;
-        break;
+        value *= 60
+        break
       case 'h':
-        value *= 60 * 60;
-        break;
+        value *= 60 * 60
+        break
       case 'd':
-        value = value * 24 * 60 * 60;
-        break;
+        value = value * 24 * 60 * 60
+        break
     }
-    return hasUnit ? `${value}s` : value;
-  };
+    return hasUnit ? `${value}s` : value
+  }
 
   const getTimeRange = ({ step = '600s', times = 20 } = {}) => {
-    const interval = parseFloat(step) * times;
-    const end = Math.floor(Date.now() / 1000);
-    const start = Math.floor(end - interval);
+    const interval = parseFloat(step) * times
+    const end = Math.floor(Date.now() / 1000)
+    const start = Math.floor(end - interval)
 
-    return { start, end };
-  };
+    return { start, end }
+  }
 
   const fetchData = async params => {
     const paramsData = Object.assign(params, {
@@ -184,58 +168,73 @@ const Status = props => {
       end: params.end,
       step: getMinuteValue(params.step),
       times: params.times,
-    });
+      namespace: store.detail.vm.project,
+    })
 
     if (!paramsData.start || !paramsData.end) {
-      const timeRange = getTimeRange(paramsData);
-      paramsData.start = timeRange.start;
-      paramsData.end = timeRange.end;
+      const timeRange = getTimeRange(paramsData)
+      paramsData.start = timeRange.start
+      paramsData.end = timeRange.end
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
-      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuLinuxDataExpr = `(100 - (avg by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuWindowsDataExpr = `(100 - (avg by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
 
-      const vmCpuData = await customStore.fetchMetric({
-        expr: store.detail.vm.os_type == "linux" ? cpuLinuxDataExpr : cpuWindowsDataExpr,
+      const cpuData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? cpuLinuxDataExpr
+            : cpuWindowsDataExpr,
         ...paramsData,
-        cluster, namespace
-      });
+      })
 
-      const vmCpuMetricData = _.find(vmCpuData, data => {
-        if (data.metric.pod === store.detail.id) return data;
-      });
+      const vmCpuMetricData = find(cpuData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
+      })
 
       // 배열 처리
-      const vmCpuArray = [];
-      !!vmCpuMetricData && vmCpuArray.push(vmCpuMetricData);
-      setVmCpuData(vmCpuArray);
-    };
+      const vmCpuArray = []
+      !!vmCpuMetricData && vmCpuArray.push(vmCpuMetricData)
+      setVmCpuData(vmCpuArray)
+    }
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
       const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
       const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
 
-      const vmMemoryData = await customStore.fetchMetric({
-        expr: store.detail.vm.os_type == "linux" ? memoryLinuxDataExpr : memoryWindowsDataExpr,
+      const memoryData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? memoryLinuxDataExpr
+            : memoryWindowsDataExpr,
         ...paramsData,
-        cluster, namespace
-      });
+      })
 
-      const vmMemoryMetricData = _.find(vmMemoryData, data => {
-        if (data.metric.pod === store.detail.id) return data;
-      });
+      const vmMemoryMetricData = find(memoryData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
+      })
 
       // 배열 처리
-      const vmMemoryArray = [];
-      !!vmMemoryMetricData && vmMemoryArray.push(vmMemoryMetricData);
-      setVmMemoryData(vmMemoryArray);
-    };
+      const vmMemoryArray = []
+      !!vmMemoryMetricData && vmMemoryArray.push(vmMemoryMetricData)
+      setVmMemoryData(vmMemoryArray)
+    }
 
-    getVmCpuUsageData();
-    getVmMemoryUsageData();
-  };
+    getVmCpuUsageData()
+    getVmMemoryUsageData()
+  }
 
   const getMonitoringCfgs = () => [
     {
@@ -254,24 +253,24 @@ const Status = props => {
       data: vmMemoryData,
       bgColor: 'transparent',
     },
-  ];
+  ]
 
   const renderMonitorings = () => {
-    const isExpand = false;
-    const loading = false;
+    const isExpand = false
+    const loading = false
 
-    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>;
+    if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
     if (isEmpty(vmCpuData) && isEmpty(vmMemoryData))
-      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>;
+      return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
-    const configs = getMonitoringCfgs();
+    const configs = getMonitoringCfgs()
 
     return (
       <div className={styles.monitors}>
         <div className={styles.charts}>
           {configs.map(item => {
-            const config = getAreaChartOps(item);
+            const config = getAreaChartOps(item)
 
             return (
               <div key={item.type}>
@@ -283,12 +282,12 @@ const Status = props => {
                   darkMode={isExpand}
                 />
               </div>
-            );
+            )
           })}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const getState = state => {
     if (
@@ -301,16 +300,15 @@ const Status = props => {
     ) {
       return 'waiting'
     }
-    else if (state === 'Running') {
+    if (state === 'Running') {
       return 'running'
     }
-    else if (state === 'Stopped' || state === 'Paused') {
+    if (state === 'Stopped' || state === 'Paused') {
       return 'stopped'
     }
-    else {
-      return 'error'
-    }
-  };
+
+    return 'error'
+  }
 
   return (
     <>
@@ -333,11 +331,16 @@ const Status = props => {
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.text}>
-                  <div>{t(`RESOURCES_${store.detail.vm?.state.toUpperCase()}`)}</div>
+                  <div>
+                    {t(`RESOURCES_${store.detail.vm?.state.toUpperCase()}`)}
+                  </div>
+
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
-                  <div>{store.detail.vm?.node ? store.detail.vm?.node : "-"}</div>
+                  <div>
+                    {store.detail.vm?.node ? store.detail.vm?.node : '-'}
+                  </div>
                   <p>{t('RESOURCES_NODE')}</p>
                 </div>
                 {renderMonitorings()}
@@ -348,7 +351,7 @@ const Status = props => {
 
         {/* Flavor */}
         {!!detailFlavor && (
-          <Panel title={t('RESOURCES_FLAVOR')}>
+          <Panel title={'Flavor'}>
             <div className={styles.wrapper}>
               <div className={classnames(styles.itemFlavor)}>
                 <div className={styles.icon}>
@@ -357,7 +360,7 @@ const Status = props => {
                 <div className={classnames(styles.title, styles.name)}>
                   <div>
                     <Link
-                      to={`/${workspace}/clusters/${cluster}/projects/${namespace}/flavors/${detailFlavor.name}`}
+                      to={`/clusters/${cluster}/flavors/${detailFlavor.name}`}
                     >
                       {detailFlavor.name}
                     </Link>
@@ -394,13 +397,13 @@ const Status = props => {
                     icon="gpu"
                     title={
                       detailFlavor.gpus.length >= 1
-                        ? detailFlavor.gpus.length == 1
-                          ? detailFlavor.gpus[0].quantity + " " + detailFlavor.gpus[0].name
+                        ? detailFlavor.gpus.length === 1
+                          ? `${detailFlavor.gpus[0].quantity} ${detailFlavor.gpus[0].name}`
                           : `${detailFlavor.gpus[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${detailFlavor.gpus.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
+                              'RESOURCES_BESIDES'
+                            )} ${detailFlavor.gpus.length - 1}${t(
+                              'RESOURCES_COUNT'
+                            )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -415,13 +418,14 @@ const Status = props => {
         {store.detail.vm?.security_groups.length > 0 && (
           <DetailSecurityGroupList
             securityGroupData={detailSecurityGroup}
-            params={props.match.params}
+            cluster={cluster}
+            namespace={store.detail.vm.project}
           />
         )}
 
         {/* 네트워크 */}
         {detailNetwork.length > 0 && (
-          <Panel title={'네트워크'}>
+          <Panel title={t('RESOURCES_NETWORK')}>
             <div className={styles.wrapper}>
               {detailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
@@ -429,19 +433,21 @@ const Status = props => {
                     {!obj.resource_name ? (
                       <Icon name={`network-duotone`} size={40} />
                     ) : (
-                      <i className="ico-type-sriov"></i>
+                      <i className="ico-type40-sriov"></i>
                     )}
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {obj.unique == "id" ? (
+                      {obj.unique === 'name' ? (
                         <Link
-                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/${obj.endpoint}/${obj.name}/${obj.id}`}
+                          to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
                       ) : (
-                        <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/${obj.endpoint}/${obj.name}`}>
+                        <Link
+                          to={`/clusters/${cluster}/projects/${obj.project}/${obj.endpoint}/${obj.name}`}
+                        >
                           {obj.name}
                         </Link>
                       )}
@@ -457,9 +463,11 @@ const Status = props => {
                     <p>CIDR</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{`${obj.gateway_ip === undefined || obj.gateway_ip === ""
-                      ? "-"
-                      : obj.gateway_ip
+                    <div>
+                      {`${
+                        obj.gateway_ip === undefined || obj.gateway_ip === ''
+                          ? '-'
+                          : obj.gateway_ip
                       }`}
                     </div>
                     <p>{t('RESOURCES_GATEWAY')}</p>
@@ -474,39 +482,43 @@ const Status = props => {
         {detailVolume.length > 0 && (
           <Panel title={t('RESOURCES_VOLUME')}>
             <div className={styles.wrapper}>
-              {detailVolume.map((obj, index) => (
-                <div className={classnames(styles.itemVolume)} key={index}>
-                  <div className={styles.icon}>
-                    <Icon name="storage" size={40} />
-                  </div>
-                  <div className={classnames(styles.title, styles.name)}>
-                    <div>
-                      <Link
-                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/resourcesvolumes/${obj.name}/${obj.id}`}
-                      >
-                        {obj.name}
-                      </Link>
+              {detailVolume.map((obj, index) => {
+                return (
+                  <div className={classnames(styles.itemVolume)} key={index}>
+                    <div className={styles.icon}>
+                      <Icon name="storage" size={40} />
                     </div>
-                    <p>{t('RESOURCES_NAME')}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>
-                      {obj.access_modes.map(mode => (
-                        <p key={mode}>{mode}</p>
-                      ))}
+                    <div className={classnames(styles.title, styles.name)}>
+                      <div>
+                        <Link
+                          to={`/clusters/${cluster}/projects/${obj.project}/resourcesvolumes/${obj.name}`}
+                        >
+                          {obj.name}
+                        </Link>
+                      </div>
+                      <p>{t('RESOURCES_NAME')}</p>
                     </div>
-                    <p>{t('RESOURCES_ACCESS_MODE')}</p>
+                    <div className={styles.title}>
+                      <div>
+                        {obj.access_modes.map(mode => (
+                          <p key={mode}>{mode}</p>
+                        ))}
+                      </div>
+                      <p>{t('RESOURCES_ACCESS_MODE')}</p>
+                    </div>
+                    <div className={styles.title}>
+                      <div>{obj.capacity}</div>
+                      <p>{t('RESOURCES_CAPACITY')}</p>
+                    </div>
+                    <div className={styles.title}>
+                      <div>
+                        {t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}
+                      </div>
+                      <p>{t('RESOURCES_STATE')}</p>
+                    </div>
                   </div>
-                  <div className={styles.title}>
-                    <div>{obj.capacity}</div>
-                    <p>{t('RESOURCES_CAPACITY')}</p>
-                  </div>
-                  <div className={styles.title}>
-                    <div>{t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}</div>
-                    <p>{t('RESOURCES_STATE')}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </Panel>
         )}
@@ -522,7 +534,7 @@ const Status = props => {
                 <div className={classnames(styles.title, styles.name)}>
                   <div>
                     <Link
-                      to={`/${workspace}/clusters/${cluster}/projects/${namespace}/networkstorages/${detailNetworkStorage.name}`}
+                      to={`/clusters/${cluster}/projects/${detailNetworkStorage.project}/networkstorages/${detailNetworkStorage.name}`}
                     >
                       {detailNetworkStorage.name}
                     </Link>
@@ -547,7 +559,7 @@ const Status = props => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default inject('detailStore')(observer(Status));
+export default inject('detailStore')(observer(Status))

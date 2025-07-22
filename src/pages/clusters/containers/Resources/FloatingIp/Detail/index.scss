@@ -73,47 +73,6 @@
   }
 }
 
-.expanded {
-  .arrow {
-    :global(.icon) {
-      transform-origin: center center;
-      transform: rotate(180deg);
-    }
-  }
-
-  .itemMain {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0 -4px;
-    padding: 12px 16px;
-    background-color: $dark-color07;
-    border-color: $dark-color07;
-
-    .content .text {
-
-      div,
-      a,
-      p {
-        color: $white;
-      }
-
-      a:hover {
-        color: $primary;
-      }
-    }
-
-    .content .monitors {
-      color: $white;
-    }
-  }
-
-  .itemExtra {
-    display: block;
-    transform: translate3d(0, 100%, 0);
-  }
-}
-
 .itemMain {
   display: flex;
   padding: 12px;
@@ -191,19 +150,6 @@
           width: calc(50% - 20px);
         }
       }
-    }
-
-    .podip {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      background: $green-color03;
-      margin-left: 8px;
-      line-height: 20px;
-      text-align: center;
-      font-weight: 600;
-      color: white;
     }
 
     .text {

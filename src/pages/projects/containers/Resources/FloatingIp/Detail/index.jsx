@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import DetailPage from 'clusters/containers/Base/Detail';
-import FloatingIpStore from 'stores/resources/floatingip';
-import { useParams } from 'react-router-dom';
+import { getIndexRoute } from 'utils/router.config';
+import DetailPage from 'projects/containers/Base/Detail';
 import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { getIndexRoute } from 'utils/router.config';
 
 import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList';
+import FloatingIpStore from 'stores/resources/floatingip';
 import LbPanel from './LbPanel';
 
 const store = new FloatingIpStore();
@@ -24,6 +23,7 @@ const FloatingIpDetail = props => {
   const fetchData = async () => {
     await store.fetchDetail(props.match.params);
     const storeDetail = toJS(store.detail);
+
     setDetail(storeDetail.floating_ip);
 
     if (storeDetail.floating_ip?.target_ip) {
@@ -35,17 +35,15 @@ const FloatingIpDetail = props => {
 
   const { workspace, cluster, namespace } = props.match.params;
   const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/floatingip`;
-  const routing = props.rootStore.routing;
 
+  const { routing } = props.rootStore;
   const PATH = `${listUrl}/${props.match.params.id}`;
-
-  // const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
   const getOperations = () => {
     return fipConnected
       ? [
           {
-            key: 'edit1',
+            key: 'disassociate',
             icon: 'image',
             text: t('RESOURCES_DEALLOCATE_FLOATING_IP'),
             action: 'view',
@@ -53,33 +51,34 @@ const FloatingIpDetail = props => {
               props.rootStore.triggerAction('floatingIp.deallocate', {
                 ...props.match.params,
                 store,
-                data: { id: detail.id },
+                data: { id: detail.id, project: namespace },
                 type: 'LB_POP',
                 success: () => handleConnectSuccess(false),
               }),
           },
         ]
       : [
-        {
-          key: 'delete',
-          icon: 'trash',
-          text: t('RESOURCES_DELETE'),
-          action: 'delete',
-          type: 'danger',
-          onClick: () =>
-            props.rootStore.triggerAction('floatingIp.remove', {
-              type: 'FLOATINGIP_DETAIL',
-              detail,
-              store,
-              cluster: props.match.params.cluster,
-              success: () => routing.push(listUrl),
-              okText: t('RESOURCES_DELETE'),
-              cancelText: t('RESOURCES_CANCEL'),
-              ...props.match.params,
-            }),
-        },
           {
-            key: 'edit1',
+            key: 'delete',
+            icon: 'trash',
+            text: t('RESOURCES_DELETE'),
+            action: 'delete',
+            type: 'danger',
+            // show: showEdit,
+            onClick: () =>
+              props.rootStore.triggerAction('floatingIp.remove', {
+                type: 'FLOATINGIP_DETAIL',
+                detail,
+                store,
+                cluster: props.match.params.cluster,
+                success: () => routing.push(listUrl),
+                okText: t('RESOURCES_DELETE'),
+                cancelText: t('RESOURCES_CANCEL'),
+                ...props,
+              }),
+          },
+          {
+            key: 'associate_vm',
             icon: 'image',
             text: t('RESOURCES_CONNECTION_VM'),
             action: 'view',
@@ -92,7 +91,7 @@ const FloatingIpDetail = props => {
               }),
           },
           {
-            key: 'edit2',
+            key: 'associate_lb',
             icon: 'image',
             text: t('RESOURCES_CONNECTION_LB'),
             action: 'view',
@@ -129,7 +128,7 @@ const FloatingIpDetail = props => {
     ];
   };
 
-  if (store.isLoading && !store.detail.name) {
+  if (store.isLoading && !store.detail?.name) {
     return <Loading className="ks-page-loading" />;
   }
 
@@ -137,7 +136,7 @@ const FloatingIpDetail = props => {
     icon: 'intranet-routers',
     module: store.module,
     name: detail?.floating_ip,
-    desc: get(store.detail.flavor, 'description', ''),
+    // desc: get(store.detail.network, 'description', ''),
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
@@ -146,30 +145,6 @@ const FloatingIpDetail = props => {
         url: listUrl,
       },
     ],
-  };
-  const Status = () => {
-    const detailFip = get(store.detail, 'floating_ip');
-    if (detailFip.instance_type === 'vm') {
-      return (
-        <DetailVmList
-          type={t('RESOURCES_FLOATING_IP')}
-          variables="id"
-          {...props.match.params}
-          id={detailFip.instance_id}
-        />
-      );
-    }
-    if (detailFip.instance_type === 'lb') {
-      return (
-        <LbPanel
-          type={t('RESOURCES_FLOATING_IP')}
-          variables="id"
-          {...props.match.params}
-          id={detailFip.instance_id}
-        />
-      );
-    }
-    return [];
   };
 
   return (
@@ -192,3 +167,32 @@ const FloatingIpDetail = props => {
 };
 
 export default inject('rootStore')(observer(FloatingIpDetail));
+
+const Status = () => {
+  const detailFip = get(store.detail, 'floating_ip');
+
+  if (detailFip?.instance_type === 'vm') {
+    return (
+      <>
+        <DetailVmList
+          type={t('RESOURCES_FLOATING_IP')}
+          variables="id"
+          id={detailFip.instance_id}
+          {...store.detail}
+        />
+      </>
+    );
+  }
+  if (detailFip?.instance_type === 'lb') {
+    return (
+      <LbPanel
+        type={t('RESOURCES_FLOATING_IP')}
+        name={detailFip.instance_id}
+        workspace={store.detail.workspace}
+        cluster={store.detail.cluster}
+        project={store.detail.namespace}
+      />
+    );
+  }
+  return [];
+};

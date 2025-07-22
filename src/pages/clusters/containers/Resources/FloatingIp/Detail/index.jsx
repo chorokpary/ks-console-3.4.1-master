@@ -5,8 +5,6 @@ import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base';
-import { getLocalTime } from 'utils';
 
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
 import FloatingIpStore from 'stores/resources/floatingip';
@@ -35,11 +33,11 @@ const FloatingIpDetail = props => {
     }
   };
 
-  const { cluster } = props.match.params;
+  const { cluster, namespace } = props.match.params;
   const listUrl = `/clusters/${cluster}/floatingip`;
 
   const { routing } = props.rootStore;
-  const PATH = `${listUrl}/${props.match.params.id}`;
+  const PATH = '/clusters/:cluster/projects/:namespace/floatingip/:id'
 
   // const showEdit = !globals.config.presetClusterRoles.includes(
   //   props.match.params.name
@@ -49,7 +47,7 @@ const FloatingIpDetail = props => {
     return fipConnected
       ? [
           {
-            key: 'edit1',
+            key: 'disassociate',
             icon: 'image',
             text: t('RESOURCES_DEALLOCATE_FLOATING_IP'),
             action: 'view',
@@ -57,7 +55,7 @@ const FloatingIpDetail = props => {
               props.rootStore.triggerAction('floatingIp.deallocate', {
                 ...props.match.params,
                 store,
-                data: { id: detail.id },
+                data: { id: detail.id, project: namespace },
                 type: 'LB_POP',
                 success: () => handleConnectSuccess(false),
               }),
@@ -84,7 +82,7 @@ const FloatingIpDetail = props => {
               }),
           },
           {
-            key: 'edit1',
+            key: 'associate_vm',
             icon: 'image',
             text: t('RESOURCES_CONNECTION_VM'),
             action: 'view',
@@ -97,7 +95,7 @@ const FloatingIpDetail = props => {
               }),
           },
           {
-            key: 'edit2',
+            key: 'associate_lb',
             icon: 'image',
             text: t('RESOURCES_CONNECTION_LB'),
             action: 'view',
@@ -122,6 +120,10 @@ const FloatingIpDetail = props => {
       {
         name: t('RESOURCES_CLUSTER'),
         value: get(store.detail, 'cluster'),
+      },
+      {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
       },
       {
         name: t('RESOURCES_NETWORK_NAME'),
@@ -192,8 +194,8 @@ const Status = () => {
     return (
       <LbPanel
         type={t('RESOURCES_FLOATING_IP')}
-        variables="id"
-        id={detailFip.instance_id}
+        name={detailFip.instance_id}
+        project={store.detail.namespace}
       />
     );
   }

@@ -46,22 +46,19 @@ export default {
       namespace,
       success,
       startRefresh,
-      devops,
       ...props
     }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .create(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
-              success &&
-                setTimeout(() => {
-                  success()
-                }, 1000)
-              startRefresh()
-            })
+          store.create(data, { cluster, workspace, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+            success &&
+              setTimeout(() => {
+                success()
+              }, 1000)
+            startRefresh()
+          })
         },
         startRefresh: () => {
           startRefresh()
@@ -72,112 +69,59 @@ export default {
         cluster,
         workspace,
         namespace,
-        devops,
         ...props,
       })
     },
   },
   'vm.edit': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .update(
-              { ...detail, cluster, workspace, namespace, devops, id: data.id },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.update({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_EDIT_VM'),
         modal: ModifyModal,
         store,
         module,
-        cluster,
-        namespace,
         ...props,
       })
     },
   },
   'vm.edit.securitygroup': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .updateSecurity(
-              { ...detail, cluster, workspace, namespace, devops, id: data.id },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.updateSecurity({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_VM_SECURITYGROUP_EDIT'),
         modal: ModifySecurityGroupModal,
         store,
-        module,
-        cluster,
-        namespace,
         ...props,
       })
     },
   },
   'vm.edit.flavor': {
-    on({
-      store,
-      module,
-      detail,
-      cluster,
-      workspace,
-      namespace,
-      success,
-      devops,
-      ...props
-    }) {
+    on({ store, detail, success, ...props }) {
       const modal = Modal.open({
         onOk: data => {
-          store
-            .updateFlavor(
-              { ...detail, cluster, workspace, namespace, devops, id: data.id },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+          store.updateFlavor({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('RESOURCES_VM_FLAVOR_EDIT'),
         modal: ModifyFlavorModal,
         store,
         module,
-        cluster,
-        namespace,
         ...props,
       })
     },
@@ -217,19 +161,17 @@ export default {
     },
   },
   'vm.remove.batch': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const arr = []
-      store.dataList.forEach(obj => {
-        if (rowKeys.includes(obj.id)) {
-          arr.push(obj.name)
-        }
+      const rowKeyNames = rowKeys.map(key => {
+        const name = key.split('/')[1]
+        return [name]
       })
-      const usernames = arr.join(', ')
+      const names = rowKeyNames.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            .batchDelete({ rowKeyNames, cluster, workspace, namespace })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
@@ -238,14 +180,48 @@ export default {
         },
         modal: DeleteModal,
         title:
-          usernames.split(', ').length === 1
+          names.split(', ').length === 1
             ? t('RESOURCES_DELETE')
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
-          usernames.split(', ').length === 1
-            ? t.html('RESOURCES_DELETE_VM_TIP', { resource: usernames })
-            : t.html('RESOURCES_DELETE_VM_TIP', { resource: usernames }),
-        resource: usernames,
+          names.split(', ').length === 1
+            ? t.html('RESOURCES_DELETE_VM_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_VM_TIP', { resource: names }),
+        resource: names,
+        store,
+        ...props,
+      })
+    },
+  },
+  'vm.remove.clusterbatch': {
+    on({ store, cluster, workspace, namespace, success, ...props }) {
+      const rowKeys = toJS(store.list.selectedRowKeys)
+      const names = rowKeys.join(', ')
+      const modal = Modal.open({
+        onOk: () => {
+          store
+            .clusterBatchDelete({
+              rowKeys,
+              cluster,
+              workspace,
+              namespace,
+            })
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        modal: DeleteModal,
+        title:
+          names.split(', ').length === 1
+            ? t('RESOURCES_DELETE')
+            : t('RESOURCES_DELETE_MULTIPLE'),
+        desc:
+          names.split(', ').length === 1
+            ? t.html('RESOURCES_DELETE_VM_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_VM_TIP', { resource: names }),
+        resource: names,
         store,
         ...props,
       })

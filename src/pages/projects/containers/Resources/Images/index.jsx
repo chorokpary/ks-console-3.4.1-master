@@ -24,9 +24,7 @@ import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
 
-import RoleStore from 'stores/role'
 import ImageStore from 'stores/resources/images'
 
 @withList({

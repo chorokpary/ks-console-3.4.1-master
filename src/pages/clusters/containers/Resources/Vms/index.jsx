@@ -19,7 +19,6 @@
 
 import React from 'react'
 import { toJS } from 'mobx'
-import { find, get } from 'lodash'
 import { Link } from 'react-router-dom'
 import { Dropdown, Menu, Notify } from '@kube-design/components'
 import { Indicator } from 'components/Base'
@@ -37,14 +36,13 @@ import styles from './index.scss'
   module: 'vms',
   authKey: 'vms',
   name: t('RESOURCES_VM'),
-  rowKey: 'id',
 })
 export default class Vms extends React.Component {
   // auto refresh start  ##################################
   constructor(props) {
     super(props)
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
-    this.isRefresh = false;
+    this.isRefresh = false
   }
 
   componentDidUpdate() {
@@ -64,7 +62,7 @@ export default class Vms extends React.Component {
 
     if (this.isRuning && !this.isRefresh) {
       this.getData({ silent: true, page, limit, project })
-    } 
+    }
   }
 
   get isRuning() {
@@ -81,11 +79,11 @@ export default class Vms extends React.Component {
   }
 
   stopRefresh = () => {
-    this.isRefresh = true;
+    this.isRefresh = true
   }
 
   startRefresh = () => {
-    this.isRefresh = false;
+    this.isRefresh = false
   }
 
   // auto refresh end  ##################################
@@ -103,7 +101,7 @@ export default class Vms extends React.Component {
         text: t('RESOURCES_DELETE'),
         action: 'delete',
         show: this.showAction,
-        onClick: item => 
+        onClick: item =>
           trigger('vm.remove', {
             detail: item,
             success: getData,
@@ -129,10 +127,10 @@ export default class Vms extends React.Component {
               ...this.props.match.params,
               type: this.name,
               success: getData,
-              startRefresh: this.startRefresh
+              startRefresh: this.startRefresh,
             })
-            this.stopRefresh();
-          },            
+            this.stopRefresh()
+          },
         },
       ],
       selectActions: [
@@ -142,7 +140,7 @@ export default class Vms extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('vm.remove.batch', {
+            trigger('vm.remove.clusterbatch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -250,7 +248,7 @@ export default class Vms extends React.Component {
               <div>
                 <Link
                   className={styles.title}
-                  to={`/clusters/${cluster}/vms/${name}/${record.id}`}
+                  to={`/clusters/${cluster}/projects/${record.project}/vms/${name}`}
                 >
                   {name}{' '}
                 </Link>
@@ -322,6 +320,7 @@ export default class Vms extends React.Component {
               if (el.name !== 'k8s-pod-network') {
                 return <p key={el.name}>{el.ip}</p>
               }
+              return <p></p>
             })
           } else {
             networkIpList = <p>-</p>
@@ -341,7 +340,7 @@ export default class Vms extends React.Component {
           const floatingIp =
             floatingList &&
             floatingList
-              ?.filter(row => row.instance_id === record.id)
+              ?.filter(row => row.instance_id === record.name)
               .map(el => <p key={el.id}>{el.floating_ip}</p>)
 
           return floatingIp === '' ? '-' : floatingIp
@@ -368,7 +367,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: security_group_objects => {
-          let securityGroupText = ''
+          let securityGroupText
           if (security_group_objects) {
             securityGroupText =
               security_group_objects.length > 1
@@ -466,8 +465,12 @@ export default class Vms extends React.Component {
     const { getData, trigger } = this.props
 
     const data = {}
+    const project = vmId.split('/')[0]
+    const vmName = vmId.split('/')[1]
     data.vmId = vmId
     data.state = state
+    data.project = project
+    data.vmName = vmName
     data.actionType = action
 
     trigger('vm.actionState', {
@@ -584,7 +587,6 @@ export default class Vms extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>
@@ -598,6 +600,7 @@ export default class Vms extends React.Component {
         />
         <ResourceTable
           {...tableProps}
+          rowKey="project_name"
           emptyProps={this.emptyProps}
           className={'table-2-6 table-4-3'}
           itemActions={this.itemActions}

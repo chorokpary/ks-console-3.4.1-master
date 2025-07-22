@@ -188,6 +188,7 @@ const ImageDetail = props => {
             component: Status,
             exact: true,
             name: props.match.params.name,
+            namespace : props.match.params.namespace,
           },
           getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
@@ -201,12 +202,14 @@ export default inject('rootStore')(observer(ImageDetail))
 
 const Status = ({ route }) => {
   const imageName = route.name
+  const namespace = route.namespace
 
   return (
     <DetailVmList
       type={t('RESOURCES_VM_IMAGE')}
-      variables="image"
+      match="image"
       name={imageName}
+      project={namespace}
     />
   )
 }

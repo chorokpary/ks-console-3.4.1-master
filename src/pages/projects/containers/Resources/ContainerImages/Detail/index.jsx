@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
+import DetailPage from 'projects/containers/Base/Detail'
 
 import { isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components'

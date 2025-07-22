@@ -17,27 +17,21 @@
  */
 
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { toJS } from 'mobx'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
+import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
 
-import RoleStore from 'stores/role'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
-import * as common from 'utils/resources'
-import ResourceTable from 'clusters/components/ResourceTable'
 
 @withList({
     store: new LoadBalancerStore(),
     module: 'lbs',
     authKey: 'loadBalancers',
     name: t('RESOURCES_LOAD_BALANCER'),
-    rowKey: 'id'
+    rowKey: 'name'
 })
 export default class LoadBalancers extends React.Component {
 
@@ -111,11 +105,11 @@ export default class LoadBalancers extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: (name, item) => (
+                render: (name, record) => (
                     <Avatar
                         icon="loadbalancer"
                         iconSize={40}
-                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${name}/${item.id}`}
+                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${name}`}
                         title={name}
                     />
                 ),
@@ -145,7 +139,7 @@ export default class LoadBalancers extends React.Component {
             },
             {
                 title: t('RESOURCES_RULE_COUNT'),
-                dataIndex: 'rules_count',
+                dataIndex: 'rule_count',
                 isHideable: true,
                 width: 'auto',
             },
@@ -195,5 +189,4 @@ export default class LoadBalancers extends React.Component {
         )
     }
 }
-
 

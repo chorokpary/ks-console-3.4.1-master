@@ -95,6 +95,10 @@ const PhysicalNetworkDetail = props => {
         value: detail.cluster,
       },
       {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
+      },
+      {
         name: t('RESOURCES_RESOURCE_NAME'),
         value: detail.physicalnetwork.resource_name,
       },

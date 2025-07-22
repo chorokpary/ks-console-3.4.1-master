@@ -9,6 +9,8 @@ import styles from './index.scss'
 
 const Status = (props) => {
     const store = props.detailStore;
+    const { workspace, cluster, namespace } = props.match.params
+
     useEffect(() => {
 
     }, []);
@@ -21,7 +23,7 @@ const Status = (props) => {
                     {store.detail.security_group?.rules.filter((rule) => rule.direction === "ingress").length > 0 &&
                         < Panel title={t('RESOURCES_INBOUND')}>
                             {store.detail.security_group?.rules.filter((rule) => rule.direction === "ingress").map((rule, index) => (
-                                <div className={styles.wrapper}>
+                                <div className={styles.wrapper} key={index}>
                                     <div className={classnames(styles.item)}>
                                         <div className={styles.icon}>
                                             <Icon name="shield" size={40} />
@@ -51,7 +53,7 @@ const Status = (props) => {
                     {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").length > 0 &&
                         <Panel title={t('RESOURCES_OUTBOUND')}>
                             {store.detail.security_group?.rules.filter((rule) => rule.direction === "egress").map((rule, index) => (
-                                <div className={styles.wrapper}>
+                                <div className={styles.wrapper} key={index}>
                                     <div className={classnames(styles.item)}>
                                         <div className={styles.icon}>
                                             <Icon name="apps" size={40} />
@@ -80,11 +82,17 @@ const Status = (props) => {
                     }
                 </div>
                 {/* 가상 머신 상세 관련 샘플 */}
-                <DetailVmList type={t('RESOURCES_SECURITY_GROUP')} variables='security_group_objects' id={props.match.params.id} {...props.match.params} />
+                <DetailVmList
+                    type={t('RESOURCES_SECURITY_GROUP')}
+                    match='security_group'
+                    name={props.match.params.name}
+                    project={namespace}
+                    cluster={cluster}
+                    workspace={workspace}
+                />
             </div>
         </>
     );
 };
 
 export default inject('detailStore')(observer(Status))
-

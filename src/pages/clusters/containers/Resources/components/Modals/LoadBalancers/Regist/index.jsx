@@ -117,7 +117,7 @@ const RegistModal = props => {
         .map(obj => {
           return {
             label: t(obj.name),
-            value: t(obj.id),
+            value: t(obj.name),
           };
         })
     );
@@ -128,7 +128,7 @@ const RegistModal = props => {
       .filter(el => el.networks.map(elN => elN.name).includes(networkName))
       .map(obj => ({
         label: t(obj.name),
-        value: t(obj.id),
+        value: t(obj.name),
         disabled: obj.state !== 'Running',
       }));
     return opt;
@@ -136,8 +136,8 @@ const RegistModal = props => {
 
   const isDuplicate = arr => {
     let cnt = 0;
-    arr.some(function(x) {
-      formRulesFields.some(function(y) {
+    arr.some(function (x) {
+      formRulesFields.some(function (y) {
         if (JSON.stringify(x) === JSON.stringify(y)) {
           cnt++;
         }
@@ -155,7 +155,7 @@ const RegistModal = props => {
 
     setIsMembers(members.length > 0);
     setIsNetworkSelect((networkName != t('RESOURCES_SELECT') && networkName != 'select'))
-    
+
     if (isDuplicate(rules)) {
       setIsDupRules(false);
     } else {
@@ -218,9 +218,8 @@ const RegistModal = props => {
 
     handleSelectClick: (i, val) => {
       const values = [...formMemberIpFields];
-
       const opt = vmDataList
-        .filter(el => el.id === val)
+        .filter(el => el.name === val)
         .map(obj => {
           return obj.networks
             .filter(el => el.name === networkName)
@@ -228,7 +227,6 @@ const RegistModal = props => {
               value: network.ip,
             }));
         });
-
       if (
         !values.map(obj => obj.vmId).includes(val) ||
         values[i].vmId === val ||
@@ -428,7 +426,7 @@ const RegistModal = props => {
             label={t('RESOURCES_NETWORK_NAME')}
             rules={[{ required: true, validator: networkValidator }]}
           >
-            <> 
+            <>
               <Select
                 name="network"
                 options={networkList}

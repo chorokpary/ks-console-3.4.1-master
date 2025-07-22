@@ -10,7 +10,6 @@ import { observer, inject } from 'mobx-react';
 import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
 
-import * as common from 'utils/resources'
 import routes from './routes'
 
 import RouterStore from 'stores/resources/routers'
@@ -71,7 +70,7 @@ const RouterDetail = (props) => {
       onClick: () =>
         props.rootStore.triggerAction('router.remove', {
           type: 'ROUTER_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.router),
           store: store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl),
@@ -90,6 +89,10 @@ const RouterDetail = (props) => {
       {
         name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
+      },
+      {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
       },
       {
         name: t('RESOURCES_SNAT_OPTION'),

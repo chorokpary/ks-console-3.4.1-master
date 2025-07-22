@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useReducer } from 'react';
-import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx';
 import { get, isEmpty } from 'lodash';
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
 import { getIndexRoute } from 'utils/router.config';
 import ImageStore from 'stores/resources/images';
-import DetailPage from 'clusters/containers/Base/Detail';
-import { Card } from 'components/Base';
+import DetailPage from 'projects/containers/Base/Detail';
 import { getLocalTime } from 'utils';
 
 import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList';

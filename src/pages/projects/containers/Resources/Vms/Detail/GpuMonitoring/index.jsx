@@ -1,28 +1,23 @@
-import { get, isEmpty, find } from 'lodash'
-import React, { useState, useEffect } from 'react'
-import { toJS } from 'mobx'
+import { isEmpty } from 'lodash'
+import React, { useState } from 'react'
 import { observer, inject } from 'mobx-react'
-import classnames from 'classnames'
 
-import { getChartData, getAreaChartOps } from 'utils/monitoring'
+import { getAreaChartOps } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
 
-import styles from './index.scss'
+const index = props => {
+  const store = props.detailStore
+  const customStore = new CustomStore()
 
-const index = (props) => {
+  const { cluster, namespace } = props.match.params
 
-  const store = props.detailStore;
-  const customStore = new CustomStore();
-
-  const { cluster, namespace } = props.match.params;
-
-  const [vmGpuUtilData, setVmGpuUtilData] = useState([]);
-  const [vmGpuRamData, setVmGpuRamData] = useState([]);
-  const [vmGpuTempData, setVmGpuTempData] = useState([]);
-  const [vmGpuPowerData, setVmGpuPowerData] = useState([]);
+  const [vmGpuUtilData, setVmGpuUtilData] = useState([])
+  const [vmGpuRamData, setVmGpuRamData] = useState([])
+  const [vmGpuTempData, setVmGpuTempData] = useState([])
+  const [vmGpuPowerData, setVmGpuPowerData] = useState([])
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -53,8 +48,7 @@ const index = (props) => {
     return { start, end }
   }
 
-  const fetchData = async (params) => {
-
+  const fetchData = async params => {
     const paramsData = Object.assign(params, {
       start: params.start,
       end: params.end,
@@ -69,57 +63,61 @@ const index = (props) => {
     }
 
     const getVmGpuUtilData = async () => {
-      const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${store.detail.id}"} / 100`
+      const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${store.detail.vm.name}", namespace="${store.detail.vm.project}"} / 100`
 
-      const vmGpuUtilData = await customStore.fetchMetric({
-	expr: gpuUtilDataExpr,
+      const gpuUtilData = await customStore.fetchMetric({
+        expr: gpuUtilDataExpr,
         ...paramsData,
-	cluster, namespace
+        cluster,
+        namespace,
       })
 
-      setVmGpuUtilData(vmGpuUtilData)
+      setVmGpuUtilData(gpuUtilData)
     }
 
     const getVmGpuRamData = async () => {
-      const gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod="${store.detail.id}"} * 1000000`
+      const gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod="${store.detail.vm.name}", namespace="${store.detail.vm.project}"} * 1000000`
 
-      const vmGpuRamData = await customStore.fetchMetric({
+      const gpuRamData = await customStore.fetchMetric({
         expr: gpuRamDataExpr,
         ...paramsData,
-	cluster, namespace
+        cluster,
+        namespace,
       })
 
-      setVmGpuRamData(vmGpuRamData)
+      setVmGpuRamData(gpuRamData)
     }
 
     const getVmGpuPowerData = async () => {
-      const gpuPowerDataExpr = `DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", pod="${store.detail.id}"}`
+      const gpuPowerDataExpr = `DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", pod="${store.detail.vm.name}", namespace="${store.detail.vm.project}"}`
 
-      const vmGpuPowerData = await customStore.fetchMetric({
+      const gpuPowerData = await customStore.fetchMetric({
         expr: gpuPowerDataExpr,
         ...paramsData,
-        cluster, namespace
+        cluster,
+        namespace,
       })
 
-      setVmGpuPowerData(vmGpuPowerData)
+      setVmGpuPowerData(gpuPowerData)
     }
 
     const getVmGpuTempData = async () => {
-      const gpuTempDataExpr = `DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", pod="${store.detail.id}"}`
+      const gpuTempDataExpr = `DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", pod="${store.detail.vm.name}", namespace="${store.detail.vm.project}"}`
 
-      const vmGpuTempData = await customStore.fetchMetric({
+      const gpuTempData = await customStore.fetchMetric({
         expr: gpuTempDataExpr,
         ...paramsData,
-        cluster, namespace
+        cluster,
+        namespace,
       })
 
-      setVmGpuTempData(vmGpuTempData)
+      setVmGpuTempData(gpuTempData)
     }
 
-    getVmGpuUtilData();
-    getVmGpuRamData();
-    getVmGpuTempData();
-    getVmGpuPowerData();
+    getVmGpuUtilData()
+    getVmGpuRamData()
+    getVmGpuTempData()
+    getVmGpuPowerData()
   }
 
   const getMonitoringCfgs = () => {
@@ -128,37 +126,29 @@ const index = (props) => {
         type: 'utilisation',
         title: 'RESOURCES_GPU_UTILIZATION',
         unit: '%',
-        legend: vmGpuUtilData.map(item => (
-            item.metric.device
-          )),
+        legend: vmGpuUtilData.map(item => item.metric.device),
         data: vmGpuUtilData,
       },
       {
         type: 'utilisation',
         title: 'RESOURCES_GPU_RAM_USAGE',
-	unit: '%',
-	unitType: 'memory',
-	legend: vmGpuRamData.map(item => (
-            item.metric.device
-          )),
+        unit: '%',
+        unitType: 'memory',
+        legend: vmGpuRamData.map(item => item.metric.device),
         data: vmGpuRamData,
       },
       {
         type: 'utilisation',
         title: t('RESOURCES_GPU_TEMPERATURE'),
         unit: '°C',
-        legend: vmGpuTempData.map(item => (
-            item.metric.device
-          )),
+        legend: vmGpuTempData.map(item => item.metric.device),
         data: vmGpuTempData,
       },
       {
         type: 'utilisation',
         title: t('RESOURCES_GPU_POWER'),
         unit: 'W',
-        legend: vmGpuPowerData.map(item => (
-            item.metric.device
-          )),
+        legend: vmGpuPowerData.map(item => item.metric.device),
         data: vmGpuPowerData,
       },
     ]
@@ -179,9 +169,8 @@ const index = (props) => {
         if (isEmpty(config.data)) return null
         return <SimpleArea key={config.title} width="100%" {...config} />
       })}
-
     </MonitoringController>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(observer(index))

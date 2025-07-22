@@ -113,7 +113,7 @@ export default class Keypairs extends React.Component {
           <Avatar
             icon="key"
             iconSize={40}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/keypairs/${name}/${item.id}`}
+            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/keypairs/${name}`}
             title={name}
           />
         ),

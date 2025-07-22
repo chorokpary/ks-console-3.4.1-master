@@ -16,13 +16,8 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
-
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -37,107 +32,8 @@ export default class RouterStore extends Base {
 
   getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
   getListUrl = this.getResourceUrl
-
-  @action
-  async fetchList({
-    cluster,
-    workspace,
-    namespace,
-    more,
-    devops,
-    ...params
-  } = {}) {
-    this.list.isLoading = true
-
-    if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
-    }
-
-    if (params.limit === Infinity || params.limit === -1) {
-      params.limit = -1
-      params.page = 1
-    }
-
-    params.limit = params.limit || 10
-
-    const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
-      this.getFilterParams(params)
-    )
-
-    // mm3 api 관련 
-    const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
-    const apiName = mm3Array.includes(this.module) ? this.module : "";
-
-    const data = (get(result, apiName) || []).map(item => ({
-      cluster,
-      namespace,
-      ...this.mapper(item),
-    }))
-
-    // 초기 데이터 처리 
-    this.dataList = data;
-
-    // namespace(project) 있는 경우
-    if (namespace) {
-      params.project = namespace;
-    }
-
-    // 검색 관련 처리 
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-    const searchArray = Object.keys(params).map((key) => {
-      let value = params[key];
-      let searchData = {
-        "searchKeywordType": key,
-        "searchKeywordText": value
-      }
-      return searchData
-    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
-
-    if (searchArray.length > 0) {
-      searchArray.map((search) => {
-        let resultList = this.dataList.filter((row) => {
-          if (typeof row[search.searchKeywordType] === "boolean") {
-            return (row[search.searchKeywordType] ? '사용' : '미사용').includes(search.searchKeywordText);
-          } else if (search.searchKeywordType === 'project') {
-            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-          } else {
-            return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-          }
-        });
-        this.dataList = resultList;
-      })
-    }
-
-    //정렬 처리
-    const sortType = !!params.ascending ? "asc" : "desc";
-    this.dataList.sort((a, b) => {
-      var x = a[params.sortBy];
-      var y = b[params.sortBy];
-      if (sortType == "desc") {
-        return x > y ? -1 : x < y ? 1 : 0;
-      } else if (sortType == "asc") {
-        return x < y ? -1 : x > y ? 1 : 0;
-      }
-    });
-
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-
-    this.list.update({
-      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || result.total_count || this.dataList.length || 0,
-      ...params,
-      limit: Number(params.limit) || 10,
-      page: Number(params.page) || 1,
-      isLoading: false,
-      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-    })
-
-    return data
-  }
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+  getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
 
   @action
   async create(data, params = {}) {
@@ -160,12 +56,13 @@ export default class RouterStore extends Base {
   }
 
   @action
-  async update({ id, ...params }, data) {
+  async update(params, data) {
 
     const jsonData = {};
     const routersData = {};
 
-    routersData.id = data.id;
+    routersData.name = data.name;
+    routersData.project = data.project;
     routersData.enable_snat = data.snatType == "T" ? true : false;
     routersData.internal = data.internal;
     routersData.external = data.external;
@@ -173,27 +70,22 @@ export default class RouterStore extends Base {
 
     jsonData.router = routersData;
 
-    // id로 수정해야해서 치환
-    params.name = id;
     await this.submitting(
-      request.put(this.getDetailUrl({ id, ...params }), jsonData)
+      request.put(this.getDetailUrl(params), jsonData)
     )
   }
 
   @action
   async fetchDetail(params) {
     this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}`
-    )
-    const detail = { ...params, ...this.mapper(result), kind: 'routers' }
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
+    const detail = { ...params, ...this.mapper(result), kind: 'Routers' }
 
     // Yaml 파일 관련 
     await this.fetchYaml(params);
-
-    // Rouster Data List 추가
-    await this.fetchDataList(params);
 
     this.detail = detail
     this.isLoading = false
@@ -203,11 +95,11 @@ export default class RouterStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/manifest`
-    )
-    const yamlData = { ...params, ...this.mapper(result), kind: 'routers' }
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+      project,
+    })
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Routers' }
 
     this.yaml = yamlData.manifest
     this.isLoading = false
@@ -215,47 +107,38 @@ export default class RouterStore extends Base {
   }
 
   @action
-  async fetchDataList(params) {
-    this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}`
-    )
-    const dataList = { ...params, ...this.mapper(result), kind: 'routers' }
-
-    this.dataList = dataList.routers
-    this.isLoading = false
-    return dataList
-  }
-
-  @action
   async batchDelete({ rowKeys, ...params }) {
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(id =>
-            request.delete(
-              `${this.getResourceUrl(params)}/${id}`
-            )
+    const rowKeyDict = rowKeys.map(key => {
+      if (key.includes('/')) {
+        const [project, name] = key.split('/')
+        return { project, name }
+      } else {
+        const project = params.namespace
+        const name = key
+        return { project, name }
+      }
+    })
+
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
           )
         )
       )
-    }
+    )
     this.list.selectedRowKeys = []
   }
 
   @action
   delete(user) {
-    // id로 삭제해야해서 치환
-    user.name = user.id;
     if (user.name === globals.user.username) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
   }
 
   @action
@@ -265,11 +148,10 @@ export default class RouterStore extends Base {
     const namespace = params.namespace;
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({cluster, namespace})}/edgetron/resources/kubevirt/networks`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/networks`
     )
     this.networkDataList = result.networks;
 
     return this.networkDataList
   }
-
 }

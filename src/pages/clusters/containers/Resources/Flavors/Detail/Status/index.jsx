@@ -4,13 +4,16 @@ import DetailVmList from 'pages/clusters/containers/Resources/components/DetailV
 import DetailKaasListFlavor from 'pages/clusters/containers/Resources/components/DetailKaasListFlavor'
 
 const Status = props => {
+  const namespace = props.match.params.namespace;
+  
   return (
     <>
       {/* 가상 머신 상세 관련 샘플 */}
       <DetailVmList
         type="Flavor"
-        variables="flavor_object"
+        match="flavor"
         name={props.match.params.name}
+        project={namespace}
       />
       <DetailKaasListFlavor
         type="Flavor"

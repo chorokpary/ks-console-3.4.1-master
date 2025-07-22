@@ -182,7 +182,7 @@ const RegistModal = props => {
       })
       const listKeypair = await vmStore.fetchVmListKeypair({ ...props })
       const listNode = await vmStore.fetchVmListNode({ ...props })
-      const listSecurityGroup = await vmStore.fetchVmListSecurityGroup({
+      const listSecurityGroup = await vmStore.fetchVmListSecurityGroupSummray({
         ...props,
       })
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
@@ -234,8 +234,8 @@ const RegistModal = props => {
     // { label: 'etc', value: '', icon: 'ico-plus', }
   ]
 
-  const availableIpOptions = netId => {
-    const networkIps = availableIpList.find(obj => obj.network === netId)
+  const availableIpOptions = (netId, project) => {
+    const networkIps = availableIpList.find(obj => obj.network === netId && obj.project === project)
     if (networkIps !== undefined) {
       return networkIps.ips.map(ip => {
         return {
@@ -327,7 +327,7 @@ const RegistModal = props => {
     setSelectedPhysicalnetworkIpList(existing)
 
     const updatedNetworkList = physicalNetworkList.map(item => {
-      if ((item.id === name, e)) {
+      if (item.id === name) {
         return { ...item, ip: val }
       }
       return item
@@ -412,7 +412,7 @@ const RegistModal = props => {
   const keypairOptions = () => {
     return keypairList.map(obj => ({
       label: t(obj.name),
-      value: t(obj.id),
+      value: t(obj.name),
     }))
   }
 
@@ -535,13 +535,13 @@ const RegistModal = props => {
         const imageSize =
           imageType === 'I'
             ? imageDataList
-              .filter(item => item.name === selectImageName)
-              .map(item => item.size)[0]
-              .replace('Gi', '')
+                .filter(item => item.name === selectImageName)
+                .map(item => item.size)[0]
+                .replace('Gi', '')
             : bootVolumeDataList
-              .filter(item => item.id === selectBootId)
-              .map(item => item.capacity)[0]
-              .replace('Gi', '')
+                .filter(item => item.id === selectBootId)
+                .map(item => item.capacity)[0]
+                .replace('Gi', '')
         const flavorSize = flavorDataList
           .filter(item => item.name === selectFlavorName)
           .map(item => item.root_disk)
@@ -568,7 +568,7 @@ const RegistModal = props => {
       setKeypairName(
         data.keypair === t('RESOURCES_SELECT')
           ? ''
-          : get(find(keypairList, { id: data.keypair }), 'name')
+          : get(find(keypairList, { name: data.keypair }), 'name')
       )
       setNodeName(data.node === t('RESOURCES_SELECT') ? '' : data.node)
 
@@ -577,7 +577,9 @@ const RegistModal = props => {
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
       setFlavorDisk(flavorData[0].root_disk)
 
-      setNetworkStorage(data.networkStorage === t('RESOURCES_SELECT') ? '' : data.networkStorage)
+      setNetworkStorage(
+        data.networkStorage === t('RESOURCES_SELECT') ? '' : data.networkStorage
+      )
 
       if (isScript) {
         const checkFlagJupyter = checkScriptJupyter()
@@ -945,11 +947,7 @@ const RegistModal = props => {
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = []
-      dataListVariables[type].forEach(el =>
-        type === 'sriov' || type === 'physicalnetwork'
-          ? nameArray.push(el.name)
-          : nameArray.push(el.id)
-      )
+      dataListVariables[type].forEach(el => nameArray.push(el.name))
       setVariables[type](nameArray)
     } else {
       setVariables[type]([])
@@ -1163,12 +1161,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
+                  className={`${
+                    regStep === 1
                       ? styles.current
                       : regStep > 1
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -1180,8 +1179,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1193,12 +1192,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
+                  className={`${
+                    regStep === 2
                       ? styles.current
                       : regStep > 2
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -1210,8 +1210,8 @@ const RegistModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1223,12 +1223,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 3
+                  className={`${
+                    regStep === 3
                       ? styles.current
                       : regStep > 3
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -1240,8 +1241,8 @@ const RegistModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1483,8 +1484,9 @@ const RegistModal = props => {
                           />
                         </Form.Item>
                         <div
-                          className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            flavorSizeCheck ? 'hide' : ''
+                          }`}
                         >
                           {imageType === 'I'
                             ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
@@ -1589,7 +1591,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['network'].length > 0 &&
                                     stateVariables['network'].length ===
-                                    dataListVariables['network'].length
+                                      dataListVariables['network'].length
                                   )
                                 }
                               />
@@ -1624,19 +1626,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {networkList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['network'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'network'
                                     )
                                   }
@@ -1646,14 +1648,14 @@ const RegistModal = props => {
                               <td>{data.type.toUpperCase()}</td>
                               <td>
                                 <Select
-                                  name={`${data.id}-ip`}
+                                  name={`${data.name}-ip`}
                                   placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.id)}
+                                  options={availableIpOptions(data.name, data.project)}
                                   onChange={e =>
-                                    handleIpSelectClick(data.id, e)
+                                    handleIpSelectClick(data.name, e)
                                   }
                                   disabled={
-                                    !networkCheckItems.includes(data.id)
+                                    !networkCheckItems.includes(data.name)
                                   }
                                   clearable
                                 />
@@ -1666,15 +1668,12 @@ const RegistModal = props => {
                       </table>
 
                       <div className={styles.removeCheckWrapper}>
-                        {networkCheckItems?.map(id => {
-                          const name = networkList
-                            ?.filter(data => data.id === id)
-                            .map(item => item.name)[0]
+                        {networkCheckItems?.map(name => {
                           return (
-                            <span key={id}>
+                            <span key={name}>
                               <Button
                                 icon="close"
-                                onClick={() => handleDelete(id, 'network')}
+                                onClick={() => handleDelete(name, 'network')}
                               >
                                 {name}
                               </Button>
@@ -1727,7 +1726,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['sriov'].length > 0 &&
                                     stateVariables['sriov'].length ===
-                                    dataListVariables['sriov'].length
+                                      dataListVariables['sriov'].length
                                   )
                                 }
                               />
@@ -1862,8 +1861,8 @@ const RegistModal = props => {
                                     dataListVariables['physicalnetwork']
                                       .length > 0 &&
                                     stateVariables['physicalnetwork'].length ===
-                                    dataListVariables['physicalnetwork']
-                                      .length
+                                      dataListVariables['physicalnetwork']
+                                        .length
                                   )
                                 }
                               />
@@ -1984,8 +1983,9 @@ const RegistModal = props => {
 
                 <div className={styles.wrapperError}>
                   <div
-                    className={`form-item-error ${!isKeypiarPasswordError ? 'hide' : ''
-                      }`}
+                    className={`form-item-error ${
+                      !isKeypiarPasswordError ? 'hide' : ''
+                    }`}
                   >
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
@@ -2031,7 +2031,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['security'].length > 0 &&
                                     stateVariables['security'].length ===
-                                    dataListVariables['security'].length
+                                      dataListVariables['security'].length
                                   )
                                 }
                               />
@@ -2069,19 +2069,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {securityGroupList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['security'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'security'
                                     )
                                   }
@@ -2089,22 +2089,19 @@ const RegistModal = props => {
                               </td>
                               <td>{data.name}</td>
                               <td>{data.description}</td>
-                              <td>{data.ingress_count}</td>
-                              <td>{data.egress_count}</td>
+                              <td>{data.ingress}</td>
+                              <td>{data.egress}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                       <div className={styles.removeCheckWrapper}>
-                        {securityGroupCheckItems?.map(id => {
-                          const name = securityGroupList
-                            ?.filter(data => data.id === id)
-                            .map(item => item.name)[0]
+                        {securityGroupCheckItems?.map(name => {
                           return (
-                            <span key={id}>
+                            <span key={name}>
                               <Button
                                 icon="close"
-                                onClick={() => handleDelete(id, 'security')}
+                                onClick={() => handleDelete(name, 'security')}
                               >
                                 {name}
                               </Button>
@@ -2182,8 +2179,9 @@ const RegistModal = props => {
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${!isJupyterPortError ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            !isJupyterPortError ? 'hide' : ''
+                          }`}
                         >
                           {t('RESOURCES_JUPYTER_PORT_RANGE_DESC')}
                         </div>
@@ -2211,8 +2209,9 @@ const RegistModal = props => {
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${!isJupyterTokenError ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            !isJupyterTokenError ? 'hide' : ''
+                          }`}
                         >
                           {t('RESOURCES_JUPYTER_TOKEN_DESC')}
                         </div>
@@ -2284,8 +2283,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPasswordError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPasswordError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                       </div>
@@ -2341,8 +2341,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isFileWriteError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isFileWriteError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                       </div>
@@ -2399,14 +2400,16 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPackageError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPackageError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PACKAGE_SETTING_EMPTY_DESC')}
                       </div>
                       <div
-                        className={`form-item-error ${!packageValidationError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !packageValidationError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_INVALID_PACKAGE_SETTING_DESC')}
                       </div>
@@ -2446,8 +2449,9 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                       <div
-                        className={`form-item-error ${!isUserScriptError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isUserScriptError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
                       </div>
@@ -2485,13 +2489,15 @@ const RegistModal = props => {
                         </div>
                       )}
                       <div className={styles.list}>
-                        <label>{`${imageType === 'I'
+                        <label>{`${
+                          imageType === 'I'
                             ? t('RESOURCES_IMAGE')
                             : t('RESOURCES_BOOT_VOLUME')
-                          }`}</label>
+                        }`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{`${imageType === 'I' ? imageName : bootVolumeName
-                            }`}</div>
+                          <div className={styles.bold}>{`${
+                            imageType === 'I' ? imageName : bootVolumeName
+                          }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
@@ -2524,10 +2530,11 @@ const RegistModal = props => {
                         )}
                         <div className={styles.list}>
                           <label>{t('RESOURCES_SECURE_BOOT')}</label>
-                          <div>{`${secureBoot === true
+                          <div>{`${
+                            secureBoot === true
                               ? t('USER_ACTIVE')
                               : t('USER_DISABLED')
-                            }`}</div>
+                          }`}</div>
                         </div>
                         <div className={styles.list}>
                           <label>{t('RESOURCES_DESCRIPTION')}</label>
@@ -2558,7 +2565,7 @@ const RegistModal = props => {
                     </div>
                     <label>{t('RESOURCES_NETWORK')}</label>
                     {networkList
-                      .filter(x => networkCheckItems.includes(x.id))
+                      .filter(x => networkCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div className={styles.list}>
@@ -2575,10 +2582,11 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
-                                {`${obj.ip === undefined
+                                {`${
+                                  obj.ip === undefined
                                     ? t('RESOURCES_AUTOMATIC')
                                     : obj.ip
-                                  }`}
+                                }`}
                               </div>
                             </div>
                           </div>
@@ -2609,10 +2617,11 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
-                                {`${obj.ip === undefined
+                                {`${
+                                  obj.ip === undefined
                                     ? t('RESOURCES_AUTOMATIC')
                                     : obj.ip
-                                  }`}
+                                }`}
                               </div>
                             </div>
                           </div>
@@ -2643,10 +2652,11 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
-                                {`${obj.ip === undefined
+                                {`${
+                                  obj.ip === undefined
                                     ? t('RESOURCES_AUTOMATIC')
                                     : obj.ip
-                                  }`}
+                                }`}
                               </div>
                             </div>
                           </div>
@@ -2676,40 +2686,38 @@ const RegistModal = props => {
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_KEYPAIR')}</label>
-                        <div>{`${keypairName === undefined
+                        <div>{`${
+                          keypairName === undefined
                             ? t('RESOURCES_NOT_SELECTED')
                             : keypairName
-                          }`}</div>
+                        }`}</div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                         <div>
                           {securityGroupCheckItems.length === 0
                             ? t('RESOURCES_NOT_SELECTED')
-                            : securityGroupCheckItems.map(id => {
-                              const securityGroup = find(securityGroupList, {
-                                id,
-                              })
-                              const name = get(securityGroup, 'name', '')
-                              return <div key={id}>{name}</div>
-                            })}
+                            : securityGroupCheckItems.map(name => {
+                                return <div key={name}>{name}</div>
+                              })}
                         </div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_NODE')}</label>
-                        <div>{`${nodeName === undefined
+                        <div>{`${
+                          nodeName === undefined
                             ? t('RESOURCES_AUTOMATIC')
                             : nodeName
-                          }`}</div>
+                        }`}</div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
-                        <div>{`${networkStorage === undefined
+                        <div>{`${
+                          networkStorage === undefined
                             ? t('RESOURCES_AUTOMATIC')
                             : networkStorage
-                          }`}</div>
+                        }`}</div>
                       </div>
-
                     </div>
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>

@@ -33,9 +33,6 @@ const RegistModal = props => {
   const [btnDimmOut, setBtnDimmOut] = useState(false);
   const [btnDimmIn, setBtnDimmIn] = useState(false);
 
-  const [inDupRules, setInDupRules] = useState(true);
-  const [outDupRules, setOutDupRules] = useState(true);
-
   const regexRemoteIp = /[^0123456789.\/]/g;
   const regexPort = /^[0-9]*(-[0-9]*)?$/;
 
@@ -627,7 +624,6 @@ const RegistModal = props => {
                         ))}
                       </tbody>
                     </table>
-                    {/* <div className={`form-item-error ${inDupRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_DUPLICATE_POLICY_TIP')}</div> */}
                   </div>
                   <div className="text-right">
                     <Button
@@ -776,7 +772,6 @@ const RegistModal = props => {
                         ))}
                       </tbody>
                     </table>
-                    {/* <div className={`form-item-error ${outDupRules ? "hide" : ""}`} style={{ marginLeft: '10px' }}>{t('RESOURCES_DUPLICATE_POLICY_TIP')}</div> */}
                   </div>
                   <div className="text-right">
                     <Button

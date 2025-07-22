@@ -15,36 +15,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable'
 
-import { Link } from 'react-router-dom'
 import React from 'react'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
+import { Avatar } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import withList, { ListPage } from 'components/HOCs/withList'
 
 import { getLocalTime } from 'utils'
-import { ICON_TYPES } from 'utils/constants'
 
-import RoleStore from 'stores/role'
 import SecurityGroupStore from 'stores/resources/securityGroups'
-import * as common from 'utils/resources'
-
-
 
 @withList({
     store: new SecurityGroupStore(),
     module: 'security_groups',
     authKey: 'securityGroups',
     name: t('RESOURCES_SECURITY_GROUP'),
-    rowKey: 'id'
+    rowKey: 'name'
 })
 export default class SecurityGroups extends React.Component {
-
     showAction(record) {
-        return globals.user.username !== record.name
+        return !(
+            (record.name === 'allow-egress-all' || record.name === 'allow-ingress-all')
+        )
     }
 
     get itemActions() {
@@ -67,7 +60,7 @@ export default class SecurityGroups extends React.Component {
     }
 
     get tableActions() {
-        const { trigger, getData, routing, tableProps } = this.props
+        const { trigger, getData, tableProps } = this.props
         return {
             ...tableProps.tableActions,
             actions: [
@@ -113,24 +106,24 @@ export default class SecurityGroups extends React.Component {
                 dataIndex: 'name',
                 sorter: true,
                 search: true,
-                render: (name, item) => (
+                render: (name, record) => (
                     <Avatar
                         icon="shield"
                         iconSize={40}
-                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/securityGroups/${name}/${item.id}`}
+                        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/securityGroups/${name}`}
                         title={name}
                     />
                 ),
             },
             {
                 title: t('RESOURCES_INBOUND_RULE_COUNT'),
-                dataIndex: 'ingress_count',
+                dataIndex: 'ingress',
                 isHideable: true,
                 width: 'auto',
             },
             {
                 title: t('RESOURCES_OUTBOUND_RULE_COUNT'),
-                dataIndex: 'egress_count',
+                dataIndex: 'egress',
                 isHideable: true,
                 width: 'auto',
             },
@@ -143,9 +136,7 @@ export default class SecurityGroups extends React.Component {
                 width: 150,
                 render: date => (
                     <p>
-                        {date
-                            ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
-                            : t('-')}
+                        {date ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss') : t('-')}
                     </p>
                 ),
             },
@@ -180,5 +171,3 @@ export default class SecurityGroups extends React.Component {
         )
     }
 }
-
-

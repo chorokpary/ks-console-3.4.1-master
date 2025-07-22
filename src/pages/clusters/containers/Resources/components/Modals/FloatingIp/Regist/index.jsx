@@ -56,12 +56,12 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
   useEffect(() => {
     if (networkDataList.length > 0 && routerList.length > 0) {
       const list =
-        networkDataList.filter(obj => routerList.includes(obj.id)) || [];
+        networkDataList.filter(obj => routerList.includes(obj.name)) || [];
       setNetworkOriginList(list);
 
       setNetworkList(list.filter(obj => obj.project === projectName));
       setRadioExternal(
-        list.filter(obj => obj.project === projectName)?.[0]?.id
+        list.filter(obj => obj.project === projectName)?.[0]?.name
       );
     }
   }, [networkDataList, routerList]);
@@ -72,24 +72,24 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
     if (!_.isEmpty(selectedIp)) {
       onOk({ floating_ip: selectedIp });
     } else {
-      onOk({ floating_ip: { network: radioExternal } });
+      onOk({ floating_ip: { network: radioExternal, project: projectName } });
     }
   };
 
   const getSliceData = data => {
     const arr = [];
-    data.filter(obj => obj.external).map(obj => arr.push(obj.external.id));
+    data.filter(obj => obj.external).map(obj => arr.push(obj.external.name));
     return arr;
   };
 
   useEffect(() => {
     const list = networkOriginList.filter(obj => obj.project === projectName);
     setNetworkList(list);
-    setRadioExternal(list[0]?.id);
+    setRadioExternal(list[0]?.name);
   }, [projectName]);
 
-  const availableIpOptions = netId => {
-    const networkIps = availableIpList.find(obj => obj.network === netId);
+  const availableIpOptions = netName => {
+    const networkIps = availableIpList.find(obj => obj.network === netName);
     const opt = networkIps.ips.map(ip => {
       return {
         label: t(ip),
@@ -99,10 +99,11 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
     return opt;
   };
 
-  const handleIpSelectClick = (netId, val) => {
+  const handleIpSelectClick = (netName, val) => {
     const record = {};
     if (val != t('RESOURCES_AUTOMATIC') && val != undefined) {
-      record.network = netId;
+      record.network = netName;
+      record.project = projectName;
       record.floating_ip = val;
     }
     setSelectedIp(record);
@@ -187,9 +188,9 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
                           <Radio
                             name="external"
                             value={data.name}
-                            checked={radioExternal === data.id}
+                            checked={radioExternal === data.name}
                             onChange={e => {
-                              setRadioExternal(data.id);
+                              setRadioExternal(data.name);
                             }}
                           />
                         </td>
@@ -197,10 +198,10 @@ const RegistModal = ({ title, onOk, store, ...props }) => {
                         <td>{data.type.toUpperCase()}</td>
                         <td>
                           <Select
-                            name={`${data.id}-ip`}
+                            name={`${data.name}-ip`}
                             placeholder={t('RESOURCES_AUTOMATIC')}
-                            options={availableIpOptions(data.id)}
-                            onChange={e => handleIpSelectClick(data.id, e)}
+                            options={availableIpOptions(data.name)}
+                            onChange={e => handleIpSelectClick(data.name, e)}
                             clearable
                           />
                         </td>

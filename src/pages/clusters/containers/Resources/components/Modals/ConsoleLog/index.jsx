@@ -16,20 +16,17 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { isUndefined, isEmpty } from 'lodash'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { toJS } from 'mobx'
 import classnames from 'classnames'
 import { Modal } from 'components/Base'
-import EditMode from 'components/EditMode'
 
 import styles from './index.scss'
 
 export default class ConsoleLoglModal extends React.Component {
   static propTypes = {
     detail: PropTypes.object,
-    vmlog: PropTypes.object,
+    vmlog: PropTypes.string,
     visible: PropTypes.bool,
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
@@ -65,7 +62,7 @@ export default class ConsoleLoglModal extends React.Component {
   }
 
   init(props) {
-    const { vmlog, detail, store } = props
+    const { vmlog } = props
     if (vmlog) {
       return this.setState({ value: vmlog })
     }
@@ -87,9 +84,7 @@ export default class ConsoleLoglModal extends React.Component {
         hideFooter={readOnly}
         fullScreen
       >
-          <div className={styles.wrapper}>
-            {this.state.value}
-          </div>       
+        <div className={styles.wrapper}>{this.state.value}</div>
       </Modal>
     )
   }

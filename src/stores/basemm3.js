@@ -136,6 +136,20 @@ export default class BaseStore {
 
     params.limit = params.limit || 10
 
+    const project = namespace !== undefined ? namespace : undefined
+
+    // namespace(project) 있는 경우
+    const projectExceptionArray = [
+      'images',
+      'flavors',
+      'gpunodes',
+    ]
+    if (project) {
+      projectExceptionArray.includes(this.module)
+        ? ''
+        : (params.project = project)
+    }
+
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
       this.getFilterParams(params)
@@ -180,19 +194,6 @@ export default class BaseStore {
 
     // 초기 데이터 처리
     this.dataList = data
-
-    // namespace(project) 있는 경우
-    const projectExceptionArray = [
-      'images',
-      'flavors',
-      'host_devices',
-      'gpunodes',
-    ]
-    if (namespace) {
-      projectExceptionArray.includes(this.module)
-        ? ''
-        : (params.project = namespace)
-    }
 
     // 검색 관련 처리
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']

@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, find } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { inject } from 'mobx-react'
 import classnames from 'classnames'
@@ -38,7 +38,7 @@ const DetailVmList = props => {
 
   const workspace = props.workspace
   const cluster = props.cluster
-  const namespace = props.namespace
+  const namespace = props.project
 
   const [vmDataList, setVmDataList] = useState([])
 
@@ -105,12 +105,13 @@ const DetailVmList = props => {
     const detailParams = {
       cluster,
       namespace,
-      project: namespace,
       resource: props.variables,
+      match: props.match,
       id: props.id,
       name: props.name,
       page,
       limit: perPage,
+      project: props.project,
     }
 
     if (params.name !== '' && params.name !== undefined) {
@@ -144,7 +145,7 @@ const DetailVmList = props => {
 
     const getVmCpuUsageData = async () => {
       const cpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       })
@@ -154,7 +155,7 @@ const DetailVmList = props => {
 
     const getVmWinCpuUsageData = async () => {
       const cpuData = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `(100 - (avg by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster,
       })
@@ -254,7 +255,7 @@ const DetailVmList = props => {
           <div className={styles.text}>
             <div>
               <Link
-                to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.name}/${obj.id}`}
+                to={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${obj.name}`}
               >
                 {obj.name}
               </Link>
@@ -264,7 +265,7 @@ const DetailVmList = props => {
                   name="terminal"
                   size={16}
                   clickable
-                  onClick={() => handleOpenVnc(obj.id, obj.project)}
+                  onClick={() => handleOpenVnc(obj.name, obj.project)}
                 />
               </Tooltip>
             </div>
@@ -283,7 +284,7 @@ const DetailVmList = props => {
             <div>{obj.node ? obj.node : '-'}</div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.id, obj.os_type, isExpandFlag)}
+          {renderMonitorings(obj.name, obj.os_type, obj.project, isExpandFlag)}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon
               name="chevron-down"
@@ -362,23 +363,25 @@ const DetailVmList = props => {
     )
   }
 
-  const renderMonitorings = (vmId, osType, isExpand) => {
+  const renderMonitorings = (vmName, osType, project, isExpand) => {
     // const isExpand = false;
     const loading = false
 
     if (loading) return <div className={styles.monitors}>{t('LOADING')}</div>
 
-    const vmCpuMetricData = _.find(
+    const vmCpuMetricData = find(
       osType === 'linux' ? vmCpuData : vmWinCpuData,
       data => {
-        if (data.metric.pod === vmId) return data
+        if (data.metric.pod === vmName && data.metric.namespace === project)
+          return data
       }
     )
 
-    const vmMemoryMetricData = _.find(
+    const vmMemoryMetricData = find(
       osType === 'linux' ? vmMemoryData : vmWinMemoryData,
       data => {
-        if (data.metric.pod === vmId) return data
+        if (data.metric.pod === vmName && data.metric.namespace === project)
+          return data
       }
     )
 
@@ -457,11 +460,10 @@ const DetailVmList = props => {
 
   const renderFooter = () => {
     const pagination = getPagination()
-    const { tot } = pagination
 
     return (
       <Level className={styles.footer}>
-        <LevelLeft>{t('TOTAL_ITEMS', { num: tot })}</LevelLeft>
+        <LevelLeft>{t('TOTAL_ITEMS', { num: pagination.total })}</LevelLeft>
         <LevelRight>
           <Pagination {...pagination} onChange={handlePage} />
         </LevelRight>

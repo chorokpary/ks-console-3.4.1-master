@@ -4,20 +4,14 @@ import { observer, inject } from 'mobx-react';
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
 
 const Status = props => {
-  const store = props.detailStore;
-  const cluster = props.detailStore?.detail.cluster;
-
-  useEffect(() => {
-  }, []);
-
   return (
     <>
       <div>
         <DetailVmList
           type={t('RESOURCES_NETWORK_STORAGE')}
-          variables="network_storage"
-          {...props.match.params}
+          match="network_storage"
           name={props.match.params.name}
+          project={props.match.params.namespace}
         />
       </div>
     </>

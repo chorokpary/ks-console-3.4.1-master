@@ -25,7 +25,6 @@ const VolumeDetail = props => {
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
   )
-  const id = props.match.params.id
   const used_by_vmi = store.detail.volume?.used_by_vmi
   const boot_volume = store.detail.volume?.boot_volume
 
@@ -85,7 +84,11 @@ const VolumeDetail = props => {
               })
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
-                data: { id, vmId: used_by_vmi, actionType: 'D' },
+                data: {
+                  name: volumeName,
+                  vmName: used_by_vmi,
+                  actionType: 'D',
+                },
                 store,
                 success: fetchData,
                 ...props.match.params,
@@ -106,7 +109,7 @@ const VolumeDetail = props => {
             type: 'VOLUME_DETAIL',
             detail: toJS(store.detail),
             store,
-            cluster: props.match.params.cluster,
+            ...props.match.params,
             success: () => routing.push(listUrl),
           }),
       })
@@ -130,6 +133,10 @@ const VolumeDetail = props => {
       {
         name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
+      },
+      {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
       },
       {
         name: t('RESOURCES_STORAGE_CLASS'),

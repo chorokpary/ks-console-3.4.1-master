@@ -79,7 +79,7 @@ const SecurityGroupDetail = props => {
       onClick: () =>
         props.rootStore.triggerAction('securityGroup.remove', {
           type: 'SECURITYGROUP_DETAIL',
-          detail: toJS(store.detail),
+          detail: toJS(store.detail.security_group),
           store,
           cluster: props.match.params.cluster,
           success: () => routing.push(listUrl()),
@@ -98,6 +98,10 @@ const SecurityGroupDetail = props => {
       {
         name: t('RESOURCES_CLUSTER'),
         value: detail.cluster,
+      },
+      {
+        name: t('PROJECT'),
+        value: props.match.params.namespace,
       },
       {
         name: t('RESOURCES_DESCRIPTION'),
@@ -120,10 +124,9 @@ const SecurityGroupDetail = props => {
     icon: 'shield',
     module: store.module,
     name: get(store.detail, 'name'),
-    // desc: get(store.detail.security_group, 'description', ''),
     operations:
-      get(store.detail, 'id') === 'c5071a6b-d606-4fde-86c1-6bcc3160bb28' ||
-      get(store.detail, 'id') === 'eb99fdd0-560f-4f85-b3a4-3780a22f3a00'
+      get(store.detail, 'name') === 'allow-egress-all' ||
+      get(store.detail, 'name') === 'allow-ingress-all'
         ? getDefaultSCOperations()
         : getOperations(),
     attrs: getAttrs(),

@@ -813,6 +813,8 @@ module.exports = {
   RESOURCES_SELECT_FLOATING_IP_TIP: '플로팅 IP를 선택해 주세요.',
   RESOURCES_FLOATING_IP_DESC:
     '플로팅 IP의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_FLOATING_IP_VM: '가상머신',
+  RESOURCES_FLOATING_IP_LB: '로드밸런서',
   RESOURCES_PIXEL_COUNT: '픽셀수',
   RESOURCES_NEED_TO_TREE: '필요 소나무',
   RESOURCES_ALLOCATION: '할당',

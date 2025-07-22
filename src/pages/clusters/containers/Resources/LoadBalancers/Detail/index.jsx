@@ -2,14 +2,11 @@
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 import LoadBalancerStore from 'stores/resources/loadbalancers'
-import { useParams } from 'react-router-dom';
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react';
-import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
-import * as common from 'utils/resources'
 import routes from './routes'
 import FloatingIpStore from 'stores/resources/floatingip';
 
@@ -32,10 +29,11 @@ const LoadBalancerDetail = (props) => {
     const routing = props.rootStore.routing;
 
     const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
-    const lbId = props.match.params.id;
+    const lbName = props.match.params.name;
+    const project = props.match.params.namespace;
     const floatingData = toJS(store.floatingIpsList)
-    const floatingId = floatingData?.filter((row) => row.instance_id == lbId).map((el) => el.id)[0]
-    const floatingIp = floatingData?.filter((row) => row.instance_id == lbId).map((el) => el.floating_ip)[0]
+    const floatingId = floatingData?.filter((row) => row.instance_id == lbName).map((el) => el.id)[0]
+    const floatingIp = floatingData?.filter((row) => row.instance_id == lbName).map((el) => el.floating_ip)[0]
 
     const getOperations = () => [
         {
@@ -71,7 +69,7 @@ const LoadBalancerDetail = (props) => {
                         store: floatingstore,
                         success: fetchData,
                         ...props.match.params,
-                        data: { id: floatingId }
+                        data: { id: floatingId, project: project }
                     })
                 }
             },
@@ -97,7 +95,7 @@ const LoadBalancerDetail = (props) => {
             onClick: () =>
                 props.rootStore.triggerAction('loadBalancer.remove', {
                     type: 'LB_DETAIL',
-                    detail: toJS(store.detail),
+                    detail: toJS(store.detail.lb),
                     store: store,
                     cluster: props.match.params.cluster,
                     success: () => routing.push(listUrl()),
@@ -116,6 +114,10 @@ const LoadBalancerDetail = (props) => {
             {
                 name: t('RESOURCES_CLUSTER'),
                 value: detail.cluster,
+            },
+            {
+                name: t('PROJECT'),
+                value: props.match.params.namespace,
             },
             {
                 name: t('RESOURCES_NETWORK_NAME'),

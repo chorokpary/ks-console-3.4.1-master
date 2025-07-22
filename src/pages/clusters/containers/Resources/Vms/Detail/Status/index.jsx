@@ -1,12 +1,9 @@
-/* eslint-disable no-shadow */
-/* eslint-disable prettier/prettier */
-import { get, groupBy, isEmpty } from 'lodash'
+import { isEmpty, find } from 'lodash'
 import React, { useState, useEffect } from 'react'
-import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
-import { Icon, Button, Notify } from '@kube-design/components'
+import { Icon } from '@kube-design/components'
 import { Link } from 'react-router-dom'
 import { Panel, Text, Indicator } from 'components/Base'
 import { TinyArea } from 'components/Charts'
@@ -35,7 +32,6 @@ const Status = props => {
   const [vmMemoryData, setVmMemoryData] = useState([])
 
   const intiParams = { times: 50, step: '10m' }
-  const [networkType, setNetworkType] = useState('network')
 
   useEffect(() => {
     if (!store.detail.vm) return
@@ -50,7 +46,7 @@ const Status = props => {
       const networkData = store.networksList
       const networkNameArray = store.detail.vm?.networks.map(item => item.name)
       const filterData = networkData.filter(item => {
-        return networkNameArray.includes(item.id)
+        return networkNameArray.includes(item.name)
       })
 
       const sriovNetworkData = store.sriov_networks
@@ -65,12 +61,12 @@ const Status = props => {
 
       if (filterData.length > 0) {
         const promises = filterData.filter(async network => {
-          if (network.name != 'k8s-pod-network') {
+          if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.id}`
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
             )
-            networkDetail.network.endpoint = "networks"
-            networkDetail.network.unique = "id"
+            networkDetail.network.endpoint = 'networks'
+            networkDetail.network.unique = 'project_name'
             setDetailNetwork(value => [...value, networkDetail.network])
           }
         })
@@ -79,12 +75,12 @@ const Status = props => {
 
       if (sriovFilterData.length > 0) {
         const promises = sriovFilterData.filter(async network => {
-          if (network.name != 'k8s-pod-network') {
+          if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
             )
-            networkDetail.network.endpoint = "sriovs"
-            networkDetail.network.unique = "name"
+            networkDetail.network.endpoint = 'sriovs'
+            networkDetail.network.unique = 'name'
             setDetailNetwork(value => [...value, networkDetail.network])
           }
         })
@@ -93,12 +89,12 @@ const Status = props => {
 
       if (physicalNetworkFilterData.length > 0) {
         const promises = physicalNetworkFilterData.filter(async network => {
-          if (network.name != 'k8s-pod-network') {
+          if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
               `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}/${network.project}/info`
             )
-            networkDetail.physicalnetwork.endpoint = "physicalnetworks"
-            networkDetail.physicalnetwork.unique = "project_name"
+            networkDetail.physicalnetwork.endpoint = 'physicalnetworks'
+            networkDetail.physicalnetwork.unique = 'project_name'
             setDetailNetwork(value => [...value, networkDetail.physicalnetwork])
           }
         })
@@ -110,21 +106,21 @@ const Status = props => {
       setDetailSecurityGroup([])
       const securityData = store.securigyGroupList
       const securityIdArray = store.detail.vm.security_groups.map(
-        item => item.id
+        item => item.name
       )
       const filterData = securityData.filter(item =>
-        securityIdArray.includes(item.id)
+        securityIdArray.includes(item.name)
       )
       setDetailSecurityGroup(filterData)
     }
 
     const fnGetVolume = async () => {
       const volumeData = store.volumeList?.filter(
-        el => el.used_by_vmi == store.detail.vm?.id
+        el => el.used_by_vmi === store.detail.vm?.name
       )
       setDetailVolume(volumeData)
     }
-
+    
     const fnGetNetworkStorage = async () => {
       setDetailNetworkStorage(store.networkStorageInfo)
     }
@@ -172,6 +168,7 @@ const Status = props => {
       end: params.end,
       step: getMinuteValue(params.step),
       times: params.times,
+      namespace: store.detail.vm.project,
     })
 
     if (!paramsData.start || !paramsData.end) {
@@ -181,19 +178,24 @@ const Status = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
-      const cpuWindowsDataExpr = `(100 - (avg by (pod) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuLinuxDataExpr = `(100 - (avg by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuWindowsDataExpr = `(100 - (avg by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
 
-      const vmCpuData = await customStore.fetchMetric({
+      const cpuData = await customStore.fetchMetric({
         expr:
-          store.detail.vm.os_type == 'linux'
+          store.detail.vm.os_type === 'linux'
             ? cpuLinuxDataExpr
             : cpuWindowsDataExpr,
         ...paramsData,
       })
 
-      const vmCpuMetricData = _.find(vmCpuData, data => {
-        if (data.metric.pod === store.detail.id) return data
+      const vmCpuMetricData = find(cpuData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
       })
 
       // 배열 처리
@@ -207,16 +209,21 @@ const Status = props => {
       const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
       const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
 
-      const vmMemoryData = await customStore.fetchMetric({
+      const memoryData = await customStore.fetchMetric({
         expr:
-          store.detail.vm.os_type == 'linux'
+          store.detail.vm.os_type === 'linux'
             ? memoryLinuxDataExpr
             : memoryWindowsDataExpr,
         ...paramsData,
       })
 
-      const vmMemoryMetricData = _.find(vmMemoryData, data => {
-        if (data.metric.pod === store.detail.id) return data
+      const vmMemoryMetricData = find(memoryData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project &&
+          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+        )
+          return data
       })
 
       // 배열 처리
@@ -293,15 +300,14 @@ const Status = props => {
     ) {
       return 'waiting'
     }
-    else if (state === 'Running') {
+    if (state === 'Running') {
       return 'running'
     }
-    else if (state === 'Stopped' || state === 'Paused') {
+    if (state === 'Stopped' || state === 'Paused') {
       return 'stopped'
     }
-    else {
-      return 'error'
-    }
+
+    return 'error'
   }
 
   return (
@@ -332,13 +338,17 @@ const Status = props => {
                   <p>{t('RESOURCES_STATE')}</p>
                 </div>
                 <div className={styles.text}>
-                  <div>{store.detail.vm?.node ? (
-                    <Link
-                      to={`/clusters/${cluster}/nodes/${store.detail.vm.node}`}
-                    >
-                      {store.detail.vm.node}
-                    </Link>
-                  ) : ("-")}</div>
+                  <div>
+                    {store.detail.vm?.node ? (
+                      <Link
+                        to={`/clusters/${cluster}/nodes/${store.detail.vm.node}`}
+                      >
+                        {store.detail.vm.node}
+                      </Link>
+                    ) : (
+                      '-'
+                    )}
+                  </div>
                   <p>{t('RESOURCES_NODE')}</p>
                 </div>
                 {renderMonitorings()}
@@ -395,13 +405,13 @@ const Status = props => {
                     icon="gpu"
                     title={
                       detailFlavor.gpus.length >= 1
-                        ? detailFlavor.gpus.length == 1
-                          ? detailFlavor.gpus[0].quantity + " " + detailFlavor.gpus[0].name
+                        ? detailFlavor.gpus.length === 1
+                          ? `${detailFlavor.gpus[0].quantity} ${detailFlavor.gpus[0].name}`
                           : `${detailFlavor.gpus[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${detailFlavor.gpus.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
+                              'RESOURCES_BESIDES'
+                            )} ${detailFlavor.gpus.length - 1}${t(
+                              'RESOURCES_COUNT'
+                            )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -417,6 +427,7 @@ const Status = props => {
           <DetailSecurityGroupList
             securityGroupData={detailSecurityGroup}
             cluster={cluster}
+            namespace={store.detail.vm.project}
           />
         )}
 
@@ -435,22 +446,18 @@ const Status = props => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {obj.unique == "id" ? (
+                      {obj.unique === 'name' ? (
                         <Link
-                          to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}/${obj.id}`}
+                          to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
                       ) : (
-                        obj.unique == "name" ? (
-                          <Link to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}>
-                            {obj.name}
-                          </Link>
-                        ) : (
-                          <Link to={`/clusters/${cluster}/projects/${obj.project}/${obj.endpoint}/${obj.name}`}>
-                            {obj.name}
-                          </Link>
-                        )
+                        <Link
+                          to={`/clusters/${cluster}/projects/${obj.project}/${obj.endpoint}/${obj.name}`}
+                        >
+                          {obj.name}
+                        </Link>
                       )}
                     </div>
                     <p>{t('RESOURCES_NAME')}</p>
@@ -464,9 +471,11 @@ const Status = props => {
                     <p>CIDR</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{`${obj.gateway_ip === undefined || obj.gateway_ip === ""
-                      ? "-"
-                      : obj.gateway_ip
+                    <div>
+                      {`${
+                        obj.gateway_ip === undefined || obj.gateway_ip === ''
+                          ? '-'
+                          : obj.gateway_ip
                       }`}
                     </div>
                     <p>{t('RESOURCES_GATEWAY')}</p>
@@ -490,7 +499,7 @@ const Status = props => {
                     <div className={classnames(styles.title, styles.name)}>
                       <div>
                         <Link
-                          to={`/clusters/${cluster}/resourcesvolumes/${obj.name}/${obj.id}`}
+                          to={`/clusters/${cluster}/projects/${obj.project}/resourcesvolumes/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
@@ -510,7 +519,9 @@ const Status = props => {
                       <p>{t('RESOURCES_CAPACITY')}</p>
                     </div>
                     <div className={styles.title}>
-                      <div>{t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}</div>
+                      <div>
+                        {t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}
+                      </div>
                       <p>{t('RESOURCES_STATE')}</p>
                     </div>
                   </div>
@@ -554,7 +565,7 @@ const Status = props => {
             </div>
           </Panel>
         )}
-    </div >
+      </div>
     </>
   )
 }

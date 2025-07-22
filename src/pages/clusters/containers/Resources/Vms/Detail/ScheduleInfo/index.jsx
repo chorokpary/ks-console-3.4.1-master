@@ -22,11 +22,11 @@ import { observer, inject } from 'mobx-react'
 import { Panel, Text } from 'components/Base'
 import { Loading, Icon, Tooltip } from '@kube-design/components'
 import { getLocalTime } from 'utils'
+import VmStore from 'stores/resources/vms'
 import StatusCard from './StatusCard'
 import styles from './index.scss'
-import VmStore from 'stores/resources/vms'
 
-const vmStore = new VmStore();
+const vmStore = new VmStore()
 
 const Status = ({ status, tip }) => {
   const icon = (
@@ -47,27 +47,24 @@ const Status = ({ status, tip }) => {
   return icon
 }
 
-const ScheduleInfo = (props) => {
-
-  const store = props.detailStore;
-
-  const [status, setStatus] = useState();
-  const [state, setState] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+const ScheduleInfo = props => {
+  const [status, setStatus] = useState()
+  const [state, setState] = useState()
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    getVmStatusData();
+    getVmStatusData()
   }, [])
 
   const getVmStatusData = async () => {
-    const status_response = await vmStore.fetchVmStatus(props.match.params);
-    const state_response = await vmStore.fetchVmState(props.match.params);
-    setStatus(status_response.status);
-    setState(state_response.state);
-    setIsLoading(false);
+    const status_response = await vmStore.fetchVmStatus(props.match.params)
+    const state_response = await vmStore.fetchVmState(props.match.params)
+    setStatus(status_response.status)
+    setState(state_response.state)
+    setIsLoading(false)
   }
 
-  const renderNodeSchedule = ()  => {
+  const renderNodeSchedule = () => {
     return (
       <Panel title={t('SCHEDULING_RESULT')}>
         <div className={styles.wrapper}>
@@ -89,62 +86,86 @@ const ScheduleInfo = (props) => {
                 'YYYY-MM-DD HH:mm:ss'
               )}
               extra={
-                <Status
-                  status={state.node === '' ? 'warning' : 'success'}
-                />
+                <Status status={state.node === '' ? 'warning' : 'success'} />
               }
             />
-	  </div>
+          </div>
         </div>
       </Panel>
     )
-  };
+  }
 
   const renderNodeScheduleTip = () => {
     return (
       <div>
-        <div className="tooltip-title">{t('RESOURCES_VM_SCHEDULING_METHOD')}</div>
+        <div className="tooltip-title">
+          {t('RESOURCES_VM_SCHEDULING_METHOD')}
+        </div>
         <p className="tooltip-desc">{t('RESOURCES_VM_ASSIGNED_DESC')}</p>
       </div>
     )
-  };
+  }
 
   const renderStatus = () => {
-    const ready_status = { name: "ready", flag: status.ready_status, icon: "success" }
-    const dv_ready_status = { name: "dv_ready", flag: status.dv_ready_status, icon: "storage" }
-    const migration_status = { name: "migration", flag: status.migration_status, icon: "changing-over" }
-    const agent_status = { name: "agent", flag: status.agent_status, icon: "stretch" }
+    const ready_status = {
+      name: 'ready',
+      flag: status.ready_status,
+      icon: 'success',
+    }
+    const dv_ready_status = {
+      name: 'dv_ready',
+      flag: status.dv_ready_status,
+      icon: 'storage',
+    }
+    const migration_status = {
+      name: 'migration',
+      flag: status.migration_status,
+      icon: 'changing-over',
+    }
+    const agent_status = {
+      name: 'agent',
+      flag: status.agent_status,
+      icon: 'stretch',
+    }
     return (
       <Panel title={t('RESOURCES_VM_SCHEDULE_STATUS')}>
-	<div className={styles.header}>
+        <div className={styles.header}>
           <Text
             className={styles.info}
             icon="templet"
             title={t(`RESOURCES_${state.state.toUpperCase()}`)}
             description={t('CURRENT_STATUS')}
             extra={
-              <Status status={state.state === 'Running' ? 'success' : 'warning'} />
+              <Status
+                status={state.state === 'Running' ? 'success' : 'warning'}
+              />
             }
           />
         </div>
         <div className={styles.cardstatus}>
-	  <StatusCard key="ready" data={ready_status} />
+          <StatusCard key="ready" data={ready_status} />
           <StatusCard key="dv_ready" data={dv_ready_status} />
-	  <StatusCard key="migration" data={migration_status} />
-	  <StatusCard key="agent" data={agent_status} />
+          <StatusCard key="migration" data={migration_status} />
+          <StatusCard key="agent" data={agent_status} />
         </div>
       </Panel>
     )
-  };
+  }
 
   return (
     <>
-      {isLoading ?
-        <div className={styles.loading}><Loading /></div>
-        : <div>{renderNodeSchedule()}{renderStatus()}</div>
-      }
+      {isLoading ? (
+        <div className={styles.loading}>
+          <Loading />
+        </div>
+      ) : (
+        <div>
+          {renderNodeSchedule()}
+          {renderStatus()}
+        </div>
+      )}
     </>
   )
-};
+}
 
-export default inject('rootStore')(observer(ScheduleInfo))
+export default inject('detailStore')(observer(ScheduleInfo))

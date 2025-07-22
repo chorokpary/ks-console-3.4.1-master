@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { observer, inject } from 'mobx-react';
-import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList';
 import classnames from 'classnames';
-
-import { Panel, Text } from 'components/Base';
 import { Icon, Loading } from '@kube-design/components';
 import { Link } from 'react-router-dom';
 
+import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList';
+import { Panel, Text } from 'components/Base';
+import styles from './index.scss';
 import RouterStore from 'stores/resources/routers';
 import LoadBalancerStore from 'stores/resources/loadbalancers';
-import styles from './index.scss';
 
 const Status = props => {
-  // console.log("props : "+ JSON.stringify(props))
   const store = props.detailStore;
-  const cluster = props.detailStore?.detail.cluster;
-  const namespace = props.match.params.namespace;
-  const workspace = props.match.params.workspace;
+  const { workspace, cluster, namespace } = props.match.params
 
   const routerStore = new RouterStore();
   const loadBalancerStore = new LoadBalancerStore();
@@ -28,15 +24,15 @@ const Status = props => {
   const [isLoadingLoadBalancer, setIsLoadingLoadBalancer] = useState(true);
 
   useEffect(() => {
-    const networkId = props.match.params.id;
+    const networkName = props.match.params.name;
 
     const fnGetRouterData = async () => {
       const routerList = await routerStore.fetchList(props.match.params);
       const routerExternalList = await routerList.filter(
-        item => item.external?.id === networkId
+        item => item.external?.name === networkName,
       );
       const routerInternalList = await routerList.filter(item =>
-        _.find(item['internal'], { id: networkId })
+        _.find(item['internal'], { name: networkName }),
       );
 
       const routerTernalList =
@@ -47,11 +43,9 @@ const Status = props => {
     };
 
     const fnGetLoadBalancerData = async () => {
-      const loadBalancerList = await loadBalancerStore.fetchList(
-        props.match.params
-      );
+      const loadBalancerList = await loadBalancerStore.fetchList(props.match.params);
       const loadBalancerFilterList = loadBalancerList.filter(
-        item => item.network.id == networkId
+        item => item.network.name == networkName,
       );
 
       setLoadBalancerList(loadBalancerFilterList);
@@ -68,9 +62,9 @@ const Status = props => {
         {/* 가상 머신 상세 관련 샘플 */}
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
-          variables="networks"
-          id={props.match.params.id}
-          {...props.match.params}
+          match="network"
+          name={props.match.params.name}
+          project={namespace}
         />
 
         {/* 라우터 */}
@@ -101,7 +95,7 @@ const Status = props => {
                     <div className={classnames(styles.title, styles.name)}>
                       <div>
                         <Link
-                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${obj.name}/${obj.id}`}
+                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
@@ -123,11 +117,9 @@ const Status = props => {
                     <div className={styles.title}>
                       <div>
                         {obj.internal.length > 0
-                          ? `${store.detail.name} ${t(
-                              'RESOURCES_BESIDES'
-                            )} ${obj.internal.length - 1}${t(
-                              'RESOURCES_COUNT'
-                            )}`
+                          ? store.detail.name +
+                          ` ${t('RESOURCES_BESIDES')} ${obj.internal.length -
+                          1}${t('RESOURCES_COUNT')}`
                           : '-'}
                       </div>
                       <p>{t('RESOURCES_INTERNAL_NETWORK')}</p>
@@ -164,14 +156,14 @@ const Status = props => {
             <Panel title={t('RESOURCES_LOAD_BALANCER')}>
               {loadbalancerList.map((obj, index) => (
                 <div className={styles.wrapper} key={index}>
-                  <div className={classnames(styles.itemLoadBalancer)}>
+                  <div className={classnames(styles.item)}>
                     <div className={styles.icon}>
-                      <Icon name="router" size={40} />
+                      <Icon name="loadbalancer" size={40} />
                     </div>
                     <div className={classnames(styles.title, styles.name)}>
                       <div>
                         <Link
-                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${obj.name}/${obj.id}`}
+                          to={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
@@ -191,7 +183,7 @@ const Status = props => {
                       <p>{t('RESOURCES_VIRTUAL_IP')}</p>
                     </div>
                     <div className={styles.title}>
-                      <div>{obj.rules_count}</div>
+                      <div>{obj.rule_count}</div>
                       <p>{t('RESOURCES_POLICY_COUNT')}</p>
                     </div>
                   </div>

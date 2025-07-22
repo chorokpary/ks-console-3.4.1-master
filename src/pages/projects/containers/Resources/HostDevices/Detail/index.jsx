@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
+import DetailPage from 'projects/containers/Base/Detail'
 import HostDeviceStore from 'stores/resources/hostdevices'
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'

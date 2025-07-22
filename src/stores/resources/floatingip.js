@@ -31,6 +31,7 @@ export default class FloatingIpStore extends Base {
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
     getListUrl = this.getResourceUrl
+    getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}/${params.project}`
 
     @action
     async create(data, params = {}) {
@@ -73,20 +74,27 @@ export default class FloatingIpStore extends Base {
     }
 
     @action
-    async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-        } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(username =>
-                        request.delete(
-                            `${this.getDetailUrl({ name: username, ...params })}`
-                        )
+    async batchDelete({ projecyKeys, ...params }) {
+        const rowKeyDict = projecyKeys.map(key => {
+            if (key.includes('/')) {
+                const [project, id] = key.split('/')
+                return { project, id }
+            } else {
+                const project = params.namespace
+                const id = key
+                return { project, id }
+            }
+        })
+
+        await this.submitting(
+            Promise.all(
+                rowKeyDict.map(rowKey =>
+                    request.delete(
+                        `${this.getDeleteUrl({ id: rowKey.id, project: rowKey.project, ...params })}`
                     )
                 )
             )
-        }
+        )
         this.list.selectedRowKeys = []
     }
 
@@ -100,7 +108,7 @@ export default class FloatingIpStore extends Base {
             return
         }
 
-        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+        return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
     }
 
     @action

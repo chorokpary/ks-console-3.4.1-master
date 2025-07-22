@@ -44,7 +44,8 @@ const FloatingIpModal = props => {
       data.name = floatingId;
       data.id = floatingId;
       data.instance_type = 'vm';
-      data.instance_id = vmId;
+      data.instance_id = vmName;
+      data.project = props.store.detail.namespace;
       data.target_network = networkId;
       data.target_ip = networkIp;
 
@@ -63,6 +64,7 @@ const FloatingIpModal = props => {
 
   useEffect(() => {
     const getVmCreateData = async () => {
+      const project = props.store.detail.namespace;
       const floatingListData = await vmStore.fetchVmListFloating(props);
       const networkListData = await vmStore.fetchVmListNetwork(props);
       const routerListData = await vmStore.fetchVmListRouter(props);
@@ -75,13 +77,15 @@ const FloatingIpModal = props => {
       // 네트워크 리스트 중 Internal 및 VM에 포함된 네트워크 추출
       const vmInternalNetworkList = await networkListData.networks.filter(
         network =>
-          network.external == false && vmNetworkList.includes(network.id)
-      );
+          network.external == false &&
+          vmNetworkList.includes(network.name) &&
+          network.project == project
+      )
 
       // 고정 ip, interface 추가
       await vmInternalNetworkList.map(network => {
         vmNetworks.map(row => {
-          if (network.id == row.name) {
+          if (network.name == row.name) {
             network.network_ip = row.ip;
             network.interface = row.interface;
           }
@@ -90,19 +94,20 @@ const FloatingIpModal = props => {
 
       // VM 이 가지고 있는 internal 네트워크 중 Router 리스트에 포함된 네트워크 리스트
       const vmInRouterInternalList = [];
-      await routerListData.routers.map(router => {
-        vmInternalNetworkList.map(network => {
-          if (some(router.internal, { id: network.id })) {
-            vmInRouterInternalList.push(network.id);
-          }
+      await routerListData.routers.filter(router => router.project == project)
+        .map(router => {
+          vmInternalNetworkList.map(network => {
+            if (some(router.internal, { name: network.name })) {
+              vmInRouterInternalList.push(network.name);
+            }
+          });
         });
-      });
 
       // VM internal 에 관련된 Router external 추출해서 데이터 생성
       const vmInRouterData = [];
       await vmInRouterInternalList.map(name => {
         routerListData.routers.map(router => {
-          if (some(router.internal, { id: name })) {
+          if (some(router.internal, { name: name })) {
             const jsonData = {};
             jsonData.internal = name;
             jsonData.external = router.external;
@@ -114,14 +119,15 @@ const FloatingIpModal = props => {
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가
       await vmInRouterData.map(data => {
         const floatingIpArray = [];
-        floatingListData.floating_ips.map(floating => {
-          if (floating.network == data.external.id && !floating.target_ip) {
-            const jsonData = {};
-            jsonData.id = floating.id;
-            jsonData.floating_ip = floating.floating_ip;
-            floatingIpArray.push(jsonData);
-          }
-        });
+        floatingListData.floating_ips.filter(floating => floating.project == project)
+          .map(floating => {
+            if (floating.network == data.external.name && !floating.target_ip) {
+              const jsonData = {};
+              jsonData.id = floating.id;
+              jsonData.floating_ip = floating.floating_ip;
+              floatingIpArray.push(jsonData);
+            }
+          });
         data.floating_data = floatingIpArray;
       });
 
@@ -159,7 +165,7 @@ const FloatingIpModal = props => {
   const networkOptions = () => {
     const opt = networkList.map(obj => ({
       label: `${obj.network_ip}/${obj.name}/${obj.interface}`,
-      value: t(obj.id),
+      value: t(obj.name),
       disabled: obj.interface === null,
     }));
     return opt;
@@ -211,8 +217,8 @@ const FloatingIpModal = props => {
               options={networkOptions()}
               onChange={value => {
                 networkList.map(obj => {
-                  if (obj.id === value) {
-                    setNetworkId(obj.id);
+                  if (obj.name === value) {
+                    setNetworkId(obj.name);
                     setNetworkIp(obj.network_ip);
                   }
                 });
@@ -222,7 +228,7 @@ const FloatingIpModal = props => {
 
           <Form.Item
             label={t('RESOURCES_FLOATING_IP')}
-            // rules={[{ required: true, validator: floatingValidator }]}
+          // rules={[{ required: true, validator: floatingValidator }]}
           >
             <Select
               // name="floating"

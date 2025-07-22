@@ -109,13 +109,7 @@ export default {
   'router.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
-      store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
-          arr.push(obj.name)
-        }
-      })
-      const usernames = arr.join(', ')
+      const names = rowKeys.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
@@ -128,32 +122,14 @@ export default {
         },
         modal: DeleteModal,
         title:
-          usernames.split(', ').length === 1
+          rowKeys.length === 1
             ? t('RESOURCES_DELETE')
             : t('RESOURCES_DELETE_MULTIPLE'),
         desc:
-          usernames.split(', ').length === 1
-            ? t.html('RESOURCES_DELETE_VROUTER_TIP', { resource: usernames })
-            : t.html('RESOURCES_DELETE_VROUTER_TIP', { resource: usernames }),
-        resource: usernames,
-        store,
-        ...props,
-      })
-    },
-  },
-  'router.delete': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: () => {
-          store.delete(detail).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
-        },
-        modal: DeleteModal,
-        module: store.module,
-        detail,
+          rowKeys.length === 1
+            ? t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', { resource: names })
+            : t.html('RESOURCES_DELETE_SECURITY_GROUP_TIP', { resource: names }),
+        resource: names,
         store,
         ...props,
       })

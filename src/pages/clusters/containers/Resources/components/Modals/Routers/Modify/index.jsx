@@ -45,11 +45,12 @@ const ModifyModal = props => {
     form.current.validator(() => {
       const { data } = form.current.props;
 
-      data.id = props.store.detail.router.id;
+      data.name = props.store.detail.router.name;
       data.snatType = radioSnatType;
       data.internal = internalCheckItems;
       data.external = radioExternal;
-      console.log(`data : ${JSON.stringify(data)}`);
+      data.project = props.store.detail.namespace;
+
       onOk({ ...data });
     });
   };
@@ -68,18 +69,18 @@ const ModifyModal = props => {
 
     setRouterExternal([]);
     routerList?.map(router => {
-      if (router.external?.id !== detailExternal?.id) {
-        setRouterExternal(prev => [...prev, router.external?.id]);
+      if (router.external?.name !== detailExternal?.name) {
+        setRouterExternal(prev => [...prev, router.external?.name]);
       }
     });
 
-    const detailInternalIds = detailInternal.map(arr => arr.id);
+    const detailInternalNames = detailInternal.map(arr => arr.name);
 
     setRouterInternal([]);
     routerList?.map(router => {
       router.internal.map(it => {
-        if (!detailInternalIds.includes(it.id)) {
-          setRouterInternal(prev => [...prev, it.id]);
+        if (!detailInternalNames.includes(it.name)) {
+          setRouterInternal(prev => [...prev, it.name]);
         }
       });
     });
@@ -98,10 +99,10 @@ const ModifyModal = props => {
 
     // 초기 선택
     detailInternal.map(item => {
-      handleSingleCheck(true, item.id, 'internal');
+      handleSingleCheck(true, item.name, 'internal');
     });
 
-    detailExternal && setRadioExternal(detailExternal?.id);
+    detailExternal && setRadioExternal(detailExternal?.name);
   }, []);
 
   // 체크 리스트 시작 ==================================================
@@ -109,7 +110,7 @@ const ModifyModal = props => {
 
   const dataListVariables = {
     internal: internalNetworkList?.filter(
-      data => !routerInternal.includes(data.id)
+      data => !routerInternal.includes(data.name)
     ),
   };
 
@@ -133,9 +134,9 @@ const ModifyModal = props => {
     if (checked) {
       const nameArray = [];
 
-      dataListVariables[type].forEach(el => nameArray.push(el.id));
+      dataListVariables[type].forEach(el => nameArray.push(el.name));
       detailInternal.map(item => {
-        nameArray.includes(item.id) ? '' : nameArray.push(item.id);
+        nameArray.includes(item.name) ? '' : nameArray.push(item.name);
       });
 
       setVariables[type](nameArray);
@@ -241,7 +242,7 @@ const ModifyModal = props => {
                   </thead>
                   <tbody>
                     {!internalNetworkList?.filter(
-                      data => !routerInternal.includes(data.id)
+                      data => !routerInternal.includes(data.name)
                     ).length && (
                       <tr>
                         <td colSpan="6" className="no-data">
@@ -250,20 +251,20 @@ const ModifyModal = props => {
                       </tr>
                     )}
                     {internalNetworkList
-                      ?.filter(data => !routerInternal.includes(data.id))
+                      ?.filter(data => !routerInternal.includes(data.name))
                       .map((data, key) => {
                         return (
-                          <tr key={data.id}>
+                          <tr key={data.name}>
                             <td>
                               <Checkbox
-                                name={`select-${data.id}`}
+                                name={`select-${data.name}`}
                                 checked={
-                                  !!stateVariables['internal'].includes(data.id)
+                                  !!stateVariables['internal'].includes(data.name)
                                 }
                                 onChange={checked =>
                                   handleSingleCheck(
                                     checked,
-                                    data.id,
+                                    data.name,
                                     'internal'
                                   )
                                 }
@@ -282,20 +283,20 @@ const ModifyModal = props => {
                         );
                       })}
                     {internalNetworkList
-                      ?.filter(data => detailInternal.includes(data.id))
+                      ?.filter(data => detailInternal.includes(data.name))
                       .map((data, key) => {
                         return (
-                          <tr key={data.id}>
+                          <tr key={data.name}>
                             <td>
                               <Checkbox
-                                name={`select-${data.id}`}
+                                name={`select-${data.name}`}
                                 checked={
-                                  !!stateVariables['internal'].includes(data.id)
+                                  !!stateVariables['internal'].includes(data.name)
                                 }
                                 onChange={checked =>
                                   handleSingleCheck(
                                     checked,
-                                    data.id,
+                                    data.name,
                                     'internal'
                                   )
                                 }
@@ -316,15 +317,12 @@ const ModifyModal = props => {
                   </tbody>
                 </table>
                 <div className={styles.removeCheckWrapper}>
-                  {internalCheckItems?.map(id => {
-                    const name = internalNetworkList
-                      ?.filter(data => data.id == id)
-                      .map(item => item.name)[0];
+                  {internalCheckItems?.map(name => {
                     return (
-                      <span key={id}>
+                      <span key={name}>
                         <Button
                           icon="close"
-                          onClick={() => handleDelete(id, 'internal')}
+                          onClick={() => handleDelete(name, 'internal')}
                         >
                           {name}
                         </Button>{' '}
@@ -386,7 +384,7 @@ const ModifyModal = props => {
                   </thead>
                   <tbody>
                     {!externalNetworkList?.filter(
-                      data => !routerExternal.includes(data.id)
+                      data => !routerExternal.includes(data.name)
                     ).length && (
                       <tr>
                         <td colSpan="6" className="no-data">
@@ -395,17 +393,17 @@ const ModifyModal = props => {
                       </tr>
                     )}
                     {externalNetworkList
-                      ?.filter(data => !routerExternal.includes(data.id))
+                      ?.filter(data => !routerExternal.includes(data.name))
                       .map(data => {
                         return (
-                          <tr key={data.id}>
+                          <tr key={data.name}>
                             <td>
                               <Radio
                                 name="external"
-                                value={data.id}
-                                checked={radioExternal === data.id}
+                                value={data.name}
+                                checked={radioExternal === data.name}
                                 onChange={e => {
-                                  setRadioExternal(data.id);
+                                  setRadioExternal(data.name);
                                 }}
                               />
                             </td>

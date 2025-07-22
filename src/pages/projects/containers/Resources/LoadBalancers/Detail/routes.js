@@ -18,9 +18,9 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/LoadBalancers/Detail/Status'
+import Status from 'projects/containers/Resources/LoadBalancers/Detail/Status'
 
-const PATH = '/:workspace/clusters/:cluster/projects/:namespace/loadBalancers/:name/:id'
+const PATH = '/:workspace/clusters/:cluster/projects/:namespace/loadBalancers/:name'
 
 export default [
     {

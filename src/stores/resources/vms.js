@@ -18,7 +18,6 @@
 
 import { get } from 'lodash'
 import { action } from 'mobx'
-import { Notify } from '@kube-design/components'
 
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 
@@ -83,6 +82,7 @@ export default class VmStore extends Base {
     const data = (get(result, 'vms') || []).map(item => ({
       cluster,
       namespace,
+      project_name: `${item.project}/${item.name}`,
       ...this.mapper(item),
     }))
 
@@ -238,30 +238,31 @@ export default class VmStore extends Base {
   }
 
   @action
-  async update({ id, ...params }, data) {
+  async update({ ...params }, data) {
     const jsonData = {}
     const vmData = {}
 
-    vmData.id = id
+    vmData.id = params.name
+    vmData.project = params.project ? params.project : params.namespace
     vmData.description = data.description ? data.description : ''
 
     jsonData.vm = vmData
 
     // id로 수정해야해서 치환
-    params.name = id
     await this.submitting(
-      request.put(this.getDetailUrl({ id, ...params }), jsonData)
+      request.put(this.getDetailUrl({ ...params }), jsonData)
     )
   }
 
   @action
-  async updateSecurity({ id, ...params }, data) {
+  async updateSecurity({ ...detail }, data) {
     const scurityGroups = data.scurityGroups
-
+    const project = detail.project ? detail.project : detail.namespace
     const jsonDataSecurity = {}
     const vmDataSecurity = {}
 
-    vmDataSecurity.id = id
+    vmDataSecurity.id = detail.name
+    vmDataSecurity.project = project
     vmDataSecurity.security_groups = scurityGroups
 
     jsonDataSecurity.vm = vmDataSecurity
@@ -269,19 +270,20 @@ export default class VmStore extends Base {
     await this.submitting(
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/vms/${id}/security_groups`,
+          detail
+        )}/edgetron/resources/kubevirt/vms/${detail.name}/security_groups`,
         jsonDataSecurity
       )
     )
   }
 
   @action
-  async updateFlavor({ id, ...params }, data) {
+  async updateFlavor({ ...detail }, data) {
     const jsonData = {}
     const flavorData = {}
 
-    flavorData.id = id
+    flavorData.id = data.id
+    flavorData.project = detail.project ? detail.project : detail.namespace
     flavorData.flavor = data.flavor
 
     jsonData.vm = flavorData
@@ -289,8 +291,8 @@ export default class VmStore extends Base {
     await this.submitting(
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-          params
-        )}/edgetron/resources/kubevirt/vms/${id}/flavor`,
+          detail
+        )}/edgetron/resources/kubevirt/vms/${detail.name}/flavor`,
         jsonData
       )
     )
@@ -299,25 +301,26 @@ export default class VmStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
+    const project = params.project ? params.project : params.namespace
 
-    const url = `${this.getResourceUrl(params)}/${params.id}/info`
+    const url = `${this.getResourceUrl(params)}/${params.name}/info`
 
-    const result = await request.get(url)
+    const result = await request.get(url, { project })
     const detail = { ...params, ...this.mapper(result), kind: 'vms' }
 
     // Yaml 파일 관련
-    await this.fetchYaml(params)
+    await this.fetchYaml(project, params)
 
     // FloatingIp 관련
     await this.fetchVmListFloating(params)
 
     // Volume 관련
-    await this.fetchVolumeList(params)
+    await this.fetchVolumeList(project, params)
 
     // SecurityGroup 관련
     await this.fetchVmListSecurityGroup({
       ...params,
-      namespace: detail.vm.project,
+      namespace: project,
     })
 
     // Network
@@ -330,13 +333,13 @@ export default class VmStore extends Base {
     // await this.fetchVmListPhysicalNetwork(params)
 
     // Network Storage
-    // if (detail.vm.network_storage !== '') {
-    //   await this.fetchVmListNetworkStorage({
-    //     ...params,
-    //     namespace: detail.vm.project,
-    //     name: detail.vm.network_storage,
-    //   })
-    // }
+    if (detail.vm.network_storage !== '') {
+      await this.fetchVmListNetworkStorage({
+        ...params,
+        namespace: detail.vm.project,
+        name: detail.vm.network_storage,
+      })
+    }
 
     this.detail = detail
     this.isLoading = false
@@ -347,9 +350,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmStatus(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/status`
+      `${this.getResourceUrl(params)}/${params.name}/status`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -360,9 +364,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmState(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/state`
+      `${this.getResourceUrl(params)}/${params.name}/state`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -371,11 +376,12 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchYaml(params) {
+  async fetchYaml(project, params) {
     this.isLoading = true
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/manifest`
+      `${this.getResourceUrl(params)}/${params.name}/manifest`,
+      { project }
     )
     const yamlData = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -387,10 +393,12 @@ export default class VmStore extends Base {
   @action
   async fetchVmLog(params) {
     this.isLoading = true
+    const project = params.project ? params.project : params.namespace
 
     try {
       const result = await request.get(
-        `${this.getResourceUrl(params)}/${params.id}/log`
+        `${this.getResourceUrl(params)}/${params.name}/log`,
+        { project }
       )
       const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -404,9 +412,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmEventList(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/event`
+      `${this.getResourceUrl(params)}/${params.name}/event`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
@@ -417,9 +426,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmPhaseEventList(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/phase_event`
+      `${this.getResourceUrl(params)}/${params.name}/phase_event`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vme' }
 
@@ -430,9 +440,10 @@ export default class VmStore extends Base {
   @action
   async fetchVmMetering(params) {
     this.isLoading = true
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.id}/metering`
+      `${this.getResourceUrl(params)}/${params.name}/metering`,
+      { project }
     )
     const response = { ...params, ...this.mapper(result), kind: 'vme' }
 
@@ -441,44 +452,61 @@ export default class VmStore extends Base {
   }
 
   @action
-  async batchDelete({ rowKeys, ...params }) {
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(id =>
-            request.delete(`${this.getResourceUrl(params)}/${id}`)
+  async batchDelete({ rowKeyNames, ...params }) {
+    await this.submitting(
+      Promise.all(
+        rowKeyNames.map(name =>
+          request.delete(
+            `${this.getResourceUrl({ name, ...params })}/${name}`,
+            {
+              project: params.namespace,
+            }
           )
         )
       )
-    }
+    )
     this.list.selectedRowKeys = []
   }
 
   @action
-  delete(user) {
-    // id로 삭제해야해서 치환
-    user.name = user.id
-    if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-      return
-    }
+  async clusterBatchDelete({ rowKeys, ...params }) {
+    const rowKeyDict = rowKeys.map(key => {
+      const [project, name] = key.split('/')
+      return { project, name }
+    })
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDetailUrl({ name: rowKey.name, ...params })}`,
+            {
+              project: rowKey.project,
+            }
+          )
+        )
+      )
+    )
+    this.list.selectedRowKeys = []
+  }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  @action
+  delete(params) {
+    const project = params.project ? params.project : params.namespace
+
+    return this.submitting(
+      request.delete(`${this.getDetailUrl(params)}`, { project })
+    )
   }
 
   @action
   async actionState({ data, ...params }) {
     const jsonData = {}
-    const id = data.vmId
+    const name = data.vmName
     jsonData.action = data.actionType
+    jsonData.project = data.project
 
     await this.submitting(
-      request.put(
-        `${this.getDetailUrl({ name: id, ...params })}/action`,
-        jsonData
-      )
+      request.put(`${this.getDetailUrl({ name, ...params })}/action`, jsonData)
     )
   }
 
@@ -499,14 +527,15 @@ export default class VmStore extends Base {
   }
 
   @action
-  async fetchVolumeList(params) {
+  async fetchVolumeList(project, params) {
     this.isLoading = true
 
     try {
       const result = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/volumes/vm/${params.id}`
+        )}/edgetron/resources/kubevirt/volumes/vm/${params.name}`,
+        { project }
       )
       const dataList = { ...params, ...this.mapper(result), kind: 'volumes' }
 
@@ -606,9 +635,9 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages/${params.name}/${
+      )}/edgetron/resources/kubevirt/network_storages/${params.name}?project=${
         params.namespace
-      }/info`
+      }`
     )
     const response = {
       ...params,
@@ -764,6 +793,12 @@ export default class VmStore extends Base {
     )
     const response = { ...params, ...this.mapper(result), kind: 'routers' }
 
+    if (params?.namespace) {
+      response.routers = response.routers.filter(
+        item => item.project === params.namespace
+      )
+    }
+
     this.isLoading = false
     return response
   }
@@ -783,13 +818,19 @@ export default class VmStore extends Base {
       kind: 'floating_ips',
     }
 
+    if (params?.namespace) {
+      response.floating_ips = response.floating_ips.filter(
+        item => item.project === params.namespace
+      )
+    }
+
     this.floatingList = response.floating_ips
     this.isLoading = false
     return response
   }
 
   @action
-  async fetchVmListSecurityGroup(params) {
+  async fetchVmListSecurityGroupSummray(params) {
     this.isLoading = true
 
     const result = await request.get(
@@ -803,18 +844,51 @@ export default class VmStore extends Base {
       kind: 'security_groups',
     }
 
+    let namespaceDataList = []
+    if (params.namespace) {
+      namespaceDataList = response.security_groups.filter(
+        item => item.project === params.namespace
+      )
+    }
+
+    const dataList = params.namespace
+      ? namespaceDataList
+      : response.security_groups
+    this.isLoading = false
+    return dataList
+  }
+
+  @action
+  async fetchVmListSecurityGroup(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/security_groups?project=${
+        params.namespace
+      }`
+    )
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'security_groups',
+    }
+
     const securityArray = []
     const promises = response.security_groups.map(async security => {
       const securityDetail = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/security_groups/${security.id}`
+        )}/edgetron/resources/kubevirt/security_groups/${
+          security.name
+        }?project=${params.namespace}`
       )
 
-      securityDetail.security_group.egress_count = securityDetail.security_group.rules.filter(
+      securityDetail.security_group.egress = securityDetail.security_group.rules.filter(
         el => el.direction === 'egress'
       ).length
-      securityDetail.security_group.ingress_count = securityDetail.security_group.rules.filter(
+      securityDetail.security_group.ingress = securityDetail.security_group.rules.filter(
         el => el.direction === 'ingress'
       ).length
 
@@ -831,7 +905,6 @@ export default class VmStore extends Base {
     }
 
     const dataList = params.namespace ? namespaceDataList : securityArray
-
     this.securigyGroupList = dataList
     this.isLoading = false
     return dataList
@@ -859,7 +932,9 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages/${params.namespace}`
+      )}/edgetron/resources/kubevirt/network_storages?project=${
+        params.namespace
+      }`
     )
     const response = {
       ...params,
@@ -913,9 +988,11 @@ export default class VmStore extends Base {
 
     const jsonData = {}
     const snapshotData = {}
+    const project = params.project ? params.project : params.namespace
 
-    snapshotData.vm_id = data.vmId
+    snapshotData.vm_id = data.vmName
     snapshotData.description = data.description
+    snapshotData.project = project
 
     jsonData.snapshot = snapshotData
 
@@ -924,10 +1001,12 @@ export default class VmStore extends Base {
 
   @action
   async snapshotList(params) {
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/vms/snapshots/${params.id}`
+      )}/edgetron/resources/kubevirt/vms/snapshots/${params.name}`,
+      { project }
     )
     result.snapshots.sort((a, b) => {
       const x = a['timestamp']
@@ -940,11 +1019,10 @@ export default class VmStore extends Base {
 
   @action
   snapshotDelete({ id, ...props }) {
-    // let cluster = globals.currentCluster
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       props
     )}/edgetron/resources/kubevirt/vms/snapshots/${id}`
-    return this.submitting(request.delete(url))
+    return this.submitting(request.delete(url, { project: props.project }))
   }
 
   @action
@@ -954,9 +1032,10 @@ export default class VmStore extends Base {
     const jsonData = {}
     const restoreData = {}
 
+    restoreData.vm_id = params.name
+    restoreData.project = params.namespace
     restoreData.snapshot_id = data.snapshotId
     restoreData.description = data.description
-
     jsonData.restore = restoreData
 
     return await request.post(url, jsonData)
@@ -964,12 +1043,12 @@ export default class VmStore extends Base {
 
   @action
   async restoreList(params) {
-    // let cluster = globals.currentCluster
-
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/vms/restores/${params.id}`
+      )}/edgetron/resources/kubevirt/vms/restores/${params.name}`,
+      { project }
     )
     result.restores.sort((a, b) => {
       const x = a['timestamp']
@@ -983,11 +1062,10 @@ export default class VmStore extends Base {
   @action
   restoreDelete({ id, ...props }) {
     // let cluster = globals.currentCluster
-
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       props
     )}/edgetron/resources/kubevirt/vms/restores/${id}`
-    return this.submitting(request.delete(url))
+    return this.submitting(request.delete(url, { project: props.project }))
   }
 
   @action
@@ -1001,6 +1079,7 @@ export default class VmStore extends Base {
 
     cloneData.source_vm_id = data.source_vm_id
     cloneData.target_vm_id = data.target_vm_name
+    cloneData.project = params.namespace
     cloneData.description = data.description
 
     jsonData.clone = cloneData
@@ -1010,10 +1089,12 @@ export default class VmStore extends Base {
 
   @action
   async cloneList(params) {
+    const project = params.project ? params.project : params.namespace
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/vms/clones`
+      )}/edgetron/resources/kubevirt/vms/clones`,
+      { project }
     )
 
     result.clones.sort((a, b) => {
@@ -1022,7 +1103,9 @@ export default class VmStore extends Base {
       return x > y ? -1 : x < y ? 1 : 0
     })
 
-    return result.clones.filter(item => item.source_vm_id === params.id)
+    return result.clones.filter(
+      item => item.source_vm_id === params.name && item.project === project
+    )
   }
 
   @action
@@ -1031,7 +1114,7 @@ export default class VmStore extends Base {
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       props
     )}/edgetron/resources/kubevirt/vms/clones/${id}`
-    return this.submitting(request.delete(url))
+    return this.submitting(request.delete(url, { project: props.project }))
   }
 
   @action
@@ -1052,35 +1135,12 @@ export default class VmStore extends Base {
     params.page = params.page || 1
     params.limit = params.limit || 10
 
-    const apiName = {
-      flavor_object: 'flavor',
-      image: 'image',
-      networks: 'network',
-      security_group_objects: 'security_group',
-      host_device: 'host_device',
-      mediated_device: 'mediated_device',
-      volume: 'volume',
-      node: 'node',
-      network_storage: 'network_storage',
-      project: 'project',
-      id: 'id',
-    }
-
-    const pathIdArray = [
-      'security_group',
-      'network',
-      'volume',
-      'id',
-      'host_device',
-      'mediated_device',
-    ]
-    const resource = get(apiName, params.resource)
-
-    params[resource] = pathIdArray.includes(resource) ? params.id : params.name
+    // we also can query the VMs by specifying the queried parameter to backend server
+    params[params.match] = params.name
 
     delete params['resource']
-    delete params['id']
     delete params['name']
+    delete params['match']
 
     if (params.searchName !== '' && params.searchName !== undefined) {
       params.name = params.searchName

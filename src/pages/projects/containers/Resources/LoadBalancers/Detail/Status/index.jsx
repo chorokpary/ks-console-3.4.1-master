@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { observer, inject } from 'mobx-react'
-import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 import { Panel } from 'components/Base'
 import styles from './index.scss'
 
@@ -25,7 +24,7 @@ const Status = (props) => {
                                         <Icon name="shield" size={40} />
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>
-                                        <div>{rule.protocol}</div>
+                                        <div>{rule.protocol.toUpperCase()}</div>
                                         <p>{t('RESOURCES_PROTOCOL')}</p>
                                     </div>
                                     <div className={classnames(styles.title, styles.name)}>

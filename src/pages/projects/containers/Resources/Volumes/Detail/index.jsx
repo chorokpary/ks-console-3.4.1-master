@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import DetailPage from 'clusters/containers/Base/Detail'
+import DetailPage from 'projects/containers/Base/Detail'
 
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
@@ -31,7 +31,6 @@ const VolumeDetail = props => {
     props.match.params.name
   )
 
-  const id = props.match.params.id
   const used_by_vmi = store.detail.volume?.used_by_vmi
 
   const getOperations = volumeName => {
@@ -86,7 +85,11 @@ const VolumeDetail = props => {
               })
             } else {
               props.rootStore.triggerAction('resourcesvolume.detach', {
-                data: { id, vmId: used_by_vmi, actionType: 'D' },
+                data: {
+                  name: volumeName,
+                  vmName: used_by_vmi,
+                  actionType: 'D',
+                },
                 store,
                 success: fetchData,
                 ...props.match.params,

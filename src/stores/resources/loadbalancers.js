@@ -16,12 +16,8 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -37,117 +33,8 @@ export default class LoadBalancerStore extends Base {
 
     getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
     getListUrl = this.getResourceUrl
-    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.id}`
-
-    @action
-    async fetchList({
-        cluster,
-        workspace,
-        namespace,
-        more,
-        devops,
-        ...params
-    } = {}) {
-        this.list.isLoading = true
-
-        if (!params.sortBy && params.ascending === undefined) {
-            params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
-        }
-
-        if (params.limit === Infinity || params.limit === -1) {
-            params.limit = -1
-            params.page = 1
-        }
-
-        params.limit = params.limit || 10
-
-        const result = await request.get(
-            this.getResourceUrl({ cluster, workspace, namespace, devops }),
-            this.getFilterParams(params)
-        )
-
-        // mm3 api 관련 
-        const mm3Array = ['vms', 'images', 'flavors', 'networks', 'routers', 'floating_ips', 'lbs', 'security_groups', 'keypairs', 'host_devices', 'pci_devices', 'volumes', 'clusters', 'workspaces', 'licenses', 'distro_types']
-        const apiName = mm3Array.includes(this.module) ? this.module : "";
-
-        const data = (get(result, apiName) || []).map(item => ({
-            cluster,
-            namespace,
-            ...this.mapper(item),
-        }))
-
-        // security_group rull count 정보 추가
-        const dataArray = [];
-
-        const promises = data.map(async (lbs) => {
-            const lbsDetail = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/lbs/` + lbs.id);
-            lbs.rules_count = (lbsDetail.lb?.rules).length;
-            dataArray.push(lbs);
-        })
-        await Promise.all(promises);
-
-        // 초기 데이터 처리 
-        this.dataList = dataArray;
-
-        // namespace(project) 있는 경우 
-        if (namespace) {
-            params.project = namespace;
-        }
-
-        // 검색 관련 처리 
-        const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-        const searchArray = Object.keys(params).map((key) => {
-            let value = params[key];
-            let searchData = {
-                "searchKeywordType": key,
-                "searchKeywordText": value
-            }
-            return searchData
-        }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
-
-        this.searchList = this.dataList;
-        if (searchArray.length > 0) {
-            searchArray.map((search) => {
-                let resultList = this.searchList.filter((row) => {
-                    if (search.searchKeywordType === 'project') {
-                        return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
-                    }
-                    return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-                });
-                this.searchList = resultList;
-            })
-            this.dataList = this.searchList;
-        }
-
-        //정렬 처리
-        const sortType = !!params.ascending ? "asc" : "desc";
-        this.dataList.sort((a, b) => {
-            var x = a[params.sortBy];
-            var y = b[params.sortBy];
-            if (sortType == "desc") {
-                return x > y ? -1 : x < y ? 1 : 0;
-            } else if (sortType == "asc") {
-                return x < y ? -1 : x > y ? 1 : 0;
-            }
-        });
-
-        // mm3 데이터 page 별 Slice 처리 
-        const perPage = Number(params.limit) || 10;
-        const currentPage = Number(params.page) || 1;
-        const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
-
-        this.list.update({
-            data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-            total: result.totalItems || result.total_count || this.dataList.length || 0,
-            ...params,
-            limit: Number(params.limit) || 10,
-            page: Number(params.page) || 1,
-            isLoading: false,
-            ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-        })
-
-        return data
-    }
+    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+    getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
 
     @action
     async create(data, params = {}) {
@@ -157,7 +44,8 @@ export default class LoadBalancerStore extends Base {
             const jsonData = {};
             const promises = data.lb.lb_rule.map(async (obj) => {
                 const ruleData = {};
-                ruleData.lb_id = res.id;
+                ruleData.lb_name = res.name;
+                ruleData.project = res.project;
                 ruleData.protocol = obj.protocol.toLowerCase();
                 if (obj.portRangeMax.indexOf("-") != -1) {
                     ruleData.port_range_min = obj.portRangeMax.split("-")[0];
@@ -187,16 +75,13 @@ export default class LoadBalancerStore extends Base {
     @action
     async fetchDetail(params) {
         this.isLoading = true
+        const project = params.project ? params.project : params.namespace
+        const result = await request.get(`${this.getDetailUrl(params)}`, {
+            project,
+        })
+        const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
 
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}`
-        )
-        const detail = { ...params, ...this.mapper(result), kind: 'Lbs' }
-
-        // Yaml 파일 관련 
         await this.fetchYaml(params);
-
-        // FloatingIp List 추출
         await this.fetchFloatingList(params);
 
         this.detail = detail
@@ -207,10 +92,11 @@ export default class LoadBalancerStore extends Base {
     @action
     async fetchDetailLbs(params) {
         this.isLoading = true
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}`
-        )
-        const detail = { ...params, ...this.mapper(result), kind: 'Lbs' }
+        const project = params.project ? params.project : params.namespace
+        const result = await request.get(`${this.getDetailUrl(params)}`, {
+            project,
+        })
+        const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
 
         this.detail = detail
         this.isLoading = false
@@ -220,11 +106,11 @@ export default class LoadBalancerStore extends Base {
     @action
     async fetchYaml(params) {
         this.isLoading = true
-
-        const result = await request.get(
-            `${this.getResourceUrl(params)}/${params.id}/manifest`
-        )
-        const yamlData = { ...params, ...this.mapper(result), kind: 'Lbs' }
+        const project = params.project ? params.project : params.namespace
+        const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+            project,
+        })
+        const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
 
         this.yaml = yamlData.manifest
         this.isLoading = false
@@ -233,19 +119,19 @@ export default class LoadBalancerStore extends Base {
 
 
     @action
-    async update({ ...params }, data) {
-
-        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.id }), data))
+    async update(params, data) {
+        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.name }), data))
         if (res.message === "OK") {
             const jsonData = {};
             if (data.lb.setAll) {
                 // 기존 rule 전체 삭제
-                await this.deleteLbRules({ ...params }, data.lb.originRule)
+                await this.deleteLbRules({ ...params }, data.lb.originRule, data.lb.project)
                 const [port_range_min, port_range_max] = data.lb.lb_rule[0].portRangeMax.split("-")
                 jsonData.lb_rule = {
                     port_range_min,
                     port_range_max,
-                    lb_id: data.lb.id,
+                    lb_name: data.lb.name,
+                    project: data.lb.project,
                     protocol: 'all'
                 }
                 // all 추가
@@ -256,7 +142,8 @@ export default class LoadBalancerStore extends Base {
 
                     if (!obj.originRuleId) {
                         const ruleData = {};
-                        ruleData.lb_id = params.id;
+                        ruleData.lb_name = params.name;
+                        ruleData.project = data.lb.project;
                         ruleData.protocol = obj.protocol.toLowerCase();
                         if (obj.portRangeMax.indexOf("-") != -1) {
                             const [port_range_min, port_range_max] = obj.portRangeMax.split("-")
@@ -280,9 +167,8 @@ export default class LoadBalancerStore extends Base {
 
                 if (delOriginRule.length > 0) {
                     // 기존 rule 중 삭제건 처리
-                    await this.deleteLbRules({ ...params }, delOriginRule)
+                    await this.deleteLbRules({ ...params }, delOriginRule, data.lb.project)
                 }
-
             }
         }
 
@@ -290,9 +176,9 @@ export default class LoadBalancerStore extends Base {
     }
 
     @action
-    async deleteLbRules({ ...params }, rules) {
+    async deleteLbRules({ ...params }, rules, project) {
         const promises = rules.map(async (id) => {
-            await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules/${id}`));
+            await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules/${id}/${project}`));
         })
         await Promise.all(promises);
     }
@@ -300,19 +186,26 @@ export default class LoadBalancerStore extends Base {
 
     @action
     async batchDelete({ rowKeys, ...params }) {
-        if (rowKeys.includes(globals.user.username)) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-        } else {
-            await this.submitting(
-                Promise.all(
-                    rowKeys.map(id =>
-                        request.delete(
-                            `${this.getDetailUrl({ id, ...params })}`
-                        )
+        const rowKeyDict = rowKeys.map(key => {
+            if (key.includes('/')) {
+                const [project, name] = key.split('/')
+                return { project, name }
+            } else {
+                const project = params.namespace
+                const name = key
+                return { project, name }
+            }
+        })
+
+        await this.submitting(
+            Promise.all(
+                rowKeyDict.map(rowKey =>
+                    request.delete(
+                        `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
                     )
                 )
             )
-        }
+        )
         this.list.selectedRowKeys = []
     }
 
@@ -323,7 +216,7 @@ export default class LoadBalancerStore extends Base {
             return
         }
 
-        return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+        return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
     }
 
     @action

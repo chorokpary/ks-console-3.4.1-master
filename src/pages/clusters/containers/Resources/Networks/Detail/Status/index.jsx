@@ -11,8 +11,8 @@ import RouterStore from 'stores/resources/routers';
 import LoadBalancerStore from 'stores/resources/loadbalancers';
 
 const Status = props => {
-  // console.log("props : "+ JSON.stringify(props))
   const store = props.detailStore;
+  const namespace = props.match.params.namespace;
   const cluster = props.detailStore?.detail.cluster;
 
   const routerStore = new RouterStore();
@@ -25,15 +25,15 @@ const Status = props => {
   const [isLoadingLoadBalancer, setIsLoadingLoadBalancer] = useState(true);
 
   useEffect(() => {
-    const networkId = props.match.params.id;
+    const networkName = props.match.params.name;
 
     const fnGetRouterData = async () => {
       const routerList = await routerStore.fetchList(props.match.params);
       const routerExternalList = await routerList.filter(
-        item => item.external?.id === networkId,
+        item => item.external?.name === networkName,
       );
       const routerInternalList = await routerList.filter(item =>
-        _.find(item['internal'], { id: networkId }),
+        _.find(item['internal'], { name: networkName }),
       );
 
       const routerTernalList =
@@ -46,7 +46,7 @@ const Status = props => {
     const fnGetLoadBalancerData = async () => {
       const loadBalancerList = await loadBalancerStore.fetchList(props.match.params);
       const loadBalancerFilterList = loadBalancerList.filter(
-        item => item.network.id == networkId,
+        item => item.network.name == networkName,
       );
 
       setLoadBalancerList(loadBalancerFilterList);
@@ -63,9 +63,9 @@ const Status = props => {
         {/* 가상 머신 상세 관련 샘플 */}
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
-          variables="networks"
-          {...props.match.params}
-          id={props.match.params.id}
+          match="network"
+          name={props.match.params.name}
+          project={namespace}
         />
 
         {/* 라우터 */}
@@ -96,7 +96,7 @@ const Status = props => {
                     <div className={classnames(styles.title, styles.name)}>
                       <div>
                         <Link
-                          to={`/clusters/${cluster}/routers/${obj.name}/${obj.id}`}
+                          to={`/clusters/${cluster}/projects/${namespace}/routers/${obj.name}`}
                         >
                           {obj.name}
                         </Link>
@@ -184,7 +184,7 @@ const Status = props => {
                       <p>{t('RESOURCES_VIRTUAL_IP')}</p>
                     </div>
                     <div className={styles.title}>
-                      <div>{obj.rules_count}</div>
+                      <div>{obj.rule_count}</div>
                       <p>{t('RESOURCES_POLICY_COUNT')}</p>
                     </div>
                   </div>

@@ -113,7 +113,7 @@ export default class FloatingIp extends React.Component {
           <Avatar
             icon="intranet-routers"
             iconSize={40}
-            to={`/clusters/${cluster}/floatingip/${item.id}`}
+            to={`/clusters/${cluster}/projects/${item.project}/floatingip/${item.id}`}
             title={floating_ip}
           />
         ),
@@ -135,7 +135,10 @@ export default class FloatingIp extends React.Component {
         dataIndex: 'instance_type',
         isHideable: true,
         width: 'auto',
-        render: instance_type => <p>{instance_type?.toUpperCase()}</p>,
+        render: instance_type => 
+          !!instance_type ? (
+            <span>{t(`RESOURCES_FLOATING_IP_${instance_type.toUpperCase()}`)}</span>
+          ) : ""
       },
       {
         title: t('RESOURCES_RESOURCE_NAME'),
@@ -145,7 +148,7 @@ export default class FloatingIp extends React.Component {
         render: (instance_name, item) => {
           return (
             <Link
-              to={`/clusters/${cluster}/vms/${item?.instance_name}/${item?.instance_id}`}
+              to={`/clusters/${cluster}/projects/${item.project}/vms/${instance_name}`}
             >
               {instance_name}
             </Link>
@@ -156,12 +159,12 @@ export default class FloatingIp extends React.Component {
         title: t('RESOURCES_NETWORK_NAME'),
         dataIndex: 'network',
         width: 'auto',
-        render: (floating_ip, item) => {
+        render: (network, item) => {
           return (
             <Link
-              to={`/clusters/${cluster}/networks/${item?.network_alias}/${item?.network}`}
+              to={`/clusters/${cluster}/projects/${item.project}/networks/${network}`}
             >
-              {item?.network_alias}
+              {network}
             </Link>
           );
         },

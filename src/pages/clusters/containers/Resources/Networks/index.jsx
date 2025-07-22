@@ -37,7 +37,7 @@ import styles from './index.scss';
   module: 'networks',
   authKey: 'networks',
   name: t('RESOURCES_NETWORK'),
-  rowKey: 'id',
+  rowKey: 'project_name',
 })
 export default class Networks extends React.Component {
   handleTabChange = value => {
@@ -115,11 +115,11 @@ export default class Networks extends React.Component {
         title: t('NAME'),
         dataIndex: 'name',
         sorter: true,
-        render: (name, item) => (
+        render: (name, record) => (
           <Avatar
             icon="network-duotone"
             iconSize={40}
-            to={`/clusters/${cluster}/networks/${name}/${item.id}`}
+            to={`/clusters/${cluster}/projects/${record.project}/networks/${name}`}
             title={name}
           />
         ),
