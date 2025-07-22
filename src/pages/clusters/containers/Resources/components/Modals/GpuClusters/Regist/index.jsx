@@ -366,7 +366,7 @@ const RegistModal = props => {
   const keypairOptions = () => {
     return keypairList.map(obj => ({
       label: t(obj.name),
-      value: t(obj.id),
+      value: t(obj.name),
     }))
   }
 
@@ -510,7 +510,7 @@ const RegistModal = props => {
       setKeypairName(
         data.keypair === t('RESOURCES_SELECT')
           ? ''
-          : get(find(keypairList, { id: data.keypair }), 'name')
+          : get(find(keypairList, { name: data.keypair }), 'name')
       )
       setNodeName(data.node === t('RESOURCES_SELECT') ? '' : data.node)
 
@@ -882,8 +882,9 @@ const RegistModal = props => {
     if (checked) {
       const nameArray = []
       dataListVariables[type].forEach(el =>
-        type === 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
-      )
+        // type === 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
+        nameArray.push(el.name)
+      )      
       setVariables[type](nameArray)
     } else {
       setVariables[type]([])
@@ -1513,19 +1514,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {networkList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['network'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'network'
                                     )
                                   }
@@ -1535,14 +1536,14 @@ const RegistModal = props => {
                               <td>{data.type.toUpperCase()}</td>
                               <td>
                                 <Select
-                                  name={`${data.id}-ip`}
+                                  name={`${data.name}-ip`}
                                   placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.id)}
+                                  options={availableIpOptions(data.name)}
                                   onChange={e =>
-                                    handleIpSelectClick(data.id, e)
+                                    handleIpSelectClick(data.name, e)
                                   }
                                   disabled={
-                                    !networkCheckItems.includes(data.id)
+                                    !networkCheckItems.includes(data.name)
                                   }
                                   clearable
                                 />
@@ -1557,7 +1558,7 @@ const RegistModal = props => {
                       <div className={styles.removeCheckWrapper}>
                         {networkCheckItems?.map(id => {
                           const name = networkList
-                            ?.filter(data => data.id === id)
+                            ?.filter(data => data.name === id)
                             .map(item => item.name)[0]
                           return (
                             <span key={id}>
@@ -1653,19 +1654,19 @@ const RegistModal = props => {
                             </tr>
                           )}
                           {securityGroupList?.map(data => (
-                            <tr key={data.id}>
+                            <tr key={data.name}>
                               <td>
                                 <Checkbox
-                                  name={`select-${data.id}`}
+                                  name={`select-${data.name}`}
                                   checked={
                                     !!stateVariables['security'].includes(
-                                      data.id
+                                      data.name
                                     )
                                   }
                                   onChange={checked =>
                                     handleSingleCheck(
                                       checked,
-                                      data.id,
+                                      data.name,
                                       'security'
                                     )
                                   }
@@ -1682,7 +1683,7 @@ const RegistModal = props => {
                       <div className={styles.removeCheckWrapper}>
                         {securityGroupCheckItems?.map(id => {
                           const name = securityGroupList
-                            ?.filter(data => data.id === id)
+                            ?.filter(data => data.name === id)
                             .map(item => item.name)[0]
                           return (
                             <span key={id}>

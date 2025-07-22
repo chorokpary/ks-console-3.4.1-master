@@ -463,7 +463,7 @@ const DetailGpuVmList = props => {
           {vmDataList.length === 0 && (
               <div className={styles.wrapper}>
                 {isLoading ? (
-                  <div>
+                  <div className={styles.loading}>
                     <Loading />
                   </div>
                 ) : props.variables === 'project' ? (
