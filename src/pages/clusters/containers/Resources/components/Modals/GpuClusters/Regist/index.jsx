@@ -20,6 +20,8 @@ import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
 import VmStore from 'stores/resources/vms'
 import QuotaStore from 'stores/quota'
+import GpuClustersStore from 'stores/resources/gpuclusters';
+
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
 
@@ -35,6 +37,7 @@ const RegistModal = props => {
 
   const vmStore = new VmStore()
   const quotaStore = new QuotaStore()
+  const gpuStore = new GpuClustersStore()
 
   const [modelView, setModalView] = useState(true)
   const [regStep, setRegStep] = useState(1)
@@ -86,7 +89,12 @@ const RegistModal = props => {
 
   const [vmCount, setVmCount] = useState('1');
   const [gpuVmName, setGpuVmName] = useState('');
-  
+  const [slideMinCount, setSlideMinCount] = useState(1)
+  const [slideMaxCount, setSlideMaxCount] = useState(127)
+  const [firstGpuVmName, setFirstGpuVmName] = useState('');
+  const [lastGpuVmName, setLastGpuVmName] = useState('');
+
+
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
 
@@ -148,6 +156,21 @@ const RegistModal = props => {
   }, [projectName])
 
   useEffect(() => {
+    const getGpuVmCount = async () => {
+      const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
+      const vmList = vmData.vmList;
+
+      if (vmList && vmList.length > 0) {
+        const vmName = vmList[0]?.vmi?.vm_name || '';
+        const suffix = vmName.slice(-3);
+        const lastVmNumber = parseInt(suffix, 10);
+        setSlideMinCount(lastVmNumber+1)
+        setSlideMaxCount(127-lastVmNumber)
+        setVmCount(1)
+      }
+    }
+    getGpuVmCount()
+
     const getVmImage = async () => {
       const listImage = await vmStore.fetchVmListImage({ ...props })
       setImageDataList(listImage.images)
@@ -356,6 +379,7 @@ const RegistModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk
+    
     form.current.validator(() => {
       setSubmitButtonFlag(true)
 
@@ -377,6 +401,9 @@ const RegistModal = props => {
       data.node = data.node === t('RESOURCES_SELECT') ? '' : data.node
       data.storageClass = storageClass
       data.secureBoot = secureBoot
+      data.gpuVmName = gpuVmName
+      data.firstGpuVmName = firstGpuVmName
+      data.lastGpuVmName = lastGpuVmName
 
       if (isScript) {
         data.makeScript = getScript()
@@ -435,7 +462,6 @@ const RegistModal = props => {
   }
 
   const closeModal = () => {
-    //props.startRefresh();
     setModalView(false)
   }
 
@@ -1057,17 +1083,23 @@ const RegistModal = props => {
   };
 
   useEffect(() => {
-    const namePrefix = props.namespace;
+    getGpuName();
+  }, [vmCount]);
+
+  const getGpuName = () => {
+    const namePrefix = "vm-" + props.name;
     if (Number(vmCount) === 0) {
       setGpuVmName('');
     } else if (Number(vmCount) === 1) {
-      setGpuVmName(`${namePrefix}_001`);
+      setGpuVmName(`${namePrefix}-${(slideMinCount+Number(vmCount)-1).toString().padStart(3, '0')}`);
     } else {
-      const first = `${namePrefix}_001`;
-      const last = `${namePrefix}_${vmCount.toString().padStart(3, '0')}`;
+      const first = `${namePrefix}-${(slideMinCount).toString().padStart(3, '0')}`;
+      const last = `${namePrefix}-${(slideMinCount+Number(vmCount)-1).toString().padStart(3, '0')}`;
+      setFirstGpuVmName(first)
+      setLastGpuVmName(last)
       setGpuVmName(`${first} - ${last}`);
     }
-  }, [vmCount]);
+  }
 
   return (
     <>
@@ -1259,7 +1291,7 @@ const RegistModal = props => {
                 </Columns>
 
                 <label className="form-item-label" htmlFor="name">
-                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT')}
+                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
                   <span className="form-item-required">*</span>
                 </label>                
                   <Form.Item
@@ -1275,16 +1307,23 @@ const RegistModal = props => {
                   >
                     <UnitSlider
                       name="vm_count"
-                      max={127}
+                      max={slideMaxCount}
                       min={0}
-                      marks={getMarks(127)}
+                      marks={getMarks(slideMaxCount)}
                       defaultValue={vmCount}
                       unit={''}
                       withInput
                       onChange={e => setVmCount(e)}
                       style={{ padding: '5px', width: '10%' }}
                     />
+                    
                   </Form.Item>
+                  
+                  <div className={styles.form_item_label_description} >
+                   <label htmlFor="name">
+                    최대 {slideMaxCount}개의 가상머신을 생성할 수 있습니다.
+                   </label>      
+                  </div>
                       
                   <Form.Item
                     label={t('RESOURCES_VM_NAME')}
@@ -1296,6 +1335,12 @@ const RegistModal = props => {
                       disabled={true}
                     />
                   </Form.Item>    
+
+                  <div className={styles.form_item_label_description} >
+                   <label htmlFor="name">
+                    자동 생성될 가상머신 이름을 확인해 주세요.
+                   </label>      
+                  </div>
 
                   {imageType === 'I' && (
                     <Form.Item>

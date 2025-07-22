@@ -374,12 +374,13 @@ const DetailGpuVmList = props => {
 
   const handleCreate = () => {
     rootStore.triggerAction('gpuclusters.regist', {
+      store,
       cluster,
       namespace: cluster,
       id: props.id, 
       name: props.name,
       type: props.name,
-      success: fnGetData(),
+      success: fnGetData,
     })
   }
 

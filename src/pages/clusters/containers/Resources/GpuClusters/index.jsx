@@ -27,6 +27,8 @@ import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
 import Table from 'components/Tables/List';
 import { getLocalTime } from 'utils';
 import { ICON_TYPES } from 'utils/constants';
+import { Indicator } from 'components/Base'
+
 import GpuClustersStore from 'stores/resources/gpuclusters';
 
 import styles from './index.scss';
@@ -149,10 +151,18 @@ export default class gpuclusters extends React.Component {
       },
       {
         title: t('RESOURCES_STATE'),
-        dataIndex: 'finger_print',
+        dataIndex: 'is_normal',
         isHideable: true,
         search: true,
         width: 'auto',
+        render: is_normal => {
+          return (
+             <div className={styles.iconwrapper}>
+                <Indicator className={styles.indicator} type={is_normal ? 'running' : 'error'} flicker/>
+                <p>{is_normal ? 'Normal' : 'Abnormal'}</p>
+              </div>
+          )          
+        },
       },
       {
         title: t('RESOURCES_REGIST_DATE'),

@@ -36,6 +36,11 @@ export default class GpuClustersStore extends Base {
   //     params
   //   )}/gpu-cluster/clusters`;
 
+  getVmResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+  )}/edgetron/resources/kubevirt/vms`
+
   getResourceUrl = (params = {}) => `/gpu-cluster/clusters`
   getResourceDetailUrl = (params = {}) => `/gpu-cluster/cluster`
 
@@ -103,8 +108,26 @@ export default class GpuClustersStore extends Base {
           : 0
     })
 
+    // 상태 추가
+    const updatedData = await Promise.all(    
+      data.map(async (item) => {
+        const newParams = {
+          name: item.namespace,
+          limit: 10000,
+        };
+
+        let resultDetail = await this.fetchVmsDetail({...newParams});
+        const is_normal = (resultDetail.vmList).every(data => data.vmi.phase === 'Running');
+      
+        return {
+          ...item,
+          is_normal,
+        };
+      })
+    );
+    
     // 초기 데이터 처리
-    this.dataList = data
+    this.dataList = updatedData
 
     // namespace(project) 있는 경우
     if (namespace) {
@@ -137,7 +160,133 @@ export default class GpuClustersStore extends Base {
 
   @action
   async create(data, params = {}) {
+    const url = this.getVmResourceUrl(params)
 
+    const jsonData = {}
+    const resourceData = {}
+
+    resourceData.project = data.project
+    resourceData.name = data.name
+    resourceData.image = data.imageType === 'I' ? data.image : ''
+    resourceData.flavor = data.flavor
+    resourceData.keypair = data.keypair
+    // resourceData.pre_installed_app = data.preInstalledApp
+
+    // 값 전달 시 invalid_boot_volume 오류 발생
+    resourceData.boot_dv = data.imageType === 'I' ? '' : data.bootvolume
+
+    resourceData.bus_type = data.busType
+
+    resourceData.secure_boot = data.secureBoot
+
+    const securityGroupsArray = []
+    data.securitygroup.forEach(name => {
+      securityGroupsArray.push(name)
+    })
+    resourceData.security_groups = securityGroupsArray
+
+    const networksArray = []
+    data.network.forEach(name => {
+      const networkObj = {}
+      networkObj.network_name = name
+      const fixedIpObj = data.ips.find(obj => obj.network_name === name)
+      if (fixedIpObj !== undefined) {
+        networksArray.push(fixedIpObj)
+      } else {
+        networksArray.push(networkObj)
+      }
+    })
+    resourceData.networks = networksArray
+
+    // api에서 이름 넣으면 스크립트 오류 발생 함
+    // resourceData.username = globals.user.username; // Failed to validate the cloud-init script 오류나서 안보냄
+    resourceData.username = ''
+    resourceData.user_script = data.makeScript
+    // data.userScript === '' || data.userScript === undefined
+    //   ? data.makeScript
+    //   : data.userScript
+
+    const sriovNetworksArray = []
+    data.sriov.forEach(name => {
+      const sriovNetworkObj = {}
+      sriovNetworkObj.network_name = name
+      const fixedIpObj = data.sriovIps.find(obj => obj.network_name === name)
+      if (fixedIpObj !== undefined) {
+        sriovNetworksArray.push(fixedIpObj)
+      } else {
+        sriovNetworksArray.push(sriovNetworkObj)
+      }
+    })
+    resourceData.sriov_networks = sriovNetworksArray
+
+    const physicalnetworksArray = []
+    if (data.physicalnetwork && Array.isArray(data.physicalnetwork)) {
+      data.physicalnetwork.forEach(name => {
+        const physicalnetworkObj = {}
+        physicalnetworkObj.network_name = name
+        const fixedIpObj = data.physicalnetworkIps.find(
+          obj => obj.network_name === name
+        )
+        if (fixedIpObj !== undefined) {
+          physicalnetworksArray.push(fixedIpObj)
+        } else {
+          physicalnetworksArray.push(physicalnetworkObj)
+        }
+      })
+    }    
+    resourceData.physical_networks = physicalnetworksArray
+
+    const hostDeviceArray = []
+    resourceData.host_devices = hostDeviceArray
+
+    const gpuDeviceArray = []
+    resourceData.gpus = gpuDeviceArray
+
+    if (
+      data.node !== 'N/A' &&
+      data.imageType !== 'B' &&
+      hostDeviceArray.length === 0 &&
+      gpuDeviceArray.length === 0
+    ) {
+      resourceData.node = data.node
+    }
+
+    resourceData.description = data.description
+    resourceData.storage_class = data.storageClass
+    resourceData.network_storage = data.networkStorage
+
+    jsonData.vm = resourceData
+
+    const promises = [];
+
+    console.log("url : "+ url)
+    let firstNum = 1;
+    let lastNum = 1;
+
+    if(data.vm_count == 1){
+      firstNum = parseInt((data.gpuVmName).slice(-3), 10);
+      lastNum = firstNum;
+    }else{
+      firstNum = parseInt((data.firstGpuVmName).slice(-3), 10);
+      lastNum = parseInt((data.lastGpuVmName).slice(-3), 10);
+    }
+
+    // 가상머신 갯수만큼 생성...
+    for (let i = firstNum; i <= lastNum; i++) {
+      const suffix = String(i).padStart(3, "0");
+      const updatedNameJsonData = {
+        vm: {
+          ...jsonData.vm,
+          name: `${data.gpu_cluster}-${suffix}`,
+        },
+      }
+      console.log("updatedNameJsonData : "+ JSON.stringify(updatedNameJsonData))
+      const promise = request.post(url, updatedNameJsonData);  // 실제 요청
+      promises.push(promise);
+    }
+
+    return await this.submitting(Promise.all(promises));
+    // return true;
   }
 
   @action
@@ -210,8 +359,6 @@ export default class GpuClustersStore extends Base {
 
     const perPage = Number(params.limit) || 10;
     const currentPage = Number(params.page) || 1;
-
-    console.log("params : "+ JSON.stringify(params))
  
     delete params['resource']
     delete params['id']

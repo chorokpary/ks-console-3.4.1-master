@@ -193,7 +193,7 @@ export default class Login extends Component {
                   },
                 ]}
               >
-                <Input name="username" placeholder="user@example.com" defaultValue="admin01"/>
+                <Input name="username" placeholder="user@example.com"/>
               </Form.Item>
               <Form.Item
                 label={t('PASSWORD')}
@@ -203,7 +203,6 @@ export default class Login extends Component {
                   name="password"
                   placeholder=" "
                   autoComplete="new-password"
-                  defaultValue="Ntels1234"
                 />
               </Form.Item>
               <div className={styles.footer}>
