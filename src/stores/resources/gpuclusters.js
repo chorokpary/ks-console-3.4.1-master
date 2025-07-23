@@ -242,24 +242,16 @@ export default class GpuClustersStore extends Base {
     const gpuDeviceArray = []
     resourceData.gpus = gpuDeviceArray
 
-    if (
-      data.node !== 'N/A' &&
-      data.imageType !== 'B' &&
-      hostDeviceArray.length === 0 &&
-      gpuDeviceArray.length === 0
-    ) {
-      resourceData.node = data.node
-    }
-
+    resourceData.node = ""
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
-    resourceData.network_storage = data.networkStorage
+    // resourceData.network_storage = data.networkStorage
+    resourceData.network_storage = ""
 
     jsonData.vm = resourceData
 
     const promises = [];
 
-    console.log("url : "+ url)
     let firstNum = 1;
     let lastNum = 1;
 
@@ -286,7 +278,6 @@ export default class GpuClustersStore extends Base {
     }
 
     return await this.submitting(Promise.all(promises));
-    // return true;
   }
 
   @action

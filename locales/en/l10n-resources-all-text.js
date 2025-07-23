@@ -1155,8 +1155,6 @@ module.exports = {
   RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
   RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
-  RESOURCES_DELETE_GPU_CLUSTER_TIP: 'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
   RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
   RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
@@ -1166,4 +1164,5 @@ module.exports = {
   RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT: '생성 가능한 가상머신 수',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID: '가상머신 생성 수를  1 이상 입력해주세요',
   RESOURCES_VM_SETTINGS: 'VM Settings',
+  RESOURCES_NO_VM: '가상머신이 없습니다.',
 }

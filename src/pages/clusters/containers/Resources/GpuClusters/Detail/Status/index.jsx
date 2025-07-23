@@ -179,11 +179,10 @@ const Status = (props) => {
         )}
 
         <DetailGpuVmList
-          type={t('RESOURCES_NETWORK')}
+          type={t('RESOURCES_GPU_CLUSTER')}
           variables="gpuclusters"
           {...props.match.params}
-          // id={props.match.params.id}
-          id="1ae2da65-2f98-42f3-b32c-ef56adfe3223"          
+          id={props.match.params.id}        
         />
 
       </div>

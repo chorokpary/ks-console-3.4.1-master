@@ -89,11 +89,6 @@ const DetailGpuVmList = props => {
     return { start, end }
   }
 
-  const handleExpand = name => {
-    setExpandItem(name)
-    setIsExpandFlag(!isExpandFlag)
-  }
-
   useEffect(() => {
     fnGetData()
     fetchData()
@@ -278,8 +273,7 @@ const DetailGpuVmList = props => {
             </div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {/* {renderMonitorings(obj.vmi.vm_name, isExpandFlag)} */}
-          {renderMonitorings("40cd85ec-2327-4de6-95ec-9a4ffc228517", isExpandFlag)} 
+          {renderMonitorings(obj.vmi.vm_name, isExpandFlag)}
         </div>
       </>
     )
@@ -472,11 +466,7 @@ const DetailGpuVmList = props => {
                   </div>
                 ) : (
                   <div className={styles.empty}>
-                    {props.type}
-                    {props.type === t('RESOURCES_SECURITY_GROUP')
-                      ? t('RESOURCES_EUL')
-                      : t('RESOURCES_LEUL')}{' '}
-                    {t('RESOURCES_NO_USE_VM')}
+                    {t('RESOURCES_NO_VM')}
                   </div>
                 )}
               </div>
