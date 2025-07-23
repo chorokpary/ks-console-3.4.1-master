@@ -31,18 +31,13 @@ export default class GpuClustersStore extends Base {
 
   module = 'gpuclusters';
 
-  // getResourceUrl = (params = {}) =>
-  //   `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-  //     params
-  //   )}/gpu-cluster/clusters`;
-
   getVmResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
   )}/edgetron/resources/kubevirt/vms`
 
-  getResourceUrl = (params = {}) => `/gpu-cluster/clusters`
-  getResourceDetailUrl = (params = {}) => `/gpu-cluster/cluster`
+  getResourceUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/clusters`
+  getResourceDetailUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/cluster`
 
   getListUrl = this.getResourceUrl;
   
@@ -273,11 +268,10 @@ export default class GpuClustersStore extends Base {
         },
       }
       console.log("updatedNameJsonData : "+ JSON.stringify(updatedNameJsonData))
-      const promise = request.post(url, updatedNameJsonData);  // 실제 요청
-      promises.push(promise);
+      request.post(url, updatedNameJsonData);
     }
 
-    return await this.submitting(Promise.all(promises));
+    return await this.submitting(new Promise(resolve => setTimeout(resolve, 3000)));
   }
 
   @action

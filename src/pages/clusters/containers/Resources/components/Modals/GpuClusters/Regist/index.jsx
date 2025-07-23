@@ -2200,7 +2200,7 @@ const RegistModal = props => {
                     </div>
                     <label>{t('RESOURCES_NETWORK')}</label>
                     {networkList
-                      .filter(x => networkCheckItems.includes(x.id))
+                      .filter(x => networkCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div className={styles.list}>
@@ -2235,7 +2235,7 @@ const RegistModal = props => {
 
                     <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                     {securityGroupList
-                      .filter(x => securityGroupCheckItems.includes(x.id))
+                      .filter(x => securityGroupCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div className={styles.list}>

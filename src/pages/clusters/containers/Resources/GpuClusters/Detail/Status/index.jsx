@@ -9,11 +9,16 @@ import { Icon, Button, Notify } from '@kube-design/components'
 import { Link } from 'react-router-dom'
 import { Panel, Text, Indicator } from 'components/Base'
 
+import * as common from 'utils/resources'
+
+import VmStore from 'stores/resources/vms'
 import DetailGpuVmList from 'pages/clusters/containers/Resources/components/DetailGpuVmList';
 
 import styles from './index.scss'
 
 const Status = (props) => {
+
+  const vmStore = new VmStore()
 
   const store = props.detailStore;
 
@@ -25,9 +30,57 @@ const Status = (props) => {
   // 초기 데이터 처리
   useEffect(() => {
 
-      if (!store.detail) return
+    if (!store.detail) return
 
-  }, [store])
+    const fnGetVmDetail = async () => {
+      const vmData = (store.detail.data.nodes).filter(item => item.vmi)
+
+      const sortedList = [...vmData].sort((a, b) => {
+       return a.vmi.vm_name < b.vmi.vm_name ? 1 : a.vmi.vm_name > b.vmi.vm_name ? -1 : 0;
+      });
+
+      const vmName = sortedList[0]?.vmi?.vm_name;
+      
+      if(!!vmName){
+        console.log("vmName : "+ vmName)
+        // vm detail data
+        const vmDetail = await vmStore.fetchDetail({ project: cluster, name: vmName })
+        
+        fnGetFlavor(vmDetail);
+        fnGetNetwork(vmDetail);
+      }      
+    }
+
+    const fnGetFlavor = async (vmDetail) => {
+      setDetailFlavor(vmDetail.vm?.flavor)
+    }
+
+    const fnGetNetwork = async (vmDetail) => {
+      setDetailNetwork([])
+
+      const networkData = await vmStore.fetchVmListNetwork({ project: cluster })
+      const networkNameArray = vmDetail.vm?.networks.map(item => item.name)
+      const filterData = (networkData.networks).filter(item => {
+        return networkNameArray.includes(item.name)
+      })
+
+      if (filterData.length > 0) {
+        const promises = filterData.filter(async network => {
+          if (network.name !== 'k8s-pod-network') {
+            const networkDetail = await request.get(
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
+            )
+            networkDetail.network.endpoint = 'networks'
+            networkDetail.network.unique = 'project_name'
+            setDetailNetwork(value => [...value, networkDetail.network])
+          }
+        })
+        await Promise.all(promises)
+      }
+    }
+
+    fnGetVmDetail();
+  }, [])
 
   return (
     <>
