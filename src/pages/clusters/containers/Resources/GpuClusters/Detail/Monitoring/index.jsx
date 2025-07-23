@@ -7,6 +7,7 @@ import { Panel } from 'components/Base'
 
 import { getChartData, getAreaChartOps } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
+import GpuClustersStore from 'stores/resources/gpuclusters'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
@@ -17,10 +18,11 @@ import VmStore from 'stores/resources/vms'
 
 const index = props => {
   const customStore = new CustomStore()
+  const store = new GpuClustersStore()
 
-  const store = new VmStore()
+  // const store = new VmStore()
   const cluster = props.detailStore?.detail.cluster
-
+  const name = props.detailStore?.detail.name
   const perPage = 6
   const [vmDataList, setVmDataList] = useState([])
 
@@ -67,29 +69,26 @@ const index = props => {
   }, [])
 
   const fnGetData = async ({ ...params } = {}) => {
-    // setIsLoading(true)
     const page = get(params, 'page', 1)
     const detailParams = {
       cluster,
       resource: props.variables,
       id: props.id,
-      name: props.name,
+      name: name,
       page: page,
       limit: perPage,
     }
 
     if (params.name !== '' && params.name !== undefined) {
-      detailParams.searchName = params.name
+      ;(detailParams.searchType = 'vm_name'),
+        (detailParams.searchName = params.name)
     }
 
     const vmList = await store.fetchVmsDetail(detailParams)
-    const vmData = vmList.vms
+    const vmData = vmList.vmList
 
-    // setTotal(vmList.total)
-    // setCurrentPage(page)
     setVmDataList(vmData)
-    selectedVm ?? setSelectedVm(vmData[0]?.id || '')
-    // setIsLoading(false)
+    selectedVm ?? setSelectedVm(vmData[0]?.vmi.vm_name || '')
   }
 
   const fetchData = async params => {
@@ -302,22 +301,24 @@ const index = props => {
                     </tr>
                   </thead>
                   <tbody className={styles.vm_list}>
-                    {vmDataList.map((vm, idx) => (
+                    {vmDataList.map((obj, idx) => (
                       <tr key={idx}>
                         <td
                           style={{
                             backgroundColor:
-                              selectedVm === vm.id ? '#EEF2FF' : '',
+                              selectedVm === obj.vmi.vm_name ? '#EEF2FF' : '',
                           }}
                           onClick={() => {
-                            setSelectedVm(vm.id)
+                            setSelectedVm(obj.vmi.vm_name)
                           }}
                         >
                           <div
                             style={{ display: 'flex', alignItems: 'center' }}
                           >
                             <i className="ico-type-vm"></i>
-                            <span style={{ marginLeft: 8 }}>{vm.name}</span>
+                            <span style={{ marginLeft: 8 }}>
+                              {obj.vmi.vm_name}
+                            </span>
                           </div>
                         </td>
                       </tr>
