@@ -159,12 +159,9 @@ const RegistModal = props => {
     const getGpuVmCount = async () => {
       const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
       const vmList = vmData.vmList;
-      console.log("vmList : "+JSON.stringify(vmList))
 
       if (vmList && vmList.length > 0) {
-        const vmName = vmList[0]?.vmi?.vm_name || '';
-        const suffix = vmName.slice(-3);
-        const lastVmNumber = parseInt(suffix, 10);
+        const lastVmNumber = vmList.length;
         setSlideMinCount(lastVmNumber+1)
         setSlideMaxCount(127-lastVmNumber)
         setVmCount(1)
@@ -688,7 +685,7 @@ const RegistModal = props => {
     if (data['keypair']) {
       flag = false
     } else {
-      isPassword ? (flag = false) : (flag = true)
+      (isScript && isPassword) ? (flag = false) : (flag = true)
     }
 
     flag ? setIsKeypiarPasswordError(true) : setIsKeypiarPasswordError(false)
@@ -1088,18 +1085,35 @@ const RegistModal = props => {
     getGpuName();
   }, [vmCount]);
 
-  const getGpuName = () => {
-    const namePrefix = "vm-" + props.name;
+  const getGpuName = async () => {
+
+    const namePrefix = "vm-" + props.name ;
+
+    const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
+    const vmList = vmData.vmList;
+
+    const existingNames = vmList.map(vm => vm.vmi.vm_name);
+
+    // 현재 prefix 를 가진 이름만 추출 >  prefix 제거하고 숫자만  > NaN 이 아닌 실제 숫자만 > 오름차순 정렬
+    const existingNums = existingNames
+    .filter(name => name.startsWith(`${namePrefix}-`))
+    .map(name => parseInt(name.replace(`${namePrefix}-`, ""), 10))
+    .filter(num => !isNaN(num))
+    .sort((a, b) => a - b);
+
+    // 기존 VM 이름들 중 가장 큰 숫자를 찾아서 그 다음 숫자
+    const startNum = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 1;
+
     if (Number(vmCount) === 0) {
       setGpuVmName('');
     } else if (Number(vmCount) === 1) {
-      setGpuVmName(`${namePrefix}-${(slideMinCount+Number(vmCount)-1).toString().padStart(3, '0')}`);
+      setGpuVmName(`${namePrefix}-${(startNum).toString().padStart(3, '0')}`);
     } else {
-      const first = `${namePrefix}-${(slideMinCount).toString().padStart(3, '0')}`;
-      const last = `${namePrefix}-${(slideMinCount+Number(vmCount)-1).toString().padStart(3, '0')}`;
+      const first = `${namePrefix}-${(startNum).toString().padStart(3, '0')}`;
+      const last = `${namePrefix}-${(startNum+Number(vmCount)-1).toString().padStart(3, '0')}`;
       setFirstGpuVmName(first)
       setLastGpuVmName(last)
-      setGpuVmName(`${first} - ${last}`);
+      setGpuVmName(`${first} ~ ${last}`);
     }
   }
 
@@ -1701,138 +1715,6 @@ const RegistModal = props => {
                     </div>
                   </div>
                 </Form.Item>
-
-                {/* <Form.Item label={t('RESOURCES_SR_IOV_NETWORK')}>
-                  <div className={styles.wrapper}>
-                    {stateVariables['sriov'].length > 0 && (
-                      <div
-                        className={classnames(
-                          styles.table_title,
-                          styles.table_title_bg
-                        )}
-                      >
-                        <Button
-                          className={styles.table_title_button}
-                          onClick={() => handleAllCheck(false, 'sriov')}
-                        >
-                          {t('RESOURCES_ALL_DESELECT')}
-                        </Button>{' '}
-                        {stateVariables['sriov'].length}
-                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
-                      </div>
-                    )}
-                    <div className={styles.table}>
-                      <table>
-                        <colgroup>
-                          <col width="5%" />
-                          <col width="20%" />
-                          <col width="15%" />
-                          <col width="20%" />
-                          <col width="25%" />
-                          <col width="25%" />
-                        </colgroup>
-                        <thead>
-                          <tr>
-                            <th>
-                              <Checkbox
-                                name="select-all-sriov"
-                                onChange={checked =>
-                                  handleAllCheck(checked, 'sriov')
-                                }
-                                checked={
-                                  !!(
-                                    dataListVariables['sriov'].length > 0 &&
-                                    stateVariables['sriov'].length ===
-                                    dataListVariables['sriov'].length
-                                  )
-                                }
-                              />
-                            </th>
-                            <th>
-                              <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
-                            </th>
-                            <th>
-                              <strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong>
-                            </th>
-                            <th>
-                              <strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong>
-                            </th>
-                            <th>
-                              <strong>{t('RESOURCES_CIDR')}</strong>
-                            </th>
-                            <th>
-                              <strong>{t('RESOURCES_GATEWAY')}</strong>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {!sriovNetworkList?.length && (
-                            <tr>
-                              <td colSpan="5" className="no-data">
-                                <p>
-                                  {t(
-                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                  )}
-                                </p>
-                              </td>
-                            </tr>
-                          )}
-                          {sriovNetworkList?.map(data => (
-                            <tr key={data.name}>
-                              <td>
-                                <Checkbox
-                                  name={`select-${data.name}`}
-                                  checked={
-                                    !!stateVariables['sriov'].includes(
-                                      data.name
-                                    )
-                                  }
-                                  onChange={checked =>
-                                    handleSingleCheck(
-                                      checked,
-                                      data.name,
-                                      'sriov'
-                                    )
-                                  }
-                                />
-                              </td>
-                              <td>{data.name}</td>
-                              <td>{data.type.toUpperCase()}</td>
-                              <td>
-                                <Select
-                                  name={`${data.name}-ip`}
-                                  placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableSriovIpOptions(data.name)}
-                                  onChange={e =>
-                                    handleSriovIpSelectClick(data.name, e)
-                                  }
-                                  disabled={
-                                    !sriovCheckItems.includes(data.name)
-                                  }
-                                  clearable
-                                />
-                              </td>
-                              <td>{data.cidr}</td>
-                              <td>{data.gateway_ip}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      <div className={styles.removeCheckWrapper}>
-                        {sriovCheckItems?.map(name => (
-                          <span key={name}>
-                            <Button
-                              icon="close"
-                              onClick={() => handleDelete(name, 'sriov')}
-                            >
-                              {name}
-                            </Button>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Form.Item> */}
               </div>
               {/* 네트워크 설정 끝========================================== */}
 
@@ -1855,15 +1737,6 @@ const RegistModal = props => {
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
                 </div>
-
-                {/* <Form.Item label={t('RESOURCES_NODE')}>
-                  <Select
-                    name="node"
-                    placeholder={t('RESOURCES_SELECT')}
-                    options={nodeOptions()}
-                    clearable
-                  />
-                </Form.Item> */}
 
                 <Form.Group
                   label={t('RESOURCES_SCRIPT')}

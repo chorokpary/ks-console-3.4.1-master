@@ -281,7 +281,7 @@ export default class GpuClustersStore extends Base {
       const updatedNameJsonData = {
         vm: {
           ...jsonData.vm,
-          name: `${data.gpu_cluster}-${suffix}`,
+          name: `vm-${data.gpu_cluster}-${suffix}`,
         },
       }
       console.log("updatedNameJsonData : "+ JSON.stringify(updatedNameJsonData))
