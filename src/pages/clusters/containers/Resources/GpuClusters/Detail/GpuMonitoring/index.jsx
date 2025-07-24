@@ -14,15 +14,12 @@ import { SimpleLine, SimpleArea } from 'components/Charts'
 import styles from './index.scss'
 import { Button, InputSearch } from '@kube-design/components'
 import VmStore from 'stores/resources/vms'
-import GpuClustersStore from 'stores/resources/gpuclusters'
 
 const index = props => {
   const customStore = new CustomStore()
 
-  // const store = new VmStore()
-  const store = new GpuClustersStore()
+  const store = new VmStore()
   const cluster = props.detailStore?.detail.cluster
-  const name = props.detailStore?.detail.name
 
   const perPage = 6
   const [vmDataList, setVmDataList] = useState([])
@@ -74,21 +71,26 @@ const index = props => {
       cluster,
       resource: props.variables,
       id: props.id,
-      name: name,
+      name: props.name,
       page: page,
       limit: perPage,
     }
 
     if (params.name !== '' && params.name !== undefined) {
-      detailParams.searchType = 'vm_name'
       detailParams.searchName = params.name
     }
 
     const vmList = await store.fetchVmsDetail(detailParams)
-    const vmData = vmList.vmList
+    const vmData = vmList.vms
 
-    setVmDataList(vmData)
-    selectedVm ?? setSelectedVm(vmData[0]?.vmi.vm_name || '')
+    // setVmDataList(vmData)
+    // selectedVm ?? setSelectedVm(vmData[0]?.id || '')
+
+    setVmDataList([
+      { vmi: { vm_name: 'gpu-wbl-petasus' } },
+      { vmi: { vm_name: 'gpu-wbl-aicm' } },
+    ])
+    selectedVm ?? setSelectedVm('gpu-wbl-petasus')
   }
 
   const fetchData = async params => {
@@ -112,7 +114,8 @@ const index = props => {
       const vmGpuUtilData = await customStore.fetchMetric({
         expr: gpuUtilDataExpr,
         ...paramsData,
-        cluster: props.match.params.cluster,
+        // cluster: props.match.params.cluster,
+        cluster: 'wbl-skt-dev',
       })
 
       setVmGpuUtilData(vmGpuUtilData)
@@ -124,7 +127,8 @@ const index = props => {
       const vmGpuRamData = await customStore.fetchMetric({
         expr: gpuRamDataExpr,
         ...paramsData,
-        cluster: props.match.params.cluster,
+        // cluster: props.match.params.cluster,
+        cluster: 'wbl-skt-dev',
       })
 
       setVmGpuRamData(vmGpuRamData)
@@ -136,7 +140,8 @@ const index = props => {
       const vmGpuPowerData = await customStore.fetchMetric({
         expr: gpuPowerDataExpr,
         ...paramsData,
-        cluster: props.match.params.cluster,
+        // cluster: props.match.params.cluster,
+        cluster: 'wbl-skt-dev',
       })
 
       setVmGpuPowerData(vmGpuPowerData)
@@ -148,7 +153,8 @@ const index = props => {
       const vmGpuTempData = await customStore.fetchMetric({
         expr: gpuTempDataExpr,
         ...paramsData,
-        cluster: props.match.params.cluster,
+        // cluster: props.match.params.cluster,
+        cluster: 'wbl-skt-dev',
       })
 
       setVmGpuTempData(vmGpuTempData)
@@ -250,24 +256,22 @@ const index = props => {
                     </tr>
                   </thead>
                   <tbody className={styles.vm_list}>
-                    {vmDataList.map((obj, idx) => (
+                    {vmDataList.map((vm, idx) => (
                       <tr key={idx}>
                         <td
                           style={{
                             backgroundColor:
-                              selectedVm === obj.vmi.vm_name ? '#EEF2FF' : '',
+                              selectedVm === vm.id ? '#EEF2FF' : '',
                           }}
                           onClick={() => {
-                            setSelectedVm(obj.vmi.vm_name)
+                            setSelectedVm(vm.id)
                           }}
                         >
                           <div
                             style={{ display: 'flex', alignItems: 'center' }}
                           >
                             <i className="ico-type-vm"></i>
-                            <span style={{ marginLeft: 8 }}>
-                              {obj.vmi.vm_name}
-                            </span>
+                            <span style={{ marginLeft: 8 }}>{vm.name}</span>
                           </div>
                         </td>
                       </tr>
