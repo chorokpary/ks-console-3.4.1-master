@@ -121,9 +121,12 @@ export default class BaseStore {
     namespace,
     more,
     devops,
+    silent,
     ...params
   } = {}) {
-    this.list.isLoading = true
+    if (!silent) {
+      this.list.isLoading = true
+    }
 
     if (!params.sortBy && params.ascending === undefined) {
       params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'timestamp'
@@ -149,6 +152,8 @@ export default class BaseStore {
         ? ''
         : (params.project = project)
     }
+
+    delete params['silent']
 
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace, devops }),
