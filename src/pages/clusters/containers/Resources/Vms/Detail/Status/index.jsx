@@ -91,7 +91,7 @@ const Status = props => {
         const promises = physicalNetworkFilterData.filter(async network => {
           if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}/${network.project}/info`
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}?project=${network.project}`
             )
             networkDetail.physicalnetwork.endpoint = 'physicalnetworks'
             networkDetail.physicalnetwork.unique = 'project_name'
