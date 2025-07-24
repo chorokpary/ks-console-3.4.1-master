@@ -13,14 +13,15 @@ import { SimpleArea } from 'components/Charts'
 
 import styles from './index.scss'
 import { Button, InputSearch } from '@kube-design/components'
-import VmStore from 'stores/resources/vms'
+import GpuClustersStore from 'stores/resources/gpuclusters'
 
 const index = props => {
   const customStore = new CustomStore()
 
-  const store = new VmStore()
+  const store = new GpuClustersStore()
   const cluster = props.detailStore?.detail.cluster
-  const perPage = 6
+  const name = props.detailStore?.detail.name
+  const perPage = 100
   const [vmDataList, setVmDataList] = useState([])
 
   const [vmCpuData, setVmCpuData] = useState([])
@@ -82,16 +83,10 @@ const index = props => {
     }
 
     const vmList = await store.fetchVmsDetail(detailParams)
-    const vmData = vmList.vms
+    const vmData = vmList.vmList
 
-    // setVmDataList(vmData)
-    // selectedVm ?? setSelectedVm(vmData[0]?.id || '')
-
-    setVmDataList([
-      { vmi: { vm_name: 'gpu-wbl-petasus' } },
-      { vmi: { vm_name: 'gpu-wbl-aicm' } },
-    ])
-    selectedVm ?? setSelectedVm('gpu-wbl-petasus')
+    setVmDataList(vmData)
+    selectedVm ?? setSelectedVm(vmData[0]?.vmi.vm_name || '')
   }
 
   const fetchData = async params => {
@@ -114,8 +109,7 @@ const index = props => {
       const vmCpuData = await customStore.fetchMetric({
         expr: cpuLinuxDataExpr,
         ...paramsData,
-        // cluster: props.match.params.cluster,
-        cluster: 'wbl-skt-dev',
+        cluster: props.match.params.cluster,
       })
 
       const vmCpuMetricData = _.find(vmCpuData, data => {
@@ -135,8 +129,7 @@ const index = props => {
       const vmMemoryData = await customStore.fetchMetric({
         expr: memoryLinuxDataExpr,
         ...paramsData,
-        // cluster: props.match.params.cluster,
-        cluster: 'wbl-skt-dev',
+        cluster: props.match.params.cluster,
       })
 
       const vmMemoryMetricData = _.find(vmMemoryData, data => {
@@ -156,8 +149,7 @@ const index = props => {
       const vmInboundData = await customStore.fetchMetric({
         expr: inboundLinuxDataExpr,
         ...paramsData,
-        // cluster: props.match.params.cluster,
-        cluster: 'wbl-skt-dev',
+        cluster: props.match.params.cluster,
       })
 
       const vmInboundMetricData = _.find(vmInboundData, data => {
@@ -174,8 +166,7 @@ const index = props => {
       const vmOutboundData = await customStore.fetchMetric({
         expr: outboundLinuxDataExpr,
         ...paramsData,
-        // cluster: props.match.params.cluster,
-        cluster: 'wbl-skt-dev',
+        cluster: props.match.params.cluster,
       })
 
       const vmOutboundMetricData = _.find(vmOutboundData, data => {
@@ -191,8 +182,7 @@ const index = props => {
       const vmDiskData = await customStore.fetchMetric({
         expr: diskLinuxDataExpr,
         ...paramsData,
-        // cluster: props.match.params.cluster,
-        cluster: 'wbl-skt-dev',
+        cluster: props.match.params.cluster,
       })
 
       const vmDiskMetricData = _.find(vmDiskData, data => {
@@ -309,22 +299,24 @@ const index = props => {
                     </tr>
                   </thead>
                   <tbody className={styles.vm_list}>
-                    {vmDataList.map((vm, idx) => (
+                    {vmDataList.map((obj, idx) => (
                       <tr key={idx}>
                         <td
                           style={{
                             backgroundColor:
-                              selectedVm === vm.id ? '#EEF2FF' : '',
+                              selectedVm === obj.vmi.vm_name ? '#EEF2FF' : '',
                           }}
                           onClick={() => {
-                            setSelectedVm(vm.id)
+                            setSelectedVm(obj.vmi.vm_name)
                           }}
                         >
                           <div
                             style={{ display: 'flex', alignItems: 'center' }}
                           >
                             <i className="ico-type-vm"></i>
-                            <span style={{ marginLeft: 8 }}>{vm.name}</span>
+                            <span style={{ marginLeft: 8 }}>
+                              {obj.vmi.vm_name}
+                            </span>
                           </div>
                         </td>
                       </tr>
