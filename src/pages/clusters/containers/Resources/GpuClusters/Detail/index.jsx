@@ -88,16 +88,16 @@ const GpuClustersDetail = (props) => {
 
     return [
       {
-        name: t('RESOURCES_CLUSTER'),
+        name: t('RESOURCES_GPU_CLUSTER'),
         value: detail.name,
       },
       {
         name: t('RESOURCES_PROJECT'),
-        value: detail.cluster,
+        value: detail.data.namespace,
       },
       {
         name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        value: (detail.data.nodes).filter(item => item.vmi).length,
+        value: (detail.data.nodes).filter(item => item.vmi).length + "/" + (detail.data.nodes).length,
       },
     ]
   }

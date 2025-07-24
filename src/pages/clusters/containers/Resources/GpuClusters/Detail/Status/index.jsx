@@ -42,7 +42,6 @@ const Status = (props) => {
       const vmName = sortedList[0]?.vmi?.vm_name;
       
       if(!!vmName){
-        console.log("vmName : "+ vmName)
         // vm detail data
         const vmDetail = await vmStore.fetchDetail({ project: cluster, name: vmName })
         
@@ -101,7 +100,7 @@ const Status = (props) => {
               </div>
               <div className={classnames(styles.title, styles.name)}>
                 <div>
-                    {store.detail.cluster}
+                    {store.detail.data.namespace}
                 </div>
                 <p>{t('RESOURCES_PROJECT')}</p>
               </div>

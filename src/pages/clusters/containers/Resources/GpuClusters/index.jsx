@@ -103,17 +103,29 @@ export default class gpuclusters extends React.Component {
     };
   }
 
+  getStateType() {
+    const STATE_TYPE = [
+      { text: 'Normal', value: 'normal' },
+      { text: 'Abnormal', value: 'abnormal' },
+    ]
+
+    return STATE_TYPE.map(status => ({
+      text: status.text,
+      value: status.value,
+    }))
+  }
+
   getColumns = () => {
     const { getSortOrder } = this.props;
     const { cluster } = this.props.match.params;
     return [
       {
-        title: t('RESOURCES_GPU_CLUSTER'),
-        dataIndex: 'namespace',
+        title: t('RESOURCES_NAME'),
+        dataIndex: 'description',
         sorter: true,
         sortOrder: getSortOrder('namespace'),
         search: true,
-        render: (name, item) => (
+        render: (description, record) => (
           <div className={styles.avatar}>
               <div className={styles.icon}>
                 <i className="ico-type-mediatedvgpu"></i>
@@ -122,9 +134,9 @@ export default class gpuclusters extends React.Component {
                 <div>
                   <Link
                     className={styles.title}
-                    to={`/clusters/${cluster}/gpuclusters/${name}`}
+                    to={`/clusters/${cluster}/gpuclusters/${description}`}
                   >
-                    {name}
+                    {description}
                   </Link>
                 </div>
               </div>
@@ -136,9 +148,9 @@ export default class gpuclusters extends React.Component {
         dataIndex: 'cluster',
         isHideable: true,
         width: 'auto',
-        render: cluster => (
-          <Link to={`/clusters/${cluster}/projects/${cluster}/overview`}>
-            {cluster}
+        render: (namespace, record) => (
+          <Link to={`/clusters/${namespace}/projects/${record.namespace}/overview`}>
+            {record.namespace}
           </Link>
         ),
       },
@@ -148,18 +160,22 @@ export default class gpuclusters extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
+         render: (assigned_vm_count, record) => (
+          <p>{assigned_vm_count}/{record.total_node_count}</p>
+        ),
       },
       {
         title: t('RESOURCES_STATE'),
-        dataIndex: 'is_normal',
+        dataIndex: 'state',
+        filters: this.getStateType(),
         isHideable: true,
         search: true,
         width: 'auto',
-        render: is_normal => {
+        render: (state) => {
           return (
              <div className={styles.iconwrapper}>
-                <Indicator className={styles.indicator} type={is_normal ? 'running' : 'error'} flicker/>
-                <p>{is_normal ? 'Normal' : 'Abnormal'}</p>
+                <Indicator className={styles.indicator} type={state == "normal" ? 'running' : 'error'} flicker/>
+                <p>{state == "normal" ? 'Normal' : 'Abnormal'}</p>
               </div>
           )          
         },
@@ -185,13 +201,13 @@ export default class gpuclusters extends React.Component {
   get columnSearch() {
     return [
       {
-        dataIndex: 'name',
+        dataIndex: 'description',
         title: t('RESOURCES_NAME'),
         search: true,
       },
       {
-        dataIndex: 'finger_print',
-        title: t('FINGER PRINT'),
+        dataIndex: 'state',
+        title: t('RESOURCES_STATE'),
         search: true,
       },
     ];

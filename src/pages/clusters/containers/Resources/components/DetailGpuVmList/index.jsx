@@ -239,7 +239,7 @@ const DetailGpuVmList = props => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/vms/${obj.vmi.vm_name}/${obj.id}`}>
+              <Link to={`/clusters/${cluster}/projects/${obj.vmi.namespace}/vms/${obj.vmi.vm_name}`}>             
                 {obj.vmi.vm_name}
               </Link>
               {/* <Tooltip content={t('VNC')}>

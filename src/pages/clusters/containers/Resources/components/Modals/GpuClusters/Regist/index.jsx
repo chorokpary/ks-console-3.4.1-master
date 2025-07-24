@@ -159,6 +159,7 @@ const RegistModal = props => {
     const getGpuVmCount = async () => {
       const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
       const vmList = vmData.vmList;
+      console.log("vmList : "+JSON.stringify(vmList))
 
       if (vmList && vmList.length > 0) {
         const vmName = vmList[0]?.vmi?.vm_name || '';

@@ -80,7 +80,7 @@ export default class GpuClustersStore extends Base {
     if (namespace) {
       params.project = namespace
     }
- 
+
     const result = await request.get(
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
@@ -91,8 +91,6 @@ export default class GpuClustersStore extends Base {
       namespace,
       ...this.mapper(item),
     }))
-
-    const total = data.length || 0
 
     // 초기 정렬 처리
     data.sort((a, b) => {
@@ -105,18 +103,11 @@ export default class GpuClustersStore extends Base {
 
     // 상태 추가
     const updatedData = await Promise.all(    
-      data.map(async (item) => {
-        const newParams = {
-          name: item.namespace,
-          limit: 10000,
-        };
-
-        let resultDetail = await this.fetchVmsDetail({...newParams});
-        const is_normal = (resultDetail.vmList).every(data => data.vmi.phase === 'Running');
-      
+      data.map(async (item) => {      
+        const state = Number(item.assigned_vm_count) == Number(item.total_node_count) ? "normal" : "abnormal";
         return {
           ...item,
-          is_normal,
+          state,
         };
       })
     );
@@ -128,6 +119,32 @@ export default class GpuClustersStore extends Base {
     if (namespace) {
       params.project = namespace
     }
+
+    // 검색 관련 처리 
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
+    const searchArray = Object.keys(params).map((key) => {
+      let value = params[key];
+      let searchData = {
+        "searchKeywordType": key,
+        "searchKeywordText": value
+      }
+      return searchData
+    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+
+    if (searchArray.length > 0) {
+      searchArray.map((search) => {
+        let resultList = this.dataList.filter((row) => {
+          if (search.searchKeywordType === 'state') {
+            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+          }
+          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
+        });
+        this.dataList = resultList;
+      })
+    }
+
+    // 전체 데이터 갯수
+    const total = this.dataList.length || 0
 
     // 정렬 처리
     const sortType = params.ascending ? 'asc' : 'desc'
@@ -283,8 +300,16 @@ export default class GpuClustersStore extends Base {
   async fetchDetail(params) {
     this.isLoading = true;
 
+    const page = 1
+    const limit = 10000
+
+    const resultList = await request.get(
+      this.getListUrl({ page, limit }),
+    )
+    const namespace = (resultList.data).filter(item => item.description === params.name).map(item => item.namespace)
+
     const result = await request.get(
-      `${this.getResourceDetailUrl(params)}/${params.name}`
+      `${this.getResourceDetailUrl(params)}/${namespace}`
     );
     const detail = { ...params, ...this.mapper(result), kind: 'data' };
 
