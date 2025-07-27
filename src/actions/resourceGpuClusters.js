@@ -35,7 +35,7 @@ export default {
             .create(data, { cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_CREATE_SUCCESSFUL') })
+              Notify.success({ content: t('RESOURCES_CREATE_REQUEST_SUCCESSFUL') })
               success && success()
             })
         },

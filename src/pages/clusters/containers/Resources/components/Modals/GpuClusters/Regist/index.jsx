@@ -29,7 +29,7 @@ import styles from './index.scss'
 import './checkbox.disabled.css'
 
 
-const regexRootDisk = /^[1-9][0-9]*$/;
+const regexVmCount = /^[1-9][0-9]*$/;
 
 const RegistModal = props => {
   const form = useRef()
@@ -263,49 +263,6 @@ const RegistModal = props => {
     setNetworkList(updatedNetworkList)
   }
 
-  const availableSriovIpOptions = netName => {
-    const networkIps = availableSriovIpList.find(obj => obj.network === netName)
-    if (networkIps !== undefined) {
-      return networkIps.ips.map(ip => {
-        return {
-          label: t(ip),
-          value: t(ip),
-        }
-      })
-    }
-  }
-
-  const handleSriovIpSelectClick = (netName, val) => {
-    const record = {}
-    record.network_name = netName
-    record.fixed_ip = val
-    const existing = selectedSriovIpList.filter(
-      obj => obj.network_name !== netName
-    )
-    if (val !== t('RESOURCES_SELECT') && val !== undefined) {
-      existing.push(record)
-    }
-    setSelectedSriovIpList(existing)
-
-    const updatedSriovNetworkList = sriovNetworkList.map(item => {
-      if (item.name === netName) {
-        return { ...item, ip: val }
-      }
-      return item
-    })
-
-    setSriovNetworkList(updatedSriovNetworkList)
-  }
-
-  const storageClassOptions = () => {
-    return storageClassDataList.map(obj => {
-      return {
-        label: t(obj.name),
-        value: t(obj.name),
-      }
-    })
-  }
-
   const imageOptions = () => {
     return imageOptionList.map(obj => {
       return {
@@ -341,25 +298,6 @@ const RegistModal = props => {
       disabled: Number(obj.root_disk) < Number(size),
     }))
   }
-
-  const bootvolumeOptions = () => {
-    const filterData = bootVolumeDataList.filter(
-      item =>
-        !item.name.includes('boot-dv') &&
-        !item.name.includes('boot-volume') &&
-        !item.name.includes('bootdisk')
-    )
-    return filterData.map(obj => ({
-      label: t(obj.name),
-      value: t(obj.id),
-    }))
-  }
-
-  const busTypeOptions = [
-    { label: 'VirtIO', value: 'virtio' },
-    { label: 'SATA', value: 'sata' },
-    { label: 'SCSi', value: 'scsi' },
-  ]
 
   const keypairOptions = () => {
     return keypairList.map(obj => ({
@@ -469,7 +407,8 @@ const RegistModal = props => {
       if (
         imageType === 'I' &&
         (data.image === t('RESOURCES_SELECT') ||
-          data.flavor === t('RESOURCES_SELECT'))
+          data.flavor === t('RESOURCES_SELECT')) ||
+          gpuVmName === ''
       ) {
         handleOk()
       } else {
@@ -832,19 +771,6 @@ const RegistModal = props => {
     )
   }
 
-  // 설명이 길어지면 ui가 깨짐
-  const handleOsType = value => {
-    setOsType(value)
-    setSelectImageName('')
-    if (value === 'windows') {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type === 'windows'))
-    } else if (value === 'linux') {
-      setImageOptionList(imageDataList.filter(obj => obj.os_type !== 'windows'))
-    } else {
-      setImageOptionList([])
-    }
-  }
-
   // 체크 리스트 시작 ==================================================
   const [networkCheckItems, setNetworkCheckItems] = useState([])
   const [sriovCheckItems, setSriovCheckItems] = useState([])
@@ -900,20 +826,6 @@ const RegistModal = props => {
   const imageValidator = (rule, value, callback) => {
     if (value === t('RESOURCES_SELECT') || value === 'select') {
       return callback({ message: t('RESOURCES_SELECT_IMAGE_TIP') })
-    }
-    callback()
-  }
-
-  const bootVolumeValidator = (rule, value, callback) => {
-    if (value === t('RESOURCES_SELECT') || value === 'select') {
-      return callback({ message: t('RESOURCES_SELECT_BOOT_VOLUME_TIP') })
-    }
-    callback()
-  }
-
-  const busTypeValidator = (rule, value, callback) => {
-    if (value === t('RESOURCES_SELECT') || value === 'select') {
-      return callback({ message: t('RESOURCES_SELECT_BUS_TIP') })
     }
     callback()
   }
@@ -1316,7 +1228,7 @@ const RegistModal = props => {
                         required: true,
                       },
                       {
-                        pattern: regexRootDisk,
+                        pattern: regexVmCount,
                         message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
                       },
                     ]}
