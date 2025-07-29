@@ -29,6 +29,7 @@ const index = props => {
   const [vmGpuRamData, setVmGpuRamData] = useState([])
   const [vmGpuTempData, setVmGpuTempData] = useState([])
   const [vmGpuPowerData, setVmGpuPowerData] = useState([])
+  const [vmGpuNvlinkData, setVmGpuNvlinkData] = useState([])
 
   const [selectedVm, setSelectedVm] = useState()
   const [fetchParams, setFetchParams] = useState({})
@@ -68,6 +69,7 @@ const index = props => {
 
   const fnGetData = async ({ ...params } = {}) => {
     const page = get(params, 'page', 1)
+
     const detailParams = {
       cluster,
       resource: props.variables,
@@ -152,10 +154,24 @@ const index = props => {
       setVmGpuTempData(vmGpuTempData)
     }
 
+    const getVmGpuNvlinkData = async () => {
+      const gpuNvlinkDataExpr = `DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod="${selectedVm}", namespace="${cluster}"}`
+      // console.log("gpuNvlinkDataExpr : "+ gpuNvlinkDataExpr)
+      const gpuNvlinkData = await customStore.fetchMetric({
+        expr: gpuNvlinkDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      // console.log("gpuNvlinkData : "+ JSON.stringify(gpuNvlinkData))
+      setVmGpuNvlinkData(gpuNvlinkData)
+    }
+
     getVmGpuUtilData()
     getVmGpuRamData()
     getVmGpuTempData()
     getVmGpuPowerData()
+    getVmGpuNvlinkData()
   }
 
   const getMonitoringCfgs = () => {
@@ -188,6 +204,13 @@ const index = props => {
         unit: 'W',
         legend: vmGpuPowerData.map(item => item.metric.device),
         data: vmGpuPowerData,
+      },
+      {
+        type: 'bandwidth',
+        title: 'GPU ' + t('NETWORK_TRAFFIC'),
+        unitType: 'bandwidth',
+        legend: vmGpuNvlinkData.map(item => item.metric.device),
+        data: vmGpuNvlinkData,
       },
     ]
   }
