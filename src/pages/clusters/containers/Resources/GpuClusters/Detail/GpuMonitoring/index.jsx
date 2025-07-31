@@ -31,6 +31,9 @@ const index = props => {
   const [vmGpuPowerData, setVmGpuPowerData] = useState([])
   const [vmGpuNvlinkData, setVmGpuNvlinkData] = useState([])
 
+  const [vmGpuInboundData, setVmGpuInboundData] = useState([])
+  const [vmGpuOutboundData, setVmGpuOutboundData] = useState([])
+
   const [selectedVm, setSelectedVm] = useState()
   const [fetchParams, setFetchParams] = useState({})
 
@@ -156,22 +159,45 @@ const index = props => {
 
     const getVmGpuNvlinkData = async () => {
       const gpuNvlinkDataExpr = `DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod="${selectedVm}", namespace="${cluster}"}`
-      // console.log("gpuNvlinkDataExpr : "+ gpuNvlinkDataExpr)
       const gpuNvlinkData = await customStore.fetchMetric({
         expr: gpuNvlinkDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
       })
 
-      // console.log("gpuNvlinkData : "+ JSON.stringify(gpuNvlinkData))
       setVmGpuNvlinkData(gpuNvlinkData)
     }
+
+    const getVmGpuInboundData = async () => {
+      const inboundLinuxDataExpr = `node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod="${selectedVm}", namespace="${cluster}"}`
+      const gpuInboundData = await customStore.fetchMetric({
+        expr: inboundLinuxDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      setVmGpuInboundData(gpuInboundData)
+    }
+
+    const getVmGpuOutboundData = async () => {
+      const outboundLinuxDataExpr = `node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod="${selectedVm}", namespace="${cluster}"}`
+      const gpuOutboundData = await customStore.fetchMetric({
+        expr: outboundLinuxDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      setVmGpuOutboundData(gpuOutboundData)
+    }
+
 
     getVmGpuUtilData()
     getVmGpuRamData()
     getVmGpuTempData()
     getVmGpuPowerData()
     getVmGpuNvlinkData()
+    getVmGpuInboundData()
+    getVmGpuOutboundData()
   }
 
   const getMonitoringCfgs = () => {
@@ -206,6 +232,20 @@ const index = props => {
         data: vmGpuPowerData,
       },
       {
+        type: 'bandwidth',
+        title: 'IB InBound ',
+        unitType: 'bandwidth',
+        legend: vmGpuInboundData.map(item => item.metric.device),
+        data: vmGpuInboundData,
+      },
+       {
+        type: 'bandwidth',
+        title: 'IB OutBound ',
+        unitType: 'bandwidth',
+        legend: vmGpuOutboundData.map(item => item.metric.device),
+        data: vmGpuOutboundData,
+      },
+       {
         type: 'bandwidth',
         title: 'GPU ' + t('NETWORK_TRAFFIC'),
         unitType: 'bandwidth',
