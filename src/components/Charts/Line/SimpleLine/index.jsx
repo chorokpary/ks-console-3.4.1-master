@@ -74,7 +74,7 @@ export default class SimpleLine extends React.Component {
   static defaultProps = {
     theme: 'light',
     width: '100%',
-    height: 200,
+    height: 220,
     title: 'Title',
     xKey: 'time',
     unit: '',

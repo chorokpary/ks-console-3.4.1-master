@@ -289,7 +289,7 @@ const index = props => {
           }}
         >
           <Panel>
-            <div style={{ height: '600px', overflowY: 'scroll' }}>
+            <div style={{ height: '630px', overflowY: 'scroll' }}>
               {renderHeader()}
               <div className={styles.content}>
                 <table className={styles.table}>
