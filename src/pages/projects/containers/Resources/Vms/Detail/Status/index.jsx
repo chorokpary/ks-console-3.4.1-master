@@ -1,5 +1,5 @@
 import { isEmpty, find } from 'lodash'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
@@ -32,6 +32,35 @@ const Status = props => {
   const [vmMemoryData, setVmMemoryData] = useState([])
 
   const intiParams = { times: 50, step: '10m' }
+
+  const categoryOrder = {
+    networks: 0,
+    sriovs: 1,
+    physicalnetworks: 2,
+  };
+
+  const sortedDetailNetwork = useMemo(() => {
+    return [...detailNetwork].sort((a, b) => {
+      // first compare by category priority
+      const catDiff = categoryOrder[a.endpoint] - categoryOrder[b.endpoint];
+      if (catDiff !== 0) return catDiff;
+
+      // if same category, compare by name
+      return a.name.localeCompare(b.name);
+    });
+  }, [detailNetwork]);
+
+  const sortedDetailVolume = useMemo(() => {
+    return [...detailVolume].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }, [detailVolume]);
+
+  const sortedDetailSecurityGroup = useMemo(() => {
+    return [...detailSecurityGroup].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }, [detailVolume]);
 
   useEffect(() => {
     if (!store.detail.vm) return
@@ -417,7 +446,7 @@ const Status = props => {
         {/* 보안그룹 */}
         {store.detail.vm?.security_groups.length > 0 && (
           <DetailSecurityGroupList
-            securityGroupData={detailSecurityGroup}
+            securityGroupData={sortedDetailSecurityGroup}
             cluster={cluster}
             namespace={store.detail.vm.project}
           />
@@ -427,7 +456,7 @@ const Status = props => {
         {detailNetwork.length > 0 && (
           <Panel title={t('RESOURCES_NETWORK')}>
             <div className={styles.wrapper}>
-              {detailNetwork.map((obj, index) => (
+              {sortedDetailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
                     {!obj.resource_name ? (
@@ -482,7 +511,7 @@ const Status = props => {
         {detailVolume.length > 0 && (
           <Panel title={t('RESOURCES_VOLUME')}>
             <div className={styles.wrapper}>
-              {detailVolume.map((obj, index) => {
+              {sortedDetailVolume.map((obj, index) => {
                 return (
                   <div className={classnames(styles.itemVolume)} key={index}>
                     <div className={styles.icon}>
