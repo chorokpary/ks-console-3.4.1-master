@@ -61,22 +61,22 @@ const GpuClustersDetail = (props) => {
     //     })
     //   },
     // },
-    // {
-    //   key: 'delete',
-    //   icon: 'trash',
-    //   text: t('DELETE'),
-    //   action: 'delete',
-    //   type: 'danger',
-    //   show: showEdit,
-    //   onClick: () =>
-    //     props.rootStore.triggerAction('gpuclusters.remove', {
-    //       type: 'GPUCLUSTERS_DETAIL',
-    //       detail: toJS(store.detail),
-    //       store: store,
-    //       cluster: props.match.params.cluster,
-    //       success: () => routing.push(listUrl),
-    //     }),
-    // },
+    {
+      key: 'delete',
+      icon: 'trash',
+      text: t('DELETE'),
+      action: 'delete',
+      type: 'danger',
+      show: showEdit,
+      onClick: () =>
+        props.rootStore.triggerAction('gpuclusters.remove', {
+          type: 'GPUCLUSTERS_DETAIL',
+          detail: toJS(store.detail),
+          store: store,
+          cluster: props.match.params.cluster,
+          success: () => routing.push(listUrl),
+        }),
+    },
   ]
 
   const getAttrs = () => {
@@ -97,7 +97,8 @@ const GpuClustersDetail = (props) => {
       },
       {
         name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        value: (detail.data.nodes).filter(item => item.vmi).length + "/" + (detail.data.nodes).length,
+        // value: (detail.data.nodes).filter(item => item.vmi).length + "/" + (detail.data.nodes).length,
+        value: (detail.data.nodes).length,
       },
     ]
   }

@@ -20,6 +20,7 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
+import ClusterModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Cluster'
 import RegistModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Modify'
 
@@ -27,6 +28,31 @@ import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
 
 export default {
+  'gpuclusters.cluster.regist': {
+    on({ store, rootStore, cluster, workspace, namespace, success, devops, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .createCluster(data, { cluster, workspace, namespace, devops })
+            .then(() => {
+              //Modal.close(modal)
+              //Notify.success({ content: t('RESOURCES_CREATE_REQUEST_SUCCESSFUL') })
+              success && success()
+              data.createSuccess?.();
+            })
+        },
+        title: t('RESOURCES_CREATE_GPU_CLUSTER'),
+        modal: ClusterModal,
+        store,
+        rootStore, 
+        cluster,
+        workspace,
+        namespace,
+        devops,
+        ...props,
+      })
+    },
+  },
   'gpuclusters.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const modal = Modal.open({
@@ -110,7 +136,7 @@ export default {
       const rowKeys = toJS(store.list.selectedRowKeys)
       let arr = new Array
       store.dataList.map(obj => {
-        if (rowKeys.includes(obj.id)) {
+        if (rowKeys.includes(obj.name)) {
           arr.push(obj.name)
         }
       })

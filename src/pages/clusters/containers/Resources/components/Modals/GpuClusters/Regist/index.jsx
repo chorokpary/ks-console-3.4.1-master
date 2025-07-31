@@ -2,7 +2,7 @@ import { find, get, range } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Modal } from 'components/Base'
-import { ProjectSelect, UnitSlider } from 'components/Inputs'
+import { ProjectSelect, UnitSlider, NumberInput } from 'components/Inputs'
 import {
   Button,
   Checkbox,
@@ -87,12 +87,15 @@ const RegistModal = props => {
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
 
-  const [vmCount, setVmCount] = useState('1');
+  const [vmCount, setVmCount] = useState(1);
   const [gpuVmName, setGpuVmName] = useState('');
   const [slideMinCount, setSlideMinCount] = useState(1)
   const [slideMaxCount, setSlideMaxCount] = useState(127)
   const [firstGpuVmName, setFirstGpuVmName] = useState('');
   const [lastGpuVmName, setLastGpuVmName] = useState('');
+
+  const [firstNum, setFirstNum] = useState('')
+  const [lastNum, setLastNum] = useState('')
 
 
   const [imageType, setImageType] = useState('I')
@@ -340,12 +343,21 @@ const RegistModal = props => {
       data.gpuVmName = gpuVmName
       data.firstGpuVmName = firstGpuVmName
       data.lastGpuVmName = lastGpuVmName
+      
+      const networkListData = networkList.filter(x => networkCheckItems.includes(x.name)).map((obj) => {
+        return {
+            name: obj.name,
+            cidr: obj.cidr
+        }
+      })
+
+      data.networkListData = networkListData
 
       if (isScript) {
         data.makeScript = getScript()
       }
 
-      onOk({ ...data })
+      //onOk({ ...data })
     })
   }
 
@@ -836,6 +848,49 @@ const RegistModal = props => {
     }
     callback()
   }
+
+  const firstNumValidator = (rule, value, callback) => {    
+    
+    if (value === undefined) {
+      return callback({ message: t('RESOURCES_NUMBER_EMPTY_DESC') })
+    }
+
+    if (!regexVmCount.test(value)) {
+      return callback({ message: t('RESOURCES_ENTER_1_MORE') })
+    }
+
+    callback()
+  }
+
+  const lastNumValidator = (rule, value, callback) => {    
+    
+    const { data } = form.current.props
+    console.log("value : "+ value)
+    console.log("data.firstNum : "+ data.firstNum)
+    console.log("Number(data.firstNum) : "+ Number(data.firstNum))
+   if(Number(data.firstNum) > 0){
+      if ((Number(data.firstNum) > Number(value))){
+        console.log("AA")
+        if (value !== undefined && value !== '') {
+          console.log("BB")
+          return callback({ message: t('RESOURCES_LAST_NUM_SHOULD_BE_BIGGER') })
+        }else{
+          console.log("CC")
+          callback()
+        } 
+      }
+      callback()
+   }else{
+      if (value === undefined) {
+      return callback({ message: t('RESOURCES_NUMBER_EMPTY_DESC') })
+      }
+
+      if (!regexVmCount.test(value)) {
+        return callback({ message: t('RESOURCES_ENTER_1_MORE') })
+      }
+   }
+  }
+
   // Validation 끝 ==================================================
 
   // 스크립트 시작 ==================================================
@@ -995,9 +1050,35 @@ const RegistModal = props => {
 
   useEffect(() => {
     getGpuName();
-  }, [vmCount]);
+  }, [firstNum, lastNum]);
 
   const getGpuName = async () => {
+    const namePrefix = "vm-" + props.name ;
+    const numFirst = Number(firstNum);
+    const numLast = Number(lastNum);
+
+    let firstName = '';
+    let lastName = '';
+    let gpuName = '';
+
+    if (numFirst > 0) {
+
+      firstName = `${namePrefix}-${numFirst.toString().padStart(3, '0')}`;
+
+      if (numLast > 0 && numFirst < numLast) {
+        lastName = `${namePrefix}-${numLast.toString().padStart(3, '0')}`;
+        gpuName = `${firstName} ~ ${lastName}`;
+      } else {
+        gpuName = firstName;
+      }
+    } 
+
+    setGpuVmName(gpuName);
+    setFirstGpuVmName(firstName)
+    setLastGpuVmName(lastName)
+  }
+
+  const getGpuName_ori = async () => {
 
     const namePrefix = "vm-" + props.name ;
 
@@ -1217,58 +1298,67 @@ const RegistModal = props => {
                       )}
                   </Column>                 
                 </Columns>
-
-                <label className="form-item-label" htmlFor="name">
-                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
-                  <span className="form-item-required">*</span>
-                </label>                
-                  <Form.Item
-                    rules={[
-                      {
-                        required: true,
-                      },
-                      {
-                        pattern: regexVmCount,
-                        message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
-                      },
-                    ]}
-                  >
-                    <UnitSlider
-                      name="vm_count"
-                      max={slideMaxCount}
-                      min={0}
-                      marks={getMarks(slideMaxCount)}
-                      defaultValue={vmCount}
-                      unit={''}
-                      withInput
-                      onChange={e => setVmCount(e)}
-                      style={{ padding: '5px', width: '10%' }}
-                    />
-                    
-                  </Form.Item>
-                  
-                  <div className={styles.form_item_label_description} >
-                   <label htmlFor="name">
-                    최대 {slideMaxCount}개의 가상머신을 생성할 수 있습니다.
-                   </label>      
-                  </div>
                       
-                  <Form.Item
-                    label={t('RESOURCES_VM_NAME')}
-                  >
-                    <Input
-                      maxLength={200}
-                      style={{ maxWidth: 'none' }}
-                      value={gpuVmName}
-                      disabled={true}
-                    />
-                  </Form.Item>    
+                  <Columns>
+                    <Column>   
+                        <label className="form-item-label" htmlFor="name">
+                        {t('가상머신 생성 범위')}
+                        <span className="form-item-required">*</span>
+                        </label>   
+                        <Columns>
+                          <Column>
+                              <Form.Item                                  
+                                rules={[
+                                 { required: true, validator: firstNumValidator },
+                                ]}
+                              >                   
+                                <NumberInput
+                                  name="firstNum"
+                                  maxLength={10}
+                                  style={{ maxWidth: 'none' }}
+                                  onChange={(e) => setFirstNum(e)}
+                                />
+                              </Form.Item>
+                          </Column>    
+                            <div style={{display: 'flex', alignItems: 'flex-start', padding: '0 8px', marginTop: '18px', height: 0 }}>
+                              ~
+                            </div>                       
+                          <Column>   
+                              <Form.Item  
+                                rules={[
+                                  { required: true, validator: lastNumValidator },
+                                ]}                                
+                              >                   
+                                <NumberInput         
+                                  name="lastNum"                           
+                                  maxLength={10}
+                                  style={{ maxWidth: 'none' }}
+                                  onChange={(e) => setLastNum(e)}
+                                />
+                              </Form.Item>                          
+                          </Column>
+                      </Columns>
+                    </Column>
+                    <Column style={{ maxWidth: '472px' }}>
+                      <Form.Item
+                        label={t('RESOURCES_VM_NAME')}
+                      >
+                        <Input
+                          maxLength={200}
+                          style={{ maxWidth: 'none' }}
+                          value={gpuVmName}
+                          disabled={true}
+                        />
+                      </Form.Item>    
 
-                  <div className={styles.form_item_label_description} >
-                   <label htmlFor="name">
-                    자동 생성될 가상머신 이름을 확인해 주세요.
-                   </label>      
-                  </div>
+                      <div className={styles.form_item_label_description} >
+                      <label htmlFor="name">
+                        자동 생성될 가상머신 이름을 확인해 주세요.
+                      </label>      
+                      </div>        
+                    </Column>
+                  </Columns>
+    
 
                   {imageType === 'I' && (
                     <Form.Item>

@@ -38,7 +38,6 @@ import styles from './index.scss';
   module: 'gpuclusters',
   authKey: 'gpuclusters',
   name: t('RESOURCES_GPU_CLUSTER'),
-  rowKey: 'namespace',
 })
 export default class gpuclusters extends React.Component {
   showAction(record) {
@@ -49,52 +48,54 @@ export default class gpuclusters extends React.Component {
     const { getData, trigger } = this.props;
 
     return [
-      // {
-      //   key: 'delete',
-      //   icon: 'trash',
-      //   text: t('RESOURCES_DELETE'),
-      //   action: 'delete',
-      //   show: this.showAction,
-      //   onClick: item =>
-      //     trigger('gpuclusters.remove', {
-      //       detail: item,
-      //       success: getData,
-      //       ...this.props.match.params,
-      //     }),
-      // },
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('RESOURCES_DELETE'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('gpuclusters.remove', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
     ];
   }
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props;
+
     return {
       ...tableProps.tableActions,
       actions: [
-        // {
-        //   key: 'regist',
-        //   type: 'control',
-        //   text: t('RESOURCES_CREATE'),
-        //   action: 'create',
-        //   onClick: () =>
-        //     trigger('gpuclusters.regist', {
-        //       ...this.props.match.params,
-        //       type: this.name,
-        //       success: getData,
-        //     }),
-        // },
+        {
+          key: 'regist',
+          type: 'control',
+          text: t('RESOURCES_CREATE'),
+          action: 'create',
+          onClick: () =>
+            trigger('gpuclusters.cluster.regist', {
+              ...this.props.match.params,
+              type: this.name,
+              rootStore: this.props.rootStore
+              // success: getData,
+            }),
+        },
       ],
       selectActions: [
-        // {
-        //   key: 'delete',
-        //   type: 'danger',
-        //   text: t('RESOURCES_DELETE'),
-        //   action: 'delete',
-        //   onClick: () =>
-        //     trigger('gpuclusters.remove.batch', {
-        //       success: getData,
-        //       ...this.props.match.params,
-        //     }),
-        // },
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('RESOURCES_DELETE'),
+          action: 'delete',
+          onClick: () =>
+            trigger('gpuclusters.remove.batch', {
+              success: getData,
+              ...this.props.match.params,
+            }),
+        },
       ],
       getCheckboxProps: record => ({
         disabled: !this.showAction(record),
@@ -125,7 +126,7 @@ export default class gpuclusters extends React.Component {
         sorter: true,
         sortOrder: getSortOrder('namespace'),
         search: true,
-        render: (description, record) => (
+        render: (name, record) => (
           <div className={styles.avatar}>
               <div className={styles.icon}>
                 <i className="ico-type-mediatedvgpu"></i>
@@ -134,9 +135,9 @@ export default class gpuclusters extends React.Component {
                 <div>
                   <Link
                     className={styles.title}
-                    to={`/clusters/${cluster}/gpuclusters/${description}`}
+                    to={`/clusters/${cluster}/gpuclusters/${name}`}
                   >
-                    {description}
+                    {name}
                   </Link>
                 </div>
               </div>
@@ -156,12 +157,12 @@ export default class gpuclusters extends React.Component {
       },
       {
         title: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        dataIndex: 'assigned_vm_count',
+        dataIndex: 'total_node_count',
         isHideable: true,
         search: true,
         width: 'auto',
-         render: (assigned_vm_count, record) => (
-          <p>{assigned_vm_count}/{record.total_node_count}</p>
+         render: (total_node_count, record) => (
+          <p>{total_node_count}</p>
         ),
       },
       {

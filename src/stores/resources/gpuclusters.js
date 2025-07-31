@@ -36,13 +36,13 @@ export default class GpuClustersStore extends Base {
       params
   )}/edgetron/resources/kubevirt/vms`
 
-  getResourceUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/clusters`
-  getResourceDetailUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/cluster`
-
-  getListUrl = this.getResourceUrl;
+  getResourceUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/cluster`
+  getResourceListUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/clusters`
   
-  getDeleteUrl = (params = {}) => `${this.getResourceDetailUrl(params)}/${params.id}`;
-
+  getListUrl = this.getResourceListUrl;
+  
+  getDeleteUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.name}`
+  
   @action
   async fetchList({
     cluster,
@@ -102,9 +102,17 @@ export default class GpuClustersStore extends Base {
     })
 
     // 상태 추가
-    const updatedData = await Promise.all(    
-      data.map(async (item) => {      
-        const state = Number(item.assigned_vm_count) == Number(item.total_node_count) ? "normal" : "abnormal";
+   const updatedData = await Promise.all(    
+      data.map(async (item) => {
+        const newParams = {
+          name: item.name,
+          limit: 10000,
+        };
+
+        let resultDetail = await this.fetchVmsDetail({...newParams});
+        const is_normal = (resultDetail.vmList).every(data => data.vmi.phase === 'Running');
+        const state = is_normal ? "normal" : "abnormal";
+      
         return {
           ...item,
           state,
@@ -166,8 +174,30 @@ export default class GpuClustersStore extends Base {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
-
+    
     return this.dataList
+  }
+
+  @action
+  async createCluster(data, params = {}) {
+
+    const url = this.getResourceUrl(params);
+
+    const jsonData = {};
+
+    jsonData.name = data.name;
+    jsonData.namespace = data.project;
+
+    try{
+      // await this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
+      // return { success: true};
+
+      const res = await this.submitting(request.post(url, jsonData));
+      return res;
+    }catch (err) {
+      console.log("BBBBBB")
+      return { success: false };
+    }    
   }
 
   @action
@@ -198,6 +228,7 @@ export default class GpuClustersStore extends Base {
     resourceData.security_groups = securityGroupsArray
 
     const networksArray = []
+ 
     data.network.forEach(name => {
       const networkObj = {}
       networkObj.network_name = name
@@ -278,14 +309,36 @@ export default class GpuClustersStore extends Base {
     // 가상머신 갯수만큼 생성...
     for (let i = firstNum; i <= lastNum; i++) {
       const suffix = String(i).padStart(3, "0");
-      const updatedNameJsonData = {
-        vm: {
+  
+      const updatedNameJsonData = {vm: {
           ...jsonData.vm,
           name: `vm-${data.gpu_cluster}-${suffix}`,
-        },
+        }
       }
-      console.log("updatedNameJsonData : "+ JSON.stringify(updatedNameJsonData))
-      request.post(url, updatedNameJsonData);
+
+      // const updatedNetworks = (updatedNameJsonData.vm).networks.map(network => {
+      //   if (network.network_name === 'external-solutionzone-201') {
+      //     const matchedCidr = (data.networkListData).find(item => item.name === network.network_name);
+      //     const subnetPart = matchedCidr?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || '';
+      //     const fixed_ip = subnetPart +"."+ String(100+i)
+      //     return {
+      //       ...network,
+      //       fixed_ip: fixed_ip, 
+      //     };
+      //   }
+      //   return network;
+      // });
+
+      // const updatedJsonData =  {   
+      //   vm: {
+      //     ...updatedNameJsonData.vm,
+      //     networks: updatedNetworks,
+      //   }
+      // };
+
+
+      console.log("updatedNameJsonData"+i+" : "+ JSON.stringify(updatedNameJsonData))
+      //request.post(url, updatedNameJsonData);
     }
 
     return await this.submitting(new Promise(resolve => setTimeout(resolve, 3000)));
@@ -306,10 +359,10 @@ export default class GpuClustersStore extends Base {
     const resultList = await request.get(
       this.getListUrl({ page, limit }),
     )
-    const namespace = (resultList.data).filter(item => item.description === params.name).map(item => item.namespace)
+    const name = (resultList.data).filter(item => item.description === params.name).map(item => item.name)
 
     const result = await request.get(
-      `${this.getResourceDetailUrl(params)}/${namespace}`
+      `${this.getResourceUrl(params)}/${name}`
     );
     const detail = { ...params, ...this.mapper(result), kind: 'data' };
 
@@ -334,13 +387,20 @@ export default class GpuClustersStore extends Base {
 
   @action
   async batchDelete({ rowKeys, ...params }) {
+
+    const url = this.getResourceUrl()
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(id =>
-            request.delete(`${this.getDetailUrl({ id, ...params })}`)
+          rowKeys.map(id =>{
+              const jsonData = {}
+              jsonData.name = id;
+
+              // request.delete(url, jsonData)
+              //request.delete(`${this.getDeleteUrl({ id, ...params })}`)               
+          }            
           )
         )
       );
@@ -350,12 +410,20 @@ export default class GpuClustersStore extends Base {
 
   @action
   delete(user) {
+
+    const url = this.getResourceUrl()
     if (user.name === globals.user.username) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
       return;
     }
+    
+    const jsonData = {}
+    jsonData.name = user.name;
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`));
+    return this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
+
+    // return this.submitting(request.delete(url, jsonData));
+    // return this.submitting(request.delete(`${this.getResourceUrl(user)}`));
   }
 
   @action
@@ -375,7 +443,7 @@ export default class GpuClustersStore extends Base {
     delete params['name']
 
     const result = await request.get(
-      `${this.getResourceDetailUrl(params)}/${name}`
+      `${this.getResourceUrl(params)}/${name}`
     )
 
     // 실제 할당된 가상머신 데이터

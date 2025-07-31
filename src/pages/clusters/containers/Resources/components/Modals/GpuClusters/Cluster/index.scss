@@ -97,3 +97,36 @@ button {
     color: #fff;
   }
 }
+
+.loading_boxwrap {
+	flex: 1;
+	position: relative;
+	padding: 20px;
+	z-index: 10;
+	overflow: hidden;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;       
+	justify-content: center;       
+	align-items: center;         
+	text-align: center;     
+}
+
+.loading_boxwrap p {  
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+}
+
+.loading_boxwrap p:first-of-type {
+  margin-top: 20px;     
+}
+
+.iconwrapper {
+  display: flex;
+    i {
+      margin-right: 5px;
+    }
+}
+
+.ico-status-running {background:url('/assets/resources/images/icons/ico-status-running.svg') center no-repeat; width: 40px; height: 40px;}

@@ -1,6 +1,7 @@
 import { get, groupBy } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
+import { Loading } from '@kube-design/components';
 import { observer, inject } from 'mobx-react'
 
 import classnames from 'classnames'
@@ -24,6 +25,7 @@ const Status = (props) => {
 
   const { cluster } = props.match.params
 
+  const [loading, setLoading] = useState(true)
   const [detailFlavor, setDetailFlavor] = useState(null)
   const [detailNetwork, setDetailNetwork] = useState([])
 
@@ -31,24 +33,6 @@ const Status = (props) => {
   useEffect(() => {
 
     if (!store.detail) return
-
-    const fnGetVmDetail = async () => {
-      const vmData = (store.detail.data.nodes).filter(item => item.vmi)
-
-      const sortedList = [...vmData].sort((a, b) => {
-       return a.vmi.vm_name < b.vmi.vm_name ? 1 : a.vmi.vm_name > b.vmi.vm_name ? -1 : 0;
-      });
-
-      const vmName = sortedList[0]?.vmi?.vm_name;
-      
-      if(!!vmName){
-        // vm detail data
-        const vmDetail = await vmStore.fetchDetail({ project: cluster, name: vmName })
-        
-        fnGetFlavor(vmDetail);
-        fnGetNetwork(vmDetail);
-      }      
-    }
 
     const fnGetFlavor = async (vmDetail) => {
       setDetailFlavor(vmDetail.vm?.flavor)
@@ -78,9 +62,39 @@ const Status = (props) => {
       }
     }
 
+    const fnGetVmDetail = async () => {
+      try{
+        const vmData = (store.detail.data.nodes).filter(item => item.vmi)
+        const sortedList = [...vmData].sort((a, b) => {
+        return a.vmi.vm_name < b.vmi.vm_name ? 1 : a.vmi.vm_name > b.vmi.vm_name ? -1 : 0;
+        });
+
+        const vmName = sortedList[0]?.vmi?.vm_name;
+
+        if(!!vmName){
+          // vm detail data
+          const vmDetail = await vmStore.fetchDetail({ project: cluster, name: vmName })
+          
+          fnGetFlavor(vmDetail);
+          fnGetNetwork(vmDetail);
+        } 
+
+      }catch(error){
+        console.log('VM 상세 정보 조회 중 오류 발생:', error)
+      }finally{
+        setLoading(false)
+      }
+    }
+
     fnGetVmDetail();
   }, [])
 
+
+   // 로딩 중이면 스피너나 로딩 메시지
+  if (loading) {
+     return <Loading className="ks-page-loading" />;
+  }
+  
   return (
     <>
       <div>
