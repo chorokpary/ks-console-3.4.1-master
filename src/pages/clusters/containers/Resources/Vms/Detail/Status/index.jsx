@@ -50,17 +50,8 @@ const Status = props => {
     });
   }, [detailNetwork]);
 
-  const sortedDetailVolume = useMemo(() => {
-    return [...detailVolume].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-  }, [detailVolume]);
-
-  const sortedDetailSecurityGroup = useMemo(() => {
-    return [...detailSecurityGroup].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-  }, [detailVolume]);
+  const sortedDetailVolume = common.useSorted(detailVolume, 'name')
+  const sortedDetailSecurityGroup = common.useSorted(detailSecurityGroup, 'name')
 
   useEffect(() => {
     if (!store.detail.vm) return
