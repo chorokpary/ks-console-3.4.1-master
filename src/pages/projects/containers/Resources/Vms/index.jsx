@@ -324,8 +324,8 @@ export default class Vms extends React.Component {
                   icon = "🅳";
                   tooltip = "Dedicated Network: ";
                 default:
-                  icon = "🆅";
-                  tooltip = "VPC Network: ";
+                  icon = "🆄";
+                  tooltip = "Unknown Network: ";
               }
 
               const fullname = tooltip + el.name
