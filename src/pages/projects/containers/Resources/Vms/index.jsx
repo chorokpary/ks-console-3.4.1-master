@@ -21,7 +21,7 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { get } from 'lodash'
 import { Link } from 'react-router-dom'
-import { Dropdown, Menu, Notify } from '@kube-design/components'
+import { Dropdown, Menu, Notify, Tooltip } from '@kube-design/components'
 import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
@@ -300,38 +300,59 @@ export default class Vms extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: networks => {
+        render: (networks, record) => {
           let networkIpList
+          let networkFipList
 
+          // we first process regular network IPs
           if (networks) {
             networkIpList = networks.map(el => {
-              if (el.name !== 'k8s-pod-network') {
-                return <p key={el.name}>{el.ip}</p>
+              if (el.name === 'k8s-pod-network') return <p></p>
+              let icon = ""
+              let tooltip = ""
+              switch (el.type) {
+                case 'virtio':
+                  icon = "🆅";
+                  tooltip = "VPC Network: ";
+                case 'sriov':
+                  icon = "🆂";
+                  tooltip = "SR-IOV Network: ";
+                case 'bond':
+                  icon = "🅱";
+                  tooltip = "Bonded Network: ";
+                case 'dedicated':
+                  icon = "🅳";
+                  tooltip = "Dedicated Network: ";
+                default:
+                  icon = "🆅";
+                  tooltip = "VPC Network: ";
               }
-              return <p></p>
+
+              const fullname = tooltip + el.name
+              return <Tooltip content={fullname} placement="right">
+                <p key={el.name}>{icon} {el.ip}</p></Tooltip>
             })
-          } else {
-            networkIpList = <p>-</p>
+
           }
 
-          return networkIpList
-        },
-      },
-      {
-        title: t('RESOURCES_FLOATING_IP'),
-        dataIndex: 'floating',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: (floating, record) => {
+          // we now process floating IP
           const floatingList = this.props.store.floatingIpList
-          const floatingIp =
+          networkFipList =
             floatingList &&
             floatingList
               ?.filter(row => row.instance_id === record.name)
-              .map(el => <p key={el.id}>{el.floating_ip}</p>)
+              .map(el => <Tooltip content="Floating IP" placement="right"><p key={el.id}>🅵 {el.floating_ip}</p></Tooltip>)
 
-          return floatingIp === '' ? '-' : floatingIp
+          // merge them
+          const items = [...networkIpList, ...networkFipList];
+
+          // if nothing to show
+          if (items.length === 0) {
+            return <p>-</p>;
+          }
+
+          // render all of them
+          return <>{items}</>;
         },
       },
       {
@@ -357,13 +378,13 @@ export default class Vms extends React.Component {
             securityGroupText =
               security_group_objects.length > 1
                 ? `${security_group_objects[0].name} ${t(
-                    'RESOURCES_BESIDES'
-                  )} ${security_group_objects.length - 1} ${t(
-                    'RESOURCES_COUNT'
-                  )}`
+                  'RESOURCES_BESIDES'
+                )} ${security_group_objects.length - 1} ${t(
+                  'RESOURCES_COUNT'
+                )}`
                 : security_group_objects.length === 1
-                ? security_group_objects[0].name
-                : '-'
+                  ? security_group_objects[0].name
+                  : '-'
           } else {
             securityGroupText = ''
           }
@@ -382,17 +403,17 @@ export default class Vms extends React.Component {
           const stateArray = ['Stopped', 'Running', 'Paused']
 
           const vmsRole = get(globals.user.projectRules, [
-              cluster,
-              namespace,
-              'vms',
-            ])
-            const _Role = get(globals.user.projectRules, [
-              cluster,
-              namespace,
-              '_',
-            ])
+            cluster,
+            namespace,
+            'vms',
+          ])
+          const _Role = get(globals.user.projectRules, [
+            cluster,
+            namespace,
+            '_',
+          ])
 
-            if (vmsRole?.includes('manage') || _Role?.includes('manage')) {
+          if (vmsRole?.includes('manage') || _Role?.includes('manage')) {
             return (
               <div>
                 <Dropdown
