@@ -307,6 +307,23 @@ export default class Vms extends React.Component {
         },
       },
       {
+        title: t('RESOURCES_FLAVOR'),
+        dataIndex: 'flavor',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: (flavor, record) => {
+          const flavor_spec = "CPU: " + record.flavor_object.vcpus + ", RAM: " + record.flavor_object.ram + "MiB, DISK: " + record.flavor_object.root_disk + "GiB"
+          return (
+            <Tooltip content={flavor_spec} placement="top">
+              <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
+                {flavor}
+              </Link>
+            </Tooltip>
+          )
+        },
+      },
+      {
         title: t('RESOURCES_STATIC_IP'),
         dataIndex: 'networks',
         isHideable: true,
