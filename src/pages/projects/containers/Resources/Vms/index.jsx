@@ -27,6 +27,7 @@ import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
+import * as common from 'utils/resources'
 import { getLocalTime, showNameAndAlias } from 'utils'
 
 import VmStore from 'stores/resources/vms'
@@ -301,7 +302,9 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (flavor, record) => {
-          const flavor_spec = "CPU: " + record.flavor_object.vcpus + ", RAM: " + record.flavor_object.ram + "MiB, DISK: " + record.flavor_object.root_disk + "GiB"
+          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " + 
+                common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " + 
+                record.flavor_object.root_disk + " GiB"
           return (
             <Tooltip content={flavor_spec} placement="top">
               <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
