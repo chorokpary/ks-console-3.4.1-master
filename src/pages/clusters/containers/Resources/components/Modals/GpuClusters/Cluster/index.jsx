@@ -12,7 +12,7 @@ import classnames from 'classnames'
 import { PATTERN_USER_NAME } from 'utils/constants'
 
 const ClusterModal = props => {
-
+  
   const store = props.store;
   const rootStore = props.rootStore;
 
@@ -44,7 +44,10 @@ const ClusterModal = props => {
     })
   }
 
-  const createSuccess = () => {
+  const [getListDataFn, setGetListDataFn] = useState(null);
+
+  const createSuccess = (getListData) => {
+    setGetListDataFn(() => getListData);
     setIsCreateSuccessd(true);
   }
 
@@ -57,22 +60,25 @@ const ClusterModal = props => {
     let elements = "";
     elements =
       <>
-        {!isCreateSuccessd &&
+        
+        {/* <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button> */}
+        
+         {!isCreateSuccessd &&
           <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
         }
         {!isCreateSend &&
           <Button onClick={() => { handleOk() }} 
-          className={classnames(styles['btn'], styles['btn-control'])} 
-          loading={props.store.isSubmitting}
-          disabled={props.store.isSubmitting}
+            className={classnames(styles['btn'], styles['btn-control'])} 
+            loading={props.store.isSubmitting}
+            disabled={props.store.isSubmitting}
           >{t('RESOURCES_CREATE')}
           </Button>
         }
         {isCreateSuccessd &&
-          // <Button onClick={() => { handleCreate() }} 
-          // className={classnames(styles['btn'], styles['btn-control'])} 
-          // loading={props.store.isSubmitting}
-          // disabled={props.store.isSubmitting}
+          // <Button onClick={() => { handleVmCreate() }} 
+          //   className={classnames(styles['btn'], styles['btn-control'])} 
+          //   loading={props.store.isSubmitting}
+          //   disabled={props.store.isSubmitting}
           // >{t('RESOURCES_CREATE_VM')}
           // </Button>
           <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CLOSE')}</Button>
@@ -82,8 +88,8 @@ const ClusterModal = props => {
     return elements;
   }
 
-  const handleCreate = () => {
-    console.log("handleCreate~~!!")  // 실제 API 가 연동되면 재개발 해야 함...
+  const handleVmCreate = () => {
+    console.log("handleVmCreate~~!!")  // 실제 API 가 연동되면 재개발 해야 함...
     rootStore.triggerAction('gpuclusters.regist', {
       store: store,
       cluster: props.cluster,
@@ -91,7 +97,7 @@ const ClusterModal = props => {
       id: clusterName, 
       name: clusterName,
       type: clusterName,
-      success: props.success,
+      success: getListDataFn
     })
     closeModal();
   }
@@ -179,5 +185,4 @@ const ClusterModal = props => {
 };
 
 export default inject('store', 'rootStore')(observer(ClusterModal))
-// export default ClusterModal
 

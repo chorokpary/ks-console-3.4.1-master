@@ -189,13 +189,12 @@ export default class GpuClustersStore extends Base {
     jsonData.namespace = data.project;
 
     try{
-      // await this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
-      // return { success: true};
+      await this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
+      return { success: true};
 
-      const res = await this.submitting(request.post(url, jsonData));
-      return res;
+      // const res = await this.submitting(request.post(url, jsonData));
+      // return res;
     }catch (err) {
-      console.log("BBBBBB")
       return { success: false };
     }    
   }
@@ -295,50 +294,40 @@ export default class GpuClustersStore extends Base {
 
     const promises = [];
 
-    let firstNum = 1;
-    let lastNum = 1;
+      let firstNum = data.firstNum;
+      let lastNum = data.lastNum;
 
-    if(data.vm_count == 1){
-      firstNum = parseInt((data.gpuVmName).slice(-3), 10);
-      lastNum = firstNum;
-    }else{
-      firstNum = parseInt((data.firstGpuVmName).slice(-3), 10);
-      lastNum = parseInt((data.lastGpuVmName).slice(-3), 10);
-    }
-
-    // 가상머신 갯수만큼 생성...
-    for (let i = firstNum; i <= lastNum; i++) {
-      const suffix = String(i).padStart(3, "0");
-  
-      const updatedNameJsonData = {vm: {
-          ...jsonData.vm,
-          name: `vm-${data.gpu_cluster}-${suffix}`,
+      // 가상머신 갯수만큼 생성...
+      for (let i = firstNum; i <= lastNum; i++) {
+        const suffix = String(i).padStart(3, "0");  
+        const updatedNameJsonData = {vm: {
+            ...jsonData.vm,
+            name: `vm-${data.gpu_cluster}-${suffix}`,
         }
       }
 
-      // const updatedNetworks = (updatedNameJsonData.vm).networks.map(network => {
-      //   if (network.network_name === 'external-solutionzone-201') {
-      //     const matchedCidr = (data.networkListData).find(item => item.name === network.network_name);
-      //     const subnetPart = matchedCidr?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || '';
-      //     const fixed_ip = subnetPart +"."+ String(100+i)
-      //     return {
-      //       ...network,
-      //       fixed_ip: fixed_ip, 
-      //     };
-      //   }
-      //   return network;
-      // });
+      const updatedNetworks = (updatedNameJsonData.vm).networks.map(network => {
+        if (network.network_name === 'external-solutionzone-201') {
+          const matchedCidr = (data.networkListData).find(item => item.name === network.network_name);
+          const subnetPart = matchedCidr?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || '';
+          const fixed_ip = subnetPart +"."+ String(100+i)
+          return {
+            ...network,
+            fixed_ip: fixed_ip, 
+          };
+        }
+        return network;
+      });
 
-      // const updatedJsonData =  {   
-      //   vm: {
-      //     ...updatedNameJsonData.vm,
-      //     networks: updatedNetworks,
-      //   }
-      // };
+      const updatedJsonData =  {   
+        vm: {
+          ...updatedNameJsonData.vm,
+          networks: updatedNetworks,
+        }
+      };
 
-
-      console.log("updatedNameJsonData"+i+" : "+ JSON.stringify(updatedNameJsonData))
-      //request.post(url, updatedNameJsonData);
+      //console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
+      request.post(url, updatedNameJsonData);
     }
 
     return await this.submitting(new Promise(resolve => setTimeout(resolve, 3000)));
@@ -359,7 +348,7 @@ export default class GpuClustersStore extends Base {
     const resultList = await request.get(
       this.getListUrl({ page, limit }),
     )
-    const name = (resultList.data).filter(item => item.description === params.name).map(item => item.name)
+    const name = (resultList.data).filter(item => item.name === params.name).map(item => item.name)
 
     const result = await request.get(
       `${this.getResourceUrl(params)}/${name}`
@@ -394,9 +383,19 @@ export default class GpuClustersStore extends Base {
     } else {
       await this.submitting(
         Promise.all(
-          rowKeys.map(id =>{
+          rowKeys.map(async (id) =>{
               const jsonData = {}
               jsonData.name = id;
+
+              const newParams = { name: id, };  
+              let resultDetail = await this.fetchDetail({...newParams});
+
+              // 실제 할당된 가상머신 데이터
+              const vmData = (resultDetail.data.nodes).filter(item => item.vmi)
+              const vmNameArray = vmData.map(item => item.vmi.vm_name);
+              
+              console.log("newParams : "+ JSON.stringify(newParams))
+              console.log("vmNameArray : "+ JSON.stringify(vmNameArray))
 
               // request.delete(url, jsonData)
               //request.delete(`${this.getDeleteUrl({ id, ...params })}`)               
@@ -409,7 +408,7 @@ export default class GpuClustersStore extends Base {
   }
 
   @action
-  delete(user) {
+  async delete(user) {
 
     const url = this.getResourceUrl()
     if (user.name === globals.user.username) {
@@ -419,6 +418,16 @@ export default class GpuClustersStore extends Base {
     
     const jsonData = {}
     jsonData.name = user.name;
+
+    const newParams = { name: user.name, };  
+    let resultDetail = await this.fetchDetail({...newParams});
+    
+    // 실제 할당된 가상머신 데이터
+    const vmData = (resultDetail.data.nodes).filter(item => item.vmi)
+    const vmNameArray = vmData.map(item => item.vmi.vm_name);
+    
+    console.log("newParams : "+ JSON.stringify(newParams))
+    console.log("vmNameArray : "+ JSON.stringify(vmNameArray))
 
     return this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
 

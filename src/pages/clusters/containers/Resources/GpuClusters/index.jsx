@@ -79,8 +79,8 @@ export default class gpuclusters extends React.Component {
             trigger('gpuclusters.cluster.regist', {
               ...this.props.match.params,
               type: this.name,
-              rootStore: this.props.rootStore
-              // success: getData,
+              rootStore: this.props.rootStore,
+              success: getData,
             }),
         },
       ],

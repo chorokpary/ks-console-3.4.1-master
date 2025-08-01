@@ -32,6 +32,7 @@ import './checkbox.disabled.css'
 const regexVmCount = /^[1-9][0-9]*$/;
 
 const RegistModal = props => {
+
   const form = useRef()
   const [formData] = useState({})
 
@@ -165,12 +166,9 @@ const RegistModal = props => {
 
       if (vmList && vmList.length > 0) {
         const lastVmNumber = vmList.length;
-        setSlideMinCount(lastVmNumber+1)
-        setSlideMaxCount(127-lastVmNumber)
-        setVmCount(1)
       }
     }
-    getGpuVmCount()
+    // getGpuVmCount()
 
     const getVmImage = async () => {
       const listImage = await vmStore.fetchVmListImage({ ...props })
@@ -357,7 +355,8 @@ const RegistModal = props => {
         data.makeScript = getScript()
       }
 
-      //onOk({ ...data })
+      console.log("생성 실행~!!!")
+      onOk({ ...data })
     })
   }
 
@@ -415,12 +414,14 @@ const RegistModal = props => {
 
   const stepMoveCheck = step => {
     const { data } = form.current.props
-    if (step === 1) {
+    if (step === 1) {      
       if (
         imageType === 'I' &&
         (data.image === t('RESOURCES_SELECT') ||
           data.flavor === t('RESOURCES_SELECT')) ||
-          gpuVmName === ''
+          gpuVmName === '' ||
+          Number(data.firstNum) === 0 ||
+          Number(data.lastNum) === 0 
       ) {
         handleOk()
       } else {
@@ -849,46 +850,28 @@ const RegistModal = props => {
     callback()
   }
 
-  const firstNumValidator = (rule, value, callback) => {    
-    
+  const firstNumValidator = (rule, value, callback) => {       
     if (value === undefined) {
       return callback({ message: t('RESOURCES_NUMBER_EMPTY_DESC') })
     }
 
-    if (!regexVmCount.test(value)) {
+    const trimmedValue = String(value).trim()
+    if (!regexVmCount.test(trimmedValue)) {
       return callback({ message: t('RESOURCES_ENTER_1_MORE') })
     }
-
     callback()
   }
 
-  const lastNumValidator = (rule, value, callback) => {    
-    
-    const { data } = form.current.props
-    console.log("value : "+ value)
-    console.log("data.firstNum : "+ data.firstNum)
-    console.log("Number(data.firstNum) : "+ Number(data.firstNum))
-   if(Number(data.firstNum) > 0){
-      if ((Number(data.firstNum) > Number(value))){
-        console.log("AA")
-        if (value !== undefined && value !== '') {
-          console.log("BB")
-          return callback({ message: t('RESOURCES_LAST_NUM_SHOULD_BE_BIGGER') })
-        }else{
-          console.log("CC")
-          callback()
-        } 
-      }
-      callback()
-   }else{
-      if (value === undefined) {
+  const lastNumValidator = (rule, value, callback) => {  
+    if (value === undefined) {
       return callback({ message: t('RESOURCES_NUMBER_EMPTY_DESC') })
-      }
+    }
 
-      if (!regexVmCount.test(value)) {
-        return callback({ message: t('RESOURCES_ENTER_1_MORE') })
-      }
-   }
+    const trimmedValue = String(value).trim()
+    if (!regexVmCount.test(trimmedValue)) {
+      return callback({ message: t('RESOURCES_ENTER_1_MORE') })
+    }
+    callback()
   }
 
   // Validation 끝 ==================================================
@@ -1039,15 +1022,6 @@ const RegistModal = props => {
     )
   }
 
-  const getMarks = max => {
-      const count = 5;
-      return range(count).reduce((marks, index) => {
-        const value = (max * index) / (count - 1);
-        const mark = value === 0 ? '0' : `${Math.floor(value)}`;
-        return { ...marks, [value]: mark };
-      }, {});
-  };
-
   useEffect(() => {
     getGpuName();
   }, [firstNum, lastNum]);
@@ -1076,38 +1050,6 @@ const RegistModal = props => {
     setGpuVmName(gpuName);
     setFirstGpuVmName(firstName)
     setLastGpuVmName(lastName)
-  }
-
-  const getGpuName_ori = async () => {
-
-    const namePrefix = "vm-" + props.name ;
-
-    const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
-    const vmList = vmData.vmList;
-
-    const existingNames = vmList.map(vm => vm.vmi.vm_name);
-
-    // 현재 prefix 를 가진 이름만 추출 >  prefix 제거하고 숫자만  > NaN 이 아닌 실제 숫자만 > 오름차순 정렬
-    const existingNums = existingNames
-    .filter(name => name.startsWith(`${namePrefix}-`))
-    .map(name => parseInt(name.replace(`${namePrefix}-`, ""), 10))
-    .filter(num => !isNaN(num))
-    .sort((a, b) => a - b);
-
-    // 기존 VM 이름들 중 가장 큰 숫자를 찾아서 그 다음 숫자
-    const startNum = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 1;
-
-    if (Number(vmCount) === 0) {
-      setGpuVmName('');
-    } else if (Number(vmCount) === 1) {
-      setGpuVmName(`${namePrefix}-${(startNum).toString().padStart(3, '0')}`);
-    } else {
-      const first = `${namePrefix}-${(startNum).toString().padStart(3, '0')}`;
-      const last = `${namePrefix}-${(startNum+Number(vmCount)-1).toString().padStart(3, '0')}`;
-      setFirstGpuVmName(first)
-      setLastGpuVmName(last)
-      setGpuVmName(`${first} ~ ${last}`);
-    }
   }
 
   return (
@@ -1299,11 +1241,17 @@ const RegistModal = props => {
                   </Column>                 
                 </Columns>
                       
+                       {/* <div className={styles.wrapperError}>
+                        <div className={`form-item-error ${1==1 ? '' : '' }`}>
+                          {t('RESOURCES_LAST_NUM_SHOULD_BE_BIGGER')}
+                        </div>
+                  </div> */}
+
                   <Columns>
                     <Column>   
                         <label className="form-item-label" htmlFor="name">
                         {t('가상머신 생성 범위')}
-                        <span className="form-item-required">*</span>
+                        <span className="form-item-required">*</span>                        
                         </label>   
                         <Columns>
                           <Column>
@@ -1334,8 +1282,8 @@ const RegistModal = props => {
                                   maxLength={10}
                                   style={{ maxWidth: 'none' }}
                                   onChange={(e) => setLastNum(e)}
-                                />
-                              </Form.Item>                          
+                                />                                
+                              </Form.Item>                    
                           </Column>
                       </Columns>
                     </Column>
@@ -1357,7 +1305,7 @@ const RegistModal = props => {
                       </label>      
                       </div>        
                     </Column>
-                  </Columns>
+                  </Columns>                 
     
 
                   {imageType === 'I' && (

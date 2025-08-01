@@ -35,10 +35,8 @@ export default {
           store
             .createCluster(data, { cluster, workspace, namespace, devops })
             .then(() => {
-              //Modal.close(modal)
-              //Notify.success({ content: t('RESOURCES_CREATE_REQUEST_SUCCESSFUL') })
               success && success()
-              data.createSuccess?.();
+              data.createSuccess?.(success);
             })
         },
         title: t('RESOURCES_CREATE_GPU_CLUSTER'),
