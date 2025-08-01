@@ -370,7 +370,7 @@ const DetailGpuVmList = props => {
     rootStore.triggerAction('gpuclusters.regist', {
       store,
       cluster,
-      namespace: cluster,
+      namespace: props.detailStore?.detail.data.namespace,
       id: props.id, 
       name: props.name,
       type: props.name,
