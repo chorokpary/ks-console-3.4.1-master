@@ -314,15 +314,19 @@ export default class Vms extends React.Component {
                 case 'virtio':
                   icon = "🆅";
                   tooltip = "VPC Network: ";
+                  break;
                 case 'sriov':
                   icon = "🆂";
                   tooltip = "SR-IOV Network: ";
+                  break;
                 case 'bond':
                   icon = "🅱";
                   tooltip = "Bonded Network: ";
+                  break;
                 case 'dedicated':
                   icon = "🅳";
                   tooltip = "Dedicated Network: ";
+                  break;
                 default:
                   icon = "🆄";
                   tooltip = "Unknown Network: ";
