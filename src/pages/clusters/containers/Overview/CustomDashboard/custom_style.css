@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import "custom_icon.css";
+@import 'custom_icon.css';
 body,
 html {
   margin: 0;
@@ -21,7 +21,7 @@ html {
 .content_box_wrap i.on::before,
 .content_box_wrap i.off::before,
 .content_box_wrap i.error::before {
-  content: "";
+  content: '';
   position: absolute;
   right: -3px;
   bottom: -3px;
@@ -78,7 +78,7 @@ html {
   resize: none;
   outline: 0;
   line-height: 1.67;
-  font-family: "Roboto", "Pretendard", sans-serif;
+  font-family: 'Roboto', 'Pretendard', sans-serif;
   list-style: none;
   font-style: normal;
 }
@@ -98,7 +98,7 @@ html {
   align-items: center;
 }
 .content_box_wrap .ico_btn_edit {
-  background: url("/assets/resources/images/icons/ico-etc-pen.svg") center
+  background: url('/assets/resources/images/icons/ico-etc-pen.svg') center
     no-repeat;
   width: 58px;
   height: 32px;
@@ -231,16 +231,16 @@ html {
 }
 .content_box_wrap .form_check label:before {
   display: block;
-  content: "";
+  content: '';
   background: transparent
-    url("/assets/resources/images/icons/ico-checkbox-off.svg") center no-repeat;
+    url('/assets/resources/images/icons/ico-checkbox-off.svg') center no-repeat;
   width: 16px;
   height: 16px;
   margin-top: 2px;
 }
 .content_box_wrap .form_check input:checked + label:before {
   background: transparent
-    url("/assets/resources/images/icons/ico-checkbox-on.svg") center no-repeat;
+    url('/assets/resources/images/icons/ico-checkbox-on.svg') center no-repeat;
 }
 .content_box_wrap .form_check p {
   display: flex;
@@ -276,11 +276,11 @@ html {
   position: relative;
   display: inline-flex !important;
 }
-.content_box_wrap .tab_radio input[type="radio"] {
+.content_box_wrap .tab_radio input[type='radio'] {
   opacity: 0;
   position: absolute;
 }
-.content_box_wrap .tab_radio input[type="radio"] + span {
+.content_box_wrap .tab_radio input[type='radio'] + span {
   width: 140px;
   height: 26px;
   text-align: center;
@@ -292,12 +292,12 @@ html {
   color: #36435c;
   line-height: 1 !important;
 }
-.content_box_wrap .tab_radio input[type="radio"]:checked + span {
+.content_box_wrap .tab_radio input[type='radio']:checked + span {
   color: #fff;
   background-color: #36435c;
   font-size: 12px;
 }
-.content_box_wrap .tab_radio input[type="radio"]:focus + span {
+.content_box_wrap .tab_radio input[type='radio']:focus + span {
   color: #fff;
 }
 .content_box_wrap .cont_boxwrap {
@@ -355,19 +355,19 @@ html {
   color: #242e42;
 }
 .content_box_wrap .cont_boxwrap .boxwrap > .box_style .titlename .basic {
-  background: url("/assets/resources/images/icons/ico-modal-process-basic.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-basic.svg')
     no-repeat;
   width: 40px;
   height: 40px;
 }
 .content_box_wrap .cont_boxwrap .boxwrap > .box_style .titlename .network {
-  background: url("/assets/resources/images/icons/ico-modal-process-network.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-network.svg')
     no-repeat;
   width: 40px;
   height: 40px;
 }
 .content_box_wrap .cont_boxwrap .boxwrap > .box_style .titlename .detail {
-  background: url("/assets/resources/images/icons/ico-modal-process-detail.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-detail.svg')
     no-repeat;
   width: 40px;
   height: 40px;
@@ -551,28 +551,28 @@ html {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url("/assets/resources/images/icons/ico-modal-process-basic.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-basic.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .network {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url("/assets/resources/images/icons/ico-modal-process-network.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-network.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .detail {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url("/assets/resources/images/icons/ico-modal-process-detail.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-detail.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .check {
   height: 40px;
   min-width: 40px;
   position: relative;
-  background: url("/assets/resources/images/icons/ico-modal-process-check.svg")
+  background: url('/assets/resources/images/icons/ico-modal-process-check.svg')
     no-repeat;
 }
 .content_box_wrap .tab_process .title {
@@ -609,7 +609,7 @@ html {
   color: #36435c;
 }
 .content_box_wrap .content_box label[aria-required]:after {
-  content: "*";
+  content: '*';
   position: absolute;
   top: 0;
   right: 0;
@@ -695,7 +695,7 @@ html {
 .content_box_wrap select {
   border: 1px solid #abb4be;
   border-radius: 4px;
-  background: #fff url("/assets/resources/images/icons/ico-arrow-down.svg")
+  background: #fff url('/assets/resources/images/icons/ico-arrow-down.svg')
     right 15px center no-repeat;
   width: 120px;
   height: 42px;
@@ -721,25 +721,25 @@ html {
   cursor: pointer;
 }
 .content_box_wrap .selected_item:before {
-  content: "";
+  content: '';
   position: absolute;
   width: 30px;
   height: 30px;
   display: inline-block;
   top: calc(50% - 15px);
   right: 1px;
-  background: url("/assets/resources/images/icons/ico-select-arrow.svg") right
+  background: url('/assets/resources/images/icons/ico-select-arrow.svg') right
     8px center no-repeat;
 }
 .content_box_wrap .selected_item.image:before {
-  content: "";
+  content: '';
   position: absolute;
   width: 30px;
   height: 30px;
   display: inline-block;
   top: calc(50% - 15px);
   right: 1px;
-  background: url("/assets/resources/images/icons/ico-cube.svg") right 8px
+  background: url('/assets/resources/images/icons/ico-cube.svg') right 8px
     center no-repeat;
 }
 .content_box_wrap .selected_item.active:before {
@@ -810,11 +810,11 @@ html {
   white-space: nowrap;
 }
 .content_box_wrap .selected_item.multi p strong:after {
-  content: ",";
+  content: ',';
   padding-right: 4px;
 }
 .content_box_wrap .selected_item.multi p strong:last-child:after {
-  content: "";
+  content: '';
   padding-right: 0;
 }
 .content_box_wrap .selected_item.active {
@@ -970,10 +970,10 @@ html {
   background: #f9fbfd !important;
 }
 .content_box_wrap .form_radio label:before {
-  content: "";
+  content: '';
   display: block;
   background: transparent
-    url("/assets/resources/images/icons/ico-radio-off.svg") center no-repeat;
+    url('/assets/resources/images/icons/ico-radio-off.svg') center no-repeat;
   width: 16px;
   height: 16px;
 }
@@ -984,10 +984,10 @@ html {
   color: #fff !important;
 }
 .content_box_wrap .form_radio input:checked + label .ico_etc_tag {
-  background: url("/assets/resources/images/icons/ico-etc-tag.svg") 0 -24px no-repeat;
+  background: url('/assets/resources/images/icons/ico-etc-tag.svg') 0 -24px no-repeat;
 }
 .content_box_wrap .form_radio input:checked + label:before {
-  background: transparent url("/assets/resources/images/icons/ico-radio-on.svg")
+  background: transparent url('/assets/resources/images/icons/ico-radio-on.svg')
     center no-repeat;
 }
 .content_box_wrap .radio_list {
@@ -995,9 +995,9 @@ html {
   max-height: 210px;
   overflow-y: auto;
 }
-.content_box_wrap .formarea input[type="text"],
-.content_box_wrap .formarea input[type="password"],
-.content_box_wrap .formarea input[type="number"] {
+.content_box_wrap .formarea input[type='text'],
+.content_box_wrap .formarea input[type='password'],
+.content_box_wrap .formarea input[type='number'] {
   border: 1px solid #abb4be;
   border-radius: 4px;
   background: #fff;
@@ -1007,30 +1007,30 @@ html {
   font-size: 12px;
   padding: 0 12px;
 }
-.content_box_wrap .formarea input[type="text"]::placeholder,
-.content_box_wrap .formarea input[type="password"]::placeholder,
-.content_box_wrap .formarea input[type="number"]::placeholder {
+.content_box_wrap .formarea input[type='text']::placeholder,
+.content_box_wrap .formarea input[type='password']::placeholder,
+.content_box_wrap .formarea input[type='number']::placeholder {
   color: #79879c;
   font-size: 12px;
 }
-.content_box_wrap .formarea input[type="text"]:hover,
-.content_box_wrap .formarea input[type="password"]:hover {
+.content_box_wrap .formarea input[type='text']:hover,
+.content_box_wrap .formarea input[type='password']:hover {
   border: 1px solid #79879c;
 }
-.content_box_wrap .formarea input[type="text"]:focus,
-.content_box_wrap .formarea input[type="password"]:focus,
-.content_box_wrap .formarea input[type="number"]:focus {
+.content_box_wrap .formarea input[type='text']:focus,
+.content_box_wrap .formarea input[type='password']:focus,
+.content_box_wrap .formarea input[type='number']:focus {
   border: 1px solid #55bc8a;
   box-shadow: 0 4px 8px 0 rgba(85, 188, 138, 0.2);
 }
-.content_box_wrap .formarea input[type="text"]:disabled,
-.content_box_wrap .formarea input[type="password"]:disabled,
-.content_box_wrap .formarea input[type="number"]:disabled {
+.content_box_wrap .formarea input[type='text']:disabled,
+.content_box_wrap .formarea input[type='password']:disabled,
+.content_box_wrap .formarea input[type='number']:disabled {
   background-color: #eff4f9;
   color: #79879c;
   cursor: initial;
 }
-.content_box_wrap .formarea input[type="textarea"] {
+.content_box_wrap .formarea input[type='textarea'] {
   border: 1px solid #abb4be;
   border-radius: 4px;
   background: #fff;
@@ -1493,7 +1493,7 @@ html {
   font-weight: 600;
   padding: 0;
   margin: 0;
-  font-family: "pretendard";
+  font-family: 'pretendard';
 }
 .content_box_wrap
   .gridbox_wrap
@@ -1699,7 +1699,7 @@ html {
   padding: 0px 8px;
   background-color: #d8e2ec;
   border-radius: 18px;
-  font-family: "Pretendard-Bold";
+  font-family: 'Pretendard-Bold';
   font-weight: 700;
   font-size: 12px;
   line-height: 20px;
@@ -1719,7 +1719,7 @@ html {
 .content_box_wrap .value_box_wrap .text_title {
   width: fit-content;
   margin-left: 12px;
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-weight: 400;
   font-size: 12px;
   letter-spacing: 0;
@@ -1867,7 +1867,7 @@ html {
   font-weight: 500;
 }
 .content_box_wrap .status_wrap .status:before {
-  content: "";
+  content: '';
   position: absolute;
   width: 10px;
   height: 10px;
@@ -1901,11 +1901,11 @@ html {
   margin: 0;
   font-size: 11px;
 }
-.content_box_wrap .boxtab input[type="radio"] {
+.content_box_wrap .boxtab input[type='radio'] {
   opacity: 0;
   position: absolute;
 }
-.content_box_wrap .boxtab input[type="radio"] + span {
+.content_box_wrap .boxtab input[type='radio'] + span {
   border-radius: 1px;
   padding: 5px 10px;
   transition: all 0.4s;
@@ -1914,7 +1914,7 @@ html {
   color: #36435c;
   line-height: 14px !important;
 }
-.content_box_wrap .boxtab input[type="radio"]:checked + span {
+.content_box_wrap .boxtab input[type='radio']:checked + span {
   background-color: #fff;
   font-size: 12px;
 }
@@ -2077,11 +2077,11 @@ html {
 .content_box_wrap .tree_wrap .tree_box_wrap > li {
   padding-top: 20px;
   padding-left: 120px;
-  background: url("/assets/resources/images/img/img-treeline.svg") 45px 50%
+  background: url('/assets/resources/images/img/img-treeline.svg') 45px 50%
     no-repeat;
 }
 .content_box_wrap .tree_wrap .tree_box_wrap > li:last-child {
-  background: url("/assets/resources/images/img/img-treeline-last.svg") 45px 50%
+  background: url('/assets/resources/images/img/img-treeline-last.svg') 45px 50%
     no-repeat;
 }
 .content_box_wrap .topology_wrap {
@@ -2193,7 +2193,7 @@ html {
   height: inherit;
   border-radius: inherit;
   background: inherit;
-  content: "";
+  content: '';
   -webkit-transform: rotate(60deg);
   -ms-transform: rotate(60deg);
   transform: rotate(60deg);
@@ -2208,7 +2208,7 @@ html {
   height: inherit;
   border-radius: inherit;
   background: inherit;
-  content: "";
+  content: '';
   -webkit-transform: rotate(-60deg);
   -ms-transform: rotate(-60deg);
   transform: rotate(-60deg);
@@ -2477,14 +2477,14 @@ html {
   > p
   + div
   > i::before {
-  content: "";
+  content: '';
   position: absolute;
   display: inline-block;
   margin-top: -10px;
   left: 15px;
   width: 10px;
   height: 15px;
-  background: url("/assets/resources/images/img/img-topology-treeline-last.svg")
+  background: url('/assets/resources/images/img/img-topology-treeline-last.svg')
     0 bottom no-repeat;
 }
 .content_box_wrap
@@ -2539,7 +2539,7 @@ html {
   height: 16px;
   margin-left: 5px;
   border-radius: 16px;
-  background: url("/assets/resources/images/icons/ico-arrow-clamp-down-wh.svg")
+  background: url('/assets/resources/images/icons/ico-arrow-clamp-down-wh.svg')
     center no-repeat;
   transform: rotate(-90deg);
   background-color: #000;
@@ -2605,13 +2605,13 @@ html {
   .network_element
   .element
   > .line.bonding:before {
-  content: "";
+  content: '';
   position: absolute;
   top: 2px;
   left: 0;
   width: 31px;
   height: 34px;
-  background: url("/assets/resources/images/img/img-topologybonding.svg")
+  background: url('/assets/resources/images/img/img-topologybonding.svg')
     no-repeat;
 }
 .content_box_wrap
@@ -2631,14 +2631,14 @@ html {
   .network_element
   .element
   > .line.bonding_r:before {
-  content: "";
+  content: '';
   position: absolute;
   top: -9px;
   right: 0;
   width: 31px;
   height: 34px;
   transform: rotate(180deg);
-  background: url("/assets/resources/images/img/img-topologybonding.svg")
+  background: url('/assets/resources/images/img/img-topologybonding.svg')
     no-repeat;
 }
 .content_box_wrap
@@ -2843,7 +2843,7 @@ html {
   border-right: 7px solid transparent;
   border-left: 7px solid transparent;
   top: -7px;
-  content: "";
+  content: '';
   display: block;
   left: 28px;
   margin-left: -7px;
@@ -2854,7 +2854,7 @@ html {
 }
 .content_box_wrap .element_overview .text-wrapper {
   height: 34px;
-  font-family: "Pretendard-Bold", Helvetica;
+  font-family: 'Pretendard-Bold', Helvetica;
   font-weight: 700;
   font-size: 20px;
 }
@@ -3079,7 +3079,7 @@ html {
 
 .src-pages-clusters-containers-Resources-components-DetailVmList-index__item
   .src-pages-clusters-containers-Resources-components-DetailVmList-index__title.src-pages-clusters-containers-Resources-components-DetailVmList-index__name {
-  width: 25% !important;
+  width: 30% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemFlavor
@@ -3089,12 +3089,12 @@ html {
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemFlavor
   .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__title.src-pages-clusters-containers-Resources-Vms-Detail-Status-index__name {
-  width: 26% !important;
+  width: 31% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemVolume
   .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__title.src-pages-clusters-containers-Resources-Vms-Detail-Status-index__name {
-  width: 26% !important;
+  width: 27% !important;
 }
 
 .src-pages-clusters-containers-Resources-Vms-Detail-Status-index__itemVolume
@@ -3112,16 +3112,16 @@ html {
   width: 40% !important;
 }
 
-.src-components-Base-Panel-index__wrapper[data-test="panel-라우터"]
+.src-components-Base-Panel-index__wrapper[data-test='panel-라우터']
   .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__item
   .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__title.src-pages-clusters-containers-Resources-Networks-Detail-Status-index__name,
-.src-components-Base-Panel-index__wrapper[data-test="panel-라우터"]
+.src-components-Base-Panel-index__wrapper[data-test='panel-라우터']
   .src-pages-projects-containers-Resources-Networks-Detail-Status-index__item
   .src-pages-projects-containers-Resources-Networks-Detail-Status-index__title.src-pages-projects-containers-Resources-Networks-Detail-Status-index__name {
   width: 38% !important;
 }
 
-.src-components-Base-Panel-index__wrapper[data-test="panel-로드-밸런서"]
+.src-components-Base-Panel-index__wrapper[data-test='panel-로드-밸런서']
   .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__item
   .src-pages-clusters-containers-Resources-Networks-Detail-Status-index__title.src-pages-clusters-containers-Resources-Networks-Detail-Status-index__name {
   width: 29% !important;

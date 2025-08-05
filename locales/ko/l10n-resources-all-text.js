@@ -215,7 +215,8 @@ module.exports = {
   RESOURCES_EDIT_DEDICATED_NETWORK: '전용 네트워크 수정',
   RESOURCES_DELETE_DEDICATED_NETWORK_TIP:
     '전용 네트워크 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_DEDICATED_NETWORK_DESC: '전용 네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DEDICATED_NETWORK_DESC:
+    '전용 네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_FABRIC: '네트워크 패브릭',
   RESOURCES_SELECT_FABRIC_TIP: '네트워크 패브릭을 선택해 주세요.',
   RESOURCES_INTERFACE: '인터페이스',
@@ -297,7 +298,7 @@ module.exports = {
   RESOURCES_NETWORK: '네트워크',
   RESOURCES_NETWORK_TAB1: '가상 네트워크',
   RESOURCES_NETWORK_TAB2: 'SR-IOV 네트워크',
-  RESOURCES_NETWORK_TAB3: '전용 네트워크', 
+  RESOURCES_NETWORK_TAB3: '전용 네트워크',
   RESOURCES_SELECT_NETWORK_IP_TIP: '네트워크 IP를 선택해 주세요.',
   RESOURCES_LIST_NETWORK: '네트워크 목록',
   RESOURCES_CREATE_NETWORK: '네트워크 생성',
@@ -833,6 +834,7 @@ module.exports = {
     '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_HOST_ROUTE: '호스트 라우트',
   RESOURCES_RESOURCE_USAGE: '리소스 사용량',
+  RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
   RESOURCES_CPU_USAGE: 'CPU 사용량',
   RESOURCES_MEMORY_USAGE: '메모리 사용량',
   RESOURCES_DISK_USAGE: '디스크 사용량',
@@ -1117,7 +1119,8 @@ module.exports = {
   RESOURCES_NODE_IP: '노드 IP',
 
   RESOURCES_NETWORK_STORAGE: '네트워크 스토리지',
-  RESOURCES_NETWORK_STORAGE_DESC: '네트워크 스토리지 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_NETWORK_STORAGE_DESC:
+    '네트워크 스토리지 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_FILESYSTEM: '파일 시스템',
   RESOURCES_SELECT_FILESYSTEM_TIP: '파일 시스템을 선택해 주세요.',
   RESOURCES_PROTOCOL: '프로토콜',
@@ -1126,37 +1129,43 @@ module.exports = {
   RESOURCES_SELECT_TRANSPORT_TIP: '통신 방식을 선택해 주세요.',
   RESOURCES_ENDPOINT: '엔드 포인트',
   RESOURCES_MOUNT_POINT: '마운트 포인트',
-  RESOURCES_INVALID_MOUNT_POINT_DESC: '잘못된 마운트 포인트입니다. 마운트 포인트는 파일 경로 양식으로 지정해야하고, 루트 경로는 마운트 포인트로 사용할 수 없습니다.',
+  RESOURCES_INVALID_MOUNT_POINT_DESC:
+    '잘못된 마운트 포인트입니다. 마운트 포인트는 파일 경로 양식으로 지정해야하고, 루트 경로는 마운트 포인트로 사용할 수 없습니다.',
   RESOURCES_MOUNT_OPTIONS_TIP: '마운트 옵션을 입력하여 주세요.',
   RESOURCES_MOUNT_OPTIONS: '마운트 옵션',
   RESOURCES_MAX_CONNECTION: '최대 연결수',
   RESOURCES_MAX_CONNECTION_TIP: '최대 연결수를 선택해 주세요.',
   RESOURCES_CREATE_NETWORK_STORAGE: '네트워크 스토리지 생성',
   RESOURCES_EDIT_NETWORK_STORAGE: '네트워크 스토리지 수정',
-  RESOURCES_DELETE_NETWORK_STORAGE_TIP: '네트워크 스토리지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_NETWORK_STORAGE_TIP:
+    '네트워크 스토리지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_NETWORK_STORAGE_COMMON: '기본 정보',
   RESOURCES_NETWORK_STORAGE_MOUNT: '마운트 정보',
 
   RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
-  RESOURCES_DELETE_GPU_CLUSTER_TIP: 'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_GPU_CLUSTER_TIP:
+    'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
-  RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
   RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
-  RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
   RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
-  RESOURCES_GPU_NODE_POOLS: 'Node Pools',  
+  RESOURCES_GPU_NODE_POOLS: 'Node Pools',
   RESOURCES_GPU_CLUSTER_VM_COUNT: '가상머신 수',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: '가상머신 생성 수',
   RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT: '생성 가능한 가상머신 수',
-  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID: '가상머신 생성 수를  1 이상 입력해주세요',
-  
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
+    '가상머신 생성 수를  1 이상 입력해주세요',
+
   RESOURCES_VM_SETTINGS: '가상머신 설정',
   RESOURCES_NO_VM: '가상머신이 없습니다.',
-  RESOURCES_CREATE_REQUEST_SUCCESSFUL: "생성 요청 했습니다.",
-  RESOURCES_NUMBER_EMPTY_DESC: "숫자를 입력하세요.",
+  RESOURCES_CREATE_REQUEST_SUCCESSFUL: '생성 요청 했습니다.',
+  RESOURCES_NUMBER_EMPTY_DESC: '숫자를 입력하세요.',
   RESOURCES_ENTER_1_MORE: '1이상 입력해 주세요.',
-  RESOURCES_CLOSE: "닫기",
-  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: "첫 번째 숫자보다 크거나 같아야 합니다."
+  RESOURCES_CLOSE: '닫기',
+  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: '첫 번째 숫자보다 크거나 같아야 합니다.',
 }
