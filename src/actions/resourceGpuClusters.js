@@ -29,20 +29,29 @@ import DeleteModal from 'components/Modals/Delete'
 
 export default {
   'gpuclusters.cluster.regist': {
-    on({ store, rootStore, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      rootStore,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
             .createCluster(data, { cluster, workspace, namespace, devops })
             .then(() => {
               success && success()
-              data.createSuccess?.(success);
+              data.createSuccess?.(success)
             })
         },
         title: t('RESOURCES_CREATE_GPU_CLUSTER'),
         modal: ClusterModal,
         store,
-        rootStore, 
+        rootStore,
         cluster,
         workspace,
         namespace,
@@ -59,7 +68,9 @@ export default {
             .create(data, { cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_CREATE_REQUEST_SUCCESSFUL') })
+              Notify.success({
+                content: t('RESOURCES_CREATE_REQUEST_SUCCESSFUL'),
+              })
               success && success()
             })
         },
@@ -75,11 +86,31 @@ export default {
     },
   },
   'gpuclusters.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, name: data.name }, data)
+            .update(
+              {
+                ...detail,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                name: data.name,
+              },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
@@ -87,6 +118,50 @@ export default {
             })
         },
         title: t('RESOURCES_EDIT_GPU_CLUSTER'),
+        modal: ModifyModal,
+        store,
+        cluster,
+        workspace,
+        namespace,
+        module,
+        ...props,
+      })
+    },
+  },
+
+  'gpuclusters.vmedit': {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store
+            .update(
+              {
+                ...detail,
+                cluster,
+                workspace,
+                namespace,
+                devops,
+                name: data.name,
+              },
+              data
+            )
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+              success && success()
+            })
+        },
+        title: t('VM 편집'),
         modal: ModifyModal,
         store,
         cluster,
@@ -132,7 +207,7 @@ export default {
   'gpuclusters.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
+      let arr = new Array()
       store.dataList.map(obj => {
         if (rowKeys.includes(obj.name)) {
           arr.push(obj.name)

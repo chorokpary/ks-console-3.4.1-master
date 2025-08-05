@@ -221,7 +221,8 @@ module.exports = {
   RESOURCES_EDIT_DEDICATED_NETWORK: 'Edit Dedicated Network',
   RESOURCES_DELETE_DEDICATED_NETWORK_TIP:
     'Enter the dedicated network name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
-  RESOURCES_DEDICATED_NETWORK_DESC: 'Manage the status and usage of dedicated network.',
+  RESOURCES_DEDICATED_NETWORK_DESC:
+    'Manage the status and usage of dedicated network.',
   RESOURCES_FABRIC: 'Network Fabric',
   RESOURCES_SELECT_FABRIC_TIP: 'Please select a Network Fabric.',
   RESOURCES_INTERFACE: 'Interface',
@@ -1015,6 +1016,8 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Please enter the port.',
   RESOURCES_ENTER_60_MORE: 'Please enter 60 or more.',
   RESOURCES_ENTER_1_MORE_AS_65535: 'Please enter between 1 and 65535.',
+  RESOURCES_LAST_NUMBER_GREATER:
+    'Please enter a number greater than the first number.',
   RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'Please enter DNS information correctly.',
   RESOURCES_DNS_PRIMARY: 'Primary',
@@ -1129,7 +1132,8 @@ module.exports = {
   RESOURCES_NODE_IP: 'Node IP',
 
   RESOURCES_NETWORK_STORAGE: 'Network Storage',
-  RESOURCES_NETWORK_STORAGE_DESC: 'Manage the status and usage of network storage.',
+  RESOURCES_NETWORK_STORAGE_DESC:
+    'Manage the status and usage of network storage.',
   RESOURCES_FILESYSTEM: 'File System',
   RESOURCES_SELECT_FILESYSTEM_TIP: 'Please select a filesystem.',
   RESOURCES_PROTOCOL: 'Protocol',
@@ -1138,37 +1142,44 @@ module.exports = {
   RESOURCES_SELECT_TRANSPORT_TIP: 'Please select a transport method.',
   RESOURCES_ENDPOINT: 'Endpoint',
   RESOURCES_MOUNT_POINT: 'Mount Point',
-  RESOURCES_INVALID_MOUNT_POINT_DESC: 'Invalid mount point. Mount point should follow the filepath format, and it does not allow to specify the root path.',
+  RESOURCES_INVALID_MOUNT_POINT_DESC:
+    'Invalid mount point. Mount point should follow the filepath format, and it does not allow to specify the root path.',
   RESOURCES_MOUNT_OPTIONS: 'Mount Options',
   RESOURCES_MOUNT_OPTIONS_TIP: 'Please enter mount options.',
   RESOURCES_MAX_CONNECTION: 'Max Connection',
-  RESOURCES_MAX_CONNECTION_TIP: 'Please select the number of maximum connection.',
+  RESOURCES_MAX_CONNECTION_TIP:
+    'Please select the number of maximum connection.',
   RESOURCES_CREATE_NETWORK_STORAGE: 'Create Network Storage',
   RESOURCES_EDIT_NETWORK_STORAGE: 'Modify Network Storage',
-  RESOURCES_DELETE_NETWORK_STORAGE_TIP: 'Enter the network storage name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
+  RESOURCES_DELETE_NETWORK_STORAGE_TIP:
+    'Enter the network storage name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
   RESOURCES_NETWORK_STORAGE_COMMON: 'Basic Information',
   RESOURCES_NETWORK_STORAGE_MOUNT: 'Mount Information',
 
   RESOURCES_GPU_CLUSTER: 'GPU Cluster',
-  RESOURCES_DELETE_GPU_CLUSTER_TIP: 'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_GPU_CLUSTER_TIP:
+    'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
-  RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
   RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
-  RESOURCES_GPU_CLUSTER_DESC: 'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
   RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
   RESOURCES_GPU_NODE_POOLS: 'Node Pools',
   RESOURCES_GPU_CLUSTER_VM_COUNT: '가상머신 수',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: '가상머신 생성 수',
   RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT: '생성 가능한 가상머신 수',
-  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID: '가상머신 생성 수를  1 이상 입력해주세요',
-  
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
+    '가상머신 생성 수를  1 이상 입력해주세요',
+
   RESOURCES_VM_SETTINGS: '가상머신 설정',
   RESOURCES_NO_VM: '가상머신이 없습니다.',
-  RESOURCES_CREATE_REQUEST_SUCCESSFUL: "생성 요청 했습니다.",
-  RESOURCES_NUMBER_EMPTY_DESC: "숫자를 입력하세요.",
+  RESOURCES_CREATE_REQUEST_SUCCESSFUL: '생성 요청 했습니다.',
+  RESOURCES_NUMBER_EMPTY_DESC: '숫자를 입력하세요.',
   RESOURCES_ENTER_1_MORE: '1이상 입력해 주세요.',
-  RESOURCES_CLOSE: "닫기",
-  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: "첫 번째 숫자보다 크거나 같아야 합니다."
+  RESOURCES_CLOSE: '닫기',
+  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: '첫 번째 숫자보다 크거나 같아야 합니다.',
 }

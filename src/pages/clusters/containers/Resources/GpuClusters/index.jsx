@@ -16,22 +16,22 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { toJS } from 'mobx';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { toJS } from 'mobx'
 
-import ResourceTable from 'clusters/components/ResourceTable';
-import { Avatar, Status } from 'components/Base';
-import Banner from 'components/Cards/Banner';
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList';
-import Table from 'components/Tables/List';
-import { getLocalTime } from 'utils';
-import { ICON_TYPES } from 'utils/constants';
+import ResourceTable from 'clusters/components/ResourceTable'
+import { Avatar, Status } from 'components/Base'
+import Banner from 'components/Cards/Banner'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
+import Table from 'components/Tables/List'
+import { getLocalTime } from 'utils'
+import { ICON_TYPES } from 'utils/constants'
 import { Indicator } from 'components/Base'
 
-import GpuClustersStore from 'stores/resources/gpuclusters';
+import GpuClustersStore from 'stores/resources/gpuclusters'
 
-import styles from './index.scss';
+import styles from './index.scss'
 
 @withClusterList({
   store: new GpuClustersStore(),
@@ -41,11 +41,11 @@ import styles from './index.scss';
 })
 export default class gpuclusters extends React.Component {
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
 
     return [
       {
@@ -61,11 +61,11 @@ export default class gpuclusters extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, routing, tableProps } = this.props
 
     return {
       ...tableProps.tableActions,
@@ -85,23 +85,23 @@ export default class gpuclusters extends React.Component {
         },
       ],
       selectActions: [
-        {
-          key: 'delete',
-          type: 'danger',
-          text: t('RESOURCES_DELETE'),
-          action: 'delete',
-          onClick: () =>
-            trigger('gpuclusters.remove.batch', {
-              success: getData,
-              ...this.props.match.params,
-            }),
-        },
+        // {
+        //   key: 'delete',
+        //   type: 'danger',
+        //   text: t('RESOURCES_DELETE'),
+        //   action: 'delete',
+        //   onClick: () =>
+        //     trigger('gpuclusters.remove.batch', {
+        //       success: getData,
+        //       ...this.props.match.params,
+        //     }),
+        // },
       ],
-      getCheckboxProps: record => ({
-        disabled: !this.showAction(record),
-        name: record.name,
-      }),
-    };
+      // getCheckboxProps: record => ({
+      //   disabled: !this.showAction(record),
+      //   name: record.name,
+      // }),
+    }
   }
 
   getStateType() {
@@ -117,31 +117,31 @@ export default class gpuclusters extends React.Component {
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('RESOURCES_NAME'),
-        dataIndex: 'description',
+        dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('namespace'),
         search: true,
         render: (name, record) => (
           <div className={styles.avatar}>
-              <div className={styles.icon}>
-                <i className="ico-type-mediatedvgpu"></i>
-              </div>
+            <div className={styles.icon}>
+              <i className="ico-type-mediatedvgpu"></i>
+            </div>
+            <div>
               <div>
-                <div>
-                  <Link
-                    className={styles.title}
-                    to={`/clusters/${cluster}/gpuclusters/${name}`}
-                  >
-                    {name}
-                  </Link>
-                </div>
+                <Link
+                  className={styles.title}
+                  to={`/clusters/${cluster}/gpuclusters/${name}`}
+                >
+                  {name}
+                </Link>
               </div>
             </div>
+          </div>
         ),
       },
       {
@@ -150,19 +150,25 @@ export default class gpuclusters extends React.Component {
         isHideable: true,
         width: 'auto',
         render: (namespace, record) => (
-          <Link to={`/clusters/${namespace}/projects/${record.namespace}/overview`}>
+          <Link
+            to={`/clusters/${namespace}/projects/${record.namespace}/overview`}
+          >
             {record.namespace}
           </Link>
         ),
       },
       {
         title: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
-        dataIndex: 'total_node_count',
+        dataIndex: 'instances',
         isHideable: true,
         search: true,
         width: 'auto',
-         render: (total_node_count, record) => (
-          <p>{total_node_count}</p>
+        render: (instances, record) => (
+          <p>
+            {record.instances && record.instances.length > 0
+              ? `${record.isRunning}/${record.instances.length}`
+              : '-'}
+          </p>
         ),
       },
       {
@@ -172,13 +178,17 @@ export default class gpuclusters extends React.Component {
         isHideable: true,
         search: true,
         width: 'auto',
-        render: (state) => {
+        render: state => {
           return (
-             <div className={styles.iconwrapper}>
-                <Indicator className={styles.indicator} type={state == "normal" ? 'running' : 'error'} flicker/>
-                <p>{state == "normal" ? 'Normal' : 'Abnormal'}</p>
-              </div>
-          )          
+            <div className={styles.iconwrapper}>
+              <Indicator
+                className={styles.indicator}
+                type={state == 'normal' ? 'running' : 'error'}
+                flicker
+              />
+              <p>{state == 'normal' ? 'Normal' : 'Abnormal'}</p>
+            </div>
+          )
         },
       },
       {
@@ -192,11 +202,11 @@ export default class gpuclusters extends React.Component {
           <p>{getLocalTime(created_at).format('YYYY-MM-DD HH:mm:ss')}</p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') };
+    return { desc: t('RESOURCES_PLEASE_CREATE_DATA') }
   }
 
   get columnSearch() {
@@ -211,7 +221,7 @@ export default class gpuclusters extends React.Component {
         title: t('RESOURCES_STATE'),
         search: true,
       },
-    ];
+    ]
   }
 
   getBanner = () => {
@@ -219,7 +229,7 @@ export default class gpuclusters extends React.Component {
   }
 
   render() {
-    const { bannerProps, tableProps } = this.props;
+    const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
         <Banner
@@ -238,6 +248,6 @@ export default class gpuclusters extends React.Component {
           columnSearch={this.columnSearch}
         />
       </ListPage>
-    );
+    )
   }
 }

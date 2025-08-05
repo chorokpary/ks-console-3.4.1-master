@@ -9,7 +9,7 @@ import { getChartData, getAreaChartOps } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
-import { SimpleLine, SimpleArea } from 'components/Charts'
+import { SimpleArea } from 'components/Charts'
 
 import styles from './index.scss'
 import { Button, InputSearch } from '@kube-design/components'
@@ -19,8 +19,8 @@ const index = props => {
   const customStore = new CustomStore()
 
   const store = new GpuClustersStore()
-  const cluster = props.detailStore?.detail.cluster
-  const name = props.detailStore?.detail.name
+  const cluster = props.match.params.cluster
+  const name = props.match.params.name
 
   const perPage = 100
   const [vmDataList, setVmDataList] = useState([])
@@ -91,7 +91,7 @@ const index = props => {
     const vmData = vmList.vmList
 
     setVmDataList(vmData)
-    selectedVm ?? setSelectedVm(vmData[0]?.vmi.vm_name || '')
+    selectedVm ?? setSelectedVm(vmData[0]?.vmName || '')
   }
 
   const fetchData = async params => {
@@ -190,7 +190,6 @@ const index = props => {
       setVmGpuOutboundData(gpuOutboundData)
     }
 
-
     getVmGpuUtilData()
     getVmGpuRamData()
     getVmGpuTempData()
@@ -233,21 +232,21 @@ const index = props => {
       },
       {
         type: 'bandwidth',
-        title: 'IB InBound ',
+        title: 'IB ' + t('RESOURCES_INBOUND'),
         unitType: 'bandwidth',
         legend: vmGpuInboundData.map(item => item.metric.device),
         data: vmGpuInboundData,
       },
-       {
+      {
         type: 'bandwidth',
-        title: 'IB OutBound ',
+        title: 'IB ' + t('RESOURCES_OUTBOUND'),
         unitType: 'bandwidth',
         legend: vmGpuOutboundData.map(item => item.metric.device),
         data: vmGpuOutboundData,
       },
-       {
+      {
         type: 'bandwidth',
-        title: 'GPU ' + t('NETWORK_TRAFFIC'),
+        title: 'NVLink ' + t('TRAFFIC'),
         unitType: 'bandwidth',
         legend: vmGpuNvlinkData.map(item => item.metric.device),
         data: vmGpuNvlinkData,
@@ -291,12 +290,10 @@ const index = props => {
       refreshing={isRefreshing}
     >
       {/* todo - 화면 분리 */}
-      <div style={{ display: 'flex', position: 'relative', width: '100%' }}>
+      <div style={{ display: 'flex' }}>
         <div
           style={{
             flex: 1,
-            width: '100%',
-            position: 'relative',
             paddingRight: '20px',
           }}
         >
@@ -307,7 +304,7 @@ const index = props => {
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>{t('가상머신')}</th>
+                      <th>{t('RESOURCES_VM')}</th>
                     </tr>
                   </thead>
                   <tbody className={styles.vm_list}>
@@ -316,19 +313,17 @@ const index = props => {
                         <td
                           style={{
                             backgroundColor:
-                              selectedVm === obj.vmi.vm_name ? '#EEF2FF' : '',
+                              selectedVm === obj.vmName ? '#EEF2FF' : '',
                           }}
                           onClick={() => {
-                            setSelectedVm(obj.vmi.vm_name)
+                            setSelectedVm(obj.vmName)
                           }}
                         >
                           <div
                             style={{ display: 'flex', alignItems: 'center' }}
                           >
                             <i className="ico-type-vm"></i>
-                            <span style={{ marginLeft: 8 }}>
-                              {obj.vmi.vm_name}
-                            </span>
+                            <span style={{ marginLeft: 8 }}>{obj.vmName}</span>
                           </div>
                         </td>
                       </tr>
@@ -340,35 +335,22 @@ const index = props => {
           </Panel>
         </div>
 
-        <div style={{ flex: 4, position: 'relative', width: '100%' }}>
+        <div
+          style={{
+            flex: 4,
+            overflow: 'auto',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
           {configs.map((item, idx) => {
             const config = getAreaChartOps(item)
             if (isEmpty(config.data)) return null
-
-            if (idx % 2 === 0) {
-              const nextConfig =
-                configs[idx + 1] && getAreaChartOps(configs[idx + 1])
-              return (
-                <div
-                  style={{
-                    display: 'flex',
-                    position: 'relative',
-                    width: '100%',
-                  }}
-                  key={config.title}
-                >
-                  <div style={{ position: 'relative', width: '50%' }}>
-                    <SimpleLine {...config} />
-                  </div>
-                  {nextConfig && !isEmpty(nextConfig.data) && (
-                    <div style={{ position: 'relative', width: '50%' }}>
-                      <SimpleLine {...nextConfig} />
-                    </div>
-                  )}
-                </div>
-              )
-            }
-            return null
+            return (
+              <div key={config.title} style={{ marginBottom: '10px' }}>
+                <SimpleArea {...config} />
+              </div>
+            )
           })}
         </div>
       </div>

@@ -1,12 +1,11 @@
-
 import React, { useEffect } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom'
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
 import { Card } from 'components/Base'
 import { getLocalTime } from 'utils'
 
@@ -15,40 +14,40 @@ import routes from './routes'
 
 import GpuClustersStore from 'stores/resources/gpuclusters'
 
-const store = new GpuClustersStore();
+const store = new GpuClustersStore()
 
-const GpuClustersDetail = (props) => {
-
+const GpuClustersDetail = props => {
   useEffect(() => {
-    fetchData();
+    fetchData()
   }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params);
+    store.fetchDetail(props.match.params)
   }
 
   const { cluster } = props.match.params
   const listUrl = `/clusters/${cluster}/gpuclusters`
 
-  const routing = props.rootStore.routing;
-  const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
+  const routing = props.rootStore.routing
+  const showEdit = !globals.config.presetClusterRoles.includes(
+    props.match.params.name
+  )
 
   const getOperations = () => [
-    // {
-    //   key: 'edit',
-    //   icon: 'pen',
-    //   text: t('EDIT_INFORMATION'),
-    //   action: 'edit',
-    //   show: showEdit,
-    //   onClick: () =>
-    //     props.rootStore.triggerAction('gpuclusters.edit', {
-    //       type: 'KEYPAIR_DETAIL',
-    //       detail: toJS(store.detail),
-    //       store: store,
-    //       success: fetchData,
-    //       ...props.match.params
-    //     }),
-    // },
+    {
+      key: 'edit',
+      icon: 'pen',
+      text: t('VM 편집'),
+      action: 'edit',
+      show: showEdit,
+      onClick: () =>
+        props.rootStore.triggerAction('gpuclusters.vmedit', {
+          detail: toJS(store.detail),
+          store: store,
+          success: fetchData,
+          ...props.match.params,
+        }),
+    },
     // {
     //   key: 'viewYaml',
     //   icon: 'eye',
@@ -81,6 +80,7 @@ const GpuClustersDetail = (props) => {
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
+    console.log('detail', detail)
 
     if (isEmpty(detail)) {
       return
@@ -98,13 +98,13 @@ const GpuClustersDetail = (props) => {
       {
         name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
         // value: (detail.data.nodes).filter(item => item.vmi).length + "/" + (detail.data.nodes).length,
-        value: (detail.data.nodes).length,
+        value: detail.data?.instances ? detail.data.instances.length : '-',
       },
     ]
   }
 
   if (store.isLoading) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const getBanner = () => {
@@ -131,10 +131,10 @@ const GpuClustersDetail = (props) => {
       <DetailPage
         stores={{ detailStore: store }}
         routes={routes}
-        {...sideProps} />
+        {...sideProps}
+      />
     </>
   )
 }
 
-export default inject('rootStore')(observer(GpuClustersDetail));
-
+export default inject('rootStore')(observer(GpuClustersDetail))
