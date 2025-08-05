@@ -45,6 +45,7 @@ const ResourceCard = (props) => {
   const [vmData, setVmData] = useState({});
   const [imageData, setImageData] = useState({});
   const [volumeData, setVolumeData] = useState({});
+  const [networkStorageData, setNetworkStorageData] = useState({});
   const [flavorData, setFlavorData] = useState({});
   const [keypairData, setKeypairData] = useState({});
   const [networkData, setNetworkData] = useState({});
@@ -60,7 +61,8 @@ const ResourceCard = (props) => {
   const stateVariables = {
     vms: vmData,        
     images: imageData,         
-    resourcesVolumes: volumeData,   
+    resourcesVolumes: volumeData,
+    networkstorages: networkStorageData,
     flavors: flavorData,
     keypairs: keypairData,   
     networks: networkData,       
@@ -77,7 +79,8 @@ const ResourceCard = (props) => {
   const setVariables = {
     vms: setVmData,        
     images: setImageData,         
-    resourcesVolumes: setVolumeData,   
+    resourcesVolumes: setVolumeData,
+    networkstorages: setNetworkStorageData,
     flavors: setFlavorData,
     keypairs: setKeypairData,   
     networks: setNetworkData,       

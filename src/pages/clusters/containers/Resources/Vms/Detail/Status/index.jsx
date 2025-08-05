@@ -1,5 +1,5 @@
 import { isEmpty, find } from 'lodash'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 
@@ -32,6 +32,26 @@ const Status = props => {
   const [vmMemoryData, setVmMemoryData] = useState([])
 
   const intiParams = { times: 50, step: '10m' }
+
+  const categoryOrder = {
+    networks: 0,
+    sriovs: 1,
+    physicalnetworks: 2,
+  };
+
+  const sortedDetailNetwork = useMemo(() => {
+    return [...detailNetwork].sort((a, b) => {
+      // first compare by category priority
+      const catDiff = categoryOrder[a.endpoint] - categoryOrder[b.endpoint];
+      if (catDiff !== 0) return catDiff;
+
+      // if same category, compare by name
+      return a.name.localeCompare(b.name);
+    });
+  }, [detailNetwork]);
+
+  const sortedDetailVolume = common.useSorted(detailVolume, 'name')
+  const sortedDetailSecurityGroup = common.useSorted(detailSecurityGroup, 'name')
 
   useEffect(() => {
     if (!store.detail.vm) return
@@ -91,7 +111,7 @@ const Status = props => {
         const promises = physicalNetworkFilterData.filter(async network => {
           if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}/${network.project}/info`
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/physical_networks/${network.name}?project=${network.project}`
             )
             networkDetail.physicalnetwork.endpoint = 'physicalnetworks'
             networkDetail.physicalnetwork.unique = 'project_name'
@@ -120,7 +140,7 @@ const Status = props => {
       )
       setDetailVolume(volumeData)
     }
-    
+
     const fnGetNetworkStorage = async () => {
       setDetailNetworkStorage(store.networkStorageInfo)
     }
@@ -408,10 +428,10 @@ const Status = props => {
                         ? detailFlavor.gpus.length === 1
                           ? `${detailFlavor.gpus[0].quantity} ${detailFlavor.gpus[0].name}`
                           : `${detailFlavor.gpus[0].name} ${t(
-                              'RESOURCES_BESIDES'
-                            )} ${detailFlavor.gpus.length - 1}${t(
-                              'RESOURCES_COUNT'
-                            )}`
+                            'RESOURCES_BESIDES'
+                          )} ${detailFlavor.gpus.length - 1}${t(
+                            'RESOURCES_COUNT'
+                          )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -425,7 +445,7 @@ const Status = props => {
         {/* 보안그룹 */}
         {store.detail.vm?.security_groups.length > 0 && (
           <DetailSecurityGroupList
-            securityGroupData={detailSecurityGroup}
+            securityGroupData={sortedDetailSecurityGroup}
             cluster={cluster}
             namespace={store.detail.vm.project}
           />
@@ -435,7 +455,7 @@ const Status = props => {
         {detailNetwork.length > 0 && (
           <Panel title={t('RESOURCES_NETWORK')}>
             <div className={styles.wrapper}>
-              {detailNetwork.map((obj, index) => (
+              {sortedDetailNetwork.map((obj, index) => (
                 <div className={classnames(styles.itemNetwork)} key={index}>
                   <div className={styles.icon}>
                     {!obj.resource_name ? (
@@ -472,11 +492,10 @@ const Status = props => {
                   </div>
                   <div className={styles.title}>
                     <div>
-                      {`${
-                        obj.gateway_ip === undefined || obj.gateway_ip === ''
-                          ? '-'
-                          : obj.gateway_ip
-                      }`}
+                      {`${obj.gateway_ip === undefined || obj.gateway_ip === ''
+                        ? '-'
+                        : obj.gateway_ip
+                        }`}
                     </div>
                     <p>{t('RESOURCES_GATEWAY')}</p>
                   </div>
@@ -490,7 +509,7 @@ const Status = props => {
         {detailVolume.length > 0 && (
           <Panel title={t('RESOURCES_VOLUME')}>
             <div className={styles.wrapper}>
-              {detailVolume.map((obj, index) => {
+              {sortedDetailVolume.map((obj, index) => {
                 return (
                   <div className={classnames(styles.itemVolume)} key={index}>
                     <div className={styles.icon}>

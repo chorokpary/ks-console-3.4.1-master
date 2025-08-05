@@ -63,7 +63,7 @@ const Status = props => {
         {/* 가상 머신 상세 관련 샘플 */}
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
-          match="network"
+          match="vpc_network"
           name={props.match.params.name}
           project={namespace}
         />

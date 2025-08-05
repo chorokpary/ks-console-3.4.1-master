@@ -66,8 +66,8 @@ const Status = props => {
         {/* 가상 머신 상세 관련 샘플 */}
         <DetailVmList
           type={t('RESOURCES_NETWORK')}
-          variables="networks"
-          id={props.match.params.name}
+          match="sriov_network"
+          name={props.match.params.name}
         />
       </div>
     </>
