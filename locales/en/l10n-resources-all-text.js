@@ -16,8 +16,8 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 module.exports = {
-  RESOURCES_BESIDES: 'Besides',
-  RESOURCES_COUNT: 'Count',
+  RESOURCES_BESIDES: 'and',
+  RESOURCES_COUNT: 'other',
   RESOURCES_EUL: 'is',
   RESOURCES_LEUL: 'is',
   RESOURCES_SG_PL: ' is (are)',

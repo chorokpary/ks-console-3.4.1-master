@@ -18,7 +18,6 @@
 
 import React from 'react'
 import { observer, inject } from 'mobx-react'
-import PodsCard from 'components/Cards/Pods'
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
 @inject('detailStore')
@@ -30,7 +29,7 @@ export default class Vms extends React.Component {
     const { cluster, node } = this.props.match.params
     
     return (
-      <DetailVmList type={t('RESOURCES_NODE')} variables='node' name={node} />
+      <DetailVmList type={t('RESOURCES_NODE')} match='node' name={node} />
     )
   }
 }
