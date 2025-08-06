@@ -28,7 +28,7 @@ const TopologyModal = props => {
         hideFooter={true}
         fullScreen
       >
-        <TopologyItem closeModal={() => closeModal()} />
+        <TopologyItem closeModal={() => closeModal()} {...props}/>
       </Modal>
     </>
   );

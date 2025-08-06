@@ -1,7 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Loading } from '@kube-design/components';
-import * as common from 'utils/resources';
-
 import { isEmpty, omit, get, find, some } from 'lodash';
 
 import TopologyStore from 'stores/resources/topology';
@@ -14,6 +11,7 @@ import {
 
 const TopologyItem = props => {
   const store = new TopologyStore();
+  const cluster = props.cluster;
 
   const [vmList, setVmList] = useState([]);
   const [networkList, setNetworkList] = useState([]);
@@ -392,7 +390,7 @@ const TopologyItem = props => {
                     <span>
                       {vm.name}
                       <a
-                        href={`/clusters/default/vms/${vm.name}`}
+                        href={`/clusters/${cluster}/projects/${vm.project}/vms/${vm.name}`}
                         className="btn_go"
                         onClick={() => closeModal()}
                       ></a>
@@ -478,7 +476,7 @@ const TopologyItem = props => {
                     <span>
                       {router.name}
                       <a
-                        href={`/clusters/default/routers/${router.name}`}
+                        href={`/clusters/${cluster}/projects/${router.project}/routers/${router.name}`}
                         className="btn_go"
                         onClick={() => closeModal()}
                       ></a>
@@ -555,7 +553,7 @@ const TopologyItem = props => {
                     <span>
                       {load.name}
                       <a
-                        href={`/clusters/default/loadBalancers/${load.name}`}
+                        href={`/clusters/${cluster}/projects/${load.project}/loadBalancers/${load.name}`}
                         className="btn_go"
                         onClick={() => closeModal()}
                       ></a>
