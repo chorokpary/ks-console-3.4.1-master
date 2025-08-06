@@ -330,7 +330,7 @@ export default class VmStore extends Base {
     await this.fetchVmListSriovNetwork(params)
 
     // Physical Network
-    await this.fetchVmListPhysicalNetwork(params)
+    // await this.fetchVmListPhysicalNetwork(params)
 
     // Network Storage
     if (detail.vm.network_storage !== '') {
@@ -851,7 +851,9 @@ export default class VmStore extends Base {
       )
     }
 
-    const dataList = params.namespace ? namespaceDataList : response.security_groups
+    const dataList = params.namespace
+      ? namespaceDataList
+      : response.security_groups
     this.isLoading = false
     return dataList
   }
@@ -863,7 +865,9 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/security_groups?project=${params.namespace}`
+      )}/edgetron/resources/kubevirt/security_groups?project=${
+        params.namespace
+      }`
     )
     const response = {
       ...params,
@@ -876,7 +880,9 @@ export default class VmStore extends Base {
       const securityDetail = await request.get(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/kubevirt/security_groups/${security.name}?project=${params.namespace}`
+        )}/edgetron/resources/kubevirt/security_groups/${
+          security.name
+        }?project=${params.namespace}`
       )
 
       securityDetail.security_group.egress = securityDetail.security_group.rules.filter(

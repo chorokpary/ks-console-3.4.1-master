@@ -221,7 +221,8 @@ module.exports = {
   RESOURCES_EDIT_DEDICATED_NETWORK: 'Edit Dedicated Network',
   RESOURCES_DELETE_DEDICATED_NETWORK_TIP:
     'Enter the dedicated network name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
-  RESOURCES_DEDICATED_NETWORK_DESC: 'Manage the status and usage of dedicated network.',
+  RESOURCES_DEDICATED_NETWORK_DESC:
+    'Manage the status and usage of dedicated network.',
   RESOURCES_FABRIC: 'Network Fabric',
   RESOURCES_SELECT_FABRIC_TIP: 'Please select a Network Fabric.',
   RESOURCES_INTERFACE: 'Interface',
@@ -1018,6 +1019,8 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Please enter the port.',
   RESOURCES_ENTER_60_MORE: 'Please enter 60 or more.',
   RESOURCES_ENTER_1_MORE_AS_65535: 'Please enter between 1 and 65535.',
+  RESOURCES_LAST_NUMBER_GREATER:
+    'Please enter a number greater than the first number.',
   RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'Please enter DNS information correctly.',
   RESOURCES_DNS_PRIMARY: 'Primary',
@@ -1048,6 +1051,7 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: 'Executed successfully.',
   RESOURCES_VM_SECURITYGROUP_EDIT: 'Edit Security Group',
   RESOURCES_VM_FLAVOR_EDIT: 'Edit Flavor',
+  RESOURCES_VM_EDIT: 'Edit VM',
   RESOURCES_VM_SCHEDULE_STATUS: 'VM Scheduling Status',
   RESOURCES_VM_SCHEDULE_READY: 'VM Ready',
   RESOURCES_VM_SCHEDULE_READY_DESC:
@@ -1068,7 +1072,10 @@ module.exports = {
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), must start and end with a lowercase letter or number, maximum length is 63 characters.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
     'Invalid name. Name can be entered in the format (lowercase or number.Domain 2 or more) / (lowercase or uppercase or number). Maximum length is 63 characters.',
-
+  RESOURCES_FABRIC_KEY_DESC:
+    'Fabric key must be in the format 0x0000~0xFFFF, and for infiniband it must be in the range 0x0001~0x7FFE, and for ethernet it must be in the range 0x0001~0x0FFE.',
+  RESOURCES_INVALID_FABRIC_KEY_DESC:
+    'Invalid fabric key. \nFabric key must be in the format 0x0000~0xFFFF, and for infiniband it must be in the range 0x0001~0x7FFE, and for ethernet it must be in the range 0x0001~0x0FFE.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Please enter an interval of 60 or more.',
   RESOURCES_ID_EMPTY_DESC: 'Please enter the ID.',
   RESOURCES_JUPYTER_PORT_RANGE_DESC:
@@ -1132,7 +1139,8 @@ module.exports = {
   RESOURCES_NODE_IP: 'Node IP',
 
   RESOURCES_NETWORK_STORAGE: 'Network Storage',
-  RESOURCES_NETWORK_STORAGE_DESC: 'Manage the status and usage of network storage.',
+  RESOURCES_NETWORK_STORAGE_DESC:
+    'Manage the status and usage of network storage.',
   RESOURCES_FILESYSTEM: 'File System',
   RESOURCES_SELECT_FILESYSTEM_TIP: 'Please select a filesystem.',
   RESOURCES_PROTOCOL: 'Protocol',
@@ -1141,14 +1149,52 @@ module.exports = {
   RESOURCES_SELECT_TRANSPORT_TIP: 'Please select a transport method.',
   RESOURCES_ENDPOINT: 'Endpoint',
   RESOURCES_MOUNT_POINT: 'Mount Point',
-  RESOURCES_INVALID_MOUNT_POINT_DESC: 'Invalid mount point. Mount point should follow the filepath format, and it does not allow to specify the root path.',
+  RESOURCES_INVALID_MOUNT_POINT_DESC:
+    'Invalid mount point. Mount point should follow the filepath format, and it does not allow to specify the root path.',
   RESOURCES_MOUNT_OPTIONS: 'Mount Options',
   RESOURCES_MOUNT_OPTIONS_TIP: 'Please enter mount options.',
   RESOURCES_MAX_CONNECTION: 'Max Connection',
-  RESOURCES_MAX_CONNECTION_TIP: 'Please select the number of maximum connection.',
+  RESOURCES_MAX_CONNECTION_TIP:
+    'Please select the number of maximum connection.',
   RESOURCES_CREATE_NETWORK_STORAGE: 'Create Network Storage',
   RESOURCES_EDIT_NETWORK_STORAGE: 'Modify Network Storage',
-  RESOURCES_DELETE_NETWORK_STORAGE_TIP: 'Enter the network storage name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
+  RESOURCES_DELETE_NETWORK_STORAGE_TIP:
+    'Enter the network storage name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
   RESOURCES_NETWORK_STORAGE_COMMON: 'Basic Information',
   RESOURCES_NETWORK_STORAGE_MOUNT: 'Mount Information',
+
+  RESOURCES_GPU_CLUSTER: 'GPU Cluster',
+  RESOURCES_GPU_CLUSTER_FABRICKEY: 'Fabric Key',
+  RESOURCES_GPU_CLUSTER_FABRICTYPE: 'Fabric Type',
+  RESOURCES_GPU_CLUSTER_SONANETWORK: 'Network',
+  RESOURCES_DELETE_GPU_CLUSTER_TIP:
+    'Enter the gpu cluster name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.' +
+    '<p></p>All virtual machines included in the cluster will be deleted.',
+  RESOURCES_DELETE_GPU_CLUSTER_VM_TIP:
+    'Virtual machine name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
+  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'Please enter a GPU cluster.',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'You can manage the status and usage of the GPU cluster.',
+  RESOURCES_CREATE_GPU_CLUSTER: 'Create GPU Cluster',
+  RESOURCES_EDIT_GPU_CLUSTER: 'Edit GPU Cluster',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'You can manage the status and usage of the GPU cluster.',
+  RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Number of Nodes',
+  RESOURCES_GPU_CLUSTER_MONITORING: 'GPU Monitoring',
+  RESOURCES_GPU_NODE_POOLS: 'Node Pools',
+  RESOURCES_GPU_CLUSTER_VM_COUNT: 'Number of Virtual Machines',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: 'Number of Virtual Machines to Create',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT:
+    'Number of Virtual Machines Available for Creation',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
+    'Please enter a value greater than or equal to 1 for the number of virtual machines to create.',
+
+  RESOURCES_VM_SETTINGS: 'Virtual Machine Settings',
+  RESOURCES_NO_VM: 'No Virtual Machines Found.',
+  RESOURCES_CREATE_REQUEST_SUCCESSFUL: 'Creation request has been made.',
+  RESOURCES_NUMBER_EMPTY_DESC: 'Please enter a number.',
+  RESOURCES_ENTER_1_MORE: 'Please enter a value greater than or equal to 1.',
+  RESOURCES_CLOSE: 'Close',
+  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER:
+    'Must be greater than or equal to the first number.',
 }

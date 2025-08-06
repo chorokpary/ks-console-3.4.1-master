@@ -60,8 +60,8 @@ const UnitTypes = {
     units: ['TB/s', 'GB/s', 'MB/s', 'KB/s', 'B/s'],
   },
   bandwidth: {
-    conditions: [1024 ** 2 / 8, 1024 / 8, 0],
-    units: ['Mbps', 'Kbps', 'bps'],
+    conditions: [1024 ** 3 / 8, 1024 ** 2 / 8, 1024 / 8, 0],
+    units: ['Gbps', 'Mbps', 'Kbps', 'bps'],
   },
   number: {
     conditions: [1000 ** 4, 1000 ** 3, 1000 ** 2, 1000, 0],
@@ -170,6 +170,9 @@ export const getValueByUnit = (num, unit, precision = 2) => {
     case 'Mbps':
       value = (value * 8) / 1024 / 1024
       break
+    case 'Gbps':
+      value = (value * 8) / 1024 / 1024 / 1024
+      break
     case 'ms':
       value *= 1000
       break
@@ -177,13 +180,13 @@ export const getValueByUnit = (num, unit, precision = 2) => {
       value *= 0.001
       break
     case 'carbonCo2':
-      value = (Math.round((value * 0.4781) / 0.1) * 0.1) * 0.001
+      value = Math.round((value * 0.4781) / 0.1) * 0.1 * 0.001
       break
     case 'carbonTree':
-      value = (Math.round((value * 0.1157625) / 0.1) * 0.1) * 0.001
+      value = Math.round((value * 0.1157625) / 0.1) * 0.1 * 0.001
       break
     case 'carbonCost':
-      value = (value * 111.16) * 0.001
+      value = value * 111.16 * 0.001
       break
   }
 
@@ -479,7 +482,7 @@ export const unitTransformMap = {
     ['months', 10000 * 60 * 60 * 24 * 30],
   ]),
   'percent (0-100)': unitTransformFactory([['%', 0]]),
-  'percent (0.0-1.0)': function (number, decimals) {
+  'percent (0.0-1.0)': function(number, decimals) {
     const format = unitTransformFactory([['%', 0]])
     return format(number * 100, decimals)
   },
@@ -502,7 +505,7 @@ export function unitTransformGroupFactory(config) {
 }
 
 export function unitTransformFactory(config) {
-  return function (number, decimals = 0) {
+  return function(number, decimals = 0) {
     const isNegative = number < 0
     const abs = Math.abs(number)
 

@@ -16,14 +16,32 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export { default as TinyArea } from './Area/TinyArea'
-export { default as MediumArea } from './Area/MediumArea'
-export { default as SimpleArea } from './Area/SimpleArea'
-export { default as MultiArea } from './Area/MultiArea'
-export { default as PercentArea } from './Area/PercentArea'
-export { default as SimpleBar } from './Bar/SimpleBar'
-export { default as StackedBar } from './Bar/StackedBar'
-export { default as SimpleCircle } from './Pie/SimpleCircle'
-export { default as PieChart } from './Pie/PieChart'
-export { default as CustomChart } from './Multi/CustomChart'
-export { default as SimpleLine } from './Line/SimpleLine'
+import { getIndexRoute } from 'utils/router.config'
+
+import Status from './Status'
+import Monitoring from './Monitoring'
+import GpuMonitoring from './GpuMonitoring'
+
+const PATH = '/clusters/:cluster/gpuclusters/:name'
+
+export default [
+  {
+    path: `${PATH}/status`,
+    title: t('RESOURCES_STATE'),
+    component: Status,
+    exact: true,
+  },
+  {
+    path: `${PATH}/monitoring`,
+    title: t('RESOURCES_MONITORING'),
+    component: Monitoring,
+    exact: true,
+  },
+  {
+    path: `${PATH}/gpumonitoring`,
+    title: t('RESOURCES_GPU_CLUSTER_MONITORING'),
+    component: GpuMonitoring,
+    exact: true,
+  },
+  getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),
+]

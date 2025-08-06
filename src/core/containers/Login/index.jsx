@@ -193,7 +193,7 @@ export default class Login extends Component {
                   },
                 ]}
               >
-                <Input name="username" placeholder="user@example.com" />
+                <Input name="username" placeholder="user@example.com"/>
               </Form.Item>
               <Form.Item
                 label={t('PASSWORD')}

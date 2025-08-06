@@ -215,7 +215,8 @@ module.exports = {
   RESOURCES_EDIT_DEDICATED_NETWORK: '전용 네트워크 수정',
   RESOURCES_DELETE_DEDICATED_NETWORK_TIP:
     '전용 네트워크 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_DEDICATED_NETWORK_DESC: '전용 네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_DEDICATED_NETWORK_DESC:
+    '전용 네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_FABRIC: '네트워크 패브릭',
   RESOURCES_SELECT_FABRIC_TIP: '네트워크 패브릭을 선택해 주세요.',
   RESOURCES_INTERFACE: '인터페이스',
@@ -300,7 +301,7 @@ module.exports = {
   RESOURCES_NETWORK: '네트워크',
   RESOURCES_NETWORK_TAB1: '가상 네트워크',
   RESOURCES_NETWORK_TAB2: 'SR-IOV 네트워크',
-  RESOURCES_NETWORK_TAB3: '전용 네트워크', 
+  RESOURCES_NETWORK_TAB3: '전용 네트워크',
   RESOURCES_SELECT_NETWORK_IP_TIP: '네트워크 IP를 선택해 주세요.',
   RESOURCES_LIST_NETWORK: '네트워크 목록',
   RESOURCES_CREATE_NETWORK: '네트워크 생성',
@@ -1012,6 +1013,8 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Port를 입력해 주세요.',
   RESOURCES_ENTER_60_MORE: '60 이상 입력해 주세요.',
   RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
+  RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
+  RESOURCES_LAST_NUMBER_GREATER: '시작 숫자보다 큰 숫자를 입력해 주세요.',
   RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'DNS 정보를 정확히 입력해주세요.',
   RESOURCES_DNS_PRIMARY: 'Primary',
@@ -1041,6 +1044,7 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
   RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
+  RESOURCES_VM_EDIT: 'VM 편집',
   RESOURCES_VM_SCHEDULE_STATUS: '가상머신 스케줄링 상태',
   RESOURCES_VM_SCHEDULE_READY: '가상머신 준비',
   RESOURCES_VM_SCHEDULE_READY_DESC:
@@ -1061,6 +1065,10 @@ module.exports = {
     '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
     '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 대문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
+  RESOURCES_FABRIC_KEY_DESC:
+    '패브릭 키는 0x0000~0xFFFF 형식이어야 하며, infiniband의 경우 0x0001~0x7FFE, ethernet의 경우 0x0001~0x0FFE 범위 내의 값이어야 합니다.',
+  RESOURCES_INVALID_FABRIC_KEY_DESC:
+    '잘못된 패브릭 키입니다. \n패브릭 키는 0x0000~0xFFFF 형식이어야 하며, infiniband의 경우 0x0001~0x7FFE, ethernet의 경우 0x0001~0x0FFE 범위 내의 값이어야 합니다.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
   RESOURCES_JUPYTER_PORT_RANGE_DESC:
@@ -1120,7 +1128,8 @@ module.exports = {
   RESOURCES_NODE_IP: '노드 IP',
 
   RESOURCES_NETWORK_STORAGE: '네트워크 스토리지',
-  RESOURCES_NETWORK_STORAGE_DESC: '네트워크 스토리지 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_NETWORK_STORAGE_DESC:
+    '네트워크 스토리지 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_FILESYSTEM: '파일 시스템',
   RESOURCES_SELECT_FILESYSTEM_TIP: '파일 시스템을 선택해 주세요.',
   RESOURCES_PROTOCOL: '프로토콜',
@@ -1129,15 +1138,49 @@ module.exports = {
   RESOURCES_SELECT_TRANSPORT_TIP: '통신 방식을 선택해 주세요.',
   RESOURCES_ENDPOINT: '엔드 포인트',
   RESOURCES_MOUNT_POINT: '마운트 포인트',
-  RESOURCES_INVALID_MOUNT_POINT_DESC: '잘못된 마운트 포인트입니다. 마운트 포인트는 파일 경로 양식으로 지정해야하고, 루트 경로는 마운트 포인트로 사용할 수 없습니다.',
+  RESOURCES_INVALID_MOUNT_POINT_DESC:
+    '잘못된 마운트 포인트입니다. 마운트 포인트는 파일 경로 양식으로 지정해야하고, 루트 경로는 마운트 포인트로 사용할 수 없습니다.',
   RESOURCES_MOUNT_OPTIONS_TIP: '마운트 옵션을 입력하여 주세요.',
   RESOURCES_MOUNT_OPTIONS: '마운트 옵션',
   RESOURCES_MAX_CONNECTION: '최대 연결수',
   RESOURCES_MAX_CONNECTION_TIP: '최대 연결수를 선택해 주세요.',
   RESOURCES_CREATE_NETWORK_STORAGE: '네트워크 스토리지 생성',
   RESOURCES_EDIT_NETWORK_STORAGE: '네트워크 스토리지 수정',
-  RESOURCES_DELETE_NETWORK_STORAGE_TIP: '네트워크 스토리지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_DELETE_NETWORK_STORAGE_TIP:
+    '네트워크 스토리지 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_NETWORK_STORAGE_COMMON: '기본 정보',
   RESOURCES_NETWORK_STORAGE_MOUNT: '마운트 정보',
-  
+
+  RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
+  RESOURCES_GPU_CLUSTER_FABRICKEY: '패브릭 키',
+  RESOURCES_GPU_CLUSTER_FABRICTYPE: '패브릭 타입',
+  RESOURCES_GPU_CLUSTER_SONANETWORK: '네트워크',
+  RESOURCES_DELETE_GPU_CLUSTER_TIP:
+    'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.' +
+    '<p></p>클러스터에 포함된 모든 가상머신이 삭제됩니다.',
+  RESOURCES_DELETE_GPU_CLUSTER_VM_TIP:
+    '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
+  RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
+  RESOURCES_GPU_CLUSTER_DESC:
+    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
+  RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
+  RESOURCES_GPU_NODE_POOLS: 'Node Pools',
+  RESOURCES_GPU_CLUSTER_VM_COUNT: '가상머신 수',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: '가상머신 생성 수',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT: '생성 가능한 가상머신 수',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
+    '가상머신 생성 수를  1 이상 입력해주세요',
+
+  RESOURCES_VM_SETTINGS: '가상머신 설정',
+  RESOURCES_NO_VM: '가상머신이 없습니다.',
+  RESOURCES_CREATE_REQUEST_SUCCESSFUL: '생성 요청 했습니다.',
+  RESOURCES_NUMBER_EMPTY_DESC: '숫자를 입력하세요.',
+  RESOURCES_ENTER_1_MORE: '1이상 입력해 주세요.',
+  RESOURCES_CLOSE: '닫기',
+  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: '첫 번째 숫자보다 크거나 같아야 합니다.',
 }
