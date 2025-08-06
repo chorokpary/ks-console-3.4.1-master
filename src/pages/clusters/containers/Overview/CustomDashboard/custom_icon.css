@@ -300,7 +300,7 @@ i {
   height: 40px;
 }
 .ico-type-sriov-wh {
-  background: url('/assets/resources/images/icons/ico-type-sriov-wh.svg') center 
+  background: url('/assets/resources/images/icons/ico-type-sriov-wh.svg') center
     no-repeat;
   width: 30px;
   height: 30px;
@@ -458,6 +458,12 @@ i {
 .ico-type-solution {
   background: url('/assets/resources/images/icons/ico-type-solution.svg') center
     no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-gpucluster {
+  background: url('/assets/resources/images/icons/ico-type-gpucluster.svg')
+    center no-repeat;
   width: 30px;
   height: 30px;
 }
@@ -760,6 +766,12 @@ i {
 }
 .ico-type40-bmcnode {
   background: url('/assets/resources/images/icons/ico-type40-bmcnode.svg')
+    center no-repeat;
+  width: 40px;
+  height: 40px;
+}
+.ico-type40-gpucluster {
+  background: url('/assets/resources/images/icons/ico-type40-gpucluster.svg')
     center no-repeat;
   width: 40px;
   height: 40px;

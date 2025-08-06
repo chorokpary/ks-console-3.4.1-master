@@ -135,7 +135,7 @@ export default class gpuclusters extends React.Component {
         render: (name, record) => (
           <div className={styles.avatar}>
             <div className={styles.icon}>
-              <i className="ico-type-mediatedvgpu"></i>
+              <i className="ico-type-gpucluster"></i>
             </div>
             <div>
               <div>
@@ -231,7 +231,7 @@ export default class gpuclusters extends React.Component {
   }
 
   getBanner = () => {
-    return <i className="ico-type40-mediatedvgpu"></i>
+    return <i className="ico-type40-gpucluster"></i>
   }
 
   render() {

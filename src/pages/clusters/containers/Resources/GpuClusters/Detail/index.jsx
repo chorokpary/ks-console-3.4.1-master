@@ -124,7 +124,7 @@ const GpuClustersDetail = props => {
   }
 
   const getBanner = () => {
-    return <i className="ico-type-mediatedvgpu"></i>
+    return <i className="ico-type-gpucluster"></i>
   }
 
   const sideProps = {
