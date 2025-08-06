@@ -345,23 +345,23 @@ export default class Vms extends React.Component {
               switch (el.type) {
                 case 'virtio':
                   icon = "🆅";
-                  tooltip = "VPC Network: ";
+                  tooltip = t('RESOURCES_VPC_NETWORK') + ": ";
                   break;
                 case 'sriov':
                   icon = "🆂";
-                  tooltip = "SR-IOV Network: ";
+                  tooltip = t('RESOURCES_SR_IOV_NETWORK') + ": ";
                   break;
                 case 'bond':
                   icon = "🅱";
-                  tooltip = "Bonded Network: ";
+                  tooltip = t('RESOURCES_BOND_NETWORK') + ": ";
                   break;
                 case 'dedicated':
                   icon = "🅳";
-                  tooltip = "Dedicated Network: ";
+                  tooltip = t('RESOURCES_DEDICATED_NETWORK') + ": ";
                   break;
                 default:
                   icon = "🆄";
-                  tooltip = "Unknown Network: ";
+                  tooltip = t('RESOURCES_UNKNOWN_NETWORK') + ": ";
               }
 
               const fullname = tooltip + el.name
