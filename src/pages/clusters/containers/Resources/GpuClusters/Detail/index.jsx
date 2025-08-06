@@ -71,7 +71,7 @@ const GpuClustersDetail = props => {
       onClick: () =>
         props.rootStore.triggerAction('gpuclusters.remove', {
           type: 'GPUCLUSTERS_DETAIL',
-          detail: toJS(store.detail),
+          detail: { ...toJS(store.detail.data), cluster },
           namespace: store.detail.data.namespace,
           store: store,
           success: () => {

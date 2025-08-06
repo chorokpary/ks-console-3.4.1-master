@@ -31,7 +31,6 @@ const ModifyModal = props => {
     form.current.validator(() => {
       const { data } = form.current.props
       const retypeList = data.retype.split(',').map(item => item.trim())
-      console.log('onOk data', retypeList)
       onOk({ retypeList })
     })
   }

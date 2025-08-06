@@ -433,7 +433,8 @@ export default class GpuClustersStore extends Base {
 
           // request.delete(url, jsonData)
           request.delete(
-            `${this.getDeleteUrl({ name: id, namespace: params.namespace })}`
+            `${this.getVmResourceUrl(params)}/${id}`
+            // `${this.getDeleteUrl({ name: id, namespace: params.namespace })}`
           )
         })
       )

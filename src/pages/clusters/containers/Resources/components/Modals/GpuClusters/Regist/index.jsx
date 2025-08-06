@@ -31,7 +31,6 @@ import './checkbox.disabled.css'
 const regexVmCount = /^[1-9][0-9]*$/
 
 const RegistModal = props => {
-  console.log('RegistModal props', props)
   const form = useRef()
   const [formData] = useState({})
 

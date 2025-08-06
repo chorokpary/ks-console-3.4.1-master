@@ -190,41 +190,41 @@ export default {
       })
     },
   },
-  'gpuclusters.remove.batch': {
-    on({ store, cluster, workspace, namespace, success, devops, ...props }) {
-      const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array()
-      store.dataList.map(obj => {
-        if (rowKeys.includes(obj.name)) {
-          arr.push(obj.name)
-        }
-      })
-      const names = arr.join(', ')
-      const modal = Modal.open({
-        onOk: () => {
-          store
-            .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-              success && success()
-            })
-        },
-        modal: DeleteModal,
-        title:
-          rowKeys.length === 1
-            ? t('RESOURCES_DELETE')
-            : t('RESOURCES_DELETE_MULTIPLE'),
-        desc:
-          rowKeys.length === 1
-            ? t.html('RESOURCES_DELETE_GPU_CLUSTER_TIP', { resource: names })
-            : t.html('RESOURCES_DELETE_GPU_CLUSTER_TIP', { resource: names }),
-        resource: names,
-        store,
-        ...props,
-      })
-    },
-  },
+  // 'gpuclusters.remove.batch': {
+  //   on({ store, cluster, workspace, namespace, success, devops, ...props }) {
+  //     const rowKeys = toJS(store.list.selectedRowKeys)
+  //     let arr = new Array()
+  //     store.dataList.map(obj => {
+  //       if (rowKeys.includes(obj.name)) {
+  //         arr.push(obj.name)
+  //       }
+  //     })
+  //     const names = arr.join(', ')
+  //     const modal = Modal.open({
+  //       onOk: () => {
+  //         store
+  //           .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+  //           .then(() => {
+  //             Modal.close(modal)
+  //             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+  //             success && success()
+  //           })
+  //       },
+  //       modal: DeleteModal,
+  //       title:
+  //         rowKeys.length === 1
+  //           ? t('RESOURCES_DELETE')
+  //           : t('RESOURCES_DELETE_MULTIPLE'),
+  //       desc:
+  //         rowKeys.length === 1
+  //           ? t.html('RESOURCES_DELETE_GPU_CLUSTER_TIP', { resource: names })
+  //           : t.html('RESOURCES_DELETE_GPU_CLUSTER_TIP', { resource: names }),
+  //       resource: names,
+  //       store,
+  //       ...props,
+  //     })
+  //   },
+  // },
   // 'gpuclusters.delete': {
   //   on({ store, detail, success, ...props }) {
   //     const modal = Modal.open({
