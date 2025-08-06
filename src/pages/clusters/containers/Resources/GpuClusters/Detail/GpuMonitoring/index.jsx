@@ -170,7 +170,7 @@ const index = props => {
     }
 
     const getVmGpuInboundData = async () => {
-      const inboundLinuxDataExpr = `node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod="${selectedVm}", namespace="${cluster}"}`
+      const inboundLinuxDataExpr = `increase(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod="${selectedVm}", namespace="${cluster}"}[5m])`
       const gpuInboundData = await customStore.fetchMetric({
         expr: inboundLinuxDataExpr,
         ...paramsData,
@@ -181,7 +181,7 @@ const index = props => {
     }
 
     const getVmGpuOutboundData = async () => {
-      const outboundLinuxDataExpr = `node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod="${selectedVm}", namespace="${cluster}"}`
+      const outboundLinuxDataExpr = `increase(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod="${selectedVm}", namespace="${cluster}"}[5m])`
       const gpuOutboundData = await customStore.fetchMetric({
         expr: outboundLinuxDataExpr,
         ...paramsData,

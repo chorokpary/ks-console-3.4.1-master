@@ -1151,7 +1151,7 @@ module.exports = {
   RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
   RESOURCES_GPU_CLUSTER_FABRICKEY: '패브릭 키',
   RESOURCES_GPU_CLUSTER_FABRICTYPE: '패브릭 타입',
-  RESOURCES_GPU_CLUSTER_SONANETWORK: '소나 네트워크',
+  RESOURCES_GPU_CLUSTER_SONANETWORK: '네트워크',
   RESOURCES_DELETE_GPU_CLUSTER_TIP:
     'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.' +
     '<p></p>클러스터에 포함된 모든 가상머신이 삭제됩니다.',

@@ -1163,7 +1163,7 @@ module.exports = {
   RESOURCES_GPU_CLUSTER: 'GPU Cluster',
   RESOURCES_GPU_CLUSTER_FABRICKEY: 'Fabric Key',
   RESOURCES_GPU_CLUSTER_FABRICTYPE: 'Fabric Type',
-  RESOURCES_GPU_CLUSTER_SONANETWORK: 'Sona Network',
+  RESOURCES_GPU_CLUSTER_SONANETWORK: 'Network',
   RESOURCES_DELETE_GPU_CLUSTER_TIP:
     'Enter the gpu cluster name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.' +
     '<p></p>All virtual machines included in the cluster will be deleted.',

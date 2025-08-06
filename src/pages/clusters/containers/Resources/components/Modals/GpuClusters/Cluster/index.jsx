@@ -241,7 +241,7 @@ const ClusterModal = props => {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('fabric type')}
+                  label={t('RESOURCES_GPU_CLUSTER_FABRICTYPE')}
                   rules={[
                     {
                       required: true,
@@ -259,7 +259,7 @@ const ClusterModal = props => {
               </Column>
               <Column>
                 <Form.Item
-                  label={t('sona network')}
+                  label={t('RESOURCES_GPU_CLUSTER_SONANETWORK')}
                   rules={[
                     {
                       required: true,
@@ -279,7 +279,7 @@ const ClusterModal = props => {
             <Columns>
               <Column>
                 <Form.Item
-                  label={t('fabric key')}
+                  label={t('RESOURCES_GPU_CLUSTER_FABRICKEY')}
                   rules={[{ required: true, validator: segmentIdValidator }]}
                   // desc={t('RESOURCES_FABRIC_KEY_DESC')}
                 >
