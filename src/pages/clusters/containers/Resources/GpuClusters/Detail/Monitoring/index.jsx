@@ -19,6 +19,7 @@ const index = props => {
   const customStore = new CustomStore()
 
   const store = new GpuClustersStore()
+
   const cluster = props.match.params.cluster
   const name = props.match.params.name
   const perPage = 100
@@ -70,6 +71,7 @@ const index = props => {
     const page = get(params, 'page', 1)
     const detailParams = {
       cluster,
+      namespace: props.detailStore.detail?.data?.namespace,
       resource: props.variables,
       id: props.id,
       name: name,

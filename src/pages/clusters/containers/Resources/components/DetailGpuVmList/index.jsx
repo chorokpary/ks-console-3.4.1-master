@@ -99,7 +99,7 @@ const DetailGpuVmList = props => {
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
     const detailParams = {
-      cluster,
+      namespace: props.namespace,
       resource: props.variables,
       id: props.id,
       name: props.name,

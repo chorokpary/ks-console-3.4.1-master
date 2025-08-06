@@ -75,6 +75,7 @@ const index = props => {
 
     const detailParams = {
       cluster,
+      namespace: props.detailStore.detail?.data?.namespace,
       resource: props.variables,
       id: props.id,
       name: name,

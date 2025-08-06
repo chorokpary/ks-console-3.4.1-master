@@ -37,13 +37,14 @@ const GpuClustersDetail = props => {
     {
       key: 'edit',
       icon: 'pen',
-      text: t('VM 편집'),
+      text: t('RESOURCES_VM_EDIT'),
       action: 'edit',
       show: showEdit,
       onClick: () =>
         props.rootStore.triggerAction('gpuclusters.vmedit', {
           detail: toJS(store.detail),
           store: store,
+          namespace: store.detail.data.namespace,
           success: fetchData,
           ...props.match.params,
         }),
@@ -71,16 +72,19 @@ const GpuClustersDetail = props => {
         props.rootStore.triggerAction('gpuclusters.remove', {
           type: 'GPUCLUSTERS_DETAIL',
           detail: toJS(store.detail),
+          namespace: store.detail.data.namespace,
           store: store,
-          cluster: props.match.params.cluster,
-          success: () => routing.push(listUrl),
+          success: () => {
+            setTimeout(() => {
+              routing.push(listUrl)
+            }, 200)
+          },
         }),
     },
   ]
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
-    console.log('detail', detail)
 
     if (isEmpty(detail)) {
       return
@@ -99,6 +103,18 @@ const GpuClustersDetail = props => {
         name: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
         // value: (detail.data.nodes).filter(item => item.vmi).length + "/" + (detail.data.nodes).length,
         value: detail.data?.instances ? detail.data.instances.length : '-',
+      },
+      {
+        name: t('RESOURCES_GPU_CLUSTER_FABRICKEY'),
+        value: detail.data?.spec?.fabricKey,
+      },
+      {
+        name: t('RESOURCES_GPU_CLUSTER_FABRICTYPE'),
+        value: detail.data?.spec?.fabricType,
+      },
+      {
+        name: t('RESOURCES_GPU_CLUSTER_SONANETWORK'),
+        value: detail.data?.spec?.sonaNetwork,
       },
     ]
   }

@@ -231,6 +231,7 @@ const Status = props => {
           variables="gpuclusters"
           {...props.match.params}
           id={props.match.params.id}
+          namespace={store.detail.data?.namespace}
         />
       </div>
     </>

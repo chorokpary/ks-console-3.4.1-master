@@ -32,6 +32,7 @@ import { Indicator } from 'components/Base'
 import GpuClustersStore from 'stores/resources/gpuclusters'
 
 import styles from './index.scss'
+import { namespace } from 'd3-selection'
 
 @withClusterList({
   store: new GpuClustersStore(),
@@ -57,7 +58,12 @@ export default class gpuclusters extends React.Component {
         onClick: item =>
           trigger('gpuclusters.remove', {
             detail: item,
-            success: getData,
+            namespace: item.namespace,
+            success: () => {
+              setTimeout(() => {
+                getData()
+              }, 200)
+            },
             ...this.props.match.params,
           }),
       },

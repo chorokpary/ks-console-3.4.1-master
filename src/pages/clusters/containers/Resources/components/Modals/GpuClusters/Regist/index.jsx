@@ -31,6 +31,7 @@ import './checkbox.disabled.css'
 const regexVmCount = /^[1-9][0-9]*$/
 
 const RegistModal = props => {
+  console.log('RegistModal props', props)
   const form = useRef()
   const [formData] = useState({})
 
@@ -338,6 +339,8 @@ const RegistModal = props => {
       data.gpuVmName = gpuVmName
       data.firstGpuVmName = firstGpuVmName
       data.lastGpuVmName = lastGpuVmName
+
+      data.gpuCluster = props.name // gpu cluster name 추가
 
       const networkListData = networkList
         .filter(x => networkCheckItems.includes(x.name))

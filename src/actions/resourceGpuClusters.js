@@ -142,24 +142,12 @@ export default {
       ...props
     }) {
       const modal = Modal.open({
-        onOk: data => {
-          store
-            .update(
-              {
-                ...detail,
-                cluster,
-                workspace,
-                namespace,
-                devops,
-                name: data.name,
-              },
-              data
-            )
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
-              success && success()
-            })
+        onOk: retypeList => {
+          store.batchDelete({ ...props, namespace, ...retypeList }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
         },
         title: t('VM 편집'),
         modal: ModifyModal,
@@ -185,13 +173,11 @@ export default {
     }) {
       const modal = Modal.open({
         onOk: () => {
-          store
-            .delete({ ...detail, cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-              success && success()
-            })
+          store.delete({ ...detail, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
@@ -239,24 +225,24 @@ export default {
       })
     },
   },
-  'gpuclusters.delete': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: () => {
-          store.delete(detail).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
-        },
-        modal: DeleteModal,
-        module: store.module,
-        detail,
-        store,
-        ...props,
-      })
-    },
-  },
+  // 'gpuclusters.delete': {
+  //   on({ store, detail, success, ...props }) {
+  //     const modal = Modal.open({
+  //       onOk: () => {
+  //         store.delete(detail).then(() => {
+  //           Modal.close(modal)
+  //           Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+  //           success && success()
+  //         })
+  //       },
+  //       modal: DeleteModal,
+  //       module: store.module,
+  //       detail,
+  //       store,
+  //       ...props,
+  //     })
+  //   },
+  // },
   'gpuclusters.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({

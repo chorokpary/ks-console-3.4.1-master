@@ -30,8 +30,9 @@ const ModifyModal = props => {
 
     form.current.validator(() => {
       const { data } = form.current.props
-      data.id = props.store.detail.id
-      onOk({ ...data })
+      const retypeList = data.retype.split(',').map(item => item.trim())
+      console.log('onOk data', retypeList)
+      onOk({ retypeList })
     })
   }
 
@@ -65,10 +66,6 @@ const ModifyModal = props => {
   const handleDelete = vmName => {
     setVmCheckItems(vmCheckItems.filter(el => el !== vmName))
   }
-
-  useEffect(() => {
-    console.log('vmCheckItems', vmCheckItems)
-  }, [vmCheckItems])
 
   // 체크 리스트 끝 ==================================================
 
@@ -131,13 +128,13 @@ const ModifyModal = props => {
                           />
                         </th>
                         <th>
-                          <strong>{t('이름')}</strong>
+                          <strong>{t('RESOURCES_NAME')}</strong>
                         </th>
                         <th>
-                          <strong>{t('상태')}</strong>
+                          <strong>{t('RESOURCES_STATE')}</strong>
                         </th>
                         <th>
-                          <strong>{t('노드')}</strong>
+                          <strong>{t('RESOURCES_NODE')}</strong>
                         </th>
                       </tr>
                     </thead>
@@ -149,7 +146,7 @@ const ModifyModal = props => {
                             className="no-data"
                             style={{ textAlign: 'center' }}
                           >
-                            <p>{t('할당된 가상머신이 없습니다.')}</p>
+                            <p>{t('RESOURCES_NO_VM')}</p>
                           </td>
                         </tr>
                       )}
@@ -192,14 +189,10 @@ const ModifyModal = props => {
             </Form.Item>
 
             <Form.Item
-              label={t('삭제 확인')}
-              desc={t(
-                `가상머신 이름 ${vmCheckItems
-                  .map(name => name)
-                  .join(
-                    ', '
-                  )}을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.`
-              )}
+              label={t('RESOURCES_DELETE') + t('RESOURCES_CONFIRM')}
+              desc={t.html('RESOURCES_DELETE_GPU_CLUSTER_VM_TIP', {
+                resource: vmCheckItems.map(name => name).join(', '),
+              })}
             >
               <Input
                 style={{ maxWidth: 'none' }}
