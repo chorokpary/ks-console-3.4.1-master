@@ -191,7 +191,7 @@ export default class Networks extends React.Component {
 
   modalTopology = () => {
     const { getData, trigger } = this.props;
-    trigger('networks.topology', {
+    trigger('networks.topology.project', {
       success: getData,
       ...this.props.match.params,
     });

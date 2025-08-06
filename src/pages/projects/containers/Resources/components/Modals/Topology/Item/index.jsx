@@ -72,7 +72,6 @@ const TopologyItem = (props) => {
       obj.num = (index + 1);
       obj.network_type = networkType;
     })
-    // console.log("unionArray : "+ JSON.stringify(unionArray))
     setNetworkUnionList(unionArray);
 
   }, [networkList, sriovList])
@@ -84,13 +83,13 @@ const TopologyItem = (props) => {
         networkUnionList.map(async (obj) => {
 
           // sriov 와 network 구분해서 처리 해야 함
-          const elementVmList = vmList.filter(item => obj.network_type == "N" ? _.find(item.networks, { 'name': obj.id }) : _.find(item.networks, { 'name': obj.name }))
+          const elementVmList = vmList.filter(item => obj.network_type == "N" ? _.find(item.networks, { 'name': obj.name }) : _.find(item.networks, { 'name': obj.name }))
           obj.elementVmList = elementVmList;
 
-          const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { id: obj.id }));
+          const elementRouterList = obj.external ? routerList.filter(item => item.external?.name == obj.name) : routerList.filter(item => some(item.internal, { name: obj.name }));
           obj.elementRouterList = elementRouterList;
 
-          const elementLoadBalancerList = loadbalancerList.filter(item => item.network?.id == obj.id)
+          const elementLoadBalancerList = loadbalancerList.filter(item => item.network?.name == obj.name)
           obj.elementLoadBalancerList = elementLoadBalancerList;
         })
       )
@@ -207,7 +206,7 @@ const TopologyItem = (props) => {
 
         obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
 
-          const vmNetworkIp = (vm.networks).filter(network => network.name == obj.id).map(item => item.ip)
+          const vmNetworkIp = (vm.networks).filter(network => network.name == obj.name).map(item => item.ip)
 
           if (vmArray.includes(vm.name)) {
             const duplicationJson = {
@@ -324,8 +323,8 @@ const TopologyItem = (props) => {
         // VM 연결
         obj.elementVmList.length > 0 && obj.elementVmList.map((vm) => {
 
-          const vmNetworkIp = (vm.networks).filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.id).map(item => item.ip);
-          const vmNetworkName = (vm.networks).filter(network => network.name == obj.id).map(item => item.name);
+          const vmNetworkIp = (vm.networks).filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.name).map(item => item.ip);
+          const vmNetworkName = (vm.networks).filter(network => network.name == obj.name).map(item => item.name);
 
           const sriovCheck = (sriovList).map(item => item.name).includes(vmNetworkName.toString());
           const bondingLeft = !sriovCheck ? "" : "bonding";
@@ -346,7 +345,7 @@ const TopologyItem = (props) => {
                   <h4>VM</h4>
                   <p>
                     <i className={`ico-type24-vm ${getState(vm.state)}`}></i>
-                    <span>{vm.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${vm.name}/${vm.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{vm.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/vms/${vm.name}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                   {floatingData.length > 0 &&
                     <div>
@@ -415,7 +414,7 @@ const TopologyItem = (props) => {
                   <h4 className="type2">VRouter</h4>
                   <p>
                     <i className="ico-type24-router on"></i>
-                    <span>{router.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${router.name}/${router.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{router.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/routers/${router.name}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                 </div>
                 <div className="element right">
@@ -477,7 +476,7 @@ const TopologyItem = (props) => {
                   <h4 className="type2">Load balancer</h4>
                   <p>
                     <i className="ico-type24-router on"></i>
-                    <span>{load.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${load.name}/${load.id}`} className="btn_go" onClick={() => closeModal()}></a></span>
+                    <span>{load.name}<a href={`/${workspace}/clusters/${cluster}/projects/${namespace}/loadBalancers/${load.name}`} className="btn_go" onClick={() => closeModal()}></a></span>
                   </p>
                 </div>
                 <div className="element right">
