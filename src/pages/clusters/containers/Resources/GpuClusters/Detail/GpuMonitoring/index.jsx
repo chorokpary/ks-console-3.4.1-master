@@ -206,7 +206,7 @@ const index = props => {
         type: 'utilisation',
         title: 'RESOURCES_GPU_UTILIZATION',
         unit: '%',
-        legend: vmGpuUtilData.map(item => item.metric.device),
+        legend: vmGpuUtilData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuUtilData,
       },
       {
@@ -214,21 +214,21 @@ const index = props => {
         title: 'RESOURCES_GPU_RAM_USAGE',
         unit: '%',
         unitType: 'memory',
-        legend: vmGpuRamData.map(item => item.metric.device),
+        legend: vmGpuRamData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuRamData,
       },
       {
         type: 'utilisation',
         title: t('RESOURCES_GPU_TEMPERATURE'),
         unit: '°C',
-        legend: vmGpuTempData.map(item => item.metric.device),
+        legend: vmGpuTempData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuTempData,
       },
       {
         type: 'utilisation',
         title: t('RESOURCES_GPU_POWER'),
         unit: 'W',
-        legend: vmGpuPowerData.map(item => item.metric.device),
+        legend: vmGpuPowerData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuPowerData,
       },
       {
@@ -248,8 +248,8 @@ const index = props => {
       {
         type: 'bandwidth',
         title: 'NVLink ' + t('TRAFFIC'),
-        unitType: 'bandwidth',
-        legend: vmGpuNvlinkData.map(item => item.metric.device),
+        unitType: 'bandwidthBytes',
+        legend: vmGpuNvlinkData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuNvlinkData,
       },
     ]

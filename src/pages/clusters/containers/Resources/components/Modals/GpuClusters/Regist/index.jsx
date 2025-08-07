@@ -29,6 +29,7 @@ import styles from './index.scss'
 import './checkbox.disabled.css'
 
 const regexVmCount = /^[1-9][0-9]*$/
+const regexVmNodePrefix = /^[a-z0-9-]{1,63}$/;
 
 const RegistModal = props => {
   const form = useRef()
@@ -88,11 +89,15 @@ const RegistModal = props => {
 
   const [vmCount, setVmCount] = useState(1)
   const [gpuVmName, setGpuVmName] = useState('')
+  const [gpuNodeName, setGpuNodeName] = useState('')
   const [slideMinCount, setSlideMinCount] = useState(1)
   const [slideMaxCount, setSlideMaxCount] = useState(127)
   const [firstGpuVmName, setFirstGpuVmName] = useState('')
   const [lastGpuVmName, setLastGpuVmName] = useState('')
 
+
+  const [vmNamePrefix, setVmNamePrefix] = useState('')
+  const [nodeNamePrefix, setNodeNamePrefix] = useState('')
   const [firstNum, setFirstNum] = useState('')
   const [lastNum, setLastNum] = useState('')
 
@@ -421,6 +426,8 @@ const RegistModal = props => {
           (data.image === t('RESOURCES_SELECT') ||
             data.flavor === t('RESOURCES_SELECT'))) ||
         gpuVmName === '' ||
+        vmNamePrefix === '' ||
+        nodeNamePrefix === '' ||
         Number(data.firstNum) === 0 ||
         Number(data.lastNum) === 0 ||
         Number(data.firstNum) > Number(data.lastNum)
@@ -1033,31 +1040,44 @@ const RegistModal = props => {
 
   useEffect(() => {
     getGpuName()
-  }, [firstNum, lastNum])
+  }, [firstNum, lastNum, vmNamePrefix, nodeNamePrefix])
 
   const getGpuName = async () => {
-    const namePrefix = props.name
+    // const namePrefix = props.name
+    const vmPrefix = vmNamePrefix   
+    const nodePrefix = nodeNamePrefix   
+
     const numFirst = Number(firstNum)
     const numLast = Number(lastNum)
 
-    let firstName = ''
-    let lastName = ''
+    let firstVmName = ''
+    let lastVmName = ''
+    let firstNodeName = ''
+    let lastNodeName = ''
+
     let gpuName = ''
+    let nodeName = ''
 
     if (numFirst > 0) {
-      firstName = `${namePrefix}-${numFirst.toString().padStart(3, '0')}`
+      firstVmName = `${vmPrefix}${numFirst.toString().padStart(3, '0')}`
+      firstNodeName = `${nodePrefix}${numFirst.toString().padStart(3, '0')}`
 
       if (numLast > 0 && numFirst < numLast) {
-        lastName = `${namePrefix}-${numLast.toString().padStart(3, '0')}`
-        gpuName = `${firstName} ~ ${lastName}`
+        lastVmName = `${vmPrefix}${numLast.toString().padStart(3, '0')}`
+        lastNodeName = `${nodePrefix}${numLast.toString().padStart(3, '0')}`
+
+        gpuName = `${firstVmName} ~ ${lastVmName}`
+        nodeName = `${firstNodeName} ~ ${lastNodeName}`
       } else {
-        gpuName = firstName
+        gpuName = firstVmName
+        nodeName = firstNodeName
       }
     }
 
     setGpuVmName(gpuName)
-    setFirstGpuVmName(firstName)
-    setLastGpuVmName(lastName)
+    setGpuNodeName(nodeName)
+    setFirstGpuVmName(firstVmName)
+    setLastGpuVmName(lastVmName)
   }
 
   return (
@@ -1250,11 +1270,46 @@ const RegistModal = props => {
                   </Column>
                 </Columns>
 
-                {/* <div className={styles.wrapperError}>
-                        <div className={`form-item-error ${1==1 ? '' : '' }`}>
-                          {t('RESOURCES_LAST_NUM_SHOULD_BE_BIGGER')}
-                        </div>
-                  </div> */}
+                 <Columns>
+                  <Column>
+                    <Form.Item 
+                      label={t('RESOURCES_VM_PREFIX')}
+                      rules={[
+                        { required: true, message: t('RESOURCES_VM_PREFIX_EMPTY_DESC') },
+                        {
+                          pattern: regexVmNodePrefix,
+                          message: t('RESOURCES_INVALID_VM_PREFIX_DESC'),
+                        },
+                      ]}
+                    >
+                      <Input
+                        name="vm_name_prefix"
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}
+                        onChange={e => setVmNamePrefix(e)}
+                      />
+                    </Form.Item>
+                  </Column>
+                  <Column>
+                     <Form.Item 
+                      label={t('RESOURCES_NODE_PREFIX')}
+                     rules={[
+                        { required: true, message: t('RESOURCES_NODE_PREFIX_EMPTY_DESC') },
+                        {
+                          pattern: regexVmNodePrefix,
+                          message: t('RESOURCES_INVALID_NODE_PREFIX_DESC'),
+                        },
+                      ]}
+                    >
+                      <Input
+                        name="node_name_prefix"
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}                        
+                        onChange={e => setNodeNamePrefix(e)}
+                      />
+                    </Form.Item>                   
+                  </Column>
+                </Columns>
 
                 <Columns>
                   <Column>
@@ -2018,11 +2073,18 @@ const RegistModal = props => {
                       </div>
                     </div>
 
+                    <div className={styles.greybgbox}>
+                      <div className={styles.list_two_col}>
+                        <label>{t('RESOURCES_NODE_NAME')}</label>
+                        <div style={{ maxWidth: 'none' }}>{gpuNodeName}</div>
+                      </div>
+                    </div>
+
                     {imageType === 'I' && description && (
                       <div className={styles.greybgbox}>
-                        <div className={styles.list}>
+                        <div className={styles.list_one_col}>
                           <label>{t('RESOURCES_DESCRIPTION')}</label>
-                          <div>{description}</div>
+                          <div style={{ maxWidth: 'none' }}>{description}</div>
                         </div>
                       </div>
                     )}

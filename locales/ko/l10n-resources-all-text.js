@@ -322,7 +322,7 @@ module.exports = {
   RESOURCES_YEAR: '년',
   RESOURCES_NODE: '노드',
   RESOURCES_NODE_STATE: '노드 상태',
-  RESOURCES_NODE_NAME: '노드명',
+  RESOURCES_NODE_NAME: '노드 이름',
   RESOURCES_NEXT: '다음',
   RESOURCES_STEP: '단계',
   RESOURCES_DASHBOARD: '대시보드',
@@ -1183,4 +1183,12 @@ module.exports = {
   RESOURCES_ENTER_1_MORE: '1이상 입력해 주세요.',
   RESOURCES_CLOSE: '닫기',
   RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: '첫 번째 숫자보다 크거나 같아야 합니다.',
+  RESOURCES_VM_PREFIX: '가상머신 이름 prefix',
+  RESOURCES_VM_PREFIX_EMPTY_DESC: '가상머신 이름 prefix 을 입력해 주세요.',
+  RESOURCES_INVALID_VM_PREFIX_DESC:
+    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며, 최대 길이는 63자입니다.',
+  RESOURCES_NODE_PREFIX: '노드 이름 prefix',
+  RESOURCES_NODE_PREFIX_EMPTY_DESC: '노드 이름 prefix 을 입력해 주세요.',
+  RESOURCES_INVALID_NODE_PREFIX_DESC:
+    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며, 최대 길이는 63자입니다.',
 }

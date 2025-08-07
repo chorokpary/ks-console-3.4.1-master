@@ -420,6 +420,177 @@ button {
             }
           }
         }
+
+        .list_two_col {
+          display: flex;
+          flex-direction: column;
+          align-items: baseline;
+          position: relative;
+          width: fit-content;
+          word-break: break-all;
+
+          label {
+            align-items: flex-start;
+            display: flex;
+            padding: 8px 0px;
+            position: relative;
+            width: 85px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #5F708A;
+          }
+
+          div {
+            font-size: 12px;
+            color: #242E42;
+            width: 424px;
+            padding-right: 10px;
+
+            &.bold {
+              font-weight: 600;
+            }
+          }
+
+          p {
+            width: 424px;
+            padding-right: 10px;
+
+            &.bold {
+              font-weight: 600;
+            }
+          }
+
+          &>label+div {
+            font-weight: 600;
+          }
+
+          .multiline {
+            padding: 0;
+            font-weight: 600;
+            align-items: flex-start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: fit-content;
+
+            p {
+              margin-top: 4px;
+              line-height: 16px;
+
+              .flag {
+                width: 100px;
+                height: 15px;
+                color: #79879c;
+                display: inline-block;
+                background: #eff4f9;
+                border: 1px solid #ccd3db;
+                margin: 0 6px 2px 0;
+                border-radius: 2px;
+                font-size: 11px;
+                line-height: 15px;
+
+                >em {
+                  display: inline-block;
+                  background: #36435c;
+                  color: #fff;
+                  width: 45px;
+                  margin-right: 3px;
+                  text-align: left;
+                  padding-left: 6px;
+                  font-style: normal;
+
+
+                }
+              }
+            }
+          }
+        }
+
+        .list_one_col {
+          display: flex;
+          flex-direction: column;
+          align-items: baseline;
+          position: relative;
+          width: fit-content;
+          word-break: break-all;
+
+          label {
+            align-items: flex-start;
+            display: flex;
+            padding: 8px 0px;
+            position: relative;
+            width: 85px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #5F708A;
+          }
+
+          div {
+            font-size: 12px;
+            color: #242E42;
+            width: 848px;
+            padding-right: 10px;
+
+            &.bold {
+              font-weight: 600;
+            }
+          }
+
+          p {
+            width: 848px;
+            padding-right: 10px;
+
+            &.bold {
+              font-weight: 600;
+            }
+          }
+
+          &>label+div {
+            font-weight: 600;
+          }
+
+          .multiline {
+            padding: 0;
+            font-weight: 600;
+            align-items: flex-start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: fit-content;
+
+            p {
+              margin-top: 4px;
+              line-height: 16px;
+
+              .flag {
+                width: 100px;
+                height: 15px;
+                color: #79879c;
+                display: inline-block;
+                background: #eff4f9;
+                border: 1px solid #ccd3db;
+                margin: 0 6px 2px 0;
+                border-radius: 2px;
+                font-size: 11px;
+                line-height: 15px;
+
+                >em {
+                  display: inline-block;
+                  background: #36435c;
+                  color: #fff;
+                  width: 45px;
+                  margin-right: 3px;
+                  text-align: left;
+                  padding-left: 6px;
+                  font-style: normal;
+
+
+                }
+              }
+            }
+          }
+        }
+
       }
     }
   }
