@@ -60,12 +60,12 @@ const UnitTypes = {
     units: ['TB/s', 'GB/s', 'MB/s', 'KB/s', 'B/s'],
   },
   bandwidth: {
-    conditions: [1024 ** 3 / 8, 1024 ** 2 / 8, 1024 / 8, 0],
-    units: ['Gbps', 'Mbps', 'Kbps', 'bps'],
+    conditions: [1000 ** 4 / 8, 1000 ** 3 / 8, 1000 ** 2 / 8, 1000 / 8, 0],
+    units: ['Tbps', 'Gbps', 'Mbps', 'Kbps', 'bps'],
   },
   bandwidthBytes: {
-    conditions: [1024 ** 3, 1024 ** 2, 1024, 0],
-    units: ['GBps', 'MBps', 'KBps', 'Bps'],
+    conditions: [1000 ** 4, 1000 ** 3, 1000 ** 2, 1000, 0],
+    units: ['TBps', 'GBps', 'MBps', 'KBps', 'Bps'],
   },
   number: {
     conditions: [1000 ** 4, 1000 ** 3, 1000 ** 2, 1000, 0],
@@ -145,42 +145,35 @@ export const getValueByUnit = (num, unit, precision = 2) => {
     case 'B':
     case 'B/s':
     case 'Bps':
+    case 'bps':
       break
     case 'K':
     case 'KB':
     case 'KB/s':
     case 'KBps':
+    case 'Kbps':
       value /= 1000
       break
     case 'M':
     case 'MB':
     case 'MB/s':
     case 'MBps':
+    case 'Mbps':
       value /= 1000 ** 2
       break
     case 'G':
     case 'GB':
     case 'GB/s':
     case 'GBps':
+    case 'Gbps':
       value /= 1000 ** 3
       break
     case 'T':
     case 'TB':
     case 'TB/s':
     case 'TBps':
+    case 'Tbps':
       value /= 1000 ** 4
-      break
-    case 'bps':
-      value *= 8
-      break
-    case 'Kbps':
-      value = (value * 8) / 1024
-      break
-    case 'Mbps':
-      value = (value * 8) / 1024 / 1024
-      break
-    case 'Gbps':
-      value = (value * 8) / 1024 / 1024 / 1024
       break
     case 'ms':
       value *= 1000
