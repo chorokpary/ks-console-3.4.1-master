@@ -18,16 +18,10 @@
 
 import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
-import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
-import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 
 export default class ComputingStore extends Base {
-
 
   @action
   async fetchComputingData({
@@ -70,7 +64,8 @@ export default class ComputingStore extends Base {
       let resultCount = 0;
 
       if(pagedModule.includes(item.type)){
-        resultCount = get(await request.get(`${apiUrl}/${item.type}?project=${namespace}`), 'total', 0);
+        result = get(await request.get(`${apiUrl}/${item.type}?project=${namespace}&limit=-1`), item.root, []);
+        resultCount = result.length;
       }else{
         result = get(await request.get(`${apiUrl}/${item.type}`), item.root, []);
         resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;

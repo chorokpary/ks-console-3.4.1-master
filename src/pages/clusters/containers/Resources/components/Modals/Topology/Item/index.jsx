@@ -1,7 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Loading } from '@kube-design/components';
-import * as common from 'utils/resources';
-
 import { isEmpty, omit, get, find, some } from 'lodash';
 
 import TopologyStore from 'stores/resources/topology';
@@ -14,6 +11,7 @@ import {
 
 const TopologyItem = props => {
   const store = new TopologyStore();
+  const cluster = props.cluster;
 
   const [vmList, setVmList] = useState([]);
   const [networkList, setNetworkList] = useState([]);
@@ -85,18 +83,18 @@ const TopologyItem = props => {
           // sriov 와 network 구분해서 처리 해야 함
           const elementVmList = vmList.filter(item =>
             obj.network_type == 'N'
-              ? _.find(item.networks, { name: obj.id })
+              ? _.find(item.networks, { name: obj.name })
               : _.find(item.networks, { name: obj.name })
           );
           obj.elementVmList = elementVmList;
 
           const elementRouterList = obj.external
             ? routerList.filter(item => item.external?.name == obj.name)
-            : routerList.filter(item => some(item.internal, { id: obj.id }));
+            : routerList.filter(item => some(item.internal, { name: obj.name }));
           obj.elementRouterList = elementRouterList;
 
           const elementLoadBalancerList = loadbalancerList.filter(
-            item => item.network?.id == obj.id
+            item => item.network?.name == obj.name
           );
           obj.elementLoadBalancerList = elementLoadBalancerList;
         })
@@ -245,7 +243,7 @@ const TopologyItem = props => {
         obj.elementVmList.length > 0 &&
           obj.elementVmList.map(vm => {
             const vmNetworkIp = vm.networks
-              .filter(network => network.name == obj.id)
+              .filter(network => network.name == obj.name)
               .map(item => item.ip);
 
             if (vmArray.includes(vm.name)) {
@@ -350,11 +348,11 @@ const TopologyItem = props => {
         obj.elementVmList.map(vm => {
 
           const vmNetworkIp = vm.networks
-            .filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.id)
+            .filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.name)
             .map(item => item.ip);
 
           const vmNetworkName = vm.networks
-            .filter(network => network.name == obj.id)
+            .filter(network => network.name == obj.name)
             .map(item => item.name);
 
           const sriovCheck = sriovList
@@ -392,7 +390,7 @@ const TopologyItem = props => {
                     <span>
                       {vm.name}
                       <a
-                        href={`/clusters/default/vms/${vm.name}/${vm.id}`}
+                        href={`/clusters/${cluster}/projects/${vm.project}/vms/${vm.name}`}
                         className="btn_go"
                         onClick={() => closeModal()}
                       ></a>
@@ -478,7 +476,7 @@ const TopologyItem = props => {
                     <span>
                       {router.name}
                       <a
-                        href={`/clusters/default/routers/${router.name}/${router.id}`}
+                        href={`/clusters/${cluster}/projects/${router.project}/routers/${router.name}`}
                         className="btn_go"
                         onClick={() => closeModal()}
                       ></a>
@@ -555,7 +553,7 @@ const TopologyItem = props => {
                     <span>
                       {load.name}
                       <a
-                        href={`/clusters/default/loadBalancers/${load.name}/${load.id}`}
+                        href={`/clusters/${cluster}/projects/${load.project}/loadBalancers/${load.name}`}
                         className="btn_go"
                         onClick={() => closeModal()}
                       ></a>
