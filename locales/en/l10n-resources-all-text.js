@@ -1197,4 +1197,12 @@ module.exports = {
   RESOURCES_CLOSE: 'Close',
   RESOURCES_LAST_NUM_SHOULD_BE_BIGGER:
     'Must be greater than or equal to the first number.',
+  RESOURCES_VM_PREFIX: 'Virtual Machine Name prefix',
+  RESOURCES_VM_PREFIX_EMPTY_DESC: ' Please enter a Virtual Machine name prefix.',
+  RESOURCES_INVALID_VM_PREFIX_DESC:
+    'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
+  RESOURCES_NODE_PREFIX: 'Node Name prefix',
+  RESOURCES_NODE_PREFIX_EMPTY_DESC: 'Please enter a Node name prefix.',
+  RESOURCES_INVALID_NODE_PREFIX_DESC:
+    'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
 }

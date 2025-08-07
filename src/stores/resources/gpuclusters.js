@@ -330,7 +330,8 @@ export default class GpuClustersStore extends Base {
       const updatedNameJsonData = {
         vm: {
           ...jsonData.vm,
-          name: `${data.gpu_cluster}-${suffix}`,
+          name: `${data.vm_name_prefix}${suffix}`,
+          node: `${data.node_name_prefix}${suffix}`,
         },
       }
 
@@ -361,7 +362,7 @@ export default class GpuClustersStore extends Base {
         },
       }
 
-      //console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
+      // console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
       request.post(url, updatedNameJsonData)
     }
 

@@ -117,16 +117,16 @@ const ClusterModal = props => {
     let elements = ''
     elements = (
       <>
-        {/* <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button> */}
+        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
 
-        {!isCreateSuccessd && (
+        {/* {!isCreateSuccessd && (
           <Button
             onClick={() => closeModal()}
             className={classnames(styles['btn'], styles['btn-default'])}
           >
             {t('RESOURCES_CANCEL')}
           </Button>
-        )}
+        )} */}
         {!isCreateSend && (
           <Button
             onClick={() => {
@@ -140,18 +140,18 @@ const ClusterModal = props => {
           </Button>
         )}
         {isCreateSuccessd && (
-          // <Button onClick={() => { handleVmCreate() }}
-          //   className={classnames(styles['btn'], styles['btn-control'])}
-          //   loading={props.store.isSubmitting}
-          //   disabled={props.store.isSubmitting}
-          // >{t('RESOURCES_CREATE_VM')}
-          // </Button>
-          <Button
-            onClick={() => closeModal()}
-            className={classnames(styles['btn'], styles['btn-default'])}
-          >
-            {t('RESOURCES_CLOSE')}
+          <Button onClick={() => { handleVmCreate() }}
+            className={classnames(styles['btn'], styles['btn-control'])}
+            loading={props.store.isSubmitting}
+            disabled={props.store.isSubmitting}
+          >{t('RESOURCES_CREATE_VM')}
           </Button>
+          // <Button
+          //   onClick={() => closeModal()}
+          //   className={classnames(styles['btn'], styles['btn-default'])}
+          // >
+          //   {t('RESOURCES_CLOSE')}
+          // </Button>
         )}
       </>
     )
@@ -325,7 +325,7 @@ const ClusterModal = props => {
                   <i className={styles[`ico-status-running`]}/>
                 </div> */}
                 <p>GPU 클러스터가 생성되었습니다.</p>
-                {/* <p>가상머신을 생성하시겠습니까?</p> */}
+                <p>가상머신을 생성하시겠습니까?</p>
               </>
             )}
           </div>
