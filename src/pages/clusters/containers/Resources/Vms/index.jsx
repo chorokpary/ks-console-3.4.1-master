@@ -20,12 +20,13 @@
 import React from 'react'
 import { toJS } from 'mobx'
 import { Link } from 'react-router-dom'
-import { Dropdown, Menu, Notify } from '@kube-design/components'
+import { Dropdown, Menu, Notify, Tooltip } from '@kube-design/components'
 import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import { ListPage, withClusterList } from 'components/HOCs/withList'
 import ResourceTable from 'clusters/components/ResourceTable'
 
+import * as common from 'utils/resources'
 import { getLocalTime, showNameAndAlias } from 'utils'
 
 import VmStore from 'stores/resources/vms'
@@ -307,43 +308,87 @@ export default class Vms extends React.Component {
         },
       },
       {
+        title: t('RESOURCES_FLAVOR'),
+        dataIndex: 'flavor',
+        isHideable: true,
+        search: true,
+        width: 'auto',
+        render: (flavor, record) => {
+          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " + 
+                common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " + 
+                record.flavor_object.root_disk + " GiB"
+          return (
+            <Tooltip content={flavor_spec} placement="top">
+              <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
+                {flavor}
+              </Link>
+            </Tooltip>
+          )
+        },
+      },
+      {
         title: t('RESOURCES_STATIC_IP'),
         dataIndex: 'networks',
         isHideable: true,
         search: true,
         width: 'auto',
-        render: networks => {
+        render: (networks, record) => {
           let networkIpList
+          let networkFipList
 
+          // we first process regular network IPs
           if (networks) {
             networkIpList = networks.map(el => {
-              if (el.name !== 'k8s-pod-network') {
-                return <p key={el.name}>{el.ip}</p>
+              if (el.name === 'k8s-pod-network') return <p></p>
+              let icon = ""
+              let tooltip = ""
+              switch (el.type) {
+                case 'virtio':
+                  icon = "🆅";
+                  tooltip = t('RESOURCES_VPC_NETWORK') + ": ";
+                  break;
+                case 'sriov':
+                  icon = "🆂";
+                  tooltip = t('RESOURCES_SR_IOV_NETWORK') + ": ";
+                  break;
+                case 'bond':
+                  icon = "🅱";
+                  tooltip = t('RESOURCES_BOND_NETWORK') + ": ";
+                  break;
+                case 'dedicated':
+                  icon = "🅳";
+                  tooltip = t('RESOURCES_DEDICATED_NETWORK') + ": ";
+                  break;
+                default:
+                  icon = "🆄";
+                  tooltip = t('RESOURCES_UNKNOWN_NETWORK') + ": ";
               }
-              return <p></p>
+
+              const fullname = tooltip + el.name
+              return <Tooltip content={fullname} placement="right">
+                <p key={el.name}>{icon} {el.ip}</p></Tooltip>
             })
-          } else {
-            networkIpList = <p>-</p>
+
           }
 
-          return networkIpList
-        },
-      },
-      {
-        title: t('RESOURCES_FLOATING_IP'),
-        dataIndex: 'floating',
-        isHideable: true,
-        search: true,
-        width: 'auto',
-        render: (floating, record) => {
+          // we now process floating IP
           const floatingList = this.props.store.floatingIpList
-          const floatingIp =
+          networkFipList =
             floatingList &&
             floatingList
               ?.filter(row => row.instance_id === record.name)
-              .map(el => <p key={el.id}>{el.floating_ip}</p>)
+              .map(el => <Tooltip content="Floating IP" placement="right"><p key={el.id}>🅵 {el.floating_ip}</p></Tooltip>)
 
-          return floatingIp === '' ? '-' : floatingIp
+          // merge them
+          const items = [...networkIpList, ...networkFipList];
+
+          // if nothing to show
+          if (items.length === 0) {
+            return <p>-</p>;
+          }
+
+          // render all of them
+          return <>{items}</>;
         },
       },
       {
@@ -372,13 +417,13 @@ export default class Vms extends React.Component {
             securityGroupText =
               security_group_objects.length > 1
                 ? `${security_group_objects[0].name} ${t(
-                    'RESOURCES_BESIDES'
-                  )} ${security_group_objects.length - 1} ${t(
-                    'RESOURCES_COUNT'
-                  )}`
+                  'RESOURCES_BESIDES'
+                )} ${security_group_objects.length - 1} ${t(
+                  'RESOURCES_COUNT'
+                )}`
                 : security_group_objects.length === 1
-                ? security_group_objects[0].name
-                : '-'
+                  ? security_group_objects[0].name
+                  : '-'
           } else {
             securityGroupText = ''
           }

@@ -16,33 +16,36 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray, intersection } from 'lodash';
-import { observable, action } from 'mobx';
-import { Notify } from '@kube-design/components';
-import { LIST_DEFAULT_ORDER } from 'utils/constants';
-import ObjectMapper from 'utils/object.mapper';
-import cookie from 'utils/cookie';
+import { get, set, uniq, isArray, intersection } from 'lodash'
+import { observable, action } from 'mobx'
+import { Notify } from '@kube-design/components'
+import { LIST_DEFAULT_ORDER } from 'utils/constants'
+import ObjectMapper from 'utils/object.mapper'
+import cookie from 'utils/cookie'
 
-import Base from '../basemm3'; // mm3 관련 추가 파일
-import List from '../base.list';
+import Base from '../basemm3' // mm3 관련 추가 파일
+import List from '../base.list'
 
 export default class GpuClustersStore extends Base {
-  records = new List();
+  records = new List()
 
-  module = 'gpuclusters';
+  module = 'gpuclusters'
 
   getVmResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-  )}/edgetron/resources/kubevirt/vms`
+    )}/edgetron/resources/kubevirt/vms`
 
-  getResourceUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/cluster`
-  getResourceListUrl = (params = {}) => `kapis/gpucluster.kubesphere.io/v1alpha1/gpu-cluster/clusters`
-  
-  getListUrl = this.getResourceListUrl;
-  
-  getDeleteUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.name}`
-  
+  getResourceUrl = (params = {}) =>
+    `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
+  getResourceListUrl = (params = {}) =>
+    `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
+
+  getListUrl = this.getResourceListUrl
+
+  getDeleteUrl = (params = {}) =>
+    `${this.getResourceUrl(params)}/${params.namespace}/${params.name}`
+
   @action
   async fetchList({
     cluster,
@@ -97,29 +100,40 @@ export default class GpuClustersStore extends Base {
       return a.creation_timestamp < b.creation_timestamp
         ? 1
         : a.creation_timestamp > b.creation_timestamp
-          ? -1
-          : 0
+        ? -1
+        : 0
     })
 
     // 상태 추가
-   const updatedData = await Promise.all(    
-      data.map(async (item) => {
+    const updatedData = await Promise.all(
+      data.map(async item => {
         const newParams = {
           name: item.name,
           limit: 10000,
-        };
+        }
 
-        let resultDetail = await this.fetchVmsDetail({...newParams});
-        const is_normal = (resultDetail.vmList).every(data => data.vmi.phase === 'Running');
-        const state = is_normal ? "normal" : "abnormal";
-      
+        let resultDetail = await this.fetchVmsDetail({
+          ...newParams,
+          namespace: item.namespace,
+        })
+
+        let isRunning = 0
+        const is_normal = resultDetail.vmList.every(data => {
+          if (data.vmPhase === 'Running') {
+            isRunning += 1
+          }
+          return data.vmPhase === 'Running'
+        })
+        const state = is_normal ? 'normal' : 'abnormal'
+
         return {
           ...item,
+          isRunning,
           state,
-        };
+        }
       })
-    );
-    
+    )
+
     // 초기 데이터 처리
     this.dataList = updatedData
 
@@ -128,26 +142,33 @@ export default class GpuClustersStore extends Base {
       params.project = namespace
     }
 
-    // 검색 관련 처리 
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-    const searchArray = Object.keys(params).map((key) => {
-      let value = params[key];
-      let searchData = {
-        "searchKeywordType": key,
-        "searchKeywordText": value
-      }
-      return searchData
-    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const searchArray = Object.keys(params)
+      .map(key => {
+        let value = params[key]
+        let searchData = {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        }
+        return searchData
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
 
     if (searchArray.length > 0) {
-      searchArray.map((search) => {
-        let resultList = this.dataList.filter((row) => {
+      searchArray.map(search => {
+        let resultList = this.dataList.filter(row => {
           if (search.searchKeywordType === 'state') {
-            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+            return (
+              row[search.searchKeywordType]?.toLowerCase() ===
+              search.searchKeywordText.toLowerCase()
+            )
           }
-          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-        });
-        this.dataList = resultList;
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase())
+        })
+        this.dataList = resultList
       })
     }
 
@@ -174,29 +195,33 @@ export default class GpuClustersStore extends Base {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
-    
+
     return this.dataList
   }
 
   @action
   async createCluster(data, params = {}) {
+    const url = this.getResourceUrl(params)
 
-    const url = this.getResourceUrl(params);
+    const jsonData = {}
 
-    const jsonData = {};
+    jsonData.name = data.name
+    jsonData.namespace = data.project
+    jsonData.description = data.description
+    jsonData.fabricKey = data.fabricKey
+    jsonData.fabricType = data.fabricType
+    jsonData.sonaNetwork = data.sonaNetwork
 
-    jsonData.name = data.name;
-    jsonData.namespace = data.project;
+    try {
+      // await this.submitting(new Promise(resolve => setTimeout(resolve, 500)))
+      // return { success: true }
 
-    try{
-      await this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
-      return { success: true};
-
-      // const res = await this.submitting(request.post(url, jsonData));
-      // return res;
-    }catch (err) {
-      return { success: false };
-    }    
+      const res = await this.submitting(request.post(url, jsonData))
+      // console.log('createCluster response:', res)
+      return res
+    } catch (err) {
+      return { success: false }
+    }
   }
 
   @action
@@ -227,7 +252,7 @@ export default class GpuClustersStore extends Base {
     resourceData.security_groups = securityGroupsArray
 
     const networksArray = []
- 
+
     data.network.forEach(name => {
       const networkObj = {}
       networkObj.network_name = name
@@ -275,7 +300,7 @@ export default class GpuClustersStore extends Base {
           physicalnetworksArray.push(physicalnetworkObj)
         }
       })
-    }    
+    }
     resourceData.physical_networks = physicalnetworksArray
 
     const hostDeviceArray = []
@@ -284,155 +309,179 @@ export default class GpuClustersStore extends Base {
     const gpuDeviceArray = []
     resourceData.gpus = gpuDeviceArray
 
-    resourceData.node = ""
+    resourceData.node = ''
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
     // resourceData.network_storage = data.networkStorage
-    resourceData.network_storage = ""
+    resourceData.network_storage = ''
+
+    resourceData.gpu_cluster = data.gpuCluster
 
     jsonData.vm = resourceData
 
-    const promises = [];
+    const promises = []
 
-      let firstNum = data.firstNum;
-      let lastNum = data.lastNum;
+    let firstNum = data.firstNum
+    let lastNum = data.lastNum
 
-      // 가상머신 갯수만큼 생성...
-      for (let i = firstNum; i <= lastNum; i++) {
-        const suffix = String(i).padStart(3, "0");  
-        const updatedNameJsonData = {vm: {
-            ...jsonData.vm,
-            name: `vm-${data.gpu_cluster}-${suffix}`,
-        }
+    // 가상머신 갯수만큼 생성...
+    for (let i = firstNum; i <= lastNum; i++) {
+      const suffix = String(i).padStart(3, '0')
+      const updatedNameJsonData = {
+        vm: {
+          ...jsonData.vm,
+          name: `${data.vm_name_prefix}${suffix}`,
+          node: `${data.node_name_prefix}${suffix}`,
+        },
       }
 
-      const updatedNetworks = (updatedNameJsonData.vm).networks.map(network => {
+      const updatedNetworks = updatedNameJsonData.vm.networks.map(network => {
         if (network.network_name === 'external-solutionzone-201') {
-          const matchedCidr = (data.networkListData).find(item => item.name === network.network_name);
-          const subnetPart = matchedCidr?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || '';
-          const fixed_ip = subnetPart +"."+ String(100+i)
+          const matchedCidr = data.networkListData.find(
+            item => item.name === network.network_name
+          )
+          const subnetPart =
+            matchedCidr?.cidr
+              ?.split('/')[0]
+              .split('.')
+              .slice(0, 3)
+              .join('.') || ''
+          const fixed_ip = subnetPart + '.' + String(100 + i)
           return {
             ...network,
-            fixed_ip: fixed_ip, 
-          };
+            fixed_ip: fixed_ip,
+          }
         }
-        return network;
-      });
+        return network
+      })
 
-      const updatedJsonData =  {   
+      const updatedJsonData = {
         vm: {
           ...updatedNameJsonData.vm,
           networks: updatedNetworks,
-        }
-      };
+        },
+      }
 
-      //console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
-      request.post(url, updatedNameJsonData);
+      // console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
+      request.post(url, updatedNameJsonData)
     }
 
-    return await this.submitting(new Promise(resolve => setTimeout(resolve, 3000)));
+    return await this.submitting(
+      new Promise(resolve => setTimeout(resolve, 3000))
+    )
   }
 
   @action
-  async update({ name, ...params }, data) {
-
-  }
+  async update({ name, ...params }, data) {}
 
   @action
-  async fetchDetail(params) {
-    this.isLoading = true;
+  async fetchDetail({ ...params }) {
+    this.isLoading = true
 
     const page = 1
     const limit = 10000
 
-    const resultList = await request.get(
-      this.getListUrl({ page, limit }),
-    )
-    const name = (resultList.data).filter(item => item.name === params.name).map(item => item.name)
+    const resultList = await request.get(this.getListUrl({ page, limit }))
+
+    const [matched] = resultList.data
+      .filter(item => item.name === params.name)
+      .map(item => ({
+        name: item.name,
+        namespace: item.namespace,
+      }))
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${name}`
-    );
-    const detail = { ...params, ...this.mapper(result), kind: 'data' };
+      `${this.getResourceUrl(params)}/${matched.namespace}/${matched.name}`
+    )
+    const detail = { ...params, ...this.mapper(result), kind: 'data' }
 
-    this.detail = detail;
-    this.isLoading = false;
-    return detail;
+    this.detail = detail
+    this.isLoading = false
+    return detail
   }
 
   @action
   async fetchYaml(params) {
-    this.isLoading = true;
+    this.isLoading = true
 
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.id}/manifest`
-    );
-    const yamlData = { ...params, ...this.mapper(result), kind: 'gpucluster' };
+    )
+    const yamlData = { ...params, ...this.mapper(result), kind: 'gpucluster' }
 
-    this.yaml = yamlData.manifest;
-    this.isLoading = false;
-    return yamlData;
+    this.yaml = yamlData.manifest
+    this.isLoading = false
+    return yamlData
   }
 
   @action
-  async batchDelete({ rowKeys, ...params }) {
+  async batchDelete({ ...params }) {
+    return await this.submitting(
+      Promise.all(
+        params.retypeList.map(async id => {
+          // const jsonData = {}
+          // jsonData.name = id
 
-    const url = this.getResourceUrl()
-    if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
-    } else {
-      await this.submitting(
-        Promise.all(
-          rowKeys.map(async (id) =>{
-              const jsonData = {}
-              jsonData.name = id;
+          // const newParams = { name: id }
+          // let resultDetail = await this.fetchDetail({ ...newParams })
 
-              const newParams = { name: id, };  
-              let resultDetail = await this.fetchDetail({...newParams});
+          // // 실제 할당된 가상머신 데이터
+          // const vmData = resultDetail.data.nodes.filter(item => item.vmi)
+          // const vmNameArray = vmData.map(item => item.vmName)
 
-              // 실제 할당된 가상머신 데이터
-              const vmData = (resultDetail.data.nodes).filter(item => item.vmi)
-              const vmNameArray = vmData.map(item => item.vmi.vm_name);
-              
-              console.log("newParams : "+ JSON.stringify(newParams))
-              console.log("vmNameArray : "+ JSON.stringify(vmNameArray))
+          // console.log('newParams : ' + JSON.stringify(newParams))
+          // console.log('vmNameArray : ' + JSON.stringify(vmNameArray))
 
-              // request.delete(url, jsonData)
-              //request.delete(`${this.getDeleteUrl({ id, ...params })}`)               
-          }            
+          // request.delete(url, jsonData)
+          request.delete(
+            `${this.getVmResourceUrl(params)}/${id}`
+            // `${this.getDeleteUrl({ name: id, namespace: params.namespace })}`
           )
-        )
-      );
-    }
-    this.list.selectedRowKeys = [];
+        })
+      )
+    )
   }
 
   @action
-  async delete(user) {
+  async delete(params) {
+    return await this.submitting(
+      Promise.all(
+        params?.instances && params.instances?.length > 0
+          ? params.instances.map(vmdata =>
+              request.delete(
+                `${this.getVmResourceUrl(params)}/${vmdata.vmName}`
+              )
+            )
+          : [],
+        request.delete(`${this.getDeleteUrl(params)}`)
+      )
+    )
+    // const url = `${this.getResourceUrl()}/${user.cluster}`
+    // if (user.name === globals.user.username) {
+    //   Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+    //   return
+    // }
 
-    const url = this.getResourceUrl()
-    if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
-      return;
-    }
-    
-    const jsonData = {}
-    jsonData.name = user.name;
+    // const jsonData = {}
+    // jsonData.name = user.name
 
-    const newParams = { name: user.name, };  
-    let resultDetail = await this.fetchDetail({...newParams});
-    
-    // 실제 할당된 가상머신 데이터
-    const vmData = (resultDetail.data.nodes).filter(item => item.vmi)
-    const vmNameArray = vmData.map(item => item.vmi.vm_name);
-    
-    console.log("newParams : "+ JSON.stringify(newParams))
-    console.log("vmNameArray : "+ JSON.stringify(vmNameArray))
+    // const newParams = { name: user.name }
+    // let resultDetail = await this.fetchDetail({
+    //   ...newParams,
+    //   cluster: user.cluster,
+    // })
 
-    return this.submitting(new Promise(resolve => setTimeout(resolve, 500)));
+    // // 실제 할당된 가상머신 데이터
+    // const vmData = resultDetail.data.nodes.filter(item => item.vmi)
+    // const vmNameArray = vmData.map(item => item.vmName)
+
+    // console.log('newParams : ' + JSON.stringify(newParams))
+    // console.log('vmNameArray : ' + JSON.stringify(vmNameArray))
+
+    // return this.submitting(new Promise(resolve => setTimeout(resolve, 500)))
 
     // return this.submitting(request.delete(url, jsonData));
-    // return this.submitting(request.delete(`${this.getResourceUrl(user)}`));
+    // return this.submitting(request.delete(`${this.getDeleteUrl(params)}`))
   }
 
   @action
@@ -442,49 +491,53 @@ export default class GpuClustersStore extends Base {
     params.page = params.page || 1
     params.limit = params.limit || 10
 
-    const name = params.name;
+    const name = params.name
 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
- 
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+
     delete params['resource']
     delete params['id']
     delete params['name']
 
     const result = await request.get(
-      `${this.getResourceUrl(params)}/${name}`
+      `${this.getResourceUrl(params)}/${namespace}/${name}`
     )
 
     // 실제 할당된 가상머신 데이터
-    const vmData = (result.data.nodes).filter(item => item.vmi)
+    const vmData = result.data?.instances || []
 
     // 데이터 검색
-    let searchData = [];
+    let searchData = []
     if (params.searchName !== '' && params.searchName !== undefined) {
-         searchData = vmData.filter((row) => {
-          return get(row.vmi, params.searchType)?.toLowerCase().includes(params.searchName?.toLowerCase());
-      });      
+      searchData = vmData.filter(row => {
+        return get(row, params.searchType)
+          ?.toLowerCase()
+          .includes(params.searchName?.toLowerCase())
+      })
     }
 
     delete params['searchType']
-    delete params['searchName']    
+    delete params['searchName']
 
-    const dataList = searchData.length == 0 ? vmData : searchData;
+    const dataList = searchData.length == 0 ? vmData : searchData
 
     // 정렬 처리
     const sortedList = [...dataList].sort((a, b) => {
-      return a.vmi.vm_name < b.vmi.vm_name ? 1 : a.vmi.vm_name > b.vmi.vm_name ? -1 : 0;
-    });
+      return a.vmName < b.vmName ? 1 : a.vmName > b.vmName ? -1 : 0
+    })
 
-    // 데이터 page 별 Slice 처리 
-    const currentData = sortedList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // 데이터 page 별 Slice 처리
+    const currentData = sortedList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     const resultData = {}
-    resultData.vmList = currentData;
-    resultData.total = dataList.length;
+    resultData.vmList = currentData
+    resultData.total = dataList.length
 
     this.isLoading = false
     return resultData
   }
-  
 }

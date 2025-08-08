@@ -222,6 +222,9 @@ module.exports = {
   RESOURCES_INTERFACE: '인터페이스',
   RESOURCES_INTERFACE_INDEX: '인터페이스 인덱스',
   RESOURCES_SELECT_INTERFACE_INDEX_TIP: '인터페이스 인덱스를 선택해 주세요.',
+  RESOURCES_BOND_NETWORK: '본드 네트워크',
+  RESOURCES_VPC_NETWORK: 'VPC 네트워크',
+  RESOURCES_UNKNOWN_NETWORK: '미확인 네트워크',
   RESOURCES_SR_IOV_NETWORK: 'SR-IOV 네트워크',
   RESOURCES_CREATE_SR_IOV: 'SR-IOV 생성',
   RESOURCES_EDIT_SR_IOV: 'SR-IOV 수정',
@@ -319,7 +322,7 @@ module.exports = {
   RESOURCES_YEAR: '년',
   RESOURCES_NODE: '노드',
   RESOURCES_NODE_STATE: '노드 상태',
-  RESOURCES_NODE_NAME: '노드명',
+  RESOURCES_NODE_NAME: '노드 이름',
   RESOURCES_NEXT: '다음',
   RESOURCES_STEP: '단계',
   RESOURCES_DASHBOARD: '대시보드',
@@ -1011,6 +1014,8 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Port를 입력해 주세요.',
   RESOURCES_ENTER_60_MORE: '60 이상 입력해 주세요.',
   RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
+  RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
+  RESOURCES_LAST_NUMBER_GREATER: '시작 숫자보다 큰 숫자를 입력해 주세요.',
   RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'DNS 정보를 정확히 입력해주세요.',
   RESOURCES_DNS_PRIMARY: 'Primary',
@@ -1040,6 +1045,7 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: '실행 되었습니다.',
   RESOURCES_VM_SECURITYGROUP_EDIT: '보안그룹 편집',
   RESOURCES_VM_FLAVOR_EDIT: 'Flavor 편집',
+  RESOURCES_VM_EDIT: 'VM 편집',
   RESOURCES_VM_SCHEDULE_STATUS: '가상머신 스케줄링 상태',
   RESOURCES_VM_SCHEDULE_READY: '가상머신 준비',
   RESOURCES_VM_SCHEDULE_READY_DESC:
@@ -1060,6 +1066,10 @@ module.exports = {
     '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 63자입니다.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
     '잘못된 이름입니다. 이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 대문자 or 숫자) 형식으로 입력 가능합니다. 최대 길이는 63자입니다.',
+  RESOURCES_FABRIC_KEY_DESC:
+    '패브릭 키는 0x0000~0xFFFF 형식이어야 하며, infiniband의 경우 0x0001~0x7FFE, ethernet의 경우 0x0001~0x0FFE 범위 내의 값이어야 합니다.',
+  RESOURCES_INVALID_FABRIC_KEY_DESC:
+    '잘못된 패브릭 키입니다. \n패브릭 키는 0x0000~0xFFFF 형식이어야 하며, infiniband의 경우 0x0001~0x7FFE, ethernet의 경우 0x0001~0x0FFE 범위 내의 값이어야 합니다.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Interval은 60 이상 입력해 주세요.',
   RESOURCES_ID_EMPTY_DESC: '아이디를 입력해 주세요.',
   RESOURCES_JUPYTER_PORT_RANGE_DESC:
@@ -1143,8 +1153,14 @@ module.exports = {
   RESOURCES_NETWORK_STORAGE_MOUNT: '마운트 정보',
 
   RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
+  RESOURCES_GPU_CLUSTER_FABRICKEY: '패브릭 키',
+  RESOURCES_GPU_CLUSTER_FABRICTYPE: '패브릭 타입',
+  RESOURCES_GPU_CLUSTER_SONANETWORK: '네트워크',
   RESOURCES_DELETE_GPU_CLUSTER_TIP:
-    'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+    'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.' +
+    '<p></p>클러스터에 포함된 모든 가상머신이 삭제됩니다.',
+  RESOURCES_DELETE_GPU_CLUSTER_VM_TIP:
+    '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
   RESOURCES_GPU_CLUSTER_DESC:
     'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
@@ -1168,4 +1184,12 @@ module.exports = {
   RESOURCES_ENTER_1_MORE: '1이상 입력해 주세요.',
   RESOURCES_CLOSE: '닫기',
   RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: '첫 번째 숫자보다 크거나 같아야 합니다.',
+  RESOURCES_VM_PREFIX: '가상머신 이름 prefix',
+  RESOURCES_VM_PREFIX_EMPTY_DESC: '가상머신 이름 prefix 을 입력해 주세요.',
+  RESOURCES_INVALID_VM_PREFIX_DESC:
+    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며, 최대 길이는 63자입니다.',
+  RESOURCES_NODE_PREFIX: '노드 이름 prefix',
+  RESOURCES_NODE_PREFIX_EMPTY_DESC: '노드 이름 prefix 을 입력해 주세요.',
+  RESOURCES_INVALID_NODE_PREFIX_DESC:
+    '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며, 최대 길이는 63자입니다.',
 }

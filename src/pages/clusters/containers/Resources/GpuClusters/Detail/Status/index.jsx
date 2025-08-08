@@ -1,7 +1,7 @@
 import { get, groupBy } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
-import { Loading } from '@kube-design/components';
+import { Loading } from '@kube-design/components'
 import { observer, inject } from 'mobx-react'
 
 import classnames from 'classnames'
@@ -13,15 +13,14 @@ import { Panel, Text, Indicator } from 'components/Base'
 import * as common from 'utils/resources'
 
 import VmStore from 'stores/resources/vms'
-import DetailGpuVmList from 'pages/clusters/containers/Resources/components/DetailGpuVmList';
+import DetailGpuVmList from 'pages/clusters/containers/Resources/components/DetailGpuVmList'
 
 import styles from './index.scss'
 
-const Status = (props) => {
-
+const Status = props => {
   const vmStore = new VmStore()
 
-  const store = props.detailStore;
+  const store = props.detailStore
 
   const { cluster } = props.match.params
 
@@ -31,19 +30,18 @@ const Status = (props) => {
 
   // 초기 데이터 처리
   useEffect(() => {
-
     if (!store.detail) return
 
-    const fnGetFlavor = async (vmDetail) => {
+    const fnGetFlavor = async vmDetail => {
       setDetailFlavor(vmDetail.vm?.flavor)
     }
 
-    const fnGetNetwork = async (vmDetail) => {
+    const fnGetNetwork = async vmDetail => {
       setDetailNetwork([])
 
       const networkData = await vmStore.fetchVmListNetwork({ project: cluster })
       const networkNameArray = vmDetail.vm?.networks.map(item => item.name)
-      const filterData = (networkData.networks).filter(item => {
+      const filterData = networkData.networks.filter(item => {
         return networkNameArray.includes(item.name)
       })
 
@@ -63,65 +61,42 @@ const Status = (props) => {
     }
 
     const fnGetVmDetail = async () => {
-      try{
-        const vmData = (store.detail.data.nodes).filter(item => item.vmi)
+      try {
+        const vmData = store.detail.data?.instances || []
         const sortedList = [...vmData].sort((a, b) => {
-        return a.vmi.vm_name < b.vmi.vm_name ? 1 : a.vmi.vm_name > b.vmi.vm_name ? -1 : 0;
-        });
+          return a.vmName < b.vmName ? 1 : a.vmName > b.vmName ? -1 : 0
+        })
 
-        const vmName = sortedList[0]?.vmi?.vm_name;
+        const vmName = sortedList[0]?.vmName
 
-        if(!!vmName){
+        if (!!vmName) {
           // vm detail data
-          const vmDetail = await vmStore.fetchDetail({ project: cluster, name: vmName })
-          
-          fnGetFlavor(vmDetail);
-          fnGetNetwork(vmDetail);
-        } 
+          const vmDetail = await vmStore.fetchDetail({
+            project: cluster,
+            name: vmName,
+          })
 
-      }catch(error){
+          fnGetFlavor(vmDetail)
+          fnGetNetwork(vmDetail)
+        }
+      } catch (error) {
         console.log('VM 상세 정보 조회 중 오류 발생:', error)
-      }finally{
+      } finally {
         setLoading(false)
       }
     }
 
-    fnGetVmDetail();
+    fnGetVmDetail()
   }, [])
 
-
-   // 로딩 중이면 스피너나 로딩 메시지
+  // 로딩 중이면 스피너나 로딩 메시지
   if (loading) {
-     return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
-  
+
   return (
     <>
       <div>
-
-        {/* GPU 클러스터 */}
-        <Panel title={'GPU 클러스터'}>
-          <div className={styles.wrapper}>
-            <div className={classnames(styles.itemFlavor)}>
-              <div className={styles.icon}>
-                <i className="ico-type-mediatedvgpu"></i>
-              </div>
-              <div className={classnames(styles.title, styles.name)}>
-                <div>
-                    {store.detail.name}
-                </div>
-                <p>{t('RESOURCES_GPU_CLUSTER')}</p>
-              </div>
-              <div className={classnames(styles.title, styles.name)}>
-                <div>
-                    {store.detail.data.namespace}
-                </div>
-                <p>{t('RESOURCES_PROJECT')}</p>
-              </div>
-            </div>
-          </div>
-        </Panel>
-
         {/* Flavor */}
         {!!detailFlavor && (
           <Panel title={'Flavor'}>
@@ -166,17 +141,20 @@ const Status = (props) => {
                 </div>
                 <div className={styles.title}>
                   <Text
+                    styles={{ width: '40px' }}
                     key="GPU"
                     icon="gpu"
                     title={
                       detailFlavor.gpus.length >= 1
                         ? detailFlavor.gpus.length == 1
-                          ? detailFlavor.gpus[0].quantity+" " +detailFlavor.gpus[0].name
+                          ? detailFlavor.gpus[0].quantity +
+                            ' ' +
+                            detailFlavor.gpus[0].name
                           : `${detailFlavor.gpus[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${detailFlavor.gpus.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
+                              'RESOURCES_BESIDES'
+                            )} ${detailFlavor.gpus.length - 1}${t(
+                              'RESOURCES_COUNT'
+                            )}`
                         : '-'
                     }
                     description={t('GPU')}
@@ -202,22 +180,24 @@ const Status = (props) => {
                   </div>
                   <div className={classnames(styles.title, styles.name)}>
                     <div>
-                      {obj.unique == "id" ? (
+                      {obj.unique == 'id' ? (
                         <Link
                           to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}/${obj.id}`}
                         >
                           {obj.name}
                         </Link>
+                      ) : obj.unique == 'name' ? (
+                        <Link
+                          to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}
+                        >
+                          {obj.name}
+                        </Link>
                       ) : (
-                        obj.unique == "name" ? (
-                          <Link to={`/clusters/${cluster}/${obj.endpoint}/${obj.name}`}>
-                            {obj.name}
-                          </Link>
-                        ) : (
-                          <Link to={`/clusters/${cluster}/projects/${obj.project}/${obj.endpoint}/${obj.name}`}>
-                            {obj.name}
-                          </Link>
-                        )
+                        <Link
+                          to={`/clusters/${cluster}/projects/${obj.project}/${obj.endpoint}/${obj.name}`}
+                        >
+                          {obj.name}
+                        </Link>
                       )}
                     </div>
                     <p>{t('RESOURCES_NAME')}</p>
@@ -231,9 +211,11 @@ const Status = (props) => {
                     <p>CIDR</p>
                   </div>
                   <div className={styles.title}>
-                    <div>{`${obj.gateway_ip === undefined || obj.gateway_ip === ""
-                      ? "-"
-                      : obj.gateway_ip
+                    <div>
+                      {`${
+                        obj.gateway_ip === undefined || obj.gateway_ip === ''
+                          ? '-'
+                          : obj.gateway_ip
                       }`}
                     </div>
                     <p>{t('RESOURCES_GATEWAY')}</p>
@@ -248,13 +230,12 @@ const Status = (props) => {
           type={t('RESOURCES_GPU_CLUSTER')}
           variables="gpuclusters"
           {...props.match.params}
-          id={props.match.params.id}        
+          id={props.match.params.id}
+          namespace={store.detail.data?.namespace}
         />
-
       </div>
     </>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(observer(Status))
-

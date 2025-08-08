@@ -20,7 +20,7 @@ import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
 import VmStore from 'stores/resources/vms'
 import QuotaStore from 'stores/quota'
-import GpuClustersStore from 'stores/resources/gpuclusters';
+import GpuClustersStore from 'stores/resources/gpuclusters'
 
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
@@ -28,11 +28,10 @@ import CardSelect from '../../../CardSelect'
 import styles from './index.scss'
 import './checkbox.disabled.css'
 
-
-const regexVmCount = /^[1-9][0-9]*$/;
+const regexVmCount = /^[1-9][0-9]*$/
+const regexVmNodePrefix = /^[a-z0-9-]{1,63}$/;
 
 const RegistModal = props => {
-
   const form = useRef()
   const [formData] = useState({})
 
@@ -88,16 +87,19 @@ const RegistModal = props => {
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
 
-  const [vmCount, setVmCount] = useState(1);
-  const [gpuVmName, setGpuVmName] = useState('');
+  const [vmCount, setVmCount] = useState(1)
+  const [gpuVmName, setGpuVmName] = useState('')
+  const [gpuNodeName, setGpuNodeName] = useState('')
   const [slideMinCount, setSlideMinCount] = useState(1)
   const [slideMaxCount, setSlideMaxCount] = useState(127)
-  const [firstGpuVmName, setFirstGpuVmName] = useState('');
-  const [lastGpuVmName, setLastGpuVmName] = useState('');
+  const [firstGpuVmName, setFirstGpuVmName] = useState('')
+  const [lastGpuVmName, setLastGpuVmName] = useState('')
 
+
+  const [vmNamePrefix, setVmNamePrefix] = useState('')
+  const [nodeNamePrefix, setNodeNamePrefix] = useState('')
   const [firstNum, setFirstNum] = useState('')
   const [lastNum, setLastNum] = useState('')
-
 
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -162,10 +164,10 @@ const RegistModal = props => {
   useEffect(() => {
     const getGpuVmCount = async () => {
       const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
-      const vmList = vmData.vmList;
+      const vmList = vmData.vmList
 
       if (vmList && vmList.length > 0) {
-        const lastVmNumber = vmList.length;
+        const lastVmNumber = vmList.length
       }
     }
     // getGpuVmCount()
@@ -316,7 +318,7 @@ const RegistModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk
-    
+
     form.current.validator(() => {
       setSubmitButtonFlag(true)
 
@@ -341,13 +343,17 @@ const RegistModal = props => {
       data.gpuVmName = gpuVmName
       data.firstGpuVmName = firstGpuVmName
       data.lastGpuVmName = lastGpuVmName
-      
-      const networkListData = networkList.filter(x => networkCheckItems.includes(x.name)).map((obj) => {
-        return {
+
+      data.gpuCluster = props.name // gpu cluster name 추가
+
+      const networkListData = networkList
+        .filter(x => networkCheckItems.includes(x.name))
+        .map(obj => {
+          return {
             name: obj.name,
-            cidr: obj.cidr
-        }
-      })
+            cidr: obj.cidr,
+          }
+        })
 
       data.networkListData = networkListData
 
@@ -355,7 +361,7 @@ const RegistModal = props => {
         data.makeScript = getScript()
       }
 
-      console.log("생성 실행~!!!")
+      console.log('생성 실행~!!!')
       onOk({ ...data })
     })
   }
@@ -414,27 +420,30 @@ const RegistModal = props => {
 
   const stepMoveCheck = step => {
     const { data } = form.current.props
-    if (step === 1) {      
+    if (step === 1) {
       if (
-        imageType === 'I' &&
-        (data.image === t('RESOURCES_SELECT') ||
-          data.flavor === t('RESOURCES_SELECT')) ||
-          gpuVmName === '' ||
-          Number(data.firstNum) === 0 ||
-          Number(data.lastNum) === 0 
+        (imageType === 'I' &&
+          (data.image === t('RESOURCES_SELECT') ||
+            data.flavor === t('RESOURCES_SELECT'))) ||
+        gpuVmName === '' ||
+        vmNamePrefix === '' ||
+        nodeNamePrefix === '' ||
+        Number(data.firstNum) === 0 ||
+        Number(data.lastNum) === 0 ||
+        Number(data.firstNum) > Number(data.lastNum)
       ) {
         handleOk()
       } else {
         const imageSize =
           imageType === 'I'
             ? imageDataList
-              .filter(item => item.name === selectImageName)
-              .map(item => item.size)[0]
-              .replace('Gi', '')
+                .filter(item => item.name === selectImageName)
+                .map(item => item.size)[0]
+                .replace('Gi', '')
             : bootVolumeDataList
-              .filter(item => item.id === selectBootId)
-              .map(item => item.capacity)[0]
-              .replace('Gi', '')
+                .filter(item => item.id === selectBootId)
+                .map(item => item.capacity)[0]
+                .replace('Gi', '')
         const flavorSize = flavorDataList
           .filter(item => item.name === selectFlavorName)
           .map(item => item.root_disk)
@@ -637,7 +646,7 @@ const RegistModal = props => {
     if (data['keypair']) {
       flag = false
     } else {
-      (isScript && isPassword) ? (flag = false) : (flag = true)
+      isScript && isPassword ? (flag = false) : (flag = true)
     }
 
     flag ? setIsKeypiarPasswordError(true) : setIsKeypiarPasswordError(false)
@@ -821,7 +830,7 @@ const RegistModal = props => {
       dataListVariables[type].forEach(el =>
         // type === 'sriov' ? nameArray.push(el.name) : nameArray.push(el.id)
         nameArray.push(el.name)
-      )      
+      )
       setVariables[type](nameArray)
     } else {
       setVariables[type]([])
@@ -850,7 +859,7 @@ const RegistModal = props => {
     callback()
   }
 
-  const firstNumValidator = (rule, value, callback) => {       
+  const firstNumValidator = (rule, value, callback) => {
     if (value === undefined) {
       return callback({ message: t('RESOURCES_NUMBER_EMPTY_DESC') })
     }
@@ -859,10 +868,11 @@ const RegistModal = props => {
     if (!regexVmCount.test(trimmedValue)) {
       return callback({ message: t('RESOURCES_ENTER_1_MORE') })
     }
+
     callback()
   }
 
-  const lastNumValidator = (rule, value, callback) => {  
+  const lastNumValidator = (rule, value, callback) => {
     if (value === undefined) {
       return callback({ message: t('RESOURCES_NUMBER_EMPTY_DESC') })
     }
@@ -871,6 +881,12 @@ const RegistModal = props => {
     if (!regexVmCount.test(trimmedValue)) {
       return callback({ message: t('RESOURCES_ENTER_1_MORE') })
     }
+
+    const { data } = form.current.props
+    if (Number(value) < Number(data.firstNum)) {
+      return callback({ message: t('RESOURCES_LAST_NUMBER_GREATER') })
+    }
+
     callback()
   }
 
@@ -1023,33 +1039,45 @@ const RegistModal = props => {
   }
 
   useEffect(() => {
-    getGpuName();
-  }, [firstNum, lastNum]);
+    getGpuName()
+  }, [firstNum, lastNum, vmNamePrefix, nodeNamePrefix])
 
   const getGpuName = async () => {
-    const namePrefix = "vm-" + props.name ;
-    const numFirst = Number(firstNum);
-    const numLast = Number(lastNum);
+    // const namePrefix = props.name
+    const vmPrefix = vmNamePrefix   
+    const nodePrefix = nodeNamePrefix   
 
-    let firstName = '';
-    let lastName = '';
-    let gpuName = '';
+    const numFirst = Number(firstNum)
+    const numLast = Number(lastNum)
+
+    let firstVmName = ''
+    let lastVmName = ''
+    let firstNodeName = ''
+    let lastNodeName = ''
+
+    let gpuName = ''
+    let nodeName = ''
 
     if (numFirst > 0) {
-
-      firstName = `${namePrefix}-${numFirst.toString().padStart(3, '0')}`;
+      firstVmName = `${vmPrefix}${numFirst.toString().padStart(3, '0')}`
+      firstNodeName = `${nodePrefix}${numFirst.toString().padStart(3, '0')}`
 
       if (numLast > 0 && numFirst < numLast) {
-        lastName = `${namePrefix}-${numLast.toString().padStart(3, '0')}`;
-        gpuName = `${firstName} ~ ${lastName}`;
-      } else {
-        gpuName = firstName;
-      }
-    } 
+        lastVmName = `${vmPrefix}${numLast.toString().padStart(3, '0')}`
+        lastNodeName = `${nodePrefix}${numLast.toString().padStart(3, '0')}`
 
-    setGpuVmName(gpuName);
-    setFirstGpuVmName(firstName)
-    setLastGpuVmName(lastName)
+        gpuName = `${firstVmName} ~ ${lastVmName}`
+        nodeName = `${firstNodeName} ~ ${lastNodeName}`
+      } else {
+        gpuName = firstVmName
+        nodeName = firstNodeName
+      }
+    }
+
+    setGpuVmName(gpuName)
+    setGpuNodeName(nodeName)
+    setFirstGpuVmName(firstVmName)
+    setLastGpuVmName(lastVmName)
   }
 
   return (
@@ -1062,7 +1090,9 @@ const RegistModal = props => {
         bodyClassName={styles.body}
         visible={modelView}
         hideFooter
-        disableCloseButton={(submitButtonFlag && props.isSubmitting) ? true : false}
+        disableCloseButton={
+          submitButtonFlag && props.isSubmitting ? true : false
+        }
       >
         <Form data={formData} ref={form}>
           {/* Header */}
@@ -1076,12 +1106,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -1093,8 +1124,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1106,12 +1137,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -1123,8 +1155,8 @@ const RegistModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1136,12 +1168,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 3
-                    ? styles.current
-                    : regStep > 3
+                  className={`${
+                    regStep === 3
+                      ? styles.current
+                      : regStep > 3
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -1153,8 +1186,8 @@ const RegistModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1190,9 +1223,7 @@ const RegistModal = props => {
               <div className={`${regStep === 1 ? '' : 'hide'}`}>
                 <Columns>
                   <Column>
-                     <Form.Item
-                      label={t('RESOURCES_GPU_CLUSTER')}
-                    >
+                    <Form.Item label={t('RESOURCES_GPU_CLUSTER')}>
                       <Input
                         name="gpu_cluster"
                         maxLength={63}
@@ -1200,12 +1231,10 @@ const RegistModal = props => {
                         defaultValue={props.name}
                         disabled={true}
                       />
-                    </Form.Item>                    
-                  </Column>                
+                    </Form.Item>
+                  </Column>
                   <Column>
-                    <Form.Item
-                      label={t('RESOURCES_PROJECT')}
-                    >
+                    <Form.Item label={t('RESOURCES_PROJECT')}>
                       <Input
                         name="project_text"
                         maxLength={63}
@@ -1215,181 +1244,219 @@ const RegistModal = props => {
                       />
                     </Form.Item>
                     {!props.namespace && (
-                    <Form.Item
-                      label={t('PROJECT')}
-                      desc={t('SELECT_PROJECT_DESC')}
+                      <Form.Item
+                        label={t('PROJECT')}
+                        desc={t('SELECT_PROJECT_DESC')}
+                        rules={[
+                          {
+                            required: true,
+                            message: t('PROJECT_NOT_SELECT_DESC'),
+                          },
+                        ]}
+                      >
+                        <ProjectSelect
+                          name="metadata.namespace"
+                          defaultValue={projectName}
+                          cluster={props.cluster}
+                          onChange={e => {
+                            setProjectName(e)
+                            setNetworkCheckItems([])
+                            setSriovCheckItems([])
+                            setSecurityGroupCheckItems([])
+                          }}
+                        />
+                      </Form.Item>
+                    )}
+                  </Column>
+                </Columns>
+
+                 <Columns>
+                  <Column>
+                    <Form.Item 
+                      label={t('RESOURCES_VM_PREFIX')}
                       rules={[
+                        { required: true, message: t('RESOURCES_VM_PREFIX_EMPTY_DESC') },
                         {
-                          required: true,
-                          message: t('PROJECT_NOT_SELECT_DESC'),
+                          pattern: regexVmNodePrefix,
+                          message: t('RESOURCES_INVALID_VM_PREFIX_DESC'),
                         },
                       ]}
                     >
-                      <ProjectSelect
-                        name="metadata.namespace"
-                        defaultValue={projectName}
-                        cluster={props.cluster}
-                        onChange={e => {
-                          setProjectName(e)
-                          setNetworkCheckItems([])
-                          setSriovCheckItems([])
-                          setSecurityGroupCheckItems([])
-                        }}
+                      <Input
+                        name="vm_name_prefix"
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}
+                        onChange={e => setVmNamePrefix(e)}
                       />
                     </Form.Item>
-                      )}
-                  </Column>                 
+                  </Column>
+                  <Column>
+                     <Form.Item 
+                      label={t('RESOURCES_NODE_PREFIX')}
+                     rules={[
+                        { required: true, message: t('RESOURCES_NODE_PREFIX_EMPTY_DESC') },
+                        {
+                          pattern: regexVmNodePrefix,
+                          message: t('RESOURCES_INVALID_NODE_PREFIX_DESC'),
+                        },
+                      ]}
+                    >
+                      <Input
+                        name="node_name_prefix"
+                        maxLength={63}
+                        style={{ maxWidth: 'none' }}                        
+                        onChange={e => setNodeNamePrefix(e)}
+                      />
+                    </Form.Item>                   
+                  </Column>
                 </Columns>
-                      
-                       {/* <div className={styles.wrapperError}>
-                        <div className={`form-item-error ${1==1 ? '' : '' }`}>
-                          {t('RESOURCES_LAST_NUM_SHOULD_BE_BIGGER')}
-                        </div>
-                  </div> */}
 
-                  <Columns>
-                    <Column>   
-                        <label className="form-item-label" htmlFor="name">
-                        {t('가상머신 생성 범위')}
-                        <span className="form-item-required">*</span>                        
-                        </label>   
-                        <Columns>
-                          <Column>
-                              <Form.Item                                  
-                                rules={[
-                                 { required: true, validator: firstNumValidator },
-                                ]}
-                              >                   
-                                <NumberInput
-                                  name="firstNum"
-                                  maxLength={10}
-                                  style={{ maxWidth: 'none' }}
-                                  onChange={(e) => setFirstNum(e)}
-                                />
-                              </Form.Item>
-                          </Column>    
-                            <div style={{display: 'flex', alignItems: 'flex-start', padding: '0 8px', marginTop: '18px', height: 0 }}>
-                              ~
-                            </div>                       
-                          <Column>   
-                              <Form.Item  
-                                rules={[
-                                  { required: true, validator: lastNumValidator },
-                                ]}                                
-                              >                   
-                                <NumberInput         
-                                  name="lastNum"                           
-                                  maxLength={10}
-                                  style={{ maxWidth: 'none' }}
-                                  onChange={(e) => setLastNum(e)}
-                                />                                
-                              </Form.Item>                    
-                          </Column>
-                      </Columns>
-                    </Column>
-                    <Column style={{ maxWidth: '472px' }}>
-                      <Form.Item
-                        label={t('RESOURCES_VM_NAME')}
+                <Columns>
+                  <Column>
+                    <label className="form-item-label" htmlFor="name">
+                      {t('가상머신 생성 범위')}
+                      <span className="form-item-required">*</span>
+                    </label>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          rules={[
+                            { required: true, validator: firstNumValidator },
+                          ]}
+                        >
+                          <NumberInput
+                            name="firstNum"
+                            maxLength={10}
+                            style={{ maxWidth: 'none' }}
+                            onChange={e => setFirstNum(e)}
+                          />
+                        </Form.Item>
+                      </Column>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          padding: '0 8px',
+                          marginTop: '18px',
+                          height: 0,
+                        }}
                       >
-                        <Input
-                          maxLength={200}
-                          style={{ maxWidth: 'none' }}
-                          value={gpuVmName}
-                          disabled={true}
-                        />
-                      </Form.Item>    
+                        ~
+                      </div>
+                      <Column>
+                        <Form.Item
+                          rules={[
+                            { required: true, validator: lastNumValidator },
+                          ]}
+                        >
+                          <NumberInput
+                            name="lastNum"
+                            maxLength={10}
+                            style={{ maxWidth: 'none' }}
+                            onChange={e => setLastNum(e)}
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+                  </Column>
+                  <Column style={{ maxWidth: '472px' }}>
+                    <Form.Item label={t('RESOURCES_VM_NAME')}>
+                      <Input
+                        maxLength={200}
+                        style={{ maxWidth: 'none' }}
+                        value={gpuVmName}
+                        disabled={true}
+                      />
+                    </Form.Item>
 
-                      <div className={styles.form_item_label_description} >
+                    <div className={styles.form_item_label_description}>
                       <label htmlFor="name">
                         자동 생성될 가상머신 이름을 확인해 주세요.
-                      </label>      
-                      </div>        
-                    </Column>
-                  </Columns>                 
-    
+                      </label>
+                    </div>
+                  </Column>
+                </Columns>
 
-                  {imageType === 'I' && (
-                    <Form.Item>
-                      <Columns>
-                        <Column>      
-                            <Form.Item
-                              label={t('RESOURCES_IMAGE')}
-                              rules={[
-                                { required: true, validator: imageValidator },
-                              ]}
-                            >
-                              <TypeSelect
-                                name="image"
-                                defaultValue={t('RESOURCES_SELECT')}
-                                placeholder={{
-                                  label: t('RESOURCES_SELECT'),
-                                }}
-                                options={imageOptions()}
-                                onChange={e => {
-                                  setSelectImageName(e)
-                                  const distro_type = imageOptionList
-                                    .filter(item => item.name === e)
-                                    .map(item => item.distro_type)[0]
-                                  handleImageDistroType(distro_type)
-                                  const app = imageOptionList
-                                    .filter(item => item.name === e)
-                                    .map(item => item.pre_installed_app)[0]
-                                  handlePreInstalledApp(app)
-                                }}
-                                defaultDescription={t(
-                                  'RESOURCES_SELECT_IMAGE_TIP'
-                                )}
-                              />
-                            </Form.Item>
-                            {selectImageName && (
-                              <Form.Item>
-                                <div className={styles.wrapperImageView}>
-                                  {`${osType[0].toUpperCase() +
-                                    osType.slice(
-                                      1,
-                                      osType.length
-                                    )} > ${selectImageName}`}
-                                </div>
-                              </Form.Item>
-                            )}
-                        </Column>
-                        <Column style={{ maxWidth: '472px' }}>
-                            <Form.Item
-                              label={t('RESOURCES_FLAVOR')}
-                              rules={[
-                                { required: true, validator: flavorValidator },
-                              ]}
-                            >
-                              <TypeSelect
-                                name="flavor"
-                                defaultValue={t('RESOURCES_SELECT')}
-                                options={flavorOptions()}
-                                onChange={e => setSelectFlavorName(e)}
-                                placeholder={{
-                                  label: t('RESOURCES_SELECT'),
-                                }}
-                                defaultDescription={t(
-                                  'RESOURCES_SELECT_FLAVOR_TIP'
-                                )}
-                                newMaxHeight="198"
-                              />
-                            </Form.Item>
-                            <div
-                              className={`form-item-error ${flavorSizeCheck ? 'hide' : ''
-                                }`}
-                            >
-                              {imageType === 'I'
-                                ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
-                                : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}
+                {imageType === 'I' && (
+                  <Form.Item>
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_IMAGE')}
+                          rules={[
+                            { required: true, validator: imageValidator },
+                          ]}
+                        >
+                          <TypeSelect
+                            name="image"
+                            defaultValue={t('RESOURCES_SELECT')}
+                            placeholder={{
+                              label: t('RESOURCES_SELECT'),
+                            }}
+                            options={imageOptions()}
+                            onChange={e => {
+                              setSelectImageName(e)
+                              const distro_type = imageOptionList
+                                .filter(item => item.name === e)
+                                .map(item => item.distro_type)[0]
+                              handleImageDistroType(distro_type)
+                              const app = imageOptionList
+                                .filter(item => item.name === e)
+                                .map(item => item.pre_installed_app)[0]
+                              handlePreInstalledApp(app)
+                            }}
+                            defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
+                          />
+                        </Form.Item>
+                        {selectImageName && (
+                          <Form.Item>
+                            <div className={styles.wrapperImageView}>
+                              {`${osType[0].toUpperCase() +
+                                osType.slice(
+                                  1,
+                                  osType.length
+                                )} > ${selectImageName}`}
                             </div>
-                        </Column>
-                      </Columns>
-                    </Form.Item>
-                  )}
-                  {isProjectQuotaSet && (
-                    <div>{t('RESOURCES_SELECT_FLAVOR_QUOTA_TIP')}</div>
-                  )}
-
+                          </Form.Item>
+                        )}
+                      </Column>
+                      <Column style={{ maxWidth: '472px' }}>
+                        <Form.Item
+                          label={t('RESOURCES_FLAVOR')}
+                          rules={[
+                            { required: true, validator: flavorValidator },
+                          ]}
+                        >
+                          <TypeSelect
+                            name="flavor"
+                            defaultValue={t('RESOURCES_SELECT')}
+                            options={flavorOptions()}
+                            onChange={e => setSelectFlavorName(e)}
+                            placeholder={{
+                              label: t('RESOURCES_SELECT'),
+                            }}
+                            defaultDescription={t(
+                              'RESOURCES_SELECT_FLAVOR_TIP'
+                            )}
+                            newMaxHeight="198"
+                          />
+                        </Form.Item>
+                        <div
+                          className={`form-item-error ${
+                            flavorSizeCheck ? 'hide' : ''
+                          }`}
+                        >
+                          {imageType === 'I'
+                            ? t('RESOURCES_SELECT_SIZE_LAGER_IMAGE_SIZE_DESC')
+                            : t('RESOURCES_SELECT_SIZE_LAGER_BOOT_SIZE_DESC')}
+                        </div>
+                      </Column>
+                    </Columns>
+                  </Form.Item>
+                )}
+                {isProjectQuotaSet && (
+                  <div>{t('RESOURCES_SELECT_FLAVOR_QUOTA_TIP')}</div>
+                )}
 
                 <Form.Item
                   className={styles.textarea}
@@ -1444,7 +1511,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['network'].length > 0 &&
                                     stateVariables['network'].length ===
-                                    dataListVariables['network'].length
+                                      dataListVariables['network'].length
                                   )
                                 }
                               />
@@ -1581,7 +1648,7 @@ const RegistModal = props => {
                                   !!(
                                     dataListVariables['security'].length > 0 &&
                                     stateVariables['security'].length ===
-                                    dataListVariables['security'].length
+                                      dataListVariables['security'].length
                                   )
                                 }
                               />
@@ -1681,8 +1748,9 @@ const RegistModal = props => {
 
                 <div className={styles.wrapperError}>
                   <div
-                    className={`form-item-error ${!isKeypiarPasswordError ? 'hide' : ''
-                      }`}
+                    className={`form-item-error ${
+                      !isKeypiarPasswordError ? 'hide' : ''
+                    }`}
                   >
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
@@ -1736,8 +1804,9 @@ const RegistModal = props => {
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${!isJupyterPortError ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            !isJupyterPortError ? 'hide' : ''
+                          }`}
                         >
                           {t('RESOURCES_JUPYTER_PORT_RANGE_DESC')}
                         </div>
@@ -1765,8 +1834,9 @@ const RegistModal = props => {
                           </Columns>
                         </div>
                         <div
-                          className={`form-item-error ${!isJupyterTokenError ? 'hide' : ''
-                            }`}
+                          className={`form-item-error ${
+                            !isJupyterTokenError ? 'hide' : ''
+                          }`}
                         >
                           {t('RESOURCES_JUPYTER_TOKEN_DESC')}
                         </div>
@@ -1838,8 +1908,9 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isPasswordError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isPasswordError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                       </div>
@@ -1895,13 +1966,13 @@ const RegistModal = props => {
                         </Button>
                       </div>
                       <div
-                        className={`form-item-error ${!isFileWriteError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isFileWriteError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
                       </div>
                     </Form.Group>
-                    
                   </div>
                   <div
                     className={
@@ -1937,8 +2008,9 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                       <div
-                        className={`form-item-error ${!isUserScriptError ? 'hide' : ''
-                          }`}
+                        className={`form-item-error ${
+                          !isUserScriptError ? 'hide' : ''
+                        }`}
                       >
                         {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
                       </div>
@@ -1978,13 +2050,15 @@ const RegistModal = props => {
                         </div>
                       )}
                       <div className={styles.list}>
-                        <label>{`${imageType === 'I'
-                          ? t('RESOURCES_IMAGE')
-                          : t('RESOURCES_BOOT_VOLUME')
-                          }`}</label>
+                        <label>{`${
+                          imageType === 'I'
+                            ? t('RESOURCES_IMAGE')
+                            : t('RESOURCES_BOOT_VOLUME')
+                        }`}</label>
                         <div className={styles.multiline}>
-                          <div className={styles.bold}>{`${imageType === 'I' ? imageName : bootVolumeName
-                            }`}</div>
+                          <div className={styles.bold}>{`${
+                            imageType === 'I' ? imageName : bootVolumeName
+                          }`}</div>
                         </div>
                       </div>
                       <div className={styles.list}>
@@ -1999,11 +2073,18 @@ const RegistModal = props => {
                       </div>
                     </div>
 
-                    {(imageType === 'I' && description) && (
+                    <div className={styles.greybgbox}>
+                      <div className={styles.list_two_col}>
+                        <label>{t('RESOURCES_NODE_NAME')}</label>
+                        <div style={{ maxWidth: 'none' }}>{gpuNodeName}</div>
+                      </div>
+                    </div>
+
+                    {imageType === 'I' && description && (
                       <div className={styles.greybgbox}>
-                        <div className={styles.list}>
+                        <div className={styles.list_one_col}>
                           <label>{t('RESOURCES_DESCRIPTION')}</label>
-                          <div>{description}</div>
+                          <div style={{ maxWidth: 'none' }}>{description}</div>
                         </div>
                       </div>
                     )}
@@ -2041,10 +2122,11 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
-                                {`${obj.ip === undefined
-                                  ? t('RESOURCES_AUTOMATIC')
-                                  : obj.ip
-                                  }`}
+                                {`${
+                                  obj.ip === undefined
+                                    ? t('RESOURCES_AUTOMATIC')
+                                    : obj.ip
+                                }`}
                               </div>
                             </div>
                           </div>
@@ -2104,10 +2186,11 @@ const RegistModal = props => {
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_KEYPAIR')}</label>
-                        <div>{`${keypairName === undefined
-                          ? t('RESOURCES_NOT_SELECTED')
-                          : keypairName
-                          }`}</div>
+                        <div>{`${
+                          keypairName === undefined
+                            ? t('RESOURCES_NOT_SELECTED')
+                            : keypairName
+                        }`}</div>
                       </div>
                       <div className={styles.list}>
                         <label>{t('RESOURCES_SCRIPT')}</label>

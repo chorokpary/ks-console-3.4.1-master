@@ -16,7 +16,6 @@ const TopologyModal = (props) => {
     setModalView(false);
   }
 
-
   return (
     <>
        <Modal

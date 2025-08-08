@@ -23,6 +23,7 @@
 
 .table {
   width: 100%;
+  table-layout: fixed;
 
   tr {
     border-bottom: 4px solid $card-bg-color;

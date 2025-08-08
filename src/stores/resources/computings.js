@@ -18,16 +18,10 @@
 
 import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
-import { Notify } from '@kube-design/components'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
-import ObjectMapper from 'utils/object.mapper'
-import cookie from 'utils/cookie'
-import axios from "axios";
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 
 export default class ComputingStore extends Base {
-
 
   @action
   async fetchComputingData({
@@ -47,17 +41,18 @@ export default class ComputingStore extends Base {
       { num: 1, type: 'vms', root: 'vms', name: t('RESOURCES_VM'), routeName: 'vms', multitenancy: true, icon: 'ico-type-vm', createField: 'creation_timestamp' },
       { num: 2, type: 'images', root: 'images', name: t('RESOURCES_VM_IMAGE'), routeName: 'images', multitenancy: false, icon: 'snapshot', createField: 'timestamp' },
       { num: 3, type: 'volumes', root: 'volumes', name: t('RESOURCES_VOLUME'), routeName: 'resourcesVolumes', multitenancy: true, icon: 'storage', createField: 'timestamp' },
-      { num: 4, type: 'flavors', root: 'flavors', name: t('RESOURCES_FLAVOR'), routeName: 'flavors', multitenancy: false, icon: 'apps', createField: 'timestamp' },
-      { num: 5, type: 'keypairs', root: 'keypairs', name: t('RESOURCES_KEYPAIR'), routeName: 'keypairs', multitenancy: true, icon: 'key', createField: 'timestamp' },
-      { num: 6, type: 'networks', root: 'networks', name: t('RESOURCES_NETWORK'), routeName: 'networks', multitenancy: true, icon: 'network-duotone', createField: 'timestamp' },
-      { num: 7, type: 'sriov_networks', root: 'sriovs', name: t('RESOURCES_SR_IOV_NETWORK'), routeName: 'sriovs', multitenancy: true, icon: 'ico-type-sriov', createField: 'timestamp' },
-      { num: 8, type: 'physical_networks', root: 'physicalnetworks', name: t('RESOURCES_DEDICATED_NETWORK'), routeName: 'physicalnetworks', multitenancy: true, icon: 'ico-type-sriov', createField: 'timestamp' },
-      { num: 9, type: 'routers', root: 'routers', name: t('RESOURCES_VROUTER'), routeName: 'routers', multitenancy: true, icon: 'router', createField: 'timestamp' },
-      { num: 10, type: 'floating_ips', root: 'floating_ips', name: t('RESOURCES_FLOATING_IP'), routeName: 'floatingip', multitenancy: true, icon: 'intranet-routers', createField: 'not' },
-      { num: 11, type: 'lbs', root: 'lbs', name: t('RESOURCES_LOAD_BALANCER'), routeName: 'loadBalancers', multitenancy: true, icon: 'loadbalancer', createField: 'timestamp' },
-      { num: 12, type: 'security_groups', root: 'security_groups', name: t('RESOURCES_SECURITY_GROUP'), routeName: 'securityGroups', multitenancy: true, icon: 'shield', createField: 'timestamp' },
-      { num: 13, type: 'host_devices', root: 'host_devices', name: t('RESOURCES_HOST_DEVICE'), routeName: 'hostdevices', multitenancy: false, icon: 'ico-type-hostdevice', createField: 'timestamp' },
-      { num: 14, type: 'mediated_devices', root: 'mediated_devices', name: t('RESOURCES_MEDIATED_DEVICE'), routeName: 'mediateddevices', multitenancy: false, icon: 'ico-type-mediatedvgpu', createField: 'timestamp' },
+      { num: 4, type: 'network_storages', root: 'network_storages', name: t('RESOURCES_NETWORK_STORAGE'), routeName: 'networkstorages', multitenancy: true, icon: 'storage', createField: 'timestamp' },
+      { num: 5, type: 'flavors', root: 'flavors', name: t('RESOURCES_FLAVOR'), routeName: 'flavors', multitenancy: false, icon: 'apps', createField: 'timestamp' },
+      { num: 6, type: 'keypairs', root: 'keypairs', name: t('RESOURCES_KEYPAIR'), routeName: 'keypairs', multitenancy: true, icon: 'key', createField: 'timestamp' },
+      { num: 7, type: 'networks', root: 'networks', name: t('RESOURCES_NETWORK'), routeName: 'networks', multitenancy: true, icon: 'network-duotone', createField: 'timestamp' },
+      { num: 8, type: 'sriov_networks', root: 'sriovs', name: t('RESOURCES_SR_IOV_NETWORK'), routeName: 'sriovs', multitenancy: true, icon: 'ico-type-sriov', createField: 'timestamp' },
+      { num: 9, type: 'physical_networks', root: 'physicalnetworks', name: t('RESOURCES_DEDICATED_NETWORK'), routeName: 'physicalnetworks', multitenancy: true, icon: 'ico-type-sriov', createField: 'timestamp' },
+      { num: 10, type: 'routers', root: 'routers', name: t('RESOURCES_VROUTER'), routeName: 'routers', multitenancy: true, icon: 'router', createField: 'timestamp' },
+      { num: 11, type: 'floating_ips', root: 'floating_ips', name: t('RESOURCES_FLOATING_IP'), routeName: 'floatingip', multitenancy: true, icon: 'intranet-routers', createField: 'not' },
+      { num: 12, type: 'lbs', root: 'lbs', name: t('RESOURCES_LOAD_BALANCER'), routeName: 'loadBalancers', multitenancy: true, icon: 'loadbalancer', createField: 'timestamp' },
+      { num: 13, type: 'security_groups', root: 'security_groups', name: t('RESOURCES_SECURITY_GROUP'), routeName: 'securityGroups', multitenancy: true, icon: 'shield', createField: 'timestamp' },
+      { num: 14, type: 'host_devices', root: 'host_devices', name: t('RESOURCES_HOST_DEVICE'), routeName: 'hostdevices', multitenancy: false, icon: 'ico-type-hostdevice', createField: 'timestamp' },
+      { num: 15, type: 'mediated_devices', root: 'mediated_devices', name: t('RESOURCES_MEDIATED_DEVICE'), routeName: 'mediateddevices', multitenancy: false, icon: 'ico-type-mediatedvgpu', createField: 'timestamp' },
     ];
 
     const computingDataArray = [];
@@ -69,7 +64,8 @@ export default class ComputingStore extends Base {
       let resultCount = 0;
 
       if(pagedModule.includes(item.type)){
-        resultCount = get(await request.get(`${apiUrl}/${item.type}?project=${namespace}`), 'total', 0);
+        result = get(await request.get(`${apiUrl}/${item.type}?project=${namespace}&limit=-1`), item.root, []);
+        resultCount = result.length;
       }else{
         result = get(await request.get(`${apiUrl}/${item.type}`), item.root, []);
         resultCount = item.multitenancy ? result.filter(item => item.project == namespace).length : result.length;

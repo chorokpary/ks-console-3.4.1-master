@@ -16,8 +16,8 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 module.exports = {
-  RESOURCES_BESIDES: 'Besides',
-  RESOURCES_COUNT: 'Count',
+  RESOURCES_BESIDES: 'and',
+  RESOURCES_COUNT: 'other',
   RESOURCES_EUL: 'is',
   RESOURCES_LEUL: 'is',
   RESOURCES_SG_PL: ' is (are)',
@@ -228,7 +228,10 @@ module.exports = {
   RESOURCES_INTERFACE: 'Interface',
   RESOURCES_INTERFACE_INDEX: 'Interface Index',
   RESOURCES_SELECT_INTERFACE_INDEX_TIP: 'Please select an Interface Index.',
+  RESOURCES_BOND_NETWORK: 'Bond Network',
+  RESOURCES_VPC_NETWORK: 'VPC Network',
   RESOURCES_SR_IOV_NETWORK: 'SR-IOV Network',
+  RESOURCES_UNKNOWN_NETWORK: 'Unknown Network',
   RESOURCES_CREATE_SR_IOV: 'Create SR-IOV',
   RESOURCES_EDIT_SR_IOV: 'Edit SR-IOV',
   RESOURCES_DELETE_SR_IOV_TIP:
@@ -1017,6 +1020,8 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Please enter the port.',
   RESOURCES_ENTER_60_MORE: 'Please enter 60 or more.',
   RESOURCES_ENTER_1_MORE_AS_65535: 'Please enter between 1 and 65535.',
+  RESOURCES_LAST_NUMBER_GREATER:
+    'Please enter a number greater than the first number.',
   RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'Please enter DNS information correctly.',
   RESOURCES_DNS_PRIMARY: 'Primary',
@@ -1047,6 +1052,7 @@ module.exports = {
   RESOURCES_EXCUTION_SUCCESSFULLY: 'Executed successfully.',
   RESOURCES_VM_SECURITYGROUP_EDIT: 'Edit Security Group',
   RESOURCES_VM_FLAVOR_EDIT: 'Edit Flavor',
+  RESOURCES_VM_EDIT: 'Edit VM',
   RESOURCES_VM_SCHEDULE_STATUS: 'VM Scheduling Status',
   RESOURCES_VM_SCHEDULE_READY: 'VM Ready',
   RESOURCES_VM_SCHEDULE_READY_DESC:
@@ -1067,7 +1073,10 @@ module.exports = {
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), must start and end with a lowercase letter or number, maximum length is 63 characters.',
   RESOURCES_INVALID_NAME_HOSTDEVICES_DESC:
     'Invalid name. Name can be entered in the format (lowercase or number.Domain 2 or more) / (lowercase or uppercase or number). Maximum length is 63 characters.',
-
+  RESOURCES_FABRIC_KEY_DESC:
+    'Fabric key must be in the format 0x0000~0xFFFF, and for infiniband it must be in the range 0x0001~0x7FFE, and for ethernet it must be in the range 0x0001~0x0FFE.',
+  RESOURCES_INVALID_FABRIC_KEY_DESC:
+    'Invalid fabric key. \nFabric key must be in the format 0x0000~0xFFFF, and for infiniband it must be in the range 0x0001~0x7FFE, and for ethernet it must be in the range 0x0001~0x0FFE.',
   RESOURCES_INTERVAL_60_OVER_DESC: 'Please enter an interval of 60 or more.',
   RESOURCES_ID_EMPTY_DESC: 'Please enter the ID.',
   RESOURCES_JUPYTER_PORT_RANGE_DESC:
@@ -1156,29 +1165,46 @@ module.exports = {
   RESOURCES_NETWORK_STORAGE_MOUNT: 'Mount Information',
 
   RESOURCES_GPU_CLUSTER: 'GPU Cluster',
+  RESOURCES_GPU_CLUSTER_FABRICKEY: 'Fabric Key',
+  RESOURCES_GPU_CLUSTER_FABRICTYPE: 'Fabric Type',
+  RESOURCES_GPU_CLUSTER_SONANETWORK: 'Network',
   RESOURCES_DELETE_GPU_CLUSTER_TIP:
-    'GPU 클러스터 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
+    'Enter the gpu cluster name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.' +
+    '<p></p>All virtual machines included in the cluster will be deleted.',
+  RESOURCES_DELETE_GPU_CLUSTER_VM_TIP:
+    'Virtual machine name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
+  RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'Please enter a GPU cluster.',
   RESOURCES_GPU_CLUSTER_DESC:
-    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
-  RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
+    'You can manage the status and usage of the GPU cluster.',
+  RESOURCES_CREATE_GPU_CLUSTER: 'Create GPU Cluster',
+  RESOURCES_EDIT_GPU_CLUSTER: 'Edit GPU Cluster',
   RESOURCES_GPU_CLUSTER_DESC:
-    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
-  RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Node 수',
-  RESOURCES_GPU_CLUSTER_MONITORING: 'GPU 모니터링',
+    'You can manage the status and usage of the GPU cluster.',
+  RESOURCES_GPU_CLUSTER_NODE_COUNT: 'Number of Nodes',
+  RESOURCES_GPU_CLUSTER_MONITORING: 'GPU Monitoring',
   RESOURCES_GPU_NODE_POOLS: 'Node Pools',
-  RESOURCES_GPU_CLUSTER_VM_COUNT: '가상머신 수',
-  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: '가상머신 생성 수',
-  RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT: '생성 가능한 가상머신 수',
+  RESOURCES_GPU_CLUSTER_VM_COUNT: 'Number of Virtual Machines',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT: 'Number of Virtual Machines to Create',
+  RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT:
+    'Number of Virtual Machines Available for Creation',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
-    '가상머신 생성 수를  1 이상 입력해주세요',
+    'Please enter a value greater than or equal to 1 for the number of virtual machines to create.',
 
-  RESOURCES_VM_SETTINGS: '가상머신 설정',
-  RESOURCES_NO_VM: '가상머신이 없습니다.',
-  RESOURCES_CREATE_REQUEST_SUCCESSFUL: '생성 요청 했습니다.',
-  RESOURCES_NUMBER_EMPTY_DESC: '숫자를 입력하세요.',
-  RESOURCES_ENTER_1_MORE: '1이상 입력해 주세요.',
-  RESOURCES_CLOSE: '닫기',
-  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER: '첫 번째 숫자보다 크거나 같아야 합니다.',
+  RESOURCES_VM_SETTINGS: 'Virtual Machine Settings',
+  RESOURCES_NO_VM: 'No Virtual Machines Found.',
+  RESOURCES_CREATE_REQUEST_SUCCESSFUL: 'Creation request has been made.',
+  RESOURCES_NUMBER_EMPTY_DESC: 'Please enter a number.',
+  RESOURCES_ENTER_1_MORE: 'Please enter a value greater than or equal to 1.',
+  RESOURCES_CLOSE: 'Close',
+  RESOURCES_LAST_NUM_SHOULD_BE_BIGGER:
+    'Must be greater than or equal to the first number.',
+  RESOURCES_VM_PREFIX: 'Virtual Machine Name prefix',
+  RESOURCES_VM_PREFIX_EMPTY_DESC:
+    ' Please enter a Virtual Machine name prefix.',
+  RESOURCES_INVALID_VM_PREFIX_DESC:
+    'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
+  RESOURCES_NODE_PREFIX: 'Node Name prefix',
+  RESOURCES_NODE_PREFIX_EMPTY_DESC: 'Please enter a Node name prefix.',
+  RESOURCES_INVALID_NODE_PREFIX_DESC:
+    'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
 }
