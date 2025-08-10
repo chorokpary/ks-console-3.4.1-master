@@ -75,7 +75,7 @@ const Status = props => {
       })
 
       const physicalNetworkData = store.physicalnetworksList
-      const physicalNetworkFilterData = physicalNetworkData.filter(item => {
+      const physicalNetworkFilterData = physicalNetworkData?.filter(item => {
         return networkNameArray.includes(item.name)
       })
 
