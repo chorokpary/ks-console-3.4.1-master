@@ -80,7 +80,7 @@ const index = props => {
     }
 
     if (params.name !== '' && params.name !== undefined) {
-      ;(detailParams.searchType = 'vm_name'),
+      ;(detailParams.searchType = 'vmName'),
         (detailParams.searchName = params.name)
     }
 
