@@ -932,9 +932,7 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/network_storages?project=${
-        params.namespace
-      }`
+      )}/edgetron/resources/kubevirt/network_storages`
     )
     const response = {
       ...params,

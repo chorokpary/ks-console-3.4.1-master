@@ -190,7 +190,6 @@ const RegistModal = props => {
       })
       const listNetworkStorage = await vmStore.fetchNetworkStorage({
         ...props,
-        namespace: projectName,
       })
 
       setBootVolumeDataList(listBootVolume.volumes)
@@ -325,9 +324,8 @@ const RegistModal = props => {
       existing.push(record)
     }
     setSelectedPhysicalnetworkIpList(existing)
-
     const updatedNetworkList = physicalNetworkList.map(item => {
-      if (item.id === name) {
+      if (item.name === name) {
         return { ...item, ip: val }
       }
       return item
