@@ -336,23 +336,19 @@ export default class GpuClustersStore extends Base {
       }
 
       const updatedNetworks = updatedNameJsonData.vm.networks.map(network => {
-        if (network.network_name === 'external-solutionzone-201') {
+        if(!network.fixed_ip){
           const matchedCidr = data.networkListData.find(
-            item => item.name === network.network_name
-          )
-          const subnetPart =
-            matchedCidr?.cidr
-              ?.split('/')[0]
-              .split('.')
-              .slice(0, 3)
-              .join('.') || ''
-          const fixed_ip = subnetPart + '.' + String(100 + i)
+          item => item.name === network.network_name
+        )
+        const subnetPart = matchedCidr?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || ''
+        const fixed_ip = subnetPart + '.' + String(100 + i)
           return {
             ...network,
             fixed_ip: fixed_ip,
           }
         }
-        return network
+
+        return network        
       })
 
       const updatedJsonData = {
@@ -361,8 +357,8 @@ export default class GpuClustersStore extends Base {
           networks: updatedNetworks,
         },
       }
-
-      // console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
+      
+      console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
       request.post(url, updatedNameJsonData)
     }
 

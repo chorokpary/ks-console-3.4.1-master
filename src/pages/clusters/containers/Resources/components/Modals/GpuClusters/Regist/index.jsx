@@ -255,9 +255,9 @@ const RegistModal = props => {
       existing.push(record)
     }
     setSelectedIpList(existing)
-
+    
     const updatedNetworkList = networkList.map(item => {
-      if (item.id === netId) {
+      if (item.name === netId) {
         return { ...item, ip: val }
       }
       return item
@@ -362,6 +362,7 @@ const RegistModal = props => {
       }
 
       console.log('생성 실행~!!!')
+      // console.log(JSON.stringify(data))
       onOk({ ...data })
     })
   }
