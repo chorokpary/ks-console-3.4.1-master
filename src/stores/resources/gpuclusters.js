@@ -359,7 +359,7 @@ export default class GpuClustersStore extends Base {
       }
       
       console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
-      request.post(url, updatedNameJsonData)
+      request.post(url, updatedJsonData)
     }
 
     return await this.submitting(
