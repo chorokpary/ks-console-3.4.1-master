@@ -344,7 +344,8 @@ const RegistModal = props => {
   }
 
   const networkStorageOptions = () => {
-    return networkStorageDataList.map(obj => {
+    return networkStorageDataList.filter(obj => obj.project === projectName)
+      .map(obj => {
       return {
         label: t(obj.name),
         value: t(obj.name),
