@@ -330,7 +330,7 @@ export default class VmStore extends Base {
     await this.fetchVmListSriovNetwork(params)
 
     // Physical Network
-    // await this.fetchVmListPhysicalNetwork(params)
+    await this.fetchVmListPhysicalNetwork(params)
 
     // Network Storage
     if (detail.vm.network_storage !== '') {
