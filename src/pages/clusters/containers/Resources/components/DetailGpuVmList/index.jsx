@@ -177,7 +177,7 @@ const DetailGpuVmList = props => {
       const vmGpuRamData = await customStore.fetchMetric({
         expr: gpuRamDataExpr,
         ...paramsData,
-        cluster: props.match.params.cluster,
+        cluster,
       })
 
       setVmGpuRamData(vmGpuRamData)
