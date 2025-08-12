@@ -101,6 +101,8 @@ const RegistModal = props => {
   const [firstNum, setFirstNum] = useState('')
   const [lastNum, setLastNum] = useState('')
 
+  const [clusterNetwork, setClusterNetwork] = useState('')
+  
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
 
@@ -162,6 +164,19 @@ const RegistModal = props => {
   }, [projectName])
 
   useEffect(() => {
+
+    const getClusterDetail = async () => {
+      const clusterDetail = await gpuStore.fetchDetail({
+        clster: props.namespace,
+        name: props.name
+      })
+      const clusterNetworkName = clusterDetail.data?.spec?.sonaNetwork;
+      setClusterNetwork(clusterNetworkName)
+      handleSingleCheck(true, clusterNetworkName, 'network') //초기 셋팅
+    }
+
+    getClusterDetail()
+
     const getGpuVmCount = async () => {
       const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
       const vmList = vmData.vmList
@@ -170,7 +185,7 @@ const RegistModal = props => {
         const lastVmNumber = vmList.length
       }
     }
-    // getGpuVmCount()
+    getGpuVmCount()
 
     const getVmImage = async () => {
       const listImage = await vmStore.fetchVmListImage({ ...props })
@@ -214,7 +229,7 @@ const RegistModal = props => {
   }, [])
 
   const projectFilteredData = project => {
-    const networks = networkDataList.filter(obj => obj.project === project)
+    const networks = networkDataList.filter(obj => obj.project === project).filter(item => item.name === clusterNetwork)
     setNetworkList(networks)
     const sriovNetworks = sriovNetworkDataList.filter(
       obj => obj.project === project
@@ -242,6 +257,15 @@ const RegistModal = props => {
           label: t(ip),
           value: t(ip),
         }
+      })
+    }
+  }
+
+   const availableIpListData = netId => {
+    const networkIps = availableIpList.find(obj => obj.network === netId)
+    if (networkIps !== undefined) {
+      return networkIps.ips.map(ip => {
+        return ip
       })
     }
   }
@@ -316,6 +340,10 @@ const RegistModal = props => {
     }))
   }
 
+  const ipToNumber = (ip) => {
+    return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+  }
+
   const handleOk = () => {
     const onOk = props.onOk
 
@@ -353,7 +381,7 @@ const RegistModal = props => {
             name: obj.name,
             cidr: obj.cidr,
           }
-        })
+      })
 
       data.networkListData = networkListData
 
@@ -362,7 +390,7 @@ const RegistModal = props => {
       }
 
       console.log('생성 실행~!!!')
-      // console.log(JSON.stringify(data))
+      //console.log(JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -1081,6 +1109,12 @@ const RegistModal = props => {
     setLastGpuVmName(lastVmName)
   }
 
+  const getNetworkAssignmentRange = () => {
+    const firstNetwork = Number(firstNum) + 100
+    const lastNetwork = Number(lastNum) + 100
+    return firstNetwork + " ~ " + lastNetwork;
+  }
+
   return (
     <>
       <Modal
@@ -1473,28 +1507,11 @@ const RegistModal = props => {
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_NETWORK')}>
                   <div className={styles.wrapper}>
-                    {stateVariables['network'].length > 0 && (
-                      <div
-                        className={classnames(
-                          styles.table_title,
-                          styles.table_title_bg
-                        )}
-                      >
-                        <Button
-                          className={styles.table_title_button}
-                          onClick={() => handleAllCheck(false, 'network')}
-                        >
-                          {t('RESOURCES_ALL_DESELECT')}
-                        </Button>
-                        {stateVariables['network'].length}
-                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
-                      </div>
-                    )}
+
                     <div className={styles.table}>
                       <table>
                         <colgroup>
-                          <col width="5%" />
-                          <col width="20%" />
+                          <col width="25%" />
                           <col width="15%" />
                           <col width="20%" />
                           <col width="20%" />
@@ -1502,21 +1519,6 @@ const RegistModal = props => {
                         </colgroup>
                         <thead>
                           <tr>
-                            <th>
-                              <Checkbox
-                                name="select-all-network"
-                                onChange={checked =>
-                                  handleAllCheck(checked, 'network')
-                                }
-                                checked={
-                                  !!(
-                                    dataListVariables['network'].length > 0 &&
-                                    stateVariables['network'].length ===
-                                      dataListVariables['network'].length
-                                  )
-                                }
-                              />
-                            </th>
                             <th>
                               <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
                             </th>
@@ -1535,51 +1537,12 @@ const RegistModal = props => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!networkList?.length && (
-                            <tr>
-                              <td colSpan="6" className="no-data">
-                                <p>
-                                  {t(
-                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                  )}
-                                </p>
-                              </td>
-                            </tr>
-                          )}
                           {networkList?.map(data => (
                             <tr key={data.name}>
-                              <td>
-                                <Checkbox
-                                  name={`select-${data.name}`}
-                                  checked={
-                                    !!stateVariables['network'].includes(
-                                      data.name
-                                    )
-                                  }
-                                  onChange={checked =>
-                                    handleSingleCheck(
-                                      checked,
-                                      data.name,
-                                      'network'
-                                    )
-                                  }
-                                />
-                              </td>
                               <td>{data.name}</td>
                               <td>{data.type.toUpperCase()}</td>
                               <td>
-                                <Select
-                                  name={`${data.name}-ip`}
-                                  placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.name)}
-                                  onChange={e =>
-                                    handleIpSelectClick(data.name, e)
-                                  }
-                                  disabled={
-                                    !networkCheckItems.includes(data.name)
-                                  }
-                                  clearable
-                                />
+                                {getNetworkAssignmentRange()}
                               </td>
                               <td>{data.cidr}</td>
                               <td>{data.gateway_ip}</td>
@@ -1588,23 +1551,6 @@ const RegistModal = props => {
                         </tbody>
                       </table>
 
-                      <div className={styles.removeCheckWrapper}>
-                        {networkCheckItems?.map(id => {
-                          const name = networkList
-                            ?.filter(data => data.name === id)
-                            .map(item => item.name)[0]
-                          return (
-                            <span key={id}>
-                              <Button
-                                icon="close"
-                                onClick={() => handleDelete(id, 'network')}
-                              >
-                                {name}
-                              </Button>
-                            </span>
-                          )
-                        })}
-                      </div>
                     </div>
                   </div>
                 </Form.Item>
@@ -2123,11 +2069,7 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
-                                {`${
-                                  obj.ip === undefined
-                                    ? t('RESOURCES_AUTOMATIC')
-                                    : obj.ip
-                                }`}
+                                 {getNetworkAssignmentRange()}
                               </div>
                             </div>
                           </div>
