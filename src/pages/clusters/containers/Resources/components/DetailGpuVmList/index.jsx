@@ -53,6 +53,7 @@ const DetailGpuVmList = props => {
   const [vmMemoryData, setVmMemoryData] = useState([])
 
   const [vmGpuUtilData, setVmGpuUtilData] = useState([])
+  const [vmGpuRamData, setVmGpuRamData] = useState([])
 
   const perPage = 6
   const [currentPage, setCurrentPage] = useState(1)
@@ -159,7 +160,6 @@ const DetailGpuVmList = props => {
     }
 
     const getVmGpuUtilData = async () => {
-      // const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${store.detail.id}"} / 100`
       const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter"} / 100`
 
       const vmGpuUtilData = await customStore.fetchMetric({
@@ -171,34 +171,55 @@ const DetailGpuVmList = props => {
       setVmGpuUtilData(vmGpuUtilData)
     }
 
+    const getVmGpuRamData = async () => {
+      const gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter"} * 1000000`
+
+      const vmGpuRamData = await customStore.fetchMetric({
+        expr: gpuRamDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      setVmGpuRamData(vmGpuRamData)
+    }
+
     getVmCpuUsageData()
     getVmMemoryUsageData()
     getVmGpuUtilData()
+    getVmGpuRamData()
   }
 
-  const getMonitoringCfgs = (cpuData, memoryData, gpuData) => [
+  const getMonitoringCfgs = (cpuData, memoryData, gpuData, gpuMemoryData) => [
+    // {
+    //   type: 'cpu',
+    //   title: 'CPU',
+    //   unitType: 'cpu',
+    //   legend: ['USED'],
+    //   data: cpuData,
+    //   bgColor: 'transparent',
+    // },
+    // {
+    //   type: 'memory',
+    //   title: 'MEMORY',
+    //   unitType: 'memory',
+    //   legend: ['USED'],
+    //   data: memoryData,
+    //   bgColor: 'transparent',
+    // },
     {
       type: 'cpu',
-      title: 'CPU',
+      title: 'RESOURCES_GPU_UTILIZATION',
       unitType: 'cpu',
       legend: ['USED'],
-      data: cpuData,
+      data: gpuData,
       bgColor: 'transparent',
     },
     {
       type: 'memory',
-      title: 'MEMORY',
+      title: 'RESOURCES_GPU_RAM_USAGE',
       unitType: 'memory',
       legend: ['USED'],
-      data: memoryData,
-      bgColor: 'transparent',
-    },
-    {
-      type: 'cpu',
-      title: 'GPU',
-      unitType: 'cpu',
-      legend: ['USED'],
-      data: gpuData,
+      data: gpuMemoryData,
       bgColor: 'transparent',
     },
   ]
@@ -306,7 +327,12 @@ const DetailGpuVmList = props => {
       if (data.metric.pod === vmId) return data
     })
 
-    if (!vmCpuMetricData && !vmMemoryMetricData && !vmGpuMetricData)
+     const vmGpuMemoryMetricData = _.find(vmGpuRamData, data => {
+      if (data.metric.pod === vmId) return data
+    })
+
+    // if (!vmCpuMetricData && !vmMemoryMetricData && !vmGpuMetricData && !vmGpuMemoryMetricData)
+    if (!vmGpuMetricData && !vmGpuMemoryMetricData)
       return <div className={styles.monitors}>{t('NO_MONITORING_DATA')}</div>
 
     const vmCpuArray = []
@@ -318,7 +344,10 @@ const DetailGpuVmList = props => {
     const vmGpuArray = []
     vmGpuArray.push(vmGpuMetricData)
 
-    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray, vmGpuArray)
+    const vmGpuMemoryArray = []
+    vmGpuMemoryArray.push(vmGpuMemoryMetricData)
+
+    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray, vmGpuArray, vmGpuMemoryArray)
 
     return (
       <div className={styles.monitors}>
