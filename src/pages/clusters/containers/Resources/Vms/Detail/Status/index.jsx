@@ -569,11 +569,11 @@ const Status = props => {
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
                 <div className={styles.title}>
-                  <div>{detailNetworkStorage.protocol}</div>
+                  <div>{detailNetworkStorage.protocol.toUpperCase()}</div>
                   <p>{t('RESOURCES_PROTOCOL')}</p>
                 </div>
                 <div className={styles.title}>
-                  <div>{detailNetworkStorage.transport}</div>
+                  <div>{detailNetworkStorage.transport.toUpperCase()}</div>
                   <p>{t('RESOURCES_TRANSPORT')}</p>
                 </div>
                 <div className={styles.title}>

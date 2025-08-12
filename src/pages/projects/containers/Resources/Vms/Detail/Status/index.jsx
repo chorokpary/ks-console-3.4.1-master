@@ -518,7 +518,7 @@ const Status = props => {
                       </div>
                       <p>{t('RESOURCES_NAME')}</p>
                     </div>
-                    <div className={styles.title}>
+                    <div className={styles.attribute}>
                       <div>
                         {obj.access_modes.map(mode => (
                           <p key={mode}>{mode}</p>
@@ -526,11 +526,11 @@ const Status = props => {
                       </div>
                       <p>{t('RESOURCES_ACCESS_MODE')}</p>
                     </div>
-                    <div className={styles.title}>
+                    <div className={styles.attribute}>
                       <div>{obj.capacity}</div>
                       <p>{t('RESOURCES_CAPACITY')}</p>
                     </div>
-                    <div className={styles.title}>
+                    <div className={styles.attribute}>
                       <div>
                         {t(`RESOURCES_IMAGE_${obj.phase.toUpperCase()}`)}
                       </div>
@@ -561,15 +561,15 @@ const Status = props => {
                   </div>
                   <p>{t('RESOURCES_NAME')}</p>
                 </div>
-                <div className={styles.title}>
-                  <div>{detailNetworkStorage.protocol}</div>
+                <div className={styles.attribute}>
+                  <div>{detailNetworkStorage.protocol.toUpperCase()}</div>
                   <p>{t('RESOURCES_PROTOCOL')}</p>
                 </div>
-                <div className={styles.title}>
-                  <div>{detailNetworkStorage.transport}</div>
+                <div className={styles.attribute}>
+                  <div>{detailNetworkStorage.transport.toUpperCase()}</div>
                   <p>{t('RESOURCES_TRANSPORT')}</p>
                 </div>
-                <div className={styles.title}>
+                <div className={styles.attribute}>
                   <div>{detailNetworkStorage.mount_point}</div>
                   <p>{t('RESOURCES_MOUNT_POINT')}</p>
                 </div>

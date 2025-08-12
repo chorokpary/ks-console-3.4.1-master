@@ -308,7 +308,22 @@
 
     &.name {
       padding-right: 20px;
-      width: 28%;
+      width: 26%;
+    }
+  }
+
+  .attribute {
+    min-width: 120px;
+    width: 20%;
+
+    & > div {
+      @include ellipsis;
+      @include TypographyTitleH6($dark-color07);
+    }
+
+    & > p {
+      @include ellipsis;
+      @include TypographyParagraph($dark-color01);
     }
   }
 
