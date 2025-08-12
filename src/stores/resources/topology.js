@@ -50,7 +50,7 @@ export default class TopologyStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms?limit=-1`
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
