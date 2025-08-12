@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DetailPage from 'clusters/containers/Base/Detail'
 
 import { useParams } from 'react-router-dom'
@@ -12,18 +12,32 @@ import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import routes from './routes'
 
+import VmStore from 'stores/resources/vms'
 import GpuClustersStore from 'stores/resources/gpuclusters'
 
+const vmStore = new VmStore()
 const store = new GpuClustersStore()
 
 const GpuClustersDetail = props => {
+
+  const [ networkCidr, setNetworkCidr ] = useState('')
+
   useEffect(() => {
     fetchData()
+    getNetworkList()
   }, [])
 
   const fetchData = () => {
     store.fetchDetail(props.match.params)
   }
+
+  const getNetworkList = async () => {
+    const listNetwork = await vmStore.fetchVmListNetwork(props.match.params)
+    const networks = listNetwork.networks
+    const cidr = networks.filter(item => item.name === store.detail.data?.spec?.sonaNetwork)[0].cidr
+
+    setNetworkCidr(cidr)
+  }  
 
   const { cluster } = props.match.params
   const listUrl = `/clusters/${cluster}/gpuclusters`
@@ -115,6 +129,10 @@ const GpuClustersDetail = props => {
       {
         name: t('RESOURCES_GPU_CLUSTER_SONANETWORK'),
         value: detail.data?.spec?.sonaNetwork,
+      },
+      {
+        name: t('RESOURCES_CIDR'),
+        value: networkCidr,
       },
     ]
   }
