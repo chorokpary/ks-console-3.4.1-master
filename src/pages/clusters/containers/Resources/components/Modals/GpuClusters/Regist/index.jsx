@@ -18,9 +18,13 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import * as common from 'utils/resources'
 import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
+import { Loading } from '@kube-design/components'
+
 import VmStore from 'stores/resources/vms'
 import QuotaStore from 'stores/quota'
 import GpuClustersStore from 'stores/resources/gpuclusters'
+
+import GpuVmSelect from 'pages/clusters/containers/Resources/components/GpuVmSelect'
 
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
@@ -87,14 +91,19 @@ const RegistModal = props => {
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
 
-  const [vmCount, setVmCount] = useState(1)
+  const [vmCount, setVmCount] = useState(0)
   const [gpuVmName, setGpuVmName] = useState('')
   const [gpuNodeName, setGpuNodeName] = useState('')
   const [slideMinCount, setSlideMinCount] = useState(1)
-  const [slideMaxCount, setSlideMaxCount] = useState(127)
+  const [slideMaxCount, setSlideMaxCount] = useState(128)
   const [firstGpuVmName, setFirstGpuVmName] = useState('')
   const [lastGpuVmName, setLastGpuVmName] = useState('')
+  
+  const [vmListLoading, setVmListLoading] = useState(true)
+  const [vmList, setVmList] = useState([])
 
+  const [rangeVm, setRangeVm] = useState('')
+  const [isCancelSelect, setIsCancelSelect] = useState(false)
 
   const [vmNamePrefix, setVmNamePrefix] = useState('')
   const [nodeNamePrefix, setNodeNamePrefix] = useState('')
@@ -102,6 +111,8 @@ const RegistModal = props => {
   const [lastNum, setLastNum] = useState('')
 
   const [clusterNetwork, setClusterNetwork] = useState('')
+  const [messageAllFalse, setMessageAllFalse] = useState(true)
+  const [messageState, setMessageState] = useState()
   
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
@@ -174,17 +185,14 @@ const RegistModal = props => {
       setClusterNetwork(clusterNetworkName)
       handleSingleCheck(true, clusterNetworkName, 'network') //초기 셋팅
     }
-
     getClusterDetail()
 
     const getGpuVmCount = async () => {
       const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
       const vmList = vmData.vmList
-
-      if (vmList && vmList.length > 0) {
-        const lastVmNumber = vmList.length
-      }
-    }
+      setVmList(vmList)
+      setVmListLoading(false)
+    }    
     getGpuVmCount()
 
     const getVmImage = async () => {
@@ -261,7 +269,7 @@ const RegistModal = props => {
     }
   }
 
-   const availableIpListData = netId => {
+  const availableIpListData = netId => {
     const networkIps = availableIpList.find(obj => obj.network === netId)
     if (networkIps !== undefined) {
       return networkIps.ips.map(ip => {
@@ -279,7 +287,7 @@ const RegistModal = props => {
       existing.push(record)
     }
     setSelectedIpList(existing)
-    
+
     const updatedNetworkList = networkList.map(item => {
       if (item.name === netId) {
         return { ...item, ip: val }
@@ -348,6 +356,11 @@ const RegistModal = props => {
     const onOk = props.onOk
 
     form.current.validator(() => {
+      
+      if(!gpuVmName || messageAllFalse){
+        return false;
+      }
+
       setSubmitButtonFlag(true)
 
       const { data } = form.current.props
@@ -371,12 +384,14 @@ const RegistModal = props => {
       data.gpuVmName = gpuVmName
       data.firstGpuVmName = firstGpuVmName
       data.lastGpuVmName = lastGpuVmName
+      data.firstNum = Number(firstNum)
+      data.lastNum = Number(lastNum)
 
       data.gpuCluster = props.name // gpu cluster name 추가
 
       const networkListData = networkList
         .filter(x => networkCheckItems.includes(x.name))
-        .map(obj => {
+        .map(obj => {          
           return {
             name: obj.name,
             cidr: obj.cidr,
@@ -457,9 +472,7 @@ const RegistModal = props => {
         gpuVmName === '' ||
         vmNamePrefix === '' ||
         nodeNamePrefix === '' ||
-        Number(data.firstNum) === 0 ||
-        Number(data.lastNum) === 0 ||
-        Number(data.firstNum) > Number(data.lastNum)
+        messageAllFalse === true
       ) {
         handleOk()
       } else {
@@ -1067,9 +1080,31 @@ const RegistModal = props => {
     )
   }
 
+  const getMarks = max => {
+      const count = 5;
+      return range(count).reduce((marks, index) => {
+        const value = (max * index) / (count - 1);
+        const mark = value === 0 ? '0' : `${Math.floor(value)}`;
+        return { ...marks, [value]: mark };
+      }, {});
+  };
+
   useEffect(() => {
     getGpuName()
   }, [firstNum, lastNum, vmNamePrefix, nodeNamePrefix])
+
+  const getNameRange = (range) => {
+    const start = range.start;
+    const end = range.end;
+    setFirstNum(start)
+    setLastNum(end)
+  }
+
+  const getMessageState = (messageStateData) => {
+    const allFalse = Object.values(messageStateData).every(value => value === false);
+    setMessageAllFalse(!allFalse)
+    setMessageState(messageStateData)
+  }
 
   const getGpuName = async () => {
     // const namePrefix = props.name
@@ -1102,11 +1137,29 @@ const RegistModal = props => {
         nodeName = firstNodeName
       }
     }
-
+    
     setGpuVmName(gpuName)
     setGpuNodeName(nodeName)
     setFirstGpuVmName(firstVmName)
     setLastGpuVmName(lastVmName)
+  }
+
+  const handleSliderReset = () => {
+    setVmCount(0)
+  }
+
+  const handleSliderChange = (e) => {
+    const num = Number(e);      
+
+    if (num === 0) {
+      setRangeVm('');
+      setIsCancelSelect(true);
+      setGpuVmName('');
+    } else {
+      setRangeVm(num);
+      setIsCancelSelect(false);
+      setVmCount(num)
+    }
   }
 
   const getNetworkAssignmentRange = () => {
@@ -1346,71 +1399,51 @@ const RegistModal = props => {
                   </Column>
                 </Columns>
 
-                <Columns>
-                  <Column>
-                    <label className="form-item-label" htmlFor="name">
-                      {t('가상머신 생성 범위')}
-                      <span className="form-item-required">*</span>
-                    </label>
-                    <Columns>
-                      <Column>
-                        <Form.Item
-                          rules={[
-                            { required: true, validator: firstNumValidator },
-                          ]}
-                        >
-                          <NumberInput
-                            name="firstNum"
-                            maxLength={10}
-                            style={{ maxWidth: 'none' }}
-                            onChange={e => setFirstNum(e)}
-                          />
-                        </Form.Item>
-                      </Column>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          padding: '0 8px',
-                          marginTop: '18px',
-                          height: 0,
-                        }}
-                      >
-                        ~
-                      </div>
-                      <Column>
-                        <Form.Item
-                          rules={[
-                            { required: true, validator: lastNumValidator },
-                          ]}
-                        >
-                          <NumberInput
-                            name="lastNum"
-                            maxLength={10}
-                            style={{ maxWidth: 'none' }}
-                            onChange={e => setLastNum(e)}
-                          />
-                        </Form.Item>
-                      </Column>
-                    </Columns>
-                  </Column>
-                  <Column style={{ maxWidth: '472px' }}>
-                    <Form.Item label={t('RESOURCES_VM_NAME')}>
-                      <Input
-                        maxLength={200}
-                        style={{ maxWidth: 'none' }}
-                        value={gpuVmName}
-                        disabled={true}
-                      />
-                    </Form.Item>
-
-                    <div className={styles.form_item_label_description}>
-                      <label htmlFor="name">
-                        자동 생성될 가상머신 이름을 확인해 주세요.
-                      </label>
-                    </div>
-                  </Column>
-                </Columns>
+                <label className="form-item-label" htmlFor="name">
+                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
+                  <span className="form-item-required">*</span>
+                </label>                
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
+                    },
+                    {
+                      pattern: regexVmCount,
+                      message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
+                    },
+                  ]}
+                >
+                  <UnitSlider
+                    isReset={messageState?.basic ?? false}
+                    name="vm_count"
+                    max={slideMaxCount}
+                    min={0}
+                    marks={getMarks(slideMaxCount)}                    
+                    unit={''}
+                    value={vmCount}
+                    withInput
+                    onChange={handleSliderChange}
+                    style={{ padding: '5px', width: '10%' }}
+                  />
+                  
+                </Form.Item>
+                
+                <div className={styles.form_item_label_description} >
+                  <label htmlFor="name">
+                  최대 {slideMaxCount}개의 가상머신을 생성할 수 있습니다.
+                  </label>      
+                </div>
+                        
+                <div>  
+                  {vmListLoading 
+                      ? <Loading className="ks-page-loading" />
+                      : <GpuVmSelect isCancel={isCancelSelect} rangeValue={rangeVm} vmPrefix={vmNamePrefix} vmList={vmList}
+                                       getMessageState={getMessageState} getNameRange={getNameRange}/>
+                  }
+                </div> 
+                
 
                 {imageType === 'I' && (
                   <Form.Item>
@@ -1505,9 +1538,8 @@ const RegistModal = props => {
 
               {/* 네트워크 설정 시작========================================== */}
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
-                <Form.Item label={t('RESOURCES_NETWORK')}>
+               <Form.Item label={t('RESOURCES_NETWORK')}>
                   <div className={styles.wrapper}>
-
                     <div className={styles.table}>
                       <table>
                         <colgroup>
@@ -1550,7 +1582,6 @@ const RegistModal = props => {
                           ))}
                         </tbody>
                       </table>
-
                     </div>
                   </div>
                 </Form.Item>
@@ -2069,7 +2100,7 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
-                                 {getNetworkAssignmentRange()}
+                               {getNetworkAssignmentRange()}
                               </div>
                             </div>
                           </div>

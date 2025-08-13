@@ -34,7 +34,7 @@ const GpuClustersDetail = props => {
   const getNetworkList = async () => {
     const listNetwork = await vmStore.fetchVmListNetwork(props.match.params)
     const networks = listNetwork.networks
-    const cidr = networks.filter(item => item.name === store.detail.data?.spec?.sonaNetwork)[0].cidr
+    const cidr = networks?.find(item => item.name === store.detail.data?.spec?.sonaNetwork)?.cidr ?? '';
 
     setNetworkCidr(cidr)
   }  
