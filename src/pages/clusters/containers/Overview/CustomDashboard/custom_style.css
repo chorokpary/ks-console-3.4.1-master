@@ -3141,3 +3141,178 @@ html {
   .kubed-icon-dark {
   color: #fff !important;
 }
+
+/* VM Grid */
+.vm_grid_container {
+  background-color: #eff4f9;
+  position: relative;
+  border-radius: 8px;
+  width: 100%;
+  height: 122px;
+  margin-bottom: 8px;
+}
+
+.vm_grid_wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.vm_grid_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  position: relative;
+  flex: 1;
+}
+
+.vm_grid_square {
+  width: 832px;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  background: #eff4f9;
+  font-size: 12px;
+}
+
+.vm_grid_item {
+  position: relative;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.vm_grid_item:hover {
+  transform: scale(1.1);
+}
+
+.vm_grid_item_box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 2px;
+  transition: background-color 0.1s ease;
+}
+
+.vm_grid_item_box--inactive {
+  background-color: #ccd3db !important;
+}
+
+.vm_grid_item_box--selected {
+  background-color: #5680ec !important;
+}
+
+.vm_grid_item_box--error {
+  background-color: #ca2621 !important;
+}
+
+.vm_grid_item_box--unavailable {
+  background-color: #abb4be !important;
+}
+
+.vm_grid_icon {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  width: 24px;
+  height: 24px;
+}
+
+.vm_grid_icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.vm_grid_tooltip {
+  position: fixed;
+  z-index: 50;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: white;
+  background-color: black;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  transform: translateX(-50%);
+  display: none;
+}
+
+.vm_grid_info_container_box{
+  width: 100%;
+  display: flex;
+}
+
+.vm_grid_left {
+  width: 80%;
+}
+
+.vm_grid_right {
+  width: 20%;
+  margin-left: auto;
+  text-align: right;
+}
+
+.vm_grid_info_container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.vm_grid_info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  gap: 4px;
+}
+.vm_grid_info .vm_grid_msg_basic {
+  color: #6b7280;
+}
+.vm_grid_info .vm_grid_msg_error_unavailable,
+.vm_grid_info .vm_grid_msg_error_nocapacity {
+  color: #ef4444;
+}
+.vm_grid_info .vm_name {
+  display: flex;
+  gap: 4px;
+}
+.vm_grid_info .vm_start_name,
+.vm_grid_info .vm_end_name {
+  color: #4465DC;
+  font-weight: 700;
+}
+.vm_grid_info .vm_name_error {
+  color: #ef4444;
+  font-weight: bold;
+}
+.vm_grid_info .vm_dash {
+  color: #4465DC;
+  font-weight: 700;
+}
+
+.vm_grid_btn {
+  display: flex;
+  height: 32px;
+  padding: 0 25px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 50px;
+  background: #D8E2EC;
+  font-size: 12px;
+  outline: none;
+  border: none;
+}

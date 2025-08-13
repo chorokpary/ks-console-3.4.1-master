@@ -312,9 +312,8 @@ export default class GpuClustersStore extends Base {
     resourceData.node = ''
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
-    // resourceData.network_storage = data.networkStorage
-    resourceData.network_storage = ''
-
+    resourceData.network_storage = data.networkStorage
+   
     resourceData.gpu_cluster = data.gpuCluster
 
     jsonData.vm = resourceData
@@ -326,6 +325,7 @@ export default class GpuClustersStore extends Base {
 
     // 가상머신 갯수만큼 생성...
     for (let i = firstNum; i <= lastNum; i++) {
+
       const suffix = String(i).padStart(3, '0')
       const updatedNameJsonData = {
         vm: {
@@ -335,24 +335,17 @@ export default class GpuClustersStore extends Base {
         },
       }
 
-      const updatedNetworks = updatedNameJsonData.vm.networks.map(network => {
-        if (network.network_name === 'external-solutionzone-201') {
-          const matchedCidr = data.networkListData.find(
-            item => item.name === network.network_name
-          )
-          const subnetPart =
-            matchedCidr?.cidr
-              ?.split('/')[0]
-              .split('.')
-              .slice(0, 3)
-              .join('.') || ''
-          const fixed_ip = subnetPart + '.' + String(100 + i)
-          return {
-            ...network,
-            fixed_ip: fixed_ip,
-          }
-        }
-        return network
+      const updatedNetworks = updatedNameJsonData.vm.networks.map(network => {      
+        let fixed_ip = "";
+        const matchedNetwork = data.networkListData.find( item => item.name === network.network_name )      
+
+        const subnetPart = matchedNetwork?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || ''
+        fixed_ip = subnetPart + '.' + String(100 + i)   
+
+        return {
+          ...network,
+          fixed_ip: fixed_ip,
+        }   
       })
 
       const updatedJsonData = {
@@ -361,10 +354,11 @@ export default class GpuClustersStore extends Base {
           networks: updatedNetworks,
         },
       }
+      
+      //console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
+      request.post(url, updatedJsonData)
 
-      // console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
-      request.post(url, updatedNameJsonData)
-    }
+    } //for문 end
 
     return await this.submitting(
       new Promise(resolve => setTimeout(resolve, 3000))
@@ -533,11 +527,19 @@ export default class GpuClustersStore extends Base {
       currentPage * perPage
     )
 
+    const updateData = currentData.map(item => (
+      {
+        ...item,
+        namespace: result.data?.namespace
+      }
+    ))
+
     const resultData = {}
-    resultData.vmList = currentData
+    resultData.vmList = updateData
     resultData.total = dataList.length
 
     this.isLoading = false
     return resultData
   }
+  
 }

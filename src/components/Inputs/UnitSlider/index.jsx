@@ -30,7 +30,9 @@ export default class UnitSlider extends React.Component {
   }
 
   render() {
-    const { onChange, ...rest } = this.props
-    return <Slider onChange={this.handleChange} {...rest} />
+    const { onChange, isReset, value: propValue, ...rest } = this.props
+
+    const value = isReset ? 0 : propValue;
+    return <Slider value={value}  onChange={this.handleChange} {...rest} />
   }
 }

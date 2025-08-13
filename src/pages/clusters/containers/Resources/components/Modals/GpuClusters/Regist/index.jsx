@@ -18,9 +18,13 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import * as common from 'utils/resources'
 import { PATTERN_PACKAGE_NAME, PATTERN_USER_NAME } from 'utils/constants'
 import classnames from 'classnames'
+import { Loading } from '@kube-design/components'
+
 import VmStore from 'stores/resources/vms'
 import QuotaStore from 'stores/quota'
 import GpuClustersStore from 'stores/resources/gpuclusters'
+
+import GpuVmSelect from 'pages/clusters/containers/Resources/components/GpuVmSelect'
 
 import TypeSelect from '../../../TypeSelect'
 import CardSelect from '../../../CardSelect'
@@ -49,15 +53,26 @@ const RegistModal = props => {
   const [keypairDataList, setKeypairDataList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [physicalNetworkDataList, setPhysicalNetworkDataList] = useState([])
   const [securityGroupDataList, setSecurityGroupDataList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
+  const [networkStorageDataList, setNetworkStorageDataList] = useState([])
   const [availableIpList, setAvailableIpList] = useState([])
   const [selectedIpList, setSelectedIpList] = useState([])
   const [availableSriovIpList, setAvailableSriovIpList] = useState([])
   const [selectedSriovIpList, setSelectedSriovIpList] = useState([])
+  const [
+      availablePhysicalnetworkIpList,
+      setAvailablePhysicalnetworkIpList,
+    ] = useState([])
+    const [
+      selectedPhysicalnetworkIpList,
+      setSelectedPhysicalnetworkIpList,
+    ] = useState([])
 
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
+  const [physicalNetworkList, setPhysicalNetworkList] = useState([])
   const [securityGroupList, setSecurityGroupList] = useState([])
   const [keypairList, setKeypairList] = useState([])
 
@@ -86,21 +101,31 @@ const RegistModal = props => {
   const [nodeName, setNodeName] = useState('')
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
+  const [networkStorage, setNetworkStorage] = useState('')
 
-  const [vmCount, setVmCount] = useState(1)
+  const [vmCount, setVmCount] = useState(0)
   const [gpuVmName, setGpuVmName] = useState('')
   const [gpuNodeName, setGpuNodeName] = useState('')
   const [slideMinCount, setSlideMinCount] = useState(1)
-  const [slideMaxCount, setSlideMaxCount] = useState(127)
+  const [slideMaxCount, setSlideMaxCount] = useState(128)
   const [firstGpuVmName, setFirstGpuVmName] = useState('')
   const [lastGpuVmName, setLastGpuVmName] = useState('')
+  
+  const [vmListLoading, setVmListLoading] = useState(true)
+  const [vmList, setVmList] = useState([])
 
+  const [rangeVm, setRangeVm] = useState('')
+  const [isCancelSelect, setIsCancelSelect] = useState(false)
 
   const [vmNamePrefix, setVmNamePrefix] = useState('')
   const [nodeNamePrefix, setNodeNamePrefix] = useState('')
   const [firstNum, setFirstNum] = useState('')
   const [lastNum, setLastNum] = useState('')
 
+  const [clusterNetwork, setClusterNetwork] = useState('')
+  const [messageAllFalse, setMessageAllFalse] = useState(true)
+  const [messageState, setMessageState] = useState()
+  
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
 
@@ -162,15 +187,25 @@ const RegistModal = props => {
   }, [projectName])
 
   useEffect(() => {
+
+    const getClusterDetail = async () => {
+      const clusterDetail = await gpuStore.fetchDetail({
+        clster: props.namespace,
+        name: props.name
+      })
+      const clusterNetworkName = clusterDetail.data?.spec?.sonaNetwork;
+      setClusterNetwork(clusterNetworkName)
+      handleSingleCheck(true, clusterNetworkName, 'network') //초기 셋팅
+    }
+    getClusterDetail()
+
     const getGpuVmCount = async () => {
       const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
       const vmList = vmData.vmList
-
-      if (vmList && vmList.length > 0) {
-        const lastVmNumber = vmList.length
-      }
-    }
-    // getGpuVmCount()
+      setVmList(vmList)
+      setVmListLoading(false)
+    }    
+    getGpuVmCount()
 
     const getVmImage = async () => {
       const listImage = await vmStore.fetchVmListImage({ ...props })
@@ -186,9 +221,17 @@ const RegistModal = props => {
       const listAvailableSriovIps = await vmStore.fetchAllAvailableSriovIps({
         ...props,
       })
+      const listAvailablePhysicalnetworkIps = await vmStore.fetchAllAvailablePhysicalIps(
+        {
+          ...props,
+        }
+      )
       const listBootVolume = await vmStore.fetchVmListBootVolume({ ...props })
       const listNetwork = await vmStore.fetchVmListNetwork({ ...props })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
+        ...props,
+      })
+      const listPhysicalNetwork = await vmStore.fetchVmListPhysicalNetwork({
         ...props,
       })
       const listKeypair = await vmStore.fetchVmListKeypair({ ...props })
@@ -199,27 +242,39 @@ const RegistModal = props => {
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
         ...props,
       })
-
+      const listNetworkStorage = await vmStore.fetchNetworkStorage({
+        ...props,
+        namespace: projectName,
+      })
+      
       setBootVolumeDataList(listBootVolume.volumes)
       setNetworkDataList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
+      setPhysicalNetworkDataList(listPhysicalNetwork.physicalnetworks)
       setKeypairDataList(listKeypair.keypairs)
       setNodeDataList(listNode.nodes.filter(obj => obj.node_role !== 'master'))
       setSecurityGroupDataList(listSecurityGroup)
       setStorageClassDataList(listStoregeClass.user_sces)
       setAvailableIpList(listAvailableIps.all_ips)
       setAvailableSriovIpList(listAvailableSriovIps.all_ips)
+      setAvailableSriovIpList(listAvailableSriovIps.all_ips)
+      setAvailablePhysicalnetworkIpList(listAvailablePhysicalnetworkIps.all_ips)
+      setNetworkStorageDataList(listNetworkStorage.network_storages)
     }
     getVmCreateData()
   }, [])
 
   const projectFilteredData = project => {
-    const networks = networkDataList.filter(obj => obj.project === project)
+    const networks = networkDataList.filter(obj => obj.project === project).filter(item => item.name === clusterNetwork)
     setNetworkList(networks)
     const sriovNetworks = sriovNetworkDataList.filter(
       obj => obj.project === project
     )
     setSriovNetworkList(sriovNetworks)
+    const physicalnetworks = physicalNetworkDataList.filter(
+      obj => obj.project === project
+    )
+    setPhysicalNetworkList(physicalnetworks)
     const securityGroups = securityGroupDataList
       .filter(obj => obj.project === project)
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
@@ -246,6 +301,15 @@ const RegistModal = props => {
     }
   }
 
+  const availableIpListData = netId => {
+    const networkIps = availableIpList.find(obj => obj.network === netId)
+    if (networkIps !== undefined) {
+      return networkIps.ips.map(ip => {
+        return ip
+      })
+    }
+  }
+
   const handleIpSelectClick = (netId, val) => {
     const record = {}
     record.network_name = netId
@@ -257,13 +321,59 @@ const RegistModal = props => {
     setSelectedIpList(existing)
 
     const updatedNetworkList = networkList.map(item => {
-      if (item.id === netId) {
+      if (item.name === netId) {
         return { ...item, ip: val }
       }
       return item
     })
 
     setNetworkList(updatedNetworkList)
+  }
+
+  const availablePhysicalNetworkIpOptions = (name, project) => {
+      const networkIps = availablePhysicalnetworkIpList.find(
+        obj => obj.network === name && obj.project === project
+      )
+      if (networkIps !== undefined) {
+        return networkIps.ips.map(ip => {
+          return {
+            label: t(ip),
+            value: t(ip),
+          }
+        })
+      }
+   }
+  
+  const handlePhysicalNetworkIpSelectClick = (name, val) => {
+    const record = {}
+    record.network_name = name
+    record.fixed_ip = val
+
+    const existing = selectedPhysicalnetworkIpList.filter(
+      obj => obj.network_name !== name
+    )
+    if (val !== t('RESOURCES_SELECT') && val !== undefined) {
+      existing.push(record)
+    }
+    setSelectedPhysicalnetworkIpList(existing)
+
+    const updatedNetworkList = physicalNetworkList.map(item => {
+      if (item.name === name) {
+        return { ...item, ip: val }
+      }
+      return item
+    })
+
+    setPhysicalNetworkList(updatedNetworkList)
+  }
+
+  const networkStorageOptions = () => {
+    return networkStorageDataList.map(obj => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+    })
   }
 
   const imageOptions = () => {
@@ -316,10 +426,19 @@ const RegistModal = props => {
     }))
   }
 
+  const ipToNumber = (ip) => {
+    return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+  }
+
   const handleOk = () => {
     const onOk = props.onOk
 
     form.current.validator(() => {
+      
+      if(!gpuVmName || messageAllFalse){
+        return false;
+      }
+
       setSubmitButtonFlag(true)
 
       const { data } = form.current.props
@@ -329,6 +448,8 @@ const RegistModal = props => {
       data.ips = selectedIpList
       data.sriov = sriovCheckItems
       data.sriovIps = selectedSriovIpList
+      data.physicalnetwork = physicalnetworkCheckItems
+      data.physicalnetworkIps = selectedPhysicalnetworkIpList
       data.securitygroup = securityGroupCheckItems
       data.imageType = imageType
       data.busType = busType
@@ -343,17 +464,19 @@ const RegistModal = props => {
       data.gpuVmName = gpuVmName
       data.firstGpuVmName = firstGpuVmName
       data.lastGpuVmName = lastGpuVmName
+      data.firstNum = Number(firstNum)
+      data.lastNum = Number(lastNum)
 
       data.gpuCluster = props.name // gpu cluster name 추가
 
       const networkListData = networkList
         .filter(x => networkCheckItems.includes(x.name))
-        .map(obj => {
+        .map(obj => {          
           return {
             name: obj.name,
             cidr: obj.cidr,
           }
-        })
+      })
 
       data.networkListData = networkListData
 
@@ -362,6 +485,7 @@ const RegistModal = props => {
       }
 
       console.log('생성 실행~!!!')
+      //console.log(JSON.stringify(data))
       onOk({ ...data })
     })
   }
@@ -428,9 +552,7 @@ const RegistModal = props => {
         gpuVmName === '' ||
         vmNamePrefix === '' ||
         nodeNamePrefix === '' ||
-        Number(data.firstNum) === 0 ||
-        Number(data.lastNum) === 0 ||
-        Number(data.firstNum) > Number(data.lastNum)
+        messageAllFalse === true
       ) {
         handleOk()
       } else {
@@ -477,6 +599,10 @@ const RegistModal = props => {
       setFlavorCpu(flavorData[0].vcpus)
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
       setFlavorDisk(flavorData[0].root_disk)
+
+      setNetworkStorage(
+        data.networkStorage === t('RESOURCES_SELECT') ? '' : data.networkStorage
+      )
 
       if (isScript) {
         const checkFlagJupyter = checkScriptJupyter()
@@ -796,23 +922,27 @@ const RegistModal = props => {
   // 체크 리스트 시작 ==================================================
   const [networkCheckItems, setNetworkCheckItems] = useState([])
   const [sriovCheckItems, setSriovCheckItems] = useState([])
+  const [physicalnetworkCheckItems, setPhysicalnetworkCheckItems] = useState([])
   const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([])
 
   const dataListVariables = {
     network: networkList,
     sriov: sriovNetworkList,
+    physicalnetwork: physicalNetworkList,
     security: securityGroupList,
   }
 
   const stateVariables = {
     network: networkCheckItems,
     sriov: sriovCheckItems,
+    physicalnetwork: physicalnetworkCheckItems,
     security: securityGroupCheckItems,
   }
 
   const setVariables = {
     network: setNetworkCheckItems,
     sriov: setSriovCheckItems,
+    physicalnetwork: setPhysicalnetworkCheckItems,
     security: setSecurityGroupCheckItems,
   }
 
@@ -1038,9 +1168,31 @@ const RegistModal = props => {
     )
   }
 
+  const getMarks = max => {
+      const count = 5;
+      return range(count).reduce((marks, index) => {
+        const value = (max * index) / (count - 1);
+        const mark = value === 0 ? '0' : `${Math.floor(value)}`;
+        return { ...marks, [value]: mark };
+      }, {});
+  };
+
   useEffect(() => {
     getGpuName()
   }, [firstNum, lastNum, vmNamePrefix, nodeNamePrefix])
+
+  const getNameRange = (range) => {
+    const start = range.start;
+    const end = range.end;
+    setFirstNum(start)
+    setLastNum(end)
+  }
+
+  const getMessageState = (messageStateData) => {
+    const allFalse = Object.values(messageStateData).every(value => value === false);
+    setMessageAllFalse(!allFalse)
+    setMessageState(messageStateData)
+  }
 
   const getGpuName = async () => {
     // const namePrefix = props.name
@@ -1073,11 +1225,35 @@ const RegistModal = props => {
         nodeName = firstNodeName
       }
     }
-
+    
     setGpuVmName(gpuName)
     setGpuNodeName(nodeName)
     setFirstGpuVmName(firstVmName)
     setLastGpuVmName(lastVmName)
+  }
+
+  const handleSliderReset = () => {
+    setVmCount(0)
+  }
+
+  const handleSliderChange = (e) => {
+    const num = Number(e);      
+
+    if (num === 0) {
+      setRangeVm('');
+      setIsCancelSelect(true);
+      setGpuVmName('');
+    } else {
+      setRangeVm(num);
+      setIsCancelSelect(false);
+      setVmCount(num)
+    }
+  }
+
+  const getNetworkAssignmentRange = () => {
+    const firstNetwork = Number(firstNum) + 100
+    const lastNetwork = Number(lastNum) + 100
+    return firstNetwork + " ~ " + lastNetwork;
   }
 
   return (
@@ -1311,71 +1487,51 @@ const RegistModal = props => {
                   </Column>
                 </Columns>
 
-                <Columns>
-                  <Column>
-                    <label className="form-item-label" htmlFor="name">
-                      {t('가상머신 생성 범위')}
-                      <span className="form-item-required">*</span>
-                    </label>
-                    <Columns>
-                      <Column>
-                        <Form.Item
-                          rules={[
-                            { required: true, validator: firstNumValidator },
-                          ]}
-                        >
-                          <NumberInput
-                            name="firstNum"
-                            maxLength={10}
-                            style={{ maxWidth: 'none' }}
-                            onChange={e => setFirstNum(e)}
-                          />
-                        </Form.Item>
-                      </Column>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          padding: '0 8px',
-                          marginTop: '18px',
-                          height: 0,
-                        }}
-                      >
-                        ~
-                      </div>
-                      <Column>
-                        <Form.Item
-                          rules={[
-                            { required: true, validator: lastNumValidator },
-                          ]}
-                        >
-                          <NumberInput
-                            name="lastNum"
-                            maxLength={10}
-                            style={{ maxWidth: 'none' }}
-                            onChange={e => setLastNum(e)}
-                          />
-                        </Form.Item>
-                      </Column>
-                    </Columns>
-                  </Column>
-                  <Column style={{ maxWidth: '472px' }}>
-                    <Form.Item label={t('RESOURCES_VM_NAME')}>
-                      <Input
-                        maxLength={200}
-                        style={{ maxWidth: 'none' }}
-                        value={gpuVmName}
-                        disabled={true}
-                      />
-                    </Form.Item>
-
-                    <div className={styles.form_item_label_description}>
-                      <label htmlFor="name">
-                        자동 생성될 가상머신 이름을 확인해 주세요.
-                      </label>
-                    </div>
-                  </Column>
-                </Columns>
+                <label className="form-item-label" htmlFor="name">
+                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
+                  <span className="form-item-required">*</span>
+                </label>                
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
+                    },
+                    {
+                      pattern: regexVmCount,
+                      message: t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID'),
+                    },
+                  ]}
+                >
+                  <UnitSlider
+                    isReset={messageState?.basic ?? false}
+                    name="vm_count"
+                    max={slideMaxCount}
+                    min={0}
+                    marks={getMarks(slideMaxCount)}                    
+                    unit={''}
+                    value={vmCount}
+                    withInput
+                    onChange={handleSliderChange}
+                    style={{ padding: '5px', width: '10%' }}
+                  />
+                  
+                </Form.Item>
+                
+                <div className={styles.form_item_label_description} >
+                  <label htmlFor="name">
+                  최대 {slideMaxCount}개의 가상머신을 생성할 수 있습니다.
+                  </label>      
+                </div>
+                        
+                <div>  
+                  {vmListLoading 
+                      ? <Loading className="ks-page-loading" />
+                      : <GpuVmSelect isCancel={isCancelSelect} rangeValue={rangeVm} vmPrefix={vmNamePrefix} vmList={vmList}
+                                       getMessageState={getMessageState} getNameRange={getNameRange}/>
+                  }
+                </div> 
+                
 
                 {imageType === 'I' && (
                   <Form.Item>
@@ -1470,30 +1626,12 @@ const RegistModal = props => {
 
               {/* 네트워크 설정 시작========================================== */}
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
-                <Form.Item label={t('RESOURCES_NETWORK')}>
+               <Form.Item label={t('RESOURCES_NETWORK')}>
                   <div className={styles.wrapper}>
-                    {stateVariables['network'].length > 0 && (
-                      <div
-                        className={classnames(
-                          styles.table_title,
-                          styles.table_title_bg
-                        )}
-                      >
-                        <Button
-                          className={styles.table_title_button}
-                          onClick={() => handleAllCheck(false, 'network')}
-                        >
-                          {t('RESOURCES_ALL_DESELECT')}
-                        </Button>
-                        {stateVariables['network'].length}
-                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
-                      </div>
-                    )}
                     <div className={styles.table}>
                       <table>
                         <colgroup>
-                          <col width="5%" />
-                          <col width="20%" />
+                          <col width="25%" />
                           <col width="15%" />
                           <col width="20%" />
                           <col width="20%" />
@@ -1501,21 +1639,6 @@ const RegistModal = props => {
                         </colgroup>
                         <thead>
                           <tr>
-                            <th>
-                              <Checkbox
-                                name="select-all-network"
-                                onChange={checked =>
-                                  handleAllCheck(checked, 'network')
-                                }
-                                checked={
-                                  !!(
-                                    dataListVariables['network'].length > 0 &&
-                                    stateVariables['network'].length ===
-                                      dataListVariables['network'].length
-                                  )
-                                }
-                              />
-                            </th>
                             <th>
                               <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
                             </th>
@@ -1534,51 +1657,12 @@ const RegistModal = props => {
                           </tr>
                         </thead>
                         <tbody>
-                          {!networkList?.length && (
-                            <tr>
-                              <td colSpan="6" className="no-data">
-                                <p>
-                                  {t(
-                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                  )}
-                                </p>
-                              </td>
-                            </tr>
-                          )}
                           {networkList?.map(data => (
                             <tr key={data.name}>
-                              <td>
-                                <Checkbox
-                                  name={`select-${data.name}`}
-                                  checked={
-                                    !!stateVariables['network'].includes(
-                                      data.name
-                                    )
-                                  }
-                                  onChange={checked =>
-                                    handleSingleCheck(
-                                      checked,
-                                      data.name,
-                                      'network'
-                                    )
-                                  }
-                                />
-                              </td>
                               <td>{data.name}</td>
                               <td>{data.type.toUpperCase()}</td>
                               <td>
-                                <Select
-                                  name={`${data.name}-ip`}
-                                  placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.name)}
-                                  onChange={e =>
-                                    handleIpSelectClick(data.name, e)
-                                  }
-                                  disabled={
-                                    !networkCheckItems.includes(data.name)
-                                  }
-                                  clearable
-                                />
+                                {getNetworkAssignmentRange()}
                               </td>
                               <td>{data.cidr}</td>
                               <td>{data.gateway_ip}</td>
@@ -1586,24 +1670,6 @@ const RegistModal = props => {
                           ))}
                         </tbody>
                       </table>
-
-                      <div className={styles.removeCheckWrapper}>
-                        {networkCheckItems?.map(id => {
-                          const name = networkList
-                            ?.filter(data => data.name === id)
-                            .map(item => item.name)[0]
-                          return (
-                            <span key={id}>
-                              <Button
-                                icon="close"
-                                onClick={() => handleDelete(id, 'network')}
-                              >
-                                {name}
-                              </Button>
-                            </span>
-                          )
-                        })}
-                      </div>
                     </div>
                   </div>
                 </Form.Item>
@@ -1732,6 +1798,157 @@ const RegistModal = props => {
                     </div>
                   </div>
                 </Form.Item>
+
+                <Form.Item label={t('RESOURCES_DEDICATED_NETWORK')}>
+                  <div className={styles.wrapper}>
+                    {stateVariables['physicalnetwork'].length > 0 && (
+                      <div
+                        className={classnames(
+                          styles.table_title,
+                          styles.table_title_bg
+                        )}
+                      >
+                        <Button
+                          className={styles.table_title_button}
+                          onClick={() =>
+                            handleAllCheck(false, 'physicalnetwork')
+                          }
+                        >
+                          {t('RESOURCES_ALL_DESELECT')}
+                        </Button>{' '}
+                        {stateVariables['physicalnetwork'].length}
+                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                      </div>
+                    )}
+                    <div className={styles.table}>
+                      <table>
+                        <colgroup>
+                          <col width="5%" />
+                          <col width="20%" />
+                          <col width="15%" />
+                          <col width="20%" />
+                          <col width="25%" />
+                          <col width="25%" />
+                        </colgroup>
+                        <thead>
+                          <tr>
+                            <th>
+                              <Checkbox
+                                name="select-all-physicalnetwork"
+                                onChange={checked =>
+                                  handleAllCheck(checked, 'physicalnetwork')
+                                }
+                                checked={
+                                  !!(
+                                    dataListVariables['physicalnetwork']
+                                      .length > 0 &&
+                                    stateVariables['physicalnetwork'].length ===
+                                      dataListVariables['physicalnetwork']
+                                        .length
+                                  )
+                                }
+                              />
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_CIDR')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_GATEWAY')}</strong>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {!physicalNetworkList?.length && (
+                            <tr>
+                              <td colSpan="5" className="no-data">
+                                <p>
+                                  {t(
+                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                  )}
+                                </p>
+                              </td>
+                            </tr>
+                          )}
+                          {physicalNetworkList?.map(data => (
+                            <tr key={data.name}>
+                              <td>
+                                <Checkbox
+                                  name={`select-${data.name}`}
+                                  checked={
+                                    !!stateVariables[
+                                      'physicalnetwork'
+                                    ].includes(data.name)
+                                  }
+                                  onChange={checked =>
+                                    handleSingleCheck(
+                                      checked,
+                                      data.name,
+                                      'physicalnetwork'
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>{data.name}</td>
+                              <td>{data.type.toUpperCase()}</td>
+                              <td>
+                                <Select
+                                  name={`${data.name}-ip`}
+                                  placeholder={t('RESOURCES_AUTOMATIC')}
+                                  options={availablePhysicalNetworkIpOptions(
+                                    data.name,
+                                    data.project
+                                  )}
+                                  onChange={e =>
+                                    handlePhysicalNetworkIpSelectClick(
+                                      data.name,
+                                      e
+                                    )
+                                  }
+                                  disabled={
+                                    !physicalnetworkCheckItems.includes(
+                                      data.name
+                                    )
+                                  }
+                                  clearable
+                                />
+                              </td>
+                              <td>{data.cidr}</td>
+                              <td>{data.gateway_ip}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className={styles.removeCheckWrapper}>
+                        {physicalnetworkCheckItems?.map(id => {
+                          const name = physicalNetworkList
+                            ?.filter(data => data.name === id)
+                            .map(item => item.name)[0]
+                          return (
+                            <span key={id}>
+                              <Button
+                                icon="close"
+                                onClick={() =>
+                                  handleDelete(id, 'physicalnetwork')
+                                }
+                              >
+                                {name}
+                              </Button>
+                            </span>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Form.Item>
               </div>
               {/* 네트워크 설정 끝========================================== */}
 
@@ -1755,6 +1972,15 @@ const RegistModal = props => {
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
                 </div>
+
+                <Form.Item label={t('RESOURCES_NETWORK_STORAGE')}>
+                  <Select
+                    name="networkStorage"
+                    placeholder={t('RESOURCES_SELECT')}
+                    options={networkStorageOptions()}
+                    clearable
+                  />
+                </Form.Item>
 
                 <Form.Group
                   label={t('RESOURCES_SCRIPT')}
@@ -2122,6 +2348,37 @@ const RegistModal = props => {
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
                               <div>
+                               {getNetworkAssignmentRange()}
+                              </div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_CIDR')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
+                    {physicalNetworkList
+                      .filter(x => physicalnetworkCheckItems.includes(x.name))
+                      .map((obj, index) => (
+                        <div className={styles.greybgbox} key={index}>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_NAME')}</label>
+                            <div>{obj.name}</div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_FABRIC')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.fabric.toUpperCase()}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
+                            <div className={styles.multiline}>
+                              <div>
                                 {`${
                                   obj.ip === undefined
                                     ? t('RESOURCES_AUTOMATIC')
@@ -2190,6 +2447,14 @@ const RegistModal = props => {
                           keypairName === undefined
                             ? t('RESOURCES_NOT_SELECTED')
                             : keypairName
+                        }`}</div>
+                      </div>
+                      <div className={styles.list}>
+                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
+                        <div>{`${
+                          networkStorage === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : networkStorage
                         }`}</div>
                       </div>
                       <div className={styles.list}>
