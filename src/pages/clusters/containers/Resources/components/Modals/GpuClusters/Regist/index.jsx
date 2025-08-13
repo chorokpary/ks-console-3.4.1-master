@@ -53,15 +53,26 @@ const RegistModal = props => {
   const [keypairDataList, setKeypairDataList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [physicalNetworkDataList, setPhysicalNetworkDataList] = useState([])
   const [securityGroupDataList, setSecurityGroupDataList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
+  const [networkStorageDataList, setNetworkStorageDataList] = useState([])
   const [availableIpList, setAvailableIpList] = useState([])
   const [selectedIpList, setSelectedIpList] = useState([])
   const [availableSriovIpList, setAvailableSriovIpList] = useState([])
   const [selectedSriovIpList, setSelectedSriovIpList] = useState([])
+  const [
+      availablePhysicalnetworkIpList,
+      setAvailablePhysicalnetworkIpList,
+    ] = useState([])
+    const [
+      selectedPhysicalnetworkIpList,
+      setSelectedPhysicalnetworkIpList,
+    ] = useState([])
 
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
+  const [physicalNetworkList, setPhysicalNetworkList] = useState([])
   const [securityGroupList, setSecurityGroupList] = useState([])
   const [keypairList, setKeypairList] = useState([])
 
@@ -90,6 +101,7 @@ const RegistModal = props => {
   const [nodeName, setNodeName] = useState('')
   const [storageClass, setStorageClass] = useState('')
   const [secureBoot, setSecureBoot] = useState(false)
+  const [networkStorage, setNetworkStorage] = useState('')
 
   const [vmCount, setVmCount] = useState(0)
   const [gpuVmName, setGpuVmName] = useState('')
@@ -209,9 +221,17 @@ const RegistModal = props => {
       const listAvailableSriovIps = await vmStore.fetchAllAvailableSriovIps({
         ...props,
       })
+      const listAvailablePhysicalnetworkIps = await vmStore.fetchAllAvailablePhysicalIps(
+        {
+          ...props,
+        }
+      )
       const listBootVolume = await vmStore.fetchVmListBootVolume({ ...props })
       const listNetwork = await vmStore.fetchVmListNetwork({ ...props })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
+        ...props,
+      })
+      const listPhysicalNetwork = await vmStore.fetchVmListPhysicalNetwork({
         ...props,
       })
       const listKeypair = await vmStore.fetchVmListKeypair({ ...props })
@@ -222,16 +242,24 @@ const RegistModal = props => {
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
         ...props,
       })
-
+      const listNetworkStorage = await vmStore.fetchNetworkStorage({
+        ...props,
+        namespace: projectName,
+      })
+      
       setBootVolumeDataList(listBootVolume.volumes)
       setNetworkDataList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
+      setPhysicalNetworkDataList(listPhysicalNetwork.physicalnetworks)
       setKeypairDataList(listKeypair.keypairs)
       setNodeDataList(listNode.nodes.filter(obj => obj.node_role !== 'master'))
       setSecurityGroupDataList(listSecurityGroup)
       setStorageClassDataList(listStoregeClass.user_sces)
       setAvailableIpList(listAvailableIps.all_ips)
       setAvailableSriovIpList(listAvailableSriovIps.all_ips)
+      setAvailableSriovIpList(listAvailableSriovIps.all_ips)
+      setAvailablePhysicalnetworkIpList(listAvailablePhysicalnetworkIps.all_ips)
+      setNetworkStorageDataList(listNetworkStorage.network_storages)
     }
     getVmCreateData()
   }, [])
@@ -243,6 +271,10 @@ const RegistModal = props => {
       obj => obj.project === project
     )
     setSriovNetworkList(sriovNetworks)
+    const physicalnetworks = physicalNetworkDataList.filter(
+      obj => obj.project === project
+    )
+    setPhysicalNetworkList(physicalnetworks)
     const securityGroups = securityGroupDataList
       .filter(obj => obj.project === project)
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
@@ -296,6 +328,52 @@ const RegistModal = props => {
     })
 
     setNetworkList(updatedNetworkList)
+  }
+
+  const availablePhysicalNetworkIpOptions = (name, project) => {
+      const networkIps = availablePhysicalnetworkIpList.find(
+        obj => obj.network === name && obj.project === project
+      )
+      if (networkIps !== undefined) {
+        return networkIps.ips.map(ip => {
+          return {
+            label: t(ip),
+            value: t(ip),
+          }
+        })
+      }
+   }
+  
+  const handlePhysicalNetworkIpSelectClick = (name, val) => {
+    const record = {}
+    record.network_name = name
+    record.fixed_ip = val
+
+    const existing = selectedPhysicalnetworkIpList.filter(
+      obj => obj.network_name !== name
+    )
+    if (val !== t('RESOURCES_SELECT') && val !== undefined) {
+      existing.push(record)
+    }
+    setSelectedPhysicalnetworkIpList(existing)
+
+    const updatedNetworkList = physicalNetworkList.map(item => {
+      if (item.name === name) {
+        return { ...item, ip: val }
+      }
+      return item
+    })
+
+    setPhysicalNetworkList(updatedNetworkList)
+  }
+
+  const networkStorageOptions = () => {
+    return networkStorageDataList.map(obj => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+    })
   }
 
   const imageOptions = () => {
@@ -370,6 +448,8 @@ const RegistModal = props => {
       data.ips = selectedIpList
       data.sriov = sriovCheckItems
       data.sriovIps = selectedSriovIpList
+      data.physicalnetwork = physicalnetworkCheckItems
+      data.physicalnetworkIps = selectedPhysicalnetworkIpList
       data.securitygroup = securityGroupCheckItems
       data.imageType = imageType
       data.busType = busType
@@ -519,6 +599,10 @@ const RegistModal = props => {
       setFlavorCpu(flavorData[0].vcpus)
       setFlavorMemory(common.fnSetBytes(flavorData[0].ram))
       setFlavorDisk(flavorData[0].root_disk)
+
+      setNetworkStorage(
+        data.networkStorage === t('RESOURCES_SELECT') ? '' : data.networkStorage
+      )
 
       if (isScript) {
         const checkFlagJupyter = checkScriptJupyter()
@@ -838,23 +922,27 @@ const RegistModal = props => {
   // 체크 리스트 시작 ==================================================
   const [networkCheckItems, setNetworkCheckItems] = useState([])
   const [sriovCheckItems, setSriovCheckItems] = useState([])
+  const [physicalnetworkCheckItems, setPhysicalnetworkCheckItems] = useState([])
   const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([])
 
   const dataListVariables = {
     network: networkList,
     sriov: sriovNetworkList,
+    physicalnetwork: physicalNetworkList,
     security: securityGroupList,
   }
 
   const stateVariables = {
     network: networkCheckItems,
     sriov: sriovCheckItems,
+    physicalnetwork: physicalnetworkCheckItems,
     security: securityGroupCheckItems,
   }
 
   const setVariables = {
     network: setNetworkCheckItems,
     sriov: setSriovCheckItems,
+    physicalnetwork: setPhysicalnetworkCheckItems,
     security: setSecurityGroupCheckItems,
   }
 
@@ -1710,6 +1798,157 @@ const RegistModal = props => {
                     </div>
                   </div>
                 </Form.Item>
+
+                <Form.Item label={t('RESOURCES_DEDICATED_NETWORK')}>
+                  <div className={styles.wrapper}>
+                    {stateVariables['physicalnetwork'].length > 0 && (
+                      <div
+                        className={classnames(
+                          styles.table_title,
+                          styles.table_title_bg
+                        )}
+                      >
+                        <Button
+                          className={styles.table_title_button}
+                          onClick={() =>
+                            handleAllCheck(false, 'physicalnetwork')
+                          }
+                        >
+                          {t('RESOURCES_ALL_DESELECT')}
+                        </Button>{' '}
+                        {stateVariables['physicalnetwork'].length}
+                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                      </div>
+                    )}
+                    <div className={styles.table}>
+                      <table>
+                        <colgroup>
+                          <col width="5%" />
+                          <col width="20%" />
+                          <col width="15%" />
+                          <col width="20%" />
+                          <col width="25%" />
+                          <col width="25%" />
+                        </colgroup>
+                        <thead>
+                          <tr>
+                            <th>
+                              <Checkbox
+                                name="select-all-physicalnetwork"
+                                onChange={checked =>
+                                  handleAllCheck(checked, 'physicalnetwork')
+                                }
+                                checked={
+                                  !!(
+                                    dataListVariables['physicalnetwork']
+                                      .length > 0 &&
+                                    stateVariables['physicalnetwork'].length ===
+                                      dataListVariables['physicalnetwork']
+                                        .length
+                                  )
+                                }
+                              />
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_NETWORK_TYPE_YOO')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_IP_ASSIGNMENT')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_CIDR')}</strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_GATEWAY')}</strong>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {!physicalNetworkList?.length && (
+                            <tr>
+                              <td colSpan="5" className="no-data">
+                                <p>
+                                  {t(
+                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                  )}
+                                </p>
+                              </td>
+                            </tr>
+                          )}
+                          {physicalNetworkList?.map(data => (
+                            <tr key={data.name}>
+                              <td>
+                                <Checkbox
+                                  name={`select-${data.name}`}
+                                  checked={
+                                    !!stateVariables[
+                                      'physicalnetwork'
+                                    ].includes(data.name)
+                                  }
+                                  onChange={checked =>
+                                    handleSingleCheck(
+                                      checked,
+                                      data.name,
+                                      'physicalnetwork'
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td>{data.name}</td>
+                              <td>{data.type.toUpperCase()}</td>
+                              <td>
+                                <Select
+                                  name={`${data.name}-ip`}
+                                  placeholder={t('RESOURCES_AUTOMATIC')}
+                                  options={availablePhysicalNetworkIpOptions(
+                                    data.name,
+                                    data.project
+                                  )}
+                                  onChange={e =>
+                                    handlePhysicalNetworkIpSelectClick(
+                                      data.name,
+                                      e
+                                    )
+                                  }
+                                  disabled={
+                                    !physicalnetworkCheckItems.includes(
+                                      data.name
+                                    )
+                                  }
+                                  clearable
+                                />
+                              </td>
+                              <td>{data.cidr}</td>
+                              <td>{data.gateway_ip}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className={styles.removeCheckWrapper}>
+                        {physicalnetworkCheckItems?.map(id => {
+                          const name = physicalNetworkList
+                            ?.filter(data => data.name === id)
+                            .map(item => item.name)[0]
+                          return (
+                            <span key={id}>
+                              <Button
+                                icon="close"
+                                onClick={() =>
+                                  handleDelete(id, 'physicalnetwork')
+                                }
+                              >
+                                {name}
+                              </Button>
+                            </span>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Form.Item>
               </div>
               {/* 네트워크 설정 끝========================================== */}
 
@@ -1733,6 +1972,15 @@ const RegistModal = props => {
                     {t('RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC')}
                   </div>
                 </div>
+
+                <Form.Item label={t('RESOURCES_NETWORK_STORAGE')}>
+                  <Select
+                    name="networkStorage"
+                    placeholder={t('RESOURCES_SELECT')}
+                    options={networkStorageOptions()}
+                    clearable
+                  />
+                </Form.Item>
 
                 <Form.Group
                   label={t('RESOURCES_SCRIPT')}
@@ -2112,6 +2360,41 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
+                    <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
+                    {physicalNetworkList
+                      .filter(x => physicalnetworkCheckItems.includes(x.name))
+                      .map((obj, index) => (
+                        <div className={styles.greybgbox} key={index}>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_NAME')}</label>
+                            <div>{obj.name}</div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_FABRIC')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.fabric.toUpperCase()}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
+                            <div className={styles.multiline}>
+                              <div>
+                                {`${
+                                  obj.ip === undefined
+                                    ? t('RESOURCES_AUTOMATIC')
+                                    : obj.ip
+                                }`}
+                              </div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_CIDR')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
 
                     <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                     {securityGroupList
@@ -2164,6 +2447,14 @@ const RegistModal = props => {
                           keypairName === undefined
                             ? t('RESOURCES_NOT_SELECTED')
                             : keypairName
+                        }`}</div>
+                      </div>
+                      <div className={styles.list}>
+                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
+                        <div>{`${
+                          networkStorage === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : networkStorage
                         }`}</div>
                       </div>
                       <div className={styles.list}>

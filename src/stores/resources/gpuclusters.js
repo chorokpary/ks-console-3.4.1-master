@@ -312,9 +312,8 @@ export default class GpuClustersStore extends Base {
     resourceData.node = ''
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
-    // resourceData.network_storage = data.networkStorage
-    resourceData.network_storage = ''
-
+    resourceData.network_storage = data.networkStorage
+   
     resourceData.gpu_cluster = data.gpuCluster
 
     jsonData.vm = resourceData
@@ -542,4 +541,5 @@ export default class GpuClustersStore extends Base {
     this.isLoading = false
     return resultData
   }
+  
 }
