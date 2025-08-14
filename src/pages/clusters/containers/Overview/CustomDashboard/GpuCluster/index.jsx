@@ -1,27 +1,75 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
-import PodStore from 'stores/pod'
+import GpuClusterStore from 'stores/resources/gpuclusters'
 import PodModel from 'stores/dashboard/pods'
 import { fnSetPods } from 'utils/dashboard'
 import cleanupTrigger from '../cleanupTrigger'
+import CustomStore from 'stores/monitoring/custom/monitor'
 
 const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
-  const podStore = new PodStore()
+  const gpuClusterStore = new GpuClusterStore()
+  const customStore = new CustomStore()
 
   const fetchData = async () => {
-    return await podStore.fetchList({ limit: 1000, ...props })
+    return await gpuClusterStore.fetchList({ limit: 1000, ...props })
   }
-  const [list, error, loading] = cleanupTrigger(fetchData, [])
+  const [gpuClusterList, error, loading] = cleanupTrigger(fetchData, [])
 
-  const pods = new PodModel()
-  const [data, setData] = useState(pods)
+  const [selectedGpuCluster, setSelectedGpuCluster] = useState()
+  const [gpuCluster, setGpuCluster] = useState('')
+  const [vmTotal, setVmTotal] = useState(0)
+  const [temp, setTemp] = useState()
+
+  const [originData, setOriginData] = useState()
 
   useEffect(() => {
-    if (list.length > 0) {
-      const data = fnSetPods(list, pods)
-      setData(data)
+    if (gpuClusterList.length > 0) {
+      console.log(gpuClusterList)
+      setSelectedGpuCluster(gpuClusterList[0])
+
+      setOriginData(gpuClusterList)
     }
-  }, [list])
+  }, [gpuClusterList])
+
+  useEffect(() => {
+    if (gpuClusterList.length > 0) {
+      setGpuCluster(selectedGpuCluster.name)
+      setVmTotal(selectedGpuCluster.instances?.length || 0)
+      getData()
+    }
+  }, [selectedGpuCluster])
+
+  const getData = async () => {
+    // const vmList = selectedGpuCluster.instances
+    //   .map(item => item.vmName)
+    //   .join('|')
+    const vmList = 'gpu-wbl-aicm|gpu-wbl-petasus'
+
+    const step = '5m'
+    const times = 100
+    var currentTime = Math.floor(Date.now() / 1000)
+
+    const tempData = await customStore.fetchMetric({
+      expr: `avg(DCGM_FI_DEV_GPU_TEMP{pod=~"${vmList}"})`,
+      // start: currentTime - 30000,
+      // end: currentTime,
+      // cluster: props.cluster,
+    })
+    console.log('tempData : ', tempData)
+
+    const gpuAvgUsage = await customStore.fetchMetric({
+      expr: `avg(DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}"})`,
+      start: currentTime - 30000,
+      end: currentTime,
+      cluster: props.cluster,
+    })
+    console.log('gpuAvgUsage : ', gpuAvgUsage)
+  }
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById('dropdown')
+    dropdown.classList.toggle('hidden')
+  }
 
   return (
     <>
@@ -47,41 +95,35 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
                         <div className="card_header">
                           <div
                             className="select_cluster"
-                            // onClick="toggleDropdown()"
+                            onClick={toggleDropdown}
                           >
                             <div className="icon_vgpu">
                               <i className="ico-type-mediatedvgpu"></i>
-                              <p className="cluster_name">B200_cluster01</p>
+                              <p className="cluster_name">{gpuCluster}</p>
                             </div>
 
                             <div className="dropdown_icon"></div>
 
                             <ul id="dropdown" className="dropdown hidden">
-                              <li className="dropdown_option">
-                                <div className="icon_vgpu">
-                                  <i className="ico-type-mediatedvgpu"></i>
-                                  <p className="cluster_name">B200_cluster01</p>
-                                </div>
-                              </li>
-                              <li className="dropdown_option">
-                                <div className="icon_vgpu">
-                                  <i className="ico-type-mediatedvgpu"></i>
-                                  <p className="cluster_name">B200_cluster01</p>
-                                </div>
-                              </li>
-                              <li className="dropdown_option">
-                                <div className="icon_vgpu">
-                                  <i className="ico-type-mediatedvgpu"></i>
-                                  <p className="cluster_name">B200_cluster01</p>
-                                </div>
-                              </li>
+                              {gpuClusterList.map((item, idx) => (
+                                <li
+                                  className="dropdown_option"
+                                  key={idx}
+                                  onClick={() => setSelectedGpuCluster(item)}
+                                >
+                                  <div className="icon_vgpu">
+                                    <i className="ico-type-mediatedvgpu"></i>
+                                    <p className="cluster_name">{item.name}</p>
+                                  </div>
+                                </li>
+                              ))}
                             </ul>
                           </div>
 
                           <div className="status_group">
                             <div className="status_item">
                               <p className="status_label">가상머신</p>
-                              <span className="status_value">10</span>
+                              <span className="status_value">{vmTotal}</span>
                             </div>
                             <div className="status_item">
                               <p className="status_label">총 GPU</p>
