@@ -14,6 +14,7 @@ import { SimpleArea } from 'components/Charts'
 import styles from './index.scss'
 import { Button, InputSearch } from '@kube-design/components'
 import GpuClustersStore from 'stores/resources/gpuclusters'
+import { namespace } from 'd3-selection'
 
 const index = props => {
   const customStore = new CustomStore()
@@ -96,6 +97,7 @@ const index = props => {
   }
 
   const fetchData = async params => {
+  
     setFetchParams(params)
     const paramsData = Object.assign(params, {
       start: params.start,
@@ -117,6 +119,7 @@ const index = props => {
         expr: gpuUtilDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuUtilData(vmGpuUtilData)
@@ -129,6 +132,7 @@ const index = props => {
         expr: gpuRamDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuRamData(vmGpuRamData)
@@ -141,6 +145,7 @@ const index = props => {
         expr: gpuPowerDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuPowerData(vmGpuPowerData)
@@ -153,6 +158,7 @@ const index = props => {
         expr: gpuTempDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuTempData(vmGpuTempData)
@@ -164,6 +170,7 @@ const index = props => {
         expr: gpuNvlinkDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuNvlinkData(gpuNvlinkData)
@@ -175,6 +182,7 @@ const index = props => {
         expr: inboundLinuxDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuInboundData(gpuInboundData)
@@ -186,6 +194,7 @@ const index = props => {
         expr: outboundLinuxDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
+        namespace: props.detailStore.detail.data.namespace,
       })
 
       setVmGpuOutboundData(gpuOutboundData)
