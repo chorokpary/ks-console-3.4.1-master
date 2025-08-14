@@ -18,18 +18,19 @@
 
 import React from 'react'
 import { observer, inject } from 'mobx-react'
+import { toJS } from 'mobx'
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
 const Status = (props) => {
     const store = props.detailStore;
+    const detail = toJS(store.detail);
 
     const renderVms = () => {
-
         return (
             <>
                 <div>
                     {/* 가상 머신 상세 관련 샘플 */}
-                    <DetailVmList type={t('RESOURCES_HOST_DEVICE')} match='host_device' name={props.match.params.id} gpu={store.detail.host_device.is_gpu} />
+                    <DetailVmList type={t('RESOURCES_HOST_DEVICE')} match='host_device' name={detail.host_device.name} gpu={store.detail.host_device.is_gpu} />
                 </div>
             </>
         );
