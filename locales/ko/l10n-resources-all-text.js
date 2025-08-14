@@ -837,6 +837,7 @@ module.exports = {
     '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_HOST_ROUTE: '호스트 라우트',
   RESOURCES_RESOURCE_USAGE: '리소스 사용량',
+  RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
   RESOURCES_CPU_USAGE: 'CPU 사용량',
   RESOURCES_MEMORY_USAGE: '메모리 사용량',
   RESOURCES_DISK_USAGE: '디스크 사용량',
