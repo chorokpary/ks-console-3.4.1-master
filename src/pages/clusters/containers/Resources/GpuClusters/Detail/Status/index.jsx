@@ -72,7 +72,7 @@ const Status = props => {
         if (!!vmName) {
           // vm detail data
           const vmDetail = await vmStore.fetchDetail({
-            project: cluster,
+            project: store.detail.data.namespace,
             name: vmName,
           })
 
