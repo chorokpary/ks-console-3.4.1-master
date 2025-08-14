@@ -200,9 +200,10 @@ const RegistModal = props => {
     getClusterDetail()
 
     const getGpuVmCount = async () => {
-      const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
-      const vmList = vmData.vmList
-      setVmList(vmList)
+      const vmTotalList = await gpuStore.fetchList({ limit: 10000 })
+      // const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
+      // const vmList = vmData.vmList
+      setVmList(getVmNameNumeric(vmTotalList))
       setVmListLoading(false)
     }    
     getGpuVmCount()
@@ -368,7 +369,8 @@ const RegistModal = props => {
   }
 
   const networkStorageOptions = () => {
-    return networkStorageDataList.map(obj => {
+     return networkStorageDataList.filter(obj => obj.project === projectName)
+      .map(obj => {
       return {
         label: t(obj.name),
         value: t(obj.name),
@@ -1255,6 +1257,19 @@ const RegistModal = props => {
     const lastNetwork = Number(lastNum) + 100
     return firstNetwork + " ~ " + lastNetwork;
   }
+
+  const getVmNameNumeric= (data) => {
+  return Array.from(
+    new Set(
+      data
+        .flatMap(item => item.instances || [])
+        .map(inst => inst.vmName || "")
+        .filter(name => name.length >= 3)
+        .map(name => name.slice(-3))
+        .filter(suffix => /^\d{3}$/.test(suffix))
+    )
+  ).sort((a, b) => Number(a) - Number(b));
+}
 
   return (
     <>

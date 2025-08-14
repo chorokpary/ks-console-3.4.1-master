@@ -16,14 +16,26 @@ import classnames from 'classnames'
 import styles from './index.scss'
 
 const ModifyModal = props => {
+
   const store = props.store
-  const vmData = store.detail.data?.instances || []
-  const [vmList, setVmiList] = useState(vmData)
+  const [vmList, setVmiList] = useState([])
 
   const form = useRef()
   const [modelView, setModalView] = useState(true)
   const [formData, setFormData] = useState({})
   const [retype, setRetype] = useState('')
+
+  useEffect(() => {
+    const fnGetData = async () => {
+      const detailParams = {
+          namespace: store.detail.data?.namespace,
+          name: store.detail.data?.name,
+      }   
+      const vmDetaliData = await store.fetchVmsDetail(detailParams)
+      setVmiList(vmDetaliData.vmList)
+    }    
+    fnGetData()
+  }, [])
 
   const handleOk = () => {
     const onOk = props.onOk

@@ -36,7 +36,7 @@ const GpuVmSelect = (props) => {
 
     const updatedBase = base.map(item => {
       // vmList에서 뒤 3자리 추출 후 비교
-      const isMatch = props.vmList.some(vm => vm.vmName.slice(-3) === item.id);
+      const isMatch = props.vmList.some(obj => obj === item.id);
       return isMatch ? { ...item, status: "unavailable" } : item;
     });
 

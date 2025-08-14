@@ -88,7 +88,7 @@ export default class GpuClustersStore extends Base {
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
-
+    
     const data = (get(result, 'data') || []).map(item => ({
       cluster,
       namespace,
@@ -133,7 +133,7 @@ export default class GpuClustersStore extends Base {
         }
       })
     )
-
+   
     // 초기 데이터 처리
     this.dataList = updatedData
 
@@ -143,7 +143,7 @@ export default class GpuClustersStore extends Base {
     }
 
     // 검색 관련 처리
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending', 'project']
     const searchArray = Object.keys(params)
       .map(key => {
         let value = params[key]
@@ -154,7 +154,7 @@ export default class GpuClustersStore extends Base {
         return searchData
       })
       .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
-
+ 
     if (searchArray.length > 0) {
       searchArray.map(search => {
         let resultList = this.dataList.filter(row => {
@@ -195,7 +195,7 @@ export default class GpuClustersStore extends Base {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
-
+   
     return this.dataList
   }
 
@@ -427,10 +427,10 @@ export default class GpuClustersStore extends Base {
           // console.log('vmNameArray : ' + JSON.stringify(vmNameArray))
 
           // request.delete(url, jsonData)
-          request.delete(
-            `${this.getVmResourceUrl(params)}/${id}`
-            // `${this.getDeleteUrl({ name: id, namespace: params.namespace })}`
-          )
+
+          const namespace = params.namespace;
+          const url = `${this.getVmResourceUrl(params)}/${id}${namespace === "default" ? "" : "?project="+namespace}`
+          request.delete(url)
         })
       )
     )
