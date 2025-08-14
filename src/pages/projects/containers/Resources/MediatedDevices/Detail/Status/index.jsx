@@ -18,10 +18,12 @@
 
 import React from 'react'
 import { observer, inject } from 'mobx-react'
+import { toJS } from 'mobx'
 import DetailVmList from 'pages/projects/containers/Resources/components/DetailVmList'
 
 const Status = (props) => {
     const store = props.detailStore;
+    const detail = toJS(store.detail);
 
     if (store.isLoading) {
         return <Loading className="ks-page-loading" />;
@@ -33,7 +35,7 @@ const Status = (props) => {
             <>
                 <div>
                     {/* 가상 머신 상세 관련 샘플 */}
-                    <DetailVmList type={t('RESOURCES_MEDIATED_DEVICE')} variables='mediated_device' id={props.match.params.id} gpu={store.detail.mediated_device.is_gpu} {...props.match.params} />
+                    <DetailVmList type={t('RESOURCES_MEDIATED_DEVICE')} match='mediated_device' name={detail.mediated_device.mediated_device_name} gpu={store.detail.mediated_device.is_gpu} {...props.match.params} />
                 </div>
             </>
         );
