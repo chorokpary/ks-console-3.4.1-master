@@ -1,4 +1,4 @@
-import { get, groupBy } from 'lodash'
+import { get, groupBy, join } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { toJS } from 'mobx'
 import { Loading } from '@kube-design/components'
@@ -31,67 +31,80 @@ const Status = props => {
   // 초기 데이터 처리
   useEffect(() => {
     if (!store.detail) return
+    fnGetVmDetail();  
+  }, [])
 
-    const fnGetFlavor = async vmDetail => {
-      setDetailFlavor(vmDetail.vm?.flavor)
+  const fnGetFlavor = async vmDetail => {
+    setDetailFlavor(vmDetail.vm?.flavor)
+  }
+  
+  const fnGetNetwork = async vmDetail => {
+ 
+    setDetailNetwork([])
+
+    const networkData = await vmStore.fetchVmListNetwork({ project: cluster })
+    const networkNameArray = vmDetail.vm?.networks.map(item => item.name)
+    const filterData = networkData.networks.filter(item => {
+      return networkNameArray.includes(item.name)
+    })
+
+    if (filterData.length > 0) {
+      const promises = filterData.filter(async network => {
+        if (network.name !== 'k8s-pod-network') {
+          const networkDetail = await request.get(
+            `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
+          )
+          networkDetail.network.endpoint = 'networks'
+          networkDetail.network.unique = 'project_name'         
+          setDetailNetwork(value => [...value, networkDetail.network])
+        }
+      })
+      await Promise.all(promises)
     }
+  }
 
-    const fnGetNetwork = async vmDetail => {
-      setDetailNetwork([])
-
-      const networkData = await vmStore.fetchVmListNetwork({ project: cluster })
-      const networkNameArray = vmDetail.vm?.networks.map(item => item.name)
-      const filterData = networkData.networks.filter(item => {
-        return networkNameArray.includes(item.name)
+  const fnGetVmDetail = async () => {
+    try {
+      const vmData = store.detail.data?.instances || []
+      const sortedList = [...vmData].sort((a, b) => {
+        return a.vmName < b.vmName ? 1 : a.vmName > b.vmName ? -1 : 0
       })
 
-      if (filterData.length > 0) {
-        const promises = filterData.filter(async network => {
-          if (network.name !== 'k8s-pod-network') {
-            const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
-            )
-            networkDetail.network.endpoint = 'networks'
-            networkDetail.network.unique = 'project_name'
-            setDetailNetwork(value => [...value, networkDetail.network])
-          }
-        })
-        await Promise.all(promises)
-      }
-    }
+      const vmName = sortedList[0]?.vmName
 
-    const fnGetVmDetail = async () => {
-      try {
-        const vmData = store.detail.data?.instances || []
-        const sortedList = [...vmData].sort((a, b) => {
-          return a.vmName < b.vmName ? 1 : a.vmName > b.vmName ? -1 : 0
-        })
+      if (!!vmName) {
 
-        const vmName = sortedList[0]?.vmName
+        const vmTotalData = await vmStore.fetchList({ limit: 10000})
+        const vmTotalList = vmTotalData.map(item => item.name)
+        const hasVmName = vmTotalList.includes(vmName)
 
-        if (!!vmName) {
+        if(hasVmName){
           // vm detail data
           const vmDetail = await vmStore.fetchDetail({
-            project: cluster,
+            project: store.detail.data.namespace,
             name: vmName,
           })
 
           fnGetFlavor(vmDetail)
           fnGetNetwork(vmDetail)
         }
-      } catch (error) {
-        console.log('VM 상세 정보 조회 중 오류 발생:', error)
-      } finally {
-        setLoading(false)
+        
       }
+    } catch (error) {
+      console.log('VM 상세 정보 조회 중 오류 발생:', error)
+    } finally {
+      setLoading(false)
     }
-
-    fnGetVmDetail()
-  }, [])
+  }
 
   // 로딩 중이면 스피너나 로딩 메시지
   if (loading) {
     return <Loading className="ks-page-loading" />
+  }
+
+  const handleEmpty = () => {
+    setDetailFlavor(null)
+    setDetailNetwork([])
   }
 
   return (
@@ -232,6 +245,7 @@ const Status = props => {
           {...props.match.params}
           id={props.match.params.id}
           namespace={store.detail.data?.namespace}
+          handleEmpty={handleEmpty}
         />
       </div>
     </>

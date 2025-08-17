@@ -843,6 +843,7 @@ module.exports = {
   RESOURCES_HOST_DEVICE_DESC: 'Manage the status and usage of host devices.',
   RESOURCES_HOST_ROUTE: 'Host Route',
   RESOURCES_RESOURCE_USAGE: 'Resource Usage',
+  RESOURCES_GPU_CLUSTER: 'GPU Cluster',
   RESOURCES_CPU_USAGE: 'CPU Usage',
   RESOURCES_MEMORY_USAGE: 'Memory Usage',
   RESOURCES_DISK_USAGE: 'Disk Usage',
@@ -1198,7 +1199,8 @@ module.exports = {
   RESOURCES_LAST_NUM_SHOULD_BE_BIGGER:
     'Must be greater than or equal to the first number.',
   RESOURCES_VM_PREFIX: 'Virtual Machine Name prefix',
-  RESOURCES_VM_PREFIX_EMPTY_DESC: ' Please enter a Virtual Machine name prefix.',
+  RESOURCES_VM_PREFIX_EMPTY_DESC:
+    ' Please enter a Virtual Machine name prefix.',
   RESOURCES_INVALID_VM_PREFIX_DESC:
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
   RESOURCES_NODE_PREFIX: 'Node Name prefix',

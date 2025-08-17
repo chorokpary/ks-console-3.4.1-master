@@ -1,39 +1,41 @@
 import React, { useEffect, useState } from 'react'
 import { GridStack } from 'gridstack'
-import 'gridstack/dist/gridstack.min.css';
+import 'gridstack/dist/gridstack.min.css'
 import './dashboard.css'
-import { inject, observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react'
 import ClusterMonitorStore from 'stores/monitoring/cluster'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import DeleteModal from 'components/Modals/Delete'
 
-import ClusterNode from './ClusterNode';
-import Pod from './Pod';
-import Vm from './Vm';
-import UsageTop5 from './UsageTop5';
-import RecentResource from './RecentResource';
-import Kaas from './Kaas';
-import ResourcesUsage from './ResourceUsage';
-import NetworkTraffic from './NetworkTraffic';
-import Issue from './Issue';
-import Computing from './Computing';
-import ResourceChange from './ResourceChange';
-import ClusterStatus from './ClusterStatus';
-import Bmc from './Bmc';
+import ClusterNode from './ClusterNode'
+import Pod from './Pod'
+import Vm from './Vm'
+import UsageTop5 from './UsageTop5'
+import RecentResource from './RecentResource'
+import Kaas from './Kaas'
+import ResourcesUsage from './ResourceUsage'
+import NetworkTraffic from './NetworkTraffic'
+import Issue from './Issue'
+import Computing from './Computing'
+import ResourceChange from './ResourceChange'
+import ClusterStatus from './ClusterStatus'
+import Bmc from './Bmc'
+import GpuCluster from './GpuCluster'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 
-const CustomDashboard = (props) => {
-
+const CustomDashboard = props => {
   const { cluster } = props.match.params
-  const { routing } = props.rootStore;
+  const { routing } = props.rootStore
 
   const monitorStore = new ClusterMonitorStore()
 
   const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
 
-  const [dashboardArr, setDashboardArr] = useState(new Array(new DashboardInfo()))
+  const [dashboardArr, setDashboardArr] = useState(
+    new Array(new DashboardInfo())
+  )
 
   const options = {
     column: 15,
@@ -43,16 +45,16 @@ const CustomDashboard = (props) => {
     cellHeight: 59,
     verticalMargin: 20,
     disableResize: true, // resize
-    disableDrag: true // drag
-  };
+    disableDrag: true, // drag
+  }
 
   var grid
   useEffect(() => {
-    var dashboardArr = JSON.parse(localStorage.getItem("dashboardArr"))
+    var dashboardArr = JSON.parse(localStorage.getItem('dashboardArr'))
     if (!dashboardArr) {
       const dash = new DashboardInfo()
       dashboardArr = [dash]
-      localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
+      localStorage.setItem('dashboardArr', JSON.stringify(dashboardArr))
     }
 
     setDashboardArr(dashboardArr)
@@ -62,19 +64,19 @@ const CustomDashboard = (props) => {
     routing.push(`/clusters/${cluster}/overview/edit`)
   }
 
-  const handleClickOutside = (e) => {
+  const handleClickOutside = e => {
     if (!e.target.closest('.tab-quick-menu')) {
-      document.querySelectorAll('.tab-quick-menu button').forEach((removeBtn) => {
+      document.querySelectorAll('.tab-quick-menu button').forEach(removeBtn => {
         removeBtn.classList.remove('active')
       })
     }
-  };
+  }
   useEffect(() => {
-    window.addEventListener("click", handleClickOutside);
+    window.addEventListener('click', handleClickOutside)
     return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+      window.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
 
   const actvieQuick = e => {
     e.target.parentElement.classList.add('active')
@@ -84,8 +86,8 @@ const CustomDashboard = (props) => {
     const modal = Modal.open({
       onOk: () => {
         dashboardArr.splice(idx, 1)
-        localStorage.setItem("dashboardArr", JSON.stringify(dashboardArr))
-        const spliceArr = JSON.parse(localStorage.getItem("dashboardArr"))
+        localStorage.setItem('dashboardArr', JSON.stringify(dashboardArr))
+        const spliceArr = JSON.parse(localStorage.getItem('dashboardArr'))
         Modal.close(modal)
         Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
 
@@ -100,7 +102,7 @@ const CustomDashboard = (props) => {
   useEffect(() => {
     if (dashboardArr.length > 0) {
       setActiveDashboard(dashboardArr[0])
-      document.getElementById("dashTab0").click()
+      document.getElementById('dashTab0').click()
     }
   }, [dashboardArr])
 
@@ -110,8 +112,7 @@ const CustomDashboard = (props) => {
 
   useEffect(() => {
     if (!_.isEmpty(activeDashboard)) {
-
-      let maxHeight = 0;
+      let maxHeight = 0
       const keys = Object.keys(activeDashboard)
       keys.map(obj => {
         const panel = activeDashboard[obj]
@@ -122,42 +123,61 @@ const CustomDashboard = (props) => {
         }
       })
 
-      const minHeight = (maxHeight) * 60
+      const minHeight = maxHeight * 60
       document.querySelector('.grid-stack').style.minHeight = `${minHeight}px`
 
-      grid = GridStack.init(options);
+      grid = GridStack.init(options)
     }
   }, [activeDashboard])
-
 
   return (
     <>
       <div className="dashboard">
         <div className="content-wrapper content_wrap">
           <div className="dash_wrap">
-
             <section>
               {/* Top area */}
               <div className="dash_toptab">
                 {dashboardArr.map((obj, idx) => (
                   <label htmlFor={`dashTab${idx}`} key={idx}>
-                    <input type="radio" name="mode" id={`dashTab${idx}`} value={`dashTab${idx}`} defaultChecked={idx == 0 ? true : false} />
-                    <span onClick={() => setActiveDashboard(obj)}>{obj.name}
+                    <input
+                      type="radio"
+                      name="mode"
+                      id={`dashTab${idx}`}
+                      value={`dashTab${idx}`}
+                      defaultChecked={idx == 0 ? true : false}
+                    />
+                    <span onClick={() => setActiveDashboard(obj)}>
+                      {obj.name}
                       <div className="tab-quick-menu" onClick={actvieQuick}>
-                        <button type="button" className='btn_quick' ><i className="ico-quick-menu"></i></button>
+                        <button type="button" className="btn_quick">
+                          <i className="ico-quick-menu"></i>
+                        </button>
                         <ul className="quick-menu-list">
-                          <li onClick={() => editDashboard(idx)}><i className="ico-quick-pannel"></i><span>{t('RESOURCES_EDIT_DASHBOARD')}</span></li>
-                          {dashboardArr.length > 1 &&
-                            <li onClick={() => deleteDashboard(idx, obj.name)}><i className="ico-quick-trash"></i><span>{t('RESOURCES_DELETE_DASHBOARD')}</span></li>
-                          }
+                          <li onClick={() => editDashboard(idx)}>
+                            <i className="ico-quick-pannel"></i>
+                            <span>{t('RESOURCES_EDIT_DASHBOARD')}</span>
+                          </li>
+                          {dashboardArr.length > 1 && (
+                            <li onClick={() => deleteDashboard(idx, obj.name)}>
+                              <i className="ico-quick-trash"></i>
+                              <span>{t('RESOURCES_DELETE_DASHBOARD')}</span>
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </span>
                   </label>
                 ))}
-                {dashboardArr.length <= 10 &&
-                  <button type="button" className="btn_dash_add" onClick={() => editMode()}><i className="ico-plus"></i></button>
-                }
+                {dashboardArr.length <= 10 && (
+                  <button
+                    type="button"
+                    className="btn_dash_add"
+                    onClick={() => editMode()}
+                  >
+                    <i className="ico-plus"></i>
+                  </button>
+                )}
               </div>
               {/* // Top area */}
 
@@ -166,7 +186,7 @@ const CustomDashboard = (props) => {
                 <div className="grid_wrap">
                   <div className="grid-stack">
                     {/* 클러스터 노드 */}
-                    {activeDashboard.clusterNode &&
+                    {activeDashboard.clusterNode && (
                       <ClusterNode
                         x={activeDashboard.clusterNode.x}
                         y={activeDashboard.clusterNode.y}
@@ -174,10 +194,10 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.clusterNode.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 파드 */}
-                    {activeDashboard.pod &&
+                    {activeDashboard.pod && (
                       <Pod
                         x={activeDashboard.pod.x}
                         y={activeDashboard.pod.y}
@@ -185,10 +205,10 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.pod.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 가상머신 */}
-                    {activeDashboard.vm &&
+                    {activeDashboard.vm && (
                       <Vm
                         x={activeDashboard.vm.x}
                         y={activeDashboard.vm.y}
@@ -196,10 +216,10 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.vm.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 쿠버네티스 */}
-                    {activeDashboard.kaas &&
+                    {activeDashboard.kaas && (
                       <Kaas
                         x={activeDashboard.kaas.x}
                         y={activeDashboard.kaas.y}
@@ -207,32 +227,46 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.kaas.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
+
+                    {/* GPU 클러스터 */}
+                    {activeDashboard.gpuCluster && (
+                      <GpuCluster
+                        monitorStore={monitorStore}
+                        x={activeDashboard.gpuCluster.x}
+                        y={activeDashboard.gpuCluster.y}
+                        w={activeDashboard.gpuCluster.w}
+                        h={activeDashboard.gpuCluster.h}
+                        {...props.match.params}
+                      />
+                    )}
 
                     {/* 리소스 사용량 */}
-                    {activeDashboard.resourceUsage &&
-                      <ResourcesUsage monitorStore={monitorStore}
+                    {activeDashboard.resourceUsage && (
+                      <ResourcesUsage
+                        monitorStore={monitorStore}
                         x={activeDashboard.resourceUsage.x}
                         y={activeDashboard.resourceUsage.y}
                         w={activeDashboard.resourceUsage.w}
                         h={activeDashboard.resourceUsage.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 네트워크 트래픽 */}
-                    {activeDashboard.networkTraffic &&
-                      <NetworkTraffic monitorStore={monitorStore}
+                    {activeDashboard.networkTraffic && (
+                      <NetworkTraffic
+                        monitorStore={monitorStore}
                         x={activeDashboard.networkTraffic.x}
                         y={activeDashboard.networkTraffic.y}
                         w={activeDashboard.networkTraffic.w}
                         h={activeDashboard.networkTraffic.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 리소스 사용량 Top 5 */}
-                    {activeDashboard.usageTop5 &&
+                    {activeDashboard.usageTop5 && (
                       <UsageTop5
                         x={activeDashboard.usageTop5.x}
                         y={activeDashboard.usageTop5.y}
@@ -240,10 +274,10 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.usageTop5.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 최근 생성된 리소스 (일주일) */}
-                    {activeDashboard.recentResource &&
+                    {activeDashboard.recentResource && (
                       <RecentResource
                         x={activeDashboard.recentResource.x}
                         y={activeDashboard.recentResource.y}
@@ -251,17 +285,17 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.recentResource.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 이슈 */}
-                    {activeDashboard.issue &&
+                    {activeDashboard.issue && (
                       <Issue
                         x={activeDashboard.issue.x}
                         y={activeDashboard.issue.y}
                         w={activeDashboard.issue.w}
                         h={activeDashboard.issue.h}
                       />
-                    }
+                    )}
 
                     {/* 컴퓨팅 */}
                     <Computing
@@ -270,18 +304,19 @@ const CustomDashboard = (props) => {
                     />
 
                     {/* 리소스 변화량 */}
-                    {activeDashboard.resourceChange &&
-                      <ResourceChange monitorStore={monitorStore}
+                    {activeDashboard.resourceChange && (
+                      <ResourceChange
+                        monitorStore={monitorStore}
                         x={activeDashboard.resourceChange.x}
                         y={activeDashboard.resourceChange.y}
                         w={activeDashboard.resourceChange.w}
                         h={activeDashboard.resourceChange.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* 클러스터 컴포넌트 상태 */}
-                    {activeDashboard.clusterStatus &&
+                    {activeDashboard.clusterStatus && (
                       <ClusterStatus
                         x={activeDashboard.clusterStatus.x}
                         y={activeDashboard.clusterStatus.y}
@@ -289,30 +324,23 @@ const CustomDashboard = (props) => {
                         h={activeDashboard.clusterStatus.h}
                         {...props.match.params}
                       />
-                    }
+                    )}
 
                     {/* bmc 관련 
                     (BMC 노드 현황, 탄소지표, 전력사용량 top 5, cpu 소비 전력량 비교 1대평균
                     탄소 발자국 - 전력 사용량, co2 발생량, 나무, 비용)*/}
-                    <Bmc
-                      bmc={activeDashboard}
-                      {...props.match.params}
-                    />
-
+                    <Bmc bmc={activeDashboard} {...props.match.params} />
                   </div>
                 </div>
-
               </div>
               {/* // grid-stack */}
-
             </section>
           </div>
           {/* // grid_wrap */}
-
         </div>
       </div>
     </>
   )
 }
 
-export default inject('rootStore')(observer(CustomDashboard));
+export default inject('rootStore')(observer(CustomDashboard))

@@ -46,7 +46,7 @@ const DetailGpuVmList = props => {
 
   const [isExpandFlag, setIsExpandFlag] = useState(false)
   const [expandItem, setExpandItem] = useState()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [isSearchFlag, setIsSearchFlag] = useState(false)
 
   const [vmCpuData, setVmCpuData] = useState([])
@@ -95,8 +95,16 @@ const DetailGpuVmList = props => {
     fetchData()
   }, [])
 
+
+  useEffect(() => {
+    fnGetData(); 
+    const intervalId = setInterval(fnGetData, 3000); 
+    return () => clearInterval(intervalId); 
+  }, []);
+
   const fnGetData = async ({ ...params } = {}) => {
-    setIsLoading(true)
+
+    setIsLoading(false)
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
     const detailParams = {
@@ -120,6 +128,10 @@ const DetailGpuVmList = props => {
     setCurrentPage(page)
     setVmDataList(vmList)
     setIsLoading(false)
+    
+    if(vmList.length === 0){
+      props.handleEmpty()
+    }  
   }
 
   const fetchData = async () => {
@@ -449,6 +461,7 @@ const DetailGpuVmList = props => {
   }
 
   const getState = state => {
+    console.log("state : "+ state)
     if (
       state === 'Provisioning' ||
       state === 'Starting' ||

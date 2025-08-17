@@ -163,8 +163,8 @@ const ClusterModal = props => {
     console.log('handleVmCreate~~!!') // 실제 API 가 연동되면 재개발 해야 함...
     rootStore.triggerAction('gpuclusters.regist', {
       store: store,
-      cluster: props.cluster,
-      namespace: props.cluster,
+      cluster: projectName,
+      namespace: projectName,
       id: clusterName,
       name: clusterName,
       type: clusterName,
