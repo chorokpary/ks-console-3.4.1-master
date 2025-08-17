@@ -18,13 +18,17 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
   const [selectedGpuCluster, setSelectedGpuCluster] = useState()
   const [gpuCluster, setGpuCluster] = useState('')
   const [vmTotal, setVmTotal] = useState(0)
+  const [gpuTotal, setGpuTotal] = useState(0) 
   const [temp, setTemp] = useState()
+  const [usage, setUsage] = useState()
+  const [memoryUsage, setMemoryUsage] = useState(0)
+  const [memoryTotalUsage, setMemoryTotalUsage] = useState(0)
 
   const [originData, setOriginData] = useState()
 
   useEffect(() => {
     if (gpuClusterList.length > 0) {
-      console.log(gpuClusterList)
+
       setSelectedGpuCluster(gpuClusterList[0])
 
       setOriginData(gpuClusterList)
@@ -35,15 +39,28 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
     if (gpuClusterList.length > 0) {
       setGpuCluster(selectedGpuCluster.name)
       setVmTotal(selectedGpuCluster.instances?.length || 0)
-      getData()
+      setGpuTotal(selectedGpuCluster.instances?.filter(instance => instance.vmType === "gpu").length || 0)
     }
   }, [selectedGpuCluster])
 
+  useEffect(() => {
+    // 모든 상태가 세팅된 후 getData() 호출
+    if (gpuCluster && vmTotal !== null && gpuTotal !== null) {
+      getData()
+    }
+  }, [gpuCluster, vmTotal, gpuTotal])
+
+  const convertTB = (bytes) => {
+    if (bytes === undefined || bytes === null || isNaN(bytes)) {      
+      return 0;
+    }  
+    const tb = bytes / (1024 ** 4);
+    return tb !== 0 ? parseFloat(tb.toFixed(1)) : 0;
+  };
+
   const getData = async () => {
-    // const vmList = selectedGpuCluster.instances
-    //   .map(item => item.vmName)
-    //   .join('|')
-    const vmList = 'gpu-wbl-aicm|gpu-wbl-petasus'
+    const vmList = selectedGpuCluster?.instances?.map(item => item.vmName).join('|') || ''
+    //const vmList = 'gpu-wbl-aicm|gpu-wbl-petasus'
 
     const step = '5m'
     const times = 100
@@ -55,7 +72,8 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
       // end: currentTime,
       // cluster: props.cluster,
     })
-    console.log('tempData : ', tempData)
+    const avgTemp = tempData[0]?.value?.[1] ? Math.floor(parseFloat(tempData[0].value[1])) : 0;
+    setTemp(avgTemp)
 
     const gpuAvgUsage = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}"})`,
@@ -63,7 +81,26 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
       end: currentTime,
       cluster: props.cluster,
     })
-    console.log('gpuAvgUsage : ', gpuAvgUsage)
+    const avgValue = gpuAvgUsage[0]?.values?.[0]?.[1] ? parseFloat(gpuAvgUsage[0].values[0][1]) : 0;
+    setUsage(avgValue)
+
+    const gpuAvgMemoryUsage = await customStore.fetchMetric({
+      expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"})`,
+      start: currentTime - 30000,
+      end: currentTime,
+      cluster: props.cluster,
+    })
+    const avgMemory = gpuAvgMemoryUsage[0]?.values?.[0]?.[1] ? parseFloat(gpuAvgMemoryUsage[0].values[0][1]) : 0;
+    setMemoryUsage(convertTB(avgMemory))
+
+    const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
+      expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
+      start: currentTime - 30000,
+      end: currentTime,
+      cluster: props.cluster,
+    })
+    const avgTotalMemory = gpuAvgMemoryTotalUsage[0]?.values?.[0]?.[1] ? parseFloat(gpuAvgMemoryTotalUsage[0].values[0][1]) : 0;
+    setMemoryTotalUsage(convertTB(avgTotalMemory))
   }
 
   function toggleDropdown() {
@@ -98,7 +135,7 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
                             onClick={toggleDropdown}
                           >
                             <div className="icon_vgpu">
-                              <i className="ico-type-mediatedvgpu"></i>
+                              <i className="ico-type-gpucluster"></i>
                               <p className="cluster_name">{gpuCluster}</p>
                             </div>
 
@@ -112,7 +149,7 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
                                   onClick={() => setSelectedGpuCluster(item)}
                                 >
                                   <div className="icon_vgpu">
-                                    <i className="ico-type-mediatedvgpu"></i>
+                                    <i className="ico-type-gpucluster"></i>
                                     <p className="cluster_name">{item.name}</p>
                                   </div>
                                 </li>
@@ -127,22 +164,22 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
                             </div>
                             <div className="status_item">
                               <p className="status_label">총 GPU</p>
-                              <span className="status_value">80</span>
+                              <span className="status_value">{gpuTotal}</span>
                             </div>
                             <div className="status_item">
                               <p className="status_label">GPU 평균 사용률</p>
-                              <span className="status_value">52%</span>
+                              <span className="status_value">{usage}%</span>
                             </div>
                             <div className="status_item">
                               <p className="status_label">GPU 메모리 사용량</p>
                               <span className="status_value">
-                                1.2/6.4 <span className="unit">TB</span>
+                                {memoryUsage}/{memoryTotalUsage} <span className="unit">TB</span>
                               </span>
                             </div>
                             <div className="status_item">
                               <p className="status_label">평균 온도</p>
                               <span className="status_value">
-                                67<span className="unit">°C</span>
+                                {temp}<span className="unit">°C</span>
                               </span>
                             </div>
                           </div>
