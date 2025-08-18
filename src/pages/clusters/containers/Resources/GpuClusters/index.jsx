@@ -172,7 +172,7 @@ export default class gpuclusters extends React.Component {
         render: (instances, record) => (
           <p>
             {record.instances && record.instances.length > 0
-              ? `${record.isRunning}/${record.instances.length}`
+              ? `${record.isRunningCount}/${record.instances.length}`
               : '-'}
           </p>
         ),
@@ -199,7 +199,7 @@ export default class gpuclusters extends React.Component {
       },
       {
         title: t('RESOURCES_REGIST_DATE'),
-        dataIndex: 'created_at',
+        dataIndex: 'createdAt',
         isHideable: true,
         width: 150,
         sorter: true,
@@ -218,7 +218,7 @@ export default class gpuclusters extends React.Component {
   get columnSearch() {
     return [
       {
-        dataIndex: 'description',
+        dataIndex: 'name',
         title: t('RESOURCES_NAME'),
         search: true,
       },

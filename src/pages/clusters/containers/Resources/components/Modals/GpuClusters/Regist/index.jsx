@@ -23,6 +23,7 @@ import { Loading } from '@kube-design/components'
 import VmStore from 'stores/resources/vms'
 import QuotaStore from 'stores/quota'
 import GpuClustersStore from 'stores/resources/gpuclusters'
+import GpuNodeStore from 'stores/resources/gpunodes'
 
 import GpuVmSelect from 'pages/clusters/containers/Resources/components/GpuVmSelect'
 
@@ -42,6 +43,7 @@ const RegistModal = props => {
   const vmStore = new VmStore()
   const quotaStore = new QuotaStore()
   const gpuStore = new GpuClustersStore()
+  const gpuNodeStore = new GpuNodeStore()  
 
   const [modelView, setModalView] = useState(true)
   const [regStep, setRegStep] = useState(1)
@@ -107,7 +109,7 @@ const RegistModal = props => {
   const [gpuVmName, setGpuVmName] = useState('')
   const [gpuNodeName, setGpuNodeName] = useState('')
   const [slideMinCount, setSlideMinCount] = useState(1)
-  const [slideMaxCount, setSlideMaxCount] = useState(128)
+  const [slideMaxCount, setSlideMaxCount] = useState(0)
   const [firstGpuVmName, setFirstGpuVmName] = useState('')
   const [lastGpuVmName, setLastGpuVmName] = useState('')
   
@@ -201,9 +203,11 @@ const RegistModal = props => {
 
     const getGpuVmCount = async () => {
       const vmTotalList = await gpuStore.fetchList({ limit: 10000 })
-      // const vmData = await gpuStore.fetchVmsDetail({ ...props, limit: 10000 })
-      // const vmList = vmData.vmList
       setVmList(getVmNameNumeric(vmTotalList))
+
+      const gpuNodesList = await gpuNodeStore.fetchList({limit: 10000})
+      setSlideMaxCount(gpuNodesList.length)
+
       setVmListLoading(false)
     }    
     getGpuVmCount()
@@ -1542,7 +1546,7 @@ const RegistModal = props => {
                 <div>  
                   {vmListLoading 
                       ? <Loading className="ks-page-loading" />
-                      : <GpuVmSelect isCancel={isCancelSelect} rangeValue={rangeVm} vmPrefix={vmNamePrefix} vmList={vmList}
+                      : <GpuVmSelect isCancel={isCancelSelect} rangeValue={rangeVm} vmPrefix={vmNamePrefix} vmList={vmList} initGpuCount={slideMaxCount}
                                        getMessageState={getMessageState} getNameRange={getNameRange}/>
                   }
                 </div> 

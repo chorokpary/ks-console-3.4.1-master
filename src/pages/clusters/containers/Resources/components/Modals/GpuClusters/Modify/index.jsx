@@ -30,6 +30,7 @@ const ModifyModal = props => {
       const detailParams = {
           namespace: store.detail.data?.namespace,
           name: store.detail.data?.name,
+          limit: 1000,
       }   
       const vmDetaliData = await store.fetchVmsDetail(detailParams)
       setVmiList(vmDetaliData.vmList)
@@ -174,7 +175,7 @@ const ModifyModal = props => {
                               />
                             </td>
                             <td>{data.vmName}</td>
-                            <td>{data.vmPhase}</td>
+                            <td>{t(`RESOURCES_${data.vmPhase.toUpperCase()}`)}</td>
                             <td>{data.nodeName}</td>
                           </tr>
                         )

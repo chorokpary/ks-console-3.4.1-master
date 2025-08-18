@@ -62,7 +62,7 @@ export default class GpuClustersStore extends Base {
     }
 
     if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'created_at'
+      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'createdAt'
     }
 
     if (infinite) {
@@ -97,9 +97,9 @@ export default class GpuClustersStore extends Base {
 
     // 초기 정렬 처리
     data.sort((a, b) => {
-      return a.creation_timestamp < b.creation_timestamp
+      return a.createdAt < b.createdAt
         ? 1
-        : a.creation_timestamp > b.creation_timestamp
+        : a.createdAt > b.createdAt
         ? -1
         : 0
     })
@@ -117,18 +117,19 @@ export default class GpuClustersStore extends Base {
           namespace: item.namespace,
         })
 
-        let isRunning = 0
-        const is_normal = resultDetail.vmList.every(data => {
+        let isRunningCount = 0;
+        resultDetail.vmList.forEach(data => {
           if (data.vmPhase === 'Running') {
-            isRunning += 1
+            isRunningCount += 1;
           }
-          return data.vmPhase === 'Running'
-        })
+        });
+
+        const is_normal = isRunningCount === resultDetail.vmList.length;
         const state = is_normal ? 'normal' : 'abnormal'
 
         return {
           ...item,
-          isRunning,
+          isRunningCount,
           state,
         }
       })
@@ -141,7 +142,7 @@ export default class GpuClustersStore extends Base {
     if (namespace) {
       params.project = namespace
     }
-
+ 
     // 검색 관련 처리
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending', 'project']
     const searchArray = Object.keys(params)
@@ -217,7 +218,7 @@ export default class GpuClustersStore extends Base {
       // return { success: true }
 
       const res = await this.submitting(request.post(url, jsonData))
-      // console.log('createCluster response:', res)
+
       return res
     } catch (err) {
       return { success: false }
@@ -510,11 +511,11 @@ export default class GpuClustersStore extends Base {
           .includes(params.searchName?.toLowerCase())
       })
     }
+ 
+    const dataList = searchData.length == 0 ? (params.searchName !== '' && params.searchName !== undefined) ? searchData : vmData : searchData
 
     delete params['searchType']
-    delete params['searchName']
-
-    const dataList = searchData.length == 0 ? vmData : searchData
+    delete params['searchName']    
 
     // 정렬 처리
     const sortedList = [...dataList].sort((a, b) => {
