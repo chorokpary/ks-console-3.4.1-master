@@ -26,7 +26,7 @@ const GpuVmSelect = (props) => {
   const initialVmData = React.useMemo(() => {
     const base = [];
 
-    const extra = Array.from({ length: 128 }, (_, i) => {
+    const extra = Array.from({ length: props.initGpuCount }, (_, i) => {
       const num = i+1;
       const padded = num.toString().padStart(3, "0");
       return { id: `${padded}`, name: `${padded}`, status: "inactive" };

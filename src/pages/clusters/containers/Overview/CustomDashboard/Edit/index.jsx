@@ -469,7 +469,7 @@ const CustomDashboardEdit = props => {
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_05">
+                      <div className="view img_22">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>

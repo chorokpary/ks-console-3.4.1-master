@@ -97,7 +97,6 @@ const index = props => {
   }
 
   const fetchData = async params => {
-  
     setFetchParams(params)
     const paramsData = Object.assign(params, {
       start: params.start,

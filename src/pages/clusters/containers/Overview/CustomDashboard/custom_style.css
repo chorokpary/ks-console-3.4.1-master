@@ -3164,7 +3164,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 12px;
   position: relative;
   flex: 1;
@@ -3178,7 +3178,7 @@ html {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   background: #eff4f9;
   font-size: 12px;
 }

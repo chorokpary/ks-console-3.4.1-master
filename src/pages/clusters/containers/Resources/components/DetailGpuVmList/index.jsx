@@ -97,8 +97,13 @@ const DetailGpuVmList = props => {
 
 
   useEffect(() => {
+
+    const params = searchValue
+      ? { name: searchValue, page: currentPage }
+      : { page: currentPage }
+
     fnGetData(); 
-    const intervalId = setInterval(fnGetData, 3000); 
+    const intervalId = setInterval(fnGetData(params), 3000); 
     return () => clearInterval(intervalId); 
   }, []);
 
@@ -117,7 +122,7 @@ const DetailGpuVmList = props => {
     }
 
     if (params.name !== '' && params.name !== undefined) {
-      ;(detailParams.searchType = 'vmName'),
+        (detailParams.searchType = 'vmName'),
         (detailParams.searchName = params.name)
     }
 
@@ -129,7 +134,7 @@ const DetailGpuVmList = props => {
     setVmDataList(vmList)
     setIsLoading(false)
     
-    if(vmList.length === 0){
+    if(vmList.length === 0 && !detailParams.searchType && !detailParams.searchName){
       props.handleEmpty()
     }  
   }
@@ -389,7 +394,7 @@ const DetailGpuVmList = props => {
   }
 
   const handleSearch = value => {
-    setSearchValue(value)
+    setSearchValue(value)    
     fnGetData({
       name: value,
     })
@@ -461,7 +466,7 @@ const DetailGpuVmList = props => {
   }
 
   const getState = state => {
-    console.log("state : "+ state)
+    // console.log("state : "+ state)
     if (
       state === 'Provisioning' ||
       state === 'Starting' ||

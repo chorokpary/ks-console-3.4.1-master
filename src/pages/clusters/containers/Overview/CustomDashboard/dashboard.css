@@ -827,6 +827,12 @@ body {
   background: url('/assets/resources/images/dummy/dash_box_21.svg') center top
     no-repeat;
 }
+.dashboard .popover-container .popover-content .preview_cont .view.img_22 {
+  width: 1300px;
+  height: 520px;
+  background: url('/assets/resources/images/dummy/dash_box_22.svg') center top
+    no-repeat;
+}
 .dashboard .popover-container #popoverButton:hover + .popover-container {
   display: block;
 }
@@ -2541,14 +2547,26 @@ body {
   align-items: center;
   gap: 8px;
   position: relative;
-  width: 30px;
   height: 30px;
+  width: calc(100% - 20px);
+}
+.grid_item .grid_info.style_groupnode .dropdown_option .icon_vgpu {
+  width: 100%;
+}
+.grid_item .grid_info.style_groupnode .dropdown_option .cluster_name {
+  width: 100%;
 }
 .grid_item .grid_info.style_groupnode .cluster_name {
   font-size: 14px;
   font-weight: 700;
   color: #36435c;
   font-family: Pretendard;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  width: calc(100% - 40px);
 }
 .grid_item .grid_info.style_groupnode .dropdown_icon {
   width: 10px;
@@ -2560,6 +2578,8 @@ body {
 }
 .grid_item .grid_info.style_groupnode .dropdown {
   width: 287px;
+  height: 374px;
+  overflow-y: auto;
   position: absolute;
   top: 70px;
   left: 0;
@@ -2576,6 +2596,8 @@ body {
   display: none;
 }
 .grid_item .grid_info.style_groupnode .dropdown_option {
+  z-index: 100;
+  position: relative;
   padding: 8px 8px;
   cursor: pointer;
 }
@@ -2763,7 +2785,7 @@ body {
 .grid_item .grid_info .dot {
   width: 10px;
   height: 10px;
-  border-radius: 9999px;
+  border-radius: 2px;
 }
 .grid_item .grid_info .dot.unknown {
   background: #bbbbbb;
@@ -2876,7 +2898,7 @@ body {
   position: absolute;
   left: 20px;
   bottom: 20px;
-  z-index: 1000;
+  z-index: 10;
   width: 32px;
   height: 92px;
   color: #ffffff;
