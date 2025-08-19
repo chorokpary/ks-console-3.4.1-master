@@ -3047,7 +3047,7 @@ html {
   padding: 0 !important;
 }
 
-.transform-component-module_wrapper__SPB86 {
+.topology_wrap .transform-component-module_wrapper__SPB86 {
   height: auto !important;
 }
 
@@ -3250,7 +3250,7 @@ html {
   display: none;
 }
 
-.vm_grid_info_container_box{
+.vm_grid_info_container_box {
   width: 100%;
   display: flex;
 }
@@ -3291,7 +3291,7 @@ html {
 }
 .vm_grid_info .vm_start_name,
 .vm_grid_info .vm_end_name {
-  color: #4465DC;
+  color: #4465dc;
   font-weight: 700;
 }
 .vm_grid_info .vm_name_error {
@@ -3299,7 +3299,7 @@ html {
   font-weight: bold;
 }
 .vm_grid_info .vm_dash {
-  color: #4465DC;
+  color: #4465dc;
   font-weight: 700;
 }
 
@@ -3311,7 +3311,7 @@ html {
   align-items: center;
   gap: 10px;
   border-radius: 50px;
-  background: #D8E2EC;
+  background: #d8e2ec;
   font-size: 12px;
   outline: none;
   border: none;

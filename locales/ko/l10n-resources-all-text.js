@@ -1192,4 +1192,8 @@ module.exports = {
   RESOURCES_NODE_PREFIX_EMPTY_DESC: '노드 이름 prefix 을 입력해 주세요.',
   RESOURCES_INVALID_NODE_PREFIX_DESC:
     '잘못된 이름입니다. 이름은 소문자, 숫자, 하이픈(-)만 포함할 수 있으며, 최대 길이는 63자입니다.',
+  RESOURCES_GPUCLUSTER_CRITICAL: '심각',
+  RESOURCES_GPUCLUSTER_MINOR: '경고',
+  RESOURCES_GPUCLUSTER_NORMAL: '정상',
+  RESOURCES_GPUCLUSTER_UNKNOWN: '미확인',
 }

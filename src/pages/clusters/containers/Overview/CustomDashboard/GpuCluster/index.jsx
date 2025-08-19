@@ -13,6 +13,8 @@ import {
   getAreaChartOps,
 } from 'utils/monitoring'
 
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+
 const GpuCluster = ({
   monitorStore,
   x,
@@ -44,10 +46,19 @@ const GpuCluster = ({
 
   const [gpuUtilData, setGpuUtilData] = useState({})
   const [gpuMemData, setGpuMemData] = useState({})
+  const [gpuXidData, setGpuXidData] = useState({})
 
   const [inboundData, setInboundData] = useState(0)
   const [outboundData, setOutboundData] = useState(0)
   const [nvlinkData, setNvlinkData] = useState(0)
+
+  const [criticalCount, setCriticalCount] = useState(0)
+  const [minorCount, setMinorCount] = useState(0)
+  const [normalCount, setNormalCount] = useState(0)
+  const [unknownCount, setUnknownCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+
+  const [scale, setScale] = useState(1)
 
   useEffect(() => {
     if (gpuClusterList.length > 0) {
@@ -196,14 +207,23 @@ const GpuCluster = ({
     const gpuUtilTransform = transformDataToObject(gpuUtilData)
     setGpuUtilData(gpuUtilTransform)
 
-    const gpumMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"})`
+    const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"})`
 
     const gpuMemData = await customStore.fetchMetric({
-      expr: gpumMemDataExpr,
+      expr: gpuMemDataExpr,
       ...paramsData,
     })
     const gpuMemTransform = transformDataToObject(gpuMemData)
     setGpuMemData(gpuMemTransform)
+
+    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}`
+
+    const gpuXidData = await customStore.fetchMetric({
+      expr: gpuXidExpr,
+      ...paramsData,
+    })
+    const gpuXidTransform = transformXidDataToObject(gpuXidData)
+    setGpuXidData(gpuXidTransform)
 
     setPanelLoading(false)
   }
@@ -213,7 +233,7 @@ const GpuCluster = ({
     dropdown.classList.toggle('hidden')
   }
 
-  function transformDataToObject(data) {
+  const transformDataToObject = data => {
     const result = {}
 
     data.forEach(item => {
@@ -228,6 +248,67 @@ const GpuCluster = ({
 
       result[host][gpu] = Number(lastValue)
     })
+
+    return result
+  }
+
+  const transformXidDataToObject = data => {
+    console.log('transformXidDataToObject', data)
+    const result = {}
+    let criticalCount = 0
+    let minorCount = 0
+    let normalCount = 0
+    let unknownCount = 0
+
+    data.forEach(item => {
+      const host = item.metric.Hostname
+      const gpu = item.metric.gpu
+      const errCode = item.metric.err_code
+      let errValue = 'unknown'
+      if (
+        errCode == '31' ||
+        errCode == '32' ||
+        errCode == '43' ||
+        errCode == '45' ||
+        errCode == '48' ||
+        errCode == '56' ||
+        errCode == '61' ||
+        errCode == '79' ||
+        errCode == '89'
+      ) {
+        errValue = 'critical'
+        criticalCount++
+      } else if (
+        errCode == '1' ||
+        errCode == '4' ||
+        errCode == '5' ||
+        errCode == '8' ||
+        errCode == '13' ||
+        errCode == '31' ||
+        errCode == '47' ||
+        errCode == '74'
+      ) {
+        errValue = 'minor'
+        minorCount++
+      } else if (errCode == '0') {
+        errValue = 'normal'
+        normalCount++
+      } else {
+        unknownCount++
+      }
+
+      if (!result[host]) {
+        result[host] = {}
+      }
+
+      result[host][gpu] = errValue
+    })
+
+    setCriticalCount(criticalCount)
+    setMinorCount(minorCount)
+    setNormalCount(normalCount)
+    setUnknownCount(unknownCount)
+    setTotalCount(vmTotal * 8)
 
     return result
   }
@@ -257,6 +338,27 @@ const GpuCluster = ({
     }
 
     localStorage.setItem('selectedGpuCluster', JSON.stringify(next))
+  }
+
+  const getState = state => {
+    if (
+      state === 'Provisioning' ||
+      state === 'Starting' ||
+      state === 'Stopping' ||
+      state === 'Terminating' ||
+      state === 'Migrating' ||
+      state === 'WaitingForVolumeBinding'
+    ) {
+      return 'minor'
+    }
+    if (state === 'Running') {
+      return 'normal'
+    }
+    if (state === 'Stopped' || state === 'Paused') {
+      return 'unknown'
+    }
+
+    return 'critical'
   }
 
   return (
@@ -343,186 +445,129 @@ const GpuCluster = ({
                       </div>
 
                       <section className="flex_row">
-                        <div className="zoomin_icon">
-                          <button id="zoomIn" className="btn_zoom_icon">
-                            <i className="ico-plus"></i>
-                          </button>
-                          <button id="zoomOut" className="btn_zoom_icon">
-                            <i className="ico-minus"></i>
-                          </button>
-                          <button id="resetZoom" className="btn_zoom_icon">
-                            <i className="ico-reset"></i>
-                          </button>
-                        </div>
                         <div className="gpu_group">
-                          <Loading spinning={panelLoading}>
-                            <div className="gpu_card_group">
-                              {selectedGpuCluster?.instances &&
-                                selectedGpuCluster.instances.length > 0 &&
-                                selectedGpuCluster.instances.map(
-                                  (instance, index) => (
-                                    <div className="gpu_card" key={index}>
-                                      <div className="gpu_card_header">
-                                        <div className="gpu_card_title">
-                                          {instance.vmName}
-                                        </div>
-                                        <div className="gpu_card_status_dot normal"></div>
-                                      </div>
-                                      <GpuBoxValues
-                                        gpuUtilData={gpuUtilData}
-                                        gpuMemData={gpuMemData}
-                                        vmName={instance.vmName}
-                                      />
-                                      <div className="gpu_card_metrics">
-                                        <div className="gpu_card_metric">
-                                          <div className="gpu_card_metric_label">
-                                            GPU Avg
-                                          </div>
-                                          <div className="gpu_card_metric_value">
-                                            {gpuUtilData[instance.vmName] &&
-                                              Object.values(
-                                                gpuUtilData[instance.vmName]
-                                              ).reduce((acc, v) => acc + v, 0)}
-                                            %
-                                          </div>
-                                        </div>
-                                        <div className="gpu_card_metric">
-                                          <div className="gpu_card_metric_label">
-                                            GPU Mem
-                                          </div>
-                                          <div className="gpu_card_metric_value">
-                                            {gpuMemData[instance.vmName] &&
-                                              Object.values(
-                                                gpuMemData[instance.vmName]
-                                              ).reduce((acc, v) => acc + v, 0)}
-                                            %
-                                          </div>
-                                        </div>
-                                      </div>
+                          <TransformWrapper
+                            initialScale={1}
+                            initialPositionX={10}
+                            initialPositionY={10}
+                            minScale={0.5}
+                            maxScale={3}
+                            onTransformed={ctx => setScale(ctx.state.scale)}
+                          >
+                            {({ zoomIn, zoomOut, resetTransform }) => (
+                              <>
+                                <Controls
+                                  zoomIn={zoomIn}
+                                  zoomOut={zoomOut}
+                                  resetTransform={resetTransform}
+                                />
+                                <TransformComponent
+                                  onTransformChange={transform =>
+                                    console.log('Transform changed:', transform)
+                                  }
+                                  wrapperStyle={{
+                                    width: '1000px',
+                                    height: '390px',
+                                  }}
+                                >
+                                  <Loading spinning={panelLoading}>
+                                    <div className="gpu_card_group">
+                                      {selectedGpuCluster?.instances &&
+                                        selectedGpuCluster.instances.length >
+                                          0 &&
+                                        selectedGpuCluster.instances.map(
+                                          (instance, index) => (
+                                            <div
+                                              className="gpu_card"
+                                              key={index}
+                                            >
+                                              <div className="gpu_card_header">
+                                                <div className="gpu_card_title">
+                                                  {instance.vmName}
+                                                </div>
+                                                <div
+                                                  className={`gpu_card_status_dot ${getState(
+                                                    instance.vmPhase
+                                                  )}`}
+                                                ></div>
+                                              </div>
+                                              <GpuBoxValues
+                                                gpuUtilData={gpuUtilData}
+                                                gpuMemData={gpuMemData}
+                                                gpuXidData={gpuXidData}
+                                                vmName={instance.vmName}
+                                              />
+                                              {scale >= 1 && (
+                                                <div className="gpu_card_metrics">
+                                                  <div className="gpu_card_metric">
+                                                    <div className="gpu_card_metric_label">
+                                                      GPU Avg
+                                                    </div>
+                                                    <div className="gpu_card_metric_value">
+                                                      {gpuUtilData[
+                                                        instance.vmName
+                                                      ] &&
+                                                        Object.values(
+                                                          gpuUtilData[
+                                                            instance.vmName
+                                                          ]
+                                                        ).reduce(
+                                                          (acc, v) => acc + v,
+                                                          0
+                                                        )}
+                                                      %
+                                                    </div>
+                                                  </div>
+                                                  <div className="gpu_card_metric">
+                                                    <div className="gpu_card_metric_label">
+                                                      GPU Mem
+                                                    </div>
+                                                    <div className="gpu_card_metric_value">
+                                                      {gpuMemData[
+                                                        instance.vmName
+                                                      ] &&
+                                                        Object.values(
+                                                          gpuMemData[
+                                                            instance.vmName
+                                                          ]
+                                                        ).reduce(
+                                                          (acc, v) => acc + v,
+                                                          0
+                                                        )}
+                                                      %
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+                                          )
+                                        )}
                                     </div>
-                                  )
-                                )}
-                            </div>
-                          </Loading>
+                                  </Loading>
+                                </TransformComponent>
+                              </>
+                            )}
+                          </TransformWrapper>
                         </div>
-                        {/* <div className="gpu_group">
-                          <div className="gpu_card_group">
-                            <div className="gpu_card">
-                              <div className="gpu_card_header">
-                                <div className="gpu_card_title">Node-01</div>
-                                <div className="gpu_card_status_dot normal"></div>
-                              </div>
-
-                              <section className="gpu_card_gpu_list">
-                                <div className="gpu_box normal">
-                                  <div className="gpu_box_index">1</div>
-                                  <div className="tooltip_box">
-                                    <div className="gpu_card_title">GPU1</div>
-                                    <div className="gpu_card_metrics">
-                                      <div className="gpu_card_metric">
-                                        <div className="gpu_card_metric_label">
-                                          GPU Avg
-                                        </div>
-                                        <div className="gpu_card_metric_value">
-                                          46.9%
-                                        </div>
-                                      </div>
-                                      <div className="gpu_card_metric">
-                                        <div className="gpu_card_metric_label">
-                                          GPU Mem
-                                        </div>
-                                        <div className="gpu_card_metric_value">
-                                          46.9%
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="gpu_box normal">
-                                  <div className="gpu_box_index">2</div>
-                                  <div className="tooltip_box">
-                                    <div className="gpu_card_title">GPU2</div>
-                                    <div className="gpu_card_metrics">
-                                      <div className="gpu_card_metric">
-                                        <div className="gpu_card_metric_label">
-                                          GPU Avg
-                                        </div>
-                                        <div className="gpu_card_metric_value">
-                                          46.9%
-                                        </div>
-                                      </div>
-                                      <div className="gpu_card_metric">
-                                        <div className="gpu_card_metric_label">
-                                          GPU Mem
-                                        </div>
-                                        <div className="gpu_card_metric_value">
-                                          46.9%
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="gpu_box normal">
-                                  <div className="gpu_box_index">3</div>
-                                </div>
-                                <div className="gpu_box normal">
-                                  <div className="gpu_box_index">4</div>
-                                </div>
-                                <div className="gpu_box unknown">
-                                  <div className="gpu_box_index">5</div>
-                                </div>
-                                <div className="gpu_box normal">
-                                  <div className="gpu_box_index">6</div>
-                                </div>
-                                <div className="gpu_box critical">
-                                  <div className="gpu_box_index">7</div>
-                                </div>
-                                <div className="gpu_box minor">
-                                  <div className="gpu_box_index">8</div>
-                                </div>
-                              </section>
-
-                              <div className="gpu_card_metrics">
-                                <div className="gpu_card_metric">
-                                  <div className="gpu_card_metric_label">
-                                    GPU Avg
-                                  </div>
-                                  <div className="gpu_card_metric_value">
-                                    46.9%
-                                  </div>
-                                </div>
-                                <div className="gpu_card_metric">
-                                  <div className="gpu_card_metric_label">
-                                    GPU Mem
-                                  </div>
-                                  <div className="gpu_card_metric_value">
-                                    46.9%
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div> */}
                         <div className="gpu_panel">
                           <div className="gpu_top">
                             <div className="gpu_title">GPU 현황</div>
                             <div className="gpu_status">
                               <div className="gpu_summary">
                                 <span className="gpu_summary_main">
-                                  {vmTotal}
+                                  {normalCount}
                                 </span>
                                 <span>/</span>
                                 <span className="gpu_summary_total">
-                                  {' '}
-                                  {vmTotal}
+                                  {totalCount}
                                 </span>
                               </div>
                               <div className="gpu_legend">
                                 <div className="gpu_legend_values">
-                                  <div>0</div>
-                                  <div>0</div>
-                                  <div>{vmTotal}</div>
-                                  <div>0</div>
+                                  <div>{criticalCount}</div>
+                                  <div>{minorCount}</div>
+                                  <div>{normalCount}</div>
+                                  <div>{unknownCount}</div>
                                 </div>
                                 <div className="gpu_legend_dots">
                                   <div className="dot critical"></div>
@@ -531,10 +576,12 @@ const GpuCluster = ({
                                   <div className="dot unknown"></div>
                                 </div>
                                 <div className="gpu_legend_labels">
-                                  <div>Critical</div>
-                                  <div>Minor</div>
-                                  <div>Normal</div>
-                                  <div>Unknown</div>
+                                  <div>
+                                    {t('RESOURCES_GPUCLUSTER_CRITICAL')}
+                                  </div>
+                                  <div>{t('RESOURCES_GPUCLUSTER_MINOR')}</div>
+                                  <div>{t('RESOURCES_GPUCLUSTER_NORMAL')}</div>
+                                  <div>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</div>
                                 </div>
                               </div>
                             </div>
@@ -628,26 +675,29 @@ const InfinibandValues = ({ inboundData, outboundData }) => {
   )
 }
 
-const GpuBoxValues = ({ gpuUtilData, gpuMemData, vmName }) => {
-  const index = [1, 2, 3, 4, 5, 6, 7, 8]
+const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
+  const index = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
     <section className="gpu_card_gpu_list">
       {index.map(el => (
-        <div className="gpu_box normal" key={el}>
-          <div className="gpu_box_index">{el}</div>
+        <div
+          className={`gpu_box ${gpuXidData?.[vmName]?.[el] || 'unknown'}`}
+          key={el}
+        >
+          <div className="gpu_box_index">{el + 1}</div>
           <div className="tooltip_box">
-            <div className="gpu_card_title">GPU{el}</div>
+            <div className="gpu_card_title">GPU{el + 1}</div>
             <div className="gpu_card_metrics">
               <div className="gpu_card_metric">
                 <div className="gpu_card_metric_label">GPU Avg</div>
                 <div className="gpu_card_metric_value">
-                  {gpuUtilData && gpuUtilData?.[vmName]?.['2']}%
+                  {(gpuUtilData && gpuUtilData?.[vmName]?.[el]) || 0}%
                 </div>
               </div>
               <div className="gpu_card_metric">
                 <div className="gpu_card_metric_label">GPU Mem</div>
                 <div className="gpu_card_metric_value">
-                  {gpuMemData && gpuMemData?.[vmName]?.['2']}%
+                  {(gpuMemData && gpuMemData?.[vmName]?.[el]) || 0}%
                 </div>
               </div>
             </div>
@@ -657,5 +707,26 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, vmName }) => {
     </section>
   )
 }
+
+const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
+  <>
+    <div className="zoomin_icon">
+      <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
+        <i className="ico-plus"></i>
+      </button>
+      <button id="zoomOut" className="btn_zoom_icon" onClick={() => zoomOut()}>
+        <i className="ico-minus"></i>
+      </button>
+      <button
+        id="resetZoom"
+        className="btn_zoom_icon"
+        onClick={() => resetTransform()}
+      >
+        <i className="ico-reset"></i>
+      </button>
+      <div id="result"></div>
+    </div>
+  </>
+)
 
 export default GpuCluster
