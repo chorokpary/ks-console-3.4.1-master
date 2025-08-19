@@ -1207,4 +1207,8 @@ module.exports = {
   RESOURCES_NODE_PREFIX_EMPTY_DESC: 'Please enter a Node name prefix.',
   RESOURCES_INVALID_NODE_PREFIX_DESC:
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
+  RESOURCES_GPUCLUSTER_CRITICAL: 'Critical',
+  RESOURCES_GPUCLUSTER_MINOR: 'Minor',
+  RESOURCES_GPUCLUSTER_NORMAL: 'Normal',
+  RESOURCES_GPUCLUSTER_UNKNOWN: 'Unknown',
 }

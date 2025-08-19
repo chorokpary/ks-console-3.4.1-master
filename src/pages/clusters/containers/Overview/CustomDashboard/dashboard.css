@@ -2702,12 +2702,14 @@ body {
 }
 .grid_item .grid_info .gpu_panel {
   width: 283px;
+  height: 390px;
+  margin-bottom: 20px;
   padding: 12px;
   background: white;
   border-radius: 4px;
   display: inline-flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: flex-start;
   font-family: Pretendard, sans-serif;
   color: #181d28;
@@ -2896,7 +2898,7 @@ body {
 }
 .grid_item .zoomin_icon {
   position: absolute;
-  left: 20px;
+  left: 5px;
   bottom: 20px;
   z-index: 10;
   width: 32px;
@@ -2928,7 +2930,7 @@ body {
   position: relative;
   display: flex;
   width: calc(100% - 287px);
-  height: 360px;
+  height: 415px;
   justify-content: center;
   align-items: flex-start;
   overflow: auto;

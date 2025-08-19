@@ -91,6 +91,12 @@ const CustomDashboard = props => {
         Modal.close(modal)
         Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
 
+        const prev = JSON.parse(
+          localStorage.getItem('selectedGpuCluster') || '{}'
+        )
+        delete prev[name]
+        localStorage.setItem('selectedGpuCluster', JSON.stringify(prev))
+
         setDashboardArr(spliceArr)
       },
       modal: DeleteModal,
@@ -102,6 +108,7 @@ const CustomDashboard = props => {
   useEffect(() => {
     if (dashboardArr.length > 0) {
       setActiveDashboard(dashboardArr[0])
+      localStorage.setItem('activeDashboardName', dashboardArr[0].name)
       document.getElementById('dashTab0').click()
     }
   }, [dashboardArr])
@@ -147,7 +154,12 @@ const CustomDashboard = props => {
                       value={`dashTab${idx}`}
                       defaultChecked={idx == 0 ? true : false}
                     />
-                    <span onClick={() => setActiveDashboard(obj)}>
+                    <span
+                      onClick={() => {
+                        setActiveDashboard(obj)
+                        localStorage.setItem('activeDashboardName', obj.name)
+                      }}
+                    >
                       {obj.name}
                       <div className="tab-quick-menu" onClick={actvieQuick}>
                         <button type="button" className="btn_quick">
@@ -238,6 +250,7 @@ const CustomDashboard = props => {
                         w={activeDashboard.gpuCluster.w}
                         h={activeDashboard.gpuCluster.h}
                         {...props.match.params}
+                        activeDashboard={activeDashboard}
                       />
                     )}
 

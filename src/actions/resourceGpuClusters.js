@@ -43,9 +43,13 @@ export default {
         onOk: data => {
           store
             .createCluster(data, { cluster, workspace, namespace, devops })
-            .then(() => {
-              success && success()
-              data.createSuccess?.(success)
+            .then((res) => {
+              if(res.success){
+                success && success()
+                data.createSuccess?.(success)
+              }else{
+                data.createFail()
+              }         
             })
         },
         title: t('RESOURCES_CREATE_GPU_CLUSTER'),

@@ -60,7 +60,7 @@ const UnitTypes = {
     units: ['TB/s', 'GB/s', 'MB/s', 'KB/s', 'B/s'],
   },
   bandwidth: {
-    conditions: [1000 ** 4 / 8, 1000 ** 3 / 8, 1000 ** 2 / 8, 1000 / 8, 0],
+    conditions: [1000 ** 4, 1000 ** 3, 1000 ** 2, 1000, 0],
     units: ['Tbps', 'Gbps', 'Mbps', 'Kbps', 'bps'],
   },
   bandwidthBytes: {
@@ -72,7 +72,8 @@ const UnitTypes = {
     units: ['T', 'G', 'M', 'K', ''],
   },
 }
-
+200
+120
 export const getSuitableUnit = (value, unitType) => {
   const config = UnitTypes[unitType]
 
