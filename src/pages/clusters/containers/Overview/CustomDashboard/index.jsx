@@ -31,11 +31,9 @@ const CustomDashboard = props => {
 
   const monitorStore = new ClusterMonitorStore()
 
-  const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
+  const [activeDashboard, setActiveDashboard] = useState({})
 
-  const [dashboardArr, setDashboardArr] = useState(
-    new Array(new DashboardInfo())
-  )
+  const [dashboardArr, setDashboardArr] = useState(new Array({}))
 
   const options = {
     column: 15,
@@ -311,10 +309,13 @@ const CustomDashboard = props => {
                     )}
 
                     {/* 컴퓨팅 */}
-                    <Computing
-                      computing={activeDashboard}
-                      {...props.match.params}
-                    />
+                    {(activeDashboard.computingNetwork ||
+                      activeDashboard.computingTemplate) && (
+                      <Computing
+                        computing={activeDashboard}
+                        {...props.match.params}
+                      />
+                    )}
 
                     {/* 리소스 변화량 */}
                     {activeDashboard.resourceChange && (
@@ -342,7 +343,17 @@ const CustomDashboard = props => {
                     {/* bmc 관련 
                     (BMC 노드 현황, 탄소지표, 전력사용량 top 5, cpu 소비 전력량 비교 1대평균
                     탄소 발자국 - 전력 사용량, co2 발생량, 나무, 비용)*/}
-                    <Bmc bmc={activeDashboard} {...props.match.params} />
+
+                    {(activeDashboard.bmcNode ||
+                      activeDashboard.carbonIndicator ||
+                      activeDashboard.powerUsageTop5 ||
+                      activeDashboard.cpuPower ||
+                      activeDashboard.carbonPower ||
+                      activeDashboard.carbonCo2 ||
+                      activeDashboard.carbonTree ||
+                      activeDashboard.carbonCost) && (
+                      <Bmc bmc={activeDashboard} {...props.match.params} />
+                    )}
                   </div>
                 </div>
               </div>
