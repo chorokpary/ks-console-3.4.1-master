@@ -76,7 +76,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
       handlePodData(podData)
 
       // vm list
-      const vmList = await vmStore.vmList({ ...props })
+      const vmList = await vmStore.vmList({ limit: -1, ...props })
       let promsql_pod_vm_list = '';
       let vm_list_length = 0;
       vmList.map(obj => {

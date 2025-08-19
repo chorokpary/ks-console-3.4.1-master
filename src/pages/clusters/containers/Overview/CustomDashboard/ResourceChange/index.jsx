@@ -54,7 +54,7 @@ const ResourceChange = ({ monitorStore, x, y, w, h, ...props }) => {
         cluster: props.cluster
       })
 
-      const vmData = await vmStore.vmList({ sortBy: 'creation_timestamp', ...props })
+      const vmData = await vmStore.vmList({ limit: -1, sortBy: 'creation_timestamp', ...props })
       const kaasData = await kaasStore.fetchList({ limit: 1000, sortBy: 'timestamp', ...props })
 
       const podData = [

@@ -124,7 +124,7 @@ const UsageTop5 = ({ x, y, w, h, ...props }) => {
     let cleanupTrigger = true;
     // vm list
     const getVmList = async () => {
-      const vmList = await vmStore.vmList({ ...props })
+      const vmList = await vmStore.vmList({ limit: -1, ...props })
       let vmNames = '';
       vmList.map(obj => vmNames = vmNames + obj.id + "|")
 
@@ -147,7 +147,7 @@ const UsageTop5 = ({ x, y, w, h, ...props }) => {
 
     var currentTime = Math.floor(Date.now() / 1000);
     const cpuData = await customStore.fetchMetric({
-      expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",${filtered}}[5m])) * 100)) / 100`,
+      expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle",${filtered}}[5m])) * 100)) / 100`,
       start: currentTime,
       end: currentTime,
       cluster: props.cluster
