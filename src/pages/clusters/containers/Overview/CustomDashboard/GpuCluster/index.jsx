@@ -162,7 +162,7 @@ const GpuCluster = ({
         )
       : 0
     // setMemoryUsage(getSuitableValue(avgMemory, 'disk'))
-    setMemoryUsage((avgMemory * 8 * 64) / 1024)
+    setMemoryUsage(((avgMemory * 8 * vmTotal) / 1024).toFixed(1))
 
     const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
@@ -178,7 +178,7 @@ const GpuCluster = ({
         )
       : 0
     // setMemoryTotalUsage(getSuitableValue(avgTotalMemory, 'disk'))
-    setMemoryTotalUsage((avgTotalMemory * 8 * 64) / 1024)
+    setMemoryTotalUsage(((avgTotalMemory * 8 * vmTotal) / 1024).toFixed(1))
 
     const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
     const gpuInboundData = await customStore.fetchMetric({
