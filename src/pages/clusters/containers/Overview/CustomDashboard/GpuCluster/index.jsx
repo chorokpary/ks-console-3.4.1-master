@@ -112,7 +112,7 @@ const GpuCluster = ({
       // start: currentTime - 30000,
       start: currentTime,
       end: currentTime,
-      cluster: props.cluster,
+      cluster: selectedGpuCluster?.namespace,
     }
 
     const vmList =
@@ -123,7 +123,7 @@ const GpuCluster = ({
       expr: `avg(DCGM_FI_DEV_GPU_TEMP{pod=~"${vmList}"})`,
       // start: currentTime - 30000,
       // end: currentTime,
-      // cluster: props.cluster,
+      // cluster: selectedGpuCluster?.namespace,
     })
     const avgTemp = tempData[0]?.value?.[1]
       ? Math.floor(parseFloat(tempData[0].value[1]))
@@ -134,7 +134,7 @@ const GpuCluster = ({
       expr: `avg(DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}"})`,
       start: currentTime - 30000,
       end: currentTime,
-      cluster: props.cluster,
+      cluster: selectedGpuCluster?.namespace,
       step: '50m',
       times: 10,
     })
@@ -180,32 +180,32 @@ const GpuCluster = ({
     // setMemoryTotalUsage(getSuitableValue(avgTotalMemory, 'disk'))
     setMemoryTotalUsage((avgTotalMemory / 1000 / 1000).toFixed(2))
 
-    const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${props.cluster}"}[5m]) * 8`
+    const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
     const gpuInboundData = await customStore.fetchMetric({
       expr: inboundLinuxDataExpr,
       ...paramsData,
-      namespace: selectedGpuCluster.namespace,
+      namespace: selectedGpuCluster?.namespace,
     })
     setInboundData(
       gpuInboundData?.[gpuInboundData?.length - 1]?.values?.[0][1] || 0
     )
 
-    const outboundLinuxDataExpr = `rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${props.cluster}"}[5m]) * 8`
+    const outboundLinuxDataExpr = `rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
     const gpuOutboundData = await customStore.fetchMetric({
       expr: outboundLinuxDataExpr,
       ...paramsData,
-      namespace: selectedGpuCluster.namespace,
+      namespace: selectedGpuCluster?.namespace,
     })
 
     setOutboundData(
       gpuOutboundData?.[gpuOutboundData?.length - 1]?.values?.[0][1] || 0
     )
 
-    const gpuNvlinkDataExpr = `DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}`
+    const gpuNvlinkDataExpr = `DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
     const gpuNvlinkData = await customStore.fetchMetric({
       expr: gpuNvlinkDataExpr,
       ...paramsData,
-      namespace: selectedGpuCluster.namespace,
+      namespace: selectedGpuCluster?.namespace,
       step: '600s',
     })
 
@@ -213,7 +213,7 @@ const GpuCluster = ({
       gpuNvlinkData?.[gpuNvlinkData?.length - 1]?.values?.[0][1] || 0
     )
 
-    const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}`
+    const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
 
     const gpuUtilData = await customStore.fetchMetric({
       expr: gpuUtilDataExpr,
@@ -222,7 +222,7 @@ const GpuCluster = ({
     const gpuUtilTransform = transformDataToObject(gpuUtilData)
     setGpuUtilData(gpuUtilTransform)
 
-    const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}) * 100`
+    const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}) * 100`
 
     const gpuMemData = await customStore.fetchMetric({
       expr: gpuMemDataExpr,
@@ -231,7 +231,7 @@ const GpuCluster = ({
     const gpuMemTransform = transformDataToObject(gpuMemData)
     setGpuMemData(gpuMemTransform)
 
-    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}`
+    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
 
     const gpuXidData = await customStore.fetchMetric({
       expr: gpuXidExpr,
