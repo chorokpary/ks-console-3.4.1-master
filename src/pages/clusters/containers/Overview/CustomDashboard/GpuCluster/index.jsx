@@ -13,7 +13,15 @@ import {
   getAreaChartOps,
 } from 'utils/monitoring'
 
-const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
+const GpuCluster = ({
+  monitorStore,
+  x,
+  y,
+  w,
+  h,
+  activeDashboard,
+  ...props
+}) => {
   const gpuClusterStore = new GpuClusterStore()
   const customStore = new CustomStore()
 
@@ -21,6 +29,8 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
     return await gpuClusterStore.fetchList({ limit: 1000, ...props })
   }
   const [gpuClusterList, error, loading] = cleanupTrigger(fetchData, [])
+
+  const [panelLoading, setPanelLoading] = useState(false)
 
   const [selectedGpuCluster, setSelectedGpuCluster] = useState()
   const [gpuCluster, setGpuCluster] = useState('')
@@ -39,15 +49,23 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
   const [outboundData, setOutboundData] = useState(0)
   const [nvlinkData, setNvlinkData] = useState(0)
 
-  const [originData, setOriginData] = useState()
-
   useEffect(() => {
     if (gpuClusterList.length > 0) {
-      setSelectedGpuCluster(gpuClusterList[0])
-
-      setOriginData(gpuClusterList)
+      const activeDashboardName = localStorage.getItem('activeDashboardName')
+      const selectedGpuClusterObj = JSON.parse(
+        localStorage.getItem('selectedGpuCluster')
+      )
+      const selectedGpuClusterName =
+        selectedGpuClusterObj?.[activeDashboardName]
+      if (selectedGpuClusterName) {
+        setSelectedGpuCluster(
+          gpuClusterList.find(item => item.name === selectedGpuClusterName)
+        )
+      } else {
+        setSelectedGpuCluster(gpuClusterList[0])
+      }
     }
-  }, [gpuClusterList])
+  }, [gpuClusterList, activeDashboard])
 
   useEffect(() => {
     if (gpuClusterList.length > 0) {
@@ -77,8 +95,10 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
   }
 
   const getData = async () => {
+    setPanelLoading(true)
     var currentTime = Math.floor(Date.now() / 1000)
     const paramsData = {
+      // start: currentTime - 30000,
       start: currentTime,
       end: currentTime,
       cluster: props.cluster,
@@ -101,7 +121,9 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
 
     const gpuAvgUsageData = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}"})`,
-      ...paramsData,
+      start: currentTime - 30000,
+      end: currentTime,
+      cluster: props.cluster,
       step: '50m',
       times: 10,
     })
@@ -137,8 +159,6 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
       expr: inboundLinuxDataExpr,
       ...paramsData,
       namespace: selectedGpuCluster.namespace,
-      start: currentTime,
-      end: currentTime,
     })
     setInboundData(
       gpuInboundData?.[gpuInboundData?.length - 1]?.values?.[0][1] || 0
@@ -149,8 +169,6 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
       expr: outboundLinuxDataExpr,
       ...paramsData,
       namespace: selectedGpuCluster.namespace,
-      start: currentTime,
-      end: currentTime,
     })
 
     setOutboundData(
@@ -174,8 +192,6 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
     const gpuUtilData = await customStore.fetchMetric({
       expr: gpuUtilDataExpr,
       ...paramsData,
-      start: currentTime,
-      end: currentTime,
     })
     const gpuUtilTransform = transformDataToObject(gpuUtilData)
     setGpuUtilData(gpuUtilTransform)
@@ -185,11 +201,11 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
     const gpuMemData = await customStore.fetchMetric({
       expr: gpumMemDataExpr,
       ...paramsData,
-      start: currentTime,
-      end: currentTime,
     })
     const gpuMemTransform = transformDataToObject(gpuMemData)
     setGpuMemData(gpuMemTransform)
+
+    setPanelLoading(false)
   }
 
   function toggleDropdown() {
@@ -230,6 +246,19 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
     setGpuAvgUsage({ data: data })
   }
 
+  const handleSelectGpuCluster = item => {
+    const activeDashboardName = localStorage.getItem('activeDashboardName')
+
+    const prev = JSON.parse(localStorage.getItem('selectedGpuCluster') || '{}')
+
+    const next = {
+      ...prev,
+      [activeDashboardName]: item.name,
+    }
+
+    localStorage.setItem('selectedGpuCluster', JSON.stringify(next))
+  }
+
   return (
     <>
       <div
@@ -268,7 +297,10 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
                                 <li
                                   className="dropdown_option"
                                   key={idx}
-                                  onClick={() => setSelectedGpuCluster(item)}
+                                  onClick={() => {
+                                    setSelectedGpuCluster(item)
+                                    handleSelectGpuCluster(item)
+                                  }}
                                 >
                                   <div className="icon_vgpu">
                                     <i className="ico-type-gpucluster"></i>
@@ -323,53 +355,55 @@ const GpuCluster = ({ monitorStore, x, y, w, h, ...props }) => {
                           </button>
                         </div>
                         <div className="gpu_group">
-                          <div className="gpu_card_group">
-                            {selectedGpuCluster?.instances &&
-                              selectedGpuCluster.instances.length > 0 &&
-                              selectedGpuCluster.instances.map(
-                                (instance, index) => (
-                                  <div className="gpu_card" key={index}>
-                                    <div className="gpu_card_header">
-                                      <div className="gpu_card_title">
-                                        {instance.vmName}
+                          <Loading spinning={panelLoading}>
+                            <div className="gpu_card_group">
+                              {selectedGpuCluster?.instances &&
+                                selectedGpuCluster.instances.length > 0 &&
+                                selectedGpuCluster.instances.map(
+                                  (instance, index) => (
+                                    <div className="gpu_card" key={index}>
+                                      <div className="gpu_card_header">
+                                        <div className="gpu_card_title">
+                                          {instance.vmName}
+                                        </div>
+                                        <div className="gpu_card_status_dot normal"></div>
                                       </div>
-                                      <div className="gpu_card_status_dot normal"></div>
+                                      <GpuBoxValues
+                                        gpuUtilData={gpuUtilData}
+                                        gpuMemData={gpuMemData}
+                                        vmName={instance.vmName}
+                                      />
+                                      <div className="gpu_card_metrics">
+                                        <div className="gpu_card_metric">
+                                          <div className="gpu_card_metric_label">
+                                            GPU Avg
+                                          </div>
+                                          <div className="gpu_card_metric_value">
+                                            {gpuUtilData[instance.vmName] &&
+                                              Object.values(
+                                                gpuUtilData[instance.vmName]
+                                              ).reduce((acc, v) => acc + v, 0)}
+                                            %
+                                          </div>
+                                        </div>
+                                        <div className="gpu_card_metric">
+                                          <div className="gpu_card_metric_label">
+                                            GPU Mem
+                                          </div>
+                                          <div className="gpu_card_metric_value">
+                                            {gpuMemData[instance.vmName] &&
+                                              Object.values(
+                                                gpuMemData[instance.vmName]
+                                              ).reduce((acc, v) => acc + v, 0)}
+                                            %
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <GpuBoxValues
-                                      gpuUtilData={gpuUtilData}
-                                      gpuMemData={gpuMemData}
-                                      vmName={instance.vmName}
-                                    />
-                                    <div className="gpu_card_metrics">
-                                      <div className="gpu_card_metric">
-                                        <div className="gpu_card_metric_label">
-                                          GPU Avg
-                                        </div>
-                                        <div className="gpu_card_metric_value">
-                                          {gpuUtilData[instance.vmName] &&
-                                            Object.values(
-                                              gpuUtilData[instance.vmName]
-                                            ).reduce((acc, v) => acc + v, 0)}
-                                          %
-                                        </div>
-                                      </div>
-                                      <div className="gpu_card_metric">
-                                        <div className="gpu_card_metric_label">
-                                          GPU Mem
-                                        </div>
-                                        <div className="gpu_card_metric_value">
-                                          {gpuMemData[instance.vmName] &&
-                                            Object.values(
-                                              gpuMemData[instance.vmName]
-                                            ).reduce((acc, v) => acc + v, 0)}
-                                          %
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                )
-                              )}
-                          </div>
+                                  )
+                                )}
+                            </div>
+                          </Loading>
                         </div>
                         {/* <div className="gpu_group">
                           <div className="gpu_card_group">
