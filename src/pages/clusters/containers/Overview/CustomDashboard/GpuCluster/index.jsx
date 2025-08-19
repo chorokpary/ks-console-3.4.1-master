@@ -494,8 +494,11 @@ const GpuCluster = ({
                                       {selectedGpuCluster?.instances &&
                                         selectedGpuCluster.instances.length >
                                           0 &&
-                                        selectedGpuCluster.instances.map(
-                                          (instance, index) => (
+                                        [...selectedGpuCluster.instances]
+                                          .sort((a, b) =>
+                                            a.vmName.localeCompare(b.vmName)
+                                          )
+                                          .map((instance, index) => (
                                             <div
                                               className="gpu_card"
                                               key={index}
@@ -569,8 +572,7 @@ const GpuCluster = ({
                                                 </div>
                                               )}
                                             </div>
-                                          )
-                                        )}
+                                          ))}
                                     </div>
                                   </Loading>
                                 </TransformComponent>
