@@ -139,9 +139,12 @@ const GpuCluster = ({
       times: 10,
     })
     handleGpuAvgUsage(gpuAvgUsageData)
-
-    const avgValue = gpuAvgUsageData[0]?.values?.[0]?.[1]
-      ? getSuitableValue(gpuAvgUsageData[0].values[0][1])
+    const avgValue = gpuAvgUsageData[0]?.values?.[
+      gpuAvgUsageData.length - 1
+    ]?.[1]
+      ? getSuitableValue(
+          gpuAvgUsageData[0].values[gpuAvgUsageData[0].values.length - 1][1]
+        )
       : 0
     setUsage(avgValue)
 
@@ -149,21 +152,33 @@ const GpuCluster = ({
       expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"})`,
       ...paramsData,
     })
-    const avgMemory = gpuAvgMemoryUsage[0]?.values?.[0]?.[1]
-      ? parseFloat(gpuAvgMemoryUsage[0].values[0][1])
+    const avgMemory = gpuAvgMemoryUsage[0]?.values?.[
+      gpuAvgMemoryUsage[0]?.values.length - 1
+    ]?.[1]
+      ? parseFloat(
+          gpuAvgMemoryUsage[0].values[
+            gpuAvgMemoryUsage[0]?.values.length - 1
+          ][1]
+        )
       : 0
     // setMemoryUsage(getSuitableValue(avgMemory, 'disk'))
-    setMemoryUsage(convertTB(avgMemory))
+    setMemoryUsage((avgMemory / 1000 / 1000).toFixed(2))
 
     const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
       ...paramsData,
     })
-    const avgTotalMemory = gpuAvgMemoryTotalUsage[0]?.values?.[0]?.[1]
-      ? parseFloat(gpuAvgMemoryTotalUsage[0].values[0][1])
+    const avgTotalMemory = gpuAvgMemoryTotalUsage[0]?.values?.[
+      gpuAvgMemoryTotalUsage[0]?.values.length - 1
+    ]?.[1]
+      ? parseFloat(
+          gpuAvgMemoryTotalUsage[0].values[
+            gpuAvgMemoryTotalUsage[0]?.values.length - 1
+          ][1]
+        )
       : 0
     // setMemoryTotalUsage(getSuitableValue(avgTotalMemory, 'disk'))
-    setMemoryTotalUsage(convertTB(avgTotalMemory))
+    setMemoryTotalUsage((avgTotalMemory / 1000 / 1000).toFixed(2))
 
     const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${props.cluster}"}[5m]) * 8`
     const gpuInboundData = await customStore.fetchMetric({
@@ -198,7 +213,7 @@ const GpuCluster = ({
       gpuNvlinkData?.[gpuNvlinkData?.length - 1]?.values?.[0][1] || 0
     )
 
-    const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} / 100`
+    const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}`
 
     const gpuUtilData = await customStore.fetchMetric({
       expr: gpuUtilDataExpr,
@@ -207,7 +222,7 @@ const GpuCluster = ({
     const gpuUtilTransform = transformDataToObject(gpuUtilData)
     setGpuUtilData(gpuUtilTransform)
 
-    const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"})`
+    const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${props.cluster}"}) * 100`
 
     const gpuMemData = await customStore.fetchMetric({
       expr: gpuMemDataExpr,
@@ -433,8 +448,8 @@ const GpuCluster = ({
                             <div className="status_item">
                               <p className="status_label">GPU 메모리 사용량</p>
                               <span className="status_value">
-                                {memoryUsage}/{memoryTotalUsage}{' '}
-                                <span className="unit">TB</span>
+                                {memoryUsage}/{memoryTotalUsage}
+                                <span className="unit">GB</span>
                               </span>
                             </div>
                             <div className="status_item">
@@ -511,16 +526,18 @@ const GpuCluster = ({
                                                       {gpuUtilData[
                                                         instance.vmName
                                                       ] &&
-                                                        Number(
-                                                          Object.values(
-                                                            gpuUtilData[
-                                                              instance.vmName
-                                                            ]
-                                                          ).reduce(
-                                                            (acc, v) =>
-                                                              acc + Number(v),
-                                                            0
-                                                          )
+                                                        (
+                                                          Number(
+                                                            Object.values(
+                                                              gpuUtilData[
+                                                                instance.vmName
+                                                              ]
+                                                            ).reduce(
+                                                              (acc, v) =>
+                                                                acc + Number(v),
+                                                              0
+                                                            )
+                                                          ) / 8
                                                         ).toFixed(2)}
                                                       %
                                                     </div>
@@ -533,16 +550,18 @@ const GpuCluster = ({
                                                       {gpuMemData[
                                                         instance.vmName
                                                       ] &&
-                                                        Number(
-                                                          Object.values(
-                                                            gpuMemData[
-                                                              instance.vmName
-                                                            ]
-                                                          ).reduce(
-                                                            (acc, v) =>
-                                                              acc + Number(v),
-                                                            0
-                                                          )
+                                                        (
+                                                          Number(
+                                                            Object.values(
+                                                              gpuMemData[
+                                                                instance.vmName
+                                                              ]
+                                                            ).reduce(
+                                                              (acc, v) =>
+                                                                acc + Number(v),
+                                                              0
+                                                            )
+                                                          ) / 8
                                                         ).toFixed(2)}
                                                       %
                                                     </div>
@@ -686,7 +705,6 @@ const InfinibandValues = ({ inboundData, outboundData }) => {
 }
 
 const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
-  console.log(gpuUtilData)
   const index = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
     <section className="gpu_card_gpu_list">
