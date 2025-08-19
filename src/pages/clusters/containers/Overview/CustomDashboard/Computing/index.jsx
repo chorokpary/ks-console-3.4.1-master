@@ -60,7 +60,7 @@ const Computing = ({ computing, ...props }) => {
     const getData = async () => {
       setLoading(true)
 
-      const vmlist = await vmStore.vmList({ ...props })
+      const vmlist = await vmStore.vmList({ limit: -1, ...props })
       const networklist = await networkStore.fetchList({ limit: 1000, ...props })
       const routerlist = await routerStore.fetchList({ limit: 1000, ...props })
       const sriovlist = await sriovStore.fetchList({ limit: 1000, ...props })

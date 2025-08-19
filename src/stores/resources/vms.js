@@ -949,7 +949,7 @@ export default class VmStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/vms`
+      )}/edgetron/resources/kubevirt/vms?limit=${params.limit}`
     )
     if (params) {
       result.vms.sort((a, b) => {
