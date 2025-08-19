@@ -162,7 +162,7 @@ const GpuCluster = ({
         )
       : 0
     // setMemoryUsage(getSuitableValue(avgMemory, 'disk'))
-    setMemoryUsage((avgMemory / 1000 / 1000).toFixed(2))
+    setMemoryUsage(((avgMemory * 8 * vmTotal) / 1024).toFixed(1))
 
     const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
@@ -178,7 +178,7 @@ const GpuCluster = ({
         )
       : 0
     // setMemoryTotalUsage(getSuitableValue(avgTotalMemory, 'disk'))
-    setMemoryTotalUsage((avgTotalMemory / 1000 / 1000).toFixed(2))
+    setMemoryTotalUsage(((avgTotalMemory * 8 * vmTotal) / 1024).toFixed(1))
 
     const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
     const gpuInboundData = await customStore.fetchMetric({
@@ -439,7 +439,9 @@ const GpuCluster = ({
                             </div>
                             <div className="status_item">
                               <p className="status_label">총 GPU</p>
-                              <span className="status_value">{gpuTotal}</span>
+                              <span className="status_value">
+                                {gpuTotal * 8}
+                              </span>
                             </div>
                             <div className="status_item">
                               <p className="status_label">GPU 평균 사용률</p>
@@ -449,7 +451,7 @@ const GpuCluster = ({
                               <p className="status_label">GPU 메모리 사용량</p>
                               <span className="status_value">
                                 {memoryUsage}/{memoryTotalUsage}
-                                <span className="unit">GB</span>
+                                <span className="unit">GiB</span>
                               </span>
                             </div>
                             <div className="status_item">
