@@ -13,7 +13,7 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import classnames from 'classnames'
 
 import { Modal } from 'components/Base'
-import { ProjectSelect } from 'components/Inputs'
+import { ProjectSelect, PropertiesInput } from 'components/Inputs'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import VmStore from 'stores/resources/vms'
 import KaasStore from 'stores/resources/containerresource'
@@ -76,6 +76,10 @@ const RegistModal = props => {
   const [osDistro, setOsDistro] = useState('ubuntu-2204')
 
   const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
+
+  // 레이블 관련 상태 추가
+  const [nodeSelector, setNodeSelector] = useState({})
+  const [nodeSelectorError, setNodeSelectorError] = useState(false)
 
   useEffect(() => {
     const getVmCreateData = async () => {
@@ -312,6 +316,7 @@ const RegistModal = props => {
       data.expiration = expirationSelect
       data.private_registry = tab === 'private'
       data.secure_boot = secureBoot
+      data.node_selectors = nodeSelector
       onOk({ ...data })
     })
   }
@@ -359,6 +364,9 @@ const RegistModal = props => {
     }
 
     if (step === 3) {
+      if (nodeSelectorError) {
+        return false
+      }
       setClusterName(data.name)
       setImageName(data.image)
       setDescription(data.description)
@@ -579,6 +587,15 @@ const RegistModal = props => {
   }
   const handleEkgStack = e => {
     setEkgStack(e.filter(obj => obj !== 'all'))
+  }
+
+  // 레이블 관련 핸들러 추가
+  const handleNodeSelectorChange = value => {
+    setNodeSelector(value)
+  }
+
+  const handleNodeSelectorError = error => {
+    setNodeSelectorError(!!error)
   }
 
   const [tab, setTab] = useState('private')
@@ -1233,6 +1250,28 @@ const RegistModal = props => {
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
+
+                {/* 노드셀렉터 레이블 입력 필드 추가 */}
+                <Form.Item label={t('ADD_NODE_SELECTOR')}>
+                  <div className={styles.box_wrapper}>
+                    <div
+                      className={`form-item-error ${
+                        nodeSelectorError ? '' : 'hide'
+                      }`}
+                    >
+                      {t('ADD_NODE_SELECTOR_TIP')}
+                    </div>
+                    <div className={styles.box_title}>
+                      <PropertiesInput
+                        value={nodeSelector}
+                        onChange={handleNodeSelectorChange}
+                        onError={handleNodeSelectorError}
+                        addText={t('ADD')}
+                      />
+                    </div>
+                  </div>
+                </Form.Item>
+
                 <Columns>
                   <Column>
                     <Form.Item label={t('RESOURCES_CONTAINER_IMAGE')}>
@@ -1519,6 +1558,23 @@ const RegistModal = props => {
                           {t('RESOURCES_YEAR')}
                         </div>
                       </div>
+                      {/* 레이블 정보 표시 추가 */}
+                      {Object.keys(nodeSelector).length > 0 && (
+                        <div className={styles.list} style={{ width: '100%' }}>
+                          <label style={{ width: '100%' }}>
+                            {t('ADD_NODE_SELECTOR')}
+                          </label>
+                          <div className={styles.multiline}>
+                            {Object.entries(nodeSelector).map(
+                              ([key, value]) => (
+                                <div key={key}>
+                                  {key}: {value}
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
