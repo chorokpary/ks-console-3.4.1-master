@@ -23,6 +23,7 @@ import classnames from 'classnames'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import NetworkStore from 'stores/resources/networks'
 
+
 const fabricKeyOptions = [
   { label: 'infiniband', value: 'infiniband' },
   { label: 'ethernet', value: 'ethernet' },
@@ -70,8 +71,7 @@ const ClusterModal = props => {
     const onOk = props.onOk
 
     form.current.validator(() => {
-      setIsDisabled(true)
-      setIsCreateSend(true)
+      setIsDisabled(true)     
       const { data } = form.current.props
       data.project = projectName
 
@@ -80,6 +80,7 @@ const ClusterModal = props => {
       onOk({
         ...data,
         createSuccess,
+        createFail,
       })
     })
   }
@@ -106,7 +107,13 @@ const ClusterModal = props => {
 
   const createSuccess = getListData => {
     setGetListDataFn(() => getListData)
-    setIsCreateSuccessd(true)
+    setIsCreateSuccessd(true)  
+    setIsCreateSend(true)      
+  }
+
+  const createFail= () => {
+    setIsCreateSuccessd(false)
+    setIsDisabled(false)    
   }
 
   const closeModal = () => {
@@ -118,15 +125,6 @@ const ClusterModal = props => {
     elements = (
       <>
         <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
-
-        {/* {!isCreateSuccessd && (
-          <Button
-            onClick={() => closeModal()}
-            className={classnames(styles['btn'], styles['btn-default'])}
-          >
-            {t('RESOURCES_CANCEL')}
-          </Button>
-        )} */}
         {!isCreateSend && (
           <Button
             onClick={() => {
@@ -142,16 +140,8 @@ const ClusterModal = props => {
         {isCreateSuccessd && (
           <Button onClick={() => { handleVmCreate() }}
             className={classnames(styles['btn'], styles['btn-control'])}
-            loading={props.store.isSubmitting}
-            disabled={props.store.isSubmitting}
           >{t('RESOURCES_CREATE_VM')}
           </Button>
-          // <Button
-          //   onClick={() => closeModal()}
-          //   className={classnames(styles['btn'], styles['btn-default'])}
-          // >
-          //   {t('RESOURCES_CLOSE')}
-          // </Button>
         )}
       </>
     )
