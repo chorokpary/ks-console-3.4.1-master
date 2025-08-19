@@ -240,20 +240,24 @@ const GpuCluster = ({
       const host = item.metric.Hostname
       const gpu = item.metric.gpu
       const values = item.values
-      const lastValue = values.length > 0 ? values[values.length - 1][1] : null
+      const lastValue = values.length > 0 ? values[values.length - 1][1] : 0
 
       if (!result[host]) {
         result[host] = {}
       }
 
-      result[host][gpu] = Number(lastValue)
+      let formattedValue = 0
+      if (lastValue && Number(lastValue) !== 0) {
+        formattedValue = Number(lastValue).toFixed(2) // 소수점 둘째자리까지
+      }
+
+      result[host][gpu] = formattedValue
     })
 
     return result
   }
 
   const transformXidDataToObject = data => {
-    console.log('transformXidDataToObject', data)
     const result = {}
     let criticalCount = 0
     let minorCount = 0
@@ -507,14 +511,17 @@ const GpuCluster = ({
                                                       {gpuUtilData[
                                                         instance.vmName
                                                       ] &&
-                                                        Object.values(
-                                                          gpuUtilData[
-                                                            instance.vmName
-                                                          ]
-                                                        ).reduce(
-                                                          (acc, v) => acc + v,
-                                                          0
-                                                        )}
+                                                        Number(
+                                                          Object.values(
+                                                            gpuUtilData[
+                                                              instance.vmName
+                                                            ]
+                                                          ).reduce(
+                                                            (acc, v) =>
+                                                              acc + Number(v),
+                                                            0
+                                                          )
+                                                        ).toFixed(2)}
                                                       %
                                                     </div>
                                                   </div>
@@ -526,14 +533,17 @@ const GpuCluster = ({
                                                       {gpuMemData[
                                                         instance.vmName
                                                       ] &&
-                                                        Object.values(
-                                                          gpuMemData[
-                                                            instance.vmName
-                                                          ]
-                                                        ).reduce(
-                                                          (acc, v) => acc + v,
-                                                          0
-                                                        )}
+                                                        Number(
+                                                          Object.values(
+                                                            gpuMemData[
+                                                              instance.vmName
+                                                            ]
+                                                          ).reduce(
+                                                            (acc, v) =>
+                                                              acc + Number(v),
+                                                            0
+                                                          )
+                                                        ).toFixed(2)}
                                                       %
                                                     </div>
                                                   </div>
@@ -676,6 +686,7 @@ const InfinibandValues = ({ inboundData, outboundData }) => {
 }
 
 const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
+  console.log(gpuUtilData)
   const index = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
     <section className="gpu_card_gpu_list">
