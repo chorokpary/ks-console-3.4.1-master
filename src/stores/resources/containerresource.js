@@ -182,6 +182,7 @@ export default class ResourceStore extends Base {
     reqData.expiration = data.expiration
     reqData.private_registry = data.private_registry
     reqData.secure_boot = data.secure_boot
+    reqData.node_selectors = data.node_selectors
     jsonData.cluster = reqData
 
     return await this.submitting(

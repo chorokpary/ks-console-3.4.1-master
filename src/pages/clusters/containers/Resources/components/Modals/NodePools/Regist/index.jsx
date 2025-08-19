@@ -4,6 +4,7 @@ import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import classnames from 'classnames'
 
 import { Modal } from 'components/Base'
+import { PropertiesInput } from 'components/Inputs'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import VmStore from 'stores/resources/vms'
 import ResourceStore from 'stores/resources/containerresource'
@@ -39,6 +40,10 @@ const RegistNodePoolModal = props => {
 
   const [isAutoScale, setIsAutoScale] = useState(false)
   const [autoScale, setAutoScale] = useState([1, 3])
+
+  // NodeSelector 관련 상태 추가
+  const [nodeSelector, setNodeSelector] = useState({})
+  const [nodeSelectorError, setNodeSelectorError] = useState(false)
 
   useEffect(() => {
     const getVmCreateData = async () => {
@@ -152,6 +157,7 @@ const RegistNodePoolModal = props => {
       data.nodepool_replicas = nodepoolReplicas
       data.autoscale = isAutoScale
       data.scale_range = scaleRange
+      data.node_selectors = nodeSelector
       onOk({ ...data })
     })
   }
@@ -175,7 +181,6 @@ const RegistNodePoolModal = props => {
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
           loading={props.isSubmitting}
-          disabled={props.isSubmitting}
         >
           {t('RESOURCES_CREATE')}
         </Button>
@@ -252,6 +257,15 @@ const RegistNodePoolModal = props => {
       const maxNum = e > 10 ? 10 : e < 1 ? 1 : e
       setAutoScale([1, maxNum])
     }
+  }
+
+  // NodeSelector 관련 핸들러 추가
+  const handleNodeSelectorChange = value => {
+    setNodeSelector(value)
+  }
+
+  const handleNodeSelectorError = error => {
+    setNodeSelectorError(!!error)
   }
 
   // 스크립트 끝 ==================================================
@@ -426,6 +440,27 @@ const RegistNodePoolModal = props => {
                     )}
                   </Columns>
                 </Form.Group>
+                {/* NodeSelector 입력 필드 추가 */}
+                <div style={{ padding: 10 }} />
+                <Form.Item label={t('ADD_NODE_SELECTOR')}>
+                  <div className={styles.box_wrapper}>
+                    <div
+                      className={`form-item-error ${
+                        nodeSelectorError ? '' : 'hide'
+                      }`}
+                    >
+                      {t('ADD_NODE_SELECTOR_TIP')}
+                    </div>
+                    <div className={styles.box_title}>
+                      <PropertiesInput
+                        value={nodeSelector}
+                        onChange={handleNodeSelectorChange}
+                        onError={handleNodeSelectorError}
+                        addText={t('ADD')}
+                      />
+                    </div>
+                  </div>
+                </Form.Item>
                 <Form.Item
                   className={styles.textarea}
                   label={t('RESOURCES_DESCRIPTION')}

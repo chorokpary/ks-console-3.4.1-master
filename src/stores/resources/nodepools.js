@@ -132,6 +132,7 @@ export default class ResourceStore extends Base {
     reqData.accelerator = data.accelerator.toLowerCase()
     reqData.autoscale = data.autoscale
     reqData.scale_range = data.scale_range
+    reqData.node_selectors = data.node_selectors
     jsonData.nodepool = reqData
 
     return await request.post(

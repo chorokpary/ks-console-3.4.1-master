@@ -251,6 +251,7 @@ module.exports = {
   SELECT_NODES_DESC:
     'Assign pod replicas to specific nodes. You can use labels to select nodes or manually specify a node.',
   ADD_NODE_SELECTOR: 'Add Node Selector',
+  ADD_NODE_SELECTOR_TIP: 'Add right key-value pairs to select nodes.',
   ADD_METADATA_DESC: 'Add metadata to the resource.',
   KEY: 'Key',
   VALUE: 'Value',
