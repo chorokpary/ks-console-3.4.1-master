@@ -31,9 +31,11 @@ const CustomDashboard = props => {
 
   const monitorStore = new ClusterMonitorStore()
 
-  const [activeDashboard, setActiveDashboard] = useState({})
+  const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
 
-  const [dashboardArr, setDashboardArr] = useState(new Array({}))
+  const [dashboardArr, setDashboardArr] = useState(
+    new Array(new DashboardInfo())
+  )
 
   const options = {
     column: 15,
