@@ -447,7 +447,7 @@ const GpuCluster = ({
                               </span>
                             </div>
                             <div className="status_item">
-                              <p className="status_label">평균 온도</p>
+                              <p className="status_label">GPU 평균 온도</p>
                               <span className="status_value">
                                 {temp}
                                 <span className="unit">°C</span>
