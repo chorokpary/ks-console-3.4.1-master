@@ -90,9 +90,13 @@ export default class TimeSelector extends React.PureComponent {
   }
 
   handleTimeChange = data => {
-    this.setState({ visible: false, ...data }, () => {
-      const newData = omit(data, ['lastTime'])
-
+    const cleanedData = {
+      ...data,
+      start: data.start ? Math.floor(data.start) : data.start,
+      end: data.end ? Math.floor(data.end) : data.end,
+    }
+    this.setState({ visible: false, ...cleanedData }, () => {
+      const newData = omit(cleanedData, ['lastTime'])
       this.props.onChange(newData)
     })
   }

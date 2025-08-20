@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Loading } from '@kube-design/components'
 import GpuClusterStore from 'stores/resources/gpuclusters'
 import TinyArea from 'projects/containers/Overview/ResourceUsage/TinyArea'
@@ -154,7 +155,7 @@ const GpuCluster = ({
         )
       : 0
     // setMemoryUsage(getSuitableValue(avgMemory, 'disk'))
-    setMemoryUsage(((avgMemory * 8 * vmTotal) / 1024).toFixed(1))
+    setMemoryUsage(((avgMemory * 8 * vmTotal) / 1024 / 1024).toFixed(1))
 
     const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
@@ -170,7 +171,9 @@ const GpuCluster = ({
         )
       : 0
     // setMemoryTotalUsage(getSuitableValue(avgTotalMemory, 'disk'))
-    setMemoryTotalUsage(((avgTotalMemory * 8 * vmTotal) / 1024).toFixed(1))
+    setMemoryTotalUsage(
+      ((avgTotalMemory * 8 * vmTotal) / 1024 / 1024).toFixed(1)
+    )
 
     const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
     const gpuInboundData = await customStore.fetchMetric({
@@ -443,11 +446,11 @@ const GpuCluster = ({
                               <p className="status_label">GPU 메모리 사용량</p>
                               <span className="status_value">
                                 {memoryUsage}/{memoryTotalUsage}
-                                <span className="unit">GiB</span>
+                                <span className="unit">TiB</span>
                               </span>
                             </div>
                             <div className="status_item">
-                              <p className="status_label">평균 온도</p>
+                              <p className="status_label">GPU 평균 온도</p>
                               <span className="status_value">
                                 {temp}
                                 <span className="unit">°C</span>
@@ -499,7 +502,11 @@ const GpuCluster = ({
                                             >
                                               <div className="gpu_card_header">
                                                 <div className="gpu_card_title">
-                                                  {instance.vmName}
+                                                  <Link
+                                                    to={`/clusters/${props.cluster}/projects/${selectedGpuCluster.namespace}/vms/${instance.vmName}`}
+                                                  >
+                                                    {instance.vmName}
+                                                  </Link>
                                                 </div>
                                                 <div
                                                   className={`gpu_card_status_dot ${getState(
