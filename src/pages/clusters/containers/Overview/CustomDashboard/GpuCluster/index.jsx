@@ -247,13 +247,13 @@ const GpuCluster = ({
     const result = {}
 
     data.forEach(item => {
-      const host = item.metric.Hostname
+      const pod = item.metric.pod
       const gpu = item.metric.gpu
       const values = item.values
       const lastValue = values.length > 0 ? values[values.length - 1][1] : 0
 
-      if (!result[host]) {
-        result[host] = {}
+      if (!result[pod]) {
+        result[pod] = {}
       }
 
       let formattedValue = 0
@@ -261,7 +261,7 @@ const GpuCluster = ({
         formattedValue = Number(lastValue).toFixed(2) // 소수점 둘째자리까지
       }
 
-      result[host][gpu] = formattedValue
+      result[pod][gpu] = formattedValue
     })
 
     return result
@@ -275,7 +275,7 @@ const GpuCluster = ({
     let unknownCount = 0
 
     data.forEach(item => {
-      const host = item.metric.Hostname
+      const pod = item.metric.pod
       const gpu = item.metric.gpu
       const errCode = item.metric.err_code
       let errValue = 'unknown'
@@ -311,11 +311,11 @@ const GpuCluster = ({
         unknownCount++
       }
 
-      if (!result[host]) {
-        result[host] = {}
+      if (!result[pod]) {
+        result[pod] = {}
       }
 
-      result[host][gpu] = errValue
+      result[pod][gpu] = errValue
     })
 
     setCriticalCount(criticalCount)
