@@ -97,14 +97,6 @@ const GpuCluster = ({
     }
   }, [gpuCluster, vmTotal, gpuTotal])
 
-  const convertTB = bytes => {
-    if (bytes === undefined || bytes === null || isNaN(bytes)) {
-      return 0
-    }
-    const tb = bytes / 1024 ** 4
-    return tb !== 0 ? parseFloat(tb.toFixed(1)) : 0
-  }
-
   const getData = async () => {
     setPanelLoading(true)
     var currentTime = Math.floor(Date.now() / 1000)
@@ -142,9 +134,9 @@ const GpuCluster = ({
     const avgValue = gpuAvgUsageData[0]?.values?.[
       gpuAvgUsageData.length - 1
     ]?.[1]
-      ? getSuitableValue(
+      ? parseFloat(
           gpuAvgUsageData[0].values[gpuAvgUsageData[0].values.length - 1][1]
-        )
+        ).toFixed(1)
       : 0
     setUsage(avgValue)
 

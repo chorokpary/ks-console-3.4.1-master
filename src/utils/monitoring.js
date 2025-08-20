@@ -72,8 +72,7 @@ const UnitTypes = {
     units: ['T', 'G', 'M', 'K', ''],
   },
 }
-200
-120
+
 export const getSuitableUnit = (value, unitType) => {
   const config = UnitTypes[unitType]
 
