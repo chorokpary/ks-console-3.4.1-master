@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Loading } from '@kube-design/components'
 import GpuClusterStore from 'stores/resources/gpuclusters'
 import TinyArea from 'projects/containers/Overview/ResourceUsage/TinyArea'
@@ -501,7 +502,11 @@ const GpuCluster = ({
                                             >
                                               <div className="gpu_card_header">
                                                 <div className="gpu_card_title">
-                                                  {instance.vmName}
+                                                  <Link
+                                                    to={`/clusters/${props.cluster}/projects/${selectedGpuCluster.namespace}/vms/${instance.vmName}`}
+                                                  >
+                                                    {instance.vmName}
+                                                  </Link>
                                                 </div>
                                                 <div
                                                   className={`gpu_card_status_dot ${getState(
