@@ -161,7 +161,17 @@ export default class SimpleArea extends React.Component {
     const { unit, areaColors } = this.props
     const { series, activeSeries } = this.state
 
-    return series.map((key, index) => {
+    const sortedSeries = [...series].sort((a, b) => {
+      const numA = this.extractNumber(a)
+      const numB = this.extractNumber(b)
+
+      if (numA === numB) {
+        return a.localeCompare(b)
+      }
+      return numA - numB
+    })
+
+    return sortedSeries.map((key, index) => {
       const colorName = areaColors[index]
       const color = COLORS_MAP[colorName] || colorName
 
@@ -185,12 +195,22 @@ export default class SimpleArea extends React.Component {
             />
           }
           unit={unit}
-          hide={!activeSeries.includes(key)}
+          hide={!sortedSeries.includes(key)}
           connectNulls
           {...fillProps}
         />
       )
     })
+  }
+
+  extractNumber(str) {
+    let numStr = ''
+    for (let ch of str) {
+      if (ch >= '0' && ch <= '9') {
+        numStr += ch
+      }
+    }
+    return numStr === '' ? 0 : parseInt(numStr, 10)
   }
 
   render() {
