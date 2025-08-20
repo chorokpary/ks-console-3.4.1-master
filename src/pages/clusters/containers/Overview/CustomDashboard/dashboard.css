@@ -2758,11 +2758,11 @@ body {
 }
 .grid_item .grid_info .gpu_legend {
   display: flex;
-  gap: 11px;
+  gap: 9px;
   height: 98px;
   align-items: center;
   justify-content: flex-start;
-  width: 129px;
+  width: 170px;
 }
 .grid_item .grid_info .gpu_legend_values {
   display: flex;
