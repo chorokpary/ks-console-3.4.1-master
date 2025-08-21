@@ -42,8 +42,8 @@ const GpuCluster = ({
   const [temp, setTemp] = useState()
   const [gpuAvgUsage, setGpuAvgUsage] = useState()
   const [usage, setUsage] = useState()
-  const [memoryUsage, setMemoryUsage] = useState(0)
-  const [memoryTotalUsage, setMemoryTotalUsage] = useState(0)
+  const [memoryUsage, setMemoryUsage] = useState({ unit: '', val: 0 })
+  const [memoryTotalUsage, setMemoryTotalUsage] = useState({ unit: '', val: 0 })
 
   const [gpuUtilData, setGpuUtilData] = useState({})
   const [gpuMemData, setGpuMemData] = useState({})
@@ -154,8 +154,17 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    // setMemoryUsage(getSuitableValue(avgMemory, 'disk'))
-    setMemoryUsage(((avgMemory * 8 * vmTotal) / 1024 / 1024).toFixed(1))
+
+    // 응답 데이터 MiB 로 상정
+    const memUnit = getSuitableUnit(
+      avgMemory * 8 * vmTotal * 1024 * 1024,
+      'memory'
+    )
+    const memValue = getValueByUnit(
+      avgMemory * 8 * vmTotal * 1024 * 1024,
+      memUnit
+    )
+    setMemoryUsage({ unit: memUnit, val: memValue.toFixed(1) })
 
     const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
       expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
@@ -170,10 +179,19 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    // setMemoryTotalUsage(getSuitableValue(avgTotalMemory, 'disk'))
-    setMemoryTotalUsage(
-      ((avgTotalMemory * 8 * vmTotal) / 1024 / 1024).toFixed(1)
+    // 응답 데이터 MiB 로 상정
+    const totalMemUnit = getSuitableUnit(
+      avgTotalMemory * 8 * vmTotal * 1024 * 1024,
+      'memory'
     )
+    const totalMemValue = getValueByUnit(
+      avgTotalMemory * 8 * vmTotal * 1024 * 1024,
+      totalMemUnit
+    )
+    setMemoryTotalUsage({
+      unit: totalMemUnit,
+      val: totalMemValue.toFixed(1),
+    })
 
     const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
     const gpuInboundData = await customStore.fetchMetric({
@@ -445,8 +463,14 @@ const GpuCluster = ({
                             <div className="status_item">
                               <p className="status_label">GPU 메모리 사용량</p>
                               <span className="status_value">
-                                {memoryUsage}/{memoryTotalUsage}
-                                <span className="unit">TiB</span>
+                                {memoryUsage.val}
+                                <span className="unit">
+                                  {memoryUsage.unit}
+                                </span>{' '}
+                                /{memoryTotalUsage.val}
+                                <span className="unit">
+                                  {memoryTotalUsage.unit}
+                                </span>
                               </span>
                             </div>
                             <div className="status_item">
