@@ -56,7 +56,6 @@ const GpuCluster = ({
   const [criticalCount, setCriticalCount] = useState(0)
   const [minorCount, setMinorCount] = useState(0)
   const [normalCount, setNormalCount] = useState(0)
-  const [unknownCount, setUnknownCount] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
 
   const [scale, setScale] = useState(1)
@@ -290,7 +289,6 @@ const GpuCluster = ({
     let criticalCount = 0
     let minorCount = 0
     let normalCount = 0
-    let unknownCount = 0
 
     data.forEach(item => {
       const pod = item.metric.pod
@@ -325,8 +323,6 @@ const GpuCluster = ({
       } else if (errCode == '0') {
         errValue = 'normal'
         normalCount++
-      } else {
-        unknownCount++
       }
 
       if (!result[pod]) {
@@ -339,7 +335,6 @@ const GpuCluster = ({
     setCriticalCount(criticalCount)
     setMinorCount(minorCount)
     setNormalCount(normalCount)
-    setUnknownCount(unknownCount)
     setTotalCount(vmTotal * 8)
 
     return result
@@ -623,7 +618,12 @@ const GpuCluster = ({
                                   <div>{criticalCount}</div>
                                   <div>{minorCount}</div>
                                   <div>{normalCount}</div>
-                                  <div>{unknownCount}</div>
+                                  <div>
+                                    {totalCount -
+                                      (criticalCount +
+                                        minorCount +
+                                        normalCount)}
+                                  </div>
                                 </div>
                                 <div className="gpu_legend_dots">
                                   <div className="dot critical"></div>
