@@ -37,6 +37,7 @@ export default {
         title: t('RESOURCES_EDIT_KAAS_RESOURCE'),
         modal: ModifyModal,
         nodepool,
+        store,
         ...params,
       })
     },
@@ -58,6 +59,7 @@ export default {
           resource: store.nodepool.name,
         }),
         resource: store.nodepool.name,
+        store,
         ...params,
       })
     },

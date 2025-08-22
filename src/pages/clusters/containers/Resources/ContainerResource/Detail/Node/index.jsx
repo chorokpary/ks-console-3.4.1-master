@@ -201,8 +201,7 @@ const Node = props => {
         })
       },
       modal: NodePoolRegistModal,
-      module: kaasStore.module,
-      storeResource: kaasStore,
+      nodePoolStore: nodePoolStore,
       ...props,
     })
   }

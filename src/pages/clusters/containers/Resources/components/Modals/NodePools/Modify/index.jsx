@@ -87,8 +87,8 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
           type={'control'}
-          loading={props.isSubmitting}
-          disabled={props.isSubmitting}
+          loading={props.store.isSubmitting}
+          disabled={props.store.isSubmitting}
         >
           {t('RESOURCES_EDIT')}
         </Button>
