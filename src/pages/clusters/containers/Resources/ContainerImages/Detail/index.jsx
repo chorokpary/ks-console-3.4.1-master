@@ -117,6 +117,14 @@ const ContainerImageDetail = props => {
         value: detail.image.kube_version,
       },
       {
+        name: t('RESOURCES_ACCELERATOR_TYPE'),
+        value: detail.image.accelerator_type,
+      },
+      {
+        name: t('RESOURCES_STORAGE_CLASS'),
+        value: detail.image.storage_class,
+      },
+      {
         name: t('RESOURCES_STEP'),
         value: t(`RESOURCES_IMAGE_${detail.image.phase.toUpperCase()}`),
       },

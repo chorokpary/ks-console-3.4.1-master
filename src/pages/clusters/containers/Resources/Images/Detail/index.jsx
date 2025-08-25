@@ -125,6 +125,10 @@ const ImageDetail = props => {
         value: detail.image.accelerator_type,
       },
       {
+        name: t('RESOURCES_STORAGE_CLASS'),
+        value: detail.image.storage_class,
+      },
+      {
         name: t('RESOURCES_PRE_INSTALLED_APP'),
         value: detail.image.pre_installed_app,
       },
@@ -188,7 +192,7 @@ const ImageDetail = props => {
             component: Status,
             exact: true,
             name: props.match.params.name,
-            namespace : props.match.params.namespace,
+            namespace: props.match.params.namespace,
           },
           getIndexRoute({ path: `${PATH}`, to: `${PATH}/status`, exact: true }),
         ]}
