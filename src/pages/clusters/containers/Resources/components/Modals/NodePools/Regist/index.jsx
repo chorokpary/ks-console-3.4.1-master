@@ -149,7 +149,7 @@ const RegistNodePoolModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk
-    form.current.validator(() => {
+    form.current.validator(() => {      
       const { data } = form.current.props
       const scaleRange = {}
       scaleRange.min_replicas = isAutoScale ? autoScale[0] : 0
@@ -180,7 +180,8 @@ const RegistNodePoolModal = props => {
             handleOk()
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
-          loading={props.isSubmitting}
+          loading={props.nodePoolStore.isSubmitting}
+          disabled={props.nodePoolStore.isSubmitting}
         >
           {t('RESOURCES_CREATE')}
         </Button>
