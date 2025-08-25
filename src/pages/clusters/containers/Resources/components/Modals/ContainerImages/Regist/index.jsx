@@ -650,7 +650,7 @@ const ResourceImageModal = props => {
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={800}
         title={title}
         onOk={handleOk}
         okText={t('RESOURCES_CREATE')}

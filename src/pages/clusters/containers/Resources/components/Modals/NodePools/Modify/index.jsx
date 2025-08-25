@@ -134,7 +134,7 @@ const ModifyNodePoolModal = ({ nodepool, ...props }) => {
     <>
       <Modal
         icon="pen"
-        width={960}
+        width={800}
         title={t('RESOURCES_EDIT_NODEPOOL')}
         onCancel={closeModal}
         bodyClassName={styles.body}

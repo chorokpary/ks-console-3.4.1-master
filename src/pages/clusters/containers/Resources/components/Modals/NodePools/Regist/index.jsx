@@ -274,7 +274,7 @@ const RegistNodePoolModal = props => {
     <>
       <Modal
         icon="templet"
-        width={960}
+        width={800}
         title={t('RESOURCES_CREATE_NODEPOOL')}
         onCancel={closeModal}
         bodyClassName={styles.body}

@@ -91,7 +91,7 @@ export default function ResourceImageModal({ title, store, onOk, detail }) {
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={800}
         title={title}
         onOk={handleOk}
         okText={t('RESOURCES_EDIT')}

@@ -449,7 +449,7 @@ const ModifyModal = props => {
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={800}
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
