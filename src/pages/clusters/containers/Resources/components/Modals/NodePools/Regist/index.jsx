@@ -149,7 +149,7 @@ const RegistNodePoolModal = props => {
 
   const handleOk = () => {
     const onOk = props.onOk
-    form.current.validator(() => {      
+    form.current.validator(() => {
       const { data } = form.current.props
       const scaleRange = {}
       scaleRange.min_replicas = isAutoScale ? autoScale[0] : 0
