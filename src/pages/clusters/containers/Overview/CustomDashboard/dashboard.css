@@ -2702,14 +2702,14 @@ body {
 }
 .grid_item .grid_info .gpu_panel {
   width: 283px;
-  height: 390px;
+  height: 425px;
   margin-bottom: 20px;
   padding: 12px;
   background: white;
   border-radius: 4px;
   display: inline-flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   font-family: Pretendard, sans-serif;
   color: #181d28;
@@ -2825,7 +2825,7 @@ body {
 .grid_item .grid_info .chart_section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
   align-self: stretch;
 }
 .grid_item .grid_info .chart_title {

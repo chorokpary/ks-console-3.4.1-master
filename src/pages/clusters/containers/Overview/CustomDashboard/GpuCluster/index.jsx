@@ -101,7 +101,6 @@ const GpuCluster = ({
     setPanelLoading(true)
     var currentTime = Math.floor(Date.now() / 1000)
     const paramsData = {
-      // start: currentTime - 30000,
       start: currentTime,
       end: currentTime,
       cluster: selectedGpuCluster?.namespace,
@@ -115,7 +114,7 @@ const GpuCluster = ({
       expr: `avg(DCGM_FI_DEV_GPU_TEMP{pod=~"${vmList}"})`,
       // start: currentTime - 30000,
       // end: currentTime,
-      // cluster: selectedGpuCluster?.namespace,
+      cluster: selectedGpuCluster?.namespace,
     })
     const avgTemp = tempData[0]?.value?.[1]
       ? Math.floor(parseFloat(tempData[0].value[1]))
@@ -130,7 +129,8 @@ const GpuCluster = ({
       step: '50m',
       times: 10,
     })
-    handleGpuAvgUsage(gpuAvgUsageData)
+    setGpuAvgUsage(gpuAvgUsageData)
+
     const avgValue = gpuAvgUsageData[0]?.values?.[
       gpuAvgUsageData.length - 1
     ]?.[1]
@@ -153,8 +153,6 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-
-    // 응답 데이터 MiB 로 상정
     const memUnit = getSuitableUnit(
       avgMemory * 8 * vmTotal * 1024 * 1024,
       'memory'
@@ -178,7 +176,6 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    // 응답 데이터 MiB 로 상정
     const totalMemUnit = getSuitableUnit(
       avgTotalMemory * 8 * vmTotal * 1024 * 1024,
       'memory'
@@ -192,38 +189,41 @@ const GpuCluster = ({
       val: totalMemValue.toFixed(1),
     })
 
-    const inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
+    const inboundLinuxDataExpr = `sum(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8)`
     const gpuInboundData = await customStore.fetchMetric({
       expr: inboundLinuxDataExpr,
       ...paramsData,
+      start: currentTime - 30000,
+      end: currentTime,
+      step: '50m',
+      times: 10,
       namespace: selectedGpuCluster?.namespace,
     })
-    setInboundData(
-      gpuInboundData?.[gpuInboundData?.length - 1]?.values?.[0][1] || 0
-    )
+    setInboundData(gpuInboundData)
 
-    const outboundLinuxDataExpr = `rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8`
+    const outboundLinuxDataExpr = `sum(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}[5m]) * 8)`
     const gpuOutboundData = await customStore.fetchMetric({
       expr: outboundLinuxDataExpr,
       ...paramsData,
+      start: currentTime - 30000,
+      end: currentTime,
+      step: '50m',
+      times: 10,
       namespace: selectedGpuCluster?.namespace,
     })
+    setOutboundData(gpuOutboundData)
 
-    setOutboundData(
-      gpuOutboundData?.[gpuOutboundData?.length - 1]?.values?.[0][1] || 0
-    )
-
-    const gpuNvlinkDataExpr = `DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
+    const gpuNvlinkDataExpr = `sum(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"})`
     const gpuNvlinkData = await customStore.fetchMetric({
       expr: gpuNvlinkDataExpr,
       ...paramsData,
+      start: currentTime - 30000,
+      end: currentTime,
+      step: '50m',
+      times: 10,
       namespace: selectedGpuCluster?.namespace,
-      step: '600s',
     })
-
-    setNvlinkData(
-      gpuNvlinkData?.[gpuNvlinkData?.length - 1]?.values?.[0][1] || 0
-    )
+    setNvlinkData(gpuNvlinkData)
 
     const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
 
@@ -340,20 +340,6 @@ const GpuCluster = ({
     return result
   }
 
-  const handleGpuAvgUsage = gpuAvgUsage => {
-    const data = get(
-      getAreaChartOps({
-        type: 'avg',
-        title: 'AVG',
-        legend: ['Gpu'],
-        unit: '',
-        data: [gpuAvgUsage?.[0]] || [],
-      }),
-      'data'
-    )
-    setGpuAvgUsage({ data: data })
-  }
-
   const handleSelectGpuCluster = item => {
     const activeDashboardName = localStorage.getItem('activeDashboardName')
 
@@ -404,287 +390,342 @@ const GpuCluster = ({
               <label>{t('RESOURCES_GPU_CLUSTER')}</label>
             </div>
             <Loading spinning={loading}>
-              <div className="spin-nested-loading">
-                <div className="spin-container">
-                  <div className="grid_info style_groupnode">
-                    <div className="box_gpucluster">
-                      <div className="card_wrapper">
-                        <div className="card_header">
-                          <div
-                            className="select_cluster"
-                            onClick={toggleDropdown}
-                          >
-                            <div className="icon_vgpu">
-                              <i className="ico-type-gpucluster"></i>
-                              <p className="cluster_name">{gpuCluster}</p>
-                            </div>
+              <div className="grid_info style_groupnode">
+                <div className="box_gpucluster">
+                  <div className="card_wrapper">
+                    <div className="card_header">
+                      <div className="select_cluster" onClick={toggleDropdown}>
+                        <div className="icon_vgpu">
+                          <i className="ico-type-gpucluster"></i>
+                          <p className="cluster_name">{gpuCluster}</p>
+                        </div>
 
-                            <div className="dropdown_icon"></div>
+                        <div className="dropdown_icon"></div>
 
-                            <ul id="dropdown" className="dropdown hidden">
-                              {gpuClusterList.map((item, idx) => (
-                                <li
-                                  className="dropdown_option"
-                                  key={idx}
-                                  onClick={() => {
-                                    setSelectedGpuCluster(item)
-                                    handleSelectGpuCluster(item)
-                                  }}
-                                >
-                                  <div className="icon_vgpu">
-                                    <i className="ico-type-gpucluster"></i>
-                                    <p className="cluster_name">{item.name}</p>
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
+                        <ul id="dropdown" className="dropdown hidden">
+                          {gpuClusterList.map((item, idx) => (
+                            <li
+                              className="dropdown_option"
+                              key={idx}
+                              onClick={() => {
+                                setSelectedGpuCluster(item)
+                                handleSelectGpuCluster(item)
+                              }}
+                            >
+                              <div className="icon_vgpu">
+                                <i className="ico-type-gpucluster"></i>
+                                <p className="cluster_name">{item.name}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="status_group">
+                        <div className="status_item">
+                          <p className="status_label">가상머신</p>
+                          <span className="status_value">{vmTotal}</span>
+                        </div>
+                        <div className="status_item">
+                          <p className="status_label">총 GPU</p>
+                          <span className="status_value">{gpuTotal * 8}</span>
+                        </div>
+                        <div className="status_item">
+                          <p className="status_label">GPU 평균 사용률</p>
+                          <span className="status_value">{usage}%</span>
+                        </div>
+                        <div className="status_item">
+                          <p className="status_label">GPU 메모리 사용량</p>
+                          <span className="status_value">
+                            {memoryUsage.val}
+                            <span className="unit">{memoryUsage.unit}</span> /
+                            {memoryTotalUsage.val}
+                            <span className="unit">
+                              {memoryTotalUsage.unit}
+                            </span>
+                          </span>
+                        </div>
+                        <div className="status_item">
+                          <p className="status_label">GPU 평균 온도</p>
+                          <span className="status_value">
+                            {temp}
+                            <span className="unit">°C</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <section className="flex_row">
+                    <div className="gpu_group">
+                      <TransformWrapper
+                        initialScale={1}
+                        initialPositionX={10}
+                        initialPositionY={10}
+                        minScale={0.5}
+                        maxScale={3}
+                        onTransformed={ctx => setScale(ctx.state.scale)}
+                      >
+                        {({ zoomIn, zoomOut, resetTransform }) => (
+                          <>
+                            <Controls
+                              zoomIn={zoomIn}
+                              zoomOut={zoomOut}
+                              resetTransform={resetTransform}
+                            />
+                            <TransformComponent
+                              onTransformChange={transform =>
+                                console.log('Transform changed:', transform)
+                              }
+                              wrapperStyle={{
+                                width: '1000px',
+                                height: '390px',
+                              }}
+                            >
+                              <Loading spinning={panelLoading}>
+                                <div className="gpu_card_group">
+                                  {selectedGpuCluster?.instances &&
+                                    selectedGpuCluster.instances.length > 0 &&
+                                    [...selectedGpuCluster.instances]
+                                      .sort((a, b) =>
+                                        a.vmName.localeCompare(b.vmName)
+                                      )
+                                      .map((instance, index) => (
+                                        <div className="gpu_card" key={index}>
+                                          <div className="gpu_card_header">
+                                            <div className="gpu_card_title">
+                                              <Link
+                                                to={`/clusters/${props.cluster}/projects/${selectedGpuCluster.namespace}/vms/${instance.vmName}`}
+                                              >
+                                                {instance.vmName}
+                                              </Link>
+                                            </div>
+                                            <div
+                                              className={`gpu_card_status_dot ${getState(
+                                                instance.vmPhase
+                                              )}`}
+                                            ></div>
+                                          </div>
+                                          <GpuBoxValues
+                                            gpuUtilData={gpuUtilData}
+                                            gpuMemData={gpuMemData}
+                                            gpuXidData={gpuXidData}
+                                            vmName={instance.vmName}
+                                          />
+                                          {scale >= 1 && (
+                                            <div className="gpu_card_metrics">
+                                              <div className="gpu_card_metric">
+                                                <div className="gpu_card_metric_label">
+                                                  GPU Avg
+                                                </div>
+                                                <div className="gpu_card_metric_value">
+                                                  {gpuUtilData[
+                                                    instance.vmName
+                                                  ] &&
+                                                    (
+                                                      Number(
+                                                        Object.values(
+                                                          gpuUtilData[
+                                                            instance.vmName
+                                                          ]
+                                                        ).reduce(
+                                                          (acc, v) =>
+                                                            acc + Number(v),
+                                                          0
+                                                        )
+                                                      ) / 8
+                                                    ).toFixed(2)}
+                                                  %
+                                                </div>
+                                              </div>
+                                              <div className="gpu_card_metric">
+                                                <div className="gpu_card_metric_label">
+                                                  GPU Mem
+                                                </div>
+                                                <div className="gpu_card_metric_value">
+                                                  {gpuMemData[
+                                                    instance.vmName
+                                                  ] &&
+                                                    (
+                                                      Number(
+                                                        Object.values(
+                                                          gpuMemData[
+                                                            instance.vmName
+                                                          ]
+                                                        ).reduce(
+                                                          (acc, v) =>
+                                                            acc + Number(v),
+                                                          0
+                                                        )
+                                                      ) / 8
+                                                    ).toFixed(2)}
+                                                  %
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                </div>
+                              </Loading>
+                            </TransformComponent>
+                          </>
+                        )}
+                      </TransformWrapper>
+                    </div>
+                    <div className="gpu_panel">
+                      <div className="gpu_top">
+                        <div className="gpu_title">GPU 현황</div>
+                        <div className="gpu_status">
+                          <div className="gpu_summary">
+                            <span className="gpu_summary_main">
+                              {normalCount}
+                            </span>
+                            <span>/</span>
+                            <span className="gpu_summary_total">
+                              {totalCount}
+                            </span>
                           </div>
-
-                          <div className="status_group">
-                            <div className="status_item">
-                              <p className="status_label">가상머신</p>
-                              <span className="status_value">{vmTotal}</span>
+                          <div className="gpu_legend">
+                            <div className="gpu_legend_values">
+                              <div>{criticalCount}</div>
+                              <div>{minorCount}</div>
+                              <div>{normalCount}</div>
+                              <div>
+                                {totalCount -
+                                  (criticalCount + minorCount + normalCount)}
+                              </div>
                             </div>
-                            <div className="status_item">
-                              <p className="status_label">총 GPU</p>
-                              <span className="status_value">
-                                {gpuTotal * 8}
-                              </span>
+                            <div className="gpu_legend_dots">
+                              <div className="dot critical"></div>
+                              <div className="dot minor"></div>
+                              <div className="dot normal"></div>
+                              <div className="dot unknown"></div>
                             </div>
-                            <div className="status_item">
-                              <p className="status_label">GPU 평균 사용률</p>
-                              <span className="status_value">{usage}%</span>
-                            </div>
-                            <div className="status_item">
-                              <p className="status_label">GPU 메모리 사용량</p>
-                              <span className="status_value">
-                                {memoryUsage.val}
-                                <span className="unit">
-                                  {memoryUsage.unit}
-                                </span>{' '}
-                                /{memoryTotalUsage.val}
-                                <span className="unit">
-                                  {memoryTotalUsage.unit}
-                                </span>
-                              </span>
-                            </div>
-                            <div className="status_item">
-                              <p className="status_label">GPU 평균 온도</p>
-                              <span className="status_value">
-                                {temp}
-                                <span className="unit">°C</span>
-                              </span>
+                            <div className="gpu_legend_labels">
+                              <div>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</div>
+                              <div>{t('RESOURCES_GPUCLUSTER_MINOR')}</div>
+                              <div>{t('RESOURCES_GPUCLUSTER_NORMAL')}</div>
+                              <div>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</div>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <section className="flex_row">
-                        <div className="gpu_group">
-                          <TransformWrapper
-                            initialScale={1}
-                            initialPositionX={10}
-                            initialPositionY={10}
-                            minScale={0.5}
-                            maxScale={3}
-                            onTransformed={ctx => setScale(ctx.state.scale)}
-                          >
-                            {({ zoomIn, zoomOut, resetTransform }) => (
-                              <>
-                                <Controls
-                                  zoomIn={zoomIn}
-                                  zoomOut={zoomOut}
-                                  resetTransform={resetTransform}
-                                />
-                                <TransformComponent
-                                  onTransformChange={transform =>
-                                    console.log('Transform changed:', transform)
-                                  }
-                                  wrapperStyle={{
-                                    width: '1000px',
-                                    height: '390px',
-                                  }}
-                                >
-                                  <Loading spinning={panelLoading}>
-                                    <div className="gpu_card_group">
-                                      {selectedGpuCluster?.instances &&
-                                        selectedGpuCluster.instances.length >
-                                          0 &&
-                                        [...selectedGpuCluster.instances]
-                                          .sort((a, b) =>
-                                            a.vmName.localeCompare(b.vmName)
-                                          )
-                                          .map((instance, index) => (
-                                            <div
-                                              className="gpu_card"
-                                              key={index}
-                                            >
-                                              <div className="gpu_card_header">
-                                                <div className="gpu_card_title">
-                                                  <Link
-                                                    to={`/clusters/${props.cluster}/projects/${selectedGpuCluster.namespace}/vms/${instance.vmName}`}
-                                                  >
-                                                    {instance.vmName}
-                                                  </Link>
-                                                </div>
-                                                <div
-                                                  className={`gpu_card_status_dot ${getState(
-                                                    instance.vmPhase
-                                                  )}`}
-                                                ></div>
-                                              </div>
-                                              <GpuBoxValues
-                                                gpuUtilData={gpuUtilData}
-                                                gpuMemData={gpuMemData}
-                                                gpuXidData={gpuXidData}
-                                                vmName={instance.vmName}
-                                              />
-                                              {scale >= 1 && (
-                                                <div className="gpu_card_metrics">
-                                                  <div className="gpu_card_metric">
-                                                    <div className="gpu_card_metric_label">
-                                                      GPU Avg
-                                                    </div>
-                                                    <div className="gpu_card_metric_value">
-                                                      {gpuUtilData[
-                                                        instance.vmName
-                                                      ] &&
-                                                        (
-                                                          Number(
-                                                            Object.values(
-                                                              gpuUtilData[
-                                                                instance.vmName
-                                                              ]
-                                                            ).reduce(
-                                                              (acc, v) =>
-                                                                acc + Number(v),
-                                                              0
-                                                            )
-                                                          ) / 8
-                                                        ).toFixed(2)}
-                                                      %
-                                                    </div>
-                                                  </div>
-                                                  <div className="gpu_card_metric">
-                                                    <div className="gpu_card_metric_label">
-                                                      GPU Mem
-                                                    </div>
-                                                    <div className="gpu_card_metric_value">
-                                                      {gpuMemData[
-                                                        instance.vmName
-                                                      ] &&
-                                                        (
-                                                          Number(
-                                                            Object.values(
-                                                              gpuMemData[
-                                                                instance.vmName
-                                                              ]
-                                                            ).reduce(
-                                                              (acc, v) =>
-                                                                acc + Number(v),
-                                                              0
-                                                            )
-                                                          ) / 8
-                                                        ).toFixed(2)}
-                                                      %
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              )}
-                                            </div>
-                                          ))}
-                                    </div>
-                                  </Loading>
-                                </TransformComponent>
-                              </>
-                            )}
-                          </TransformWrapper>
-                        </div>
-                        <div className="gpu_panel">
-                          <div className="gpu_top">
-                            <div className="gpu_title">GPU 현황</div>
-                            <div className="gpu_status">
-                              <div className="gpu_summary">
-                                <span className="gpu_summary_main">
-                                  {normalCount}
-                                </span>
-                                <span>/</span>
-                                <span className="gpu_summary_total">
-                                  {totalCount}
-                                </span>
-                              </div>
-                              <div className="gpu_legend">
-                                <div className="gpu_legend_values">
-                                  <div>{criticalCount}</div>
-                                  <div>{minorCount}</div>
-                                  <div>{normalCount}</div>
-                                  <div>
-                                    {totalCount -
-                                      (criticalCount +
-                                        minorCount +
-                                        normalCount)}
-                                  </div>
-                                </div>
-                                <div className="gpu_legend_dots">
-                                  <div className="dot critical"></div>
-                                  <div className="dot minor"></div>
-                                  <div className="dot normal"></div>
-                                  <div className="dot unknown"></div>
-                                </div>
-                                <div className="gpu_legend_labels">
-                                  <div>
-                                    {t('RESOURCES_GPUCLUSTER_CRITICAL')}
-                                  </div>
-                                  <div>{t('RESOURCES_GPUCLUSTER_MINOR')}</div>
-                                  <div>{t('RESOURCES_GPUCLUSTER_NORMAL')}</div>
-                                  <div>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="gpu_chart">
-                            <div className="chart_section">
-                              <div className="chart_title">GPU 사용률 추이</div>
-                              <div className="chart_values">
-                                <div className="chart_total">
-                                  <span>{usage}%</span>
-                                  {/* <span>/</span>
+                      <div className="gpu_chart">
+                        <div className="chart_section">
+                          <div className="chart_title">GPU 사용률 추이</div>
+                          <div className="chart_values">
+                            <div className="chart_total">
+                              <span>{usage}%</span>
+                              {/* <span>/</span>
                                   <span>6.4 TB</span> */}
-                                  <span></span>
-                                  <span></span>
-                                </div>
-                                {/* <div className="chart_percent">52%</div> */}
-                              </div>
-                              <div className="chart_gpu_trend">
-                                {gpuAvgUsage?.data?.length > 0 && (
-                                  <TinyArea
-                                    {...gpuAvgUsage}
-                                    bgColor="transparent"
-                                    width={256}
-                                    height={32}
-                                  />
-                                )}
-                              </div>
+                              <span></span>
+                              <span></span>
                             </div>
-
-                            <div className="chart_section">
-                              <div className="chart_title">NVLink (Total)</div>
-                              <NVLinkValues nvlinkData={nvlinkData} />
-                            </div>
-
-                            <div className="chart_section">
-                              <div className="chart_title">Infiniband</div>
-                              <InfinibandValues
-                                inboundData={inboundData}
-                                outboundData={outboundData}
-                              />
-                            </div>
+                            {/* <div className="chart_percent">52%</div> */}
+                          </div>
+                          <div className="chart_gpu_trend">
+                            {gpuAvgUsage?.length > 0 &&
+                              gpuAvgUsage.map((item, idx) => {
+                                const config = getAreaChartOps({
+                                  type: 'bandwidth',
+                                  legend: ['Gpu'],
+                                  unitType: 'bandwidth',
+                                  data: [item] || [],
+                                })
+                                return (
+                                  <div key={idx}>
+                                    <TinyArea
+                                      {...config}
+                                      bgColor="transparent"
+                                      width={256}
+                                      height={32}
+                                    />
+                                  </div>
+                                )
+                              })}
                           </div>
                         </div>
-                      </section>
+
+                        <div className="chart_section">
+                          <div className="chart_title">NVLink (Total)</div>
+                          <div className="chart_gpu_trend">
+                            {nvlinkData?.length > 0 &&
+                              nvlinkData.map((item, idx) => {
+                                const config = getAreaChartOps({
+                                  type: 'bandwidth',
+                                  legend: ['Gpu'],
+                                  unitType: 'bandwidthBytes',
+                                  data: [item] || [],
+                                })
+                                return (
+                                  <div key={idx}>
+                                    <TinyArea
+                                      {...config}
+                                      bgColor="transparent"
+                                      width={256}
+                                      height={32}
+                                    />
+                                  </div>
+                                )
+                              })}
+                          </div>
+                        </div>
+
+                        <div className="chart_section">
+                          <div className="chart_title">
+                            IB {t('RESOURCES_INBOUND')}
+                          </div>
+                          <div className="chart_gpu_trend">
+                            {inboundData?.length > 0 &&
+                              inboundData.map((item, idx) => {
+                                const config = getAreaChartOps({
+                                  type: 'bandwidth',
+                                  legend: ['Gpu'],
+                                  unitType: 'bandwidth',
+                                  data: [item] || [],
+                                })
+                                return (
+                                  <div key={idx}>
+                                    <TinyArea
+                                      {...config}
+                                      bgColor="transparent"
+                                      width={256}
+                                      height={32}
+                                    />
+                                  </div>
+                                )
+                              })}
+                          </div>
+                          <div className="chart_title">
+                            IB {t('RESOURCES_OUTBOUND')}
+                          </div>
+                          <div className="chart_gpu_trend">
+                            {outboundData?.length > 0 &&
+                              outboundData.map((item, idx) => {
+                                const config = getAreaChartOps({
+                                  type: 'bandwidth',
+                                  legend: ['Gpu'],
+                                  unitType: 'bandwidth',
+                                  data: [item] || [],
+                                })
+                                return (
+                                  <div key={idx}>
+                                    <TinyArea
+                                      {...config}
+                                      bgColor="transparent"
+                                      width={256}
+                                      height={32}
+                                    />
+                                  </div>
+                                )
+                              })}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </section>
                 </div>
               </div>
             </Loading>
@@ -692,42 +733,6 @@ const GpuCluster = ({
         </div>
       </div>
     </>
-  )
-}
-
-const NVLinkValues = ({ nvlinkData }) => {
-  const nvlinkDataUnit = getSuitableUnit(nvlinkData, 'bandwidthBytes')
-  const nvlinkDataValue = getValueByUnit(nvlinkData, nvlinkDataUnit)
-
-  return (
-    <div className="chart_values">
-      <div className="chart_total">
-        <span>{nvlinkDataValue} </span>
-        <span>{nvlinkDataUnit}</span>
-      </div>
-    </div>
-  )
-}
-
-const InfinibandValues = ({ inboundData, outboundData }) => {
-  const inboundUnit = getSuitableUnit(inboundData, 'bandwidth')
-  const inboundValue = getValueByUnit(inboundData, inboundUnit)
-  const outboundUnit = getSuitableUnit(outboundData, 'bandwidth')
-  const outboundValue = getValueByUnit(outboundData, outboundUnit)
-
-  return (
-    <div className="chart_values">
-      <div className="chart_total">
-        <span className="title">TX </span>
-        <span className="lg">{inboundValue}</span>
-        <span>{inboundUnit}</span>
-      </div>
-      <div className="chart_total">
-        <span className="title"> RX </span>
-        <span className="lg">{outboundValue}</span>
-        <span>{outboundUnit}</span>
-      </div>
-    </div>
   )
 }
 
