@@ -31,6 +31,406 @@ const GpuCluster = ({
   const fetchData = async () => {
     return await gpuClusterStore.fetchList({ limit: 1000, ...props })
   }
+  const asd = {
+    cluster: 'default',
+    namespace: 'default',
+    createdAt: '2025-08-20T03:54:18Z',
+    instances: [
+      {
+        nodeName: 'gspp-msi-gpu013',
+        vmName: 'gsvp-msi-gpu013',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu025',
+        vmName: 'gsvp-msi-gpu025',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu027',
+        vmName: 'gsvp-msi-gpu027',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu038',
+        vmName: 'gsvp-msi-gpu038',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu001',
+        vmName: 'gsvp-msi-gpu001',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu034',
+        vmName: 'gsvp-msi-gpu034',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu046',
+        vmName: 'gsvp-msi-gpu046',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu005',
+        vmName: 'gsvp-msi-gpu005',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu028',
+        vmName: 'gsvp-msi-gpu028',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu042',
+        vmName: 'gsvp-msi-gpu042',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu024',
+        vmName: 'gsvp-msi-gpu024',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu002',
+        vmName: 'gsvp-msi-gpu002',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu043',
+        vmName: 'gsvp-msi-gpu043',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu047',
+        vmName: 'gsvp-msi-gpu047',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu060',
+        vmName: 'gsvp-msi-gpu060',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu055',
+        vmName: 'gsvp-msi-gpu055',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu003',
+        vmName: 'gsvp-msi-gpu003',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu053',
+        vmName: 'gsvp-msi-gpu053',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu054',
+        vmName: 'gsvp-msi-gpu054',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu016',
+        vmName: 'gsvp-msi-gpu016',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu018',
+        vmName: 'gsvp-msi-gpu018',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu014',
+        vmName: 'gsvp-msi-gpu014',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu037',
+        vmName: 'gsvp-msi-gpu037',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu058',
+        vmName: 'gsvp-msi-gpu058',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu006',
+        vmName: 'gsvp-msi-gpu006',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu023',
+        vmName: 'gsvp-msi-gpu023',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu033',
+        vmName: 'gsvp-msi-gpu033',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu036',
+        vmName: 'gsvp-msi-gpu036',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu030',
+        vmName: 'gsvp-msi-gpu030',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu052',
+        vmName: 'gsvp-msi-gpu052',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu056',
+        vmName: 'gsvp-msi-gpu056',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu062',
+        vmName: 'gsvp-msi-gpu062',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu029',
+        vmName: 'gsvp-msi-gpu029',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu041',
+        vmName: 'gsvp-msi-gpu041',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu057',
+        vmName: 'gsvp-msi-gpu057',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu009',
+        vmName: 'gsvp-msi-gpu009',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu010',
+        vmName: 'gsvp-msi-gpu010',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu061',
+        vmName: 'gsvp-msi-gpu061',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu063',
+        vmName: 'gsvp-msi-gpu063',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu064',
+        vmName: 'gsvp-msi-gpu064',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu044',
+        vmName: 'gsvp-msi-gpu044',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu004',
+        vmName: 'gsvp-msi-gpu004',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu031',
+        vmName: 'gsvp-msi-gpu031',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu035',
+        vmName: 'gsvp-msi-gpu035',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu059',
+        vmName: 'gsvp-msi-gpu059',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu012',
+        vmName: 'gsvp-msi-gpu012',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu026',
+        vmName: 'gsvp-msi-gpu026',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu045',
+        vmName: 'gsvp-msi-gpu045',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu051',
+        vmName: 'gsvp-msi-gpu051',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu019',
+        vmName: 'gsvp-msi-gpu019',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu007',
+        vmName: 'gsvp-msi-gpu007',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu022',
+        vmName: 'gsvp-msi-gpu022',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu011',
+        vmName: 'gsvp-msi-gpu011',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu021',
+        vmName: 'gsvp-msi-gpu021',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu032',
+        vmName: 'gsvp-msi-gpu032',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu050',
+        vmName: 'gsvp-msi-gpu050',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu008',
+        vmName: 'gsvp-msi-gpu008',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu048',
+        vmName: 'gsvp-msi-gpu048',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu039',
+        vmName: 'gsvp-msi-gpu039',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu015',
+        vmName: 'gsvp-msi-gpu015',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu020',
+        vmName: 'gsvp-msi-gpu020',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu040',
+        vmName: 'gsvp-msi-gpu040',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu017',
+        vmName: 'gsvp-msi-gpu017',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+      {
+        nodeName: 'gspp-msi-gpu049',
+        vmName: 'gsvp-msi-gpu049',
+        vmPhase: 'Running',
+        vmType: 'gpu',
+      },
+    ],
+    name: 'wbl-dev-aicm',
+    spec: {
+      description: 'GPU001 AICM cluster',
+      fabricKey: '0x2000',
+      fabricType: 'infiniband',
+      sonaNetwork: 'external-gpuzone-001',
+    },
+    isRunningCount: 2,
+    state: 'normal',
+  }
   const [gpuClusterList, error, loading] = cleanupTrigger(fetchData, [])
 
   const [panelLoading, setPanelLoading] = useState(false)
@@ -75,6 +475,7 @@ const GpuCluster = ({
       } else {
         setSelectedGpuCluster(gpuClusterList[0])
       }
+      setSelectedGpuCluster(asd)
     }
   }, [gpuClusterList, activeDashboard])
 
@@ -463,7 +864,7 @@ const GpuCluster = ({
                         initialPositionX={10}
                         initialPositionY={10}
                         minScale={0.5}
-                        maxScale={3}
+                        maxScale={1.5}
                         onTransformed={ctx => setScale(ctx.state.scale)}
                       >
                         {({ zoomIn, zoomOut, resetTransform }) => (
@@ -483,7 +884,16 @@ const GpuCluster = ({
                               }}
                             >
                               <Loading spinning={panelLoading}>
-                                <div className="gpu_card_group">
+                                <div
+                                  className="gpu_card_group"
+                                  style={{
+                                    width: `${900 / scale}px`, // scale 줄어들면 더 넓어짐
+                                    display: 'grid',
+                                    gridTemplateColumns:
+                                      'repeat(auto-fill, minmax(140px, 1fr))',
+                                    // gap: '10px',
+                                  }}
+                                >
                                   {selectedGpuCluster?.instances &&
                                     selectedGpuCluster.instances.length > 0 &&
                                     [...selectedGpuCluster.instances]
@@ -618,8 +1028,6 @@ const GpuCluster = ({
                           <div className="chart_values">
                             <div className="chart_total">
                               <span>{usage}%</span>
-                              {/* <span>/</span>
-                                  <span>6.4 TB</span> */}
                               <span></span>
                               <span></span>
                             </div>
