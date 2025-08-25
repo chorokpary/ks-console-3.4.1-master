@@ -14,12 +14,16 @@
   text-align: center;
   
   li:first-child {
-    margin-left: 0px;
+    margin-left: 10px;
+  }
+  li:last-child {
+    margin-right: 10px;
   }
 
   li {
-    margin-bottom: 0px;
-    width: 230px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 235px;
     height: 120px;
   }
   
