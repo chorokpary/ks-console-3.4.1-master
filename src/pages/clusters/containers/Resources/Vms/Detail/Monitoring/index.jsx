@@ -62,8 +62,8 @@ const index = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `((sum by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance, namespace) node_uname_info) - 1) / ${store.detail.vm.flavor.vcpus}`
-      const cpuWindowsDataExpr = `((sum by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance, namespace) windows_os_info) - 1) / ${store.detail.vm.flavor.vcpus}`
+      const cpuLinuxDataExpr = `linux:vm:cpu:usage_percent:5m / ${store.detail.vm.flavor.vcpus}`
+      const cpuWindowsDataExpr = `windows:vm:cpu:usage_percent:5m / ${store.detail.vm.flavor.vcpus}`
       const cpuData = await customStore.fetchMetric({
         expr:
           store.detail.vm.os_type === 'linux'
@@ -76,8 +76,7 @@ const index = props => {
       const vmCpuMetricData = find(cpuData, data => {
         if (
           data.metric.pod === store.detail.vm.name &&
-          data.metric.namespace === store.detail.vm.project &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+          data.metric.namespace === store.detail.vm.project
         )
           return data
       })
@@ -90,8 +89,8 @@ const index = props => {
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
-      const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+      const memoryLinuxDataExpr = `linux:vm:memory:used_bytes:raw`
+      const memoryWindowsDataExpr = `windows:vm:memory:used_bytes:raw`
 
       const memoryData = await customStore.fetchMetric({
         expr:
@@ -105,8 +104,7 @@ const index = props => {
       const vmMemoryMetricData = find(memoryData, data => {
         if (
           data.metric.pod === store.detail.vm.name &&
-          data.metric.namespace === store.detail.vm.project &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+          data.metric.namespace === store.detail.vm.project
         )
           return data
       })
@@ -119,8 +117,8 @@ const index = props => {
 
     // vm inbound data
     const getVmInboundData = async () => {
-      const inboundLinuxDataExpr = `sum by (pod,instance,namespace) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const inboundWindowsDataExpr = `sum by (pod,instance,namespace) (irate(windows_net_bytes_received_total{service="launcher-node-exporter"}[5m]))`
+      const inboundLinuxDataExpr = `linux:vm:net:rx_bytes:5m`
+      const inboundWindowsDataExpr = `windows:vm:net:rx_bytes:5m`
 
       const inboundData = await customStore.fetchMetric({
         expr:
@@ -134,8 +132,7 @@ const index = props => {
       const vmInboundMetricData = find(inboundData, data => {
         if (
           data.metric.pod === store.detail.vm.name &&
-          data.metric.namespace === store.detail.vm.project &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+          data.metric.namespace === store.detail.vm.project
         )
           return data
       })
@@ -145,8 +142,8 @@ const index = props => {
 
     // vm outbound data
     const getVmOutboundData = async () => {
-      const outboundLinuxDataExpr = `sum by (pod,instance,namespace) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const outboundWindowsDataExpr = `sum by (pod,instance,namespace) (irate(windows_net_bytes_sent_total{service="launcher-node-exporter"}[5m]))`
+      const outboundLinuxDataExpr = `linux:vm:net:tx_bytes:5m`
+      const outboundWindowsDataExpr = `windows:vm:net:tx_bytes:5m`
 
       const outboundData = await customStore.fetchMetric({
         expr:
@@ -160,8 +157,7 @@ const index = props => {
       const vmOutboundMetricData = find(outboundData, data => {
         if (
           data.metric.pod === store.detail.vm.name &&
-          data.metric.namespace === store.detail.vm.project &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+          data.metric.namespace === store.detail.vm.project
         )
           return data
       })
@@ -170,8 +166,8 @@ const index = props => {
     }
 
     const getVmDiskUsageData = async () => {
-      const diskLinuxDataExpr = `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`
-      const diskWindowsDataExpr = `(100 - (((sum by(pod) (windows_logical_disk_free_bytes)) / sum by(pod) (windows_logical_disk_size_bytes)) * 100)) / 100`
+      const diskLinuxDataExpr = `linux:vm:filesystem:usage_fraction:raw`
+      const diskWindowsDataExpr = `windows:vm:disk:usage_fraction:raw`
 
       const diskData = await customStore.fetchMetric({
         expr:
