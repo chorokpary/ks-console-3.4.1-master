@@ -575,6 +575,7 @@ module.exports = {
   RESOURCES_MIGRATING: '마이그레이션 중',
   RESOURCES_ETHERNET: '이더넷',
   RESOURCES_ETHERNET_TYPE: '이더넷 유형',
+  RESOURCES_ETHERNET_TYPE_SHORT: '이더넷 유형',
   RESOURCES_NAME: '이름',
   RESOURCES_NAME_VALID_DESC:
     '이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 숫자) 형식으로 입력 가능합니다.',

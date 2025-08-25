@@ -579,6 +579,7 @@ module.exports = {
   RESOURCES_MIGRATING: 'Migrating',
   RESOURCES_ETHERNET: 'Ethernet',
   RESOURCES_ETHERNET_TYPE: 'Ethernet Type',
+  RESOURCES_ETHERNET_TYPE_SHORT: 'Eth Type',
   RESOURCES_NAME: 'Name',
   RESOURCES_NAME_VALID_DESC:
     'The name can be entered in the format of (lowercase or number.domain with at least 2 characters)/(lowercase or number).',

@@ -607,7 +607,7 @@ const RegistModal = props => {
     <>
       <Modal
         icon="templet"
-        width={800}
+        width={960}
         title={props.title}
         onCancel={closeModal}
         bodyClassName={styles.body}
