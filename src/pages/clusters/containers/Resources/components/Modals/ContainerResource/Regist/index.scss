@@ -12,6 +12,26 @@
 
 .customUl {
   text-align: center;
+  
+  li:first-child {
+    margin-left: 0px;
+  }
+
+  li {
+    margin-bottom: 0px;
+    width: 230px;
+    height: 120px;
+  }
+  
+  figure {
+    i {
+      background-size: 100% 100%;
+    }
+  }
+
+  h3 {
+    margin-top: 10px;
+  }
 }
 
 .textarea {
@@ -405,7 +425,7 @@ button {
   height: 64px;
   padding: 0px 20px;
   position: relative;
-  width: 960px;
+  width: 800px;
 
   .process_item {
     align-items: flex-start;
