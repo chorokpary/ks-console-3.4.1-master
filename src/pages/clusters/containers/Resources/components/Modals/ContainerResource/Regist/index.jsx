@@ -41,6 +41,7 @@ const RegistModal = props => {
   const [imageOptionList, setImageOptionList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
@@ -58,6 +59,9 @@ const RegistModal = props => {
   const [elbSelect, setElbSelect] = useState('')
   const [expirationSelect, setExpirationSelect] = useState('10')
   const [ekgStack, setEkgStack] = useState([])
+  const [storageClass, setStorageClass] = useState('')
+  const [imageStorageClass, setImageStorageClass] = useState('')
+  const [storageClassTab, setStorageClassTab] = useState('default') // 'default', 'image', 'manual'
 
   // options
   const [cnis, setCnis] = useState([])
@@ -96,12 +100,17 @@ const RegistModal = props => {
 
       const listImage = await kaasStore.fetchListImage(props)
 
+      const listStoregeClass = await vmStore.fetchVmListStoregeClass({
+        ...props,
+      })
+
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
       setNetworkList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
       setSriovNetworkList(listSriovNetwork.sriovs)
+      setStorageClassDataList(listStoregeClass.user_sces)
     }
 
     getVmCreateData()
@@ -281,6 +290,15 @@ const RegistModal = props => {
     })
   }
 
+  const storageClassOptions = () => {
+    return storageClassDataList.map(obj => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+    })
+  }
+
   const expirationOption = [
     { label: `1${t('RESOURCES_YEAR')}`, value: 1 },
     { label: `2${t('RESOURCES_YEAR')}`, value: 2 },
@@ -317,6 +335,7 @@ const RegistModal = props => {
       data.private_registry = tab === 'private'
       data.secure_boot = secureBoot
       data.node_selectors = nodeSelector
+      data.storage_class = storageClass
       onOk({ ...data })
     })
   }
@@ -853,7 +872,19 @@ const RegistModal = props => {
                             label: t('RESOURCES_SELECT'),
                           }}
                           options={imageOptions()}
-                          onChange={e => setSelectImageName(e)}
+                          onChange={e => {
+                            setSelectImageName(e)
+                            // 이미지 선택 시 storage_class 업데이트
+                            const imageSC = imageOptionList.find(
+                              item => item.name === e
+                            )?.storage_class
+                            if (imageSC) {
+                              setImageStorageClass(imageSC)
+                            }
+                            if (storageClassTab === 'image') {
+                              setStorageClass(imageSC)
+                            }
+                          }}
                           defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
                         />
                       </Form.Item>
@@ -869,15 +900,60 @@ const RegistModal = props => {
                         </Form.Item>
                       )}
                     </Column>
-                    <Column
-                      align={'middle'}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Form.Item desc={t('RESOURCES_MASTER_COUNT_MAX_DESC')}>
+                    <Column>
+                      <Form.Item label={t('RESOURCES_STORAGE_CLASS')}>
+                        <Tabs
+                          type="button"
+                          activeName={storageClassTab}
+                          onChange={newTab => {
+                            setStorageClassTab(newTab)
+                            if (newTab === 'default') {
+                              setStorageClass('')
+                            }
+                            if (newTab === 'image') {
+                              setStorageClass(imageStorageClass)
+                            }
+                          }}
+                        >
+                          <TabPanel
+                            label={t('RESOURCES_DEFAULT')}
+                            name="default"
+                          />
+                          <TabPanel
+                            label={t('RESOURCES_IMAGE_CLASS')}
+                            name="image"
+                          />
+                          <TabPanel
+                            label={t('RESOURCES_MANUAL_SELECTION')}
+                            name="manual"
+                          />
+                        </Tabs>
+                      </Form.Item>
+                      {storageClassTab === 'manual' && (
+                        <Form.Item>
+                          <Select
+                            options={storageClassOptions()}
+                            onChange={el => setStorageClass(el)}
+                            value={
+                              storageClass !== ''
+                                ? storageClass
+                                : t('RESOURCES_SELECT')
+                            }
+                          />
+                        </Form.Item>
+                      )}
+                      {storageClassTab === 'image' && storageClass !== '' && (
+                        <Form.Item>
+                          <div className={styles.wrapperImageView}>
+                            {storageClass}
+                          </div>
+                        </Form.Item>
+                      )}
+                      <div style={{ padding: 20 }} />
+                      <Form.Item
+                        label={t('RESOURCES_NODE_COUNT')}
+                        desc={t('RESOURCES_MASTER_COUNT_MAX_DESC')}
+                      >
                         <div>
                           <Button icon="substract" onClick={minusMasterBtn} />
                           &nbsp;&nbsp;
@@ -1352,6 +1428,12 @@ const RegistModal = props => {
                         <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
                       </div>
+                      {storageClass && (
+                        <div className={styles.list} style={{ width: '40%' }}>
+                          <label>{t('RESOURCES_STORAGE_CLASS')}</label>
+                          <div className={styles.bold}>{storageClass}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
 

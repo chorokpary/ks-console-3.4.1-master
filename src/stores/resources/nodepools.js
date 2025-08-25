@@ -29,7 +29,8 @@ export default class ResourceStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${params.name
+    )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+      params.name
     }`
 
   @action
@@ -77,7 +78,8 @@ export default class ResourceStore extends Base {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${params.name
+      )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+        params.name
       }/nodes`,
       { project: params.namespace }
     )
@@ -131,6 +133,7 @@ export default class ResourceStore extends Base {
     reqData.autoscale = data.autoscale
     reqData.scale_range = data.scale_range
     reqData.node_selectors = data.node_selectors
+    reqData.storage_class = data.storage_class
     jsonData.nodepool = reqData
 
     return await this.submitting(
@@ -158,7 +161,8 @@ export default class ResourceStore extends Base {
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${params.name
+        )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+          params.name
         }?project=${params.namespace}`,
         jsonData
       )
@@ -171,7 +175,8 @@ export default class ResourceStore extends Base {
       request.delete(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${params.name
+        )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+          params.name
         }`,
         { project: params.namespace }
       )
