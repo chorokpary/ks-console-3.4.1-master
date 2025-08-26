@@ -67,7 +67,7 @@ const index = props => {
 
     const getVmCpuUsageData = async () => {
       const cpuLinuxDataExpr = `linux:vm:cpu:usage_percent:5m / ${store.detail.vm.flavor.vcpus}`
-      const cpuWindowsDataExpr = `windows:vm:cpu:usage_percent:5m / (${store.detail.vm.flavor.vcpus} * 2)`
+      const cpuWindowsDataExpr = `windows:vm:cpu:usage_percent:5m / ${store.detail.vm.flavor.vcpus}`
       const cpuData = await customStore.fetchMetric({
         expr:
           store.detail.vm.os_type === 'linux'
