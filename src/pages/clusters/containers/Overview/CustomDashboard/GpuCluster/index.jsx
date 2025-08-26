@@ -267,8 +267,6 @@ const GpuCluster = ({
     })
 
     // Xid Error - 최근 10분간 변화량이 있는지 확인
-    // todo select box
-    // select box 데이터로 setXidTimeRange
     const gpuXidExprChangeExpr = `changes((max by (gpu, pod) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"})[10m:])) > 0`
     const gpuXidExprChangeData = await customStore.fetchMetric({
       expr: gpuXidExprChangeExpr,
@@ -565,6 +563,7 @@ const GpuCluster = ({
                               zoomIn={zoomIn}
                               zoomOut={zoomOut}
                               resetTransform={resetTransform}
+                              setXidTimeRange={setXidTimeRange}
                             />
                             <TransformComponent
                               onTransformChange={transform =>
@@ -572,7 +571,7 @@ const GpuCluster = ({
                               }
                               wrapperStyle={{
                                 width: '1000px',
-                                height: '390px',
+                                height: '415px',
                               }}
                             >
                               <Loading spinning={panelLoading}>
@@ -690,7 +689,7 @@ const GpuCluster = ({
                           </div>
                           <div className="gpu_legend">
                             <div className="gpu_legend_values">
-                              <div>{criticalCount}</div>
+                              {/* <div>{criticalCount}</div> */}
                               <div>{minorCount}</div>
                               <div>{normalCount}</div>
                               <div>
@@ -699,13 +698,13 @@ const GpuCluster = ({
                               </div>
                             </div>
                             <div className="gpu_legend_dots">
-                              <div className="dot critical"></div>
+                              {/* <div className="dot critical"></div> */}
                               <div className="dot minor"></div>
                               <div className="dot normal"></div>
                               <div className="dot unknown"></div>
                             </div>
                             <div className="gpu_legend_labels">
-                              <div>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</div>
+                              {/* <div>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</div> */}
                               <div>{t('RESOURCES_GPUCLUSTER_MINOR')}</div>
                               <div>{t('RESOURCES_GPUCLUSTER_NORMAL')}</div>
                               <div>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</div>
@@ -869,8 +868,18 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
   )
 }
 
-const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
+const Controls = ({ zoomIn, zoomOut, resetTransform, setXidTimeRange }) => (
   <>
+    <div className="select step">
+      <select
+        onChange={e => setXidTimeRange(Number(e.target.value))}
+        defaultValue={3600}
+      >
+        <option value={3600}>1h</option>
+        <option value={3600 * 2}>2h</option>
+        <option value={3600 * 3}>3h</option>
+      </select>
+    </div>
     <div className="zoomin_icon">
       <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
         <i className="ico-plus"></i>
