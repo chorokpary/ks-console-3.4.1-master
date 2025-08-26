@@ -157,7 +157,7 @@ const RegistModal = props => {
       if (response.features) {
         for (let i = 0, n = response.features.length; i < n; i += 1) {
           resFeature.push({
-            label: response.features[i].name,
+            label: t(`RESOURCES_KAAS_FEATURE_${response.features[i].name.toUpperCase()}`),
             value: response.features[i].name,
             // icon: response.data.features[i].name.toLowerCase(),
             icon: `ico-etc-${response.features[i].name.toLowerCase()}`,
@@ -1324,7 +1324,7 @@ const RegistModal = props => {
                   <Form.Group>
                     <Form.Item>
                       <CardSelect
-                        className={styles.customUl}
+                        className={styles.customStackUl}
                         onChange={e => handleEkgStack(e)}
                         options={features}
                         value={ekgStack}

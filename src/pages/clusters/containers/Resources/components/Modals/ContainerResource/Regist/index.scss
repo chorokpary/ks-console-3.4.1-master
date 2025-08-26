@@ -38,6 +38,34 @@
   }
 }
 
+.customStackUl {
+  text-align: center;
+  
+  li:first-child {
+    margin-left: 2px;
+  }
+  li:last-child {
+    margin-right: 10px;
+  }
+
+  li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 172px;
+    height: 120px;
+  }
+  
+  figure {
+    i {
+      background-size: 100% 100%;
+    }
+  }
+
+  h3 {
+    margin-top: 10px;
+  }
+}
+
 .textarea {
   :global .textarea {
     max-width: 100%;
