@@ -302,9 +302,9 @@ const index = props => {
       },
       {
         type: 'utilisation',
-        title: 'MEMORY_USAGE',
+        title: t('RESOURCES_MEMORY_PERCENT'),
         unit: '%',
-        legend: ['MEMORY_USAGE'],
+        legend: [t('RESOURCES_MEMORY_PERCENT')],
         data: vmMemoryPercent,
       },
       {
@@ -323,9 +323,9 @@ const index = props => {
       },
       {
         type: 'utilisation',
-        title: t('RESOURCES_DISK_USAGE'),
+        title: t('RESOURCES_DISK_PERCENT'),
         unit: '%',
-        legend: [t('RESOURCES_DISK_USAGE')],
+        legend: [t('RESOURCES_DISK_PERCENT')],
         data: vmDiskPercent,
       },
       {

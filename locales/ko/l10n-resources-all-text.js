@@ -848,7 +848,9 @@ module.exports = {
   RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
   RESOURCES_CPU_USAGE: 'CPU 사용량',
   RESOURCES_MEMORY_USAGE: '메모리 사용량',
+  RESOURCES_MEMORY_PERCENT: '메모리 사용률',
   RESOURCES_DISK_USAGE: '디스크 사용량',
+  RESOURCES_DISK_PERCENT: '디스크 사용률',
   RESOURCES_SELECT_NETWORK_NAME_TIP: '네트워크 이름을 선택해 주세요.',
   RESOURCES_EXTERNAL_NETWORK_TIP:
     'FLAT 유형의 네트워크만 External 네트워크로 설정할 수 있습니다.',

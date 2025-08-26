@@ -857,7 +857,9 @@ module.exports = {
   RESOURCES_GPU_CLUSTER: 'GPU Cluster',
   RESOURCES_CPU_USAGE: 'CPU Usage',
   RESOURCES_MEMORY_USAGE: 'Memory Usage',
+  RESOURCES_MEMORY_PERCENT: 'Memorge Percentage',
   RESOURCES_DISK_USAGE: 'Disk Usage',
+  RESOURCES_DISK_PERCENT: 'Disk Percentage',
   RESOURCES_SELECT_NETWORK_NAME_TIP: 'Please select a network name.',
   RESOURCES_EXTERNAL_NETWORK_TIP:
     'Only FLAT type network can be configured as external.',
