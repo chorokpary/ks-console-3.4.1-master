@@ -189,6 +189,13 @@ module.exports = {
   RESOURCES_KAAS_IMAGE_DESC:
     'KaaS 이미지의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_COMPONENT_STATE: 'KaaS 컴포넌트 상태',
+  RESOURCES_KAAS_FEATURE_APPSTORE: '앱 스토어',
+  RESOURCES_KAAS_FEATURE_AUDIT: '감사',
+  RESOURCES_KAAS_FEATURE_DEVOPS: '데브옵스',
+  RESOURCES_KAAS_FEATURE_LMA: '로깅 및 모니터링',
+  RESOURCES_KAAS_FEATURE_NETWORK: '네트워크',
+  RESOURCES_KAAS_FEATURE_SECURITY: '보안',
+  RESOURCES_KAAS_FEATURE_SERVICEMESH: '서비스 메시',
   RESOURCES_CONNECTION_LB: 'LB 연결',
   RESOURCES_SELECT_MASTER_FLAVOR_TIP: 'Master Flavor를 선택해 주세요.',
   RESOURCES_SELECT_MASTER_ARCH_TIP: 'Master 아키텍쳐를 선택해 주세요.',
@@ -575,6 +582,7 @@ module.exports = {
   RESOURCES_MIGRATING: '마이그레이션 중',
   RESOURCES_ETHERNET: '이더넷',
   RESOURCES_ETHERNET_TYPE: '이더넷 유형',
+  RESOURCES_ETHERNET_TYPE_SHORT: '이더넷 유형',
   RESOURCES_NAME: '이름',
   RESOURCES_NAME_VALID_DESC:
     '이름은 (소문자 or 숫자.도메인 2자 이상)/(소문자 or 숫자) 형식으로 입력 가능합니다.',
@@ -840,7 +848,9 @@ module.exports = {
   RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
   RESOURCES_CPU_USAGE: 'CPU 사용량',
   RESOURCES_MEMORY_USAGE: '메모리 사용량',
+  RESOURCES_MEMORY_PERCENT: '메모리 사용률',
   RESOURCES_DISK_USAGE: '디스크 사용량',
+  RESOURCES_DISK_PERCENT: '디스크 사용률',
   RESOURCES_SELECT_NETWORK_NAME_TIP: '네트워크 이름을 선택해 주세요.',
   RESOURCES_EXTERNAL_NETWORK_TIP:
     'FLAT 유형의 네트워크만 External 네트워크로 설정할 수 있습니다.',
@@ -1196,4 +1206,7 @@ module.exports = {
   RESOURCES_GPUCLUSTER_MINOR: '경고',
   RESOURCES_GPUCLUSTER_NORMAL: '정상',
   RESOURCES_GPUCLUSTER_UNKNOWN: '미확인',
+  RESOURCES_DEFAULT: '기본',
+  RESOURCES_IMAGE_CLASS: '이미지와 동일',
+  RESOURCES_MANUAL_SELECTION: '직접 선택',
 }

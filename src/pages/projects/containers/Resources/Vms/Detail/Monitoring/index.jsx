@@ -16,9 +16,13 @@ const index = props => {
 
   const [vmCpuData, setVmCpuData] = useState([])
   const [vmMemoryData, setVmMemoryData] = useState([])
+  const [vmMemoryPercent, setVmMemoryPercent] = useState([])
   const [vmInboundData, setVmInboundData] = useState({})
   const [vmOutboundData, setVmOutboundData] = useState({})
   const [vmDiskData, setVmDiskData] = useState([])
+  const [vmDiskPercent, setVmDiskPercent] = useState([])
+  const [vmIopsReadData, setVmIopsReadData] = useState({})
+  const [vmIopsWriteData, setVmIopsWriteData] = useState({})
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -64,8 +68,8 @@ const index = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `((sum by (pod,instance) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance) node_uname_info) - 1) / ${store.detail.vm.flavor.vcpus}`
-      const cpuWindowsDataExpr = `((sum by (pod,instance) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance) windows_os_info) - 1) / ${store.detail.vm.flavor.vcpus}`
+      const cpuLinuxDataExpr = `linux:vm:cpu:usage_percent:5m`
+      const cpuWindowsDataExpr = `windows:vm:cpu:usage_percent:5m`
       const cpuData = await customStore.fetchMetric({
         expr:
           store.detail.vm.os_type === 'linux'
@@ -77,11 +81,7 @@ const index = props => {
       })
 
       const vmCpuMetricData = find(cpuData, data => {
-        if (
-          data.metric.pod === store.detail.vm.name &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
-        )
-          return data
+        if (data.metric.pod === store.detail.vm.name) return data
       })
 
       // 배열 처리
@@ -92,8 +92,8 @@ const index = props => {
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
-      const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+      const memoryLinuxDataExpr = `linux:vm:memory:used_bytes:raw`
+      const memoryWindowsDataExpr = `windows:vm:memory:used_bytes:raw`
 
       const memoryData = await customStore.fetchMetric({
         expr:
@@ -106,11 +106,7 @@ const index = props => {
       })
 
       const vmMemoryMetricData = find(memoryData, data => {
-        if (
-          data.metric.pod === store.detail.vm.name &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
-        )
-          return data
+        if (data.metric.pod === store.detail.vm.name) return data
       })
 
       // 배열 처리
@@ -119,10 +115,34 @@ const index = props => {
       setVmMemoryData(vmMemoryArray)
     }
 
+    // vm memory percent
+    const getVmMemoryPercentData = async () => {
+      const memoryLinuxDataExpr = `linux:vm:memory:used_percent:5m`
+      const memoryWindowsDataExpr = `windows:vm:memory:used_percent:5m`
+
+      const memoryData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? memoryLinuxDataExpr
+            : memoryWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmMemoryMetricData = find(memoryData, data => {
+        if (data.metric.pod === store.detail.vm.name) return data
+      })
+
+      // 배열 처리
+      const vmMemoryArray = []
+      vmMemoryArray.push(vmMemoryMetricData)
+      setVmMemoryPercent(vmMemoryArray)
+    }
+
     // vm inbound data
     const getVmInboundData = async () => {
-      const inboundLinuxDataExpr = `sum by (pod,instance) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const inboundWindowsDataExpr = `sum by (pod,instance) (irate(windows_net_bytes_received_total{service="launcher-node-exporter"}[5m]))`
+      const inboundLinuxDataExpr = `linux:vm:net:rx_bytes:5m`
+      const inboundWindowsDataExpr = `windows:vm:net:rx_bytes:5m`
 
       const inboundData = await customStore.fetchMetric({
         expr:
@@ -135,11 +155,7 @@ const index = props => {
       })
 
       const vmInboundMetricData = find(inboundData, data => {
-        if (
-          data.metric.pod === store.detail.vm.name &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
-        )
-          return data
+        if (data.metric.pod === store.detail.vm.name) return data
       })
 
       setVmInboundData(vmInboundMetricData)
@@ -147,8 +163,8 @@ const index = props => {
 
     // vm outbound data
     const getVmOutboundData = async () => {
-      const outboundLinuxDataExpr = `sum by (pod,instance) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
-      const outboundWindowsDataExpr = `sum by (pod,instance) (irate(windows_net_bytes_sent_total{service="launcher-node-exporter"}[5m]))`
+      const outboundLinuxDataExpr = `linux:vm:net:tx_bytes:5m`
+      const outboundWindowsDataExpr = `windows:vm:net:tx_bytes:5m`
 
       const outboundData = await customStore.fetchMetric({
         expr:
@@ -161,19 +177,15 @@ const index = props => {
       })
 
       const vmOutboundMetricData = find(outboundData, data => {
-        if (
-          data.metric.pod === store.detail.vm.name &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
-        )
-          return data
+        if (data.metric.pod === store.detail.vm.name) return data
       })
 
       setVmOutboundData(vmOutboundMetricData)
     }
 
-    const getVmDiskUsageData = async () => {
-      const diskLinuxDataExpr = `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`
-      const diskWindowsDataExpr = `(100 - (((sum by(pod) (windows_logical_disk_free_bytes)) / sum by(pod) (windows_logical_disk_size_bytes)) * 100)) / 100`
+    const getVmDiskPercentData = async () => {
+      const diskLinuxDataExpr = `linux:vm:filesystem:usage_fraction:raw`
+      const diskWindowsDataExpr = `windows:vm:disk:usage_fraction:raw`
 
       const diskData = await customStore.fetchMetric({
         expr:
@@ -186,7 +198,31 @@ const index = props => {
       })
 
       const vmDiskMetricData = find(diskData, data => {
-        if (data.metric?.pod === store.detail.name) return data
+        if (data.metric?.pod === store.detail.vm.name) return data
+      })
+
+      // 배열 처리
+      const vmDiskArray = []
+      vmDiskArray.push(vmDiskMetricData)
+      setVmDiskPercent(vmDiskArray)
+    }
+
+    // vm disk usage
+    const getVmDiskUsageData = async () => {
+      const diskLinuxDataExpr = `linux:vm:filesystem:used_bytes:raw`
+      const diskWindowsDataExpr = `windows:vm:disk:used_bytes:raw`
+
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.vm.name) return data
       })
 
       // 배열 처리
@@ -195,11 +231,57 @@ const index = props => {
       setVmDiskData(vmDiskArray)
     }
 
+    // vm iops read
+    const getVmIopsReadData = async () => {
+      const diskLinuxDataExpr = `linux:vm:disk:read_ops:5m`
+      const diskWindowsDataExpr = `windows:vm:disk:read_ops:5m`
+
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.name) return data
+      })
+
+      setVmIopsReadData(vmDiskMetricData)
+    }
+
+    // vm iops write
+    const getVmIopsWriteData = async () => {
+      const diskLinuxDataExpr = `linux:vm:disk:write_ops:5m`
+      const diskWindowsDataExpr = `windows:vm:disk:write_ops:5m`
+
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.name) return data
+      })
+
+      setVmIopsWriteData(vmDiskMetricData)
+    }
+
     getVmCpuUsageData()
     getVmMemoryUsageData()
+    getVmMemoryPercentData()
     getVmInboundData()
     getVmOutboundData()
     getVmDiskUsageData()
+    getVmDiskPercentData()
+    getVmIopsReadData()
+    getVmIopsWriteData()
   }
 
   const getMonitoringCfgs = () => {
@@ -214,10 +296,16 @@ const index = props => {
       {
         type: 'utilisation',
         title: 'MEMORY_USAGE',
-        unit: '%',
         unitType: 'memory',
         legend: ['MEMORY_USAGE'],
         data: vmMemoryData,
+      },
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_MEMORY_PERCENT'),
+        unit: '%',
+        legend: [t('RESOURCES_MEMORY_PERCENT')],
+        data: vmMemoryPercent,
       },
       {
         type: 'bandwidth',
@@ -229,9 +317,22 @@ const index = props => {
       {
         type: 'utilisation',
         title: t('RESOURCES_DISK_USAGE'),
-        unit: '%',
+        unitType: 'disk',
         legend: [t('RESOURCES_DISK_USAGE')],
         data: vmDiskData,
+      },
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_DISK_PERCENT'),
+        unit: '%',
+        legend: [t('RESOURCES_DISK_PERCENT')],
+        data: vmDiskPercent,
+      },
+      {
+        type: 'iops',
+        title: 'IOPS',
+        legend: ['READ', 'WRITE'],
+        data: [vmIopsReadData, vmIopsWriteData],
       },
     ]
   }

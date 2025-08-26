@@ -183,6 +183,7 @@ export default class ResourceStore extends Base {
     reqData.private_registry = data.private_registry
     reqData.secure_boot = data.secure_boot
     reqData.node_selectors = data.node_selectors
+    reqData.storage_class = data.storage_class
     jsonData.cluster = reqData
 
     return await this.submitting(

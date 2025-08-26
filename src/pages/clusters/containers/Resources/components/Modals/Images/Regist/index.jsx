@@ -17,6 +17,7 @@ import {
 import classnames from 'classnames'
 import axios from 'axios'
 import { Base64 } from 'js-base64'
+import request from 'utils/request'
 
 import DistroTypeStore from 'stores/resources/distrotype'
 import PreInstallAppStore from 'stores/resources/preinstalls'
@@ -110,6 +111,9 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
   const [projectName, setProjectName] = useState('edgestack')
   const [dockerUrl, setDockerUrl] = useState('quay.io')
 
+  const [storageClass, setStorageClass] = useState('nfs-csi')
+  const [storageClassDataList, setStorageClassDataList] = useState([])
+
   const [loading, setLoading] = useState(false)
   const [sourceEmpty, setSourceEmpty] = useState(false)
 
@@ -147,6 +151,43 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
       setPreInstallAppList(preInstallApps)
     }
 
+    const getStorageClassList = async () => {
+      try {
+        const response = await request.get(
+          'kapis/resources.kubesphere.io/v1alpha3/storageclasses'
+        )
+        if (response && response.items && Array.isArray(response.items)) {
+          setStorageClassDataList(response.items)
+
+          // nfs-csi가 있는지 확인하고, 없다면 default storage class를 찾아서 설정
+          const hasNfsCsi = response.items.some(
+            item => item.metadata && item.metadata.name === 'nfs-csi'
+          )
+
+          if (!hasNfsCsi) {
+            // default storage class 찾기
+            const defaultStorageClass = response.items.find(
+              item =>
+                item.metadata &&
+                item.metadata.annotations &&
+                item.metadata.annotations[
+                  'storageclass.kubernetes.io/is-default-class'
+                ] === 'true'
+            )
+
+            if (defaultStorageClass) {
+              setStorageClass(defaultStorageClass.metadata.name)
+            }
+          }
+        } else {
+          setStorageClassDataList([])
+        }
+      } catch (error) {
+        console.error('Failed to fetch storage classes:', error)
+        setStorageClassDataList([])
+      }
+    }
+
     const getVmImageList = async () => {
       const originUrl = new URL(registryUrl)
       const urlParams = originUrl.searchParams
@@ -176,6 +217,7 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
     getDistroTypeList()
     getAcceleratorTypeList()
     getPreInstallAppList()
+    getStorageClassList()
     getVmImageList()
   }, [])
 
@@ -356,6 +398,15 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
     }))
   }
 
+  const storageClassOptions = () => {
+    return storageClassDataList
+      .filter(obj => obj && obj.metadata && obj.metadata.name)
+      .map(obj => ({
+        label: t(obj.metadata.name),
+        value: t(obj.metadata.name),
+      }))
+  }
+
   const handleOk = () => {
     form.current.validator(() => {
       const { data } = form.current.props
@@ -371,10 +422,11 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
       }
       setSourceEmpty(false)
 
-      data.userName = userName
-      data.userPassword = userPassword
+      data.username = userName
+      data.password = userPassword
       data.distro_type = distroType
       data.source = `docker://${dockerUrl}/${projectName}/${imageName}:${tag}`
+      data.storage_class = storageClass
       if (
         publicType === 'public' &&
         (!registryUrlActive || registryUrl === defaultRegistryUrl)
@@ -784,7 +836,7 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={800}
         title={title}
         onOk={handleOk}
         okText={t('RESOURCES_CREATE')}
@@ -1168,6 +1220,11 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
                             />
                           </Form.Item>
                         </Column>
+                      </Columns>
+                    </Form.Item>
+
+                    <Form.Item>
+                      <Columns>
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_BOOT_TYPE')}
@@ -1181,6 +1238,19 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
                               name="boot_type"
                               defaultValue="uefi"
                               options={bootTypeOptions}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_STORAGE_CLASS')}
+                            rules={[{ required: true }]}
+                          >
+                            <Select
+                              name="storage_class"
+                              defaultValue={storageClass}
+                              options={storageClassOptions()}
+                              onChange={e => setStorageClass(e)}
                             />
                           </Form.Item>
                         </Column>
@@ -1419,6 +1489,33 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
                     <Form.Item>
                       <Columns>
                         <Column>
+                          <Form.Item label={t('RESOURCES_VERSION')}>
+                            <Input
+                              name="version"
+                              placeholder="ex) v1.30.1"
+                              maxLength={253}
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
+                        </Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_STORAGE_CLASS')}
+                            rules={[{ required: false }]}
+                          >
+                            <Select
+                              name="storage_class"
+                              defaultValue={storageClass}
+                              options={storageClassOptions()}
+                              onChange={e => setStorageClass(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
+                    </Form.Item>
+                    <Form.Item>
+                      <Columns>
+                        <Column>
                           <Form.Item
                             label={t('RESOURCES_REAL_TIME')}
                             rules={[
@@ -1442,15 +1539,6 @@ const ResourceImageModal = ({ props, title, store, onOk, startRefresh }) => {
                                 </RadioButton>
                               ))}
                             </RadioGroup>
-                          </Form.Item>
-                        </Column>
-                        <Column>
-                          <Form.Item label={t('RESOURCES_VERSION')}>
-                            <Input
-                              name="version"
-                              maxLength={253}
-                              style={{ maxWidth: 'none' }}
-                            />
                           </Form.Item>
                         </Column>
                       </Columns>

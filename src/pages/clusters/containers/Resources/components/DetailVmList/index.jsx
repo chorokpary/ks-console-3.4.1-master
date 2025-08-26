@@ -140,7 +140,7 @@ const DetailVmList = props => {
 
     const getVmCpuUsageData = async () => {
       const data = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `linux:vm:cpu:usage_percent:5m`,
         ...paramsData,
         cluster,
       })
@@ -150,7 +150,7 @@ const DetailVmList = props => {
 
     const getVmWinCpuUsageData = async () => {
       const data = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`,
+        expr: `windows:vm:cpu:usage_percent:5m`,
         ...paramsData,
         cluster,
       })
@@ -160,7 +160,7 @@ const DetailVmList = props => {
     // vm memory data
     const getVmMemoryUsageData = async () => {
       const data = await customStore.fetchMetric({
-        expr: `node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*"}`,
+        expr: `linux:vm:memory:used_bytes:raw`,
         ...paramsData,
         cluster,
       })
@@ -170,7 +170,7 @@ const DetailVmList = props => {
 
     const getVmWinMemoryUsageData = async () => {
       const data = await customStore.fetchMetric({
-        expr: `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`,
+        expr: `windows:vm:memory:used_bytes:raw`,
         ...paramsData,
         cluster,
       })

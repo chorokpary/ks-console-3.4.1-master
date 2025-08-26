@@ -41,6 +41,7 @@ const RegistModal = props => {
   const [imageOptionList, setImageOptionList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
@@ -58,6 +59,9 @@ const RegistModal = props => {
   const [elbSelect, setElbSelect] = useState('')
   const [expirationSelect, setExpirationSelect] = useState('10')
   const [ekgStack, setEkgStack] = useState([])
+  const [storageClass, setStorageClass] = useState('')
+  const [imageStorageClass, setImageStorageClass] = useState('')
+  const [storageClassTab, setStorageClassTab] = useState('default') // 'default', 'image', 'manual'
 
   // options
   const [cnis, setCnis] = useState([])
@@ -96,12 +100,17 @@ const RegistModal = props => {
 
       const listImage = await kaasStore.fetchListImage(props)
 
+      const listStoregeClass = await vmStore.fetchVmListStoregeClass({
+        ...props,
+      })
+
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
       setNetworkList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
       setSriovNetworkList(listSriovNetwork.sriovs)
+      setStorageClassDataList(listStoregeClass.user_sces)
     }
 
     getVmCreateData()
@@ -148,7 +157,7 @@ const RegistModal = props => {
       if (response.features) {
         for (let i = 0, n = response.features.length; i < n; i += 1) {
           resFeature.push({
-            label: response.features[i].name,
+            label: t(`RESOURCES_KAAS_FEATURE_${response.features[i].name.toUpperCase()}`),
             value: response.features[i].name,
             // icon: response.data.features[i].name.toLowerCase(),
             icon: `ico-etc-${response.features[i].name.toLowerCase()}`,
@@ -281,6 +290,15 @@ const RegistModal = props => {
     })
   }
 
+  const storageClassOptions = () => {
+    return storageClassDataList.map(obj => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+    })
+  }
+
   const expirationOption = [
     { label: `1${t('RESOURCES_YEAR')}`, value: 1 },
     { label: `2${t('RESOURCES_YEAR')}`, value: 2 },
@@ -317,6 +335,7 @@ const RegistModal = props => {
       data.private_registry = tab === 'private'
       data.secure_boot = secureBoot
       data.node_selectors = nodeSelector
+      data.storage_class = storageClass
       onOk({ ...data })
     })
   }
@@ -607,7 +626,7 @@ const RegistModal = props => {
     <>
       <Modal
         icon="templet"
-        width={960}
+        width={840}
         title={props.title}
         onCancel={closeModal}
         bodyClassName={styles.body}
@@ -626,13 +645,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep === 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -644,8 +662,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -657,13 +675,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
-                      ? styles.current
-                      : regStep > 2
+                  className={`${regStep === 2
+                    ? styles.current
+                    : regStep > 2
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.network}></span>
@@ -675,8 +692,8 @@ const RegistModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -688,13 +705,12 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 3
-                      ? styles.current
-                      : regStep > 3
+                  className={`${regStep === 3
+                    ? styles.current
+                    : regStep > 3
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -706,8 +722,8 @@ const RegistModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -853,7 +869,19 @@ const RegistModal = props => {
                             label: t('RESOURCES_SELECT'),
                           }}
                           options={imageOptions()}
-                          onChange={e => setSelectImageName(e)}
+                          onChange={e => {
+                            setSelectImageName(e)
+                            // 이미지 선택 시 storage_class 업데이트
+                            const imageSC = imageOptionList.find(
+                              item => item.name === e
+                            )?.storage_class
+                            if (imageSC) {
+                              setImageStorageClass(imageSC)
+                            }
+                            if (storageClassTab === 'image') {
+                              setStorageClass(imageSC)
+                            }
+                          }}
                           defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
                         />
                       </Form.Item>
@@ -869,15 +897,71 @@ const RegistModal = props => {
                         </Form.Item>
                       )}
                     </Column>
-                    <Column
-                      align={'middle'}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Form.Item desc={t('RESOURCES_MASTER_COUNT_MAX_DESC')}>
+                    <Column>
+                      <Form.Item label={t('RESOURCES_STORAGE_CLASS')}>
+                        <Tabs
+                          type="button"
+                          activeName={storageClassTab}
+                          onChange={newTab => {
+                            setStorageClassTab(newTab)
+                            if (newTab === 'default') {
+                              setStorageClass('')
+                            }
+                            if (newTab === 'image') {
+                              setStorageClass(imageStorageClass)
+                            }
+                          }}
+                        >
+                          <TabPanel
+                            label={t('RESOURCES_DEFAULT')}
+                            name="default"
+                          />
+                          <TabPanel
+                            label={t('RESOURCES_IMAGE_CLASS')}
+                            name="image"
+                          />
+                          <TabPanel
+                            label={t('RESOURCES_MANUAL_SELECTION')}
+                            name="manual"
+                          />
+                        </Tabs>
+                      </Form.Item>
+                      {storageClassTab === 'manual' && (
+                        <Form.Item>
+                          <Select
+                            options={storageClassOptions()}
+                            onChange={el => setStorageClass(el)}
+                            value={
+                              storageClass !== ''
+                                ? storageClass
+                                : t('RESOURCES_SELECT')
+                            }
+                          />
+                        </Form.Item>
+                      )}
+                      {storageClassTab === 'image' && storageClass !== '' && (
+                        <Form.Item>
+                          <div className={styles.wrapperImageView}>
+                            {storageClass}
+                          </div>
+                        </Form.Item>
+                      )}
+                      <Form.Item label={t('RESOURCES_VM_CUSTOM_SETTINGS')}>
+                        <div className={styles.box_wrapper}>
+                          <div className={styles.box_title}>
+                            <Checkbox
+                              checked={secureBoot}
+                              onChange={sb => setSecureBoot(sb)}
+                            >
+                              {t('RESOURCES_ENABLE_SECURE_BOOT')}
+                            </Checkbox>
+                          </div>
+                        </div>
+                      </Form.Item>
+                      <Form.Item
+                        label={t('RESOURCES_NODE_COUNT')}
+                        desc={t('RESOURCES_MASTER_COUNT_MAX_DESC')}
+                      >
                         <div>
                           <Button icon="substract" onClick={minusMasterBtn} />
                           &nbsp;&nbsp;
@@ -963,16 +1047,16 @@ const RegistModal = props => {
                             <tbody>
                               {!networkList?.filter(el => el.external)
                                 .length && (
-                                <tr>
-                                  <td colSpan="6" className="no-data">
-                                    <p>
-                                      {t(
-                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                      )}
-                                    </p>
-                                  </td>
-                                </tr>
-                              )}
+                                  <tr>
+                                    <td colSpan="6" className="no-data">
+                                      <p>
+                                        {t(
+                                          'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                        )}
+                                      </p>
+                                    </td>
+                                  </tr>
+                                )}
                               {networkList
                                 ?.filter(el => el.external)
                                 .map(data => (
@@ -1074,9 +1158,8 @@ const RegistModal = props => {
                       </div>
                     </Form.Item>
                     <div
-                      className={`form-item-error ${
-                        !networkName ? '' : 'hide'
-                      }`}
+                      className={`form-item-error ${!networkName ? '' : 'hide'
+                        }`}
                     >
                       {t('RESOURCES_SELECT_NETWORK_TIP')}
                     </div>
@@ -1241,11 +1324,11 @@ const RegistModal = props => {
                   <Form.Group>
                     <Form.Item>
                       <CardSelect
-                        className={styles.customUl}
+                        className={styles.customStackUl}
                         onChange={e => handleEkgStack(e)}
                         options={features}
                         value={ekgStack}
-                        customSize={[`70%`, `15%`]}
+                        customSize={[`100%`, `0%`]}
                       />
                     </Form.Item>
                   </Form.Group>
@@ -1255,9 +1338,8 @@ const RegistModal = props => {
                 <Form.Item label={t('ADD_NODE_SELECTOR')}>
                   <div className={styles.box_wrapper}>
                     <div
-                      className={`form-item-error ${
-                        nodeSelectorError ? '' : 'hide'
-                      }`}
+                      className={`form-item-error ${nodeSelectorError ? '' : 'hide'
+                        }`}
                     >
                       {t('ADD_NODE_SELECTOR_TIP')}
                     </div>
@@ -1289,29 +1371,18 @@ const RegistModal = props => {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('RESOURCES_VM_CUSTOM_SETTINGS')}>
-                      <div className={styles.box_wrapper}>
-                        <div className={styles.box_title}>
-                          <Checkbox
-                            checked={secureBoot}
-                            onChange={sb => setSecureBoot(sb)}
-                          >
-                            {t('RESOURCES_ENABLE_SECURE_BOOT')}
-                          </Checkbox>
-                        </div>
-                      </div>
+                    <Form.Item label={t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}>
+                      <Select
+                        name="expiration"
+                        options={expirationOption}
+                        defaultValue={10}
+                        onChange={el => setExpirationSelect(el)}
+                      />
                     </Form.Item>
                   </Column>
                 </Columns>
 
-                <Form.Item label={t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}>
-                  <Select
-                    name="expiration"
-                    options={expirationOption}
-                    defaultValue={10}
-                    onChange={el => setExpirationSelect(el)}
-                  />
-                </Form.Item>
+
               </div>
               {/* 세부 설정 끝========================================== */}
 
@@ -1352,6 +1423,12 @@ const RegistModal = props => {
                         <label>{t('RESOURCES_DESCRIPTION')}</label>
                         <div>{description}</div>
                       </div>
+                      {storageClass && (
+                        <div className={styles.list} style={{ width: '40%' }}>
+                          <label>{t('RESOURCES_STORAGE_CLASS')}</label>
+                          <div className={styles.bold}>{storageClass}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1455,12 +1532,11 @@ const RegistModal = props => {
                         </div>
                       ))}
                     <label
-                      className={`${
-                        networkList.filter(x => elbCheckItem === x.name)
-                          .length > 0
-                          ? ''
-                          : 'hide'
-                      }`}
+                      className={`${networkList.filter(x => elbCheckItem === x.name)
+                        .length > 0
+                        ? ''
+                        : 'hide'
+                        }`}
                     >
                       ELB ({elbSelect})
                     </label>

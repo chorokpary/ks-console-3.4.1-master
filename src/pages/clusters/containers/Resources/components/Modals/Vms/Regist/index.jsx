@@ -89,6 +89,8 @@ const RegistModal = props => {
   const [keypairName, setKeypairName] = useState('')
   const [nodeName, setNodeName] = useState('')
   const [storageClass, setStorageClass] = useState('')
+  const [imageStorageClass, setImageStorageClass] = useState('')
+  const [storageClassTab, setStorageClassTab] = useState('default') // 'default', 'image', 'manual'
   const [secureBoot, setSecureBoot] = useState(false)
   const [networkStorage, setNetworkStorage] = useState('')
 
@@ -234,7 +236,9 @@ const RegistModal = props => {
   ]
 
   const availableIpOptions = (netId, project) => {
-    const networkIps = availableIpList.find(obj => obj.network === netId && obj.project === project)
+    const networkIps = availableIpList.find(
+      obj => obj.network === netId && obj.project === project
+    )
     if (networkIps !== undefined) {
       return networkIps.ips.map(ip => {
         return {
@@ -344,13 +348,14 @@ const RegistModal = props => {
   }
 
   const networkStorageOptions = () => {
-    return networkStorageDataList.filter(obj => obj.project === projectName)
+    return networkStorageDataList
+      .filter(obj => obj.project === projectName)
       .map(obj => {
-      return {
-        label: t(obj.name),
-        value: t(obj.name),
-      }
-    })
+        return {
+          label: t(obj.name),
+          value: t(obj.name),
+        }
+      })
   }
 
   const imageOptions = () => {
@@ -1396,6 +1401,17 @@ const RegistModal = props => {
                                     .filter(item => item.name === e)
                                     .map(item => item.pre_installed_app)[0]
                                   handlePreInstalledApp(app)
+
+                                  // 이미지 탭일 때 storage_class 업데이트
+                                  const imageSC = imageOptionList.find(
+                                    item => item.name === e
+                                  ).storage_class
+                                  if (imageSC) {
+                                    setImageStorageClass(imageSC)
+                                  }
+                                  if (storageClassTab === 'image') {
+                                    setStorageClass(imageSC)
+                                  }
                                 }}
                                 defaultDescription={t(
                                   'RESOURCES_SELECT_IMAGE_TIP'
@@ -1495,30 +1511,67 @@ const RegistModal = props => {
 
                       <Column>
                         {imageType === 'B' && <div style={{ padding: 8 }} />}
+                        {imageType === 'I' && (
+                          <div className={styles.caption}>
+                            {t('RESOURCES_STORAGE_CLASS')}
+                          </div>
+                        )}
+                        {imageType === 'I' && (
+                          <Form.Group>
+                            <Form.Item>
+                              <Tabs
+                                type="button"
+                                activeName={storageClassTab}
+                                onChange={newTab => {
+                                  setStorageClassTab(newTab)
+                                  if (newTab === 'default') {
+                                    setStorageClass('')
+                                  }
+                                  if (newTab === 'image') {
+                                    setStorageClass(imageStorageClass)
+                                  }
+                                }}
+                              >
+                                <TabPanel
+                                  label={t('RESOURCES_DEFAULT')}
+                                  name="default"
+                                />
+                                <TabPanel
+                                  label={t('RESOURCES_IMAGE_CLASS')}
+                                  name="image"
+                                />
+                                <TabPanel
+                                  label={t('RESOURCES_MANUAL_SELECTION')}
+                                  name="manual"
+                                />
+                              </Tabs>
+                            </Form.Item>
+                            {storageClassTab === 'manual' && (
+                              <Form.Item>
+                                <Select
+                                  options={storageClassOptions()}
+                                  onChange={el => setStorageClass(el)}
+                                  value={
+                                    storageClass !== ''
+                                      ? storageClass
+                                      : t('RESOURCES_SELECT')
+                                  }
+                                />
+                              </Form.Item>
+                            )}
+                            {storageClassTab === 'image' &&
+                              storageClass !== '' && (
+                                <Form.Item>
+                                  <div className={styles.wrapperImageView}>
+                                    {storageClass}
+                                  </div>
+                                </Form.Item>
+                              )}
+                          </Form.Group>
+                        )}
                         <div className={styles.caption}>
                           {t('RESOURCES_VM_CUSTOM_SETTINGS')}
                         </div>
-                        {imageType === 'I' && (
-                          <Form.Group
-                            label={t('RESOURCES_STORAGE_CLASS')}
-                            onChange={() => {
-                              setStorageClass('')
-                            }}
-                            checkable
-                          >
-                            <Form.Item>
-                              <Select
-                                options={storageClassOptions()}
-                                onChange={el => setStorageClass(el)}
-                                value={
-                                  storageClass !== ''
-                                    ? storageClass
-                                    : t('RESOURCES_SELECT')
-                                }
-                              />
-                            </Form.Item>
-                          </Form.Group>
-                        )}
                         <div className={styles.box_wrapper}>
                           <div className={styles.box_title}>
                             <Checkbox
@@ -1649,7 +1702,10 @@ const RegistModal = props => {
                                 <Select
                                   name={`${data.name}-ip`}
                                   placeholder={t('RESOURCES_AUTOMATIC')}
-                                  options={availableIpOptions(data.name, data.project)}
+                                  options={availableIpOptions(
+                                    data.name,
+                                    data.project
+                                  )}
                                   onChange={e =>
                                     handleIpSelectClick(data.name, e)
                                   }

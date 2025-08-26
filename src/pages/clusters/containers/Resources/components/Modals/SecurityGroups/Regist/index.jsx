@@ -432,7 +432,7 @@ const RegistModal = props => {
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={800}
         title={props.title}
         onOk={handleOk}
         onCancel={closeModal}
@@ -508,7 +508,7 @@ const RegistModal = props => {
                             <strong>{t('RESOURCES_PORT_RANGE')}</strong>
                           </th>
                           <th>
-                            <strong>{t('RESOURCES_ETHERNET_TYPE')}</strong>
+                            <strong>{t('RESOURCES_ETHERNET_TYPE_SHORT')}</strong>
                           </th>
                           <th>
                             <strong>{t('RESOURCES_REMOTE_IP_RANGE')}</strong>

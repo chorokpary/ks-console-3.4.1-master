@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Form, Input, Slider, TextArea } from '@kube-design/components'
+import {
+  Button,
+  Form,
+  Input,
+  Select,
+  Slider,
+  TextArea,
+  Tabs,
+} from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import classnames from 'classnames'
 
@@ -28,6 +36,7 @@ const RegistNodePoolModal = props => {
   const [imageDataList, setImageDataList] = useState([])
   const [selectImageName, setSelectImageName] = useState('')
   const [imageOptionList, setImageOptionList] = useState([])
+  const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
@@ -41,6 +50,11 @@ const RegistNodePoolModal = props => {
   const [isAutoScale, setIsAutoScale] = useState(false)
   const [autoScale, setAutoScale] = useState([1, 3])
 
+  // Storage Class 관련 상태 추가
+  const [storageClass, setStorageClass] = useState('')
+  const [imageStorageClass, setImageStorageClass] = useState('')
+  const [storageClassTab, setStorageClassTab] = useState('default') // 'default', 'image', 'manual'
+
   // NodeSelector 관련 상태 추가
   const [nodeSelector, setNodeSelector] = useState({})
   const [nodeSelectorError, setNodeSelectorError] = useState(false)
@@ -53,10 +67,15 @@ const RegistNodePoolModal = props => {
       })
       const listImage = await resourceStore.fetchListImage(props)
 
+      const listStoregeClass = await vmStore.fetchVmListStoregeClass({
+        ...props,
+      })
+
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
       setOsDistro(props.detailStore.detail.cluster.os_distro)
       setKubeVersion(props.detailStore.detail.cluster.kube_version)
+      setStorageClassDataList(listStoregeClass.user_sces)
     }
     const getAcceleratorTypeList = async () => {
       const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
@@ -147,9 +166,18 @@ const RegistNodePoolModal = props => {
     }))
   }
 
+  const storageClassOptions = () => {
+    return storageClassDataList.map(obj => {
+      return {
+        label: t(obj.name),
+        value: t(obj.name),
+      }
+    })
+  }
+
   const handleOk = () => {
     const onOk = props.onOk
-    form.current.validator(() => {      
+    form.current.validator(() => {
       const { data } = form.current.props
       const scaleRange = {}
       scaleRange.min_replicas = isAutoScale ? autoScale[0] : 0
@@ -158,6 +186,7 @@ const RegistNodePoolModal = props => {
       data.autoscale = isAutoScale
       data.scale_range = scaleRange
       data.node_selectors = nodeSelector
+      data.storage_class = storageClass
       onOk({ ...data })
     })
   }
@@ -270,11 +299,13 @@ const RegistNodePoolModal = props => {
   }
 
   // 스크립트 끝 ==================================================
+  const { TabPanel } = Tabs
+
   return (
     <>
       <Modal
         icon="templet"
-        width={960}
+        width={800}
         title={t('RESOURCES_CREATE_NODEPOOL')}
         onCancel={closeModal}
         bodyClassName={styles.body}
@@ -305,7 +336,7 @@ const RegistNodePoolModal = props => {
                     style={{ maxWidth: 'none' }}
                   />
                 </Form.Item>
-                <div style={{ padding: 10 }} />
+                <div style={{ padding: 3 }} />
                 NodePool
                 <span className="form-item-required">*</span>
                 <Form.Group>
@@ -358,7 +389,19 @@ const RegistNodePoolModal = props => {
                             label: t('RESOURCES_SELECT'),
                           }}
                           options={imageOptions()}
-                          onChange={e => setSelectImageName(e)}
+                          onChange={e => {
+                            setSelectImageName(e)
+                            // 이미지 선택 시 storage_class 업데이트
+                            const imageSC = imageOptionList.find(
+                              item => item.name === e
+                            )?.storage_class
+                            if (imageSC) {
+                              setImageStorageClass(imageSC)
+                            }
+                            if (storageClassTab === 'image') {
+                              setStorageClass(imageSC)
+                            }
+                          }}
                           defaultDescription={t('RESOURCES_SELECT_IMAGE_TIP')}
                         />
                       </Form.Item>
@@ -376,7 +419,55 @@ const RegistNodePoolModal = props => {
                     </Column>
                   </Columns>
                 </Form.Group>
-                <div style={{ padding: 10 }} />
+                {t('RESOURCES_STORAGE_CLASS')}
+                <span className="form-item-required">*</span>
+                <Form.Group>
+                  <Form.Item>
+                    <Tabs
+                      type="button"
+                      activeName={storageClassTab}
+                      onChange={newTab => {
+                        setStorageClassTab(newTab)
+                        if (newTab === 'default') {
+                          setStorageClass('')
+                        }
+                        if (newTab === 'image') {
+                          setStorageClass(imageStorageClass)
+                        }
+                      }}
+                    >
+                      <TabPanel label={t('RESOURCES_DEFAULT')} name="default" />
+                      <TabPanel
+                        label={t('RESOURCES_IMAGE_CLASS')}
+                        name="image"
+                      />
+                      <TabPanel
+                        label={t('RESOURCES_MANUAL_SELECTION')}
+                        name="manual"
+                      />
+                    </Tabs>
+                  </Form.Item>
+                  {storageClassTab === 'manual' && (
+                    <Form.Item>
+                      <Select
+                        options={storageClassOptions()}
+                        onChange={el => setStorageClass(el)}
+                        value={
+                          storageClass !== ''
+                            ? storageClass
+                            : t('RESOURCES_SELECT')
+                        }
+                      />
+                    </Form.Item>
+                  )}
+                  {storageClassTab === 'image' && storageClass !== '' && (
+                    <Form.Item>
+                      <div className={styles.wrapperImageView}>
+                        {storageClass}
+                      </div>
+                    </Form.Item>
+                  )}
+                </Form.Group>
                 Replicas
                 <span className="form-item-required">*</span>
                 <Form.Group>
@@ -442,7 +533,6 @@ const RegistNodePoolModal = props => {
                   </Columns>
                 </Form.Group>
                 {/* NodeSelector 입력 필드 추가 */}
-                <div style={{ padding: 10 }} />
                 <Form.Item label={t('ADD_NODE_SELECTOR')}>
                   <div className={styles.box_wrapper}>
                     <div

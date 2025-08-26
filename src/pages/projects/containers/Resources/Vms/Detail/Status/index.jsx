@@ -198,8 +198,8 @@ const Status = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `(100 - (avg by (pod,instance,namespace) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
-      const cpuWindowsDataExpr = `(100 - (avg by (pod,instance,namespace) (irate(windows_cpu_time_total{service="launcher-node-exporter",mode="idle"}[5m])) * 100)) / 100`
+      const cpuLinuxDataExpr = `linux:vm:cpu:usage_percent:5m`
+      const cpuWindowsDataExpr = `windows:vm:cpu:usage_percent:5m`
 
       const cpuData = await customStore.fetchMetric({
         expr:
@@ -212,8 +212,7 @@ const Status = props => {
       const vmCpuMetricData = find(cpuData, data => {
         if (
           data.metric.pod === store.detail.vm.name &&
-          data.metric.namespace === store.detail.vm.project &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+          data.metric.namespace === store.detail.vm.project
         )
           return data
       })
@@ -226,8 +225,8 @@ const Status = props => {
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
-      const memoryWindowsDataExpr = `windows_os_visible_memory_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-windows_memory_available_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+      const memoryLinuxDataExpr = `linux:vm:memory:used_bytes:raw`
+      const memoryWindowsDataExpr = `windows:vm:memory:used_bytes:raw`
 
       const memoryData = await customStore.fetchMetric({
         expr:
@@ -240,8 +239,7 @@ const Status = props => {
       const vmMemoryMetricData = find(memoryData, data => {
         if (
           data.metric.pod === store.detail.vm.name &&
-          data.metric.namespace === store.detail.vm.project &&
-          data.metric.instance.split(':')[0] === store.detail.vm.networks[0].ip
+          data.metric.namespace === store.detail.vm.project
         )
           return data
       })

@@ -20,6 +20,7 @@ import ClusterDistroTypeStore from 'stores/resources/clusterdistrotype'
 import classnames from 'classnames'
 import axios from 'axios'
 import { Base64 } from 'js-base64'
+import request from 'utils/request'
 
 import GpuNodeStore from 'stores/resources/gpunodes'
 import TypeSelect from '../../../TypeSelect'
@@ -91,6 +92,9 @@ const ResourceImageModal = props => {
   const [tag, setTag] = useState('')
   const [projectName, setProjectName] = useState('edgestack')
   const [dockerUrl, setDockerUrl] = useState('quay.io')
+
+  const [storageClass, setStorageClass] = useState('nfs-csi')
+  const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [loading, setLoading] = useState(false)
   const [sourceEmpty, setSourceEmpty] = useState(false)
@@ -248,10 +252,11 @@ const ResourceImageModal = props => {
       }
       setSourceEmpty(false)
 
-      data.userName = userName
-      data.userPassword = userPassword
+      data.username = userName
+      data.password = userPassword
       data.os_distro = distroType
       data.source = `docker://${dockerUrl}/${projectName}/${imageName}:${tag}`
+      data.storage_class = storageClass
       if (
         publicType === 'public' &&
         (!registryUrlActive || registryUrl === defaultRegistryUrl)
@@ -321,8 +326,25 @@ const ResourceImageModal = props => {
       setAcceleratorTypeList(accelList)
     }
 
+    const getStorageClassList = async () => {
+      try {
+        const response = await request.get(
+          'kapis/resources.kubesphere.io/v1alpha3/storageclasses'
+        )
+        if (response && response.items && Array.isArray(response.items)) {
+          setStorageClassDataList(response.items)
+        } else {
+          setStorageClassDataList([])
+        }
+      } catch (error) {
+        console.error('Failed to fetch storage classes:', error)
+        setStorageClassDataList([])
+      }
+    }
+
     getDistroTypeList()
     getAcceleratorTypeList()
+    getStorageClassList()
   }, [])
 
   const distroTypeOptions = () => {
@@ -339,6 +361,15 @@ const ResourceImageModal = props => {
       label: t(obj),
       value: t(obj),
     }))
+  }
+
+  const storageClassOptions = () => {
+    return storageClassDataList
+      .filter(obj => obj && obj.metadata && obj.metadata.name)
+      .map(obj => ({
+        label: t(obj.metadata.name),
+        value: t(obj.metadata.name),
+      }))
   }
 
   const handleDistroType = value => {
@@ -650,7 +681,7 @@ const ResourceImageModal = props => {
     <>
       <Modal
         icon="pen"
-        width={1000}
+        width={800}
         title={title}
         onOk={handleOk}
         okText={t('RESOURCES_CREATE')}
@@ -1010,6 +1041,23 @@ const ResourceImageModal = props => {
                           </Form.Item>
                         </Column>
                       </Columns>
+
+                      {/* Storage Class 선택 필드 추가 */}
+                      <Columns>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_STORAGE_CLASS')}
+                            rules={[{ required: true }]}
+                          >
+                            <Select
+                              name="storage_class"
+                              defaultValue={storageClass}
+                              options={storageClassOptions()}
+                              onChange={e => setStorageClass(e)}
+                            />
+                          </Form.Item>
+                        </Column>
+                      </Columns>
                     </Form.Group>
                   </Form.Item>
                   <Form.Item>
@@ -1162,6 +1210,23 @@ const ResourceImageModal = props => {
                             maxLength={253}
                             style={{ maxWidth: 'none' }}
                             placeholder="v1.1.1"
+                          />
+                        </Form.Item>
+                      </Column>
+                    </Columns>
+
+                    {/* Storage Class 선택 필드 추가 */}
+                    <Columns>
+                      <Column>
+                        <Form.Item
+                          label={t('RESOURCES_STORAGE_CLASS')}
+                          rules={[{ required: false }]}
+                        >
+                          <Select
+                            name="storage_class"
+                            defaultValue={storageClass}
+                            options={storageClassOptions()}
+                            onChange={e => setStorageClass(e)}
                           />
                         </Form.Item>
                       </Column>
