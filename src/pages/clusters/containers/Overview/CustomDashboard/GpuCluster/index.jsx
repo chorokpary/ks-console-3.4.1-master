@@ -59,6 +59,8 @@ const GpuCluster = ({
   const [normalCount, setNormalCount] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
 
+  const [xidTimeRange, setXidTimeRange] = useState(3600)
+
   const [scale, setScale] = useState(1)
 
   useEffect(() => {
@@ -244,17 +246,46 @@ const GpuCluster = ({
     const gpuMemTransform = transformDataToObject(gpuMemData)
     setGpuMemData(gpuMemTransform)
 
-    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
+    // xid error 관련
+    xidData()
 
+    setPanelLoading(false)
+  }
+
+  const xidData = async () => {
+    setPanelLoading(true)
+
+    const vmList =
+      selectedGpuCluster?.instances?.map(item => item.vmName).join('|') || ''
+    var currentTime = Math.floor(Date.now() / 1000)
+
+    // Xid Error
+    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"}`
     const gpuXidData = await customStore.fetchMetric({
       expr: gpuXidExpr,
-      ...paramsData,
+      cluster: selectedGpuCluster?.namespace,
     })
-    const gpuXidTransform = transformXidDataToObject(gpuXidData)
+
+    // Xid Error - 최근 10분간 변화량이 있는지 확인
+    const gpuXidExprChangeExpr = `changes((max by (gpu, pod) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"})[10m:])) > 0`
+    const gpuXidExprChangeData = await customStore.fetchMetric({
+      expr: gpuXidExprChangeExpr,
+      cluster: selectedGpuCluster?.namespace,
+      start: currentTime - xidTimeRange, // 1시간 기준 > 3600
+      end: currentTime,
+    })
+    const gpuXidTransform = transformXidDataToObject(
+      gpuXidData,
+      gpuXidExprChangeData
+    )
     setGpuXidData(gpuXidTransform)
 
     setPanelLoading(false)
   }
+
+  useEffect(() => {
+    xidData()
+  }, [xidTimeRange])
 
   function toggleDropdown() {
     const dropdown = document.getElementById('dropdown')
@@ -285,60 +316,119 @@ const GpuCluster = ({
     return result
   }
 
-  const transformXidDataToObject = data => {
-    const result = {}
-    let criticalCount = 0
+  // const transformXidDataToObject = data => {
+  //   const result = {}
+  //   let criticalCount = 0
+  //   let minorCount = 0
+  //   let normalCount = 0
+
+  //   data.forEach(item => {
+  //     const pod = item.metric.pod
+  //     const gpu = item.metric.gpu
+  //     const errCode = item.metric.err_code
+  //     let errValue = 'unknown'
+  //     if (
+  //       errCode == '31' ||
+  //       errCode == '32' ||
+  //       errCode == '43' ||
+  //       errCode == '45' ||
+  //       errCode == '48' ||
+  //       errCode == '56' ||
+  //       errCode == '61' ||
+  //       errCode == '79' ||
+  //       errCode == '89'
+  //     ) {
+  //       errValue = 'critical'
+  //       criticalCount++
+  //     } else if (
+  //       errCode == '1' ||
+  //       errCode == '4' ||
+  //       errCode == '5' ||
+  //       errCode == '8' ||
+  //       errCode == '13' ||
+  //       errCode == '31' ||
+  //       errCode == '47' ||
+  //       errCode == '74'
+  //     ) {
+  //       errValue = 'minor'
+  //       minorCount++
+  //     } else if (errCode == '0') {
+  //       errValue = 'normal'
+  //       normalCount++
+  //     }
+
+  //     if (!result[pod]) {
+  //       result[pod] = {}
+  //     }
+
+  //     result[pod][gpu] = errValue
+  //   })
+
+  //   setCriticalCount(criticalCount)
+  //   setMinorCount(minorCount)
+  //   setNormalCount(normalCount)
+  //   setTotalCount(vmTotal * 8)
+
+  //   return result
+  // }
+
+  const transformXidDataToObject = (data1, data2) => {
     let minorCount = 0
     let normalCount = 0
 
-    data.forEach(item => {
+    const resultMap = {}
+
+    const comparePods = new Set(
+      data2.map(item => `${item.metric.pod}-${item.metric.gpu}`)
+    )
+
+    data1.forEach(item => {
       const pod = item.metric.pod
       const gpu = item.metric.gpu
+      const key = `${pod}-${gpu}`
       const errCode = item.metric.err_code
-      let errValue = 'unknown'
-      if (
-        errCode == '31' ||
-        errCode == '32' ||
-        errCode == '43' ||
-        errCode == '45' ||
-        errCode == '48' ||
-        errCode == '56' ||
-        errCode == '61' ||
-        errCode == '79' ||
-        errCode == '89'
-      ) {
-        errValue = 'critical'
-        criticalCount++
-      } else if (
-        errCode == '1' ||
-        errCode == '4' ||
-        errCode == '5' ||
-        errCode == '8' ||
-        errCode == '13' ||
-        errCode == '31' ||
-        errCode == '47' ||
-        errCode == '74'
-      ) {
-        errValue = 'minor'
+
+      // pod 단위 결과 객체 초기화
+      if (!resultMap[pod]) {
+        resultMap[pod] = {}
+      }
+
+      if (comparePods.has(key)) {
+        resultMap[pod][gpu] = 'minor'
         minorCount++
-      } else if (errCode == '0') {
-        errValue = 'normal'
-        normalCount++
+      } else {
+        if (
+          errCode == '31' ||
+          errCode == '32' ||
+          errCode == '43' ||
+          errCode == '45' ||
+          errCode == '48' ||
+          errCode == '56' ||
+          errCode == '61' ||
+          errCode == '79' ||
+          errCode == '89' ||
+          errCode == '1' ||
+          errCode == '4' ||
+          errCode == '5' ||
+          errCode == '8' ||
+          errCode == '13' ||
+          errCode == '31' ||
+          errCode == '47' ||
+          errCode == '74' ||
+          errCode == '0'
+        ) {
+          resultMap[pod][gpu] = 'normal'
+          normalCount++
+        } else {
+          resultMap[pod][gpu] = 'unknown'
+        }
       }
-
-      if (!result[pod]) {
-        result[pod] = {}
-      }
-
-      result[pod][gpu] = errValue
     })
-
-    setCriticalCount(criticalCount)
     setMinorCount(minorCount)
     setNormalCount(normalCount)
     setTotalCount(vmTotal * 8)
 
-    return result
+    return resultMap
   }
 
   const handleSelectGpuCluster = item => {
@@ -473,6 +563,7 @@ const GpuCluster = ({
                               zoomIn={zoomIn}
                               zoomOut={zoomOut}
                               resetTransform={resetTransform}
+                              setXidTimeRange={setXidTimeRange}
                             />
                             <TransformComponent
                               onTransformChange={transform =>
@@ -480,7 +571,7 @@ const GpuCluster = ({
                               }
                               wrapperStyle={{
                                 width: '1000px',
-                                height: '390px',
+                                height: '415px',
                               }}
                             >
                               <Loading spinning={panelLoading}>
@@ -598,7 +689,7 @@ const GpuCluster = ({
                           </div>
                           <div className="gpu_legend">
                             <div className="gpu_legend_values">
-                              <div>{criticalCount}</div>
+                              {/* <div>{criticalCount}</div> */}
                               <div>{minorCount}</div>
                               <div>{normalCount}</div>
                               <div>
@@ -607,13 +698,13 @@ const GpuCluster = ({
                               </div>
                             </div>
                             <div className="gpu_legend_dots">
-                              <div className="dot critical"></div>
+                              {/* <div className="dot critical"></div> */}
                               <div className="dot minor"></div>
                               <div className="dot normal"></div>
                               <div className="dot unknown"></div>
                             </div>
                             <div className="gpu_legend_labels">
-                              <div>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</div>
+                              {/* <div>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</div> */}
                               <div>{t('RESOURCES_GPUCLUSTER_MINOR')}</div>
                               <div>{t('RESOURCES_GPUCLUSTER_NORMAL')}</div>
                               <div>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</div>
@@ -777,8 +868,18 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
   )
 }
 
-const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
+const Controls = ({ zoomIn, zoomOut, resetTransform, setXidTimeRange }) => (
   <>
+    <div className="select step">
+      <select
+        onChange={e => setXidTimeRange(Number(e.target.value))}
+        defaultValue={3600}
+      >
+        <option value={3600}>1h</option>
+        <option value={3600 * 2}>2h</option>
+        <option value={3600 * 3}>3h</option>
+      </select>
+    </div>
     <div className="zoomin_icon">
       <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
         <i className="ico-plus"></i>
