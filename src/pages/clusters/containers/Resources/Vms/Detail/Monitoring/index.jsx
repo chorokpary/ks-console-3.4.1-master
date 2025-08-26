@@ -14,9 +14,13 @@ const index = props => {
 
   const [vmCpuData, setVmCpuData] = useState([])
   const [vmMemoryData, setVmMemoryData] = useState([])
+  const [vmMemoryPercent, setVmMemoryPercent] = useState([])
   const [vmInboundData, setVmInboundData] = useState({})
   const [vmOutboundData, setVmOutboundData] = useState({})
   const [vmDiskData, setVmDiskData] = useState([])
+  const [vmDiskPercent, setVmDiskPercent] = useState([])
+  const [vmIopsReadData, setVmIopsReadData] = useState({})
+  const [vmIopsWriteData, setVmIopsWriteData] = useState({})
 
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
@@ -115,6 +119,34 @@ const index = props => {
       setVmMemoryData(vmMemoryArray)
     }
 
+    // vm memory percent
+    const getVmMemoryPercentData = async () => {
+      const memoryLinuxDataExpr = `linux:vm:memory:used_percent:5m`
+      const memoryWindowsDataExpr = `windows:vm:memory:used_percent:5m`
+
+      const memoryData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? memoryLinuxDataExpr
+            : memoryWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmMemoryMetricData = find(memoryData, data => {
+        if (
+          data.metric.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project
+        )
+          return data
+      })
+
+      // 배열 처리
+      const vmMemoryArray = []
+      vmMemoryArray.push(vmMemoryMetricData)
+      setVmMemoryPercent(vmMemoryArray)
+    }
+
     // vm inbound data
     const getVmInboundData = async () => {
       const inboundLinuxDataExpr = `linux:vm:net:rx_bytes:5m`
@@ -165,7 +197,8 @@ const index = props => {
       setVmOutboundData(vmOutboundMetricData)
     }
 
-    const getVmDiskUsageData = async () => {
+    // vm disk percent
+    const getVmDiskPercentData = async () => {
       const diskLinuxDataExpr = `linux:vm:filesystem:usage_fraction:raw`
       const diskWindowsDataExpr = `windows:vm:disk:usage_fraction:raw`
 
@@ -179,7 +212,35 @@ const index = props => {
       })
 
       const vmDiskMetricData = find(diskData, data => {
-        if (data.metric?.pod === store.detail.name) return data
+        if (data.metric?.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project
+        ) return data
+      })
+
+      // 배열 처리
+      const vmDiskArray = []
+      vmDiskArray.push(vmDiskMetricData)
+      setVmDiskPercent(vmDiskArray)
+    }
+
+    // vm disk usage
+    const getVmDiskUsageData = async () => {
+      const diskLinuxDataExpr = `linux:vm:filesystem:used_bytes:raw`
+      const diskWindowsDataExpr = `windows:vm:disk:used_bytes:raw`
+
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.vm.name &&
+          data.metric.namespace === store.detail.vm.project
+        ) return data
       })
 
       // 배열 처리
@@ -188,11 +249,61 @@ const index = props => {
       setVmDiskData(vmDiskArray)
     }
 
+    // vm iops read
+    const getVmIopsReadData = async () => {
+      const diskLinuxDataExpr = `linux:vm:disk:read_ops:5m`
+      const diskWindowsDataExpr = `windows:vm:disk:read_ops:5m`
+
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.name &&
+          data.metric.namespace === store.detail.vm.project
+        ) return data
+      })
+
+      setVmIopsReadData(vmDiskMetricData)
+    }
+
+    // vm iops write
+    const getVmIopsWriteData = async () => {
+      const diskLinuxDataExpr = `linux:vm:disk:write_ops:5m`
+      const diskWindowsDataExpr = `windows:vm:disk:write_ops:5m`
+
+      const diskData = await customStore.fetchMetric({
+        expr:
+          store.detail.vm.os_type === 'linux'
+            ? diskLinuxDataExpr
+            : diskWindowsDataExpr,
+        ...paramsData,
+        cluster: props.match.params.cluster,
+      })
+
+      const vmDiskMetricData = find(diskData, data => {
+        if (data.metric?.pod === store.detail.name &&
+          data.metric.namespace === store.detail.vm.project
+        ) return data
+      })
+
+      setVmIopsWriteData(vmDiskMetricData)
+    }
+
     getVmCpuUsageData()
     getVmMemoryUsageData()
+    getVmMemoryPercentData()
     getVmInboundData()
     getVmOutboundData()
     getVmDiskUsageData()
+    getVmDiskPercentData()
+    getVmIopsReadData()
+    getVmIopsWriteData()
   }
 
   const getMonitoringCfgs = () => {
@@ -207,10 +318,16 @@ const index = props => {
       {
         type: 'utilisation',
         title: 'MEMORY_USAGE',
-        unit: '%',
         unitType: 'memory',
         legend: ['MEMORY_USAGE'],
         data: vmMemoryData,
+      },
+      {
+        type: 'utilisation',
+        title: 'MEMORY_USAGE',
+        unit: '%',
+        legend: ['MEMORY_USAGE'],
+        data: vmMemoryPercent,
       },
       {
         type: 'bandwidth',
@@ -222,9 +339,22 @@ const index = props => {
       {
         type: 'utilisation',
         title: t('RESOURCES_DISK_USAGE'),
-        unit: '%',
+        unitType: 'disk',
         legend: [t('RESOURCES_DISK_USAGE')],
         data: vmDiskData,
+      },
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_DISK_USAGE'),
+        unit: '%',
+        legend: [t('RESOURCES_DISK_USAGE')],
+        data: vmDiskPercent,
+      },
+      {
+        type: 'iops',
+        title: 'IOPS',
+        legend: ['READ', 'WRITE'],
+        data: [vmIopsReadData, vmIopsWriteData],
       },
     ]
   }
