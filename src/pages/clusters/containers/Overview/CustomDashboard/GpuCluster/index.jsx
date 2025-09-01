@@ -156,10 +156,7 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    const memUnit = getSuitableUnit(
-      avgMemory * 8 * vmTotal * 1024 * 1024,
-      'memory'
-    )
+    const memUnit = getSuitableUnit(avgMemory * 8 * vmTotal, 'memory', 'Mi')
     const memValue = getValueByUnit(
       avgMemory * 8 * vmTotal * 1024 * 1024,
       memUnit
@@ -557,7 +554,13 @@ const GpuCluster = ({
                         maxScale={1.5}
                         onTransformed={ctx => setScale(ctx.state.scale)}
                       >
-                        {({ zoomIn, zoomOut, resetTransform, centerView, setTransform }) => (
+                        {({
+                          zoomIn,
+                          zoomOut,
+                          resetTransform,
+                          centerView,
+                          setTransform,
+                        }) => (
                           <>
                             <Controls
                               zoomIn={zoomIn}
@@ -759,6 +762,7 @@ const GpuCluster = ({
                                   legend: ['Gpu'],
                                   unitType: 'bandwidthBytes',
                                   data: [item] || [],
+                                  customUnit: 'MBps',
                                 })
                                 return (
                                   <div key={idx}>
@@ -776,7 +780,7 @@ const GpuCluster = ({
 
                         <div className="chart_section">
                           <div className="chart_title">
-                            IB {t('RESOURCES_INBOUND')}
+                            IB {t('RESOURCES_INBOUND')} (Total)
                           </div>
                           <div className="chart_gpu_trend">
                             {inboundData?.length > 0 &&
@@ -800,7 +804,7 @@ const GpuCluster = ({
                               })}
                           </div>
                           <div className="chart_title">
-                            IB {t('RESOURCES_OUTBOUND')}
+                            IB {t('RESOURCES_OUTBOUND')} (Total)
                           </div>
                           <div className="chart_gpu_trend">
                             {outboundData?.length > 0 &&
@@ -870,24 +874,35 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
   )
 }
 
-const Controls = ({ zoomIn, zoomOut, resetTransform, setXidTimeRange, centerView, setTransform }) => {
-  const duration = 200; 
+const Controls = ({
+  zoomIn,
+  zoomOut,
+  resetTransform,
+  setXidTimeRange,
+  centerView,
+  setTransform,
+}) => {
+  const duration = 200
 
   const handleZoomIn = () => {
-    zoomIn(0.1, duration, "easeOut")
-    setTimeout(() => { centerView();}, duration)
+    zoomIn(0.1, duration, 'easeOut')
+    setTimeout(() => {
+      centerView()
+    }, duration)
   }
 
   const handleZoomOut = () => {
-    zoomOut(0.1, duration, "easeOut")
-    setTimeout(() => { centerView();}, duration)
+    zoomOut(0.1, duration, 'easeOut')
+    setTimeout(() => {
+      centerView()
+    }, duration)
   }
 
   const handleReset = () => {
-    setTransform(10, 10, 1, duration, "easeOut");
+    setTransform(10, 10, 1, duration, 'easeOut')
   }
 
-  return  (
+  return (
     <>
       <div className="select step">
         <select
@@ -902,16 +917,30 @@ const Controls = ({ zoomIn, zoomOut, resetTransform, setXidTimeRange, centerView
         </select>
       </div>
       <div className="zoomin_icon">
-        <button id="zoomIn" className="btn_zoom_icon" onClick={() => {handleZoomIn()}}>
+        <button
+          id="zoomIn"
+          className="btn_zoom_icon"
+          onClick={() => {
+            handleZoomIn()
+          }}
+        >
           <i className="ico-plus"></i>
         </button>
-        <button id="zoomOut" className="btn_zoom_icon" onClick={() => {handleZoomOut()}}>
+        <button
+          id="zoomOut"
+          className="btn_zoom_icon"
+          onClick={() => {
+            handleZoomOut()
+          }}
+        >
           <i className="ico-minus"></i>
         </button>
         <button
           id="resetZoom"
           className="btn_zoom_icon"
-          onClick={() => {handleReset()}}
+          onClick={() => {
+            handleReset()
+          }}
         >
           <i className="ico-reset"></i>
         </button>

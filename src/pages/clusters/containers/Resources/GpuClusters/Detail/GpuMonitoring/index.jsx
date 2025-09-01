@@ -259,6 +259,7 @@ const index = props => {
         unitType: 'bandwidthBytes',
         legend: vmGpuNvlinkData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuNvlinkData,
+        customUnit: 'MBps',
       },
     ]
   }
