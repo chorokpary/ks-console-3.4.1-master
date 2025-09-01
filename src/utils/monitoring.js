@@ -73,7 +73,17 @@ const UnitTypes = {
   },
 }
 
-export const getSuitableUnit = (value, unitType) => {
+const getCustomValue = (unitType, customUnit) => {
+  const config = UnitTypes[unitType]
+  if (!config || !customUnit) return 1
+
+  const index = config.units.indexOf(customUnit)
+  if (index === -1) return 1
+
+  return config.conditions[index] || 1
+}
+
+export const getSuitableUnit = (value, unitType, customValue = 1) => {
   const config = UnitTypes[unitType]
 
   if (isEmpty(config)) return ''
@@ -82,11 +92,10 @@ export const getSuitableUnit = (value, unitType) => {
   const values = isArray(value) ? value : [[0, Number(value)]]
   let result = last(config.units)
   config.conditions.some((condition, index) => {
-    const triggered = values.some(
-      _value =>
-        ((isArray(_value) ? get(_value, '[1]') : Number(_value)) || 0) >=
-        condition
-    )
+    const triggered = values.some(_value => {
+      const numeric = isArray(_value) ? get(_value, '[1]') : Number(_value)
+      return (numeric || 0) * customValue >= condition
+    })
 
     if (triggered) {
       result = config.units[index]
@@ -207,11 +216,13 @@ export const getChartData = ({
   legend = [],
   valuesData = [],
   dot = 2,
+  customValue,
 }) => {
   /*
     build a value map => { 1566289260: {...} }
     e.g. { 1566289260: { 'utilisation': 30.2 } }
   */
+
   let minX = 0
   let maxX = 0
   const valueMap = {}
@@ -233,7 +244,7 @@ export const getChartData = ({
           value === '-1'
             ? null
             : getValueByUnit(
-                value,
+                value * customValue,
                 isUndefined(unit) ? type : unit,
                 dot
               ).toFixed(2)
@@ -269,8 +280,11 @@ export const getAreaChartOps = ({
   const seriesData = isArray(data) ? data : []
   const valuesData = seriesData.map(result => get(result, 'values') || [])
 
+  const customValue = rest.customUnit
+    ? getCustomValue(unitType, rest.customUnit)
+    : 1
   const unit = unitType
-    ? getSuitableUnit(flatten(valuesData), unitType)
+    ? getSuitableUnit(flatten(valuesData), unitType, customValue)
     : rest.unit
 
   const chartData = getChartData({
@@ -280,6 +294,7 @@ export const getAreaChartOps = ({
     legend,
     valuesData,
     dot: rest.dot,
+    customValue,
   })
 
   return {

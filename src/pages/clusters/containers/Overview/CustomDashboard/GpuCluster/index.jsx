@@ -156,10 +156,7 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    const memUnit = getSuitableUnit(
-      avgMemory * 8 * vmTotal * 1024 * 1024,
-      'memory'
-    )
+    const memUnit = getSuitableUnit(avgMemory * 8 * vmTotal, 'memory', 'Mi')
     const memValue = getValueByUnit(
       avgMemory * 8 * vmTotal * 1024 * 1024,
       memUnit
@@ -398,24 +395,26 @@ const GpuCluster = ({
         minorCount++
       } else {
         if (
-          errCode == '31' ||
-          errCode == '32' ||
-          errCode == '43' ||
-          errCode == '45' ||
-          errCode == '48' ||
-          errCode == '56' ||
-          errCode == '61' ||
-          errCode == '79' ||
-          errCode == '89' ||
-          errCode == '1' ||
-          errCode == '4' ||
-          errCode == '5' ||
-          errCode == '8' ||
-          errCode == '13' ||
-          errCode == '31' ||
-          errCode == '47' ||
-          errCode == '74' ||
-          errCode == '0'
+          // errCode == '31' ||
+          // errCode == '32' ||
+          // errCode == '43' ||
+          // errCode == '45' ||
+          // errCode == '48' ||
+          // errCode == '56' ||
+          // errCode == '61' ||
+          // errCode == '79' ||
+          // errCode == '89' ||
+          // errCode == '1' ||
+          // errCode == '4' ||
+          // errCode == '5' ||
+          // errCode == '8' ||
+          // errCode == '13' ||
+          // errCode == '31' ||
+          // errCode == '47' ||
+          // errCode == '74' ||
+          // errCode == '0'
+          Number(errCode) >= 1 &&
+          Number(errCode) <= 143
         ) {
           resultMap[pod][gpu] = 'normal'
           normalCount++
@@ -557,13 +556,21 @@ const GpuCluster = ({
                         maxScale={1.5}
                         onTransformed={ctx => setScale(ctx.state.scale)}
                       >
-                        {({ zoomIn, zoomOut, resetTransform }) => (
+                        {({
+                          zoomIn,
+                          zoomOut,
+                          resetTransform,
+                          centerView,
+                          setTransform,
+                        }) => (
                           <>
                             <Controls
                               zoomIn={zoomIn}
                               zoomOut={zoomOut}
                               resetTransform={resetTransform}
                               setXidTimeRange={setXidTimeRange}
+                              centerView={centerView}
+                              setTransform={setTransform}
                             />
                             <TransformComponent
                               onTransformChange={transform =>
@@ -757,6 +764,7 @@ const GpuCluster = ({
                                   legend: ['Gpu'],
                                   unitType: 'bandwidthBytes',
                                   data: [item] || [],
+                                  customUnit: 'MBps',
                                 })
                                 return (
                                   <div key={idx}>
@@ -774,7 +782,7 @@ const GpuCluster = ({
 
                         <div className="chart_section">
                           <div className="chart_title">
-                            IB {t('RESOURCES_INBOUND')}
+                            IB {t('RESOURCES_INBOUND')} (Total)
                           </div>
                           <div className="chart_gpu_trend">
                             {inboundData?.length > 0 &&
@@ -798,7 +806,7 @@ const GpuCluster = ({
                               })}
                           </div>
                           <div className="chart_title">
-                            IB {t('RESOURCES_OUTBOUND')}
+                            IB {t('RESOURCES_OUTBOUND')} (Total)
                           </div>
                           <div className="chart_gpu_trend">
                             {outboundData?.length > 0 &&
@@ -868,35 +876,80 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
   )
 }
 
-const Controls = ({ zoomIn, zoomOut, resetTransform, setXidTimeRange }) => (
-  <>
-    <div className="select step">
-      <select
-        onChange={e => setXidTimeRange(Number(e.target.value))}
-        defaultValue={3600}
-      >
-        <option value={3600}>1h</option>
-        <option value={3600 * 2}>2h</option>
-        <option value={3600 * 3}>3h</option>
-      </select>
-    </div>
-    <div className="zoomin_icon">
-      <button id="zoomIn" className="btn_zoom_icon" onClick={() => zoomIn()}>
-        <i className="ico-plus"></i>
-      </button>
-      <button id="zoomOut" className="btn_zoom_icon" onClick={() => zoomOut()}>
-        <i className="ico-minus"></i>
-      </button>
-      <button
-        id="resetZoom"
-        className="btn_zoom_icon"
-        onClick={() => resetTransform()}
-      >
-        <i className="ico-reset"></i>
-      </button>
-      <div id="result"></div>
-    </div>
-  </>
-)
+const Controls = ({
+  zoomIn,
+  zoomOut,
+  resetTransform,
+  setXidTimeRange,
+  centerView,
+  setTransform,
+}) => {
+  const duration = 200
+
+  const handleZoomIn = () => {
+    zoomIn(0.1, duration, 'easeOut')
+    setTimeout(() => {
+      centerView()
+    }, duration)
+  }
+
+  const handleZoomOut = () => {
+    zoomOut(0.1, duration, 'easeOut')
+    setTimeout(() => {
+      centerView()
+    }, duration)
+  }
+
+  const handleReset = () => {
+    setTransform(10, 10, 1, duration, 'easeOut')
+  }
+
+  return (
+    <>
+      <div className="select step">
+        <select
+          onChange={e => setXidTimeRange(Number(e.target.value))}
+          defaultValue={3600}
+        >
+          <option value={3600}>1h</option>
+          <option value={3600 * 2}>2h</option>
+          <option value={3600 * 3}>3h</option>
+          <option value={3600 * 12}>12h</option>
+          <option value={3600 * 24}>24h</option>
+        </select>
+      </div>
+      <div className="zoomin_icon">
+        <button
+          id="zoomIn"
+          className="btn_zoom_icon"
+          onClick={() => {
+            handleZoomIn()
+          }}
+        >
+          <i className="ico-plus"></i>
+        </button>
+        <button
+          id="zoomOut"
+          className="btn_zoom_icon"
+          onClick={() => {
+            handleZoomOut()
+          }}
+        >
+          <i className="ico-minus"></i>
+        </button>
+        <button
+          id="resetZoom"
+          className="btn_zoom_icon"
+          onClick={() => {
+            handleReset()
+          }}
+        >
+          <i className="ico-reset"></i>
+        </button>
+        <div id="result"></div>
+      </div>
+    </>
+  )
+}
 
 export default GpuCluster
