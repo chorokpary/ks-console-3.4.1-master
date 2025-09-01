@@ -395,24 +395,26 @@ const GpuCluster = ({
         minorCount++
       } else {
         if (
-          errCode == '31' ||
-          errCode == '32' ||
-          errCode == '43' ||
-          errCode == '45' ||
-          errCode == '48' ||
-          errCode == '56' ||
-          errCode == '61' ||
-          errCode == '79' ||
-          errCode == '89' ||
-          errCode == '1' ||
-          errCode == '4' ||
-          errCode == '5' ||
-          errCode == '8' ||
-          errCode == '13' ||
-          errCode == '31' ||
-          errCode == '47' ||
-          errCode == '74' ||
-          errCode == '0'
+          // errCode == '31' ||
+          // errCode == '32' ||
+          // errCode == '43' ||
+          // errCode == '45' ||
+          // errCode == '48' ||
+          // errCode == '56' ||
+          // errCode == '61' ||
+          // errCode == '79' ||
+          // errCode == '89' ||
+          // errCode == '1' ||
+          // errCode == '4' ||
+          // errCode == '5' ||
+          // errCode == '8' ||
+          // errCode == '13' ||
+          // errCode == '31' ||
+          // errCode == '47' ||
+          // errCode == '74' ||
+          // errCode == '0'
+          Number(errCode) >= 1 &&
+          Number(errCode) <= 143
         ) {
           resultMap[pod][gpu] = 'normal'
           normalCount++
