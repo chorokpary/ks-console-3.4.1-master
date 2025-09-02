@@ -242,11 +242,7 @@ export const getChartData = ({
         valueMap[time][key] =
           value === '-1'
             ? null
-            : getValueByUnit(
-                value,
-                isUndefined(unit) ? type : unit,
-                dot
-              ).toFixed(2)
+            : getValueByUnit(value, isUndefined(unit) ? type : unit, dot)
       }
 
       if (!minX || minX > time) minX = time
