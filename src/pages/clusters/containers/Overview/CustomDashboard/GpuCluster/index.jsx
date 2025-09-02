@@ -12,6 +12,7 @@ import {
   getSuitableUnit,
   getValueByUnit,
   getAreaChartOps,
+  getCustomValue,
 } from 'utils/monitoring'
 
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
@@ -156,9 +157,12 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    const memUnit = getSuitableUnit(avgMemory * 8 * vmTotal, 'memory', 'Mi')
+    const memUnit = getSuitableUnit(
+      avgMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
+      'memory'
+    )
     const memValue = getValueByUnit(
-      avgMemory * 8 * vmTotal * 1024 * 1024,
+      avgMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
       memUnit
     )
     setMemoryUsage({ unit: memUnit, val: memValue.toFixed(1) })
@@ -177,11 +181,11 @@ const GpuCluster = ({
         )
       : 0
     const totalMemUnit = getSuitableUnit(
-      avgTotalMemory * 8 * vmTotal * 1024 * 1024,
+      avgTotalMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
       'memory'
     )
     const totalMemValue = getValueByUnit(
-      avgTotalMemory * 8 * vmTotal * 1024 * 1024,
+      avgTotalMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
       totalMemUnit
     )
     setMemoryTotalUsage({

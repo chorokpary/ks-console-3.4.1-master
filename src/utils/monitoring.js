@@ -73,7 +73,7 @@ const UnitTypes = {
   },
 }
 
-const getCustomValue = (unitType, customUnit) => {
+export const getCustomValue = (unitType, customUnit) => {
   const config = UnitTypes[unitType]
   if (!config || !customUnit) return 1
 
