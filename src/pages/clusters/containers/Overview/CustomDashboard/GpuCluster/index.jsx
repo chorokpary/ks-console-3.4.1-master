@@ -126,7 +126,7 @@ const GpuCluster = ({
     setTemp(avgTemp)
 
     const gpuAvgUsageData = await customStore.fetchMetric({
-      expr: `avg(DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}"})`,
+      expr: `avg(DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}"})/ 100`,
       start: currentTime - 30000,
       end: currentTime,
       cluster: selectedGpuCluster?.namespace,
@@ -139,13 +139,18 @@ const GpuCluster = ({
       gpuAvgUsageData.length - 1
     ]?.[1]
       ? parseFloat(
-          gpuAvgUsageData[0].values[gpuAvgUsageData[0].values.length - 1][1]
+          gpuAvgUsageData[0].values[gpuAvgUsageData[0].values.length - 1][1] *
+            100
         ).toFixed(1)
       : 0
     setUsage(avgValue)
 
+    const gpuLength = 8
     const gpuAvgMemoryUsage = await customStore.fetchMetric({
-      expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"})`,
+      expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"}) * ${gpuLength} * ${vmTotal} * ${getCustomValue(
+        'memory',
+        'Mi'
+      )}`,
       ...paramsData,
     })
     const avgMemory = gpuAvgMemoryUsage[0]?.values?.[
@@ -157,18 +162,15 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    const memUnit = getSuitableUnit(
-      avgMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
-      'memory'
-    )
-    const memValue = getValueByUnit(
-      avgMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
-      memUnit
-    )
+    const memUnit = getSuitableUnit(avgMemory, 'memory')
+    const memValue = getValueByUnit(avgMemory, memUnit)
     setMemoryUsage({ unit: memUnit, val: memValue.toFixed(1) })
 
     const gpuAvgMemoryTotalUsage = await customStore.fetchMetric({
-      expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})`,
+      expr: `avg(DCGM_FI_DEV_FB_USED{pod=~"${vmList}"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}"})  * ${gpuLength} * ${vmTotal} * ${getCustomValue(
+        'memory',
+        'Mi'
+      )}`,
       ...paramsData,
     })
     const avgTotalMemory = gpuAvgMemoryTotalUsage[0]?.values?.[
@@ -180,14 +182,8 @@ const GpuCluster = ({
           ][1]
         )
       : 0
-    const totalMemUnit = getSuitableUnit(
-      avgTotalMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
-      'memory'
-    )
-    const totalMemValue = getValueByUnit(
-      avgTotalMemory * 8 * vmTotal * getCustomValue('memory', 'Mi'),
-      totalMemUnit
-    )
+    const totalMemUnit = getSuitableUnit(avgTotalMemory, 'memory')
+    const totalMemValue = getValueByUnit(avgTotalMemory, totalMemUnit)
     setMemoryTotalUsage({
       unit: totalMemUnit,
       val: totalMemValue.toFixed(1),
@@ -217,7 +213,9 @@ const GpuCluster = ({
     })
     setOutboundData(gpuOutboundData)
 
-    const gpuNvlinkDataExpr = `sum(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${selectedGpuCluster?.namespace}"})`
+    const gpuNvlinkDataExpr = `sum(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmList}", namespace="${
+      selectedGpuCluster?.namespace
+    }"}) * ${getCustomValue('bandwidthBytes', 'MBps')}`
     const gpuNvlinkData = await customStore.fetchMetric({
       expr: gpuNvlinkDataExpr,
       ...paramsData,
@@ -739,9 +737,9 @@ const GpuCluster = ({
                             {gpuAvgUsage?.length > 0 &&
                               gpuAvgUsage.map((item, idx) => {
                                 const config = getAreaChartOps({
-                                  type: 'bandwidth',
+                                  type: 'utilisation',
                                   legend: ['Gpu'],
-                                  unitType: 'bandwidth',
+                                  unit: '%',
                                   data: [item] || [],
                                 })
                                 return (
@@ -768,7 +766,6 @@ const GpuCluster = ({
                                   legend: ['Gpu'],
                                   unitType: 'bandwidthBytes',
                                   data: [item] || [],
-                                  customUnit: 'MBps',
                                 })
                                 return (
                                   <div key={idx}>

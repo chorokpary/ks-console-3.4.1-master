@@ -5,7 +5,7 @@ import { observer, inject } from 'mobx-react'
 import classnames from 'classnames'
 import { Panel } from 'components/Base'
 
-import { getChartData, getAreaChartOps } from 'utils/monitoring'
+import { getChartData, getAreaChartOps, getCustomValue } from 'utils/monitoring'
 import CustomStore from 'stores/monitoring/custom/monitor'
 
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
@@ -164,14 +164,16 @@ const index = props => {
     }
 
     const getVmGpuNvlinkData = async () => {
-      const gpuNvlinkDataExpr = `DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod="${selectedVm}", namespace="${cluster}"}`
+      const gpuNvlinkDataExpr = `(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod="${selectedVm}", namespace="${cluster}"}) * ${getCustomValue(
+        'bandwidthBytes',
+        'MBps'
+      )}`
       const gpuNvlinkData = await customStore.fetchMetric({
         expr: gpuNvlinkDataExpr,
         ...paramsData,
         cluster: props.match.params.cluster,
         namespace: props.detailStore.detail.data.namespace,
       })
-
       setVmGpuNvlinkData(gpuNvlinkData)
     }
 
@@ -259,7 +261,6 @@ const index = props => {
         unitType: 'bandwidthBytes',
         legend: vmGpuNvlinkData.map(item => 'GPU' + item.metric.gpu),
         data: vmGpuNvlinkData,
-        customUnit: 'MBps',
       },
     ]
   }
