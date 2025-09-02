@@ -413,7 +413,7 @@ const GpuCluster = ({
           // errCode == '47' ||
           // errCode == '74' ||
           // errCode == '0'
-          Number(errCode) >= 1 &&
+          Number(errCode) >= 0 &&
           Number(errCode) <= 143
         ) {
           resultMap[pod][gpu] = 'normal'
