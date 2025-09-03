@@ -103,7 +103,7 @@ const DetailGpuVmList = props => {
       : { page: currentPage }
 
     fnGetData(); 
-    const intervalId = setInterval(fnGetData(params), 3000); 
+    const intervalId = setInterval(() => fnGetData(params), 3000);
     return () => clearInterval(intervalId); 
   }, []);
 

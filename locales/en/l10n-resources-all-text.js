@@ -1224,4 +1224,12 @@ module.exports = {
   RESOURCES_GPUCLUSTER_MINOR: 'Minor',
   RESOURCES_GPUCLUSTER_NORMAL: 'Normal',
   RESOURCES_GPUCLUSTER_UNKNOWN: 'Unknown',
+  RESOURCES_DEFAULT: 'Default',
+  RESOURCES_IMAGE_CLASS: 'Same as image',
+  RESOURCES_MANUAL_SELECTION: 'Manual Selection',
+  RESOURCES_DELETE_GPU_ALL_VM_TIP: 'All virtual machines included in the cluster will be deleted.',
+  RESOURCES_VM_ALL_RESTART: 'VM All Restart',
+  RESOURCES_VM_ALL_STOP: 'VM All Stop',
+  RESOURCES_VM_ALL_START: 'VM All Start',
+  RESOURCES_VM_ALL_DELETE: 'VM All Delete',
 }

@@ -1209,4 +1209,9 @@ module.exports = {
   RESOURCES_DEFAULT: '기본',
   RESOURCES_IMAGE_CLASS: '이미지와 동일',
   RESOURCES_MANUAL_SELECTION: '직접 선택',
+  RESOURCES_DELETE_GPU_ALL_VM_TIP: '클러스터에 포함된 모든 가상머신이 삭제됩니다.',
+  RESOURCES_VM_ALL_RESTART: '전체 VM 재시작',
+  RESOURCES_VM_ALL_STOP: '전체 VM 정지',
+  RESOURCES_VM_ALL_START: '전체 VM 시작',
+  RESOURCES_VM_ALL_DELETE: '전체 VM 삭제',  
 }

@@ -20,6 +20,7 @@ import { toJS } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
+import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confirm'
 import ClusterModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Cluster'
 import RegistModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Modify'
@@ -177,7 +178,7 @@ export default {
     }) {
       const modal = Modal.open({
         onOk: () => {
-          store.delete({ ...detail, namespace }).then(() => {
+          store.delete({ ...props, namespace, ...retypeList }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
@@ -194,59 +195,68 @@ export default {
       })
     },
   },
-  // 'gpuclusters.remove.batch': {
-  //   on({ store, cluster, workspace, namespace, success, devops, ...props }) {
-  //     const rowKeys = toJS(store.list.selectedRowKeys)
-  //     let arr = new Array()
-  //     store.dataList.map(obj => {
-  //       if (rowKeys.includes(obj.name)) {
-  //         arr.push(obj.name)
-  //       }
-  //     })
-  //     const names = arr.join(', ')
-  //     const modal = Modal.open({
-  //       onOk: () => {
-  //         store
-  //           .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
-  //           .then(() => {
-  //             Modal.close(modal)
-  //             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-  //             success && success()
-  //           })
-  //       },
-  //       modal: DeleteModal,
-  //       title:
-  //         rowKeys.length === 1
-  //           ? t('RESOURCES_DELETE')
-  //           : t('RESOURCES_DELETE_MULTIPLE'),
-  //       desc:
-  //         rowKeys.length === 1
-  //           ? t.html('RESOURCES_DELETE_GPU_CLUSTER_TIP', { resource: names })
-  //           : t.html('RESOURCES_DELETE_GPU_CLUSTER_TIP', { resource: names }),
-  //       resource: names,
-  //       store,
-  //       ...props,
-  //     })
-  //   },
-  // },
-  // 'gpuclusters.delete': {
-  //   on({ store, detail, success, ...props }) {
-  //     const modal = Modal.open({
-  //       onOk: () => {
-  //         store.delete(detail).then(() => {
-  //           Modal.close(modal)
-  //           Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-  //           success && success()
-  //         })
-  //       },
-  //       modal: DeleteModal,
-  //       module: store.module,
-  //       detail,
-  //       store,
-  //       ...props,
-  //     })
-  //   },
-  // },
+  'gpuclusters.actionState': {
+    on({
+      store,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      actionType,
+      ...props
+    }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.actionState({ ...detail, namespace, actionType }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_CHANGED_SUCCESSFULLY') })
+            success && success()
+          })
+        },
+        modal: ConfirmModal,
+        title: t(`RESOURCES_VM_ALL_${actionType.toUpperCase()}`),
+        desc: t.html('RESOURCES_CHANGE_VM_STATE', {
+          resource: detail.name,
+        }),
+        resource: detail.name,
+        store,
+        ...props,
+      })
+    },
+  },
+  'gpuclusters.vmAllDelete': {
+    on({
+      store,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      name,
+      vmList,
+      ...props
+    }) {
+      const modal = Modal.open({
+        onOk: () => {
+          store.vmAllDelete({ namespace, vmList }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
+        },
+        modal: DeleteModal,
+        title: t('RESOURCES_VM_ALL_DELETE'),
+        desc: t.html('RESOURCES_DELETE_GPU_ALL_VM_TIP', {
+          resource: name,
+        }),
+        resource: name,
+        store,
+        ...props,
+      })
+    },
+  },
   'gpuclusters.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
