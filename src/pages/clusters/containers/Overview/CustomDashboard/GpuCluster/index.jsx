@@ -891,14 +891,14 @@ const Controls = ({
     zoomIn(0.1, duration, 'easeOut')
     setTimeout(() => {
       centerView()
-    }, duration)
+    }, duration + 100)
   }
 
   const handleZoomOut = () => {
     zoomOut(0.1, duration, 'easeOut')
     setTimeout(() => {
       centerView()
-    }, duration)
+    }, duration + 100)
   }
 
   const handleReset = () => {
