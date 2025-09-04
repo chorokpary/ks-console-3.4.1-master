@@ -414,21 +414,6 @@ export default class GpuClustersStore extends Base {
     return await this.submitting(
       Promise.all(
         params.retypeList.map(async id => {
-          // const jsonData = {}
-          // jsonData.name = id
-
-          // const newParams = { name: id }
-          // let resultDetail = await this.fetchDetail({ ...newParams })
-
-          // // 실제 할당된 가상머신 데이터
-          // const vmData = resultDetail.data.nodes.filter(item => item.vmi)
-          // const vmNameArray = vmData.map(item => item.vmName)
-
-          // console.log('newParams : ' + JSON.stringify(newParams))
-          // console.log('vmNameArray : ' + JSON.stringify(vmNameArray))
-
-          // request.delete(url, jsonData)
-
           const namespace = params.namespace;
           const url = `${this.getVmResourceUrl(params)}/${id}${namespace === "default" ? "" : "?project="+namespace}`
           request.delete(url)
@@ -451,32 +436,19 @@ export default class GpuClustersStore extends Base {
         request.delete(`${this.getDeleteUrl(params)}`)
       )
     )
-    // const url = `${this.getResourceUrl()}/${user.cluster}`
-    // if (user.name === globals.user.username) {
-    //   Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-    //   return
-    // }
+  }
 
-    // const jsonData = {}
-    // jsonData.name = user.name
-
-    // const newParams = { name: user.name }
-    // let resultDetail = await this.fetchDetail({
-    //   ...newParams,
-    //   cluster: user.cluster,
-    // })
-
-    // // 실제 할당된 가상머신 데이터
-    // const vmData = resultDetail.data.nodes.filter(item => item.vmi)
-    // const vmNameArray = vmData.map(item => item.vmName)
-
-    // console.log('newParams : ' + JSON.stringify(newParams))
-    // console.log('vmNameArray : ' + JSON.stringify(vmNameArray))
-
-    // return this.submitting(new Promise(resolve => setTimeout(resolve, 500)))
-
-    // return this.submitting(request.delete(url, jsonData));
-    // return this.submitting(request.delete(`${this.getDeleteUrl(params)}`))
+  @action
+  async vmAllDelete({ ...params }) {
+    return await this.submitting(
+      Promise.all(
+          params.vmList.map(async vmName => {
+          const namespace = params.namespace;
+          const url = `${this.getVmResourceUrl(params)}/${vmName}${namespace === "default" ? "" : "?project="+namespace}`
+          request.delete(url)
+        })
+      )
+    )
   }
 
   @action
@@ -541,6 +513,28 @@ export default class GpuClustersStore extends Base {
 
     this.isLoading = false
     return resultData
+  }
+
+  @action
+  async actionState({ actionType, ...params }) {
+     return await this.submitting(
+      Promise.all(
+        params?.instances && params.instances?.length > 0
+          ? params.instances.map(vmdata => {          
+              const name = vmdata.vmName
+
+              const jsonData = {}
+              jsonData.action = actionType
+              jsonData.project = params.namespace
+
+              const paramData = {}
+              paramData.cluster = params.namespace
+
+              return request.put(`${this.getVmResourceUrl({ name, ...paramData })}/${name}/action`, jsonData)
+           })
+          : []
+      )
+    )
   }
   
 }
