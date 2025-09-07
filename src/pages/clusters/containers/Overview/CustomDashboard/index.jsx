@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { GridStack } from 'gridstack'
 import 'gridstack/dist/gridstack.min.css'
 import './dashboard.css'
@@ -24,6 +24,7 @@ import Bmc from './Bmc'
 import GpuCluster from './GpuCluster'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
+import { makePanels } from 'stores/dashboard/panels'
 
 const CustomDashboard = props => {
   const { cluster } = props.match.params
@@ -32,10 +33,9 @@ const CustomDashboard = props => {
   const monitorStore = new ClusterMonitorStore()
 
   const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
+  // const [activeDashboard, setActiveDashboard] = useState({})
 
-  const [dashboardArr, setDashboardArr] = useState(
-    new Array(new DashboardInfo())
-  )
+  const [dashboardArr, setDashboardArr] = useState([])
 
   const options = {
     column: 15,
@@ -48,7 +48,6 @@ const CustomDashboard = props => {
     disableDrag: true, // drag
   }
 
-  var grid
   useEffect(() => {
     var dashboardArr = JSON.parse(localStorage.getItem('dashboardArr'))
     if (!dashboardArr) {
@@ -58,6 +57,7 @@ const CustomDashboard = props => {
     }
 
     setDashboardArr(dashboardArr)
+    setActiveDashboard(dashboardArr[0])
   }, [])
 
   const editMode = () => {
@@ -107,6 +107,7 @@ const CustomDashboard = props => {
 
   useEffect(() => {
     if (dashboardArr.length > 0) {
+      console.log('dashboardArr', dashboardArr)
       setActiveDashboard(dashboardArr[0])
       localStorage.setItem('activeDashboardName', dashboardArr[0].name)
       document.getElementById('dashTab0').click()
@@ -119,6 +120,7 @@ const CustomDashboard = props => {
 
   useEffect(() => {
     if (!_.isEmpty(activeDashboard)) {
+      console.log('22222')
       let maxHeight = 0
       const keys = Object.keys(activeDashboard)
       keys.map(obj => {
@@ -196,8 +198,7 @@ const CustomDashboard = props => {
               {/* tab-content */}
               <div className="tab-content">
                 <div className="grid_wrap">
-                  <div className="grid-stack">
-                    {/* 클러스터 노드 */}
+                  {/* <div className="grid-stack">
                     {activeDashboard.clusterNode && (
                       <ClusterNode
                         x={activeDashboard.clusterNode.x}
@@ -208,7 +209,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 파드 */}
                     {activeDashboard.pod && (
                       <Pod
                         x={activeDashboard.pod.x}
@@ -219,7 +219,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 가상머신 */}
                     {activeDashboard.vm && (
                       <Vm
                         x={activeDashboard.vm.x}
@@ -230,7 +229,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 쿠버네티스 */}
                     {activeDashboard.kaas && (
                       <Kaas
                         x={activeDashboard.kaas.x}
@@ -241,7 +239,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* GPU 클러스터 */}
                     {activeDashboard.gpuCluster && (
                       <GpuCluster
                         monitorStore={monitorStore}
@@ -254,7 +251,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 리소스 사용량 */}
                     {activeDashboard.resourceUsage && (
                       <ResourcesUsage
                         monitorStore={monitorStore}
@@ -266,7 +262,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 네트워크 트래픽 */}
                     {activeDashboard.networkTraffic && (
                       <NetworkTraffic
                         monitorStore={monitorStore}
@@ -278,7 +273,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 리소스 사용량 Top 5 */}
                     {activeDashboard.usageTop5 && (
                       <UsageTop5
                         x={activeDashboard.usageTop5.x}
@@ -289,7 +283,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 최근 생성된 리소스 (일주일) */}
                     {activeDashboard.recentResource && (
                       <RecentResource
                         x={activeDashboard.recentResource.x}
@@ -300,7 +293,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 이슈 */}
                     {activeDashboard.issue && (
                       <Issue
                         x={activeDashboard.issue.x}
@@ -310,7 +302,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 컴퓨팅 */}
                     {(activeDashboard.computingNetwork ||
                       activeDashboard.computingTemplate) && (
                       <Computing
@@ -319,7 +310,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 리소스 변화량 */}
                     {activeDashboard.resourceChange && (
                       <ResourceChange
                         monitorStore={monitorStore}
@@ -331,7 +321,6 @@ const CustomDashboard = props => {
                       />
                     )}
 
-                    {/* 클러스터 컴포넌트 상태 */}
                     {activeDashboard.clusterStatus && (
                       <ClusterStatus
                         x={activeDashboard.clusterStatus.x}
@@ -341,10 +330,6 @@ const CustomDashboard = props => {
                         {...props.match.params}
                       />
                     )}
-
-                    {/* bmc 관련 
-                    (BMC 노드 현황, 탄소지표, 전력사용량 top 5, cpu 소비 전력량 비교 1대평균
-                    탄소 발자국 - 전력 사용량, co2 발생량, 나무, 비용)*/}
 
                     {(activeDashboard.bmcNode ||
                       activeDashboard.carbonIndicator ||
@@ -356,7 +341,32 @@ const CustomDashboard = props => {
                       activeDashboard.carbonCost) && (
                       <Bmc bmc={activeDashboard} {...props.match.params} />
                     )}
-                  </div>
+                  </div> */}
+
+                  {activeDashboard && !_.isEmpty(activeDashboard) && (
+                    <GridStackWrapper>
+                      {Object.entries(activeDashboard).map(([key, value]) => {
+                        if (key === 'name') return null // name은 탭 이름으로만 쓰고 건너뜀
+                        const Comp = widgetMap[key]
+                        return (
+                          <GridItem key={key} {...value}>
+                            {Comp ? (
+                              <Comp
+                                widgetKey={key}
+                                monitorStore={monitorStore}
+                                {...(key === 'gpuCluster'
+                                  ? { activeDashboard }
+                                  : {})}
+                                {...props.match.params}
+                              />
+                            ) : (
+                              <div>{key}</div>
+                            )}
+                          </GridItem>
+                        )
+                      })}
+                    </GridStackWrapper>
+                  )}
                 </div>
               </div>
               {/* // grid-stack */}
@@ -370,3 +380,66 @@ const CustomDashboard = props => {
 }
 
 export default inject('rootStore')(observer(CustomDashboard))
+
+const widgetMap = {
+  clusterNode: props => <ClusterNode {...props} />,
+  pod: props => <Pod {...props} />,
+  vm: props => <Vm {...props} />,
+  kaas: props => <Kaas {...props} />,
+  usageTop5: props => <UsageTop5 {...props} />,
+  gpuCluster: props => <GpuCluster {...props} />,
+  recentResource: props => <RecentResource {...props} />,
+  resourceUsage: props => <ResourcesUsage {...props} />,
+  issue: props => <Issue {...props} />,
+  networkTraffic: props => <NetworkTraffic {...props} />,
+  resourceChange: props => <ResourceChange {...props} />,
+  clusterStatus: props => <ClusterStatus {...props} />,
+  computingTemplate: props => <Computing {...props} />,
+  computingNetwork: props => <Computing {...props} />,
+  bmcNode: props => <Bmc {...props} />,
+  carbonIndicator: props => <Bmc {...props} />,
+  powerUsageTop5: props => <Bmc {...props} />,
+  carbonPower: props => <Bmc {...props} />,
+  carbonCo2: props => <Bmc {...props} />,
+  carbonTree: props => <Bmc {...props} />,
+  carbonCost: props => <Bmc {...props} />,
+  cpuPower: props => <Bmc {...props} />,
+}
+
+// GridStack Wrapper
+const GridStackWrapper = ({ children }) => {
+  const gridRef = useRef(null)
+
+  useEffect(() => {
+    if (gridRef.current) {
+      GridStack.init(
+        {
+          column: 15,
+          float: false,
+          disableOneColumnMode: true,
+          handleClass: 'grid-stack-item-content .grid_item .grid_title',
+          cellHeight: 59,
+          verticalMargin: 20,
+          disableResize: true, // resize
+          disableDrag: true, // drag
+        },
+        gridRef.current
+      )
+    }
+  }, [])
+
+  return (
+    <div className="grid-stack" ref={gridRef}>
+      {children}
+    </div>
+  )
+}
+
+// Grid Item
+const GridItem = ({ x, y, w, h, children }) => {
+  return (
+    <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+      <div className="grid-stack-item-content">{children}</div>
+    </div>
+  )
+}

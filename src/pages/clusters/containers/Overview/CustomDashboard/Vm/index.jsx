@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
 import VmStore from 'stores/resources/vms'
-import VmModel from 'stores/dashboard/vms';
-import cleanupTrigger from '../cleanupTrigger';
+import VmModel from 'stores/dashboard/vms'
+import cleanupTrigger from '../cleanupTrigger'
 
-const Vm = ({ x, y, w, h, ...props }) => {
-
-  const vmStore = new VmStore();
+const Vm = ({ widgetKey, monitorStore, ...props }) => {
+  const vmStore = new VmStore()
 
   const fetchData = async () => {
     return await vmStore.fetchVmStats({ ...props })
   }
   const [stat, error, loading] = cleanupTrigger(fetchData, [])
 
-  const vms = new VmModel({ ...props });
-  const [data, setData] = useState(vms);
+  const vms = new VmModel({ ...props })
+  const [data, setData] = useState(vms)
 
   useEffect(() => {
     setData(stat)
@@ -22,49 +21,59 @@ const Vm = ({ x, y, w, h, ...props }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content">
-          {/* grid_item */}
-          <div className="grid_item">
-            <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_VM')}</label>
-            </div>
-            <Loading spinning={loading}>
-              <div className="grid_info style_status">
-                <div className="box type_status">
-                  <div className="cont_group">
-                    <div className="cont1">
-                      <div className="number_wrap">
-                        <i className="ico-type-vm"></i>
-                        <p><span className="em">{data.running}</span> / {data.total}</p>
-                      </div>
-                    </div>
-                    <div className="cont2">
-                      <div className="status_wrap">
-                        <div className="value">{data.waiting}</div>
-                        <p className="status waiting"><span>{t('RESOURCES_PROGRESSING')}</span></p>
-                      </div>
-                      <div className="status_wrap">
-                        <div className="value">{data.running}</div>
-                        <p className="status running"><span>{t('RESOURCES_RUNNING')}</span></p>
-                      </div>
-                      <div className="status_wrap">
-                        <div className="value">{data.stopped}</div>
-                        <p className="status warning"><span>{t('RESOURCES_STOPPED')}</span></p>
-                      </div>
-                      <div className="status_wrap">
-                        <div className="value">{data.error}</div>
-                        <p className="status error"><span>{t('RESOURCES_ERROR')}</span></p>
-                      </div>
-                    </div>
+      {/* <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content"> */}
+      {/* grid_item */}
+      <div className="grid_item">
+        <div className="grid_title" style={{ cursor: 'default' }}>
+          <label>{t('RESOURCES_VM')}</label>
+        </div>
+        <Loading spinning={loading}>
+          <div className="grid_info style_status">
+            <div className="box type_status">
+              <div className="cont_group">
+                <div className="cont1">
+                  <div className="number_wrap">
+                    <i className="ico-type-vm"></i>
+                    <p>
+                      <span className="em">{data.running}</span> / {data.total}
+                    </p>
+                  </div>
+                </div>
+                <div className="cont2">
+                  <div className="status_wrap">
+                    <div className="value">{data.waiting}</div>
+                    <p className="status waiting">
+                      <span>{t('RESOURCES_PROGRESSING')}</span>
+                    </p>
+                  </div>
+                  <div className="status_wrap">
+                    <div className="value">{data.running}</div>
+                    <p className="status running">
+                      <span>{t('RESOURCES_RUNNING')}</span>
+                    </p>
+                  </div>
+                  <div className="status_wrap">
+                    <div className="value">{data.stopped}</div>
+                    <p className="status warning">
+                      <span>{t('RESOURCES_STOPPED')}</span>
+                    </p>
+                  </div>
+                  <div className="status_wrap">
+                    <div className="value">{data.error}</div>
+                    <p className="status error">
+                      <span>{t('RESOURCES_ERROR')}</span>
+                    </p>
                   </div>
                 </div>
               </div>
-            </Loading>
+            </div>
           </div>
-          {/* // grid_item */}
-        </div>
+        </Loading>
       </div>
+      {/* // grid_item */}
+      {/* </div>
+      </div> */}
     </>
   )
 }

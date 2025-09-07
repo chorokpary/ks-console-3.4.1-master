@@ -31,7 +31,7 @@ const MetricTypes = {
   pod_memory_usage: 'pod_memory_usage',
 }
 
-const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
+const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
   const podStore = new PodStore()
   const customStore = new CustomStore()
   const vmStore = new VmStore()
@@ -79,6 +79,7 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
         promsql_pod_vm_list = promsql_pod_vm_list + obj.id + '|'
         vm_list_length++
       })
+      console.log('promsql_pod_vm_list', promsql_pod_vm_list)
 
       // kaas list
       const kaasList = await resourceStore.fetchList({ limit: 1000, ...props })
@@ -238,132 +239,132 @@ const ResourcesUsage = ({ monitorStore, x, y, w, h, ...props }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content">
-          {/* grid_item */}
-          <div className="grid_item">
-            <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_RESOURCE_USAGE')}</label>
-              <div className="right">
-                <div className="dash_boxtab">
-                  <label htmlFor="name2_1">
-                    <input
-                      type="radio"
-                      name="box-tab"
-                      id="name2_1"
-                      value="name3"
-                      defaultChecked
-                      onClick={() => onClickRightTab('node')}
-                    />
-                    <span>{t('RESOURCES_NODE')}</span>
-                  </label>
-                  <label htmlFor="name2_2">
-                    <input
-                      type="radio"
-                      name="box-tab"
-                      id="name2_2"
-                      value="name4"
-                      onClick={() => onClickRightTab('pod')}
-                    />
-                    <span>{t('POD_PL')}</span>
-                  </label>
-                  <label htmlFor="name2_3">
-                    <input
-                      type="radio"
-                      name="box-tab"
-                      id="name2_3"
-                      value="name5"
-                      onClick={() => onClickRightTab('vm')}
-                    />
-                    <span>{t('RESOURCES_VM')}</span>
-                  </label>
-                  <label htmlFor="name2_4">
-                    <input
-                      type="radio"
-                      name="box-tab"
-                      id="name2_4"
-                      value="name6"
-                      onClick={() => onClickRightTab('kaas')}
-                    />
-                    <span>KaaS</span>
-                  </label>
-                </div>
+      {/* <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content"> */}
+      {/* grid_item */}
+      <div className="grid_item">
+        <div className="grid_title" style={{ cursor: 'default' }}>
+          <label>{t('RESOURCES_RESOURCE_USAGE')}</label>
+          <div className="right">
+            <div className="dash_boxtab">
+              <label htmlFor="name2_1">
+                <input
+                  type="radio"
+                  name="box-tab"
+                  id="name2_1"
+                  value="name3"
+                  defaultChecked
+                  onClick={() => onClickRightTab('node')}
+                />
+                <span>{t('RESOURCES_NODE')}</span>
+              </label>
+              <label htmlFor="name2_2">
+                <input
+                  type="radio"
+                  name="box-tab"
+                  id="name2_2"
+                  value="name4"
+                  onClick={() => onClickRightTab('pod')}
+                />
+                <span>{t('POD_PL')}</span>
+              </label>
+              <label htmlFor="name2_3">
+                <input
+                  type="radio"
+                  name="box-tab"
+                  id="name2_3"
+                  value="name5"
+                  onClick={() => onClickRightTab('vm')}
+                />
+                <span>{t('RESOURCES_VM')}</span>
+              </label>
+              <label htmlFor="name2_4">
+                <input
+                  type="radio"
+                  name="box-tab"
+                  id="name2_4"
+                  value="name6"
+                  onClick={() => onClickRightTab('kaas')}
+                />
+                <span>KaaS</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <Loading spinning={loading && rightTab !== 'node'}>
+          <div className="grid_info style_chart">
+            <div className="box type_chart">
+              <div className="cont1">
+                {tabData &&
+                  tabData.map(data => (
+                    <div
+                      className={`chart_tab ${
+                        tabActive == data.activeTab ? 'on' : ''
+                      }`}
+                      key={data.name}
+                      onClick={() => onClickLeftTab(data.activeTab)}
+                    >
+                      <div className="title">
+                        <i
+                          className={`ico-type-${data.unitType} ${data.name}`}
+                        ></i>
+                        <h5>{data.name}</h5>
+                      </div>
+                      {rightTab == 'node' ? (
+                        <div className="data">
+                          <div className="number_wrap">
+                            <p>
+                              <span className="em">{data._used}</span> /{' '}
+                              {data._total}
+                              <span
+                                className="unit"
+                                style={{ marginLeft: '3px' }}
+                              >
+                                {' '}
+                                {t(data._unit)}
+                              </span>
+                            </p>
+                            <p>{Math.round(data._percent)}%</p>
+                          </div>
+                          <div className="graph_wrap">
+                            <div className="graph_bar">
+                              <div
+                                className="bar animate-bar"
+                                style={{
+                                  width: `${Math.round(data._percent)}%`,
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="data">
+                          <div className="number_wrap rgt">
+                            <p>
+                              <span className="em">
+                                {isNaN(data._used) ? 0 : data._used}
+                              </span>
+                              <span className="unit">{t(data._unit)}</span>
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+              <div className="cont2">
+                {tabContentActive && (
+                  <TabContent option={tabContent}></TabContent>
+                )}
+                {/* <div className="chart_01"></div> */}
               </div>
             </div>
-            <Loading spinning={loading && rightTab !== 'node'}>
-              <div className="grid_info style_chart">
-                <div className="box type_chart">
-                  <div className="cont1">
-                    {tabData &&
-                      tabData.map(data => (
-                        <div
-                          className={`chart_tab ${
-                            tabActive == data.activeTab ? 'on' : ''
-                          }`}
-                          key={data.name}
-                          onClick={() => onClickLeftTab(data.activeTab)}
-                        >
-                          <div className="title">
-                            <i
-                              className={`ico-type-${data.unitType} ${data.name}`}
-                            ></i>
-                            <h5>{data.name}</h5>
-                          </div>
-                          {rightTab == 'node' ? (
-                            <div className="data">
-                              <div className="number_wrap">
-                                <p>
-                                  <span className="em">{data._used}</span> /{' '}
-                                  {data._total}
-                                  <span
-                                    className="unit"
-                                    style={{ marginLeft: '3px' }}
-                                  >
-                                    {' '}
-                                    {t(data._unit)}
-                                  </span>
-                                </p>
-                                <p>{Math.round(data._percent)}%</p>
-                              </div>
-                              <div className="graph_wrap">
-                                <div className="graph_bar">
-                                  <div
-                                    className="bar animate-bar"
-                                    style={{
-                                      width: `${Math.round(data._percent)}%`,
-                                    }}
-                                  ></div>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="data">
-                              <div className="number_wrap rgt">
-                                <p>
-                                  <span className="em">
-                                    {isNaN(data._used) ? 0 : data._used}
-                                  </span>
-                                  <span className="unit">{t(data._unit)}</span>
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                  </div>
-                  <div className="cont2">
-                    {tabContentActive && (
-                      <TabContent option={tabContent}></TabContent>
-                    )}
-                    {/* <div className="chart_01"></div> */}
-                  </div>
-                </div>
-              </div>
-            </Loading>
           </div>
-          {/* // grid_item */}
-        </div>
+        </Loading>
       </div>
+      {/* // grid_item */}
+      {/* </div>
+      </div> */}
     </>
   )
 }

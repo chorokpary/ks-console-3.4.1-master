@@ -18,9 +18,11 @@ const ComputingTemplate = ({
   keypairList,
   kaasList,
   kaasIamgeList,
-  x, y, w, h
+  x,
+  y,
+  w,
+  h,
 }) => {
-
   const [hd, setHd] = useState({ used: 0, unused: 0 })
   const [md, setMd] = useState({ used: 0, unused: 0 })
   const [image, setImage] = useState({ used: 0, unused: 0 })
@@ -30,10 +32,10 @@ const ComputingTemplate = ({
 
   useEffect(() => {
     if (flavorDetailList.length > 0) {
-      let hdUsed = 0;
+      let hdUsed = 0
       var hdSet = new Set() // device
 
-      let mdUsed = 0;
+      let mdUsed = 0
       var mdSet = new Set() // gpu
       flavorDetailList.map(obj => {
         obj['flavor'].devices.map(el => {
@@ -57,7 +59,7 @@ const ComputingTemplate = ({
 
   useEffect(() => {
     if (imageList.length > 0) {
-      let used = 0;
+      let used = 0
       var imageSet = new Set()
       vmList?.map(obj => {
         imageSet.add(obj.image)
@@ -71,7 +73,7 @@ const ComputingTemplate = ({
 
   useEffect(() => {
     if (keypairList.length > 0) {
-      let used = 0;
+      let used = 0
       var keypairSet = new Set()
       vmList?.map(obj => {
         keypairSet.add(obj.keypair_object?.name)
@@ -85,7 +87,7 @@ const ComputingTemplate = ({
 
   useEffect(() => {
     if (flavorList.length > 0) {
-      let used = 0;
+      let used = 0
       var flavorSet = new Set()
       vmList?.map(obj => {
         flavorSet.add(obj.flavor)
@@ -98,7 +100,7 @@ const ComputingTemplate = ({
   }, [flavorList, vmList])
 
   useEffect(() => {
-    let used = 0;
+    let used = 0
     var kaasSet = new Set()
     kaasList?.map(obj => {
       kaasSet.add(obj.kube_image)
@@ -111,28 +113,26 @@ const ComputingTemplate = ({
 
   return (
     <>
-      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content">
-          <div className="grid_item">
-            <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_COMPUTING_TEMPLATE_CURRENT_SITUATION')}</label>
-              <div className="right">
-                {/* <i className="ico-btn-trash"></i> */}
-              </div>
-            </div>
-            <Loading spinning={loading}>
-              <div className="grid_info style_status box_nth">
-                <ImagePanel image={image} />
-                <KaasPanel kaas={kaas} />
-                <FlavorPanel flavor={flavor} />
-                <KeypairPanel keypair={keypair} />
-                <HostDevicePanel hd={hd} />
-                <MediatedDevicePanel md={md} />
-              </div>
-            </Loading>
-          </div>
+      {/* <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content"> */}
+      <div className="grid_item">
+        <div className="grid_title" style={{ cursor: 'default' }}>
+          <label>{t('RESOURCES_COMPUTING_TEMPLATE_CURRENT_SITUATION')}</label>
+          <div className="right">{/* <i className="ico-btn-trash"></i> */}</div>
         </div>
+        <Loading spinning={loading}>
+          <div className="grid_info style_status box_nth">
+            <ImagePanel image={image} />
+            <KaasPanel kaas={kaas} />
+            <FlavorPanel flavor={flavor} />
+            <KeypairPanel keypair={keypair} />
+            <HostDevicePanel hd={hd} />
+            <MediatedDevicePanel md={md} />
+          </div>
+        </Loading>
       </div>
+      {/* </div>
+      </div> */}
     </>
   )
 }
