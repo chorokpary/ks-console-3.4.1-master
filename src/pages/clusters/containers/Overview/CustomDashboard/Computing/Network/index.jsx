@@ -16,9 +16,11 @@ const ComputingNetwork = ({
   vmList,
   sgList,
   lbList,
-  x, y, w, h
+  x,
+  y,
+  w,
+  h,
 }) => {
-
   const [lb, setLb] = useState({ used: 0, unused: 0 })
   const [sg, setSg] = useState({ used: 0, unused: 0 })
   const [floatingIp, setFloatingIp] = useState({ used: 0, unused: 0 })
@@ -28,33 +30,29 @@ const ComputingNetwork = ({
 
   useEffect(() => {
     if (floatingIpList.length > 0) {
-      let used = 0;
-      let unused = 0;
-      floatingIpList.map(obj => (
-        obj.instance_type ? used++ : unused++
-      ))
+      let used = 0
+      let unused = 0
+      floatingIpList.map(obj => (obj.instance_type ? used++ : unused++))
       setFloatingIp({ used, unused })
     }
   }, [floatingIpList])
 
   useEffect(() => {
     if (networkList.length > 0) {
-      let external = 0;
-      let internal = 0;
-      networkList.map(obj => (
-        obj.external ? external++ : internal++
-      ))
+      let external = 0
+      let internal = 0
+      networkList.map(obj => (obj.external ? external++ : internal++))
       setNetwork({ external, internal })
     }
   }, [networkList])
 
   useEffect(() => {
     if (routerList.length > 0) {
-      let external = 0;
-      let internal = 0;
+      let external = 0
+      let internal = 0
       routerList.map(obj => {
-        obj.external ? external++ : '';
-        obj.internal.length > 0 ? internal++ : '';
+        obj.external ? external++ : ''
+        obj.internal.length > 0 ? internal++ : ''
       })
       setRouter({ external, internal })
     }
@@ -62,8 +60,8 @@ const ComputingNetwork = ({
 
   useEffect(() => {
     if (sriovList.length > 0) {
-      let external = 0;
-      let internal = sriovList.length;
+      let external = 0
+      let internal = sriovList.length
       setSriov({ external, internal })
     }
   }, [sriovList])
@@ -72,9 +70,7 @@ const ComputingNetwork = ({
     if (sgList.length > 0) {
       var hs = new Set()
       vmList.map(obj => {
-        obj['security_group_objects']?.map(el => (
-          hs.add(el.name)
-        ))
+        obj['security_group_objects']?.map(el => hs.add(el.name))
       })
       setSg({ used: hs.size, unused: sgList.length - hs.size })
     }
@@ -82,36 +78,34 @@ const ComputingNetwork = ({
 
   useEffect(() => {
     if (lbList.length > 0) {
-      let unused = 0;
-      let used = lbList.length;
+      let unused = 0
+      let used = lbList.length
       setLb({ used, unused })
     }
   }, [lbList])
 
   return (
     <>
-      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content">
-          <div className="grid_item">
-            <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_COMPUTING_NETWORK_CURRENT_SITUATION')}</label>
-              <div className="right">
-                {/* <i className="ico-btn-trash"></i> */}
-              </div>
-            </div>
-            <Loading spinning={loading}>
-              <div className="grid_info style_status box_nth">
-                <NetworkPanel network={network} />
-                <SriovPanel sriov={sriov} />
-                <RouterPanel router={router} />
-                <LbPanel lb={lb} />
-                <SecurityGroupPanel sg={sg} />
-                <FloatingIpPanel floatingIp={floatingIp} />
-              </div>
-            </Loading>
-          </div>
+      {/* <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content"> */}
+      <div className="grid_item">
+        <div className="grid_title" style={{ cursor: 'default' }}>
+          <label>{t('RESOURCES_COMPUTING_NETWORK_CURRENT_SITUATION')}</label>
+          <div className="right">{/* <i className="ico-btn-trash"></i> */}</div>
         </div>
+        <Loading spinning={loading}>
+          <div className="grid_info style_status box_nth">
+            <NetworkPanel network={network} />
+            <SriovPanel sriov={sriov} />
+            <RouterPanel router={router} />
+            <LbPanel lb={lb} />
+            <SecurityGroupPanel sg={sg} />
+            <FloatingIpPanel floatingIp={floatingIp} />
+          </div>
+        </Loading>
       </div>
+      {/* </div>
+      </div> */}
     </>
   )
 }

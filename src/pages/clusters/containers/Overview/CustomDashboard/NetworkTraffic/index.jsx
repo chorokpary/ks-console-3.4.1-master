@@ -20,7 +20,7 @@ const MetricTypes = {
   pod_net_bytes_received: 'pod_net_bytes_received',
 }
 
-const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
+const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
   const podStore = new PodStore()
   const customStore = new CustomStore()
   const vmStore = new VmStore()
@@ -179,118 +179,118 @@ const NetworkTraffic = ({ monitorStore, x, y, w, h, ...props }) => {
 
   return (
     <>
-      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content">
-          {/* grid_item */}
-          <div className="grid_item">
-            <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_NETWORK_TRAFFIC')}</label>
-              <div className="right">
-                <div className="dash_boxtab">
-                  <label htmlFor="name3">
-                    <input
-                      type="radio"
-                      name="box-tab1"
-                      id="name3"
-                      value="name3"
-                      defaultChecked
-                      onClick={() => onClickRightTab('node')}
-                    />
-                    <span>{t('RESOURCES_NODE')}</span>
-                  </label>
-                  <label htmlFor="name4">
-                    <input
-                      type="radio"
-                      name="box-tab1"
-                      id="name4"
-                      value="name4"
-                      onClick={() => onClickRightTab('pod')}
-                    />
-                    <span>{t('POD_PL')}</span>
-                  </label>
-                  <label htmlFor="name5">
-                    <input
-                      type="radio"
-                      name="box-tab1"
-                      id="name5"
-                      value="name5"
-                      onClick={() => onClickRightTab('vm')}
-                    />
-                    <span>{t('RESOURCES_VM')}</span>
-                  </label>
-                  <label htmlFor="name6">
-                    <input
-                      type="radio"
-                      name="box-tab1"
-                      id="name6"
-                      value="name6"
-                      onClick={() => onClickRightTab('kaas')}
-                    />
-                    <span>KaaS</span>
-                  </label>
+      {/* <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content"> */}
+      {/* grid_item */}
+      <div className="grid_item">
+        <div className="grid_title" style={{ cursor: 'default' }}>
+          <label>{t('RESOURCES_NETWORK_TRAFFIC')}</label>
+          <div className="right">
+            <div className="dash_boxtab">
+              <label htmlFor="name3">
+                <input
+                  type="radio"
+                  name="box-tab1"
+                  id="name3"
+                  value="name3"
+                  defaultChecked
+                  onClick={() => onClickRightTab('node')}
+                />
+                <span>{t('RESOURCES_NODE')}</span>
+              </label>
+              <label htmlFor="name4">
+                <input
+                  type="radio"
+                  name="box-tab1"
+                  id="name4"
+                  value="name4"
+                  onClick={() => onClickRightTab('pod')}
+                />
+                <span>{t('POD_PL')}</span>
+              </label>
+              <label htmlFor="name5">
+                <input
+                  type="radio"
+                  name="box-tab1"
+                  id="name5"
+                  value="name5"
+                  onClick={() => onClickRightTab('vm')}
+                />
+                <span>{t('RESOURCES_VM')}</span>
+              </label>
+              <label htmlFor="name6">
+                <input
+                  type="radio"
+                  name="box-tab1"
+                  id="name6"
+                  value="name6"
+                  onClick={() => onClickRightTab('kaas')}
+                />
+                <span>KaaS</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <Loading spinning={loading && rightTab !== 'node'}>
+          <div className="grid_info style_chart">
+            <div className="box type_chart">
+              <div className="cont1">
+                <div className="chart_tab no-tab">
+                  <div className="title">
+                    <i className="ico-type-outbound"></i>
+                    <h5>{t('RESOURCES_OUTBOUND')}</h5>
+                  </div>
+                  <div className="data">
+                    <div className="number_wrap data-r">
+                      <p>
+                        <span className="em">{tabData?.OUT}</span>{' '}
+                        <span className="unit">{tabData?.UNIT}</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
+                <div className="chart_tab no-tab">
+                  <div className="title">
+                    <i className="ico-type-inbound"></i>
+                    <h5>{t('RESOURCES_INBOUND')}</h5>
+                  </div>
+                  <div className="data">
+                    <div className="number_wrap data-r">
+                      <p>
+                        <span className="em">{tabData?.IN}</span>{' '}
+                        <span className="unit">{tabData?.UNIT}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="chart_tab no-tab">
+                  <div className="title">
+                    <i className="ico-type-network"></i>
+                    <h5>{t('TOTAL')}</h5>
+                  </div>
+                  <div className="data">
+                    <div className="number_wrap data-r">
+                      <p>
+                        <span className="em">{tabData?.TOTAL}</span>{' '}
+                        <span className="unit">{tabData?.UNIT}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="cont2">
+                {tabContentActive && (
+                  <TabContent option={tabContent}></TabContent>
+                )}
+                {/* <div className="chart_02"></div> */}
               </div>
             </div>
-            <Loading spinning={loading && rightTab !== 'node'}>
-              <div className="grid_info style_chart">
-                <div className="box type_chart">
-                  <div className="cont1">
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-outbound"></i>
-                        <h5>{t('RESOURCES_OUTBOUND')}</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p>
-                            <span className="em">{tabData?.OUT}</span>{' '}
-                            <span className="unit">{tabData?.UNIT}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-inbound"></i>
-                        <h5>{t('RESOURCES_INBOUND')}</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p>
-                            <span className="em">{tabData?.IN}</span>{' '}
-                            <span className="unit">{tabData?.UNIT}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="chart_tab no-tab">
-                      <div className="title">
-                        <i className="ico-type-network"></i>
-                        <h5>{t('TOTAL')}</h5>
-                      </div>
-                      <div className="data">
-                        <div className="number_wrap data-r">
-                          <p>
-                            <span className="em">{tabData?.TOTAL}</span>{' '}
-                            <span className="unit">{tabData?.UNIT}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="cont2">
-                    {tabContentActive && (
-                      <TabContent option={tabContent}></TabContent>
-                    )}
-                    {/* <div className="chart_02"></div> */}
-                  </div>
-                </div>
-              </div>
-            </Loading>
           </div>
-          {/* // grid_item */}
-        </div>
+        </Loading>
       </div>
+      {/* // grid_item */}
+      {/* </div>
+      </div> */}
     </>
   )
 }

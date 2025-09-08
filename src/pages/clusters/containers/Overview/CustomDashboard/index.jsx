@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { GridStack } from 'gridstack'
 import 'gridstack/dist/gridstack.min.css'
 import './dashboard.css'
@@ -24,6 +24,7 @@ import Bmc from './Bmc'
 import GpuCluster from './GpuCluster'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
+import { makePanels } from 'stores/dashboard/panels'
 
 const CustomDashboard = props => {
   const { cluster } = props.match.params
@@ -31,11 +32,9 @@ const CustomDashboard = props => {
 
   const monitorStore = new ClusterMonitorStore()
 
-  const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
+  const [activeDashboard, setActiveDashboard] = useState({})
 
-  const [dashboardArr, setDashboardArr] = useState(
-    new Array(new DashboardInfo())
-  )
+  const [dashboardArr, setDashboardArr] = useState([])
 
   const options = {
     column: 15,
@@ -48,7 +47,19 @@ const CustomDashboard = props => {
     disableDrag: true, // drag
   }
 
-  var grid
+  // 위치를 위한 초기 grid 그려주기
+  useEffect(() => {
+    const drawExPanel = new DashboardInfo()
+    grid = GridStack.init(options)
+    const keys = Object.keys(drawExPanel)
+    keys.map(obj => {
+      const panel = drawExPanel[obj] ? makePanels(obj, drawExPanel[obj]) : null
+      if (panel) {
+        grid.addWidget(panel)
+      }
+    })
+  }, [])
+
   useEffect(() => {
     var dashboardArr = JSON.parse(localStorage.getItem('dashboardArr'))
     if (!dashboardArr) {
@@ -58,6 +69,7 @@ const CustomDashboard = props => {
     }
 
     setDashboardArr(dashboardArr)
+    setActiveDashboard(dashboardArr[0])
   }, [])
 
   const editMode = () => {
@@ -119,6 +131,8 @@ const CustomDashboard = props => {
 
   useEffect(() => {
     if (!_.isEmpty(activeDashboard)) {
+      grid.removeAll()
+
       let maxHeight = 0
       const keys = Object.keys(activeDashboard)
       keys.map(obj => {
@@ -197,164 +211,29 @@ const CustomDashboard = props => {
               <div className="tab-content">
                 <div className="grid_wrap">
                   <div className="grid-stack">
-                    {/* 클러스터 노드 */}
-                    {activeDashboard.clusterNode && (
-                      <ClusterNode
-                        x={activeDashboard.clusterNode.x}
-                        y={activeDashboard.clusterNode.y}
-                        w={activeDashboard.clusterNode.w}
-                        h={activeDashboard.clusterNode.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 파드 */}
-                    {activeDashboard.pod && (
-                      <Pod
-                        x={activeDashboard.pod.x}
-                        y={activeDashboard.pod.y}
-                        w={activeDashboard.pod.w}
-                        h={activeDashboard.pod.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 가상머신 */}
-                    {activeDashboard.vm && (
-                      <Vm
-                        x={activeDashboard.vm.x}
-                        y={activeDashboard.vm.y}
-                        w={activeDashboard.vm.w}
-                        h={activeDashboard.vm.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 쿠버네티스 */}
-                    {activeDashboard.kaas && (
-                      <Kaas
-                        x={activeDashboard.kaas.x}
-                        y={activeDashboard.kaas.y}
-                        w={activeDashboard.kaas.w}
-                        h={activeDashboard.kaas.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* GPU 클러스터 */}
-                    {activeDashboard.gpuCluster && (
-                      <GpuCluster
-                        monitorStore={monitorStore}
-                        x={activeDashboard.gpuCluster.x}
-                        y={activeDashboard.gpuCluster.y}
-                        w={activeDashboard.gpuCluster.w}
-                        h={activeDashboard.gpuCluster.h}
-                        {...props.match.params}
-                        activeDashboard={activeDashboard}
-                      />
-                    )}
-
-                    {/* 리소스 사용량 */}
-                    {activeDashboard.resourceUsage && (
-                      <ResourcesUsage
-                        monitorStore={monitorStore}
-                        x={activeDashboard.resourceUsage.x}
-                        y={activeDashboard.resourceUsage.y}
-                        w={activeDashboard.resourceUsage.w}
-                        h={activeDashboard.resourceUsage.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 네트워크 트래픽 */}
-                    {activeDashboard.networkTraffic && (
-                      <NetworkTraffic
-                        monitorStore={monitorStore}
-                        x={activeDashboard.networkTraffic.x}
-                        y={activeDashboard.networkTraffic.y}
-                        w={activeDashboard.networkTraffic.w}
-                        h={activeDashboard.networkTraffic.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 리소스 사용량 Top 5 */}
-                    {activeDashboard.usageTop5 && (
-                      <UsageTop5
-                        x={activeDashboard.usageTop5.x}
-                        y={activeDashboard.usageTop5.y}
-                        w={activeDashboard.usageTop5.w}
-                        h={activeDashboard.usageTop5.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 최근 생성된 리소스 (일주일) */}
-                    {activeDashboard.recentResource && (
-                      <RecentResource
-                        x={activeDashboard.recentResource.x}
-                        y={activeDashboard.recentResource.y}
-                        w={activeDashboard.recentResource.w}
-                        h={activeDashboard.recentResource.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 이슈 */}
-                    {activeDashboard.issue && (
-                      <Issue
-                        x={activeDashboard.issue.x}
-                        y={activeDashboard.issue.y}
-                        w={activeDashboard.issue.w}
-                        h={activeDashboard.issue.h}
-                      />
-                    )}
-
-                    {/* 컴퓨팅 */}
-                    {(activeDashboard.computingNetwork ||
-                      activeDashboard.computingTemplate) && (
-                      <Computing
-                        computing={activeDashboard}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 리소스 변화량 */}
-                    {activeDashboard.resourceChange && (
-                      <ResourceChange
-                        monitorStore={monitorStore}
-                        x={activeDashboard.resourceChange.x}
-                        y={activeDashboard.resourceChange.y}
-                        w={activeDashboard.resourceChange.w}
-                        h={activeDashboard.resourceChange.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* 클러스터 컴포넌트 상태 */}
-                    {activeDashboard.clusterStatus && (
-                      <ClusterStatus
-                        x={activeDashboard.clusterStatus.x}
-                        y={activeDashboard.clusterStatus.y}
-                        w={activeDashboard.clusterStatus.w}
-                        h={activeDashboard.clusterStatus.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {/* bmc 관련 
-                    (BMC 노드 현황, 탄소지표, 전력사용량 top 5, cpu 소비 전력량 비교 1대평균
-                    탄소 발자국 - 전력 사용량, co2 발생량, 나무, 비용)*/}
-
-                    {(activeDashboard.bmcNode ||
-                      activeDashboard.carbonIndicator ||
-                      activeDashboard.powerUsageTop5 ||
-                      activeDashboard.cpuPower ||
-                      activeDashboard.carbonPower ||
-                      activeDashboard.carbonCo2 ||
-                      activeDashboard.carbonTree ||
-                      activeDashboard.carbonCost) && (
-                      <Bmc bmc={activeDashboard} {...props.match.params} />
+                    {activeDashboard && !_.isEmpty(activeDashboard) && (
+                      <>
+                        {Object.entries(activeDashboard).map(([key, value]) => {
+                          if (key === 'name') return null // name은 탭 이름으로만 쓰고 건너뜀
+                          const Comp = widgetMap[key]
+                          return (
+                            <GridItem key={key} {...value}>
+                              {Comp ? (
+                                <Comp
+                                  widgetKey={key}
+                                  monitorStore={monitorStore}
+                                  {...(key === 'gpuCluster'
+                                    ? { activeDashboard }
+                                    : {})}
+                                  {...props.match.params}
+                                />
+                              ) : (
+                                <div>{key}</div>
+                              )}
+                            </GridItem>
+                          )
+                        })}
+                      </>
                     )}
                   </div>
                 </div>
@@ -370,3 +249,37 @@ const CustomDashboard = props => {
 }
 
 export default inject('rootStore')(observer(CustomDashboard))
+
+const widgetMap = {
+  clusterNode: props => <ClusterNode {...props} />,
+  pod: props => <Pod {...props} />,
+  vm: props => <Vm {...props} />,
+  kaas: props => <Kaas {...props} />,
+  usageTop5: props => <UsageTop5 {...props} />,
+  gpuCluster: props => <GpuCluster {...props} />,
+  recentResource: props => <RecentResource {...props} />,
+  resourceUsage: props => <ResourcesUsage {...props} />,
+  issue: props => <Issue {...props} />,
+  networkTraffic: props => <NetworkTraffic {...props} />,
+  resourceChange: props => <ResourceChange {...props} />,
+  clusterStatus: props => <ClusterStatus {...props} />,
+  computingTemplate: props => <Computing {...props} />,
+  computingNetwork: props => <Computing {...props} />,
+  bmcNode: props => <Bmc {...props} />,
+  carbonIndicator: props => <Bmc {...props} />,
+  powerUsageTop5: props => <Bmc {...props} />,
+  carbonPower: props => <Bmc {...props} />,
+  carbonCo2: props => <Bmc {...props} />,
+  carbonTree: props => <Bmc {...props} />,
+  carbonCost: props => <Bmc {...props} />,
+  cpuPower: props => <Bmc {...props} />,
+}
+
+// Grid Item
+const GridItem = ({ x, y, w, h, children }) => {
+  return (
+    <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+      <div className="grid-stack-item-content">{children}</div>
+    </div>
+  )
+}
