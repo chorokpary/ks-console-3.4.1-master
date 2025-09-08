@@ -76,10 +76,9 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
       let promsql_pod_vm_list = ''
       let vm_list_length = 0
       vmList.map(obj => {
-        promsql_pod_vm_list = promsql_pod_vm_list + obj.id + '|'
+        promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
         vm_list_length++
       })
-      console.log('promsql_pod_vm_list', promsql_pod_vm_list)
 
       // kaas list
       const kaasList = await resourceStore.fetchList({ limit: 1000, ...props })

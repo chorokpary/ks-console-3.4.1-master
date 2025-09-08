@@ -268,7 +268,7 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                               <div class="card_header">
                                 <div class="select_cluster" onclick="toggleDropdown()">
                                   <div class="icon_vgpu">
-                                    <i class="ico-type-mediatedvgpu"></i>
+                                    <i class="ico-type-gpucluster"></i>
                                     <p class="cluster_name">B200_cluster01</p>
                                   </div>
                                   
@@ -325,19 +325,20 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                             </div>
                    
                             <section class="flex_row">
-                              <div class="zoomin_icon">
-                                <button id="zoomIn" class="btn_zoom_icon">
-                                  <i class="ico-plus"></i>
-                                </button>
-                                <button id="zoomOut" class="btn_zoom_icon">
-                                  <i class="ico-minus"></i>
-                                </button>
-                                <button id="resetZoom" class="btn_zoom_icon">
-                                  <i class="ico-reset"></i>
-                                </button>
-                              </div>
                               <div class="gpu_group" >
-                       
+                                <div className="select step">
+                                </div>
+                                  <div class="zoomin_icon">
+                                    <button id="zoomIn" class="btn_zoom_icon">
+                                      <i class="ico-plus"></i>
+                                    </button>
+                                    <button id="zoomOut" class="btn_zoom_icon">
+                                      <i class="ico-minus"></i>
+                                    </button>
+                                    <button id="resetZoom" class="btn_zoom_icon">
+                                      <i class="ico-reset"></i>
+                                    </button>
+                                  </div>
                                 <div class="gpu_card_group">
                                 
                                   <div class="gpu_card">
@@ -1180,638 +1181,6 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="gpu_card">
-                                    <div class="gpu_card_header">
-                                      <div class="gpu_card_title">Node-01</div>
-                                      <div class="gpu_card_status_dot normal"></div>
-                                    </div>
-                                  
-                                    <section class="gpu_card_gpu_list">
-                                      <div class="gpu_box normal"> <!--주석삭제 : normal, critical, minor, unknown-->
-                                        <div class="gpu_box_index">1</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU1</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">2</div>
-                                        <div class="tooltip_box">
-                                          <div class="gpu_card_title">GPU2</div>
-                                          <div class="gpu_card_metrics">
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Avg</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                            <div class="gpu_card_metric">
-                                              <div class="gpu_card_metric_label">GPU Mem</div>
-                                              <div class="gpu_card_metric_value">46.9%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">3</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">4</div>
-                                      </div>
-                                      <div class="gpu_box unknown">
-                                        <div class="gpu_box_index">5</div>
-                                      </div>
-                                      <div class="gpu_box normal">
-                                        <div class="gpu_box_index">6</div>
-                                      </div>
-                                      <div class="gpu_box critical">
-                                        <div class="gpu_box_index">7</div>
-                                      </div>
-                                      <div class="gpu_box minor">
-                                        <div class="gpu_box_index">8</div>
-                                      </div>
-                                    </section>
-                                  
-                                    <div class="gpu_card_metrics">
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Avg</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                      <div class="gpu_card_metric">
-                                        <div class="gpu_card_metric_label">GPU Mem</div>
-                                        <div class="gpu_card_metric_value">46.9%</div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                 
-                                
                                 </div>
 
                               </div>
@@ -1820,26 +1189,23 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                   <div class="gpu_title">GPU 현황</div>
                                   <div class="gpu_status">
                                     <div class="gpu_summary">
-                                      <span class="gpu_summary_main">58</span><span>/</span><span class="gpu_summary_total"> 80</span>
+                                      <span class="gpu_summary_main">50</span><span>/</span><span class="gpu_summary_total"> 70</span>
                                     </div>
                                     <div class="gpu_legend">
                                       <div class="gpu_legend_values">
-                                        <div>2</div>
                                         <div>10</div>
-                                        <div>58</div>
+                                        <div>50</div>
                                         <div>10</div>
                                       </div>
                                       <div class="gpu_legend_dots">
-                                        <div class="dot critical"></div>
                                         <div class="dot minor"></div>
                                         <div class="dot normal"></div>
                                         <div class="dot unknown"></div>
                                       </div>
                                       <div class="gpu_legend_labels">
-                                        <div>Critical</div>
-                                        <div>Minor</div>
-                                        <div>Normal</div>
-                                        <div>Unknown</div>
+                                        <div>경고</div>
+                                        <div>정상</div>
+                                        <div>미확인</div>
                                       </div>
                                     </div>
                                   </div>
@@ -1849,29 +1215,21 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                   <div class="chart_section">
                                     <div class="chart_title">GPU 사용량 추이</div>
                                     <div class="chart_values">
-                                      <div class="chart_total"><span>3.8</span><span>/</span><span>6.4 TB</span></div>
-                                      <div class="chart_percent">52%</div>
+                                      <div class="chart_total"><span>52%</span><span></span><span></span></div>
                                     </div>
                                     <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
                                   </div>
-                            
                                   <div class="chart_section">
                                     <div class="chart_title">NVLink (Total)</div>
-                                    <div class="chart_values">
-                                      <div class="chart_total"><span>38 </span><span>GB/s</span></div>
-                                    </div>
+                                    <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
                                   </div>
-                            
                                   <div class="chart_section">
-                                    <div class="chart_title">Infiniband</div>
-                                    <div class="chart_values">
-                                      <div class="chart_total">
-                                        <span class="title">TX </span><span class="lg">95 </span><span>GB/s</span>
-                                      </div>
-                                      <div class="chart_total">
-                                        <span class="title"> RX </span><span class="lg">92 </span><span>GB/s</span>
-                                      </div>
-                                    </div>
+                                    <div class="chart_title">IB 인바운드 (Total)</div>
+                                    <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
+                                  </div>
+                                  <div class="chart_section">
+                                    <div class="chart_title">IB 아웃바운드 (Total)</div>
+                                    <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
                                   </div>
                                 </div>
                               </div>   

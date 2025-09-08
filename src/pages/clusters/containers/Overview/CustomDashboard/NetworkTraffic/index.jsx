@@ -68,7 +68,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
       // vm list
       const vmList = await vmStore.vmList({ limit: -1, ...props })
       let vmUuid = ''
-      vmList.map(obj => (vmUuid = vmUuid + obj.id + '|'))
+      vmList.map(obj => (vmUuid = vmUuid + obj.name + '|'))
 
       // vm inbound data
       var currentTime = Math.floor(Date.now() / 1000)

@@ -32,8 +32,7 @@ const CustomDashboard = props => {
 
   const monitorStore = new ClusterMonitorStore()
 
-  const [activeDashboard, setActiveDashboard] = useState(new DashboardInfo())
-  // const [activeDashboard, setActiveDashboard] = useState({})
+  const [activeDashboard, setActiveDashboard] = useState({})
 
   const [dashboardArr, setDashboardArr] = useState([])
 
@@ -47,6 +46,19 @@ const CustomDashboard = props => {
     disableResize: true, // resize
     disableDrag: true, // drag
   }
+
+  // 위치를 위한 초기 grid 그려주기
+  useEffect(() => {
+    const drawExPanel = new DashboardInfo()
+    grid = GridStack.init(options)
+    const keys = Object.keys(drawExPanel)
+    keys.map(obj => {
+      const panel = drawExPanel[obj] ? makePanels(obj, drawExPanel[obj]) : null
+      if (panel) {
+        grid.addWidget(panel)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     var dashboardArr = JSON.parse(localStorage.getItem('dashboardArr'))
@@ -107,7 +119,6 @@ const CustomDashboard = props => {
 
   useEffect(() => {
     if (dashboardArr.length > 0) {
-      console.log('dashboardArr', dashboardArr)
       setActiveDashboard(dashboardArr[0])
       localStorage.setItem('activeDashboardName', dashboardArr[0].name)
       document.getElementById('dashTab0').click()
@@ -120,7 +131,8 @@ const CustomDashboard = props => {
 
   useEffect(() => {
     if (!_.isEmpty(activeDashboard)) {
-      console.log('22222')
+      grid.removeAll()
+
       let maxHeight = 0
       const keys = Object.keys(activeDashboard)
       keys.map(obj => {
@@ -198,175 +210,32 @@ const CustomDashboard = props => {
               {/* tab-content */}
               <div className="tab-content">
                 <div className="grid_wrap">
-                  {/* <div className="grid-stack">
-                    {activeDashboard.clusterNode && (
-                      <ClusterNode
-                        x={activeDashboard.clusterNode.x}
-                        y={activeDashboard.clusterNode.y}
-                        w={activeDashboard.clusterNode.w}
-                        h={activeDashboard.clusterNode.h}
-                        {...props.match.params}
-                      />
+                  <div className="grid-stack">
+                    {activeDashboard && !_.isEmpty(activeDashboard) && (
+                      <>
+                        {Object.entries(activeDashboard).map(([key, value]) => {
+                          if (key === 'name') return null // name은 탭 이름으로만 쓰고 건너뜀
+                          const Comp = widgetMap[key]
+                          return (
+                            <GridItem key={key} {...value}>
+                              {Comp ? (
+                                <Comp
+                                  widgetKey={key}
+                                  monitorStore={monitorStore}
+                                  {...(key === 'gpuCluster'
+                                    ? { activeDashboard }
+                                    : {})}
+                                  {...props.match.params}
+                                />
+                              ) : (
+                                <div>{key}</div>
+                              )}
+                            </GridItem>
+                          )
+                        })}
+                      </>
                     )}
-
-                    {activeDashboard.pod && (
-                      <Pod
-                        x={activeDashboard.pod.x}
-                        y={activeDashboard.pod.y}
-                        w={activeDashboard.pod.w}
-                        h={activeDashboard.pod.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.vm && (
-                      <Vm
-                        x={activeDashboard.vm.x}
-                        y={activeDashboard.vm.y}
-                        w={activeDashboard.vm.w}
-                        h={activeDashboard.vm.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.kaas && (
-                      <Kaas
-                        x={activeDashboard.kaas.x}
-                        y={activeDashboard.kaas.y}
-                        w={activeDashboard.kaas.w}
-                        h={activeDashboard.kaas.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.gpuCluster && (
-                      <GpuCluster
-                        monitorStore={monitorStore}
-                        x={activeDashboard.gpuCluster.x}
-                        y={activeDashboard.gpuCluster.y}
-                        w={activeDashboard.gpuCluster.w}
-                        h={activeDashboard.gpuCluster.h}
-                        {...props.match.params}
-                        activeDashboard={activeDashboard}
-                      />
-                    )}
-
-                    {activeDashboard.resourceUsage && (
-                      <ResourcesUsage
-                        monitorStore={monitorStore}
-                        x={activeDashboard.resourceUsage.x}
-                        y={activeDashboard.resourceUsage.y}
-                        w={activeDashboard.resourceUsage.w}
-                        h={activeDashboard.resourceUsage.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.networkTraffic && (
-                      <NetworkTraffic
-                        monitorStore={monitorStore}
-                        x={activeDashboard.networkTraffic.x}
-                        y={activeDashboard.networkTraffic.y}
-                        w={activeDashboard.networkTraffic.w}
-                        h={activeDashboard.networkTraffic.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.usageTop5 && (
-                      <UsageTop5
-                        x={activeDashboard.usageTop5.x}
-                        y={activeDashboard.usageTop5.y}
-                        w={activeDashboard.usageTop5.w}
-                        h={activeDashboard.usageTop5.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.recentResource && (
-                      <RecentResource
-                        x={activeDashboard.recentResource.x}
-                        y={activeDashboard.recentResource.y}
-                        w={activeDashboard.recentResource.w}
-                        h={activeDashboard.recentResource.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.issue && (
-                      <Issue
-                        x={activeDashboard.issue.x}
-                        y={activeDashboard.issue.y}
-                        w={activeDashboard.issue.w}
-                        h={activeDashboard.issue.h}
-                      />
-                    )}
-
-                    {(activeDashboard.computingNetwork ||
-                      activeDashboard.computingTemplate) && (
-                      <Computing
-                        computing={activeDashboard}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.resourceChange && (
-                      <ResourceChange
-                        monitorStore={monitorStore}
-                        x={activeDashboard.resourceChange.x}
-                        y={activeDashboard.resourceChange.y}
-                        w={activeDashboard.resourceChange.w}
-                        h={activeDashboard.resourceChange.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {activeDashboard.clusterStatus && (
-                      <ClusterStatus
-                        x={activeDashboard.clusterStatus.x}
-                        y={activeDashboard.clusterStatus.y}
-                        w={activeDashboard.clusterStatus.w}
-                        h={activeDashboard.clusterStatus.h}
-                        {...props.match.params}
-                      />
-                    )}
-
-                    {(activeDashboard.bmcNode ||
-                      activeDashboard.carbonIndicator ||
-                      activeDashboard.powerUsageTop5 ||
-                      activeDashboard.cpuPower ||
-                      activeDashboard.carbonPower ||
-                      activeDashboard.carbonCo2 ||
-                      activeDashboard.carbonTree ||
-                      activeDashboard.carbonCost) && (
-                      <Bmc bmc={activeDashboard} {...props.match.params} />
-                    )}
-                  </div> */}
-
-                  {activeDashboard && !_.isEmpty(activeDashboard) && (
-                    <GridStackWrapper>
-                      {Object.entries(activeDashboard).map(([key, value]) => {
-                        if (key === 'name') return null // name은 탭 이름으로만 쓰고 건너뜀
-                        const Comp = widgetMap[key]
-                        return (
-                          <GridItem key={key} {...value}>
-                            {Comp ? (
-                              <Comp
-                                widgetKey={key}
-                                monitorStore={monitorStore}
-                                {...(key === 'gpuCluster'
-                                  ? { activeDashboard }
-                                  : {})}
-                                {...props.match.params}
-                              />
-                            ) : (
-                              <div>{key}</div>
-                            )}
-                          </GridItem>
-                        )
-                      })}
-                    </GridStackWrapper>
-                  )}
+                  </div>
                 </div>
               </div>
               {/* // grid-stack */}
@@ -404,35 +273,6 @@ const widgetMap = {
   carbonTree: props => <Bmc {...props} />,
   carbonCost: props => <Bmc {...props} />,
   cpuPower: props => <Bmc {...props} />,
-}
-
-// GridStack Wrapper
-const GridStackWrapper = ({ children }) => {
-  const gridRef = useRef(null)
-
-  useEffect(() => {
-    if (gridRef.current) {
-      GridStack.init(
-        {
-          column: 15,
-          float: false,
-          disableOneColumnMode: true,
-          handleClass: 'grid-stack-item-content .grid_item .grid_title',
-          cellHeight: 59,
-          verticalMargin: 20,
-          disableResize: true, // resize
-          disableDrag: true, // drag
-        },
-        gridRef.current
-      )
-    }
-  }, [])
-
-  return (
-    <div className="grid-stack" ref={gridRef}>
-      {children}
-    </div>
-  )
 }
 
 // Grid Item
