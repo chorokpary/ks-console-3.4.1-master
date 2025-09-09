@@ -818,7 +818,7 @@ const validateQuantity = (data) => {
                           <Form.Item>
                             <div
                               style={{
-                                marginLeft: '45%',
+                                marginLeft: '15%',
                               }}
                             >
                               <Button
@@ -888,7 +888,7 @@ const validateQuantity = (data) => {
                           <Form.Item>
                             <div
                               style={{
-                                marginLeft: '45%',
+                                marginLeft: '15%',
                               }}
                             >
                               <Button
