@@ -36,6 +36,7 @@ const CustomDashboard = props => {
 
   const [dashboardArr, setDashboardArr] = useState([])
 
+  var grid
   const options = {
     column: 15,
     float: false,
@@ -58,6 +59,7 @@ const CustomDashboard = props => {
         grid.addWidget(panel)
       }
     })
+    grid.removeAll()
   }, [])
 
   useEffect(() => {
@@ -131,8 +133,6 @@ const CustomDashboard = props => {
 
   useEffect(() => {
     if (!_.isEmpty(activeDashboard)) {
-      grid.removeAll()
-
       let maxHeight = 0
       const keys = Object.keys(activeDashboard)
       keys.map(obj => {
