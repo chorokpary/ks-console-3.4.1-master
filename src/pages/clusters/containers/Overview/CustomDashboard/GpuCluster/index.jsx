@@ -541,6 +541,9 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
               <section className="flex_row">
                 <div className="gpu_group">
                   <TransformWrapper
+                    wheel={{ wheelDisabled: true }}
+                    doubleClick={{ disabled: true }}
+                    panning={{ disabled: true }}
                     initialScale={1}
                     initialPositionX={10}
                     initialPositionY={10}
@@ -548,29 +551,18 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                     maxScale={1.5}
                     onTransformed={ctx => setScale(ctx.state.scale)}
                   >
-                    {({
-                      zoomIn,
-                      zoomOut,
-                      resetTransform,
-                      centerView,
-                      setTransform,
-                    }) => (
+                    {({ setTransform }) => (
                       <>
                         <Controls
-                          zoomIn={zoomIn}
-                          zoomOut={zoomOut}
-                          resetTransform={resetTransform}
                           setXidTimeRange={setXidTimeRange}
-                          centerView={centerView}
                           setTransform={setTransform}
+                          scale={scale}
                         />
                         <TransformComponent
-                          onTransformChange={transform =>
-                            console.log('Transform changed:', transform)
-                          }
                           wrapperStyle={{
                             width: '1000px',
                             height: '415px',
+                            overflowY: 'scroll',
                           }}
                         >
                           <Loading spinning={panelLoading}>
@@ -859,28 +851,17 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
   )
 }
 
-const Controls = ({
-  zoomIn,
-  zoomOut,
-  resetTransform,
-  setXidTimeRange,
-  centerView,
-  setTransform,
-}) => {
+const Controls = ({ setXidTimeRange, setTransform, scale }) => {
   const duration = 200
 
   const handleZoomIn = () => {
-    zoomIn(0.1, duration, 'easeOut')
-    setTimeout(() => {
-      centerView()
-    }, duration + 100)
+    if (scale >= 1.45) return
+    setTransform(10, 10, (scale + 0.1).toFixed(1), duration, 'easeOut')
   }
 
   const handleZoomOut = () => {
-    zoomOut(0.1, duration, 'easeOut')
-    setTimeout(() => {
-      centerView()
-    }, duration + 100)
+    if (scale < 0.7) return
+    setTransform(10, 10, (scale - 0.1).toFixed(1), duration, 'easeOut')
   }
 
   const handleReset = () => {
