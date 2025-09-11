@@ -389,7 +389,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
         resultMap[pod] = {}
       }
 
-      if (comparePods.has(key)) {
+      if (comparePods.has(key) && errCode !== '0') {
         resultMap[pod][gpu] = {
           state: 'minor',
           errCode: errCode,
@@ -874,7 +874,7 @@ const GpuBoxValues = ({
                 </div>
               </div>
             </div>
-            {gpuXidData?.[vmName]?.[el].state !== 'normal' && (
+            {gpuXidData?.[vmName]?.[el].state === 'minor' && (
               <div className="gpu_card_error">
                 <div
                   className={`severity_badge ${gpuXidData?.[vmName]?.[el].state}`}

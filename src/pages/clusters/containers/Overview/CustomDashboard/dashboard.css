@@ -3179,7 +3179,7 @@ body {
   -ms-flex-direction: row;
   flex-direction: row;
   gap: 8px;
-  height: calc(100% - 80px);
+  height: calc(100% - 73px);
 }
 .grid_item .grid_info.style_groupnode .select_cluster {
   position: relative;
@@ -3402,7 +3402,6 @@ body {
 .grid_item .grid_info .gpu_panel {
   width: 283px;
   height: 100%;
-  overflow-y: auto;
   margin-bottom: 20px;
   padding: 12px;
   background: white;
