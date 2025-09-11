@@ -1,47 +1,62 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
-import NodeStore from 'stores/node';
+import NodeStore from 'stores/node'
 import VmStore from 'stores/resources/vms'
 import PodStore from 'stores/pod'
 import KaasStore from 'stores/resources/containerresource'
-import moment from 'moment-mini';
+import moment from 'moment-mini'
 
 const iconType = {
-  'node': 'clusternode',
-  'pod': 'pod',
-  'vm': 'vm',
-  'kaas': 'container',
+  node: 'clusternode',
+  pod: 'pod',
+  vm: 'vm',
+  kaas: 'container',
 }
 
-const RecentResource = ({ x, y, w, h, ...props }) => {
-  const nodeStore = new NodeStore();
-  const podStore = new PodStore();
-  const vmStore = new VmStore();
-  const kaasStore = new KaasStore();
+const RecentResource = ({ widgetKey, monitorStore, ...props }) => {
+  const nodeStore = new NodeStore()
+  const podStore = new PodStore()
+  const vmStore = new VmStore()
+  const kaasStore = new KaasStore()
 
-  const [nodeList, setNodeList] = useState([]);
-  const [podList, setPodList] = useState([]);
-  const [vmList, setVmList] = useState([]);
-  const [kaasList, setKaasList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [nodeList, setNodeList] = useState([])
+  const [podList, setPodList] = useState([])
+  const [vmList, setVmList] = useState([])
+  const [kaasList, setKaasList] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-
-    let cleanupTrigger = true;
+    let cleanupTrigger = true
     const getData = async () => {
       setLoading(true)
 
       // node data
-      const nodeList = await nodeStore.fetchList({ limit: 10, sortBy: 'createTime', ...props })
+      const nodeList = await nodeStore.fetchList({
+        limit: 10,
+        sortBy: 'createTime',
+        ...props,
+      })
 
       // pod data
-      const podList = await podStore.fetchList({ limit: 10, sortBy: 'createTime', ...props })
+      const podList = await podStore.fetchList({
+        limit: 10,
+        sortBy: 'createTime',
+        ...props,
+      })
 
       // vm data
-      const vmList = await vmStore.fetchList({ limit: 10, sortBy: 'creation_timestamp', ...props })
+      const vmList = await vmStore.fetchList({
+        limit: 10,
+        sortBy: 'creation_timestamp',
+        ...props,
+      })
 
       // kaas data
-      const kaasList = await kaasStore.fetchList({ limit: 10, sortBy: 'timestamp', ...props })
+      const kaasList = await kaasStore.fetchList({
+        limit: 10,
+        sortBy: 'timestamp',
+        ...props,
+      })
 
       if (cleanupTrigger) {
         handleDate(nodeList, 'createTime', 'node')
@@ -51,19 +66,18 @@ const RecentResource = ({ x, y, w, h, ...props }) => {
 
         setLoading(false)
       }
-    };
-    getData();
+    }
+    getData()
     return () => {
       cleanupTrigger = false
       setLoading(false)
     }
-
   }, [])
 
   // recent week
   const handleDate = (list, dateType, resourceType) => {
-    let date = new Date();
-    let dayBefore = date.getTime() - (7 * 24 * 60 * 60 * 1000) // recent week
+    let date = new Date()
+    let dayBefore = date.getTime() - 7 * 24 * 60 * 60 * 1000 // recent week
 
     let arr = []
     list.map(obj => {
@@ -73,40 +87,41 @@ const RecentResource = ({ x, y, w, h, ...props }) => {
     })
 
     if (resourceType == 'node') {
-      setNodeList(arr);
+      setNodeList(arr)
     } else if (resourceType == 'pod') {
-      setPodList(arr);
+      setPodList(arr)
     } else if (resourceType == 'vm') {
-      setVmList(arr);
+      setVmList(arr)
     } else if (resourceType == 'kaas') {
-      setKaasList(arr);
+      setKaasList(arr)
     }
   }
 
   return (
     <>
-      <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
-        <div className="grid-stack-item-content">
-          {/* grid_item */}
-          <div className="grid_item">
-            <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>{t('RESOURCES_RECENT_CREATE_RESOURCE')} ({t('RESOURCES_WEEKEND')})</label>
-
-            </div>
-            <div className="grid_info style_list">
-              <Loading spinning={loading}>
-                <List
-                  nodeList={nodeList}
-                  podList={podList}
-                  vmList={vmList}
-                  kaasList={kaasList}
-                />
-              </Loading>
-            </div>
-          </div>
-          {/* // grid_item */}
+      {/* <div className="grid-stack-item" gs-x={x} gs-y={y} gs-w={w} gs-h={h}>
+        <div className="grid-stack-item-content"> */}
+      {/* grid_item */}
+      <div className="grid_item">
+        <div className="grid_title" style={{ cursor: 'default' }}>
+          <label>
+            {t('RESOURCES_RECENT_CREATE_RESOURCE')} ({t('RESOURCES_WEEKEND')})
+          </label>
+        </div>
+        <div className="grid_info style_list">
+          <Loading spinning={loading}>
+            <List
+              nodeList={nodeList}
+              podList={podList}
+              vmList={vmList}
+              kaasList={kaasList}
+            />
+          </Loading>
         </div>
       </div>
+      {/* // grid_item */}
+      {/* </div>
+      </div> */}
     </>
   )
 }
@@ -114,23 +129,22 @@ const RecentResource = ({ x, y, w, h, ...props }) => {
 export default RecentResource
 
 const List = ({ nodeList, podList, vmList, kaasList }) => {
-
   const [list, setList] = useState([])
   useEffect(() => {
-    let arr = [];
+    let arr = []
     arr.push(...nodeList)
     arr.push(...podList)
     arr.push(...vmList)
     arr.push(...kaasList)
-    arr.sort(function (a, b) {
-      return moment(b.date) - moment(a.date);
-    });
+    arr.sort(function(a, b) {
+      return moment(b.date) - moment(a.date)
+    })
     setList(arr)
   }, [nodeList, podList, vmList, kaasList])
 
   return (
     <>
-      {list.length > 0 &&
+      {list.length > 0 && (
         <ul className="list_01">
           {list.map((obj, idx) => (
             <li className="li_type_01" key={idx}>
@@ -142,19 +156,24 @@ const List = ({ nodeList, podList, vmList, kaasList }) => {
                 </h6>
               </div>
               <div className="type">
-                <span className={`type_${obj.type == 'node' ? 'node' : iconType[obj.type]}`}>{obj.type}</span>
+                <span
+                  className={`type_${
+                    obj.type == 'node' ? 'node' : iconType[obj.type]
+                  }`}
+                >
+                  {obj.type}
+                </span>
               </div>
             </li>
-          ))
-          }
+          ))}
         </ul>
-      }
+      )}
 
-      {list.length == 0 &&
+      {list.length == 0 && (
         <div className="grid_text">
           <span>{t('RESOURCES_NO_DATA')}</span>
         </div>
-      }
+      )}
     </>
   )
 }
