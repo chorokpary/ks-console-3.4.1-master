@@ -17,6 +17,11 @@ import {
 
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
+const ERROR_MSG = {
+  normal: '정상',
+  minor: '경고',
+  unknown: '알 수 없음',
+}
 const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
   const gpuClusterStore = new GpuClusterStore()
   const customStore = new CustomStore()
@@ -385,7 +390,11 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
       }
 
       if (comparePods.has(key)) {
-        resultMap[pod][gpu] = 'minor'
+        resultMap[pod][gpu] = {
+          state: 'minor',
+          errCode: errCode,
+          errMsg: item.metric.err_msg,
+        }
         minorCount++
       } else {
         if (
@@ -410,10 +419,18 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
           Number(errCode) >= 0 &&
           Number(errCode) <= 143
         ) {
-          resultMap[pod][gpu] = 'normal'
+          resultMap[pod][gpu] = {
+            state: 'normal',
+            errCode: errCode,
+            errMsg: item.metric.err_msg,
+          }
           normalCount++
         } else {
-          resultMap[pod][gpu] = 'unknown'
+          resultMap[pod][gpu] = {
+            state: 'unknown',
+            errCode: errCode,
+            errMsg: item.metric.err_msg,
+          }
         }
       }
     })
@@ -603,6 +620,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                         gpuMemData={gpuMemData}
                                         gpuXidData={gpuXidData}
                                         vmName={instance.vmName}
+                                        scale={scale}
                                       />
                                       {scale >= 1 && (
                                         <div className="gpu_card_metrics">
@@ -818,17 +836,29 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
   )
 }
 
-const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
+const GpuBoxValues = ({
+  gpuUtilData,
+  gpuMemData,
+  gpuXidData,
+  vmName,
+  scale,
+}) => {
   const index = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
     <section className="gpu_card_gpu_list">
       {index.map(el => (
         <div
-          className={`gpu_box ${gpuXidData?.[vmName]?.[el] || 'unknown'}`}
+          className={`gpu_box ${gpuXidData?.[vmName]?.[el].state || 'unknown'}`}
           key={el}
         >
           <div className="gpu_box_index">{el + 1}</div>
-          <div className="tooltip_box">
+          <div
+            className="tooltip_box"
+            style={{
+              transform: `scale(${1 / scale})`, // 역스케일 적용
+              transformOrigin: 'top left',
+            }}
+          >
             <div className="gpu_card_title">GPU{el + 1}</div>
             <div className="gpu_card_metrics">
               <div className="gpu_card_metric">
@@ -844,6 +874,19 @@ const GpuBoxValues = ({ gpuUtilData, gpuMemData, gpuXidData, vmName }) => {
                 </div>
               </div>
             </div>
+            {gpuXidData?.[vmName]?.[el].state !== 'normal' && (
+              <div className="gpu_card_error">
+                <div
+                  className={`severity_badge ${gpuXidData?.[vmName]?.[el].state}`}
+                >
+                  {ERROR_MSG[gpuXidData?.[vmName]?.[el].state]}
+                </div>
+                <span>{gpuXidData && gpuXidData?.[vmName]?.[el].errMsg}</span>
+                <span className="error_code">
+                  Xid {gpuXidData && gpuXidData?.[vmName]?.[el].errCode}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       ))}
