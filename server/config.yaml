@@ -392,8 +392,8 @@ client:
                 clusterModule: alerting,
                 requiredClusterVersion: v3.1.0,
               }
-            - { name: kubeeye-monitoring, title: RESOURCES_CLUSTER_INSPECTOR }
-            - { name: clusterfault, title: RESOURCES_CLUSTER_FAULT_TITLE }
+            #- { name: kubeeye-monitoring, title: RESOURCES_CLUSTER_INSPECTOR }
+            #- { name: clusterfault, title: RESOURCES_CLUSTER_FAULT_TITLE }
 
   # access control page navigations
   accessNavs:

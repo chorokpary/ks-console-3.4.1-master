@@ -766,7 +766,7 @@ const ModifyModal = props => {
                         </Column>
                         <Column>
                           <Form.Item>
-                            <div style={{ marginLeft: '45%' }}>
+                            <div style={{ marginLeft: '15%' }}>
                               <Button
                                 icon="substract"
                                 onClick={() =>
@@ -830,7 +830,7 @@ const ModifyModal = props => {
                         </Column>
                         <Column>
                           <Form.Item>
-                            <div style={{ marginLeft: '45%' }}>
+                            <div style={{ marginLeft: '15%' }}>
                               <Button
                                 icon="substract"
                                 onClick={() =>
