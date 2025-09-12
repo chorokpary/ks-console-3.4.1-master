@@ -1038,7 +1038,7 @@ td > div[class$='-index__avatar'] {
   background-color: #55bc8a !important;
 }
 
-[class*='-index__check'] {
+[class*='-index__check']:not([class*='-index__checkItem']) {
   background-color: #55bc8a !important;
 }
 
