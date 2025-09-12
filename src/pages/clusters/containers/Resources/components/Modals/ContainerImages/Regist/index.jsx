@@ -244,7 +244,7 @@ const ResourceImageModal = props => {
       if (sizeEmpty) {
         return
       }
-      data.size = Number(imageSize.slice(0, imageSize.length - 2))
+      data.size = imageSize.slice(0, imageSize.length - 2)
 
       if (imageName === '' || tag === '') {
         setSourceEmpty(true)
