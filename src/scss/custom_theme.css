@@ -1038,15 +1038,11 @@ td > div[class$='-index__avatar'] {
   background-color: #55bc8a !important;
 }
 
-[class*='-index__check']:not([class*='-index__checkItem']) {
-  background-color: #55bc8a !important;
-}
-
-[class*='-Regist-index__check'] {
+[class$='-Regist-index__check'] {
   background-color: transparent !important;
 }
 
-[class*='-Modify-index__check'] {
+[class$='-Modify-index__check'] {
   background-color: transparent !important;
 }
 
