@@ -466,7 +466,7 @@ const ModifyModal = props => {
                   className={`${regStep == 2 ? styles.current : styles.todo}`}
                 ></div>
               </div>
-              <span className={styles.check}></span>
+              <span className={styles.detail}></span>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_DETAIL_SETTINGS')}
