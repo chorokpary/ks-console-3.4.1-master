@@ -160,7 +160,8 @@ export default class Vms extends React.Component {
       state === 'Starting' ||
       state === 'Stopping' ||
       state === 'Terminating' ||
-      state === 'Migrating'
+      state === 'Migrating' ||
+      state === 'Booting'
     ) {
       return 'waiting'
     }
@@ -185,6 +186,7 @@ export default class Vms extends React.Component {
       { text: t('RESOURCES_STOPPED'), value: 'Stopped' },
       { text: t('RESOURCES_PROVISIONING'), value: 'Provisioning' },
       { text: t('RESOURCES_STARTING'), value: 'Starting' },
+      { text: t('RESOURCES_BOOTING'), value: 'Booting' },
       { text: t('RESOURCES_RUNNING'), value: 'Running' },
       { text: t('RESOURCES_PAUSED'), value: 'Paused' },
       { text: t('RESOURCES_MIGRATING'), value: 'Migrating' },
@@ -439,7 +441,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (state, record) => {
-          const stateArray = ['Stopped', 'Running', 'Paused']
+          const stateArray = ['Stopped', 'Running', 'Booting', 'Paused']
 
           if (stateArray.includes(state)) {
             return (
@@ -580,6 +582,25 @@ export default class Vms extends React.Component {
             >
               <i className={styles['ico-quick-unpause']}></i>
               <span>{t('RESOURCES_UNPAUSE')}</span>
+            </Menu.MenuItem>
+            <Menu.MenuItem
+              key="option-3"
+              onClick={() => this.handleVmAction('restart', state, vmId)}
+            >
+              <i className={styles['ico-quick-restart']}></i>
+              <span>{t('RESOURCES_RESTART')}</span>
+            </Menu.MenuItem>
+          </>
+        )}
+        {/* Booting */}
+        {state === 'Booting' && (
+          <>
+            <Menu.MenuItem
+              key="option-1"
+              onClick={() => this.handleVmAction('stop', state, vmId)}
+            >
+              <i className={styles['ico-quick-stop']}></i>
+              <span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
             <Menu.MenuItem
               key="option-3"

@@ -75,6 +75,7 @@ const Information = props => {
     if (
       state === 'Provisioning' ||
       state === 'Starting' ||
+      state === 'Booting' ||
       state === 'Stopping' ||
       state === 'Terminating' ||
       state === 'Migrating'

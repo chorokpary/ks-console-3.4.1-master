@@ -552,6 +552,7 @@ module.exports = {
   RESOURCES_ENABLE_SECURE_BOOT: 'Activate SecureBoot',
   RESOURCES_SYSTEM_MONITORING: 'System Monitoring',
   RESOURCES_STARTING: 'Starting',
+  RESOURCES_BOOTING: 'Booting',
   RESOURCES_WAITING: 'Waiting',
   RESOURCES_PROGRESSING: 'Progressing',
   RESOURCES_WARNING: 'Warning',
