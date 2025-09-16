@@ -578,7 +578,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                         <TransformComponent
                           wrapperStyle={{
                             width: '1000px',
-                            height: '415px',
+                            height: '540px',
                             overflowY: 'scroll',
                           }}
                         >

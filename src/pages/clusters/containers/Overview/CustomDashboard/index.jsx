@@ -8,6 +8,16 @@ import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import DeleteModal from 'components/Modals/Delete'
 
+import Node from './Node'
+import VirtualMachine from './VirtualMachine'
+import GpuStatus from './GpuStatus'
+import GpuUsage from './GpuUsage'
+import KaasGpu from './KaasGpu'
+import GpuMap from './GpuMap'
+import GpuUsageStatus from './GpuUsageStatus'
+import GpuUsageTop5 from './GpuUsageTop5'
+import AlarmVertical from './AlarmVertical'
+import AlarmHorizontal from './AlarmHorizontal'
 import ClusterNode from './ClusterNode'
 import Pod from './Pod'
 import Vm from './Vm'
@@ -24,6 +34,7 @@ import Bmc from './Bmc'
 import GpuCluster from './GpuCluster'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
+import CustomDashboardInfo from 'stores/dashboard/customDashboardInfo'
 import { makePanels } from 'stores/dashboard/panels'
 
 const CustomDashboard = props => {
@@ -65,7 +76,7 @@ const CustomDashboard = props => {
   useEffect(() => {
     var dashboardArr = JSON.parse(localStorage.getItem('dashboardArr'))
     if (!dashboardArr) {
-      const dash = new DashboardInfo()
+      const dash = new CustomDashboardInfo()
       dashboardArr = [dash]
       localStorage.setItem('dashboardArr', JSON.stringify(dashboardArr))
     }
@@ -251,6 +262,16 @@ const CustomDashboard = props => {
 export default inject('rootStore')(observer(CustomDashboard))
 
 const widgetMap = {
+  node: props => <Node {...props} />,
+  virtualMachine: props => <VirtualMachine {...props} />,
+  gpuStatus: props => <GpuStatus {...props} />,
+  gpuUsage: props => <GpuUsage {...props} />,
+  kaasGpu: props => <KaasGpu {...props} />,
+  gpuMap: props => <GpuMap {...props} />,
+  gpuUsageStatus: props => <GpuUsageStatus {...props} />,
+  gpuUsageTop5: props => <GpuUsageTop5 {...props} />,
+  alarmVertical: props => <AlarmVertical {...props} />,
+  alarmHorizontal: props => <AlarmHorizontal {...props} />,
   clusterNode: props => <ClusterNode {...props} />,
   pod: props => <Pod {...props} />,
   vm: props => <Vm {...props} />,
