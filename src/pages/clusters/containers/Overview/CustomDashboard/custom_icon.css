@@ -467,6 +467,37 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-clusternode-gpu {
+  background: url('/assets/resources/images/icons/ico-type-clusternode-gpu.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-gpuaas-gpu {
+  background: url('/assets/resources/images/icons/ico-type-gpuaas-gpu.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-container-gpu {
+  background: url('/assets/resources/images/icons/ico-type-container-gpu.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-vm-gpu {
+  background: url('/assets/resources/images/icons/ico-type-vm-gpu.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+.ico-type-temperature {
+  background: url('/assets/resources/images/icons/ico-type-temperature.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
+
 /* 24x24 */
 .ico-type24-clusternode {
   background: url('/assets/resources/images/icons/ico-type24-clusternode.svg')
@@ -687,14 +718,44 @@ i {
 .ico-type24-container2 {
   background: url('/assets/resources/images/icons/ico-type24-container2.svg')
     center no-repeat;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 }
 .ico-type24-workload {
   background: url('/assets/resources/images/icons/ico-type24-workload.svg')
     center no-repeat;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-clusternode-gpu {
+  background: url('/assets/resources/images/icons/ico-type24-clusternode-gpu.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-gpuaas-gpu {
+  background: url('/assets/resources/images/icons/ico-type24-gpuaas-gpu.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-container-gpu {
+  background: url('/assets/resources/images/icons/ico-type24-container-gpu.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-vm-gpu {
+  background: url('/assets/resources/images/icons/ico-type24-vm-gpu.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-temperature {
+  background: url('/assets/resources/images/icons/ico-type24-temperature.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
 }
 
 /* 40x40 */
@@ -776,6 +837,13 @@ i {
   width: 40px;
   height: 40px;
 }
+.ico-type40-gpuaas-gpu {
+  background: url('/assets/resources/images/icons/ico-type40-gpuaas-gpu.svg')
+    center no-repeat;
+  width: 40px;
+  height: 40px;
+}
+
 /* 16x16 */
 .ico-type16-snapshot {
   background: url('/assets/resources/images/icons/ico-type16-snapshot.svg')
@@ -940,6 +1008,19 @@ i {
 }
 .ico-btn-trash:hover {
   background: url('/assets/resources/images/icons/ico-btn-trash.svg') center
+    no-repeat;
+  width: 58px;
+  height: 32px;
+  border-radius: 16px;
+}
+.ico-list-filter {
+  background: url('/assets/resources/images/icons/ico-list-filter.svg') center
+    no-repeat;
+  width: 28px;
+  height: 28px;
+}
+.ico-list-filter:hover {
+  background: url('/assets/resources/images/icons/ico-list-filter.svg') center
     no-repeat;
   width: 58px;
   height: 32px;
