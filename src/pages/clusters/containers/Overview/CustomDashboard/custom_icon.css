@@ -491,6 +491,12 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-temperature {
+  background: url('/assets/resources/images/icons/ico-type-temperature.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 
 /* 24x24 */
 .ico-type24-clusternode {
@@ -741,6 +747,12 @@ i {
 }
 .ico-type24-vm-gpu {
   background: url('/assets/resources/images/icons/ico-type24-vm-gpu.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+.ico-type24-temperature {
+  background: url('/assets/resources/images/icons/ico-type24-temperature.svg')
     center no-repeat;
   width: 24px;
   height: 24px;

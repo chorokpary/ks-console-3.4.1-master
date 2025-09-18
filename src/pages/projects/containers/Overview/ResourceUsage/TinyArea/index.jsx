@@ -60,11 +60,12 @@ export default class TinyArea extends React.Component {
   }
 
   getVeticalPoints() {
-    const { width } = this.props
+    const { width, pointCount = 10 } = this.props
     const offset = 5
     const start = offset
-    const step = (width - offset * 2) / 10
-    return Array(10)
+    const step = (width - offset * 2) / (pointCount - 1)
+
+    return Array(pointCount)
       .fill('')
       .map((item, index) => start + step * index)
   }

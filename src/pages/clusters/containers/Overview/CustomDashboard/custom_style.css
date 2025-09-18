@@ -3683,8 +3683,9 @@ html {
   padding: 0 !important;
 }
 
+/* 대시보드에서 height 에러가 도출되어 important 삭제 */
 .transform-component-module_wrapper__SPB86 {
-  height: auto !important;
+  height: auto;
 }
 
 #box_zoom:active:hover {

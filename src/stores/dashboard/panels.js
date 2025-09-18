@@ -535,139 +535,364 @@ export const gpuMapPanel = ({ x, y, w, h }) => {
                                 B200-node-21
                               </div>
                               <div class="percent">0%</div>
-                            </div>
-                          </div>
-
-                          <!-- GPU Map -->
-                          <div id="gpu-map" class="gpu_map">
-                            <div class="gpu_tile gpu_state_usage1">
+                            </div><div class="gpu_tile gpu_state_usage1">
                               <div class="name" title="B200-node-01">
-                                GPU-01
+                                B200-node-01
                               </div>
                               <div class="percent">20%</div>
                             </div>
                             <div class="gpu_tile gpu_state_usage2">
-                              <div class="name" title="GPU-06">GPU-06</div>
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
                               <div class="percent">36%</div>
                             </div>
                             <div class="gpu_tile gpu_state_usage3">
-                              <div class="name" title="GPU-11">GPU-11</div>
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
                               <div class="percent">70%</div>
                             </div>
                             <div class="gpu_tile gpu_state_usage4">
-                              <div class="name" title="GPU-16">GPU-16</div>
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
                               <div class="percent">90%</div>
                               <div class="badge_alert"></div>
                             </div>
                             <div class="gpu_tile gpu_state_unknown">
-                              <div class="name" title="GPU-21">GPU-21</div>
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
                               <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
                             </div>
                           </div>
-                          <!-- 팝오버 샘플 : 팝오버는 tile의 색상값과 동일한 색상값과 동일한 클래스 추가 필요 -->
-                          <!-- close_btn, gpu_backdrop 클릭시 팝오버 닫히게 개발 필요-->
-                          <div class="gpu_backdrop">
-                            <div class="gpu_popover gpu_state_usage4">
-                              <!-- 노드 데이터 샘플 -->
-                              <div class="data_node">
-                                <div class="title">
-                                  <span>B200-node-16 (노드 타일 일때)</span>
-                                  <span class="link"></span>
-                                  <!-- 해당 이름의 노드 또는 가상머신 상세로 이동 -->
-                                  <span class="close_btn">✕</span>
-                                </div>
-                                <div class="gpu_data_info">
-                                  <div>
-                                    <span class="label">가상머신 개수</span>
-                                    <span class="value">3</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <!-- 가상머신 데이터 샘플 -->
-                              <div class="data_vm">
-                                <div class="title">
-                                  <span>B200-vm-002 (가상머신 타일 일때)</span>
-                                  <span class="link"></span>
-                                  <!-- 해당 이름의 노드 또는 가상머신 상세로 이동 -->
-                                  <span class="close_btn">✕</span>
-                                </div>
-                                <div class="gpu_data_info">
-                                  <div>
-                                    <span class="label">노드</span>
-                                    <span class="value">B200-node-16</span>
-                                    <span class="link"></span>
-                                    <!-- 해당 이름의 노드 상세로 이동 -->
-                                  </div>
-                                </div>
-                              </div>
-                              <!-- GPU 데이터 샘플 -->
-                              <div class="data_gpu">
-                                <div class="title">
-                                  <span><i class="ico-type24-gpuaas-gpu"></i>GPU-11 (GPU 타일 일 때)</span>
-                                  <!-- 해당 이름의 노드 또는 가상머신 상세로 이동 -->
-                                  <span class="close_btn">✕</span>
-                                </div>
-                                <div class="gpu_data_info">
-                                  <div>
-                                    <span class="label">노드</span>
-                                    <span class="value">B200-node-16</span>
-                                    <span class="link"></span>
-                                    <!-- 해당 이름의 노드 상세로 이동 -->
-                                  </div>
-                                  <div>
-                                    <span class="label">가상머신</span>
-                                    <span class="value">VM-01</span>
-                                    <span class="link"></span><!-- 해당 이름의 가상머신 상세로 이동 -->
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="gpu_info">
-                                <div class="gpu_usage_info">
-                                  <span class="label">GPU 사용률</span>
-                                  <span class="value">90%</span>
-                                </div>
-                                <div class="gpu_usage_info">
-                                  <span class="label">GPU 메모리 사용률</span>
-                                  <span class="value">76%</span>
-                                </div>
-                              </div>
-                              <div class="gpu_pop_boxes">
-                                <div class="gpu_pop_box gpu_state_usage3">
-                                  <div class="name">GPU-0</div>
-                                  <div class="percent">70%</div>
-                                </div>
-                                <div class="gpu_pop_box gpu_state_usage4 gpu_alert">
-                                  <div class="name">GPU-1</div>
-                                  <div class="percent">90%</div>
-                                  <div class="badge_alert"></div>
-                                </div>
-                                <div class="gpu_pop_box gpu_state_usage2">
-                                  <div class="name">GPU-2</div>
-                                  <div class="percent">55%</div>
-                                </div>
-                              </div>
 
-                              <!-- alert_card는 초기 미노출, 에러 gpu_pop_box.gpu_alert 클릭시에만 해당 에러 노출  -->
-                              <div class="alert_card">
-                                <div class="alert_content">
-                                  <div class="alert_header">
-                                    <span class="alert_status minor">경고</span>
-                                    <span class="alert_resource type_gpu">GPU</span>
-                                  </div>
-                                  <div class="alert_body">
-                                    <p class="alert_message">
-                                      GPU의 디스플레이 엔진 응답 지연을
-                                      감지했습니다.
-                                    </p>
-                                    <p class="alert_badge">
-                                      <span class="alert_errorcode">Error Code: Xid 14</span>
-                                    </p>
-                                  </div>
-                                  <p class="alert_date">2025-08-23</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                          <!-- GPU Map -->
                         </div>
                       </div>
                     </div>
@@ -717,9 +942,104 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                         <!-- // select_wrap -->
                       </div>
                     </div>
-                    <div class="spin-nested-loading">
-                      <div class="spin-container"></div>
-                    </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <!-- Metrics Grid -->
+                          <div class="gpu_usage_grid">
+                            <!-- 공통 메트릭 카드 -->
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                GPU 평균 사용률
+                              </h3>
+                              <p class="gpu_usage_card_value">76%</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                GPU 메모리 사용률
+                              </h3>
+                              <p class="gpu_usage_card_value">52%</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                GPU 온도 (최고 / 평균)
+                              </h3>
+                              <p class="gpu_usage_card_value">95℃ / 72℃</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                전력 사용량 (Total)
+                              </h3>
+                              <p class="gpu_usage_card_value">3,200w</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                NVLink (Total)
+                              </h3>
+                              <p class="gpu_usage_card_value">38GB/s</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <!-- Infiniband (특수 구조) -->
+                            <div class="gpu_usage_card gpu_usage_network">
+                              <h3 class="gpu_usage_card_title">
+                                Infiniband (Total)
+                              </h3>
+                              <div class="gpu_network_section">
+                                <section class="network_section">
+                                  <p>
+                                    <span class="badge">TX</span>
+                                    <span class="value">95GB/s</span>
+                                  </p>
+                                  <div class="network_chart">
+                                    <img
+                                      src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                    />
+                                  </div>
+                                </section>
+                                <section class="network_section">
+                                  <p>
+                                    <span class="badge">RX</span>
+                                    <span class="value">90GB/s</span>
+                                  </p>
+                                  <div class="network_chart">
+                                    <img
+                                      src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                    />
+                                  </div>
+                                </section>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                   </div>
                 </div>
                 </div>`
@@ -736,9 +1056,94 @@ export const gpuUsageTop5Panel = ({ x, y, w, h }) => {
                       <div class="right"></div>
                       <i class="ico-btn-trash"></i>
                     </div>
-                    <div class="spin-nested-loading">
-                      <div class="spin-container"></div>
-                    </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="gpu_usage_top_wrap">
+                            <div class="gpu_usage_top">
+                              <h3 class="gpu_usage_top_title">GPU 사용률</h3>
+                              <ul class="gpu_usage_list">
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-0992322</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 90%"></div>
+                                  </div>
+                                  <span class="percent">90%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-1</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 82%"></div>
+                                  </div>
+                                  <span class="percent">82%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-2</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 75%"></div>
+                                  </div>
+                                  <span class="percent">75%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-3</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 64%"></div>
+                                  </div>
+                                  <span class="percent">64%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-4</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 58%"></div>
+                                  </div>
+                                  <span class="percent">58%</span>
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="gpu_usage_top color2">
+                              <h3 class="gpu_usage_top_title">
+                                GPU 메모리 사용률
+                              </h3>
+                              <ul class="gpu_usage_list">
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-09</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 90%"></div>
+                                  </div>
+                                  <span class="percent">90%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-1</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 82%"></div>
+                                  </div>
+                                  <span class="percent">82%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-22</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 75%"></div>
+                                  </div>
+                                  <span class="percent">75%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-3</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 64%"></div>
+                                  </div>
+                                  <span class="percent">64%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-4</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 58%"></div>
+                                  </div>
+                                  <span class="percent">58%</span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                   </div>
                 </div>
                 </div>`

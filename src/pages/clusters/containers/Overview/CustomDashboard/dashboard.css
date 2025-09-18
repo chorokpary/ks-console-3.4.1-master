@@ -907,6 +907,56 @@ body {
   height: 520px;
   background: url("/assets/resources/images/dummy/dash_box_22.svg") center top no-repeat;
 }
+.dashboard .popover-container .popover-content .preview_cont .view.img_31 {
+  width: 312px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_31.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_32 {
+  width: 312px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_32.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_33 {
+  width: 312px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_33.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_34 {
+  width: 312px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_34.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_35 {
+  width: 312px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_35.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_36 {
+  width: 644px;
+  height: 652px;
+  background: url("/assets/resources/images/dummy/dash_box_36.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_37 {
+  width: 646px;
+  height: 428px;
+  background: url("/assets/resources/images/dummy/dash_box_37.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_38 {
+  width: 646px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_38.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_39 {
+  width: 312px;
+  height: 652px;
+  background: url("/assets/resources/images/dummy/dash_box_39.svg") center top no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_40 {
+  width: 1310px;
+  height: 204px;
+  background: url("/assets/resources/images/dummy/dash_box_40.svg") center top no-repeat;
+}
 .dashboard .popover-container #popoverButton:hover + .popover-container {
   display: block;
 }
@@ -916,6 +966,9 @@ body {
 
 .dash_wrap {
   /* GPU status map */
+  /* gou usage overview */
+  /* Infiniband */
+  /* gpu usage top5 */
 }
 .dash_wrap .number_wrap {
   display: -webkit-box;
@@ -944,10 +997,11 @@ body {
   -webkit-box-align: baseline;
       -ms-flex-align: baseline;
           align-items: baseline;
+  font-family: Pretendard;
 }
 .dash_wrap .number_wrap > p .em {
   font-size: 20px;
-  font-family: "Pretendard";
+  font-family: Pretendard;
   margin-right: 3px;
 }
 .dash_wrap .status_wrap {
@@ -961,6 +1015,7 @@ body {
   gap: 10px;
 }
 .dash_wrap .status_wrap .value {
+  font-family: Pretendard;
   width: 35px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1027,7 +1082,7 @@ body {
   background: #55bc8a;
 }
 .dash_wrap .status_wrap .status.used_gpu:before {
-  background: #55bc8a;
+  background: #6366F1;
 }
 .dash_wrap .status_wrap .status.unused:before {
   background: #abb4be;
@@ -1510,7 +1565,7 @@ body {
 }
 .dash_wrap .alert_card .alert_content .alert_header .alert_status {
   width: 50px;
-  height: 16px;
+  height: 20px;
   padding: 2px 4px;
   border-radius: 2px;
   display: -webkit-box;
@@ -1522,7 +1577,7 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  font-size: 10px;
+  font-size: 11px;
   font-family: Pretendard;
   font-weight: 600;
   color: white;
@@ -1542,7 +1597,7 @@ body {
 }
 .dash_wrap .alert_card .alert_content .alert_header .alert_resource {
   width: 50px;
-  height: 16px;
+  height: 20px;
   padding: 4px;
   border-radius: 2px;
   display: -webkit-box;
@@ -1554,7 +1609,7 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  font-size: 10px;
+  font-size: 11px;
   font-family: Roboto;
   font-weight: 600;
   line-height: 13px;
@@ -1627,7 +1682,7 @@ body {
   color: #d07600;
 }
 .dash_wrap .alert_card .alert_content .alert_date {
-  font-size: 11px;
+  font-size: 12px;
   font-family: Roboto;
   font-weight: 400;
   color: #36435c;
@@ -1639,7 +1694,7 @@ body {
   padding: 6px;
   overflow: auto;
   border-radius: 2px;
-  border: 1px solid #D1D7DF;
+  border: 1px solid #e4e4e7;
   background: #F5F8FD;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map {
@@ -1994,6 +2049,195 @@ body {
   color: rgba(54, 67, 92, 0.5019607843) !important;
   border-color: rgba(54, 67, 92, 0.5019607843) !important;
 }
+.dash_wrap .gpu_usage_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  width: calc(100% + 24px);
+  height: calc(100% + 5px);
+  border-top: 1px solid #d8dee5;
+  margin: 0 -12px;
+}
+.dash_wrap .gpu_usage_card {
+  border-right: 1px solid #e4e4e7;
+  border-bottom: 1px solid #e4e4e7;
+  padding: 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease;
+}
+.dash_wrap .gpu_usage_card:nth-child(3n) {
+  border-right: none;
+}
+.dash_wrap .gpu_usage_card:nth-child(n+4) {
+  border-bottom: none;
+}
+.dash_wrap .gpu_usage_card .gpu_usage_card_title {
+  font-weight: 700;
+  font-size: 11px;
+  color: #36435c;
+  letter-spacing: 0.5px;
+  width: 100%;
+  text-align: left;
+  margin: 0;
+}
+.dash_wrap .gpu_usage_card .gpu_usage_card_value {
+  width: 100%;
+  font-weight: 600;
+  font-family: "Pretendard";
+  font-size: 20px;
+  color: #181d28;
+  text-align: left;
+  margin-top: 12px;
+  margin-bottom: auto;
+}
+.dash_wrap .gpu_usage_card .gpu_usage_card_chart {
+  width: 100%;
+  height: 55%;
+}
+.dash_wrap .gpu_usage_card .gpu_usage_card_chart img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.dash_wrap .gpu_usage_network {
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+.dash_wrap .gpu_usage_network .gpu_network_section {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  width: 100%;
+  height: 100%;
+}
+.dash_wrap .gpu_usage_network .gpu_network_section .network_section {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.dash_wrap .gpu_usage_network .gpu_network_section .badge {
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid #e4e4e7;
+  background: #f9f9fb;
+  font: 600 11px "Pretendard", sans-serif;
+}
+.dash_wrap .gpu_usage_network .gpu_network_section .value {
+  font: 600 20px "Pretendard", sans-serif;
+  padding-left: 8px;
+  color: #181d28;
+}
+.dash_wrap .gpu_usage_network .gpu_network_section .network_chart {
+  width: 100%;
+  height: 40px;
+}
+.dash_wrap .gpu_usage_network .gpu_network_section .network_chart img {
+  width: 100%;
+  height: 100%;
+}
+.dash_wrap .gpu_usage_top_wrap {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  gap: 12px;
+}
+.dash_wrap .gpu_usage_top {
+  width: 100%;
+  height: calc(100% - 8px);
+  padding: 12px;
+  padding-bottom: 8px;
+  background: #F9FBFD;
+  border-radius: 4px;
+}
+.dash_wrap .gpu_usage_top h3.gpu_usage_top_title {
+  font-size: 11px;
+  margin: 0;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item {
+  display: grid;
+  grid-template-columns: 64px 1fr 30px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 10px;
+  height: 16%;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .gpu_name {
+  font-size: 10px;
+  font-weight: 200;
+  color: #181d28;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .percent {
+  font-family: Pretendard;
+  font-weight: 600;
+  color: #000;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .bar_wrapper {
+  height: 6px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .bar_wrapper .bar {
+  height: 100%;
+  background: #4487EC;
+  border-radius: 10px;
+  -webkit-transition: width 0.3s ease;
+  transition: width 0.3s ease;
+}
+.dash_wrap .gpu_usage_top.color2 .bar {
+  background: #7173EA !important;
+}
 .dash_wrap .hexagon {
   position: relative;
   float: left;
@@ -2301,9 +2545,6 @@ body {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
   height: 30px;
   cursor: move;
 }
@@ -2366,9 +2607,17 @@ body {
 .grid_item .grid_option_area .alert_tab {
   gap: 4px;
 }
+.grid_item .grid_option_area .alert_tab .select_wrap {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
 .grid_item .grid_option_area .selected-item.single {
   height: 26px;
-  padding: 2px 34px 2px 12px;
+  padding: 2px 30px 2px 12px;
+}
+.grid_item .grid_option_area .selected-item.single strong {
+  min-width: 60px;
 }
 .grid_item .grid_option_area .legend_button_wrapper {
   position: relative;
@@ -3813,11 +4062,13 @@ body {
 .grid_item .grid_info .gpu_summary_main {
   font-weight: 600;
   font-size: 24px;
+  font-family: Pretendard;
   line-height: 32px;
 }
 .grid_item .grid_info .gpu_summary_total {
   font-weight: 600;
   font-size: 16px;
+  font-family: Pretendard;
   line-height: 16px;
 }
 .grid_item .grid_info .gpu_legend {
@@ -3849,6 +4100,7 @@ body {
 }
 .grid_item .grid_info .gpu_legend_values > div {
   font-weight: 600;
+  font-family: Pretendard;
   font-size: 16px;
   line-height: 14.4px;
   text-align: center;
@@ -3984,7 +4236,6 @@ body {
   display: -ms-flexbox;
   display: flex;
   font-weight: 600;
-  font-family: Pretendard, sans-serif;
   -webkit-box-align: baseline;
       -ms-flex-align: baseline;
           align-items: baseline;
@@ -3993,6 +4244,7 @@ body {
 }
 .grid_item .grid_info .chart_total > span {
   font-size: 12px;
+  font-family: Pretendard;
 }
 .grid_item .grid_info .chart_total > span.sm {
   font-size: 12px;
@@ -4588,8 +4840,9 @@ body {
 }
 .grid_item .list_02 .li_type_02 .value {
   text-align: right;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 700;
+  font-family: Pretendard;
   margin-bottom: 10px;
 }
 .grid_item .list_02 .li_type_02 .value > span {
@@ -4615,11 +4868,13 @@ body {
   width: 24px;
   font-size: 10px;
   color: #36435c;
+  font-family: Pretendard;
 }
 .grid_item .list_02 .li_type_02 dl dd {
   text-align: right;
   font-size: 16px;
   font-weight: 600;
+  font-family: Pretendard;
 }
 .grid_item .list_02 .li_type_02 dl dd > span {
   display: inline-block;

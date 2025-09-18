@@ -395,7 +395,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'gpuStatus')}
                   ></span>
                 </label>
-                <label className="section-title">{t('gpuStatus')}</label>
+                <label className="section-title">{t('GPU 현황')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -427,7 +427,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'gpuUsage')}
                   ></span>
                 </label>
-                <label className="section-title">{t('gpuUsage')}</label>
+                <label className="section-title">{t('GPU 가용률')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -459,7 +459,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'kaasGpu')}
                   ></span>
                 </label>
-                <label className="section-title">{t('kaasGpu')}</label>
+                <label className="section-title">{t('KaaS')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -491,7 +491,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'gpuMap')}
                   ></span>
                 </label>
-                <label className="section-title">{t('gpuMap')}</label>
+                <label className="section-title">{t('GPU 현황 맵')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -523,7 +523,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'gpuUsageStatus')}
                   ></span>
                 </label>
-                <label className="section-title">{t('gpuUsageStatus')}</label>
+                <label className="section-title">{t('GPU 사용 현황')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -555,7 +555,9 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'gpuUsageTop5')}
                   ></span>
                 </label>
-                <label className="section-title">{t('gpuUsageTop5')}</label>
+                <label className="section-title">
+                  {t('GPU 사용 현황 Top5')}
+                </label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -587,7 +589,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'alarmVertical')}
                   ></span>
                 </label>
-                <label className="section-title">{t('alarmVertical')}</label>
+                <label className="section-title">{t('알람 (세로)')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>
@@ -619,7 +621,7 @@ const CustomDashboardEdit = props => {
                     onClick={e => toggleHandler(e, 'alarmHorizontal')}
                   ></span>
                 </label>
-                <label className="section-title">{t('alarmHorizontal')}</label>
+                <label className="section-title">{t('알람 (가로)')}</label>
                 <button className="icon_preview open-popover-button ">
                   <i className="ico-etc-preview"></i>
                 </button>

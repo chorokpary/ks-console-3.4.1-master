@@ -741,6 +741,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
@@ -766,6 +767,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
@@ -793,6 +795,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
@@ -817,6 +820,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
