@@ -336,7 +336,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_10">
+                      <div className="view img_31">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -371,7 +371,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_11">
+                      <div className="view img_32">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -404,7 +404,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_33">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -436,7 +436,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_34">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -468,7 +468,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_35">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -500,7 +500,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_36">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -532,7 +532,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_37">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -566,7 +566,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_38">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -598,7 +598,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_39">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
@@ -630,7 +630,7 @@ const CustomDashboardEdit = props => {
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
-                      <div className="view img_21">
+                      <div className="view img_40">
                         {t('RESOURCES_PREVIEW')}
                       </div>
                     </div>
