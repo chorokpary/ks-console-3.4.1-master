@@ -20,7 +20,7 @@ import React from 'react'
 import { observer, inject } from 'mobx-react'
 
 import { toJS } from 'mobx'
-import { get, isEmpty } from 'lodash'
+import { get, isEmpty, flatten } from 'lodash'
 import { getSuitableUnit, getCustomValue } from 'utils/monitoring'
 
 import { Panel } from 'components/Base'
@@ -240,7 +240,7 @@ export default class Status extends React.Component {
             {
               key: 'memory',
               icon: 'memory',
-              unit: getSuitableUnit(vmGpuRamData, 'memory'),
+              unit: getSuitableUnit(flatten(vmGpuRamData?.map(result => get(result, 'values') || [])), 'memory'),
               legend: ['RESOURCES_GPU_RAM_USAGE'],
               title: 'RESOURCES_GPU_RAM_USAGE',
               data: vmGpuRamData,
@@ -265,7 +265,7 @@ export default class Status extends React.Component {
               key: 'inbound',
               icon: 'ico-type-inbound',
               type: 'bandwidth',
-              unit: getSuitableUnit(vmGpuInboundData, 'bandwidth'),
+              unit: getSuitableUnit(flatten(vmGpuInboundData?.map(result => get(result, 'values') || [])), 'bandwidth'),
               legend: ['RESOURCES_GPU_IB_INBOUND'],
               title: 'RESOURCES_GPU_IB_INBOUND',
               data: vmGpuInboundData,
@@ -274,7 +274,7 @@ export default class Status extends React.Component {
               key: 'outbound',
               icon: 'ico-type-outbound',
               type: 'bandwidth',
-              unit: getSuitableUnit(vmGpuOutboundData, 'bandwidth'),
+              unit: getSuitableUnit(flatten(vmGpuOutboundData?.map(result => get(result, 'values') || [])), 'bandwidth'),
               legend: ['RESOURCES_GPU_IB_OUTBOUND'],
               title: 'RESOURCES_GPU_IB_OUTBOUND',
               data: vmGpuOutboundData,
@@ -283,7 +283,7 @@ export default class Status extends React.Component {
               key: 'traffic',
               icon: 'topology',
               type: 'bandwidth',
-              unit: getSuitableUnit(vmGpuNvlinkData, 'bandwidthBytes'),
+              unit: getSuitableUnit(flatten(vmGpuNvlinkData?.map(result => get(result, 'values') || [])), 'bandwidthBytes'),
               legend: ['RESOURCES_GPU_NVLINK_TRAFFIC'],
               title: 'RESOURCES_GPU_NVLINK_TRAFFIC',
               data: vmGpuNvlinkData,
