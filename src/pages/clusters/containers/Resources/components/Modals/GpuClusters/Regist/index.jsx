@@ -1310,7 +1310,7 @@ const RegistModal = props => {
                   }`}
                 ></div>
               </div>
-              <span className={styles.basic}></span>
+              <div className={styles.basic}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_VM_SETTINGS')}
@@ -1341,7 +1341,7 @@ const RegistModal = props => {
                   }`}
                 ></div>
               </div>
-              <span className={styles.network}></span>
+              <div className={styles.network}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_NETWORK_SETTINGS')}
@@ -1372,7 +1372,7 @@ const RegistModal = props => {
                   }`}
                 ></div>
               </div>
-              <span className={styles.detail}></span>
+              <div className={styles.detail}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_DETAIL_SETTINGS')}
@@ -1397,7 +1397,7 @@ const RegistModal = props => {
                   className={`${regStep === 4 ? styles.current : styles.todo}`}
                 ></div>
               </div>
-              <span className={styles.check}></span>
+              <div className={styles.confirm}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_CHECK_INPUT_INFORMATION')}
