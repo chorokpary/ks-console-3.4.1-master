@@ -32,6 +32,10 @@ const GpuUsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
     setGpuMemUsageTop5Data(gpuMemUsageTop5)
     setLoading(false)
   }
+  //gpu 사용 현황 Top5 gpu 이름 길어서 ellipsis 처리 될 때 tooltip 표현
+  document.querySelectorAll('.gpu_name').forEach(el => {
+    el.setAttribute('data-text', el.textContent.trim())
+  })
 
   return (
     <>

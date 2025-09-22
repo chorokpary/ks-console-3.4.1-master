@@ -16,8 +16,7 @@ import KaasGpu from './KaasGpu'
 import GpuMap from './GpuMap'
 import GpuUsageStatus from './GpuUsageStatus'
 import GpuUsageTop5 from './GpuUsageTop5'
-import AlarmVertical from './AlarmVertical'
-import AlarmHorizontal from './AlarmHorizontal'
+import Alarm from './Alarm'
 import ClusterNode from './ClusterNode'
 import Pod from './Pod'
 import Vm from './Vm'
@@ -270,8 +269,8 @@ const widgetMap = {
   gpuMap: props => <GpuMap {...props} />,
   gpuUsageStatus: props => <GpuUsageStatus {...props} />,
   gpuUsageTop5: props => <GpuUsageTop5 {...props} />,
-  alarmVertical: props => <AlarmVertical {...props} />,
-  alarmHorizontal: props => <AlarmHorizontal {...props} />,
+  alarmVertical: props => <Alarm {...props} />,
+  alarmHorizontal: props => <Alarm isVertical={true} {...props} />,
   clusterNode: props => <ClusterNode {...props} />,
   pod: props => <Pod {...props} />,
   vm: props => <Vm {...props} />,

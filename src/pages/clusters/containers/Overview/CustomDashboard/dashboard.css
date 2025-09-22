@@ -511,7 +511,7 @@ body {
 }
 .dashboard .checkbox-list li.selected,
 .dashboard .select-list li.selected {
-  background: #36435c url("/assets/resources/images/icons/ico-check-green.svg") right 18px center no-repeat;
+  background: #36435c url("/assets/resources/images/icons/ico-check-white.svg") right 18px center no-repeat;
 }
 .dashboard .switch {
   position: relative;
@@ -1348,6 +1348,64 @@ body {
 .dash_wrap .tab-quick-menu .quick-menu-list li:hover {
   background: #e3e9ef;
 }
+.dash_wrap .icon_dropdown_wrap {
+  position: relative;
+  display: inline-block;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_btn {
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  color: #fff;
+  background: #2b2f4a;
+  border-radius: 4px;
+  overflow: hidden;
+  -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+  min-width: 100px;
+  z-index: 100;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box.open {
+  display: block;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box .icon_dropdown_list {
+  list-style: none;
+  margin: 0;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box .icon_dropdown_list li {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box .icon_dropdown_list li:hover {
+  background: #394061;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box .icon_dropdown_list li.selected {
+  font-weight: 600;
+  background: #36435c url("/assets/resources/images/icons/ico-check-white.svg") right 8px center no-repeat;
+}
+.dash_wrap .icon_dropdown_wrap .icon_dropdown_box .icon_dropdown_list li span {
+  color: #fff;
+}
 .dash_wrap .dash_boxtab {
   background: #d8dee5;
   border-radius: 2px;
@@ -2024,6 +2082,13 @@ body {
   background: no-repeat center/contain;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='%23FFB84D' d='M12 3c.6 0 1.14.32 1.44.84l8.52 14.76c.54.94-.14 2.12-1.2 2.12H3.24c-1.06 0-1.74-1.18-1.2-2.12L10.56 3.84C10.86 3.32 11.4 3 12 3z'/><path fill='white' d='M11 9h2v5h-2zm0 6h2v2h-2z'/></svg>");
 }
+.dash_wrap .gpu_map_wrap .badge_alert.unknown {
+  background: #A6AEB7;
+}
+.dash_wrap .gpu_map_wrap .badge_alert.unknown::before {
+  -webkit-filter: grayscale(100%) brightness(1.08);
+          filter: grayscale(100%) brightness(1.08);
+}
 .dash_wrap .gpu_state_usage1 {
   background: #55BC8A;
 }
@@ -2201,21 +2266,40 @@ body {
 }
 .dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item {
   display: grid;
-  grid-template-columns: 64px 1fr 30px;
+  grid-template-columns: 110px 1fr 30px;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
   gap: 10px;
   height: 16%;
+  position: relative;
+  cursor: default;
 }
 .dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .gpu_name {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 200;
   color: #181d28;
-  text-align: right;
+  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .gpu_name:hover::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  background: #242e42;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 400;
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-top: 4px;
 }
 .dash_wrap .gpu_usage_top .gpu_usage_list .gpu_usage_item .percent {
   font-family: Pretendard;
