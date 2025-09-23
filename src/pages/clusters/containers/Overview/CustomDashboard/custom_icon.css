@@ -497,6 +497,12 @@ i {
   width: 30px;
   height: 30px;
 }
+.ico-type-instance {
+  background: url('/assets/resources/images/icons/ico-type-instance.svg')
+    center no-repeat;
+  width: 30px;
+  height: 30px;
+}
 
 /* 24x24 */
 .ico-type24-clusternode {
@@ -757,6 +763,13 @@ i {
   width: 24px;
   height: 24px;
 }
+.ico-type24-instance {
+  background: url('/assets/resources/images/icons/ico-type-instance.svg')
+    center no-repeat;
+  width: 24px;
+  height: 24px;
+}
+
 
 /* 40x40 */
 .ico-type40-vm {
