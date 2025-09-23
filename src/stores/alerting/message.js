@@ -143,4 +143,17 @@ export default class AlertStore extends Base {
     this.ruleCount = get(result, '0.totalItems', 0)
     this.builtinRuleCount = get(result, '1.totalItems', 0)
   }
+
+  @observable
+  detailMessage = null;
+
+  @action
+  setDetailMessage(data){
+    this.detailMessage = null;
+    this.detailMessage = data;
+  }
+
+  getDetailMessage() {
+    return this.detailMessage;
+  }
 }
