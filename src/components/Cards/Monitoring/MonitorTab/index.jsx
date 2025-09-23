@@ -70,7 +70,7 @@ export default class MonitorTab extends React.Component {
             <Text
               icon={tab.icon}
               title={
-                !tab.data ? '-' : `${this.getLastValue(tab.data, tab.unit)}%`
+                !tab.data ? '-' : `${this.getLastValue(tab.data, tab.unit)} ${tab.unit}`
               }
               description={t(`${tab.title}_SCAP`)}
             />

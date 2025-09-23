@@ -4,7 +4,7 @@ import 'gridstack/dist/gridstack.min.css'
 import './dashboard.css'
 import { inject, observer } from 'mobx-react'
 import ClusterMonitorStore from 'stores/monitoring/cluster'
-import { Notify } from '@kube-design/components'
+import { Notify, Toggle } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import DeleteModal from 'components/Modals/Delete'
 
@@ -38,7 +38,7 @@ import { makePanels } from 'stores/dashboard/panels'
 
 const CustomDashboard = props => {
   const { cluster } = props.match.params
-  const { routing } = props.rootStore
+  const { routing, user } = props.rootStore
 
   const monitorStore = new ClusterMonitorStore()
 
@@ -168,52 +168,58 @@ const CustomDashboard = props => {
           <div className="dash_wrap">
             <section>
               {/* Top area */}
-              <div className="dash_toptab">
-                {dashboardArr.map((obj, idx) => (
-                  <label htmlFor={`dashTab${idx}`} key={idx}>
-                    <input
-                      type="radio"
-                      name="mode"
-                      id={`dashTab${idx}`}
-                      value={`dashTab${idx}`}
-                      defaultChecked={idx == 0 ? true : false}
-                    />
-                    <span
-                      onClick={() => {
-                        setActiveDashboard(obj)
-                        localStorage.setItem('activeDashboardName', obj.name)
-                      }}
-                    >
-                      {obj.name}
-                      <div className="tab-quick-menu" onClick={actvieQuick}>
-                        <button type="button" className="btn_quick">
-                          <i className="ico-quick-menu"></i>
-                        </button>
-                        <ul className="quick-menu-list">
-                          <li onClick={() => editDashboard(idx)}>
-                            <i className="ico-quick-pannel"></i>
-                            <span>{t('RESOURCES_EDIT_DASHBOARD')}</span>
-                          </li>
-                          {dashboardArr.length > 1 && (
-                            <li onClick={() => deleteDashboard(idx, obj.name)}>
-                              <i className="ico-quick-trash"></i>
-                              <span>{t('RESOURCES_DELETE_DASHBOARD')}</span>
+              <div className='dash_top_align'>
+                <div className="dash_toptab">
+                  {dashboardArr.map((obj, idx) => (
+                    <label htmlFor={`dashTab${idx}`} key={idx}>
+                      <input
+                        type="radio"
+                        name="mode"
+                        id={`dashTab${idx}`}
+                        value={`dashTab${idx}`}
+                        defaultChecked={idx == 0 ? true : false}
+                      />
+                      <span
+                        onClick={() => {
+                          setActiveDashboard(obj)
+                          localStorage.setItem('activeDashboardName', obj.name)
+                        }}
+                      >
+                        {obj.name}
+                        <div className="tab-quick-menu" onClick={actvieQuick}>
+                          <button type="button" className="btn_quick">
+                            <i className="ico-quick-menu"></i>
+                          </button>
+                          <ul className="quick-menu-list">
+                            <li onClick={() => editDashboard(idx)}>
+                              <i className="ico-quick-pannel"></i>
+                              <span>{t('RESOURCES_EDIT_DASHBOARD')}</span>
                             </li>
-                          )}
-                        </ul>
-                      </div>
-                    </span>
-                  </label>
-                ))}
-                {dashboardArr.length <= 10 && (
-                  <button
-                    type="button"
-                    className="btn_dash_add"
-                    onClick={() => editMode()}
-                  >
-                    <i className="ico-plus"></i>
-                  </button>
-                )}
+                            {dashboardArr.length > 1 && (
+                              <li onClick={() => deleteDashboard(idx, obj.name)}>
+                                <i className="ico-quick-trash"></i>
+                                <span>{t('RESOURCES_DELETE_DASHBOARD')}</span>
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      </span>
+                    </label>
+                  ))}
+                  {dashboardArr.length <= 10 && (
+                    <button
+                      type="button"
+                      className="btn_dash_add"
+                      onClick={() => editMode()}
+                    >
+                      <i className="ico-plus"></i>
+                    </button>                  
+                  )}                 
+                </div>  
+                <div className="dash_toggle">
+                  <Toggle checked={user.showMenu} onChange={() => user.handlechangeShowMenu(!user.showMenu)}  />
+                  <span>{user.showMenu ? " 좌측 메뉴" : " 좌측 메뉴"}</span>
+                </div>            
               </div>
               {/* // Top area */}
 

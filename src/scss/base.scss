@@ -174,27 +174,23 @@ pre {
 }
 
 .ks-page {
-  &-loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-  }
-
-  &-body {
-    background-color: $body-bg-color;
-  }
-
   &-side {
     position: fixed;
     top: 88px;
+    left: 3;
     width: $nav-width;
+    height: calc(100vh - 88px);
     padding: 0 20px 40px 20px;
     z-index: 201;
+    background-color: white;
+    transition: transform 0.5s ease;
 
-    @media (max-width: 1366px) {
-      width: $narrow-nav-width;
+    &.open {
+      transform: translateX(0); // 보이는 상태
+    }
+
+    &.closed {
+      transform: translateX(-100%); // 숨김 상태
     }
 
     &-title {
@@ -242,11 +238,21 @@ pre {
   &-main {
     overflow-y: auto;
     overflow-x: hidden;
-    margin-left: $nav-width - 20px;
     padding: 20px;
+    transition: margin-left 0.3s ease;
+
+    &.with-sidebar {
+      margin-left: $nav-width - 20px;
+    }
+
+    &.full {
+      margin-left: 0;
+    }
 
     @media (max-width: 1366px) {
-      margin-left: $narrow-nav-width - 20px;
+      &.with-sidebar {
+        margin-left: $narrow-nav-width - 20px;
+      }
     }
   }
 }

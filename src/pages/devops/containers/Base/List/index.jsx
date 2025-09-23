@@ -98,7 +98,7 @@ class DevOpsListLayout extends Component {
           />
         </div>
 
-        <div className="ks-page-main">
+        <div className="ks-page-main with-sidebar">
           {renderRoutes(
             [
               ...route.routes,

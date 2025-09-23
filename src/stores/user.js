@@ -38,6 +38,13 @@ export default class UsersStore extends Base {
 
   module = 'users'
 
+  @observable showMenu = true
+
+  @action
+  handlechangeShowMenu(state) {
+    this.showMenu = state;
+  }
+
   getPath({ cluster, workspace, namespace, devops } = {}) {
     let path = ''
 

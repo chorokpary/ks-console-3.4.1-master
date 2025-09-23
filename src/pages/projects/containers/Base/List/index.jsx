@@ -78,7 +78,7 @@ class ProjectLayout extends Component {
             match={match}
           />
         </div>
-        <div className="ks-page-main">{renderRoutes(this.getRoutes(navs))}</div>
+        <div className="ks-page-main with-sidebar">{renderRoutes(this.getRoutes(navs))}</div>
       </div>
     )
   }
