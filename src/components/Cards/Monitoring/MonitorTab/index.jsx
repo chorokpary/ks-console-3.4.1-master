@@ -44,6 +44,9 @@ export default class MonitorTab extends React.Component {
 
   getLastValue = (data, unit) => {
     const values = get(data, `[0].values`, [])
+    if (!values.length) {
+      return 0;
+    }
     return getValueByUnit(values[values.length - 1][1], unit)
   }
 
