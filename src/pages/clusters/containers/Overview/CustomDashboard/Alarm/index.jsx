@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Loading, Select } from '@kube-design/components'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Loading,
+  Select,
+} from '@kube-design/components'
 import MessageStore from 'stores/alerting/message'
-import { get } from 'lodash'
+import { get, set } from 'lodash'
 
 const typeOption = [
   {
@@ -29,14 +35,28 @@ const typeOption = [
     label: t('KaaS'),
   },
 ]
+const sortOption = [
+  {
+    value: 'latest',
+    label: t('최신 순'),
+  },
+  {
+    value: 'oldest',
+    label: t('오래된 순'),
+  },
+]
 
 const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   const store = new MessageStore()
   const [alarmData, setAlarmData] = useState([])
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState('all')
-
   const [filter, setFilter] = useState('all')
+  const [sort, setSort] = useState('latest')
+
+  const [open, setOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
   const [criticalCount, setCriticalCount] = useState(0)
   const [minorCount, setMinorCount] = useState(0)
   const [unknownCount, setUnknownCount] = useState(0)
@@ -49,37 +69,18 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     setLoading(true)
     const alarmData = await store.fetchList({
       sortBy: 'activeAt',
-      limit: 30,
+      limit: 50,
     })
-    setAlarmData(alarmData)
-    setLoading(false)
-    setAlarmData(asd.items)
-  }
 
-  const asd = {
-    items: [
-      {
-        activeAt: '2025-09-19T06:11:08.064866888Z',
-        annotations: {
-          message: 'XID error vm:vm01, gpu:2, error_code: 43',
-          summary: 'test alert 입니다',
-        },
-        labels: {
-          alertname: 'xid name alert1',
-          alerttype: 'metric',
-          gpu: '2',
-          rule_group: 'xid-test',
-          rule_id: '9aa038b9-c119-437a-8bf0-208aaf3213b8',
-          rule_level: 'cluster',
-          rule_type: 'custom',
-          severity: 'critical',
-          vm: 'vm01',
-        },
-        state: 'firing',
-        value: '4.3e+01',
-      },
-    ],
-    totalItems: 1,
+    let cluster = globals.currentCluster
+    const globalAlarmData = await store.fetchList({
+      sortBy: 'activeAt',
+      type: 'builtin',
+      cluster,
+      limit: 49,
+    })
+    setAlarmData([...alarmData, ...globalAlarmData])
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -147,6 +148,37 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     }
   }
 
+  const filteredData = useMemo(() => {
+    return alarmData
+      .filter(data => {
+        const status = getStatus(data.labels.severity).code
+        const resourceType = getTypeIcon(data.labels) || 'node'
+
+        const severityMatch = filter === 'all' || status === filter
+        const typeMatch = type === 'all' || resourceType === type
+
+        return severityMatch && typeMatch
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.activeAt).getTime()
+        const dateB = new Date(b.activeAt).getTime()
+        if (sort === 'latest') return dateB - dateA
+        if (sort === 'oldest') return dateA - dateB
+        return 0
+      })
+  }, [alarmData, filter, type, sort])
+
+  // 바깥 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = e => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
+
   return (
     <>
       <div className="grid_item">
@@ -163,12 +195,9 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                   defaultChecked
                   onClick={() => setFilter('all')}
                 />
-                {/* gpu badge number는 99 이상일때 99로만 표현 */}
                 <span>
                   <span className="gpu_badge_number">
-                    {criticalCount + minorCount + unknownCount > 99
-                      ? '99'
-                      : criticalCount + minorCount + unknownCount}
+                    {criticalCount + minorCount + unknownCount}
                   </span>
                   <span>전체</span>
                 </span>
@@ -183,7 +212,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 />
                 <span>
                   <span className="gpu_badge_number critical">
-                    {criticalCount > 99 ? '99' : criticalCount}
+                    {criticalCount}
                   </span>
                   <span>심각</span>
                 </span>
@@ -197,9 +226,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                   onClick={() => setFilter('minor')}
                 />
                 <span>
-                  <span className="gpu_badge_number minor">
-                    {minorCount > 99 ? '99' : minorCount}
-                  </span>
+                  <span className="gpu_badge_number minor">{minorCount}</span>
                   <span>경고</span>
                 </span>
               </label>
@@ -213,7 +240,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 />
                 <span>
                   <span className="gpu_badge_number unknown">
-                    {unknownCount > 99 ? '99' : unknownCount}
+                    {unknownCount}
                   </span>
                   <span>주의</span>
                 </span>
@@ -233,10 +260,30 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 />
               </div>
             </div>
-            <button className="icon">
-              <i className="ico-list-filter"></i>
-            </button>
-            {/* filter 버튼 클릭시 : dropdown 최신 순 / 오래된 순*/}
+            <div className="icon_dropdown_wrap" ref={dropdownRef}>
+              <button
+                className="icon icon_dropdown_btn"
+                onClick={() => setOpen(prev => !prev)}
+              >
+                <i className="ico-list-filter"></i>
+              </button>
+              <div className={`icon_dropdown_box ${open && 'open'}`}>
+                <ul className="icon_dropdown_list">
+                  {sortOption.map(opt => (
+                    <li
+                      key={opt.value}
+                      className={sort === opt.value ? 'selected' : ''}
+                      onClick={() => {
+                        setSort(opt.value)
+                        setOpen(false)
+                      }}
+                    >
+                      <span>{opt.label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
         {!isVertical && (
@@ -250,12 +297,9 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 defaultChecked
                 onClick={() => setFilter('all')}
               />
-              {/* gpu badge number는 99 이상일때 99로만 표현 */}
               <span>
                 <span className="gpu_badge_number">
-                  {criticalCount + minorCount + unknownCount > 99
-                    ? '99'
-                    : criticalCount + minorCount + unknownCount}
+                  {criticalCount + minorCount + unknownCount}
                 </span>
                 <span>전체</span>
               </span>
@@ -270,7 +314,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
               />
               <span>
                 <span className="gpu_badge_number critical">
-                  {criticalCount > 99 ? '99' : criticalCount}
+                  {criticalCount}
                 </span>
                 <span>심각</span>
               </span>
@@ -284,9 +328,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 onClick={() => setFilter('minor')}
               />
               <span>
-                <span className="gpu_badge_number minor">
-                  {minorCount > 99 ? '99' : minorCount}
-                </span>
+                <span className="gpu_badge_number minor">{minorCount}</span>
                 <span>경고</span>
               </span>
             </label>
@@ -299,9 +341,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 onClick={() => setFilter('unknown')}
               />
               <span>
-                <span className="gpu_badge_number unknown">
-                  {unknownCount > 99 ? '99' : unknownCount}
-                </span>
+                <span className="gpu_badge_number unknown">{unknownCount}</span>
                 <span>주의</span>
               </span>
             </label>
@@ -310,57 +350,45 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
 
         <Loading spinning={loading}>
           <div className="grid_info style_list">
-            {alarmData.length > 0 ? (
+            {filteredData.length > 0 ? (
               <ul className={`alert_card_list ${isVertical ? 'bottom' : ''}`}>
-                {alarmData
-                  .filter(data => {
-                    const status = getStatus(data.labels.severity)
-                    if (filter === 'all') return true
-                    return status.code === filter
-                  })
-                  .map((data, index) => {
-                    const status = getStatus(data.labels.severity)
-                    return (
-                      <li className="alert_card" key={index}>
-                        <div className="alert_content">
-                          <div className="alert_header">
-                            <span className={`alert_status ${status.code}`}>
-                              {status.text}
-                            </span>
-                            <span
-                              className={`alert_resource type_${getTypeIcon(
-                                data.labels
-                              ) || 'node'}`}
-                            >
-                              {getType(data.labels) || '노드'}
-                            </span>
-                          </div>
-
-                          <div className="alert_body">
-                            <p className="alert_message">
-                              {data.annotations.summary}
-                              {/* Thanos Rule {{$labels.instance}} in
-                                    {{$labels.namespace}} is failing to queue */}
-                            </p>
-                            {data.labels.gpu && (
-                              <p className="alert_badge">
-                                <span className="alert_errorcode">
-                                  Error Code: {Number(data.value)}
-                                </span>
-                              </p>
-                            )}
-                          </div>
-                          <p className="alert_date">
-                            {
-                              new Date(data.activeAt)
-                                .toISOString()
-                                .split('T')[0]
-                            }
-                          </p>
+                {filteredData.map((data, index) => {
+                  const status = getStatus(data.labels.severity)
+                  return (
+                    <li className="alert_card" key={index}>
+                      <div className="alert_content">
+                        <div className="alert_header">
+                          <span className={`alert_status ${status.code}`}>
+                            {status.text}
+                          </span>
+                          <span
+                            className={`alert_resource type_${getTypeIcon(
+                              data.labels
+                            ) || 'node'}`}
+                          >
+                            {getType(data.labels) || '노드'}
+                          </span>
                         </div>
-                      </li>
-                    )
-                  })}
+
+                        <div className="alert_body">
+                          <p className="alert_message">
+                            {data.annotations.summary}
+                          </p>
+                          {data.annotations?.message && (
+                            <p className="alert_badge">
+                              <span className="alert_errorcode">
+                                {data.annotations.message}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                        <p className="alert_date">
+                          {new Date(data.activeAt).toISOString().split('T')[0]}
+                        </p>
+                      </div>
+                    </li>
+                  )
+                })}
               </ul>
             ) : (
               <div className="grid_text">
