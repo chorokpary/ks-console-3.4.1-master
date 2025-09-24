@@ -51,12 +51,14 @@ const Status = props => {
     if (filterData.length > 0) {
       const promises = filterData.filter(async network => {
         if (network.name !== 'k8s-pod-network') {
-          const networkDetail = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${cluster}/edgetron/resources/kubevirt/networks/${network.name}?project=${network.project}`
-          )
-          networkDetail.network.endpoint = 'networks'
-          networkDetail.network.unique = 'project_name'         
-          setDetailNetwork(value => [...value, networkDetail.network])
+          const networkDetail = {}
+          networkDetail.name = network.name
+          networkDetail.type = network.type
+          networkDetail.cidr = network.cidr
+          networkDetail.gateway_ip = network.gateway_ip
+          networkDetail.endpoint = 'networks'
+          networkDetail.unique = 'project_name'         
+          setDetailNetwork(value => [...value, networkDetail])
         }
       })
       await Promise.all(promises)
@@ -73,22 +75,14 @@ const Status = props => {
       const vmName = sortedList[0]?.vmName
 
       if (!!vmName) {
+        // vm detail data
+        const vmDetail = await vmStore.fetchDetail({
+          project: store.detail.data.namespace,
+          name: vmName,
+        })
 
-        const vmTotalData = await vmStore.fetchList({ limit: 10000})
-        const vmTotalList = vmTotalData.map(item => item.name)
-        const hasVmName = vmTotalList.includes(vmName)
-
-        if(hasVmName){
-          // vm detail data
-          const vmDetail = await vmStore.fetchDetail({
-            project: store.detail.data.namespace,
-            name: vmName,
-          })
-
-          fnGetFlavor(vmDetail)
-          fnGetNetwork(vmDetail)
-        }
-        
+        fnGetFlavor(vmDetail)
+        fnGetNetwork(vmDetail)        
       }
     } catch (error) {
       console.log('VM 상세 정보 조회 중 오류 발생:', error)
