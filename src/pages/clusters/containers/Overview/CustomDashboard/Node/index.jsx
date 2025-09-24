@@ -131,12 +131,12 @@ const Node = ({ widgetKey, monitorStore, ...props }) => {
                       <span>스케줄링 불가</span>
                     </p>
                   </div>
-                  <div className="status_wrap">
+                  {/* <div className="status_wrap">
                     <div className="value">{data.gpuTotal + data.cpuTotal}</div>
                     <p className="status total">
                       <span>전체</span>
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

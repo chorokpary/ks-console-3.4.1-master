@@ -98,12 +98,12 @@ const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                       <span>미사용</span>
                     </p>
                   </div>
-                  <div className="status_wrap">
+                  {/* <div className="status_wrap">
                     <div className="value">{totalCount}</div>
                     <p className="status total">
                       <span>전체</span>
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

@@ -12,10 +12,13 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 import PodStore from 'stores/monitoring/pod'
 import { getContentOptions, getData } from './handleTab'
 
-const MetricTypes = {
+const NodeMetricTypes = {
   net_transmitted: 'cluster_net_bytes_transmitted',
   net_received: 'cluster_net_bytes_received',
   net_utilisation: 'cluster_net_utilisation',
+}
+
+const PodMetricTypes = {
   pod_net_bytes_transmitted: 'pod_net_bytes_transmitted',
   pod_net_bytes_received: 'pod_net_bytes_received',
 }
@@ -53,7 +56,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
 
       // node data
       const metricData = await monitorStore.fetchMetrics({
-        metrics: Object.values(MetricTypes),
+        metrics: Object.values(NodeMetricTypes),
         step: '5m', // Time interval
         times: 100,
         // step: '3600s', // 최근 7일
@@ -143,7 +146,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
       if (!podFetchedRef.current) {
         setLoading(true)
         const fetchedPodData = await podStore.fetchMetrics({
-          metrics: Object.values(MetricTypes),
+          metrics: Object.values(PodMetricTypes),
           step: '5m',
           times: 100,
           cluster: props.cluster,

@@ -71,7 +71,7 @@ const GpuStatus = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>GPU 현황</label>
+          <label>GPU</label>
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status">

@@ -14,7 +14,7 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 import ResourceStore from 'stores/resources/containerresource'
 import { getContentOptions, getData } from './handleTab'
 
-const MetricTypes = {
+const NodeMetricTypes = {
   cpu_usage: 'cluster_cpu_usage',
   cpu_total: 'cluster_cpu_total',
   cpu_utilisation: 'cluster_cpu_utilisation',
@@ -24,8 +24,8 @@ const MetricTypes = {
   disk_size_usage: 'cluster_disk_size_usage',
   disk_size_capacity: 'cluster_disk_size_capacity',
   disk_utilisation: 'cluster_disk_size_utilisation',
-  // pod_count: 'cluster_pod_running_count',
-  // pod_capacity: 'cluster_pod_quota',
+}
+const PodMetricTypes = {
   pod_utilisation: 'cluster_pod_utilisation',
   pod_cpu_usage: 'pod_cpu_usage',
   pod_memory_usage: 'pod_memory_usage',
@@ -58,7 +58,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
 
       // node data
       const metricData = await monitorStore.fetchMetrics({
-        metrics: Object.values(MetricTypes),
+        metrics: Object.values(NodeMetricTypes),
         step: '5m', // Time interval
         times: 100,
         // step: '3600s', // 최근 7일
@@ -201,7 +201,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
         setLoading(true)
 
         const fetchedPodData = await podStore.fetchMetrics({
-          metrics: Object.values(MetricTypes),
+          metrics: Object.values(PodMetricTypes),
           step: '5m',
           times: 100,
           cluster: props.cluster,
