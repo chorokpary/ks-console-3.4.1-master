@@ -168,7 +168,7 @@ const CustomDashboard = props => {
           <div className="dash_wrap">
             <section>
               {/* Top area */}
-              <div className='dash_top_align'>
+              <div className="dash_top_align">
                 <div className="dash_toptab">
                   {dashboardArr.map((obj, idx) => (
                     <label htmlFor={`dashTab${idx}`} key={idx}>
@@ -196,7 +196,9 @@ const CustomDashboard = props => {
                               <span>{t('RESOURCES_EDIT_DASHBOARD')}</span>
                             </li>
                             {dashboardArr.length > 1 && (
-                              <li onClick={() => deleteDashboard(idx, obj.name)}>
+                              <li
+                                onClick={() => deleteDashboard(idx, obj.name)}
+                              >
                                 <i className="ico-quick-trash"></i>
                                 <span>{t('RESOURCES_DELETE_DASHBOARD')}</span>
                               </li>
@@ -213,13 +215,16 @@ const CustomDashboard = props => {
                       onClick={() => editMode()}
                     >
                       <i className="ico-plus"></i>
-                    </button>                  
-                  )}                 
-                </div>  
+                    </button>
+                  )}
+                </div>
                 <div className="dash_toggle">
-                  <Toggle checked={user.showMenu} onChange={() => user.handlechangeShowMenu(!user.showMenu)}  />
-                  <span>{user.showMenu ? " 좌측 메뉴" : " 좌측 메뉴"}</span>
-                </div>            
+                  <Toggle
+                    checked={user.showMenu}
+                    onChange={() => user.handlechangeShowMenu(!user.showMenu)}
+                  />
+                  <span>{user.showMenu ? ' 좌측 메뉴' : ' 좌측 메뉴'}</span>
+                </div>
               </div>
               {/* // Top area */}
 

@@ -8,6 +8,8 @@ import {
 } from '@kube-design/components'
 import MessageStore from 'stores/alerting/message'
 import { get, set } from 'lodash'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom'
+import { inject, observer } from 'mobx-react'
 
 const typeOption = [
   {
@@ -47,7 +49,9 @@ const sortOption = [
 ]
 
 const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
+  const history = useHistory()
   const store = new MessageStore()
+
   const [alarmData, setAlarmData] = useState([])
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState('all')
@@ -79,7 +83,11 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
       cluster,
       limit: 49,
     })
-    setAlarmData([...alarmData, ...globalAlarmData])
+    const globalAlarmDataWithType = globalAlarmData.map(item => ({
+      ...item,
+      state_type: 'builtin',
+    }))
+    setAlarmData([...alarmData, ...globalAlarmDataWithType])
     setLoading(false)
   }
 
@@ -178,6 +186,17 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
+
+  const handleRowClick = data => {
+    const newRecord = {
+      ...data,
+      state_type: data.state_type || 'custom',
+    }
+    props.rootStore.message.setDetailMessage(newRecord)
+    history.push(
+      `/clusters/${props.cluster}/alerts/${data.annotations.summary}`
+    )
+  }
 
   return (
     <>
@@ -371,7 +390,10 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                         </div>
 
                         <div className="alert_body">
-                          <p className="alert_message">
+                          <p
+                            className="alert_message"
+                            onClick={() => handleRowClick(data)}
+                          >
                             {data.annotations.summary}
                           </p>
                           {data.annotations?.message && (
@@ -402,4 +424,4 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   )
 }
 
-export default Alarm
+export default inject('rootStore')(observer(Alarm))
