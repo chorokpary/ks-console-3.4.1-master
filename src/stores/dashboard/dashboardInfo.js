@@ -54,12 +54,12 @@ export default class DashboardInfo {
     w: 12,
     h: 4,
   }
-  bmcNode = {
-    x: 0,
-    y: 34,
-    w: 12,
-    h: 7,
-  }
+  // bmcNode = {
+  //   x: 0,
+  //   y: 34,
+  //   w: 12,
+  //   h: 7,
+  // }
   resourceChange = {
     x: 0,
     y: 41,
@@ -72,36 +72,36 @@ export default class DashboardInfo {
     w: 6,
     h: 5,
   }
-  carbonPower = {
-    x: 0,
-    y: 46,
-    w: 6,
-    h: 3,
-  }
-  carbonCo2 = {
-    x: 6,
-    y: 46,
-    w: 6,
-    h: 3,
-  }
-  carbonTree = {
-    x: 0,
-    y: 49,
-    w: 6,
-    h: 3,
-  }
-  carbonCost = {
-    x: 6,
-    y: 49,
-    w: 6,
-    h: 3,
-  }
-  cpuPower = {
-    x: 0,
-    y: 52,
-    w: 12,
-    h: 5,
-  }
+  // carbonPower = {
+  //   x: 0,
+  //   y: 46,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // carbonCo2 = {
+  //   x: 6,
+  //   y: 46,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // carbonTree = {
+  //   x: 0,
+  //   y: 49,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // carbonCost = {
+  //   x: 6,
+  //   y: 49,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // cpuPower = {
+  //   x: 0,
+  //   y: 52,
+  //   w: 12,
+  //   h: 5,
+  // }
   usageTop5 = {
     x: 12,
     y: 0,
@@ -114,24 +114,24 @@ export default class DashboardInfo {
     w: 3,
     h: 9,
   }
-  issue = {
-    x: 12,
-    y: 17,
-    w: 3,
-    h: 9,
-  }
-  carbonIndicator = {
-    x: 12,
-    y: 26,
-    w: 3,
-    h: 9,
-  }
-  powerUsageTop5 = {
-    x: 12,
-    y: 35,
-    w: 3,
-    h: 7,
-  }
+  // issue = {
+  //   x: 12,
+  //   y: 17,
+  //   w: 3,
+  //   h: 9,
+  // }
+  // carbonIndicator = {
+  //   x: 12,
+  //   y: 26,
+  //   w: 3,
+  //   h: 9,
+  // }
+  // powerUsageTop5 = {
+  //   x: 12,
+  //   y: 35,
+  //   w: 3,
+  //   h: 7,
+  // }
 
   node = {
     x: 0,

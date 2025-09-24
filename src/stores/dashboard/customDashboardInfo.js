@@ -54,10 +54,10 @@ export default class CustomDashboardInfo {
     w: 3,
     h: 12,
   }
-  alarmHorizontal = {
-    x: 0,
-    y: 16,
-    w: 12,
-    h: 4,
-  }
+  // alarmHorizontal = {
+  //   x: 0,
+  //   y: 16,
+  //   w: 12,
+  //   h: 4,
+  // }
 }
