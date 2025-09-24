@@ -393,6 +393,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                           <p
                             className="alert_message"
                             onClick={() => handleRowClick(data)}
+                            style={{ cursor: 'pointer' }}
                           >
                             {data.annotations.summary}
                           </p>

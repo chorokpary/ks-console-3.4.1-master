@@ -168,7 +168,10 @@ const CustomDashboard = props => {
           <div className="dash_wrap">
             <section>
               {/* Top area */}
-              <div className="dash_top_align">
+              <div
+                className="dash_top_align"
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
                 <div className="dash_toptab">
                   {dashboardArr.map((obj, idx) => (
                     <label htmlFor={`dashTab${idx}`} key={idx}>
@@ -218,7 +221,18 @@ const CustomDashboard = props => {
                     </button>
                   )}
                 </div>
-                <div className="dash_toggle">
+                <div
+                  className="dash_toggle"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    minHeight: '32px',
+                    padding: '2px',
+                    marginLeft: '8px',
+                    marginBottom: '8px',
+                  }}
+                >
                   <Toggle
                     checked={user.showMenu}
                     onChange={() => user.handlechangeShowMenu(!user.showMenu)}

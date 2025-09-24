@@ -19,7 +19,7 @@ export default class DashboardInfo {
     h: 4,
   }
   kaas = {
-    x: 9,
+    x: 12,
     y: 0,
     w: 3,
     h: 4,
@@ -153,12 +153,6 @@ export default class DashboardInfo {
   }
   gpuUsage = {
     x: 9,
-    y: 0,
-    w: 3,
-    h: 4,
-  }
-  kaasGpu = {
-    x: 12,
     y: 0,
     w: 3,
     h: 4,

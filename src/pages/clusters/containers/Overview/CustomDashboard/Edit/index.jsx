@@ -446,7 +446,7 @@ const CustomDashboardEdit = props => {
                   </div>
                 </div>
               </div>
-              <div className="section-content">
+              {/* <div className="section-content">
                 <label className="switch type_text">
                   <input
                     type="checkbox"
@@ -477,7 +477,7 @@ const CustomDashboardEdit = props => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="section-content">
                 <label className="switch type_text">
                   <input
