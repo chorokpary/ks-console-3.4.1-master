@@ -107,7 +107,7 @@ const index = props => {
     }
 
     const getVmCpuUsageData = async () => {
-      const cpuLinuxDataExpr = `((sum by (pod,instance) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode!~"guest.*|idle|iowait"}[5m])) + on(pod, instance) node_uname_info) - 1) / 2`
+      const cpuLinuxDataExpr = `sum by (pod, instance) (irate(node_cpu_seconds_total{service="launcher-node-exporter",pod="${selectedVm}",mode!~"guest.*|idle|iowait"}[5m]))`
       const vmCpuData = await customStore.fetchMetric({
         expr: cpuLinuxDataExpr,
         ...paramsData,
@@ -126,7 +126,7 @@ const index = props => {
 
     // vm memory data
     const getVmMemoryUsageData = async () => {
-      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod!~"virt-launcher-.*"}`
+      const memoryLinuxDataExpr = `node_memory_MemTotal_bytes{service="launcher-node-exporter",pod="${selectedVm}"}-node_memory_MemFree_bytes{service="launcher-node-exporter",pod="${selectedVm}"}-node_memory_Cached_bytes{service="launcher-node-exporter",pod="${selectedVm}"}`
 
       const vmMemoryData = await customStore.fetchMetric({
         expr: memoryLinuxDataExpr,
@@ -146,7 +146,7 @@ const index = props => {
 
     // vm inbound data
     const getVmInboundData = async () => {
-      const inboundLinuxDataExpr = `sum by (pod) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const inboundLinuxDataExpr = `sum by (pod) (irate(node_network_receive_bytes_total{service="launcher-node-exporter",device=~"net.*",pod="${selectedVm}"}[5m]))`
 
       const vmInboundData = await customStore.fetchMetric({
         expr: inboundLinuxDataExpr,
@@ -163,7 +163,7 @@ const index = props => {
 
     // vm outbound data
     const getVmOutboundData = async () => {
-      const outboundLinuxDataExpr = `sum by (pod) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*"}[5m]))`
+      const outboundLinuxDataExpr = `sum by (pod) (irate(node_network_transmit_bytes_total{service="launcher-node-exporter",device=~"net.*",pod="${selectedVm}"}[5m]))`
 
       const vmOutboundData = await customStore.fetchMetric({
         expr: outboundLinuxDataExpr,
@@ -179,7 +179,7 @@ const index = props => {
     }
 
     const getVmDiskUsageData = async () => {
-      const diskLinuxDataExpr = `(100 - (((sum by(pod) (node_filesystem_avail_bytes)) / sum by(pod) (node_filesystem_size_bytes)) * 100)) / 100`
+      const diskLinuxDataExpr = `(100 - (((sum by(pod) (node_filesystem_avail_bytes{pod="${selectedVm}"})) / sum by(pod) (node_filesystem_size_bytes{pod="${selectedVm}"})) * 100)) / 100`
 
       const vmDiskData = await customStore.fetchMetric({
         expr: diskLinuxDataExpr,
