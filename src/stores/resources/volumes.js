@@ -265,7 +265,7 @@ export default class VolumeStore extends Base {
     const jsonData = {}
     const actionData = {}
 
-    actionData.vm_id = data.vmName
+    actionData.vm_name = data.vmName
     if (data.actionType === 'A') {
       actionData.persist = true
       actionData.action = 'attach'
