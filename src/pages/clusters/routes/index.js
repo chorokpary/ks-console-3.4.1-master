@@ -49,6 +49,7 @@ import ConfigMaps from '../containers/ConfigMaps'
 import ServiceAccounts from '../containers/ServiceAccounts'
 import ClusterMonitor from '../containers/Monitor/Cluster'
 import ResourceMonitor from '../containers/Monitor/Resource'
+import Gpumonitor from '../containers/Monitor/Gpu/index'
 import Members from '../containers/Members'
 import Roles from '../containers/Roles'
 import BaseInfo from '../containers/BaseInfo'
@@ -233,6 +234,10 @@ export default [
           {
             path: `${PATH}/monitor-cluster`,
             component: ClusterMonitor,
+          },
+          {
+            path: `${PATH}/monitor-gpu`,
+            component: Gpumonitor,
           },
           {
             path: `${PATH}/monitor-resource`,
