@@ -14,6 +14,7 @@ import * as common from 'utils/resources'
 
 import VmStore from 'stores/resources/vms'
 import DetailGpuVmList from 'pages/clusters/containers/Resources/components/DetailGpuVmList'
+import DetailGpuResource from 'pages/clusters/containers/Resources/components/DetailGpuResource'
 
 import styles from './index.scss'
 
@@ -27,6 +28,8 @@ const Status = props => {
   const [loading, setLoading] = useState(true)
   const [detailFlavor, setDetailFlavor] = useState(null)
   const [detailNetwork, setDetailNetwork] = useState([])
+
+  const [vmList, setVmList] = useState('');
 
   // 초기 데이터 처리
   useEffect(() => {
@@ -72,6 +75,7 @@ const Status = props => {
         return a.vmName < b.vmName ? 1 : a.vmName > b.vmName ? -1 : 0
       })
 
+      const vmJoinData =  vmData.map(item => item.vmName).join('|') || ''
       const vmName = sortedList[0]?.vmName
 
       if (!!vmName) {
@@ -84,6 +88,8 @@ const Status = props => {
         fnGetFlavor(vmDetail)
         fnGetNetwork(vmDetail)        
       }
+        setVmList(vmJoinData)
+
     } catch (error) {
       console.log('VM 상세 정보 조회 중 오류 발생:', error)
     } finally {
@@ -104,6 +110,14 @@ const Status = props => {
   return (
     <>
       <div>
+        {vmList && 
+          <DetailGpuResource
+            {...props.match.params}
+            namespace={store.detail.data?.namespace}
+            vmList={vmList}
+          />
+        }
+
         {/* Flavor */}
         {!!detailFlavor && (
           <Panel title={'Flavor'}>
