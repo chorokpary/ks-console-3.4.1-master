@@ -284,15 +284,7 @@ export default class SimpleCircle extends React.Component {
   }
 
   render() {
-    const {
-      width,
-      height,
-      showCenter,
-      innerRadius = '70%',
-      startAngle,
-      endAngle,
-      isTooltip = true,
-    } = this.props
+    const { width, height, showCenter, innerRadius = '70%' } = this.props
     const data = this.getData()
 
     return (
@@ -308,16 +300,12 @@ export default class SimpleCircle extends React.Component {
               innerRadius={innerRadius}
               outerRadius="100%"
               stroke="transparent"
-              startAngle={startAngle}
-              endAngle={endAngle}
               {...this.state.totalFill}
             />
-            {isTooltip && (
-              <Tooltip
-                wrapperStyle={{ zIndex: 100 }}
-                content={this.renderTooltip}
-              />
-            )}
+            <Tooltip
+              wrapperStyle={{ zIndex: 100 }}
+              content={this.renderTooltip}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
