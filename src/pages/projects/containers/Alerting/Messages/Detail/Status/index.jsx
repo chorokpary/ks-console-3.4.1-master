@@ -23,14 +23,19 @@ const Status = (props) => {
   const [expandIndex, setExpandIndex] = useState("");
 
   useEffect(() => {
+     if (detail) {
       fnGetData()
-    }, [])
+     }
+    }, [detail])
   
   const fnGetData = async () => {
+    
+    if (!detail) return;
+
     const params = {
       cluster,
       name: detail.labels.rule_group,
-      type : detail.state_type == "builtin" ? "builtin" : '',      
+      type : detail?.state_type == "builtin" ? "builtin" : '',      
     }
 
     const policyData = await policyStore.fetchDetail(params)

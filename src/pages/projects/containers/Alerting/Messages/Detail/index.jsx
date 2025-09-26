@@ -18,7 +18,7 @@ const MessageDetail = props => {
 
   const { workspace, cluster, namespace, name } = props.match.params; 
   // const listUrl = `/${workspace}/clusters/${cluster}/projects/${namespace}/alerts`;
-  const listUrl = `/clusters/${cluster}/alerts${props.rootStore.message?.detailMessage.state_type === "builtin" ? "?type=builtin" : ""}`;
+  const listUrl = `/clusters/${cluster}/alerts${props.rootStore.message?.detailMessage?.state_type === "builtin" ? "?type=builtin" : ""}`;
 
   const getOperations = () => [   
   ];
