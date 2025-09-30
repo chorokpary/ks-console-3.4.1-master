@@ -278,8 +278,8 @@ const index = props => {
         const foundVm = vmStores.find(vm => vm.node === node.name)
         return {
           ...node,
-          name: foundVm ? foundVm.name : null,
-          node: foundVm ? foundVm.node : null,
+          name: foundVm ? foundVm.name : '',
+          node: foundVm ? foundVm.node : node.name,
         }
       }) || []
     )

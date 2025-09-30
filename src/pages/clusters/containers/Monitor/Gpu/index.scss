@@ -21,8 +21,7 @@
   align-items: center;
   height: 48px;
   padding: 0 14px;
-  border-radius: 4px;
-  background-color: $dark;
+  background-color: #242e42;
   margin: 0 0 12px;
 
   &Item {
@@ -32,7 +31,7 @@
     margin: 0 6px;
     padding: 0 14px;
     font-weight: 500;
-    color: $white;
+    color: #ffffff;
     border: 1px solid transparent;
     text-align: center;
     transition: all $trans-speed;
@@ -43,12 +42,13 @@
 
     &.active {
       border-radius: 4px;
-      box-shadow: $btn-primary-shadow;
-      background-color: $primary;
-      border-color: $primary;
+      box-shadow: none !important;
+      background-color: #4465dc !important;
+      border-color: #4465dc !important;
+
 
       &:hover {
-        color: $white;
+        color: #a8bbff !important;
       }
     }
   }

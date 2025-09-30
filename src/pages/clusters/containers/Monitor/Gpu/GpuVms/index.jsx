@@ -29,7 +29,7 @@ const Index = props => {
                 <tr key={`${obj.name}-${index}`}>
                   <td
                     style={{
-                      backgroundColor: selected?.name === obj.name ? PALE_BLUE_COLOR : '',
+                      backgroundColor: selected?.id === obj.id ? PALE_BLUE_COLOR : '',
                     }}
                     onClick={() => {
                       setSelected(obj)
@@ -37,7 +37,9 @@ const Index = props => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <i className="ico-type-vm"></i>
-                      <span style={{ marginLeft: 8 }}>{obj.name}</span>
+                      <span style={{ marginLeft: 8 }}>
+                        {obj.name || 'unknown'}
+                      </span>
                     </div>
                   </td>
                 </tr>

@@ -730,6 +730,11 @@ div.flatpickr-calendar
   font-weight: 700 !important;
 }
 
+/* GPU 모니터링 상단 메뉴탭 */
+a:hover.src-pages-clusters-containers-Monitor-Gpu-index__navItem {
+  color: #a8bbff !important;
+}
+
 /***** 목록,상세,생성 화면 *****/
 /* 상세 우측 메뉴탭 */
 a:hover.src-core-containers-Base-Detail-index__navItem {

@@ -37,8 +37,7 @@ const Index = props => {
                 <tr key={`${obj.name}-${index}`}>
                   <td
                     style={{
-                      backgroundColor:
-                        selected?.name === obj.name ? PALE_BLUE_COLOR : '',
+                      backgroundColor: selected?.node_ip === obj.node_ip ? PALE_BLUE_COLOR : '',
                     }}
                     onClick={() => {
                       setSelected(obj)
@@ -46,7 +45,9 @@ const Index = props => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <i className="ico-type-clusternode"></i>
-                      <span style={{ marginLeft: 8 }}>{obj.node}</span>
+                      <span style={{ marginLeft: 8 }}>
+                        {obj.node || 'unknown'}
+                      </span>
                     </div>
                   </td>
                 </tr>
