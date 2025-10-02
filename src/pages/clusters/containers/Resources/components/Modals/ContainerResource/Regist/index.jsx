@@ -157,7 +157,11 @@ const RegistModal = props => {
       if (response.features) {
         for (let i = 0, n = response.features.length; i < n; i += 1) {
           resFeature.push({
-            label: t(`RESOURCES_KAAS_FEATURE_${response.features[i].name.toUpperCase()}`),
+            label: t(
+              `RESOURCES_KAAS_FEATURE_${response.features[
+                i
+              ].name.toUpperCase()}`
+            ),
             value: response.features[i].name,
             // icon: response.data.features[i].name.toLowerCase(),
             icon: `ico-etc-${response.features[i].name.toLowerCase()}`,
@@ -645,12 +649,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <div className={styles.basic}></div>
@@ -662,8 +667,8 @@ const RegistModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -675,12 +680,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <div className={styles.network}></div>
@@ -692,8 +698,8 @@ const RegistModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -705,12 +711,13 @@ const RegistModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 3
-                    ? styles.current
-                    : regStep > 3
+                  className={`${
+                    regStep === 3
+                      ? styles.current
+                      : regStep > 3
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <div className={styles.detail}></div>
@@ -722,8 +729,8 @@ const RegistModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -1047,16 +1054,16 @@ const RegistModal = props => {
                             <tbody>
                               {!networkList?.filter(el => el.external)
                                 .length && (
-                                  <tr>
-                                    <td colSpan="6" className="no-data">
-                                      <p>
-                                        {t(
-                                          'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                        )}
-                                      </p>
-                                    </td>
-                                  </tr>
-                                )}
+                                <tr>
+                                  <td colSpan="6" className="no-data">
+                                    <p>
+                                      {t(
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                      )}
+                                    </p>
+                                  </td>
+                                </tr>
+                              )}
                               {networkList
                                 ?.filter(el => el.external)
                                 .map(data => (
@@ -1158,8 +1165,9 @@ const RegistModal = props => {
                       </div>
                     </Form.Item>
                     <div
-                      className={`form-item-error ${!networkName ? '' : 'hide'
-                        }`}
+                      className={`form-item-error ${
+                        !networkName ? '' : 'hide'
+                      }`}
                     >
                       {t('RESOURCES_SELECT_NETWORK_TIP')}
                     </div>
@@ -1338,8 +1346,9 @@ const RegistModal = props => {
                 <Form.Item label={t('ADD_NODE_SELECTOR')}>
                   <div className={styles.box_wrapper}>
                     <div
-                      className={`form-item-error ${nodeSelectorError ? '' : 'hide'
-                        }`}
+                      className={`form-item-error ${
+                        nodeSelectorError ? '' : 'hide'
+                      }`}
                     >
                       {t('ADD_NODE_SELECTOR_TIP')}
                     </div>
@@ -1371,7 +1380,9 @@ const RegistModal = props => {
                     </Form.Item>
                   </Column>
                   <Column>
-                    <Form.Item label={t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}>
+                    <Form.Item
+                      label={t('RESOURCES_CERTIFICATE_EXPIRATION_PERIOD')}
+                    >
                       <Select
                         name="expiration"
                         options={expirationOption}
@@ -1381,8 +1392,6 @@ const RegistModal = props => {
                     </Form.Item>
                   </Column>
                 </Columns>
-
-
               </div>
               {/* 세부 설정 끝========================================== */}
 
@@ -1532,11 +1541,12 @@ const RegistModal = props => {
                         </div>
                       ))}
                     <label
-                      className={`${networkList.filter(x => elbCheckItem === x.name)
-                        .length > 0
-                        ? ''
-                        : 'hide'
-                        }`}
+                      className={`${
+                        networkList.filter(x => elbCheckItem === x.name)
+                          .length > 0
+                          ? ''
+                          : 'hide'
+                      }`}
                     >
                       ELB ({elbSelect})
                     </label>

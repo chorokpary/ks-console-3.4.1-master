@@ -134,6 +134,11 @@ export default class ResourceStore extends Base {
     reqData.scale_range = data.scale_range
     reqData.node_selectors = data.node_selectors
     reqData.storage_class = data.storage_class
+    if (data.network_flag === 1) {
+      reqData.external_network = data.external_network
+    } else {
+      reqData.sriov_network = data.sriov_network
+    }
     jsonData.nodepool = reqData
 
     return await this.submitting(

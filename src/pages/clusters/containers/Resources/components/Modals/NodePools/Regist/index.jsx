@@ -3,6 +3,7 @@ import {
   Button,
   Form,
   Input,
+  Radio,
   Select,
   Slider,
   TextArea,
@@ -59,6 +60,14 @@ const RegistNodePoolModal = props => {
   const [nodeSelector, setNodeSelector] = useState({})
   const [nodeSelectorError, setNodeSelectorError] = useState(false)
 
+  // 네트워크 관련 상태 추가
+  const [networkFlag, setNetworkFlag] = useState(1)
+  const [networkName, setNetworkName] = useState('')
+  const [networkCheckItem, setNetworkCheckItem] = useState('')
+  const [sriovCheckItem, setSriovCheckItem] = useState('')
+  const [networkList, setNetworkList] = useState([])
+  const [sriovNetworkList, setSriovNetworkList] = useState([])
+
   useEffect(() => {
     const getVmCreateData = async () => {
       const listFlavor = await vmStore.fetchVmListFlavor({
@@ -71,11 +80,23 @@ const RegistNodePoolModal = props => {
         ...props,
       })
 
+      // 네트워크 데이터 가져오기
+      const listNetwork = await vmStore.fetchVmListNetwork({
+        ...props,
+      })
+      const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
+        ...props,
+      })
+
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
       setOsDistro(props.detailStore.detail.cluster.os_distro)
       setKubeVersion(props.detailStore.detail.cluster.kube_version)
       setStorageClassDataList(listStoregeClass.user_sces)
+
+      // 네트워크 데이터 설정
+      setNetworkList(listNetwork.networks)
+      setSriovNetworkList(listSriovNetwork.sriovs)
     }
     const getAcceleratorTypeList = async () => {
       const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
@@ -187,6 +208,15 @@ const RegistNodePoolModal = props => {
       data.scale_range = scaleRange
       data.node_selectors = nodeSelector
       data.storage_class = storageClass
+
+      // 네트워크 데이터 추가
+      data.network_flag = networkFlag
+      if (networkFlag === 1) {
+        data.external_network = networkCheckItem
+      } else if (networkFlag === 2) {
+        data.sriov_network = sriovCheckItem
+      }
+
       onOk({ ...data })
     })
   }
@@ -296,6 +326,23 @@ const RegistNodePoolModal = props => {
 
   const handleNodeSelectorError = error => {
     setNodeSelectorError(!!error)
+  }
+
+  const onChangeNetwork = el => {
+    setNetworkFlag(el)
+    setNetworkName('')
+    handleSingleCheck('', 'sriov')
+    handleSingleCheck('', 'network')
+  }
+
+  const handleSingleCheck = (name, type) => {
+    setVariables[type](name)
+    setNetworkName(name)
+  }
+
+  const setVariables = {
+    network: setNetworkCheckItem,
+    sriov: setSriovCheckItem,
   }
 
   // 스크립트 끝 ==================================================
@@ -419,6 +466,188 @@ const RegistNodePoolModal = props => {
                     </Column>
                   </Columns>
                 </Form.Group>
+                {/* 네트워크 설정 시작========================================== */}
+                <div style={{ marginTop: 24, marginBottom: 24 }}>
+                  <div className={styles.box_title} style={{ marginBottom: 8 }}>
+                    <label>
+                      {t('RESOURCES_NETWORK')}
+                      <span className="form-item-required">*</span>
+                    </label>
+                  </div>
+                  <Form.Group>
+                    <Form.Item>
+                      <div>
+                        <Select
+                          options={[
+                            { label: t('RESOURCES_NETWORK'), value: 1 },
+                            { label: t('RESOURCES_SR_IOV_NETWORK'), value: 2 },
+                          ]}
+                          onChange={e => onChangeNetwork(e)}
+                          defaultValue={1}
+                        />
+                      </div>
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('RESOURCES_NETWORK')}
+                      className={`${networkFlag === 1 ? '' : 'hide'}`}
+                    >
+                      <div className={styles.wrapper}>
+                        <div className={styles.table}>
+                          <table>
+                            <colgroup>
+                              <col width="5%" />
+                              <col width="20%" />
+                              <col width="15%" />
+                              <col width="20%" />
+                              <col width="20%" />
+                              <col width="20%" />
+                            </colgroup>
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>
+                                  <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                                </th>
+                                <th>
+                                  <strong>
+                                    {t('RESOURCES_NETWORK_TYPE_YOO')}
+                                  </strong>
+                                </th>
+                                <th>
+                                  <strong>{t('RESOURCES_DEFAULT_PATH')}</strong>
+                                </th>
+                                <th>
+                                  <strong>{t('RESOURCES_CIDR')}</strong>
+                                </th>
+                                <th>
+                                  <strong>{t('RESOURCES_GATEWAY')}</strong>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {!networkList?.filter(el => el.external)
+                                .length && (
+                                <tr>
+                                  <td colSpan="6" className="no-data">
+                                    <p>
+                                      {t(
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                      )}
+                                    </p>
+                                  </td>
+                                </tr>
+                              )}
+                              {networkList
+                                ?.filter(el => el.external)
+                                .map(data => (
+                                  <tr key={data.name}>
+                                    <td>
+                                      <Radio
+                                        name={`select-${data.name}`}
+                                        checked={data.name === networkCheckItem}
+                                        onChange={() =>
+                                          handleSingleCheck(
+                                            data.name,
+                                            'network'
+                                          )
+                                        }
+                                      />
+                                    </td>
+                                    <td>{data.name}</td>
+                                    <td>{data.type.toUpperCase()}</td>
+                                    <td>
+                                      {data.default_route
+                                        ? t('RESOURCES_USE')
+                                        : t('RESOURCES_NOT_USE')}
+                                    </td>
+                                    <td>{data.cidr}</td>
+                                    <td>{data.gateway_ip}</td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('RESOURCES_SR_IOV_NETWORK')}
+                      className={`${networkFlag === 2 ? '' : 'hide'}`}
+                    >
+                      <div className={styles.wrapper}>
+                        <div className={styles.table}>
+                          <table>
+                            <colgroup>
+                              <col width="5%" />
+                              <col width="25%" />
+                              <col width="20%" />
+                              <col width="25%" />
+                              <col width="25%" />
+                            </colgroup>
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>
+                                  <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                                </th>
+                                <th>
+                                  <strong>
+                                    {t('RESOURCES_NETWORK_TYPE_YOO')}
+                                  </strong>
+                                </th>
+                                <th>
+                                  <strong>{t('RESOURCES_CIDR')}</strong>
+                                </th>
+                                <th>
+                                  <strong>{t('RESOURCES_GATEWAY')}</strong>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {!sriovNetworkList?.length && (
+                                <tr>
+                                  <td colSpan="5" className="no-data">
+                                    <p>
+                                      {t(
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                      )}
+                                    </p>
+                                  </td>
+                                </tr>
+                              )}
+                              {sriovNetworkList?.map(data => (
+                                <tr key={data.name}>
+                                  <td>
+                                    <Radio
+                                      name={`select-${data.name}`}
+                                      checked={data.name === sriovCheckItem}
+                                      onChange={() =>
+                                        handleSingleCheck(data.name, 'sriov')
+                                      }
+                                    />
+                                  </td>
+                                  <td>{data.name}</td>
+                                  <td>{data.type.toUpperCase()}</td>
+                                  <td>{data.cidr}</td>
+                                  <td>{data.gateway_ip}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </Form.Item>
+                    <div
+                      className={`form-item-error ${
+                        !networkName ? '' : 'hide'
+                      }`}
+                    >
+                      {t('RESOURCES_SELECT_NETWORK_TIP')}
+                    </div>
+                  </Form.Group>
+                </div>
+                {/* 네트워크 설정 끝========================================== */}
                 {t('RESOURCES_STORAGE_CLASS')}
                 <span className="form-item-required">*</span>
                 <Form.Group>
