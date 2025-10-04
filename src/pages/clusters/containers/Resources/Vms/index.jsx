@@ -282,17 +282,19 @@ export default class Vms extends React.Component {
         render: (image, record) => {
           const icon = `ico-os-${record.image_object?.distro_type}`
           return image ? (
-            <Link to={`/clusters/${cluster}/images/${image}`}>
-              <i
-                style={{
-                  backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
-                  width: '40px',
-                  height: '40px',
-                }}
-              ></i>
-            </Link>
+            <Tooltip content={image} placement="right">
+              <Link to={`/clusters/${cluster}/images/${image}`}>
+                <i
+                  style={{
+                    backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    width: '40px',
+                    height: '40px',
+                  }}
+                ></i>
+              </Link>
+            </Tooltip>
           ) : (
             <p className={styles.textCenter}>N/A</p>
           )
@@ -316,9 +318,9 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (flavor, record) => {
-          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " + 
-                common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " + 
-                record.flavor_object.root_disk + " GiB"
+          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " +
+            common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " +
+            record.flavor_object.root_disk + " GiB"
           return (
             <Tooltip content={flavor_spec} placement="top">
               <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
