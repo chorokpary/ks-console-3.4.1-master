@@ -1,17 +1,20 @@
-import { get, last } from "lodash";
-import { getAreaChartOps, getValueByUnit, getSuitableUnit } from 'utils/monitoring'
+import { get, last } from 'lodash'
+import {
+  getAreaChartOps,
+  getValueByUnit,
+  getSuitableUnit,
+} from 'utils/monitoring'
 
 const MetricTypes = {
   net_transmitted: 'cluster_net_bytes_transmitted',
   net_received: 'cluster_net_bytes_received',
   net_utilisation: 'cluster_net_utilisation',
   pod_net_bytes_transmitted: 'pod_net_bytes_transmitted',
-  pod_net_bytes_received: 'pod_net_bytes_received'
+  pod_net_bytes_received: 'pod_net_bytes_received',
 }
 
 export function getData(activeTab, data) {
-
-  var result;
+  var result
   if (activeTab == 'node') {
     result = getNodeData(data)
   } else if (activeTab == 'pod') {
@@ -21,12 +24,11 @@ export function getData(activeTab, data) {
   } else if (activeTab == 'kaas') {
     result = getKaasData(data)
   }
-  return result;
+  return result
 }
 
 export function getContentOptions(activeTab, data) {
-
-  var result = [];
+  var result = []
   if (activeTab == 'node') {
     result = getNodeResult(data)
   } else if (activeTab == 'pod') {
@@ -36,32 +38,63 @@ export function getContentOptions(activeTab, data) {
   } else if (activeTab == 'kaas') {
     result = getKaasResult(data)
   }
-  return result;
+  return result
 }
 
 // ================================= left tab data =================================
 function getNodeData(metricData) {
-
-  const totalVal = last(get(metricData, `${MetricTypes.net_utilisation}.data.result[0]`, {}).values)?.[1]
+  const totalVal = last(
+    get(metricData, `${MetricTypes.net_utilisation}.data.result[0]`, {}).values
+  )?.[1]
   const config = getAreaChartOps(getNodeResult(metricData)[0])
-  var lastData = config.data[config.data.length - 1];
+  var lastData = config.data[config.data.length - 1]
   if (lastData) {
     lastData.UNIT = config.unit
-    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+    lastData.TOTAL = getValueByUnit(
+      totalVal,
+      getSuitableUnit(totalVal, 'bandwidth')
+    )
   }
 
   return lastData
 }
 
-function getPodData(podData) {
-  const inbound = last(get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}).values)?.[1]
-  const outbound = last(get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}).values)?.[1]
+// function getPodData(podData) {
+//   const inbound = last(
+//     get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {})
+//       .values
+//   )?.[1]
+//   const outbound = last(
+//     get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {})
+//       .values
+//   )?.[1]
+//   const totalVal = Number(inbound) + Number(outbound)
+//   const config = getAreaChartOps(getPodResult(podData)[0])
+//   var lastData = config.data[config.data.length - 1]
+//   if (lastData) {
+//     lastData.UNIT = config.unit
+//     lastData.TOTAL = getValueByUnit(
+//       totalVal,
+//       getSuitableUnit(totalVal, 'bandwidth')
+//     )
+//   }
+
+//   return lastData
+// }
+
+function getPodData(data) {
+  const inbound = last(data.podInboundData[0]?.values)?.[1]
+  const outbound = last(data.podOutboundData[0]?.values)?.[1]
   const totalVal = Number(inbound) + Number(outbound)
-  const config = getAreaChartOps(getPodResult(podData)[0])
-  var lastData = config.data[config.data.length - 1];
+  const config = getAreaChartOps(getPodResult(data)[0])
+
+  var lastData = config.data[config.data.length - 1]
   if (lastData) {
     lastData.UNIT = config.unit
-    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+    lastData.TOTAL = getValueByUnit(
+      totalVal,
+      getSuitableUnit(totalVal, 'bandwidth')
+    )
   }
 
   return lastData
@@ -73,10 +106,13 @@ function getVmData(data) {
   const totalVal = Number(inbound) + Number(outbound)
   const config = getAreaChartOps(getVmResult(data)[0])
 
-  var lastData = config.data[config.data.length - 1];
+  var lastData = config.data[config.data.length - 1]
   if (lastData) {
     lastData.UNIT = config.unit
-    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+    lastData.TOTAL = getValueByUnit(
+      totalVal,
+      getSuitableUnit(totalVal, 'bandwidth')
+    )
   }
 
   return lastData
@@ -88,10 +124,13 @@ function getKaasData(data) {
   const totalVal = Number(inbound) + Number(outbound)
   const config = getAreaChartOps(getKaasResult(data)[0])
 
-  var lastData = config.data[config.data.length - 1];
+  var lastData = config.data[config.data.length - 1]
   if (lastData) {
     lastData.UNIT = config.unit
-    lastData.TOTAL = getValueByUnit(totalVal, getSuitableUnit(totalVal, 'bandwidth'))
+    lastData.TOTAL = getValueByUnit(
+      totalVal,
+      getSuitableUnit(totalVal, 'bandwidth')
+    )
   }
 
   return lastData
@@ -115,17 +154,31 @@ function getNodeResult(metricData) {
   return result
 }
 
-function getPodResult(podData) {
+// function getPodResult(podData) {
+//   const result = [
+//     {
+//       type: 'bandwidth',
+//       title: 'NETWORK_TRAFFIC',
+//       unitType: 'bandwidth',
+//       legend: ['OUT', 'IN'],
+//       data: [
+//         get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}),
+//         get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}),
+//       ],
+//     },
+//   ]
+
+//   return result
+// }
+
+function getPodResult(data) {
   const result = [
     {
       type: 'bandwidth',
       title: 'NETWORK_TRAFFIC',
       unitType: 'bandwidth',
       legend: ['OUT', 'IN'],
-      data: [
-        get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}),
-        get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}),
-      ],
+      data: [data.podOutboundData[0], data.podInboundData[0]],
     },
   ]
 
@@ -139,10 +192,7 @@ function getVmResult(data) {
       title: 'NETWORK_TRAFFIC',
       unitType: 'bandwidth',
       legend: ['OUT', 'IN'],
-      data: [
-        data.vmOutboundData[0],
-        data.vmInboundData[0],
-      ],
+      data: [data.vmOutboundData[0], data.vmInboundData[0]],
     },
   ]
 
@@ -156,10 +206,7 @@ function getKaasResult(data) {
       title: 'NETWORK_TRAFFIC',
       unitType: 'bandwidth',
       legend: ['OUT', 'IN'],
-      data: [
-        data.vmOutboundData[0],
-        data.vmInboundData[0],
-      ],
+      data: [data.vmOutboundData[0], data.vmInboundData[0]],
     },
   ]
 

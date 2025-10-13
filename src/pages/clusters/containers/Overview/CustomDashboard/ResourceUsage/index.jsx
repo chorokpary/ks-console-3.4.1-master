@@ -136,6 +136,28 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
         ['memoryData']: kaasMemoryData,
       })
 
+      const podCpuData = await customStore.fetchMetric({
+        expr: `sum(sum by (pod) (rate(container_cpu_usage_seconds_total[5m])))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      const podMemoryData = await customStore.fetchMetric({
+        expr: `sum(sum by (pod) (container_memory_usage_bytes))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      console.log('podCpuData', podCpuData)
+      console.log('podMemoryData', podMemoryData)
+      // setPodData({
+      //   ...podData,
+      //   ['cpuData']: podCpuData,
+      //   ['memoryData']: podMemoryData,
+      // })
+
       if (cleanupTrigger) {
         setLoading(false)
       }
@@ -158,6 +180,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
         },
       ],
     }
+    console.log('data', data)
     setPodData(data)
     return data
   }
@@ -206,6 +229,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
           times: 100,
           cluster: props.cluster,
         })
+        console.log('fetchedPodData', fetchedPodData)
         const handleData = handlePodData(fetchedPodData)
         podFetchedRef.current = true // 호출 기록
         data = handleData

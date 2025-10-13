@@ -36,7 +36,10 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
   const [rightTab, setRightTab] = useState('node')
   const [loading, setLoading] = useState(false)
 
-  const [podData, setPodData] = useState([])
+  const [podData, setPodData] = useState({
+    podInboundData: [],
+    podOutboundData: [],
+  })
   const podFetchedRef = useRef(false)
 
   const [vmData, setVmData] = useState({
@@ -65,7 +68,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
       })
       // const metricData = []
       handleData('node', metricData)
-      handleContenOption('node', metricData)
+      handleContentOption('node', metricData)
       setMetricData(metricData)
 
       // vm list
@@ -115,6 +118,28 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
         ['vmOutboundData']: kaasOutboundData,
       })
 
+      // 총합을 노출?
+      // 총합 나누기 pod 갯수로 노출?
+      const podInboundData = await customStore.fetchMetric({
+        expr: `avg by () (sum by(pod) (rate(container_network_transmit_bytes_total[5m])))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      const podOutboundData = await customStore.fetchMetric({
+        expr: `avg by () (sum by(pod) (rate(container_network_receive_bytes_total[5m])))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      setPodData({
+        ...podData,
+        ['podInboundData']: podInboundData,
+        ['podOutboundData']: podOutboundData,
+      })
+
       if (cleanupTrigger) {
         setLoading(false)
       }
@@ -132,7 +157,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
   }
 
   // handle right data
-  const handleContenOption = (rightTabActive, data) => {
+  const handleContentOption = (rightTabActive, data) => {
     setTabContentData(getContentOptions(rightTabActive, data))
   }
 
@@ -143,27 +168,28 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
     if (tab === 'node') {
       data = metricData
     } else if (tab === 'pod') {
-      if (!podFetchedRef.current) {
-        setLoading(true)
-        const fetchedPodData = await podStore.fetchMetrics({
-          metrics: Object.values(PodMetricTypes),
-          step: '5m',
-          times: 100,
-          cluster: props.cluster,
-        })
-        setPodData(fetchedPodData)
-        podFetchedRef.current = true // 호출 기록
-        data = fetchedPodData
-        setLoading(false)
-      } else {
-        data = podData
-      }
+      // if (!podFetchedRef.current) {
+      //   setLoading(true)
+      //   const fetchedPodData = await podStore.fetchMetrics({
+      //     metrics: Object.values(PodMetricTypes),
+      //     step: '5m',
+      //     times: 100,
+      //     cluster: props.cluster,
+      //   })
+      //   setPodData(fetchedPodData)
+      //   podFetchedRef.current = true // 호출 기록
+      //   data = fetchedPodData
+      //   setLoading(false)
+      // } else {
+      //   data = podData
+      // }
+      data = podData
     } else if (tab === 'vm') {
       data = vmData
     } else if (tab === 'kaas') {
       data = kaasData
     }
-    handleContenOption(tab, data)
+    handleContentOption(tab, data)
     handleData(tab, data)
   }
 
