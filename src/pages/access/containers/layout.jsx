@@ -50,7 +50,7 @@ class AccessLayout extends Component {
             match={match}
           />
         </div>
-        <div className="ks-page-main">
+        <div className="ks-page-main with-sidebar">
           {renderRoutes([
             ...route.routes,
             getIndexRoute({

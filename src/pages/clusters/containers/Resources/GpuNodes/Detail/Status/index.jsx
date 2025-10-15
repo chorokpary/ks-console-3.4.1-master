@@ -22,8 +22,12 @@ import { observer, inject } from 'mobx-react'
 import { Panel } from 'components/Base'
 import DeploymentCard from './DeploymentCard'
 import DetailGpuDeviceList from 'pages/clusters/containers/Resources/components/DetailGpuDeviceList';
+import DetailGpuResource from 'pages/clusters/containers/Resources/components/DetailGpuResource'
+
+import VmStore from 'stores/resources/vms'
 
 import styles from './index.scss'
+import { join } from 'lodash';
 
 @inject('detailStore')
 @observer
@@ -32,6 +36,27 @@ export default class Status extends React.Component {
     super(props)
 
     this.store = props.detailStore
+    this.vmStore = new VmStore({ cluster: this.cluster })
+
+    this.state = {
+      vmList: '',     
+    }
+  }
+
+  componentDidMount() {
+    this.fnGetData()
+  }
+
+  fnGetData = async () => {
+    const params = {
+      cluster: this.store.detail.cluster,
+      limit: 10000,
+    }
+
+    const vmListData = await this.vmStore.fetchList(params)
+    const vmJoinData = vmListData.filter(item => item.node === this.store.detail.name).map(item => item.name).join('|') || ''
+
+    this.setState({ vmList: vmJoinData });
   }
 
   renderDeployments() {
@@ -83,6 +108,14 @@ export default class Status extends React.Component {
   render() {
     return (
       <div className={styles.main}>
+        {this.state.vmList && 
+          <DetailGpuResource
+            {...this.props}
+            cluster={this.store.detail.cluster}
+            namespace={this.store.detail.cluster}
+            vmList={this.state.vmList}
+          />
+        }
         {this.renderDeployments()}
       </div>
     )

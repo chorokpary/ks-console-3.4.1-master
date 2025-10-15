@@ -32,6 +32,7 @@ import NetworkPoliciesDetail from 'projects/containers/Network/Policies/Detail'
 import Volume from 'projects/containers/Volumes/Detail'
 import VolumeSnapshotsDetail from 'projects/containers/VolumeSnapshots/Detail'
 import AlertPolicyDetail from 'projects/containers/Alerting/Policies/Detail'
+import AlertMessagesDetail from 'projects/containers/Alerting/Messages/Detail'
 import VolumeSnapshotContent from '../containers/Storage/VolumeSnapshots/SnapshotContent/Detail'
 import SnapshotClassesDetail from '../containers/Storage/VolumeSnapshotClasses/Detail'
 import PV from '../containers/Storage/PV/detail'
@@ -100,6 +101,10 @@ export default [
     path: [`${PATH}/alert-rules/builtin/:name`, `${PATH}/alert-rules/:name`],
     component: AlertPolicyDetail,
   },
+  {
+    path: `${PATH}/alerts/:name`,
+    component: AlertMessagesDetail,
+  },  
   {
     path: `${PATH}/log-collections/:component/:name`,
     component: LogCollectionDetail,

@@ -44,6 +44,9 @@ export default class MonitorTab extends React.Component {
 
   getLastValue = (data, unit) => {
     const values = get(data, `[0].values`, [])
+    if (!values.length) {
+      return 0;
+    }
     return getValueByUnit(values[values.length - 1][1], unit)
   }
 
@@ -70,7 +73,7 @@ export default class MonitorTab extends React.Component {
             <Text
               icon={tab.icon}
               title={
-                !tab.data ? '-' : `${this.getLastValue(tab.data, tab.unit)}%`
+                !tab.data ? '-' : `${this.getLastValue(tab.data, tab.unit)} ${tab.unit}`
               }
               description={t(`${tab.title}_SCAP`)}
             />

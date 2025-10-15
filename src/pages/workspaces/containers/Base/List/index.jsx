@@ -75,7 +75,7 @@ class WorkspaceLayout extends Component {
             match={match}
           />
         </div>
-        <div className="ks-page-main">
+        <div className="ks-page-main with-sidebar">
           {indexPath &&
             renderRoutes([
               ...routes,

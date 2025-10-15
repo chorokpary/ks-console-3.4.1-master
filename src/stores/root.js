@@ -23,6 +23,7 @@ import { parse } from 'qs'
 
 import UserStore from 'stores/user'
 import WebSocketStore from 'stores/websocket'
+import MessageStore from 'stores/alerting/message'
 import { getQueryString } from 'utils'
 
 export default class RootStore {
@@ -44,6 +45,7 @@ export default class RootStore {
     this.user = new UserStore()
     this.routing = new RouterStore()
     this.routing.query = this.query
+    this.message = new MessageStore()
 
     global.navigateTo = this.routing.push
   }

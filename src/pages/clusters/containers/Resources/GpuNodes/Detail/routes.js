@@ -21,6 +21,7 @@ import { getIndexRoute } from 'utils/router.config'
 import Status from 'clusters/containers/Resources/GpuNodes/Detail/Status'
 import GpuDevice from 'clusters/containers/Resources/GpuNodes/Detail/GpuDevice'
 import Vms from 'clusters/containers/Resources/GpuNodes/Detail/Vms'
+import GpuMonitoring from 'clusters/containers/Resources/GpuNodes/Detail/GpuMonitoring'
 
 const PATH = '/clusters/:cluster/gpunodes/:name'
 
@@ -41,6 +42,12 @@ export default [
         path: `${PATH}/vms`,
         title: t('RESOURCES_VM'),
         component: Vms,
+        exact: true,
+    },
+    {
+        path: `${PATH}/gpumonitoring`,
+        title: t('RESOURCES_GPU_CLUSTER_MONITORING'),
+        component: GpuMonitoring,
         exact: true,
     },
     getIndexRoute({ path: PATH, to: `${PATH}/status`, exact: true }),

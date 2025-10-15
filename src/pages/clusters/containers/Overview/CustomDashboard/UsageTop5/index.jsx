@@ -126,7 +126,7 @@ const UsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
     const getVmList = async () => {
       const vmList = await vmStore.vmList({ limit: -1, ...props })
       let vmNames = ''
-      vmList.map(obj => (vmNames = vmNames + obj.id + '|'))
+      vmList.map(obj => (vmNames = vmNames + obj.name + '|'))
 
       if (cleanupTrigger) {
         setVmList(vmNames)

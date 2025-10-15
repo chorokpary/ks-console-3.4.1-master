@@ -20,8 +20,9 @@ import React from 'react'
 import { capitalize, get } from 'lodash'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
+import { inject, observer } from 'mobx-react'
 
-import { Text, Status } from 'components/Base'
+import { Text, Status, Avatar } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import withList, { ListPage } from 'components/HOCs/withList'
 
@@ -166,8 +167,21 @@ export default class AlertingPolicy extends React.Component {
     }))
   }
 
+  moveToDetail = (name, record) => {
+    const { cluster } = this.props.match.params
+
+    const newRecord = {
+      ...record,
+      state_type: this.state.type
+    };
+
+    this.props.rootStore.message.setDetailMessage(newRecord)
+    this.props.history.push(`/clusters/${cluster}/alerts/${name}`)
+  }
+
   getColumns = () => {
     const { getFilteredValue, getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('MESSAGE'),
@@ -180,6 +194,7 @@ export default class AlertingPolicy extends React.Component {
               get(record, 'annotations.message') ||
               get(record, 'annotations.description', '-')
             }
+            onClick={() => this.moveToDetail(get(record, 'annotations.summary'), record)}
           />
         ),
       },

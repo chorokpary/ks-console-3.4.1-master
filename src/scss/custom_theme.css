@@ -730,6 +730,11 @@ div.flatpickr-calendar
   font-weight: 700 !important;
 }
 
+/* GPU 모니터링 상단 메뉴탭 */
+a:hover.src-pages-clusters-containers-Monitor-Gpu-index__navItem {
+  color: #a8bbff !important;
+}
+
 /***** 목록,상세,생성 화면 *****/
 /* 상세 우측 메뉴탭 */
 a:hover.src-core-containers-Base-Detail-index__navItem {
@@ -1038,15 +1043,11 @@ td > div[class$='-index__avatar'] {
   background-color: #55bc8a !important;
 }
 
-[class*='-index__check']:not([class*='-index__checkItem']) {
-  background-color: #55bc8a !important;
-}
-
-[class*='-Regist-index__check'] {
+[class$='-Regist-index__check'] {
   background-color: transparent !important;
 }
 
-[class*='-Modify-index__check'] {
+[class$='-Modify-index__check'] {
   background-color: transparent !important;
 }
 

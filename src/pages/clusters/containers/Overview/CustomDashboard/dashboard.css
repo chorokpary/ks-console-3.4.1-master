@@ -1228,6 +1228,23 @@ body {
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 }
+
+.dash_top_align {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash_wrap .dash_toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;          
+  min-height: 32px;
+  padding: 2px;      
+  margin-left: 8px;
+  margin-bottom: 20px;
+}
+
 .dash_wrap .dash_toptab label {
   cursor: pointer;
   position: relative;

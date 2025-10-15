@@ -59,10 +59,11 @@ class ClusterLayout extends Component {
   render() {
     const { match, route, location } = this.props
     const { detail } = this.props.clusterStore
+    const { user } = this.props.rootStore
 
     return (
       <div className="ks-page">
-        <div className="ks-page-side">
+        <div className={`ks-page-side ${user.showMenu ? 'open' : 'closed'}`}>
           <Selector
             icon={detail.icon}
             value={showNameAndAlias(detail)}
@@ -76,7 +77,7 @@ class ClusterLayout extends Component {
             disabled={!detail.isReady}
           />
         </div>
-        <div className="ks-page-main">{renderRoutes(route.routes)}</div>
+        <div className={`ks-page-main ${user.showMenu ? 'with-sidebar' : 'full'}`}>{renderRoutes(route.routes)}</div>
       </div>
     )
   }
