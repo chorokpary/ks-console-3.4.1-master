@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Loading, Select } from '@kube-design/components'
+import { Link } from 'react-router-dom'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import GpuNodeStore from 'stores/resources/gpunodes'
-import cleanupTrigger from '../cleanupTrigger'
-import { namespace } from 'd3-selection'
-import { get, set } from 'lodash'
 import VmStore from 'stores/resources/vms'
 
 const typeOption = [
@@ -67,10 +65,10 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   const gpuNodeStore = new GpuNodeStore()
   const vmStore = new VmStore()
 
-  const fetchData = async () => {
-    return await gpuNodeStore.fetchList({ limit: 1000, ...props })
-  }
-  const [gpuNodeList, error, loading] = cleanupTrigger(fetchData, [])
+  const [loading, setLoading] = useState(false)
+  const [gpuLoading, setGpuLoading] = useState(false)
+  const [vmLoading, setVmLoading] = useState(false)
+  const [nodeLoading, setNodeLoading] = useState(false)
 
   const [type, setType] = useState('node')
   const [range, setRange] = useState(3600)
@@ -80,15 +78,16 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   const dropdownRef = useRef(null)
 
   const [clusterArr, setClusterArr] = useState([])
-  const [gpuList, setGpuList] = useState([])
   const [popOpen, setPopOpen] = useState(false)
   const [selectCluster, setSelectCluster] = useState()
   const [vmList, setVmList] = useState([])
   const [vmResultList, setVmResultList] = useState([])
+  const [nodeList, setNodeList] = useState([])
 
   const [dataList, setDataList] = useState([])
   const [gpuDataList, setGpuDataList] = useState([])
   const [gpuXidData, setGpuXidData] = useState({})
+  const [selectGpu, setSelectGpu] = useState({})
 
   const toggleLegend = () => {
     const dropdown = document.getElementById('legendDropdown')
@@ -112,16 +111,22 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   }, [])
 
   useEffect(() => {
-    getVmData()
+    getLandingData()
   }, [])
 
-  const getVmData = async () => {
+  const getLandingData = async () => {
+    setLoading(true)
+
+    const nodeData = await gpuNodeStore.fetchList({ limit: 1000, ...props })
+    if (nodeData.length > 0) getGpuNodeList(nodeData, true)
+
     const vmData = await vmStore.fetchList({ limit: 1000, ...props })
     const vmList = vmData.filter(item => {
       return item.gpus.length > 0
     })
-
     setVmList(vmList)
+
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -131,6 +136,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   }, [vmList])
 
   const getVmAvgData = async () => {
+    setVmLoading(true)
+
     var currentTime = Math.floor(Date.now() / 1000)
     const paramsData = {
       start: currentTime - range,
@@ -161,7 +168,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       expr: exprMem,
       paramsData,
     })
-    console.log('vmList', vmList)
+
     const result = vmList.map(c => {
       const metricUtil = vmAvgUsageData.find(m => m.metric.pod === c.name)
       const metricMem = vmAvgMemoryUsage.find(m => m.metric.pod === c.name)
@@ -178,41 +185,37 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         namespace: c.project,
       }
     })
-    console.log('vmResultList', result)
 
+    setVmLoading(false)
     setVmResultList(result)
   }
 
-  useEffect(() => {
-    if (gpuNodeList.length > 0) {
-      let clusterArr = []
-      gpuNodeList.map(item => {
-        const clusterName = item.name
-        const vmList = item?.instances?.map(obj => obj.vmName)
-        clusterArr.push({
-          clusterName,
-          vmList,
-          namespace: item.namespace,
-          state: item.state,
-        })
+  const getGpuNodeList = (nodeList, isLanding) => {
+    setNodeLoading(true)
+    let clusterArr = []
+    nodeList.map(item => {
+      const clusterName = item.name
+      const vmList = item?.instances?.map(obj => obj.vmName)
+      clusterArr.push({
+        clusterName,
+        vmList,
+        namespace: item.namespace,
+        state: item.state,
       })
-      setClusterArr(clusterArr)
-    }
-  }, [gpuNodeList])
+    })
+    setClusterArr(clusterArr)
 
-  useEffect(() => {
-    if (clusterArr.length > 0) {
-      const getData = async () => {
-        var currentTime = Math.floor(Date.now() / 1000)
-        const paramsData = {
-          start: currentTime,
-          end: currentTime,
-        }
+    const getData = async () => {
+      var currentTime = Math.floor(Date.now() / 1000)
+      const paramsData = {
+        start: currentTime,
+        end: currentTime,
+      }
 
-        const expr = clusterArr
-          .map(item => {
-            const vmList = item?.vmList?.join('|')
-            return `(
+      const expr = clusterArr
+        .map(item => {
+          const vmList = item?.vmList?.join('|')
+          return `(
               avg by (group) (
                 label_replace(
                   DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}",namespace="${item.namespace}"},
@@ -220,32 +223,32 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 )
               )
             )`
-          })
-          .join(' or ')
-
-        const gpuAvgUsageData = await customStore.fetchMetric({
-          expr: expr,
-          paramsData,
         })
-        const result = clusterArr.map(c => {
-          const metric = gpuAvgUsageData.find(
-            m => m.metric.group === c.clusterName
-          )
-          return {
-            group: c.clusterName,
-            value: metric ? Number(metric.value[1]).toFixed(0) : 0,
-            state: metric ? c.state : 'unknown',
-            vmList: c.vmList,
-            namespace: c.namespace,
-          }
-        })
+        .join(' or ')
 
-        console.log('result', result)
-        setGpuList(result)
-      }
-      getData()
+      const gpuAvgUsageData = await customStore.fetchMetric({
+        expr: expr,
+        paramsData,
+      })
+      const result = clusterArr.map(c => {
+        const metric = gpuAvgUsageData.find(
+          m => m.metric.group === c.clusterName
+        )
+        return {
+          group: c.clusterName,
+          value: metric ? Number(metric.value[1]).toFixed(0) : 0,
+          state: metric ? c.state : 'unknown',
+          vmList: c.vmList,
+          namespace: c.namespace,
+        }
+      })
+
+      setNodeLoading(false)
+      setNodeList(result)
+      if (isLanding) setDataList(result)
     }
-  }, [clusterArr])
+    getData()
+  }
 
   const getAreaColor = value => {
     if (value >= 80) {
@@ -268,13 +271,12 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         start: currentTime - 1000,
         end: currentTime - 1000,
       }
-      const expr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"} / 100`
       const getGpuData = async () => {
+        const expr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"} / 100`
         const gpuAvgUsageData = await customStore.fetchMetric({
           expr: expr,
           paramsData,
         })
-        console.log('gpuAvgUsageData', gpuAvgUsageData)
 
         setGpuDataList(gpuAvgUsageData)
 
@@ -297,7 +299,6 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
           gpuXidData,
           gpuXidExprChangeData
         )
-        console.log('gpuXidTransform', gpuXidTransform)
         setGpuXidData(gpuXidTransform)
       }
 
@@ -305,7 +306,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     }
   }, [selectCluster, range])
 
-  const transformXidDataToObject = (data1, data2) => {
+  const transformXidDataToObject = (data1, data2, gpuUtil, gpuMem) => {
     const resultMap = {}
 
     const comparePods = new Set(
@@ -328,6 +329,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
           state: 'minor',
           errCode: errCode,
           errMsg: item.metric.err_msg,
+          util: gpuUtil[pod] ? gpuUtil[pod][gpu] : 0,
+          mem: gpuMem[pod] ? gpuMem[pod][gpu] : 0,
         }
       } else {
         if (Number(errCode) >= 0 && Number(errCode) <= 143) {
@@ -335,12 +338,16 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             state: 'normal',
             errCode: errCode,
             errMsg: item.metric.err_msg,
+            util: gpuUtil[pod] ? gpuUtil[pod][gpu] : 0,
+            mem: gpuMem[pod] ? gpuMem[pod][gpu] : 0,
           }
         } else {
           resultMap[pod][gpu] = {
             state: 'unknown',
             errCode: errCode,
             errMsg: item.metric.err_msg,
+            util: gpuUtil[pod] ? gpuUtil[pod][gpu] : 0,
+            mem: gpuMem[pod] ? gpuMem[pod][gpu] : 0,
           }
         }
       }
@@ -349,13 +356,104 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     return resultMap
   }
 
+  const getGpuListData = () => {
+    setGpuLoading(true)
+    var currentTime = Math.floor(Date.now() / 1000)
+    const vmNameList = vmList
+      .map(item => {
+        return item.name
+      })
+      .join('|')
+    const getData = async () => {
+      const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmNameList}"}`
+
+      const gpuUtilData = await customStore.fetchMetric({
+        expr: gpuUtilDataExpr,
+        start: currentTime - range, // 1시간 기준 > 3600
+        end: currentTime,
+      })
+      const gpuUtilTransform = transformDataToObject(gpuUtilData)
+
+      const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmNameList}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmNameList}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmNameList}"}) * 100`
+      const gpuMemData = await customStore.fetchMetric({
+        expr: gpuMemDataExpr,
+        start: currentTime - range, // 1시간 기준 > 3600
+        end: currentTime,
+      })
+      const gpuMemTransform = transformDataToObject(gpuMemData)
+
+      // Xid Error
+      const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmNameList}"}`
+      const gpuXidData = await customStore.fetchMetric({
+        expr: gpuXidExpr,
+        // cluster: selectCluster?.namespace,
+      })
+
+      // Xid Error - 최근 10분간 변화량이 있는지 확인
+      const gpuXidExprChangeExpr = `changes((max by (gpu, pod) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmNameList}"})[10m:])) > 0`
+      const gpuXidExprChangeData = await customStore.fetchMetric({
+        expr: gpuXidExprChangeExpr,
+        // cluster: selectCluster?.namespace,
+        start: currentTime - range, // 1시간 기준 > 3600
+        end: currentTime,
+      })
+      const gpuXidTransform = transformXidDataToObject(
+        gpuXidData,
+        gpuXidExprChangeData,
+        gpuUtilTransform,
+        gpuMemTransform
+      )
+
+      let gpuDataList = []
+      Object.entries(gpuXidTransform).map(([vmName, gpuData]) => {
+        Object.entries(gpuData).map(([gpuIndex, gpuItem]) => {
+          gpuDataList.push({
+            group: vmName,
+            gpu: gpuIndex,
+            state: gpuItem.state,
+            util: gpuItem.util,
+            mem: gpuItem.mem,
+          })
+        })
+      })
+      setDataList(gpuDataList)
+
+      setGpuLoading(false)
+    }
+    getData()
+  }
+
+  const transformDataToObject = data => {
+    const result = {}
+
+    data.forEach(item => {
+      const pod = item.metric.pod
+      const gpu = item.metric.gpu
+      const values = item.values
+      const lastValue = values.length > 0 ? values[values.length - 1][1] : 0
+
+      if (!result[pod]) {
+        result[pod] = {}
+      }
+
+      let formattedValue = 0
+      if (lastValue && Number(lastValue) !== 0) {
+        formattedValue = Number(lastValue).toFixed(2) // 소수점 둘째자리까지
+      }
+
+      result[pod][gpu] = formattedValue
+    })
+
+    return result
+  }
+
   useEffect(() => {
     if (type === 'node') {
-      setDataList(gpuList)
+      setDataList(nodeList)
     } else if (type === 'vm') {
       setDataList(vmResultList)
     } else if (type === 'gpu') {
-      setDataList(gpuList)
+      getGpuListData()
     }
   }, [type])
 
@@ -396,7 +494,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             <div className="icon_dropdown_wrap" ref={dropdownRef}>
               <button
                 className="icon icon_dropdown_btn"
-                onClick={() => setOpen(prev => !prev)}
+                onClick={() => !popOpen && setOpen(prev => !prev)}
               >
                 <i className="ico-list-filter"></i>
               </button>
@@ -424,7 +522,6 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             <button className="legend_toggle_button" onClick={toggleLegend}>
               범례
             </button>
-
             <div
               className="legend_dropdown_container"
               id="legendDropdown"
@@ -467,7 +564,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 onClick={() => setFilter('all')}
               />
               <span>
-                <span className="gpu_badge_number">18</span>
+                <span className="gpu_badge_number">{dataList.length}</span>
                 <span>전체</span>
               </span>
             </label>
@@ -480,7 +577,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 onClick={() => setFilter('minor')}
               />
               <span>
-                <span className="gpu_badge_number minor">6</span>
+                <span className="gpu_badge_number minor">
+                  {dataList.filter(item => item.state === 'abnormal').length}
+                </span>
                 <span>경고</span>
               </span>
             </label>
@@ -493,11 +592,12 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 onClick={() => setFilter('unknown')}
               />
               <span>
-                <span className="gpu_badge_number unknown">6</span>
+                <span className="gpu_badge_number unknown">
+                  {dataList.filter(item => item.state === 'unknown').length}
+                </span>
                 <span>미확인</span>
               </span>
             </label>
-            {/* <div className="right" style={{ width: '45%' }}> */}
             <div className="usageTab usageTabCustom">
               <div className="select-list-box" style={{ width: '29%' }}>
                 <Select
@@ -514,99 +614,132 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 </style>
               </div>
             </div>
-            {/* </div> */}
           </div>
         </div>
         <div className="spin-nested-loading">
           <div className="spin-container">
             <div className="gpu_map_wrap">
-              <div id="gpunode-map" className="gpunode_map">
-                {dataList.length === 0 && <div>데이터가 없습니다.</div>}
-                {dataList.length > 0 &&
-                  dataList
-                    .filter(item => {
-                      // todo 필터링 기능 구현 ?
-                      if (filter === 'all') return true
-                      if (filter === 'minor') return item.state === 'abnormal'
-                      if (filter === 'unknown') return item.state === 'unknown'
-                      return true
-                    })
-                    .sort((a, b) => {
-                      switch (sort) {
-                        case 'nameAsc':
-                          return a.group.localeCompare(b.group)
-                        case 'nameDesc':
-                          return b.group.localeCompare(a.group)
-                        case 'usageAsc':
-                          return a.value - b.value
-                        case 'usageDesc':
-                          return b.value - a.value
-                        default:
-                          return 0
-                      }
-                    })
-                    .map((item, index) => {
-                      return (
-                        <>
-                          <div
-                            className={`gpu_tile ${getAreaColor(item.value)}`}
-                            key={index}
-                            onClick={() => {
-                              console.log('item', item)
-                              setPopOpen(true)
-                              setSelectCluster(item)
-                            }}
-                          >
-                            <div className="name" title={item.group}>
-                              {item.group}
-                            </div>
-                            <div className="percent">{item.value}%</div>
-                            {(item.state === 'abnormal' ||
-                              item.state === 'unknown') && (
+              <Loading
+                spinning={loading || gpuLoading || vmLoading || nodeLoading}
+              >
+                {type !== 'gpu' && (
+                  <div id="gpunode-map" className="gpunode_map">
+                    {dataList.length === 0 && <div>데이터가 없습니다.</div>}
+                    {dataList.length > 0 &&
+                      dataList
+                        .filter(item => {
+                          if (filter === 'all') return true
+                          if (filter === 'minor')
+                            return item.state === 'abnormal'
+                          if (filter === 'unknown')
+                            return item.state === 'unknown'
+                          return true
+                        })
+                        .sort((a, b) => {
+                          switch (sort) {
+                            case 'nameAsc':
+                              return a.group.localeCompare(b.group)
+                            case 'nameDesc':
+                              return b.group.localeCompare(a.group)
+                            case 'usageAsc':
+                              return a.value - b.value
+                            case 'usageDesc':
+                              return b.value - a.value
+                            default:
+                              return 0
+                          }
+                        })
+                        .map((item, index) => {
+                          return (
+                            <>
                               <div
-                                className={`badge_alert ${item.state}`}
-                              ></div>
-                            )}
-                          </div>
-                        </>
-                      )
-                    })}
-              </div>
-
-              {/* GPU Map */}
-              {/* <div id="gpu-map" className="gpu_map">
-                <div className="gpu_tile gpu_state_usage1">
-                  <div className="name" title="B200-node-01">
-                    GPU-01
+                                className={`gpu_tile ${getAreaColor(
+                                  item.value
+                                )}`}
+                                key={index}
+                                onClick={() => {
+                                  setPopOpen(true)
+                                  setSelectCluster(item)
+                                }}
+                              >
+                                <div className="name" title={item.group}>
+                                  {item.group}
+                                </div>
+                                <div className="percent">{item.value}%</div>
+                                {(item.state === 'abnormal' ||
+                                  item.state === 'unknown') && (
+                                  <div
+                                    className={`badge_alert ${item.state}`}
+                                  ></div>
+                                )}
+                              </div>
+                            </>
+                          )
+                        })}
                   </div>
-                  <div className="percent">20%</div>
-                </div>
-                <div className="gpu_tile gpu_state_usage2">
-                  <div className="name" title="GPU-06">
-                    GPU-06
-                  </div>
-                  <div className="percent">36%</div>
-                </div>
-                <div className="gpu_tile gpu_state_usage3">
-                  <div className="name" title="GPU-11">
-                    GPU-11
-                  </div>
-                  <div className="percent">70%</div>
-                </div>
-                <div className="gpu_tile gpu_state_usage4">
-                  <div className="name" title="GPU-16">
-                    GPU-16
-                  </div>
-                  <div className="percent">90%</div>
-                  <div className="badge_alert"></div>
-                </div>
-                <div className="gpu_tile gpu_state_unknown">
-                  <div className="name" title="GPU-21">
-                    GPU-21
-                  </div>
-                  <div className="percent">0%</div>
-                </div>
-              </div> */}
+                )}
+                {type === 'gpu' && (
+                  <>
+                    {dataList.length === 0 && <div>데이터가 없습니다.</div>}
+                    {dataList.length > 0 && (
+                      <div id="gpu-map" className="gpu_map">
+                        {dataList
+                          .filter(item => {
+                            if (filter === 'all') return true
+                            if (filter === 'minor')
+                              return item.state === 'abnormal'
+                            if (filter === 'unknown')
+                              return item.state === 'unknown'
+                            return true
+                          })
+                          .sort((a, b) => {
+                            switch (sort) {
+                              case 'nameAsc':
+                                return a.group.localeCompare(b.group)
+                              case 'nameDesc':
+                                return b.group.localeCompare(a.group)
+                              case 'usageAsc':
+                                return a.util - b.util
+                              case 'usageDesc':
+                                return b.util - a.util
+                              default:
+                                return 0
+                            }
+                          })
+                          .map((gpuItem, index) => (
+                            <div
+                              className={`gpu_tile ${getAreaColor(
+                                gpuItem?.util
+                              )} ${
+                                gpuItem.state === 'minor' ? 'gpu_alert' : ''
+                              }`}
+                              key={`${gpuItem.group}-${gpuItem.gpu}`}
+                              onClick={() => {
+                                setPopOpen(true)
+                                setSelectGpu({
+                                  vmName: gpuItem.group,
+                                  gpuIndex: gpuItem.gpu,
+                                  data: gpuItem,
+                                })
+                              }}
+                            >
+                              <div className="name" title={gpuItem.group}>
+                                GPU-{gpuItem.gpu}
+                              </div>
+                              <div className="percent">{gpuItem.util}%</div>
+                              {(gpuItem.state === 'minor' ||
+                                gpuItem.state === 'unknown') && (
+                                <div
+                                  className={`badge_alert ${gpuItem.state}`}
+                                ></div>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </Loading>
               {/* 팝오버 샘플 : 팝오버는 tile의 색상값과 동일한 색상값과 동일한 클래스 추가 필요 */}
               {/* close_btn, gpu_backdrop 클릭시 팝오버 닫히게 개발 필요*/}
               <div className={`gpu_backdrop ${popOpen && 'active'}`}>
@@ -618,8 +751,11 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                     <div className="data_node">
                       <div className="title">
                         <span>{selectCluster?.group}</span>
-                        <span className="link"></span>
-                        {/* 해당 이름의 노드 또는 가상머신 상세로 이동 */}
+                        <Link
+                          to={`/clusters/${props.cluster}/gpunodes/${selectCluster?.group}`}
+                        >
+                          <span className="link"></span>
+                        </Link>
                         <span
                           className="close_btn"
                           onClick={() => setPopOpen(false)}
@@ -629,7 +765,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                       </div>
                       <div className="gpu_data_info">
                         <div>
-                          <span className="label">가상머신 개수</span>
+                          <span className="label" style={{ flex: 'none' }}>
+                            가상머신 개수
+                          </span>
                           <span className="value">
                             {selectCluster?.vmList?.length}
                           </span>
@@ -641,7 +779,11 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                     <div className="data_vm">
                       <div className="title">
                         <span>{selectCluster?.group}</span>
-                        <span className="link"></span>
+                        <Link
+                          to={`/clusters/${props.cluster}/projects/${selectCluster?.namespace}/vms/${selectCluster?.group}`}
+                        >
+                          <span className="link"></span>
+                        </Link>
                         <span
                           className="close_btn"
                           onClick={() => {
@@ -654,85 +796,134 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                       {selectCluster?.node && (
                         <div className="gpu_data_info">
                           <div>
-                            <span className="label">노드</span>
+                            <span className="label" style={{ flex: 'none' }}>
+                              노드
+                            </span>
                             <span className="value">{selectCluster?.node}</span>
-                            <span className="link"></span>
+                            <Link
+                              to={`/clusters/${props.cluster}/gpunodes/${selectCluster?.node}`}
+                            >
+                              <span className="link"></span>
+                            </Link>
                           </div>
                         </div>
                       )}
                     </div>
                   )}
-                  {/* GPU 데이터 샘플 */}
-                  {/* <div className="data_gpu">
-                    <div className="title">
-                      <span>
-                        <i className="ico-type24-gpuaas-gpu"></i>GPU-11 (GPU
-                        타일 일 때)
-                      </span>
-                      <span className="close_btn">✕</span>
-                    </div>
-                    <div className="gpu_data_info">
-                      <div>
-                        <span className="label">노드</span>
-                        <span className="value">B200-node-16</span>
-                        <span className="link"></span>
-                      </div>
-                      <div>
-                        <span className="label">가상머신</span>
-                        <span className="value">VM-01</span>
-                        <span className="link"></span>
-                      </div>
-                    </div>
-                  </div> */}
-                  <div className="gpu_info">
-                    <div className="gpu_usage_info">
-                      <span className="label">GPU 사용률</span>
-                      <span className="value">{selectCluster?.value}%</span>
-                    </div>
-                    <div className="gpu_usage_info">
-                      <span className="label">GPU 메모리 사용률</span>
-                      <span className="value">{selectCluster?.valueMem}%</span>
-                    </div>
-                  </div>
-                  <div className="gpu_pop_boxes">
-                    {gpuDataList
-                      ?.sort((a, b) => a.metric.gpu - b.metric.gpu)
-                      .map((item, index) => (
-                        <div
-                          className={`gpu_pop_box ${getAreaColor(
-                            item?.value?.[1]
-                          )} ${
-                            gpuXidData?.[item.metric.pod]?.[item.metric.gpu]
-                              .state === 'minor'
-                              ? 'gpu_alert'
-                              : ''
-                          }`}
-                          key={index}
-                        >
-                          <div className="name">GPU-{item?.metric?.gpu}</div>
-                          <div className="percent">
-                            {Number(item?.value?.[1]) || 0}%
-                          </div>
-                          {gpuXidData?.[item.metric.pod]?.[item.metric.gpu]
-                            .state === 'minor' && (
-                            <div className="badge_alert"></div>
-                          )}
+                  {type === 'gpu' && (
+                    <>
+                      <div className="data_gpu">
+                        <div className="title">
+                          <span>
+                            <i className="ico-type24-gpuaas-gpu"></i>
+                            GPU-{selectGpu?.gpuIndex}
+                          </span>
+                          <span
+                            className="close_btn"
+                            onClick={() => {
+                              setPopOpen(false)
+                            }}
+                          >
+                            ✕
+                          </span>
                         </div>
-                      ))}
-                    {/* <div className="gpu_pop_box gpu_state_usage3">
-                      <div className="name">GPU-0</div>
-                      <div className="percent">70%</div>
-                    </div>
-                    <div className="gpu_pop_box gpu_state_usage4 gpu_alert">
-                      <div className="name">GPU-1</div>
-                      <div className="percent">90%</div>
-                      <div className="badge_alert"></div>
-                    </div>
-                    <div className="gpu_pop_box gpu_state_usage2">
-                      <div className="name">GPU-2</div>
-                      <div className="percent">55%</div>
-                    </div> */}
-                  </div>
+                        <div className="gpu_data_info">
+                          <div>
+                            <span className="label" style={{ flex: 'none' }}>
+                              노드
+                            </span>
+                            <span className="value">
+                              {
+                                vmList.find(
+                                  item => item.name === selectGpu?.vmName
+                                )?.node
+                              }
+                            </span>
+                            <Link
+                              to={`/clusters/${props.cluster}/gpunodes/${
+                                vmList.find(
+                                  item => item.name === selectGpu?.vmName
+                                )?.node
+                              }`}
+                            >
+                              <span className="link"></span>
+                            </Link>
+                          </div>
+                          <div>
+                            <span className="label" style={{ flex: 'none' }}>
+                              가상머신
+                            </span>
+                            <span className="value">{selectGpu?.vmName}</span>
+                            <Link
+                              to={`/clusters/${props.cluster}/projects/${
+                                vmList.find(
+                                  item => item.name === selectGpu?.vmName
+                                )?.project
+                              }/vms/${selectGpu?.vmName}`}
+                            >
+                              <span className="link"></span>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="gpu_info">
+                        <div className="gpu_usage_info">
+                          <span className="label">GPU 사용률</span>
+                          <span className="value">{selectGpu?.util || 0}%</span>
+                        </div>
+                        <div className="gpu_usage_info">
+                          <span className="label">GPU 메모리 사용률</span>
+                          <span className="value">{selectGpu?.mem || 0}%</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {type !== 'gpu' && (
+                    <>
+                      <div className="gpu_info">
+                        <div className="gpu_usage_info">
+                          <span className="label">GPU 사용률</span>
+                          <span className="value">
+                            {selectCluster?.value || 0}%
+                          </span>
+                        </div>
+                        <div className="gpu_usage_info">
+                          <span className="label">GPU 메모리 사용률</span>
+                          <span className="value">
+                            {selectCluster?.valueMem || 0}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="gpu_pop_boxes">
+                        {gpuDataList
+                          ?.sort((a, b) => a.metric.gpu - b.metric.gpu)
+                          .map((item, index) => (
+                            <div
+                              className={`gpu_pop_box ${getAreaColor(
+                                item?.value?.[1]
+                              )} ${
+                                gpuXidData?.[item.metric.pod]?.[item.metric.gpu]
+                                  .state === 'minor'
+                                  ? 'gpu_alert'
+                                  : ''
+                              }`}
+                              key={index}
+                            >
+                              <div className="name">
+                                GPU-{item?.metric?.gpu}
+                              </div>
+                              <div className="percent">
+                                {Number(item?.value?.[1]) || 0}%
+                              </div>
+                              {gpuXidData?.[item.metric.pod]?.[item.metric.gpu]
+                                .state === 'minor' && (
+                                <div className="badge_alert"></div>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    </>
+                  )}
 
                   {/* alert_card는 초기 미노출, 에러 gpu_pop_box.gpu_alert 클릭시에만 해당 에러 노출  */}
                   <div className="alert_card">
