@@ -460,6 +460,10 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   useEffect(() => {
     if (type === 'vm' && vmList.length > 0) {
       getVmAvgData()
+    } else if (type === 'node' && clusterArr.length > 0) {
+      getGpuNodeList(clusterArr, false)
+    } else if (type === 'gpu' && vmList.length > 0) {
+      getGpuListData()
     }
   }, [range])
 
@@ -744,8 +748,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               {/* close_btn, gpu_backdrop 클릭시 팝오버 닫히게 개발 필요*/}
               <div className={`gpu_backdrop ${popOpen && 'active'}`}>
                 <div
-                  className={`gpu_popover gpu_state_usage4 ${popOpen &&
-                    'active'}`}
+                  className={`gpu_popover ${getAreaColor(
+                    type !== 'gpu' ? selectCluster?.value : selectGpu?.util
+                  )} ${popOpen && 'active'}`}
                 >
                   {type === 'node' && (
                     <div className="data_node">
