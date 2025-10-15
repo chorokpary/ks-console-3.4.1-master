@@ -13,7 +13,6 @@
   }
 }
 
-.check,
 .substract {
   position: absolute;
   top: 28px;
@@ -27,6 +26,10 @@
 
 .substract {
   background-color: $yellow;
+}
+
+.check {
+  background-color: #55bc8a;
 }
 
 .tooltip {
