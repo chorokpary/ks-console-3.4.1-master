@@ -12,7 +12,6 @@ const BindingModal = props => {
   const [formData] = useState({})
 
   const vmStore = new VmStore()
-  const volumeStore = new VolumeStore()
 
   const [vmList, setVmList] = useState([])
   const [vmName, setVmName] = useState()
@@ -31,7 +30,7 @@ const BindingModal = props => {
       data.name = props.store.detail.name
       data.bus = bus
 
-      volumeStore.actionState({ data, ...props }).then(() => {
+      props.store.actionState({ data, ...props }).then(() => {
         Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
         success()
         closeModal()
@@ -50,7 +49,7 @@ const BindingModal = props => {
         namespace: props.project ? props.project : props.namespace,
       })
 
-      const volumeData = await volumeStore.fetchList({
+      const volumeData = await props.store.fetchList({
         cluster: props.cluster,
         namespace: props.project ? props.project : props.namespace,
       })
@@ -119,6 +118,7 @@ const BindingModal = props => {
         onOk={handleOk}
         onCancel={closeModal}
         visible={modelView}
+        isSubmitting={props.store.isSubmitting}
       >
         <Form data={formData} ref={form}>
           <Form.Item

@@ -22,7 +22,7 @@ const VolumeModal = props => {
   const [reFetch, setReFetch] = useState(false);
 
   const vmName = props.store.detail.name;
-  const vmId = props.store.detail.id;
+  const project = props.store.detail.namespace;
 
   const closeModal = () => {
     setModalView(false);
@@ -72,16 +72,16 @@ const VolumeModal = props => {
       // 볼륨 리스트 중 해당 가상머신과 연결이 되어 있건, 아무것도 연결이 안되어 있는 볼륨 리스트.
       const volumeListData = volumeData.filter(obj => {
         return (
-          (obj.used_by_vmi === vmId || !obj.used_by_vmi) &&
-	  obj.id !== `${vmId}-boot-dv` && obj.phase == "Succeeded" && 
-	  obj.boot_volume === false
-	);
+          ((obj.used_by_vmi === vmName && obj.project === project) || !obj.used_by_vmi) &&
+          obj.name !== `${vmName}-boot-dv` && obj.phase == "Succeeded" &&
+          obj.boot_volume === false
+        );
       });
 
       const connectedVolumeArray = [];
       await volumeListData.map(obj => {
-        if (obj.used_by_vmi === vmId) {
-	  connectedVolumeArray.push(obj.id);
+        if (obj.used_by_vmi === vmName) {
+          connectedVolumeArray.push(obj.id);
         }
       });
 
@@ -101,8 +101,7 @@ const VolumeModal = props => {
 
     const data = {};
     data.vmName = vmName;
-    data.vmId = vmId;
-    data.volumeName = name;
+    data.name = name;
     data.id = id;
     data.actionType = checked ? 'A' : 'D';
 
@@ -118,7 +117,7 @@ const VolumeModal = props => {
     }
 
     volumeStore
-      .actionState({ data, cluster: props.cluster, namespace: props.namespace })
+      .actionState({ data, cluster: props.cluster, namespace: project })
       .then(() => {
         Notify.success({ content: t('RESOURCES_PROCESSED') });
         props.onOk();
@@ -150,7 +149,7 @@ const VolumeModal = props => {
                     <col width="18%" />
                     <col width="8%" />
                     <col width="18%" />
-	            <col width="10%" />
+                    <col width="10%" />
                   </colgroup>
                   <thead>
                     <tr>
@@ -195,61 +194,61 @@ const VolumeModal = props => {
                       <tr key={data.id}>
                         <td>{data.name}</td>
                         <td>
-			  <Checkbox
-			    name={`select-${data.id}`}
-			    checked={
-			      !!stateVariables['hotplug'].includes(data.id) || data.hotplug === true
-		            }
-			    onChange={checked =>
-			      handleSingleCheck(
-				checked,
-				data.id,
-				'hotplug'
-			      )
-		            }
-			    disabled={!!volumeCheckItems.includes(data.id)}
-			  />
-			</td>
-			<td>
-			  <Select
-			    name={`${data.id}-bus`}
-			    placeholder={t('RESOURCES_AUTOMATIC')}
-			    options={busTypeOptions}
-			    onChange={e =>
-			      handleBusSelectClick(data.id, e)
-			    }
-			    defaultValue={
-				    (() => {
-				      if (!!(data.bus)) {
-				        return data.bus;
-				      } else {
-					if (hotplugCheckItems.includes(data.id)) {
-				          return "scsi";
-					} else {
-					  return "virtio";
-					}
-				      }
-				    })()
-			    }
-			    disabled={hotplugCheckItems.includes(data.id) || volumeCheckItems.includes(data.id)}
-			    clearable
-			  />
-			</td>
-			<td>{data.storage_class}</td>
+                          <Checkbox
+                            name={`select-${data.id}`}
+                            checked={
+                              !!stateVariables['hotplug'].includes(data.id) || data.hotplug === true
+                            }
+                            onChange={checked =>
+                              handleSingleCheck(
+                                checked,
+                                data.id,
+                                'hotplug'
+                              )
+                            }
+                            disabled={!!volumeCheckItems.includes(data.id)}
+                          />
+                        </td>
+                        <td>
+                          <Select
+                            name={`${data.id}-bus`}
+                            placeholder={t('RESOURCES_AUTOMATIC')}
+                            options={busTypeOptions}
+                            onChange={e =>
+                              handleBusSelectClick(data.id, e)
+                            }
+                            defaultValue={
+                              (() => {
+                                if (!!(data.bus)) {
+                                  return data.bus;
+                                } else {
+                                  if (hotplugCheckItems.includes(data.id)) {
+                                    return "scsi";
+                                  } else {
+                                    return "virtio";
+                                  }
+                                }
+                              })()
+                            }
+                            disabled={hotplugCheckItems.includes(data.id) || volumeCheckItems.includes(data.id)}
+                            clearable
+                          />
+                        </td>
+                        <td>{data.storage_class}</td>
                         <td>{data.capacity}</td>
                         <td>{data.selected_node}</td>
                         <td>
                           {(data.selected_node == props.store.detail.vm.node ||
                             !data.selected_node) && (
-                            <Toggle
-			      checked={volumeCheckItems.includes(data.id)}
-                              onChange={e =>
-                                handleVolumeToggle(e, data.name, data.id)
-                              }
-                              onText={t('ON')}
-                              offText={t('OFF')}
-                            />
-                          )}
+                              <Toggle
+                                checked={volumeCheckItems.includes(data.id)}
+                                onChange={e =>
+                                  handleVolumeToggle(e, data.name, data.id)
+                                }
+                                onText={t('ON')}
+                                offText={t('OFF')}
+                              />
+                            )}
                         </td>
                       </tr>
                     ))}

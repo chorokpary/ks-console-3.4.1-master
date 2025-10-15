@@ -715,7 +715,7 @@ const RegistModal = props => {
                   }`}
                 ></div>
               </div>
-              <span className={styles.basic}></span>
+              <div className={styles.basic}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_DEFAULT_SETTINGS')}
@@ -740,7 +740,7 @@ const RegistModal = props => {
                   className={`${regStep === 2 ? styles.current : styles.todo}`}
                 ></div>
               </div>
-              <span className={styles.check}></span>
+              <div className={styles.detail}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
                   {t('RESOURCES_DETAIL_SETTINGS')}

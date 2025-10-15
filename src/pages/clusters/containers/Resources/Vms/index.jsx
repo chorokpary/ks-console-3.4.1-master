@@ -160,7 +160,8 @@ export default class Vms extends React.Component {
       state === 'Starting' ||
       state === 'Stopping' ||
       state === 'Terminating' ||
-      state === 'Migrating'
+      state === 'Migrating' ||
+      state === 'Booting'
     ) {
       return 'waiting'
     }
@@ -185,6 +186,7 @@ export default class Vms extends React.Component {
       { text: t('RESOURCES_STOPPED'), value: 'Stopped' },
       { text: t('RESOURCES_PROVISIONING'), value: 'Provisioning' },
       { text: t('RESOURCES_STARTING'), value: 'Starting' },
+      { text: t('RESOURCES_BOOTING'), value: 'Booting' },
       { text: t('RESOURCES_RUNNING'), value: 'Running' },
       { text: t('RESOURCES_PAUSED'), value: 'Paused' },
       { text: t('RESOURCES_MIGRATING'), value: 'Migrating' },
@@ -280,17 +282,19 @@ export default class Vms extends React.Component {
         render: (image, record) => {
           const icon = `ico-os-${record.image_object?.distro_type}`
           return image ? (
-            <Link to={`/clusters/${cluster}/images/${image}`}>
-              <i
-                style={{
-                  backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
-                  width: '40px',
-                  height: '40px',
-                }}
-              ></i>
-            </Link>
+            <Tooltip content={image} placement="right">
+              <Link to={`/clusters/${cluster}/images/${image}`}>
+                <i
+                  style={{
+                    backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    width: '40px',
+                    height: '40px',
+                  }}
+                ></i>
+              </Link>
+            </Tooltip>
           ) : (
             <p className={styles.textCenter}>N/A</p>
           )
@@ -314,9 +318,9 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (flavor, record) => {
-          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " + 
-                common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " + 
-                record.flavor_object.root_disk + " GiB"
+          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " +
+            common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " +
+            record.flavor_object.root_disk + " GiB"
           return (
             <Tooltip content={flavor_spec} placement="top">
               <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
@@ -439,7 +443,7 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (state, record) => {
-          const stateArray = ['Stopped', 'Running', 'Paused']
+          const stateArray = ['Stopped', 'Running', 'Booting', 'Paused']
 
           if (stateArray.includes(state)) {
             return (
@@ -580,6 +584,25 @@ export default class Vms extends React.Component {
             >
               <i className={styles['ico-quick-unpause']}></i>
               <span>{t('RESOURCES_UNPAUSE')}</span>
+            </Menu.MenuItem>
+            <Menu.MenuItem
+              key="option-3"
+              onClick={() => this.handleVmAction('restart', state, vmId)}
+            >
+              <i className={styles['ico-quick-restart']}></i>
+              <span>{t('RESOURCES_RESTART')}</span>
+            </Menu.MenuItem>
+          </>
+        )}
+        {/* Booting */}
+        {state === 'Booting' && (
+          <>
+            <Menu.MenuItem
+              key="option-1"
+              onClick={() => this.handleVmAction('stop', state, vmId)}
+            >
+              <i className={styles['ico-quick-stop']}></i>
+              <span>{t('RESOURCES_STOP')}</span>
             </Menu.MenuItem>
             <Menu.MenuItem
               key="option-3"
