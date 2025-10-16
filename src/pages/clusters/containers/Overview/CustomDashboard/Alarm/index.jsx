@@ -8,15 +8,17 @@ import {
 } from '@kube-design/components'
 import MessageStore from 'stores/alerting/message'
 import { get, set } from 'lodash'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom'
+import { inject, observer } from 'mobx-react'
 
 const typeOption = [
   {
     value: 'all',
-    label: t('전체'),
+    label: t('RESOURCES_ALL'),
   },
   {
     value: 'node',
-    label: t('노드'),
+    label: t('RESOURCES_NODE'),
   },
   {
     value: 'gpu',
@@ -28,7 +30,7 @@ const typeOption = [
   },
   {
     value: 'vm',
-    label: t('가상머신'),
+    label: t('RESOURCES_VM'),
   },
   {
     value: 'kaas',
@@ -38,16 +40,18 @@ const typeOption = [
 const sortOption = [
   {
     value: 'latest',
-    label: t('최신 순'),
+    label: t('RESOURCES_SORT_LATEST'),
   },
   {
     value: 'oldest',
-    label: t('오래된 순'),
+    label: t('RESOURCES_SORT_OLDEST'),
   },
 ]
 
 const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
+  const history = useHistory()
   const store = new MessageStore()
+
   const [alarmData, setAlarmData] = useState([])
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState('all')
@@ -79,7 +83,11 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
       cluster,
       limit: 49,
     })
-    setAlarmData([...alarmData, ...globalAlarmData])
+    const globalAlarmDataWithType = globalAlarmData.map(item => ({
+      ...item,
+      state_type: 'builtin',
+    }))
+    setAlarmData([...alarmData, ...globalAlarmDataWithType])
     setLoading(false)
   }
 
@@ -138,13 +146,13 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
 
   const getStatus = severity => {
     if (severity === 'critical') {
-      return { code: 'critical', text: '심각' }
+      return { code: 'critical', text: t('RESOURCES_GPUCLUSTER_CRITICAL') }
     } else if (severity === 'error') {
-      return { code: 'minor', text: '경고' }
+      return { code: 'minor', text: t('RESOURCES_GPUCLUSTER_MINOR') }
     } else if (severity === 'warning') {
-      return { code: 'unknown', text: '주의' }
+      return { code: 'unknown', text: t('RESOURCES_WARNING') }
     } else {
-      return { code: 'unknown', text: '주의' }
+      return { code: 'unknown', text: t('RESOURCES_WARNING') }
     }
   }
 
@@ -179,11 +187,22 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
+  const handleRowClick = data => {
+    const newRecord = {
+      ...data,
+      state_type: data.state_type || 'custom',
+    }
+    props.rootStore.message.setDetailMessage(newRecord)
+    history.push(
+      `/clusters/${props.cluster}/alerts/${data.annotations.summary}`
+    )
+  }
+
   return (
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>알림</label>
+          <label>{t('RESOURCES_ALERTING_MESSAGE')}</label>
           {isVertical && (
             <div className="alert_tab bottom" style={{ marginLeft: '830px' }}>
               <label htmlFor="al_name2_1">
@@ -199,7 +218,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                   <span className="gpu_badge_number">
                     {criticalCount + minorCount + unknownCount}
                   </span>
-                  <span>전체</span>
+                  <span>{t('RESOURCES_ALL')}</span>
                 </span>
               </label>
               <label htmlFor="al_name2_2">
@@ -214,7 +233,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                   <span className="gpu_badge_number critical">
                     {criticalCount}
                   </span>
-                  <span>심각</span>
+                  <span>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</span>
                 </span>
               </label>
               <label htmlFor="al_name2_3">
@@ -227,7 +246,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 />
                 <span>
                   <span className="gpu_badge_number minor">{minorCount}</span>
-                  <span>경고</span>
+                  <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
                 </span>
               </label>
               <label htmlFor="al_name2_4">
@@ -242,7 +261,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                   <span className="gpu_badge_number unknown">
                     {unknownCount}
                   </span>
-                  <span>주의</span>
+                  <span>{t('RESOURCES_WARNING')}</span>
                 </span>
               </label>
             </div>
@@ -301,7 +320,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 <span className="gpu_badge_number">
                   {criticalCount + minorCount + unknownCount}
                 </span>
-                <span>전체</span>
+                <span>{t('RESOURCES_ALL')}</span>
               </span>
             </label>
             <label htmlFor="al_name1_2">
@@ -316,7 +335,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                 <span className="gpu_badge_number critical">
                   {criticalCount}
                 </span>
-                <span>심각</span>
+                <span>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</span>
               </span>
             </label>
             <label htmlFor="al_name1_3">
@@ -329,7 +348,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
               />
               <span>
                 <span className="gpu_badge_number minor">{minorCount}</span>
-                <span>경고</span>
+                <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
               </span>
             </label>
             <label htmlFor="al_name1_4">
@@ -342,7 +361,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
               />
               <span>
                 <span className="gpu_badge_number unknown">{unknownCount}</span>
-                <span>주의</span>
+                <span>{t('RESOURCES_WARNING')}</span>
               </span>
             </label>
           </div>
@@ -371,7 +390,11 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                         </div>
 
                         <div className="alert_body">
-                          <p className="alert_message">
+                          <p
+                            className="alert_message"
+                            onClick={() => handleRowClick(data)}
+                            style={{ cursor: 'pointer' }}
+                          >
                             {data.annotations.summary}
                           </p>
                           {data.annotations?.message && (
@@ -392,7 +415,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
               </ul>
             ) : (
               <div className="grid_text">
-                <span>데이터가 없습니다.</span>
+                <span>{t('RESOURCES_NO_DATA')}</span>
               </div>
             )}
           </div>
@@ -402,4 +425,4 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   )
 }
 
-export default Alarm
+export default inject('rootStore')(observer(Alarm))

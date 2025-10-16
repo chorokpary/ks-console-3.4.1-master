@@ -71,7 +71,7 @@ const GpuStatus = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>GPU 현황</label>
+          <label>GPU</label>
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status">
@@ -89,7 +89,7 @@ const GpuStatus = ({ widgetKey, monitorStore, ...props }) => {
                   <div className="status_wrap">
                     <div className="value">{normalCount}</div>
                     <p className="status running">
-                      <span>정상</span>
+                      <span>{t('RESOURCES_GPUCLUSTER_NORMAL')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
@@ -97,13 +97,13 @@ const GpuStatus = ({ widgetKey, monitorStore, ...props }) => {
                       {totalCount - normalCount - minorCount}
                     </div>
                     <p className="status unknown">
-                      <span>미확인</span>
+                      <span>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{minorCount}</div>
                     <p className="status warning">
-                      <span>경고</span>
+                      <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
                     </p>
                   </div>
                 </div>

@@ -27,9 +27,9 @@ const panelInfo = {
   computingTemplate: function(val = { w: 12, h: 4 }) {
     return computingTemplatePanel(val)
   },
-  bmcNode: function(val = { w: 12, h: 7 }) {
-    return bmcNodePanel(val)
-  },
+  // bmcNode: function(val = { w: 12, h: 7 }) {
+  //   return bmcNodePanel(val)
+  // },
   resourceChange: function(val = { w: 6, h: 5 }) {
     return resourceChangePanel(val)
   },
@@ -37,37 +37,37 @@ const panelInfo = {
   clusterStatus: function(val = { w: 6, h: 5 }) {
     return clusterStatusPanel(val)
   },
-  carbonPower: function(val = { w: 6, h: 3 }) {
-    return carbonPowerPanel(val)
-  },
-  carbonCo2: function(val = { w: 6, h: 3 }) {
-    return carbonCo2Panel(val)
-  },
-  carbonTree: function(val = { w: 6, h: 3 }) {
-    return carbonTreePanel(val)
-  },
-  carbonCost: function(val = { w: 6, h: 3 }) {
-    return carbonCostPanel(val)
-  },
+  // carbonPower: function(val = { w: 6, h: 3 }) {
+  //   return carbonPowerPanel(val)
+  // },
+  // carbonCo2: function(val = { w: 6, h: 3 }) {
+  //   return carbonCo2Panel(val)
+  // },
+  // carbonTree: function(val = { w: 6, h: 3 }) {
+  //   return carbonTreePanel(val)
+  // },
+  // carbonCost: function(val = { w: 6, h: 3 }) {
+  //   return carbonCostPanel(val)
+  // },
 
-  cpuPower: function(val = { w: 12, h: 5 }) {
-    return cpuPowerPanel(val)
-  },
+  // cpuPower: function(val = { w: 12, h: 5 }) {
+  //   return cpuPowerPanel(val)
+  // },
   usageTop5: function(val = { w: 3, h: 8 }) {
     return usageTop5Panel(val)
   },
   recentResource: function(val = { w: 3, h: 9 }) {
     return recentResourcePanel(val)
   },
-  issue: function(val = { w: 3, h: 9 }) {
-    return issuePanel(val)
-  },
-  carbonIndicator: function(val = { w: 3, h: 9 }) {
-    return carbonIndicatorPanel(val)
-  },
-  powerUsageTop5: function(val = { w: 3, h: 7 }) {
-    return powerUsageTop5Panel(val)
-  },
+  // issue: function(val = { w: 3, h: 9 }) {
+  //   return issuePanel(val)
+  // },
+  // carbonIndicator: function(val = { w: 3, h: 9 }) {
+  //   return carbonIndicatorPanel(val)
+  // },
+  // powerUsageTop5: function(val = { w: 3, h: 7 }) {
+  //   return powerUsageTop5Panel(val)
+  // },
 
   node: function(val = { w: 3, h: 4 }) {
     return nodePanel(val)
@@ -80,9 +80,6 @@ const panelInfo = {
   },
   gpuUsage: function(val = { w: 3, h: 4 }) {
     return gpuUsagePanel(val)
-  },
-  kaasGpu: function(val = { w: 3, h: 4 }) {
-    return kaasGpuPanel(val)
   },
   gpuMap: function(val = { w: 6, h: 12 }) {
     return gpuMapPanel(val)
@@ -321,59 +318,6 @@ export const gpuUsagePanel = ({ x, y, w, h }) => {
                                     <div class="value">80</div>
                                     <p class="status total">
                                       <span>전체</span>
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>`
-
-  return panel
-}
-
-export const kaasGpuPanel = ({ x, y, w, h }) => {
-  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="kaasGpuPanel">
-                  <div class="grid-stack-item-content">
-                    <div class="grid_item">
-                      <div class="grid_title">
-                        <label>KaaS</label>
-                        <i class="ico-btn-trash"></i>
-                      </div>
-                      <div class="spin-nested-loading">
-                        <div class="spin-container">
-                          <div class="grid_info style_status">
-                            <div class="box type_status">
-                              <div class="cont_group clusternode">
-                                <div class="cont1">
-                                  <div class="number_wrap">
-                                    <i class="ico-type24-container-gpu"
-                                      ><span>GPU KaaS</span>
-                                    </i>
-                                    <p><span class="em">1</span>/ 1</p>
-                                  </div>
-                                  <div class="number_wrap">
-                                    <i class="ico-type24-container"
-                                      ><span>CPU KaaS</span>
-                                    </i>
-                                    <p><span class="em">1</span>/ 1</p>
-                                  </div>
-                                </div>
-                                <div class="cont2">
-                                  <div class="status_wrap">
-                                    <div class="value">8</div>
-                                    <p class="status running">
-                                      <span>준비</span>
-                                    </p>
-                                  </div>
-                                  <div class="status_wrap">
-                                    <div class="value">2</div>
-                                    <p class="status waiting">
-                                      <span>준비안됨</span>
                                     </p>
                                   </div>
                                 </div>

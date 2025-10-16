@@ -91,7 +91,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>가상머신</label>
+          <label>{t('RESOURCES_VM')}</label>
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status">
@@ -100,7 +100,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
                 <div className="cont1">
                   <div className="number_wrap">
                     <i className="ico-type24-vm-gpu">
-                      <span>GPU 가상머신</span>
+                      <span>GPU {t('RESOURCES_VM')}</span>
                     </i>
                     <p>
                       <span className="em">{data.gpuRunning || 0}</span>/{' '}
@@ -109,7 +109,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
                   </div>
                   <div className="number_wrap">
                     <i className="ico-type24-vm">
-                      <span>CPU 가상머신</span>
+                      <span>CPU {t('RESOURCES_VM')}</span>
                     </i>
                     <p>
                       <span className="em">{data.vmRunning || 0}</span>/{' '}
@@ -121,25 +121,25 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
                   <div className="status_wrap">
                     <div className="value">{data.waiting || 0}</div>
                     <p className="status waiting">
-                      <span>진행중</span>
+                      <span>{t('RESOURCES_PROGRESSING')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{data.running || 0}</div>
                     <p className="status running">
-                      <span>실행중</span>
+                      <span>{t('RESOURCES_RUNNING')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{data.stopped || 0}</div>
                     <p className="status warning">
-                      <span>정지됨</span>
+                      <span>{t('RESOURCES_STOPPED')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{data.error || 0}</div>
                     <p className="status error">
-                      <span>오류</span>
+                      <span>{t('RESOURCES_ERROR')}</span>
                     </p>
                   </div>
                 </div>

@@ -59,7 +59,7 @@ const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>GPU 가용률</label>
+          <label>{t('RESOURCES_GPU_AVAILABLE')}</label>
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status">
@@ -89,19 +89,13 @@ const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                   <div className="status_wrap">
                     <div className="value">{runningCount}</div>
                     <p className="status used_gpu">
-                      <span>사용중</span>
+                      <span>{t('RESOURCES_USING')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{totalCount - runningCount}</div>
                     <p className="status waiting">
-                      <span>미사용</span>
-                    </p>
-                  </div>
-                  <div className="status_wrap">
-                    <div className="value">{totalCount}</div>
-                    <p className="status total">
-                      <span>전체</span>
+                      <span>{t('RESOURCES_UNUSED')}</span>
                     </p>
                   </div>
                 </div>

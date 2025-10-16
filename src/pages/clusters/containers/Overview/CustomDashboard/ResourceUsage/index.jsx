@@ -14,7 +14,7 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 import ResourceStore from 'stores/resources/containerresource'
 import { getContentOptions, getData } from './handleTab'
 
-const MetricTypes = {
+const NodeMetricTypes = {
   cpu_usage: 'cluster_cpu_usage',
   cpu_total: 'cluster_cpu_total',
   cpu_utilisation: 'cluster_cpu_utilisation',
@@ -24,8 +24,8 @@ const MetricTypes = {
   disk_size_usage: 'cluster_disk_size_usage',
   disk_size_capacity: 'cluster_disk_size_capacity',
   disk_utilisation: 'cluster_disk_size_utilisation',
-  // pod_count: 'cluster_pod_running_count',
-  // pod_capacity: 'cluster_pod_quota',
+}
+const PodMetricTypes = {
   pod_utilisation: 'cluster_pod_utilisation',
   pod_cpu_usage: 'pod_cpu_usage',
   pod_memory_usage: 'pod_memory_usage',
@@ -58,7 +58,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
 
       // node data
       const metricData = await monitorStore.fetchMetrics({
-        metrics: Object.values(MetricTypes),
+        metrics: Object.values(NodeMetricTypes),
         step: '5m', // Time interval
         times: 100,
         // step: '3600s', // 최근 7일
@@ -136,6 +136,28 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
         ['memoryData']: kaasMemoryData,
       })
 
+      const podCpuData = await customStore.fetchMetric({
+        expr: `sum(sum by (pod) (rate(container_cpu_usage_seconds_total[5m])))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      const podMemoryData = await customStore.fetchMetric({
+        expr: `sum(sum by (pod) (container_memory_usage_bytes))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      console.log('podCpuData', podCpuData)
+      console.log('podMemoryData', podMemoryData)
+      // setPodData({
+      //   ...podData,
+      //   ['cpuData']: podCpuData,
+      //   ['memoryData']: podMemoryData,
+      // })
+
       if (cleanupTrigger) {
         setLoading(false)
       }
@@ -158,6 +180,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
         },
       ],
     }
+    console.log('data', data)
     setPodData(data)
     return data
   }
@@ -201,11 +224,12 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
         setLoading(true)
 
         const fetchedPodData = await podStore.fetchMetrics({
-          metrics: Object.values(MetricTypes),
+          metrics: Object.values(PodMetricTypes),
           step: '5m',
           times: 100,
           cluster: props.cluster,
         })
+        console.log('fetchedPodData', fetchedPodData)
         const handleData = handlePodData(fetchedPodData)
         podFetchedRef.current = true // 호출 기록
         data = handleData

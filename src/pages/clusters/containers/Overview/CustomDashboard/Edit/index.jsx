@@ -450,38 +450,6 @@ const CustomDashboardEdit = props => {
                 <label className="switch type_text">
                   <input
                     type="checkbox"
-                    id="kaasGpuPanel-toggle"
-                    className="toggle"
-                    defaultChecked={activeDashboard.kaasGpu}
-                  />
-                  <span
-                    className="slider"
-                    onClick={e => toggleHandler(e, 'kaasGpu')}
-                  ></span>
-                </label>
-                <label className="section-title">{t('KaaS')}</label>
-                <button className="icon_preview open-popover-button ">
-                  <i className="ico-etc-preview"></i>
-                </button>
-
-                <div className="popover-container">
-                  <div className="popover-content">
-                    <h5>{t('RESOURCES_PREVIEW')}</h5>
-                    <div className="preview_cont">
-                      <div className="view img_35">
-                        {t('RESOURCES_PREVIEW')}
-                      </div>
-                    </div>
-                    <button className="close-popover-button">
-                      <i className="ico-close"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="section-content">
-                <label className="switch type_text">
-                  <input
-                    type="checkbox"
                     id="gpuMapPanel-toggle"
                     className="toggle"
                     defaultChecked={activeDashboard.gpuMap}
@@ -1141,7 +1109,7 @@ const CustomDashboardEdit = props => {
                 </div>
               </div>
             </div>
-            <button className="accordion-btn" onClick={e => handleAccordion(e)}>
+            {/* <button className="accordion-btn" onClick={e => handleAccordion(e)}>
               {t('RESOURCES_BAREMETAL_CURRENT_SITUATION_AND_POWER_USAGE')}
               <i className="ico-arrow-clamp-up"></i>
             </button>
@@ -1168,7 +1136,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_12">
@@ -1179,9 +1146,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1206,7 +1170,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_13">
@@ -1217,9 +1180,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1244,7 +1204,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_14">
@@ -1255,9 +1214,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1282,7 +1238,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_15">
@@ -1293,9 +1248,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1321,7 +1273,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_16">
@@ -1332,9 +1283,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1360,7 +1308,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_17">
@@ -1371,9 +1318,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1398,7 +1342,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_18">
@@ -1409,9 +1352,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1436,7 +1376,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_19">
@@ -1447,12 +1386,9 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <button className="accordion-btn" onClick={e => handleAccordion(e)}>
               {t('RESOURCES_ETC')}
