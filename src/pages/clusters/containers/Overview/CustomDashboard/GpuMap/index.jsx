@@ -117,8 +117,14 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   const getLandingData = async () => {
     setLoading(true)
 
-    const nodeData = await gpuNodeStore.fetchList({ limit: 1000, ...props })
-    if (nodeData.length > 0) getGpuNodeList(nodeData, true)
+    const nodeData = await vmStore.fetchVmListNode({ limit: 1000, ...props })
+    const gpuNodeData = await gpuNodeStore.fetchList({ limit: 1000, ...props })
+    const gpuNodeList =
+      nodeData?.nodes?.filter(item => {
+        return gpuNodeData.map(i => i.name).includes(item.name)
+      }) || []
+    console.log('gpuNodeList', gpuNodeList)
+    if (gpuNodeList.length > 0) getGpuNodeList(gpuNodeList, true)
 
     const vmData = await vmStore.fetchList({ limit: 1000, ...props })
     const vmList = vmData.filter(item => {
@@ -195,10 +201,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     let clusterArr = []
     nodeList.map(item => {
       const clusterName = item.name
-      const vmList = item?.instances?.map(obj => obj.vmName)
       clusterArr.push({
         clusterName,
-        vmList,
+        vmList: item.vm_list,
         namespace: item.namespace,
         state: item.state,
       })
@@ -214,7 +219,13 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
 
       const expr = clusterArr
         .map(item => {
-          const vmList = item?.vmList?.join('|')
+          console.log('item', item)
+          const vmList = item?.vmList
+            ?.map(obj => {
+              return obj.split('/')[1]
+            })
+            .join('|')
+          console.log('vmList', vmList)
           return `(
               avg by (group) (
                 label_replace(
@@ -329,8 +340,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
           state: 'minor',
           errCode: errCode,
           errMsg: item.metric.err_msg,
-          util: gpuUtil[pod] ? gpuUtil[pod][gpu] : 0,
-          mem: gpuMem[pod] ? gpuMem[pod][gpu] : 0,
+          util: gpuUtil?.[pod] ? gpuUtil[pod][gpu] : 0,
+          mem: gpuMem?.[pod] ? gpuMem[pod][gpu] : 0,
         }
       } else {
         if (Number(errCode) >= 0 && Number(errCode) <= 143) {
@@ -338,16 +349,16 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             state: 'normal',
             errCode: errCode,
             errMsg: item.metric.err_msg,
-            util: gpuUtil[pod] ? gpuUtil[pod][gpu] : 0,
-            mem: gpuMem[pod] ? gpuMem[pod][gpu] : 0,
+            util: gpuUtil?.[pod] ? gpuUtil[pod][gpu] : 0,
+            mem: gpuMem?.[pod] ? gpuMem[pod][gpu] : 0,
           }
         } else {
           resultMap[pod][gpu] = {
             state: 'unknown',
             errCode: errCode,
             errMsg: item.metric.err_msg,
-            util: gpuUtil[pod] ? gpuUtil[pod][gpu] : 0,
-            mem: gpuMem[pod] ? gpuMem[pod][gpu] : 0,
+            util: gpuUtil?.[pod] ? gpuUtil[pod][gpu] : 0,
+            mem: gpuMem?.[pod] ? gpuMem[pod][gpu] : 0,
           }
         }
       }
@@ -620,175 +631,184 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             </div>
           </div>
         </div>
-        <div className="spin-nested-loading">
-          <div className="spin-container">
-            <div className="gpu_map_wrap">
-              <Loading
-                spinning={loading || gpuLoading || vmLoading || nodeLoading}
+        <Loading spinning={loading || gpuLoading || vmLoading || nodeLoading}>
+          <div className="gpu_map_wrap">
+            {dataList.length === 0 && <div>데이터가 없습니다.</div>}
+            {type !== 'gpu' && dataList.length > 0 && (
+              <div id="gpunode-map" className="gpunode_map">
+                {dataList
+                  .filter(item => {
+                    if (filter === 'all') return true
+                    if (filter === 'minor') return item.state === 'abnormal'
+                    if (filter === 'unknown') return item.state === 'unknown'
+                    return true
+                  })
+                  .sort((a, b) => {
+                    switch (sort) {
+                      case 'nameAsc':
+                        return a.group.localeCompare(b.group)
+                      case 'nameDesc':
+                        return b.group.localeCompare(a.group)
+                      case 'usageAsc':
+                        return a.value - b.value
+                      case 'usageDesc':
+                        return b.value - a.value
+                      default:
+                        return 0
+                    }
+                  })
+                  .map((item, index) => {
+                    return (
+                      <div
+                        className={`gpu_tile ${getAreaColor(item.value)}`}
+                        key={`${item.group} - ${index}`}
+                        onClick={() => {
+                          setPopOpen(true)
+                          setSelectCluster(item)
+                        }}
+                      >
+                        <div className="name" title={item.group}>
+                          {item.group}
+                        </div>
+                        <div className="percent">{item.value}%</div>
+                        {(item.state === 'abnormal' ||
+                          item.state === 'unknown') && (
+                          <div className={`badge_alert ${item.state}`}></div>
+                        )}
+                      </div>
+                    )
+                  })}
+              </div>
+            )}
+            {type === 'gpu' && dataList.length > 0 && (
+              <div id="gpu-map" className="gpu_map">
+                {dataList
+                  .filter(item => {
+                    if (filter === 'all') return true
+                    if (filter === 'minor') return item.state === 'abnormal'
+                    if (filter === 'unknown') return item.state === 'unknown'
+                    return true
+                  })
+                  .sort((a, b) => {
+                    switch (sort) {
+                      case 'nameAsc':
+                        return a.group.localeCompare(b.group)
+                      case 'nameDesc':
+                        return b.group.localeCompare(a.group)
+                      case 'usageAsc':
+                        return a.util - b.util
+                      case 'usageDesc':
+                        return b.util - a.util
+                      default:
+                        return 0
+                    }
+                  })
+                  .map((gpuItem, index) => (
+                    <div
+                      className={`gpu_tile ${getAreaColor(gpuItem?.util)} ${
+                        gpuItem.state === 'minor' ? 'gpu_alert' : ''
+                      }`}
+                      key={`${gpuItem.group}-${gpuItem.gpu}-${index}`}
+                      onClick={() => {
+                        setPopOpen(true)
+                        setSelectGpu({
+                          vmName: gpuItem.group,
+                          gpuIndex: gpuItem.gpu,
+                          data: gpuItem,
+                        })
+                      }}
+                    >
+                      <div className="name" title={gpuItem.group}>
+                        GPU-{gpuItem.gpu}
+                      </div>
+                      <div className="percent">{gpuItem.util}%</div>
+                      {(gpuItem.state === 'minor' ||
+                        gpuItem.state === 'unknown') && (
+                        <div className={`badge_alert ${gpuItem.state}`}></div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            )}
+            {/* 팝오버 샘플 : 팝오버는 tile의 색상값과 동일한 색상값과 동일한 클래스 추가 필요 */}
+            {/* close_btn, gpu_backdrop 클릭시 팝오버 닫히게 개발 필요*/}
+            <div className={`gpu_backdrop ${popOpen && 'active'}`}>
+              <div
+                className={`gpu_popover ${getAreaColor(
+                  type !== 'gpu' ? selectCluster?.value : selectGpu?.util
+                )} ${popOpen && 'active'}`}
               >
-                {type !== 'gpu' && (
-                  <div id="gpunode-map" className="gpunode_map">
-                    {dataList.length === 0 && <div>데이터가 없습니다.</div>}
-                    {dataList.length > 0 &&
-                      dataList
-                        .filter(item => {
-                          if (filter === 'all') return true
-                          if (filter === 'minor')
-                            return item.state === 'abnormal'
-                          if (filter === 'unknown')
-                            return item.state === 'unknown'
-                          return true
-                        })
-                        .sort((a, b) => {
-                          switch (sort) {
-                            case 'nameAsc':
-                              return a.group.localeCompare(b.group)
-                            case 'nameDesc':
-                              return b.group.localeCompare(a.group)
-                            case 'usageAsc':
-                              return a.value - b.value
-                            case 'usageDesc':
-                              return b.value - a.value
-                            default:
-                              return 0
-                          }
-                        })
-                        .map((item, index) => {
-                          return (
-                            <>
-                              <div
-                                className={`gpu_tile ${getAreaColor(
-                                  item.value
-                                )}`}
-                                key={index}
-                                onClick={() => {
-                                  setPopOpen(true)
-                                  setSelectCluster(item)
-                                }}
-                              >
-                                <div className="name" title={item.group}>
-                                  {item.group}
-                                </div>
-                                <div className="percent">{item.value}%</div>
-                                {(item.state === 'abnormal' ||
-                                  item.state === 'unknown') && (
-                                  <div
-                                    className={`badge_alert ${item.state}`}
-                                  ></div>
-                                )}
-                              </div>
-                            </>
-                          )
-                        })}
+                {type === 'node' && (
+                  <div className="data_node">
+                    <div className="title">
+                      <span>{selectCluster?.group}</span>
+                      <Link
+                        to={`/clusters/${props.cluster}/gpunodes/${selectCluster?.group}`}
+                      >
+                        <span className="link"></span>
+                      </Link>
+                      <span
+                        className="close_btn"
+                        onClick={() => setPopOpen(false)}
+                      >
+                        ✕
+                      </span>
+                    </div>
+                    <div className="gpu_data_info">
+                      <div>
+                        <span className="label" style={{ flex: 'none' }}>
+                          가상머신 개수
+                        </span>
+                        <span className="value">
+                          {selectCluster?.vmList?.length}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {type === 'vm' && (
+                  <div className="data_vm">
+                    <div className="title">
+                      <span>{selectCluster?.group}</span>
+                      <Link
+                        to={`/clusters/${props.cluster}/projects/${selectCluster?.namespace}/vms/${selectCluster?.group}`}
+                      >
+                        <span className="link"></span>
+                      </Link>
+                      <span
+                        className="close_btn"
+                        onClick={() => {
+                          setPopOpen(false)
+                        }}
+                      >
+                        ✕
+                      </span>
+                    </div>
+                    {selectCluster?.node && (
+                      <div className="gpu_data_info">
+                        <div>
+                          <span className="label" style={{ flex: 'none' }}>
+                            노드
+                          </span>
+                          <span className="value">{selectCluster?.node}</span>
+                          <Link
+                            to={`/clusters/${props.cluster}/gpunodes/${selectCluster?.node}`}
+                          >
+                            <span className="link"></span>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 {type === 'gpu' && (
                   <>
-                    {dataList.length === 0 && <div>데이터가 없습니다.</div>}
-                    {dataList.length > 0 && (
-                      <div id="gpu-map" className="gpu_map">
-                        {dataList
-                          .filter(item => {
-                            if (filter === 'all') return true
-                            if (filter === 'minor')
-                              return item.state === 'abnormal'
-                            if (filter === 'unknown')
-                              return item.state === 'unknown'
-                            return true
-                          })
-                          .sort((a, b) => {
-                            switch (sort) {
-                              case 'nameAsc':
-                                return a.group.localeCompare(b.group)
-                              case 'nameDesc':
-                                return b.group.localeCompare(a.group)
-                              case 'usageAsc':
-                                return a.util - b.util
-                              case 'usageDesc':
-                                return b.util - a.util
-                              default:
-                                return 0
-                            }
-                          })
-                          .map((gpuItem, index) => (
-                            <div
-                              className={`gpu_tile ${getAreaColor(
-                                gpuItem?.util
-                              )} ${
-                                gpuItem.state === 'minor' ? 'gpu_alert' : ''
-                              }`}
-                              key={`${gpuItem.group}-${gpuItem.gpu}`}
-                              onClick={() => {
-                                setPopOpen(true)
-                                setSelectGpu({
-                                  vmName: gpuItem.group,
-                                  gpuIndex: gpuItem.gpu,
-                                  data: gpuItem,
-                                })
-                              }}
-                            >
-                              <div className="name" title={gpuItem.group}>
-                                GPU-{gpuItem.gpu}
-                              </div>
-                              <div className="percent">{gpuItem.util}%</div>
-                              {(gpuItem.state === 'minor' ||
-                                gpuItem.state === 'unknown') && (
-                                <div
-                                  className={`badge_alert ${gpuItem.state}`}
-                                ></div>
-                              )}
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </Loading>
-              {/* 팝오버 샘플 : 팝오버는 tile의 색상값과 동일한 색상값과 동일한 클래스 추가 필요 */}
-              {/* close_btn, gpu_backdrop 클릭시 팝오버 닫히게 개발 필요*/}
-              <div className={`gpu_backdrop ${popOpen && 'active'}`}>
-                <div
-                  className={`gpu_popover ${getAreaColor(
-                    type !== 'gpu' ? selectCluster?.value : selectGpu?.util
-                  )} ${popOpen && 'active'}`}
-                >
-                  {type === 'node' && (
-                    <div className="data_node">
+                    <div className="data_gpu">
                       <div className="title">
-                        <span>{selectCluster?.group}</span>
-                        <Link
-                          to={`/clusters/${props.cluster}/gpunodes/${selectCluster?.group}`}
-                        >
-                          <span className="link"></span>
-                        </Link>
-                        <span
-                          className="close_btn"
-                          onClick={() => setPopOpen(false)}
-                        >
-                          ✕
+                        <span>
+                          <i className="ico-type24-gpuaas-gpu"></i>
+                          GPU-{selectGpu?.gpuIndex}
                         </span>
-                      </div>
-                      <div className="gpu_data_info">
-                        <div>
-                          <span className="label" style={{ flex: 'none' }}>
-                            가상머신 개수
-                          </span>
-                          <span className="value">
-                            {selectCluster?.vmList?.length}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {type === 'vm' && (
-                    <div className="data_vm">
-                      <div className="title">
-                        <span>{selectCluster?.group}</span>
-                        <Link
-                          to={`/clusters/${props.cluster}/projects/${selectCluster?.namespace}/vms/${selectCluster?.group}`}
-                        >
-                          <span className="link"></span>
-                        </Link>
                         <span
                           className="close_btn"
                           onClick={() => {
@@ -798,107 +818,74 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                           ✕
                         </span>
                       </div>
-                      {selectCluster?.node && (
-                        <div className="gpu_data_info">
-                          <div>
-                            <span className="label" style={{ flex: 'none' }}>
-                              노드
-                            </span>
-                            <span className="value">{selectCluster?.node}</span>
-                            <Link
-                              to={`/clusters/${props.cluster}/gpunodes/${selectCluster?.node}`}
-                            >
-                              <span className="link"></span>
-                            </Link>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {type === 'gpu' && (
-                    <>
-                      <div className="data_gpu">
-                        <div className="title">
-                          <span>
-                            <i className="ico-type24-gpuaas-gpu"></i>
-                            GPU-{selectGpu?.gpuIndex}
+                      <div className="gpu_data_info">
+                        <div>
+                          <span className="label" style={{ flex: 'none' }}>
+                            노드
                           </span>
-                          <span
-                            className="close_btn"
-                            onClick={() => {
-                              setPopOpen(false)
-                            }}
+                          <span className="value">
+                            {
+                              vmList.find(
+                                item => item.name === selectGpu?.vmName
+                              )?.node
+                            }
+                          </span>
+                          <Link
+                            to={`/clusters/${props.cluster}/gpunodes/${
+                              vmList.find(
+                                item => item.name === selectGpu?.vmName
+                              )?.node
+                            }`}
                           >
-                            ✕
-                          </span>
+                            <span className="link"></span>
+                          </Link>
                         </div>
-                        <div className="gpu_data_info">
-                          <div>
-                            <span className="label" style={{ flex: 'none' }}>
-                              노드
-                            </span>
-                            <span className="value">
-                              {
-                                vmList.find(
-                                  item => item.name === selectGpu?.vmName
-                                )?.node
-                              }
-                            </span>
-                            <Link
-                              to={`/clusters/${props.cluster}/gpunodes/${
-                                vmList.find(
-                                  item => item.name === selectGpu?.vmName
-                                )?.node
-                              }`}
-                            >
-                              <span className="link"></span>
-                            </Link>
-                          </div>
-                          <div>
-                            <span className="label" style={{ flex: 'none' }}>
-                              가상머신
-                            </span>
-                            <span className="value">{selectGpu?.vmName}</span>
-                            <Link
-                              to={`/clusters/${props.cluster}/projects/${
-                                vmList.find(
-                                  item => item.name === selectGpu?.vmName
-                                )?.project
-                              }/vms/${selectGpu?.vmName}`}
-                            >
-                              <span className="link"></span>
-                            </Link>
-                          </div>
+                        <div>
+                          <span className="label" style={{ flex: 'none' }}>
+                            가상머신
+                          </span>
+                          <span className="value">{selectGpu?.vmName}</span>
+                          <Link
+                            to={`/clusters/${props.cluster}/projects/${
+                              vmList.find(
+                                item => item.name === selectGpu?.vmName
+                              )?.project
+                            }/vms/${selectGpu?.vmName}`}
+                          >
+                            <span className="link"></span>
+                          </Link>
                         </div>
                       </div>
-                      <div className="gpu_info">
-                        <div className="gpu_usage_info">
-                          <span className="label">GPU 사용률</span>
-                          <span className="value">{selectGpu?.util || 0}%</span>
-                        </div>
-                        <div className="gpu_usage_info">
-                          <span className="label">GPU 메모리 사용률</span>
-                          <span className="value">{selectGpu?.mem || 0}%</span>
-                        </div>
+                    </div>
+                    <div className="gpu_info">
+                      <div className="gpu_usage_info">
+                        <span className="label">GPU 사용률</span>
+                        <span className="value">{selectGpu?.util || 0}%</span>
                       </div>
-                    </>
-                  )}
-                  {type !== 'gpu' && (
-                    <>
-                      <div className="gpu_info">
-                        <div className="gpu_usage_info">
-                          <span className="label">GPU 사용률</span>
-                          <span className="value">
-                            {selectCluster?.value || 0}%
-                          </span>
-                        </div>
-                        <div className="gpu_usage_info">
-                          <span className="label">GPU 메모리 사용률</span>
-                          <span className="value">
-                            {selectCluster?.valueMem || 0}%
-                          </span>
-                        </div>
+                      <div className="gpu_usage_info">
+                        <span className="label">GPU 메모리 사용률</span>
+                        <span className="value">{selectGpu?.mem || 0}%</span>
                       </div>
+                    </div>
+                  </>
+                )}
+                {type !== 'gpu' && (
+                  <>
+                    <div className="gpu_info">
+                      <div className="gpu_usage_info">
+                        <span className="label">GPU 사용률</span>
+                        <span className="value">
+                          {selectCluster?.value || 0}%
+                        </span>
+                      </div>
+                      <div className="gpu_usage_info">
+                        <span className="label">GPU 메모리 사용률</span>
+                        <span className="value">
+                          {selectCluster?.valueMem || 0}%
+                        </span>
+                      </div>
+                    </div>
+                    {gpuDataList.length > 0 && (
                       <div className="gpu_pop_boxes">
                         {gpuDataList
                           ?.sort((a, b) => a.metric.gpu - b.metric.gpu)
@@ -927,36 +914,36 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                             </div>
                           ))}
                       </div>
-                    </>
-                  )}
+                    )}
+                  </>
+                )}
 
-                  {/* alert_card는 초기 미노출, 에러 gpu_pop_box.gpu_alert 클릭시에만 해당 에러 노출  */}
-                  <div className="alert_card">
-                    <div className="alert_content">
-                      <div className="alert_header">
-                        <span className="alert_status minor">경고</span>
-                        <span className="alert_resource type_gpu">GPU</span>
-                      </div>
-                      <div className="alert_body">
-                        <p className="alert_message">
-                          GPU의 디스플레이 엔진 응답 지연을 감지했습니다.
-                        </p>
-                        <p className="alert_badge">
-                          <span className="alert_errorcode">
-                            XID error
-                            vm:vm023124234234241231231423421312314142342423,
-                            gpu:2, error_code:43
-                          </span>
-                        </p>
-                      </div>
-                      <p className="alert_date">2025-08-23</p>
+                {/* alert_card는 초기 미노출, 에러 gpu_pop_box.gpu_alert 클릭시에만 해당 에러 노출  */}
+                <div className="alert_card">
+                  <div className="alert_content">
+                    <div className="alert_header">
+                      <span className="alert_status minor">경고</span>
+                      <span className="alert_resource type_gpu">GPU</span>
                     </div>
+                    <div className="alert_body">
+                      <p className="alert_message">
+                        GPU의 디스플레이 엔진 응답 지연을 감지했습니다.
+                      </p>
+                      <p className="alert_badge">
+                        <span className="alert_errorcode">
+                          XID error
+                          vm:vm023124234234241231231423421312314142342423,
+                          gpu:2, error_code:43
+                        </span>
+                      </p>
+                    </div>
+                    <p className="alert_date">2025-08-23</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </Loading>
       </div>
     </>
   )
