@@ -41,13 +41,15 @@ const GpuUsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>GPU 사용 현황 Top5</label>
+          <label>{t('RESOURCES_GPU_USAGE_STATUS_TOP5')}</label>
           <div className="right"></div>
         </div>
         <Loading spinning={loading}>
           <div className="gpu_usage_top_wrap">
             <div className="gpu_usage_top">
-              <h3 className="gpu_usage_top_title">GPU 사용률</h3>
+              <h3 className="gpu_usage_top_title">
+                GPU {t('RESOURCES_USAGE')}
+              </h3>
               <ul className="gpu_usage_list">
                 {gpuUsageTop5Data?.map((item, idx) => (
                   <li className="gpu_usage_item" key={idx}>
@@ -70,7 +72,9 @@ const GpuUsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
               </ul>
             </div>
             <div className="gpu_usage_top color2">
-              <h3 className="gpu_usage_top_title">GPU 메모리 사용률</h3>
+              <h3 className="gpu_usage_top_title">
+                GPU {t('RESOURCES_GPU_AVG_MEMORY_USAGE')}
+              </h3>
               <ul className="gpu_usage_list">
                 {gpuMemUsageTop5Data?.map((item, idx) => (
                   <li className="gpu_usage_item" key={idx}>

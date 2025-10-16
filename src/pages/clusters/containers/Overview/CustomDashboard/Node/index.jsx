@@ -84,7 +84,7 @@ const Node = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>노드</label>
+          <label>{t('RESOURCES_NODE')}</label>
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status">
@@ -93,7 +93,7 @@ const Node = ({ widgetKey, monitorStore, ...props }) => {
                 <div className="cont1">
                   <div className="number_wrap">
                     <i className="ico-type24-clusternode-gpu">
-                      <span>GPU 노드</span>
+                      <span>GPU {t('RESOURCES_NODE')}</span>
                     </i>
                     <p>
                       <span className="em">{data.gpuRunning}</span>/{' '}
@@ -102,7 +102,7 @@ const Node = ({ widgetKey, monitorStore, ...props }) => {
                   </div>
                   <div className="number_wrap">
                     <i className="ico-type24-clusternode">
-                      <span>CPU 노드</span>
+                      <span>CPU {t('RESOURCES_NODE')}</span>
                     </i>
                     <p>
                       <span className="em">{data.cpuRunning}</span>/{' '}
@@ -116,27 +116,21 @@ const Node = ({ widgetKey, monitorStore, ...props }) => {
                       {data.gpuRunning + data.cpuRunning}
                     </div>
                     <p className="status running">
-                      <span>실행중</span>
+                      <span>{t('RESOURCES_RUNNING')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{data.warning}</div>
                     <p className="status warning">
-                      <span>주의</span>
+                      <span>{t('RESOURCES_WARNING')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">
                     <div className="value">{data.unschedulable}</div>
                     <p className="status unschedulable">
-                      <span>스케줄링 불가</span>
+                      <span>{t('RESOURCES_UNSCHEDULABLE')}</span>
                     </p>
                   </div>
-                  {/* <div className="status_wrap">
-                    <div className="value">{data.gpuTotal + data.cpuTotal}</div>
-                    <p className="status total">
-                      <span>전체</span>
-                    </p>
-                  </div> */}
                 </div>
               </div>
             </div>

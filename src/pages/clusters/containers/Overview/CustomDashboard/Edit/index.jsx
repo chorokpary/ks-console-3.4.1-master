@@ -446,38 +446,6 @@ const CustomDashboardEdit = props => {
                   </div>
                 </div>
               </div>
-              {/* <div className="section-content">
-                <label className="switch type_text">
-                  <input
-                    type="checkbox"
-                    id="kaasGpuPanel-toggle"
-                    className="toggle"
-                    defaultChecked={activeDashboard.kaasGpu}
-                  />
-                  <span
-                    className="slider"
-                    onClick={e => toggleHandler(e, 'kaasGpu')}
-                  ></span>
-                </label>
-                <label className="section-title">{t('KaaS')}</label>
-                <button className="icon_preview open-popover-button ">
-                  <i className="ico-etc-preview"></i>
-                </button>
-
-                <div className="popover-container">
-                  <div className="popover-content">
-                    <h5>{t('RESOURCES_PREVIEW')}</h5>
-                    <div className="preview_cont">
-                      <div className="view img_35">
-                        {t('RESOURCES_PREVIEW')}
-                      </div>
-                    </div>
-                    <button className="close-popover-button">
-                      <i className="ico-close"></i>
-                    </button>
-                  </div>
-                </div>
-              </div> */}
               <div className="section-content">
                 <label className="switch type_text">
                   <input

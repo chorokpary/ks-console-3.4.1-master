@@ -8,11 +8,11 @@ import VmStore from 'stores/resources/vms'
 const typeOption = [
   {
     value: 'node',
-    label: t('노드'),
+    label: t('RESOURCES_NODE'),
   },
   {
     value: 'vm',
-    label: t('가상머신'),
+    label: t('RESOURCES_VM'),
   },
   {
     value: 'gpu',
@@ -22,41 +22,41 @@ const typeOption = [
 const rangeOption = [
   {
     value: 3600,
-    label: t('최근 1시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 1 }),
   },
   {
     value: 3600 * 2,
-    label: t('최근 2시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 2 }),
   },
   {
     value: 3600 * 3,
-    label: t('최근 3시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 3 }),
   },
   {
     value: 3600 * 12,
-    label: t('최근 12시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 12 }),
   },
   {
     value: 3600 * 24,
-    label: t('최근 24시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 24 }),
   },
 ]
 const sortOption = [
   {
     value: 'nameAsc',
-    label: t('이름 ↓'),
+    label: t('RESOURCES_NAME') + ' ↓',
   },
   {
     value: 'nameDesc',
-    label: t('이름 ↑'),
+    label: t('RESOURCES_NAME') + ' ↑',
   },
   {
     value: 'usageAsc',
-    label: t('사용률 ↓'),
+    label: t('RESOURCES_USAGE') + ' ↓',
   },
   {
     value: 'usageDesc',
-    label: t('사용률 ↑'),
+    label: t('RESOURCES_USAGE') + ' ↑',
   },
 ]
 
@@ -123,12 +123,11 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       nodeData?.nodes?.filter(item => {
         return gpuNodeData.map(i => i.name).includes(item.name)
       }) || []
-    console.log('gpuNodeList', gpuNodeList)
     if (gpuNodeList.length > 0) getGpuNodeList(gpuNodeList, true)
 
     const vmData = await vmStore.fetchList({ limit: 1000, ...props })
     const vmList = vmData.filter(item => {
-      return item.gpus.length > 0
+      return item.gpus.length > 0 && item.node
     })
     setVmList(vmList)
 
@@ -219,13 +218,11 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
 
       const expr = clusterArr
         .map(item => {
-          console.log('item', item)
           const vmList = item?.vmList
             ?.map(obj => {
               return obj.split('/')[1]
             })
             .join('|')
-          console.log('vmList', vmList)
           return `(
               avg by (group) (
                 label_replace(
@@ -535,7 +532,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         <div className="grid_option_area">
           <div className="legend_button_wrapper">
             <button className="legend_toggle_button" onClick={toggleLegend}>
-              범례
+              {t('RESOURCES_LEGEND')}
             </button>
             <div
               className="legend_dropdown_container"
@@ -580,7 +577,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               />
               <span>
                 <span className="gpu_badge_number">{dataList.length}</span>
-                <span>전체</span>
+                <span>{t('RESOURCES_ALL')}</span>
               </span>
             </label>
             <label htmlFor="al_name_3">
@@ -595,7 +592,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 <span className="gpu_badge_number minor">
                   {dataList.filter(item => item.state === 'abnormal').length}
                 </span>
-                <span>경고</span>
+                <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
               </span>
             </label>
             <label htmlFor="al_name_4">
@@ -610,7 +607,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 <span className="gpu_badge_number unknown">
                   {dataList.filter(item => item.state === 'unknown').length}
                 </span>
-                <span>미확인</span>
+                <span>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</span>
               </span>
             </label>
             <div className="usageTab usageTabCustom">
@@ -633,7 +630,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         </div>
         <Loading spinning={loading || gpuLoading || vmLoading || nodeLoading}>
           <div className="gpu_map_wrap">
-            {dataList.length === 0 && <div>데이터가 없습니다.</div>}
+            {dataList.length === 0 && <div>{t('RESOURCES_NO_DATA')}</div>}
             {type !== 'gpu' && dataList.length > 0 && (
               <div id="gpunode-map" className="gpunode_map">
                 {dataList
@@ -757,7 +754,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                     <div className="gpu_data_info">
                       <div>
                         <span className="label" style={{ flex: 'none' }}>
-                          가상머신 개수
+                          {t('RESOURCES_VM_COUNT')}
                         </span>
                         <span className="value">
                           {selectCluster?.vmList?.length}
@@ -788,7 +785,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                       <div className="gpu_data_info">
                         <div>
                           <span className="label" style={{ flex: 'none' }}>
-                            노드
+                            {t('RESOURCES_NODE')}
                           </span>
                           <span className="value">{selectCluster?.node}</span>
                           <Link
@@ -821,7 +818,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                       <div className="gpu_data_info">
                         <div>
                           <span className="label" style={{ flex: 'none' }}>
-                            노드
+                            {t('RESOURCES_NODE')}
                           </span>
                           <span className="value">
                             {
@@ -842,7 +839,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                         </div>
                         <div>
                           <span className="label" style={{ flex: 'none' }}>
-                            가상머신
+                            {t('RESOURCES_VM')}
                           </span>
                           <span className="value">{selectGpu?.vmName}</span>
                           <Link
@@ -859,11 +856,15 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                     </div>
                     <div className="gpu_info">
                       <div className="gpu_usage_info">
-                        <span className="label">GPU 사용률</span>
+                        <span className="label">
+                          {t('RESOURCES_GPU_UTILIZATION_PERCENT')}
+                        </span>
                         <span className="value">{selectGpu?.util || 0}%</span>
                       </div>
                       <div className="gpu_usage_info">
-                        <span className="label">GPU 메모리 사용률</span>
+                        <span className="label">
+                          {t('RESOURCES_GPU_MEMORY_UTILIZATION_PERCENT')}
+                        </span>
                         <span className="value">{selectGpu?.mem || 0}%</span>
                       </div>
                     </div>
@@ -873,13 +874,17 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                   <>
                     <div className="gpu_info">
                       <div className="gpu_usage_info">
-                        <span className="label">GPU 사용률</span>
+                        <span className="label">
+                          {t('RESOURCES_GPU_UTILIZATION_PERCENT')}
+                        </span>
                         <span className="value">
                           {selectCluster?.value || 0}%
                         </span>
                       </div>
                       <div className="gpu_usage_info">
-                        <span className="label">GPU 메모리 사용률</span>
+                        <span className="label">
+                          {t('RESOURCES_GPU_MEMORY_UTILIZATION_PERCENT')}
+                        </span>
                         <span className="value">
                           {selectCluster?.valueMem || 0}%
                         </span>

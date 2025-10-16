@@ -14,27 +14,27 @@ import TinyArea from 'projects/containers/Overview/ResourceUsage/TinyArea'
 const typeOption = [
   {
     value: 3600,
-    label: t('최근 1시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 1 }),
   },
   {
     value: 10800,
-    label: t('최근 3시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 3 }),
   },
   {
     value: 21600,
-    label: t('최근 6시간'),
+    label: t('RESOURCES_LAST_TIME_HOUR_CUSTOM', { hour: 6 }),
   },
   {
     value: 86400,
-    label: t('최근 1일'),
+    label: t('RESOURCES_LAST_TIME_DAY_CUSTOM', { day: 1 }),
   },
   {
     value: 172800,
-    label: t('최근 2일'),
+    label: t('RESOURCES_LAST_TIME_DAY_CUSTOM', { day: 2 }),
   },
   {
     value: 604800,
-    label: t('최근 7일'),
+    label: t('RESOURCES_LAST_TIME_DAY_CUSTOM', { day: 7 }),
   },
 ]
 const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
@@ -193,7 +193,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
         <div className="d-flex align-start w-100">
           <div className="content-box" style={{ width: '60%' }}>
             <div className="grid_title" style={{ cursor: 'default' }}>
-              <label>GPU 사용 현황</label>
+              <label>{t('RESOURCES_GPU_USAGE_STATUS')}</label>
             </div>
           </div>
           <div
@@ -214,7 +214,9 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
         <Loading spinning={loading}>
           <div className="gpu_usage_grid">
             <div className="gpu_usage_card">
-              <h3 className="gpu_usage_card_title">GPU 평균 사용률</h3>
+              <h3 className="gpu_usage_card_title">
+                {t('RESOURCES_GPU_AVG_USAGE')}
+              </h3>
               <p className="gpu_usage_card_value">{gpuAvgUsageLast}%</p>
               <div className="gpu_usage_card_chart">
                 {gpuAvgUsage?.length > 0 &&
@@ -241,7 +243,9 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
             </div>
 
             <div className="gpu_usage_card">
-              <h3 className="gpu_usage_card_title">GPU 메모리 사용량</h3>
+              <h3 className="gpu_usage_card_title">
+                {t('RESOURCES_GPU_AVG_MEMORY_USAGE')}
+              </h3>
               <p className="gpu_usage_card_value">{gpuAvgMemUsageLast}</p>
               <div className="gpu_usage_card_chart">
                 {gpuAvgMemUsage?.length > 0 &&
@@ -269,7 +273,9 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
             </div>
 
             <div className="gpu_usage_card">
-              <h3 className="gpu_usage_card_title">GPU 온도 평균</h3>
+              <h3 className="gpu_usage_card_title">
+                {t('RESOURCES_GPU_TEMP_AVG')}
+              </h3>
               <p className="gpu_usage_card_value">{gpuTempLast}°C</p>
               <div className="gpu_usage_card_chart">
                 {tempData?.length > 0 &&
@@ -296,7 +302,9 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
             </div>
 
             <div className="gpu_usage_card">
-              <h3 className="gpu_usage_card_title">전력 사용량 (Total)</h3>
+              <h3 className="gpu_usage_card_title">
+                {t('RESOURCES_POWER_USAGE')} (Total)
+              </h3>
               <p className="gpu_usage_card_value">{gpuPowerLast}W</p>
               <div className="gpu_usage_card_chart">
                 {gpuPowerData?.length > 0 &&

@@ -12,7 +12,6 @@ import Node from './Node'
 import VirtualMachine from './VirtualMachine'
 import GpuStatus from './GpuStatus'
 import GpuUsage from './GpuUsage'
-import KaasGpu from './KaasGpu'
 import GpuMap from './GpuMap'
 import GpuUsageStatus from './GpuUsageStatus'
 import GpuUsageTop5 from './GpuUsageTop5'
@@ -290,7 +289,6 @@ const widgetMap = {
   virtualMachine: props => <VirtualMachine {...props} />,
   gpuStatus: props => <GpuStatus {...props} />,
   gpuUsage: props => <GpuUsage {...props} />,
-  kaasGpu: props => <KaasGpu {...props} />,
   gpuMap: props => <GpuMap {...props} />,
   gpuUsageStatus: props => <GpuUsageStatus {...props} />,
   gpuUsageTop5: props => <GpuUsageTop5 {...props} />,
