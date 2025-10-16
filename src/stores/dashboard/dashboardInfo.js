@@ -28,7 +28,7 @@ export default class DashboardInfo {
     x: 0,
     y: 4,
     w: 12,
-    h: 10,
+    h: 12,
   }
   resourceUsage = {
     x: 0,
@@ -131,5 +131,66 @@ export default class DashboardInfo {
     y: 35,
     w: 3,
     h: 7,
+  }
+
+  node = {
+    x: 0,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
+  virtualMachine = {
+    x: 3,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
+  gpuStatus = {
+    x: 6,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
+  gpuUsage = {
+    x: 9,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
+  kaasGpu = {
+    x: 12,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
+  gpuMap = {
+    x: 0,
+    y: 4,
+    w: 6,
+    h: 12,
+  }
+  gpuUsageStatus = {
+    x: 6,
+    y: 4,
+    w: 6,
+    h: 8,
+  }
+  gpuUsageTop5 = {
+    x: 6,
+    y: 12,
+    w: 6,
+    h: 4,
+  }
+  alarmVertical = {
+    x: 12,
+    y: 4,
+    w: 3,
+    h: 12,
+  }
+  alarmHorizontal = {
+    x: 0,
+    y: 16,
+    w: 12,
+    h: 4,
   }
 }

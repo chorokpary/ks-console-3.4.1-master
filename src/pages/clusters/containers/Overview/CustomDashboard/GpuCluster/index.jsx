@@ -579,7 +579,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                         <TransformComponent
                           wrapperStyle={{
                             width: '1000px',
-                            height: '415px',
+                            height: '540px',
                             overflowY: 'scroll',
                           }}
                         >
@@ -742,6 +742,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
@@ -767,6 +768,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
@@ -794,6 +796,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
@@ -818,6 +821,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                                   bgColor="transparent"
                                   width={256}
                                   height={32}
+                                  pointCount={11}
                                 />
                               </div>
                             )
