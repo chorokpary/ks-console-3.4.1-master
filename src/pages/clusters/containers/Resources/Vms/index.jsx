@@ -248,12 +248,12 @@ export default class Vms extends React.Component {
                   flicker
                 />
               </div>
-              <div>
+              <div className={styles.text_no_wrap}>
                 <Link
                   className={styles.title}
                   to={`/clusters/${cluster}/projects/${record.project}/vms/${name}`}
                 >
-                  {name}{' '}
+                  {name}
                 </Link>
                 <div className={styles.desc}>{this.getItemDesc(state)}</div>
               </div>
@@ -322,11 +322,13 @@ export default class Vms extends React.Component {
             common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " +
             record.flavor_object.root_disk + " GiB"
           return (
-            <Tooltip content={flavor_spec} placement="top">
-              <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
-                {flavor}
-              </Link>
-            </Tooltip>
+            <div className={styles.text_no_wrap}>
+              <Tooltip content={flavor_spec} placement="top">
+                <Link to={`/clusters/${cluster}/flavors/${flavor}`}>
+                  {flavor}
+                </Link>
+              </Tooltip>
+            </div>
           )
         },
       },
@@ -405,7 +407,9 @@ export default class Vms extends React.Component {
           return node === 'N/A' ? (
             node
           ) : (
-            <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>
+            <div className={styles.text_no_wrap}>
+              <Link to={`/clusters/${cluster}/nodes/${node}`}>{node}</Link>
+            </div>
           )
         },
       },

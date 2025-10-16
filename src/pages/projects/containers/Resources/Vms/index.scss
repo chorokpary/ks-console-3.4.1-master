@@ -44,6 +44,14 @@
     }
   }
 
+  .text_no_wrap {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+    overflow: hidden;
+    max-width: 200px;
+  }
+
   .title {
     @include TypographyTitleH6($dark-color07);
   }
@@ -51,6 +59,14 @@
   .desc {
     @include TypographyParagraph($dark-color01);
   }
+}
+
+.text_no_wrap {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  overflow: hidden;
+  max-width: 150px;
 }
 
 .textCenter {

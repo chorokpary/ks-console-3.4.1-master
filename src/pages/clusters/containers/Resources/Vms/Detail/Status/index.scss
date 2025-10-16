@@ -23,7 +23,7 @@
   background-color: $white;
   border: 1px solid $border-color;
   border-radius: 4px;
-  transition: all $trans-speed;  
+  transition: all $trans-speed;
 
   .icon {
     position: relative;
@@ -87,7 +87,7 @@
         justify-content: space-between;
         margin: 0 -10px;
 
-        & > div {
+        &>div {
           margin: 0 10px;
           width: calc(50% - 20px);
         }
@@ -117,12 +117,12 @@
         width: 28%;
       }
 
-      & > div {
+      &>div {
         @include ellipsis;
         @include TypographyTitleH6($dark-color07);
       }
 
-      & > p {
+      &>p {
         @include ellipsis;
         @include TypographyParagraph($dark-color01);
       }
@@ -131,19 +131,23 @@
 
   .ipTip {
     width: 176px;
+
     ul {
       margin-top: 8px;
     }
+
     li {
       display: flex;
       font-weight: normal;
+
       :global {
         .icon {
           margin-right: 4px;
         }
       }
     }
-    li + li {
+
+    li+li {
       margin-top: 4px;
     }
   }
@@ -183,12 +187,12 @@
     min-width: 120px;
     width: 12%;
 
-    & > div {
+    &>div {
       @include ellipsis;
       @include TypographyTitleH6($dark-color07);
     }
 
-    & > p {
+    &>p {
       @include ellipsis;
       @include TypographyParagraph($dark-color01);
     }
@@ -240,12 +244,12 @@
     min-width: 120px;
     width: 20%;
 
-    & > div {
+    &>div {
       @include ellipsis;
       @include TypographyTitleH6($dark-color07);
     }
 
-    & > p {
+    &>p {
       @include ellipsis;
       @include TypographyParagraph($dark-color01);
     }
@@ -296,12 +300,12 @@
   .title {
     min-width: 120px;
 
-    & > div {
+    &>div {
       @include ellipsis;
       @include TypographyTitleH6($dark-color07);
     }
 
-    & > p {
+    &>p {
       @include ellipsis;
       @include TypographyParagraph($dark-color01);
     }
@@ -347,6 +351,7 @@
     border-color: $dark-color07;
 
     .content .text {
+
       div,
       a,
       p {
@@ -444,7 +449,7 @@
         justify-content: space-between;
         margin: 0 -10px;
 
-        & > div {
+        &>div {
           margin: 0 10px;
           width: calc(50% - 20px);
         }
@@ -474,12 +479,12 @@
         width: 20%;
       }
 
-      & > div {
+      &>div {
         @include ellipsis;
         @include TypographyTitleH6($dark-color07);
       }
 
-      & > p {
+      &>p {
         @include ellipsis;
         @include TypographyParagraph($dark-color01);
       }
@@ -488,19 +493,23 @@
 
   .ipTip {
     width: 176px;
+
     ul {
       margin-top: 8px;
     }
+
     li {
       display: flex;
       font-weight: normal;
+
       :global {
         .icon {
           margin-right: 4px;
         }
       }
     }
-    li + li {
+
+    li+li {
       margin-top: 4px;
     }
   }
@@ -519,7 +528,7 @@
   border-radius: 0 0 4px 4px;
   z-index: 1;
 
-  .containers > div {
+  .containers>div {
     background-color: $white;
     border: 1px solid $light-color03;
     margin-bottom: 12px;
