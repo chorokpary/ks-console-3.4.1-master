@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import GpuNodeStore from 'stores/resources/gpunodes'
 import VmStore from 'stores/resources/vms'
+import { getCustomValue } from 'utils/monitoring'
 
 const typeOption = [
   {
@@ -160,9 +161,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               )
             )`
     const exprMem = `(
-              avg by (pod) (
-                  DCGM_FI_DEV_FB_USED{pod=~"${vmNameList}"}
-              )
+              avg by (pod) (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmNameList}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmNameList}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmNameList}"}) * 100)
             )`
 
     const vmAvgUsageData = await customStore.fetchMetric({
@@ -274,45 +273,45 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
 
   useEffect(() => {
     if (selectCluster) {
-      var currentTime = Math.floor(Date.now() / 1000)
-      const paramsData = {
-        start: currentTime - 1000,
-        end: currentTime - 1000,
-      }
-      const getGpuData = async () => {
-        const expr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"} / 100`
-        const gpuAvgUsageData = await customStore.fetchMetric({
-          expr: expr,
-          paramsData,
-        })
-
-        setGpuDataList(gpuAvgUsageData)
-
-        // Xid Error
-        const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"}`
-        const gpuXidData = await customStore.fetchMetric({
-          expr: gpuXidExpr,
-          cluster: selectCluster?.namespace,
-        })
-
-        // Xid Error - 최근 10분간 변화량이 있는지 확인
-        const gpuXidExprChangeExpr = `changes((max by (gpu, pod) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"})[10m:])) > 0`
-        const gpuXidExprChangeData = await customStore.fetchMetric({
-          expr: gpuXidExprChangeExpr,
-          cluster: selectCluster?.namespace,
-          start: currentTime - range, // 1시간 기준 > 3600
-          end: currentTime,
-        })
-        const gpuXidTransform = transformXidDataToObject(
-          gpuXidData,
-          gpuXidExprChangeData
-        )
-        setGpuXidData(gpuXidTransform)
-      }
-
-      getGpuData()
+      getGpuData(selectCluster)
     }
-  }, [selectCluster, range])
+  }, [range])
+
+  const getGpuData = async selectCluster => {
+    var currentTime = Math.floor(Date.now() / 1000)
+    const paramsData = {
+      start: currentTime - 1000,
+      end: currentTime - 1000,
+    }
+    const expr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"}`
+    const gpuAvgUsageData = await customStore.fetchMetric({
+      expr: expr,
+      paramsData,
+    })
+
+    setGpuDataList(gpuAvgUsageData)
+
+    // Xid Error
+    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"}`
+    const gpuXidData = await customStore.fetchMetric({
+      expr: gpuXidExpr,
+      cluster: selectCluster?.namespace,
+    })
+
+    // Xid Error - 최근 10분간 변화량이 있는지 확인
+    const gpuXidExprChangeExpr = `changes((max by (gpu, pod) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod="${selectCluster.group}",namespace="${selectCluster.namespace}"})[10m:])) > 0`
+    const gpuXidExprChangeData = await customStore.fetchMetric({
+      expr: gpuXidExprChangeExpr,
+      cluster: selectCluster?.namespace,
+      start: currentTime - range, // 1시간 기준 > 3600
+      end: currentTime,
+    })
+    const gpuXidTransform = transformXidDataToObject(
+      gpuXidData,
+      gpuXidExprChangeData
+    )
+    setGpuXidData(gpuXidTransform)
+  }
 
   const transformXidDataToObject = (data1, data2, gpuUtil, gpuMem) => {
     const resultMap = {}
@@ -446,7 +445,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
 
       let formattedValue = 0
       if (lastValue && Number(lastValue) !== 0) {
-        formattedValue = Number(lastValue).toFixed(2) // 소수점 둘째자리까지
+        formattedValue = Number(lastValue).toFixed(0)
       }
 
       result[pod][gpu] = formattedValue
@@ -660,8 +659,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                         className={`gpu_tile ${getAreaColor(item.value)}`}
                         key={`${item.group} - ${index}`}
                         onClick={() => {
-                          setPopOpen(true)
+                          getGpuData(item)
                           setSelectCluster(item)
+                          setPopOpen(true)
                         }}
                       >
                         <div className="name" title={item.group}>
@@ -707,12 +707,12 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                       }`}
                       key={`${gpuItem.group}-${gpuItem.gpu}-${index}`}
                       onClick={() => {
-                        setPopOpen(true)
                         setSelectGpu({
                           vmName: gpuItem.group,
                           gpuIndex: gpuItem.gpu,
                           data: gpuItem,
                         })
+                        setPopOpen(true)
                       }}
                     >
                       <div className="name" title={gpuItem.group}>
@@ -732,7 +732,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             <div className={`gpu_backdrop ${popOpen && 'active'}`}>
               <div
                 className={`gpu_popover ${getAreaColor(
-                  type !== 'gpu' ? selectCluster?.value : selectGpu?.util
+                  type !== 'gpu' ? selectCluster?.value : selectGpu?.data?.util
                 )} ${popOpen && 'active'}`}
               >
                 {type === 'node' && (
@@ -859,13 +859,17 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                         <span className="label">
                           {t('RESOURCES_GPU_UTILIZATION_PERCENT')}
                         </span>
-                        <span className="value">{selectGpu?.util || 0}%</span>
+                        <span className="value">
+                          {selectGpu?.data?.util || 0}%
+                        </span>
                       </div>
                       <div className="gpu_usage_info">
                         <span className="label">
                           {t('RESOURCES_GPU_MEMORY_UTILIZATION_PERCENT')}
                         </span>
-                        <span className="value">{selectGpu?.mem || 0}%</span>
+                        <span className="value">
+                          {selectGpu?.data?.mem || 0}%
+                        </span>
                       </div>
                     </div>
                   </>
