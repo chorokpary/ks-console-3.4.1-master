@@ -5,6 +5,7 @@ import {
   getAreaChartOps,
   getSuitableUnit,
   getValueByUnit,
+  getCustomValue,
 } from 'utils/monitoring'
 import { get, last } from 'lodash'
 import { SimpleArea } from 'components/Charts'
@@ -48,8 +49,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
   const [metricData, setMetricData] = useState([])
   const [vmData, setVmData] = useState({ cpuData: [], memoryData: [] })
   const [kaasData, setKaasData] = useState({ cpuData: [], memoryData: [] })
-  const [podData, setPodData] = useState([])
-  const podFetchedRef = useRef(false)
+  const [podData, setPodData] = useState({ cpuData: [], memoryData: [] })
 
   useEffect(() => {
     let cleanupTrigger = true
@@ -137,26 +137,24 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
       })
 
       const podCpuData = await customStore.fetchMetric({
-        expr: `sum(sum by (pod) (rate(container_cpu_usage_seconds_total[5m])))`,
+        expr: `sum(rate(container_cpu_usage_seconds_total{image!="",pod!~"^virt-launcher.*"}[5m]))`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
       })
 
       const podMemoryData = await customStore.fetchMetric({
-        expr: `sum(sum by (pod) (container_memory_usage_bytes))`,
+        expr: `sum(container_memory_usage_bytes{image!="",pod!~"^virt-launcher.*"})`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
       })
 
-      console.log('podCpuData', podCpuData)
-      console.log('podMemoryData', podMemoryData)
-      // setPodData({
-      //   ...podData,
-      //   ['cpuData']: podCpuData,
-      //   ['memoryData']: podMemoryData,
-      // })
+      setPodData({
+        ...podData,
+        ['cpuData']: podCpuData,
+        ['memoryData']: podMemoryData,
+      })
 
       if (cleanupTrigger) {
         setLoading(false)
@@ -168,34 +166,6 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
       setLoading(false)
     }
   }, [])
-
-  const handlePodData = podData => {
-    const data = {
-      pod_cpu_usage: [
-        { values: sumPodDataValue(get(podData, `pod_cpu_usage.data.result`)) },
-      ],
-      pod_memory_usage: [
-        {
-          values: sumPodDataValue(get(podData, `pod_memory_usage.data.result`)),
-        },
-      ],
-    }
-    console.log('data', data)
-    setPodData(data)
-    return data
-  }
-  const sumPodDataValue = _podData => {
-    const _values = _podData?.map(obj => obj.values)
-    let valueArr = []
-    _values?.map((arr, idx) => {
-      let a = 0
-      arr.map(arr2 => {
-        a += Number(arr2[1])
-      })
-      valueArr.push([arr[idx]?.[0], a / arr.length])
-    })
-    return valueArr
-  }
 
   // handle left data
   const handleData = (rightTabActive, metricData) => {
@@ -220,23 +190,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
     if (tab === 'node') {
       data = metricData
     } else if (tab === 'pod') {
-      if (!podFetchedRef.current) {
-        setLoading(true)
-
-        const fetchedPodData = await podStore.fetchMetrics({
-          metrics: Object.values(PodMetricTypes),
-          step: '5m',
-          times: 100,
-          cluster: props.cluster,
-        })
-        console.log('fetchedPodData', fetchedPodData)
-        const handleData = handlePodData(fetchedPodData)
-        podFetchedRef.current = true // 호출 기록
-        data = handleData
-        setLoading(false)
-      } else {
-        data = podData
-      }
+      data = podData
     } else if (tab === 'vm') {
       data = vmData
     } else if (tab === 'kaas') {

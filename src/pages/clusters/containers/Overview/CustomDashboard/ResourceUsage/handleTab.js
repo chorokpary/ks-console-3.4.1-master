@@ -1,5 +1,10 @@
-import { get, last } from "lodash"
-import { getLastMonitoringData, getAreaChartOps, getSuitableUnit, getValueByUnit } from 'utils/monitoring'
+import { get, last } from 'lodash'
+import {
+  getLastMonitoringData,
+  getAreaChartOps,
+  getSuitableUnit,
+  getValueByUnit,
+} from 'utils/monitoring'
 
 const MetricTypes = {
   cpu_usage: 'cluster_cpu_usage',
@@ -15,14 +20,13 @@ const MetricTypes = {
   // pod_capacity: 'cluster_pod_quota',
   pod_utilisation: 'cluster_pod_utilisation',
   pod_cpu_usage: 'pod_cpu_usage',
-  pod_memory_usage: 'pod_memory_usage'
+  pod_memory_usage: 'pod_memory_usage',
 }
 
 const getValue = data => get(data, 'value[1]', 0)
 
 export function getData(activeTab, data) {
-
-  var result;
+  var result
   if (activeTab == 'node') {
     result = getNodeData(data)
   } else if (activeTab == 'pod') {
@@ -32,12 +36,11 @@ export function getData(activeTab, data) {
   } else if (activeTab == 'kaas') {
     result = getKaasData(data)
   }
-  return result;
+  return result
 }
 
 export function getContentOptions(activeTab, data) {
-
-  var result = [];
+  var result = []
   if (activeTab == 'node') {
     result = getNodeResult(data)
   } else if (activeTab == 'pod') {
@@ -47,7 +50,7 @@ export function getContentOptions(activeTab, data) {
   } else if (activeTab == 'kaas') {
     result = getKaasResult(data)
   }
-  return result;
+  return result
 }
 
 // ================================= left tab data =================================
@@ -82,7 +85,7 @@ function getNodeData(metricData) {
     obj._unit = getSuitableUnit(obj.total || obj.used, obj.unitType) || obj.unit
     obj._used = getValueByUnit(obj.used, obj._unit)
     obj._total = getValueByUnit(obj.total, obj._unit)
-    obj._percent = obj._used / obj._total * 100
+    obj._percent = (obj._used / obj._total) * 100
   })
 
   return result
@@ -94,33 +97,34 @@ function getPodData(podData) {
       activeTab: 'cpu',
       name: 'CPU',
       unitType: 'cpu',
-      used: podData.pod_cpu_usage ? last(podData.pod_cpu_usage[0].values)[1] : 0,
+      used: podData.cpuData ? last(podData.cpuData[0].values)[1] : 0,
       total: 1,
     },
     {
       activeTab: 'memory',
       name: '메모리',
       unitType: 'memory',
-      used: podData.pod_memory_usage ? last(podData.pod_memory_usage[0].values)[1] : 0,
+      unit: 'Gi',
+      used: podData.memoryData ? last(podData.memoryData[0].values)[1] : 0,
       total: 99999999,
     },
   ]
 
   result.map(obj => {
-    obj._unit = getSuitableUnit(obj.total || obj.used, obj.unitType) || obj.unit
+    obj._unit = getSuitableUnit(obj.used, obj.unitType) || obj.unit
     obj._used = getValueByUnit(obj.used, obj._unit)
     obj._total = getValueByUnit(obj.total, obj._unit)
-    obj._percent = obj._used / obj._total * 100
+    obj._percent = (obj._used / obj._total) * 100
   })
   return result
 }
 
 function getVmData(data) {
-  var cpuCnt = 0;
+  var cpuCnt = 0
   data.cpuData.map(obj => {
     cpuCnt += Number(last(obj.values)[1])
   })
-  var memoryCnt = 0;
+  var memoryCnt = 0
   data.memoryData.map(obj => {
     memoryCnt += Number(last(obj.values)[1])
   })
@@ -148,17 +152,17 @@ function getVmData(data) {
     obj._unit = getSuitableUnit(obj.total || obj.used, obj.unitType) || obj.unit
     obj._used = getValueByUnit(obj.used, obj._unit)
     obj._total = getValueByUnit(obj.total, obj._unit)
-    obj._percent = obj._used / obj._total * 100
+    obj._percent = (obj._used / obj._total) * 100
   })
   return result
 }
 
 function getKaasData(data) {
-  var cpuCnt = 0;
+  var cpuCnt = 0
   data.cpuData.map(obj => {
     cpuCnt += Number(last(obj.values)[1])
   })
-  var memoryCnt = 0;
+  var memoryCnt = 0
   data.memoryData.map(obj => {
     memoryCnt += Number(last(obj.values)[1])
   })
@@ -186,11 +190,10 @@ function getKaasData(data) {
     obj._unit = getSuitableUnit(obj.total || obj.used, obj.unitType) || obj.unit
     obj._used = getValueByUnit(obj.used, obj._unit)
     obj._total = getValueByUnit(obj.total, obj._unit)
-    obj._percent = obj._used / obj._total * 100
+    obj._percent = (obj._used / obj._total) * 100
   })
   return result
 }
-
 
 // ================================= right tab data =================================
 function getNodeResult(metricData) {
@@ -235,7 +238,7 @@ function getPodResult(podData) {
       unit: '%',
       unitType: 'cpu',
       legend: ['USAGE'],
-      data: podData.pod_cpu_usage
+      data: podData.cpuData,
     },
     {
       activeTab: 'memory',
@@ -244,7 +247,7 @@ function getPodResult(podData) {
       unit: '%',
       unitType: 'memory',
       legend: ['USAGE'],
-      data: podData.pod_memory_usage
+      data: podData.memoryData,
     },
   ]
   return result
@@ -258,7 +261,7 @@ function getVmResult(data) {
       title: 'CPU_USAGE',
       unit: '%',
       legend: ['USAGE'],
-      data: data.cpuData
+      data: data.cpuData,
       // legend:
       //   data.cpuData.map(item => (
       //     item.metric.pod
@@ -276,7 +279,7 @@ function getVmResult(data) {
       unit: '%',
       unitType: 'memory',
       legend: ['USAGE'],
-      data: data.memoryData
+      data: data.memoryData,
       // legend:
       //   data.memoryData.map(item => (
       //     item.metric.pod
@@ -299,7 +302,7 @@ function getKaasResult(data) {
       title: 'CPU_USAGE',
       unit: '%',
       legend: ['USAGE'],
-      data: data.cpuData
+      data: data.cpuData,
       // legend:
       //   data.cpuData.map(item => (
       //     item.metric.pod
@@ -317,7 +320,7 @@ function getKaasResult(data) {
       unit: '%',
       unitType: 'memory',
       legend: ['USAGE'],
-      data: data.memoryData
+      data: data.memoryData,
       // legend:
       //   data.memoryData.map(item => (
       //     item.metric.pod

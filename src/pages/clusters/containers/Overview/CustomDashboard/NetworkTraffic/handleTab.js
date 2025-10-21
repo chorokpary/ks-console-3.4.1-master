@@ -59,29 +59,6 @@ function getNodeData(metricData) {
   return lastData
 }
 
-// function getPodData(podData) {
-//   const inbound = last(
-//     get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {})
-//       .values
-//   )?.[1]
-//   const outbound = last(
-//     get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {})
-//       .values
-//   )?.[1]
-//   const totalVal = Number(inbound) + Number(outbound)
-//   const config = getAreaChartOps(getPodResult(podData)[0])
-//   var lastData = config.data[config.data.length - 1]
-//   if (lastData) {
-//     lastData.UNIT = config.unit
-//     lastData.TOTAL = getValueByUnit(
-//       totalVal,
-//       getSuitableUnit(totalVal, 'bandwidth')
-//     )
-//   }
-
-//   return lastData
-// }
-
 function getPodData(data) {
   const inbound = last(data.podInboundData[0]?.values)?.[1]
   const outbound = last(data.podOutboundData[0]?.values)?.[1]
@@ -153,23 +130,6 @@ function getNodeResult(metricData) {
 
   return result
 }
-
-// function getPodResult(podData) {
-//   const result = [
-//     {
-//       type: 'bandwidth',
-//       title: 'NETWORK_TRAFFIC',
-//       unitType: 'bandwidth',
-//       legend: ['OUT', 'IN'],
-//       data: [
-//         get(podData, `${MetricTypes.pod_net_bytes_transmitted}.data.result[0]`, {}),
-//         get(podData, `${MetricTypes.pod_net_bytes_received}.data.result[0]`, {}),
-//       ],
-//     },
-//   ]
-
-//   return result
-// }
 
 function getPodResult(data) {
   const result = [

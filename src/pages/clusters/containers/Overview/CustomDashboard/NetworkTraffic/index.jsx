@@ -118,17 +118,15 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
         ['vmOutboundData']: kaasOutboundData,
       })
 
-      // 총합을 노출?
-      // 총합 나누기 pod 갯수로 노출?
       const podInboundData = await customStore.fetchMetric({
-        expr: `avg by () (sum by(pod) (rate(container_network_transmit_bytes_total[5m])))`,
+        expr: `sum(rate(container_network_transmit_bytes_total{pod!~"^virt-launcher.*"}[5m]))`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
       })
 
       const podOutboundData = await customStore.fetchMetric({
-        expr: `avg by () (sum by(pod) (rate(container_network_receive_bytes_total[5m])))`,
+        expr: `sum(rate(container_network_receive_bytes_total{pod!~"^virt-launcher.*"}[5m]))`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
