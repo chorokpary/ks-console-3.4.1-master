@@ -205,7 +205,7 @@ export default class Resource extends React.Component {
                   flicker
                 />
               </div>
-              <div>
+              <div className={styles.text_no_wrap}>
                 <Link
                   className={styles.title}
                   to={`/${workspace}/clusters/${cluster}/projects/${namespace}/containerResource/${name}`}

@@ -31,6 +31,11 @@ const RegistNodePoolModal = props => {
   const gpuNodeStore = new GpuNodeStore()
 
   const [modelView, setModalView] = useState(true)
+  const [regStep, setRegStep] = useState(1)
+
+  const [nodePoolName, setNodePoolName] = useState('')
+  const [imageName, setImageName] = useState('')
+  const [description, setDescription] = useState('')
 
   const [flavorDataList, setFlavorDataList] = useState([])
   const [flavorOptionList, setFlavorOptionList] = useState([])
@@ -67,6 +72,8 @@ const RegistNodePoolModal = props => {
   const [sriovCheckItem, setSriovCheckItem] = useState('')
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
+
+  const [isFirst, setIsFirst] = useState(true)
 
   useEffect(() => {
     const getVmCreateData = async () => {
@@ -145,8 +152,8 @@ const RegistNodePoolModal = props => {
       const gpuDesc =
         obj.gpus && obj.gpus.length > 0
           ? ` / ${obj.gpus
-              .map(g => `${g.name.split('/')[1]}: ${g.quantity}`)
-              .join(', ')}`
+            .map(g => `${g.name.split('/')[1]}: ${g.quantity}`)
+            .join(', ')}`
           : ''
 
       const deviceDesc =
@@ -225,25 +232,148 @@ const RegistNodePoolModal = props => {
     setModalView(false)
   }
 
+  const stepMoveCheck = step => {
+    const { data } = form.current.props
+    if (step === 1) {
+      if (isFirst) {
+        if (networkList.length > 0) {
+          handleSingleCheck(
+            networkList.filter(el => el.external)[0].name,
+            'network'
+          )
+          setNetworkName(networkList.filter(el => el.external)[0].name)
+        }
+        setIsFirst(false)
+      }
+
+      if (
+        data.name === undefined ||
+        !PATTERN_USER_NAME.test(data.name) ||
+        data.kube_image === t('RESOURCES_SELECT') ||
+        data.flavor === t('RESOURCES_SELECT')
+      ) {
+        handleOk()
+      } else {
+        setRegStep(2)
+      }
+    }
+    if (step === 2) {
+      setRegStep(3)
+    }
+    if (step === 3) {
+
+      setNodePoolName(data.name)
+      setImageName(data.kube_image)
+      setDescription(data.description)
+
+      setRegStep(4)
+    }
+  }
+
   const fnGetModalFooter = () => {
     return (
       <>
-        <Button
-          onClick={() => closeModal()}
-          className={classnames(styles['btn'], styles['btn-default'])}
-        >
-          {t('RESOURCES_CANCEL')}
-        </Button>
-        <Button
-          onClick={() => {
-            handleOk()
-          }}
-          className={classnames(styles['btn'], styles['btn-control'])}
-          loading={props.nodePoolStore.isSubmitting}
-          disabled={props.nodePoolStore.isSubmitting}
-        >
-          {t('RESOURCES_CREATE')}
-        </Button>
+        {regStep === 1 && (
+          <>
+            <Button
+              onClick={() => closeModal()}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_CANCEL')}
+            </Button>
+            <Button
+              type="control"
+              onClick={() => {
+                stepMoveCheck(1)
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+            >
+              {t('RESOURCES_NEXT')}
+            </Button>
+          </>
+        )}
+        {regStep === 2 && (
+          <>
+            <Button
+              onClick={() => closeModal()}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_CANCEL')}
+            </Button>
+            <Button
+              onClick={() => {
+                setRegStep(regStep - 1)
+              }}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_PREVIOUS')}
+            </Button>
+            <Button
+              type="control"
+              onClick={() => {
+                stepMoveCheck(2)
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+            >
+              {t('RESOURCES_NEXT')}
+            </Button>
+          </>
+        )}
+        {regStep === 3 && (
+          <>
+            <Button
+              onClick={() => closeModal()}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_CANCEL')}
+            </Button>
+            <Button
+              onClick={() => {
+                setRegStep(regStep - 1)
+              }}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_PREVIOUS')}
+            </Button>
+            <Button
+              type="control"
+              onClick={() => {
+                stepMoveCheck(3)
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+            >
+              {t('RESOURCES_NEXT')}
+            </Button>
+          </>
+        )}
+        {regStep === 4 && (
+          <>
+            <Button
+              onClick={() => closeModal()}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_CANCEL')}
+            </Button>
+            <Button
+              onClick={() => {
+                setRegStep(3)
+              }}
+              className={classnames(styles['btn'], styles['btn-default'])}
+            >
+              {t('RESOURCES_PREVIOUS')}
+            </Button>
+            <Button
+              onClick={() => {
+                handleOk()
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+              loading={props.store.isSubmitting}
+              disabled={props.store.isSubmitting}
+            >
+              {t('RESOURCES_CREATE')}
+            </Button>
+          </>
+        )}
       </>
     )
   }
@@ -255,7 +385,7 @@ const RegistNodePoolModal = props => {
       imageDataList.filter(
         obj =>
           obj.accelerator_type.toLowerCase() ===
-            acceleratorType.toLowerCase() &&
+          acceleratorType.toLowerCase() &&
           obj.os_distro === osDistro &&
           obj.kube_version === kubeVersion &&
           obj.arch_type === value
@@ -352,7 +482,7 @@ const RegistNodePoolModal = props => {
     <>
       <Modal
         icon="templet"
-        width={800}
+        width={840}
         title={t('RESOURCES_CREATE_NODEPOOL')}
         onCancel={closeModal}
         bodyClassName={styles.body}
@@ -360,11 +490,128 @@ const RegistNodePoolModal = props => {
         hideFooter
       >
         <Form data={formData} ref={form}>
+          {/* Header */}
+          <div className={styles.tab_process}>
+            {/* styles.view_screen  : 이전 링크 관련 class */}
+            <div
+              className={classnames(
+                styles.process_item,
+                `${regStep === 1 ? styles.current : ''}`
+              )}
+            >
+              <div className={styles.status}>
+                <div
+                  className={`${regStep === 1
+                    ? styles.current
+                    : regStep > 1
+                      ? styles.done
+                      : styles.todo
+                    }`}
+                ></div>
+              </div>
+              <div className={styles.basic}></div>
+              <div className={styles.title}>
+                <div className={styles.step_name}>
+                  {t('RESOURCES_DEFAULT_SETTINGS')}
+                </div>
+                <div className={styles.situation}>
+                  {regStep === 1
+                    ? t('RESOURCES_CURRENT')
+                    : regStep > 1
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
+                </div>
+              </div>
+            </div>
+            <div
+              className={classnames(
+                styles.process_item,
+                `${regStep === 2 ? styles.current : ''}`
+              )}
+            >
+              <div className={styles.status}>
+                <div
+                  className={`${regStep === 2
+                    ? styles.current
+                    : regStep > 2
+                      ? styles.done
+                      : styles.todo
+                    }`}
+                ></div>
+              </div>
+              <div className={styles.network}></div>
+              <div className={styles.title}>
+                <div className={styles.step_name}>
+                  {t('RESOURCES_NETWORK_SETTINGS')}
+                </div>
+                <div className={styles.situation}>
+                  {regStep === 2
+                    ? t('RESOURCES_CURRENT')
+                    : regStep > 2
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
+                </div>
+              </div>
+            </div>
+            <div
+              className={classnames(
+                styles.process_item,
+                `${regStep === 3 ? styles.current : ''}`
+              )}
+            >
+              <div className={styles.status}>
+                <div
+                  className={`${regStep === 3
+                    ? styles.current
+                    : regStep > 3
+                      ? styles.done
+                      : styles.todo
+                    }`}
+                ></div>
+              </div>
+              <div className={styles.detail}></div>
+              <div className={styles.title}>
+                <div className={styles.step_name}>
+                  {t('RESOURCES_DETAIL_SETTINGS')}
+                </div>
+                <div className={styles.situation}>
+                  {regStep === 3
+                    ? t('RESOURCES_CURRENT')
+                    : regStep > 3
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
+                </div>
+              </div>
+            </div>
+            <div
+              className={classnames(
+                styles.process_item,
+                `${regStep === 4 ? styles.current : ''}`
+              )}
+            >
+              <div className={styles.status}>
+                <div
+                  className={`${regStep === 4 ? styles.current : styles.todo}`}
+                ></div>
+              </div>
+              <div className={styles.confirm}></div>
+              <div className={styles.title}>
+                <div className={styles.step_name}>
+                  {t('RESOURCES_CHECK_INPUT_INFORMATION')}
+                </div>
+                <div className={styles.situation}>
+                  {regStep === 4
+                    ? t('RESOURCES_CURRENT')
+                    : t('RESOURCES_NOT_SET')}
+                </div>
+              </div>
+            </div>
+          </div>
           {/* Content */}
           <div className={styles.pop_overflow_y}>
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
-              <div>
+              <div className={`${regStep === 1 ? '' : 'hide'}`}>
                 <Form.Item
                   label={t('NAME')}
                   rules={[
@@ -466,7 +713,138 @@ const RegistNodePoolModal = props => {
                     </Column>
                   </Columns>
                 </Form.Group>
-                {/* 네트워크 설정 시작========================================== */}
+
+                {t('RESOURCES_STORAGE_CLASS')}
+                <span className="form-item-required">*</span>
+                <Form.Group>
+                  <Columns>
+                    <Column>
+                      <Form.Item>
+                        <Tabs
+                          type="button"
+                          activeName={storageClassTab}
+                          onChange={newTab => {
+                            setStorageClassTab(newTab)
+                            if (newTab === 'default') {
+                              setStorageClass('')
+                            }
+                            if (newTab === 'image') {
+                              setStorageClass(imageStorageClass)
+                            }
+                          }}
+                        >
+                          <TabPanel label={t('RESOURCES_DEFAULT')} name="default" />
+                          <TabPanel
+                            label={t('RESOURCES_IMAGE_CLASS')}
+                            name="image"
+                          />
+                          <TabPanel
+                            label={t('RESOURCES_MANUAL_SELECTION')}
+                            name="manual"
+                          />
+                        </Tabs>
+                      </Form.Item>
+                    </Column>
+                    <Column>
+                      {storageClassTab === 'manual' && (
+                        <Form.Item>
+                          <Select
+                            options={storageClassOptions()}
+                            onChange={el => setStorageClass(el)}
+                            value={
+                              storageClass !== ''
+                                ? storageClass
+                                : t('RESOURCES_SELECT')
+                            }
+                          />
+                        </Form.Item>
+                      )}
+                      {storageClassTab === 'image' && storageClass !== '' && (
+                        <Form.Item>
+                          <div className={styles.wrapperImageView}>
+                            {storageClass}
+                          </div>
+                        </Form.Item>
+                      )}
+                    </Column>
+                  </Columns>
+                </Form.Group>
+                Replicas
+                <span className="form-item-required">*</span>
+                <Form.Group>
+                  <Columns>
+                    <Column>
+                      <Form.Group
+                        label={t('RESOURCES_AUTO_EXPAND')}
+                        onChange={() => setIsAutoScale(!isAutoScale)}
+                        checkable
+                      >
+                        <Form.Item label={t('RESOURCES_SCALING')}>
+                          <Slider
+                            max={10}
+                            min={1}
+                            marks={{
+                              1: '1',
+                              2: '2',
+                              3: '3',
+                              4: '4',
+                              5: '5',
+                              6: '6',
+                              7: '7',
+                              8: '8',
+                              9: '9',
+                              10: '10',
+                            }}
+                            step={1}
+                            value={autoScale}
+                            onChange={e => handlerAutoScale(e)}
+                            range
+                            withInput
+                          />
+                        </Form.Item>
+                      </Form.Group>
+                    </Column>
+                    {!isAutoScale && (
+                      <Column
+                        align={'middle'}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Form.Item>
+                          <div style={{ marginBottom: '12px' }}>
+                            <Button
+                              icon="substract"
+                              onClick={decreaseReplicaBtn}
+                            />
+                            &nbsp;&nbsp;
+                            <Input
+                              name="nodepoolReplicas"
+                              value={nodepoolReplicas}
+                              style={{ width: '40%', textAlign: 'center' }}
+                            />
+                            &nbsp;&nbsp;
+                            <Button icon="add" onClick={increaseReplicaBtn} />
+                          </div>
+                        </Form.Item>
+                      </Column>
+                    )}
+                  </Columns>
+                </Form.Group>
+                <Form.Item
+                  className={styles.textarea}
+                  label={t('RESOURCES_DESCRIPTION')}
+                  desc={t('DESCRIPTION_DESC')}
+                >
+                  <TextArea name="description" maxLength={256} />
+                </Form.Item>
+                <div style={{ padding: 25 }} />
+              </div>
+              {/* 기본설정 설정 끝========================================== */}
+              {/* 네트워크 설정 시작========================================== */}
+              <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <div style={{ marginTop: 24, marginBottom: 24 }}>
                   <div className={styles.box_title} style={{ marginBottom: 8 }}>
                     <label>
@@ -528,16 +906,16 @@ const RegistNodePoolModal = props => {
                             <tbody>
                               {!networkList?.filter(el => el.external)
                                 .length && (
-                                <tr>
-                                  <td colSpan="6" className="no-data">
-                                    <p>
-                                      {t(
-                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                      )}
-                                    </p>
-                                  </td>
-                                </tr>
-                              )}
+                                  <tr>
+                                    <td colSpan="6" className="no-data">
+                                      <p>
+                                        {t(
+                                          'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                        )}
+                                      </p>
+                                    </td>
+                                  </tr>
+                                )}
                               {networkList
                                 ?.filter(el => el.external)
                                 .map(data => (
@@ -639,135 +1017,22 @@ const RegistNodePoolModal = props => {
                       </div>
                     </Form.Item>
                     <div
-                      className={`form-item-error ${
-                        !networkName ? '' : 'hide'
-                      }`}
+                      className={`form-item-error ${!networkName ? '' : 'hide'
+                        }`}
                     >
                       {t('RESOURCES_SELECT_NETWORK_TIP')}
                     </div>
                   </Form.Group>
                 </div>
-                {/* 네트워크 설정 끝========================================== */}
-                {t('RESOURCES_STORAGE_CLASS')}
-                <span className="form-item-required">*</span>
-                <Form.Group>
-                  <Form.Item>
-                    <Tabs
-                      type="button"
-                      activeName={storageClassTab}
-                      onChange={newTab => {
-                        setStorageClassTab(newTab)
-                        if (newTab === 'default') {
-                          setStorageClass('')
-                        }
-                        if (newTab === 'image') {
-                          setStorageClass(imageStorageClass)
-                        }
-                      }}
-                    >
-                      <TabPanel label={t('RESOURCES_DEFAULT')} name="default" />
-                      <TabPanel
-                        label={t('RESOURCES_IMAGE_CLASS')}
-                        name="image"
-                      />
-                      <TabPanel
-                        label={t('RESOURCES_MANUAL_SELECTION')}
-                        name="manual"
-                      />
-                    </Tabs>
-                  </Form.Item>
-                  {storageClassTab === 'manual' && (
-                    <Form.Item>
-                      <Select
-                        options={storageClassOptions()}
-                        onChange={el => setStorageClass(el)}
-                        value={
-                          storageClass !== ''
-                            ? storageClass
-                            : t('RESOURCES_SELECT')
-                        }
-                      />
-                    </Form.Item>
-                  )}
-                  {storageClassTab === 'image' && storageClass !== '' && (
-                    <Form.Item>
-                      <div className={styles.wrapperImageView}>
-                        {storageClass}
-                      </div>
-                    </Form.Item>
-                  )}
-                </Form.Group>
-                Replicas
-                <span className="form-item-required">*</span>
-                <Form.Group>
-                  <Columns>
-                    <Column>
-                      <Form.Group
-                        label={t('RESOURCES_AUTO_EXPAND')}
-                        onChange={() => setIsAutoScale(!isAutoScale)}
-                        checkable
-                      >
-                        <Form.Item label={t('RESOURCES_SCALING')}>
-                          <Slider
-                            max={10}
-                            min={1}
-                            marks={{
-                              1: '1',
-                              2: '2',
-                              3: '3',
-                              4: '4',
-                              5: '5',
-                              6: '6',
-                              7: '7',
-                              8: '8',
-                              9: '9',
-                              10: '10',
-                            }}
-                            step={1}
-                            value={autoScale}
-                            onChange={e => handlerAutoScale(e)}
-                            range
-                            withInput
-                          />
-                        </Form.Item>
-                      </Form.Group>
-                    </Column>
-                    {!isAutoScale && (
-                      <Column
-                        align={'middle'}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Form.Item>
-                          <div style={{ marginBottom: '12px' }}>
-                            <Button
-                              icon="substract"
-                              onClick={decreaseReplicaBtn}
-                            />
-                            &nbsp;&nbsp;
-                            <Input
-                              name="nodepoolReplicas"
-                              value={nodepoolReplicas}
-                              style={{ width: '40%', textAlign: 'center' }}
-                            />
-                            &nbsp;&nbsp;
-                            <Button icon="add" onClick={increaseReplicaBtn} />
-                          </div>
-                        </Form.Item>
-                      </Column>
-                    )}
-                  </Columns>
-                </Form.Group>
-                {/* NodeSelector 입력 필드 추가 */}
+              </div>
+              {/* 네트워크 설정 끝========================================== */}
+              {/* 세부 설정 시작 ========================================== */}
+              <div className={`${regStep === 3 ? '' : 'hide'}`}>
                 <Form.Item label={t('ADD_NODE_SELECTOR')}>
                   <div className={styles.box_wrapper}>
                     <div
-                      className={`form-item-error ${
-                        nodeSelectorError ? '' : 'hide'
-                      }`}
+                      className={`form-item-error ${nodeSelectorError ? '' : 'hide'
+                        }`}
                     >
                       {t('ADD_NODE_SELECTOR_TIP')}
                     </div>
@@ -781,16 +1046,186 @@ const RegistNodePoolModal = props => {
                     </div>
                   </div>
                 </Form.Item>
-                <Form.Item
-                  className={styles.textarea}
-                  label={t('RESOURCES_DESCRIPTION')}
-                  desc={t('DESCRIPTION_DESC')}
-                >
-                  <TextArea name="description" maxLength={256} />
-                </Form.Item>
-                <div style={{ padding: 25 }} />
               </div>
-              {/* 기본설정 설정 끝========================================== */}
+              {/* 세부 설정 끝 ========================================== */}
+              {/* 입력 정보 확인 시작========================================== */}
+              <div className={`${regStep === 4 ? '' : 'hide'}`}>
+                <div className={styles.boxwrap}>
+                  <div className={styles.box_style}>
+                    <div className={styles.boxtitle}>
+                      <div className={styles.titlename}>
+                        <span className={styles.basic}></span>
+                        <label>{t('RESOURCES_DEFAULT_SETTINGS')}</label>
+                      </div>
+                      <Button
+                        icon="pen"
+                        onClick={() => {
+                          setRegStep(1)
+                        }}
+                      ></Button>
+                    </div>
+                    <div className={styles.greybgbox}>
+                      <div className={styles.list} style={{ width: '25%' }}>
+                        <label>{t('RESOURCES_NAME')}</label>
+                        <div className={styles.bold}>{nodePoolName}</div>
+                      </div>
+                      <div className={styles.list} style={{ width: '35%' }}>
+                        <label>{t('RESOURCES_IMAGE')}</label>
+                        <div className={styles.multiline}>
+                          <div className={styles.bold}>{imageName}</div>
+                        </div>
+                      </div>
+                      <div className={styles.list} style={{ width: '40%' }}>
+                        <label>{t('RESOURCES_DESCRIPTION')}</label>
+                        <div>{description}</div>
+                      </div>
+                      {storageClass && (
+                        <div className={styles.list} style={{ width: '40%' }}>
+                          <label>{t('RESOURCES_STORAGE_CLASS')}</label>
+                          <div className={styles.bold}>{storageClass}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.box_style}>
+                    <div className={styles.boxtitle}>
+                      <div className={styles.titlename}>
+                        <span className={styles.network}></span>
+                        <label>{t('RESOURCES_NETWORK_SETTINGS')}</label>
+                      </div>
+                      <Button
+                        icon="pen"
+                        onClick={() => {
+                          setRegStep(2)
+                        }}
+                      ></Button>
+                    </div>
+                    <label className={`${networkFlag === 1 ? '' : 'hide'}`}>
+                      {t('RESOURCES_NETWORK')}
+                    </label>
+                    {networkList
+                      .filter(x => networkCheckItem === x.name)
+                      .map((obj, index) => (
+                        <div className={styles.greybgbox} key={index}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_NAME')}</label>
+                            <div>{obj.name}</div>
+                          </div>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.type}</div>
+                            </div>
+                          </div>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_CIDR')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_GATEWAY')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.gateway_ip}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    <label className={`${networkFlag === 2 ? '' : 'hide'}`}>
+                      {t('RESOURCES_SR_IOV_NETWORK')}
+                    </label>
+                    {sriovNetworkList
+                      .filter(x => sriovCheckItem === x.name)
+                      .map((obj, index) => (
+                        <div className={styles.greybgbox} key={index}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_NAME')}</label>
+                            <div>{obj.name}</div>
+                          </div>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.type}</div>
+                            </div>
+                          </div>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_CIDR')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_GATEWAY')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.gateway_ip}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+
+                  <div className={styles.box_style}>
+                    <div className={styles.boxtitle}>
+                      <div className={styles.titlename}>
+                        <span className={styles.detail}></span>
+                        <label>{t('RESOURCES_DETAIL_SETTINGS')}</label>
+                      </div>
+                      <Button
+                        icon="pen"
+                        onClick={() => {
+                          setRegStep(3)
+                        }}
+                      ></Button>
+                    </div>
+                    <div className={styles.greybgbox}>
+                      <div className={styles.list}>
+                        {Object.keys(nodeSelector).length > 0 && (
+                          <div className={styles.list} style={{ width: '100%' }}>
+                            <label style={{ width: '100%' }}>
+                              {t('ADD_NODE_SELECTOR')}
+                            </label>
+                            <div className={styles.multiline}>
+                              {Object.entries(nodeSelector).map(
+                                ([key, value]) => (
+                                  <div key={key}>
+                                    {key}: {value}
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* 입력 정보 확인 끝========================================== */}
             </div>
           </div>
 
