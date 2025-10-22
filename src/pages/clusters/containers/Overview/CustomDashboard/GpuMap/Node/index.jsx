@@ -34,7 +34,7 @@ const Node = ({
       start: currentTime - 1000,
       end: currentTime - 1000,
     }
-    const expr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}"}`
+    const expr = `sum by (UUID, pod, gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmList}"})`
     const gpuAvgUsageData = await customStore.fetchMetric({
       expr: expr,
       paramsData,
