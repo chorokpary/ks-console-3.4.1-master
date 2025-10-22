@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Loading } from '@kube-design/components'
-import PodStore from 'stores/pod'
-import PodModel from 'stores/dashboard/pods'
-import { fnSetPods } from 'utils/dashboard'
-import cleanupTrigger from '../cleanupTrigger'
-import GpuClustersStore from 'stores/resources/gpuclusters'
-import { StatusCircle } from 'components/Cards/Monitoring'
 import { SimpleCircle } from 'components/Charts'
-import classnames from 'classnames'
-import CustomStore from 'stores/monitoring/custom/monitor'
-
+import GpuNodeStore from 'stores/resources/gpunodes'
+import VmStore from 'stores/resources/vms'
 import styles from './index.scss'
-import { set } from 'lodash'
 
 const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
-  const customStore = new CustomStore()
+  const gpuNodeStore = new GpuNodeStore()
+  const vmStore = new VmStore()
+
   const [runningCount, setRunningCount] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -25,33 +19,17 @@ const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
 
   const getData = async () => {
     setLoading(true)
-    var currentTime = Math.floor(Date.now() / 1000)
+    const gpuNodeList = await gpuNodeStore.fetchList({ limit: -1, ...props })
+    const totalCnt = gpuNodeList.reduce((prev, curr) => prev + curr.count, 0)
+    setTotalCount(totalCnt)
 
-    const gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter"}`
+    const vmData = await vmStore.fetchList({ limit: -1, ...props })
+    const vmCnt = vmData.reduce(
+      (prev, curr) => (curr.node != '' ? prev + curr.gpus.length : prev),
+      0
+    )
 
-    const gpuUtilData = await customStore.fetchMetric({
-      expr: gpuUtilDataExpr,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    transformDataToObject(gpuUtilData)
-  }
-
-  const transformDataToObject = data => {
-    let runningCount = 0
-    let totalCount = 0
-
-    data.forEach(item => {
-      const values = item.values
-      const lastValue = values.length > 0 ? values[values.length - 1][1] : 0
-
-      if (lastValue && Number(lastValue) > 0) {
-        runningCount++
-      }
-      totalCount++
-    })
-    setRunningCount(runningCount)
-    setTotalCount(totalCount)
+    setRunningCount(vmCnt)
     setLoading(false)
   }
 
@@ -78,7 +56,7 @@ const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                         isTooltip={false}
                         renderCustomCenter={() => (
                           <div style={{ fontSize: '20px' }}>
-                            {(runningCount / totalCount) * 100}%
+                            {((runningCount / totalCount) * 100).toFixed(1)}%
                           </div>
                         )}
                       />
