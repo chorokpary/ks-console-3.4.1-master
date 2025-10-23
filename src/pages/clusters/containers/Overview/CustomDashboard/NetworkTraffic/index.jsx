@@ -12,10 +12,13 @@ import CustomStore from 'stores/monitoring/custom/monitor'
 import PodStore from 'stores/monitoring/pod'
 import { getContentOptions, getData } from './handleTab'
 
-const MetricTypes = {
+const NodeMetricTypes = {
   net_transmitted: 'cluster_net_bytes_transmitted',
   net_received: 'cluster_net_bytes_received',
   net_utilisation: 'cluster_net_utilisation',
+}
+
+const PodMetricTypes = {
   pod_net_bytes_transmitted: 'pod_net_bytes_transmitted',
   pod_net_bytes_received: 'pod_net_bytes_received',
 }
@@ -33,7 +36,10 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
   const [rightTab, setRightTab] = useState('node')
   const [loading, setLoading] = useState(false)
 
-  const [podData, setPodData] = useState([])
+  const [podData, setPodData] = useState({
+    podInboundData: [],
+    podOutboundData: [],
+  })
   const podFetchedRef = useRef(false)
 
   const [vmData, setVmData] = useState({
@@ -53,7 +59,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
 
       // node data
       const metricData = await monitorStore.fetchMetrics({
-        metrics: Object.values(MetricTypes),
+        metrics: Object.values(NodeMetricTypes),
         step: '5m', // Time interval
         times: 100,
         // step: '3600s', // 최근 7일
@@ -62,7 +68,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
       })
       // const metricData = []
       handleData('node', metricData)
-      handleContenOption('node', metricData)
+      handleContentOption('node', metricData)
       setMetricData(metricData)
 
       // vm list
@@ -112,6 +118,26 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
         ['vmOutboundData']: kaasOutboundData,
       })
 
+      const podInboundData = await customStore.fetchMetric({
+        expr: `sum(rate(container_network_transmit_bytes_total{pod!~"^virt-launcher.*"}[5m]))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      const podOutboundData = await customStore.fetchMetric({
+        expr: `sum(rate(container_network_receive_bytes_total{pod!~"^virt-launcher.*"}[5m]))`,
+        start: currentTime - 30000,
+        end: currentTime,
+        cluster: props.cluster,
+      })
+
+      setPodData({
+        ...podData,
+        ['podInboundData']: podInboundData,
+        ['podOutboundData']: podOutboundData,
+      })
+
       if (cleanupTrigger) {
         setLoading(false)
       }
@@ -129,7 +155,7 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
   }
 
   // handle right data
-  const handleContenOption = (rightTabActive, data) => {
+  const handleContentOption = (rightTabActive, data) => {
     setTabContentData(getContentOptions(rightTabActive, data))
   }
 
@@ -140,27 +166,28 @@ const NetworkTraffic = ({ widgetKey, monitorStore, ...props }) => {
     if (tab === 'node') {
       data = metricData
     } else if (tab === 'pod') {
-      if (!podFetchedRef.current) {
-        setLoading(true)
-        const fetchedPodData = await podStore.fetchMetrics({
-          metrics: Object.values(MetricTypes),
-          step: '5m',
-          times: 100,
-          cluster: props.cluster,
-        })
-        setPodData(fetchedPodData)
-        podFetchedRef.current = true // 호출 기록
-        data = fetchedPodData
-        setLoading(false)
-      } else {
-        data = podData
-      }
+      // if (!podFetchedRef.current) {
+      //   setLoading(true)
+      //   const fetchedPodData = await podStore.fetchMetrics({
+      //     metrics: Object.values(PodMetricTypes),
+      //     step: '5m',
+      //     times: 100,
+      //     cluster: props.cluster,
+      //   })
+      //   setPodData(fetchedPodData)
+      //   podFetchedRef.current = true // 호출 기록
+      //   data = fetchedPodData
+      //   setLoading(false)
+      // } else {
+      //   data = podData
+      // }
+      data = podData
     } else if (tab === 'vm') {
       data = vmData
     } else if (tab === 'kaas') {
       data = kaasData
     }
-    handleContenOption(tab, data)
+    handleContentOption(tab, data)
     handleData(tab, data)
   }
 

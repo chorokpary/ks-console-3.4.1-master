@@ -4,6 +4,7 @@ import 'gridstack/dist/gridstack.min.css'
 import { inject, observer } from 'mobx-react'
 import queryString from 'query-string'
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
+import CustomDashboardInfo from 'stores/dashboard/customDashboardInfo'
 import { Notify } from '@kube-design/components'
 
 import './edit.css'
@@ -22,9 +23,25 @@ const CustomDashboardEdit = props => {
   const [activeDashboard, setActiveDashboard] = useState(
     idx
       ? JSON.parse(localStorage.getItem('dashboardArr'))[idx]
-      : new DashboardInfo()
+      : new CustomDashboardInfo()
   )
   const [dashboardName, setDashboardName] = useState(activeDashboard.name)
+
+  var grid
+
+  // 위치를 위한 초기 grid 그려주기
+  useEffect(() => {
+    const drawExPanel = new DashboardInfo()
+    grid = GridStack.init(options)
+    const keys = Object.keys(drawExPanel)
+    keys.map(obj => {
+      const panel = drawExPanel[obj] ? makePanels(obj, drawExPanel[obj]) : null
+      if (panel) {
+        grid.addWidget(panel)
+      }
+    })
+    grid.removeAll()
+  }, [])
 
   // accordion
   var accordionButtons
@@ -44,7 +61,6 @@ const CustomDashboardEdit = props => {
     verticalMargin: 20,
     disableResize: true,
   }
-  var grid
 
   useEffect(() => {
     grid = GridStack.init(options)
@@ -290,6 +306,307 @@ const CustomDashboardEdit = props => {
                 <button id="openAll" onClick={() => openAll()}>
                   <i className="ico-fold-unfold-all"></i>
                 </button>
+              </div>
+            </div>
+
+            <button className="accordion-btn" onClick={e => handleAccordion(e)}>
+              {t('GPU')}
+              <i className="ico-arrow-clamp-up"></i>
+            </button>
+            <div className="accordion-content">
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="nodePanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.node}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'node')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('노드')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_31">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                  {/* <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div> */}
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="virtualMachinePanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.virtualMachine}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'virtualMachine')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('가상머신')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_32">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="gpuStatusPanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.gpuStatus}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'gpuStatus')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('GPU 현황')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_33">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="gpuUsagePanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.gpuUsage}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'gpuUsage')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('GPU 가용률')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_34">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="gpuMapPanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.gpuMap}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'gpuMap')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('GPU 현황 맵')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_36">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="gpuUsageStatusPanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.gpuUsageStatus}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'gpuUsageStatus')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('GPU 사용 현황')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_37">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="gpuUsageTop5Panel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.gpuUsageTop5}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'gpuUsageTop5')}
+                  ></span>
+                </label>
+                <label className="section-title">
+                  {t('GPU 사용 현황 Top5')}
+                </label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_38">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="alarmVerticalPanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.alarmVertical}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'alarmVertical')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('알람 (세로)')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_39">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="alarmHorizontalPanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.alarmHorizontal}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'alarmHorizontal')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('알람 (가로)')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_40">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -792,7 +1109,7 @@ const CustomDashboardEdit = props => {
                 </div>
               </div>
             </div>
-            <button className="accordion-btn" onClick={e => handleAccordion(e)}>
+            {/* <button className="accordion-btn" onClick={e => handleAccordion(e)}>
               {t('RESOURCES_BAREMETAL_CURRENT_SITUATION_AND_POWER_USAGE')}
               <i className="ico-arrow-clamp-up"></i>
             </button>
@@ -819,7 +1136,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_12">
@@ -830,9 +1146,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -857,7 +1170,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_13">
@@ -868,9 +1180,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -895,7 +1204,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_14">
@@ -906,9 +1214,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -933,7 +1238,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_15">
@@ -944,9 +1248,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -972,7 +1273,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_16">
@@ -983,9 +1283,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1011,7 +1308,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_17">
@@ -1022,9 +1318,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1049,7 +1342,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_18">
@@ -1060,9 +1352,6 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
               <div className="section-content">
@@ -1087,7 +1376,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_19">
@@ -1098,12 +1386,9 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <button className="accordion-btn" onClick={e => handleAccordion(e)}>
               {t('RESOURCES_ETC')}

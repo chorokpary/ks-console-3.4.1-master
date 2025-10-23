@@ -88,7 +88,7 @@ export default class GpuClustersStore extends Base {
       this.getListUrl({ cluster, workspace, namespace, devops, page, limit }),
       this.getFilterParams(params)
     )
-    
+
     const data = (get(result, 'data') || []).map(item => ({
       cluster,
       namespace,
@@ -97,11 +97,7 @@ export default class GpuClustersStore extends Base {
 
     // 초기 정렬 처리
     data.sort((a, b) => {
-      return a.createdAt < b.createdAt
-        ? 1
-        : a.createdAt > b.createdAt
-        ? -1
-        : 0
+      return a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0
     })
 
     // 상태 추가
@@ -117,14 +113,14 @@ export default class GpuClustersStore extends Base {
           namespace: item.namespace,
         })
 
-        let isRunningCount = 0;
+        let isRunningCount = 0
         resultDetail.vmList.forEach(data => {
           if (data.vmPhase === 'Running') {
-            isRunningCount += 1;
+            isRunningCount += 1
           }
-        });
+        })
 
-        const is_normal = isRunningCount === resultDetail.vmList.length;
+        const is_normal = isRunningCount === resultDetail.vmList.length
         const state = is_normal ? 'normal' : 'abnormal'
 
         return {
@@ -134,7 +130,7 @@ export default class GpuClustersStore extends Base {
         }
       })
     )
-   
+
     // 초기 데이터 처리
     this.dataList = updatedData
 
@@ -142,7 +138,7 @@ export default class GpuClustersStore extends Base {
     if (namespace) {
       params.project = namespace
     }
- 
+
     // 검색 관련 처리
     const exceptionArray = ['page', 'limit', 'sortBy', 'ascending', 'project']
     const searchArray = Object.keys(params)
@@ -155,7 +151,7 @@ export default class GpuClustersStore extends Base {
         return searchData
       })
       .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
- 
+
     if (searchArray.length > 0) {
       searchArray.map(search => {
         let resultList = this.dataList.filter(row => {
@@ -196,7 +192,7 @@ export default class GpuClustersStore extends Base {
       isLoading: false,
       ...(this.list.silent ? {} : { selectedRowKeys: [] }),
     })
-   
+
     return this.dataList
   }
 
@@ -313,8 +309,8 @@ export default class GpuClustersStore extends Base {
     resourceData.node = ''
     resourceData.description = data.description
     resourceData.storage_class = data.storageClass
-    resourceData.network_storage = data.networkStorage || ""
-   
+    resourceData.network_storage = data.networkStorage || ''
+
     resourceData.gpu_cluster = data.gpuCluster
 
     jsonData.vm = resourceData
@@ -326,7 +322,6 @@ export default class GpuClustersStore extends Base {
 
     // 가상머신 갯수만큼 생성...
     for (let i = firstNum; i <= lastNum; i++) {
-
       const suffix = String(i).padStart(3, '0')
       const updatedNameJsonData = {
         vm: {
@@ -336,17 +331,24 @@ export default class GpuClustersStore extends Base {
         },
       }
 
-      const updatedNetworks = updatedNameJsonData.vm.networks.map(network => {      
-        let fixed_ip = "";
-        const matchedNetwork = data.networkListData.find( item => item.name === network.network_name )      
+      const updatedNetworks = updatedNameJsonData.vm.networks.map(network => {
+        let fixed_ip = ''
+        const matchedNetwork = data.networkListData.find(
+          item => item.name === network.network_name
+        )
 
-        const subnetPart = matchedNetwork?.cidr?.split('/')[0].split('.').slice(0, 3).join('.') || ''
-        fixed_ip = subnetPart + '.' + String(100 + i)   
+        const subnetPart =
+          matchedNetwork?.cidr
+            ?.split('/')[0]
+            .split('.')
+            .slice(0, 3)
+            .join('.') || ''
+        fixed_ip = subnetPart + '.' + String(100 + i)
 
         return {
           ...network,
           fixed_ip: fixed_ip,
-        }   
+        }
       })
 
       const updatedJsonData = {
@@ -355,10 +357,9 @@ export default class GpuClustersStore extends Base {
           networks: updatedNetworks,
         },
       }
-      
+
       //console.log("updatedJsonData"+i+" : "+ JSON.stringify(updatedJsonData))
       request.post(url, updatedJsonData)
-
     } //for문 end
 
     return await this.submitting(
@@ -414,8 +415,10 @@ export default class GpuClustersStore extends Base {
     return await this.submitting(
       Promise.all(
         params.retypeList.map(async id => {
-          const namespace = params.namespace;
-          const url = `${this.getVmResourceUrl(params)}/${id}${namespace === "default" ? "" : "?project="+namespace}`
+          const namespace = params.namespace
+          const url = `${this.getVmResourceUrl(params)}/${id}${
+            namespace === 'default' ? '' : '?project=' + namespace
+          }`
           request.delete(url)
         })
       )
@@ -442,9 +445,11 @@ export default class GpuClustersStore extends Base {
   async vmAllDelete({ ...params }) {
     return await this.submitting(
       Promise.all(
-          params.vmList.map(async vmName => {
-          const namespace = params.namespace;
-          const url = `${this.getVmResourceUrl(params)}/${vmName}${namespace === "default" ? "" : "?project="+namespace}`
+        params.vmList.map(async vmName => {
+          const namespace = params.namespace
+          const url = `${this.getVmResourceUrl(params)}/${vmName}${
+            namespace === 'default' ? '' : '?project=' + namespace
+          }`
           request.delete(url)
         })
       )
@@ -483,11 +488,16 @@ export default class GpuClustersStore extends Base {
           .includes(params.searchName?.toLowerCase())
       })
     }
- 
-    const dataList = searchData.length == 0 ? (params.searchName !== '' && params.searchName !== undefined) ? searchData : vmData : searchData
+
+    const dataList =
+      searchData.length == 0
+        ? params.searchName !== '' && params.searchName !== undefined
+          ? searchData
+          : vmData
+        : searchData
 
     delete params['searchType']
-    delete params['searchName']    
+    delete params['searchName']
 
     // 정렬 처리
     const sortedList = [...dataList].sort((a, b) => {
@@ -500,12 +510,10 @@ export default class GpuClustersStore extends Base {
       currentPage * perPage
     )
 
-    const updateData = currentData.map(item => (
-      {
-        ...item,
-        namespace: result.data?.namespace
-      }
-    ))
+    const updateData = currentData.map(item => ({
+      ...item,
+      namespace: result.data?.namespace,
+    }))
 
     const resultData = {}
     resultData.vmList = updateData
@@ -517,10 +525,10 @@ export default class GpuClustersStore extends Base {
 
   @action
   async actionState({ actionType, ...params }) {
-     return await this.submitting(
+    return await this.submitting(
       Promise.all(
         params?.instances && params.instances?.length > 0
-          ? params.instances.map(vmdata => {          
+          ? params.instances.map(vmdata => {
               const name = vmdata.vmName
 
               const jsonData = {}
@@ -530,11 +538,16 @@ export default class GpuClustersStore extends Base {
               const paramData = {}
               paramData.cluster = params.namespace
 
-              return request.put(`${this.getVmResourceUrl({ name, ...paramData })}/${name}/action`, jsonData)
-           })
+              return request.put(
+                `${this.getVmResourceUrl({
+                  name,
+                  ...paramData,
+                })}/${name}/action`,
+                jsonData
+              )
+            })
           : []
       )
     )
   }
-  
 }

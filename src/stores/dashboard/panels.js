@@ -11,7 +11,7 @@ const panelInfo = {
   kaas: function(val = { w: 3, h: 4 }) {
     return kaasPanel(val)
   },
-  gpuCluster: function(val = { w: 12, h: 10 }) {
+  gpuCluster: function(val = { w: 12, h: 12 }) {
     return gpuClusterPanel(val)
   },
   resourceUsage: function(val = { w: 12, h: 6 }) {
@@ -27,9 +27,9 @@ const panelInfo = {
   computingTemplate: function(val = { w: 12, h: 4 }) {
     return computingTemplatePanel(val)
   },
-  bmcNode: function(val = { w: 12, h: 7 }) {
-    return bmcNodePanel(val)
-  },
+  // bmcNode: function(val = { w: 12, h: 7 }) {
+  //   return bmcNodePanel(val)
+  // },
   resourceChange: function(val = { w: 6, h: 5 }) {
     return resourceChangePanel(val)
   },
@@ -37,42 +37,1393 @@ const panelInfo = {
   clusterStatus: function(val = { w: 6, h: 5 }) {
     return clusterStatusPanel(val)
   },
-  carbonPower: function(val = { w: 6, h: 3 }) {
-    return carbonPowerPanel(val)
-  },
-  carbonCo2: function(val = { w: 6, h: 3 }) {
-    return carbonCo2Panel(val)
-  },
-  carbonTree: function(val = { w: 6, h: 3 }) {
-    return carbonTreePanel(val)
-  },
-  carbonCost: function(val = { w: 6, h: 3 }) {
-    return carbonCostPanel(val)
-  },
+  // carbonPower: function(val = { w: 6, h: 3 }) {
+  //   return carbonPowerPanel(val)
+  // },
+  // carbonCo2: function(val = { w: 6, h: 3 }) {
+  //   return carbonCo2Panel(val)
+  // },
+  // carbonTree: function(val = { w: 6, h: 3 }) {
+  //   return carbonTreePanel(val)
+  // },
+  // carbonCost: function(val = { w: 6, h: 3 }) {
+  //   return carbonCostPanel(val)
+  // },
 
-  cpuPower: function(val = { w: 12, h: 5 }) {
-    return cpuPowerPanel(val)
-  },
+  // cpuPower: function(val = { w: 12, h: 5 }) {
+  //   return cpuPowerPanel(val)
+  // },
   usageTop5: function(val = { w: 3, h: 8 }) {
     return usageTop5Panel(val)
   },
   recentResource: function(val = { w: 3, h: 9 }) {
     return recentResourcePanel(val)
   },
-  issue: function(val = { w: 3, h: 9 }) {
-    return issuePanel(val)
-  },
-  carbonIndicator: function(val = { w: 3, h: 9 }) {
-    return carbonIndicatorPanel(val)
-  },
+  // issue: function(val = { w: 3, h: 9 }) {
+  //   return issuePanel(val)
+  // },
+  // carbonIndicator: function(val = { w: 3, h: 9 }) {
+  //   return carbonIndicatorPanel(val)
+  // },
+  // powerUsageTop5: function(val = { w: 3, h: 7 }) {
+  //   return powerUsageTop5Panel(val)
+  // },
 
-  powerUsageTop5: function(val = { w: 3, h: 7 }) {
-    return powerUsageTop5Panel(val)
+  node: function(val = { w: 3, h: 4 }) {
+    return nodePanel(val)
+  },
+  virtualMachine: function(val = { w: 3, h: 4 }) {
+    return virtualMachinePanel(val)
+  },
+  gpuStatus: function(val = { w: 3, h: 4 }) {
+    return gpuStatusPanel(val)
+  },
+  gpuUsage: function(val = { w: 3, h: 4 }) {
+    return gpuUsagePanel(val)
+  },
+  gpuMap: function(val = { w: 6, h: 12 }) {
+    return gpuMapPanel(val)
+  },
+  gpuUsageStatus: function(val = { w: 6, h: 8 }) {
+    return gpuUsageStatusPanel(val)
+  },
+  gpuUsageTop5: function(val = { w: 6, h: 4 }) {
+    return gpuUsageTop5Panel(val)
+  },
+  alarmVertical: function(val = { w: 3, h: 12 }) {
+    return alarmVerticalPanel(val)
+  },
+  alarmHorizontal: function(val = { w: 12, h: 4 }) {
+    return alarmHorizontalPanel(val)
   },
 }
 
 export const makePanels = (key, val) => {
   return panelInfo[key]?.(val)
+}
+
+export const nodePanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="nodePanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>노드</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group clusternode">
+                                <div class="cont1">
+                                  <div class="number_wrap">
+                                    <i class="ico-type24-clusternode-gpu"
+                                      ><span>GPU 노드</span>
+                                    </i>
+                                    <p><span class="em">140</span>/ 140</p>
+                                  </div>
+                                  <div class="number_wrap">
+                                    <i class="ico-type24-clusternode"
+                                      ><span>CPU 노드</span>
+                                    </i>
+                                    <p><span class="em">10</span>/ 10</p>
+                                  </div>
+                                </div>
+                                <div class="cont3">
+                                  <div class="status_wrap">
+                                    <div class="value">150</div>
+                                    <p class="status running">
+                                      <span>실행중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">0</div>
+                                    <p class="status warning">
+                                      <span>주의</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">0</div>
+                                    <p class="status unschedulable">
+                                      <span>스케줄링 불가</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">150</div>
+                                    <p class="status total">
+                                      <span>전체</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const virtualMachinePanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="virtualMachinePanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>가상머신</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group clusternode">
+                                <div class="cont1">
+                                  <div class="number_wrap">
+                                    <i class="ico-type24-vm-gpu"
+                                      ><span>GPU 가상머신</span>
+                                    </i>
+                                    <p><span class="em">100</span>/ 100</p>
+                                  </div>
+                                  <div class="number_wrap">
+                                    <i class="ico-type24-vm"
+                                      ><span>CPU 가상머신</span>
+                                    </i>
+                                    <p><span class="em">49</span>/ 49</p>
+                                  </div>
+                                </div>
+                                <div class="cont2">
+                                  <div class="status_wrap">
+                                    <div class="value">2</div>
+                                    <p class="status waiting">
+                                      <span>진행중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">93</div>
+                                    <p class="status running">
+                                      <span>실행중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">1</div>
+                                    <p class="status warning">
+                                      <span>정지됨</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">1</div>
+                                    <p class="status error">
+                                      <span>오류</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const gpuStatusPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="gpuStatusPanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>GPU 현황</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group">
+                                <div class="cont1">
+                                  <div class="number_wrap">
+                                    <i class="ico-type-gpuaas-gpu"></i>
+                                    <p><span class="em">70</span> / 80</p>
+                                  </div>
+                                </div>
+                                <div class="cont2">
+                                  <div class="status_wrap">
+                                    <div class="value">80</div>
+                                    <p class="status running">
+                                      <span>정상</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">0</div>
+                                    <p class="status unknown">
+                                      <span>미확인</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">10</div>
+                                    <p class="status warning">
+                                      <span>경고</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const gpuUsagePanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="gpuUsagePanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>GPU 가용률</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group">
+                                <div class="cont1">
+                                  <img
+                                    src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
+                                  />
+                                </div>
+                                <div class="cont2">
+                                  <div class="status_wrap">
+                                    <div class="value">43</div>
+                                    <p class="status used_gpu">
+                                      <span>사용중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">37</div>
+                                    <p class="status waiting">
+                                      <span>미사용</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">80</div>
+                                    <p class="status total">
+                                      <span>전체</span>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const gpuMapPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="gpuMapPanel">
+                  <div class="grid-stack-item-content">
+                  <div class="grid_item">
+                    <div class="grid_title">
+                      <label>GPU 현황 맵</label>
+                      <div class="right">
+                        <div class="select_wrap">
+                          <div class="select-list-box">
+                            <div class="selected-item single">
+                              <p>
+                                <strong>노드</strong>
+                              </p>
+                            </div>
+                            <ul class="select-list scroll-gray">
+                              <li class="selected">
+                                <p>
+                                  <strong>노드</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>가상머신</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>GPU</strong>
+                                </p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <!-- // select_wrap -->
+                        <button class="icon">
+                          <i class="ico-list-filter"></i>
+                        </button>
+                        <i class="ico-btn-trash"></i>
+                        <!-- 이름 순, 이름 역순, 사용률 높은 순, 사용률 낮은 순 -->
+                      </div>
+                    </div>
+                    <div class="grid_option_area">
+                      <div class="legend_button_wrapper">
+                        <button class="legend_toggle_button" onclick="toggleLegend()">
+                          범례
+                        </button>
+
+                        <div class="legend_dropdown_container" id="legendDropdown" style="display: none">
+                          <div class="legend_container">
+                            <div class="legend_items">
+                              <div class="legend_item">
+                                <div class="color_bar gpu_state_unknown"></div>
+                                <span class="level">0</span>
+                              </div>
+                              <div class="legend_item">
+                                <div class="color_bar gpu_state_usage1"></div>
+                                <span class="level">30</span>
+                              </div>
+                              <div class="legend_item">
+                                <div class="color_bar gpu_state_usage2"></div>
+                                <span class="level">60</span>
+                              </div>
+                              <div class="legend_item">
+                                <div class="color_bar gpu_state_usage3"></div>
+                                <span class="level">80</span>
+                              </div>
+                              <div class="legend_item">
+                                <div class="color_bar gpu_state_usage4"></div>
+                                <span class="level">100</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="alert_tab">
+                        <label for="al_name_1">
+                          <input type="radio" name="box-tab" id="al_name_1" value="name3" checked />
+                          <!-- gpu badge number는 99 이상일때 99로만 표현 -->
+                          <span><span class="gpu_badge_number">18</span><span>전체</span></span>
+                        </label>
+                        <label for="al_name_3">
+                          <input type="radio" name="box-tab" id="al_name_3" value="name5" />
+                          <span><span class="gpu_badge_number minor">6</span><span>경고</span></span>
+                        </label>
+                        <label for="al_name_4">
+                          <input type="radio" name="box-tab" id="al_name_4" value="name6" />
+                          <span><span class="gpu_badge_number unknown">6</span><span>주의</span></span>
+                        </label>
+                        <div class="select_wrap">
+                          <div class="select-list-box">
+                            <div class="selected-item single">
+                              <p>
+                                <strong>1h</strong>
+                              </p>
+                            </div>
+                            <ul class="select-list scroll-gray">
+                              <li class="selected">
+                                <p>
+                                  <strong>1h</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>1m</strong>
+                                </p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="spin-nested-loading">
+                      <div class="spin-container">
+                        <div class="gpu_map_wrap">
+                          <div id="gpunode-map" class="gpunode_map">
+                            <!-- GPU Map : 노드, 가상머신 동일함. GPU만 작은 tile (상태별 5개씩 ) -->
+                            <div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                            <div class="gpu_tile gpu_state_unknown">
+                              <div class="name" title="B200-node-21">
+                                B200-node-21
+                              </div>
+                              <div class="percent">0%</div>
+                            </div><div class="gpu_tile gpu_state_usage1">
+                              <div class="name" title="B200-node-01">
+                                B200-node-01
+                              </div>
+                              <div class="percent">20%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage2">
+                              <div class="name" title="B200-node-06">
+                                B200-node-06
+                              </div>
+                              <div class="percent">36%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage3">
+                              <div class="name" title="B200-node-11">
+                                B200-node-11
+                              </div>
+                              <div class="percent">70%</div>
+                            </div>
+                            <div class="gpu_tile gpu_state_usage4">
+                              <div class="name" title="B200-node-16">
+                                B200-node-16
+                              </div>
+                              <div class="percent">90%</div>
+                              <div class="badge_alert"></div>
+                            </div>
+                          </div>
+
+                          <!-- GPU Map -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                </div>`
+
+  return panel
+}
+
+export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="gpuUsageStatusPanel">
+                  <div class="grid-stack-item-content">
+                  <div class="grid_item">
+                    <div class="grid_title">
+                      <label>GPU 사용 현황</label>
+                      <div class="right">
+                        <div class="select_wrap">
+                          <div class="select-list-box">
+                            <div class="selected-item single">
+                              <p>
+                                <strong>최근 1주일</strong>
+                              </p>
+                            </div>
+
+                            <ul class="select-list scroll-gray">
+                              <li class="selected">
+                                <p>
+                                  <strong>최근 1주일</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>최근 1일</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>최근 7시간</strong>
+                                </p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      <i class="ico-btn-trash"></i>
+                        <!-- // select_wrap -->
+                      </div>
+                    </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <!-- Metrics Grid -->
+                          <div class="gpu_usage_grid">
+                            <!-- 공통 메트릭 카드 -->
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                GPU 평균 사용률
+                              </h3>
+                              <p class="gpu_usage_card_value">76%</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                GPU 메모리 사용률
+                              </h3>
+                              <p class="gpu_usage_card_value">52%</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                GPU 온도 (최고 / 평균)
+                              </h3>
+                              <p class="gpu_usage_card_value">95℃ / 72℃</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                전력 사용량 (Total)
+                              </h3>
+                              <p class="gpu_usage_card_value">3,200w</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <div class="gpu_usage_card">
+                              <h3 class="gpu_usage_card_title">
+                                NVLink (Total)
+                              </h3>
+                              <p class="gpu_usage_card_value">38GB/s</p>
+                              <div class="gpu_usage_card_chart">
+                                <img
+                                  src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                />
+                              </div>
+                            </div>
+
+                            <!-- Infiniband (특수 구조) -->
+                            <div class="gpu_usage_card gpu_usage_network">
+                              <h3 class="gpu_usage_card_title">
+                                Infiniband (Total)
+                              </h3>
+                              <div class="gpu_network_section">
+                                <section class="network_section">
+                                  <p>
+                                    <span class="badge">TX</span>
+                                    <span class="value">95GB/s</span>
+                                  </p>
+                                  <div class="network_chart">
+                                    <img
+                                      src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                    />
+                                  </div>
+                                </section>
+                                <section class="network_section">
+                                  <p>
+                                    <span class="badge">RX</span>
+                                    <span class="value">90GB/s</span>
+                                  </p>
+                                  <div class="network_chart">
+                                    <img
+                                      src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
+                                    />
+                                  </div>
+                                </section>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                </div>`
+
+  return panel
+}
+
+export const gpuUsageTop5Panel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="gpuUsageTop5Panel">
+                  <div class="grid-stack-item-content">
+                  <div class="grid_item">
+                    <div class="grid_title">
+                      <label>GPU 사용 현황 Top5</label>
+                      <div class="right"></div>
+                      <i class="ico-btn-trash"></i>
+                    </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="gpu_usage_top_wrap">
+                            <div class="gpu_usage_top">
+                              <h3 class="gpu_usage_top_title">GPU 사용률</h3>
+                              <ul class="gpu_usage_list">
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-0992322</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 90%"></div>
+                                  </div>
+                                  <span class="percent">90%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-1</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 82%"></div>
+                                  </div>
+                                  <span class="percent">82%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-2</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 75%"></div>
+                                  </div>
+                                  <span class="percent">75%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-3</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 64%"></div>
+                                  </div>
+                                  <span class="percent">64%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-4</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 58%"></div>
+                                  </div>
+                                  <span class="percent">58%</span>
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="gpu_usage_top color2">
+                              <h3 class="gpu_usage_top_title">
+                                GPU 메모리 사용률
+                              </h3>
+                              <ul class="gpu_usage_list">
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-09</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 90%"></div>
+                                  </div>
+                                  <span class="percent">90%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-1</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 82%"></div>
+                                  </div>
+                                  <span class="percent">82%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-22</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 75%"></div>
+                                  </div>
+                                  <span class="percent">75%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-3</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 64%"></div>
+                                  </div>
+                                  <span class="percent">64%</span>
+                                </li>
+                                <li class="gpu_usage_item">
+                                  <span class="gpu_name">GPU-4</span>
+                                  <div class="bar_wrapper">
+                                    <div class="bar" style="width: 58%"></div>
+                                  </div>
+                                  <span class="percent">58%</span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                </div>`
+
+  return panel
+}
+
+export const alarmVerticalPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="alarmVerticalPanel">
+                  <div class="grid-stack-item-content">
+                  <div class="grid_item">
+                    <div class="grid_title">
+                      <label>알림</label>
+                      <div class="right">
+                        <div class="select_wrap">
+                          <div class="select-list-box">
+                            <div class="selected-item single">
+                              <p>
+                                <strong>노드</strong>
+                              </p>
+                            </div>
+
+                            <ul class="select-list scroll-gray">
+                              <li class="selected">
+                                <p>
+                                  <strong>노드</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>Pod</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>가상머신</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>KaaS</strong>
+                                </p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <!-- // select_wrap -->
+                        <button class="icon">
+                          <i class="ico-list-filter"></i>
+                        </button>
+                        <i class="ico-btn-trash"></i>
+                        <!-- filter 버튼 클릭시 : dropdown 최신 순 / 오래된 순-->
+                      </div>
+                    </div>
+                    <div class="alert_tab">
+                      <label for="al_name_1">
+                        <input type="radio" name="box-tab" id="al_name_1" value="name3" checked />
+                        <!-- gpu badge number는 99 이상일때 99로만 표현 -->
+                        <span><span class="gpu_badge_number">18</span><span>전체</span></span>
+                      </label>
+                      <label for="al_name_2">
+                        <input type="radio" name="box-tab" id="al_name_2" value="name4" />
+                        <span><span class="gpu_badge_number critical">6</span><span>심각</span></span>
+                      </label>
+                      <label for="al_name_3">
+                        <input type="radio" name="box-tab" id="al_name_3" value="name5" />
+                        <span><span class="gpu_badge_number minor">6</span><span>경고</span></span>
+                      </label>
+                      <label for="al_name_4">
+                        <input type="radio" name="box-tab" id="al_name_4" value="name6" />
+                        <span><span class="gpu_badge_number unknown">6</span><span>주의</span></span>
+                      </label>
+                    </div>
+                    <div class="spin-nested-loading">
+                      <div class="spin-container">
+                        <div class="grid_info style_list">
+                          <!-- <div class="grid_text">
+                            <span>데이터가 없습니다.</span>
+                          </div> -->
+                          <ul class="alert_card_list">
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status critical">심각</span>
+                                  <span class="alert_resource type_node">노드</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    Thanos Rule {{$labels.instance}} in
+                                    {{$labels.namespace}} is failing to queue
+                                    alerts.
+                                  </p>
+                                  <!--배지가 필요할 때만 사용 <p class="alert_badge">
+                                      <span class="alert_errorcode"
+                                        >Error Code: Xid 14</span
+                                      >
+                                    </p> -->
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status minor">경고</span>
+                                  <span class="alert_resource type_gpu">GPU</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    GPU의 디스플레이 엔진 응답 지연을
+                                    감지했습니다.
+                                  </p>
+                                  <p class="alert_badge">
+                                    <span class="alert_errorcode">Error Code: Xid 14</span>
+                                  </p>
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status unknown">주의</span>
+                                  <span class="alert_resource type_vm">가상머신</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    Pod name is skt-32 value is
+                                    2.405932480e+06
+                                  </p>
+                                  <!--배지가 필요할 때만 사용 <p class="alert_badge">
+                                      <span class="alert_errorcode"
+                                        >Error Code: Xid 14</span
+                                      >
+                                    </p> -->
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>`
+
+  return panel
+}
+
+export const alarmHorizontalPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="alarmHorizontalPanel">
+                  <div class="grid-stack-item-content">
+                  <div class="grid_item">
+                    <div class="grid_title">
+                      <label>알림</label>
+                      <div class="right">
+                        <div class="alert_tab bottom">
+                          <label for="al_name2_1">
+                            <input type="radio" name="box-tab" id="al_name2_1" value="name3" checked />
+                            <!-- gpu badge number는 99 이상일때 99로만 표현 -->
+                            <span><span class="gpu_badge_number">18</span><span>전체</span></span>
+                          </label>
+                          <label for="al_name2_2">
+                            <input type="radio" name="box-tab" id="al_name2_2" value="name4" />
+                            <span><span class="gpu_badge_number critical">6</span><span>심각</span></span>
+                          </label>
+                          <label for="al_name2_3">
+                            <input type="radio" name="box-tab" id="al_name2_3" value="name5" />
+                            <span><span class="gpu_badge_number minor">6</span><span>경고</span></span>
+                          </label>
+                          <label for="al_name2_4">
+                            <input type="radio" name="box-tab" id="al_name2_4" value="name6" />
+                            <span><span class="gpu_badge_number unknown">6</span><span>주의</span></span>
+                          </label>
+                        </div>
+                        <div class="select_wrap">
+                          <div class="select-list-box">
+                            <div class="selected-item single">
+                              <p>
+                                <strong>노드</strong>
+                              </p>
+                            </div>
+
+                            <ul class="select-list scroll-gray">
+                              <li class="selected">
+                                <p>
+                                  <strong>노드</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>Pod</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>가상머신</strong>
+                                </p>
+                              </li>
+                              <li>
+                                <p>
+                                  <strong>KaaS</strong>
+                                </p>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <!-- // select_wrap -->
+                        <button class="icon">
+                          <i class="ico-list-filter"></i>
+                        </button>
+                        <i class="ico-btn-trash"></i>
+                        <!-- filter 버튼 클릭시 : dropdown 최신 순 / 오래된 순-->
+                      </div>
+                    </div>
+
+                    <div class="spin-nested-loading">
+                      <div class="spin-container">
+                        <div class="grid_info style_list">
+                          <!-- <div class="grid_text">
+                            <span>데이터가 없습니다.</span>
+                          </div> -->
+                          <ul class="alert_card_list bottom">
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status critical">심각</span>
+                                  <span class="alert_resource type_node">노드</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    Thanos Rule {{$labels.instance}} in
+                                    {{$labels.namespace}} is failing to queue
+                                    alerts.
+                                  </p>
+                                  <!--배지가 필요할 때만 사용 <p class="alert_badge">
+                                      <span class="alert_errorcode"
+                                        >Error Code: Xid 14</span
+                                      >
+                                    </p> -->
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status minor">경고</span>
+                                  <span class="alert_resource type_gpu">GPU</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    GPU의 디스플레이 엔진 응답 지연을
+                                    감지했습니다.
+                                  </p>
+                                  <p class="alert_badge">
+                                    <span class="alert_errorcode">Error Code: Xid 14</span>
+                                  </p>
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status minor">경고</span>
+                                  <span class="alert_resource type_gpu">GPU</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    GPU의 디스플레이 엔진 응답 지연을
+                                    감지했습니다.
+                                  </p>
+                                  <p class="alert_badge">
+                                    <span class="alert_errorcode">Error Code: Xid 14</span>
+                                  </p>
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status minor">경고</span>
+                                  <span class="alert_resource type_gpu">GPU</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    GPU의 디스플레이 엔진 응답 지연을
+                                    감지했습니다.
+                                  </p>
+                                  <p class="alert_badge">
+                                    <span class="alert_errorcode">Error Code: Xid 14</span>
+                                  </p>
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                            <li class="alert_card">
+                              <div class="alert_content">
+                                <div class="alert_header">
+                                  <span class="alert_status unknown">주의</span>
+                                  <span class="alert_resource type_vm">가상머신</span>
+                                </div>
+
+                                <div class="alert_body">
+                                  <p class="alert_message">
+                                    Pod name is skt-32 value is
+                                    2.405932480e+06
+                                  </p>
+                                  <!--배지가 필요할 때만 사용 <p class="alert_badge">
+                                      <span class="alert_errorcode"
+                                        >Error Code: Xid 14</span
+                                      >
+                                    </p> -->
+                                </div>
+                                <p class="alert_date">2025-08-23</p>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>`
+
+  return panel
 }
 
 export const clusterNodePanel = ({ x, y, w, h }) => {

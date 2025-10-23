@@ -19,7 +19,7 @@ export default class DashboardInfo {
     h: 4,
   }
   kaas = {
-    x: 9,
+    x: 12,
     y: 0,
     w: 3,
     h: 4,
@@ -28,7 +28,7 @@ export default class DashboardInfo {
     x: 0,
     y: 4,
     w: 12,
-    h: 10,
+    h: 12,
   }
   resourceUsage = {
     x: 0,
@@ -54,12 +54,12 @@ export default class DashboardInfo {
     w: 12,
     h: 4,
   }
-  bmcNode = {
-    x: 0,
-    y: 34,
-    w: 12,
-    h: 7,
-  }
+  // bmcNode = {
+  //   x: 0,
+  //   y: 34,
+  //   w: 12,
+  //   h: 7,
+  // }
   resourceChange = {
     x: 0,
     y: 41,
@@ -72,36 +72,36 @@ export default class DashboardInfo {
     w: 6,
     h: 5,
   }
-  carbonPower = {
-    x: 0,
-    y: 46,
-    w: 6,
-    h: 3,
-  }
-  carbonCo2 = {
-    x: 6,
-    y: 46,
-    w: 6,
-    h: 3,
-  }
-  carbonTree = {
-    x: 0,
-    y: 49,
-    w: 6,
-    h: 3,
-  }
-  carbonCost = {
-    x: 6,
-    y: 49,
-    w: 6,
-    h: 3,
-  }
-  cpuPower = {
-    x: 0,
-    y: 52,
-    w: 12,
-    h: 5,
-  }
+  // carbonPower = {
+  //   x: 0,
+  //   y: 46,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // carbonCo2 = {
+  //   x: 6,
+  //   y: 46,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // carbonTree = {
+  //   x: 0,
+  //   y: 49,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // carbonCost = {
+  //   x: 6,
+  //   y: 49,
+  //   w: 6,
+  //   h: 3,
+  // }
+  // cpuPower = {
+  //   x: 0,
+  //   y: 52,
+  //   w: 12,
+  //   h: 5,
+  // }
   usageTop5 = {
     x: 12,
     y: 0,
@@ -114,22 +114,77 @@ export default class DashboardInfo {
     w: 3,
     h: 9,
   }
-  issue = {
-    x: 12,
-    y: 17,
+  // issue = {
+  //   x: 12,
+  //   y: 17,
+  //   w: 3,
+  //   h: 9,
+  // }
+  // carbonIndicator = {
+  //   x: 12,
+  //   y: 26,
+  //   w: 3,
+  //   h: 9,
+  // }
+  // powerUsageTop5 = {
+  //   x: 12,
+  //   y: 35,
+  //   w: 3,
+  //   h: 7,
+  // }
+
+  node = {
+    x: 0,
+    y: 0,
     w: 3,
-    h: 9,
+    h: 4,
   }
-  carbonIndicator = {
-    x: 12,
-    y: 26,
+  virtualMachine = {
+    x: 3,
+    y: 0,
     w: 3,
-    h: 9,
+    h: 4,
   }
-  powerUsageTop5 = {
-    x: 12,
-    y: 35,
+  gpuStatus = {
+    x: 6,
+    y: 0,
     w: 3,
-    h: 7,
+    h: 4,
+  }
+  gpuUsage = {
+    x: 9,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
+  gpuMap = {
+    x: 0,
+    y: 4,
+    w: 6,
+    h: 12,
+  }
+  gpuUsageStatus = {
+    x: 6,
+    y: 4,
+    w: 6,
+    h: 8,
+  }
+  gpuUsageTop5 = {
+    x: 6,
+    y: 12,
+    w: 6,
+    h: 4,
+  }
+  alarmVertical = {
+    x: 12,
+    y: 4,
+    w: 3,
+    h: 12,
+  }
+  alarmHorizontal = {
+    x: 0,
+    y: 16,
+    w: 12,
+    h: 4,
   }
 }

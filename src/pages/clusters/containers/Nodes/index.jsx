@@ -320,8 +320,9 @@ export default class Nodes extends React.Component {
         dataIndex: 'cpu_type',
         filteredValue: getFilteredValue('status'),
         isHideable: true,
-        render: (_, record) =>
+        render: (_, record) => (
           <Text title={record.nodeInfo.architecture.toUpperCase()} />
+        ),
       },
       {
         title: t('CPU_USAGE'),

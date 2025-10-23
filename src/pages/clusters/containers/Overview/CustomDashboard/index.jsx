@@ -8,6 +8,14 @@ import { Notify, Toggle } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import DeleteModal from 'components/Modals/Delete'
 
+import Node from './Node'
+import VirtualMachine from './VirtualMachine'
+import GpuStatus from './GpuStatus'
+import GpuUsage from './GpuUsage'
+import GpuMap from './GpuMap'
+import GpuUsageStatus from './GpuUsageStatus'
+import GpuUsageTop5 from './GpuUsageTop5'
+import Alarm from './Alarm'
 import ClusterNode from './ClusterNode'
 import Pod from './Pod'
 import Vm from './Vm'
@@ -24,6 +32,7 @@ import Bmc from './Bmc'
 import GpuCluster from './GpuCluster'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
+import CustomDashboardInfo from 'stores/dashboard/customDashboardInfo'
 import { makePanels } from 'stores/dashboard/panels'
 
 const CustomDashboard = props => {
@@ -65,7 +74,7 @@ const CustomDashboard = props => {
   useEffect(() => {
     var dashboardArr = JSON.parse(localStorage.getItem('dashboardArr'))
     if (!dashboardArr) {
-      const dash = new DashboardInfo()
+      const dash = new CustomDashboardInfo()
       dashboardArr = [dash]
       localStorage.setItem('dashboardArr', JSON.stringify(dashboardArr))
     }
@@ -158,7 +167,10 @@ const CustomDashboard = props => {
           <div className="dash_wrap">
             <section>
               {/* Top area */}
-              <div className='dash_top_align'>
+              <div
+                className="dash_top_align"
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
                 <div className="dash_toptab">
                   {dashboardArr.map((obj, idx) => (
                     <label htmlFor={`dashTab${idx}`} key={idx}>
@@ -186,7 +198,9 @@ const CustomDashboard = props => {
                               <span>{t('RESOURCES_EDIT_DASHBOARD')}</span>
                             </li>
                             {dashboardArr.length > 1 && (
-                              <li onClick={() => deleteDashboard(idx, obj.name)}>
+                              <li
+                                onClick={() => deleteDashboard(idx, obj.name)}
+                              >
                                 <i className="ico-quick-trash"></i>
                                 <span>{t('RESOURCES_DELETE_DASHBOARD')}</span>
                               </li>
@@ -203,13 +217,27 @@ const CustomDashboard = props => {
                       onClick={() => editMode()}
                     >
                       <i className="ico-plus"></i>
-                    </button>                  
-                  )}                 
-                </div>  
-                <div className="dash_toggle">
-                  <Toggle checked={user.showMenu} onChange={() => user.handlechangeShowMenu(!user.showMenu)}  />
-                  <span>{user.showMenu ? " 좌측 메뉴" : " 좌측 메뉴"}</span>
-                </div>            
+                    </button>
+                  )}
+                </div>
+                <div
+                  className="dash_toggle"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    minHeight: '32px',
+                    padding: '2px',
+                    marginLeft: '8px',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <Toggle
+                    checked={user.showMenu}
+                    onChange={() => user.handlechangeShowMenu(!user.showMenu)}
+                  />
+                  <span>{user.showMenu ? ' 좌측 메뉴' : ' 좌측 메뉴'}</span>
+                </div>
               </div>
               {/* // Top area */}
 
@@ -257,6 +285,15 @@ const CustomDashboard = props => {
 export default inject('rootStore')(observer(CustomDashboard))
 
 const widgetMap = {
+  node: props => <Node {...props} />,
+  virtualMachine: props => <VirtualMachine {...props} />,
+  gpuStatus: props => <GpuStatus {...props} />,
+  gpuUsage: props => <GpuUsage {...props} />,
+  gpuMap: props => <GpuMap {...props} />,
+  gpuUsageStatus: props => <GpuUsageStatus {...props} />,
+  gpuUsageTop5: props => <GpuUsageTop5 {...props} />,
+  alarmVertical: props => <Alarm {...props} />,
+  alarmHorizontal: props => <Alarm isVertical={true} {...props} />,
   clusterNode: props => <ClusterNode {...props} />,
   pod: props => <Pod {...props} />,
   vm: props => <Vm {...props} />,
