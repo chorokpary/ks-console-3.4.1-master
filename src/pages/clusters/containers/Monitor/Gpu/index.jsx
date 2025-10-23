@@ -15,7 +15,6 @@ import Banner from 'components/Cards/Banner'
 import { SimpleArea } from 'components/Charts'
 
 import { InputSearch, Button } from '@kube-design/components'
-
 import VmStore from 'stores/resources/vms'
 import GpuNodeStore from 'stores/resources/gpunodes'
 
@@ -144,6 +143,7 @@ const index = props => {
 
   const [selected, setSelected] = useState(null)
   const [fetchParams, setFetchParams] = useState({})
+  const [isSearchLoading, setIsSearchLoading] = useState(false)
 
   const fetchVmGpuStores = async () => {
     const vmStores = await gpuVmStore.fetchList({ cluster, limit: 10000 })
@@ -289,6 +289,7 @@ const index = props => {
   }
 
   const fetchData = async () => {
+    setIsSearchLoading(true)
     const vmStores = sortByNameAsc(await fetchVmGpuStores())
     const nodeStores = sortByNameAsc(await fetchNodeStores())
     const nodeMappingNames = getNodeMappingNames(nodeStores, vmStores)
@@ -300,19 +301,19 @@ const index = props => {
       setSelected(nodeMappingNames[0] ?? null)
     }
 
-    if (monitoringType === 'vms') {
+    if (monitoringType === VMS) {
       setSelected(vmStores[0] ?? null)
     }
+    setIsSearchLoading(false)
   }
 
   const getSearchData = async ({ ...params } = {}) => {
-
     const { name } = params
 
     if (!name) {
       return
     }
-
+    setIsSearchLoading(true)
     const vmStores = sortByNameAsc(await fetchVmGpuStores())
     const nodeStores = sortByNameAsc(await fetchNodeStores())
 
@@ -320,10 +321,12 @@ const index = props => {
       const nodeMappingNames = getNodeMappingNames(nodeStores, vmStores)
 
       setGpuNodesData(nodeMappingNames.filter(node => node.node?.includes(name)) ?? [])
+      setIsSearchLoading(false)
       return
     }
 
     setGpuVmsData(vmStores.filter(node => node.name.includes(name)) ?? [])
+    setIsSearchLoading(false)
   }
 
   const fetchSearch = async params => {
@@ -518,6 +521,8 @@ const index = props => {
               gpuNodesData,
               gpuVmsData,
               setMonitoringType,
+              isSearchLoading,
+              setIsSearchLoading,
             })}
           </div>
           <div
