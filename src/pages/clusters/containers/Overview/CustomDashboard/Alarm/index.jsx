@@ -105,11 +105,11 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   }, [alarmData])
 
   const getTypeIcon = labels => {
-    if (labels?.event_type === 'node') {
+    if (labels?.resource_type === 'node') {
       return 'node'
-    } else if (labels?.event_type === 'vm') {
+    } else if (labels?.resource_type === 'vm') {
       return 'vm'
-    } else if (labels?.event_type === 'gpu') {
+    } else if (labels?.resource_type === 'gpu') {
       return 'gpu'
     } else {
       return 'node'
@@ -117,11 +117,11 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   }
 
   const getType = labels => {
-    if (labels?.event_type === 'node') {
+    if (labels?.resource_type === 'node') {
       return t('RESOURCES_NODE')
-    } else if (labels?.event_type === 'vm') {
+    } else if (labels?.resource_type === 'vm') {
       return t('RESOURCES_VM')
-    } else if (labels?.event_type === 'gpu') {
+    } else if (labels?.resource_type === 'gpu') {
       return 'GPU'
     } else {
       return t('RESOURCES_NODE')

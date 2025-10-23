@@ -525,6 +525,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               style={{ display: 'none' }}
             >
               <div className="legend_container">
+                <div className="legend_item_label">
+                  {t('RESOURCES_GPU_UTILIZATION_PERCENT')}
+                </div>
                 <div className="legend_items">
                   <div className="legend_item">
                     <div className="color_bar gpu_state_unknown"></div>
@@ -532,19 +535,19 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                   </div>
                   <div className="legend_item">
                     <div className="color_bar gpu_state_usage1"></div>
-                    <span className="level">30</span>
+                    <span className="level">30%</span>
                   </div>
                   <div className="legend_item">
                     <div className="color_bar gpu_state_usage2"></div>
-                    <span className="level">60</span>
+                    <span className="level">60%</span>
                   </div>
                   <div className="legend_item">
                     <div className="color_bar gpu_state_usage3"></div>
-                    <span className="level">80</span>
+                    <span className="level">80%</span>
                   </div>
                   <div className="legend_item">
                     <div className="color_bar gpu_state_usage4"></div>
-                    <span className="level">100</span>
+                    <span className="level">100%</span>
                   </div>
                 </div>
               </div>
