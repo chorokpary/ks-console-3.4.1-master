@@ -25,16 +25,8 @@ const typeOption = [
     label: t('GPU'),
   },
   {
-    value: 'pod',
-    label: t('Pod'),
-  },
-  {
     value: 'vm',
     label: t('RESOURCES_VM'),
-  },
-  {
-    value: 'kaas',
-    label: t('KaaS'),
   },
 ]
 const sortOption = [
@@ -113,34 +105,26 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   }, [alarmData])
 
   const getTypeIcon = labels => {
-    if ('container' in labels) {
-      return 'kaas'
-    } else if ('daemonset' in labels) {
-      return 'vm'
-    } else if ('job' in labels) {
+    if (labels?.event_type === 'node') {
       return 'node'
-    } else if ('pod' in labels) {
-      return 'pod'
-    } else if ('gpu' in labels) {
+    } else if (labels?.event_type === 'vm') {
+      return 'vm'
+    } else if (labels?.event_type === 'gpu') {
       return 'gpu'
     } else {
-      return 'etc'
+      return 'node'
     }
   }
 
   const getType = labels => {
-    if ('container' in labels) {
-      return 'KaaS'
-    } else if ('daemonset' in labels) {
-      return 'VM'
-    } else if ('job' in labels) {
-      return 'Node'
-    } else if ('pod' in labels) {
-      return 'Pod'
-    } else if ('gpu' in labels) {
+    if (labels?.event_type === 'node') {
+      return t('RESOURCES_NODE')
+    } else if (labels?.event_type === 'vm') {
+      return t('RESOURCES_VM')
+    } else if (labels?.event_type === 'gpu') {
       return 'GPU'
     } else {
-      return 'etc'
+      return t('RESOURCES_NODE')
     }
   }
 
