@@ -208,6 +208,10 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     })
     setClusterArr(clusterArr)
 
+    const vmList = clusterArr
+      .map(item => item?.vmList?.map(obj => obj.split('/')[1]))
+      .join('|')
+
     const getData = async () => {
       var currentTime = Math.floor(Date.now() / 1000)
       const paramsData = {
@@ -215,57 +219,43 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         end: currentTime,
       }
 
-      const exprUtil = clusterArr
-        .map(item => {
-          const vmList = item?.vmList
-            ?.map(obj => {
-              return obj.split('/')[1]
-            })
-            .join('|')
-          return `(
-                avg by (group) (
-                  label_replace(
-                    DCGM_FI_DEV_GPU_UTIL{pod=~"${vmList}", job="launcher-dcgm-exporter"},
-                    "group", "${item.clusterName}", "", ""
-                  )
-                )
-              )`
-        })
-        .join(' or ')
-
       const nodeAvgUsageData = await customStore.fetchMetric({
-        expr: exprUtil,
+        expr: `avg by (pod) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter",pod=~"${vmList}"})`,
         paramsData,
       })
 
-      const exprMem = clusterArr
-        .map(item => {
-          const vmList = item?.vmList?.map(obj => obj.split('/')[1]).join('|')
-          return `(
-              avg by (group) (
-                label_replace(
-                  (
-                    DCGM_FI_DEV_FB_USED{pod=~"${vmList}", job="launcher-dcgm-exporter"}
-                    /
-                    (DCGM_FI_DEV_FB_USED{pod=~"${vmList}", job="launcher-dcgm-exporter"} 
-                      + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}", job="launcher-dcgm-exporter"})
-                  ) * 100,
-                  "group", "${item.clusterName}", "", ""
-                )
-              )
-            )`
-        })
-        .join(' or ')
+      const nodeAvgUsageMetric = nodeAvgUsageData.map(item => {
+        const pod = item.metric.pod
+        let node
+        clusterArr.map(c =>
+          c?.vmList.map(
+            obj => obj.split('/')[1] === pod && (node = c.clusterName)
+          )
+        )
+        return { ...item, metric: { group: node } }
+      })
+
       const nodeAvgMemData = await customStore.fetchMetric({
-        expr: exprMem,
+        expr: `avg by (pod) (DCGM_FI_DEV_FB_USED{pod=~"${vmList}", job="launcher-dcgm-exporter"}/(DCGM_FI_DEV_FB_USED{pod=~"${vmList}", job="launcher-dcgm-exporter"} + DCGM_FI_DEV_FB_FREE{pod=~"${vmList}", job="launcher-dcgm-exporter"})) * 100`,
         paramsData,
+      })
+
+      const nodeAvgMemMetric = nodeAvgMemData.map(item => {
+        const pod = item.metric.pod
+        let node
+        clusterArr.map(c =>
+          c?.vmList.map(
+            obj => obj.split('/')[1] === pod && (node = c.clusterName)
+          )
+        )
+        return { ...item, metric: { group: node } }
       })
 
       const result = clusterArr.map(c => {
-        const metricUtil = nodeAvgUsageData.find(
+        const metricUtil = nodeAvgUsageMetric.find(
           m => m.metric.group === c.clusterName
         )
-        const metricMem = nodeAvgMemData.find(
+        const metricMem = nodeAvgMemMetric.find(
           m => m.metric.group === c.clusterName
         )
         return {
