@@ -114,6 +114,14 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         dropdownRefRange.current.classList.remove('active')
       }
     }
+
+    //gpu_tile .name 길어서 ellipsis 처리 될 때 tooltip 표현 (27자 이상일 때만)
+    document.querySelectorAll('.gpu_tile .name').forEach(el => {
+      const text = el.textContent.trim()
+      if (text.length > 27) {
+        el.setAttribute('data-text', text)
+      }
+    })
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])

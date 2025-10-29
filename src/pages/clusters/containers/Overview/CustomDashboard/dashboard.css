@@ -1963,19 +1963,56 @@ body {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   cursor: pointer;
+  -webkit-transition: -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  z-index: 1;
+  min-height: 0;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover {
-  opacity: 0.9;
+  -webkit-transform: scale(1.3);
+  transform: scale(1.3);
+  -webkit-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  padding: 6px 8px;
+  aspect-ratio: 1/1;
+}
+.dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover .name {
+  font-size: 9px;
+  padding-top: 3px;
+  line-height: 1.3;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-all;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+.dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover .percent {
+  -webkit-transform: scale(0.8);
+  transform: scale(0.8);
+  font-size: 18px;
+}
+.dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover .badge_alert {
+  -webkit-transform: scale(0.8);
+  transform: scale(0.8);
+  top: -2px;
+  right: -2px;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile .name {
   font-family: Pretendard;
   font-size: 12px;
   font-weight: 700;
-  line-height: 1.2;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: #ffffff;
+  -ms-flex-negative: 1;
+  flex-shrink: 1;
+  min-height: 0;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile .percent {
   font-family: Pretendard;
@@ -1983,9 +2020,78 @@ body {
   font-weight: 700;
   text-align: center;
   color: #ffffff;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpunode_map
+  .gpu_tile:nth-child(8n + 1):hover
+  .name[data-text]::before {
+  left: 4px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpunode_map
+  .gpu_tile:nth-child(8n):hover
+  .name[data-text]::before {
+  left: auto;
+  right: 4px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpunode_map
+  .gpu_tile:nth-child(8n + 1):hover
+  .name[data-text]::after {
+  left: 30px;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpunode_map
+  .gpu_tile:nth-child(8n):hover
+  .name[data-text]::after {
+  left: auto;
+  right: 30px;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name[data-text]::before {
+  content: attr(data-text);
+  position: absolute;
+  width: 120px;
+  word-break: break-all;
+  white-space: normal;
+  top: calc(100% + 8px);
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  z-index: 20;
+  pointer-events: none;
+  background: #242e42;
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name[data-text]::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  -webkit-transform: translateX(-50%) rotate(45deg);
+  transform: translateX(-50%) rotate(45deg);
+  background-color: #242e42;
+  width: 8px;
+  height: 8px;
 }
 .dash_wrap .gpu_map_wrap .gpu_map {
-  display: grid; /* 변경: flex → grid */
+  display: grid;
   grid-template-columns: repeat(24, minmax(16px, 1fr));
   gap: 2px;
   -ms-flex-line-pack: start;
@@ -2006,18 +2112,209 @@ body {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   cursor: pointer;
-}
-.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover {
-  opacity: 0.9;
-}
-.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile > .badge_alert {
-  width: 100%;
-  height: 100%;
+  -webkit-transition: -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    -webkit-transform 0.2s ease, -webkit-box-shadow 0.2s ease;
+  z-index: 1;
+  /* First row (1~24): nudge downward by 12px on hover */
+  /* First row + left-most column: combine X and Y adjustments */
+  /* First row + right-most column: combine X and Y adjustments */
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .name,
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .percent {
   display: none;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover {
+  -webkit-transform: scale(4);
+  transform: scale(4);
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  padding: 1.5px 2px;
+  -webkit-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  border-radius: 0.5px;
+  overflow: visible; /* allow expanded tile and tooltip to render fully */
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name,
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .percent {
+  display: block;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .badge_alert {
+  -webkit-transform: scale(0.25);
+  transform: scale(0.25);
+  top: -8px;
+  right: -8px;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name {
+  display: -webkit-box;
+  font-size: 3px;
+  font-weight: 700;
+  padding-top: 2px;
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .percent {
+  font-size: 4.5px;
+  padding-bottom: 1.3px;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:nth-child(24n + 1):hover {
+  -webkit-transform-origin: left center;
+  transform-origin: left center;
+  -webkit-transform: translateX(-8px) scale(4);
+  transform: translateX(-8px) scale(4);
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:nth-child(24n):hover {
+  -webkit-transform-origin: right center;
+  transform-origin: right center;
+  -webkit-transform: translateX(8px) scale(4);
+  transform: translateX(8px) scale(4);
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:nth-child(-n + 24):hover {
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-transform: translateY(32px) scale(4);
+  transform: translateY(32px) scale(4);
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n + 1):nth-child(-n + 24):hover {
+  -webkit-transform-origin: left center;
+  transform-origin: left center;
+  -webkit-transform: translateX(-8px) translateY(32px) scale(4);
+  transform: translateX(-8px) translateY(32px) scale(4);
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n):nth-child(-n + 24):hover {
+  -webkit-transform-origin: right center;
+  transform-origin: right center;
+  -webkit-transform: translateX(8px) translateY(32px) scale(4);
+  transform: translateX(8px) translateY(32px) scale(4);
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .name {
+  font-family: Pretendard;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #ffffff;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .percent {
+  font-family: Pretendard;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name[data-text]::before {
+  width: 40px;
+  top: calc(100% + 2px);
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  padding: 2px 2px 0 2px;
+  border-radius: 1px;
+  font-size: 3px;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name[data-text]::after {
+  top: calc(100% + 1px);
+  width: 2px;
+  height: 2px;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n + 1):hover
+  .name[data-text]::before {
+  left: 0px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n + 2):hover
+  .name[data-text]::before {
+  left: 2px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n + 3):hover
+  .name[data-text]::before {
+  left: 0px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n):hover
+  .name[data-text]::before {
+  left: auto;
+  right: 0px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n-1):hover
+  .name[data-text]::before {
+  left: auto;
+  right: 2px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n-2):hover
+  .name[data-text]::before {
+  left: auto;
+  right: 0px;
+  -webkit-transform: none;
+  transform: none;
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n + 1):hover
+  .name[data-text]::after {
+  left: 15px;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.dash_wrap
+  .gpu_map_wrap
+  .gpu_map
+  .gpu_tile:nth-child(24n + 1):hover
+  .name[data-text]::after:nth-child(24n):hover
+  .name[data-text]::after {
+  left: auto;
+  right: 100px;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .dash_wrap .gpu_map_wrap .gpu_backdrop {
   position: absolute;
@@ -2261,6 +2558,10 @@ body {
   z-index: 100;
   background: #e79818;
   border-radius: 2px;
+  -webkit-transition: -webkit-transform 0.2s ease;
+  transition: -webkit-transform 0.2s ease;
+  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, -webkit-transform 0.2s ease;
 }
 .dash_wrap .gpu_map_wrap .badge_alert::before {
   position: absolute;
@@ -4482,6 +4783,7 @@ body {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   width: calc(100% - 40px);
