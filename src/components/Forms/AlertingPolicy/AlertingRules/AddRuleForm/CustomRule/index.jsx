@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react'
 import {
   Form,
   Input,
@@ -11,6 +11,8 @@ import { get } from 'lodash'
 import styles from './index.scss'
 import UnitInput from '../../../BaseInfo/UnitInput'
 import CustomExpr from './CustomExpr'
+
+import ConfigMapStore from 'stores/configmap'
 
 const durationUnitOptions = [
   {
@@ -26,7 +28,7 @@ const durationUnitOptions = [
     value: 'h',
   },
 ]
-
+ 
 export const severityOptions = [
   {
     label: t('CRITICAL_ALERT'),
@@ -49,7 +51,37 @@ export const severityOptions = [
 ]
 
 const CustomRule = (props, ref) => {
+
+ const configMapStore = new ConfigMapStore()
+
   const { editRule } = props
+
+  const [resourceOptions, setResourceOptions] = useState([])
+
+  useEffect(() => {
+    const fetchResourceTypes = async () => {
+
+      const params = {
+        cluster: 'default',
+        namespace: 'kubesphere-monitoring-system',
+        name: 'alert-rule-resource-type',
+      }
+
+      const configmap = await configMapStore.fetchDetail(params)
+      const resourceData = JSON.parse(get(configmap, 'data.resource_type', '[]'))
+
+      const options = Array.isArray(resourceData)
+      ? resourceData.map(item => ({
+          label: item.toUpperCase(),
+          value: item,
+        }))
+      : []
+
+      setResourceOptions(options)
+    }
+
+    fetchResourceTypes()
+  }, [])
 
   const ruleRef = useRef()
   useImperativeHandle(ref, () => ({
@@ -66,6 +98,9 @@ const CustomRule = (props, ref) => {
     expr: get(editRule, 'expr', ''),
     severity: get(editRule, 'severity', ''),
     disable: get(editRule, 'disable', false),
+    labels: {
+      resource_type : get(editRule, 'labels.resource_type', ''),
+    }
   })
 
   const timeValidator = (rule, value, callback) => {
@@ -92,7 +127,29 @@ const CustomRule = (props, ref) => {
               <Input name="alert" maxLength={63} />
             </Form.Item>
           </Column>
-          <Column></Column>
+          <Column>
+            <Form.Item
+              label={t('TYPE')}
+              rules={[{ required: true, message: t('RESOURCE_TYPE_REQUIRED') }]}
+            >
+              <Select
+                name="labels.resource_type"
+                options={resourceOptions}
+                optionRenderer={({ label, value }) => (
+                  <span
+                    className={styles[value]}
+                    style={{ paddingTop: 2, paddingBottom: 2 }}
+                  >
+                    {label}
+                  </span>
+                )}
+                valueRenderer={({ label, value }) => (
+                  <span className={styles[value]}>{label.toUpperCase()}</span>
+                )}
+                placeholder=" "
+              ></Select>
+            </Form.Item>
+          </Column>
         </Columns>
         <Columns>
           <Column>
