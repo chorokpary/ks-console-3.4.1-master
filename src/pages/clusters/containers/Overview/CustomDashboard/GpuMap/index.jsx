@@ -470,7 +470,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>GPU 현황 맵</label>
+          <label>{t('RESOURCES_GPU_STATUS_MAP')}</label>
           <div className="right" style={{ width: '22%' }}>
             <div
               className="select-list-box"
