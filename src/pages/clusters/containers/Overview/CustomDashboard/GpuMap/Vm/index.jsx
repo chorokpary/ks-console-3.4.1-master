@@ -107,8 +107,8 @@ const Vm = ({
                   setPopOpen(true)
                 }}
               >
-                <div className="name" title={item.group}>
-                  {item.group}
+                <div className="name">
+                  <span className="name_text">{item.group}</span>
                 </div>
                 <div className="percent">{item.value}%</div>
                 {(item.state === 'abnormal' || item.state === 'unknown') && (

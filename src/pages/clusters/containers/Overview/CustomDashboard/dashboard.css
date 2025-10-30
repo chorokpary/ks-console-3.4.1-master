@@ -1934,6 +1934,66 @@ body {
   border: 1px solid #e4e4e7;
   background: #f5f8fd;
 }
+.dash_wrap .gpu_map_wrap .gpu_tile .name_text {
+  font-family: Pretendard;
+  font-weight: 700;
+  color: #ffffff;
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name,
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .percent {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name {
+  overflow: hidden;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name .name_text {
+  display: inline-block;
+  max-height: 100%;
+  font-weight: 700;
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name[data-text]::before {
+  content: attr(data-text);
+  position: absolute;
+  width: 120px;
+  word-break: break-all;
+  white-space: normal;
+  top: calc(100% + 8px);
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  z-index: 20;
+  pointer-events: none;
+  background: #242e42;
+}
+.dash_wrap .gpu_map_wrap .gpu_tile:hover .name[data-text]::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  -webkit-transform: translateX(-50%) rotate(45deg);
+  transform: translateX(-50%) rotate(45deg);
+  background-color: #242e42;
+  width: 8px;
+  height: 8px;
+}
 .dash_wrap .gpu_map_wrap .gpunode_map {
   display: grid; /* 변경: flex → grid */
   grid-template-columns: repeat(8, minmax(62px, 1fr));
@@ -1972,6 +2032,9 @@ body {
   min-height: 0;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-transform: scale(1.3);
   transform: scale(1.3);
   -webkit-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -1981,14 +2044,11 @@ body {
   aspect-ratio: 1/1;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover .name {
-  font-size: 9px;
   padding-top: 3px;
-  line-height: 1.3;
-  overflow: hidden;
-  white-space: normal;
-  word-break: break-all;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  padding-bottom: 2px;
+}
+.dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover .name .name_text {
+  font-size: 9px;
 }
 .dash_wrap .gpu_map_wrap .gpunode_map .gpu_tile:hover .percent {
   -webkit-transform: scale(0.8);
@@ -2061,35 +2121,6 @@ body {
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
-.dash_wrap .gpu_map_wrap .gpu_tile:hover .name[data-text]::before {
-  content: attr(data-text);
-  position: absolute;
-  width: 120px;
-  word-break: break-all;
-  white-space: normal;
-  top: calc(100% + 8px);
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  transform: translateX(-50%);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 9px;
-  z-index: 20;
-  pointer-events: none;
-  background: #242e42;
-}
-.dash_wrap .gpu_map_wrap .gpu_tile:hover .name[data-text]::after {
-  content: '';
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  -webkit-transform: translateX(-50%) rotate(45deg);
-  transform: translateX(-50%) rotate(45deg);
-  background-color: #242e42;
-  width: 8px;
-  height: 8px;
-}
 .dash_wrap .gpu_map_wrap .gpu_map {
   display: grid;
   grid-template-columns: repeat(24, minmax(16px, 1fr));
@@ -2112,9 +2143,9 @@ body {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   cursor: pointer;
@@ -2129,7 +2160,8 @@ body {
   /* First row + right-most column: combine X and Y adjustments */
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .name,
-.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .percent {
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .percent,
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile .name_text {
   display: none;
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover {
@@ -2146,31 +2178,41 @@ body {
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name,
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .percent {
-  display: block;
-}
-.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .badge_alert {
-  -webkit-transform: scale(0.25);
-  transform: scale(0.25);
-  top: -8px;
-  right: -8px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name {
-  display: -webkit-box;
+  height: 12px;
+  overflow: hidden;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .name .name_text {
+  display: inline-block;
+  max-height: 100%;
   font-size: 3px;
   font-weight: 700;
-  padding-top: 2px;
   white-space: normal;
   text-align: center;
   word-break: break-all;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .percent {
   font-size: 4.5px;
   padding-bottom: 1.3px;
+}
+.dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:hover .badge_alert {
+  -webkit-transform: scale(0.25);
+  transform: scale(0.25);
+  top: -8px;
+  right: -8px;
 }
 .dash_wrap .gpu_map_wrap .gpu_map .gpu_tile:nth-child(24n + 1):hover {
   -webkit-transform-origin: left center;
@@ -2601,7 +2643,8 @@ body {
 .dash_wrap .gpu_state_unknown .label,
 .dash_wrap .gpu_state_unknown .value,
 .dash_wrap .gpu_state_unknown .percent,
-.dash_wrap .gpu_state_unknown .name {
+.dash_wrap .gpu_state_unknown .name,
+.dash_wrap .gpu_state_unknown .name_text {
   color: rgba(54, 67, 92, 0.5647058824) !important;
 }
 .dash_wrap .gpu_state_unknown.gpu_popover {
@@ -2618,10 +2661,12 @@ body {
   border-color: rgba(54, 67, 92, 0.5019607843) !important;
 }
 .dash_wrap .gpu_state_unknown.gpu_popover .name,
+.dash_wrap .gpu_state_unknown.gpu_popover .name_text,
 .dash_wrap .gpu_state_unknown.gpu_popover .percent {
   color: #ffffff !important;
 }
 .dash_wrap .gpu_state_unknown.gpu_popover .gpu_state_unknown .name,
+.dash_wrap .gpu_state_unknown.gpu_popover .gpu_state_unknown .name_text,
 .dash_wrap .gpu_state_unknown.gpu_popover .gpu_state_unknown .percent {
   color: rgba(54, 67, 92, 0.5019607843) !important;
 }

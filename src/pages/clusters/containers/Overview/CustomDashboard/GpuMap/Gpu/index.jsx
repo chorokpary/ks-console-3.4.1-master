@@ -63,8 +63,10 @@ const Gpu = ({
                 setPopOpen(true)
               }}
             >
-              <div className="name" title={gpuItem.group}>
-                GPU-{gpuItem.gpu}
+              <div className="name">
+                <span className="name_text">
+                  GPU-{gpuItem.gpu} ({gpuItem.group})
+                </span>
               </div>
               <div className="percent">{gpuItem.util}%</div>
               {(gpuItem.state === 'minor' || gpuItem.state === 'unknown') && (
