@@ -83,12 +83,13 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     setLoading(false)
   }
 
-  useEffect(() => {
-    if (alarmData.length > 0) {
-      let criticalCount = 0
-      let minorCount = 0
-      let unknownCount = 0
-      alarmData.map(data => {
+  const getCount = type => {
+    let criticalCount = 0
+    let minorCount = 0
+    let unknownCount = 0
+    alarmData.map(data => {
+      const labelType = getTypeIcon(data.labels) || 'node'
+      if (labelType === type) {
         if (data.labels.severity == 'critical') {
           criticalCount++
         } else if (data.labels.severity == 'minor') {
@@ -96,13 +97,23 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
         } else {
           unknownCount++
         }
-      })
+      } else {
+        if (type === 'all') {
+          if (data.labels.severity == 'critical') {
+            criticalCount++
+          } else if (data.labels.severity == 'minor') {
+            minorCount++
+          } else {
+            unknownCount++
+          }
+        }
+      }
+    })
 
-      setCriticalCount(criticalCount)
-      setMinorCount(minorCount)
-      setUnknownCount(unknownCount)
-    }
-  }, [alarmData])
+    setCriticalCount(criticalCount)
+    setMinorCount(minorCount)
+    setUnknownCount(unknownCount)
+  }
 
   const getTypeIcon = labels => {
     if (labels?.resource_type === 'node') {
@@ -141,7 +152,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
   }
 
   const filteredData = useMemo(() => {
-    return alarmData
+    const filteredData = alarmData
       .filter(data => {
         const status = getStatus(data.labels.severity).code
         const resourceType = getTypeIcon(data.labels) || 'node'
@@ -158,6 +169,9 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
         if (sort === 'oldest') return dateA - dateB
         return 0
       })
+    getCount(type)
+
+    return filteredData
   }, [alarmData, filter, type, sort])
 
   // 바깥 클릭 감지

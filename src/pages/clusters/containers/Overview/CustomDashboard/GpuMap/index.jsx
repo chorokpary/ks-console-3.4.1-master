@@ -78,6 +78,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   const [open, setOpen] = useState(false)
   const [filter, setFilter] = useState('all')
   const dropdownRef = useRef(null)
+  const dropdownRefRange = useRef(null)
 
   const [clusterArr, setClusterArr] = useState([])
   const [popOpen, setPopOpen] = useState(false)
@@ -106,7 +107,14 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpen(false)
       }
+      if (
+        dropdownRefRange.current &&
+        !dropdownRefRange.current.contains(e.target)
+      ) {
+        dropdownRefRange.current.classList.remove('active')
+      }
     }
+
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
@@ -462,7 +470,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>GPU 현황 맵</label>
+          <label>{t('RESOURCES_GPU_STATUS_MAP')}</label>
           <div className="right" style={{ width: '22%' }}>
             <div
               className="select-list-box"
@@ -543,7 +551,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               </div>
             </div>
           </div>
-          <div className="alert_tab" style={{ width: '50%' }}>
+          <div className="alert_tab">
             <label htmlFor="al_name_1">
               <input
                 type="radio"
@@ -588,20 +596,31 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 <span>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</span>
               </span>
             </label>
-            <div className="usageTab usageTabCustom">
-              <div className="select-list-box" style={{ width: '29%' }}>
-                <Select
-                  value={range}
-                  onChange={e => setRange(e)}
-                  options={rangeOption}
-                />
-                <style>
-                  {`
-                    .usageTabCustom .select-control {
-                      height: 25px !important;
-                    }
-                  `}
-                </style>
+            <div className="select_wrap">
+              <div className="select-list-box">
+                <div className="selected-item single" ref={dropdownRefRange}>
+                  <p>
+                    <strong>
+                      {rangeOption.find(obj => obj.value === range)?.label}
+                    </strong>
+                  </p>
+                </div>
+                <ul className="select-list scroll-gray">
+                  {rangeOption.map(opt => (
+                    <li
+                      key={opt.value}
+                      className={range === opt.value ? 'selected' : ''}
+                      onClick={() => {
+                        setRange(opt.value)
+                        setOpen(false)
+                      }}
+                    >
+                      <p>
+                        <strong>{opt.label}</strong>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>

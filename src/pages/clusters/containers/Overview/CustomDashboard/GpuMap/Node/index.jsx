@@ -20,6 +20,15 @@ const Node = ({
   ...props
 }) => {
   useEffect(() => {
+    //gpu_tile .name 길어서 ellipsis 처리 될 때 tooltip 표현 (27자 이상일 때만)
+    document.querySelectorAll('.gpu_tile .name').forEach(el => {
+      const text = el.textContent.trim()
+      if (text.length > 27) {
+        el.setAttribute('data-text', text)
+      }
+    })
+  }, [])
+  useEffect(() => {
     if (selectCluster) {
       getGpuData(selectCluster)
     }
@@ -98,8 +107,8 @@ const Node = ({
                   setPopOpen(true)
                 }}
               >
-                <div className="name" title={item.group}>
-                  {item.group}
+                <div className="name">
+                  <span className="name_text">{item.group}</span>
                 </div>
                 <div className="percent">{item.value}%</div>
                 {(item.state === 'abnormal' || item.state === 'unknown') && (

@@ -1251,6 +1251,7 @@ module.exports = {
   RESOURCES_GPU_NVLINK_TRAFFIC_SCAP: 'NVLink Traffic',
   RESOURCES_USAGE: 'Utilization',
   RESOURCES_LAST_TIME_HOUR_CUSTOM: 'Last Hour {hour}',
+  RESOURCES_LAST_TIME_DAY_CUSTOM: 'Last {day} Days',
 
   RESOURCES_LEGEND: 'Legend',
   RESOURCES_VM_COUNT: 'VM Count',
@@ -1265,4 +1266,5 @@ module.exports = {
   RESOURCES_GPU_USAGE_STATUS_TOP5: 'GPU Usage Top5',
   RESOURCES_SORT_LATEST: 'Latest',
   RESOURCES_SORT_OLDEST: 'Oldest',
+  RESOURCES_GPU_STATUS_MAP: 'GPU Status Map',
 }

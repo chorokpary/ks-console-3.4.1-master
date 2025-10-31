@@ -12,6 +12,16 @@ const Gpu = ({
   vmList,
   ...props
 }) => {
+  useEffect(() => {
+    //gpu_tile .name 길어서 ellipsis 처리 될 때 tooltip 표현 (27자 이상일 때만)
+    document.querySelectorAll('.gpu_tile .name').forEach(el => {
+      const text = el.textContent.trim()
+      if (text.length > 27) {
+        el.setAttribute('data-text', text)
+      }
+    })
+  }, [])
+
   const [selectGpu, setSelectGpu] = useState({})
 
   return (
@@ -53,8 +63,10 @@ const Gpu = ({
                 setPopOpen(true)
               }}
             >
-              <div className="name" title={gpuItem.group}>
-                GPU-{gpuItem.gpu}
+              <div className="name">
+                <span className="name_text">
+                  GPU-{gpuItem.gpu} ({gpuItem.group})
+                </span>
               </div>
               <div className="percent">{gpuItem.util}%</div>
               {(gpuItem.state === 'minor' || gpuItem.state === 'unknown') && (
