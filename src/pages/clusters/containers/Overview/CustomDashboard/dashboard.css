@@ -3283,7 +3283,7 @@ body {
   padding: 2px 30px 2px 12px;
 }
 .grid_item .grid_option_area .selected-item.single strong {
-  min-width: 60px;
+  min-width: 70px;
 }
 .grid_item .grid_option_area .legend_button_wrapper {
   position: relative;
