@@ -14,6 +14,7 @@ const index = props => {
   const customStore = new CustomStore()
   const vmStore = new VmStore()  
 
+  const [vmProject, setVmProject] = useState('')
   const [vmDataList, setVmDataList] = useState([])
   const [fetchParams, setFetchParams] = useState({})
 
@@ -67,8 +68,10 @@ const index = props => {
     }
 
     const vmList = await vmStore.fetchList(params)
+    const project = vmList.filter(item => item.node === store.detail.name)[0].project
     const vmData = vmList.filter(item => item.node === store.detail.name).map(item => item.name).join('|') || ''
 
+    setVmProject(project)
     setVmDataList(vmData)
   }
 
@@ -88,7 +91,7 @@ const index = props => {
     }
 
     const getVmGpuUtilData = async () => {
-      const gpuUtilDataExpr = `avg by (gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"}) / 100`
+      const gpuUtilDataExpr = `avg by (gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${vmProject}"}) / 100`
 
       const gpuUtilData = await customStore.fetchMetric({
         expr: gpuUtilDataExpr,
@@ -100,7 +103,7 @@ const index = props => {
     }
 
     const getVmGpuRamData = async () => {
-      const gpuRamDataExpr = `avg by (gpu)(DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"}) * 1000000`
+      const gpuRamDataExpr = `avg by (gpu)(DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${vmProject}"}) * 1000000`
       const gpuRamData = await customStore.fetchMetric({
         expr: gpuRamDataExpr,
         ...paramsData,
@@ -111,7 +114,7 @@ const index = props => {
     }
 
     const getVmGpuPowerData = async () => {
-      const gpuPowerDataExpr = `avg by (gpu)(DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"})`
+      const gpuPowerDataExpr = `avg by (gpu)(DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${vmProject}"})`
 
       const gpuPowerData = await customStore.fetchMetric({
         expr: gpuPowerDataExpr,
@@ -123,7 +126,7 @@ const index = props => {
     }
 
     const getVmGpuTempData = async () => {
-      const gpuTempDataExpr = `avg by (gpu)(DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"})`
+      const gpuTempDataExpr = `avg by (gpu)(DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${vmProject}"})`
       const gpuTempData = await customStore.fetchMetric({
         expr: gpuTempDataExpr,
         ...paramsData,
@@ -134,7 +137,7 @@ const index = props => {
     }
 
     const getVmGpuNvlinkData = async () => {
-      const gpuNvlinkDataExpr = `sum by (gpu)(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"}) * ${getCustomValue(
+      const gpuNvlinkDataExpr = `sum by (gpu)(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", pod=~"${vmDataList}", namespace="${vmProject}"}) * ${getCustomValue(
         'bandwidthBytes',
         'MBps'
       )}`
@@ -147,7 +150,7 @@ const index = props => {
     }
 
     const getVmGpuInboundData = async () => {
-      const inboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"}[2m]) * 8)`
+      const inboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", pod=~"${vmDataList}", namespace="${vmProject}"}[2m]) * 8)`
       const gpuInboundData = await customStore.fetchMetric({
         expr: inboundLinuxDataExpr,
         ...paramsData,
@@ -158,7 +161,7 @@ const index = props => {
     }
 
     const getVmGpuOutboundData = async () => {
-      const outboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod=~"${vmDataList}", namespace="${store.detail.cluster}"}[2m]) * 8)`
+      const outboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", pod=~"${vmDataList}", namespace="${vmProject}"}[2m]) * 8)`
       const gpuOutboundData = await customStore.fetchMetric({
         expr: outboundLinuxDataExpr,
         ...paramsData,
