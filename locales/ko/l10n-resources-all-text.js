@@ -333,6 +333,7 @@ module.exports = {
   RESOURCES_NODE_NAME: '노드 이름',
   RESOURCES_NEXT: '다음',
   RESOURCES_STEP: '단계',
+  RESOURCES_FOLD_LEFT_MENU: '좌측 메뉴',
   RESOURCES_DASHBOARD: '대시보드',
   RESOURCES_DELETE_DASHBOARD: '대시보드 삭제',
   RESOURCES_DASHBOARD_NAME: '대시보드 이름',

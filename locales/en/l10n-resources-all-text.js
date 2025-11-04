@@ -338,6 +338,7 @@ module.exports = {
   RESOURCES_NODE_NAME: 'Node Name',
   RESOURCES_NEXT: 'Next',
   RESOURCES_STEP: 'Step',
+  RESOURCES_FOLD_LEFT_MENU: 'Left Menu',
   RESOURCES_DASHBOARD: 'Dashboard',
   RESOURCES_DELETE_DASHBOARD: 'Delete Dashboard',
   RESOURCES_DASHBOARD_NAME: 'Dashboard Name',
