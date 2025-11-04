@@ -256,6 +256,7 @@ module.exports = {
   RESOURCES_VM_NAME: '가상 머신 이름',
   RESOURCES_SELECT_VM_NAME_TIP: '가상 머신 이름을 선택해 주세요.',
   RESOURCES_VM: '가상머신',
+  RESOURCES_VM_SHORT: '가상머신',
   RESOURCES_VM_MIGRATION_DESC:
     '가상머신 상태가 마이그레이션중으로 변경되고,완료되면 가상머신 상태가 표시됩니다',
   RESOURCES_CHANGE_VM_STATE: '가상머신 상태를 변경하시겠습니까?',
