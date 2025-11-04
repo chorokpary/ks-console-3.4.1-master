@@ -28,6 +28,7 @@ import VmStore from 'stores/resources/vms'
 
 import styles from './index.scss'
 import { join } from 'lodash';
+import { namespace } from 'd3-selection';
 
 @inject('detailStore')
 @observer
@@ -39,7 +40,8 @@ export default class Status extends React.Component {
     this.vmStore = new VmStore({ cluster: this.cluster })
 
     this.state = {
-      vmList: '',     
+      vmList: '',
+      namespace: ''     
     }
   }
 
@@ -54,9 +56,10 @@ export default class Status extends React.Component {
     }
 
     const vmListData = await this.vmStore.fetchList(params)
+    const project = vmListData.filter(item => item.node === this.store.detail.name)[0].project
     const vmJoinData = vmListData.filter(item => item.node === this.store.detail.name).map(item => item.name).join('|') || ''
 
-    this.setState({ vmList: vmJoinData });
+    this.setState({ vmList: vmJoinData, namespace : project });
   }
 
   renderDeployments() {
@@ -112,7 +115,7 @@ export default class Status extends React.Component {
           <DetailGpuResource
             {...this.props}
             cluster={this.store.detail.cluster}
-            namespace={this.store.detail.cluster}
+            namespace={this.state.namespace}
             vmList={this.state.vmList}
           />
         }
