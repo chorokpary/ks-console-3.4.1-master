@@ -27,7 +27,7 @@ export default class GatewayMonitor extends Base {
 
   getApi = ({ namespace }) =>
     `${this.apiVersion}/namespaces/${namespace ||
-      'kubesphere-system'}/ingresses`
+      'petasus-system'}/ingresses`
 
   getGatewayParams = ({ resources = [], metrics = [], ...rest } = {}) => {
     const params = {
