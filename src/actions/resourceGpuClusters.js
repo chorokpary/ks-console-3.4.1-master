@@ -45,7 +45,7 @@ export default {
           store
             .createCluster(data, { cluster, workspace, namespace, devops })
             .then((res) => {
-              if(res.success){
+              if(res.ok){
                 success && success()
                 data.createSuccess?.(success)
               }else{
@@ -133,7 +133,6 @@ export default {
       })
     },
   },
-
   'gpuclusters.vmedit': {
     on({
       store,
@@ -165,6 +164,37 @@ export default {
       })
     },
   },
+  'gpuclusters.vmadd': {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
+      const modal = Modal.open({
+        onOk: retypeList => {
+          store.vmAdd({ ...props, namespace, ...retypeList }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_ADD_SUCCESSFUL') })
+            success && success()
+          })
+        },
+        title: t('VM 추가'),
+        modal: AddModal,
+        store,
+        cluster,
+        workspace,
+        namespace,
+        module,
+        ...props,
+      })
+    },
+  },
   'gpuclusters.remove': {
     on({
       store,
@@ -178,7 +208,7 @@ export default {
     }) {
       const modal = Modal.open({
         onOk: () => {
-          store.delete({ ...props, namespace, ...retypeList }).then(() => {
+          store.delete({ ...props, namespace, detail, name:detail.name }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
             success && success()
