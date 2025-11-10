@@ -48,13 +48,13 @@ const GpuUsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
           <div className="gpu_usage_top_wrap">
             <div className="gpu_usage_top">
               <h3 className="gpu_usage_top_title">
-                GPU {t('RESOURCES_USAGE')}
+                GPU {t('RESOURCES_USAGE')} (%)
               </h3>
               <ul className="gpu_usage_list">
                 {gpuUsageTop5Data?.map((item, idx) => (
                   <li className="gpu_usage_item" key={idx}>
                     <span className="gpu_name">
-                      {item.metric.pod} / {item.metric.gpu}
+                      {item.metric.pod}/{item.metric.gpu}
                     </span>
                     <div className="bar_wrapper">
                       <div
@@ -73,13 +73,13 @@ const GpuUsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
             </div>
             <div className="gpu_usage_top color2">
               <h3 className="gpu_usage_top_title">
-                GPU {t('RESOURCES_GPU_AVG_MEMORY_USAGE')}
+                GPU {t('RESOURCES_GPU_AVG_MEMORY_USAGE')} (%)
               </h3>
               <ul className="gpu_usage_list">
                 {gpuMemUsageTop5Data?.map((item, idx) => (
                   <li className="gpu_usage_item" key={idx}>
                     <span className="gpu_name">
-                      {item.metric.pod} / {item.metric.gpu}
+                      {item.metric.pod}/{item.metric.gpu}
                     </span>
                     <div className="bar_wrapper">
                       <div

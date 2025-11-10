@@ -41,7 +41,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
   const customStore = new CustomStore()
   const [loading, setLoading] = useState(false)
 
-  const [xidTimeRange, setXidTimeRange] = useState(3600)
+  const [xidTimeRange, setXidTimeRange] = useState(86400)
 
   const [gpuAvgUsage, setGpuAvgUsage] = useState()
   const [gpuAvgUsageLast, setGpuAvgUsageLast] = useState(0)
