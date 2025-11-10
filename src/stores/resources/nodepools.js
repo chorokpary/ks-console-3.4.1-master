@@ -139,6 +139,7 @@ export default class ResourceStore extends Base {
     } else {
       reqData.sriov_network = data.sriov_network
     }
+    reqData.physical_networks = data.physical_networks
     jsonData.nodepool = reqData
 
     return await this.submitting(
