@@ -26,7 +26,7 @@ module.exports = async (ctx, next) => {
       const data = await getNewToken(ctx)
       if (data.token) {
         ctx.cookies.set('token', data.token)
-        ctx.cookies.set('expire', data.expire)
+        ctx.cookies.set('expire', data.expire, { httpOnly: false })
         ctx.cookies.set('refreshToken', data.refreshToken)
         return ctx.redirect(ctx.headers.referer || '/')
       }

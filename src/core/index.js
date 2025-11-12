@@ -29,6 +29,41 @@ import i18n from './i18n'
 
 require('@babel/polyfill')
 
+// ===============================
+// 추가 함수 expire 만료 검사 start
+// ===============================
+const getCookieValue = (name) => {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+  if (match) return match[2]
+  return null
+}
+
+const checkExpiration = async () => {
+  const expire = getCookieValue('expire')
+  if (!expire) return
+
+  try {
+    if (expire) {
+      const now = Math.floor(Date.now() / 1000)
+      const expireSec = Math.floor(expire / 1000)
+
+      if (now >= expireSec) {
+        // 만료 시 로그아웃 처리
+        await request.post('logout')
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
+
+setInterval(checkExpiration, 10 * 1000)
+checkExpiration()
+
+// ===============================
+// 추가 함수 expire 만료 검사 end
+// ===============================
+
 // request error handler
 window.onunhandledrejection = function(e) {
   if (e && (e.status === 'Failure' || e.status >= 400)) {

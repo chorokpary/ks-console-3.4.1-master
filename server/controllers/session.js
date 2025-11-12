@@ -123,7 +123,7 @@ const handleLogin = async ctx => {
   const lastToken = ctx.cookies.get('token')
 
   ctx.cookies.set('token', user.token)
-  ctx.cookies.set('expire', user.expire)
+  ctx.cookies.set('expire', user.expire, { httpOnly: false })
   ctx.cookies.set('refreshToken', user.refreshToken)
   ctx.cookies.set('referer', null)
 
@@ -230,7 +230,7 @@ const handleThirdLogin = async ctx => {
   const lastToken = ctx.cookies.get('token')
 
   ctx.cookies.set('token', user.token)
-  ctx.cookies.set('expire', user.expire)
+  ctx.cookies.set('expire', user.expire, { httpOnly: false })
   ctx.cookies.set('refreshToken', user.refreshToken)
   ctx.cookies.set('referer', null)
 
@@ -323,7 +323,7 @@ const handleOAuthLogin = async ctx => {
   }
 
   ctx.cookies.set('token', user.token)
-  ctx.cookies.set('expire', user.expire)
+  ctx.cookies.set('expire', user.expire, { httpOnly: false })
   ctx.cookies.set('refreshToken', user.refreshToken)
   ctx.cookies.set('referer', null)
 
@@ -369,7 +369,7 @@ const handleLoginConfirm = async ctx => {
   const data = await getNewToken(ctx)
   if (data.token) {
     ctx.cookies.set('token', data.token)
-    ctx.cookies.set('expire', data.expire)
+    ctx.cookies.set('expire', data.expire, { httpOnly: false })
     ctx.cookies.set('refreshToken', data.refreshToken)
 
     ctx.cookies.set('defaultUser', null)
