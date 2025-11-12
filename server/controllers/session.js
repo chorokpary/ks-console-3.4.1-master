@@ -30,6 +30,7 @@ const {
   oAuthLogin,
   getNewToken,
   createUser,
+  createUserMfa,
 } = require('../services/session')
 const {
   isValidReferer,
@@ -255,6 +256,7 @@ const handleThirdLogin = async ctx => {
   ctx.redirect(isValidReferer(referer) ? referer : '/')
 }
 
+/*
 const handleLogout = async ctx => {
   const oAuthLoginInfo = safeParseJSON(
     decodeURIComponent(ctx.cookies.get('oAuthLoginInfo'))
@@ -276,8 +278,21 @@ const handleLogout = async ctx => {
     oAuthLoginInfo.type === 'OIDCIdentityProvider' &&
     oAuthLoginInfo.endSessionURL
   ) {
-    const url = `${oAuthLoginInfo.endSessionURL}`
-    ctx.body = { data: { url }, success: true }
+    // ewyoon
+    const baseOrigin = origin || `${ctx.protocol}://${ctx.host}`
+    const postLogoutRedirectURI = `${baseOrigin}/login`
+
+    // 로그아웃 URL에 id_token_hint와 post_logout_redirect_uri 추가
+   const logoutUrl =
+      `/kapis/oauth/logout?post_logout_redirect_uri=` +
+      encodeURIComponent(postLogoutRedirectURI)
+
+
+    // Keycloak 로그아웃 리다이렉트
+    ctx.body = { data: { url: logoutUrl }, success: true }
+    // ewyoon
+    //const url = `${oAuthLoginInfo.endSessionURL}`
+    //ctx.body = { data: { url }, success: true }
   } else {
     const { origin = '', referer = '' } = ctx.headers
     const refererPath = referer.replace(origin, '')
@@ -295,6 +310,171 @@ const handleLogout = async ctx => {
     }
   }
 }
+*/
+
+// 브라우저(프론트채널)에서 Keycloak 세션을 직접 종료하는 로그아웃 핸들러
+// 브라우저(프론트채널)에서 Keycloak 세션을 직접 종료하는 로그아웃 핸들러
+/*
+const handleLogout = async ctx => {
+  // 1) 쿠키/메타 정보 읽기
+  let oAuthLoginInfo = {}
+  try {
+    const raw = ctx.cookies.get('oAuthLoginInfo')
+    if (raw) oAuthLoginInfo = safeParseJSON(decodeURIComponent(raw)) || {}
+  } catch (e) {
+    oAuthLoginInfo = {}
+  }
+
+  const accessToken = ctx.cookies.get('token') || ''
+  const maybeIdToken = ctx.cookies.get('id_token') || '' // 있다면 사용(선택)
+
+  // 2) 앱/프론트 측 쿠키 정리
+  const clear = name => ctx.cookies.set(name, null, { path: '/' }) // Path는 발급 시와 동일하게
+  clear('token')
+  clear('expire')
+  clear('refreshToken')
+  clear('oAuthLoginInfo')
+  // clear('mm3AccessToken')
+  // clear('mm3RefreshToken')
+
+  // 3) 리다이렉트 기본값 계산
+  const hdrOrigin = (ctx.headers && ctx.headers.origin) || ''
+  const baseOrigin = hdrOrigin || `${ctx.protocol}://${ctx.host}`
+  const postLogoutRedirectURI = `${baseOrigin}/login`
+
+  // 4) OIDC 구성이 있고 endSessionURL이 있으면 → Keycloak end_session으로 브라우저 리다이렉트
+  if (
+    oAuthLoginInfo &&
+    oAuthLoginInfo.type === 'OIDCIdentityProvider' &&
+    oAuthLoginInfo.endSessionURL
+  ) {
+    const endSessionURL = oAuthLoginInfo.endSessionURL // ex) https://kc/realms/xxx/protocol/openid-connect/logout
+    const url = new URL(endSessionURL)
+    url.searchParams.set('post_logout_redirect_uri', postLogoutRedirectURI)
+
+    // 가능하면 id_token_hint 사용(가장 명확)
+    if (maybeIdToken) {
+      url.searchParams.set('id_token_hint', maybeIdToken)
+    } else {
+      // 없으면 client_id 사용. 없을 경우 기본값 "kubesphere"
+      const clientId =
+        oAuthLoginInfo.clientID ||
+        oAuthLoginInfo.clientId ||
+        'kubesphere'
+      url.searchParams.set('client_id', clientId)
+    }
+
+    // state 보존(있을 때만) — optional chaining 제거
+    const q = (ctx.query || (ctx.request && ctx.request.query) || {})
+    if (q.state) url.searchParams.set('state', q.state)
+
+    // 프론트가 이 URL로 이동하도록 반환(혹은 ctx.redirect(url)로 즉시 리다이렉트도 가능)
+    ctx.body = { data: { url: url.toString() }, success: true }
+    return
+  }
+
+  // 5) fallback: OIDC 메타가 없으면 앱 토큰만 무효화하고 /login으로 보냄
+  try {
+    if (accessToken) {
+      await send_gateway_request({
+        method: 'GET',
+        url: '/oauth/logout',
+        token: accessToken,
+      })
+    }
+  } catch (e) {
+    // 베스트 에포트: 실패하더라도 계속 진행
+  }
+
+  const referer = (ctx.headers && ctx.headers.referer) || ''
+  const refererPath = referer.replace(hdrOrigin, '')
+  if (typeof isAppsRoute === 'function' && isAppsRoute(refererPath)) {
+    ctx.redirect(refererPath)
+  } else {
+    ctx.redirect('/login')
+  }
+}
+*/
+const handleLogout = async ctx => {
+  const oAuthLoginInfo = safeParseJSON(
+    decodeURIComponent(ctx.cookies.get('oAuthLoginInfo'))
+  )
+ 
+  console.log("=== 로그아웃 디버깅 ===")
+  console.log("oAuthLoginInfo:", JSON.stringify(oAuthLoginInfo, null, 2))
+ 
+  const token = ctx.cookies.get('token')
+  const idToken = ctx.cookies.get('id_token') // id_token이 있다면 사용
+ 
+  ctx.cookies.set('token', null)
+  ctx.cookies.set('expire', null)
+  ctx.cookies.set('refreshToken', null)
+  ctx.cookies.set('oAuthLoginInfo', null)
+  ctx.cookies.set('id_token', null) // id_token도 정리
+ 
+  // ctx.cookies.set('mm3AccessToken', null)
+  // ctx.cookies.set('mm3RefreshToken', null)
+ 
+  const hdrOrigin = (ctx.headers && ctx.headers.origin) || ''
+  const baseOrigin = hdrOrigin || `${ctx.protocol}://${ctx.host}`
+  const postLogoutRedirectURI  = `${baseOrigin}/login`
+  
+  // end-session URL 구성 개선
+  const endSessionBase = `http://${ctx.hostname}:30081/application/o/ks-console/end-session/`
+  const params = new URLSearchParams()
+  params.set('post_logout_redirect_uri', postLogoutRedirectURI)
+  
+  // id_token_hint가 있으면 추가 (더 안전한 로그아웃)
+  if (idToken) {
+    params.set('id_token_hint', idToken)
+  }
+  
+  const endSessionURI = `${endSessionBase}?${params.toString()}`
+ 
+  if (
+    !isEmpty(oAuthLoginInfo) &&
+    oAuthLoginInfo.type &&
+    oAuthLoginInfo.type === 'OIDCIdentityProvider' &&
+    oAuthLoginInfo.endSessionURL
+  ) {
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
+    const baseEndSessionURL = `${oAuthLoginInfo.endSessionURL}`
+    console.log("url : "+ baseEndSessionURL)
+    
+    // 원래 endSessionURL에 필요한 파라미터 추가
+    const endSessionURL = new URL(baseEndSessionURL)
+    endSessionURL.searchParams.set('post_logout_redirect_uri', postLogoutRedirectURI)
+    if (idToken) {
+      endSessionURL.searchParams.set('id_token_hint', idToken)
+    }
+    
+    // 클라이언트에서 직접 이동하도록 URL 반환
+    ctx.body = { 
+      success: true, 
+      data: { 
+        url: endSessionURL.toString()
+      } 
+    }
+  } else {
+    console.log("BBBBBBBBBBBBBBBBBBBBBBBBB")
+    const { origin = '', referer = '' } = ctx.headers
+    const refererPath = referer.replace(origin, '')
+ 
+    await send_gateway_request({
+      method: 'GET',
+      url: '/oauth/logout',
+      token,
+    })
+ 
+    if (isAppsRoute(refererPath)) {
+      ctx.redirect(refererPath)
+    } else {
+      ctx.redirect('/login')
+    }
+  }
+}
+
+
 
 const handleOAuthLogin = async ctx => {
   let user = null
@@ -378,10 +558,21 @@ const handleLoginConfirm = async ctx => {
   }
 }
 
+const handleCreateUserMfa = async ctx => {
+  const token = ctx.cookies.get('token')
+  const params = ctx.request.body
+
+  const result = await createUserMfa(params, token)
+
+  ctx.status = result.success ? 200 : (result.code || 500)
+  ctx.body = result
+}
+
 module.exports = {
   handleLogin,
   handleThirdLogin,
   handleLogout,
   handleOAuthLogin,
   handleLoginConfirm,
+  handleCreateUserMfa,
 }
