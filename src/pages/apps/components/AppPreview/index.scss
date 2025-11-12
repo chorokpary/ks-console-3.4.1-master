@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   margin-top: 20px;
@@ -13,3 +13,5 @@
   display: block;
   padding: 150px;
 }
+
+

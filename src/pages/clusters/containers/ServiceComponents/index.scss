@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .header {
   position: relative;
@@ -77,3 +77,6 @@
     }
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .billCard {
   width: 440px;
@@ -136,3 +136,6 @@
     z-index: 11;
   }
 }
+
+
+

@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   padding: 12px;
@@ -95,3 +95,6 @@
 .offline {
   background-color: $light-color07;
 }
+
+
+

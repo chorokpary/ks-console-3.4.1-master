@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .errorMessage {
   color: $red-color03;
@@ -42,3 +42,6 @@
     }
   }
 }
+
+
+

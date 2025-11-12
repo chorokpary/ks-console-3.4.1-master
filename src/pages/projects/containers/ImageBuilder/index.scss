@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .header {
   height: 100px;
@@ -74,3 +74,6 @@
   background-color: #36435c;
   color: white !important;
 }
+
+
+

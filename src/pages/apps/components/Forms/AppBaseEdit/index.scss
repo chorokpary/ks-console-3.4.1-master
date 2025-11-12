@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   width: 487px;
@@ -45,3 +45,6 @@
   margin: 8px 0;
   color: $red;
 }
+
+
+

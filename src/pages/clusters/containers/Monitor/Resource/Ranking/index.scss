@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper{
   border-radius: $border-radius;
@@ -33,3 +33,6 @@
     }
   }
 }
+
+
+

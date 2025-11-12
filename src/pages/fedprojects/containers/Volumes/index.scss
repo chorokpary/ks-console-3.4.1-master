@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .capacity {
   h3 {
@@ -20,3 +20,6 @@
   vertical-align: middle;
   color: $white !important;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .cluster {
   position: relative;
@@ -33,3 +33,5 @@
     width: 100%;
   }
 }
+
+

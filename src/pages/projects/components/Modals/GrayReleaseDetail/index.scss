@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .modal {
   max-width: 1400px;
@@ -196,3 +196,6 @@
 .monitor {
   margin-top: 20px;
 }
+
+
+

@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .quota {
   display: flex;
@@ -34,3 +34,6 @@
   height: 20px;
   border-radius: 2px;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   position: relative;
@@ -36,3 +36,6 @@
   display: block;
   padding: 150px;
 }
+
+
+

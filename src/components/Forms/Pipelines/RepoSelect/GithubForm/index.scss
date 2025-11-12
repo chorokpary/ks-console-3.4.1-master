@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .repo {
   display: flex;
@@ -241,3 +241,6 @@
   float: right;
   margin-top: 12px;
 }
+
+
+

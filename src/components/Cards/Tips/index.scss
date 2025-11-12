@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $tipHeight: 32px;
 
@@ -50,3 +50,6 @@ $tipHeight: 32px;
   line-height: 32px;
   cursor: pointer;
 }
+
+
+

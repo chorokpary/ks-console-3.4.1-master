@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .main {
   display: flex;
@@ -62,3 +62,6 @@
     }
   }
 }
+
+
+

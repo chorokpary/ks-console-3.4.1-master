@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 :global {
   @for $i from 1 through 10 {
@@ -119,3 +119,6 @@
 .columnMenu {
   width: 160px;
 }
+
+
+

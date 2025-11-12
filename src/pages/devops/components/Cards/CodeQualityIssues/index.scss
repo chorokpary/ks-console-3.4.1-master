@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 :global {
   .codequality-icon {
@@ -157,3 +157,6 @@
   font-weight: 500;
   color: #329dce;
 }
+
+
+

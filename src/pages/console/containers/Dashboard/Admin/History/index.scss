@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .empty {
   padding: 12px;
@@ -72,3 +72,6 @@
   background-color: #fff;
   border-radius: 50%;
 }
+
+
+

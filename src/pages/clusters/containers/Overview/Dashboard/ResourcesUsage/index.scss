@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   display: flex;
@@ -24,3 +24,6 @@
 .list {
   flex: 1;
 }
+
+
+

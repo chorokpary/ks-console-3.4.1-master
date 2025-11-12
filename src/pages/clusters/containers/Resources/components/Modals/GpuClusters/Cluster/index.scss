@@ -1,5 +1,5 @@
-@import "~scss/variables";
-@import "~scss/mixins";
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .textarea {
   :global .textarea {
@@ -130,3 +130,6 @@ button {
 }
 
 .ico-status-running {background:url('/assets/resources/images/icons/ico-status-running.svg') center no-repeat; width: 40px; height: 40px;}
+
+
+

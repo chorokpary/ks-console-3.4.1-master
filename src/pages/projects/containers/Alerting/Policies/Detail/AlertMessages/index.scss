@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table {
   margin: -12px -12px;
@@ -62,3 +62,6 @@
     }
   }
 }
+
+
+

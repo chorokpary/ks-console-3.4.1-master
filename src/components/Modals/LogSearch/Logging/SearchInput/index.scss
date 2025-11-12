@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $inputHeight: 40px;
 
@@ -101,3 +101,6 @@ $inputHeight: 40px;
     width: 50%;
   }
 }
+
+
+

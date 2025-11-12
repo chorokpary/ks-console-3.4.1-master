@@ -1,5 +1,10 @@
-@import "~scss/variables";
-@import "~scss/mixins";
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
+
+@use "scss/custom" as *;
+@use "scss/base" as *;
+@use "scss/utilities" as *;
+@use "scss/markdown" as *;
 
 @import '/assets/fonts/Roboto/stylesheet.css';
 
@@ -37,13 +42,6 @@
 
 .add {
     margin-top: 12px;
-}
-
-:global {
-    @import '~scss/custom';
-    @import '~scss/base';
-    @import '~scss/utilities';
-    @import '~scss/markdown';
 }
 
 .customUl {
@@ -550,3 +548,5 @@ button {
 }
 
 //tab_process
+
+

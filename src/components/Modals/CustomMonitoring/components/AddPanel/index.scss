@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   line-height: 36px;
@@ -17,3 +17,6 @@
     background-color: $bg-color;
   }
 }
+
+
+

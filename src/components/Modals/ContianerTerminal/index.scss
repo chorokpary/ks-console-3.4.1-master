@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .kubectl {
   display: flex;
@@ -63,3 +63,6 @@
     word-wrap: break-word;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .header {
   display: flex;
@@ -46,3 +46,6 @@
   top: 8px;
   right: 8px;
 }
+
+
+

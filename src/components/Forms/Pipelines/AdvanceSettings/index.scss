@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .advance {
   width: 930px;
@@ -17,3 +17,6 @@
   border-radius: 4px;
   background-color: $lightest;
 }
+
+
+

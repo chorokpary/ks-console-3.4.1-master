@@ -1,4 +1,4 @@
-@import "~scss/variables";
+@use "scss/variables" as *;
 
 .wrapper {
   border: 1px solid $light-color06;
@@ -66,4 +66,7 @@
   font-weight: bold;
   color: #fff;
 }
+
+
+
 

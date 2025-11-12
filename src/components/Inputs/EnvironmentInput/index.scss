@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   & > div:last-child {
@@ -43,3 +43,6 @@
   box-shadow: 0px 8px 16px rgba(36, 46, 66, 0.28);
   border-radius: 4px;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .billHome {
   height: 100%;
@@ -90,3 +90,6 @@
     }
   }
 }
+
+
+

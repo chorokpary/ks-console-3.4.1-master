@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .card {
   display: inline-flex;
@@ -28,3 +28,5 @@
 .substract {
   background-color: $yellow;
 }
+
+

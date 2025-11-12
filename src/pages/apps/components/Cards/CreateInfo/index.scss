@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .createInfo {
   .title {
@@ -65,4 +65,7 @@
     }
   }
 }
+
+
+
 

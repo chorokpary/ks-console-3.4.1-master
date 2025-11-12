@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .container {
   border: 1px solid $light-color06;
@@ -257,3 +257,6 @@
     }
   }
 }
+
+
+

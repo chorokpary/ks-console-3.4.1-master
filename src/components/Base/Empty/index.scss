@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   display: flex;
@@ -13,3 +13,6 @@
 .content {
   margin-top: 30px;
 }
+
+
+

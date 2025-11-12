@@ -1,7 +1,10 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .empty {
   padding: 100px 0;
   text-align: center;
   font-size: 16px;
 }
+
+
+

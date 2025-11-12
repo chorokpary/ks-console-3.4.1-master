@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .content {
   margin: -20px;
@@ -11,3 +11,6 @@
     }
   }
 }
+
+
+

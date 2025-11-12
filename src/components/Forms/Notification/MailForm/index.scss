@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .title {
   display: flex;
@@ -38,3 +38,6 @@
     }
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .deployment_codeResource {
   display: flex;
@@ -16,3 +16,6 @@
     flex-grow: 1;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .card {
   padding: 12px;
@@ -13,3 +13,6 @@
   cursor: pointer;
   margin-left: 15px;
 }
+
+
+

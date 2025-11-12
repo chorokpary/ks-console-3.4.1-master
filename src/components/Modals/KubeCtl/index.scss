@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .kubectl {
   display: flex;
@@ -45,3 +45,6 @@
     box-sizing: border-box;
   }
 }
+
+
+

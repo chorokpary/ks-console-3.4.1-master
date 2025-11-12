@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .text {
   margin-bottom: 20px;
@@ -12,3 +12,6 @@
     @include TypographyParagraph($dark-color01);
   }
 }
+
+
+

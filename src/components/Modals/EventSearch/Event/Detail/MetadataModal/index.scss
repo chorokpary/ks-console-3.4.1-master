@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .tabs {
   height: 100%;
@@ -112,3 +112,6 @@
   color: $white;
   background-color: #f5a623;
 }
+
+
+

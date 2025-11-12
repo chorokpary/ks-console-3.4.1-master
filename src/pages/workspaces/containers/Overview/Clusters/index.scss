@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .cluster {
   display: flex;
@@ -47,3 +47,6 @@
     border: solid 1px $border-color;
   }
 }
+
+
+

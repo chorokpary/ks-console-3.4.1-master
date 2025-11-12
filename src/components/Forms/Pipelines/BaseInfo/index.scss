@@ -1,7 +1,10 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .from {
   :global .columns {
     margin-bottom: 8px;
   }
 }
+
+
+

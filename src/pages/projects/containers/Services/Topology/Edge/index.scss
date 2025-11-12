@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   & > path {
@@ -11,3 +11,6 @@
     fill: $dark-color05;
   }
 }
+
+
+

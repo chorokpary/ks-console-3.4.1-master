@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .pipelineCard {
   box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
@@ -143,3 +143,6 @@
     opacity: 0.4;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .title {
   cursor: pointer;
@@ -8,3 +8,6 @@
     color: $primary;
   }
 }
+
+
+

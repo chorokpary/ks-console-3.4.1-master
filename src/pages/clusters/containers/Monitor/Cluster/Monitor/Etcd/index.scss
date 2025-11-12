@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .content {
   margin: 0 -6px;
@@ -21,3 +21,6 @@
   padding: 0 6px;
   background-color: $card-bg-color;
 }
+
+
+

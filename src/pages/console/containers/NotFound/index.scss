@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   margin-top: 132px;
@@ -37,3 +37,6 @@
     color: #329dce;
   }
 }
+
+
+

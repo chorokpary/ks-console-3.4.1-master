@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .main {
   padding: 0;
@@ -41,3 +41,5 @@
   box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
   background-color: #ffffff;
 }
+
+

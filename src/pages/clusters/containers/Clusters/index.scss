@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .searchPanel {
   display: flex;
@@ -70,3 +70,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+
+

@@ -1,4 +1,4 @@
-@import "~scss/variables";
+@use "scss/variables" as *;
 
 .global {
   margin-bottom: 12px;
@@ -6,3 +6,5 @@
     margin-right: 4px;
   }
 }
+
+

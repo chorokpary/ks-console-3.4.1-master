@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   background-color: $lightest;
@@ -17,3 +17,6 @@
 .tip {
   margin-left: 4px;
 }
+
+
+

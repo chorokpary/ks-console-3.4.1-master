@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .reason {
   display: inline-block;
@@ -50,3 +50,6 @@
 .error {
   color: $red-color04;
 }
+
+
+

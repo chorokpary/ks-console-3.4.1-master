@@ -14,23 +14,6 @@ html {
   background-color: #e8f0f6 !important;
 }
 
-/* login */
-.login-body {
-  background: url(/assets/resources/images/img/img_login.svg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  overflow-x: hidden;
-}
-
-.src-core-containers-Login-index__login .top_logo {
-  margin-bottom: 10px !important;
-}
-
-.src-core-containers-Login-index__footer button[type='submit']:hover {
-  border: 0 !important;
-}
-
 /* scroll */
 *::-webkit-scrollbar {
   width: 6px;
@@ -611,11 +594,6 @@ div.flatpickr-calendar
 .src-core-layouts-Base-index__main {
   background-color: #e8f0f6 !important;
   border: 1px solid #e8f0f6 !important;
-}
-
-.ks-page-side {
-  top: 68px !important;
-  padding-top: 20px !important;
 }
 
 /* header 탑메뉴 정렬 및 색상 로고 */
@@ -1750,19 +1728,37 @@ input.input:not([readonly]):not([disabled]):focus {
 }
 
 /* 로그인 */
+.login-body {
+  background: url(/assets/resources/images/img/img_login.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+.input-password {
+  width: auto !important;
+}
+
+.src-core-containers-Login-index__footer button[type='submit']:hover {
+  border: 0 !important;
+}
+
 .src-core-containers-Login-index__login {
   position: relative;
-  padding: 60px !important;
+  padding: 60px 40px !important;
   margin-top: 180px !important;
-  width: 460px !important;
+  width: 420px !important;
   border-radius: 8px !important;
-  -webkit-box-shadow: 0px 4px 15px 0px #18358c !important;
-  box-shadow: 0px 4px 15px 0px #18358c !important;
+  -webkit-box-shadow: 0px 4px 15px 0px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0px 4px 15px 0px rgba(0, 0, 0, 0.5) !important;
 }
 .src-core-containers-Login-index__login .top_logo {
-  height: 100px !important;
-  text-align: center !important;
   margin-bottom: 50px !important;
+  text-align: center !important;
+}
+.src-core-containers-Login-index__loginContainer .src-core-containers-Login-index__logo img {
+  width: 240px !important;
 }
 .src-core-containers-Login-index__login
   .top_logo
@@ -1785,12 +1781,12 @@ input.input:not([readonly]):not([disabled]):focus {
   line-height: 20px;
   text-align: center;
 }
+.src-core-containers-Login-index__login .alert {
+  margin: 10px 0 !important;
+}
 .src-core-containers-Login-index__login .form-item-error {
   margin-top: 0px !important;
-}
-
-.src-core-containers-Login-index__logo > img {
-  height: 40px !important;
+  margin-bottom: 10px !important;
 }
 
 .src-core-containers-Login-index__divider {

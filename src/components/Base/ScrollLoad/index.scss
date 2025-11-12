@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   width: 100%;
@@ -35,3 +35,6 @@
 .empty {
   position: absolute;
 }
+
+
+

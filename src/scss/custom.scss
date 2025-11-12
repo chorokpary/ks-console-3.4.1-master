@@ -1,3 +1,6 @@
+@use "variables" as *;
+@use "mixins" as *;
+
 .input-password {
   width: 100% !important;
   max-width: 455px;
@@ -218,3 +221,6 @@
   color: $white;
   background-color: $yellow-color03;
 }
+
+
+

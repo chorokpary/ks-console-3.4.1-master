@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   position: fixed;
@@ -155,3 +155,6 @@
     z-index: -1;
   }
 }
+
+
+

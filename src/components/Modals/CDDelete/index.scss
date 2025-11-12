@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .modalHeader {
   padding: 20px;
@@ -84,3 +84,6 @@
   background-color: $card-bg-color;
   box-shadow: none;
 }
+
+
+

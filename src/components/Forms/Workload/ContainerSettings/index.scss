@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 @mixin tipFont {
   font-family: 'PingFang SC', sans-serif;
@@ -23,3 +23,6 @@
     font-weight: 600;
   }
 }
+
+
+

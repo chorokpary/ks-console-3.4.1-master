@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .item {
   position: relative;
@@ -49,4 +49,7 @@
     visibility: hidden;
   }
 }
+
+
+
 

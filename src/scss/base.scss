@@ -1,3 +1,7 @@
+@use "variables" as *;
+@use "mixins" as *;
+@use "sass:map";
+
 html {
   overflow-y: visible; // overwrite overflow from minireset
   margin-right: calc(100% - 100vw); // fix jumping scrollbar
@@ -62,7 +66,7 @@ pre {
 @each $header, $size in $headings {
   .#{$header} {
     display: block;
-    line-height: map-get($heading-heights, $header);
+    line-height: map.get($heading-heights, $header);
     font-size: $size;
     font-weight: 600;
     font-style: normal;
@@ -173,85 +177,89 @@ pre {
   }
 }
 
-.ks-page {
-  &-side {
-    position: fixed;
-    top: 88px;
-    left: 3;
-    width: $nav-width;
-    height: calc(100vh - 88px);
-    padding: 0 20px 40px 20px;
-    z-index: 201;
-    background-color: white;
-    transition: transform 0.5s ease;
-
-    &.open {
-      transform: translateX(0); // 보이는 상태
-    }
-
-    &.closed {
-      transform: translateX(-100%); // 숨김 상태
-    }
-
-    &-title {
-      position: relative;
-      padding: 24px 8px;
-
-      .icon {
-        margin-right: 12px;
-      }
-
-      .h3 {
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 23px;
-        line-height: 1.33;
-        text-shadow: 0 2px 4px rgba(36, 46, 66, 0.1);
-      }
-    }
-
-    &-bottom {
-      position: absolute;
+:global {
+  .ks-page {
+    &-side {
+      position: fixed;
+      top: 88px;
       left: 0;
-      bottom: 0;
-      height: 2px;
-      border-style: solid;
-      border-width: 1px 0 0 0;
-      border-image-source: radial-gradient(
-        circle at 50% 50%,
-        #e3e9ef,
-        rgba(216, 216, 216, 0)
-      );
-      border-image-slice: 1;
+      width: $nav-width;
+      min-width: $nav-width;
+      max-width: $nav-width;
+      height: calc(100vh - 88px);
+      padding: 0 20px 40px 20px;
+      z-index: 201;
+      background-color: white;
+      transition: transform 0.5s ease;
+
+      &.open {
+        transform: translateX(0); // 보이는 상태
+      }
+
+      &.closed {
+        transform: translateX(-100%); // 숨김 상태
+      }
+
+      &-title {
+        position: relative;
+        padding: 24px 8px;
+
+        .icon {
+          margin-right: 12px;
+        }
+
+        .h3 {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 23px;
+          line-height: 1.33;
+          text-shadow: 0 2px 4px rgba(36, 46, 66, 0.1);
+        }
+      }
+
+      &-bottom {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        border-style: solid;
+        border-width: 1px 0 0 0;
+        border-image-source: radial-gradient(
+          circle at 50% 50%,
+          #e3e9ef,
+          rgba(216, 216, 216, 0)
+        );
+        border-image-slice: 1;
+      }
     }
-  }
 
-  &-nav {
-    width: auto;
-    padding: 0 12px 0 0;
-    margin-right: -12px;
-    z-index: 1;
-    height: calc(100vh - 188px);
-    overflow-y: auto;
-  }
+    &-nav {
+      width: auto;
+      padding: 0 12px 0 0;
+      margin-right: -12px;
+      z-index: 1;
+      height: calc(100vh - 188px);
+      overflow-y: auto;
+    }
 
-  &-main {
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
+    &-main {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      transition: margin-left 0.3s ease;
 
     &.with-sidebar {
       margin-left: $nav-width - 20px;
     }
 
-    &.full {
-      margin-left: 0;
-    }
+      &.full {
+        margin-left: 0;
+      }
 
-    @media (max-width: 1366px) {
-      &.with-sidebar {
-        margin-left: $narrow-nav-width - 20px;
+      @media (max-width: 1366px) {
+        &.with-sidebar {
+          margin-left: $narrow-nav-width;
+        }
       }
     }
   }
@@ -297,3 +305,7 @@ pre {
   border-radius: 4px;
   word-break: break-all;
 }
+
+
+
+

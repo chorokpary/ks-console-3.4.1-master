@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   border-radius: 4px;
@@ -37,3 +37,6 @@
   right: 0;
   transform: translateY(-50%);
 }
+
+
+

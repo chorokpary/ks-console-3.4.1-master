@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   position: relative;
@@ -57,3 +57,6 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
+
+

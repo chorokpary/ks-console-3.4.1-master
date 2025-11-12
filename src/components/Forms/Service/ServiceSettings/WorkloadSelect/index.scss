@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .body {
   padding: 12px;
@@ -76,3 +76,6 @@
     transition: all $trans-speed ease-in-out;
   }
 }
+
+
+

@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .trigger {
   position: fixed;
@@ -90,3 +90,6 @@
     padding-bottom: 20px;
   }
 }
+
+
+

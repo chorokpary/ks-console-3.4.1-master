@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .card {
   position: relative;
@@ -98,3 +98,6 @@
     margin-right: 4px;
   }
 }
+
+
+

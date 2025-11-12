@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   height: 100%;
@@ -83,3 +83,6 @@
 .emtpy {
   height: 244px;
 }
+
+
+

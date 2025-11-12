@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .baseInfo {
   height: 80px;
@@ -68,3 +68,6 @@
     vertical-align: middle;
   }
 }
+
+
+

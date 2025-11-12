@@ -1,6 +1,9 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .editor {
   min-height: 500px;
   border-radius: 4px;
 }
+
+
+

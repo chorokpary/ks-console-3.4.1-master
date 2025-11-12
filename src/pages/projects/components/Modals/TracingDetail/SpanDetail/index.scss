@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   height: 100%;
@@ -93,3 +93,6 @@
     margin-top: 8px;
   }
 }
+
+
+

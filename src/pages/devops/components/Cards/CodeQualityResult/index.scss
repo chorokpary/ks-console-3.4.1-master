@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .content {
   display: flex;
@@ -120,3 +120,6 @@
   height: 21px;
   background-image: url('/assets/sonarqube.svg');
 }
+
+
+

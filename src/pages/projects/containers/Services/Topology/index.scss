@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .toolbar {
   display: flex;
@@ -50,3 +50,6 @@
     height: calc(100vh - 52px);
   }
 }
+
+
+

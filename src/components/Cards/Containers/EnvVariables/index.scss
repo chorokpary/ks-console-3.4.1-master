@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .main {
   min-height: auto;
@@ -105,3 +105,6 @@
     }
   }
 }
+
+
+

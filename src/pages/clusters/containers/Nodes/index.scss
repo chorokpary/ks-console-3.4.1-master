@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .taints {
   display: inline-block;
@@ -39,3 +39,6 @@
     fill: #ea4641;
   }
 }
+
+
+

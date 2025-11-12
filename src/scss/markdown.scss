@@ -1,3 +1,6 @@
+@use "variables" as *;
+@use "mixins" as *;
+
 .markdown-body {
   font-size: 12px;
   color: #242e42;
@@ -70,3 +73,6 @@
     }
   }
 }
+
+
+

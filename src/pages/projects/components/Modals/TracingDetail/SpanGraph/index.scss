@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .graph {
   position: relative;
@@ -89,3 +89,6 @@
     z-index: 3;
   }
 }
+
+
+

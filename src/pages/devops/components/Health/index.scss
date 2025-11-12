@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 .icon {
   display: inline-block;
   vertical-align: middle;
@@ -22,3 +22,5 @@
 .nostatus {
   background-image: url('/assets/health-nostatus.svg')
 }
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .checkboxCard {
   margin-top: 20px;
@@ -21,3 +21,6 @@
     box-shadow: 0 8px 16px 0 rgba(36, 46, 66, 0.08);
   }
 }
+
+
+

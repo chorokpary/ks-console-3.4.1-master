@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   margin-top: 12px;
@@ -38,3 +38,6 @@
   text-align: center;
   margin-top: 20px;
 }
+
+
+

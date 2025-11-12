@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .rules {
   & > li {
@@ -26,3 +26,6 @@
     color: $text-color;
   }
 }
+
+
+

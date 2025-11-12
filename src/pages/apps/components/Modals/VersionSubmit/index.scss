@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .body {
   padding: 0;
@@ -91,3 +91,6 @@
   right: 30px;
   bottom: 28px;
 }
+
+
+

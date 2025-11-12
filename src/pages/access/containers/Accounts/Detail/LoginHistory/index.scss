@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table {
   margin: 0 -20px;
@@ -11,3 +11,6 @@
     vertical-align: middle;
   }
 }
+
+
+

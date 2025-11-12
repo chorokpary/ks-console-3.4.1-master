@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .uploadInfo {
   margin-bottom: 8px;
@@ -27,3 +27,6 @@
     word-wrap: break-word;
   }
 }
+
+
+

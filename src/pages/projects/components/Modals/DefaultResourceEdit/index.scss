@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .itemWrapper {
   padding: 12px;
@@ -10,3 +10,6 @@
     margin-bottom: 4px;
   }
 }
+
+
+

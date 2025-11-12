@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .footer {
   border-color: $bg-color;
@@ -34,3 +34,6 @@
     }
   }
 }
+
+
+

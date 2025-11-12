@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
     padding: 12px;
@@ -433,3 +433,6 @@
     width: 260px;
     margin-right: 12px;
 }
+
+
+

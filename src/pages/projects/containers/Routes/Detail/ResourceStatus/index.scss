@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .ports {
   padding: 20px 40px;
@@ -111,3 +111,6 @@
   top: 24px;
   right: 12px;
 }
+
+
+

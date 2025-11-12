@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .clickable {
   color: $green;
@@ -13,3 +13,6 @@
   background-color: #ffffff;
   border: solid 1px $light-color03;
 }
+
+
+

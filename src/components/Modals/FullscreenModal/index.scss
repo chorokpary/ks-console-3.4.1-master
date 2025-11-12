@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .header {
   border-bottom: none;
@@ -17,3 +17,6 @@
 .container {
   min-width: 1000px;
 }
+
+
+

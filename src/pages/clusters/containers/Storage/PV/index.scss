@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 .mode_title {
   display: flex;
   align-items: center;
@@ -41,3 +41,6 @@
     }
   }
 }
+
+
+

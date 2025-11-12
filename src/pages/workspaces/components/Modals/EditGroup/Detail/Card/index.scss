@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .cardWrapper {
   flex: 1;
@@ -41,3 +41,5 @@
   background-image: url('/assets/add-grey.svg');
   margin-right: 4px;
 }
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .input {
   :global {
@@ -17,3 +17,6 @@
     }
   }
 }
+
+
+

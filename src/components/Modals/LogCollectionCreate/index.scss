@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .items {
   border-radius: 4px;
@@ -58,3 +58,6 @@
     text-align: center;
   }
 }
+
+
+
