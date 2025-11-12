@@ -167,7 +167,7 @@ export default class gpuclusters extends React.Component {
         title: t('RESOURCES_GPU_CLUSTER_VM_COUNT'),
         dataIndex: 'instances',
         isHideable: true,
-        search: true,
+        // search: true,
         width: 'auto',
         render: (instances, record) => (
           <p>
@@ -251,7 +251,7 @@ export default class gpuclusters extends React.Component {
           itemActions={this.itemActions}
           tableActions={this.tableActions}
           columns={this.getColumns()}
-          columnSearch={this.columnSearch}
+          // columnSearch={this.columnSearch}
         />
       </ListPage>
     )
